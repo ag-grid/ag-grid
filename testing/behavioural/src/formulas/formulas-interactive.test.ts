@@ -13,6 +13,7 @@ import {
 import { BatchEditModule, CellSelectionModule, ClipboardModule, FormulaModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -197,6 +198,22 @@ describe('ag-grid formulas interactive workflows', () => {
             rowData: [{ id: 'r1', a: 5, b: 0, c: 0 }],
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
         });
+        await new GridColumns(
+            api,
+            `tabbing forward from an editing formula cell commits it and moves focus right setup`
+        ).checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            ├── a "A" width:200 editable
+            ├── b "B" width:200 editable
+            └── c "C" width:200 editable
+        `);
+        await new GridRows(api, `tabbing forward from an editing formula cell commits it and moves focus right setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" a:5 b:0 c:0
+            `);
 
         const started = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 0, colKey: 'b' });
@@ -214,6 +231,13 @@ describe('ag-grid formulas interactive workflows', () => {
         const rowNode = api.getRowNode('r1')!;
         expect(api.getCellValue({ rowNode, colKey: 'b', useFormatter: false })).toBe(10);
         expect(api.getFocusedCell()?.column.getColId()).toBe('c');
+        await new GridRows(
+            api,
+            `tabbing forward from an editing formula cell commits it and moves focus right final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:r1 row-number:"1" a:5 b:10 c:0
+        `);
     });
 
     test('tabbing backward via Shift+Tab from an editing formula cell commits and moves left', async () => {
@@ -222,6 +246,24 @@ describe('ag-grid formulas interactive workflows', () => {
             rowData: [{ id: 'r1', a: 0, b: 0, c: 5 }],
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
         });
+        await new GridColumns(
+            api,
+            `tabbing backward via Shift+Tab from an editing formula cell commits and moves le setup`
+        ).checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            ├── a "A" width:200 editable
+            ├── b "B" width:200 editable
+            └── c "C" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `tabbing backward via Shift+Tab from an editing formula cell commits and moves le setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" a:0 b:0 c:5
+        `);
 
         const started = waitForEvent('cellEditingStarted', api);
         api.startEditingCell({ rowIndex: 0, colKey: 'b' });
@@ -239,6 +281,13 @@ describe('ag-grid formulas interactive workflows', () => {
         const rowNode = api.getRowNode('r1')!;
         expect(api.getCellValue({ rowNode, colKey: 'b', useFormatter: false })).toBe(6);
         expect(api.getFocusedCell()?.column.getColId()).toBe('a');
+        await new GridRows(
+            api,
+            `tabbing backward via Shift+Tab from an editing formula cell commits and moves le final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:r1 row-number:"1" a:0 b:6 c:5
+        `);
     });
 
     test('closing one formula editor and opening another does not leak active-editor state', async () => {

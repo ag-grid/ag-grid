@@ -171,8 +171,38 @@ describe('Manual pinned rows', () => {
             paginationPageSize: rowData.length,
             paginationPageSizeSelector: [rowData.length, 2 * rowData.length],
         });
+        await new GridColumns(api, `Setting _grandTotalRow_ to pinned value when pagination is enabled works setup`)
+            .checkColumns(`
+                CENTER
+                └── sport "Sport" width:200
+            `);
+        await new GridRows(api, `Setting _grandTotalRow_ to pinned value when pagination is enabled works setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:"0-football" sport:"football"
+                ├── LEAF id:"0-rugby" sport:"rugby"
+                ├── LEAF id:"0-tennis" sport:"tennis"
+                ├── LEAF id:"0-cricket" sport:"cricket"
+                ├── LEAF id:"0-golf" sport:"golf"
+                ├── LEAF id:"0-swimming" sport:"swimming"
+                └── LEAF id:"0-rowing" sport:"rowing"
+                PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID
+            `
+        );
 
         assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+        await new GridRows(api, `Setting _grandTotalRow_ to pinned value when pagination is enabled works final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:"0-football" sport:"football"
+                ├── LEAF id:"0-rugby" sport:"rugby"
+                ├── LEAF id:"0-tennis" sport:"tennis"
+                ├── LEAF id:"0-cricket" sport:"cricket"
+                ├── LEAF id:"0-golf" sport:"golf"
+                ├── LEAF id:"0-swimming" sport:"swimming"
+                └── LEAF id:"0-rowing" sport:"rowing"
+                PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID
+            `);
     });
 
     test('grand total row can be pinned without `enableRowPinning`', async () => {
@@ -181,8 +211,34 @@ describe('Manual pinned rows', () => {
             rowData,
             grandTotalRow: 'pinnedBottom',
         });
+        await new GridColumns(api, `grand total row can be pinned without _enableRowPinning_ setup`).checkColumns(`
+            CENTER
+            └── sport "Sport" width:200
+        `);
+        await new GridRows(api, `grand total row can be pinned without _enableRowPinning_ setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 sport:"football"
+            ├── LEAF id:1 sport:"rugby"
+            ├── LEAF id:2 sport:"tennis"
+            ├── LEAF id:3 sport:"cricket"
+            ├── LEAF id:4 sport:"golf"
+            ├── LEAF id:5 sport:"swimming"
+            └── LEAF id:6 sport:"rowing"
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID
+        `);
 
         assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+        await new GridRows(api, `grand total row can be pinned without _enableRowPinning_ final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 sport:"football"
+            ├── LEAF id:1 sport:"rugby"
+            ├── LEAF id:2 sport:"tennis"
+            ├── LEAF id:3 sport:"cricket"
+            ├── LEAF id:4 sport:"golf"
+            ├── LEAF id:5 sport:"swimming"
+            └── LEAF id:6 sport:"rowing"
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID
+        `);
     });
 
     test('can move position of pinned grand total row with `grandTotalRow`', async () => {
@@ -196,6 +252,23 @@ describe('Manual pinned rows', () => {
             },
             grandTotalRow: 'pinnedBottom',
         });
+        await new GridColumns(api, `can move position of pinned grand total row with _grandTotalRow_ setup`)
+            .checkColumns(`
+                CENTER
+                └── sport "Sport" width:200
+            `);
+        await new GridRows(api, `can move position of pinned grand total row with _grandTotalRow_ setup`).check(`
+            PINNED_TOP id:t-top-0-rugby sport:"rugby"
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:"0-football" sport:"football"
+            ├── LEAF id:"0-rugby" sport:"rugby"
+            ├── LEAF id:"0-tennis" sport:"tennis"
+            ├── LEAF id:"0-cricket" sport:"cricket"
+            ├── LEAF id:"0-golf" sport:"golf"
+            ├── LEAF id:"0-swimming" sport:"swimming"
+            └── LEAF id:"0-rowing" sport:"rowing"
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID
+        `);
 
         assertPinnedRows(api, 'top', ['t-top-0-rugby']);
         assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
@@ -203,6 +276,28 @@ describe('Manual pinned rows', () => {
         expect(oldPinnedBottom.destroyed).toBe(false);
 
         api.setGridOption('grandTotalRow', 'pinnedTop');
+        await new GridColumns(
+            api,
+            `can move position of pinned grand total row with _grandTotalRow_ after setGridOption grandTotalRow`
+        ).checkColumns(`
+            CENTER
+            └── sport "Sport" width:200
+        `);
+        await new GridRows(
+            api,
+            `can move position of pinned grand total row with _grandTotalRow_ after setGridOption grandTotalRow`
+        ).check(`
+            PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID
+            PINNED_TOP id:t-top-0-rugby sport:"rugby"
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:"0-football" sport:"football"
+            ├── LEAF id:"0-rugby" sport:"rugby"
+            ├── LEAF id:"0-tennis" sport:"tennis"
+            ├── LEAF id:"0-cricket" sport:"cricket"
+            ├── LEAF id:"0-golf" sport:"golf"
+            ├── LEAF id:"0-swimming" sport:"swimming"
+            └── LEAF id:"0-rowing" sport:"rowing"
+        `);
         await asyncSetTimeout(10);
 
         assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID', 't-top-0-rugby']);
@@ -219,6 +314,21 @@ describe('Manual pinned rows', () => {
             },
             grandTotalRow: 'pinnedTop',
         });
+        await new GridColumns(api, `cycle through grandTotalRow positions including pinned setup`).checkColumns(`
+            CENTER
+            └── sport "Sport" width:200
+        `);
+        await new GridRows(api, `cycle through grandTotalRow positions including pinned setup`).check(`
+            PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:"0-football" sport:"football"
+            ├── LEAF id:"0-rugby" sport:"rugby"
+            ├── LEAF id:"0-tennis" sport:"tennis"
+            ├── LEAF id:"0-cricket" sport:"cricket"
+            ├── LEAF id:"0-golf" sport:"golf"
+            ├── LEAF id:"0-swimming" sport:"swimming"
+            └── LEAF id:"0-rowing" sport:"rowing"
+        `);
 
         // pinnedTop
         assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']);
@@ -227,12 +337,54 @@ describe('Manual pinned rows', () => {
         expect(topPinnedNode.destroyed).toBe(false);
 
         api.setGridOption('grandTotalRow', 'top');
+        await new GridColumns(
+            api,
+            `cycle through grandTotalRow positions including pinned after setGridOption grandTotalRow`
+        ).checkColumns(`
+            CENTER
+            └── sport "Sport" width:200
+        `);
+        await new GridRows(
+            api,
+            `cycle through grandTotalRow positions including pinned after setGridOption grandTotalRow`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─ footer id:rowGroupFooter_ROOT_NODE_ID
+            ├── LEAF id:"0-football" sport:"football"
+            ├── LEAF id:"0-rugby" sport:"rugby"
+            ├── LEAF id:"0-tennis" sport:"tennis"
+            ├── LEAF id:"0-cricket" sport:"cricket"
+            ├── LEAF id:"0-golf" sport:"golf"
+            ├── LEAF id:"0-swimming" sport:"swimming"
+            └── LEAF id:"0-rowing" sport:"rowing"
+        `);
         await asyncSetTimeout(10);
         assertPinnedRows(api, 'top', []);
         assertPinnedRows(api, 'bottom', []);
         expect(topPinnedNode.destroyed).toBe(true);
 
         api.setGridOption('grandTotalRow', 'pinnedBottom');
+        await new GridColumns(
+            api,
+            `cycle through grandTotalRow positions including pinned after setGridOption grandTotalRow #2`
+        ).checkColumns(`
+            CENTER
+            └── sport "Sport" width:200
+        `);
+        await new GridRows(
+            api,
+            `cycle through grandTotalRow positions including pinned after setGridOption grandTotalRow #2`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:"0-football" sport:"football"
+            ├── LEAF id:"0-rugby" sport:"rugby"
+            ├── LEAF id:"0-tennis" sport:"tennis"
+            ├── LEAF id:"0-cricket" sport:"cricket"
+            ├── LEAF id:"0-golf" sport:"golf"
+            ├── LEAF id:"0-swimming" sport:"swimming"
+            └── LEAF id:"0-rowing" sport:"rowing"
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID
+        `);
         await asyncSetTimeout(10);
         assertPinnedRows(api, 'top', []);
         assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
@@ -243,6 +395,26 @@ describe('Manual pinned rows', () => {
         expect(bottomNode).not.toBe(topPinnedNode);
 
         api.setGridOption('grandTotalRow', undefined);
+        await new GridColumns(
+            api,
+            `cycle through grandTotalRow positions including pinned after setGridOption grandTotalRow #3`
+        ).checkColumns(`
+            CENTER
+            └── sport "Sport" width:200
+        `);
+        await new GridRows(
+            api,
+            `cycle through grandTotalRow positions including pinned after setGridOption grandTotalRow #3`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:"0-football" sport:"football"
+            ├── LEAF id:"0-rugby" sport:"rugby"
+            ├── LEAF id:"0-tennis" sport:"tennis"
+            ├── LEAF id:"0-cricket" sport:"cricket"
+            ├── LEAF id:"0-golf" sport:"golf"
+            ├── LEAF id:"0-swimming" sport:"swimming"
+            └── LEAF id:"0-rowing" sport:"rowing"
+        `);
         await asyncSetTimeout(10);
         assertPinnedRows(api, 'top', []);
         assertPinnedRows(api, 'bottom', []);
@@ -513,6 +685,22 @@ describe('Manual pinned rows', () => {
                 return `${params.level}-${params.data?.sport}`;
             },
         });
+        await new GridColumns(api, `isRowPinnable callback unpins a row when it stops being pinnable setup`)
+            .checkColumns(`
+                CENTER
+                └── sport "Sport" width:200
+            `);
+        await new GridRows(api, `isRowPinnable callback unpins a row when it stops being pinnable setup`).check(`
+            PINNED_TOP id:t-top-0-rugby sport:"rugby"
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:"0-football" sport:"football"
+            ├── LEAF id:"0-rugby" sport:"rugby"
+            ├── LEAF id:"0-tennis" sport:"tennis"
+            ├── LEAF id:"0-cricket" sport:"cricket"
+            ├── LEAF id:"0-golf" sport:"golf"
+            ├── LEAF id:"0-swimming" sport:"swimming"
+            └── LEAF id:"0-rowing" sport:"rowing"
+        `);
 
         assertPinnedRows(api, 'top', ['t-top-0-rugby']);
         const pinnedRugby = getPinnedRows(api, 'top')[0];
@@ -521,6 +709,19 @@ describe('Manual pinned rows', () => {
         // Make rugby no longer pinnable, then trigger rowNodeDataChanged via update.
         pinnable = new Set();
         api.applyTransaction({ update: [{ sport: 'rugby' }] });
+        await new GridRows(
+            api,
+            `isRowPinnable callback unpins a row when it stops being pinnable after applyTransaction`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:"0-football" sport:"football"
+            ├── LEAF id:"0-rugby" sport:"rugby"
+            ├── LEAF id:"0-tennis" sport:"tennis"
+            ├── LEAF id:"0-cricket" sport:"cricket"
+            ├── LEAF id:"0-golf" sport:"golf"
+            ├── LEAF id:"0-swimming" sport:"swimming"
+            └── LEAF id:"0-rowing" sport:"rowing"
+        `);
         await asyncSetTimeout(10);
 
         // The previously-pinned row should be unpinned (rowNodeDataChanged listener handles it).
@@ -543,22 +744,90 @@ describe('Manual pinned rows', () => {
                 return `${params.level}-${params.data?.sport}`;
             },
         });
+        await new GridColumns(api, `sort change re-sorts pinned containers setup`).checkColumns(`
+            CENTER
+            └── sport "Sport" width:200
+        `);
+        await new GridRows(api, `sort change re-sorts pinned containers setup`).check(`
+            PINNED_TOP id:t-top-0-football sport:"football"
+            PINNED_TOP id:t-top-0-tennis sport:"tennis"
+            PINNED_TOP id:t-top-0-cricket sport:"cricket"
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:"0-football" sport:"football"
+            ├── LEAF id:"0-rugby" sport:"rugby"
+            ├── LEAF id:"0-tennis" sport:"tennis"
+            ├── LEAF id:"0-cricket" sport:"cricket"
+            ├── LEAF id:"0-golf" sport:"golf"
+            ├── LEAF id:"0-swimming" sport:"swimming"
+            └── LEAF id:"0-rowing" sport:"rowing"
+        `);
 
         // Initial order matches source row order: football, tennis, cricket
         assertPinnedRows(api, 'top', ['t-top-0-football', 't-top-0-tennis', 't-top-0-cricket']);
 
         // Sort ascending by sport — pinned area must re-sort
         api.applyColumnState({ state: [{ colId: 'sport', sort: 'asc' }] });
+        await new GridColumns(api, `sort change re-sorts pinned containers after applyColumnState`).checkColumns(`
+            CENTER
+            └── sport "Sport" width:200 sort:asc
+        `);
+        await new GridRows(api, `sort change re-sorts pinned containers after applyColumnState`).check(`
+            PINNED_TOP id:t-top-0-cricket sport:"cricket"
+            PINNED_TOP id:t-top-0-football sport:"football"
+            PINNED_TOP id:t-top-0-tennis sport:"tennis"
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:"0-cricket" sport:"cricket"
+            ├── LEAF id:"0-football" sport:"football"
+            ├── LEAF id:"0-golf" sport:"golf"
+            ├── LEAF id:"0-rowing" sport:"rowing"
+            ├── LEAF id:"0-rugby" sport:"rugby"
+            ├── LEAF id:"0-swimming" sport:"swimming"
+            └── LEAF id:"0-tennis" sport:"tennis"
+        `);
         await asyncSetTimeout(10);
         assertPinnedRows(api, 'top', ['t-top-0-cricket', 't-top-0-football', 't-top-0-tennis']);
 
         // Sort descending
         api.applyColumnState({ state: [{ colId: 'sport', sort: 'desc' }] });
+        await new GridColumns(api, `sort change re-sorts pinned containers after applyColumnState #2`).checkColumns(`
+            CENTER
+            └── sport "Sport" width:200 sort:desc
+        `);
+        await new GridRows(api, `sort change re-sorts pinned containers after applyColumnState #2`).check(`
+            PINNED_TOP id:t-top-0-tennis sport:"tennis"
+            PINNED_TOP id:t-top-0-football sport:"football"
+            PINNED_TOP id:t-top-0-cricket sport:"cricket"
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:"0-tennis" sport:"tennis"
+            ├── LEAF id:"0-swimming" sport:"swimming"
+            ├── LEAF id:"0-rugby" sport:"rugby"
+            ├── LEAF id:"0-rowing" sport:"rowing"
+            ├── LEAF id:"0-golf" sport:"golf"
+            ├── LEAF id:"0-football" sport:"football"
+            └── LEAF id:"0-cricket" sport:"cricket"
+        `);
         await asyncSetTimeout(10);
         assertPinnedRows(api, 'top', ['t-top-0-tennis', 't-top-0-football', 't-top-0-cricket']);
 
         // Clear sort — falls back to source row order
         api.applyColumnState({ state: [{ colId: 'sport', sort: null }] });
+        await new GridColumns(api, `sort change re-sorts pinned containers after applyColumnState #3`).checkColumns(`
+            CENTER
+            └── sport "Sport" width:200
+        `);
+        await new GridRows(api, `sort change re-sorts pinned containers after applyColumnState #3`).check(`
+            PINNED_TOP id:t-top-0-football sport:"football"
+            PINNED_TOP id:t-top-0-tennis sport:"tennis"
+            PINNED_TOP id:t-top-0-cricket sport:"cricket"
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:"0-football" sport:"football"
+            ├── LEAF id:"0-rugby" sport:"rugby"
+            ├── LEAF id:"0-tennis" sport:"tennis"
+            ├── LEAF id:"0-cricket" sport:"cricket"
+            ├── LEAF id:"0-golf" sport:"golf"
+            ├── LEAF id:"0-swimming" sport:"swimming"
+            └── LEAF id:"0-rowing" sport:"rowing"
+        `);
         await asyncSetTimeout(10);
         assertPinnedRows(api, 'top', ['t-top-0-football', 't-top-0-tennis', 't-top-0-cricket']);
     });
@@ -594,6 +863,25 @@ describe('Manual pinned rows', () => {
             },
             groupDefaultExpanded: -1,
         });
+        await new GridColumns(api, `pivotMode toggle hides pinned leaf clones and shows them again on toggle off setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── sport "Sport" width:200
+                └── value "Value" width:200 aggFunc:sum
+            `);
+        await new GridRows(api, `pivotMode toggle hides pinned leaf clones and shows them again on toggle off setup`)
+            .check(`
+                PINNED_TOP id:t-top-row-group-country-A ag-Grid-AutoColumn:"A" value:3
+                PINNED_TOP id:t-top-leaf-A-rugby country:"A" year:2024 sport:"rugby" value:1
+                PINNED_TOP id:t-top-leaf-B-rugby country:"B" year:2024 sport:"rugby" value:3
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-A ag-Grid-AutoColumn:"A" value:3
+                │ ├── LEAF id:leaf-A-rugby country:"A" year:2024 sport:"rugby" value:1
+                │ └── LEAF id:leaf-A-tennis country:"A" year:2024 sport:"tennis" value:2
+                └─┬ LEAF_GROUP id:row-group-country-B ag-Grid-AutoColumn:"B" value:3
+                · └── LEAF id:leaf-B-rugby country:"B" year:2024 sport:"rugby" value:3
+            `);
 
         // Initially (pivotMode off): both the group AND the leaf clones are visible.
         const initialPinned = getPinnedRows(api, 'top');
@@ -605,6 +893,27 @@ describe('Manual pinned rows', () => {
 
         // Turn pivot mode on — leaf clones should be hidden, group clones remain.
         api.setGridOption('pivotMode', true);
+        await new GridColumns(
+            api,
+            `pivotMode toggle hides pinned leaf clones and shows them again on toggle off after setGridOption pivotMode`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └─┬ "2024" GROUP
+              └── pivot_year_2024_value "Value" width:200 columnGroupShow:open
+        `);
+        await new GridRows(
+            api,
+            `pivotMode toggle hides pinned leaf clones and shows them again on toggle off after setGridOption pivotMode`
+        ).check(`
+            PINNED_TOP id:t-top-row-group-country-A ag-Grid-AutoColumn:"A" pivot_year_2024_value:3
+            ROOT id:ROOT_NODE_ID pivot_year_2024_value:6
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-A ag-Grid-AutoColumn:"A" pivot_year_2024_value:3
+            │ ├── LEAF hidden id:leaf-A-rugby pivot_year_2024_value:1
+            │ └── LEAF hidden id:leaf-A-tennis pivot_year_2024_value:2
+            └─┬ LEAF_GROUP collapsed id:row-group-country-B ag-Grid-AutoColumn:"B" pivot_year_2024_value:3
+            · └── LEAF hidden id:leaf-B-rugby pivot_year_2024_value:3
+        `);
         await asyncSetTimeout(10);
 
         const afterPivot = getPinnedRows(api, 'top');
@@ -618,6 +927,29 @@ describe('Manual pinned rows', () => {
 
         // Toggle pivot mode off — leaf clones should come back.
         api.setGridOption('pivotMode', false);
+        await new GridColumns(
+            api,
+            `pivotMode toggle hides pinned leaf clones and shows them again on toggle off after setGridOption pivotMode #2`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── sport "Sport" width:200
+            └── value "Value" width:200 aggFunc:sum
+        `);
+        await new GridRows(
+            api,
+            `pivotMode toggle hides pinned leaf clones and shows them again on toggle off after setGridOption pivotMode #2`
+        ).check(`
+            PINNED_TOP id:t-top-row-group-country-A ag-Grid-AutoColumn:"A" value:3
+            PINNED_TOP id:t-top-leaf-A-rugby country:"A" year:2024 sport:"rugby" value:1
+            PINNED_TOP id:t-top-leaf-B-rugby country:"B" year:2024 sport:"rugby" value:3
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-A ag-Grid-AutoColumn:"A" value:3
+            │ ├── LEAF id:leaf-A-rugby country:"A" year:2024 sport:"rugby" value:1
+            │ └── LEAF id:leaf-A-tennis country:"A" year:2024 sport:"tennis" value:2
+            └─┬ LEAF_GROUP id:row-group-country-B ag-Grid-AutoColumn:"B" value:3
+            · └── LEAF id:leaf-B-rugby country:"B" year:2024 sport:"rugby" value:3
+        `);
         await asyncSetTimeout(10);
 
         const afterToggleOff = getPinnedRows(api, 'top');

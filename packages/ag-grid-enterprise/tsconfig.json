@@ -4,6 +4,9 @@
   "include": [],
   "references": [
     {
+      "path": "../ag-grid-community/tsconfig.lib.json"
+    },
+    {
       "path": "./tsconfig.lib.json"
     },
     {

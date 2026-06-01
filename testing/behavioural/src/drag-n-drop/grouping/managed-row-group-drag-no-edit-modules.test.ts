@@ -26,6 +26,7 @@ describe('managed row drag without edit modules', () => {
             ColumnApiModule,
             EventApiModule,
             RowApiModule,
+            ColumnApiModule,
             CellApiModule,
             ValidationModule,
         ],

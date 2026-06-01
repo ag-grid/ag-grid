@@ -2,7 +2,7 @@ import type { ColDef, GridApi } from 'ag-grid-community';
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('column tool panel test IDs with virtualization', () => {
     const gridMgr = new TestGridsManager({
@@ -90,6 +90,44 @@ describe('column tool panel test IDs with virtualization', () => {
 
     it('should maintain checkbox test IDs after scrolling the virtual list', async () => {
         const api = await createGrid();
+        await new GridColumns(api, `should maintain checkbox test IDs after scrolling the virtual list setup`)
+            .checkColumns(`
+                CENTER
+                ├── col0 "Column 0" width:200
+                ├── col1 "Column 1" width:200
+                ├── col2 "Column 2" width:200
+                ├── col3 "Column 3" width:200
+                ├── col4 "Column 4" width:200
+                ├── col5 "Column 5" width:200
+                ├── col6 "Column 6" width:200
+                ├── col7 "Column 7" width:200
+                ├── col8 "Column 8" width:200
+                ├── col9 "Column 9" width:200
+                ├── col10 "Column 10" width:200
+                ├── col11 "Column 11" width:200
+                ├── col12 "Column 12" width:200
+                ├── col13 "Column 13" width:200
+                ├── col14 "Column 14" width:200
+                ├── col15 "Column 15" width:200
+                ├── col16 "Column 16" width:200
+                ├── col17 "Column 17" width:200
+                ├── col18 "Column 18" width:200
+                ├── col19 "Column 19" width:200
+                ├── col20 "Column 20" width:200
+                ├── col21 "Column 21" width:200
+                ├── col22 "Column 22" width:200
+                ├── col23 "Column 23" width:200
+                ├── col24 "Column 24" width:200
+                ├── col25 "Column 25" width:200
+                ├── col26 "Column 26" width:200
+                ├── col27 "Column 27" width:200
+                ├── col28 "Column 28" width:200
+                └── col29 "Column 29" width:200
+            `);
+        await new GridRows(api, `should maintain checkbox test IDs after scrolling the virtual list setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 col0:"val_col0" col1:"val_col1" col2:"val_col2" col3:"val_col3" col4:"val_col4" col5:"val_col5" col6:"val_col6" col7:"val_col7" col8:"val_col8" col9:"val_col9" col10:"val_col10" col11:"val_col11" col12:"val_col12" col13:"val_col13" col14:"val_col14" col15:"val_col15" col16:"val_col16" col17:"val_col17" col18:"val_col18" col19:"val_col19" col20:"val_col20" col21:"val_col21" col22:"val_col22" col23:"val_col23" col24:"val_col24" col25:"val_col25" col26:"val_col26" col27:"val_col27" col28:"val_col28" col29:"val_col29"
+        `);
         await asyncSetTimeout(50);
 
         const viewport = forceVirtualListRender(api);
@@ -127,5 +165,11 @@ describe('column tool panel test IDs with virtualization', () => {
         const missingAfterScrollBack = countCheckboxesWithoutTestId(api);
         expect(missingAfterScrollBack).toEqual([]);
         expect(getVisibleCheckboxTestIds(api)[0]).toBe(agTestIdFor.columnSelectListItemCheckbox('Column 0 Column'));
+        await new GridRows(api, `should maintain checkbox test IDs after scrolling the virtual list final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 col0:"val_col0" col1:"val_col1" col2:"val_col2" col3:"val_col3" col4:"val_col4" col5:"val_col5" col6:"val_col6" col7:"val_col7" col8:"val_col8" col9:"val_col9" col10:"val_col10" col11:"val_col11" col12:"val_col12" col13:"val_col13" col14:"val_col14" col15:"val_col15" col16:"val_col16" col17:"val_col17" col18:"val_col18" col19:"val_col19" col20:"val_col20" col21:"val_col21" col22:"val_col22" col23:"val_col23" col24:"val_col24" col25:"val_col25" col26:"val_col26" col27:"val_col27" col28:"val_col28" col29:"val_col29"
+            `
+        );
     });
 });

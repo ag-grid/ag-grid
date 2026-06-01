@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { ToolbarModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('Toolbar quickFilter item', () => {
     const gridMgr = new TestGridsManager({
@@ -20,6 +20,15 @@ describe('Toolbar quickFilter item', () => {
                 items: ['agQuickFilterToolbarItem'],
             },
         });
+        await new GridColumns(api, `renders input with placeholder setup`).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `renders input with placeholder setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 name:"Alice"
+            └── LEAF id:1 name:"Bob"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -28,6 +37,11 @@ describe('Toolbar quickFilter item', () => {
         expect(input).not.toBeNull();
         expect(input!.placeholder).toBe('Filter...');
         expect(input!.getAttribute('aria-label')).toBe('Filter');
+        await new GridRows(api, `renders input with placeholder final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 name:"Alice"
+            └── LEAF id:1 name:"Bob"
+        `);
     });
 
     test('sets quickFilterText on input', async () => {
@@ -38,6 +52,15 @@ describe('Toolbar quickFilter item', () => {
                 items: ['agQuickFilterToolbarItem'],
             },
         });
+        await new GridColumns(api, `sets quickFilterText on input setup`).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `sets quickFilterText on input setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 name:"Alice"
+            └── LEAF id:1 name:"Bob"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -50,6 +73,10 @@ describe('Toolbar quickFilter item', () => {
         await new Promise<void>((resolve) => setTimeout(resolve, 350));
 
         expect(api.getGridOption('quickFilterText')).toBe('Alice');
+        await new GridRows(api, `sets quickFilterText on input final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     describe('missing QuickFilterModule', () => {
@@ -69,6 +96,18 @@ describe('Toolbar quickFilter item', () => {
                 rowData: [{ name: 'Alice' }],
                 toolbar: { items: ['agQuickFilterToolbarItem'] },
             });
+            await new GridColumns(
+                api,
+                `hides quickFilter and logs error when QuickFilterModule is not registered setup`
+            ).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `hides quickFilter and logs error when QuickFilterModule is not registered setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 name:"Alice"
+                `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -84,6 +123,13 @@ describe('Toolbar quickFilter item', () => {
             );
 
             errorSpy.mockRestore();
+            await new GridRows(
+                api,
+                `hides quickFilter and logs error when QuickFilterModule is not registered final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
         });
     });
 });

@@ -690,7 +690,7 @@ describe('Delta Sorting — pivot-triggered changedPath deactivation', () => {
         modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
     });
 
-    test('falls back to full sort when pivotStage nullifies the changedPath', () => {
+    test('falls back to full sort when pivotStage nullifies the changedPath', async () => {
         // When a transaction introduces a new unique pivot column value, pivotStage returns true
         // because the set of generated pivot columns changed (uniqueValuesChanged=true in
         // executePivotOn). CSRM then sets changedPath to undefined, so sortStage receives
@@ -713,6 +713,20 @@ describe('Delta Sorting — pivot-triggered changedPath deactivation', () => {
             ],
             getRowId: ({ data }) => data.id,
         });
+        await new GridColumns(api, `falls back to full sort when pivotStage nullifies the changedPath setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200 sort:asc
+                └─┬ "2020" GROUP
+                  └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+            `);
+        await new GridRows(api, `falls back to full sort when pivotStage nullifies the changedPath setup`).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:300
+            ├─┬ LEAF_GROUP collapsed id:row-group-region-A ag-Grid-AutoColumn:"A" pivot_year_2020_sales:200
+            │ └── LEAF hidden id:2 pivot_year_2020_sales:200
+            └─┬ LEAF_GROUP collapsed id:row-group-region-B ag-Grid-AutoColumn:"B" pivot_year_2020_sales:100
+            · └── LEAF hidden id:1 pivot_year_2020_sales:100
+        `);
 
         // Adding year 2021 → uniqueValuesChanged → pivotStage returns true →
         // CSRM sets changedPath=undefined → doDeltaSort receives undefined → full sort.
@@ -723,5 +737,16 @@ describe('Delta Sorting — pivot-triggered changedPath deactivation', () => {
         expect(api.getDisplayedRowAtIndex(0)?.key).toBe('A');
         expect(api.getDisplayedRowAtIndex(1)?.key).toBe('B');
         expect(api.getDisplayedRowAtIndex(2)?.key).toBe('C');
+        await new GridRows(api, `falls back to full sort when pivotStage nullifies the changedPath final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:300 pivot_year_2021_sales:50
+                ├─┬ LEAF_GROUP collapsed id:row-group-region-A ag-Grid-AutoColumn:"A" pivot_year_2020_sales:200 pivot_year_2021_sales:null
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:200 pivot_year_2021_sales:200
+                ├─┬ LEAF_GROUP collapsed id:row-group-region-B ag-Grid-AutoColumn:"B" pivot_year_2020_sales:100 pivot_year_2021_sales:null
+                │ └── LEAF hidden id:1 pivot_year_2020_sales:100 pivot_year_2021_sales:100
+                └─┬ LEAF_GROUP collapsed id:row-group-region-C ag-Grid-AutoColumn:"C" pivot_year_2020_sales:null pivot_year_2021_sales:50
+                · └── LEAF hidden id:3 pivot_year_2020_sales:50 pivot_year_2021_sales:50
+            `
+        );
     });
 });

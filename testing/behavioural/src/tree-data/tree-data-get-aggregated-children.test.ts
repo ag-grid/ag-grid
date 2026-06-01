@@ -157,6 +157,17 @@ describe('IRowNode.getAggregatedChildren() with tree data', () => {
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
+        await new GridColumns(api, `recursive returns all leaf descendants through nested folders setup`).checkColumns(
+            `
+                CENTER
+                ├── ag-Grid-AutoColumn "File" width:200
+                ├── name "Name" width:200
+                └── size "Size" width:200 aggFunc:sum
+            `
+        );
+        await new GridRows(api, `recursive returns all leaf descendants through nested folders setup`).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
 
         applyTransactionChecked(api, {
             add: [
@@ -187,5 +198,14 @@ describe('IRowNode.getAggregatedChildren() with tree data', () => {
         const workLeaves = workNode.getAggregatedChildren('size', true);
         expect(workLeaves.length).toBe(2);
         expect(workLeaves.map((n) => n.data?.name).sort()).toEqual(['data.xlsx', 'report.pdf']);
+        await new GridRows(api, `recursive returns all leaf descendants through nested folders final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Documents GROUP id:1 ag-Grid-AutoColumn:"Documents" name:"Documents" size:350
+            · ├─┬ Work GROUP id:2 ag-Grid-AutoColumn:"Work" name:"Work" size:300
+            · │ ├── report.pdf LEAF id:3 ag-Grid-AutoColumn:"report.pdf" name:"report.pdf" size:100
+            · │ └── data.xlsx LEAF id:4 ag-Grid-AutoColumn:"data.xlsx" name:"data.xlsx" size:200
+            · └─┬ Personal GROUP id:5 ag-Grid-AutoColumn:"Personal" name:"Personal" size:50
+            · · └── photo.jpg LEAF id:6 ag-Grid-AutoColumn:"photo.jpg" name:"photo.jpg" size:50
+        `);
     });
 });

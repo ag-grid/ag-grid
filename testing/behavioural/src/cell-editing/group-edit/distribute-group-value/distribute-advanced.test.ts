@@ -1,6 +1,8 @@
 import type { GroupRowValueSetterParams } from 'ag-grid-community';
 
 import {
+    GridColumns,
+    GridRows,
     SETTER_MODES,
     asyncSetTimeout,
     createSimpleGrid,
@@ -350,6 +352,20 @@ describe('distribution default handler', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `function aggFunc without options is disabled by default (no distribution) setup`)
+            .checkColumns(`
+                CENTER
+                ├── group "Group" width:200
+                └── amount "Amount" width:200 aggFunc:custom editable
+            `);
+        await new GridRows(api, `function aggFunc without options is disabled by default (no distribution) setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-R amount:30
+                · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:30
+                · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+                · · └── LEAF id:a2 region:"R" country:"C" amount:20
+            `);
 
         const group = api.getRowNode('row-group-region-R-country-C')!;
         group.setDataValue('amount', 42, 'ui');
@@ -358,6 +374,14 @@ describe('distribution default handler', () => {
         // Function aggFuncs are disabled by default — children unchanged
         expect(api.getRowNode('a1')?.data?.amount).toBe(10);
         expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+        await new GridRows(api, `function aggFunc without options is disabled by default (no distribution) final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-R amount:30
+                · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:30
+                · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+                · · └── LEAF id:a2 region:"R" country:"C" amount:20
+            `);
     });
 
     test('function aggFunc with distribution: true enables overwrite', async () => {
@@ -384,6 +408,18 @@ describe('distribution default handler', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `function aggFunc with distribution: true enables overwrite setup`).checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:custom editable
+        `);
+        await new GridRows(api, `function aggFunc with distribution: true enables overwrite setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:30
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:30
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+            · · └── LEAF id:a2 region:"R" country:"C" amount:20
+        `);
 
         const group = api.getRowNode('row-group-region-R-country-C')!;
         group.setDataValue('amount', 42, 'ui');
@@ -392,6 +428,13 @@ describe('distribution default handler', () => {
         // distribution: true enables function aggFuncs with 'overwrite'
         expect(api.getRowNode('a1')?.data?.amount).toBe(42);
         expect(api.getRowNode('a2')?.data?.amount).toBe(42);
+        await new GridRows(api, `function aggFunc with distribution: true enables overwrite final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:84
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:84
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:42
+            · · └── LEAF id:a2 region:"R" country:"C" amount:42
+        `);
     });
 
     test('options object on colDef with record and default handler', async () => {
@@ -426,6 +469,18 @@ describe('distribution default handler', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `options object on colDef with record and default handler setup`).checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:myCustomAgg editable
+        `);
+        await new GridRows(api, `options object on colDef with record and default handler setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:30
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:30
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+            · · └── LEAF id:a2 region:"R" country:"C" amount:20
+        `);
 
         const group = api.getRowNode('row-group-region-R-country-C')!;
         group.setDataValue('amount', 100, 'ui');
@@ -434,6 +489,13 @@ describe('distribution default handler', () => {
         // myCustomAgg is not in the record, default handler sets all to 0
         expect(api.getRowNode('a1')?.data?.amount).toBe(0);
         expect(api.getRowNode('a2')?.data?.amount).toBe(0);
+        await new GridRows(api, `options object on colDef with record and default handler final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:0
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:0
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:0
+            · · └── LEAF id:a2 region:"R" country:"C" amount:0
+        `);
     });
 });
 
@@ -1622,6 +1684,18 @@ describe('options object directly on colDef', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `record with function entry on colDef options object setup`).checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
+        `);
+        await new GridRows(api, `record with function entry on colDef options object setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:30
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:30
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+            · · └── LEAF id:a2 region:"R" country:"C" amount:20
+        `);
 
         const group = api.getRowNode('row-group-region-R-country-C')!;
         group.setDataValue('amount', 100, 'ui');
@@ -1630,6 +1704,13 @@ describe('options object directly on colDef', () => {
         expect(customCalls).toHaveLength(1);
         expect(api.getRowNode('a1')?.data?.amount).toBe(555);
         expect(api.getRowNode('a2')?.data?.amount).toBe(555);
+        await new GridRows(api, `record with function entry on colDef options object final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:1110
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:1110
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:555
+            · · └── LEAF id:a2 region:"R" country:"C" amount:555
+        `);
     });
 
     test('custom (non-string) aggFunc with record falls to default handler', async () => {
@@ -1666,6 +1747,19 @@ describe('options object directly on colDef', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `custom (non-string) aggFunc with record falls to default handler setup`)
+            .checkColumns(`
+                CENTER
+                ├── group "Group" width:200
+                └── amount "Amount" width:200 aggFunc:custom editable
+            `);
+        await new GridRows(api, `custom (non-string) aggFunc with record falls to default handler setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:30
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:30
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+            · · └── LEAF id:a2 region:"R" country:"C" amount:20
+        `);
 
         const group = api.getRowNode('row-group-region-R-country-C')!;
         group.setDataValue('amount', 100, 'ui');
@@ -1675,6 +1769,15 @@ describe('options object directly on colDef', () => {
         expect(defaultCalls).toHaveLength(1);
         expect(api.getRowNode('a1')?.data?.amount).toBe(888);
         expect(api.getRowNode('a2')?.data?.amount).toBe(888);
+        await new GridRows(api, `custom (non-string) aggFunc with record falls to default handler final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-R amount:1776
+                · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:1776
+                · · ├── LEAF id:a1 region:"R" country:"C" amount:888
+                · · └── LEAF id:a2 region:"R" country:"C" amount:888
+            `
+        );
     });
 
     test('function aggFunc with record and no default is disabled (no distribution)', async () => {
@@ -1701,6 +1804,20 @@ describe('options object directly on colDef', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `function aggFunc with record and no default is disabled (no distribution) setup`)
+            .checkColumns(`
+                CENTER
+                ├── group "Group" width:200
+                └── amount "Amount" width:200 aggFunc:custom editable
+            `);
+        await new GridRows(api, `function aggFunc with record and no default is disabled (no distribution) setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-R amount:30
+                · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:30
+                · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+                · · └── LEAF id:a2 region:"R" country:"C" amount:20
+            `);
 
         const group = api.getRowNode('row-group-region-R-country-C')!;
         group.setDataValue('amount', 42, 'ui');
@@ -1709,6 +1826,14 @@ describe('options object directly on colDef', () => {
         // Function aggFunc, not in record, no default → disabled by default
         expect(api.getRowNode('a1')?.data?.amount).toBe(10);
         expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+        await new GridRows(api, `function aggFunc with record and no default is disabled (no distribution) final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-R amount:30
+                · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:30
+                · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+                · · └── LEAF id:a2 region:"R" country:"C" amount:20
+            `);
     });
 
     test('consecutive edits with options object on colDef', async () => {
@@ -2118,7 +2243,7 @@ describe('distribution: true', () => {
     });
 
     test('true in record overrides false from deep-merged defaultColDef', async () => {
-        const api = gridsManager.createGridAndWait('true-override-false', {
+        const api = await gridsManager.createGridAndWait('true-override-false', {
             defaultColDef: {
                 cellEditor: 'agTextCellEditor',
                 editable: true,
@@ -2145,15 +2270,36 @@ describe('distribution: true', () => {
             groupDefaultExpanded: -1,
             getRowId: (params: any) => params.data?.id,
         });
+        await new GridColumns(api, `true in record overrides false from deep-merged defaultColDef setup`).checkColumns(
+            `
+                CENTER
+                ├── group "Group" width:200 editable
+                └── amount "Amount" width:200 aggFunc:count editable
+            `
+        );
+        await new GridRows(api, `true in record overrides false from deep-merged defaultColDef setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:{"value":2}
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:{"value":2}
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+            · · └── LEAF id:a2 region:"R" country:"C" amount:20
+        `);
 
         await asyncSetTimeout(0);
 
-        const group = (await api).getRowNode('row-group-region-R-country-C')!;
+        const group = api.getRowNode('row-group-region-R-country-C')!;
         group.setDataValue('amount', 77, 'ui');
         await asyncSetTimeout(0);
 
         // true overrides false, enabling count with 'overwrite'
-        expect((await api).getRowNode('a1')?.data?.amount).toBe(77);
-        expect((await api).getRowNode('a2')?.data?.amount).toBe(77);
+        expect(api.getRowNode('a1')?.data?.amount).toBe(77);
+        expect(api.getRowNode('a2')?.data?.amount).toBe(77);
+        await new GridRows(api, `true in record overrides false from deep-merged defaultColDef final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:{"value":2}
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:{"value":2}
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:77
+            · · └── LEAF id:a2 region:"R" country:"C" amount:77
+        `);
     });
 });

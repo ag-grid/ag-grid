@@ -399,6 +399,25 @@ describe('Cell Editing: change detection', () => {
                 ],
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `updates pivot aggregation after batch commit on leaf rows setup`).checkColumns(
+                `
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├─┬ "2020" GROUP
+                    │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open editable
+                    └─┬ "2021" GROUP
+                      └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open editable
+                `
+            );
+            await new GridRows(api, `updates pivot aggregation after batch commit on leaf rows setup`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:400 pivot_year_2021_sales:600
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:100 pivot_year_2021_sales:200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:100 pivot_year_2021_sales:100
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:200 pivot_year_2021_sales:200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:300 pivot_year_2021_sales:400
+                · ├── LEAF hidden id:3 pivot_year_2020_sales:300 pivot_year_2021_sales:300
+                · └── LEAF hidden id:4 pivot_year_2020_sales:400 pivot_year_2021_sales:400
+            `);
 
             const pivotColumns = api.getPivotResultColumns()!;
             const col2020 = pivotColumns.find((col) => col.getColId().includes('2020'))!;
@@ -430,6 +449,15 @@ describe('Cell Editing: change detection', () => {
             expect(france.aggData?.[col2021.getColId()]).toBe(200);
             expect(germany.aggData?.[col2020.getColId()]).toBe(700);
             expect(germany.aggData?.[col2021.getColId()]).toBe(400);
+            await new GridRows(api, `updates pivot aggregation after batch commit on leaf rows final state`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:1200 pivot_year_2021_sales:600
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:500 pivot_year_2021_sales:200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:500 pivot_year_2021_sales:500
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:200 pivot_year_2021_sales:200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:700 pivot_year_2021_sales:400
+                · ├── LEAF hidden id:3 pivot_year_2020_sales:700 pivot_year_2021_sales:700
+                · └── LEAF hidden id:4 pivot_year_2020_sales:400 pivot_year_2021_sales:400
+            `);
         });
     });
 
@@ -531,6 +559,20 @@ describe('Cell Editing: change detection', () => {
                 columnDefs: [{ field: 'value', aggFunc: 'sum', editable: true, cellDataType: false }],
                 grandTotalRow: 'bottom',
             });
+            await new GridColumns(
+                api,
+                `UI edit during batch applies batch style to grand total row cell (baseline) setup`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200 aggFunc:sum editable
+            `);
+            await new GridRows(api, `UI edit during batch applies batch style to grand total row cell (baseline) setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID value:30
+                    ├── LEAF id:1 value:10
+                    ├── LEAF id:2 value:20
+                    └─ footer id:rowGroupFooter_ROOT_NODE_ID value:30
+                `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
             await asyncSetTimeout(1);
@@ -555,6 +597,15 @@ describe('Cell Editing: change detection', () => {
             expect(footerCell).toHaveClass('ag-cell-batch-edit');
 
             api.cancelBatchEdit();
+            await new GridRows(
+                api,
+                `UI edit during batch applies batch style to grand total row cell (baseline) final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID value:30
+                ├── LEAF id:1 value:10
+                ├── LEAF id:2 value:20
+                └─ footer id:rowGroupFooter_ROOT_NODE_ID value:30
+            `);
         });
     });
 });

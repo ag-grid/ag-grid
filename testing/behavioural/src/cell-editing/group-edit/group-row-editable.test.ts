@@ -2,7 +2,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import type { GridOptions, ValueParserParams } from 'ag-grid-community';
 
-import { TestGridsManager } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 import type {
     EditableCallback,
     GroupRowEditableCallback,
@@ -821,11 +821,31 @@ describe('editability based on distribution configuration', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `leaf rows remain editable when group distribution is suppressed setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum editable
+            `);
+        await new GridRows(api, `leaf rows remain editable when group distribution is suppressed setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" amount:30
+            · ├── LEAF id:a-1 category:"A" amount:10
+            · └── LEAF id:a-2 category:"A" amount:20
+        `);
 
         const column = api.getColumn('amount')!;
         const groupRowNode = api.getDisplayedRowAtIndex(0)!;
         expect(column.isCellEditable(groupRowNode)).toBe(false);
         expect(column.isCellEditable(api.getRowNode('a-1')!)).toBe(true);
+        await new GridRows(api, `leaf rows remain editable when group distribution is suppressed final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" amount:30
+                · ├── LEAF id:a-1 category:"A" amount:10
+                · └── LEAF id:a-2 category:"A" amount:20
+            `
+        );
     });
 });
 
@@ -857,6 +877,19 @@ describe('suppressDoubleClickExpand with groupRowEditable', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `double-click does not expand/collapse when suppressDoubleClickExpand is true setup`)
+            .checkColumns(`
+                CENTER
+                ├── group "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum editable
+            `);
+        await new GridRows(api, `double-click does not expand/collapse when suppressDoubleClickExpand is true setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-category-A amount:30
+                · ├── LEAF id:1 category:"A" amount:10
+                · └── LEAF id:2 category:"A" amount:20
+            `);
         await asyncSetTimeout(0);
 
         const groupNode = api.getDisplayedRowAtIndex(0)!;
@@ -873,6 +906,15 @@ describe('suppressDoubleClickExpand with groupRowEditable', () => {
 
         // Node should still be expanded — suppressDoubleClickExpand prevents collapse
         expect(groupNode.expanded).toBe(true);
+        await new GridRows(
+            api,
+            `double-click does not expand/collapse when suppressDoubleClickExpand is true final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-category-A amount:30
+            · ├── LEAF id:1 category:"A" amount:10
+            · └── LEAF id:2 category:"A" amount:20
+        `);
     });
 });
 
@@ -914,6 +956,24 @@ describe('groupRowValueSetter on columns without field or valueSetter', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(
+            api,
+            `column with valueGetter and groupRowValueSetter (no field/valueSetter) allows gr setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── amount "Amount" width:200 aggFunc:sum editable
+            └── computed "Computed" width:200 aggFunc:sum
+        `);
+        await new GridRows(
+            api,
+            `column with valueGetter and groupRowValueSetter (no field/valueSetter) allows gr setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID computed:null
+            └─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" amount:30 computed:60
+            · ├── LEAF id:1 category:"A" amount:10 computed:20
+            · └── LEAF id:2 category:"A" amount:20 computed:40
+        `);
         await asyncSetTimeout(0);
 
         const groupNode = api.getDisplayedRowAtIndex(0)!;
@@ -931,6 +991,15 @@ describe('groupRowValueSetter on columns without field or valueSetter', () => {
         const child2 = api.getRowNode('2')!;
         expect(child1.data.amount).toBe(50);
         expect(child2.data.amount).toBe(50);
+        await new GridRows(
+            api,
+            `column with valueGetter and groupRowValueSetter (no field/valueSetter) allows gr final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID computed:null
+            └─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" amount:100 computed:200
+            · ├── LEAF id:1 category:"A" amount:50 computed:100
+            · └── LEAF id:2 category:"A" amount:50 computed:100
+        `);
     });
 
     test('column with valueGetter, valueSetter, and groupRowValueSetter allows group editing', async () => {
@@ -975,6 +1044,24 @@ describe('groupRowValueSetter on columns without field or valueSetter', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(
+            api,
+            `column with valueGetter, valueSetter, and groupRowValueSetter allows group editi setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── amount "Amount" width:200 editable
+            └── computed "Computed" width:200 aggFunc:sum editable
+        `);
+        await new GridRows(
+            api,
+            `column with valueGetter, valueSetter, and groupRowValueSetter allows group editi setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID computed:null
+            └─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" computed:60
+            · ├── LEAF id:1 category:"A" amount:10 computed:20
+            · └── LEAF id:2 category:"A" amount:20 computed:40
+        `);
         await asyncSetTimeout(0);
 
         const groupNode = api.getDisplayedRowAtIndex(0)!;
@@ -999,6 +1086,15 @@ describe('groupRowValueSetter on columns without field or valueSetter', () => {
 
         expect(valueSetterCalls).toHaveLength(1);
         expect(groupRowValueSetterCalls).toHaveLength(0);
+        await new GridRows(
+            api,
+            `column with valueGetter, valueSetter, and groupRowValueSetter allows group editi final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID computed:null
+            └─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" computed:200
+            · ├── LEAF id:1 category:"A" amount:50 computed:100
+            · └── LEAF id:2 category:"A" amount:50 computed:100
+        `);
     });
 
     test('group row with null data does not call valueSetter, only groupRowValueSetter', async () => {
@@ -1044,6 +1140,19 @@ describe('groupRowValueSetter on columns without field or valueSetter', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `group row with null data does not call valueSetter, only groupRowValueSetter setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum editable
+            `);
+        await new GridRows(api, `group row with null data does not call valueSetter, only groupRowValueSetter setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" amount:30
+                · ├── LEAF id:1 category:"A" amount:10
+                · └── LEAF id:2 category:"A" amount:20
+            `);
         await asyncSetTimeout(0);
 
         const groupNode = api.getDisplayedRowAtIndex(0)!;
@@ -1065,5 +1174,14 @@ describe('groupRowValueSetter on columns without field or valueSetter', () => {
         const child2 = api.getRowNode('2')!;
         expect(child1.data.amount).toBe(50);
         expect(child2.data.amount).toBe(50);
+        await new GridRows(
+            api,
+            `group row with null data does not call valueSetter, only groupRowValueSetter final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" amount:100
+            · ├── LEAF id:1 category:"A" amount:50
+            · └── LEAF id:2 category:"A" amount:50
+        `);
     });
 });

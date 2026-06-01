@@ -5,7 +5,7 @@ import { GridRows, asyncSetTimeout } from '../../../test-utils';
 import { createGroupRowData as createRowData, gridsManager } from '../group-edit-test-utils';
 
 export { EDIT_MODES, asyncSetTimeout, editCell, gridsManager, performEdit } from '../group-edit-test-utils';
-export { GridRows } from '../../../test-utils';
+export { GridRows, GridColumns } from '../../../test-utils';
 export { distributeGroupValue } from 'ag-grid-enterprise';
 export { createGroupRowData as createRowData } from '../group-edit-test-utils';
 

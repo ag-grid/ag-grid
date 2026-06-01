@@ -2,33 +2,14 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
-// jsdom has no layout engine so two things break for the filter builder dialog:
-// 1. element.offsetParent is always null — Dialog positioning crashes
-// 2. VirtualList viewports get 20px from mock layout, rendering 0 rows at 40px each
-//
-// Patch both at the prototype level so they're effective BEFORE the builder creates components.
-// NOTE: originals must be captured INSIDE beforeAll (after mockGridLayout.init() has run via
-// TestGridsManager constructor) so we wrap the mock, not the native jsdom function.
-const origOffsetParentDesc = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-const origOffsetHeightDesc = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
-const origClientHeightDesc = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'clientHeight');
+// The builder dialog's VirtualList sizes its viewport from getBoundingClientRect — give it a
+// stable height so item count is deterministic. Other popup/dialog needs (offsetParent,
+// offsetHeight, clientHeight) are handled by mockGridLayout.
 let savedGetBoundingClientRect: typeof Element.prototype.getBoundingClientRect;
 beforeAll(() => {
-    // Capture the mock layout's getBoundingClientRect (set during TestGridsManager construction)
     savedGetBoundingClientRect = Element.prototype.getBoundingClientRect;
-
-    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-        get(this: HTMLElement) {
-            const native = origOffsetParentDesc?.get?.call(this);
-            return native ?? this.parentElement;
-        },
-        configurable: true,
-    });
-
-    // Wrap the mock's getBoundingClientRect to return larger height for VirtualList viewports.
-    // Must use defineProperty because the mock sets it as non-writable (configurable but writable:false).
     Object.defineProperty(Element.prototype, 'getBoundingClientRect', {
         configurable: true,
         writable: true,
@@ -44,38 +25,13 @@ beforeAll(() => {
             return rect;
         },
     });
-
-    // The mock layout defines offsetHeight on Element.prototype, but jsdom defines it on
-    // HTMLElement.prototype which takes precedence (returning 0). Override on HTMLElement.prototype
-    // so VirtualList's gui.offsetHeight returns getBoundingClientRect().height correctly.
-    Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
-        get(this: HTMLElement) {
-            return this.getBoundingClientRect().height;
-        },
-        configurable: true,
-    });
-    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
-        get(this: HTMLElement) {
-            return this.getBoundingClientRect().height;
-        },
-        configurable: true,
-    });
 });
 afterAll(() => {
-    if (origOffsetParentDesc) {
-        Object.defineProperty(HTMLElement.prototype, 'offsetParent', origOffsetParentDesc);
-    }
     if (savedGetBoundingClientRect) {
         Object.defineProperty(Element.prototype, 'getBoundingClientRect', {
             configurable: true,
             value: savedGetBoundingClientRect,
         });
-    }
-    if (origOffsetHeightDesc) {
-        Object.defineProperty(HTMLElement.prototype, 'offsetHeight', origOffsetHeightDesc);
-    }
-    if (origClientHeightDesc) {
-        Object.defineProperty(HTMLElement.prototype, 'clientHeight', origClientHeightDesc);
     }
 });
 
@@ -205,6 +161,19 @@ describe('Advanced Filter - Builder UI', () => {
     describe('Opening and closing', () => {
         test('showAdvancedFilterBuilder opens the builder dialog', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await new GridColumns(api, `showAdvancedFilterBuilder opens the builder dialog setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── age "Age" width:200
+                └── hasGold "Has Gold" width:200
+            `);
+            await new GridRows(api, `showAdvancedFilterBuilder opens the builder dialog setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
             await asyncSetTimeout(0);
 
             expect(isBuilderOpen()).toBe(false);
@@ -213,10 +182,30 @@ describe('Advanced Filter - Builder UI', () => {
             await asyncSetTimeout(0);
 
             expect(isBuilderOpen()).toBe(true);
+            await new GridRows(api, `showAdvancedFilterBuilder opens the builder dialog final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
         });
 
         test('hideAdvancedFilterBuilder closes the builder dialog', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await new GridColumns(api, `hideAdvancedFilterBuilder closes the builder dialog setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── age "Age" width:200
+                └── hasGold "Has Gold" width:200
+            `);
+            await new GridRows(api, `hideAdvancedFilterBuilder closes the builder dialog setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
             await asyncSetTimeout(0);
 
             api.showAdvancedFilterBuilder();
@@ -227,12 +216,34 @@ describe('Advanced Filter - Builder UI', () => {
             await asyncSetTimeout(0);
 
             expect(isBuilderOpen()).toBe(false);
+            await new GridRows(api, `hideAdvancedFilterBuilder closes the builder dialog final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
         });
     });
 
     describe('Builder reflects model state', () => {
         test('empty model shows default join with one empty condition', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await new GridColumns(api, `empty model shows default join with one empty condition setup`).checkColumns(
+                `
+                    CENTER
+                    ├── athlete "Athlete" width:200
+                    ├── age "Age" width:200
+                    └── hasGold "Has Gold" width:200
+                `
+            );
+            await new GridRows(api, `empty model shows default join with one empty condition setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
             await asyncSetTimeout(0);
 
             api.showAdvancedFilterBuilder();
@@ -241,10 +252,30 @@ describe('Advanced Filter - Builder UI', () => {
             const items = await getBuilderItems();
             // Should have at least a root join item and an empty condition
             expect(items.length).toBeGreaterThanOrEqual(2);
+            await new GridRows(api, `empty model shows default join with one empty condition final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
         });
 
         test('single text condition model shows correct pills', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await new GridColumns(api, `single text condition model shows correct pills setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── age "Age" width:200
+                └── hasGold "Has Gold" width:200
+            `);
+            await new GridRows(api, `single text condition model shows correct pills setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
             await asyncSetTimeout(0);
 
             api.setAdvancedFilterModel({
@@ -265,10 +296,27 @@ describe('Advanced Filter - Builder UI', () => {
             expect(getOperatorPillText(conditions[0])).toBe('contains');
             // Text values display with quotes in the pill
             expect(getValuePillText(conditions[0])).toBe('"bolt"');
+            await new GridRows(api, `single text condition model shows correct pills final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+            `);
         });
 
         test('single number condition model shows correct pills', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await new GridColumns(api, `single number condition model shows correct pills setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── age "Age" width:200
+                └── hasGold "Has Gold" width:200
+            `);
+            await new GridRows(api, `single number condition model shows correct pills setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
             await asyncSetTimeout(0);
 
             api.setAdvancedFilterModel({
@@ -288,10 +336,29 @@ describe('Advanced Filter - Builder UI', () => {
             expect(getColumnPillText(conditions[0])).toBe('Age');
             expect(getOperatorPillText(conditions[0])).toBe('>');
             expect(getValuePillText(conditions[0])).toBe('25');
+            await new GridRows(api, `single number condition model shows correct pills final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+            `);
         });
 
         test('compound AND model shows join pill and multiple conditions', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await new GridColumns(api, `compound AND model shows join pill and multiple conditions setup`).checkColumns(
+                `
+                    CENTER
+                    ├── athlete "Athlete" width:200
+                    ├── age "Age" width:200
+                    └── hasGold "Has Gold" width:200
+                `
+            );
+            await new GridRows(api, `compound AND model shows join pill and multiple conditions setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
             await asyncSetTimeout(0);
 
             api.setAdvancedFilterModel({
@@ -322,10 +389,27 @@ describe('Advanced Filter - Builder UI', () => {
 
             expect(getColumnPillText(conditions[1])).toBe('Age');
             expect(getOperatorPillText(conditions[1])).toBe('>');
+            await new GridRows(api, `compound AND model shows join pill and multiple conditions final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+            `);
         });
 
         test('boolean condition model shows correct pills', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await new GridColumns(api, `boolean condition model shows correct pills setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── age "Age" width:200
+                └── hasGold "Has Gold" width:200
+            `);
+            await new GridRows(api, `boolean condition model shows correct pills setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
             await asyncSetTimeout(0);
 
             api.setAdvancedFilterModel({
@@ -343,10 +427,28 @@ describe('Advanced Filter - Builder UI', () => {
             expect(conditions.length).toBe(1);
             expect(getColumnPillText(conditions[0])).toBe('Has Gold');
             expect(getOperatorPillText(conditions[0])).toBe('is true');
+            await new GridRows(api, `boolean condition model shows correct pills final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                └── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+            `);
         });
 
         test('blank operator condition shows no value pill', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await new GridColumns(api, `blank operator condition shows no value pill setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── age "Age" width:200
+                └── hasGold "Has Gold" width:200
+            `);
+            await new GridRows(api, `blank operator condition shows no value pill setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
             await asyncSetTimeout(0);
 
             api.setAdvancedFilterModel({
@@ -367,6 +469,9 @@ describe('Advanced Filter - Builder UI', () => {
             // No value pill for zero-operand operators
             const valuePill = conditions[0].querySelector('.ag-advanced-filter-builder-value-pill');
             expect(valuePill).toBeNull();
+            await new GridRows(api, `blank operator condition shows no value pill final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
     });
 
@@ -377,6 +482,20 @@ describe('Advanced Filter - Builder UI', () => {
     describe('Applying filter from builder', () => {
         test('applying a model set via API filters rows after builder apply', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await new GridColumns(api, `applying a model set via API filters rows after builder apply setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── athlete "Athlete" width:200
+                    ├── age "Age" width:200
+                    └── hasGold "Has Gold" width:200
+                `);
+            await new GridRows(api, `applying a model set via API filters rows after builder apply setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
             await asyncSetTimeout(0);
 
             // Set a filter model
@@ -390,10 +509,29 @@ describe('Advanced Filter - Builder UI', () => {
             await asyncSetTimeout(0);
 
             expect(getDisplayedAthletes(api)).toEqual(['Emma Thompson']);
+            await new GridRows(api, `applying a model set via API filters rows after builder apply final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                `
+            );
         });
 
         test('clearing model via null removes filter', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            await new GridColumns(api, `clearing model via null removes filter setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── age "Age" width:200
+                └── hasGold "Has Gold" width:200
+            `);
+            await new GridRows(api, `clearing model via null removes filter setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
             await asyncSetTimeout(0);
 
             // Set a filter
@@ -413,6 +551,13 @@ describe('Advanced Filter - Builder UI', () => {
             await asyncSetTimeout(0);
 
             expect(api.getDisplayedRowCount()).toBe(ROW_DATA.length);
+            await new GridRows(api, `clearing model via null removes filter final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
         });
     });
 });

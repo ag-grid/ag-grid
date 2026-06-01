@@ -1,5 +1,4 @@
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
-import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import type { IRowNode } from 'ag-grid-community';
@@ -12,8 +11,6 @@ describe('ag-grid hierarchical tree data reset', () => {
         modules: [RowSelectionModule, ClientSideRowModelModule, TreeDataModule],
     });
 
-    let consoleWarnSpy: MockInstance;
-
     beforeEach(() => {
         vitest.useRealTimers();
         cachedJSONObjects.clear();
@@ -22,7 +19,6 @@ describe('ag-grid hierarchical tree data reset', () => {
 
     afterEach(() => {
         gridsManager.reset();
-        consoleWarnSpy?.mockRestore();
     });
 
     test('tree data with id is created in the right order, and order can be changed also if data references do not change', async () => {
@@ -619,6 +615,17 @@ describe('ag-grid hierarchical tree data reset', () => {
                 { name: 'B', children: [{ name: 'B.1' }] },
             ],
         });
+        await new GridColumns(api, `setRowData without getRowId destroys filler nodes silently setup`).checkColumns(`
+            CENTER
+            └── ag-Grid-AutoColumn "Hierarchy" width:200
+        `);
+        await new GridRows(api, `setRowData without getRowId destroys filler nodes silently setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0"
+            │ └── 1 LEAF id:1 ag-Grid-AutoColumn:"1"
+            └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2"
+            · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3"
+        `);
         await asyncSetTimeout(1);
 
         const fillers: IRowNode[] = [];
@@ -627,6 +634,15 @@ describe('ag-grid hierarchical tree data reset', () => {
                 fillers.push(n);
             }
         });
+        await new GridRows(api, `setRowData without getRowId destroys filler nodes silently after forEachNode`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0"
+                │ └── 1 LEAF id:1 ag-Grid-AutoColumn:"1"
+                └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2"
+                · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3"
+            `
+        );
         expect(fillers.length).toBeGreaterThan(0);
 
         let topChangedCount = 0;

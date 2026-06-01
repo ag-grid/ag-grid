@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('Toolbar', () => {
     const gridMgr = new TestGridsManager({
@@ -20,6 +20,14 @@ describe('Toolbar', () => {
                 items: [{ label: 'Test', action: () => {} }],
             },
         });
+        await new GridColumns(api, `renders toolbar element when toolbar option is provided setup`).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `renders toolbar element when toolbar option is provided setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -27,6 +35,10 @@ describe('Toolbar', () => {
         const toolbar = gridDiv.querySelector('.ag-toolbar');
         expect(toolbar).not.toBeNull();
         expect(toolbar?.classList.contains('ag-hidden')).toBe(false);
+        await new GridRows(api, `renders toolbar element when toolbar option is provided final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     test('hides toolbar when toolbar option is not provided', async () => {
@@ -34,12 +46,24 @@ describe('Toolbar', () => {
             columnDefs: [{ field: 'name' }],
             rowData: [{ name: 'Alice' }],
         });
+        await new GridColumns(api, `hides toolbar when toolbar option is not provided setup`).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `hides toolbar when toolbar option is not provided setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar');
         expect(toolbar?.classList.contains('ag-hidden')).toBe(true);
+        await new GridRows(api, `hides toolbar when toolbar option is not provided final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     test('hides toolbar when items array is empty', async () => {
@@ -50,12 +74,24 @@ describe('Toolbar', () => {
                 items: [],
             },
         });
+        await new GridColumns(api, `hides toolbar when items array is empty setup`).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `hides toolbar when items array is empty setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         const toolbar = gridDiv.querySelector('.ag-toolbar');
         expect(toolbar?.classList.contains('ag-hidden')).toBe(true);
+        await new GridRows(api, `hides toolbar when items array is empty final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     test('toolbar is positioned above header drop zones', async () => {
@@ -66,6 +102,14 @@ describe('Toolbar', () => {
                 items: [{ label: 'Test', action: () => {} }],
             },
         });
+        await new GridColumns(api, `toolbar is positioned above header drop zones setup`).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `toolbar is positioned above header drop zones setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -77,6 +121,10 @@ describe('Toolbar', () => {
 
         expect(toolbarIndex).toBeGreaterThanOrEqual(0);
         expect(toolbarIndex).toBeLessThan(bodyIndex);
+        await new GridRows(api, `toolbar is positioned above header drop zones final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     describe('getToolbarItemInstance', () => {
@@ -85,10 +133,22 @@ describe('Toolbar', () => {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
             });
+            await new GridColumns(api, `returns undefined when no toolbar is configured setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `returns undefined when no toolbar is configured setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
             expect(api.getToolbarItemInstance('agQuickFilterToolbarItem')).toBeUndefined();
+            await new GridRows(api, `returns undefined when no toolbar is configured final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
         });
 
         test('returns undefined for an unknown key', async () => {
@@ -97,10 +157,22 @@ describe('Toolbar', () => {
                 rowData: [{ name: 'Alice' }],
                 toolbar: { items: ['agQuickFilterToolbarItem'] },
             });
+            await new GridColumns(api, `returns undefined for an unknown key setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `returns undefined for an unknown key setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
             expect(api.getToolbarItemInstance('nonExistentKey')).toBeUndefined();
+            await new GridRows(api, `returns undefined for an unknown key final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
         });
 
         test('returns the built-in item instance by explicit key', async () => {
@@ -111,11 +183,23 @@ describe('Toolbar', () => {
                     items: [{ toolbarItem: 'agQuickFilterToolbarItem', key: 'myFilter' }],
                 },
             });
+            await new GridColumns(api, `returns the built-in item instance by explicit key setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `returns the built-in item instance by explicit key setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
             const instance = api.getToolbarItemInstance('myFilter');
             expect(instance).toBeDefined();
+            await new GridRows(api, `returns the built-in item instance by explicit key final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
         });
 
         test('returns built in item when string form is used (no explicit key)', async () => {
@@ -124,10 +208,24 @@ describe('Toolbar', () => {
                 rowData: [{ name: 'Alice' }],
                 toolbar: { items: ['agQuickFilterToolbarItem'] },
             });
+            await new GridColumns(api, `returns built in item when string form is used (no explicit key) setup`)
+                .checkColumns(`
+                    CENTER
+                    └── name "Name" width:200
+                `);
+            await new GridRows(api, `returns built in item when string form is used (no explicit key) setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
             expect(api.getToolbarItemInstance('agQuickFilterToolbarItem')).toBeDefined();
+            await new GridRows(api, `returns built in item when string form is used (no explicit key) final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 name:"Alice"
+                `);
         });
 
         test('returns undefined when no explicit key is given on object form', async () => {
@@ -138,10 +236,25 @@ describe('Toolbar', () => {
                     items: [{ toolbarItem: 'agQuickFilterToolbarItem' }],
                 },
             });
+            await new GridColumns(api, `returns undefined when no explicit key is given on object form setup`)
+                .checkColumns(`
+                    CENTER
+                    └── name "Name" width:200
+                `);
+            await new GridRows(api, `returns undefined when no explicit key is given on object form setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
             expect(api.getToolbarItemInstance('agQuickFilterToolbarItem')).toBeUndefined();
+            await new GridRows(api, `returns undefined when no explicit key is given on object form final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 name:"Alice"
+                `
+            );
         });
 
         test('returns undefined after toolbar items are cleared at runtime', async () => {
@@ -152,12 +265,35 @@ describe('Toolbar', () => {
                     items: [{ toolbarItem: 'agQuickFilterToolbarItem', key: 'myFilter' }],
                 },
             });
+            await new GridColumns(api, `returns undefined after toolbar items are cleared at runtime setup`)
+                .checkColumns(`
+                    CENTER
+                    └── name "Name" width:200
+                `);
+            await new GridRows(api, `returns undefined after toolbar items are cleared at runtime setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
             expect(api.getToolbarItemInstance('myFilter')).toBeDefined();
 
             api.setGridOption('toolbar', { items: [] });
+            await new GridColumns(
+                api,
+                `returns undefined after toolbar items are cleared at runtime after setGridOption toolbar`
+            ).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(
+                api,
+                `returns undefined after toolbar items are cleared at runtime after setGridOption toolbar`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             expect(api.getToolbarItemInstance('myFilter')).toBeUndefined();
         });
@@ -171,6 +307,16 @@ describe('Toolbar', () => {
                 rowData: [{ name: 'Alice' }],
                 toolbar: { items: ['agQuickFilterToolbarItem', 'agQuickFilterToolbarItem'] },
             });
+            await new GridColumns(api, `does not render duplicate built-in items in string form setup`).checkColumns(
+                `
+                    CENTER
+                    └── name "Name" width:200
+                `
+            );
+            await new GridRows(api, `does not render duplicate built-in items in string form setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -182,6 +328,10 @@ describe('Toolbar', () => {
             expect(warnings).toContain('303');
 
             warnSpy.mockRestore();
+            await new GridRows(api, `does not render duplicate built-in items in string form final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
         });
 
         test('renders duplicate built-in items when passed as objects without explicit keys', async () => {
@@ -192,12 +342,33 @@ describe('Toolbar', () => {
                     items: [{ toolbarItem: 'agQuickFilterToolbarItem' }, { toolbarItem: 'agQuickFilterToolbarItem' }],
                 },
             });
+            await new GridColumns(
+                api,
+                `renders duplicate built-in items when passed as objects without explicit keys setup`
+            ).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(
+                api,
+                `renders duplicate built-in items when passed as objects without explicit keys setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
             const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
             expect(toolbar.querySelectorAll('.ag-toolbar-input-field').length).toBe(2);
+            await new GridRows(
+                api,
+                `renders duplicate built-in items when passed as objects without explicit keys final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
         });
 
         test('does not render both items when explicit keys collide and warns', async () => {
@@ -213,6 +384,15 @@ describe('Toolbar', () => {
                     ],
                 },
             });
+            await new GridColumns(api, `does not render both items when explicit keys collide and warns setup`)
+                .checkColumns(`
+                    CENTER
+                    └── name "Name" width:200
+                `);
+            await new GridRows(api, `does not render both items when explicit keys collide and warns setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -224,6 +404,11 @@ describe('Toolbar', () => {
             expect(warnings).toContain('303');
 
             warnSpy.mockRestore();
+            await new GridRows(api, `does not render both items when explicit keys collide and warns final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 name:"Alice"
+                `);
         });
     });
 
@@ -236,6 +421,14 @@ describe('Toolbar', () => {
                 rowData: [{ name: 'Alice' }],
                 toolbar: { items: [] },
             });
+            await new GridColumns(api, `adds items when toolbar items are populated at runtime setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `adds items when toolbar items are populated at runtime setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -244,6 +437,20 @@ describe('Toolbar', () => {
             expect(toolbar.querySelector('.ag-toolbar-input-field')).toBeNull();
 
             api.setGridOption('toolbar', { items: ['agQuickFilterToolbarItem'] });
+            await new GridColumns(
+                api,
+                `adds items when toolbar items are populated at runtime after setGridOption toolbar`
+            ).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(
+                api,
+                `adds items when toolbar items are populated at runtime after setGridOption toolbar`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             expect(toolbar.querySelector('.ag-toolbar-input-field')).not.toBeNull();
         });
@@ -254,6 +461,14 @@ describe('Toolbar', () => {
                 rowData: [{ name: 'Alice' }],
                 toolbar: { items: ['agQuickFilterToolbarItem'] },
             });
+            await new GridColumns(api, `replaces items when toolbar is updated at runtime setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `replaces items when toolbar is updated at runtime setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -262,6 +477,16 @@ describe('Toolbar', () => {
             expect(toolbar.querySelector('.ag-toolbar-input-field')).not.toBeNull();
 
             api.setGridOption('toolbar', { items: ['agFindToolbarItem'] });
+            await new GridColumns(api, `replaces items when toolbar is updated at runtime after setGridOption toolbar`)
+                .checkColumns(`
+                    CENTER
+                    └── name "Name" width:200
+                `);
+            await new GridRows(api, `replaces items when toolbar is updated at runtime after setGridOption toolbar`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 name:"Alice"
+                `);
 
             const inputs = toolbar.querySelectorAll<HTMLInputElement>('.ag-toolbar-input-field');
             expect(inputs).toHaveLength(1);
@@ -274,6 +499,14 @@ describe('Toolbar', () => {
                 rowData: [{ name: 'Alice' }],
                 toolbar: { items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] },
             });
+            await new GridColumns(api, `clears items when toolbar items are emptied at runtime setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `clears items when toolbar items are emptied at runtime setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -282,6 +515,20 @@ describe('Toolbar', () => {
             expect(toolbar.querySelectorAll('.ag-toolbar-input-field')).toHaveLength(2);
 
             api.setGridOption('toolbar', { items: [] });
+            await new GridColumns(
+                api,
+                `clears items when toolbar items are emptied at runtime after setGridOption toolbar`
+            ).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(
+                api,
+                `clears items when toolbar items are emptied at runtime after setGridOption toolbar`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             expect(toolbar.querySelectorAll('.ag-toolbar-input-field')).toHaveLength(0);
         });
@@ -295,6 +542,15 @@ describe('Toolbar', () => {
                     items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'],
                 },
             });
+            await new GridColumns(api, `updates alignment when toolbar alignment changes at runtime setup`)
+                .checkColumns(`
+                    CENTER
+                    └── name "Name" width:200
+                `);
+            await new GridRows(api, `updates alignment when toolbar alignment changes at runtime setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -306,6 +562,20 @@ describe('Toolbar', () => {
                 alignment: 'right',
                 items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'],
             });
+            await new GridColumns(
+                api,
+                `updates alignment when toolbar alignment changes at runtime after setGridOption toolbar`
+            ).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(
+                api,
+                `updates alignment when toolbar alignment changes at runtime after setGridOption toolbar`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             // right-start marker appears before the first right-aligned item
             const rightStart = toolbar.querySelector('.ag-toolbar-right-start');
@@ -324,6 +594,16 @@ describe('Toolbar', () => {
                 enableRtl: true,
                 toolbar: { items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] },
             });
+            await new GridColumns(api, `default alignment in RTL does not force right partition setup`).checkColumns(
+                `
+                    CENTER
+                    └── name "Name" width:200
+                `
+            );
+            await new GridRows(api, `default alignment in RTL does not force right partition setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -332,6 +612,10 @@ describe('Toolbar', () => {
 
             // No right-start spacer: all items are in the left partition.
             expect(toolbar.querySelector('.ag-toolbar-right-start')).toBeNull();
+            await new GridRows(api, `default alignment in RTL does not force right partition final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
         });
 
         test('explicit left alignment matches inherited left alignment in RTL', async () => {
@@ -378,6 +662,15 @@ describe('Toolbar', () => {
                 rowData: [{ name: 'Alice' }],
                 toolbar: { items: ['agQuickFilterToolbarItem'] },
             });
+            await new GridColumns(api, `rapid consecutive updates converge on the final configuration setup`)
+                .checkColumns(`
+                    CENTER
+                    └── name "Name" width:200
+                `);
+            await new GridRows(api, `rapid consecutive updates converge on the final configuration setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -386,8 +679,50 @@ describe('Toolbar', () => {
 
             // Three rapid rebuilds: any in-flight resolves from earlier generations must not leak into the DOM
             api.setGridOption('toolbar', { items: ['agFindToolbarItem'] });
+            await new GridColumns(
+                api,
+                `rapid consecutive updates converge on the final configuration after setGridOption toolbar`
+            ).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(
+                api,
+                `rapid consecutive updates converge on the final configuration after setGridOption toolbar`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
             api.setGridOption('toolbar', { items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] });
+            await new GridColumns(
+                api,
+                `rapid consecutive updates converge on the final configuration after setGridOption toolbar #2`
+            ).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(
+                api,
+                `rapid consecutive updates converge on the final configuration after setGridOption toolbar #2`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
             api.setGridOption('toolbar', { items: ['agFindToolbarItem'] });
+            await new GridColumns(
+                api,
+                `rapid consecutive updates converge on the final configuration after setGridOption toolbar #3`
+            ).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(
+                api,
+                `rapid consecutive updates converge on the final configuration after setGridOption toolbar #3`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             // Give any pending async promises a chance to resolve
             await new Promise<void>((resolve) => setTimeout(resolve, 0));

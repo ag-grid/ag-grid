@@ -1,7 +1,7 @@
 import type { OverlayType } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
-import { TestGridsManager, asyncSetTimeout, isAgHtmlElementVisible } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid overlayComponent', () => {
     const gridsManager = new TestGridsManager({
@@ -42,7 +42,7 @@ describe('ag-grid overlayComponent', () => {
         expect(hasCustomOverlayWrapper()).toBeFalsy();
     });
 
-    test('custom loading and no-rows overlays are rendered when provided via overlayComponentSelector', () => {
+    test('custom loading and no-rows overlays are rendered when provided via overlayComponentSelector', async () => {
         const capturedParams: Record<string, any> = {};
         const capturedCallbacks: Record<OverlayType, number> = {} as any;
         const api = gridsManager.createGrid('myGrid', {
@@ -62,6 +62,21 @@ describe('ag-grid overlayComponent', () => {
                 return undefined;
             },
         });
+        await new GridColumns(
+            api,
+            `custom loading and no-rows overlays are rendered when provided via overlayCompon setup`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `custom loading and no-rows overlays are rendered when provided via overlayCompon setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
 
         // By default (no rowData set) classic behaviour shows loading overlay
         expect(document.querySelector('.my-custom-loading-overlay')).toBeTruthy();
@@ -69,6 +84,12 @@ describe('ag-grid overlayComponent', () => {
 
         // when rowData set to empty array, no-rows overlay should be shown
         api.setGridOption('rowData', []);
+        await new GridRows(
+            api,
+            `custom loading and no-rows overlays are rendered when provided via overlayCompon after setGridOption rowData`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(document.querySelector('.my-custom-loading-overlay')).toBeFalsy();
         expect(document.querySelector('.my-custom-no-rows-overlay')).toBeTruthy();
 
@@ -78,9 +99,39 @@ describe('ag-grid overlayComponent', () => {
 
         // ensure refresh reacts to overlayComponentParams updates (current active overlay is the no-rows overlay)
         api.setGridOption('overlayComponentParams', { fromTest: 'activeParam2' });
+        await new GridColumns(
+            api,
+            `custom loading and no-rows overlays are rendered when provided via overlayCompon after setGridOption overlayComponentParams`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `custom loading and no-rows overlays are rendered when provided via overlayCompon after setGridOption overlayComponentParams`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(capturedParams['my-custom-no-rows-overlay'].fromTest).toBe('activeParam2');
         // restore to undefined
         api.setGridOption('overlayComponentParams', undefined);
+        await new GridColumns(
+            api,
+            `custom loading and no-rows overlays are rendered when provided via overlayCompon after setGridOption overlayComponentParams #2`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `custom loading and no-rows overlays are rendered when provided via overlayCompon after setGridOption overlayComponentParams #2`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
 
         expect(capturedParams['my-custom-no-rows-overlay']).toBeDefined();
         expect(capturedParams['my-custom-no-rows-overlay'].api).toBeDefined();
@@ -93,7 +144,7 @@ describe('ag-grid overlayComponent', () => {
         expect(capturedParams['my-custom-no-rows-overlay_Counts']).toEqual({ init: 1, refresh: 2 });
     });
 
-    test('loading=true and custom loading component with overlayComponentSelector', () => {
+    test('loading=true and custom loading component with overlayComponentSelector', async () => {
         const capturedParams: Record<string, any> = {};
         const capturedCallbacks: Record<OverlayType, number> = {} as any;
 
@@ -112,6 +163,19 @@ describe('ag-grid overlayComponent', () => {
             loading: true,
             rowData: [{}],
         });
+        await new GridColumns(api, `loading=true and custom loading component with overlayComponentSelector setup`)
+            .checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+        await new GridRows(api, `loading=true and custom loading component with overlayComponentSelector setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `
+        );
 
         expect(document.querySelector('.ag-overlay-loading-wrapper')).toBeTruthy();
         expect(hasLoadingOverlayWrapper()).toBeTruthy();
@@ -119,6 +183,22 @@ describe('ag-grid overlayComponent', () => {
         expect(capturedParams['my-resolve-loader']?.fromTest).toBe('loadingParam');
         // update overlayComponentParams should refresh the component
         api.setGridOption('overlayComponentParams', { fromTest: 'loadingParam2' });
+        await new GridColumns(
+            api,
+            `loading=true and custom loading component with overlayComponentSelector after setGridOption overlayComponentParams`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `loading=true and custom loading component with overlayComponentSelector after setGridOption overlayComponentParams`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0
+        `);
         expect(capturedParams['my-resolve-loader']?.fromTest).toBe('loadingParam2');
 
         expect(capturedParams['my-resolve-loader_Counts']).toEqual({ init: 1, refresh: 1 });
@@ -127,7 +207,7 @@ describe('ag-grid overlayComponent', () => {
         });
     });
 
-    test('loading=true overlayComponent resolves to the loading overlay uses loading wrapper class', () => {
+    test('loading=true overlayComponent resolves to the loading overlay uses loading wrapper class', async () => {
         const capturedParams: Record<string, any> = {};
 
         const api = gridsManager.createGrid('myGrid', {
@@ -140,6 +220,22 @@ describe('ag-grid overlayComponent', () => {
             loading: true,
             rowData: [{}],
         });
+        await new GridColumns(
+            api,
+            `loading=true overlayComponent resolves to the loading overlay uses loading wrapp setup`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `loading=true overlayComponent resolves to the loading overlay uses loading wrapp setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0
+        `);
 
         expect(document.querySelector('.ag-overlay-loading-wrapper')).toBeTruthy();
         expect(hasLoadingOverlayWrapper()).toBeTruthy();
@@ -148,6 +244,22 @@ describe('ag-grid overlayComponent', () => {
         expect(capturedParams['my-resolve-loader']?.overlayType).toBe('loading');
         // update specific loading params should refresh the component
         api.setGridOption('overlayComponentParams', { fromTest: 'loadingParam2' });
+        await new GridColumns(
+            api,
+            `loading=true overlayComponent resolves to the loading overlay uses loading wrapp after setGridOption overlayComponentParams`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `loading=true overlayComponent resolves to the loading overlay uses loading wrapp after setGridOption overlayComponentParams`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0
+        `);
 
         expect(capturedParams['my-resolve-loader']?.fromTest).toBe('loadingParam2');
         expect(capturedParams['my-resolve-loader']?.overlayType).toBe('loading');
@@ -239,7 +351,7 @@ describe('ag-grid overlayComponent', () => {
         expect(capturedCallbacks).toEqual({});
     });
 
-    test('activeOverlay set to a component class uses the custom wrapper class', () => {
+    test('activeOverlay set to a component class uses the custom wrapper class', async () => {
         const capturedParams: Record<string, any> = {};
         const C = makeOverlayComp(capturedParams, 'my-class-custom');
 
@@ -248,14 +360,41 @@ describe('ag-grid overlayComponent', () => {
             loading: false,
             rowData: [{}],
         });
+        await new GridColumns(api, `activeOverlay set to a component class uses the custom wrapper class setup`)
+            .checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+        await new GridRows(api, `activeOverlay set to a component class uses the custom wrapper class setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0
+        `);
 
         api.setGridOption('activeOverlay', C as any);
+        await new GridColumns(
+            api,
+            `activeOverlay set to a component class uses the custom wrapper class after setGridOption activeOverlay`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `activeOverlay set to a component class uses the custom wrapper class after setGridOption activeOverlay`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0
+        `);
         expect(hasCustomOverlayWrapper()).toBeTruthy();
         expect(document.querySelector('.my-class-custom')).toBeTruthy();
         expect(capturedParams['my-class-custom_Counts']).toEqual({ init: 1 });
     });
 
-    test('provided overlays params should not mix with activeOverlayParams', () => {
+    test('provided overlays params should not mix with activeOverlayParams', async () => {
         const capturedParams: Record<string, any> = {};
 
         const api = gridsManager.createGrid('myGrid', {
@@ -268,6 +407,16 @@ describe('ag-grid overlayComponent', () => {
             noRowsOverlayComponentParams: { fromTest: 'noRowsSpecific' },
             activeOverlayParams: { fromTest: 'activeParam' },
         });
+        await new GridColumns(api, `provided overlays params should not mix with activeOverlayParams setup`)
+            .checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+        await new GridRows(api, `provided overlays params should not mix with activeOverlayParams setup`).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
 
         // initial loading overlay should show and receive specific param
         expect(document.querySelector('.my-custom-loading-overlay')).toBeTruthy();
@@ -276,31 +425,97 @@ describe('ag-grid overlayComponent', () => {
 
         // activeOverlayParams should not override overlay-specific params
         api.setGridOption('activeOverlayParams', { fromTest: 'activeParam2' });
+        await new GridColumns(
+            api,
+            `provided overlays params should not mix with activeOverlayParams after setGridOption activeOverlayParams`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `provided overlays params should not mix with activeOverlayParams after setGridOption activeOverlayParams`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(capturedParams['my-custom-loading-overlay'].fromTest).toBe('loadingSpecific');
 
         // updating the specific loading params should refresh the component
         api.setGridOption('loadingOverlayComponentParams', { fromTest: 'loadingSpecific2' });
+        await new GridColumns(
+            api,
+            `provided overlays params should not mix with activeOverlayParams after setGridOption loadingOverlayComponentParams`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `provided overlays params should not mix with activeOverlayParams after setGridOption loadingOverlayComponentParams`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(capturedParams['my-custom-loading-overlay'].fromTest).toBe('loadingSpecific2');
 
         // trigger no-rows and verify it receives its specific param
         api.setGridOption('rowData', []);
+        await new GridRows(
+            api,
+            `provided overlays params should not mix with activeOverlayParams after setGridOption rowData`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(document.querySelector('.my-custom-no-rows-overlay')).toBeTruthy();
         expect(capturedParams['my-custom-no-rows-overlay']).toBeDefined();
         expect(capturedParams['my-custom-no-rows-overlay'].fromTest).toBe('noRowsSpecific');
 
         // activeOverlayParams should not override no-rows specific params
         api.setGridOption('activeOverlayParams', { fromTest: 'activeParam3' });
+        await new GridColumns(
+            api,
+            `provided overlays params should not mix with activeOverlayParams after setGridOption activeOverlayParams #2`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `provided overlays params should not mix with activeOverlayParams after setGridOption activeOverlayParams #2`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(capturedParams['my-custom-no-rows-overlay'].fromTest).toBe('noRowsSpecific');
 
         // updating the specific no-rows params should refresh the component
         api.setGridOption('noRowsOverlayComponentParams', { fromTest: 'noRowsSpecific2' });
+        await new GridColumns(
+            api,
+            `provided overlays params should not mix with activeOverlayParams after setGridOption noRowsOverlayComponentParams`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `provided overlays params should not mix with activeOverlayParams after setGridOption noRowsOverlayComponentParams`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(capturedParams['my-custom-no-rows-overlay'].fromTest).toBe('noRowsSpecific2');
 
         expect(capturedParams['my-custom-loading-overlay_Counts']).toEqual({ init: 1, refresh: 1 });
         expect(capturedParams['my-custom-no-rows-overlay_Counts']).toEqual({ init: 1, refresh: 1 });
     });
 
-    test('overlayComponentParams should not override loadingOverlayComponentParams or noRowsOverlayComponentParams to ease migration', () => {
+    test('overlayComponentParams should not override loadingOverlayComponentParams or noRowsOverlayComponentParams to ease migration', async () => {
         const capturedParams: Record<string, any> = {};
 
         const api = gridsManager.createGrid('myGrid', {
@@ -313,6 +528,21 @@ describe('ag-grid overlayComponent', () => {
             loadingOverlayComponentParams: { fromTest: 'loadingSpecific' },
             noRowsOverlayComponentParams: { fromTest: 'noRowsSpecific' },
         });
+        await new GridColumns(
+            api,
+            `overlayComponentParams should not override loadingOverlayComponentParams or noRo setup`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `overlayComponentParams should not override loadingOverlayComponentParams or noRo setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
 
         // initial loading overlay should show and receive specific param
         expect(document.querySelector('.my-custom-loading-overlay')).toBeTruthy();
@@ -321,27 +551,78 @@ describe('ag-grid overlayComponent', () => {
 
         // updating the specific loading params should refresh the component
         api.setGridOption('loadingOverlayComponentParams', { fromTest: 'loadingSpecific2' });
+        await new GridColumns(
+            api,
+            `overlayComponentParams should not override loadingOverlayComponentParams or noRo after setGridOption loadingOverlayComponentParams`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `overlayComponentParams should not override loadingOverlayComponentParams or noRo after setGridOption loadingOverlayComponentParams`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(capturedParams['my-custom-loading-overlay'].fromTest).toBe('loadingSpecific2');
 
         // trigger no-rows and verify it receives its specific param
         api.setGridOption('rowData', []);
+        await new GridRows(
+            api,
+            `overlayComponentParams should not override loadingOverlayComponentParams or noRo after setGridOption rowData`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(document.querySelector('.my-custom-no-rows-overlay')).toBeTruthy();
         expect(capturedParams['my-custom-no-rows-overlay']).toBeDefined();
         expect(capturedParams['my-custom-no-rows-overlay'].fromTest).toBe('noRowsSpecific');
 
         // overlayComponentParams should not override no-rows specific params
         api.setGridOption('overlayComponentParams', { fromTest: 'overlayComponent2' });
+        await new GridColumns(
+            api,
+            `overlayComponentParams should not override loadingOverlayComponentParams or noRo after setGridOption overlayComponentParams`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `overlayComponentParams should not override loadingOverlayComponentParams or noRo after setGridOption overlayComponentParams`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(capturedParams['my-custom-no-rows-overlay'].fromTest).toBe('noRowsSpecific');
 
         // updating the specific no-rows params should refresh the component
         api.setGridOption('noRowsOverlayComponentParams', { fromTest: 'noRowsSpecific2' });
+        await new GridColumns(
+            api,
+            `overlayComponentParams should not override loadingOverlayComponentParams or noRo after setGridOption noRowsOverlayComponentParams`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `overlayComponentParams should not override loadingOverlayComponentParams or noRo after setGridOption noRowsOverlayComponentParams`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(capturedParams['my-custom-no-rows-overlay'].fromTest).toBe('noRowsSpecific2');
 
         expect(capturedParams['my-custom-loading-overlay_Counts']).toEqual({ init: 1, refresh: 1 });
         expect(capturedParams['my-custom-no-rows-overlay_Counts']).toEqual({ init: 1, refresh: 2 });
     });
 
-    test('loading/no-rows overlayComponentSelector accepts string keys from components map', () => {
+    test('loading/no-rows overlayComponentSelector accepts string keys from components map', async () => {
         const capturedParams: Record<string, any> = {};
         const capturedCallbacks: Record<OverlayType, number> = {} as any;
 
@@ -369,6 +650,21 @@ describe('ag-grid overlayComponent', () => {
             // start with loading to test loading overlay resolution
             loading: true,
         });
+        await new GridColumns(
+            api,
+            `loading/no-rows overlayComponentSelector accepts string keys from components map setup`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `loading/no-rows overlayComponentSelector accepts string keys from components map setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
 
         // loading overlay should be rendered via the component found by string key
         expect(document.querySelector('.my-custom-loader-key')).toBeTruthy();
@@ -376,7 +672,28 @@ describe('ag-grid overlayComponent', () => {
 
         // clear loading and trigger no-rows by setting empty rows
         api.setGridOption('loading', false);
+        await new GridColumns(
+            api,
+            `loading/no-rows overlayComponentSelector accepts string keys from components map after setGridOption loading`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `loading/no-rows overlayComponentSelector accepts string keys from components map after setGridOption loading`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         api.setGridOption('rowData', []);
+        await new GridRows(
+            api,
+            `loading/no-rows overlayComponentSelector accepts string keys from components map after setGridOption rowData`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
 
         expect(document.querySelector('.my-custom-no-rows-key')).toBeTruthy();
         expect(capturedParams['my-custom-no-rows-key']).toBeDefined();
@@ -389,7 +706,7 @@ describe('ag-grid overlayComponent', () => {
         });
     });
 
-    test('overlayComponentSelector takes priority over loadingOverlayComponent ', () => {
+    test('overlayComponentSelector takes priority over loadingOverlayComponent ', async () => {
         const capturedParams: Record<string, any> = {};
         const capturedCallbacks: Record<OverlayType, number> = {} as any;
 
@@ -420,6 +737,18 @@ describe('ag-grid overlayComponent', () => {
             loading: true,
             rowData: [],
         });
+        await new GridColumns(api, `overlayComponentSelector takes priority over loadingOverlayComponent  setup`)
+            .checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+        await new GridRows(api, `overlayComponentSelector takes priority over loadingOverlayComponent  setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+            `
+        );
 
         // loading overlay should be rendered via the component found by string key
         expect(document.querySelector('.my-custom-loader-key-2')).toBeTruthy();
@@ -427,7 +756,28 @@ describe('ag-grid overlayComponent', () => {
 
         // clear loading and trigger no-rows by setting empty rows
         api.setGridOption('rowData', []);
+        await new GridRows(
+            api,
+            `overlayComponentSelector takes priority over loadingOverlayComponent  after setGridOption rowData`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         api.setGridOption('loading', false);
+        await new GridColumns(
+            api,
+            `overlayComponentSelector takes priority over loadingOverlayComponent  after setGridOption loading`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `overlayComponentSelector takes priority over loadingOverlayComponent  after setGridOption loading`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
 
         expect(document.querySelector('.my-custom-no-rows-key-1')).toBeTruthy();
         expect(capturedParams['my-custom-no-rows-key-1']).toBeDefined();
@@ -438,32 +788,107 @@ describe('ag-grid overlayComponent', () => {
         });
     });
 
-    test('suppressOverlays: [loading] does not disables loading overlay forced via activeOverlay', () => {
+    test('suppressOverlays: [loading] does not disables loading overlay forced via activeOverlay', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             suppressOverlays: ['loading'],
         });
+        await new GridColumns(
+            api,
+            `suppressOverlays: [loading] does not disables loading overlay forced via activeO setup`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `suppressOverlays: [loading] does not disables loading overlay forced via activeO setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
 
         expect(hasLoadingOverlay()).toBeFalsy();
         expect(hasLoadingOverlayWrapper()).toBeFalsy();
 
         api.setGridOption('loading', true);
+        await new GridColumns(
+            api,
+            `suppressOverlays: [loading] does not disables loading overlay forced via activeO after setGridOption loading`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `suppressOverlays: [loading] does not disables loading overlay forced via activeO after setGridOption loading`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(hasLoadingOverlay()).toBeFalsy();
         expect(hasLoadingOverlayWrapper()).toBeFalsy();
 
         api.setGridOption('loading', false);
+        await new GridColumns(
+            api,
+            `suppressOverlays: [loading] does not disables loading overlay forced via activeO after setGridOption loading #2`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `suppressOverlays: [loading] does not disables loading overlay forced via activeO after setGridOption loading #2`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         api.setGridOption('activeOverlay', 'agLoadingOverlay');
+        await new GridColumns(
+            api,
+            `suppressOverlays: [loading] does not disables loading overlay forced via activeO after setGridOption activeOverlay`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `suppressOverlays: [loading] does not disables loading overlay forced via activeO after setGridOption activeOverlay`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(hasLoadingOverlay()).toBeTruthy();
         expect(hasLoadingOverlayWrapper()).toBeTruthy();
     });
 
-    test('suppressOverlays: [noRows] disables no-rows overlay unless forced via activeOverlay', () => {
+    test('suppressOverlays: [noRows] disables no-rows overlay unless forced via activeOverlay', async () => {
         expect(document.querySelector('.my-custom-no-rows-overlay1')).toBeFalsy();
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowData: [],
             suppressOverlays: ['noRows'],
         });
+        await new GridColumns(
+            api,
+            `suppressOverlays: [noRows] disables no-rows overlay unless forced via activeOver setup`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `suppressOverlays: [noRows] disables no-rows overlay unless forced via activeOver setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
 
         expect(hasNoRowsOverlay()).toBeFalsy();
         expect(hasNoRowsOverlayWrapper()).toBeFalsy();
@@ -473,6 +898,21 @@ describe('ag-grid overlayComponent', () => {
         expect(hasNoRowsOverlayWrapper()).toBeFalsy();
 
         api.setGridOption('activeOverlay', 'agNoRowsOverlay');
+        await new GridColumns(
+            api,
+            `suppressOverlays: [noRows] disables no-rows overlay unless forced via activeOver after setGridOption activeOverlay`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `suppressOverlays: [noRows] disables no-rows overlay unless forced via activeOver after setGridOption activeOverlay`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+        `);
         expect(hasNoRowsOverlayWrapper()).toBeTruthy();
         expect(hasNoRowsOverlay()).toBeTruthy();
     });

@@ -1,6 +1,7 @@
-import type { Column, ColumnGroup } from 'ag-grid-community';
+import type { Column, ColumnGroup, ProvidedColumnGroup } from 'ag-grid-community';
 
 import type { GridColumns } from '../gridColumns';
+import type { GridColumnsBugs } from '../gridColumnsOptions';
 import type { GridColumnsErrors } from './gridColumnsErrors';
 
 /**
@@ -8,7 +9,10 @@ import type { GridColumnsErrors } from './gridColumnsErrors';
  * This is the column-side equivalent of GridRowsValidator.
  */
 export class GridColumnsValidator {
-    public constructor(public readonly errors: GridColumnsErrors) {}
+    public constructor(
+        public readonly errors: GridColumnsErrors,
+        public readonly bugs: Readonly<GridColumnsBugs>
+    ) {}
 
     public validate(gridColumns: GridColumns): void {
         const { api, leftCols, centerCols, rightCols, allDisplayedCols, leftTree, centerTree, rightTree } = gridColumns;
@@ -57,15 +61,16 @@ export class GridColumnsValidator {
         }
 
         // ── Per-section validation ──────────────────────────────────────────
-        this.validateSection(leftCols, 'left', leftTree, isRtl);
-        this.validateSection(centerCols, null, centerTree, isRtl);
-        this.validateSection(rightCols, 'right', rightTree, isRtl);
+        const pivotMode = !!api.getGridOption?.('pivotMode');
+        this.validateSection(leftCols, 'left', leftTree, isRtl, pivotMode);
+        this.validateSection(centerCols, null, centerTree, isRtl, pivotMode);
+        this.validateSection(rightCols, 'right', rightTree, isRtl, pivotMode);
 
         // ── Sort index consistency ──────────────────────────────────────────
         this.validateSortIndices(allDisplayedCols);
 
         // ── Pinned boundary markers ─────────────────────────────────────────
-        this.validatePinnedBoundaryMarkers(leftCols, rightCols);
+        this.validatePinnedBoundaryMarkers(leftCols, rightCols, isRtl);
 
         // ── Row group / pivot / value column list consistency ────────────────
         this.validateFunctionColumns(gridColumns);
@@ -79,6 +84,787 @@ export class GridColumnsValidator {
                 this.errors.get(col).add('isColumn is false on a Column object.');
             }
         }
+
+        // ── Liveness: no destroyed cols/groups reachable from the grid ──────
+        this.validateAlive(gridColumns, allGridCols);
+
+        // ── Provided-group id uniqueness in the current state ───────────────
+        this.validateProvidedGroupIdUniqueness(gridColumns);
+
+        // ── api.getColumn(colId) lookup consistency ─────────────────────────
+        this.validateApiGetColumn(gridColumns);
+
+        // ── api.getDisplayedColAfter / Before navigation chain ──────────────
+        this.validateDisplayedColNavigation(gridColumns);
+
+        // ── getAllGridColumns() colId uniqueness ────────────────────────────
+        this.validateAllGridColumnsUnique(allGridCols);
+
+        // ── Hidden columns excluded from displayed ──────────────────────────
+        this.validateHiddenColumnsExcluded(gridColumns, allGridCols);
+
+        // ── Section disjoint: no column appears in more than one section ────
+        this.validateSectionsDisjoint(gridColumns);
+
+        // ── Tree leaves match section flat arrays ───────────────────────────
+        this.validateTreeMatchesFlat(gridColumns, isRtl);
+
+        // ── isPinning / isPinningLeft / isPinningRight consistency ──────────
+        this.validatePinningFlags(gridColumns);
+
+        // ── getColumnGroupState matches displayed group isExpanded() ────────
+        this.validateColumnGroupState(gridColumns);
+
+        // ── getAllDisplayedColumnGroups consistency with section trees ──────
+        this.validateAllDisplayedColumnGroups(gridColumns);
+
+        // ── getAllDisplayedVirtualColumns subset of getAllDisplayedColumns ──
+        this.validateVirtualColumnsSubset(gridColumns);
+
+        // ── api.getColumnDef(colId) returns each displayed col's colDef ─────
+        this.validateApiGetColumnDef(gridColumns);
+
+        // ── api.getColumns() superset of displayed (covers colDefCols) ──────
+        this.validateGetColumnsContainsDisplayed(gridColumns);
+
+        // ── api.getColumnGroup / getProvidedColumnGroup lookup ──────────────
+        this.validateColumnGroupLookup(gridColumns);
+
+        // ── At-rest UI flags (hover, menu) ──────────────────────────────────
+        this.validateAtRestFlags(gridColumns);
+
+        // ── Per-column flex / state consistency ─────────────────────────────
+        this.validateFlexConsistency(gridColumns);
+
+        // ── Tree root parents are null in each section ──────────────────────
+        this.validateTreeRootsHaveNoParent(gridColumns);
+
+        // ── All cols in column state are reachable via api.getColumn ────────
+        this.validateColumnStateColumnsExist(gridColumns);
+
+        // ── colKind ↔ colId convention consistency ──────────────────────────
+        this.validateColKindIdConvention(gridColumns);
+
+        // ── Auto-group columns presence/position rules ──────────────────────
+        this.validateAutoGroupColumns(gridColumns);
+
+        // ── Pivot mode / pivot result columns presence rules ────────────────
+        this.validatePivotResultColumns(gridColumns);
+
+        // ── getRowGroupColumns() order matches column state rowGroupIndex ────
+        this.validateRowGroupColumnOrder(gridColumns);
+
+        // ── getPivotColumns() order matches column state pivotIndex ─────────
+        this.validatePivotColumnOrder(gridColumns);
+    }
+
+    /** `api.getRowGroupColumns()` must be ordered by ascending `rowGroupIndex` in column state. */
+    private validateRowGroupColumnOrder(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        if (!(api.isModuleRegistered as (name: string) => boolean)('SharedRowGrouping')) {
+            return;
+        }
+        const rowGroupCols = api.getRowGroupColumns?.();
+        if (!rowGroupCols || rowGroupCols.length === 0) {
+            return;
+        }
+        const stateArr = api.getColumnState?.();
+        if (!stateArr) {
+            return;
+        }
+        const indexByColId = new Map<string, number>();
+        for (let i = 0, len = stateArr.length; i < len; ++i) {
+            const s = stateArr[i];
+            if (typeof s.rowGroupIndex === 'number') {
+                indexByColId.set(s.colId, s.rowGroupIndex);
+            }
+        }
+        for (let i = 1, len = rowGroupCols.length; i < len; ++i) {
+            const prev = indexByColId.get(rowGroupCols[i - 1].getColId());
+            const curr = indexByColId.get(rowGroupCols[i].getColId());
+            if (prev != null && curr != null && prev > curr) {
+                this.errors.default.add(
+                    `getRowGroupColumns() order mismatch: "${rowGroupCols[i - 1].getColId()}" (rowGroupIndex=${prev}) appears before "${rowGroupCols[i].getColId()}" (rowGroupIndex=${curr}).`
+                );
+                break;
+            }
+        }
+    }
+
+    /** `api.getPivotColumns()` must be ordered by ascending `pivotIndex` in column state. */
+    private validatePivotColumnOrder(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        if (!(api.isModuleRegistered as (name: string) => boolean)('SharedPivot')) {
+            return;
+        }
+        const pivotCols = api.getPivotColumns?.();
+        if (!pivotCols || pivotCols.length === 0) {
+            return;
+        }
+        const stateArr = api.getColumnState?.();
+        if (!stateArr) {
+            return;
+        }
+        const indexByColId = new Map<string, number>();
+        for (let i = 0, len = stateArr.length; i < len; ++i) {
+            const s = stateArr[i];
+            if (typeof s.pivotIndex === 'number') {
+                indexByColId.set(s.colId, s.pivotIndex);
+            }
+        }
+        for (let i = 1, len = pivotCols.length; i < len; ++i) {
+            const prev = indexByColId.get(pivotCols[i - 1].getColId());
+            const curr = indexByColId.get(pivotCols[i].getColId());
+            if (prev != null && curr != null && prev > curr) {
+                this.errors.default.add(
+                    `getPivotColumns() order mismatch: "${pivotCols[i - 1].getColId()}" (pivotIndex=${prev}) appears before "${pivotCols[i].getColId()}" (pivotIndex=${curr}).`
+                );
+                break;
+            }
+        }
+    }
+
+    /** Service columns must have the expected colId prefix for their `colKind`:
+     *  - `ag-Grid-SelectionColumn` ↔ `colKind === 'selection'`
+     *  - `ag-Grid-RowNumbersColumn` ↔ `colKind === 'row-number'`
+     *  - `ag-Grid-AutoColumn*` ↔ `colKind === 'auto-group'`
+     *  Catches cases where a service column is registered with the wrong kind (would route through
+     *  the wrong code path in partitionVisibleCols / column state). */
+    private validateColKindIdConvention(gridColumns: GridColumns): void {
+        const check = (col: Column): void => {
+            const colId = col.getColId();
+            const colKind = (col as any).colKind as string | undefined;
+            if (colKind === undefined) {
+                return; // colKind is internal; older code paths may not set it.
+            }
+            const expectedKind =
+                colId === 'ag-Grid-SelectionColumn'
+                    ? 'selection'
+                    : colId === 'ag-Grid-RowNumbersColumn'
+                      ? 'row-number'
+                      : colId.startsWith('ag-Grid-AutoColumn')
+                        ? 'auto-group'
+                        : null;
+            if (expectedKind && colKind !== expectedKind) {
+                this.errors
+                    .get(col)
+                    .add(`Column "${colId}" has colKind="${colKind}" but its id prefix implies "${expectedKind}".`);
+            }
+            // Reverse: if it claims to be a service kind, the id must match.
+            if (colKind === 'selection' && colId !== 'ag-Grid-SelectionColumn') {
+                this.errors
+                    .get(col)
+                    .add(`Column has colKind="selection" but colId="${colId}" (expected "ag-Grid-SelectionColumn").`);
+            }
+            if (colKind === 'row-number' && colId !== 'ag-Grid-RowNumbersColumn') {
+                this.errors
+                    .get(col)
+                    .add(`Column has colKind="row-number" but colId="${colId}" (expected "ag-Grid-RowNumbersColumn").`);
+            }
+            if (colKind === 'auto-group' && !colId.startsWith('ag-Grid-AutoColumn')) {
+                this.errors
+                    .get(col)
+                    .add(
+                        `Column has colKind="auto-group" but colId="${colId}" doesn't start with "ag-Grid-AutoColumn".`
+                    );
+            }
+        };
+        for (let i = 0, len = gridColumns.allDisplayedCols.length; i < len; ++i) {
+            check(gridColumns.allDisplayedCols[i]);
+        }
+    }
+
+    /** Auto-group column presence/absence — narrow, high-confidence cases only:
+     *  - `groupDisplayType === 'custom'` with active row-groups: no auto-group cols (user provides their own).
+     *  - No row-groups AND no auto cols generated: this isn't really a check, but ensure we don't
+     *    have leftover auto cols from a previous state.
+     *  Doesn't try to predict exact count under modifiers like `groupHideColumnsUntilExpanded` or
+     *  `groupHideOpenParents`, which can hide some auto cols. */
+    private validateAutoGroupColumns(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        if (!(api.isModuleRegistered as (name: string) => boolean)('SharedRowGrouping')) {
+            return;
+        }
+        const groupDisplayType = api.getGridOption?.('groupDisplayType') ?? 'singleColumn';
+        const treeData = !!api.getGridOption?.('treeData');
+        if (treeData) {
+            return; // tree data has its own auto-col rules; out of scope.
+        }
+        const autoCols = gridColumns.allDisplayedCols.filter(
+            (c) => (c as any).colKind === 'auto-group' || c.getColId().startsWith('ag-Grid-AutoColumn')
+        );
+        // 'custom' display type means the user supplies their own group cell renderer cols; no
+        // ag-Grid-AutoColumn should be added by the grid.
+        if (groupDisplayType === 'custom' && autoCols.length > 0) {
+            this.errors.default.add(
+                `groupDisplayType="custom" but ${autoCols.length} auto-group column(s) are displayed.`
+            );
+        }
+    }
+
+    /** Pivot result columns (`pivot_*`) may only appear when `pivotMode === true` AND the grid is
+     *  showing pivot results. Guarded by `SharedPivot` module — otherwise `getPivotResultColumns`
+     *  logs error #200. */
+    private validatePivotResultColumns(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        if (!(api.isModuleRegistered as (name: string) => boolean)('SharedPivot')) {
+            return;
+        }
+        const pivotMode = !!api.getGridOption?.('pivotMode');
+        const pivotResultCols = (api as any).getPivotResultColumns?.() as Column[] | null | undefined;
+        const pivotResultSet = pivotResultCols ? new Set(pivotResultCols) : null;
+
+        for (let i = 0, len = gridColumns.allDisplayedCols.length; i < len; ++i) {
+            const col = gridColumns.allDisplayedCols[i];
+            const colId = col.getColId();
+            const isPivotResult = (pivotResultSet?.has(col) ?? false) || colId.startsWith('pivot_');
+            if (!isPivotResult) {
+                continue;
+            }
+            if (!pivotMode) {
+                this.errors.get(col).add(`Pivot result column "${colId}" is displayed but pivotMode is false.`);
+            }
+        }
+    }
+
+    /** Any column in `getAllGridColumns()` with `isVisible()===false` MUST NOT appear in displayed columns. */
+    private validateHiddenColumnsExcluded(gridColumns: GridColumns, allGridCols: Column[]): void {
+        if (allGridCols.length === 0) {
+            return;
+        }
+        const pivotMode = !!gridColumns.api.getGridOption?.('pivotMode');
+        const displayedSet = new Set(gridColumns.allDisplayedCols);
+        for (let i = 0, len = allGridCols.length; i < len; ++i) {
+            const col = allGridCols[i];
+            if (!col.isVisible() && displayedSet.has(col) && !isValueColShownInPivotMode(col, pivotMode)) {
+                this.errors.get(col).add('Column has isVisible()=false but appears in displayed columns.');
+            }
+        }
+    }
+
+    /** No column may appear in more than one section (left/center/right). */
+    private validateSectionsDisjoint(gridColumns: GridColumns): void {
+        const seen = new Map<Column, 'left' | 'center' | 'right'>();
+        const check = (cols: Column[], section: 'left' | 'center' | 'right'): void => {
+            for (let i = 0, len = cols.length; i < len; ++i) {
+                const col = cols[i];
+                const prev = seen.get(col);
+                if (prev !== undefined && prev !== section) {
+                    this.errors
+                        .get(col)
+                        .add(`Column "${col.getColId()}" appears in both "${prev}" and "${section}" sections.`);
+                } else {
+                    seen.set(col, section);
+                }
+            }
+        };
+        check(gridColumns.leftCols, 'left');
+        check(gridColumns.centerCols, 'center');
+        check(gridColumns.rightCols, 'right');
+    }
+
+    /** Tree leaves (flattened) per section must equal that section's flat column array. */
+    private validateTreeMatchesFlat(gridColumns: GridColumns, isRtl: boolean): void {
+        if (!this.bugs.treeLeavesMatchFlatArray || !gridColumns.hasColumnGroups) {
+            return;
+        }
+        const check = (tree: (Column | ColumnGroup)[], flat: Column[], label: 'left' | 'center' | 'right'): void => {
+            const leaves: Column[] = [];
+            this.collectLeaves(tree, leaves);
+            if (leaves.length !== flat.length) {
+                this.errors.default.add(
+                    `${label} tree has ${leaves.length} leaf columns but ${label}Cols flat array has ${flat.length}.`
+                );
+                return;
+            }
+            for (let i = 0, len = flat.length; i < len; ++i) {
+                if (leaves[i] !== flat[i]) {
+                    this.errors.default.add(
+                        `${label} tree leaf[${i}] "${leaves[i].getColId()}" does not match ${label}Cols[${i}] "${flat[i].getColId()}".`
+                    );
+                    break;
+                }
+            }
+        };
+        // In RTL the right section is rendered first in `allDisplayedColumns`, but each section's tree leaves
+        // still correspond positionally to its own flat array.
+        check(gridColumns.leftTree, gridColumns.leftCols, 'left');
+        check(gridColumns.centerTree, gridColumns.centerCols, 'center');
+        check(gridColumns.rightTree, gridColumns.rightCols, 'right');
+        // touch isRtl to silence unused (kept in signature for future RTL-specific checks)
+        void isRtl;
+    }
+
+    private collectLeaves(tree: (Column | ColumnGroup)[], out: Column[]): void {
+        for (let i = 0, len = tree.length; i < len; ++i) {
+            const node = tree[i];
+            if (node.isColumn) {
+                out.push(node as Column);
+            } else {
+                const children = (node as ColumnGroup).getDisplayedChildren();
+                if (children) {
+                    this.collectLeaves(children, out);
+                }
+            }
+        }
+    }
+
+    /** `isPinning()` must be true iff there are any pinned columns. Same for left/right specific. */
+    private validatePinningFlags(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        const hasLeft = gridColumns.leftCols.length > 0;
+        const hasRight = gridColumns.rightCols.length > 0;
+        const expectedPinning = hasLeft || hasRight;
+        const isPinning = api.isPinning?.();
+        if (isPinning !== undefined && isPinning !== expectedPinning) {
+            this.errors.default.add(
+                `api.isPinning() is ${isPinning} but leftCols(${gridColumns.leftCols.length}) + rightCols(${gridColumns.rightCols.length}) suggests ${expectedPinning}.`
+            );
+        }
+        const isPinningLeft = api.isPinningLeft?.();
+        if (isPinningLeft !== undefined && isPinningLeft !== hasLeft) {
+            this.errors.default.add(
+                `api.isPinningLeft() is ${isPinningLeft} but leftCols.length is ${gridColumns.leftCols.length}.`
+            );
+        }
+        const isPinningRight = api.isPinningRight?.();
+        if (isPinningRight !== undefined && isPinningRight !== hasRight) {
+            this.errors.default.add(
+                `api.isPinningRight() is ${isPinningRight} but rightCols.length is ${gridColumns.rightCols.length}.`
+            );
+        }
+    }
+
+    /** `api.getColumnGroupState()` entries must match displayed groups' expansion state. */
+    private validateColumnGroupState(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        const stateArr = api.getColumnGroupState?.();
+        if (!stateArr) {
+            return;
+        }
+        const displayedGroupsById = new Map<string, ColumnGroup>();
+        const walk = (tree: (Column | ColumnGroup)[]): void => {
+            for (let i = 0, len = tree.length; i < len; ++i) {
+                const node = tree[i];
+                if (node.isColumn) {
+                    continue;
+                }
+                const group = node as ColumnGroup;
+                const provided = group.getProvidedColumnGroup();
+                if (provided && !provided.isPadding?.()) {
+                    displayedGroupsById.set(provided.getGroupId(), group);
+                }
+                const children = group.getChildren();
+                if (children) {
+                    walk(children);
+                }
+            }
+        };
+        walk(gridColumns.leftTree);
+        walk(gridColumns.centerTree);
+        walk(gridColumns.rightTree);
+
+        for (let i = 0, len = stateArr.length; i < len; ++i) {
+            const entry = stateArr[i];
+            const group = displayedGroupsById.get(entry.groupId);
+            if (!group) {
+                // Provided groups may be in state but not displayed if their leaf columns are all hidden.
+                // Don't error in that case.
+                continue;
+            }
+            const expanded = group.isExpanded();
+            if (entry.open !== expanded) {
+                this.errors
+                    .get(group)
+                    .add(
+                        `getColumnGroupState() reports open=${entry.open} for "${entry.groupId}" but group.isExpanded()=${expanded}.`
+                    );
+            }
+        }
+    }
+
+    /** `api.getAllDisplayedColumnGroups()` must equal the concatenation of left/center/right trees. */
+    private validateAllDisplayedColumnGroups(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        const all = api.getAllDisplayedColumnGroups?.();
+        if (!all || !gridColumns.hasColumnGroups) {
+            return;
+        }
+        const expected: (Column | ColumnGroup)[] = [
+            ...gridColumns.leftTree,
+            ...gridColumns.centerTree,
+            ...gridColumns.rightTree,
+        ];
+        if (all.length !== expected.length) {
+            this.errors.default.add(
+                `getAllDisplayedColumnGroups() returned ${all.length} entries but left/center/right trees total ${expected.length}.`
+            );
+            return;
+        }
+        for (let i = 0, len = expected.length; i < len; ++i) {
+            if (all[i] !== expected[i]) {
+                this.errors.default.add(
+                    `getAllDisplayedColumnGroups()[${i}] does not match expected element from concatenated section trees.`
+                );
+                break;
+            }
+        }
+    }
+
+    /** `api.getAllDisplayedVirtualColumns()` must be a subset of `getAllDisplayedColumns()`. Order is not constrained
+     *  (the viewport implementation concatenates `colsWithinViewport + leftCols + rightCols`). Uniqueness IS enforced. */
+    private validateVirtualColumnsSubset(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        const virtual = api.getAllDisplayedVirtualColumns?.();
+        if (!virtual || virtual.length === 0) {
+            return;
+        }
+        const displayedSet = new Set(gridColumns.allDisplayedCols);
+        const seen = new Set<Column>();
+        for (let i = 0, len = virtual.length; i < len; ++i) {
+            const col = virtual[i];
+            if (!displayedSet.has(col)) {
+                this.errors
+                    .get(col)
+                    .add(
+                        `getAllDisplayedVirtualColumns() contains "${col.getColId()}" which is NOT in getAllDisplayedColumns().`
+                    );
+                continue;
+            }
+            if (seen.has(col)) {
+                this.errors.get(col).add(`getAllDisplayedVirtualColumns() contains duplicate "${col.getColId()}".`);
+                continue;
+            }
+            seen.add(col);
+        }
+    }
+
+    /** `api.getColumnDef(colId)` must return each displayed column's colDef. */
+    private validateApiGetColumnDef(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        if (typeof api.getColumnDef !== 'function') {
+            return;
+        }
+        for (let i = 0, len = gridColumns.allDisplayedCols.length; i < len; ++i) {
+            const col = gridColumns.allDisplayedCols[i];
+            const colId = col.getColId();
+            const apiDef = api.getColumnDef(colId);
+            const colDef = col.getColDef();
+            if (apiDef !== colDef) {
+                this.errors
+                    .get(col)
+                    .add(`api.getColumnDef("${colId}") returned a different object than col.getColDef().`);
+            }
+        }
+    }
+
+    /** Every displayed *primary* column must be in `api.getColumns()` (colDefList).
+     *
+     *  Per the column model, displayed cols = `[serviceCols, ...colDefList]` in normal mode, OR pivot-result
+     *  cols when `showingPivotResult` is true. So we exclude:
+     *    - Service columns (colId starts with `ag-Grid-` — auto-group, selection, row-numbers)
+     *    - Pivot result columns (returned by `api.getPivotResultColumns()`)
+     *
+     *  A primary column that's displayed but missing from `getColumns()` indicates a column-model bug. */
+    private validateGetColumnsContainsDisplayed(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        const cols = api.getColumns?.();
+        if (!cols) {
+            return;
+        }
+        const colDefSet = new Set(cols);
+        const isPivotRegistered = (api.isModuleRegistered as (name: string) => boolean)('SharedPivot');
+        const pivotResultCols = isPivotRegistered
+            ? ((api as any).getPivotResultColumns?.() as Column[] | null | undefined)
+            : null;
+        const pivotResultSet = pivotResultCols ? new Set(pivotResultCols) : null;
+        for (let i = 0, len = gridColumns.allDisplayedCols.length; i < len; ++i) {
+            const col = gridColumns.allDisplayedCols[i];
+            if (colDefSet.has(col)) {
+                continue;
+            }
+            const colId = col.getColId();
+            if (colId.startsWith('ag-Grid-')) {
+                continue; // Service column (auto-group / selection / row-numbers)
+            }
+            if (pivotResultSet?.has(col)) {
+                continue; // Pivot result column
+            }
+            this.errors
+                .get(col)
+                .add(
+                    `Displayed primary column "${colId}" is NOT in api.getColumns() (colDefList). Not a service col (ag-Grid-*) nor a pivot result col.`
+                );
+        }
+    }
+
+    /** Every displayed (non-padding) column group must be findable via `api.getColumnGroup` and `api.getProvidedColumnGroup`. */
+    private validateColumnGroupLookup(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        if (typeof api.getColumnGroup !== 'function' || typeof api.getProvidedColumnGroup !== 'function') {
+            return;
+        }
+        const walk = (tree: (Column | ColumnGroup)[]): void => {
+            for (let i = 0, len = tree.length; i < len; ++i) {
+                const node = tree[i];
+                if (node.isColumn) {
+                    continue;
+                }
+                const group = node as ColumnGroup;
+                if (!group.isPadding()) {
+                    const provided = group.getProvidedColumnGroup();
+                    if (provided) {
+                        const providedId = provided.getGroupId();
+                        const foundProvided = api.getProvidedColumnGroup(providedId);
+                        if (foundProvided !== provided) {
+                            this.errors
+                                .get(group)
+                                .add(
+                                    `api.getProvidedColumnGroup("${providedId}") did not return the provided group of this displayed group.`
+                                );
+                        }
+                    }
+                }
+                const children = group.getChildren();
+                if (children) {
+                    walk(children);
+                }
+            }
+        };
+        walk(gridColumns.leftTree);
+        walk(gridColumns.centerTree);
+        walk(gridColumns.rightTree);
+    }
+
+    /** At validation time, no displayed column should be hovered. Guarded by `ColumnHoverModule`
+     *  registration — otherwise `api.isColumnHovered` logs error #200 for every column. */
+    private validateAtRestFlags(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        if (!(api.isModuleRegistered as (name: string) => boolean)('ColumnHover')) {
+            return;
+        }
+        const isHovered = api.isColumnHovered as ((c: Column) => boolean) | undefined;
+        if (typeof isHovered !== 'function') {
+            return;
+        }
+        for (let i = 0, len = gridColumns.allDisplayedCols.length; i < len; ++i) {
+            const col = gridColumns.allDisplayedCols[i];
+            if (isHovered(col)) {
+                this.errors.get(col).add(`api.isColumnHovered() is true at rest for "${col.getColId()}".`);
+            }
+        }
+    }
+
+    /** `getFlex()` is authoritative once a runtime mutation (resize, setGridOption width, etc.)
+     *  occurs. `colDef.flex` is the initial config and may stay non-null even after a resize
+     *  clears flex. Compare against the live column state instead. */
+    private validateFlexConsistency(gridColumns: GridColumns): void {
+        const stateById = new Map<string, number | null>();
+        for (const state of gridColumns.api.getColumnState() ?? []) {
+            if (state.colId != null) {
+                stateById.set(state.colId, state.flex ?? null);
+            }
+        }
+        for (let i = 0, len = gridColumns.allDisplayedCols.length; i < len; ++i) {
+            const col = gridColumns.allDisplayedCols[i];
+            if (!stateById.has(col.getColId())) {
+                continue;
+            }
+            const stateFlex = stateById.get(col.getColId()) ?? null;
+            const colFlex = col.getFlex() ?? null;
+            if (colFlex !== stateFlex) {
+                this.errors
+                    .get(col)
+                    .add(
+                        `column state flex is ${String(stateFlex)} but getFlex() returns ${String(colFlex)} (col.getColDef().flex=${String(col.getColDef().flex)})`
+                    );
+            }
+        }
+    }
+
+    /** Top-level entries in each section tree must have `getParent() === null` (they're roots). */
+    private validateTreeRootsHaveNoParent(gridColumns: GridColumns): void {
+        const check = (tree: (Column | ColumnGroup)[], section: 'left' | 'center' | 'right'): void => {
+            for (let i = 0, len = tree.length; i < len; ++i) {
+                const node = tree[i];
+                const parent = node.getParent();
+                if (parent !== null) {
+                    const id = node.isColumn ? (node as Column).getColId() : (node as ColumnGroup).getGroupId();
+                    this.errors
+                        .get(node)
+                        .add(
+                            `${section} tree root "${id}" has a non-null parent (expected null since it is a tree root).`
+                        );
+                }
+            }
+        };
+        check(gridColumns.leftTree, 'left');
+        check(gridColumns.centerTree, 'center');
+        check(gridColumns.rightTree, 'right');
+    }
+
+    /** Every colId in `getColumnState()` must be findable via `api.getColumn`. */
+    private validateColumnStateColumnsExist(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        if (!this.bugs.columnStateEntriesExist || typeof api.getColumn !== 'function') {
+            return;
+        }
+        const stateArr = api.getColumnState?.();
+        if (!stateArr) {
+            return;
+        }
+        for (let i = 0, len = stateArr.length; i < len; ++i) {
+            const colId = stateArr[i].colId;
+            const found = api.getColumn(colId);
+            if (!found) {
+                // Auto-group columns and other generated columns may appear in state without being looked up
+                // by id from `getColumn` in some legacy modes — only flag if the column id looks like a regular
+                // user-defined column (not ag-Grid-auto- prefix).
+                if (!colId.startsWith('ag-Grid-')) {
+                    this.errors.default.add(
+                        `getColumnState() has entry for colId "${colId}" but api.getColumn("${colId}") returned null.`
+                    );
+                }
+            }
+        }
+    }
+
+    /** `api.getColumn(colId)` must return the column for every displayed column. */
+    private validateApiGetColumn(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        if (typeof api.getColumn !== 'function') {
+            return;
+        }
+        for (let i = 0, len = gridColumns.allDisplayedCols.length; i < len; ++i) {
+            const col = gridColumns.allDisplayedCols[i];
+            const colId = col.getColId();
+            const found = api.getColumn(colId);
+            if (found !== col) {
+                this.errors
+                    .get(col)
+                    .add(`api.getColumn("${colId}") returned ${found === null ? 'null' : 'a different column'}.`);
+            }
+        }
+    }
+
+    /** `api.getDisplayedColAfter(cols[i])` must equal `cols[i+1]`, and `getDisplayedColBefore(cols[i+1])` must equal `cols[i]`. */
+    private validateDisplayedColNavigation(gridColumns: GridColumns): void {
+        const api = gridColumns.api;
+        const cols = gridColumns.allDisplayedCols;
+        const after = api.getDisplayedColAfter as ((c: Column) => Column | null) | undefined;
+        const before = api.getDisplayedColBefore as ((c: Column) => Column | null) | undefined;
+        if (typeof after !== 'function' || typeof before !== 'function') {
+            return;
+        }
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const expectedAfter = i < len - 1 ? cols[i + 1] : null;
+            const actualAfter = after(cols[i]);
+            if (actualAfter !== expectedAfter) {
+                this.errors
+                    .get(cols[i])
+                    .add(
+                        `api.getDisplayedColAfter("${cols[i].getColId()}") returned "${actualAfter?.getColId() ?? 'null'}" but expected "${expectedAfter?.getColId() ?? 'null'}".`
+                    );
+            }
+            const expectedBefore = i > 0 ? cols[i - 1] : null;
+            const actualBefore = before(cols[i]);
+            if (actualBefore !== expectedBefore) {
+                this.errors
+                    .get(cols[i])
+                    .add(
+                        `api.getDisplayedColBefore("${cols[i].getColId()}") returned "${actualBefore?.getColId() ?? 'null'}" but expected "${expectedBefore?.getColId() ?? 'null'}".`
+                    );
+            }
+        }
+    }
+
+    /** `getAllGridColumns()` must contain unique colIds (catches duplicate / leaked references). */
+    private validateAllGridColumnsUnique(allGridCols: Column[]): void {
+        if (allGridCols.length === 0) {
+            return;
+        }
+        const counts = new Map<string, number>();
+        for (let i = 0, len = allGridCols.length; i < len; ++i) {
+            const id = allGridCols[i].getColId();
+            counts.set(id, (counts.get(id) ?? 0) + 1);
+        }
+        counts.forEach((count, id) => {
+            if (count > 1) {
+                this.errors.default.add(`getAllGridColumns() has duplicate colId "${id}" (${count} times).`);
+            }
+        });
+    }
+
+    /** No two DISTINCT `ProvidedColumnGroup`s may share a `groupId` in the current displayed tree.
+     *  (Multiple display instances of the SAME provided group legitimately share an id — they're
+     *  the same object.) Catches the reused-padding / fresh-allocation id collision after a refresh. */
+    private validateProvidedGroupIdUniqueness(gridColumns: GridColumns): void {
+        const byId = new Map<string, ProvidedColumnGroup>();
+        const walk = (tree: (Column | ColumnGroup)[]): void => {
+            for (let i = 0, len = tree.length; i < len; ++i) {
+                const node = tree[i];
+                if (node.isColumn) {
+                    continue;
+                }
+                const group = node as ColumnGroup;
+                const provided = group.getProvidedColumnGroup();
+                const id = provided.getGroupId();
+                const existing = byId.get(id);
+                if (existing !== undefined && existing !== provided) {
+                    this.errors
+                        .get(group)
+                        .add(
+                            `Two distinct ProvidedColumnGroups share groupId "${id}" — id collision in the current state (reused padding vs freshly-allocated id after refresh).`
+                        );
+                } else {
+                    byId.set(id, provided);
+                }
+                const children = group.getChildren();
+                if (children) {
+                    walk(children);
+                }
+            }
+        };
+        walk(gridColumns.leftTree);
+        walk(gridColumns.centerTree);
+        walk(gridColumns.rightTree);
+    }
+
+    /** Asserts every reachable column and column group is `isAlive()`. Catches leaks where the
+     *  grid keeps a reference to a destroyed bean — e.g. service cols, auto-group cols,
+     *  hierarchy cols, or column groups that should have been rebuilt during a refresh. */
+    private validateAlive(gridColumns: GridColumns, allGridCols: Column[]): void {
+        for (let i = 0, len = allGridCols.length; i < len; ++i) {
+            const col = allGridCols[i];
+            if (!(col as unknown as { isAlive(): boolean }).isAlive()) {
+                this.errors.get(col).add('Column is reachable via getAllGridColumns() but isAlive() is false.');
+            }
+        }
+        for (let i = 0, len = gridColumns.allDisplayedCols.length; i < len; ++i) {
+            const col = gridColumns.allDisplayedCols[i];
+            if (!(col as unknown as { isAlive(): boolean }).isAlive()) {
+                this.errors.get(col).add('Displayed column is destroyed (isAlive() is false).');
+            }
+        }
+        this.walkTreeForAlive(gridColumns.leftTree);
+        this.walkTreeForAlive(gridColumns.centerTree);
+        this.walkTreeForAlive(gridColumns.rightTree);
+    }
+
+    private walkTreeForAlive(tree: (Column | ColumnGroup)[]): void {
+        for (let i = 0, len = tree.length; i < len; ++i) {
+            const node = tree[i];
+            if (!(node as unknown as { isAlive(): boolean }).isAlive()) {
+                const label = node.isColumn ? 'Column' : 'ColumnGroup';
+                this.errors.get(node).add(`${label} is in the displayed tree but isAlive() is false.`);
+            }
+            if (!node.isColumn) {
+                const children = (node as ColumnGroup).getChildren();
+                if (children) {
+                    this.walkTreeForAlive(children);
+                }
+            }
+        }
     }
 
     // ── Section-level validation ────────────────────────────────────────────
@@ -87,11 +873,12 @@ export class GridColumnsValidator {
         cols: Column[],
         expectedPinned: 'left' | 'right' | null,
         tree: (Column | ColumnGroup)[],
-        isRtl: boolean
+        isRtl: boolean,
+        pivotMode: boolean
     ): void {
         for (let i = 0; i < cols.length; i++) {
             const col = cols[i];
-            this.validateColumn(col, expectedPinned, cols, i);
+            this.validateColumn(col, expectedPinned, cols, i, pivotMode);
         }
 
         // Validate tree structure
@@ -104,7 +891,8 @@ export class GridColumnsValidator {
         col: Column,
         expectedPinned: 'left' | 'right' | null,
         sectionCols: Column[],
-        index: number
+        index: number,
+        pivotMode: boolean
     ): void {
         const colErrors = this.errors.get(col);
 
@@ -125,7 +913,9 @@ export class GridColumnsValidator {
         }
 
         // ── Visible consistency ─────────────────────────────────────────────
-        if (!col.isVisible()) {
+        // Value columns get displayed unconditionally in pivot mode while no pivot result exists
+        // (see `partitionVisibleCols` in `visibleColsService.ts`). Skip the check in that case.
+        if (!col.isVisible() && !isValueColShownInPivotMode(col, pivotMode)) {
             colErrors.add('Column is in displayed columns but isVisible() returns false.');
         }
 
@@ -185,6 +975,8 @@ export class GridColumnsValidator {
         }
 
         // ── Aggregation function consistency ────────────────────────────────
+        // `getAggFunc()` reflects runtime state; it should be cleared when the column leaves the
+        // active value list. `colDef.aggFunc` (the initial config) is allowed to persist separately.
         const aggFunc = col.getAggFunc();
         const isValueActive = col.isValueActive();
         if (isValueActive && aggFunc == null) {
@@ -609,8 +1401,10 @@ export class GridColumnsValidator {
 
     // ── Pinned boundary markers ─────────────────────────────────────────────
 
-    private validatePinnedBoundaryMarkers(leftCols: Column[], rightCols: Column[]): void {
-        // isLastLeftPinned: at most one column, must be last in leftCols
+    private validatePinnedBoundaryMarkers(leftCols: Column[], rightCols: Column[], isRtl: boolean): void {
+        // isLastLeftPinned: at most one column, must be the last col in `leftCols` (the boundary
+        // adjacent to the centre body). RTL doesn't change this — `leftCols` is still ordered
+        // start-edge-first in both layouts and the boundary is the trailing entry.
         if (leftCols.length > 0) {
             const lastLeftPinnedCols = leftCols.filter((c) => c.isLastLeftPinned());
             if (lastLeftPinnedCols.length > 1) {
@@ -625,7 +1419,9 @@ export class GridColumnsValidator {
             }
         }
 
-        // isFirstRightPinned: at most one column, must be first in rightCols
+        // isFirstRightPinned: at most one column, must be the boundary adjacent to the centre body.
+        // In LTR that's `rightCols[0]`; in RTL the right section is visually mirrored so the boundary
+        // is `rightCols[length - 1]`. (See `VisibleColsService.setFirstRightAndLastLeftPinned`.)
         if (rightCols.length > 0) {
             const firstRightPinnedCols = rightCols.filter((c) => c.isFirstRightPinned());
             if (firstRightPinnedCols.length > 1) {
@@ -633,9 +1429,10 @@ export class GridColumnsValidator {
                     `${firstRightPinnedCols.length} columns have isFirstRightPinned()=true, expected at most 1.`
                 );
             }
-            if (firstRightPinnedCols.length === 1 && firstRightPinnedCols[0] !== rightCols[0]) {
+            const expectedBoundary = isRtl ? rightCols[rightCols.length - 1] : rightCols[0];
+            if (firstRightPinnedCols.length === 1 && firstRightPinnedCols[0] !== expectedBoundary) {
                 this.errors.default.add(
-                    `isFirstRightPinned() column "${firstRightPinnedCols[0].getColId()}" is not the first column in rightCols.`
+                    `isFirstRightPinned() column "${firstRightPinnedCols[0].getColId()}" is not the ${isRtl ? 'last' : 'first'} column in rightCols.`
                 );
             }
         }
@@ -785,4 +1582,11 @@ export class GridColumnsValidator {
             }
         }
     }
+}
+
+/** Value columns get pushed into displayed cols unconditionally when the grid is in pivot mode
+ *  but isn't yet showing pivot results (see `partitionVisibleCols` in `visibleColsService.ts`).
+ *  Visibility-based invariants need to whitelist this scenario. */
+function isValueColShownInPivotMode(col: Column, pivotMode: boolean): boolean {
+    return pivotMode && col.isValueActive();
 }

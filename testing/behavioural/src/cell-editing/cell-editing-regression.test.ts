@@ -22,6 +22,7 @@ import {
 
 import {
     EditEventTracker,
+    GridColumns,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -178,6 +179,16 @@ describe('Cell Editing Regression', () => {
             ],
             onRowEditingStopped,
         });
+        await new GridColumns(api, `full-row editing fires rowEditingStopped on stopEditing setup`).checkColumns(`
+            CENTER
+            ├── make "Make" width:200 editable
+            └── model "Model" width:200 editable
+        `);
+        await new GridRows(api, `full-row editing fires rowEditingStopped on stopEditing setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 make:"Toyota" model:"Celica"
+            └── LEAF id:1 make:"Ford" model:"Mondeo"
+        `);
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
@@ -205,6 +216,11 @@ describe('Cell Editing Regression', () => {
             batchEditingStarted: 0,
             batchEditingStopped: 0,
         });
+        await new GridRows(api, `full-row editing fires rowEditingStopped on stopEditing final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 make:"Toyota" model:"Celica"
+            └── LEAF id:1 make:"Ford" model:"Mondeo"
+        `);
     });
 
     test('full-row editing closes empty editors when tabbing to next row', async () => {
@@ -500,6 +516,17 @@ describe('Cell Editing Regression', () => {
             ],
             rowData: [{ value: 'Alpha' }],
         });
+        await new GridColumns(api, `rich select editor opens without error when cellRenderer is a function setup`)
+            .checkColumns(`
+                CENTER
+                └── value "Value" width:200 editable
+            `);
+        await new GridRows(api, `rich select editor opens without error when cellRenderer is a function setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:"Alpha"
+            `
+        );
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -524,6 +551,11 @@ describe('Cell Editing Regression', () => {
         expect(listRows[0].querySelector('b')).toHaveTextContent('Alpha');
         expect(listRows[1].querySelector('b')).toHaveTextContent('Beta');
         expect(listRows[2].querySelector('b')).toHaveTextContent('Gamma');
+        await new GridRows(api, `rich select editor opens without error when cellRenderer is a function final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 value:"Alpha"
+            `);
     });
 
     // AG-15794 - onCellEditRequest source
@@ -567,6 +599,15 @@ describe('Cell Editing Regression', () => {
             rowData: [{ code: 0 }, { code: 2 }],
             onCellEditRequest: ({ source }) => onCellEditRequest(source),
         });
+        await new GridColumns(api, `onCellEditRequest should have source=edit setup`).checkColumns(`
+            CENTER
+            └── code "Code" width:200 editable
+        `);
+        await new GridRows(api, `onCellEditRequest should have source=edit setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 code:"0 - zero"
+            └── LEAF id:1 code:"2 - two"
+        `);
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
@@ -635,6 +676,11 @@ describe('Cell Editing Regression', () => {
             batchEditingStarted: 0,
             batchEditingStopped: 0,
         });
+        await new GridRows(api, `onCellEditRequest should have source=edit final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 code:"0 - zero"
+            └── LEAF id:1 code:"2 - two"
+        `);
     });
 
     // Regression test for first cell edit event newValue is Symbol(unedited)
@@ -1095,6 +1141,18 @@ describe('Cell Editing Regression', () => {
                 },
             ],
         });
+        await new GridColumns(api, `Delete key on cell with valueGetter passes correct oldValue to valueSetter setup`)
+            .checkColumns(`
+                CENTER
+                ├── name "Name" width:333 flex:1 editable
+                ├── totalMedals "Total Medals" width:334 flex:1 editable
+                └── score "Score" width:333 flex:1 editable
+            `);
+        await new GridRows(api, `Delete key on cell with valueGetter passes correct oldValue to valueSetter setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID totalMedals:"<ERROR>" score:"<ERROR>"
+                └── LEAF id:0 name:"Michael Phelps" totalMedals:10 score:42
+            `);
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
@@ -1144,6 +1202,13 @@ describe('Cell Editing Regression', () => {
             batchEditingStarted: 0,
             batchEditingStopped: 0,
         });
+        await new GridRows(
+            api,
+            `Delete key on cell with valueGetter passes correct oldValue to valueSetter final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID totalMedals:"<ERROR>" score:"<ERROR>"
+            └── LEAF id:0 name:"Michael Phelps" totalMedals:0 score:0
+        `);
     });
 
     test.each(['ui', 'data'] as const)(
@@ -1331,6 +1396,20 @@ describe('Cell Editing Regression', () => {
                 { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
             ],
         });
+        await new GridColumns(api, `tabbing into empty cell then clicking another cell closes editor setup`)
+            .checkColumns(`
+                CENTER
+                ├── make "Make" width:200 editable
+                ├── model "Model" width:200 editable
+                ├── price "Price" width:200 editable
+                └── electric "Electric" width:200 editable
+            `);
+        await new GridRows(api, `tabbing into empty cell then clicking another cell closes editor setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 make:"Tesla" model:"Model Y" electric:true
+            ├── LEAF id:1 make:"Ford" model:"F-Series" price:33850 electric:false
+            └── LEAF id:2 make:"Toyota" model:"Corolla" price:29600 electric:false
+        `);
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
@@ -1406,6 +1485,14 @@ describe('Cell Editing Regression', () => {
             batchEditingStarted: 0,
             batchEditingStopped: 0,
         });
+        await new GridRows(api, `tabbing into empty cell then clicking another cell closes editor final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 make:"Tesla" model:"Model Y" electric:true
+                ├── LEAF id:1 make:"Ford" model:"F-Series" price:33850 electric:false
+                └── LEAF id:2 make:"Toyota" model:"Corolla" price:29600 electric:false
+            `
+        );
     });
 
     test('full row editing: tabbing into empty cell then clicking another cell closes editors', async () => {
@@ -1422,6 +1509,25 @@ describe('Cell Editing Regression', () => {
                 { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
             ],
         });
+        await new GridColumns(
+            api,
+            `full row editing: tabbing into empty cell then clicking another cell closes edit setup`
+        ).checkColumns(`
+            CENTER
+            ├── make "Make" width:200 editable
+            ├── model "Model" width:200 editable
+            ├── price "Price" width:200 editable
+            └── electric "Electric" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `full row editing: tabbing into empty cell then clicking another cell closes edit setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 make:"Tesla" model:"Model Y" electric:true
+            ├── LEAF id:1 make:"Ford" model:"F-Series" price:33850 electric:false
+            └── LEAF id:2 make:"Toyota" model:"Corolla" price:29600 electric:false
+        `);
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
@@ -1500,6 +1606,15 @@ describe('Cell Editing Regression', () => {
             batchEditingStarted: 0,
             batchEditingStopped: 0,
         });
+        await new GridRows(
+            api,
+            `full row editing: tabbing into empty cell then clicking another cell closes edit final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 make:"Tesla" model:"Model Y" electric:true
+            ├── LEAF id:1 make:"Ford" model:"F-Series" price:33850 electric:false
+            └── LEAF id:2 make:"Toyota" model:"Corolla" price:29600 electric:false
+        `);
     });
 
     // Test for valueSetter returning false preventing Delete key changes with cellSelection

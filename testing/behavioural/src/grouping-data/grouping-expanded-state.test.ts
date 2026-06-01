@@ -566,6 +566,22 @@ describe('ag-grid grouping expanded state', () => {
                 applyTransactionChecked(api, { add: [newRow] });
             },
         });
+        await new GridColumns(api, `expansion state with dynamic data changes and groupDefaultExpanded callback setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Country" width:200
+                ├── athlete "Athlete" width:200
+                └── sport "Sport" width:200
+            `);
+        await new GridRows(api, `expansion state with dynamic data changes and groupDefaultExpanded callback setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ ├── LEAF hidden id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+                │ └── LEAF hidden id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+                · └── LEAF hidden id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            `);
 
         // Verify initial groupDefaultExpanded callback calls
         expect(groupDefaultExpandedCalls).toHaveLength(2); // Ireland and Italy
@@ -576,6 +592,17 @@ describe('ag-grid grouping expanded state', () => {
         dynamicCountry = 'Ireland';
         initGroupOpenedPromise();
         api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
+        await new GridRows(
+            api,
+            `expansion state with dynamic data changes and groupDefaultExpanded callback after setRowNodeExpanded`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └── LEAF hidden id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+        `);
         await groupOpenedPromise!;
 
         // Check that Ireland is expanded and dynamic node was added
@@ -603,6 +630,20 @@ describe('ag-grid grouping expanded state', () => {
         dynamicCountry = 'Italy';
         initGroupOpenedPromise();
         api.setRowNodeExpanded(api.getRowNode('row-group-country-Italy')!, true, false, true);
+        await new GridRows(
+            api,
+            `expansion state with dynamic data changes and groupDefaultExpanded callback after setRowNodeExpanded #2`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ ├── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            │ └── LEAF id:dynamic-1 country:"Ireland" athlete:"Dynamic Athlete 1" sport:"Dynamic Sport"
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            └─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
+            · └── LEAF id:spain-1 country:"Spain" athlete:"Carlos Garcia" sport:"Basketball"
+        `);
         await groupOpenedPromise!;
 
         // Check that both groups are expanded and have dynamic nodes

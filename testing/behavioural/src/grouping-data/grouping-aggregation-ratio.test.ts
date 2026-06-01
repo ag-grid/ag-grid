@@ -2,7 +2,7 @@ import type { GridApi, IAggFuncParams, IAggFuncResult, IRowNode, ValueGetterPara
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 /**
  * Mirrors the `multi-level-ratio` documentation example. The aggFunc + value getter pair
@@ -80,7 +80,7 @@ describe('ratio-of-sums aggregation via IAggFuncResult wrapper', () => {
         gridsManager.reset();
     });
 
-    test('rolls up gold/silver totals correctly across multiple grouping levels', () => {
+    test('rolls up gold/silver totals correctly across multiple grouping levels', async () => {
         const api = gridsManager.createGrid('ratio-multi-level', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -101,6 +101,23 @@ describe('ratio-of-sums aggregation via IAggFuncResult wrapper', () => {
                 { id: '3', country: 'Ireland', year: 2004, gold: 6, silver: 2 },
             ] satisfies MedalRow[],
         });
+        await new GridColumns(api, `rolls up gold/silver totals correctly across multiple grouping levels setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── goldSilverRatio "Gold to Silver" width:200 aggFunc:ratio
+            `);
+        await new GridRows(api, `rolls up gold/silver totals correctly across multiple grouping levels setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" goldSilverRatio:{"gold":10,"silver":4,"value":2.5}
+                · ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:2000 goldSilverRatio:{"gold":4,"silver":2,"value":2}
+                · │ ├── LEAF id:1 country:"Ireland" year:2000 goldSilverRatio:{"gold":3,"silver":1,"value":3}
+                · │ └── LEAF id:2 country:"Ireland" year:2000 goldSilverRatio:{"gold":1,"silver":1,"value":1}
+                · └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2004 ag-Grid-AutoColumn:2004 goldSilverRatio:{"gold":6,"silver":2,"value":3}
+                · · └── LEAF id:3 country:"Ireland" year:2004 goldSilverRatio:{"gold":6,"silver":2,"value":3}
+            `
+        );
 
         // Year-level sums
         const year2000 = findGroupRow(api, '2000').aggData?.goldSilverRatio;
@@ -119,9 +136,19 @@ describe('ratio-of-sums aggregation via IAggFuncResult wrapper', () => {
         expect(ireland.silver).toBe(4);
         expect(ireland.toNumber()).toBe(2.5);
         expect(ireland.toString()).toBe('2.50');
+        await new GridRows(api, `rolls up gold/silver totals correctly across multiple grouping levels final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" goldSilverRatio:{"gold":10,"silver":4,"value":2.5}
+                · ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:2000 goldSilverRatio:{"gold":4,"silver":2,"value":2}
+                · │ ├── LEAF id:1 country:"Ireland" year:2000 goldSilverRatio:{"gold":3,"silver":1,"value":3}
+                · │ └── LEAF id:2 country:"Ireland" year:2000 goldSilverRatio:{"gold":1,"silver":1,"value":1}
+                · └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2004 ag-Grid-AutoColumn:2004 goldSilverRatio:{"gold":6,"silver":2,"value":3}
+                · · └── LEAF id:3 country:"Ireland" year:2004 goldSilverRatio:{"gold":6,"silver":2,"value":3}
+            `);
     });
 
-    test('child group with zero silver still contributes its gold to the parent total', () => {
+    test('child group with zero silver still contributes its gold to the parent total', async () => {
         const api = gridsManager.createGrid('ratio-zero-silver-child', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
@@ -144,6 +171,22 @@ describe('ratio-of-sums aggregation via IAggFuncResult wrapper', () => {
                 { id: '3', country: 'Ireland', year: 2004, gold: 0, silver: 5 },
             ] satisfies MedalRow[],
         });
+        await new GridColumns(api, `child group with zero silver still contributes its gold to the parent total setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── goldSilverRatio "Gold to Silver" width:200 aggFunc:ratio
+            `);
+        await new GridRows(api, `child group with zero silver still contributes its gold to the parent total setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" goldSilverRatio:{"gold":7,"silver":5,"value":1.4}
+                · ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:2000 goldSilverRatio:{"gold":7,"silver":0,"value":null}
+                · │ ├── LEAF id:1 country:"Ireland" year:2000 goldSilverRatio:{"gold":5,"silver":0,"value":null}
+                · │ └── LEAF id:2 country:"Ireland" year:2000 goldSilverRatio:{"gold":2,"silver":0,"value":null}
+                · └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2004 ag-Grid-AutoColumn:2004 goldSilverRatio:{"gold":0,"silver":5,"value":0}
+                · · └── LEAF id:3 country:"Ireland" year:2004 goldSilverRatio:{"gold":0,"silver":5,"value":0}
+            `);
 
         const year2000 = findGroupRow(api, '2000').aggData?.goldSilverRatio;
         expect(year2000).toBeInstanceOf(RatioResult);
@@ -166,5 +209,17 @@ describe('ratio-of-sums aggregation via IAggFuncResult wrapper', () => {
         expect(ireland.gold).toBe(7);
         expect(ireland.silver).toBe(5);
         expect(ireland.toNumber()).toBe(7 / 5);
+        await new GridRows(
+            api,
+            `child group with zero silver still contributes its gold to the parent total final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" goldSilverRatio:{"gold":7,"silver":5,"value":1.4}
+            · ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:2000 goldSilverRatio:{"gold":7,"silver":0,"value":null}
+            · │ ├── LEAF id:1 country:"Ireland" year:2000 goldSilverRatio:{"gold":5,"silver":0,"value":null}
+            · │ └── LEAF id:2 country:"Ireland" year:2000 goldSilverRatio:{"gold":2,"silver":0,"value":null}
+            · └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2004 ag-Grid-AutoColumn:2004 goldSilverRatio:{"gold":0,"silver":5,"value":0}
+            · · └── LEAF id:3 country:"Ireland" year:2004 goldSilverRatio:{"gold":0,"silver":5,"value":0}
+        `);
     });
 });

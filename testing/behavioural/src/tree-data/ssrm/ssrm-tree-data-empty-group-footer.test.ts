@@ -1,7 +1,7 @@
 import type { GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import { waitForNoLoadingRows } from '../../test-utils/ssrm-test-utils';
 
 describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
@@ -65,6 +65,21 @@ describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
         };
 
         const api = gridsManager.createGrid('ssrmEmptyGroupFooter', gridOptions);
+        await new GridColumns(
+            api,
+            `expanding group with empty children and groupTotalRow bottom does not cause infi setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── name "Name" width:200
+        `);
+        await new GridRows(
+            api,
+            `expanding group with empty children and groupTotalRow bottom does not cause infi setup`
+        ).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         // Wait for root load (1 request)
         await waitForLoadCount(tracker, 1);
@@ -83,6 +98,14 @@ describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
         await asyncSetTimeout(200);
 
         expect(tracker.loadCount).toBe(2);
+        await new GridRows(
+            api,
+            `expanding group with empty children and groupTotalRow bottom does not cause infi final state`
+        ).check(`
+            ROOT id:<no-id>
+            └─┬ A GROUP id:A ag-Grid-AutoColumn:"Node A" id:"A" name:"Node A"
+            · └─ footer id:rowGroupFooter_A ag-Grid-AutoColumn:"Total Node A" id:"A" name:"Node A"
+        `);
     });
 
     test('expanding empty group with groupHideOpenParents and groupTotalRow bottom does not cause infinite requests', async () => {
@@ -124,7 +147,25 @@ describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
             serverSideDatasource: datasource,
         };
 
+        // This config combination legitimately logs validation warnings — silence the noise.
+        const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         const api = gridsManager.createGrid('ssrmHideOpenParents', gridOptions);
+        await new GridColumns(
+            api,
+            `expanding empty group with groupHideOpenParents and groupTotalRow bottom does no setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── name "Name" width:200
+        `);
+        await new GridRows(
+            api,
+            `expanding empty group with groupHideOpenParents and groupTotalRow bottom does no setup`
+        ).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
+        consoleWarnSpy.mockRestore();
 
         // Wait for root load
         await waitForLoadCount(tracker, 1);
@@ -158,6 +199,16 @@ describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
 
         tracker.active = false;
         await asyncSetTimeout(10);
+        await new GridRows(
+            api,
+            `expanding empty group with groupHideOpenParents and groupTotalRow bottom does no final state`
+        ).check(`
+            ROOT id:<no-id>
+            └─┬ A GROUP id:A ag-Grid-AutoColumn:"Node A" id:"A" name:"Node A"
+            · ├─┬ B GROUP id:B ag-Grid-AutoColumn:"Node B" id:"B" name:"Node B"
+            · │ └─ footer id:rowGroupFooter_B ag-Grid-AutoColumn:"Total Node B" id:"B" name:"Node B"
+            · └─ footer id:rowGroupFooter_A ag-Grid-AutoColumn:"Total Node A" id:"A" name:"Node A"
+        `);
     });
 
     test('expanding group with empty children without groupTotalRow does not cause infinite requests', async () => {
@@ -176,6 +227,21 @@ describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
         };
 
         const api = gridsManager.createGrid('ssrmEmptyGroupNoFooter', gridOptions);
+        await new GridColumns(
+            api,
+            `expanding group with empty children without groupTotalRow does not cause infinit setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── name "Name" width:200
+        `);
+        await new GridRows(
+            api,
+            `expanding group with empty children without groupTotalRow does not cause infinit setup`
+        ).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         // Wait for root load
         await waitForLoadCount(tracker, 1);
@@ -194,5 +260,12 @@ describe('ag-grid SSRM tree data empty group with groupTotalRow', () => {
         await asyncSetTimeout(200);
 
         expect(tracker.loadCount).toBe(2);
+        await new GridRows(
+            api,
+            `expanding group with empty children without groupTotalRow does not cause infinit final state`
+        ).check(`
+            ROOT id:<no-id>
+            └── A GROUP id:A ag-Grid-AutoColumn:"Node A" id:"A" name:"Node A"
+        `);
     });
 });

@@ -2,7 +2,7 @@ import type { ColDef, ColGroupDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Column Model', () => {
     const gridsManager = new TestGridsManager({
@@ -489,7 +489,7 @@ describe('Column Model', () => {
     });
 
     describe('column state', () => {
-        test('getColumnState returns full state', () => {
+        test('getColumnState returns full state', async () => {
             const columnDefs: ColDef[] = [
                 { colId: 'a', width: 150, sort: 'asc', pinned: 'left' },
                 { colId: 'b', width: 250 },
@@ -497,6 +497,15 @@ describe('Column Model', () => {
             ];
 
             const api = gridsManager.createGrid('myGrid', { columnDefs });
+            await new GridColumns(api, `getColumnState returns full state setup`).checkColumns(`
+                LEFT
+                └── a width:150 sort:asc
+                CENTER
+                └── b width:250
+            `);
+            await new GridRows(api, `getColumnState returns full state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const state = api.getColumnState();
             expect(state).toHaveLength(3);
@@ -516,6 +525,9 @@ describe('Column Model', () => {
             const stateC = state.find((s) => s.colId === 'c');
             expect(stateC).toBeDefined();
             expect(stateC!.hide).toBe(true);
+            await new GridRows(api, `getColumnState returns full state final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
 
         test('applyColumnState updates multiple properties', async () => {
@@ -561,14 +573,21 @@ describe('Column Model', () => {
                 └── a width:300 sort:asc
             `);
 
+            // Capture grid-level `columnsReset` event (events are async — flush before asserting).
+            const resetEvents: any[] = [];
+            api.addEventListener('columnsReset', (e) => resetEvents.push(e));
+
             // Reset to original
             api.resetColumnState();
+            await asyncSetTimeout(0);
 
             await new GridColumns(api, 'reset state').checkColumns(`
                 CENTER
                 ├── a width:150
                 └── b width:250
             `);
+
+            expect(resetEvents.length).toBeGreaterThan(0);
         });
 
         test('applyColumnState with applyOrder reorders columns', async () => {

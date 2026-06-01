@@ -1,5 +1,3 @@
-import type { MockInstance } from 'vitest';
-
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
@@ -11,15 +9,12 @@ describe('ag-grid hierarchical immutable tree data', () => {
         modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
-    let consoleWarnSpy: MockInstance;
-
     beforeEach(() => {
         gridsManager.reset();
     });
 
     afterEach(() => {
         gridsManager.reset();
-        consoleWarnSpy?.mockRestore();
     });
 
     test('ag-grid hierarchical immutable tree data', async () => {

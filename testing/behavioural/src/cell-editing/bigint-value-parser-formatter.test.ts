@@ -2,7 +2,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import { ClientSideRowModelModule, TextEditorModule, getGridElement } from 'ag-grid-community';
 
-import { GridRows, TestGridsManager, waitForEvent, waitForInput } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent, waitForInput } from '../test-utils';
 
 describe('BigInt value parser and formatter', () => {
     const gridMgr = new TestGridsManager({
@@ -19,6 +19,14 @@ describe('BigInt value parser and formatter', () => {
             rowData: [{ id: 'r1', value: 10n }],
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `parses bigint editor input setup`).checkColumns(`
+            CENTER
+            └── value "Value" width:200 editable
+        `);
+        await new GridRows(api, `parses bigint editor input setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 value:"10n"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const cell = gridDiv.querySelector<HTMLElement>('[row-index="0"] [col-id="value"]')!;
@@ -38,6 +46,10 @@ describe('BigInt value parser and formatter', () => {
 
         const rowNode = api.getRowNode('r1')!;
         expect(rowNode.data.value).toBe(500n);
+        await new GridRows(api, `parses bigint editor input final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 value:"500n"
+        `);
     });
 
     test('uses valueFormatter for bigint display', async () => {

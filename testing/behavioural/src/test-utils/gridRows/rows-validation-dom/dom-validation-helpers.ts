@@ -106,11 +106,17 @@ export function validateNoDuplicateRowIds(gridRows: GridRows): void {
     }
 }
 
-/** Counts the number of header rows in the grid DOM to compute expected aria-rowindex values. */
+/** Counts the rows above the data rows that occupy `aria-rowindex` slots. This includes
+ *  `.ag-header-row` elements inside `.ag-header`, plus an extra slot for the advanced filter
+ *  header row (`.ag-advanced-filter-header`) when present. */
 export function countHeaderRows(gridElement: HTMLElement): number {
     const header = gridElement.querySelector('.ag-header');
-    if (!header) {
-        return 0;
+    let count = 0;
+    if (header) {
+        count += header.querySelectorAll(':scope > .ag-header-row').length;
     }
-    return header.querySelectorAll(':scope > .ag-header-row').length;
+    if (gridElement.querySelector('.ag-advanced-filter-header')) {
+        count += 1;
+    }
+    return count;
 }

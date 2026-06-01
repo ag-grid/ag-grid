@@ -4,7 +4,25 @@ import { GridRows } from './gridRows/gridRows';
 import { GridRowsDiagramTree } from './gridRows/rows-diagram/gridRowsDiagramTree';
 
 export function optionalEscapeString(s: string): string {
-    return /^(?!\d)\w[._-\w]*$|^\d+$/.test(s) ? s : JSON.stringify(s);
+    // Bare identifier or all-digit literal — no quoting needed.
+    if (/^(?!\d)\w[._-\w]*$|^\d+$/.test(s)) {
+        return s;
+    }
+    // For strings containing control chars, backslash, or both quote styles we fall back to
+    // `JSON.stringify` (whose `\"` form would need ugly double-backslash escaping in the snapshot
+    // template literal — kept as a last resort).
+    if (/[\n\r\t\\]/.test(s)) {
+        return JSON.stringify(s);
+    }
+    const hasDouble = s.includes('"');
+    const hasSingle = s.includes("'");
+    // String has `"` but no `'` → wrap in single quotes (avoids `\"` in the snapshot source).
+    if (hasDouble && !hasSingle) {
+        return `'${s}'`;
+    }
+    // Fallback to the historical double-quoted form. JSON.stringify handles any remaining edge
+    // case where the string mixes both quote styles.
+    return JSON.stringify(s);
 }
 
 export function rowIdToString(row: IRowNode | string | number | null | undefined): string {

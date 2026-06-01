@@ -325,6 +325,17 @@ describe('ag-grid grouping aggregation', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `custom aggFunc receives api and context in params setup`).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Category" width:200
+            └── value "Value" width:200 aggFunc:custom
+        `);
+        await new GridRows(api, `custom aggFunc receives api and context in params setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" value:30
+            · ├── LEAF id:1 category:"A" value:10
+            · └── LEAF id:2 category:"A" value:20
+        `);
 
         expect(capturedParams.length).toBeGreaterThan(0);
 
@@ -337,6 +348,12 @@ describe('ag-grid grouping aggregation', () => {
             expect(params.values).toBeDefined();
             expect(Array.isArray(params.values)).toBe(true);
         }
+        await new GridRows(api, `custom aggFunc receives api and context in params final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" value:30
+            · ├── LEAF id:1 category:"A" value:10
+            · └── LEAF id:2 category:"A" value:20
+        `);
     });
 
     test('grouping with mixed data types and null values in aggregation', async () => {

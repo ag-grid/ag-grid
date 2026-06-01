@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('Toolbar find item', () => {
     const gridMgr = new TestGridsManager({
@@ -20,6 +20,14 @@ describe('Toolbar find item', () => {
                 items: ['agFindToolbarItem'],
             },
         });
+        await new GridColumns(api, `renders input with placeholder setup`).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `renders input with placeholder setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -28,6 +36,10 @@ describe('Toolbar find item', () => {
         expect(input).not.toBeNull();
         expect(input!.placeholder).toBe('Find...');
         expect(input!.getAttribute('aria-label')).toBe('Find');
+        await new GridRows(api, `renders input with placeholder final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     test('sets findSearchValue on input', async () => {
@@ -38,6 +50,14 @@ describe('Toolbar find item', () => {
                 items: ['agFindToolbarItem'],
             },
         });
+        await new GridColumns(api, `sets findSearchValue on input setup`).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `sets findSearchValue on input setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -50,6 +70,10 @@ describe('Toolbar find item', () => {
         await new Promise<void>((resolve) => setTimeout(resolve, 350));
 
         expect(api.getGridOption('findSearchValue')).toBe('Alice');
+        await new GridRows(api, `sets findSearchValue on input final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     test('match count is a label associated with the input', async () => {
@@ -60,6 +84,14 @@ describe('Toolbar find item', () => {
                 items: ['agFindToolbarItem'],
             },
         });
+        await new GridColumns(api, `match count is a label associated with the input setup`).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `match count is a label associated with the input setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -70,6 +102,10 @@ describe('Toolbar find item', () => {
         expect(matchCount.tagName).toBe('LABEL');
         expect(input.id).toBeTruthy();
         expect(matchCount.getAttribute('for')).toBe(input.id);
+        await new GridRows(api, `match count is a label associated with the input final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     describe('missing FindModule', () => {
@@ -89,6 +125,15 @@ describe('Toolbar find item', () => {
                 rowData: [{ name: 'Alice' }],
                 toolbar: { items: ['agFindToolbarItem'] },
             });
+            await new GridColumns(api, `hides find and logs error when FindModule is not registered setup`)
+                .checkColumns(`
+                    CENTER
+                    └── name "Name" width:200
+                `);
+            await new GridRows(api, `hides find and logs error when FindModule is not registered setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -104,6 +149,12 @@ describe('Toolbar find item', () => {
             );
 
             errorSpy.mockRestore();
+            await new GridRows(api, `hides find and logs error when FindModule is not registered final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 name:"Alice"
+                `
+            );
         });
     });
 });

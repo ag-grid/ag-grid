@@ -1,7 +1,7 @@
 import type { GridApi, GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 import { waitForNoLoadingRows } from '../test-utils/ssrm-test-utils';
 
 type Employee = {
@@ -157,9 +157,43 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(
+            api,
+            `purge refresh re-sorts rows client-side when serverSideEnableClientSideSort is e setup`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── name "Name" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(
+            api,
+            `purge refresh re-sorts rows client-side when serverSideEnableClientSideSort is e setup`
+        ).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await waitForEvent('firstDataRendered', api);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await new GridColumns(
+            api,
+            `purge refresh re-sorts rows client-side when serverSideEnableClientSideSort is e after applyColumnState`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── name "Name" width:200
+            └── value "Value" width:200 sort:asc
+        `);
+        await new GridRows(
+            api,
+            `purge refresh re-sorts rows client-side when serverSideEnableClientSideSort is e after applyColumnState`
+        ).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:"2" name:"Alice" value:1
+            ├── LEAF id:3 id:"3" name:"Bob" value:2
+            └── LEAF id:1 id:"1" name:"Charlie" value:3
+        `);
         await waitForNoLoadingRows(api);
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
@@ -191,9 +225,32 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `purge refresh re-sorts rows with descending sort setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── name "Name" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `purge refresh re-sorts rows with descending sort setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await waitForEvent('firstDataRendered', api);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'desc' }] });
+        await new GridColumns(api, `purge refresh re-sorts rows with descending sort after applyColumnState`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── value "Value" width:200 sort:desc
+            `);
+        await new GridRows(api, `purge refresh re-sorts rows with descending sort after applyColumnState`).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:3 id:"3" name:"Charlie" value:3
+            ├── LEAF id:2 id:"2" name:"Bob" value:2
+            └── LEAF id:1 id:"1" name:"Alice" value:1
+        `);
         await waitForNoLoadingRows(api);
 
         expect(getDisplayedValues(api, 'value')).toEqual([3, 2, 1]);
@@ -222,9 +279,39 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `purge refresh does not sort when serverSideEnableClientSideSort is disabled setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `purge refresh does not sort when serverSideEnableClientSideSort is disabled setup`)
+            .check(`
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `);
         await waitForEvent('firstDataRendered', api);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await new GridColumns(
+            api,
+            `purge refresh does not sort when serverSideEnableClientSideSort is disabled after applyColumnState`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── name "Name" width:200
+            └── value "Value" width:200 sort:asc
+        `);
+        await new GridRows(
+            api,
+            `purge refresh does not sort when serverSideEnableClientSideSort is disabled after applyColumnState`
+        ).check(`
+            ROOT id:<no-id>
+            ├── filler id:rowIndex:0
+            ├── filler id:rowIndex:1
+            └── filler id:rowIndex:2
+        `);
         await waitForNoLoadingRows(api);
 
         api.refreshServerSide({ purge: true });
@@ -252,10 +339,29 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `initial load sorts rows client-side when sort is pre-configured setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── value "Value" width:200 sort:asc
+            `);
+        await new GridRows(api, `initial load sorts rows client-side when sort is pre-configured setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await waitForEvent('firstDataRendered', api);
 
         // Rows should be sorted on initial load without any explicit applyColumnState call
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
+        await new GridRows(api, `initial load sorts rows client-side when sort is pre-configured final state`).check(
+            `
+                ROOT id:<no-id>
+                ├── LEAF id:2 id:"2" name:"Alice" value:1
+                ├── LEAF id:3 id:"3" name:"Bob" value:2
+                └── LEAF id:1 id:"1" name:"Charlie" value:3
+            `
+        );
     });
 
     test('child store sorts rows client-side on initial group expansion', async () => {
@@ -424,9 +530,33 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `non-purge refresh re-sorts rows client-side setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── name "Name" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `non-purge refresh re-sorts rows client-side setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await waitForEvent('firstDataRendered', api);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await new GridColumns(api, `non-purge refresh re-sorts rows client-side after applyColumnState`).checkColumns(
+            `
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── value "Value" width:200 sort:asc
+            `
+        );
+        await new GridRows(api, `non-purge refresh re-sorts rows client-side after applyColumnState`).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:"2" name:"Alice" value:1
+            ├── LEAF id:3 id:"3" name:"Bob" value:2
+            └── LEAF id:1 id:"1" name:"Charlie" value:3
+        `);
         await waitForNoLoadingRows(api);
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
@@ -526,9 +656,40 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `non-purge refresh re-sorts when server returns rows in different order setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `non-purge refresh re-sorts when server returns rows in different order setup`).check(
+            `
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `
+        );
         await waitForEvent('firstDataRendered', api);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await new GridColumns(
+            api,
+            `non-purge refresh re-sorts when server returns rows in different order after applyColumnState`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── name "Name" width:200
+            └── value "Value" width:200 sort:asc
+        `);
+        await new GridRows(
+            api,
+            `non-purge refresh re-sorts when server returns rows in different order after applyColumnState`
+        ).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:"2" name:"Alice" value:1
+            ├── LEAF id:3 id:"3" name:"Bob" value:2
+            └── LEAF id:1 id:"1" name:"Charlie" value:3
+        `);
         await waitForNoLoadingRows(api);
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
@@ -574,9 +735,32 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `non-purge refresh re-sorts when row values change setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── name "Name" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `non-purge refresh re-sorts when row values change setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await waitForEvent('firstDataRendered', api);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await new GridColumns(api, `non-purge refresh re-sorts when row values change after applyColumnState`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── value "Value" width:200 sort:asc
+            `);
+        await new GridRows(api, `non-purge refresh re-sorts when row values change after applyColumnState`).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:"2" name:"Alice" value:1
+            ├── LEAF id:3 id:"3" name:"Bob" value:2
+            └── LEAF id:1 id:"1" name:"Charlie" value:3
+        `);
         await waitForNoLoadingRows(api);
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
@@ -609,9 +793,31 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `purge refresh without getRowId re-sorts rows setup`).checkColumns(`
+            CENTER
+            ├── name "Name" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `purge refresh without getRowId re-sorts rows setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await waitForEvent('firstDataRendered', api);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await new GridColumns(api, `purge refresh without getRowId re-sorts rows after applyColumnState`).checkColumns(
+            `
+                CENTER
+                ├── name "Name" width:200
+                └── value "Value" width:200 sort:asc
+            `
+        );
+        await new GridRows(api, `purge refresh without getRowId re-sorts rows after applyColumnState`).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:1 name:"Alice" value:1
+            ├── LEAF id:2 name:"Bob" value:2
+            └── LEAF id:0 name:"Charlie" value:3
+        `);
         await waitForNoLoadingRows(api);
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
@@ -641,6 +847,17 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `purge refresh with multi-column sort re-sorts correctly setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── name "Name" width:200
+            ├── category "Category" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `purge refresh with multi-column sort re-sorts correctly setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await waitForEvent('firstDataRendered', api);
 
         // Multi-column sort: category asc, then value asc
@@ -650,6 +867,23 @@ describe('SSRM Client-Side Sorting', () => {
                 { colId: 'value', sort: 'asc', sortIndex: 1 },
             ],
         });
+        await new GridColumns(api, `purge refresh with multi-column sort re-sorts correctly after applyColumnState`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── category "Category" width:200 sort:asc sortIndex:0
+                └── value "Value" width:200 sort:asc sortIndex:1
+            `);
+        await new GridRows(api, `purge refresh with multi-column sort re-sorts correctly after applyColumnState`).check(
+            `
+                ROOT id:<no-id>
+                ├── LEAF id:2 id:"2" name:"Bob" category:"A" value:1
+                ├── LEAF id:3 id:"3" name:"Charlie" category:"A" value:3
+                ├── LEAF id:4 id:"4" name:"Diana" category:"B" value:1
+                └── LEAF id:1 id:"1" name:"Alice" category:"B" value:2
+            `
+        );
         await waitForNoLoadingRows(api);
 
         // A(1), A(3), B(1), B(2)
@@ -681,12 +915,50 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `purge refresh with no active sort does not re-order rows setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── name "Name" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `purge refresh with no active sort does not re-order rows setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await waitForEvent('firstDataRendered', api);
 
         // Apply a sort then clear it
         api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await new GridColumns(api, `purge refresh with no active sort does not re-order rows after applyColumnState`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── value "Value" width:200 sort:asc
+            `);
+        await new GridRows(api, `purge refresh with no active sort does not re-order rows after applyColumnState`)
+            .check(`
+                ROOT id:<no-id>
+                ├── LEAF id:2 id:"2" name:"Alice" value:1
+                ├── LEAF id:3 id:"3" name:"Bob" value:2
+                └── LEAF id:1 id:"1" name:"Charlie" value:3
+            `);
         await waitForNoLoadingRows(api);
         api.applyColumnState({ state: [{ colId: 'value', sort: null }] });
+        await new GridColumns(api, `purge refresh with no active sort does not re-order rows after applyColumnState #2`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `purge refresh with no active sort does not re-order rows after applyColumnState #2`)
+            .check(`
+                ROOT id:<no-id>
+                ├── LEAF id:2 id:"2" name:"Alice" value:1
+                ├── LEAF id:3 id:"3" name:"Bob" value:2
+                └── LEAF id:1 id:"1" name:"Charlie" value:3
+            `);
         await waitForNoLoadingRows(api);
 
         api.refreshServerSide({ purge: true });
@@ -720,10 +992,43 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `purge refresh with paginated loading sorts only after all blocks load setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `purge refresh with paginated loading sorts only after all blocks load setup`).check(
+            `
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `
+        );
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await new GridColumns(
+            api,
+            `purge refresh with paginated loading sorts only after all blocks load after applyColumnState`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── name "Name" width:200
+            └── value "Value" width:200 sort:asc
+        `);
+        await new GridRows(
+            api,
+            `purge refresh with paginated loading sorts only after all blocks load after applyColumnState`
+        ).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:"2" name:"Alice" value:1
+            ├── LEAF id:4 id:"4" name:"Diana" value:2
+            ├── LEAF id:3 id:"3" name:"Bob" value:3
+            ├── LEAF id:5 id:"5" name:"Eve" value:4
+            └── LEAF id:1 id:"1" name:"Charlie" value:5
+        `);
         await waitForNoLoadingRows(api);
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3, 4, 5]);
@@ -906,9 +1211,40 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `grand total row: non-purge refresh re-sorts leaves and preserves grand total setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `grand total row: non-purge refresh re-sorts leaves and preserves grand total setup`)
+            .check(`
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `);
         await waitForEvent('firstDataRendered', api);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await new GridColumns(
+            api,
+            `grand total row: non-purge refresh re-sorts leaves and preserves grand total after applyColumnState`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── name "Name" width:200
+            └── value "Value" width:200 sort:asc
+        `);
+        await new GridRows(
+            api,
+            `grand total row: non-purge refresh re-sorts leaves and preserves grand total after applyColumnState`
+        ).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:"2" name:"Alice" value:1
+            ├── LEAF id:3 id:"3" name:"Bob" value:2
+            ├── LEAF id:1 id:"1" name:"Charlie" value:3
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"grand" name:"Total" value:6
+        `);
         await waitForNoLoadingRows(api);
 
         // Non-purge refresh — server returns unsorted data again plus grand total.
@@ -943,9 +1279,40 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `changing sort column between refreshes updates ordering to latest sort setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── a "A" width:200
+                └── b "B" width:200
+            `);
+        await new GridRows(api, `changing sort column between refreshes updates ordering to latest sort setup`).check(
+            `
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `
+        );
         await waitForEvent('firstDataRendered', api);
 
         api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+        await new GridColumns(
+            api,
+            `changing sort column between refreshes updates ordering to latest sort after applyColumnState`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── a "A" width:200 sort:asc
+            └── b "B" width:200
+        `);
+        await new GridRows(
+            api,
+            `changing sort column between refreshes updates ordering to latest sort after applyColumnState`
+        ).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:"2" a:1 b:30
+            ├── LEAF id:3 id:"3" a:2 b:20
+            └── LEAF id:1 id:"1" a:3 b:10
+        `);
         await waitForNoLoadingRows(api);
 
         let refreshed = waitForEvent('storeRefreshed', api);
@@ -962,6 +1329,24 @@ describe('SSRM Client-Side Sorting', () => {
                 { colId: 'b', sort: 'desc' },
             ],
         });
+        await new GridColumns(
+            api,
+            `changing sort column between refreshes updates ordering to latest sort after applyColumnState #2`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── a "A" width:200
+            └── b "B" width:200 sort:desc
+        `);
+        await new GridRows(
+            api,
+            `changing sort column between refreshes updates ordering to latest sort after applyColumnState #2`
+        ).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:"2" a:1 b:30
+            ├── LEAF id:3 id:"3" a:2 b:20
+            └── LEAF id:1 id:"1" a:3 b:10
+        `);
         await waitForNoLoadingRows(api);
 
         refreshed = waitForEvent('storeRefreshed', api);
@@ -1051,9 +1436,38 @@ describe('SSRM Client-Side Sorting', () => {
                 },
             },
         });
+        await new GridColumns(api, `transaction add: out-of-order row is placed at its sorted position setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `transaction add: out-of-order row is placed at its sorted position setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await waitForEvent('firstDataRendered', api);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await new GridColumns(
+            api,
+            `transaction add: out-of-order row is placed at its sorted position after applyColumnState`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            ├── name "Name" width:200
+            └── value "Value" width:200 sort:asc
+        `);
+        await new GridRows(
+            api,
+            `transaction add: out-of-order row is placed at its sorted position after applyColumnState`
+        ).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" name:"Alice" value:1
+            ├── LEAF id:2 id:"2" name:"Bob" value:3
+            └── LEAF id:3 id:"3" name:"Charlie" value:5
+        `);
         await waitForNoLoadingRows(api);
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 3, 5]);
@@ -1061,6 +1475,16 @@ describe('SSRM Client-Side Sorting', () => {
         // Value 2 belongs between Alice (1) and Bob (3). Without client-side sort it would
         // appear last; with the sort it takes its natural position.
         api.applyServerSideTransaction({ add: [{ id: '4', name: 'Dora', value: 2 }] });
+        await new GridRows(
+            api,
+            `transaction add: out-of-order row is placed at its sorted position after applyServerSideTransaction`
+        ).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" name:"Alice" value:1
+            ├── LEAF id:4 id:"4" name:"Dora" value:2
+            ├── LEAF id:2 id:"2" name:"Bob" value:3
+            └── LEAF id:3 id:"3" name:"Charlie" value:5
+        `);
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3, 5]);
         expect(getDisplayedValues(api, 'name')).toEqual(['Alice', 'Dora', 'Bob', 'Charlie']);

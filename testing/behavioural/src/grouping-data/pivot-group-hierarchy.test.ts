@@ -298,7 +298,7 @@ describe('pivot with groupHierarchy (date-time)', () => {
         `);
     });
 
-    // skipped on `latest` — fix lands with AG-17366-column-model-rewrite
+    // Solved by AG-17366 when it is completed
     test.skip('re-setting identical columnDefs does not leave destroyed hierarchy columns', async () => {
         const api = createPivotDateTimeGrid();
         api.setPivotColumns(['date']);
@@ -382,7 +382,182 @@ describe('pivot with groupHierarchy (date-time)', () => {
         expect(monthIdx).toBeLessThan(dateIdx);
 
         // Sanity: GridColumns snapshot of the displayed structure.
-        await new GridColumns(api, 'date hierarchy as row groups').checkColumns(false);
+        await new GridColumns(api, 'date hierarchy as row groups').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year "Date (Year)" width:200
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month "Date (Month)" width:200
+            ├── ag-Grid-AutoColumn-date "Date" width:200
+            ├── country "Country" width:200
+            └── date "Date" width:200 rowGroup
+        `);
+    });
+
+    // Solved by AG-17366 when it is completed
+    test.skip('two independent hierarchy sources keep each virtual run ordered before its own source', async () => {
+        const api = gridsManager.createGrid('twoHierarchies', {
+            columnDefs: [
+                { field: 'country' },
+                { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] },
+                { field: 'date2', rowGroup: true, groupHierarchy: ['year', 'quarter'] },
+            ],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1), date2: new Date(2019, 3, 1) },
+                { country: 'UK', date: new Date(2021, 5, 15), date2: new Date(2018, 8, 20) },
+            ],
+            groupDisplayType: 'multipleColumns',
+        });
+        await new GridColumns(
+            api,
+            `two independent hierarchy sources keep each virtual run ordered before its own s setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year "Date (Year)" width:200
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month "Date (Month)" width:200
+            ├── ag-Grid-AutoColumn-date "Date" width:200
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year "Date2 (Year)" width:200
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter "Date2 (Quarter)" width:200
+            ├── ag-Grid-AutoColumn-date2 "Date2" width:200
+            ├── country "Country" width:200
+            ├── date "Date" width:200 rowGroup
+            └── date2 "Date2" width:200 rowGroup
+        `);
+        await new GridRows(
+            api,
+            `two independent hierarchy sources keep each virtual run ordered before its own s setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:null ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            ├─┬ filler collapsed id:row-group-ag-Grid-HierarchyColumn-date-year-2020 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:null ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            │ └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:"1" ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            │ · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01 ag-Grid-AutoColumn-date:"2020-01-01" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            │ · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-ag-Grid-HierarchyColumn-date2-year-2019 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:"2019" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            │ · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-ag-Grid-HierarchyColumn-date2-year-2019-ag-Grid-HierarchyColumn-date2-quarter-2 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:"2" ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            │ · · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-ag-Grid-HierarchyColumn-date2-year-2019-ag-Grid-HierarchyColumn-date2-quarter-2-date2-2019-04-01 ag-Grid-AutoColumn-date2:"2019-04-01" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            │ · · · · · └── LEAF hidden id:0 ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-month:"1" ag-Grid-HierarchyColumn-date2-year:"2019" ag-Grid-HierarchyColumn-date2-quarter:"2" country:"USA" date:"2020-01-01" date2:"2019-04-01"
+            └─┬ filler collapsed id:row-group-ag-Grid-HierarchyColumn-date-year-2021 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:null ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:"6" ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15 ag-Grid-AutoColumn-date:"2021-06-15" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-ag-Grid-HierarchyColumn-date2-year-2018 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:"2018" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            · · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-ag-Grid-HierarchyColumn-date2-year-2018-ag-Grid-HierarchyColumn-date2-quarter-3 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:"3" ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            · · · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-ag-Grid-HierarchyColumn-date2-year-2018-ag-Grid-HierarchyColumn-date2-quarter-3-date2-2018-09-20 ag-Grid-AutoColumn-date2:"2018-09-20" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            · · · · · · └── LEAF hidden id:1 ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-month:"6" ag-Grid-HierarchyColumn-date2-year:"2018" ag-Grid-HierarchyColumn-date2-quarter:"3" country:"UK" date:"2021-06-15" date2:"2018-09-20"
+        `);
+        await asyncSetTimeout(0);
+
+        // Each source's virtuals stay grouped and ordered (year before month / year before quarter),
+        // immediately before that source col; the two source groups keep their colDef order.
+        const rowGroupCols = api.getRowGroupColumns().map((c) => c.getColId());
+        expect(rowGroupCols).toEqual([
+            'ag-Grid-HierarchyColumn-date-year',
+            'ag-Grid-HierarchyColumn-date-month',
+            'date',
+            'ag-Grid-HierarchyColumn-date2-year',
+            'ag-Grid-HierarchyColumn-date2-quarter',
+            'date2',
+        ]);
+        await new GridRows(
+            api,
+            `two independent hierarchy sources keep each virtual run ordered before its own s final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:null ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            ├─┬ filler collapsed id:row-group-ag-Grid-HierarchyColumn-date-year-2020 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:null ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            │ └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:"1" ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            │ · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01 ag-Grid-AutoColumn-date:"2020-01-01" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            │ · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-ag-Grid-HierarchyColumn-date2-year-2019 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:"2019" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            │ · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-ag-Grid-HierarchyColumn-date2-year-2019-ag-Grid-HierarchyColumn-date2-quarter-2 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:"2" ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            │ · · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-ag-Grid-HierarchyColumn-date2-year-2019-ag-Grid-HierarchyColumn-date2-quarter-2-date2-2019-04-01 ag-Grid-AutoColumn-date2:"2019-04-01" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            │ · · · · · └── LEAF hidden id:0 ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-month:"1" ag-Grid-HierarchyColumn-date2-year:"2019" ag-Grid-HierarchyColumn-date2-quarter:"2" country:"USA" date:"2020-01-01" date2:"2019-04-01"
+            └─┬ filler collapsed id:row-group-ag-Grid-HierarchyColumn-date-year-2021 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:null ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:"6" ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15 ag-Grid-AutoColumn-date:"2021-06-15" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-ag-Grid-HierarchyColumn-date2-year-2018 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:"2018" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            · · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-ag-Grid-HierarchyColumn-date2-year-2018-ag-Grid-HierarchyColumn-date2-quarter-3 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-quarter:"3" ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            · · · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-ag-Grid-HierarchyColumn-date2-year-2018-ag-Grid-HierarchyColumn-date2-quarter-3-date2-2018-09-20 ag-Grid-AutoColumn-date2:"2018-09-20" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null ag-Grid-HierarchyColumn-date2-quarter:null
+            · · · · · · └── LEAF hidden id:1 ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-month:"6" ag-Grid-HierarchyColumn-date2-year:"2018" ag-Grid-HierarchyColumn-date2-quarter:"3" country:"UK" date:"2021-06-15" date2:"2018-09-20"
+        `);
+    });
+
+    // Solved by AG-17366 when it is completed
+    test.skip('applyColumnState row-group ordering sorts mixed hierarchy + plain cols correctly', async () => {
+        const api = gridsManager.createGrid('stateOrder', {
+            columnDefs: [
+                { field: 'country' },
+                { field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+                { field: 'date2', enableRowGroup: true, groupHierarchy: ['year'] },
+            ],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1), date2: new Date(2019, 3, 1) },
+                { country: 'UK', date: new Date(2021, 5, 15), date2: new Date(2018, 8, 20) },
+            ],
+            groupDisplayType: 'multipleColumns',
+        });
+        await new GridColumns(
+            api,
+            `applyColumnState row-group ordering sorts mixed hierarchy + plain cols correctly setup`
+        ).checkColumns(`
+            CENTER
+            ├── country "Country" width:200
+            ├── date "Date" width:200
+            └── date2 "Date2" width:200
+        `);
+        await new GridRows(
+            api,
+            `applyColumnState row-group ordering sorts mixed hierarchy + plain cols correctly setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            ├── LEAF id:0 ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-month:"1" ag-Grid-HierarchyColumn-date2-year:"2019" country:"USA" date:"2020-01-01" date2:"2019-04-01"
+            └── LEAF id:1 ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-month:"6" ag-Grid-HierarchyColumn-date2-year:"2018" country:"UK" date:"2021-06-15" date2:"2018-09-20"
+        `);
+        await asyncSetTimeout(0);
+
+        api.applyColumnState({
+            state: [
+                { colId: 'date', rowGroupIndex: 0 },
+                { colId: 'country', rowGroupIndex: 1 },
+                { colId: 'date2', rowGroupIndex: 2 },
+            ],
+            applyOrder: true,
+        });
+        await new GridColumns(
+            api,
+            `applyColumnState row-group ordering sorts mixed hierarchy + plain cols correctly after applyColumnState`
+        ).checkColumns(`
+            CENTER
+            ├── date "Date" width:200 rowGroup
+            ├── country "Country" width:200 rowGroup
+            └── date2 "Date2" width:200 rowGroup
+        `);
+        await new GridRows(
+            api,
+            `applyColumnState row-group ordering sorts mixed hierarchy + plain cols correctly after applyColumnState`
+        ).check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            ├─┬ filler collapsed id:row-group-ag-Grid-HierarchyColumn-date-year-2020 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            │ └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            │ · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            │ · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-country-USA ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            │ · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-country-USA-ag-Grid-HierarchyColumn-date2-year-2019 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            │ · · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-country-USA-ag-Grid-HierarchyColumn-date2-year-2019-date2-2019-04-01 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            │ · · · · · └── LEAF hidden id:0 date:"2020-01-01" country:"USA" date2:"2019-04-01" ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-month:"1" ag-Grid-HierarchyColumn-date2-year:"2019"
+            └─┬ filler collapsed id:row-group-ag-Grid-HierarchyColumn-date-year-2021 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-country-UK ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            · · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-country-UK-ag-Grid-HierarchyColumn-date2-year-2018 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            · · · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-country-UK-ag-Grid-HierarchyColumn-date2-year-2018-date2-2018-09-20 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            · · · · · · └── LEAF hidden id:1 date:"2021-06-15" country:"UK" date2:"2018-09-20" ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-month:"6" ag-Grid-HierarchyColumn-date2-year:"2018"
+        `);
+        await asyncSetTimeout(0);
+
+        // Each source's virtuals sort immediately before that source; the source groups + plain col
+        // order by their rowGroupIndex (date group, then country, then date2 group).
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([
+            'ag-Grid-HierarchyColumn-date-year',
+            'ag-Grid-HierarchyColumn-date-month',
+            'date',
+            'country',
+            'ag-Grid-HierarchyColumn-date2-year',
+            'date2',
+        ]);
     });
 
     test('adding groupHierarchy at runtime creates virtual columns', async () => {
@@ -407,8 +582,19 @@ describe('pivot with groupHierarchy (date-time)', () => {
         expect(hierarchyIds.length).toBeGreaterThan(0);
         expect(new Set(hierarchyIds).size).toBe(hierarchyIds.length);
 
-        await new GridColumns(api, 'hierarchy added at runtime').checkColumns(false);
-        await new GridRows(api, 'rows after hierarchy added').check(false);
+        await new GridColumns(api, 'hierarchy added at runtime').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── country "Country" width:200
+            └── date "Date" width:200 rowGroup
+        `);
+        await new GridRows(api, 'rows after hierarchy added').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            └─┬ filler id:row-group-ag-Grid-HierarchyColumn-date-year-2020 ag-Grid-AutoColumn:"2020" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · └─┬ filler id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-6 ag-Grid-AutoColumn:"6" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · · └─┬ LEAF_GROUP id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-6-date-2020-06-15 ag-Grid-AutoColumn:"2020-06-15" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · · · └── LEAF id:0 ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-month:"6" country:"USA" date:"2020-06-15"
+        `);
     });
 
     test('removing groupHierarchy at runtime destroys virtual columns', async () => {
@@ -436,8 +622,17 @@ describe('pivot with groupHierarchy (date-time)', () => {
             expect((col as any).isAlive()).toBe(false);
         }
 
-        await new GridColumns(api, 'hierarchy removed at runtime').checkColumns(false);
-        await new GridRows(api, 'rows after hierarchy removed').check(false);
+        await new GridColumns(api, 'hierarchy removed at runtime').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── country "Country" width:200
+            └── date "Date" width:200 rowGroup
+        `);
+        await new GridRows(api, 'rows after hierarchy removed').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-date-2020-06-15 ag-Grid-AutoColumn:"2020-06-15"
+            · └── LEAF id:0 country:"USA" date:"2020-06-15"
+        `);
     });
 
     test('changing groupHierarchy array contents regenerates virtuals', async () => {
@@ -466,8 +661,19 @@ describe('pivot with groupHierarchy (date-time)', () => {
         const allIds = api.getAllGridColumns().map((c) => c.getColId());
         expect(new Set(allIds).size).toBe(allIds.length);
 
-        await new GridColumns(api, 'hierarchy expanded year → year+month').checkColumns(false);
-        await new GridRows(api, 'rows after hierarchy expanded').check(false);
+        await new GridColumns(api, 'hierarchy expanded year → year+month').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── country "Country" width:200
+            └── date "Date" width:200 rowGroup
+        `);
+        await new GridRows(api, 'rows after hierarchy expanded').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            └─┬ filler collapsed id:row-group-ag-Grid-HierarchyColumn-date-year-2020 ag-Grid-AutoColumn:"2020" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-6 ag-Grid-AutoColumn:"6" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · · └─┬ LEAF_GROUP collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-6-date-2020-06-15 ag-Grid-AutoColumn:"2020-06-15" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · · · └── LEAF hidden id:0 ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-month:"6" country:"USA" date:"2020-06-15"
+        `);
     });
 
     test('getPivotResultColumns() returns null when pivot mode is off', async () => {
@@ -479,6 +685,14 @@ describe('pivot with groupHierarchy (date-time)', () => {
 
         const cols = api.getPivotResultColumns();
         expect(cols == null || cols.length === 0).toBe(true);
+
+        await new GridColumns(api, 'pivot mode off — no pivot result cols').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── country "Country" width:200 rowGroup
+            ├── sport "Sport" width:200
+            └── gold "Gold" width:200 aggFunc:sum
+        `);
     });
 
     test('toggling pivot mode off after on clears pivot result cols', async () => {
@@ -494,6 +708,16 @@ describe('pivot with groupHierarchy (date-time)', () => {
 
         const cols = api.getPivotResultColumns();
         expect(cols == null || cols.length === 0).toBe(true);
+
+        await new GridColumns(api, 'after pivotMode → false').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── athlete "Athlete" width:200
+            ├── country "Country" width:200 rowGroup
+            ├── sport "Sport" width:200
+            ├── date "Date" width:200 pivot
+            └── total "Total" width:200 aggFunc:sum
+        `);
     });
 
     test('row-grouping the same hierarchy col twice does not duplicate virtuals', async () => {
@@ -514,6 +738,13 @@ describe('pivot with groupHierarchy (date-time)', () => {
 
         const ids = api.getRowGroupColumns().map((c) => c.getColId());
         expect(new Set(ids).size).toBe(ids.length);
+
+        await new GridColumns(api, 'addRowGroupColumns duplicate is a no-op').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── country "Country" width:200
+            └── date "Date" width:200 rowGroup
+        `);
     });
 
     test('virtual siblings preserve insertion order in multi-sort row-group output', async () => {
@@ -540,6 +771,16 @@ describe('pivot with groupHierarchy (date-time)', () => {
         expect(yearIdx).toBeLessThan(quarterIdx);
         expect(quarterIdx).toBeLessThan(monthIdx);
         expect(monthIdx).toBeLessThan(dateIdx);
+
+        await new GridColumns(api, 'multi-sort row-group: year → quarter → month → date').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year "Date (Year)" width:200
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-quarter "Date (Quarter)" width:200
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month "Date (Month)" width:200
+            ├── ag-Grid-AutoColumn-date "Date" width:200
+            ├── country "Country" width:200
+            └── date "Date" width:200 rowGroup
+        `);
     });
 
     test('clearing pivot then re-applying same pivot reuses saved pivot result cols', async () => {
@@ -581,5 +822,242 @@ describe('pivot with groupHierarchy (date-time)', () => {
         const yearVirtualAfter = api.getAllGridColumns().find((c) => c.getColId().includes('-date-year'));
         expect(yearVirtualAfter).toBeDefined();
         expect(yearVirtualAfter!.isVisible()).toBe(wasVisible);
+
+        await new GridColumns(api, 'after ungroup + regroup of hierarchy source').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── country "Country" width:200
+        `);
+    });
+
+    test('virtuals generated from a rowGroup source col are themselves rowGroupActive', async () => {
+        const api = gridsManager.createGrid('hierarchyRowGroupActive', {
+            columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1) },
+                { country: 'UK', date: new Date(2021, 5, 15) },
+            ],
+            groupDisplayType: 'multipleColumns',
+        });
+        await asyncSetTimeout(0);
+
+        await new GridColumns(api, 'virtuals + source all carry rowGroup').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year "Date (Year)" width:200
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month "Date (Month)" width:200
+            ├── ag-Grid-AutoColumn-date "Date" width:200
+            ├── country "Country" width:200
+            └── date "Date" width:200 rowGroup
+        `);
+
+        const yearVirtual = api.getColumn('ag-Grid-HierarchyColumn-date-year')!;
+        const monthVirtual = api.getColumn('ag-Grid-HierarchyColumn-date-month')!;
+        expect(yearVirtual).toBeDefined();
+        expect(monthVirtual).toBeDefined();
+        expect(api.getColumn('date')!.isRowGroupActive()).toBe(true);
+        expect(yearVirtual.isRowGroupActive()).toBe(true);
+        expect(monthVirtual.isRowGroupActive()).toBe(true);
+    });
+
+    test('every supported date-part valueGetter returns the expected value', async () => {
+        const date = new Date(2020, 5, 15, 10, 30, 45); // 2020-06-15 10:30:45 (month index 5 = June)
+        const api = gridsManager.createGrid('allDateParts', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    enableRowGroup: true,
+                    groupHierarchy: ['year', 'quarter', 'month', 'formattedMonth', 'day', 'hour', 'minute', 'second'],
+                },
+            ],
+            rowData: [{ date }],
+        });
+        await new GridColumns(api, `every supported date-part valueGetter returns the expected value setup`)
+            .checkColumns(`
+                CENTER
+                └── date "Date" width:200
+            `);
+        await new GridRows(api, `every supported date-part valueGetter returns the expected value setup`).check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-quarter:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date-formattedMonth:null ag-Grid-HierarchyColumn-date-day:null ag-Grid-HierarchyColumn-date-hour:null ag-Grid-HierarchyColumn-date-minute:null ag-Grid-HierarchyColumn-date-second:null
+            └── LEAF id:0 ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-quarter:"2" ag-Grid-HierarchyColumn-date-month:"6" ag-Grid-HierarchyColumn-date-formattedMonth:"June" ag-Grid-HierarchyColumn-date-day:"15" ag-Grid-HierarchyColumn-date-hour:"10" ag-Grid-HierarchyColumn-date-minute:":30" ag-Grid-HierarchyColumn-date-second:":45" date:"2020-06-15"
+        `);
+        await asyncSetTimeout(0);
+
+        const node = api.getRowNode('0')!;
+        const valueOf = (part: string): unknown => {
+            const col = api.getColumn(`ag-Grid-HierarchyColumn-date-${part}`)!;
+            return api.getCellValue({ rowNode: node, colKey: col });
+        };
+        expect(valueOf('year')).toBe('2020');
+        expect(valueOf('quarter')).toBe('2');
+        expect(valueOf('month')).toBe('6'); // 1-indexed (matches user expectation in date pickers)
+        expect(valueOf('formattedMonth')).toBe('June');
+        expect(valueOf('day')).toBe('15');
+        expect(valueOf('hour')).toBe('10');
+        // Minute/second are prefixed (e.g. ':30', ':45') in the format the canonical valueGetter
+        // produces — they're meant to be combined with the hour above them in the hierarchy.
+        expect(valueOf('minute')).toBe(':30');
+        expect(valueOf('second')).toBe(':45');
+        await new GridRows(api, `every supported date-part valueGetter returns the expected value final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-quarter:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date-formattedMonth:null ag-Grid-HierarchyColumn-date-day:null ag-Grid-HierarchyColumn-date-hour:null ag-Grid-HierarchyColumn-date-minute:null ag-Grid-HierarchyColumn-date-second:null
+                └── LEAF id:0 ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-quarter:"2" ag-Grid-HierarchyColumn-date-month:"6" ag-Grid-HierarchyColumn-date-formattedMonth:"June" ag-Grid-HierarchyColumn-date-day:"15" ag-Grid-HierarchyColumn-date-hour:"10" ag-Grid-HierarchyColumn-date-minute:":30" ag-Grid-HierarchyColumn-date-second:":45" date:"2020-06-15"
+            `
+        );
+    });
+
+    test('groupHierarchyConfig overrides headerName for a canonical part', async () => {
+        const api = gridsManager.createGrid('hierarchyConfigOverride', {
+            columnDefs: [{ field: 'date', enableRowGroup: true, groupHierarchy: ['year'] }],
+            rowData: [{ date: new Date(2020, 5, 15) }],
+            groupHierarchyConfig: {
+                year: { headerName: 'YR' },
+            },
+        });
+        await asyncSetTimeout(0);
+
+        const yearVirtual = api.getColumn('ag-Grid-HierarchyColumn-date-year')!;
+        expect(yearVirtual.getColDef().headerName).toBe('YR');
+
+        await new GridColumns(api, 'groupHierarchyConfig overrides headerName').checkColumns(`
+            CENTER
+            └── date "Date" width:200
+        `);
+    });
+
+    // Solved by AG-17366 when it is completed
+    test.skip('inline ColDef hierarchy part materialises only when it has an explicit colId', async () => {
+        const api = gridsManager.createGrid('hierarchyInlineColDef', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    enableRowGroup: true,
+                    // First inline part has a colId → materialises. Second lacks a colId → dropped.
+                    groupHierarchy: [
+                        { colId: 'date-decade', headerName: 'Decade', valueGetter: () => '2020s' },
+                        { headerName: 'No Id', valueGetter: () => 'x' },
+                    ],
+                },
+            ],
+            rowData: [{ date: new Date(2020, 5, 15) }],
+        });
+        await asyncSetTimeout(0);
+
+        const decadeCol = api.getColumn('date-decade')!;
+        expect(decadeCol).toBeDefined();
+        expect(decadeCol.getColDef().headerName).toBe('Decade');
+
+        // The colId-less inline part produced no virtual: only date-decade + the source remain.
+        await new GridColumns(api, 'inline ColDef hierarchy part with explicit colId').checkColumns(`
+            CENTER
+            ├── date-decade "Decade" width:200
+            └── date "Date" width:200
+        `);
+    });
+
+    test('hierarchy virtuals stay hidden when source col is un-row-grouped', async () => {
+        const api = gridsManager.createGrid('hierarchyVisibilityOnUngroup', {
+            columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
+            rowData: [{ country: 'USA', date: new Date(2020, 5, 15) }],
+        });
+        await asyncSetTimeout(0);
+
+        const yearVirtual = api.getColumn('ag-Grid-HierarchyColumn-date-year')!;
+        const monthVirtual = api.getColumn('ag-Grid-HierarchyColumn-date-month')!;
+        expect(yearVirtual.isVisible()).toBe(false);
+        expect(monthVirtual.isVisible()).toBe(false);
+
+        api.setRowGroupColumns([]);
+        await asyncSetTimeout(0);
+
+        expect(api.getColumn('date')!.isVisible()).toBe(true);
+        expect(yearVirtual.isVisible()).toBe(false);
+        expect(monthVirtual.isVisible()).toBe(false);
+
+        await new GridColumns(api, 'after un-row-group — virtuals stay hidden').checkColumns(`
+            CENTER
+            ├── country "Country" width:200
+            └── date "Date" width:200
+        `);
+    });
+
+    test('setRowGroupColumns adding a hierarchy col to an existing group keeps rowGroupActiveIndex in order', async () => {
+        // singleColumn display => the auto-group column count does NOT change when a second row-group
+        // level is added, so no auto-col-driven colDef rebuild is forced. This isolates the
+        // setColList re-stamp path: onColumnsChanged stamps rowGroupActiveIndex BEFORE setColActive
+        // splices the date col's virtuals into the list.
+        const api = gridsManager.createGrid('setRowGroupHierarchyIndexSingle', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+            ],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1) },
+                { country: 'UK', date: new Date(2021, 5, 15) },
+            ],
+        });
+        await asyncSetTimeout(0);
+
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['country']);
+
+        api.setRowGroupColumns(['country', 'date']);
+        await asyncSetTimeout(0);
+
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([
+            'country',
+            'ag-Grid-HierarchyColumn-date-year',
+            'ag-Grid-HierarchyColumn-date-month',
+            'date',
+        ]);
+
+        const stateById = new Map(api.getColumnState().map((s) => [s.colId, s.rowGroupIndex]));
+        expect(stateById.get('country')).toBe(0);
+        expect(stateById.get('ag-Grid-HierarchyColumn-date-year')).toBe(1);
+        expect(stateById.get('ag-Grid-HierarchyColumn-date-month')).toBe(2);
+        expect(stateById.get('date')).toBe(3);
+
+        await new GridColumns(api, 'columns after setRowGroupColumns with hierarchy').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── country "Country" width:200 rowGroup
+        `);
+        await new GridRows(api, 'rows after setRowGroupColumns with hierarchy').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            ├─┬ filler collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            │ └─┬ filler collapsed hidden id:row-group-country-USA-ag-Grid-HierarchyColumn-date-year-2020 ag-Grid-AutoColumn:"2020" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            │ · └─┬ filler collapsed hidden id:row-group-country-USA-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1 ag-Grid-AutoColumn:"1" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            │ · · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-USA-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01 ag-Grid-AutoColumn:"2020-01-01" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            │ · · · └── LEAF hidden id:0 ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-month:"1" country:"USA" date:"2020-01-01"
+            └─┬ filler collapsed id:row-group-country-UK ag-Grid-AutoColumn:"UK" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · └─┬ filler collapsed hidden id:row-group-country-UK-ag-Grid-HierarchyColumn-date-year-2021 ag-Grid-AutoColumn:"2021" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · · └─┬ filler collapsed hidden id:row-group-country-UK-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6 ag-Grid-AutoColumn:"6" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-UK-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15 ag-Grid-AutoColumn:"2021-06-15" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · · · · └── LEAF hidden id:1 ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-month:"6" country:"UK" date:"2021-06-15"
+        `);
+    });
+
+    test('unrecognised string parts in groupHierarchy are silently dropped', async () => {
+        // The unrecognised 'bogus' part legitimately warns — silence the noise and assert it fires.
+        const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+        const api = gridsManager.createGrid('unknownHierarchyPart', {
+            columnDefs: [
+                { field: 'country' },
+                { field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'bogus' as any, 'month'] },
+            ],
+            rowData: [{ country: 'USA', date: new Date(2020, 5, 15) }],
+        });
+        await asyncSetTimeout(0);
+        expect(consoleWarnSpy.mock.calls[0][0]).toContain('not recognised');
+        consoleWarnSpy.mockRestore();
+
+        // year + month virtuals exist; 'bogus' was filtered out and produced no virtual.
+        expect(api.getColumn('ag-Grid-HierarchyColumn-date-year')).not.toBeNull();
+        expect(api.getColumn('ag-Grid-HierarchyColumn-date-month')).not.toBeNull();
+        expect(api.getColumn('ag-Grid-HierarchyColumn-date-bogus')).toBeNull();
+
+        await new GridColumns(api, 'unrecognised hierarchy part dropped').checkColumns(`
+            CENTER
+            ├── country "Country" width:200
+            └── date "Date" width:200
+        `);
     });
 });

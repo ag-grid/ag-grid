@@ -4,6 +4,7 @@ import { ClientSideRowModelModule, NumberFilterModule, RowApiModule, TextFilterM
 import type { GridOptions, IRowNode, ModelUpdatedEvent } from 'ag-grid-community';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -384,11 +385,25 @@ describe('ag-grid row data', () => {
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
+        await new GridColumns(api, `getRowNode does not throw when passed a numeric id setup`).checkColumns(`
+            CENTER
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `getRowNode does not throw when passed a numeric id setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 value:"a"
+            └── LEAF id:2 value:"b"
+        `);
         await asyncSetTimeout(1);
 
         // Passing a number should not throw, and should still find the row via property key coercion
         expect(api.getRowNode(1 as any)).toBeTruthy();
         expect(api.getRowNode(999 as any)).toBeUndefined();
+        await new GridRows(api, `getRowNode does not throw when passed a numeric id final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 value:"a"
+            └── LEAF id:2 value:"b"
+        `);
     });
 
     test('setRowData without getRowId destroys old nodes silently (no position events)', async () => {
@@ -503,6 +518,14 @@ describe('ag-grid row data', () => {
                 animateRows: false,
             };
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `setRowData without getRowId sets newData=true setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `setRowData without getRowId sets newData=true setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:1
+            `);
             await asyncSetTimeout(1);
             const events = collectModelUpdatedEvents(api);
 
@@ -515,6 +538,10 @@ describe('ag-grid row data', () => {
                 keepRenderedRows: false,
                 newPage: false,
             });
+            await new GridRows(api, `setRowData without getRowId sets newData=true final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:2
+            `);
         });
 
         test('setRowData with getRowId (immutable update) sets newData=false', async () => {
@@ -525,6 +552,15 @@ describe('ag-grid row data', () => {
                 animateRows: false,
             };
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `setRowData with getRowId (immutable update) sets newData=false setup`)
+                .checkColumns(`
+                    CENTER
+                    └── value "Value" width:200
+                `);
+            await new GridRows(api, `setRowData with getRowId (immutable update) sets newData=false setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:1
+            `);
             await asyncSetTimeout(1);
             const events = collectModelUpdatedEvents(api);
 
@@ -538,6 +574,12 @@ describe('ag-grid row data', () => {
                 keepRenderedRows: true,
                 newPage: false,
             });
+            await new GridRows(api, `setRowData with getRowId (immutable update) sets newData=false final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:1 value:2
+                `
+            );
         });
 
         test('applyTransaction with add/remove triggers modelUpdated', async () => {
@@ -548,6 +590,14 @@ describe('ag-grid row data', () => {
                 animateRows: false,
             };
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `applyTransaction with add/remove triggers modelUpdated setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `applyTransaction with add/remove triggers modelUpdated setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:1
+            `);
             await asyncSetTimeout(1);
             const events = collectModelUpdatedEvents(api);
 
@@ -564,6 +614,11 @@ describe('ag-grid row data', () => {
                 // animate is true because suppressAnimationFrame defaults to false
                 animate: true,
             });
+            await new GridRows(api, `applyTransaction with add/remove triggers modelUpdated final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:1
+                └── LEAF id:2 value:2
+            `);
         });
 
         test('applyTransaction with update only and suppressModelUpdateAfterUpdateTransaction', async () => {
@@ -575,6 +630,20 @@ describe('ag-grid row data', () => {
                 animateRows: false,
             };
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(
+                api,
+                `applyTransaction with update only and suppressModelUpdateAfterUpdateTransaction setup`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(
+                api,
+                `applyTransaction with update only and suppressModelUpdateAfterUpdateTransaction setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:1
+            `);
             await asyncSetTimeout(1);
             const events = collectModelUpdatedEvents(api);
 
@@ -593,6 +662,14 @@ describe('ag-grid row data', () => {
                 newData: false,
                 keepRenderedRows: true,
             });
+            await new GridRows(
+                api,
+                `applyTransaction with update only and suppressModelUpdateAfterUpdateTransaction final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:2
+                └── LEAF id:2 value:3
+            `);
         });
 
         test('refreshClientSideRowModel triggers modelUpdated with keepRenderedRows=true', async () => {
@@ -606,10 +683,31 @@ describe('ag-grid row data', () => {
                 animateRows: false,
             };
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(
+                api,
+                `refreshClientSideRowModel triggers modelUpdated with keepRenderedRows=true setup`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200 sort:asc
+            `);
+            await new GridRows(api, `refreshClientSideRowModel triggers modelUpdated with keepRenderedRows=true setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:1 value:1
+                    └── LEAF id:2 value:2
+                `);
             await asyncSetTimeout(1);
             const events = collectModelUpdatedEvents(api);
 
             api.refreshClientSideRowModel('sort');
+            await new GridRows(
+                api,
+                `refreshClientSideRowModel triggers modelUpdated with keepRenderedRows=true after refreshClientSideRowModel`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:1
+                └── LEAF id:2 value:2
+            `);
             await asyncSetTimeout(1);
 
             expect(events).toHaveLength(1);
@@ -691,6 +789,15 @@ describe('ag-grid row data', () => {
                 animateRows: false,
             };
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `transaction animate uses suppressAnimationFrame, not animateRows setup`)
+                .checkColumns(`
+                    CENTER
+                    └── value "Value" width:200
+                `);
+            await new GridRows(api, `transaction animate uses suppressAnimationFrame, not animateRows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:1
+            `);
             await asyncSetTimeout(1);
             const events = collectModelUpdatedEvents(api);
 
@@ -700,6 +807,12 @@ describe('ag-grid row data', () => {
             expect(events).toHaveLength(1);
             // animate=true because suppressAnimationFrame defaults to false
             expect(events[0].animate).toBe(true);
+            await new GridRows(api, `transaction animate uses suppressAnimationFrame, not animateRows final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:1 value:1
+                    └── LEAF id:2 value:2
+                `);
         });
 
         test('suppressAnimationFrame=true sets animate=false for transactions', async () => {
@@ -710,6 +823,15 @@ describe('ag-grid row data', () => {
                 suppressAnimationFrame: true,
             };
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `suppressAnimationFrame=true sets animate=false for transactions setup`)
+                .checkColumns(`
+                    CENTER
+                    └── value "Value" width:200
+                `);
+            await new GridRows(api, `suppressAnimationFrame=true sets animate=false for transactions setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:1
+            `);
             await asyncSetTimeout(1);
             const events = collectModelUpdatedEvents(api);
 
@@ -718,6 +840,12 @@ describe('ag-grid row data', () => {
 
             expect(events).toHaveLength(1);
             expect(events[0].animate).toBe(false);
+            await new GridRows(api, `suppressAnimationFrame=true sets animate=false for transactions final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:1 value:1
+                    └── LEAF id:2 value:2
+                `);
         });
 
         test('filter change sets keepRenderedRows=true', async () => {
@@ -732,10 +860,25 @@ describe('ag-grid row data', () => {
                 animateRows: false,
             };
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `filter change sets keepRenderedRows=true setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `filter change sets keepRenderedRows=true setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:1
+                ├── LEAF id:2 value:2
+                └── LEAF id:3 value:3
+            `);
             await asyncSetTimeout(1);
             const events = collectModelUpdatedEvents(api);
 
             api.setFilterModel({ value: { type: 'greaterThan', filter: 1 } });
+            await new GridRows(api, `filter change sets keepRenderedRows=true after setFilterModel`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:2 value:2
+                └── LEAF id:3 value:3
+            `);
             await asyncSetTimeout(1);
 
             // Filter change may trigger multiple events (filter change + sort recalc)
@@ -762,10 +905,32 @@ describe('ag-grid row data', () => {
                 animateRows: false,
             };
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `sort change sets keepRenderedRows=true setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `sort change sets keepRenderedRows=true setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:3
+                ├── LEAF id:2 value:1
+                └── LEAF id:3 value:2
+            `);
             await asyncSetTimeout(1);
             const events = collectModelUpdatedEvents(api);
 
             api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+            await new GridColumns(api, `sort change sets keepRenderedRows=true after applyColumnState`).checkColumns(
+                `
+                    CENTER
+                    └── value "Value" width:200 sort:asc
+                `
+            );
+            await new GridRows(api, `sort change sets keepRenderedRows=true after applyColumnState`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:2 value:1
+                ├── LEAF id:3 value:2
+                └── LEAF id:1 value:3
+            `);
             await asyncSetTimeout(1);
 
             expect(events).toHaveLength(1);
@@ -812,12 +977,35 @@ describe('ag-grid row data', () => {
                 onModelUpdated: (e) => events.push(e),
             };
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(
+                api,
+                `initial data without columns defers modelUpdated until columns set setup`
+            ).checkColumns(``);
+            await new GridRows(api, `initial data without columns defers modelUpdated until columns set setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                `
+            );
             await asyncSetTimeout(1);
 
             // No modelUpdated without columns
             expect(events).toHaveLength(0);
 
             api.setGridOption('columnDefs', [{ field: 'value' }]);
+            await new GridColumns(
+                api,
+                `initial data without columns defers modelUpdated until columns set after setGridOption columnDefs`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(
+                api,
+                `initial data without columns defers modelUpdated until columns set after setGridOption columnDefs`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:1
+            `);
             await asyncSetTimeout(1);
 
             expect(events).toHaveLength(1);

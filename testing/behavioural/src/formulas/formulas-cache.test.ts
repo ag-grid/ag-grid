@@ -4,7 +4,7 @@ import type { FormulaFunctionParams, GridOptions, Module } from 'ag-grid-communi
 import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 describe('ag-grid formulas cache behaviour', () => {
     const rowNumberRefreshBufferMs = 25;
@@ -401,6 +401,17 @@ describe('ag-grid formulas cache behaviour', () => {
             getRowId: (params) => params.data?.id,
             columnDefs: [{ field: 'value' }],
         });
+        await new GridColumns(api, `rapid consecutive updates never read a stale cached value setup`).checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `rapid consecutive updates never read a stale cached value setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:src row-number:"1" value:0
+            └── LEAF id:dep row-number:"2" value:1
+        `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         const depNode = api.getRowNode('dep')!;
@@ -412,6 +423,11 @@ describe('ag-grid formulas cache behaviour', () => {
         }
 
         expect(values).toEqual([11, 21, 31, 41, 51]);
+        await new GridRows(api, `rapid consecutive updates never read a stale cached value final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:src row-number:"1" value:50
+            └── LEAF id:dep row-number:"2" value:51
+        `);
     });
 
     test('setting rowData to the same array reference yields the same values', async () => {

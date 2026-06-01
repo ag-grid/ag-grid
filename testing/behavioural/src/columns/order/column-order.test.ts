@@ -124,7 +124,7 @@ describe('Column Order', () => {
     describe('when overwriting colDefs', () => {
         describe('with maintainColumnOrder=true', () => {
             const maintainColumnOrder = true;
-            test('preserves initial column order, inserting new cols at tail', () => {
+            test('preserves initial column order, inserting new cols at tail', async () => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'g' }, { colId: 'f' }, { colId: 'e' }];
 
                 const gridApi = gridsManager.createGrid('myGrid', { columnDefs, maintainColumnOrder });
@@ -139,9 +139,18 @@ describe('Column Order', () => {
                 // reorder cols
                 gridApi.setGridOption('columnDefs', columnDefsNew);
                 expect(getColumnOrder(gridApi, 'center')).toEqual(['g', 'f', 'e', 'x', 'z']);
+
+                await new GridColumns(gridApi, 'after setGridOption columnDefs').checkColumns(`
+                    CENTER
+                    ├── g width:200
+                    ├── f width:200
+                    ├── e width:200
+                    ├── x width:200
+                    └── z width:200
+                `);
             });
 
-            test('preserves initial column order, inserting new group cols at tail of last group item', () => {
+            test('preserves initial column order, inserting new group cols at tail of last group item', async () => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [
                     {
                         children: [{ colId: 'a' }, { colId: 'b' }],
@@ -170,9 +179,23 @@ describe('Column Order', () => {
                 // reorder cols
                 gridApi.setGridOption('columnDefs', columnDefsNew);
                 expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', 'z', 'c', 'd', 'e', 'f', 'x']);
+
+                await new GridColumns(gridApi, 'after setGridOption columnDefs').checkColumns(`
+                    CENTER
+                    ├─┬ GROUP
+                    │ ├── a width:200
+                    │ ├── b width:200
+                    │ └── z width:200
+                    ├── c width:200
+                    ├─┬ GROUP
+                    │ ├── d width:200
+                    │ └── e width:200
+                    ├── f width:200
+                    └── x width:200
+                `);
             });
 
-            test('preserves initial column order, inserting new group cols at tail of last group item, when group has been split', () => {
+            test('preserves initial column order, inserting new group cols at tail of last group item, when group has been split', async () => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [
                     {
                         children: [{ colId: 'a' }, { colId: 'b' }],
@@ -203,9 +226,24 @@ describe('Column Order', () => {
                 // reorder cols
                 gridApi.setGridOption('columnDefs', columnDefsNew);
                 expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'c', 'd', 'b', 'z', 'e', 'f']);
+
+                await new GridColumns(gridApi, 'after setGridOption columnDefs').checkColumns(`
+                    CENTER
+                    ├─┬ GROUP
+                    │ └── a width:200
+                    ├── c width:200
+                    ├─┬ GROUP
+                    │ └── d width:200
+                    ├─┬ GROUP
+                    │ ├── b width:200
+                    │ └── z width:200
+                    ├─┬ GROUP
+                    │ └── e width:200
+                    └── f width:200
+                `);
             });
 
-            test('inserts new auto columns at head', () => {
+            test('inserts new auto columns at head', async () => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'g' }, { colId: 'f' }, { colId: 'e' }];
 
                 const gridApi = gridsManager.createGrid('myGrid', { columnDefs, maintainColumnOrder });
@@ -220,9 +258,19 @@ describe('Column Order', () => {
                 // reorder cols
                 gridApi.setGridOption('columnDefs', columnDefsNew);
                 expect(getColumnOrder(gridApi, 'center')).toEqual(['ag-Grid-AutoColumn', 'g', 'f', 'e', 'x', 'z']);
+
+                await new GridColumns(gridApi, 'after setGridOption columnDefs').checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── g width:200
+                    ├── f width:200
+                    ├── e width:200
+                    ├── x width:200
+                    └── z width:200 rowGroup
+                `);
             });
 
-            test('preserves user order changes', () => {
+            test('preserves user order changes', async () => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'g' }, { colId: 'f' }, { colId: 'e' }];
 
                 const gridApi = gridsManager.createGrid('myGrid', { columnDefs, maintainColumnOrder });
@@ -241,11 +289,21 @@ describe('Column Order', () => {
                 // reorder cols
                 gridApi.setGridOption('columnDefs', columnDefsNew);
                 expect(getColumnOrder(gridApi, 'center')).toEqual(['ag-Grid-AutoColumn', 'e', 'f', 'g', 'x', 'z']);
+
+                await new GridColumns(gridApi, 'after setGridOption columnDefs').checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── e width:200
+                    ├── f width:200
+                    ├── g width:200
+                    ├── x width:200
+                    └── z width:200 rowGroup
+                `);
             });
         });
     });
 
-    test('omits columns with colDef.hide', () => {
+    test('omits columns with colDef.hide', async () => {
         const columnDefs: (ColDef | ColGroupDef)[] = [
             { colId: 'a' },
             { colId: 'b', hide: true },
@@ -263,5 +321,15 @@ describe('Column Order', () => {
         expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'c', 'd', 'e', 'f', 'g']);
         expect(getColumnOrder(gridApi, 'left')).toEqual([]);
         expect(getColumnOrder(gridApi, 'right')).toEqual([]);
+
+        await new GridColumns(gridApi, 'omits hidden columns').checkColumns(`
+            CENTER
+            ├── a width:200
+            ├── c width:200
+            ├── d width:200
+            ├── e width:200
+            ├── f width:200
+            └── g width:200
+        `);
     });
 });

@@ -11,7 +11,8 @@ export function validateRowClasses(
     rowErrors: GridRowErrors<any>,
     lastDisplayedRowIndex: number,
     bugs: Readonly<GridRowsBugs>,
-    gridRows?: GridRows
+    gridRows?: GridRows,
+    firstDisplayedRowIndex: number = 0
 ): void {
     const el = rowElements[0];
     if (!el) {
@@ -38,10 +39,14 @@ export function validateRowClasses(
     // ag-row-group is set for all expandable rows (groups, master, tree parents)
     const expandable = row.isExpandable();
     rowErrors.add(expandable && !classList.contains('ag-row-group') && 'Expandable row should have ag-row-group class');
+    // Pinned clones of group rows (e.g. manually pinned grouped rows) keep their `ag-row-group`
+    // class even though the clone itself isn't expandable — the main-area twin owns expansion.
+    const isPinnedGroupClone = !!row.rowPinned && (row.group || !!row.pinnedSibling?.group);
     rowErrors.add(
         !expandable &&
             classList.contains('ag-row-group') &&
             !classList.contains('ag-full-width-row') &&
+            !isPinnedGroupClone &&
             'Non-expandable row should NOT have ag-row-group class'
     );
 
@@ -69,23 +74,32 @@ export function validateRowClasses(
                 `HTML element has ag-row-even but rowIndex ${rowIndex} is odd`
         );
 
-        const isFirst = rowIndex === 0;
-        rowErrors.add(
-            isFirst && !classList.contains('ag-row-first') && 'First displayed row should have ag-row-first class'
-        );
-        rowErrors.add(
-            !isFirst &&
-                classList.contains('ag-row-first') &&
-                'Non-first displayed row should NOT have ag-row-first class'
-        );
+        // Negative sentinel = "skip first/last checks" (used for SSRM where row position can't be
+        // derived from the in-memory row model alone).
+        const skipPositionChecks = firstDisplayedRowIndex < 0 || lastDisplayedRowIndex < 0;
+        const isFirst = !skipPositionChecks && rowIndex === firstDisplayedRowIndex;
+        if (!skipPositionChecks) {
+            rowErrors.add(
+                isFirst && !classList.contains('ag-row-first') && 'First displayed row should have ag-row-first class'
+            );
+            rowErrors.add(
+                !isFirst &&
+                    classList.contains('ag-row-first') &&
+                    'Non-first displayed row should NOT have ag-row-first class'
+            );
+        }
 
-        const isLast = rowIndex === lastDisplayedRowIndex;
-        rowErrors.add(
-            isLast && !classList.contains('ag-row-last') && 'Last displayed row should have ag-row-last class'
-        );
-        rowErrors.add(
-            !isLast && classList.contains('ag-row-last') && 'Non-last displayed row should NOT have ag-row-last class'
-        );
+        const isLast = !skipPositionChecks && rowIndex === lastDisplayedRowIndex;
+        if (!skipPositionChecks) {
+            rowErrors.add(
+                isLast && !classList.contains('ag-row-last') && 'Last displayed row should have ag-row-last class'
+            );
+            rowErrors.add(
+                !isLast &&
+                    classList.contains('ag-row-last') &&
+                    'Non-last displayed row should NOT have ag-row-last class'
+            );
+        }
     }
 
     // ag-row-loading for stub rows

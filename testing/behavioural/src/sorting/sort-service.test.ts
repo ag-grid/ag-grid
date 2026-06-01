@@ -276,12 +276,47 @@ describe('SortService', () => {
                 ],
                 rowData,
             });
+            await new GridColumns(api, `sort is cleared when sorted column is removed setup`).checkColumns(`
+                CENTER
+                ├── a "A" width:200
+                └── b "B" width:200
+            `);
+            await new GridRows(api, `sort is cleared when sorted column is removed setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 a:"z" b:"m"
+                ├── LEAF id:1 a:"a" b:"x"
+                └── LEAF id:2 a:"m" b:"a"
+            `);
 
             api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+            await new GridColumns(api, `sort is cleared when sorted column is removed after applyColumnState`)
+                .checkColumns(`
+                    CENTER
+                    ├── a "A" width:200 sort:asc
+                    └── b "B" width:200
+                `);
+            await new GridRows(api, `sort is cleared when sorted column is removed after applyColumnState`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 a:"a" b:"x"
+                ├── LEAF id:2 a:"m" b:"a"
+                └── LEAF id:0 a:"z" b:"m"
+            `);
             expect(getSortModel(api)).toEqual([{ colId: 'a', sort: 'asc' }]);
 
             // Remove the sorted column
             api.setGridOption('columnDefs', [{ colId: 'b', field: 'b' }]);
+            await new GridColumns(api, `sort is cleared when sorted column is removed after setGridOption columnDefs`)
+                .checkColumns(`
+                    CENTER
+                    └── b "B" width:200
+                `);
+            await new GridRows(api, `sort is cleared when sorted column is removed after setGridOption columnDefs`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 b:"m"
+                    ├── LEAF id:1 b:"x"
+                    └── LEAF id:2 b:"a"
+                `);
 
             expect(getSortModel(api)).toEqual([]);
         });
@@ -437,7 +472,11 @@ describe('SortService', () => {
             api.applyColumnState({ state: [{ colId: 'val', sort: 'asc' }] });
             expect(getSortModel(api)).toEqual([{ colId: 'val', sort: 'asc' }]);
 
-            await new GridColumns(api, 'pivot sorted').checkColumns(false);
+            await new GridColumns(api, 'pivot sorted').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── val "C" width:200 sort:asc aggFunc:sum
+            `);
         });
 
         test('sort cache invalidated when pivot mode toggled', async () => {
@@ -449,11 +488,43 @@ describe('SortService', () => {
                 ],
                 rowData,
             });
+            await new GridColumns(api, `sort cache invalidated when pivot mode toggled setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── a "A" width:200 sort:asc
+                ├── b "B" width:200 rowGroup
+                └── c "C" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `sort cache invalidated when pivot mode toggled setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP collapsed id:row-group-b-m ag-Grid-AutoColumn:"m" c:5
+                │ └── LEAF hidden id:0 a:"z" b:"m" c:5
+                ├─┬ LEAF_GROUP collapsed id:row-group-b-x ag-Grid-AutoColumn:"x" c:1
+                │ └── LEAF hidden id:1 a:"a" b:"x" c:1
+                └─┬ LEAF_GROUP collapsed id:row-group-b-a ag-Grid-AutoColumn:"a" c:9
+                · └── LEAF hidden id:2 a:"m" b:"a" c:9
+            `);
 
             expect(getSortModel(api)).toEqual([{ colId: 'a', sort: 'asc' }]);
 
             // Toggle pivot mode — sort cache must be rebuilt
             api.setGridOption('pivotMode', true);
+            await new GridColumns(api, `sort cache invalidated when pivot mode toggled after setGridOption pivotMode`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── c "C" width:200 aggFunc:sum
+                `);
+            await new GridRows(api, `sort cache invalidated when pivot mode toggled after setGridOption pivotMode`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID c:15
+                    ├─┬ LEAF_GROUP collapsed id:row-group-b-m ag-Grid-AutoColumn:"m" c:5
+                    │ └── LEAF hidden id:0 a:"z" b:"m" c:5
+                    ├─┬ LEAF_GROUP collapsed id:row-group-b-x ag-Grid-AutoColumn:"x" c:1
+                    │ └── LEAF hidden id:1 a:"a" b:"x" c:1
+                    └─┬ LEAF_GROUP collapsed id:row-group-b-a ag-Grid-AutoColumn:"a" c:9
+                    · └── LEAF hidden id:2 a:"m" b:"a" c:9
+                `);
 
             // Sort state on column a is still there but a is not a value/secondary col,
             // so getSortModel from column state still has it
@@ -499,6 +570,17 @@ describe('SortService', () => {
                 rowData,
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `changing row group columns invalidates sort cache setup`).checkColumns(`
+                CENTER
+                ├── a "A" width:200 sort:asc
+                └── b "B" width:200
+            `);
+            await new GridRows(api, `changing row group columns invalidates sort cache setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:2 a:"a" b:"x"
+                ├── LEAF id:3 a:"m" b:"a"
+                └── LEAF id:1 a:"z" b:"m"
+            `);
 
             expect(getSortModel(api)).toEqual([{ colId: 'a', sort: 'asc' }]);
 
@@ -506,6 +588,24 @@ describe('SortService', () => {
             api.applyColumnState({
                 state: [{ colId: 'a', rowGroup: true, sort: 'asc' }],
             });
+            await new GridColumns(api, `changing row group columns invalidates sort cache after applyColumnState`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── a "A" width:200 sort:asc rowGroup
+                    └── b "B" width:200
+                `);
+            await new GridRows(api, `changing row group columns invalidates sort cache after applyColumnState`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    ├─┬ LEAF_GROUP collapsed id:row-group-a-a ag-Grid-AutoColumn:"a"
+                    │ └── LEAF hidden id:2 a:"a" b:"x"
+                    ├─┬ LEAF_GROUP collapsed id:row-group-a-m ag-Grid-AutoColumn:"m"
+                    │ └── LEAF hidden id:3 a:"m" b:"a"
+                    └─┬ LEAF_GROUP collapsed id:row-group-a-z ag-Grid-AutoColumn:"z"
+                    · └── LEAF hidden id:1 a:"z" b:"m"
+                `
+            );
 
             // Sort should still be reflected
             const state = api.getColumnState();
@@ -615,7 +715,7 @@ describe('SortService', () => {
     });
 
     describe('sort model via API', () => {
-        test('getColumnState reflects sort correctly', () => {
+        test('getColumnState reflects sort correctly', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [
                     { colId: 'a', field: 'a' },
@@ -623,6 +723,17 @@ describe('SortService', () => {
                 ],
                 rowData,
             });
+            await new GridColumns(api, `getColumnState reflects sort correctly setup`).checkColumns(`
+                CENTER
+                ├── a "A" width:200
+                └── b "B" width:200
+            `);
+            await new GridRows(api, `getColumnState reflects sort correctly setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 a:"z" b:"m"
+                ├── LEAF id:1 a:"a" b:"x"
+                └── LEAF id:2 a:"m" b:"a"
+            `);
 
             api.applyColumnState({
                 state: [
@@ -630,6 +741,19 @@ describe('SortService', () => {
                     { colId: 'a', sort: 'asc', sortIndex: 1 },
                 ],
             });
+            await new GridColumns(api, `getColumnState reflects sort correctly after applyColumnState`).checkColumns(
+                `
+                    CENTER
+                    ├── a "A" width:200 sort:asc sortIndex:1
+                    └── b "B" width:200 sort:desc sortIndex:0
+                `
+            );
+            await new GridRows(api, `getColumnState reflects sort correctly after applyColumnState`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 a:"a" b:"x"
+                ├── LEAF id:0 a:"z" b:"m"
+                └── LEAF id:2 a:"m" b:"a"
+            `);
 
             const state = api.getColumnState();
             const aState = state.find((s) => s.colId === 'a')!;
@@ -646,15 +770,39 @@ describe('SortService', () => {
                 columnDefs: [{ colId: 'a', field: 'a' }],
                 rowData,
             });
+            await new GridColumns(api, `resetColumnState clears sort setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200
+            `);
+            await new GridRows(api, `resetColumnState clears sort setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 a:"z"
+                ├── LEAF id:1 a:"a"
+                └── LEAF id:2 a:"m"
+            `);
 
             api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+            await new GridColumns(api, `resetColumnState clears sort after applyColumnState`).checkColumns(`
+                CENTER
+                └── a "A" width:200 sort:asc
+            `);
+            await new GridRows(api, `resetColumnState clears sort after applyColumnState`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 a:"a"
+                ├── LEAF id:2 a:"m"
+                └── LEAF id:0 a:"z"
+            `);
             expect(getSortModel(api)).toEqual([{ colId: 'a', sort: 'asc' }]);
 
             api.resetColumnState();
+            await new GridColumns(api, `resetColumnState clears sort after resetColumnState`).checkColumns(`
+                CENTER
+                └── a "A" width:200
+            `);
             expect(getSortModel(api)).toEqual([]);
         });
 
-        test('applyColumnState replaces previous sort', () => {
+        test('applyColumnState replaces previous sort', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [
                     { colId: 'a', field: 'a' },
@@ -662,17 +810,53 @@ describe('SortService', () => {
                 ],
                 rowData,
             });
+            await new GridColumns(api, `applyColumnState replaces previous sort setup`).checkColumns(`
+                CENTER
+                ├── a "A" width:200
+                └── b "B" width:200
+            `);
+            await new GridRows(api, `applyColumnState replaces previous sort setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 a:"z" b:"m"
+                ├── LEAF id:1 a:"a" b:"x"
+                └── LEAF id:2 a:"m" b:"a"
+            `);
 
             api.applyColumnState({
                 state: [{ colId: 'a', sort: 'asc' }],
                 defaultState: { sort: null },
             });
+            await new GridColumns(api, `applyColumnState replaces previous sort after applyColumnState`).checkColumns(
+                `
+                    CENTER
+                    ├── a "A" width:200 sort:asc
+                    └── b "B" width:200
+                `
+            );
+            await new GridRows(api, `applyColumnState replaces previous sort after applyColumnState`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 a:"a" b:"x"
+                ├── LEAF id:2 a:"m" b:"a"
+                └── LEAF id:0 a:"z" b:"m"
+            `);
             expect(getSortModel(api)).toEqual([{ colId: 'a', sort: 'asc' }]);
 
             api.applyColumnState({
                 state: [{ colId: 'b', sort: 'desc' }],
                 defaultState: { sort: null },
             });
+            await new GridColumns(api, `applyColumnState replaces previous sort after applyColumnState #2`)
+                .checkColumns(`
+                    CENTER
+                    ├── a "A" width:200
+                    └── b "B" width:200 sort:desc
+                `);
+            await new GridRows(api, `applyColumnState replaces previous sort after applyColumnState #2`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 a:"a" b:"x"
+                ├── LEAF id:0 a:"z" b:"m"
+                └── LEAF id:2 a:"m" b:"a"
+            `);
             expect(getSortModel(api)).toEqual([{ colId: 'b', sort: 'desc' }]);
         });
     });

@@ -13,7 +13,7 @@ import {
 } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 /**
  * AG-15846 regression: column `valueParser` should not be called repeatedly with the
@@ -83,6 +83,14 @@ describe('Cell Editing — valueParser cache (AG-15846)', () => {
                 columnDefs: [{ field: 'a', cellEditor: 'agTextCellEditor', valueParser, editable: true }],
                 rowData: [{ a: 'old' }],
             });
+            await new GridColumns(api, `text editor — open, type, commit setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `text editor — open, type, commit setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"old"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
             await asyncSetTimeout(1);
@@ -104,6 +112,10 @@ describe('Cell Editing — valueParser cache (AG-15846)', () => {
             // The committed value should have been parsed exactly once.
             expect(rawInputs).toContain('hi');
             expect(rawInputs.filter((v) => v === 'hi')).toHaveLength(1);
+            await new GridRows(api, `text editor — open, type, commit final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"hi"
+            `);
         });
 
         test('number editor — bug report scenario (AG-15846)', async () => {
@@ -116,6 +128,14 @@ describe('Cell Editing — valueParser cache (AG-15846)', () => {
                 columnDefs: [{ field: 'numberGood', cellEditor: 'agNumberCellEditor', valueParser, editable: true }],
                 rowData: [{ numberGood: 1234 }],
             });
+            await new GridColumns(api, `number editor — bug report scenario (AG-15846) setup`).checkColumns(`
+                CENTER
+                └── numberGood "Number Good" width:200 editable
+            `);
+            await new GridRows(api, `number editor — bug report scenario (AG-15846) setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 numberGood:1234
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
             await asyncSetTimeout(1);
@@ -136,6 +156,10 @@ describe('Cell Editing — valueParser cache (AG-15846)', () => {
             const rawInputs = expectNoRepeatedRawInputs(valueParser);
             expect(rawInputs).toContain('0');
             expect(rawInputs.filter((v) => v === '0')).toHaveLength(1);
+            await new GridRows(api, `number editor — bug report scenario (AG-15846) final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 numberGood:0
+            `);
         });
     });
 
@@ -158,6 +182,14 @@ describe('Cell Editing — valueParser cache (AG-15846)', () => {
                 ],
                 rowData: [{ a: 'short' }],
             });
+            await new GridColumns(api, `text editor with maxLength validation setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `text editor with maxLength validation setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"short"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
             await asyncSetTimeout(1);
@@ -175,6 +207,10 @@ describe('Cell Editing — valueParser cache (AG-15846)', () => {
             await asyncSetTimeout(1);
 
             expectNoRepeatedRawInputs(valueParser);
+            await new GridRows(api, `text editor with maxLength validation final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"typed"
+            `);
         });
     });
 });

@@ -619,6 +619,22 @@ describe('editing with pinned sibling rows', () => {
                 groupDefaultExpanded: -1,
                 getRowId: (params) => params.data?.id,
             });
+            await new GridColumns(api, `getAggregatedChildren on pinned group returns same children as source setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── amount "Amount" width:200 aggFunc:sum
+                `);
+            await new GridRows(api, `getAggregatedChildren on pinned group returns same children as source setup`)
+                .check(`
+                    PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                    ROOT id:ROOT_NODE_ID
+                    ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                    │ ├── LEAF id:fr-paris country:"France" amount:100
+                    │ └── LEAF id:fr-lyon country:"France" amount:200
+                    └─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:150
+                    · └── LEAF id:de-berlin country:"Germany" amount:150
+                `);
 
             const sourceGroup = api.getRowNode('row-group-country-France');
             const pinnedGroup = api.getPinnedTopRow(0);
@@ -634,6 +650,16 @@ describe('editing with pinned sibling rows', () => {
             expect(pinnedChildren.length).toBe(2);
             expect(sourceChildren.map((n) => n.id).sort()).toEqual(['fr-lyon', 'fr-paris']);
             expect(pinnedChildren.map((n) => n.id).sort()).toEqual(['fr-lyon', 'fr-paris']);
+            await new GridRows(api, `getAggregatedChildren on pinned group returns same children as source final state`)
+                .check(`
+                    PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                    ROOT id:ROOT_NODE_ID
+                    ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                    │ ├── LEAF id:fr-paris country:"France" amount:100
+                    │ └── LEAF id:fr-lyon country:"France" amount:200
+                    └─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:150
+                    · └── LEAF id:de-berlin country:"Germany" amount:150
+                `);
         });
 
         test('getAggregatedChildren on pinned group reflects filtering', async () => {
@@ -648,6 +674,22 @@ describe('editing with pinned sibling rows', () => {
                 groupDefaultExpanded: -1,
                 getRowId: (params) => params.data?.id,
             });
+            await new GridColumns(api, `getAggregatedChildren on pinned group reflects filtering setup`).checkColumns(
+                `
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── amount "Amount" width:200 aggFunc:sum
+                `
+            );
+            await new GridRows(api, `getAggregatedChildren on pinned group reflects filtering setup`).check(`
+                PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                │ ├── LEAF id:fr-paris country:"France" amount:100
+                │ └── LEAF id:fr-lyon country:"France" amount:200
+                └─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:150
+                · └── LEAF id:de-berlin country:"Germany" amount:150
+            `);
 
             const pinnedGroup = api.getPinnedTopRow(0);
             expect(pinnedGroup).toBeDefined();
@@ -668,6 +710,14 @@ describe('editing with pinned sibling rows', () => {
             pinnedChildren = pinnedGroup!.getAggregatedChildren('amount');
             expect(pinnedChildren.length).toBe(1);
             expect(pinnedChildren[0].id).toBe('fr-lyon');
+            await new GridRows(api, `getAggregatedChildren on pinned group reflects filtering final state`).check(`
+                PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:200
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:200
+                │ └── LEAF id:fr-lyon country:"France" amount:200
+                └─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:150
+                · └── LEAF id:de-berlin country:"Germany" amount:150
+            `);
         });
     });
 });

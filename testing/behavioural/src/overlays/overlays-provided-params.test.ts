@@ -2,7 +2,7 @@ import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
-import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
     const gridsManager = new TestGridsManager({
@@ -36,7 +36,7 @@ describe('ag-grid overlays state', () => {
         expect(hasCustomOverlayWrapper()).toBeFalsy();
     });
 
-    test('agLoadingOverlay only gets the loading property', () => {
+    test('agLoadingOverlay only gets the loading property', async () => {
         const capturedParams: Record<string, any> = {};
 
         const api = gridsManager.createGrid('myGrid', {
@@ -49,6 +49,16 @@ describe('ag-grid overlays state', () => {
             loading: true,
             rowData: [{}],
         });
+        await new GridColumns(api, `agLoadingOverlay only gets the loading property setup`).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(api, `agLoadingOverlay only gets the loading property setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0
+        `);
 
         expect(document.querySelector('.ag-overlay-loading-wrapper')).toBeTruthy();
         expect(hasLoadingOverlayWrapper()).toBeTruthy();
@@ -58,6 +68,22 @@ describe('ag-grid overlays state', () => {
 
         // update specific loading params should refresh the component
         api.setGridOption('loadingOverlayComponentParams', { fromTest: 'loadingParam2' });
+        await new GridColumns(
+            api,
+            `agLoadingOverlay only gets the loading property after setGridOption loadingOverlayComponentParams`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `agLoadingOverlay only gets the loading property after setGridOption loadingOverlayComponentParams`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0
+        `);
         expect(capturedParams['my-resolve-loader']?.fromTest).toBe('loadingParam2');
     });
 });

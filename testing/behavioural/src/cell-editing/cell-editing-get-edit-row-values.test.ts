@@ -4,7 +4,7 @@ import { userEvent } from '@testing-library/user-event';
 import { NumberEditorModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 describe('getEditRowValues returns current editor values during active editing', () => {
     const gridMgr = new TestGridsManager({
@@ -28,6 +28,15 @@ describe('getEditRowValues returns current editor values during active editing',
             rowData: [{ id: 'ROW_0', athlete: 'Natalie Coughlin', age: 25 }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `single cell edit returns typed value while editor is open setup`).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200 editable
+            └── age "Age" width:200 editable
+        `);
+        await new GridRows(api, `single cell edit returns typed value while editor is open setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 athlete:"Natalie Coughlin" age:25
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -47,6 +56,10 @@ describe('getEditRowValues returns current editor values during active editing',
         expect(editValues!.athlete).toBe('aaaaa');
         // Original data should not be mutated
         expect(rowNode.data.athlete).toBe('Natalie Coughlin');
+        await new GridRows(api, `single cell edit returns typed value while editor is open final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:ROW_0 athlete:🖍️"aaaaa" "Natalie Coughlin" age:25
+        `);
     });
 
     test('full-row edit returns all typed values while editors are open', async () => {
@@ -60,6 +73,17 @@ describe('getEditRowValues returns current editor values during active editing',
             rowData: [{ id: 'ROW_0', athlete: 'Natalie Coughlin', age: 25 }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `full-row edit returns all typed values while editors are open setup`).checkColumns(
+            `
+                CENTER
+                ├── athlete "Athlete" width:200 editable
+                └── age "Age" width:200 editable
+            `
+        );
+        await new GridRows(api, `full-row edit returns all typed values while editors are open setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 athlete:"Natalie Coughlin" age:25
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -89,5 +113,9 @@ describe('getEditRowValues returns current editor values during active editing',
         // Original data should not be mutated
         expect(rowNode.data.athlete).toBe('Natalie Coughlin');
         expect(rowNode.data.age).toBe(25);
+        await new GridRows(api, `full-row edit returns all typed values while editors are open final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF 🖍️ id:ROW_0 athlete:🖍️"aaaaa" "Natalie Coughlin" age:🖍️"555" 25
+        `);
     });
 });

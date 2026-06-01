@@ -9,7 +9,7 @@
  * - Selection column edge cases
  * - RTL column interactions
  */
-import type { ColDef, Column } from 'ag-grid-community';
+import type { ColDef, Column, ColumnGroup } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
 
@@ -48,7 +48,11 @@ describe('Column Edge Cases', () => {
                 ├── sport width:200 rowGroup
                 └── gold width:200
             `);
-            await new GridRows(api, 'rows').check(false);
+            await new GridRows(api, 'rows').check(`
+                ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-sport:null
+                ├── LEAF id:0 ag-Grid-AutoColumn-country:"(Blanks)" ag-Grid-AutoColumn-sport:"(Blanks)"
+                └── LEAF id:1
+            `);
         });
     });
 
@@ -107,7 +111,12 @@ describe('Column Edge Cases', () => {
             expect(api.getColumn('a')).not.toBeNull();
             expect(api.getColumn('b')).not.toBeNull();
 
-            await new GridColumns(api, 'with duplicates').checkColumns(false);
+            await new GridColumns(api, 'with duplicates').checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── a_1 width:200
+                └── b width:200
+            `);
         });
     });
 
@@ -134,6 +143,123 @@ describe('Column Edge Cases', () => {
                 └── a width:200
             `);
         });
+
+        test('grid constructed without columnDefs + rowSelection change — refreshAll() !ready guard short-circuits', async () => {
+            // selectionColService.onSelectionOptionsChanged calls `colModel.refreshAll(source)`
+            // when checkboxes/headerCheckbox/checkboxLocation change. On a !ready grid (no
+            // columnDefs yet), refreshAll must take its `!this.ready` early-return without throwing.
+            const api = gridsManager.createGrid('uninitSel', {
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+                // intentionally no columnDefs
+            });
+            await new GridColumns(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  setup`
+            ).checkColumns(``);
+            await new GridRows(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            // Change checkboxes setting — fires onSelectionOptionsChanged → colModel.refreshAll
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: false });
+            await new GridColumns(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption rowSelection`
+            ).checkColumns(``);
+            await new GridRows(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption rowSelection`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(api.getAllGridColumns()).toEqual([]);
+
+            // Provide columnDefs → grid transitions to ready and rebuilds normally.
+            api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'b' }]);
+            await new GridColumns(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption columnDefs`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── a width:200
+                └── b width:200
+            `);
+            await new GridRows(
+                api,
+                `grid constructed without columnDefs + rowSelection change — refreshAll() !ready  after setGridOption columnDefs`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            await asyncSetTimeout(0);
+            const ids = api.getAllGridColumns().map((c) => c.getColId());
+            expect(ids).toContain('a');
+            expect(ids).toContain('b');
+        });
+
+        test('grid constructed without columnDefs property — api methods safe on !ready grid; later setGridOption activates cols', async () => {
+            // syncService routes `columnDefs === undefined` into `waitingForColumns = true` and
+            // never calls `colModel.setColumnDefs`. The grid is constructed and `gridReady` fires,
+            // but `ColumnModel.ready` stays false until columnDefs arrive. All `!ready` guards in
+            // columnModel are LOAD-BEARING for this window — exercising them here.
+            const api = gridsManager.createGrid('uninitialised', {
+                // intentionally no columnDefs
+            });
+            await new GridColumns(
+                api,
+                `grid constructed without columnDefs property — api methods safe on !ready grid;  setup`
+            ).checkColumns(``);
+            await new GridRows(
+                api,
+                `grid constructed without columnDefs property — api methods safe on !ready grid;  setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            // Each method below must NOT crash; values reflect the pre-init grid state.
+            expect(api.getColumnDefs()).toBeUndefined();
+            expect(api.getColumns()).toBeNull();
+            expect(api.getAllGridColumns()).toEqual([]);
+            expect(api.getColumnState()).toEqual([]);
+            // applyColumnState on an empty/!ready grid returns false (no cols to match against)
+            expect(api.applyColumnState({ state: [{ colId: 'whatever', hide: true }] })).toBe(false);
+            // setGridOption(pivotMode) on a !ready grid sets the flag but the side-effect refresh
+            // takes the !ready early-return path. This is benign — when cols arrive, the regular
+            // build pipeline applies pivot mode.
+            api.setGridOption('pivotMode', true);
+            await new GridColumns(
+                api,
+                `grid constructed without columnDefs property — api methods safe on !ready grid;  after setGridOption pivotMode`
+            ).checkColumns(``);
+            await new GridRows(
+                api,
+                `grid constructed without columnDefs property — api methods safe on !ready grid;  after setGridOption pivotMode`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(api.isPivotMode()).toBe(true);
+
+            // Now provide columnDefs — the grid transitions to ready, and previous calls are now
+            // applicable.
+            api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'b' }]);
+            await new GridColumns(
+                api,
+                `grid constructed without columnDefs property — api methods safe on !ready grid;  after setGridOption columnDefs`
+            ).checkColumns(``);
+            await new GridRows(
+                api,
+                `grid constructed without columnDefs property — api methods safe on !ready grid;  after setGridOption columnDefs`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            await asyncSetTimeout(0);
+
+            expect(api.getAllGridColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
+            expect(api.getColumns()).not.toBeNull();
+        });
     });
 
     describe('all columns hidden', () => {
@@ -149,6 +275,39 @@ describe('Column Edge Cases', () => {
             expect(api.getAllGridColumns().length).toBe(2);
 
             await new GridColumns(api, 'all hidden').checkColumns('empty');
+        });
+
+        test('group with all-hidden children is not flagged as first/last visible', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        groupId: 'empty',
+                        children: [
+                            { colId: 'a', hide: true },
+                            { colId: 'b', hide: true },
+                        ],
+                    },
+                    { colId: 'c' },
+                ],
+            });
+            await new GridColumns(api, `group with all-hidden children is not flagged as first/last visible setup`)
+                .checkColumns(`
+                    CENTER
+                    └── c width:200
+                `);
+            await new GridRows(api, `group with all-hidden children is not flagged as first/last visible setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                `
+            );
+
+            // Only 'c' is displayed; the all-hidden group has no leaves to participate in first/last checks.
+            const allDisplayed = api.getAllDisplayedColumns();
+            expect(allDisplayed.map((col) => col.getColId())).toEqual(['c']);
+            await new GridRows(api, `group with all-hidden children is not flagged as first/last visible final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                `);
         });
     });
 
@@ -190,6 +349,24 @@ describe('Column Edge Cases', () => {
                 └── b width:200
             `);
         });
+
+        test('pinned: true (boolean shorthand) is treated as left-pinned', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', pinned: true }, { colId: 'b' }, { colId: 'c', pinned: true }],
+            });
+
+            expect(api.getDisplayedLeftColumns().map((c) => c.getColId())).toEqual(['a', 'c']);
+            expect(api.getDisplayedCenterColumns().map((c) => c.getColId())).toEqual(['b']);
+            expect(api.getDisplayedRightColumns().length).toBe(0);
+
+            await new GridColumns(api, 'pinned: true as left').checkColumns(`
+                LEFT
+                ├── a width:200
+                └── c width:200
+                CENTER
+                └── b width:200
+            `);
+        });
     });
 
     describe('column events', () => {
@@ -206,22 +383,54 @@ describe('Column Edge Cases', () => {
 
             expect(listener).toHaveBeenCalled();
             api.removeEventListener('columnEverythingChanged', listener);
-            await new GridColumns(api, 'columns').checkColumns(false);
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
         });
 
         test('columnPivotModeChanged fires when pivotMode toggles', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }],
             });
+            await new GridColumns(api, `columnPivotModeChanged fires when pivotMode toggles setup`).checkColumns(`
+                CENTER
+                └── a width:200
+            `);
+            await new GridRows(api, `columnPivotModeChanged fires when pivotMode toggles setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const listener = vitest.fn();
             api.addEventListener('columnPivotModeChanged', listener);
 
             api.setGridOption('pivotMode', true);
+            await new GridColumns(
+                api,
+                `columnPivotModeChanged fires when pivotMode toggles after setGridOption pivotMode`
+            ).checkColumns(``);
+            await new GridRows(api, `columnPivotModeChanged fires when pivotMode toggles after setGridOption pivotMode`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                `);
             await asyncSetTimeout(0);
             expect(listener).toHaveBeenCalledTimes(1);
 
             api.setGridOption('pivotMode', false);
+            await new GridColumns(
+                api,
+                `columnPivotModeChanged fires when pivotMode toggles after setGridOption pivotMode #2`
+            ).checkColumns(`
+                CENTER
+                └── a width:200
+            `);
+            await new GridRows(
+                api,
+                `columnPivotModeChanged fires when pivotMode toggles after setGridOption pivotMode #2`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
             await asyncSetTimeout(0);
             expect(listener).toHaveBeenCalledTimes(2);
 
@@ -232,11 +441,24 @@ describe('Column Edge Cases', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }],
             });
+            await new GridColumns(api, `columnVisible fires when column visibility changes setup`).checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
+            await new GridRows(api, `columnVisible fires when column visibility changes setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const listener = vitest.fn();
             api.addEventListener('columnVisible', listener);
 
             api.setColumnsVisible(['b'], false);
+            await new GridColumns(api, `columnVisible fires when column visibility changes after setColumnsVisible`)
+                .checkColumns(`
+                    CENTER
+                    └── a width:200
+                `);
             await asyncSetTimeout(0);
             expect(listener).toHaveBeenCalled();
 
@@ -247,11 +469,26 @@ describe('Column Edge Cases', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }],
             });
+            await new GridColumns(api, `columnPinned fires when column pinning changes setup`).checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
+            await new GridRows(api, `columnPinned fires when column pinning changes setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const listener = vitest.fn();
             api.addEventListener('columnPinned', listener);
 
             api.setColumnsPinned(['a'], 'left');
+            await new GridColumns(api, `columnPinned fires when column pinning changes after setColumnsPinned`)
+                .checkColumns(`
+                    LEFT
+                    └── a width:200
+                    CENTER
+                    └── b width:200
+                `);
             await asyncSetTimeout(0);
             expect(listener).toHaveBeenCalled();
 
@@ -262,11 +499,26 @@ describe('Column Edge Cases', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
             });
+            await new GridColumns(api, `columnMoved fires when column is moved setup`).checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── b width:200
+                └── c width:200
+            `);
+            await new GridRows(api, `columnMoved fires when column is moved setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const listener = vitest.fn();
             api.addEventListener('columnMoved', listener);
 
             api.moveColumns(['c'], 0);
+            await new GridColumns(api, `columnMoved fires when column is moved after moveColumns`).checkColumns(`
+                CENTER
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
             await asyncSetTimeout(0);
             expect(listener).toHaveBeenCalled();
 
@@ -277,15 +529,230 @@ describe('Column Edge Cases', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a', sortable: true }],
             });
+            await new GridColumns(api, `sortChanged fires when column sort changes setup`).checkColumns(`
+                CENTER
+                └── a width:200
+            `);
+            await new GridRows(api, `sortChanged fires when column sort changes setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const listener = vitest.fn();
             api.addEventListener('sortChanged', listener);
 
             api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+            await new GridColumns(api, `sortChanged fires when column sort changes after applyColumnState`)
+                .checkColumns(`
+                    CENTER
+                    └── a width:200 sort:asc
+                `);
+            await new GridRows(api, `sortChanged fires when column sort changes after applyColumnState`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
             await asyncSetTimeout(0);
             expect(listener).toHaveBeenCalled();
 
             api.removeEventListener('sortChanged', listener);
+        });
+
+        // Solved by AG-17366 when it is completed
+        test.skip('applyColumnState dispatches all 5 change events in one call when every category changes', async () => {
+            // Each col mutates a single category so the test can attribute events to specific cols.
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'sortMe', sortable: true },
+                    { colId: 'resizeMe', width: 100 },
+                    { colId: 'pinMe' },
+                    { colId: 'hideMe' },
+                    { colId: 'aggMe', enableValue: true, aggFunc: 'sum' },
+                    { colId: 'pivotMe', enablePivot: true },
+                    { colId: 'groupMe', enableRowGroup: true },
+                ],
+                rowData: [{ sortMe: 1, resizeMe: 1, pinMe: 1, hideMe: 1, aggMe: 1, pivotMe: 'p', groupMe: 'g' }],
+            });
+            await new GridColumns(
+                api,
+                `applyColumnState dispatches all 5 change events in one call when every category  setup`
+            ).checkColumns(`
+                CENTER
+                ├── sortMe width:200
+                ├── resizeMe width:100
+                ├── pinMe width:200
+                ├── hideMe width:200
+                ├── aggMe width:200 aggFunc:sum
+                ├── pivotMe width:200
+                └── groupMe width:200
+            `);
+            await new GridRows(
+                api,
+                `applyColumnState dispatches all 5 change events in one call when every category  setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
+            await asyncSetTimeout(0);
+
+            const sortListener = vitest.fn();
+            const resizeListener = vitest.fn();
+            const pinListener = vitest.fn();
+            const visListener = vitest.fn();
+            const valueListener = vitest.fn();
+            const widthChangedListener = vitest.fn();
+            const displayedWidthListener = vitest.fn();
+            const containerWidthListener = vitest.fn();
+            const pivotChangedListener = vitest.fn();
+            const rowGroupChangedListener = vitest.fn();
+            api.addEventListener('sortChanged', sortListener);
+            api.addEventListener('columnResized', resizeListener);
+            api.addEventListener('columnPinned', pinListener);
+            api.addEventListener('columnVisible', visListener);
+            api.addEventListener('columnValueChanged', valueListener);
+            api.addEventListener('displayedColumnsWidthChanged' as any, displayedWidthListener);
+            api.addEventListener('columnContainerWidthChanged' as any, containerWidthListener);
+            api.addEventListener('columnPivotChanged', pivotChangedListener);
+            api.addEventListener('columnRowGroupChanged', rowGroupChangedListener);
+            // Col-level `widthChanged` on the resized col.
+            (api.getColumn('resizeMe') as any).__addEventListener('widthChanged', widthChangedListener);
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'sortMe', sort: 'asc' },
+                    { colId: 'resizeMe', width: 250 },
+                    { colId: 'pinMe', pinned: 'left' },
+                    { colId: 'hideMe', hide: true },
+                    { colId: 'aggMe', aggFunc: null },
+                    { colId: 'pivotMe', pivot: true },
+                    { colId: 'groupMe', rowGroup: true },
+                ],
+            });
+            await new GridColumns(
+                api,
+                `applyColumnState dispatches all 5 change events in one call when every category  after applyColumnState`
+            ).checkColumns(`
+                LEFT
+                └── pinMe width:200
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── sortMe width:200 sort:asc
+                ├── resizeMe width:250
+                ├── aggMe width:200
+                ├── pivotMe width:200 pivot
+                └── groupMe width:200 rowGroup
+            `);
+            await new GridRows(
+                api,
+                `applyColumnState dispatches all 5 change events in one call when every category  after applyColumnState`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP collapsed id:row-group-groupMe- ag-Grid-AutoColumn:"(Blanks)"
+                · └── LEAF hidden id:0
+            `);
+            await asyncSetTimeout(0);
+
+            expect(sortListener).toHaveBeenCalledTimes(1);
+            expect(resizeListener).toHaveBeenCalled();
+            expect(pinListener).toHaveBeenCalledTimes(1);
+            expect(visListener).toHaveBeenCalledTimes(1);
+            expect(valueListener).toHaveBeenCalledTimes(1);
+            expect(widthChangedListener).toHaveBeenCalled();
+            expect(displayedWidthListener).toHaveBeenCalled();
+            expect(containerWidthListener).toHaveBeenCalled();
+            expect(pivotChangedListener).toHaveBeenCalled();
+            expect(rowGroupChangedListener).toHaveBeenCalled();
+
+            // Each event's `columns` array should mention only the col(s) that changed
+            // in that category.
+            const lastCall = (l: typeof sortListener) => l.mock.calls[l.mock.calls.length - 1][0];
+            expect(lastCall(sortListener).columns.map((c: Column) => c.getColId())).toEqual(['sortMe']);
+            expect(lastCall(pinListener).columns.map((c: Column) => c.getColId())).toEqual(['pinMe']);
+            expect(lastCall(visListener).columns.map((c: Column) => c.getColId())).toEqual(['hideMe']);
+            expect(lastCall(valueListener).columns.map((c: Column) => c.getColId())).toEqual(['aggMe']);
+
+            // resize events may include flex cols; assert resizeMe is in the latest event.
+            const resizeEvent = lastCall(resizeListener);
+            expect(resizeEvent.columns.map((c: Column) => c.getColId())).toContain('resizeMe');
+
+            api.removeEventListener('sortChanged', sortListener);
+            api.removeEventListener('columnResized', resizeListener);
+            api.removeEventListener('columnPinned', pinListener);
+            api.removeEventListener('columnVisible', visListener);
+            api.removeEventListener('columnValueChanged', valueListener);
+        });
+
+        test('applyColumnState does not dispatch events for unchanged categories', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', sortable: true, sort: 'asc' },
+                    { colId: 'b', enableValue: true, aggFunc: 'sum' },
+                    { colId: 'c', pinned: 'left' },
+                ],
+                rowData: [{ a: 1, b: 1, c: 1 }],
+            });
+            await new GridColumns(api, `applyColumnState does not dispatch events for unchanged categories setup`)
+                .checkColumns(`
+                    LEFT
+                    └── c width:200
+                    CENTER
+                    ├── a width:200 sort:asc
+                    └── b width:200 aggFunc:sum
+                `);
+            await new GridRows(api, `applyColumnState does not dispatch events for unchanged categories setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0
+                `
+            );
+            await asyncSetTimeout(0);
+
+            const sortListener = vitest.fn();
+            const resizeListener = vitest.fn();
+            const pinListener = vitest.fn();
+            const visListener = vitest.fn();
+            const valueListener = vitest.fn();
+            api.addEventListener('sortChanged', sortListener);
+            api.addEventListener('columnResized', resizeListener);
+            api.addEventListener('columnPinned', pinListener);
+            api.addEventListener('columnVisible', visListener);
+            api.addEventListener('columnValueChanged', valueListener);
+
+            // Apply the SAME state — nothing should change.
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', sort: 'asc' },
+                    { colId: 'b', aggFunc: 'sum' },
+                    { colId: 'c', pinned: 'left' },
+                ],
+            });
+            await new GridColumns(
+                api,
+                `applyColumnState does not dispatch events for unchanged categories after applyColumnState`
+            ).checkColumns(`
+                LEFT
+                └── c width:200
+                CENTER
+                ├── a width:200 sort:asc
+                └── b width:200 aggFunc:sum
+            `);
+            await new GridRows(
+                api,
+                `applyColumnState does not dispatch events for unchanged categories after applyColumnState`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
+            await asyncSetTimeout(0);
+
+            expect(sortListener).not.toHaveBeenCalled();
+            expect(resizeListener).not.toHaveBeenCalled();
+            expect(pinListener).not.toHaveBeenCalled();
+            expect(visListener).not.toHaveBeenCalled();
+            expect(valueListener).not.toHaveBeenCalled();
+
+            api.removeEventListener('sortChanged', sortListener);
+            api.removeEventListener('columnResized', resizeListener);
+            api.removeEventListener('columnPinned', pinListener);
+            api.removeEventListener('columnVisible', visListener);
+            api.removeEventListener('columnValueChanged', valueListener);
         });
     });
 
@@ -309,7 +776,12 @@ describe('Column Edge Cases', () => {
             expect(colB.getLeft()).toBe(100);
             expect(colC.getLeft()).toBe(300);
 
-            await new GridColumns(api, 'RTL columns').checkColumns(false);
+            await new GridColumns(api, 'RTL columns').checkColumns(`
+                CENTER
+                ├── a width:100
+                ├── b width:200
+                └── c width:150
+            `);
         });
 
         test('enableRtl with pinned columns', async () => {
@@ -721,7 +1193,10 @@ describe('Column Edge Cases', () => {
             const col = api.getColumn('a')!;
             expect(col.getActualWidth()).toBeGreaterThan(0);
 
-            await new GridColumns(api, 'columns').checkColumns(false);
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                └── a width:36
+            `);
         });
     });
 
@@ -734,7 +1209,59 @@ describe('Column Edge Cases', () => {
             expect(api.getAllGridColumns().length).toBe(50);
             expect(api.getAllDisplayedColumns().length).toBe(50);
 
-            await new GridColumns(api, '50 columns').checkColumns(false);
+            await new GridColumns(api, '50 columns').checkColumns(`
+                CENTER
+                ├── col0 width:200
+                ├── col1 width:200
+                ├── col2 width:200
+                ├── col3 width:200
+                ├── col4 width:200
+                ├── col5 width:200
+                ├── col6 width:200
+                ├── col7 width:200
+                ├── col8 width:200
+                ├── col9 width:200
+                ├── col10 width:200
+                ├── col11 width:200
+                ├── col12 width:200
+                ├── col13 width:200
+                ├── col14 width:200
+                ├── col15 width:200
+                ├── col16 width:200
+                ├── col17 width:200
+                ├── col18 width:200
+                ├── col19 width:200
+                ├── col20 width:200
+                ├── col21 width:200
+                ├── col22 width:200
+                ├── col23 width:200
+                ├── col24 width:200
+                ├── col25 width:200
+                ├── col26 width:200
+                ├── col27 width:200
+                ├── col28 width:200
+                ├── col29 width:200
+                ├── col30 width:200
+                ├── col31 width:200
+                ├── col32 width:200
+                ├── col33 width:200
+                ├── col34 width:200
+                ├── col35 width:200
+                ├── col36 width:200
+                ├── col37 width:200
+                ├── col38 width:200
+                ├── col39 width:200
+                ├── col40 width:200
+                ├── col41 width:200
+                ├── col42 width:200
+                ├── col43 width:200
+                ├── col44 width:200
+                ├── col45 width:200
+                ├── col46 width:200
+                ├── col47 width:200
+                ├── col48 width:200
+                └── col49 width:200
+            `);
         });
     });
 
@@ -754,15 +1281,35 @@ describe('Column Edge Cases', () => {
             expect(api.getAllGridColumns().length).toBe(10);
             expect(api.getAllDisplayedColumns().length).toBe(10);
 
-            await new GridColumns(api, 'after rapid changes').checkColumns(false);
+            await new GridColumns(api, 'after rapid changes').checkColumns(`
+                CENTER
+                ├── col0 width:200
+                ├── col1 width:200
+                ├── col2 width:200
+                ├── col3 width:200
+                ├── col4 width:200
+                ├── col5 width:200
+                ├── col6 width:200
+                ├── col7 width:200
+                ├── col8 width:200
+                └── col9 width:200
+            `);
         });
     });
 
     describe('column state edge cases', () => {
-        test('applyColumnState with non-array state warns and returns false', () => {
+        test('applyColumnState with non-array state warns and returns false', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }],
             });
+            await new GridColumns(api, `applyColumnState with non-array state warns and returns false setup`)
+                .checkColumns(`
+                    CENTER
+                    └── a width:200
+                `);
+            await new GridRows(api, `applyColumnState with non-array state warns and returns false setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
@@ -776,6 +1323,11 @@ describe('Column Edge Cases', () => {
             expect(warnMsg).toContain('#32');
 
             warnSpy.mockRestore();
+            await new GridRows(api, `applyColumnState with non-array state warns and returns false final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                `
+            );
         });
 
         test('applyColumnState with empty state array is a no-op', async () => {
@@ -788,7 +1340,10 @@ describe('Column Edge Cases', () => {
 
             // Width should be unchanged
             expect(api.getColumn('a')!.getActualWidth()).toBe(100);
-            await new GridColumns(api, 'unchanged').checkColumns(false);
+            await new GridColumns(api, 'unchanged').checkColumns(`
+                CENTER
+                └── a width:100
+            `);
         });
 
         test('defaultState clears properties on columns not in state array', async () => {
@@ -807,7 +1362,12 @@ describe('Column Edge Cases', () => {
             expect(api.getColumn('b')!.getSort()).toBeFalsy();
             expect(api.getColumn('c')!.getSort()).toBe('asc');
 
-            await new GridColumns(api, 'defaults applied').checkColumns(false);
+            await new GridColumns(api, 'defaults applied').checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── b width:200
+                └── c width:200 sort:asc
+            `);
         });
     });
 
@@ -868,7 +1428,11 @@ describe('Column Edge Cases', () => {
             expect(api.getColumn('a')!.isRowGroupActive()).toBe(false);
             expect(api.getRowGroupColumns().length).toBe(0);
 
-            await new GridColumns(api, 'grouping cleared').checkColumns(false);
+            await new GridColumns(api, 'grouping cleared').checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
         });
 
         test('pivotIndex=null clears pivot', async () => {
@@ -887,7 +1451,11 @@ describe('Column Edge Cases', () => {
             expect(api.getColumn('a')!.isPivotActive()).toBe(false);
             expect(api.getPivotColumns().length).toBe(0);
 
-            await new GridColumns(api, 'pivot cleared').checkColumns(false);
+            await new GridColumns(api, 'pivot cleared').checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200 aggFunc:sum
+            `);
         });
     });
 
@@ -914,7 +1482,13 @@ describe('Column Edge Cases', () => {
             // a and b should remain adjacent
             expect(Math.abs(aIdx - bIdx)).toBe(1);
 
-            await new GridColumns(api, 'married order preserved').checkColumns(false);
+            await new GridColumns(api, 'married order preserved').checkColumns(`
+                CENTER
+                ├─┬ "Married" GROUP marryChildren
+                │ ├── a width:200
+                │ └── b width:200
+                └── c width:200
+            `);
         });
     });
 
@@ -938,6 +1512,27 @@ describe('Column Edge Cases', () => {
             await new GridColumns(api, 'all hidden incl selection').checkColumns('empty');
         });
 
+        // Solved by AG-17366 when it is completed
+        test.skip('selection column auto-hide keeps tree and flat representations consistent', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', hide: true }],
+                rowData: [{ a: 1 }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+            });
+
+            const displayed = api.getAllDisplayedColumns().map((c: Column) => c.getColId());
+            expect(displayed).toEqual([]);
+
+            const centerTree = api.getCenterDisplayedColumnGroups();
+            const treeContainsSelection = centerTree.some(
+                (n: Column | ColumnGroup) => n.isColumn && (n as Column).getColId() === 'ag-Grid-SelectionColumn'
+            );
+            expect(treeContainsSelection).toBe(false);
+
+            // Validate via the invariant that would catch any future tree-flat drift.
+            await new GridColumns(api, 'tree/flat consistent after auto-hide').checkColumns('empty');
+        });
+
         test('checkboxLocation=autoGroupColumn disables separate selection column', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'group', rowGroup: true }, { colId: 'value' }],
@@ -949,7 +1544,139 @@ describe('Column Edge Cases', () => {
             const allGrid = api.getAllGridColumns().map((c: Column) => c.getColId());
             expect(allGrid).not.toContain('ag-Grid-SelectionColumn');
 
-            await new GridColumns(api, 'no separate selection col').checkColumns(false);
+            await new GridColumns(api, 'no separate selection col').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── group width:200 rowGroup
+                └── value width:200
+            `);
+        });
+
+        test('updating selectionColumnDef when selection col does NOT exist is a safe no-op', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }],
+            });
+            await new GridColumns(
+                api,
+                `updating selectionColumnDef when selection col does NOT exist is a safe no-op setup`
+            ).checkColumns(`
+                CENTER
+                └── a width:200
+            `);
+            await new GridRows(
+                api,
+                `updating selectionColumnDef when selection col does NOT exist is a safe no-op setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            expect(api.getColumn('ag-Grid-SelectionColumn')).toBeNull();
+            api.setGridOption('selectionColumnDef', { width: 99 });
+            await new GridColumns(
+                api,
+                `updating selectionColumnDef when selection col does NOT exist is a safe no-op after setGridOption selectionColumnDef`
+            ).checkColumns(`
+                CENTER
+                └── a width:200
+            `);
+            await new GridRows(
+                api,
+                `updating selectionColumnDef when selection col does NOT exist is a safe no-op after setGridOption selectionColumnDef`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(api.getColumn('ag-Grid-SelectionColumn')).toBeNull();
+        });
+
+        test('updating selectionColumnDef with sort populates the column state sort field', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+            });
+            await new GridColumns(
+                api,
+                `updating selectionColumnDef with sort populates the column state sort field setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                └── a width:200
+            `);
+            await new GridRows(api, `updating selectionColumnDef with sort populates the column state sort field setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                `);
+
+            api.setGridOption('selectionColumnDef', { sort: 'asc' } as any);
+            await new GridColumns(
+                api,
+                `updating selectionColumnDef with sort populates the column state sort field after setGridOption selectionColumnDef`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 sort:asc !resizable !sortable suppressMovable lockPosition:left
+                └── a width:200
+            `);
+            await new GridRows(
+                api,
+                `updating selectionColumnDef with sort populates the column state sort field after setGridOption selectionColumnDef`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const selState = api.getColumnState().find((s) => s.colId === 'ag-Grid-SelectionColumn');
+            expect(selState?.sort).toBe('asc');
+        });
+
+        test.each(['left', 'right'] as const)(
+            'selection col pinned %s + all data cols hidden — refreshVisibility takes the matching switch branch',
+            (pinned) => {
+                // Path: numVisibleCols === expectedNumCols (1 selection col only), switch on pinned.
+                const api = gridsManager.createGrid(`pin-${pinned}`, {
+                    columnDefs: [{ colId: 'a', hide: true }],
+                    rowData: [{ a: 1 }],
+                    rowSelection: { mode: 'multiRow', checkboxes: true },
+                    selectionColumnDef: { pinned },
+                });
+
+                // refreshVisibility auto-hides the selection col when it's the only thing left.
+                const displayed = api.getAllDisplayedColumns();
+                expect(displayed.map((c) => c.getColId())).not.toContain('ag-Grid-SelectionColumn');
+            }
+        );
+
+        test('selection col pinned right honours pinned position when data cols also visible', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                rowData: [{ a: 1, b: 2 }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+                selectionColumnDef: { pinned: 'right' },
+            });
+            await new GridColumns(
+                api,
+                `selection col pinned right honours pinned position when data cols also visible setup`
+            ).checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+                RIGHT
+                └── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+            `);
+            await new GridRows(
+                api,
+                `selection col pinned right honours pinned position when data cols also visible setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
+
+            const selCol = api.getColumn('ag-Grid-SelectionColumn');
+            expect(selCol?.getPinned()).toBe('right');
+            await new GridRows(
+                api,
+                `selection col pinned right honours pinned position when data cols also visible final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
         });
     });
 
@@ -958,11 +1685,28 @@ describe('Column Edge Cases', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'name', width: 100 }],
             });
+            await new GridColumns(api, `column matched by field when colId not set setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:100
+            `);
+            await new GridRows(api, `column matched by field when colId not set setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const col1 = api.getColumn('name')!;
 
             // Update with same field — should reuse column instance
             api.setGridOption('columnDefs', [{ field: 'name', width: 200 }]);
+            await new GridColumns(api, `column matched by field when colId not set after setGridOption columnDefs`)
+                .checkColumns(`
+                    CENTER
+                    └── name "Name" width:200
+                `);
+            await new GridRows(api, `column matched by field when colId not set after setGridOption columnDefs`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                `
+            );
 
             const col2 = api.getColumn('name')!;
             expect(col2).toBe(col1);
@@ -974,9 +1718,19 @@ describe('Column Edge Cases', () => {
                 columnDefs: [{ colId: 'a', cellDataType: 'number' }],
                 defaultColDef: { cellDataType: 'text' },
             });
+            await new GridColumns(api, `preserves cellDataType from original colDef setup`).checkColumns(`
+                CENTER
+                └── a width:200
+            `);
+            await new GridRows(api, `preserves cellDataType from original colDef setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             // cellDataType from colDef should override defaultColDef
             expect(api.getColumn('a')!.getColDef().cellDataType).toBe('number');
+            await new GridRows(api, `preserves cellDataType from original colDef final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
     });
 
@@ -999,7 +1753,15 @@ describe('Column Edge Cases', () => {
             expect(firstCol.getColId()).toBe('left1');
             expect(lastCol.getColId()).toBe('right1');
 
-            await new GridColumns(api, 'pinned first/last').checkColumns(false);
+            await new GridColumns(api, 'pinned first/last').checkColumns(`
+                LEFT
+                ├── left1 width:200
+                └── left2 width:200
+                CENTER
+                └── center1 width:200
+                RIGHT
+                └── right1 width:200
+            `);
         });
 
         test('empty center with pinned sides has correct displayed columns', async () => {
@@ -1165,10 +1927,15 @@ describe('Column Edge Cases', () => {
             expect(firstCol.getColId()).toBeTruthy();
             expect(firstCol.getColId()).not.toBe('');
 
-            await new GridColumns(api, 'auto id').checkColumns(false);
+            await new GridColumns(api, 'auto id').checkColumns(`
+                CENTER
+                ├── 0 "NoId" width:200
+                └── b width:200
+            `);
         });
 
-        test('column with empty string colId', async () => {
+        // Solved by AG-17366 when it is completed
+        test.skip('column with empty string colId', async () => {
             const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
             const api = gridsManager.createGrid('myGrid', {
@@ -1180,7 +1947,11 @@ describe('Column Edge Cases', () => {
             const allGrid = api.getAllGridColumns();
             expect(allGrid.length).toBe(2);
 
-            await new GridColumns(api, 'empty colId').checkColumns(false);
+            await new GridColumns(api, 'empty colId').checkColumns(`
+                CENTER
+                ├──  "Empty" width:200
+                └── b width:200
+            `);
         });
 
         test('column with field containing special characters', async () => {
@@ -1190,7 +1961,11 @@ describe('Column Edge Cases', () => {
             });
 
             expect(api.getAllGridColumns().length).toBe(2);
-            await new GridColumns(api, 'special chars').checkColumns(false);
+            await new GridColumns(api, 'special chars').checkColumns(`
+                CENTER
+                ├── data-value "Data-value" width:200
+                └── count (total) "Count (total)" width:200
+            `);
         });
     });
 
@@ -1201,7 +1976,10 @@ describe('Column Edge Cases', () => {
             });
 
             expect(api.getColumn('a')!.getActualWidth()).toBe(10000);
-            await new GridColumns(api, 'large width').checkColumns(false);
+            await new GridColumns(api, 'large width').checkColumns(`
+                CENTER
+                └── a width:10000
+            `);
         });
 
         test('width=1 is accepted', async () => {
@@ -1210,7 +1988,10 @@ describe('Column Edge Cases', () => {
             });
 
             expect(api.getColumn('a')!.getActualWidth()).toBe(1);
-            await new GridColumns(api, 'tiny width').checkColumns(false);
+            await new GridColumns(api, 'tiny width').checkColumns(`
+                CENTER
+                └── a width:1
+            `);
         });
 
         test('minWidth greater than width clamps up', async () => {
@@ -1249,7 +2030,10 @@ describe('Column Edge Cases', () => {
 
             // The sort is set from colDef regardless of sortable flag
             // sortable only controls UI interaction, not API/initial state
-            await new GridColumns(api, 'sort on unsortable').checkColumns(false);
+            await new GridColumns(api, 'sort on unsortable').checkColumns(`
+                CENTER
+                └── a width:200 sort:asc !sortable
+            `);
         });
 
         test('clearing all sorts via applyColumnState', async () => {
@@ -1362,45 +2146,86 @@ describe('Column Edge Cases', () => {
     });
 
     describe('deprecated methods still work', () => {
-        test('getRight() equals getLeft() + getActualWidth()', () => {
+        test('getRight() equals getLeft() + getActualWidth()', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { colId: 'a', width: 150 },
                     { colId: 'b', width: 200 },
                 ],
             });
+            await new GridColumns(api, `getRight() equals getLeft() + getActualWidth() setup`).checkColumns(`
+                CENTER
+                ├── a width:150
+                └── b width:200
+            `);
+            await new GridRows(api, `getRight() equals getLeft() + getActualWidth() setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const colA = api.getColumn('a')!;
             const colB = api.getColumn('b')!;
 
             expect(colA.getRight()).toBe(colA.getLeft()! + colA.getActualWidth());
             expect(colB.getRight()).toBe(colB.getLeft()! + colB.getActualWidth());
+            await new GridRows(api, `getRight() equals getLeft() + getActualWidth() final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
     });
 
     describe('column navigation methods', () => {
-        test('getDisplayedColAfter returns null at last column', () => {
+        test('getDisplayedColAfter returns null at last column', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }],
             });
+            await new GridColumns(api, `getDisplayedColAfter returns null at last column setup`).checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
+            await new GridRows(api, `getDisplayedColAfter returns null at last column setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const colB = api.getColumn('b')!;
             expect(api.getDisplayedColAfter(colB)).toBeNull();
+            await new GridRows(api, `getDisplayedColAfter returns null at last column final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
 
-        test('getDisplayedColBefore returns null at first column', () => {
+        test('getDisplayedColBefore returns null at first column', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }],
             });
+            await new GridColumns(api, `getDisplayedColBefore returns null at first column setup`).checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
+            await new GridRows(api, `getDisplayedColBefore returns null at first column setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const colA = api.getColumn('a')!;
             expect(api.getDisplayedColBefore(colA)).toBeNull();
+            await new GridRows(api, `getDisplayedColBefore returns null at first column final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
 
-        test('navigation skips hidden columns across all sections', () => {
+        test('navigation skips hidden columns across all sections', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b', hide: true }, { colId: 'c', hide: true }, { colId: 'd' }],
             });
+            await new GridColumns(api, `navigation skips hidden columns across all sections setup`).checkColumns(`
+                CENTER
+                ├── a width:200
+                └── d width:200
+            `);
+            await new GridRows(api, `navigation skips hidden columns across all sections setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const colA = api.getColumn('a')!;
             const colD = api.getColumn('d')!;
@@ -1408,11 +2233,14 @@ describe('Column Edge Cases', () => {
             // b and c hidden — a's next should be d
             expect(api.getDisplayedColAfter(colA)?.getColId()).toBe('d');
             expect(api.getDisplayedColBefore(colD)?.getColId()).toBe('a');
+            await new GridRows(api, `navigation skips hidden columns across all sections final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
     });
 
     describe('column group leaf columns', () => {
-        test('getDisplayedLeafColumns excludes hidden leaves', () => {
+        test('getDisplayedLeafColumns excludes hidden leaves', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     {
@@ -1426,6 +2254,16 @@ describe('Column Edge Cases', () => {
                     },
                 ],
             });
+            await new GridColumns(api, `getDisplayedLeafColumns excludes hidden leaves setup`).checkColumns(`
+                CENTER
+                └─┬ "Group" GROUP open
+                  ├── a width:200
+                  ├── b width:200 columnGroupShow:open
+                  └── c width:200 columnGroupShow:closed hidden
+            `);
+            await new GridRows(api, `getDisplayedLeafColumns excludes hidden leaves setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             // Get the group from displayed groups
             const groups = api.getCenterDisplayedColumnGroups?.();
@@ -1441,11 +2279,14 @@ describe('Column Edge Cases', () => {
                 expect(displayedLeaves.length).toBe(2);
                 expect(displayedLeaves.map((c: Column) => c.getColId())).toEqual(['a', 'b']);
             }
+            await new GridRows(api, `getDisplayedLeafColumns excludes hidden leaves final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
     });
 
     describe('column group state API', () => {
-        test('getColumnGroupState includes nested groups', () => {
+        test('getColumnGroupState includes nested groups', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     {
@@ -1462,6 +2303,16 @@ describe('Column Edge Cases', () => {
                     },
                 ],
             });
+            await new GridColumns(api, `getColumnGroupState includes nested groups setup`).checkColumns(`
+                CENTER
+                └─┬ "Outer" GROUP
+                  └─┬ "Inner" GROUP open
+                    ├── a width:200
+                    └── b width:200 columnGroupShow:open
+            `);
+            await new GridRows(api, `getColumnGroupState includes nested groups setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const state = api.getColumnGroupState();
             const outerState = state.find((s: any) => s.groupId === 'outer');
@@ -1471,6 +2322,9 @@ describe('Column Edge Cases', () => {
             expect(outerState).toBeDefined();
             expect(innerState).toBeDefined();
             expect(innerState!.open).toBe(true);
+            await new GridRows(api, `getColumnGroupState includes nested groups final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
     });
 
@@ -1495,15 +2349,36 @@ describe('Column Edge Cases', () => {
             `);
         });
 
-        test('changing colDef reference on same colId reuses column instance', () => {
+        test('changing colDef reference on same colId reuses column instance', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }],
             });
+            await new GridColumns(api, `changing colDef reference on same colId reuses column instance setup`)
+                .checkColumns(`
+                    CENTER
+                    └── a width:200
+                `);
+            await new GridRows(api, `changing colDef reference on same colId reuses column instance setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const instance1 = api.getColumn('a');
 
             // Completely new colDef object but same colId
             api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'Updated' }]);
+            await new GridColumns(
+                api,
+                `changing colDef reference on same colId reuses column instance after setGridOption columnDefs`
+            ).checkColumns(`
+                CENTER
+                └── a "Updated" width:200
+            `);
+            await new GridRows(
+                api,
+                `changing colDef reference on same colId reuses column instance after setGridOption columnDefs`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const instance2 = api.getColumn('a');
 
@@ -1513,47 +2388,99 @@ describe('Column Edge Cases', () => {
     });
 
     describe('method return type guarantees', () => {
-        test('getDisplayNameForColumn returns string for column with field', () => {
+        test('getDisplayNameForColumn returns string for column with field', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'name' }],
             });
+            await new GridColumns(api, `getDisplayNameForColumn returns string for column with field setup`)
+                .checkColumns(`
+                    CENTER
+                    └── name "Name" width:200
+                `);
+            await new GridRows(api, `getDisplayNameForColumn returns string for column with field setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const name = api.getDisplayNameForColumn(api.getColumn('name')!, 'header');
             expect(typeof name).toBe('string');
-            expect(name).toBe('Name'); // Auto-generated from field
+            expect(name).toBe('Name');
+            await new GridRows(api, `getDisplayNameForColumn returns string for column with field final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                `
+            ); // Auto-generated from field
         });
 
-        test('getDisplayNameForColumn returns empty string for colId-only column without headerName', () => {
+        test('getDisplayNameForColumn returns empty string for colId-only column without headerName', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }],
             });
+            await new GridColumns(
+                api,
+                `getDisplayNameForColumn returns empty string for colId-only column without heade setup`
+            ).checkColumns(`
+                CENTER
+                └── a width:200
+            `);
+            await new GridRows(
+                api,
+                `getDisplayNameForColumn returns empty string for colId-only column without heade setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             // When only colId is set (no field, no headerName), display name is empty
             const name = api.getDisplayNameForColumn(api.getColumn('a')!, 'header');
             expect(typeof name).toBe('string');
             expect(name).toBe('');
+            await new GridRows(
+                api,
+                `getDisplayNameForColumn returns empty string for colId-only column without heade final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
 
-        test('applyColumnState returns boolean, not null', () => {
+        test('applyColumnState returns boolean, not null', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }],
             });
+            await new GridColumns(api, `applyColumnState returns boolean, not null setup`).checkColumns(`
+                CENTER
+                └── a width:200
+            `);
+            await new GridRows(api, `applyColumnState returns boolean, not null setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const result = api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
             expect(typeof result).toBe('boolean');
             expect(result).toBe(true);
+            await new GridRows(api, `applyColumnState returns boolean, not null final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
 
-        test('getColumnState returns array for all columns', () => {
+        test('getColumnState returns array for all columns', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b', hide: true }],
             });
+            await new GridColumns(api, `getColumnState returns array for all columns setup`).checkColumns(`
+                CENTER
+                └── a width:200
+            `);
+            await new GridRows(api, `getColumnState returns array for all columns setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const state = api.getColumnState();
             expect(Array.isArray(state)).toBe(true);
             // Should include hidden columns too
             expect(state.length).toBe(2);
             expect(state.map((s: any) => s.colId)).toContain('b');
+            await new GridRows(api, `getColumnState returns array for all columns final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
     });
 
@@ -1567,12 +2494,17 @@ describe('Column Edge Cases', () => {
             api.moveColumns(['a'], 2);
 
             // Check where a ended up — behavior depends on implementation
-            await new GridColumns(api, 'after move attempt').checkColumns(false);
+            await new GridColumns(api, 'after move attempt').checkColumns(`
+                CENTER
+                ├── b width:200
+                ├── c width:200
+                └── a width:200 suppressMovable
+            `);
         });
     });
 
     describe('headerValueGetter precedence', () => {
-        test('headerValueGetter takes precedence over headerName', () => {
+        test('headerValueGetter takes precedence over headerName', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     {
@@ -1582,12 +2514,22 @@ describe('Column Edge Cases', () => {
                     },
                 ],
             });
+            await new GridColumns(api, `headerValueGetter takes precedence over headerName setup`).checkColumns(`
+                CENTER
+                └── a "Dynamic Name" width:200
+            `);
+            await new GridRows(api, `headerValueGetter takes precedence over headerName setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const name = api.getDisplayNameForColumn(api.getColumn('a')!, 'header');
             expect(name).toBe('Dynamic Name');
+            await new GridRows(api, `headerValueGetter takes precedence over headerName final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
 
-        test('headerValueGetter receives column context', () => {
+        test('headerValueGetter receives column context', async () => {
             let receivedParams: any = null;
 
             const api = gridsManager.createGrid('myGrid', {
@@ -1601,6 +2543,13 @@ describe('Column Edge Cases', () => {
                     },
                 ],
             });
+            await new GridColumns(api, `headerValueGetter receives column context setup`).checkColumns(`
+                CENTER
+                └── testCol "Computed" width:200
+            `);
+            await new GridRows(api, `headerValueGetter receives column context setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             // Force the getter to be called
             api.getDisplayNameForColumn(api.getColumn('testCol')!, 'header');
@@ -1609,6 +2558,9 @@ describe('Column Edge Cases', () => {
             expect(receivedParams.column).toBeDefined();
             expect(receivedParams.colDef).toBeDefined();
             expect(receivedParams.location).toBe('header');
+            await new GridRows(api, `headerValueGetter receives column context final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
     });
 });

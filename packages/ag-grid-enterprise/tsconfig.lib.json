@@ -1,18 +1,14 @@
 {
   "extends": "./tsconfig.json",
+  "references": [
+    {
+      "path": "../ag-grid-community/tsconfig.lib.json"
+    }
+  ],
   "compilerOptions": {
     "types": ["vite/client"],
-    "baseUrl": "src",
     "module": "preserve",
-    "moduleResolution": "bundler",
-    // Re-establish source path mappings under the overridden `baseUrl: "src"`. Without this the
-    // inherited mappings in tsconfig.base.json resolve to wrong filesystem paths and TS falls
-    // back to `node_modules` (dist .d.ts), breaking IDE go-to-definition / find-references.
-    // `paths` only affects resolution during type-checking — emitted .d.ts files still use the
-    // bare `'ag-grid-community'` module name.
-    "paths": {
-      "ag-grid-community": ["../../ag-grid-community/src/main.ts"]
-    }
+    "moduleResolution": "bundler"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts", "src/**/test/**", "src/**/test-utils/**"]

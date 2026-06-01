@@ -277,7 +277,7 @@ describe('ag-grid hierarchical tree aggregation and filter', () => {
             │ · └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" n:"E" x:15 y:5
             ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" n:"C" x:34 y:3
             │ ├── 5 LEAF id:5 ag-Grid-AutoColumn:"5" n:"F" x:16 y:1
-            │ └─┬ h GROUP id:h ag-Grid-AutoColumn:"h" n:"H" x:18 y:0 
+            │ └─┬ h GROUP id:h ag-Grid-AutoColumn:"h" n:"H" x:18 y:0
             │ · └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" n:"I" x:18 y:3
             └─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" n:"J" x:20 y:4
             · └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" n:"K" x:20 y:0

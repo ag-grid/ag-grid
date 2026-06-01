@@ -119,6 +119,17 @@ describe('Cell Editing: edge cases', () => {
                 rowData: [{ id: 'ROW_0', a: 'Original' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `paste setDataValue with rejecting valueSetter keeps original value setup`)
+                .checkColumns(`
+                    CENTER
+                    └── a "A" width:200 editable
+                `);
+            await new GridRows(api, `paste setDataValue with rejecting valueSetter keeps original value setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:ROW_0 a:"Original"
+                `
+            );
             const eventTracker = new EditEventTracker(api);
             await asyncSetTimeout(0);
 
@@ -130,6 +141,11 @@ describe('Cell Editing: edge cases', () => {
             expect(rowNode.data.a).toBe('Original');
             expect(result).toBe(false);
             expect(eventTracker.counts.cellValueChanged).toBe(0);
+            await new GridRows(api, `paste setDataValue with rejecting valueSetter keeps original value final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:ROW_0 a:"Original"
+                `);
         });
 
         test('rangeSvc setDataValue with rejecting valueSetter keeps original value', async () => {
@@ -141,6 +157,16 @@ describe('Cell Editing: edge cases', () => {
                 rowData: [{ id: 'ROW_0', a: 'Original' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `rangeSvc setDataValue with rejecting valueSetter keeps original value setup`)
+                .checkColumns(`
+                    CENTER
+                    └── a "A" width:200 editable
+                `);
+            await new GridRows(api, `rangeSvc setDataValue with rejecting valueSetter keeps original value setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:ROW_0 a:"Original"
+                `);
             await asyncSetTimeout(0);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
@@ -149,6 +175,11 @@ describe('Cell Editing: edge cases', () => {
 
             expect(rowNode.data.a).toBe('Original');
             expect(result).toBe(false);
+            await new GridRows(api, `rangeSvc setDataValue with rejecting valueSetter keeps original value final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:ROW_0 a:"Original"
+                `);
         });
     });
 
@@ -542,6 +573,17 @@ describe('Cell Editing: edge cases', () => {
             rowData: [{ id: 'ROW_0', a: 'Original' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `batch: paste same value twice — both succeed but pending value unchanged setup`)
+            .checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+        await new GridRows(api, `batch: paste same value twice — both succeed but pending value unchanged setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:"Original"
+            `
+        );
         await asyncSetTimeout(0);
 
         api.startBatchEdit();
@@ -558,6 +600,11 @@ describe('Cell Editing: edge cases', () => {
         expect(rowNode.data.a).toBe('Original');
 
         api.cancelBatchEdit();
+        await new GridRows(api, `batch: paste same value twice — both succeed but pending value unchanged final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:"Original"
+            `);
     });
 
     // Escape in batch should revert to the prior pending value, not to sourceValue.
@@ -846,6 +893,17 @@ describe('Cell Editing: edge cases', () => {
                 rowData: [{ id: 'ROW_0', a: 'Original' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `cellClear-only batch session dispatches both batch events on commit setup`)
+                .checkColumns(`
+                    CENTER
+                    └── a "A" width:200 editable
+                `);
+            await new GridRows(api, `cellClear-only batch session dispatches both batch events on commit setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:ROW_0 a:"Original"
+                `
+            );
             const eventTracker = new EditEventTracker(api);
             await asyncSetTimeout(0);
 
@@ -867,6 +925,11 @@ describe('Cell Editing: edge cases', () => {
                 batchEditingStopped: 1,
             });
             expect(rowNode.data.a).toBe(null);
+            await new GridRows(api, `cellClear-only batch session dispatches both batch events on commit final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:ROW_0 a:null
+                `);
         });
 
         test('no-change batch session does not dispatch batch events', async () => {
@@ -877,6 +940,14 @@ describe('Cell Editing: edge cases', () => {
                 rowData: [{ id: 'ROW_0', a: 'Original' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `no-change batch session does not dispatch batch events setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `no-change batch session does not dispatch batch events setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:"Original"
+            `);
             const eventTracker = new EditEventTracker(api);
             await asyncSetTimeout(0);
 
@@ -889,6 +960,10 @@ describe('Cell Editing: edge cases', () => {
                 batchEditingStarted: 0,
                 batchEditingStopped: 0,
             });
+            await new GridRows(api, `no-change batch session does not dispatch batch events final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:ROW_0 a:"Original"
+            `);
         });
     });
 });

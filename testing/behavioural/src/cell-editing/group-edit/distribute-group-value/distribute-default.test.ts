@@ -350,6 +350,21 @@ describe('implicit distribution is NOT enabled when groupRowEditable is false or
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(
+            api,
+            `groupRowEditable: false does not trigger implicit distribution via setDataValue setup`
+        ).checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
+        `);
+        await new GridRows(api, `groupRowEditable: false does not trigger implicit distribution via setDataValue setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-region-R amount:30
+                · ├── LEAF id:a1 region:"R" amount:10
+                · └── LEAF id:a2 region:"R" amount:20
+            `);
 
         const groupNode = api.getRowNode('row-group-region-R')!;
         expect(groupNode.group).toBe(true);
@@ -361,6 +376,15 @@ describe('implicit distribution is NOT enabled when groupRowEditable is false or
         // Children should be unchanged — no implicit distribution
         expect(api.getRowNode('a1')?.data?.amount).toBe(10);
         expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+        await new GridRows(
+            api,
+            `groupRowEditable: false does not trigger implicit distribution via setDataValue final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-region-R amount:30
+            · ├── LEAF id:a1 region:"R" amount:10
+            · └── LEAF id:a2 region:"R" amount:20
+        `);
     });
 
     test('groupRowEditable callback returning false does not trigger implicit distribution', async () => {
@@ -388,6 +412,23 @@ describe('implicit distribution is NOT enabled when groupRowEditable is false or
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(
+            api,
+            `groupRowEditable callback returning false does not trigger implicit distribution setup`
+        ).checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
+        `);
+        await new GridRows(
+            api,
+            `groupRowEditable callback returning false does not trigger implicit distribution setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-region-R amount:30
+            · ├── LEAF id:a1 region:"R" amount:10
+            · └── LEAF id:a2 region:"R" amount:20
+        `);
 
         const groupNode = api.getRowNode('row-group-region-R')!;
         expect(groupNode.group).toBe(true);
@@ -398,6 +439,15 @@ describe('implicit distribution is NOT enabled when groupRowEditable is false or
         // Children should be unchanged — callback returned false
         expect(api.getRowNode('a1')?.data?.amount).toBe(10);
         expect(api.getRowNode('a2')?.data?.amount).toBe(20);
+        await new GridRows(
+            api,
+            `groupRowEditable callback returning false does not trigger implicit distribution final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-region-R amount:30
+            · ├── LEAF id:a1 region:"R" amount:10
+            · └── LEAF id:a2 region:"R" amount:20
+        `);
     });
 
     test('groupRowEditable callback returning true triggers implicit distribution', async () => {
@@ -425,6 +475,20 @@ describe('implicit distribution is NOT enabled when groupRowEditable is false or
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `groupRowEditable callback returning true triggers implicit distribution setup`)
+            .checkColumns(`
+                CENTER
+                ├── group "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum editable
+            `);
+        await new GridRows(api, `groupRowEditable callback returning true triggers implicit distribution setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-region-R amount:30
+                · ├── LEAF id:a1 region:"R" amount:10
+                · └── LEAF id:a2 region:"R" amount:20
+            `
+        );
 
         const groupNode = api.getRowNode('row-group-region-R')!;
         expect(groupNode.group).toBe(true);
@@ -435,6 +499,13 @@ describe('implicit distribution is NOT enabled when groupRowEditable is false or
         // Implicit uniform distribution: 60 / 2 = 30 each
         expect(api.getRowNode('a1')?.data?.amount).toBe(30);
         expect(api.getRowNode('a2')?.data?.amount).toBe(30);
+        await new GridRows(api, `groupRowEditable callback returning true triggers implicit distribution final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-region-R amount:60
+                · ├── LEAF id:a1 region:"R" amount:30
+                · └── LEAF id:a2 region:"R" amount:30
+            `);
     });
 
     test('groupRowEditable callback is evaluated per row for implicit distribution', async () => {
@@ -460,6 +531,34 @@ describe('implicit distribution is NOT enabled when groupRowEditable is false or
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `groupRowEditable callback is evaluated per row for implicit distribution setup`)
+            .checkColumns(`
+                CENTER
+                ├── group "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum editable
+            `);
+        await new GridRows(api, `groupRowEditable callback is evaluated per row for implicit distribution setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-region-Europe amount:180
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:60
+                │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:30
+                │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:60
+                │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
+                │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
+                │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:60
+                │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
+                │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
+                └─┬ filler id:row-group-region-Americas amount:160
+                · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:100
+                · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
+                · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
+                · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:60
+                · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
+                · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
+            `
+        );
 
         // France group: callback returns true → implicit distribution should work
         const franceNode = api.getRowNode('row-group-region-Europe-country-France')!;
@@ -476,5 +575,26 @@ describe('implicit distribution is NOT enabled when groupRowEditable is false or
 
         expect(api.getRowNode('de-berlin')?.data?.amount).toBe(30);
         expect(api.getRowNode('de-hamburg')?.data?.amount).toBe(30);
+        await new GridRows(api, `groupRowEditable callback is evaluated per row for implicit distribution final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-region-Europe amount:220
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:100
+                │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:50
+                │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:50
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:60
+                │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
+                │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
+                │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:60
+                │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
+                │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
+                └─┬ filler id:row-group-region-Americas amount:160
+                · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:100
+                · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
+                · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
+                · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:60
+                · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
+                · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
+            `);
     });
 });

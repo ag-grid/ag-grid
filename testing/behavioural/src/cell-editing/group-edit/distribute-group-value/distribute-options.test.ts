@@ -144,6 +144,25 @@ describe('defaultColDef merge with column-level groupRowValueSetter', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(
+            api,
+            `defaultColDef percentage strategy is used when column record has undefined for s setup`
+        ).checkColumns(`
+            CENTER
+            ├── group "Group" width:200 editable
+            └── amount "Amount" width:200 aggFunc:sum editable
+        `);
+        await new GridRows(
+            api,
+            `defaultColDef percentage strategy is used when column record has undefined for s setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:60
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:60
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+            · · ├── LEAF id:a2 region:"R" country:"C" amount:20
+            · · └── LEAF id:a3 region:"R" country:"C" amount:30
+        `);
 
         const groupNode = api.getRowNode('row-group-region-R-country-C')!;
         groupNode.setDataValue('amount', 120, 'ui');
@@ -154,6 +173,17 @@ describe('defaultColDef merge with column-level groupRowValueSetter', () => {
         expect(api.getRowNode('a1')?.data?.amount).toBe(20);
         expect(api.getRowNode('a2')?.data?.amount).toBe(40);
         expect(api.getRowNode('a3')?.data?.amount).toBe(60);
+        await new GridRows(
+            api,
+            `defaultColDef percentage strategy is used when column record has undefined for s final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:120
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:120
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:20
+            · · ├── LEAF id:a2 region:"R" country:"C" amount:40
+            · · └── LEAF id:a3 region:"R" country:"C" amount:60
+        `);
     });
 
     test('column-level explicit strategy overrides defaultColDef strategy', async () => {
@@ -184,6 +214,19 @@ describe('defaultColDef merge with column-level groupRowValueSetter', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `column-level explicit strategy overrides defaultColDef strategy setup`)
+            .checkColumns(`
+                CENTER
+                ├── group "Group" width:200 editable
+                └── amount "Amount" width:200 aggFunc:sum editable
+            `);
+        await new GridRows(api, `column-level explicit strategy overrides defaultColDef strategy setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-R amount:30
+            · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:30
+            · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+            · · └── LEAF id:a2 region:"R" country:"C" amount:20
+        `);
 
         const groupNode = api.getRowNode('row-group-region-R-country-C')!;
         groupNode.setDataValue('amount', 60, 'ui');
@@ -192,6 +235,15 @@ describe('defaultColDef merge with column-level groupRowValueSetter', () => {
         // uniform: 60 / 2 = 30 each
         expect(api.getRowNode('a1')?.data?.amount).toBe(30);
         expect(api.getRowNode('a2')?.data?.amount).toBe(30);
+        await new GridRows(api, `column-level explicit strategy overrides defaultColDef strategy final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-R amount:60
+                · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:60
+                · · ├── LEAF id:a1 region:"R" country:"C" amount:30
+                · · └── LEAF id:a2 region:"R" country:"C" amount:30
+            `
+        );
     });
 
     test('defaultColDef precision is inherited when column only sets distribution', async () => {
@@ -223,6 +275,22 @@ describe('defaultColDef merge with column-level groupRowValueSetter', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `defaultColDef precision is inherited when column only sets distribution setup`)
+            .checkColumns(`
+                CENTER
+                ├── group "Group" width:200 editable
+                └── amount "Amount" width:200 aggFunc:sum editable
+            `);
+        await new GridRows(api, `defaultColDef precision is inherited when column only sets distribution setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-R amount:30
+                · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:30
+                · · ├── LEAF id:a1 region:"R" country:"C" amount:10
+                · · ├── LEAF id:a2 region:"R" country:"C" amount:10
+                · · └── LEAF id:a3 region:"R" country:"C" amount:10
+            `
+        );
 
         const groupNode = api.getRowNode('row-group-region-R-country-C')!;
         groupNode.setDataValue('amount', 10, 'ui');
@@ -232,6 +300,15 @@ describe('defaultColDef merge with column-level groupRowValueSetter', () => {
         expect(api.getRowNode('a1')?.data?.amount).toBe(4);
         expect(api.getRowNode('a2')?.data?.amount).toBe(3);
         expect(api.getRowNode('a3')?.data?.amount).toBe(3);
+        await new GridRows(api, `defaultColDef precision is inherited when column only sets distribution final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-R amount:10
+                · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:10
+                · · ├── LEAF id:a1 region:"R" country:"C" amount:4
+                · · ├── LEAF id:a2 region:"R" country:"C" amount:3
+                · · └── LEAF id:a3 region:"R" country:"C" amount:3
+            `);
     });
 });
 

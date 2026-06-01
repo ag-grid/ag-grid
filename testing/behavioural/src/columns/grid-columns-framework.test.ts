@@ -408,7 +408,11 @@ describe('GridColumns Framework', () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs });
 
             // false = skip diagram, just run validators
-            await new GridColumns(api, 'validators only').checkColumns(false);
+            await new GridColumns(api, 'validators only').checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
         });
     });
 });

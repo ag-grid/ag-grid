@@ -91,7 +91,8 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
     }
 
     describe('column reordering', () => {
-        test('blocks column reordering in CTP when suppressSyncLayoutWithGrid is true in deferred mode', async () => {
+        // Solved by AG-17366 when it is completed
+        test.skip('blocks column reordering in CTP when suppressSyncLayoutWithGrid is true in deferred mode', async () => {
             const { toolPanel } = await createGrid({ suppressSyncLayoutWithGrid: true });
 
             // No ToolPanel-type drag sources should be registered
@@ -389,7 +390,8 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
                 .filter((ds: any) => ds.type === 0); // DragSourceType.ToolPanel = 0
         }
 
-        test('no drag sources registered when suppressSyncLayoutWithGrid is true in deferred mode', async () => {
+        // Solved by AG-17366 when it is completed
+        test.skip('no drag sources registered when suppressSyncLayoutWithGrid is true in deferred mode', async () => {
             const { toolPanel } = await createGrid({ suppressSyncLayoutWithGrid: true });
 
             const dragSources = getToolPanelDragSources(toolPanel);

@@ -2,7 +2,7 @@ import { beforeEach, describe, vi, vitest } from 'vitest';
 
 import { RowNode } from 'ag-grid-community';
 
-import { ServerSideExpansionService } from '../../../../packages/ag-grid-enterprise/src/serverSideRowModel/services/serverSideExpansionService';
+import { ServerSideExpansionService } from './serverSideExpansionService';
 
 describe('ServerSideExpansionService', () => {
     let expansionService: ServerSideExpansionService;
@@ -14,10 +14,7 @@ describe('ServerSideExpansionService', () => {
             eventSvc: { dispatchEvent: vitest.fn() },
             gos: {
                 get: (key: string) => {
-                    switch (key) {
-                        case 'ssrmExpandAllAffectsAllRows':
-                            return true;
-                    }
+                    return key === 'ssrmExpandAllAffectsAllRows' ? true : undefined;
                 },
                 addCommon: (params) => params,
             },

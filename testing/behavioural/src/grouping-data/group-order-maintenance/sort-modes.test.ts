@@ -95,6 +95,22 @@ describe('group order maintenance / sort modes', () => {
             rowData,
             getRowId: (p) => p.data.id,
         });
+        await new GridColumns(
+            api,
+            `pivot mode: leaf-group children are not reordered by an active leaf-column sort setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            └── athlete "Athlete" width:200 sort:asc
+        `);
+        await new GridRows(api, `pivot mode: leaf-group children are not reordered by an active leaf-column sort setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+                · ├── LEAF id:2 country:"Audi" year:2020 athlete:"A"
+                · ├── LEAF id:3 country:"Audi" year:2021 athlete:"M"
+                · └── LEAF id:1 country:"Audi" year:2020 athlete:"Z"
+            `);
 
         const audi = () => api.getRowNode('row-group-country-Audi')!;
         const childIds = () => audi().childrenAfterSort?.map((n) => n.id);
@@ -102,6 +118,27 @@ describe('group order maintenance / sort modes', () => {
         expect(childIds()).toEqual(['2', '3', '1']);
 
         api.setGridOption('pivotMode', true);
+        await new GridColumns(
+            api,
+            `pivot mode: leaf-group children are not reordered by an active leaf-column sort after setGridOption pivotMode`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├─┬ "2020" GROUP
+            │ └── pivot_year_2020_ "-" width:200
+            └─┬ "2021" GROUP
+              └── pivot_year_2021_ "-" width:200
+        `);
+        await new GridRows(
+            api,
+            `pivot mode: leaf-group children are not reordered by an active leaf-column sort after setGridOption pivotMode`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            · ├── LEAF hidden id:1
+            · ├── LEAF hidden id:2
+            · └── LEAF hidden id:3
+        `);
         expect(childIds()).toEqual(['1', '2', '3']);
     });
 
@@ -126,6 +163,24 @@ describe('group order maintenance / sort modes', () => {
             rowData,
             getRowId: (p) => p.data.id,
         });
+        await new GridColumns(api, `pivot mode + groupMaintainOrder: filter cycle preserves group order setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Country" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+            `);
+        await new GridRows(api, `pivot mode + groupMaintainOrder: filter cycle preserves group order setup`).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:30 pivot_year_2021_sales:30
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Audi ag-Grid-AutoColumn:"Audi" pivot_year_2020_sales:10 pivot_year_2021_sales:null
+            │ └── LEAF hidden id:1 pivot_year_2020_sales:10 pivot_year_2021_sales:10
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-BMW ag-Grid-AutoColumn:"BMW" pivot_year_2020_sales:20 pivot_year_2021_sales:null
+            │ └── LEAF hidden id:2 pivot_year_2020_sales:20 pivot_year_2021_sales:20
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla" pivot_year_2020_sales:null pivot_year_2021_sales:30
+            · └── LEAF hidden id:3 pivot_year_2020_sales:30 pivot_year_2021_sales:30
+        `);
 
         const initialOrder = ['Audi', 'BMW', 'Tesla'];
         const renderedKeys = () =>
@@ -137,9 +192,51 @@ describe('group order maintenance / sort modes', () => {
         expect(renderedKeys()).toEqual(initialOrder);
 
         api.setGridOption('quickFilterText', 'BMW');
+        await new GridColumns(
+            api,
+            `pivot mode + groupMaintainOrder: filter cycle preserves group order after setGridOption quickFilterText`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├─┬ "2020" GROUP
+            │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+            └─┬ "2021" GROUP
+              └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+        `);
+        await new GridRows(
+            api,
+            `pivot mode + groupMaintainOrder: filter cycle preserves group order after setGridOption quickFilterText`
+        ).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:30 pivot_year_2021_sales:30
+            └─┬ LEAF_GROUP collapsed id:row-group-country-BMW ag-Grid-AutoColumn:"BMW" pivot_year_2020_sales:20 pivot_year_2021_sales:null
+            · └── LEAF hidden id:2 pivot_year_2020_sales:20 pivot_year_2021_sales:20
+        `);
         expect(renderedKeys()).toEqual(['BMW']);
 
         api.setGridOption('quickFilterText', undefined);
+        await new GridColumns(
+            api,
+            `pivot mode + groupMaintainOrder: filter cycle preserves group order after setGridOption quickFilterText #2`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├─┬ "2020" GROUP
+            │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+            └─┬ "2021" GROUP
+              └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+        `);
+        await new GridRows(
+            api,
+            `pivot mode + groupMaintainOrder: filter cycle preserves group order after setGridOption quickFilterText #2`
+        ).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:30 pivot_year_2021_sales:30
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Audi ag-Grid-AutoColumn:"Audi" pivot_year_2020_sales:10 pivot_year_2021_sales:null
+            │ └── LEAF hidden id:1 pivot_year_2020_sales:10 pivot_year_2021_sales:10
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-BMW ag-Grid-AutoColumn:"BMW" pivot_year_2020_sales:20 pivot_year_2021_sales:null
+            │ └── LEAF hidden id:2 pivot_year_2020_sales:20 pivot_year_2021_sales:20
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla" pivot_year_2020_sales:null pivot_year_2021_sales:30
+            · └── LEAF hidden id:3 pivot_year_2020_sales:30 pivot_year_2021_sales:30
+        `);
         expect(renderedKeys()).toEqual(initialOrder);
     });
 

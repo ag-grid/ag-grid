@@ -313,6 +313,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `without column key in pivot mode, returns all children setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── sales "Sales" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `without column key in pivot mode, returns all children setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -328,6 +336,13 @@ describe('IRowNode.getAggregatedChildren()', () => {
             // Without column key, returns all children
             const allChildren = irelandGroup!.getAggregatedChildren(null);
             expect(allChildren.map((n) => n.data?.id).sort()).toEqual(['1', '2', '3']);
+            await new GridRows(api, `without column key in pivot mode, returns all children final state`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:1500 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1500 pivot_year_2021_sales:1200
+                · ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                · ├── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                · └── LEAF hidden id:3 pivot_year_2020_sales:500 pivot_year_2021_sales:500
+            `);
         });
 
         test('with multiple pivot columns (hierarchy), returns children matching all pivot keys', async () => {
@@ -344,6 +359,20 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(
+                api,
+                `with multiple pivot columns (hierarchy), returns children matching all pivot key setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── sales "Sales" width:200 aggFunc:sum
+            `);
+            await new GridRows(
+                api,
+                `with multiple pivot columns (hierarchy), returns children matching all pivot key setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -382,6 +411,17 @@ describe('IRowNode.getAggregatedChildren()', () => {
 
             const children2021Q1 = irelandGroup!.getAggregatedChildren(pivot2021Q1Col!);
             expect(children2021Q1.map((n) => n.data?.id)).toEqual(['3']);
+            await new GridRows(
+                api,
+                `with multiple pivot columns (hierarchy), returns children matching all pivot key final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year-quarter_2020-Q1_sales:100 pivot_year-quarter_2020-Q2_sales:200 pivot_year-quarter_2020_sales:300 pivot_year-quarter_2021-Q1_sales:300 pivot_year-quarter_2021-Q2_sales:400 pivot_year-quarter_2021_sales:700
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year-quarter_2020-Q1_sales:100 pivot_year-quarter_2020-Q2_sales:200 pivot_year-quarter_2020_sales:300 pivot_year-quarter_2021-Q1_sales:300 pivot_year-quarter_2021-Q2_sales:400 pivot_year-quarter_2021_sales:700
+                · ├── LEAF hidden id:1 pivot_year-quarter_2020-Q1_sales:100 pivot_year-quarter_2020-Q2_sales:100 pivot_year-quarter_2020_sales:100 pivot_year-quarter_2021-Q1_sales:100 pivot_year-quarter_2021-Q2_sales:100 pivot_year-quarter_2021_sales:100
+                · ├── LEAF hidden id:2 pivot_year-quarter_2020-Q1_sales:200 pivot_year-quarter_2020-Q2_sales:200 pivot_year-quarter_2020_sales:200 pivot_year-quarter_2021-Q1_sales:200 pivot_year-quarter_2021-Q2_sales:200 pivot_year-quarter_2021_sales:200
+                · ├── LEAF hidden id:3 pivot_year-quarter_2020-Q1_sales:300 pivot_year-quarter_2020-Q2_sales:300 pivot_year-quarter_2020_sales:300 pivot_year-quarter_2021-Q1_sales:300 pivot_year-quarter_2021-Q2_sales:300 pivot_year-quarter_2021_sales:300
+                · └── LEAF hidden id:4 pivot_year-quarter_2020-Q1_sales:400 pivot_year-quarter_2020-Q2_sales:400 pivot_year-quarter_2020_sales:400 pivot_year-quarter_2021-Q1_sales:400 pivot_year-quarter_2021-Q2_sales:400 pivot_year-quarter_2021_sales:400
+            `);
         });
 
         test('pivot column for non-leaf group returns matching children from subgroups', async () => {
@@ -398,6 +438,16 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `pivot column for non-leaf group returns matching children from subgroups setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── sales "Sales" width:200 aggFunc:sum
+                `);
+            await new GridRows(api, `pivot column for non-leaf group returns matching children from subgroups setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -426,6 +476,19 @@ describe('IRowNode.getAggregatedChildren()', () => {
             // because pivot key filtering only applies at the leaf group level
             const europeChildren2020 = europeGroup!.getAggregatedChildren(pivot2020Col!);
             expect(europeChildren2020.length).toBe(2);
+            await new GridRows(
+                api,
+                `pivot column for non-leaf group returns matching children from subgroups final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:1800 pivot_year_2021_sales:2100
+                └─┬ filler id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" pivot_year_2020_sales:1800 pivot_year_2021_sales:2100
+                · ├─┬ LEAF_GROUP collapsed id:row-group-region-Europe-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                · │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                · │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                · └─┬ LEAF_GROUP collapsed id:row-group-region-Europe-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:800 pivot_year_2021_sales:900
+                · · ├── LEAF hidden id:3 pivot_year_2020_sales:800 pivot_year_2021_sales:800
+                · · └── LEAF hidden id:4 pivot_year_2020_sales:900 pivot_year_2021_sales:900
+            `);
         });
 
         test('respects filtering in pivot mode', async () => {
@@ -442,6 +505,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `respects filtering in pivot mode setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── sales "Sales" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `respects filtering in pivot mode setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -473,6 +544,12 @@ describe('IRowNode.getAggregatedChildren()', () => {
             children2020 = irelandGroup!.getAggregatedChildren(pivot2020Col!);
             expect(children2020.length).toBe(1);
             expect(children2020[0].data?.id).toBe('1');
+            await new GridRows(api, `respects filtering in pivot mode final state`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                · ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                · └── LEAF hidden id:3 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+            `);
         });
 
         test('pivot column group totals return all children (not filtered by pivot keys)', async () => {
@@ -493,6 +570,18 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(
+                api,
+                `pivot column group totals return all children (not filtered by pivot keys) setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── sales "Sales" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `pivot column group totals return all children (not filtered by pivot keys) setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -537,6 +626,17 @@ describe('IRowNode.getAggregatedChildren()', () => {
             // Should return all 4 children (total columns aggregate all children, not just matching pivot keys)
             expect(children2020Total.length).toBe(4);
             expect(children2020Total.map((n) => n.data?.id).sort()).toEqual(['1', '2', '3', '4']);
+            await new GridRows(
+                api,
+                `pivot column group totals return all children (not filtered by pivot keys) final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year-quarter_2020-Q1_sales:100 pivot_year-quarter_2020-Q2_sales:200 pivot_year-quarter_2020_:300 pivot_year-quarter_2021-Q1_sales:300 pivot_year-quarter_2021-Q2_sales:400 pivot_year-quarter_2021_:700
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year-quarter_2020-Q1_sales:100 pivot_year-quarter_2020-Q2_sales:200 pivot_year-quarter_2020_:300 pivot_year-quarter_2021-Q1_sales:300 pivot_year-quarter_2021-Q2_sales:400 pivot_year-quarter_2021_:700
+                · ├── LEAF hidden id:1 pivot_year-quarter_2020-Q1_sales:100 pivot_year-quarter_2020-Q2_sales:100 pivot_year-quarter_2020_:100 pivot_year-quarter_2021-Q1_sales:100 pivot_year-quarter_2021-Q2_sales:100 pivot_year-quarter_2021_:100
+                · ├── LEAF hidden id:2 pivot_year-quarter_2020-Q1_sales:200 pivot_year-quarter_2020-Q2_sales:200 pivot_year-quarter_2020_:200 pivot_year-quarter_2021-Q1_sales:200 pivot_year-quarter_2021-Q2_sales:200 pivot_year-quarter_2021_:200
+                · ├── LEAF hidden id:3 pivot_year-quarter_2020-Q1_sales:300 pivot_year-quarter_2020-Q2_sales:300 pivot_year-quarter_2020_:300 pivot_year-quarter_2021-Q1_sales:300 pivot_year-quarter_2021-Q2_sales:300 pivot_year-quarter_2021_:300
+                · └── LEAF hidden id:4 pivot_year-quarter_2020-Q1_sales:400 pivot_year-quarter_2020-Q2_sales:400 pivot_year-quarter_2020_:400 pivot_year-quarter_2021-Q1_sales:400 pivot_year-quarter_2021-Q2_sales:400 pivot_year-quarter_2021_:400
+            `);
         });
     });
 
@@ -552,6 +652,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `accepts Column object as key setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── salesCol "Sales" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `accepts Column object as key setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -570,6 +678,12 @@ describe('IRowNode.getAggregatedChildren()', () => {
             // (pivot key filtering only applies to pivot columns)
             const children = irelandGroup!.getAggregatedChildren(salesCol!);
             expect(children.length).toBe(2);
+            await new GridRows(api, `accepts Column object as key final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" salesCol:300
+                · ├── LEAF id:1 country:"Ireland" salesCol:100
+                · └── LEAF id:2 country:"Ireland" salesCol:200
+            `);
         });
 
         test('accepts column ID string as key', async () => {
@@ -583,6 +697,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `accepts column ID string as key setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── salesCol "Sales" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `accepts column ID string as key setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -597,6 +719,12 @@ describe('IRowNode.getAggregatedChildren()', () => {
             // Using string column ID
             const children = irelandGroup!.getAggregatedChildren('salesCol');
             expect(children.length).toBe(2);
+            await new GridRows(api, `accepts column ID string as key final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" salesCol:300
+                · ├── LEAF id:1 country:"Ireland" salesCol:100
+                · └── LEAF id:2 country:"Ireland" salesCol:200
+            `);
         });
 
         test('returns all children when column key is invalid', async () => {
@@ -610,6 +738,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `returns all children when column key is invalid setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── sales "Sales" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `returns all children when column key is invalid setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -624,6 +760,12 @@ describe('IRowNode.getAggregatedChildren()', () => {
             // Using invalid column ID falls back to returning all children
             const children = irelandGroup!.getAggregatedChildren('nonexistent-column');
             expect(children.length).toBe(2);
+            await new GridRows(api, `returns all children when column key is invalid final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" sales:300
+                · ├── LEAF id:1 country:"Ireland" sales:100
+                · └── LEAF id:2 country:"Ireland" sales:200
+            `);
         });
     });
 
@@ -762,6 +904,20 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(
+                api,
+                `in pivot mode, filtering applies to childrenMapped regardless of suppressAggFilt setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── sales "Sales" width:200 aggFunc:sum
+            `);
+            await new GridRows(
+                api,
+                `in pivot mode, filtering applies to childrenMapped regardless of suppressAggFilt setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -796,6 +952,15 @@ describe('IRowNode.getAggregatedChildren()', () => {
             // getAggregatedChildren for pivot column returns the filtered children matching pivot key
             children2020 = irelandGroup!.getAggregatedChildren(pivot2020Col!);
             expect(children2020.map((n) => n.data?.id)).toEqual(['1']);
+            await new GridRows(
+                api,
+                `in pivot mode, filtering applies to childrenMapped regardless of suppressAggFilt final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                · ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                · └── LEAF hidden id:3 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+            `);
         });
 
         test('in pivot mode with non-leaf groups, getAggregatedChildren uses childrenAfterFilter regardless of suppressAggFilteredOnly', async () => {
@@ -821,6 +986,20 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(
+                api,
+                `in pivot mode with non-leaf groups, getAggregatedChildren uses childrenAfterFilt setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── sales "Sales" width:200 aggFunc:sum
+            `);
+            await new GridRows(
+                api,
+                `in pivot mode with non-leaf groups, getAggregatedChildren uses childrenAfterFilt setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -872,6 +1051,16 @@ describe('IRowNode.getAggregatedChildren()', () => {
                 0
             );
             expect(childrenSum).toBe(europeGroup!.aggData?.['pivot_year_2020_sales']);
+            await new GridRows(
+                api,
+                `in pivot mode with non-leaf groups, getAggregatedChildren uses childrenAfterFilt final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:1500
+                └─┬ filler id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" pivot_year_2020_sales:1500
+                · └─┬ LEAF_GROUP collapsed id:row-group-region-Europe-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1500
+                · · ├── LEAF hidden id:1 pivot_year_2020_sales:1000
+                · · └── LEAF hidden id:2 pivot_year_2020_sales:500
+            `);
         });
 
         test('pivot row total columns (pivotKeys: []) use childrenAfterFilter regardless of suppressAggFilteredOnly', async () => {
@@ -896,6 +1085,20 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(
+                api,
+                `pivot row total columns (pivotKeys: []) use childrenAfterFilter regardless of su setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── sales "Sales" width:200 aggFunc:sum
+            `);
+            await new GridRows(
+                api,
+                `pivot row total columns (pivotKeys: []) use childrenAfterFilter regardless of su setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -944,6 +1147,15 @@ describe('IRowNode.getAggregatedChildren()', () => {
             children = irelandGroup!.getAggregatedChildren(totalCol!);
             expect(children.length).toBe(2);
             expect(children.map((n) => n.data?.id).sort()).toEqual(['1', '3']);
+            await new GridRows(
+                api,
+                `pivot row total columns (pivotKeys: []) use childrenAfterFilter regardless of su final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:1000 pivot_year_2021_sales:1200 PivotRowTotal_pivot_year__sales:2200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200 PivotRowTotal_pivot_year__sales:2200
+                · ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000 PivotRowTotal_pivot_year__sales:1000
+                · └── LEAF hidden id:3 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200 PivotRowTotal_pivot_year__sales:1200
+            `);
         });
     });
 
@@ -1071,6 +1283,24 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = await gridsManager.createGridAndWait('myGrid', gridOptions);
+            await new GridColumns(api, `pinned sibling in pivot mode returns correct children for pivot column setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├─┬ "2020" GROUP
+                    │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                    └─┬ "2021" GROUP
+                      └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+                `);
+            await new GridRows(api, `pinned sibling in pivot mode returns correct children for pivot column setup`)
+                .check(`
+                    PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1500 pivot_year_2021_sales:1200
+                    ROOT id:ROOT_NODE_ID pivot_year_2020_sales:1500 pivot_year_2021_sales:1200
+                    └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1500 pivot_year_2021_sales:1200
+                    · ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                    · ├── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                    · └── LEAF hidden id:3 pivot_year_2020_sales:500 pivot_year_2021_sales:500
+                `);
 
             const sourceGroup = api.getRowNode('row-group-country-Ireland');
             const pinnedGroup = api.getPinnedTopRow(0);
@@ -1105,6 +1335,17 @@ describe('IRowNode.getAggregatedChildren()', () => {
             expect(pinnedChildren2021.length).toBe(1);
             expect(sourceChildren2021.map((n) => n.data?.id)).toEqual(['2']);
             expect(pinnedChildren2021.map((n) => n.data?.id)).toEqual(['2']);
+            await new GridRows(
+                api,
+                `pinned sibling in pivot mode returns correct children for pivot column final state`
+            ).check(`
+                PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1500 pivot_year_2021_sales:1200
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:1500 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1500 pivot_year_2021_sales:1200
+                · ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                · ├── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                · └── LEAF hidden id:3 pivot_year_2020_sales:500 pivot_year_2021_sales:500
+            `);
         });
 
         test('pinned sibling in pivot mode reflects filtering for pivot column', async () => {
@@ -1128,6 +1369,23 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = await gridsManager.createGridAndWait('myGrid', gridOptions);
+            await new GridColumns(api, `pinned sibling in pivot mode reflects filtering for pivot column setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├─┬ "2020" GROUP
+                    │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                    └─┬ "2021" GROUP
+                      └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+                `);
+            await new GridRows(api, `pinned sibling in pivot mode reflects filtering for pivot column setup`).check(`
+                PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1500 pivot_year_2021_sales:1200
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:1500 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1500 pivot_year_2021_sales:1200
+                · ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                · ├── LEAF hidden id:2 pivot_year_2020_sales:500 pivot_year_2021_sales:500
+                · └── LEAF hidden id:3 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+            `);
 
             const pinnedGroup = api.getPinnedTopRow(0);
             expect(pinnedGroup).toBeDefined();
@@ -1151,6 +1409,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             pinnedChildren = pinnedGroup!.getAggregatedChildren(pivot2020Col!);
             expect(pinnedChildren.length).toBe(1);
             expect(pinnedChildren.map((n) => n.data?.id)).toEqual(['1']);
+            await new GridRows(api, `pinned sibling in pivot mode reflects filtering for pivot column final state`)
+                .check(`
+                    PINNED_TOP id:t-top-row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                    ROOT id:ROOT_NODE_ID pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                    └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                    · ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                    · └── LEAF hidden id:3 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                `);
         });
 
         test('pinned sibling reflects transaction updates to source', async () => {
@@ -1296,6 +1562,15 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `recursive respects filtering setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── sport "Sport" width:200
+                └── gold "Gold" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `recursive respects filtering setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -1319,6 +1594,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             allLeaves = europeGroup.getAggregatedChildren('gold', true);
             expect(allLeaves.length).toBe(2);
             expect(allLeaves.map((n) => n.data?.id).sort()).toEqual(['1', '3']);
+            await new GridRows(api, `recursive respects filtering final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" gold:25
+                · ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:10
+                · │ └── LEAF id:1 region:"Europe" country:"Ireland" sport:"Soccer" gold:10
+                · └─┬ LEAF_GROUP id:row-group-region-Europe-country-France ag-Grid-AutoColumn:"France" gold:15
+                · · └── LEAF id:3 region:"Europe" country:"France" sport:"Soccer" gold:15
+            `);
         });
 
         test('recursive returns empty array for leaf nodes', async () => {
@@ -1332,6 +1615,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `recursive returns empty array for leaf nodes setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── gold "Gold" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `recursive returns empty array for leaf nodes setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             applyTransactionChecked(api, {
                 add: [{ id: '1', country: 'Ireland', gold: 10 }],
@@ -1339,6 +1630,11 @@ describe('IRowNode.getAggregatedChildren()', () => {
 
             const leafNode = api.getRowNode('1')!;
             expect(leafNode.getAggregatedChildren('gold', true)).toEqual([]);
+            await new GridRows(api, `recursive returns empty array for leaf nodes final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:10
+                · └── LEAF id:1 country:"Ireland" gold:10
+            `);
         });
 
         test('recursive with false behaves identically to no argument', async () => {
@@ -1353,6 +1649,16 @@ describe('IRowNode.getAggregatedChildren()', () => {
             };
 
             const api = gridsManager.createGrid('myGrid', gridOptions);
+            await new GridColumns(api, `recursive with false behaves identically to no argument setup`).checkColumns(
+                `
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── gold "Gold" width:200 aggFunc:sum
+                `
+            );
+            await new GridRows(api, `recursive with false behaves identically to no argument setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             applyTransactionChecked(api, {
                 add: [
@@ -1368,6 +1674,14 @@ describe('IRowNode.getAggregatedChildren()', () => {
 
             // Same array reference (no allocation)
             expect(withFalse).toBe(withoutArg);
+            await new GridRows(api, `recursive with false behaves identically to no argument final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" gold:25
+                · ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:10
+                · │ └── LEAF id:1 region:"Europe" country:"Ireland" gold:10
+                · └─┬ LEAF_GROUP id:row-group-region-Europe-country-France ag-Grid-AutoColumn:"France" gold:15
+                · · └── LEAF id:2 region:"Europe" country:"France" gold:15
+            `);
         });
     });
 });

@@ -4,7 +4,7 @@ import type { IOverlayParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid export overlay', () => {
     const gridsManager = new TestGridsManager({
@@ -104,6 +104,16 @@ describe('ag-grid export overlay', () => {
                 columnDefs,
                 rowData: [{ athlete: 'John', sport: 'Tennis', age: 25 }],
             });
+            await new GridColumns(api, `csv export shows the export overlay setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `csv export shows the export overlay setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
 
             // Initially no overlay should be shown
             expect(document.querySelector('.my-custom-loading-overlay')).toBeFalsy();
@@ -122,6 +132,10 @@ describe('ag-grid export overlay', () => {
                 expect(hasExportingOverlay()).toBeFalsy();
                 expect(hasExportingOverlayWrapper()).toBeFalsy();
             });
+            await new GridRows(api, `csv export shows the export overlay final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
         });
 
         test('csv export shows a custom export overlay', async () => {
@@ -133,6 +147,16 @@ describe('ag-grid export overlay', () => {
                     agExportingOverlay: makeOverlayComp(capturedParams, 'my-custom-loading-overlay'),
                 },
             });
+            await new GridColumns(api, `csv export shows a custom export overlay setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `csv export shows a custom export overlay setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
 
             // Initially no overlay should be shown
             expect(document.querySelector('.my-custom-loading-overlay')).toBeFalsy();
@@ -148,6 +172,10 @@ describe('ag-grid export overlay', () => {
             await waitFor(() => {
                 expect(document.querySelector('.my-custom-loading-overlay')).toBeFalsy();
             });
+            await new GridRows(api, `csv export shows a custom export overlay final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
         });
 
         test('csv export suppressed via suppressOverlays', async () => {
@@ -156,6 +184,16 @@ describe('ag-grid export overlay', () => {
                 rowData: [{ athlete: 'John', sport: 'Tennis', age: 25 }],
                 suppressOverlays: ['exporting'],
             });
+            await new GridColumns(api, `csv export suppressed via suppressOverlays setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `csv export suppressed via suppressOverlays setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
 
             // Initially no overlay should be shown
             expect(hasExportingOverlay()).toBeFalsy();
@@ -171,6 +209,10 @@ describe('ag-grid export overlay', () => {
             await waitFor(() => {
                 expect(hasExportingOverlay()).toBeFalsy();
             });
+            await new GridRows(api, `csv export suppressed via suppressOverlays final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
         });
 
         test('export overlay does not override an overlay shown via api.showNoRowsOverlay', async () => {
@@ -184,6 +226,20 @@ describe('ag-grid export overlay', () => {
                     agNoRowsOverlay: makeOverlayComp(capturedParams, 'my-custom-no-rows-overlay'),
                 },
             });
+            await new GridColumns(
+                api,
+                `export overlay does not override an overlay shown via api.showNoRowsOverlay setup`
+            ).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `export overlay does not override an overlay shown via api.showNoRowsOverlay setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+                `);
 
             // Show the no rows overlay explicitly
             api.showNoRowsOverlay();
@@ -203,6 +259,13 @@ describe('ag-grid export overlay', () => {
 
             expect(document.querySelector('.my-custom-no-rows-overlay')).toBeFalsy();
             expect(hasExportingOverlay()).toBeFalsy();
+            await new GridRows(
+                api,
+                `export overlay does not override an overlay shown via api.showNoRowsOverlay final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
         });
 
         test('csv export overlay calls overlayComponentSelector', async () => {
@@ -222,6 +285,16 @@ describe('ag-grid export overlay', () => {
                     }
                 },
             });
+            await new GridColumns(api, `csv export overlay calls overlayComponentSelector setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `csv export overlay calls overlayComponentSelector setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
 
             // When CSV export starts
             api.exportDataAsCsv();
@@ -237,6 +310,10 @@ describe('ag-grid export overlay', () => {
             expect(capturedParams['my-custom-exporting-overlay'].exportName).toBe('csv');
 
             await waitFor(() => expect(document.querySelector('.my-custom-exporting-overlay')).toBeFalsy());
+            await new GridRows(api, `csv export overlay calls overlayComponentSelector final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
         });
 
         test('export overlay does not override an activeOverlay', async () => {
@@ -246,6 +323,16 @@ describe('ag-grid export overlay', () => {
                 rowData: [{ athlete: 'John', sport: 'Tennis', age: 25 }],
                 activeOverlay: makeOverlayComp(capturedParams, 'my-active-overlay'),
             });
+            await new GridColumns(api, `export overlay does not override an activeOverlay setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `export overlay does not override an activeOverlay setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
 
             // Active overlay should be shown
             expect(document.querySelector('.my-active-overlay')).toBeTruthy();
@@ -257,6 +344,10 @@ describe('ag-grid export overlay', () => {
             await waitFor(() => expect(URL.revokeObjectURL).toHaveBeenCalled());
 
             expect(document.querySelector('.my-active-overlay')).toBeTruthy();
+            await new GridRows(api, `export overlay does not override an activeOverlay final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
         });
 
         test('csv export shows the export overlay and reverts to no rows if that was shown before', async () => {
@@ -264,6 +355,21 @@ describe('ag-grid export overlay', () => {
                 columnDefs,
                 rowData: [],
             });
+            await new GridColumns(
+                api,
+                `csv export shows the export overlay and reverts to no rows if that was shown bef setup`
+            ).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(
+                api,
+                `csv export shows the export overlay and reverts to no rows if that was shown bef setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             // Initially no rows overlay should be shown
             expect(hasNoRowsOverlay).toBeTruthy();
@@ -284,6 +390,12 @@ describe('ag-grid export overlay', () => {
                 expect(hasExportingOverlayWrapper()).toBeFalsy();
                 expect(hasNoRowsOverlay()).toBeTruthy();
             });
+            await new GridRows(
+                api,
+                `csv export shows the export overlay and reverts to no rows if that was shown bef final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
     });
 
@@ -293,6 +405,16 @@ describe('ag-grid export overlay', () => {
                 columnDefs,
                 rowData: [{ athlete: 'John', sport: 'Tennis', age: 25 }],
             });
+            await new GridColumns(api, `excel export shows the export overlay setup`).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `excel export shows the export overlay setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
 
             // When excel export starts, exporting overlay should be shown
             api.exportDataAsExcel();
@@ -308,6 +430,10 @@ describe('ag-grid export overlay', () => {
                 expect(hasExportingOverlay()).toBeFalsy();
                 expect(hasExportingOverlayWrapper()).toBeFalsy();
             });
+            await new GridRows(api, `excel export shows the export overlay final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+            `);
         });
     });
 
@@ -328,6 +454,16 @@ describe('ag-grid export overlay', () => {
                 }
             },
         });
+        await new GridColumns(api, `excel export overlay calls overlayComponentSelector setup`).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(api, `excel export overlay calls overlayComponentSelector setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+        `);
 
         // When CSV export starts
         api.exportDataAsExcel();
@@ -343,6 +479,10 @@ describe('ag-grid export overlay', () => {
         expect(capturedParams['my-custom-exporting-overlay'].exportName).toBe('excel');
 
         await waitFor(() => expect(document.querySelector('.my-custom-exporting-overlay')).toBeFalsy());
+        await new GridRows(api, `excel export overlay calls overlayComponentSelector final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 athlete:"John" sport:"Tennis" age:25
+        `);
     });
 });
 

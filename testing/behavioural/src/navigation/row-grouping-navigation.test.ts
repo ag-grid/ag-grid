@@ -2,7 +2,7 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, GROUP_AUTO_COLUMN_ID, KeyCode, RenderApiModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
 
 interface RowData {
@@ -134,17 +134,41 @@ describe('Row Grouping Navigation', () => {
         expect(api.getDisplayedRowAtIndex(0)?.expanded).toBe(false);
     });
 
-    test('suppressEnterExpand prevents Enter from toggling group expansion', () => {
+    test('suppressEnterExpand prevents Enter from toggling group expansion', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowData,
             groupDefaultExpanded: 0,
             autoGroupColumnDef: { cellRendererParams: { suppressEnterExpand: true } },
         } as GridOptions<RowData>);
+        await new GridColumns(api, `suppressEnterExpand prevents Enter from toggling group expansion setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `suppressEnterExpand prevents Enter from toggling group expansion setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP collapsed id:row-group-category-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF hidden id:0 category:"A" value:"v1"
+            │ └── LEAF hidden id:1 category:"A" value:"v2"
+            └─┬ LEAF_GROUP collapsed id:row-group-category-B ag-Grid-AutoColumn:"B"
+            · └── LEAF hidden id:2 category:"B" value:"v3"
+        `);
 
         api.setFocusedCell(0, GROUP_AUTO_COLUMN_ID);
         dispatchEnterOnGroupCell(api, 0);
         expect(api.getDisplayedRowAtIndex(0)?.expanded).toBe(false);
+        await new GridRows(api, `suppressEnterExpand prevents Enter from toggling group expansion final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP collapsed id:row-group-category-A ag-Grid-AutoColumn:"A"
+                │ ├── LEAF hidden id:0 category:"A" value:"v1"
+                │ └── LEAF hidden id:1 category:"A" value:"v2"
+                └─┬ LEAF_GROUP collapsed id:row-group-category-B ag-Grid-AutoColumn:"B"
+                · └── LEAF hidden id:2 category:"B" value:"v3"
+            `
+        );
     });
 
     test('ctrl+down moves to last displayed row', () => {

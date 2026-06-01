@@ -8,7 +8,7 @@ import type { ColDef, IHeaderComp, IHeaderGroupComp, IHeaderGroupParams, IHeader
 import { ClientSideRowModelModule, TooltipModule, getGridElement } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('Column Custom Renderers', () => {
     const gridsManager = new TestGridsManager({
@@ -86,7 +86,10 @@ describe('Column Custom Renderers', () => {
             expect(capturedParams.column).toBeDefined();
             expect(capturedParams.column.getColId()).toBe('a');
 
-            await new GridColumns(api, 'columns').checkColumns(false);
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                └── a "Alpha" width:200
+            `);
         });
     });
 
@@ -158,7 +161,10 @@ describe('Column Custom Renderers', () => {
             expect(headerA!.classList.contains('class-one')).toBe(true);
             expect(headerA!.classList.contains('class-two')).toBe(true);
 
-            await new GridColumns(api, 'columns').checkColumns(false);
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                └── a width:200
+            `);
         });
 
         test('function headerClass is called with params', async () => {
@@ -178,7 +184,10 @@ describe('Column Custom Renderers', () => {
             const headerA = gridDiv.querySelector('[col-id="a"].ag-header-cell');
             expect(headerA!.classList.contains('dynamic-class')).toBe(true);
 
-            await new GridColumns(api, 'columns').checkColumns(false);
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                └── a width:200
+            `);
         });
     });
 
@@ -261,11 +270,37 @@ describe('Column Custom Renderers', () => {
                 ],
                 rowData: [{ a: 1, b: 2 }],
             });
+            await new GridColumns(api, `AG-17086 setTooltip does not throw after HeaderCellCtrl is destroyed setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── a width:200
+                    └── b width:200
+                `);
+            await new GridRows(api, `AG-17086 setTooltip does not throw after HeaderCellCtrl is destroyed setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0
+                `
+            );
 
             expect(capturedSetTooltip).not.toBeNull();
 
             // Remove the column, which destroys its HeaderCellCtrl and nullifies this.column
             api.setGridOption('columnDefs', [{ colId: 'b' }]);
+            await new GridColumns(
+                api,
+                `AG-17086 setTooltip does not throw after HeaderCellCtrl is destroyed after setGridOption columnDefs`
+            ).checkColumns(`
+                CENTER
+                └── b width:200
+            `);
+            await new GridRows(
+                api,
+                `AG-17086 setTooltip does not throw after HeaderCellCtrl is destroyed after setGridOption columnDefs`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
 
             // Calling setTooltip after destruction should be a no-op, not a crash
             expect(() => capturedSetTooltip!('late tooltip', () => true)).not.toThrow();
@@ -294,11 +329,39 @@ describe('Column Custom Renderers', () => {
                 ],
                 rowData: [{ a: 1, b: 2 }],
             });
+            await new GridColumns(
+                api,
+                `AG-17086 setTooltip does not throw after HeaderGroupCellCtrl is destroyed setup`
+            ).checkColumns(`
+                CENTER
+                └─┬ "Group" GROUP
+                  ├── a width:200
+                  └── b width:200
+            `);
+            await new GridRows(api, `AG-17086 setTooltip does not throw after HeaderGroupCellCtrl is destroyed setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0
+                `);
 
             expect(capturedSetTooltip).not.toBeNull();
 
             // Replace columns, destroying the group header and its controller
             api.setGridOption('columnDefs', [{ colId: 'c' }]);
+            await new GridColumns(
+                api,
+                `AG-17086 setTooltip does not throw after HeaderGroupCellCtrl is destroyed after setGridOption columnDefs`
+            ).checkColumns(`
+                CENTER
+                └── c width:200
+            `);
+            await new GridRows(
+                api,
+                `AG-17086 setTooltip does not throw after HeaderGroupCellCtrl is destroyed after setGridOption columnDefs`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
 
             // Calling setTooltip after destruction should be a no-op, not a crash
             expect(() => capturedSetTooltip!('late tooltip', () => true)).not.toThrow();

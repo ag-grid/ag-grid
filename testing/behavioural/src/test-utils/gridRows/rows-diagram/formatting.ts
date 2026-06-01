@@ -2,10 +2,14 @@ import type { Column, RowNode } from 'ag-grid-community';
 import { isRowNumberCol } from 'ag-grid-community';
 
 import { rowIdToString } from '../../grid-test-utils';
+import { valuesEqual } from '../grid-rows-helpers';
 import type { GridRows } from '../gridRows';
 import { getRowStateFlags, getRowTypePrefix } from './nodeInfo';
 
-/** Serialises a value for diagram output, handling bigint and non-finite numbers specially. */
+/** Serialises a value for diagram output. The default path uses `JSON.stringify` (keeping the
+ *  established `"abc"` quoting for strings) but rewraps objects/arrays in single quotes when the
+ *  JSON output contains embedded `"` characters — that avoids `\"` escapes in the snapshot
+ *  template literal. */
 export function serialiseValue(value: unknown): string {
     if (typeof value === 'bigint') {
         return JSON.stringify(`${value}n`);
@@ -21,7 +25,20 @@ export function serialiseValue(value: unknown): string {
             return '-Infinity';
         }
     }
-    return JSON.stringify(value);
+    const json = JSON.stringify(value);
+    // STRING containing `"` characters → JSON-encoded form is `"...\"...\""`. Use the raw string
+    // wrapped in single quotes instead, provided it has no single quote of its own.
+    if (typeof value === 'string' && json.includes('\\"') && !value.includes("'")) {
+        return `'${value}'`;
+    }
+    // OBJECT / ARRAY whose JSON form contains `\"` (an actual escape sequence — a string with
+    // embedded `"` got JSON-encoded) → wrap the JSON in single quotes so the source template
+    // literal stays readable. Plain `"` chars in JSON (object keys, value delimiters) don't
+    // need wrapping — backtick template literals accept `"` unescaped.
+    if (value !== null && typeof value === 'object' && json.includes('\\"') && !json.includes("'")) {
+        return `'${json}'`;
+    }
+    return json;
 }
 
 /** Gets a cell value with optional formatting, returning the resolved display value. */
@@ -77,35 +94,49 @@ export function formatRowColumns(
 
     for (const column of columns) {
         const columnId = column.getColId();
-        if (isRootRowNode && isRowNumberCol(columnId)) {
+        const isRowNumber = isRowNumberCol(column);
+        if (isRootRowNode && isRowNumber) {
             continue;
         }
 
-        const diagramColumnId = isRowNumberCol(columnId) ? 'row-number' : columnId;
+        const diagramColumnId = isRowNumber ? 'row-number' : columnId;
 
         if (checkEditState) {
-            // In edit state mode, show column:[🖍️edit ][⏳batch ]data
-            const dataValue = getCellDisplayValue(gridRows, row, column, 'data');
-            const batchValue = checkBatchState ? getCellDisplayValue(gridRows, row, column, 'batch') : dataValue;
-            const editValue = getCellDisplayValue(gridRows, row, column, 'edit');
+            // Skip the data/edit/batch comparison for rows with no active edit. The grid calls
+            // user-provided `valueGetter`s fresh for each `from` variant, so non-deterministic
+            // getters (e.g. ones that allocate a new object per call) would otherwise compare
+            // unequal by reference even when no edit is in progress.
+            const rowHasEdit = gridRows.isRowEditing(row);
+            if (!rowHasEdit) {
+                const value = getCellDisplayValue(gridRows, row, column);
+                if (value === undefined) {
+                    continue;
+                }
+                result += ' ' + diagramColumnId + ':' + serialiseValue(value);
+            } else {
+                // In edit state mode, show column:[🖍️edit ][⏳batch ]data
+                const dataValue = getCellDisplayValue(gridRows, row, column, 'data');
+                const batchValue = checkBatchState ? getCellDisplayValue(gridRows, row, column, 'batch') : dataValue;
+                const editValue = getCellDisplayValue(gridRows, row, column, 'edit');
 
-            const batchDiffers = batchValue !== dataValue;
-            const editDiffers = editValue !== (batchDiffers ? batchValue : dataValue);
+                const batchDiffers = !valuesEqual(batchValue, dataValue);
+                const editDiffers = !valuesEqual(editValue, batchDiffers ? batchValue : dataValue);
 
-            // When edit or batch is in progress, print the cell even if default value is undefined
-            const value = getCellDisplayValue(gridRows, row, column);
-            if (value === undefined && !editDiffers && !batchDiffers) {
-                continue;
-            }
+                // When edit or batch is in progress, print the cell even if default value is undefined
+                const value = getCellDisplayValue(gridRows, row, column);
+                if (value === undefined && !editDiffers && !batchDiffers) {
+                    continue;
+                }
 
-            result += ' ' + diagramColumnId + ':';
-            if (editDiffers) {
-                result += '🖍️' + serialiseValue(editValue) + ' ';
+                result += ' ' + diagramColumnId + ':';
+                if (editDiffers) {
+                    result += '🖍️' + serialiseValue(editValue) + ' ';
+                }
+                if (batchDiffers) {
+                    result += '⏳' + serialiseValue(batchValue) + ' ';
+                }
+                result += serialiseValue(dataValue !== undefined ? dataValue : value);
             }
-            if (batchDiffers) {
-                result += '⏳' + serialiseValue(batchValue) + ' ';
-            }
-            result += serialiseValue(dataValue !== undefined ? dataValue : value);
         } else {
             // Use default resolution (no from param) to decide if column should be printed
             const value = getCellDisplayValue(gridRows, row, column);

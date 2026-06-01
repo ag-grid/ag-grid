@@ -9,7 +9,7 @@ import {
 } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 /**
  * Tests for getDataValue / setDataValue type conversion correctness.
@@ -53,6 +53,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 'hello' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `initial string value round-trips as string setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `initial string value round-trips as string setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"hello"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -61,6 +69,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe('hello');
             expect(typeof value).toBe('string');
+            await new GridRows(api, `initial string value round-trips as string final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:"hello"
+            `);
         });
 
         test('setDataValue string round-trips as string', async () => {
@@ -69,6 +81,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 'initial' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `setDataValue string round-trips as string setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `setDataValue string round-trips as string setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -80,6 +100,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe('updated');
             expect(typeof value).toBe('string');
+            await new GridRows(api, `setDataValue string round-trips as string final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️"updated" "initial"
+            `);
         });
 
         test('commit path preserves string type in data', async () => {
@@ -88,6 +112,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 'initial' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `commit path preserves string type in data setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `commit path preserves string type in data setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -101,6 +133,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
 
             expect(rowNode.data.a).toBe('committed');
             expect(typeof rowNode.data.a).toBe('string');
+            await new GridRows(api, `commit path preserves string type in data final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"committed"
+            `);
         });
     });
 
@@ -114,6 +150,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 42 }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `initial number value round-trips as number setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `initial number value round-trips as number setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:42
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -122,6 +166,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe(42);
             expect(typeof value).toBe('number');
+            await new GridRows(api, `initial number value round-trips as number final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:42
+            `);
         });
 
         test('setDataValue number round-trips as number', async () => {
@@ -130,6 +178,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 10 }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `setDataValue number round-trips as number setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `setDataValue number round-trips as number setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:10
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -141,6 +197,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe(99);
             expect(typeof value).toBe('number');
+            await new GridRows(api, `setDataValue number round-trips as number final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️99 10
+            `);
         });
 
         test('setDataValue null results in null from editor', async () => {
@@ -149,6 +209,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 10 }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `setDataValue null results in null from editor setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `setDataValue null results in null from editor setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:10
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -159,6 +227,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
 
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBeNull();
+            await new GridRows(api, `setDataValue null results in null from editor final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️null 10
+            `);
         });
 
         test('commit path preserves number type in data', async () => {
@@ -167,6 +239,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 10 }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `commit path preserves number type in data setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `commit path preserves number type in data setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:10
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -180,6 +260,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
 
             expect(rowNode.data.a).toBe(77);
             expect(typeof rowNode.data.a).toBe('number');
+            await new GridRows(api, `commit path preserves number type in data final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:77
+            `);
         });
     });
 
@@ -195,6 +279,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: initialDate }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `initial Date value round-trips as Date object setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `initial Date value round-trips as Date object setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"2024-01-15"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -204,6 +296,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             // The editor returns a Date from input.valueAsDate (UTC).
             // Verify it's a Date with the expected year/month/day components.
             expect(value).toBeInstanceOf(Date);
+            await new GridRows(api, `initial Date value round-trips as Date object final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:"2024-01-15"
+            `);
         });
 
         test('setDataValue Date round-trips as Date object', async () => {
@@ -212,6 +308,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: new Date(2024, 0, 15) }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `setDataValue Date round-trips as Date object setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `setDataValue Date round-trips as Date object setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"2024-01-15"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -225,7 +329,11 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             expect(value).toBeInstanceOf(Date);
             // Year and month should round-trip correctly through the ISO-string serialisation
             expect((value as Date).getUTCFullYear()).toBe(2025);
-            expect((value as Date).getUTCMonth()).toBe(5); // June
+            expect((value as Date).getUTCMonth()).toBe(5);
+            await new GridRows(api, `setDataValue Date round-trips as Date object final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️"2025-06-20" "2024-01-15"
+            `); // June
         });
 
         test('commit path preserves Date type in data', async () => {
@@ -234,6 +342,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: new Date(2024, 0, 15) }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `commit path preserves Date type in data setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `commit path preserves Date type in data setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"2024-01-15"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -253,6 +369,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             // The committed data value must be a Date with the same time as what the editor returned
             expect(rowNode.data.a).toBeInstanceOf(Date);
             expect((rowNode.data.a as Date).getTime()).toBe(editValue.getTime());
+            await new GridRows(api, `commit path preserves Date type in data final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"2025-06-20"
+            `);
         });
     });
 
@@ -266,6 +386,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: '2024-01-15' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `initial date string value round-trips as string setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `initial date string value round-trips as string setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"2024-01-15"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -274,6 +402,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe('2024-01-15');
             expect(typeof value).toBe('string');
+            await new GridRows(api, `initial date string value round-trips as string final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:"2024-01-15"
+            `);
         });
 
         test('setDataValue date string round-trips as string', async () => {
@@ -282,6 +414,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: '2024-01-15' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `setDataValue date string round-trips as string setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `setDataValue date string round-trips as string setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"2024-01-15"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -293,6 +433,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe('2025-06-20');
             expect(typeof value).toBe('string');
+            await new GridRows(api, `setDataValue date string round-trips as string final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️"2025-06-20" "2024-01-15"
+            `);
         });
 
         test('commit path preserves date string type in data', async () => {
@@ -301,6 +445,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: '2024-01-15' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `commit path preserves date string type in data setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `commit path preserves date string type in data setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"2024-01-15"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -314,6 +466,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
 
             expect(rowNode.data.a).toBe('2025-06-20');
             expect(typeof rowNode.data.a).toBe('string');
+            await new GridRows(api, `commit path preserves date string type in data final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"2025-06-20"
+            `);
         });
     });
 
@@ -327,6 +483,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: true }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `initial boolean true value round-trips as boolean setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `initial boolean true value round-trips as boolean setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:true
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -335,6 +499,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe(true);
             expect(typeof value).toBe('boolean');
+            await new GridRows(api, `initial boolean true value round-trips as boolean final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:true
+            `);
         });
 
         test('initial boolean false value round-trips as boolean', async () => {
@@ -343,6 +511,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: false }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `initial boolean false value round-trips as boolean setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `initial boolean false value round-trips as boolean setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:false
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -351,6 +527,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe(false);
             expect(typeof value).toBe('boolean');
+            await new GridRows(api, `initial boolean false value round-trips as boolean final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:false
+            `);
         });
 
         test('setDataValue true round-trips as boolean true', async () => {
@@ -359,6 +539,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: false }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `setDataValue true round-trips as boolean true setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `setDataValue true round-trips as boolean true setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:false
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -370,6 +558,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe(true);
             expect(typeof value).toBe('boolean');
+            await new GridRows(api, `setDataValue true round-trips as boolean true final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️true false
+            `);
         });
 
         test('setDataValue false round-trips as boolean false', async () => {
@@ -378,6 +570,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: true }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `setDataValue false round-trips as boolean false setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `setDataValue false round-trips as boolean false setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:true
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -389,6 +589,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe(false);
             expect(typeof value).toBe('boolean');
+            await new GridRows(api, `setDataValue false round-trips as boolean false final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️false true
+            `);
         });
 
         test('commit path preserves boolean type in data', async () => {
@@ -397,6 +601,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: false }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `commit path preserves boolean type in data setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `commit path preserves boolean type in data setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:false
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -410,6 +622,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
 
             expect(rowNode.data.a).toBe(true);
             expect(typeof rowNode.data.a).toBe('boolean');
+            await new GridRows(api, `commit path preserves boolean type in data final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:true
+            `);
         });
     });
 
@@ -430,6 +646,16 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 'beta' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `initial value from values list round-trips as same value setup`).checkColumns(
+                `
+                    CENTER
+                    └── a "A" width:200 editable
+                `
+            );
+            await new GridRows(api, `initial value from values list round-trips as same value setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"beta"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -437,6 +663,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe('beta');
+            await new GridRows(api, `initial value from values list round-trips as same value final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:"beta"
+            `);
         });
 
         test('setDataValue to list item round-trips correctly', async () => {
@@ -452,6 +682,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 'alpha' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `setDataValue to list item round-trips correctly setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `setDataValue to list item round-trips correctly setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"alpha"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -462,6 +700,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
 
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe('gamma');
+            await new GridRows(api, `setDataValue to list item round-trips correctly final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️"gamma" "alpha"
+            `);
         });
 
         test('numeric values preserve number type through select editor', async () => {
@@ -477,6 +719,16 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 2 }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `numeric values preserve number type through select editor setup`).checkColumns(
+                `
+                    CENTER
+                    └── a "A" width:200 editable
+                `
+            );
+            await new GridRows(api, `numeric values preserve number type through select editor setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:2
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -488,6 +740,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe(3);
             expect(typeof value).toBe('number');
+            await new GridRows(api, `numeric values preserve number type through select editor final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️3 2
+            `);
         });
 
         test('commit path preserves value type in data', async () => {
@@ -503,6 +759,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 'alpha' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `commit path preserves value type in data setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `commit path preserves value type in data setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"alpha"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -515,6 +779,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             await asyncSetTimeout(1);
 
             expect(rowNode.data.a).toBe('gamma');
+            await new GridRows(api, `commit path preserves value type in data final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"gamma"
+            `);
         });
     });
 
@@ -530,6 +798,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 'long text here' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `initial string value round-trips as string setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `initial string value round-trips as string setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"long text here"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -538,6 +814,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe('long text here');
             expect(typeof value).toBe('string');
+            await new GridRows(api, `initial string value round-trips as string final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:"long text here"
+            `);
         });
 
         test('setDataValue string round-trips as string', async () => {
@@ -548,6 +828,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 'initial' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `setDataValue string round-trips as string setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `setDataValue string round-trips as string setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -559,6 +847,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe('updated long text');
             expect(typeof value).toBe('string');
+            await new GridRows(api, `setDataValue string round-trips as string final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️"updated long text" "initial"
+            `);
         });
 
         test('commit path preserves string type in data', async () => {
@@ -569,6 +861,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 'initial' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `commit path preserves string type in data setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `commit path preserves string type in data setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -582,6 +882,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
 
             expect(rowNode.data.a).toBe('committed text');
             expect(typeof rowNode.data.a).toBe('string');
+            await new GridRows(api, `commit path preserves string type in data final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"committed text"
+            `);
         });
     });
 
@@ -602,6 +906,16 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 'beta' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `initial value from values list round-trips as same value setup`).checkColumns(
+                `
+                    CENTER
+                    └── a "A" width:200 editable
+                `
+            );
+            await new GridRows(api, `initial value from values list round-trips as same value setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"beta"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -609,6 +923,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe('beta');
+            await new GridRows(api, `initial value from values list round-trips as same value final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:"beta"
+            `);
         });
 
         test('setDataValue to list item round-trips correctly', async () => {
@@ -624,6 +942,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 'alpha' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `setDataValue to list item round-trips correctly setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `setDataValue to list item round-trips correctly setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"alpha"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -634,6 +960,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
 
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe('gamma');
+            await new GridRows(api, `setDataValue to list item round-trips correctly final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️"gamma" "alpha"
+            `);
         });
 
         test('numeric values preserve number type through rich select editor', async () => {
@@ -649,6 +979,15 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 2 }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `numeric values preserve number type through rich select editor setup`)
+                .checkColumns(`
+                    CENTER
+                    └── a "A" width:200 editable
+                `);
+            await new GridRows(api, `numeric values preserve number type through rich select editor setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:2
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -660,6 +999,12 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             const value = api.getCellValue({ rowNode, colKey: 'a', from: 'edit' });
             expect(value).toBe(3);
             expect(typeof value).toBe('number');
+            await new GridRows(api, `numeric values preserve number type through rich select editor final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF 🖍️ id:0 a:🖍️3 2
+                `
+            );
         });
 
         test('commit path preserves value type in data', async () => {
@@ -675,6 +1020,14 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
                 rowData: [{ id: '0', a: 'alpha' }],
                 getRowId: (p) => p.data.id,
             });
+            await new GridColumns(api, `commit path preserves value type in data setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `commit path preserves value type in data setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"alpha"
+            `);
 
             api.startEditingCell({ rowIndex: 0, colKey: 'a' });
             await asyncSetTimeout(1);
@@ -687,6 +1040,10 @@ describe('Cell Editor Value Types: getDataValue / setDataValue type conversion',
             await asyncSetTimeout(1);
 
             expect(rowNode.data.a).toBe('gamma');
+            await new GridRows(api, `commit path preserves value type in data final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"gamma"
+            `);
         });
     });
 });

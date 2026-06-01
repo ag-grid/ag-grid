@@ -11,7 +11,7 @@ import {
 import type { MultiFilter, SetFilter } from 'ag-grid-enterprise';
 import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
 
 interface Row {
     name: string;
@@ -85,6 +85,19 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
 
     test('Scenario A: no popup opened — reopening popup shows filtered Set Filter list', async () => {
         const api = await createGrid();
+        await new GridColumns(api, `Scenario A: no popup opened — reopening popup shows filtered Set Filter list setup`)
+            .checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `Scenario A: no popup opened — reopening popup shows filtered Set Filter list setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"michael"
+                ├── LEAF id:1 name:"michelle"
+                ├── LEAF id:2 name:"bob"
+                └── LEAF id:3 name:"alice"
+            `);
 
         // typeInFloatingFilter awaits filterChanged so the post-debounce row state is deterministic.
         await typeInFloatingFilter(api, 'michael');
@@ -95,10 +108,34 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
         await waitFor(async () => {
             expect(await openPopupAndGetDisplayedSetFilterKeys(api)).toEqual(['michael']);
         });
+        await new GridRows(
+            api,
+            `Scenario A: no popup opened — reopening popup shows filtered Set Filter list final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"michael"
+        `);
     });
 
     test('Scenario B: popup opened+closed before floating filter — reopening popup shows filtered Set Filter list', async () => {
         const api = await createGrid();
+        await new GridColumns(
+            api,
+            `Scenario B: popup opened+closed before floating filter — reopening popup shows f setup`
+        ).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(
+            api,
+            `Scenario B: popup opened+closed before floating filter — reopening popup shows f setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 name:"michael"
+            ├── LEAF id:1 name:"michelle"
+            ├── LEAF id:2 name:"bob"
+            └── LEAF id:3 name:"alice"
+        `);
 
         api.showColumnFilter('name');
         api.hideColumnFilter();
@@ -109,5 +146,12 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
         await waitFor(async () => {
             expect(await openPopupAndGetDisplayedSetFilterKeys(api)).toEqual(['michael']);
         });
+        await new GridRows(
+            api,
+            `Scenario B: popup opened+closed before floating filter — reopening popup shows f final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"michael"
+        `);
     });
 });

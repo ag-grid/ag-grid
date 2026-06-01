@@ -17,6 +17,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@vitest/coverage-v8": "2.1.9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "~5.8.3",

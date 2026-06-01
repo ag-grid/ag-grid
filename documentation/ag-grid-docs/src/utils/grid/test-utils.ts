@@ -485,7 +485,7 @@ export async function dragOverTo(source: Locator, target: Locator, offsetPositio
 export async function waitForRowAnimations(page: Page) {
     // Flush any pending microtasks / rAF callbacks so DOM mutations from the
     // preceding action are visible before we start polling.
-    await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(resolve)));
+    await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
 
     await page.waitForFunction(() => {
         // AG Grid renders rows across several named containers. Zombie rows only

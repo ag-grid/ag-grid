@@ -479,6 +479,26 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
                 grandTotalRow: 'pinnedBottom',
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `CSRM pinned grand total stays as a single row after filter change setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── amount "Amount" width:200 aggFunc:sum
+                `);
+            await new GridRows(api, `CSRM pinned grand total stays as a single row after filter change setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID amount:1000
+                    ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                    │ ├── LEAF id:fr-paris country:"France" amount:100
+                    │ └── LEAF id:fr-lyon country:"France" amount:200
+                    ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                    │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                    │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                    └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                    · └── LEAF id:it-rome country:"Italy" amount:300
+                    PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:1000
+                `
+            );
 
             expect(api.getPinnedBottomRowCount()).toBe(1);
             expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(1000);
@@ -488,7 +508,18 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
 
             expect(api.getPinnedBottomRowCount()).toBe(1);
             expect(api.getPinnedTopRowCount()).toBe(0);
-            expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(750); // lyon 200 + hamburg 250 + rome 300
+            expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(750);
+            await new GridRows(api, `CSRM pinned grand total stays as a single row after filter change final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID amount:750
+                    ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:200
+                    │ └── LEAF id:fr-lyon country:"France" amount:200
+                    ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:250
+                    │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                    └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                    · └── LEAF id:it-rome country:"Italy" amount:300
+                    PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:750
+                `); // lyon 200 + hamburg 250 + rome 300
         });
 
         test('CSRM pinned grand total stays as a single row after cycling position', async () => {
@@ -502,22 +533,110 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
                 grandTotalRow: 'pinnedBottom',
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `CSRM pinned grand total stays as a single row after cycling position setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── amount "Amount" width:200 aggFunc:sum
+                `);
+            await new GridRows(api, `CSRM pinned grand total stays as a single row after cycling position setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID amount:1000
+                    ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                    │ ├── LEAF id:fr-paris country:"France" amount:100
+                    │ └── LEAF id:fr-lyon country:"France" amount:200
+                    ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                    │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                    │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                    └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                    · └── LEAF id:it-rome country:"Italy" amount:300
+                    PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:1000
+                `
+            );
 
             expect(api.getPinnedBottomRowCount()).toBe(1);
             const firstPinned = api.getPinnedBottomRow(0)!;
 
             api.setGridOption('grandTotalRow', 'pinnedTop');
+            await new GridColumns(
+                api,
+                `CSRM pinned grand total stays as a single row after cycling position after setGridOption grandTotalRow`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum
+            `);
+            await new GridRows(
+                api,
+                `CSRM pinned grand total stays as a single row after cycling position after setGridOption grandTotalRow`
+            ).check(`
+                PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:1000
+                ROOT id:ROOT_NODE_ID amount:1000
+                ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                │ ├── LEAF id:fr-paris country:"France" amount:100
+                │ └── LEAF id:fr-lyon country:"France" amount:200
+                ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                · └── LEAF id:it-rome country:"Italy" amount:300
+            `);
             expect(api.getPinnedBottomRowCount()).toBe(0);
             expect(api.getPinnedTopRowCount()).toBe(1);
             expect(firstPinned.destroyed).toBe(true);
             const topPinned = api.getPinnedTopRow(0)!;
 
             api.setGridOption('grandTotalRow', undefined);
+            await new GridColumns(
+                api,
+                `CSRM pinned grand total stays as a single row after cycling position after setGridOption grandTotalRow #2`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum
+            `);
+            await new GridRows(
+                api,
+                `CSRM pinned grand total stays as a single row after cycling position after setGridOption grandTotalRow #2`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                │ ├── LEAF id:fr-paris country:"France" amount:100
+                │ └── LEAF id:fr-lyon country:"France" amount:200
+                ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                · └── LEAF id:it-rome country:"Italy" amount:300
+            `);
             expect(api.getPinnedBottomRowCount()).toBe(0);
             expect(api.getPinnedTopRowCount()).toBe(0);
             expect(topPinned.destroyed).toBe(true);
 
             api.setGridOption('grandTotalRow', 'pinnedBottom');
+            await new GridColumns(
+                api,
+                `CSRM pinned grand total stays as a single row after cycling position after setGridOption grandTotalRow #3`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum
+            `);
+            await new GridRows(
+                api,
+                `CSRM pinned grand total stays as a single row after cycling position after setGridOption grandTotalRow #3`
+            ).check(`
+                ROOT id:ROOT_NODE_ID amount:1000
+                ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                │ ├── LEAF id:fr-paris country:"France" amount:100
+                │ └── LEAF id:fr-lyon country:"France" amount:200
+                ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                · └── LEAF id:it-rome country:"Italy" amount:300
+                PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:1000
+            `);
             expect(api.getPinnedBottomRowCount()).toBe(1);
             expect(api.getPinnedBottomRow(0)?.destroyed).toBe(false);
         });
@@ -725,6 +844,26 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
                 grandTotalRow: 'pinnedBottom',
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `CSRM pinned grand total stays as a single row after filter change setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── amount "Amount" width:200 aggFunc:sum
+                `);
+            await new GridRows(api, `CSRM pinned grand total stays as a single row after filter change setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID amount:1000
+                    ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                    │ ├── LEAF id:fr-paris country:"France" amount:100
+                    │ └── LEAF id:fr-lyon country:"France" amount:200
+                    ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                    │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                    │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                    └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                    · └── LEAF id:it-rome country:"Italy" amount:300
+                    PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:1000
+                `
+            );
 
             expect(api.getPinnedBottomRowCount()).toBe(1);
             expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(1000);
@@ -734,7 +873,18 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
 
             expect(api.getPinnedBottomRowCount()).toBe(1);
             expect(api.getPinnedTopRowCount()).toBe(0);
-            expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(750); // lyon 200 + hamburg 250 + rome 300
+            expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(750);
+            await new GridRows(api, `CSRM pinned grand total stays as a single row after filter change final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID amount:750
+                    ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:200
+                    │ └── LEAF id:fr-lyon country:"France" amount:200
+                    ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:250
+                    │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                    └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                    · └── LEAF id:it-rome country:"Italy" amount:300
+                    PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:750
+                `); // lyon 200 + hamburg 250 + rome 300
         });
 
         test('CSRM pinned grand total stays as a single row after cycling position', async () => {
@@ -748,22 +898,110 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
                 grandTotalRow: 'pinnedBottom',
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `CSRM pinned grand total stays as a single row after cycling position setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── amount "Amount" width:200 aggFunc:sum
+                `);
+            await new GridRows(api, `CSRM pinned grand total stays as a single row after cycling position setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID amount:1000
+                    ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                    │ ├── LEAF id:fr-paris country:"France" amount:100
+                    │ └── LEAF id:fr-lyon country:"France" amount:200
+                    ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                    │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                    │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                    └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                    · └── LEAF id:it-rome country:"Italy" amount:300
+                    PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:1000
+                `
+            );
 
             expect(api.getPinnedBottomRowCount()).toBe(1);
             const firstPinned = api.getPinnedBottomRow(0)!;
 
             api.setGridOption('grandTotalRow', 'pinnedTop');
+            await new GridColumns(
+                api,
+                `CSRM pinned grand total stays as a single row after cycling position after setGridOption grandTotalRow`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum
+            `);
+            await new GridRows(
+                api,
+                `CSRM pinned grand total stays as a single row after cycling position after setGridOption grandTotalRow`
+            ).check(`
+                PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:1000
+                ROOT id:ROOT_NODE_ID amount:1000
+                ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                │ ├── LEAF id:fr-paris country:"France" amount:100
+                │ └── LEAF id:fr-lyon country:"France" amount:200
+                ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                · └── LEAF id:it-rome country:"Italy" amount:300
+            `);
             expect(api.getPinnedBottomRowCount()).toBe(0);
             expect(api.getPinnedTopRowCount()).toBe(1);
             expect(firstPinned.destroyed).toBe(true);
             const topPinned = api.getPinnedTopRow(0)!;
 
             api.setGridOption('grandTotalRow', undefined);
+            await new GridColumns(
+                api,
+                `CSRM pinned grand total stays as a single row after cycling position after setGridOption grandTotalRow #2`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum
+            `);
+            await new GridRows(
+                api,
+                `CSRM pinned grand total stays as a single row after cycling position after setGridOption grandTotalRow #2`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                │ ├── LEAF id:fr-paris country:"France" amount:100
+                │ └── LEAF id:fr-lyon country:"France" amount:200
+                ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                · └── LEAF id:it-rome country:"Italy" amount:300
+            `);
             expect(api.getPinnedBottomRowCount()).toBe(0);
             expect(api.getPinnedTopRowCount()).toBe(0);
             expect(topPinned.destroyed).toBe(true);
 
             api.setGridOption('grandTotalRow', 'pinnedBottom');
+            await new GridColumns(
+                api,
+                `CSRM pinned grand total stays as a single row after cycling position after setGridOption grandTotalRow #3`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum
+            `);
+            await new GridRows(
+                api,
+                `CSRM pinned grand total stays as a single row after cycling position after setGridOption grandTotalRow #3`
+            ).check(`
+                ROOT id:ROOT_NODE_ID amount:1000
+                ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                │ ├── LEAF id:fr-paris country:"France" amount:100
+                │ └── LEAF id:fr-lyon country:"France" amount:200
+                ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                · └── LEAF id:it-rome country:"Italy" amount:300
+                PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:1000
+            `);
             expect(api.getPinnedBottomRowCount()).toBe(1);
             expect(api.getPinnedBottomRow(0)?.destroyed).toBe(false);
         });
@@ -776,6 +1014,27 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
                 rowData: createRowData(),
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(
+                api,
+                `getAggregatedChildren on pinned group returns same children as source group setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `getAggregatedChildren on pinned group returns same children as source group setup`)
+                .check(`
+                    PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                    ROOT id:ROOT_NODE_ID
+                    ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                    │ ├── LEAF id:fr-paris country:"France" amount:100
+                    │ └── LEAF id:fr-lyon country:"France" amount:200
+                    ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                    │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                    │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                    └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                    · └── LEAF id:it-rome country:"Italy" amount:300
+                `);
 
             const franceGroup = api.getRowNode('row-group-country-France');
             const pinnedFrance = api.getPinnedTopRow(0);
@@ -791,6 +1050,21 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
             expect(pinnedChildren.length).toBe(2);
             expect(sourceChildren.map((n) => n.id).sort()).toEqual(['fr-lyon', 'fr-paris']);
             expect(pinnedChildren.map((n) => n.id).sort()).toEqual(['fr-lyon', 'fr-paris']);
+            await new GridRows(
+                api,
+                `getAggregatedChildren on pinned group returns same children as source group final state`
+            ).check(`
+                PINNED_TOP id:t-top-row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                │ ├── LEAF id:fr-paris country:"France" amount:100
+                │ └── LEAF id:fr-lyon country:"France" amount:200
+                ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                · └── LEAF id:it-rome country:"Italy" amount:300
+            `);
         });
 
         test('getAggregatedChildren on pinned group reflects filtering', async () => {

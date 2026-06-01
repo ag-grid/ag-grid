@@ -2,7 +2,7 @@ import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule, InfiniteRowModelModule } from 'ag-grid-community';
 
-import { TestGridsManager, setRowDataChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid overlays infinite scrolling state', () => {
     const gridsManager = new TestGridsManager({
@@ -31,7 +31,7 @@ describe('ag-grid overlays infinite scrolling state', () => {
         consoleErrSpy?.mockRestore();
     });
 
-    test('does not shows no-rows when using InfiniteRowModelModule', () => {
+    test('does not shows no-rows when using InfiniteRowModelModule', async () => {
         const pendingGetRows: (() => void)[] = [];
 
         const api = gridsManager.createGrid('myGrid', {
@@ -39,6 +39,16 @@ describe('ag-grid overlays infinite scrolling state', () => {
             rowModelType: 'infinite',
             datasource: { getRows: (params) => pendingGetRows.push(() => params.successCallback([], 0)) },
         });
+        await new GridColumns(api, `does not shows no-rows when using InfiniteRowModelModule setup`).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(api, `does not shows no-rows when using InfiniteRowModelModule setup`).check(`
+            [no root row]
+            └── filler id:rowIndex:0
+        `);
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
@@ -61,6 +71,10 @@ describe('ag-grid overlays infinite scrolling state', () => {
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
+        await new GridRows(api, `does not shows no-rows when using InfiniteRowModelModule final state`).check(`
+            [no root row]
+            └── filler id:rowIndex:0
+        `);
     });
 
     test('it does show loading if forced', () => {

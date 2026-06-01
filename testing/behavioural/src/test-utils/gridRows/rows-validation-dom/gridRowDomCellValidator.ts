@@ -1,5 +1,7 @@
 import type { Column, GridApi, RowNode } from 'ag-grid-community';
 
+import { valuesEqual } from '../grid-rows-helpers';
+import { getGridHTMLElement } from '../gridHtmlRows';
 import type { GridRows } from '../gridRows';
 import type { GridRowErrors } from '../rows-validation/gridRowErrors';
 import {
@@ -17,15 +19,80 @@ import {
 export class GridRowDomCellValidator {
     private readonly api: GridApi;
     private readonly columns: Column[];
+    private readonly displayedColumnIds: Set<string>;
+    private readonly displayedSections: Column[][];
     private readonly isGroupRowsDisplay: boolean;
     private readonly autoGroupColumn?: Column;
+    /** colId → row-index values covered by a .ag-spanned-row (excluding the anchor). */
+    private readonly rowSpanCoveredIndexes: Map<string, Set<number>>;
+    /** ids inside the current virtual column range, or null when virtualisation is suppressed. */
+    private readonly colVirtIds: Set<string> | null;
 
     public constructor(private readonly gridRows: GridRows) {
         const api = gridRows.api;
         this.api = api;
-        this.columns = api.getAllGridColumns() ?? [];
+        const hasColumnApi = (api.isModuleRegistered as (n: string) => boolean)('ColumnApi');
+        this.columns = hasColumnApi ? (api.getAllGridColumns() ?? []) : [];
+        this.displayedSections = hasColumnApi
+            ? [
+                  api.getDisplayedLeftColumns?.() ?? [],
+                  api.getDisplayedCenterColumns?.() ?? [],
+                  api.getDisplayedRightColumns?.() ?? [],
+              ]
+            : [[], [], []];
+        this.displayedColumnIds = new Set(this.displayedSections.flat().map((c) => c.getColId()));
         this.isGroupRowsDisplay = api.getGridOption('groupDisplayType') === 'groupRows';
         this.autoGroupColumn = this.lookupAutoGroupColumn();
+        this.rowSpanCoveredIndexes = this.collectRowSpanCoverage();
+        // Permissive when virt isn't suppressed; getAllDisplayedVirtualColumns() returns the full
+        // displayed set when viewport=0 (mocked layout), so this stays correct there too.
+        this.colVirtIds =
+            hasColumnApi && api.getGridOption?.('suppressColumnVirtualisation') !== true
+                ? new Set((api.getAllDisplayedVirtualColumns?.() ?? []).map((c) => c.getColId()))
+                : null;
+    }
+
+    private collectRowSpanCoverage(): Map<string, Set<number>> {
+        const result = new Map<string, Set<number>>();
+        const rootEl = getGridHTMLElement(this.api);
+        if (!rootEl) {
+            return result;
+        }
+        const spannedCells = rootEl.querySelectorAll('.ag-spanned-row [col-id]');
+        for (const cellNode of Array.from(spannedCells)) {
+            const cell = cellNode as HTMLElement;
+            const colId = cell.getAttribute('col-id');
+            const anchorRow = cell.closest<HTMLElement>('[row-index]');
+            const anchorIndex = Number(anchorRow?.getAttribute('row-index'));
+            const span = Number(cell.getAttribute('aria-rowspan'));
+            if (!colId || !Number.isFinite(anchorIndex) || !Number.isFinite(span) || span <= 1) {
+                continue;
+            }
+            let covered = result.get(colId);
+            if (!covered) {
+                covered = new Set<number>();
+                result.set(colId, covered);
+            }
+            for (let i = 1; i < span; ++i) {
+                covered.add(anchorIndex + i);
+            }
+        }
+        return result;
+    }
+
+    private computeColSpanCoveredIds(row: RowNode<any>): Set<string> {
+        const covered = new Set<string>();
+        for (const section of this.displayedSections) {
+            for (let i = 0, len = section.length; i < len; ++i) {
+                const span = section[i].getColSpan(row);
+                if (span > 1) {
+                    for (let j = 1; j < span && i + j < len; ++j) {
+                        covered.add(section[i + j].getColId());
+                    }
+                }
+            }
+        }
+        return covered;
     }
 
     public validateRow(row: RowNode<any>, rowElements: HTMLElement[]): void {
@@ -40,8 +107,9 @@ export class GridRowDomCellValidator {
             return;
         }
 
+        const coveredByColSpan = this.computeColSpanCoveredIds(row);
         for (const column of this.columns) {
-            this.validateCell(row, column, rowElements, rowErrors);
+            this.validateCell(row, column, rowElements, rowErrors, coveredByColSpan);
         }
     }
 
@@ -67,31 +135,41 @@ export class GridRowDomCellValidator {
         row: RowNode<any>,
         column: Column<any>,
         rowElements: HTMLElement[],
-        rowErrors: GridRowErrors<any>
+        rowErrors: GridRowErrors<any>,
+        coveredByColSpan: Set<string>
     ): void {
         const columnId = column.getColId();
         const cellElement = findCellElement(rowElements, columnId);
+        const isCovered =
+            coveredByColSpan.has(columnId) ||
+            (typeof row.rowIndex === 'number' && this.rowSpanCoveredIndexes.get(columnId)?.has(row.rowIndex) === true);
 
         rowErrors.add(
             !cellElement &&
+                !isCovered &&
                 this.shouldReportMissingCell(row, column) &&
                 `Missing cell element for column id:"${columnId}"`
+        );
+        rowErrors.add(
+            cellElement && isCovered && `Cell present for column id:"${columnId}" but column is covered by a span`
+        );
+        rowErrors.add(
+            cellElement &&
+                !isCovered &&
+                this.isUnexpectedCell(row, column) &&
+                `Unexpected cell element for column id:"${columnId}" — column is not displayed`
         );
         if (!cellElement) {
             return;
         }
 
-        // If a custom domCellValidator callback is provided and returns false, skip default validation for this cell
         if (this.gridRows.options.domCellValidator?.({ row, column, cellElement, rowErrors }) === false) {
             return;
         }
 
-        // Validate edit-related CSS classes on the cell when checkEditState is enabled
         if (this.gridRows.checkEditState) {
             const cellHasActiveEditor = this.gridRows.isCellActivelyEditing(row, columnId);
 
-            // ag-cell-inline-editing is set for in-cell editors; ag-cell-popup-editing for popup editors.
-            // Both mean the cell has an active editor — the distinction is where the editor DOM is rendered.
             const hasInlineEditingClass = cellElement.classList.contains('ag-cell-inline-editing');
             const hasPopupEditingClass = cellElement.classList.contains('ag-cell-popup-editing');
             const hasAnyEditingClass = hasInlineEditingClass || hasPopupEditingClass;
@@ -111,15 +189,20 @@ export class GridRowDomCellValidator {
                     `Cell id:"${columnId}" should NOT have ag-cell-popup-editing class`
             );
 
-            // ag-cell-editing and ag-cell-batch-edit are set by CellEditStyleFeature (batch mode only).
-            // On group/footer rows these classes can be inherited from leaf children via _hasLeafEdits,
-            // which is too complex to validate here, so we only check leaf rows.
-            if (this.gridRows.checkBatchState && !row.group && !row.footer) {
+            // Group/footer rows inherit ag-cell-editing from leaf children via _hasLeafEdits — skip them.
+            // Also skip cells without an actual pending edit: the data/batch comparison below uses
+            // reference equality, so a non-deterministic `valueGetter` (one that allocates a fresh
+            // object per call) would otherwise spuriously report a mismatch on every cell.
+            if (
+                this.gridRows.checkBatchState &&
+                !row.group &&
+                !row.footer &&
+                this.gridRows.isCellEditing(row, columnId)
+            ) {
                 const hasCellEditingClass = cellElement.classList.contains('ag-cell-editing');
                 const hasBatchEditClass = cellElement.classList.contains('ag-cell-batch-edit');
 
-                // ag-cell-editing is applied when pendingValue differs from sourceValue, not when
-                // a cell merely has an active editor. Compare batch vs data values to determine expected state.
+                // ag-cell-editing reflects pendingValue !== sourceValue, not editor presence.
                 const batchValue = this.api.getCellValue({
                     rowNode: row,
                     colKey: column,
@@ -132,7 +215,7 @@ export class GridRowDomCellValidator {
                     useFormatter: false,
                     from: 'data',
                 });
-                const cellHasBatchChange = batchValue !== dataValue;
+                const cellHasBatchChange = !valuesEqual(batchValue, dataValue);
 
                 rowErrors.add(
                     cellHasBatchChange &&
@@ -151,7 +234,6 @@ export class GridRowDomCellValidator {
                 );
             }
 
-            // Validate editor input value for cells with active editors
             if (cellHasActiveEditor) {
                 this.validateEditorInput(cellElement, row, column, rowErrors);
                 return;
@@ -174,7 +256,15 @@ export class GridRowDomCellValidator {
         const isGroupCol = (!cellRenderer && isAutoGroupColumn(columnId)) || cellRenderer === 'agGroupCellRenderer';
 
         if (isGroupCol) {
-            const childCountText = this.getChildCountText(row, this.isGroupCountSuppressed(column, true));
+            // Under groupHideOpenParents a leaf shows the ancestor's value + ancestor's child count.
+            const showRowGroup = colDef.showRowGroup;
+            const groupKey =
+                typeof showRowGroup === 'string' ? showRowGroup : showRowGroup === true ? columnId : undefined;
+            const countSource =
+                !row.group && groupKey && this.api.getGridOption('groupHideOpenParents')
+                    ? (findAncestorForGroupKey(row, groupKey) ?? row)
+                    : row;
+            const childCountText = this.getChildCountText(countSource, this.isGroupCountSuppressed(column, true));
             if (textContent === childCountText || (cellValue === null && textContent === '')) {
                 return;
             }
@@ -185,8 +275,7 @@ export class GridRowDomCellValidator {
 
         const hasGroupRendererDom = !!cellElement.querySelector('.ag-group-value');
         const showRowGroup = colDef.showRowGroup;
-        // Unresolved `showRowGroup: '<colId>'` on a group row leaves `groupData` empty and the
-        // grid renders the cell as a regular cell. Skip the group-cell path in that case.
+        // Unresolved `showRowGroup: '<colId>'` on a group row → empty groupData → rendered as a regular cell.
         const hasResolvedShowRowGroup =
             showRowGroup === true ||
             (typeof showRowGroup === 'string' && (!row.group || !!row.groupData?.[showRowGroup]));
@@ -198,7 +287,15 @@ export class GridRowDomCellValidator {
             return;
         }
 
-        rowErrors.add(textContent !== stringCellValue && cellValueMismatchMsg(columnId, cellValue, textContent));
+        if (textContent === stringCellValue) {
+            return;
+        }
+        // Function/class renderers may wrap the value; tolerate that, but flag when the value is
+        // missing entirely (an empty cellValue + non-empty text is fine — renderer-controlled).
+        if (typeof cellRenderer === 'function' && (!stringCellValue || textContent.includes(stringCellValue))) {
+            return;
+        }
+        rowErrors.add(cellValueMismatchMsg(columnId, cellValue, textContent));
     }
 
     private reportGroupCellMismatch(
@@ -219,23 +316,40 @@ export class GridRowDomCellValidator {
     }
 
     private shouldReportMissingCell(row: RowNode<any>, column: Column<any>): boolean {
-        if (!column.isVisible() || row.master) {
+        if (row.master) {
             return false;
         }
+        const colId = column.getColId();
+        if (!this.displayedColumnIds.has(colId)) {
+            return false;
+        }
+        // With virtualisation, off-screen columns are absent from every row's DOM.
+        if (this.colVirtIds && !this.colVirtIds.has(colId)) {
+            return false;
+        }
+        return true;
+    }
 
+    private isUnexpectedCell(row: RowNode<any>, column: Column<any>): boolean {
+        if (row.master || row.detail) {
+            return false;
+        }
         const columnId = column.getColId();
         if (columnId === 'ag-Grid-SelectionColumn') {
             return false;
         }
-
-        return !column.getId().startsWith('pivot_');
+        return !this.displayedColumnIds.has(columnId);
     }
 
     private getExpectedGroupCellText(row: RowNode<any>, column: Column<any>, valueText: string): string | undefined {
         const colDef = column.getColDef();
+        const groupKey = colDef.showRowGroup
+            ? typeof colDef.showRowGroup === 'string'
+                ? colDef.showRowGroup
+                : column.getColId()
+            : undefined;
 
-        if (!valueText && colDef.showRowGroup) {
-            const groupKey = typeof colDef.showRowGroup === 'string' ? colDef.showRowGroup : column.getColId();
+        if (!valueText && groupKey) {
             const groupDataValue = row.groupData?.[groupKey];
             const fallback = row.key ?? '';
             valueText = String(groupDataValue ?? fallback ?? '').trim();
@@ -245,7 +359,12 @@ export class GridRowDomCellValidator {
             valueText = this.getBlankGroupLabel(row) ?? '';
         }
 
-        const childCountText = this.getChildCountText(row, this.isGroupCountSuppressed(column, false));
+        // Under groupHideOpenParents a leaf shows the ancestor's value + ancestor's child count.
+        const countSource =
+            !row.group && groupKey && this.api.getGridOption('groupHideOpenParents')
+                ? (findAncestorForGroupKey(row, groupKey) ?? row)
+                : row;
+        const childCountText = this.getChildCountText(countSource, this.isGroupCountSuppressed(column, false));
         if (valueText) {
             return combineGroupValue(valueText, childCountText);
         }
@@ -304,25 +423,22 @@ export class GridRowDomCellValidator {
             '.ag-cell-editor input.ag-input-field-input, .ag-cell-editor textarea'
         );
         if (!input) {
-            // Popup or custom editor — input is outside the cell element, cannot validate input value
+            // Popup/custom editor — input lives outside the cell.
             return;
         }
         const editValue = this.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false, from: 'edit' });
-        const expectedStr = editValue != null ? String(editValue) : '';
+        const expectedForms = editValueAlternatives(editValue);
         const actualStr = input.value ?? '';
 
-        // getCellValue(from:'edit') returns the last synced edit value — not the live keystroke state.
-        // editorValue is only updated when stopEditing() is called or setDataValue() is invoked.
-        // When an editor is started via Backspace (input cleared, no sync yet), actualStr is ""
-        // but expectedStr is the original committed value. This mismatch is expected and not an error.
-        if (actualStr === '' && expectedStr !== '') {
+        // getCellValue(from:'edit') is the last synced value — Backspace-start clears the input before sync.
+        if (actualStr === '' && expectedForms[0] !== '') {
             return;
         }
 
         const columnId = column.getColId();
         rowErrors.add(
-            actualStr !== expectedStr &&
-                `Editor input value mismatch for column id:"${columnId}", expected ${JSON.stringify(expectedStr)}, got ${JSON.stringify(actualStr)}`
+            !expectedForms.includes(actualStr) &&
+                `Editor input value mismatch for column id:"${columnId}", expected one of ${JSON.stringify(expectedForms)}, got ${JSON.stringify(actualStr)}`
         );
     }
 
@@ -346,21 +462,63 @@ export class GridRowDomCellValidator {
             return false;
         }
 
+        const selectionCheckbox = !usesCheckboxRenderer
+            ? cellElement.querySelector<HTMLInputElement>('.ag-selection-checkbox input[type="checkbox"]')
+            : null;
+        if (selectionCheckbox) {
+            const isSelectable = row.selectable !== false;
+            rowErrors.add(
+                isSelectable &&
+                    selectionCheckbox.disabled &&
+                    `Row-selection checkbox in column id:"${columnId}" is disabled but row.selectable=true`
+            );
+            rowErrors.add(
+                !isSelectable &&
+                    !selectionCheckbox.disabled &&
+                    `Row-selection checkbox in column id:"${columnId}" is not disabled but row.selectable=false`
+            );
+            if (isSelectable) {
+                const isSelected = row.isSelected();
+                const expectedChecked = isSelected === true;
+                const expectedIndeterminate = isSelected === undefined;
+                const actualIndeterminate = selectionCheckbox.indeterminate;
+                const actualChecked = selectionCheckbox.checked;
+                rowErrors.add(
+                    expectedIndeterminate &&
+                        !actualIndeterminate &&
+                        `Row-selection checkbox in column id:"${columnId}" should be indeterminate (row.isSelected()=undefined) but is not`
+                );
+                rowErrors.add(
+                    !expectedIndeterminate &&
+                        actualIndeterminate &&
+                        `Row-selection checkbox in column id:"${columnId}" should not be indeterminate (row.isSelected()=${isSelected})`
+                );
+                if (!expectedIndeterminate && !actualIndeterminate) {
+                    rowErrors.add(
+                        actualChecked !== expectedChecked &&
+                            `Row-selection checkbox in column id:"${columnId}" expected checked=${expectedChecked} (row.isSelected()=${isSelected}) but input.checked=${actualChecked}`
+                    );
+                }
+            }
+            return false;
+        }
+
         const cellValue = this.api.getCellValue({ rowNode: row, colKey: column });
 
         if (!checkboxElement) {
             return true;
         }
 
-        // The grid's agCheckboxCellRenderer uses a native input[type=checkbox] element.
-        // Its state is stored in the input's .checked and .indeterminate properties, not aria-checked.
-        // Some custom checkbox implementations may use aria-checked instead.
+        // Native input owns state on .checked/.indeterminate; custom renderers may use aria-checked.
         const nativeInput = checkboxElement.matches('input[type="checkbox"]')
             ? (checkboxElement as HTMLInputElement)
             : checkboxElement.querySelector<HTMLInputElement>('input[type="checkbox"]');
 
         if (nativeInput) {
-            // Validate via native checkbox properties: checked=true/false, indeterminate=true for null/undefined
+            // Aggregate rows (e.g. "3/5 Qualified") put non-boolean values → renderer shows indeterminate.
+            if (typeof cellValue !== 'boolean' && cellValue != null) {
+                return true;
+            }
             const isIndeterminate = nativeInput.indeterminate;
             const isChecked = nativeInput.checked;
             const expectedChecked = cellValue === true;
@@ -385,7 +543,7 @@ export class GridRowDomCellValidator {
             return true;
         }
 
-        // Fallback: validate via aria-checked attribute (for custom checkbox implementations)
+        // Fallback for custom renderers using aria-checked.
         const expectedAria =
             cellValue === true ? 'true' : cellValue === false ? 'false' : cellValue == null ? 'mixed' : null;
 
@@ -411,4 +569,31 @@ export class GridRowDomCellValidator {
             this.api.getAllGridColumns()?.find((col) => isAutoGroupColumn(col.getColId()))
         );
     }
+}
+
+/** Acceptable string forms an editor `<input>` may use for `editValue` (Date supports several). */
+function editValueAlternatives(editValue: unknown): string[] {
+    if (editValue == null) {
+        return [''];
+    }
+    if (editValue instanceof Date) {
+        const iso = editValue.toISOString();
+        const mm = String(editValue.getMonth() + 1).padStart(2, '0');
+        const dd = String(editValue.getDate()).padStart(2, '0');
+        const localDate = `${editValue.getFullYear()}-${mm}-${dd}`;
+        return [String(editValue), iso, iso.slice(0, 10), localDate];
+    }
+    return [String(editValue)];
+}
+
+/** First ancestor whose `rowGroupColumn.colId === colId` — owner of the displayed `allChildrenCount`. */
+function findAncestorForGroupKey(row: RowNode<any>, colId: string): RowNode<any> | undefined {
+    let cursor: RowNode<any> | null | undefined = row.parent as RowNode<any> | null;
+    while (cursor) {
+        if (cursor.group && cursor.rowGroupColumn?.getColId() === colId) {
+            return cursor;
+        }
+        cursor = cursor.parent as RowNode<any> | null;
+    }
+    return undefined;
 }

@@ -10,7 +10,7 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Date Range Filter', () => {
     const gridsManager = new TestGridsManager({
@@ -39,6 +39,22 @@ describe('Date Range Filter', () => {
                 { country: 'Italy', gold: 3 },
             ],
         });
+        await new GridColumns(
+            api,
+            `Filter displays validation error state in last touched input when invalid range  setup`
+        ).checkColumns(`
+            CENTER
+            └── gold "Gold" width:200
+        `);
+        await new GridRows(
+            api,
+            `Filter displays validation error state in last touched input when invalid range  setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 gold:2
+            ├── LEAF id:1 gold:8
+            └── LEAF id:2 gold:3
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -98,5 +114,13 @@ describe('Date Range Filter', () => {
         expect(toNumberInput.valueAsNumber).toBe(5);
         expect(toNumberInput.validity.valid).toBe(true);
         expect(toNumberInput).toHaveAttribute('aria-invalid', 'false');
+        await new GridRows(
+            api,
+            `Filter displays validation error state in last touched input when invalid range  final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 gold:2
+            └── LEAF id:2 gold:3
+        `);
     });
 });
