@@ -20,8 +20,8 @@ import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 // Documented ordering rules:
 //   1. `api.addCalculatedColumn` appends to the end of the column tree (no position argument).
 //   2. A column added from the header menu is placed AFTER the leaf column it was created from.
-//   3. When that anchor is a column-group header or the auto-group column, the calc col falls back
-//      to the END of the tree.
+//   3. When that anchor is a generated visible column, e.g. the auto-group column, the calc col is
+//      placed after that visible column.
 //   4. When the anchor column is later removed, the dependent calc col falls back to the END.
 //   5. `setColumnDefs` / `updateGridOptions({ columnDefs })` is a full reset: dynamic calc cols are
 //      cleared.
@@ -314,6 +314,25 @@ describe('calculated columns - display ordering', () => {
         expect(order(api)).toEqual(['revenue', first, second, 'cost']);
     });
 
+    test('dialog add anchored on a moved calculated column keeps the calculated column chain in place', async () => {
+        const api = createGrid('dialog-chain-after-anchor-move', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue', headerName: 'Revenue' },
+                { field: 'cost', headerName: 'Cost' },
+            ],
+        });
+        const first = await addViaDialog(api, 'revenue', '[Revenue] - [Cost]');
+        expect(order(api)).toEqual(['revenue', first, 'cost']);
+
+        api.moveColumns(['revenue'], 1);
+        await asyncSetTimeout(1);
+        expect(order(api)).toEqual([first, 'revenue', 'cost']);
+
+        const second = await addViaDialog(api, first, '[Revenue] - [Cost]');
+        expect(order(api)).toEqual([first, second, 'revenue', 'cost']);
+    });
+
     test('two dialog adds on the same anchor: later add sits between the anchor and the earlier add', async () => {
         const api = createGrid('dialog-same-anchor', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
@@ -330,9 +349,9 @@ describe('calculated columns - display ordering', () => {
         expect(order(api)).toEqual(['revenue', first, second, 'cost']);
     });
 
-    // === Rule 3: group-header / auto-group anchor falls back to the end ==========================
+    // === Rule 3: generated visible column anchors use visible order =============================
 
-    test('dialog add anchored on the auto-group column falls back to the end', async () => {
+    test('dialog add anchored on the auto-group column lands after the visible anchor', async () => {
         const api = createGrid('dialog-autogroup-anchor', {
             rowData: [
                 { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
@@ -348,8 +367,46 @@ describe('calculated columns - display ordering', () => {
         // `getAllGridColumns` includes the hidden rowGroup `region` col.
         expect(order(api)).toEqual(['ag-Grid-AutoColumn', 'region', 'revenue', 'cost']);
         const id = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
-        // Anchor is the auto-group service column, not a real leaf in the column tree → end.
-        expect(order(api)).toEqual(['ag-Grid-AutoColumn', 'region', 'revenue', 'cost', id]);
+        expect(order(api)).toEqual(['ag-Grid-AutoColumn', id, 'region', 'revenue', 'cost']);
+    });
+
+    test('repeated dialog adds from the auto-group column stay next to the visible anchor', async () => {
+        const api = createGrid('dialog-autogroup-anchor-repeat', {
+            rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        const first = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        const second = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+
+        expect(order(api)).toEqual(['ag-Grid-AutoColumn', second, first, 'region', 'revenue', 'cost']);
+    });
+
+    test('adding from a moved auto-group column preserves the moved auto-group position', async () => {
+        const api = createGrid('dialog-autogroup-anchor-moved', {
+            rowData: [{ id: 'r1', region: 'EMEA', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', headerName: 'Revenue', aggFunc: 'sum' },
+                { field: 'cost', headerName: 'Cost', aggFunc: 'sum' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        const first = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        expect(order(api)).toEqual(['ag-Grid-AutoColumn', first, 'region', 'revenue', 'cost']);
+
+        api.moveColumns(['ag-Grid-AutoColumn'], 1);
+        await asyncSetTimeout(1);
+        expect(order(api)).toEqual([first, 'ag-Grid-AutoColumn', 'region', 'revenue', 'cost']);
+
+        const second = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
+        expect(order(api)).toEqual([first, 'ag-Grid-AutoColumn', second, 'region', 'revenue', 'cost']);
     });
 
     // === Rule 4: anchor removed — orphaned dependent falls back to the end =======================
