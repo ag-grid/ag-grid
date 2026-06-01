@@ -87,7 +87,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     const usesAgGridProvider = modulesFromContext !== null;
 
     const apiRef = useRef<GridApi<TData>>();
-    const eGui = useRef<HTMLDivElement | null>(null);
+    const innermostRef = useRef<HTMLDivElement | null>(null);
     const portalManager = useRef<PortalManager | null>(null);
     const destroyFuncs = useRef<(() => void)[]>([]);
     const whenReadyFuncs = useRef<(() => void)[]>([]);
@@ -102,9 +102,8 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
-        if (!eRef) {
+    const setOutermostRef = useCallback((outermost: HTMLDivElement | null) => {
+        if (!outermost) {
             ready.current = false;
             for (const f of destroyFuncs.current) {
                 f();
@@ -214,7 +213,8 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         // We ensure that the gridId is stable even in StrictMode
         mergedGridOps.gridId ??= gridIdRef.current;
         apiRef.current = gridCoreCreator.create(
-            eRef,
+            outermost,
+            innermostRef.current!,
             mergedGridOps,
             createUiCallback,
             acceptChangesCallback,
@@ -259,11 +259,11 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             ? 'legacy'
             : 'default';
     return (
-        <div className={props.className} style={style}>
+        <div className={props.className} style={style} ref={setOutermostRef}>
             {/* IMPORTANT we need 3 layers of divs with NO className because the class is managed by the styled root */}
             <div /* do not set className here */>
                 <div /* do not set className here */>
-                    <div /* do not set className here */ ref={setRef}>
+                    <div /* do not set className here */ ref={innermostRef}>
                         <RenderModeContext.Provider value={renderMode}>
                             {context && !context.isDestroyed() ? (
                                 <GridComp key={context.instanceId} context={context} />

@@ -87,6 +87,7 @@ export function createGrid<TData>(
     const [outer, inner] = _createStyledRootElements();
     eGridDiv.appendChild(outer);
     const api = new GridCoreCreator().create(
+        outer,
         inner,
         gridOptions,
         (context) => {
@@ -108,7 +109,8 @@ let nextGridId = 1;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridCoreCreator {
     public create(
-        eGridDiv: HTMLElement,
+        outermost: HTMLElement,
+        innermost: HTMLElement,
         providedOptions: GridOptions,
         createUi: (context: Context) => void,
         acceptChanges?: (context: Context) => void,
@@ -128,7 +130,7 @@ export class GridCoreCreator {
             gridId,
             params?.frameworkOverrides?.usesAgGridProvider
         );
-        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
+        const providedBeanInstances = this.createProvidedBeans(innermost, gridOptions, params);
 
         if (!beanClasses) {
             // Detailed error message will have been printed by createBeansList
@@ -138,7 +140,7 @@ export class GridCoreCreator {
 
         const destroyCallback = () => {
             _gridElementCache.delete(api);
-            _gridApiCache.delete(eGridDiv);
+            _gridApiCache.delete(outermost);
             _unRegisterGridModules(gridId);
             _destroyCallback?.();
         };
@@ -176,8 +178,8 @@ export class GridCoreCreator {
 
         const api = context.getBean('gridApi');
 
-        _gridApiCache.set(eGridDiv, api);
-        _gridElementCache.set(api, eGridDiv);
+        _gridApiCache.set(outermost, api);
+        _gridElementCache.set(api, outermost);
 
         return api;
     }
@@ -214,7 +216,7 @@ export class GridCoreCreator {
         }
     }
 
-    private createProvidedBeans(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
+    private createProvidedBeans(innermost: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
         if (_missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
@@ -222,8 +224,8 @@ export class GridCoreCreator {
 
         const seed = {
             gridOptions: gridOptions,
-            eGridDiv: eGridDiv,
-            eRootDiv: eGridDiv,
+            eGridDiv: innermost,
+            eRootDiv: innermost,
             globalListener: params ? params.globalListener : null,
             globalSyncListener: params ? params.globalSyncListener : null,
             frameworkOverrides: frameworkOverrides,
@@ -326,30 +328,36 @@ function getDefaultRowModelType(passedRowModelType?: RowModelType): RowModelType
 }
 
 /**
- * Returns a `GridApi` instance that is associated with the grid rendered in `gridElement`.
+ * Returns the `GridApi` associated with a grid, given a reference to that grid in the DOM.
  *
  * The `gridElement` argument can be one of the following:
+ * - the grid ID as determined by the `gridId` grid option
+ * - a CSS selector string
  * - a DOM node
- * - the grid ID as determined by the `gridId` grid option.
- * - CSS selector string
  *
- * When using a CSS selector, it must refer to the element passed to `createGrid`.
- *
- * If passing a DOM node as an argument, this DOM node must be an immediate child of the element passed
- * to `createGrid`. This is to support the case where multiple grids are instantiated in a single element.
+ * Resolution is permissive: pass the application element you gave to `createGrid`, the grid's
+ * own root element, or any element inside the grid. When the resolved element contains more than
+ * one grid, the first grid is returned.
  */
 export function getGridApi(gridElement: Element | string | null | undefined): GridApi | undefined {
     if (typeof gridElement === 'string') {
         try {
             gridElement =
-                document.querySelector(`[grid-id="${gridElement}"]`)?.parentElement ??
-                document.querySelector(gridElement)?.firstElementChild ??
-                document.getElementById(gridElement)?.firstElementChild;
+                document.querySelector(`[grid-id="${gridElement}"]`) ??
+                document.querySelector(gridElement) ??
+                document.getElementById(gridElement);
         } catch {
             gridElement = null;
         }
     }
-    return gridElement ? _gridApiCache.get(gridElement) : undefined;
+    gridElement = gridElement?.firstElementChild ?? gridElement;
+    while (gridElement) {
+        const api = _gridApiCache.get(gridElement);
+        if (api) {
+            return api;
+        }
+        gridElement = gridElement.parentElement;
+    }
 }
 
 /**
