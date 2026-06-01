@@ -9,9 +9,9 @@ import mkcert from 'vite-plugin-mkcert';
 import svgr from 'vite-plugin-svgr';
 
 import agCacheSitemap from '../../external/ag-website-shared/plugins/agCacheSitemap';
-import agSitemapLastmod from '../../external/ag-website-shared/plugins/agSitemapLastmod';
 import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecker';
 import agMkcertPreview from '../../external/ag-website-shared/plugins/agMkcertPreview';
+import agSitemapLastmod from '../../external/ag-website-shared/plugins/agSitemapLastmod';
 import agSourcemapCors from '../../external/ag-website-shared/plugins/agSourcemapCors';
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
