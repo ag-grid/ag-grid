@@ -1,6 +1,6 @@
 import type { AstroIntegration } from 'astro';
 import { execFile } from 'node:child_process';
-import { readFile, stat, writeFile } from 'node:fs/promises';
+import { readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
@@ -122,25 +122,29 @@ export default function agSitemapLastmod(): AstroIntegration {
             },
 
             'astro:build:done': async ({ dir, logger }) => {
-                const sitemapPath = path.join(fileURLToPath(dir), 'sitemap-0.xml');
+                const outputDir = fileURLToPath(dir);
 
-                let xml: string;
-                try {
-                    xml = await readFile(sitemapPath, 'utf8');
-                } catch {
-                    logger.warn('sitemap-0.xml not found — skipping lastmod enrichment');
+                const sitemapFiles = (await readdir(outputDir))
+                    .filter((f) => /^sitemap-\d+\.xml$/.test(f));
+
+                if (sitemapFiles.length === 0) {
+                    logger.warn('No sitemap-N.xml files found — skipping lastmod enrichment');
                     return;
                 }
 
                 const dateMap = await buildDateMap(cwd);
                 if (dateMap.size === 0) {
-                    logger.warn('Could not read git history — sitemap lastmod dates unchanged');
-                    return;
+                    logger.warn('Could not read git history — falling back to filesystem mtimes');
                 }
 
-                const enriched = await enrichSitemap(xml, baseUrl, cwd, dateMap);
-                await writeFile(sitemapPath, enriched, 'utf8');
-                logger.info(`Updated sitemap-0.xml with per-page lastmod dates (${dateMap.size} source entries)`);
+                for (const file of sitemapFiles) {
+                    const sitemapPath = path.join(outputDir, file);
+                    const xml = await readFile(sitemapPath, 'utf8');
+                    const enriched = await enrichSitemap(xml, baseUrl, cwd, dateMap);
+                    await writeFile(sitemapPath, enriched, 'utf8');
+                }
+
+                logger.info(`Updated ${sitemapFiles.length} sitemap file(s) with per-page lastmod dates (${dateMap.size} source entries)`);
             },
         },
     };
