@@ -43,6 +43,15 @@ const TRIAL_FORM_ORIGIN: Record<CspEnv, string> = {
     production: 'https://us-central1-aggrid-ecommerce.cloudfunctions.net',
 };
 
+// The contact form posts to Salesforce Web-to-Lead — a sandbox org in non-prod,
+// the live org in production (see CONTACT_FORM_DATA in
+// external/ag-website-shared/src/constants.ts).
+const SALESFORCE_FORM_ORIGIN: Record<CspEnv, string> = {
+    dev: 'https://test.salesforce.com',
+    staging: 'https://test.salesforce.com',
+    production: 'https://webto.salesforce.com',
+};
+
 // Dev-server-only extras (HMR + cross-port preview). Never emitted for staging
 // or production.
 const DEV_SCRIPT_SRC = ['https://localhost:4610', 'https://localhost:4611'];
@@ -51,6 +60,7 @@ const DEV_CONNECT_SRC = ['https://localhost:4610', 'https://localhost:4611', 'ws
 export function getCspDirectives(options: CspOptions): CspDirectives {
     const { env } = options;
     const trialFormOrigin = options.trialFormOrigin ?? TRIAL_FORM_ORIGIN[env];
+    const salesforceFormOrigin = SALESFORCE_FORM_ORIGIN[env];
 
     const directives: CspDirectives = {
         'default-src': [SELF],
@@ -102,6 +112,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.googletagmanager.com',
             'https://js.zi-scripts.com', // ZoomInfo
             'https://*.zoominfo.com', // ZoomInfo
+            'https://www.google.com', // reCAPTCHA (api2/clr XHR)
             trialFormOrigin,
         ],
         'frame-src': [
@@ -114,7 +125,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
         'worker-src': [SELF, 'blob:'],
         'object-src': [NONE],
         'base-uri': [SELF],
-        'form-action': [SELF, trialFormOrigin],
+        'form-action': [SELF, trialFormOrigin, salesforceFormOrigin],
         'frame-ancestors': [SELF],
     };
 
