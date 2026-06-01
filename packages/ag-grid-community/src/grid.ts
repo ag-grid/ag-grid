@@ -108,9 +108,13 @@ let nextGridId = 1;
 // their own UI
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridCoreCreator {
+    /**
+     * @param eOutermostGridOwned the outermost element owned by grid code, the parent of which is application-owned
+     * @param eGridDiv the element into which the grid UI should be appended - the inner element of the styled root
+     */
     public create(
-        outermost: HTMLElement,
-        innermost: HTMLElement,
+        eOutermostGridOwned: HTMLElement,
+        eGridDiv: HTMLElement,
         providedOptions: GridOptions,
         createUi: (context: Context) => void,
         acceptChanges?: (context: Context) => void,
@@ -130,7 +134,7 @@ export class GridCoreCreator {
             gridId,
             params?.frameworkOverrides?.usesAgGridProvider
         );
-        const providedBeanInstances = this.createProvidedBeans(innermost, gridOptions, params);
+        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
 
         if (!beanClasses) {
             // Detailed error message will have been printed by createBeansList
@@ -140,7 +144,7 @@ export class GridCoreCreator {
 
         const destroyCallback = () => {
             _gridElementCache.delete(api);
-            _gridApiCache.delete(outermost);
+            _gridApiCache.delete(eOutermostGridOwned);
             _unRegisterGridModules(gridId);
             _destroyCallback?.();
         };
@@ -178,8 +182,8 @@ export class GridCoreCreator {
 
         const api = context.getBean('gridApi');
 
-        _gridApiCache.set(outermost, api);
-        _gridElementCache.set(api, outermost);
+        _gridApiCache.set(eOutermostGridOwned, api);
+        _gridElementCache.set(api, eOutermostGridOwned);
 
         return api;
     }
@@ -216,7 +220,7 @@ export class GridCoreCreator {
         }
     }
 
-    private createProvidedBeans(innermost: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
+    private createProvidedBeans(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
         if (_missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
@@ -224,8 +228,8 @@ export class GridCoreCreator {
 
         const seed = {
             gridOptions: gridOptions,
-            eGridDiv: innermost,
-            eRootDiv: innermost,
+            eGridDiv: eGridDiv,
+            eRootDiv: eGridDiv,
             globalListener: params ? params.globalListener : null,
             globalSyncListener: params ? params.globalSyncListener : null,
             frameworkOverrides: frameworkOverrides,
@@ -328,16 +332,14 @@ function getDefaultRowModelType(passedRowModelType?: RowModelType): RowModelType
 }
 
 /**
- * Returns the `GridApi` associated with a grid, given a reference to that grid in the DOM.
+ * Returns the `GridApi` associated with a grid
  *
- * The `gridElement` argument can be one of the following:
+ * The `gridElement` argument can be:
  * - the grid ID as determined by the `gridId` grid option
- * - a CSS selector string
- * - a DOM node
- *
- * Resolution is permissive: pass the application element you gave to `createGrid`, the grid's
- * own root element, or any element inside the grid. When the resolved element contains more than
- * one grid, the first grid is returned.
+ * - a DOM node or a CSS selector string identifying a DOM node. This can point
+ *   to any element within a grid, or to the application-owned element
+ *   containing the grid. If the same application-owned element contains more
+ *   than one grid, the GridApi for the first grid within it will be returned.
  */
 export function getGridApi(gridElement: Element | string | null | undefined): GridApi | undefined {
     if (typeof gridElement === 'string') {

@@ -98,13 +98,15 @@ export abstract class BaseEnvironment<
 
     public getStyledRootClasses(): [inheritClass: string, applyClass: string, directionClass: string] {
         const { theme } = this;
-        const [inheritClass, applyClass] = theme ? theme._getCssClasses() : ['', this.applyLegacyThemeClasses()];
+        const [inheritClass, applyClass] = theme ? theme._getCssClasses() : ['', this.getLegacyThemeClasses()];
         const directionClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
         return [inheritClass, applyClass, directionClass];
     }
 
-    private applyLegacyThemeClasses(): string {
+    private getLegacyThemeClasses(): string {
         const themeClasses = new Set<string>();
+        // rebuild the observer set every time we call this function, to handle
+        // edge cases where the grid is initialised outside the DOM or moved
         this.mutationObserver.disconnect();
         let node = this.eRootDiv.parentElement;
         while (node) {
