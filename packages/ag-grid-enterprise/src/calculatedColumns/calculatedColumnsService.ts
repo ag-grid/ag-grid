@@ -571,9 +571,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 dynamicColumn.anchorColId = undefined;
                 dynamicColumn.anchorColDef = undefined;
             }
-            if (dynamicColumn.visibleAnchorColId === colId) {
-                dynamicColumn.visibleAnchorColId = undefined;
-            }
         }
     }
 

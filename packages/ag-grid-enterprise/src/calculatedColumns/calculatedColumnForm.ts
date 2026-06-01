@@ -17,6 +17,8 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
+import { getOperatorReplacementRange } from './calculatedColumnUtils';
+
 export type CalculatedColumnType = 'text' | 'number' | 'boolean' | 'date';
 
 export interface CalculatedColumnDraft {
@@ -45,13 +47,13 @@ export const CALCULATED_COLUMN_TYPES: Record<CalculatedColumnType, true> = {
     date: true,
 };
 
-const OPERATOR_SUGGESTIONS: ColumnSuggestion[] = ['+', '-', '*', '/', '^', '&', '=', '<>', '>', '>=', '<', '<='].map(
-    (operator) => ({
-        type: 'operator' as const,
-        label: operator,
-        value: operator,
-    })
-);
+const OPERATOR_VALUES = ['+', '-', '*', '/', '^', '&', '=', '<>', '>', '>=', '<', '<='] as const;
+const OPERATOR_REPLACEMENT_VALUES = [...OPERATOR_VALUES].sort((a, b) => b.length - a.length);
+const OPERATOR_SUGGESTIONS: ColumnSuggestion[] = OPERATOR_VALUES.map((operator) => ({
+    type: 'operator' as const,
+    label: operator,
+    value: operator,
+}));
 
 const CalculatedColumnFormElement: ElementParams = {
     tag: 'div',
@@ -438,9 +440,13 @@ export class CalculatedColumnForm extends Component {
 
         const input = this.eExpression.getInputElement();
         const value = input.value;
-        const start = this.activeReplacement?.start ?? input.selectionStart ?? value.length;
-        const end = this.activeReplacement?.end ?? input.selectionEnd ?? start;
         const token = this.getSuggestionInsertText(suggestion);
+        const initialStart = this.activeReplacement?.start ?? input.selectionStart ?? value.length;
+        const initialEnd = this.activeReplacement?.end ?? input.selectionEnd ?? initialStart;
+        const { start, end } =
+            suggestion.type === 'operator'
+                ? getOperatorReplacementRange(value, initialStart, initialEnd, OPERATOR_REPLACEMENT_VALUES)
+                : { start: initialStart, end: initialEnd };
         const nextValue = `${value.slice(0, start)}${token}${value.slice(end)}`;
         this.eExpression.setValue(nextValue);
         const nextCaret =
