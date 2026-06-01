@@ -1,6 +1,6 @@
-import type { AgContextParams } from './agStack/core/agContext';
-import { AgContext } from './agStack/core/agContext';
-import { _missing } from './agStack/utils/generic';
+import type { AgContextParams } from 'ag-stack';
+import { AgContext, _missing } from 'ag-stack';
+
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';

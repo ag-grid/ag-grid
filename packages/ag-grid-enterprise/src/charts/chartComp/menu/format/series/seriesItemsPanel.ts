@@ -1,5 +1,7 @@
+import { RefPlaceholder, _removeFromParent } from 'ag-stack';
+
 import type { AgComponentSelectorType, AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
-import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
+import { AgSelectSelector, Component } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSlider } from '../../../../../agStack/agSlider';

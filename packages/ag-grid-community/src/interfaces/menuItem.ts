@@ -1,4 +1,5 @@
-import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { IComponent } from 'ag-stack';
+
 import type { IMenuActionParams } from './iCallbackParams';
 import type { AgGridCommon } from './iCommon';
 

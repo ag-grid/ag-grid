@@ -1,5 +1,6 @@
-import { LocalEventService } from '../agStack/events/localEventService';
-import type { IAgEventEmitter, IEventEmitter } from '../agStack/interfaces/iEventEmitter';
+import type { IAgEventEmitter, IEventEmitter } from 'ag-stack';
+import { LocalEventService } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import type { SelectionEventSourceType } from '../events';
 import { _getRowIdCallback } from '../gridOptionsUtils';

@@ -1,17 +1,7 @@
-import type {
-    IMenuItem,
-    _AgCoreBeanCollection,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-} from 'ag-grid-community';
-import {
-    _AgComponentStub,
-    _createAgElement,
-    _isNodeOrElement,
-    _setAriaChecked,
-    _setAriaExpanded,
-} from 'ag-grid-community';
+import type { AgCoreBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+import { AgComponentStub, _createAgElement, _isNodeOrElement, _setAriaChecked, _setAriaExpanded } from 'ag-stack';
+
+import type { IMenuItem } from 'ag-grid-community';
 
 import type { AgMenuItemParams } from './agMenuItemComponent';
 
@@ -21,15 +11,15 @@ interface AgMenuItemRendererParams {
 }
 
 export class AgMenuItemRenderer<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
 >
-    extends _AgComponentStub<
+    extends AgComponentStub<
         TBeanCollection,
         TProperties,
         TGlobalEvents,

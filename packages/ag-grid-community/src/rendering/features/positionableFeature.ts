@@ -1,4 +1,5 @@
-import { AgPositionableFeature } from '../../agStack/rendering/agPositionableFeature';
+import { AgPositionableFeature } from 'ag-stack';
+
 import type { BeanCollection } from '../../context/context';
 import type { AgEventTypeParams } from '../../events';
 import type { GridOptionsWithDefaults } from '../../gridOptionsDefault';

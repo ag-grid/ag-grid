@@ -1,5 +1,5 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _isVisible } from '../agStack/utils/dom';
+import { RefPlaceholder, _isVisible } from 'ag-stack';
+
 import type { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import { GridBodySelector } from '../gridBodyComp/gridBodyComp';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';

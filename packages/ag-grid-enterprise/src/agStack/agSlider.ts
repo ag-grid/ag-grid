@@ -1,15 +1,14 @@
 import type {
-    AgInputNumberField,
-    AgLabelParams,
-    LabelAlignment,
-    _AgComponentSelector,
-    _AgCoreBeanCollection,
-    _AgWidgetSelectorType,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-} from 'ag-grid-community';
-import { AgAbstractLabel, AgInputNumberFieldSelector, RefPlaceholder } from 'ag-grid-community';
+    AgComponentSelector,
+    AgCoreBeanCollection,
+    BaseEvents,
+    BaseProperties,
+    IPropertiesService,
+} from 'ag-stack';
+import { RefPlaceholder } from 'ag-stack';
+
+import type { AgInputNumberField, AgLabelParams, LabelAlignment, _AgWidgetSelectorType } from 'ag-grid-community';
+import { AgAbstractLabel, AgInputNumberFieldSelector } from 'ag-grid-community';
 
 import type { AgInputRange } from './agInputRange';
 import { AgInputRangeSelector } from './agInputRange';
@@ -25,11 +24,11 @@ export interface AgSliderParams extends AgLabelParams {
 
 type AgSliderEvent = 'fieldValueChanged';
 export class AgSlider<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
 > extends AgAbstractLabel<
     TBeanCollection,
@@ -71,7 +70,7 @@ export class AgSlider<
                 <ag-input-number-field data-ref="eText"></ag-input-number-field>
             </div>
         </div>`,
-            [AgInputRangeSelector, AgInputNumberFieldSelector] as _AgComponentSelector<TComponentSelectorType>[]
+            [AgInputRangeSelector, AgInputNumberFieldSelector] as AgComponentSelector<TComponentSelectorType>[]
         );
     }
 
@@ -168,7 +167,7 @@ export class AgSlider<
     }
 }
 
-export const AgSliderSelector: _AgComponentSelector<_AgWidgetSelectorType> = {
+export const AgSliderSelector: AgComponentSelector<_AgWidgetSelectorType> = {
     selector: 'AG-SLIDER',
     component: AgSlider,
 };

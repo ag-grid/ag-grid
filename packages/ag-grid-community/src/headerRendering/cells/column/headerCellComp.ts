@@ -1,6 +1,5 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
-import { _removeAriaSort, _setAriaSort } from '../../../agStack/utils/aria';
-import { _addStylesToElement } from '../../../agStack/utils/dom';
+import { RefPlaceholder, _addStylesToElement, _removeAriaSort, _setAriaSort } from 'ag-stack';
+
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { IHeaderComp } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';

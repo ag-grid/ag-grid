@@ -1,5 +1,7 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type { ComponentSelector, ElementParams, IStatusPanelValueFormatterParams } from 'ag-grid-community';
-import { Component, RefPlaceholder, _addGridCommonParams } from 'ag-grid-community';
+import { Component, _addGridCommonParams } from 'ag-grid-community';
 
 const AgNameValueElement: ElementParams = {
     tag: 'div',

@@ -1,5 +1,7 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type { ElementParams, ILoadingCellRendererComp, ILoadingCellRendererParams } from 'ag-grid-community';
-import { Component, RefPlaceholder, _createIconNoSpan } from 'ag-grid-community';
+import { Component, _createIconNoSpan } from 'ag-grid-community';
 
 const LoadingCellRendererElement: ElementParams = {
     tag: 'div',

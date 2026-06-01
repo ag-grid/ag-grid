@@ -1,25 +1,5 @@
-import {
-    AgColumn,
-    BeanStub,
-    KeyCode,
-    ROW_NUMBERS_COLUMN_ID,
-    _addGridCommonParams,
-    _applyColumnState,
-    _areColIdsEqual,
-    _convertColumnEventSourceType,
-    _createElement,
-    _debounce,
-    _destroyColumnTree,
-    _getColumnStateFromColDef,
-    _getFirstRow,
-    _getRowNode,
-    _interpretAsRightClick,
-    _isRowNumbers,
-    _selectAllCells,
-    _setAriaLabel,
-    _updateColsMap,
-    isRowNumberCol,
-} from 'ag-grid-community';
+import { _debounce, _setAriaLabel } from 'ag-stack';
+
 import type {
     CellClassParams,
     CellCtrl,
@@ -38,6 +18,26 @@ import type {
     ValueGetterParams,
     _ColumnCollections,
     _HeaderComp,
+} from 'ag-grid-community';
+import {
+    AgColumn,
+    BeanStub,
+    KeyCode,
+    ROW_NUMBERS_COLUMN_ID,
+    _addGridCommonParams,
+    _applyColumnState,
+    _areColIdsEqual,
+    _convertColumnEventSourceType,
+    _createElement,
+    _destroyColumnTree,
+    _getColumnStateFromColDef,
+    _getFirstRow,
+    _getRowNode,
+    _interpretAsRightClick,
+    _isRowNumbers,
+    _selectAllCells,
+    _updateColsMap,
+    isRowNumberCol,
 } from 'ag-grid-community';
 
 import type {

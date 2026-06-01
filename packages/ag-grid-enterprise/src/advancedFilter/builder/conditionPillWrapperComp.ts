@@ -1,3 +1,5 @@
+import { _exists, _removeFromParent, _toStringOrNull } from 'ag-stack';
+
 import type {
     AgColumn,
     BaseCellDataType,
@@ -5,7 +7,7 @@ import type {
     BooleanAdvancedFilterModel,
     ColumnAdvancedFilterModel,
 } from 'ag-grid-community';
-import { Component, _exists, _removeFromParent, _toStringOrNull } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';

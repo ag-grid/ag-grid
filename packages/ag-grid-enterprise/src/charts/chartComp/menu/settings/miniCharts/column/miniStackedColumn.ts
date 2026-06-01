@@ -1,4 +1,4 @@
-import { _flatten } from 'ag-grid-community';
+import { _flatten } from 'ag-stack';
 
 import type { AgChartsExports } from '../../../../../agChartsExports';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';

@@ -1,4 +1,4 @@
-import { _last } from 'ag-grid-community';
+import { _last } from 'ag-stack';
 
 import type { AgChartsExports } from '../../../../agChartsExports';
 import type { CommandPath, CommandSegment, XCoordShape, XYCoordShape } from './miniChartApi';

@@ -1,4 +1,6 @@
-import type { AgColumn, BeanCollection, ColumnModel, LocaleTextFunc, RowNode } from 'ag-grid-community';
+import type { LocaleTextFunc } from 'ag-stack';
+
+import type { AgColumn, BeanCollection, ColumnModel, RowNode } from 'ag-grid-community';
 
 import { setAggData } from '../aggregation/aggDataUtils';
 

@@ -1,4 +1,5 @@
-import { AgPopupComponent } from '../../agStack/popup/agPopupComponent';
+import { AgPopupComponent } from 'ag-stack';
+
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgEventTypeParams } from '../../events';

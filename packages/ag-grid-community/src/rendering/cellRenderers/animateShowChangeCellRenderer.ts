@@ -1,6 +1,5 @@
-import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
-import { _clearElement } from '../../agStack/utils/dom';
-import { _exists } from '../../agStack/utils/generic';
+import { RefPlaceholder, _clearElement, _exists } from 'ag-stack';
+
 import type { ElementParams } from '../../utils/element';
 import { Component } from '../../widgets/component';
 import type { ICellRenderer } from './iCellRenderer';

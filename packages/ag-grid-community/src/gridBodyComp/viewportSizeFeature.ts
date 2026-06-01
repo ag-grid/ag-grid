@@ -1,4 +1,5 @@
-import { _getInnerHeight, _observeResize, _requestAnimationFrame } from '../agStack/utils/dom';
+import { _getInnerHeight, _observeResize, _requestAnimationFrame } from 'ag-stack';
+
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';

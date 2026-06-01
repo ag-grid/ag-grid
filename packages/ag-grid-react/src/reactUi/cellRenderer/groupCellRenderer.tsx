@@ -1,3 +1,4 @@
+import { _toString } from 'ag-stack';
 import React, {
     forwardRef,
     useCallback,
@@ -15,7 +16,6 @@ import type {
     IGroupCellRendererCtrl,
     UserCompDetails,
 } from 'ag-grid-community';
-import { _toString } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';

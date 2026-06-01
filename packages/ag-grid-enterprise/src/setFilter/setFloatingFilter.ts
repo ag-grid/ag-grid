@@ -1,3 +1,5 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type {
     AgColumn,
     ElementParams,
@@ -7,7 +9,7 @@ import type {
     IFloatingFilterParams,
     SetFilterModel,
 } from 'ag-grid-community';
-import { AgInputTextFieldSelector, Component, RefPlaceholder, _error } from 'ag-grid-community';
+import { AgInputTextFieldSelector, Component, _error } from 'ag-grid-community';
 
 import { SetFilter } from './setFilter';
 

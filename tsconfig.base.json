@@ -25,6 +25,7 @@
     "noUnusedLocals": false,
     "noImplicitOverride": true,
     "paths": {
+      "ag-stack": ["packages/ag-stack/src/main.ts"],
       "ag-grid-community": ["packages/ag-grid-community/src/main.ts"],
       "ag-grid-enterprise": ["packages/ag-grid-enterprise/src/main.ts"]
     }

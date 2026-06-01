@@ -1,3 +1,5 @@
+import { _removeFromArray } from 'ag-stack';
+
 import type {
     AgColumn,
     DoesFilterPassParams,
@@ -9,7 +11,7 @@ import type {
     IMultiFilterModel,
     IMultiFilterParams,
 } from 'ag-grid-community';
-import { BeanStub, _removeFromArray, _warn } from 'ag-grid-community';
+import { BeanStub, _warn } from 'ag-grid-community';
 
 import {
     forEachReverse,

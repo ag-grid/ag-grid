@@ -1,3 +1,5 @@
+import { _areEqual, _jsonEquals, _missing } from 'ag-stack';
+
 import type {
     AgColumn,
     BeanCollection,
@@ -9,7 +11,7 @@ import type {
     RowNode,
     _IRowNodePivotStage,
 } from 'ag-grid-community';
-import { BeanStub, _areEqual, _forEachChangedGroupDepthFirst, _jsonEquals, _missing } from 'ag-grid-community';
+import { BeanStub, _forEachChangedGroupDepthFirst } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 

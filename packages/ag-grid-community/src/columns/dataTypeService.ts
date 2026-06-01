@@ -1,9 +1,15 @@
-import { KeyCode } from '../agStack/constants/keyCode';
-import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
-import { _parseBigIntOrNull } from '../agStack/utils/bigInt';
-import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../agStack/utils/date';
-import { _toStringOrNull } from '../agStack/utils/generic';
-import { _getValueUsingDotField } from '../agStack/utils/value';
+import type { IEventListener } from 'ag-stack';
+import {
+    KeyCode,
+    _getValueUsingDotField,
+    _isValidDate,
+    _isValidDateTime,
+    _parseBigIntOrNull,
+    _parseDateTimeFromString,
+    _serialiseDate,
+    _toStringOrNull,
+} from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

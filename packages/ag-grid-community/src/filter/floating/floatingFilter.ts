@@ -1,4 +1,5 @@
-import type { IComponent } from '../../agStack/interfaces/iComponent';
+import type { IComponent } from 'ag-stack';
+
 import type { FilterChangedEvent } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { AgGridCommon } from '../../interfaces/iCommon';

@@ -1,8 +1,5 @@
-import { KeyCode } from './agStack/constants/keyCode';
-import { _last } from './agStack/utils/array';
-import { _getActiveDomElement } from './agStack/utils/document';
-import { _focusInto, _registerKeyboardFocusEvents } from './agStack/utils/focus';
-import { _makeNull } from './agStack/utils/generic';
+import { KeyCode, _focusInto, _getActiveDomElement, _last, _makeNull, _registerKeyboardFocusEvents } from 'ag-stack';
+
 import type { ColumnModel } from './columns/columnModel';
 import { isRowNumberCol } from './columns/columnUtils';
 import type { VisibleColsService } from './columns/visibleColsService';

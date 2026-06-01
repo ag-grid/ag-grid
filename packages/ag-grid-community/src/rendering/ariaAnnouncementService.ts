@@ -1,4 +1,5 @@
-import { BaseAriaAnnouncementService } from '../agStack/core/baseAriaAnnouncementService';
+import { BaseAriaAnnouncementService } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';

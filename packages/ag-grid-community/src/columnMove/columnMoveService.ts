@@ -1,5 +1,6 @@
-import type { HorizontalDirection } from '../agStack/constants/direction';
-import { _last, _moveInArray, _removeFromArray } from '../agStack/utils/array';
+import type { HorizontalDirection } from 'ag-stack';
+import { _last, _moveInArray, _removeFromArray } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridDragSource } from '../dragAndDrop/dragAndDropService';

@@ -1,4 +1,5 @@
-import { BaseDragService } from '../agStack/core/baseDragService';
+import { BaseDragService } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';

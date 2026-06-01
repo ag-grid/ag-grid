@@ -1,8 +1,6 @@
-import { KeyCode } from '../agStack/constants/keyCode';
-import type { IEventEmitter } from '../agStack/interfaces/iEventEmitter';
-import type { PopupEventParams } from '../agStack/interfaces/iPopup';
-import { _removeFromParent } from '../agStack/utils/dom';
-import { _jsonEquals } from '../agStack/utils/generic';
+import type { IEventEmitter, PopupEventParams } from 'ag-stack';
+import { KeyCode, _jsonEquals, _removeFromParent } from 'ag-stack';
+
 import type { AgColumn } from '../entities/agColumn';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { FilterAction, FilterWrapperParams } from '../interfaces/iFilter';

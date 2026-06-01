@@ -1,11 +1,7 @@
+import { _setAriaLabel, _setAriaLabelledBy, _setDisplayed } from 'ag-stack';
+
 import type { ElementParams, RichSelectParams } from 'ag-grid-community';
-import {
-    AgInputTextFieldSelector,
-    _setAriaLabel,
-    _setAriaLabelledBy,
-    _setDisplayed,
-    _stopPropagationForAgGrid,
-} from 'ag-grid-community';
+import { AgInputTextFieldSelector, _stopPropagationForAgGrid } from 'ag-grid-community';
 
 import { AgRichSelect } from '../../widgets/agRichSelect';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';

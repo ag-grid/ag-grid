@@ -1,8 +1,5 @@
-import { Direction } from '../agStack/constants/direction';
-import { _last } from '../agStack/utils/array';
-import { _getActiveDomElement } from '../agStack/utils/document';
-import { _observeResize } from '../agStack/utils/dom';
-import { _findTabbableParent, _focusInto } from '../agStack/utils/focus';
+import { Direction, _findTabbableParent, _focusInto, _getActiveDomElement, _last, _observeResize } from 'ag-stack';
+
 import { BeanStub } from '../context/beanStub';
 import { isHeaderPosition } from '../headerRendering/headerUtils';
 import type { GridContainerName, TabToNextGridContainerTarget } from '../interfaces/iCallbackParams';

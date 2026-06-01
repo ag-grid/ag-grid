@@ -1,5 +1,5 @@
-import { BeanStub } from 'ag-grid-community';
 import type { AgColumn, AgColumnGroup, IHeaderCellComp } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 export class RangeHeaderHighlightFeature extends BeanStub {
     private readonly columnMap: Map<AgColumn, boolean> = new Map();

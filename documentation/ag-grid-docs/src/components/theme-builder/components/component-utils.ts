@@ -1,6 +1,7 @@
+import { _asThemeImpl } from 'ag-stack';
 import { type ReactNode, memo, useEffect, useRef } from 'react';
 
-import { type Theme, _asThemeImpl } from 'ag-grid-community';
+import { type Theme } from 'ag-grid-community';
 
 /**
  * A version of React.memo with types fixed so that it doesn't break generic components

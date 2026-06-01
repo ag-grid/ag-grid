@@ -1,5 +1,7 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type { ColDef, ColGroupDef, ColumnEventType, ElementParams } from 'ag-grid-community';
-import { Component, PositionableFeature, RefPlaceholder } from 'ag-grid-community';
+import { Component, PositionableFeature } from 'ag-grid-community';
 
 import agPrimaryColsCSS from './agPrimaryCols.css';
 import type { AgPrimaryColsHeader } from './agPrimaryColsHeader';

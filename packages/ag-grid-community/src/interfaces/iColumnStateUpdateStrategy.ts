@@ -1,7 +1,8 @@
 import type { ColumnState } from '../columns/columnStateUtils';
 import type { AgColumn } from '../entities/agColumn';
-import type { IAggFunc, SortDef } from '../entities/colDef';
+import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
+import type { SortDef } from '../interfaces/iSort';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IColumnStateUpdateStrategy {

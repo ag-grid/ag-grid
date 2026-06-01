@@ -1,12 +1,12 @@
 import type {
-    AgPickerFieldParams,
-    _AgComponentSelector,
-    _AgCoreBeanCollection,
-    _AgWidgetSelectorType,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-} from 'ag-grid-community';
+    AgComponentSelector,
+    AgCoreBeanCollection,
+    BaseEvents,
+    BaseProperties,
+    IPropertiesService,
+} from 'ag-stack';
+
+import type { AgPickerFieldParams, _AgWidgetSelectorType } from 'ag-grid-community';
 import { AgPickerField, _createElement } from 'ag-grid-community';
 
 import { AgColorPanel } from './agColorPanel';
@@ -25,11 +25,11 @@ export interface AgColorPickerParams<TComponentSelectorType extends string> exte
 }
 
 export class AgColorPicker<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
 > extends AgPickerField<
     TBeanCollection,
@@ -179,7 +179,7 @@ export class AgColorPicker<
     }
 }
 
-export const AgColorPickerSelector: _AgComponentSelector<_AgWidgetSelectorType> = {
+export const AgColorPickerSelector: AgComponentSelector<_AgWidgetSelectorType> = {
     selector: 'AG-COLOR-PICKER',
     component: AgColorPicker,
 };

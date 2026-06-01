@@ -51,6 +51,11 @@
             app: {
                 defaultExtension: 'ts',
             },
+            'ag-stack': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
             'ag-grid-community': {
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',

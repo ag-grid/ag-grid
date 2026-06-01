@@ -1,7 +1,6 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
-import { _isBrowserSafari } from '../../../agStack/utils/browser';
-import { _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/date';
-import { AgInputTextFieldSelector } from '../../../agStack/widgets/agInputTextField';
+import { RefPlaceholder, _isBrowserSafari, _parseDateTimeFromString, _serialiseDate } from 'ag-stack';
+
+import { AgInputTextFieldSelector } from '../../../agWidgets/agInputTextField';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { ElementParams } from '../../../utils/element';

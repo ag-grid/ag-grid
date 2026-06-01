@@ -1,4 +1,4 @@
-import type { SortDirection, SortType } from '../entities/colDef';
+import type { SortDirection, SortType } from '../interfaces/iSort';
 
 export interface SortModelItem {
     /** Column Id to apply the sort to. */

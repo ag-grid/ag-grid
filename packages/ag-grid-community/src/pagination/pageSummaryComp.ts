@@ -1,7 +1,6 @@
-import { KeyCode } from '../agStack/constants/keyCode';
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _setAriaDisabled } from '../agStack/utils/aria';
-import { AgInputNumberFieldSelector } from '../agStack/widgets/agInputNumberField';
+import { KeyCode, RefPlaceholder, _setAriaDisabled } from 'ag-stack';
+
+import { AgInputNumberFieldSelector } from '../agWidgets/agInputNumberField';
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _createIconNoSpan } from '../utils/icon';

@@ -1,4 +1,4 @@
-import type { AgPickerFieldParams } from '../agStack/widgets/agPickerFieldParams';
+import type { AgPickerFieldParams } from '../agWidgets/agPickerFieldParams';
 import type { AgComponentSelectorType } from '../widgets/component';
 import type { ICellEditorParamsShared } from './iCellEditor';
 import type { ICellEditorRendererParams } from './iCellEditorRenderer';

@@ -1,4 +1,5 @@
-import { _addStylesToElement, _setDomChildOrder } from '../../agStack/utils/dom';
+import { _addStylesToElement, _setDomChildOrder } from 'ag-stack';
+
 import type { BeanCollection } from '../../context/context';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';

@@ -1,4 +1,5 @@
-import type { AgPromise } from '../agStack/utils/promise';
+import type { AgPromise } from 'ag-stack';
+
 import type { ValueGetterFunc } from '../entities/colDef';
 import type { IProvidedFilter, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type {

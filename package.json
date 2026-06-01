@@ -95,6 +95,7 @@
     "packages": [
       "community-modules/styles",
       "community-modules/locale",
+      "packages/ag-stack",
       "packages/ag-grid-community",
       "packages/ag-grid-enterprise",
       "packages/ag-grid-react",

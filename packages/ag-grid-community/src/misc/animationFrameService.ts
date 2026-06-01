@@ -1,4 +1,5 @@
-import { _requestAnimationFrame } from '../agStack/utils/dom';
+import { _requestAnimationFrame } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { _warn } from '../validation/logging';

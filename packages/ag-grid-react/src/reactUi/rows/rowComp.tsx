@@ -1,3 +1,4 @@
+import { CssClassManager } from 'ag-stack';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import type {
@@ -12,7 +13,7 @@ import type {
     RowStyle,
     UserCompDetails,
 } from 'ag-grid-community';
-import { CssClassManager, _EmptyBean } from 'ag-grid-community';
+import { _EmptyBean } from 'ag-grid-community';
 
 import { BeansContext, RenderModeContext } from '../beansContext';
 import CellComp from '../cells/cellComp';

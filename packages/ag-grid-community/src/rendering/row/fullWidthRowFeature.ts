@@ -1,7 +1,5 @@
-import { _isBrowserSafari } from '../../agStack/utils/browser';
-import { _getActiveDomElement } from '../../agStack/utils/document';
-import { _isFocusableFormField } from '../../agStack/utils/dom';
-import { _findNextFocusableElement } from '../../agStack/utils/focus';
+import { _findNextFocusableElement, _getActiveDomElement, _isBrowserSafari, _isFocusableFormField } from 'ag-stack';
+
 import {
     _getFullWidthCellRendererDetails,
     _getFullWidthDetailCellRendererDetails,

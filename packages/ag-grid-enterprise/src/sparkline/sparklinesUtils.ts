@@ -1,6 +1,5 @@
 import type { AgSparklineOptions } from 'ag-charts-types';
-
-import type { LocaleTextFunc } from 'ag-grid-community';
+import type { LocaleTextFunc } from 'ag-stack';
 
 type SparklineTranslate = (key: string, defaultValue: string, variableValues?: string[]) => string;
 type SparklineNumberFormatter = (value: number) => string;

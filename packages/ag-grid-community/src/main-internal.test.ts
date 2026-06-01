@@ -196,8 +196,8 @@ function getExportedNamesFromModule(filePath: string, excludeModules: string[] =
 const symbols = parseMainInternalExports();
 
 describe('main-internal.ts JSDoc validation', () => {
-    test('should have at least 500 symbols to validate', () => {
-        expect(symbols.length).toBeGreaterThan(500);
+    test('should have at least 450 symbols to validate', () => {
+        expect(symbols.length).toBeGreaterThan(450);
     });
 
     test.each(symbols)(

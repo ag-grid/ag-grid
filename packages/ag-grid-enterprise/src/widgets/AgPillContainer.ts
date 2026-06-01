@@ -1,7 +1,4 @@
-import type { ElementParams } from 'ag-grid-community';
 import {
-    Component,
-    KeyCode,
     _clearElement,
     _findFocusableElements,
     _findNextFocusableElement,
@@ -10,7 +7,10 @@ import {
     _setAriaPosInSet,
     _setAriaRole,
     _setAriaSetSize,
-} from 'ag-grid-community';
+} from 'ag-stack';
+
+import type { ElementParams } from 'ag-grid-community';
+import { Component, KeyCode } from 'ag-grid-community';
 
 import { AgPill } from './agPill';
 

@@ -1,4 +1,5 @@
-import type { AgBaseBean } from '../agStack/interfaces/agBaseBean';
+import type { AgBaseBean } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import type { ICellComp } from '../rendering/cell/cellCtrl';
 

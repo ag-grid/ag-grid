@@ -1,14 +1,15 @@
 import type {
-    AgEvent,
-    _AgComponent,
-    _AgCoreBeanCollection,
-    _AgDraggingEvent,
-    _AgDropTarget,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-} from 'ag-grid-community';
-import { AutoScrollService, _AgBeanStub, _radioCssClass } from 'ag-grid-community';
+    AgComponent,
+    AgCoreBeanCollection,
+    AgDraggingEvent,
+    AgDropTarget,
+    BaseEvents,
+    BaseProperties,
+    IPropertiesService,
+} from 'ag-stack';
+import { AgBeanStub, AutoScrollService, _radioCssClass } from 'ag-stack';
+
+import type { AgEvent } from 'ag-grid-community';
 
 import type { AgVirtualList } from './agVirtualList';
 import agVirtualListDragFeatureCSS from './agVirtualListDragFeature.css';
@@ -17,18 +18,18 @@ import type { AgVirtualListDragParams, VirtualListDragItem } from './iVirtualLis
 const LIST_ITEM_HOVERED = 'ag-list-item-hovered';
 
 export class AgVirtualListDragFeature<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TDragSourceType extends number,
-    TParentComponent extends _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>,
-    TChildComponent extends _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>,
+    TParentComponent extends AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>,
+    TChildComponent extends AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>,
     TDragValue,
     TDragStartEvent extends AgEvent,
     TDragEndEvent extends AgEvent,
-> extends _AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
     private currentDragValue: TDragValue | null = null;
     private lastHoveredListItem: VirtualListDragItem<TChildComponent> | null = null;
     private autoScrollService: AutoScrollService;
@@ -83,7 +84,7 @@ export class AgVirtualListDragFeature<
     }
 
     private createDropTarget(): void {
-        const dropTarget: _AgDropTarget<TDragSourceType, any, any, _AgDraggingEvent<TDragSourceType, any, any, any>> = {
+        const dropTarget: AgDropTarget<TDragSourceType, any, any, AgDraggingEvent<TDragSourceType, any, any, any>> = {
             isInterestedIn: (type: TDragSourceType) => type === this.params.dragSourceType,
             getIconName: () => (this.moveBlocked ? 'pinned' : 'move'),
             getContainer: () => this.comp.getGui(),
@@ -106,7 +107,7 @@ export class AgVirtualListDragFeature<
         });
     }
 
-    private onDragging(e: _AgDraggingEvent<TDragSourceType, any, any, any>) {
+    private onDragging(e: AgDraggingEvent<TDragSourceType, any, any, any>) {
         if (!this.currentDragValue || this.moveBlocked) {
             return;
         }
@@ -135,7 +136,7 @@ export class AgVirtualListDragFeature<
         _radioCssClass(el, `ag-item-highlight-${hoveredListItem.position}`);
     }
 
-    private getListDragItem(e: _AgDraggingEvent<TDragSourceType, any, any, any>): VirtualListDragItem<TChildComponent> {
+    private getListDragItem(e: AgDraggingEvent<TDragSourceType, any, any, any>): VirtualListDragItem<TChildComponent> {
         const virtualListGui = this.virtualList.getGui();
         const paddingTop = Number.parseFloat(window.getComputedStyle(virtualListGui).paddingTop);
         const rowHeight = this.virtualList.getRowHeight();

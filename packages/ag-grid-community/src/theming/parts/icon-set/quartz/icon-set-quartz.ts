@@ -1,5 +1,6 @@
-import type { Part } from '../../../../agStack/theming/part';
-import { createPart } from '../../../../agStack/theming/partImpl';
+import type { Part } from 'ag-stack';
+import { createPart } from 'ag-stack';
+
 import { getQuartzIconsCss } from './quartz-icon-data';
 
 export const iconSetQuartz = (args: { strokeWidth?: number } = {}): Part<unknown> => {

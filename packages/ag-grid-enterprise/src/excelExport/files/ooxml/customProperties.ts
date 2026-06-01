@@ -1,4 +1,5 @@
-import { _escapeString } from 'ag-grid-community';
+import { _escapeString } from 'ag-stack';
+
 import type { ExcelCustomMetadata, ExcelOOXMLTemplate, XmlElement } from 'ag-grid-community';
 
 import { replaceInvisibleCharacters } from '../../assets/excelUtils';

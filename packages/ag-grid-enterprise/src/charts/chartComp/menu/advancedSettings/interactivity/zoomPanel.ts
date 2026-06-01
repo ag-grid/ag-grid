@@ -1,5 +1,7 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type { BeanCollection } from 'ag-grid-community';
-import { AgCheckboxSelector, Component, RefPlaceholder } from 'ag-grid-community';
+import { AgCheckboxSelector, Component } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSliderSelector } from '../../../../../agStack/agSlider';

@@ -1,11 +1,11 @@
-import { createPart } from '../../../agStack/theming/partImpl';
-import { defaultLightColorSchemeParams } from '../../../agStack/theming/shared/shared-css';
 import {
     accentMix,
     backgroundColor,
+    createPart,
+    defaultLightColorSchemeParams,
     foregroundBackgroundMix,
     foregroundColor,
-} from '../../../agStack/theming/themeUtils';
+} from 'ag-stack';
 
 const makeColorSchemeLightTreeShakeable = () =>
     createPart({

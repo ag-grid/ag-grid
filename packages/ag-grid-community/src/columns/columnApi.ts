@@ -2,8 +2,8 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ColGroupDef, ColKey, HeaderLocation } from '../entities/colDef';
 import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
-import { _applyColumnState, _getColumnState, _resetColumnState } from './columnStateUtils';
 import type { ApplyColumnStateParams, ColumnState } from './columnStateUtils';
+import { _applyColumnState, _getColumnState, _resetColumnState } from './columnStateUtils';
 
 export type ColumnChangedEventType = 'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged';
 

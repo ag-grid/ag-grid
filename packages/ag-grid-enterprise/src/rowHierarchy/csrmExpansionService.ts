@@ -1,3 +1,5 @@
+import { _exists } from 'ag-stack';
+
 import type {
     GridApi,
     IClientSideRowModel,
@@ -8,7 +10,6 @@ import type {
     RowGroupOpenedEvent,
     RowNode,
 } from 'ag-grid-community';
-import { _exists } from 'ag-grid-community';
 
 import { BaseExpansionService } from './baseExpansionService';
 

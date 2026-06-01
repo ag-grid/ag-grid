@@ -35,6 +35,7 @@ const cssPlugin = {
 const exportedNames = {
     react: 'React',
     'react-dom': 'ReactDOM',
+    'ag-stack': 'agStack',
     'ag-grid-community': 'agGrid',
     'ag-grid-enterprise': 'agGrid',
     'ag-grid-react': 'AgGridReact',

@@ -5,7 +5,6 @@ import type {
     FilterHandlerParams,
     IDoesFilterPassParams,
 } from '../../interfaces/iFilter';
-import { isCombinedFilterModel } from './iSimpleFilter';
 import type {
     ICombinedSimpleModel,
     ISimpleFilterModel,
@@ -14,6 +13,7 @@ import type {
     MapValuesFromSimpleFilterModel,
     Tuple,
 } from './iSimpleFilter';
+import { isCombinedFilterModel } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
 import type { SimpleFilterModelFormatter } from './simpleFilterModelFormatter';
 import { evaluateCustomFilter } from './simpleFilterUtils';

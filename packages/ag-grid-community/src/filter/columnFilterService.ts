@@ -1,8 +1,6 @@
-import type { AgEvent } from '../agStack/interfaces/agEvent';
-import type { AgPropertyValueChangedEvent } from '../agStack/interfaces/iProperties';
-import { _removeAllFromArray } from '../agStack/utils/array';
-import { _exists, _jsonEquals } from '../agStack/utils/generic';
-import { AgPromise } from '../agStack/utils/promise';
+import type { AgEvent, AgPropertyValueChangedEvent } from 'ag-stack';
+import { AgPromise, _exists, _jsonEquals, _removeAllFromArray } from 'ag-stack';
+
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import {
     _getFilterCompKeys,

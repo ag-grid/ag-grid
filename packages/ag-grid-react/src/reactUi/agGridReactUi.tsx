@@ -1,3 +1,5 @@
+import type { FrameworkOverridesIncomingSource } from 'ag-stack';
+import { _observeResize } from 'ag-stack';
 import React, {
     forwardRef,
     useCallback,
@@ -13,7 +15,6 @@ import type {
     ComponentType,
     Context,
     FrameworkComponentWrapper,
-    FrameworkOverridesIncomingSource,
     GridApi,
     GridOptions,
     GridParams,
@@ -33,7 +34,6 @@ import {
     _getGridRegisteredModules,
     _isClientSideRowModel,
     _isServerSideRowModel,
-    _observeResize,
     _processOnChange,
     _warn,
 } from 'ag-grid-community';

@@ -34,6 +34,7 @@ const localPrefix = pathJoin(import.meta.env?.PUBLIC_SITE_URL, SITE_BASE_URL, FI
 
 const localBuildAndArchiveConfiguration: Configuration = {
     gridMap: {
+        'ag-stack': `${localPrefix}/ag-stack`,
         'ag-grid-community': `${localPrefix}/ag-grid-community`,
         'ag-grid-enterprise': `${localPrefix}/ag-grid-enterprise`,
         'ag-grid-angular': `${localPrefix}/ag-grid-angular`,
@@ -41,6 +42,7 @@ const localBuildAndArchiveConfiguration: Configuration = {
         'ag-grid-vue3': `${localPrefix}/ag-grid-vue3`,
     },
     gridCommunityPaths: {
+        'ag-stack': `${localPrefix}/ag-stack`,
         'ag-grid-community': `${localPrefix}/ag-grid-community`,
         '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale/dist/package/main.cjs.js`,
     },

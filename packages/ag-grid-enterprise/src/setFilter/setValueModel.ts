@@ -1,3 +1,5 @@
+import { _defaultComparator, _makeNull } from 'ag-stack';
+
 import type {
     FilterHandlerParams,
     ISetFilterParams,
@@ -8,15 +10,7 @@ import type {
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
 } from 'ag-grid-community';
-import {
-    AgPromise,
-    BeanStub,
-    _addGridCommonParams,
-    _defaultComparator,
-    _error,
-    _makeNull,
-    _warn,
-} from 'ag-grid-community';
+import { AgPromise, BeanStub, _addGridCommonParams, _error, _warn } from 'ag-grid-community';
 
 import type { CsrmValuesExtractor } from './csrmValueExtractor';
 import { createTreeDataOrGroupingComparator } from './setFilterUtils';

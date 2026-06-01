@@ -1,3 +1,5 @@
+import { _debounce, _jsonEquals } from 'ag-stack';
+
 import type {
     AdvancedFilterModel,
     AgColumn,
@@ -30,12 +32,10 @@ import {
     GROUP_TOTAL_ROW_ID_PREFIX,
     ROOT_NODE_ID,
     RowNode,
-    _debounce,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
     _isGetRowHeightFunction,
     _isRowSelection,
-    _jsonEquals,
     _warn,
 } from 'ag-grid-community';
 

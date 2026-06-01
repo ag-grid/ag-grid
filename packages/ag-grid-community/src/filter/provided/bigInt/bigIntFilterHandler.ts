@@ -1,4 +1,5 @@
-import { _parseBigIntOrNull } from '../../../agStack/utils/bigInt';
+import { _parseBigIntOrNull } from 'ag-stack';
+
 import type { Comparator } from '../iScalarFilter';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
 import { DEFAULT_BIGINT_FILTER_OPTIONS } from './bigIntFilterConstants';

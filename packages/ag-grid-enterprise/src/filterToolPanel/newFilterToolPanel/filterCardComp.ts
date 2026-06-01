@@ -1,15 +1,15 @@
-import type { ElementParams, FilterOpenedEvent, FilterPanelFilterState } from 'ag-grid-community';
 import {
-    Component,
     RefPlaceholder,
     _clearElement,
-    _createIcon,
     _removeFromParent,
     _setAriaControls,
     _setAriaExpanded,
     _setAriaLabel,
     _setDisplayed,
-} from 'ag-grid-community';
+} from 'ag-stack';
+
+import type { ElementParams, FilterOpenedEvent, FilterPanelFilterState } from 'ag-grid-community';
+import { Component, _createIcon } from 'ag-grid-community';
 
 import { FilterDetailComp } from './filterDetailComp';
 import { translateForFilterPanel } from './filterPanelUtils';

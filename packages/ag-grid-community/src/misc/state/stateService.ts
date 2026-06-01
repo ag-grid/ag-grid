@@ -1,7 +1,7 @@
-import { _debounce } from '../../agStack/utils/function';
-import { _jsonEquals } from '../../agStack/utils/generic';
-import { _applyColumnState, _getColumnState } from '../../columns/columnStateUtils';
+import { _debounce, _jsonEquals } from 'ag-stack';
+
 import type { ColumnState, ColumnStateParams } from '../../columns/columnStateUtils';
+import { _applyColumnState, _getColumnState } from '../../columns/columnStateUtils';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';

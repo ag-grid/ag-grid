@@ -1,5 +1,7 @@
+import { _clearElement, _exists } from 'ag-stack';
+
 import type { ElementParams } from 'ag-grid-community';
-import { Component, _clearElement, _createElement, _exists } from 'ag-grid-community';
+import { Component, _createElement } from 'ag-grid-community';
 
 const AgAutocompleteRowElement: ElementParams = {
     tag: 'div',

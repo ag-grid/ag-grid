@@ -1,3 +1,5 @@
+import { _last, _toStringOrNull } from 'ag-stack';
+
 import type {
     AgColumn,
     CellCtrl,
@@ -19,9 +21,7 @@ import {
     _getRowNode,
     _isRowBefore,
     _isSameRow,
-    _last,
     _stopPropagationForAgGrid,
-    _toStringOrNull,
     _warn,
     isRowNumberCol,
 } from 'ag-grid-community';

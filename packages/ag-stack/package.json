@@ -1,0 +1,64 @@
+{
+  "name": "ag-stack",
+  "version": "35.3.0-beta.20260529.134",
+  "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
+  "main": "./dist/package/main.cjs.js",
+  "types": "./dist/types/src/main.d.ts",
+  "module": "./dist/package/main.esm.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/package/main.esm.mjs",
+      "types": "./dist/types/src/main.d.ts",
+      "require": "./dist/package/main.cjs.js",
+      "default": "./dist/package/main.cjs.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "ag",
+    "ag-grid",
+    "datagrid",
+    "data-grid",
+    "data grid",
+    "datatable",
+    "data-table",
+    "data table",
+    "grid",
+    "table",
+    "react",
+    "table",
+    "angular",
+    "angular data grid",
+    "angular table",
+    "angular-component",
+    "react",
+    "react data grid",
+    "react table",
+    "react-component",
+    "reactjs",
+    "vue",
+    "vuejs"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie >= 0",
+    "not ie_mob >= 0",
+    "not blackberry > 0"
+  ],
+  "homepage": "https://www.ag-grid.com/",
+  "devDependencies": {
+    "web-streams-polyfill": "^4.2.0",
+    "blob-polyfill": "^9.0.20240710",
+    "compression-streams-polyfill": "^0.1.7",
+    "text-encoding-polyfill": "^0.6.7"
+  }
+}

@@ -1,5 +1,7 @@
-import { BeanStub, _last, isSpecialCol } from 'ag-grid-community';
+import { _last } from 'ag-stack';
+
 import type { CellRange, CellSelectionChangedEvent, Column } from 'ag-grid-community';
+import { BeanStub, isSpecialCol } from 'ag-grid-community';
 
 import type { AgFormulaInputField } from './agFormulaInputField';
 import {

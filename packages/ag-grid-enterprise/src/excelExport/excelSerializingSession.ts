@@ -1,3 +1,5 @@
+import { _isExpressionString, _last } from 'ag-stack';
+
 import type {
     AgColumn,
     AgColumnGroup,
@@ -23,14 +25,7 @@ import type {
     RowNode,
     RowSpanningAccumulator,
 } from 'ag-grid-community';
-import {
-    BaseGridSerializingSession,
-    _addGridCommonParams,
-    _isExpressionString,
-    _last,
-    _mergeDeep,
-    _warn,
-} from 'ag-grid-community';
+import { BaseGridSerializingSession, _addGridCommonParams, _mergeDeep, _warn } from 'ag-grid-community';
 
 import { getHeightFromProperty } from './assets/excelUtils';
 import type { Workbook } from './excelXlsxFactory';

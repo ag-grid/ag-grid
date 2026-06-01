@@ -1,9 +1,9 @@
-import { BaseRegistry } from '../../agStack/core/baseRegistry';
-import type { AgBaseComponent } from '../../agStack/interfaces/agComponent';
-import type { IconValue } from '../../agStack/interfaces/iIcon';
+import type { AgBaseComponent, IconValue } from 'ag-stack';
+import { BaseRegistry } from 'ag-stack';
+
 import type { NamedBean } from '../../context/bean';
-import { isComponentMetaFunc } from '../../context/context';
 import type { BeanCollection, DynamicBeanName, ProcessParamsFunc, UserComponentName } from '../../context/context';
+import { isComponentMetaFunc } from '../../context/context';
 import type { AgEventTypeParams } from '../../events';
 import type { GridOptionsWithDefaults } from '../../gridOptionsDefault';
 import type { GridOptionsService } from '../../gridOptionsService';

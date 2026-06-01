@@ -1,14 +1,14 @@
 import type {
-    _AfterGuiAttachedParams,
-    _AgCoreBeanCollection,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-    _WithoutCommon,
-} from 'ag-grid-community';
+    AfterGuiAttachedParams,
+    AgCoreBeanCollection,
+    BaseEvents,
+    BaseProperties,
+    IPropertiesService,
+    WithoutCommon,
+} from 'ag-stack';
 import {
-    _AgBeanStub,
-    _AgComponentStub,
+    AgBeanStub,
+    AgComponentStub,
     _anchorElementToMouseMoveEvent,
     _createAgElement,
     _focusInto,
@@ -16,7 +16,7 @@ import {
     _getRootNode,
     _isPromise,
     _isVisible,
-} from 'ag-grid-community';
+} from 'ag-stack';
 
 import type { AgCloseMenuEvent, AgMenuItemCallbacks, AgMenuItemDef } from './agMenuItemComponent';
 import { AgMenuList } from './agMenuList';
@@ -32,7 +32,7 @@ export interface AgContextMenuServiceParams<
 > {
     menuItemCallbacks: AgMenuItemCallbacks<TBeanCollection, TMenuActionParams, TCommon>;
     getMenuItems(
-        menuActionParams: _WithoutCommon<TCommon, TMenuActionParams>,
+        menuActionParams: WithoutCommon<TCommon, TMenuActionParams>,
         mouseEvent: MouseEvent | Touch
     ):
         | (TDefaultMenuItem | AgMenuItemDef<TMenuActionParams, TCommon>)[]
@@ -40,11 +40,11 @@ export interface AgContextMenuServiceParams<
         | undefined;
     mapMenuItems?(
         menuItems: (TDefaultMenuItem | AgMenuItemDef<TMenuActionParams, TCommon>)[],
-        menuActionParams: _WithoutCommon<TCommon, TMenuActionParams>,
+        menuActionParams: WithoutCommon<TCommon, TMenuActionParams>,
         getGui: () => HTMLElement
     ): (TDefaultMenuItem | AgMenuItemDef<TMenuActionParams, TCommon>)[];
     shouldBlockMenuOpen?(): boolean;
-    beforeMenuOpen?(menuActionParams: _WithoutCommon<TCommon, TMenuActionParams>): void;
+    beforeMenuOpen?(menuActionParams: WithoutCommon<TCommon, TMenuActionParams>): void;
     onMenuOpen?(): void;
     onMenuClose?(): void;
     afterMenuDestroyed?(): void;
@@ -52,15 +52,15 @@ export interface AgContextMenuServiceParams<
 }
 
 export class AgContextMenuService<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
     TDefaultMenuItem extends string,
-> extends _AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
     private destroyLoadingSpinner: (() => void) | null = null;
     private lastPromise: number = 0;
 
@@ -91,7 +91,7 @@ export class AgContextMenuService<
     }
 
     public showMenu(
-        menuActionParams: _WithoutCommon<TCommon, TMenuActionParams>,
+        menuActionParams: WithoutCommon<TCommon, TMenuActionParams>,
         mouseEvent: MouseEvent | Touch,
         anchorToElement?: HTMLElement
     ): boolean {
@@ -177,7 +177,7 @@ export class AgContextMenuService<
 
     private createContextMenu(params: {
         menuItems: (TDefaultMenuItem | AgMenuItemDef<TMenuActionParams, TCommon>)[];
-        menuActionParams: _WithoutCommon<TCommon, TMenuActionParams>;
+        menuActionParams: WithoutCommon<TCommon, TMenuActionParams>;
         mouseEvent: MouseEvent | Touch;
         anchorToElement?: HTMLElement;
     }): void {
@@ -298,15 +298,15 @@ export class AgContextMenuService<
 type ContextMenuEvent = 'closeMenu';
 
 class ContextMenu<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
     TDefaultMenuItem extends string,
-> extends _AgComponentStub<
+> extends AgComponentStub<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -329,7 +329,7 @@ class ContextMenu<
         private readonly getMenuItems: (
             getGui: () => HTMLElement
         ) => (AgMenuItemDef<TMenuActionParams, TCommon> | TDefaultMenuItem)[],
-        private readonly menuActionParams: _WithoutCommon<TCommon, TMenuActionParams>,
+        private readonly menuActionParams: WithoutCommon<TCommon, TMenuActionParams>,
         private readonly callbacks: AgMenuItemCallbacks<TBeanCollection, TMenuActionParams, TCommon>
     ) {
         super({ tag: 'div', cls: CSS_MENU, role: 'presentation' });
@@ -357,7 +357,7 @@ class ContextMenu<
         menuList.addEventListener('closeMenu', (e) => this.dispatchLocalEvent(e));
     }
 
-    public afterGuiAttached({ hidePopup }: _AfterGuiAttachedParams<string>): void {
+    public afterGuiAttached({ hidePopup }: AfterGuiAttachedParams<string>): void {
         if (hidePopup) {
             this.addDestroyFunc(hidePopup);
         }

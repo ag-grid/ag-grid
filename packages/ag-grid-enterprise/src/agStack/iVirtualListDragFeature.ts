@@ -1,12 +1,6 @@
-import type {
-    AgEvent,
-    VerticalSection,
-    _AgBeanStub,
-    _AgCoreBeanCollection,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-} from 'ag-grid-community';
+import type { AgBeanStub, AgCoreBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
+
+import type { AgEvent, VerticalSection } from 'ag-grid-community';
 
 export interface VirtualListDragItem<R> {
     rowIndex: number;
@@ -15,11 +9,11 @@ export interface VirtualListDragItem<R> {
 }
 
 export interface AgVirtualListDragParams<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TDragSourceType extends number,
     TParentComponent,
     TChildComponent,
@@ -36,7 +30,7 @@ export interface AgVirtualListDragParams<
         lastHoveredListItem: VirtualListDragItem<TChildComponent> | null
     ) => void;
     addListeners: (
-        parent: _AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+        parent: AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         listItemDragStart: (event: TDragStartEvent) => void,
         listItemDragEnd: (event: TDragEndEvent) => void
     ) => void;

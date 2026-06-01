@@ -1,9 +1,16 @@
-import { _setAriaExpanded, _setAriaRowIndex } from '../../agStack/utils/aria';
-import { _getActiveDomElement } from '../../agStack/utils/document';
-import { _addOrRemoveAttribute, _isElementChildOfClass, _isVisible } from '../../agStack/utils/dom';
-import { _batchCall } from '../../agStack/utils/function';
-import { _exists, _makeNull } from '../../agStack/utils/generic';
-import { _escapeString } from '../../agStack/utils/string';
+import {
+    _addOrRemoveAttribute,
+    _batchCall,
+    _escapeString,
+    _exists,
+    _getActiveDomElement,
+    _isElementChildOfClass,
+    _isVisible,
+    _makeNull,
+    _setAriaExpanded,
+    _setAriaRowIndex,
+} from 'ag-stack';
+
 import { setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -30,8 +37,8 @@ import {
     _isRowSelection,
     _setDomData,
 } from '../../gridOptionsUtils';
-import { getAriaHeaderRowCount, getPinnedSectionWidths } from '../../headerRendering/headerUtils';
 import type { PinnedSectionWidths } from '../../headerRendering/headerUtils';
+import { getAriaHeaderRowCount, getPinnedSectionWidths } from '../../headerRendering/headerUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallbackParams';
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';

@@ -1,9 +1,6 @@
-import { KeyCode } from '../../../agStack/constants/keyCode';
-import type { AriaSortState } from '../../../agStack/utils/aria';
-import { _getAriaSortState } from '../../../agStack/utils/aria';
-import { _getActiveDomElement } from '../../../agStack/utils/document';
-import { _setDisplayed } from '../../../agStack/utils/dom';
-import { _isKeyboardMode } from '../../../agStack/utils/focus';
+import type { AriaSortState } from 'ag-stack';
+import { KeyCode, _getActiveDomElement, _isKeyboardMode, _setDisplayed } from 'ag-stack';
+
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
 import { isRowNumberCol } from '../../../columns/columnUtils';
 import { setupCompBean } from '../../../components/emptyBean';
@@ -11,10 +8,11 @@ import { _getHeaderCompDetails } from '../../../components/framework/userCompUti
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import { _getSortDefFromInput } from '../../../entities/agColumn';
-import type { HeaderClassParams, SortDef, SortDirection } from '../../../entities/colDef';
+import type { HeaderClassParams } from '../../../entities/colDef';
 import { _addGridCommonParams, _getEnableColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
+import type { DisplaySortDef, SortDef, SortDirection } from '../../../interfaces/iSort';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
@@ -730,4 +728,18 @@ function isHeaderComp(headerComp: IHeader | undefined): headerComp is AgColumnHe
         typeof (headerComp as AgColumnHeader)?.getAnchorElementForMenu === 'function' &&
         typeof (headerComp as AgColumnHeader).onMenuKeyboardShortcut === 'function'
     );
+}
+
+function _getAriaSortState(directionOrDef: DisplaySortDef | null): AriaSortState {
+    const direction = directionOrDef?.direction;
+
+    if (direction === 'asc') {
+        return 'ascending';
+    } else if (direction === 'desc') {
+        return 'descending';
+    } else if (direction === 'mixed') {
+        return 'other';
+    }
+
+    return 'none';
 }

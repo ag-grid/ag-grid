@@ -1,3 +1,5 @@
+import { RefPlaceholder, _getDocument, _setDisplayed } from 'ag-stack';
+
 import type {
     ElementParams,
     GridInputTextArea,
@@ -12,9 +14,6 @@ import {
     AgSelectSelector,
     Component,
     KeyCode,
-    RefPlaceholder,
-    _getDocument,
-    _setDisplayed,
 } from 'ag-grid-community';
 
 export type CalculatedColumnType = 'text' | 'number' | 'boolean' | 'date';

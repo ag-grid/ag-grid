@@ -1,5 +1,5 @@
-import type { HorizontalDirection, VerticalDirection } from '../agStack/constants/direction';
-import type { AgDraggingEvent } from '../agStack/interfaces/iDragAndDrop';
+import type { AgDraggingEvent, HorizontalDirection, VerticalDirection } from 'ag-stack';
+
 import type {
     RowDragCancelEvent,
     RowDragEndEvent,

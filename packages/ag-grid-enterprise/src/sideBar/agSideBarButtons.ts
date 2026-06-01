@@ -1,11 +1,7 @@
+import { _clearElement } from 'ag-stack';
+
 import type { AgEvent, ComponentSelector, ElementParams, ToolPanelDef } from 'ag-grid-community';
-import {
-    Component,
-    KeyCode,
-    _clearElement,
-    _focusNextGridCoreContainer,
-    _stopPropagationForAgGrid,
-} from 'ag-grid-community';
+import { Component, KeyCode, _focusNextGridCoreContainer, _stopPropagationForAgGrid } from 'ag-grid-community';
 
 import { SideBarButtonComp } from './sideBarButtonComp';
 

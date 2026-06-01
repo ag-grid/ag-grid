@@ -1,3 +1,5 @@
+import { _isStringLargerThan } from 'ag-stack';
+
 import type {
     AgColumn,
     CalculatedColumnDef,
@@ -11,7 +13,7 @@ import type {
     ICalculatedColumnsService,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _isStringLargerThan, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _warnOnce } from 'ag-grid-community';
 
 import type { FormulaError } from '../formula/ast/utils';
 import { Dialog } from '../widgets/dialog';

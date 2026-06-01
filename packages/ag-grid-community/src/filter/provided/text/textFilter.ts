@@ -1,5 +1,6 @@
-import { _makeNull } from '../../../agStack/utils/generic';
-import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
+import { _makeNull } from 'ag-stack';
+
+import { AgInputTextField } from '../../../agWidgets/agInputTextField';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';

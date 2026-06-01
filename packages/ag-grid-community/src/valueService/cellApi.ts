@@ -1,4 +1,5 @@
-import { _toString } from '../agStack/utils/string';
+import { _toString } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import type { Column } from '../interfaces/iColumn';
 import type { CellValueResolveFrom } from '../interfaces/iEditService';

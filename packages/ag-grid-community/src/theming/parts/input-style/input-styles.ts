@@ -1,12 +1,6 @@
-import type { Part } from '../../../agStack/theming/part';
-import { createPart } from '../../../agStack/theming/partImpl';
-import type { BorderValue, ColorValue, LengthValue, ShadowValue } from '../../../agStack/theming/themeTypes';
-import {
-    accentColor,
-    backgroundColor,
-    foregroundBackgroundMix,
-    foregroundMix,
-} from '../../../agStack/theming/themeUtils';
+import type { BorderValue, ColorValue, LengthValue, Part, ShadowValue } from 'ag-stack';
+import { accentColor, backgroundColor, createPart, foregroundBackgroundMix, foregroundMix } from 'ag-stack';
+
 import inputStyleBaseCSS from './input-style-base.css';
 import inputStyleBorderedCSS from './input-style-bordered.css';
 import inputStyleUnderlinedCSS from './input-style-underlined.css';

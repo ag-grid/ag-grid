@@ -1,8 +1,10 @@
+import type { HighlightTooltipEventType } from 'ag-stack';
+import { _clearElement, _exists, _isElementOverflowingCallback, _setAriaSelected, _toString } from 'ag-stack';
+
 import type {
     AgPromise,
     BeanCollection,
     ElementParams,
-    HighlightTooltipEventType,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
     Registry,
@@ -11,17 +13,7 @@ import type {
     UserCompDetails,
     UserComponentFactory,
 } from 'ag-grid-community';
-import {
-    Component,
-    _addGridCommonParams,
-    _clearElement,
-    _createElement,
-    _exists,
-    _getEditorRendererDetails,
-    _isElementOverflowingCallback,
-    _setAriaSelected,
-    _toString,
-} from 'ag-grid-community';
+import { Component, _addGridCommonParams, _createElement, _getEditorRendererDetails } from 'ag-grid-community';
 
 import type { AgRichSelect } from './agRichSelect';
 import { _bindCellRendererToHtmlElement, resolveRichSelectValueFormatter } from './agRichSelect';

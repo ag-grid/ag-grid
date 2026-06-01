@@ -1,14 +1,14 @@
-import type { ElementParams, IToolbarItemComp, IToolbarItemParams, ToolbarMenuItemParams } from 'ag-grid-community';
 import {
-    Component,
     RefPlaceholder,
-    _createIconNoSpan,
     _removeAriaExpanded,
     _setAriaExpanded,
     _setAriaHasPopup,
     _setDisabled,
     _setDisplayed,
-} from 'ag-grid-community';
+} from 'ag-stack';
+
+import type { ElementParams, IToolbarItemComp, IToolbarItemParams, ToolbarMenuItemParams } from 'ag-grid-community';
+import { Component, _createIconNoSpan } from 'ag-grid-community';
 
 import type { ToolbarMenuBuilder } from '../../menu/toolbarMenuBuilder';
 import { renderToolbarButtonContents } from './toolbarItemUtils';

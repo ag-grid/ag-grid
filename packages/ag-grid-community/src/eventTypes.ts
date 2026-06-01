@@ -1,5 +1,5 @@
 // events that are available for use by users of AG Grid and so should be documented
-import type { AgEvent } from './agStack/interfaces/agEvent';
+import type { AgEvent } from 'ag-stack';
 
 /**
  * EVENTS that should be exposed via code generation for the framework components.

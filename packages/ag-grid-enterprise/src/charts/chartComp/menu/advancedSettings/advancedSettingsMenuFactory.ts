@@ -1,5 +1,7 @@
+import { _findFocusableElements, _findNextFocusableElement } from 'ag-stack';
+
 import type { NamedBean } from 'ag-grid-community';
-import { BeanStub, TabGuardComp, _findFocusableElements, _findNextFocusableElement } from 'ag-grid-community';
+import { BeanStub, TabGuardComp } from 'ag-grid-community';
 
 import { Dialog } from '../../../../widgets/dialog';
 import type { ChartTranslationService } from '../../services/chartTranslationService';

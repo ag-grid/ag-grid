@@ -1,3 +1,15 @@
+import {
+    RefPlaceholder,
+    _setAriaChecked,
+    _setAriaDescribedBy,
+    _setAriaExpanded,
+    _setAriaLabel,
+    _setAriaLabelledBy,
+    _setAriaLevel,
+    _setDisplayed,
+    _toStringOrNull,
+} from 'ag-stack';
+
 import type {
     AgColumn,
     AgEvent,
@@ -17,20 +29,11 @@ import type {
 import {
     AgCheckboxSelector,
     Component,
-    RefPlaceholder,
     _addGridCommonParams,
     _createIcon,
     _getCellRendererDetails,
     _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
-    _setAriaChecked,
-    _setAriaDescribedBy,
-    _setAriaExpanded,
-    _setAriaLabel,
-    _setAriaLabelledBy,
-    _setAriaLevel,
-    _setDisplayed,
-    _toStringOrNull,
     _warn,
 } from 'ag-grid-community';
 

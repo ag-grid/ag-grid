@@ -1,3 +1,5 @@
+import { RefPlaceholder, _exists, _setAriaDescribedBy, _setAriaLabel, _setDisplayed } from 'ag-stack';
+
 import type {
     BaseCellDataType,
     BeanCollection,
@@ -13,11 +15,6 @@ import {
     AgInputTextField,
     Component,
     KeyCode,
-    RefPlaceholder,
-    _exists,
-    _setAriaDescribedBy,
-    _setAriaLabel,
-    _setDisplayed,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 

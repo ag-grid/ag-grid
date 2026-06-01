@@ -1,5 +1,5 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _isVisible, _requestAnimationFrame, _setFixedWidth } from '../agStack/utils/dom';
+import { RefPlaceholder, _isVisible, _requestAnimationFrame, _setFixedWidth } from 'ag-stack';
+
 import type { CtrlsService } from '../ctrlsService';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';

@@ -1,5 +1,6 @@
-import type { IPopupService } from '../agStack/interfaces/iPopupService';
-import { BasePopupService } from '../agStack/popup/basePopupService';
+import type { IPopupService } from 'ag-stack';
+import { BasePopupService } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams } from '../events';

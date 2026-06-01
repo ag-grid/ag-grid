@@ -1,3 +1,5 @@
+import { RefPlaceholder, _setAriaDescribedBy, _setAriaExpanded, _setAriaLabel, _setDisplayed } from 'ag-stack';
+
 import type {
     AgColumn,
     AgProvidedColumnGroup,
@@ -16,16 +18,11 @@ import {
     Component,
     DragSourceType,
     KeyCode,
-    RefPlaceholder,
     TouchListener,
     _createIcon,
     _createIconNoSpan,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
-    _setAriaDescribedBy,
-    _setAriaExpanded,
-    _setAriaLabel,
-    _setDisplayed,
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';

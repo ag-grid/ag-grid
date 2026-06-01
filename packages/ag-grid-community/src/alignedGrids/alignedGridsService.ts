@@ -1,4 +1,5 @@
-import type { AgEvent } from '../agStack/interfaces/agEvent';
+import type { AgEvent } from 'ag-stack';
+
 import type { GridApi } from '../api/gridApi';
 import { _applyColumnState } from '../columns/columnStateUtils';
 import type { NamedBean } from '../context/bean';

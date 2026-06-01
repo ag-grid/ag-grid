@@ -1,4 +1,5 @@
-import { _removeFromArray } from '../agStack/utils/array';
+import { _removeFromArray } from 'ag-stack';
+
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';

@@ -1,11 +1,17 @@
-import { _isComponent } from '../../agStack/interfaces/agComponent';
-import { _areEqual } from '../../agStack/utils/array';
-import { _addOrRemoveAttribute, _removeFromParent, _setDisabled, _setDisplayed } from '../../agStack/utils/dom';
-import { AgPromise } from '../../agStack/utils/promise';
-import { AgAbstractInputField } from '../../agStack/widgets/agAbstractInputField';
-import type { ListOption } from '../../agStack/widgets/agList';
-import { AgRadioButton } from '../../agStack/widgets/agRadioButton';
-import { AgSelect } from '../../agStack/widgets/agSelect';
+import {
+    AgPromise,
+    _addOrRemoveAttribute,
+    _areEqual,
+    _isComponent,
+    _removeFromParent,
+    _setDisabled,
+    _setDisplayed,
+} from 'ag-stack';
+
+import { AgAbstractInputField } from '../../agWidgets/agAbstractInputField';
+import type { ListOption } from '../../agWidgets/agList';
+import { AgRadioButton } from '../../agWidgets/agRadioButton';
+import { AgSelect } from '../../agWidgets/agSelect';
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../interfaces/iFilter';
 import type { ElementParams } from '../../utils/element';

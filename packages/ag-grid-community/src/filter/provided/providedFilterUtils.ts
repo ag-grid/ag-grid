@@ -1,8 +1,9 @@
-import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
+import type { LocaleTextFunc } from 'ag-stack';
+
 import type { FilterWrapperParams } from '../../interfaces/iFilter';
 import { _warn } from '../../validation/logging';
-import { translateForFilter } from '../filterLocaleText';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
+import { translateForFilter } from '../filterLocaleText';
 import type { IProvidedFilterParams } from './iProvidedFilter';
 import type { FilterPlaceholderFunction, ISimpleFilterModelType } from './iSimpleFilter';
 

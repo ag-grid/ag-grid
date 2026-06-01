@@ -1,3 +1,5 @@
+import { RefPlaceholder, _exists, _removeFromParent } from 'ag-stack';
+
 import type {
     AdvancedFilterModel,
     BeanCollection,
@@ -10,7 +12,7 @@ import type {
     JoinAdvancedFilterModel,
     VerticalSection,
 } from 'ag-grid-community';
-import { Component, FilterButtonComp, RefPlaceholder, _exists, _removeFromParent } from 'ag-grid-community';
+import { Component, FilterButtonComp } from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../../agStack/iVirtualListDragFeature';
 import { VirtualList } from '../../widgets/virtualList';

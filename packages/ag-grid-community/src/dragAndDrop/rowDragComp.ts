@@ -1,5 +1,6 @@
-import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
-import { _isEventSupported, preventEventDefault } from '../agStack/utils/event';
+import type { LocaleTextFunc } from 'ag-stack';
+import { _isEventSupported, preventEventDefault } from 'ag-stack';
+
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';

@@ -1,11 +1,7 @@
+import { _getActiveDomElement } from 'ag-stack';
+
 import type { Component } from 'ag-grid-community';
-import {
-    BeanStub,
-    KeyCode,
-    _getActiveDomElement,
-    _isStopPropagationForAgGrid,
-    _stopPropagationForAgGrid,
-} from 'ag-grid-community';
+import { BeanStub, KeyCode, _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from 'ag-grid-community';
 
 export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
     constructor(

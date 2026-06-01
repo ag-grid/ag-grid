@@ -1,14 +1,9 @@
+import type { AriaSortState } from 'ag-stack';
+import { CssClassManager, _removeAriaSort, _setAriaSort } from 'ag-stack';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
-import type {
-    AriaSortState,
-    HeaderCellCtrl,
-    HeaderStyle,
-    IHeader,
-    IHeaderCellComp,
-    UserCompDetails,
-} from 'ag-grid-community';
-import { CssClassManager, _EmptyBean, _removeAriaSort, _setAriaSort } from 'ag-grid-community';
+import type { HeaderCellCtrl, HeaderStyle, IHeader, IHeaderCellComp, UserCompDetails } from 'ag-grid-community';
+import { _EmptyBean } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';

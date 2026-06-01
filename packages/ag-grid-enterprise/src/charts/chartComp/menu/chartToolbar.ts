@@ -1,5 +1,7 @@
+import { RefPlaceholder, _clearElement } from 'ag-stack';
+
 import type { BeanCollection, ChartToolbarMenuItemOptions, IconName } from 'ag-grid-community';
-import { Component, RefPlaceholder, _clearElement, _createElement, _createIconNoSpan } from 'ag-grid-community';
+import { Component, _createElement, _createIconNoSpan } from 'ag-grid-community';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 

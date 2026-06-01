@@ -1,17 +1,13 @@
+import { CssClassManager, _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCount } from 'ag-stack';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ComponentSelector, IGridBodyComp, VerticalSection, VerticalSectionMap } from 'ag-grid-community';
 import {
-    CssClassManager,
     FakeHScrollComp,
     FakeVScrollComp,
     GridBodyCtrl,
     _isCellSelectionEnabled,
     _isMultiRowSelection,
-    _setAriaColCount,
-    _setAriaMultiSelectable,
-    _setAriaRole,
-    _setAriaRowCount,
 } from 'ag-grid-community';
 
 import { BeansContext } from './beansContext';

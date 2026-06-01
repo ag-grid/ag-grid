@@ -1,9 +1,9 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _clearElement, _setDisplayed } from '../agStack/utils/dom';
+import { RefPlaceholder, _clearElement, _setDisplayed } from 'ag-stack';
+
 import type { AgColumn } from '../entities/agColumn';
 import { _getDisplaySortForColumn } from '../entities/agColumn';
-import type { SortDef } from '../entities/colDef';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
+import type { SortDef } from '../interfaces/iSort';
 import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
 import { _createIconNoSpan } from '../utils/icon';

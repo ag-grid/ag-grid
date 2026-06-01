@@ -1,8 +1,9 @@
 import { logErrorMessageOnce, paramToVariableName } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
+import { _asThemeImpl } from 'ag-stack';
 import { useEffect } from 'react';
 
-import { _asThemeImpl, styleMaterial, themeMaterial } from 'ag-grid-community';
+import { styleMaterial, themeMaterial } from 'ag-grid-community';
 
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { getThemeDefaultParams } from '../component-utils';

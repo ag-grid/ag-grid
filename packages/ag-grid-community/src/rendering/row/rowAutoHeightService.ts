@@ -1,6 +1,5 @@
-import { _getDocument } from '../../agStack/utils/document';
-import { _getElementSize, _observeResize } from '../../agStack/utils/dom';
-import { _debounce } from '../../agStack/utils/function';
+import { _debounce, _getDocument, _getElementSize, _observeResize } from 'ag-stack';
+
 import type { ColumnCollections } from '../../columns/columnModel';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';

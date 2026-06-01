@@ -1,14 +1,7 @@
+import { _focusInto, _getActiveDomElement, _isNothingFocused, _setAriaRole } from 'ag-stack';
+
 import type { ContainerType, IAfterGuiAttachedParams, IMultiFilterDef, SharedFilterUi } from 'ag-grid-community';
-import {
-    AgPromise,
-    KeyCode,
-    TabGuardComp,
-    _createElement,
-    _focusInto,
-    _getActiveDomElement,
-    _isNothingFocused,
-    _setAriaRole,
-} from 'ag-grid-community';
+import { AgPromise, KeyCode, TabGuardComp, _createElement } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../agStack/agGroupComponent';
 import type { GroupComponent } from '../widgets/gridEnterpriseWidgetTypes';

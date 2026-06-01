@@ -1,5 +1,6 @@
+import { _parseBigIntOrNull } from 'ag-stack';
+
 import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from 'ag-grid-community';
-import { _parseBigIntOrNull } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';

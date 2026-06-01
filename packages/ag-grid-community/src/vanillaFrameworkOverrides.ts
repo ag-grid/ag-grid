@@ -1,4 +1,5 @@
-import type { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
+import type { FrameworkOverridesIncomingSource } from 'ag-stack';
+
 import { BASE_URL } from './baseUrl';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import { setValidationDocLink } from './validation/logging';

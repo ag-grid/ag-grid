@@ -1,5 +1,7 @@
+import { _makeNull } from 'ag-stack';
+
 import type { AgColumn, IClientSideRowModel, RowNode } from 'ag-grid-community';
-import { AgPromise, BeanStub, _makeNull } from 'ag-grid-community';
+import { AgPromise, BeanStub } from 'ag-grid-community';
 
 import { processDataPath } from './setFilterUtils';
 

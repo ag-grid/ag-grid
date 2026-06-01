@@ -3,12 +3,12 @@
 module.exports = {
     forbidden: [
         {
-            name: 'ag-stack',
-            comment: 'AG Stack cannot depend on grid code.',
+            name: 'ag-widgets',
+            comment: 'AG Widgets cannot depend on grid code.',
             severity: 'error',
-            from: { path: ['^src/agStack/'] },
+            from: { path: ['^src/agWidgets/'] },
             to: {
-                pathNot: ['^src/agStack/', '^src/version\\.ts$'],
+                pathNot: ['^src/agWidgets/', '^src/version\\.ts$', 'ag-stack'],
             },
         },
     ],

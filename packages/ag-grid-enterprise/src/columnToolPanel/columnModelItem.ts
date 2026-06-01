@@ -1,5 +1,6 @@
+import { LocalEventService } from 'ag-stack';
+
 import type { AgColumn, AgProvidedColumnGroup, IEventEmitter, IEventListener } from 'ag-grid-community';
-import { LocalEventService } from 'ag-grid-community';
 
 type ColumnModelItemEvent = 'expandedChanged';
 export class ColumnModelItem implements IEventEmitter<ColumnModelItemEvent> {

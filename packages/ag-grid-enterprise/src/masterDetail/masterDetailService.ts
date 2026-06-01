@@ -1,3 +1,5 @@
+import { _exists, _observeResize } from 'ag-stack';
+
 import type {
     BeanName,
     DetailGridInfo,
@@ -12,11 +14,9 @@ import {
     BeanStub,
     DETAIL_ROW_ID_PREFIX,
     RowNode,
-    _exists,
     _getClientSideRowModel,
     _isClientSideRowModel,
     _isServerSideRowModel,
-    _observeResize,
 } from 'ag-grid-community';
 
 export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {

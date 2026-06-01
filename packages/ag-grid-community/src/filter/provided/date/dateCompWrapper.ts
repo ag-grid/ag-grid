@@ -1,6 +1,5 @@
-import { _setAriaInvalid } from '../../../agStack/utils/aria';
-import { _setDisplayed } from '../../../agStack/utils/dom';
-import { _debounce } from '../../../agStack/utils/function';
+import { _debounce, _setAriaInvalid, _setDisplayed } from 'ag-stack';
+
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { Context } from '../../../context/context';

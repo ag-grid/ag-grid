@@ -1,4 +1,5 @@
-import { _dateToFormattedString, _parseDateTimeFromString } from '../../../agStack/utils/date';
+import { _dateToFormattedString, _parseDateTimeFromString } from 'ag-stack';
+
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SharedFilterParams } from '../../../interfaces/iFilter';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';

@@ -1,4 +1,5 @@
 import type { AgCartesianAxisOptions, AgTimeAxisFormattableLabelFormat } from 'ag-charts-types';
+import { RefPlaceholder, _removeFromParent, _setDisplayed } from 'ag-stack';
 
 import type {
     AgComponentSelectorType,
@@ -8,14 +9,7 @@ import type {
     GridSelect,
     ListOption,
 } from 'ag-grid-community';
-import {
-    AgCheckbox,
-    AgSelectSelector,
-    Component,
-    RefPlaceholder,
-    _removeFromParent,
-    _setDisplayed,
-} from 'ag-grid-community';
+import { AgCheckbox, AgSelectSelector, Component } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import type { AgSliderParams } from '../../../../../agStack/agSlider';

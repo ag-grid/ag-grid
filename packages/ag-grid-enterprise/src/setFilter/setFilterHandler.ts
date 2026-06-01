@@ -1,3 +1,5 @@
+import { _debounce, _last, _makeNull, _toStringOrNull } from 'ag-stack';
+
 import type {
     AgColumn,
     DoesFilterPassParams,
@@ -12,16 +14,7 @@ import type {
     SetFilterModelValue,
     ValueFormatterParams,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _addGridCommonParams,
-    _debounce,
-    _error,
-    _isClientSideRowModel,
-    _last,
-    _makeNull,
-    _toStringOrNull,
-} from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _error, _isClientSideRowModel } from 'ag-grid-community';
 
 import { CsrmValuesExtractor } from './csrmValueExtractor';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';

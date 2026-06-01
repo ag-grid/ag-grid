@@ -1,14 +1,8 @@
 import type { AgChartInstance, AgSparklineOptions } from 'ag-charts-types';
+import { RefPlaceholder, _batchCall, _setAriaLabel, _setAriaLabelledBy } from 'ag-stack';
 
 import type { AgColumn, Environment, ICellRenderer, ISparklineCellRendererParams, RowNode } from 'ag-grid-community';
-import {
-    Component,
-    RefPlaceholder,
-    _batchCall,
-    _formatNumberCommas,
-    _setAriaLabel,
-    _setAriaLabelledBy,
-} from 'ag-grid-community';
+import { Component, _formatNumberCommas } from 'ag-grid-community';
 
 import {
     getChartTypeLabel,

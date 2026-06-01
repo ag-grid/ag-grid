@@ -1,4 +1,5 @@
-import { _removeFromArray } from '../agStack/utils/array';
+import { _removeFromArray } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import { _getGrandTotalRow, _isServerSideRowModel } from '../gridOptionsUtils';

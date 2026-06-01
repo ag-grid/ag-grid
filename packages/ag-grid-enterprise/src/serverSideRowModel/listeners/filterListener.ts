@@ -1,3 +1,5 @@
+import { _jsonEquals } from 'ag-stack';
+
 import type {
     AdvancedFilterModel,
     BeanCollection,
@@ -6,7 +8,7 @@ import type {
     NamedBean,
     StoreRefreshAfterParams,
 } from 'ag-grid-community';
-import { BeanStub, _isServerSideRowModel, _jsonEquals } from 'ag-grid-community';
+import { BeanStub, _isServerSideRowModel } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';

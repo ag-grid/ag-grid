@@ -1,14 +1,12 @@
-import { LocalEventService } from '../agStack/events/localEventService';
-import type { AgEvent } from '../agStack/interfaces/agEvent';
-import type { IEventEmitter, IEventListener } from '../agStack/interfaces/iEventEmitter';
+import type { AgEvent, IEventEmitter, IEventListener, TempEventHandler } from 'ag-stack';
 import {
+    LocalEventService,
     _areEventsNear,
     _getFirstActiveTouch,
     addTempEventHandlers,
     clearTempEventHandlers,
     preventEventDefault,
-} from '../agStack/utils/event';
-import type { TempEventHandler } from '../agStack/utils/event';
+} from 'ag-stack';
 
 export interface TapEvent extends AgEvent<'tap'> {
     touchStart: Touch;

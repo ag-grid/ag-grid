@@ -1,6 +1,7 @@
-import { AgComponentStub } from '../agStack/core/agComponentStub';
-import type { AgBaseComponent, AgComponentEvent, AgComponentSelector } from '../agStack/interfaces/agComponent';
-import type { AgWidgetSelectorType } from '../agStack/widgets/agWidgetSelectorType';
+import type { AgBaseComponent, AgComponentEvent, AgComponentSelector } from 'ag-stack';
+import { AgComponentStub } from 'ag-stack';
+
+import type { AgWidgetSelectorType } from '../agWidgets/agWidgetSelectorType';
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';

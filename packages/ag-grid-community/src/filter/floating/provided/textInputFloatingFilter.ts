@@ -1,7 +1,5 @@
-import { KeyCode } from '../../../agStack/constants/keyCode';
-import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
-import { _clearElement } from '../../../agStack/utils/dom';
-import { _debounce } from '../../../agStack/utils/function';
+import { KeyCode, RefPlaceholder, _clearElement, _debounce } from 'ag-stack';
+
 import type { AgColumn } from '../../../entities/agColumn';
 import type { ElementParams } from '../../../utils/element';
 import type { BigIntFilterModel } from '../../provided/bigInt/iBigIntFilter';

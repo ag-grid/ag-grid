@@ -1,10 +1,16 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCount } from '../agStack/utils/aria';
+import {
+    RefPlaceholder,
+    _setAriaColCount,
+    _setAriaMultiSelectable,
+    _setAriaRole,
+    _setAriaRowCount,
+    _setDisplayed,
+} from 'ag-stack';
+
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { VerticalSection, VerticalSectionMap } from '../interfaces/iGridSection';
-import { _setDisplayed } from '../main-internal';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';

@@ -1,4 +1,5 @@
-import { _setDisplayed } from '../agStack/utils/dom';
+import { _setDisplayed } from 'ag-stack';
+
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';

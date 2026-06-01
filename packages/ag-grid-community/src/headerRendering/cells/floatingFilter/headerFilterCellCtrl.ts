@@ -1,8 +1,12 @@
-import { KeyCode } from '../../../agStack/constants/keyCode';
-import { _setAriaLabel } from '../../../agStack/utils/aria';
-import { _getActiveDomElement } from '../../../agStack/utils/document';
-import { _isElementChildOfClass } from '../../../agStack/utils/dom';
-import { _findNextFocusableElement, _focusInto } from '../../../agStack/utils/focus';
+import {
+    KeyCode,
+    _findNextFocusableElement,
+    _focusInto,
+    _getActiveDomElement,
+    _isElementChildOfClass,
+    _setAriaLabel,
+} from 'ag-stack';
+
 import { setupCompBean } from '../../../components/emptyBean';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';

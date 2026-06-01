@@ -1,3 +1,5 @@
+import { _doOnce } from 'ag-stack';
+
 import type { GridApi, GridOptions, Module, Params } from 'ag-grid-community';
 import {
     CellApiModule,
@@ -7,7 +9,6 @@ import {
     EventApiModule,
     RowApiModule,
     ValidationModule,
-    _doOnce,
     createGrid,
     getGridElement,
 } from 'ag-grid-community';

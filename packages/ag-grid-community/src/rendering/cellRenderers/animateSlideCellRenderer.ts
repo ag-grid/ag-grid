@@ -1,6 +1,5 @@
-import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
-import { _exists, _missing } from '../../agStack/utils/generic';
-import { _clearElement } from '../../main';
+import { RefPlaceholder, _clearElement, _exists, _missing } from 'ag-stack';
+
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import { Component } from '../../widgets/component';

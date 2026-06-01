@@ -1,6 +1,6 @@
-import type { IconValue } from '../agStack/interfaces/iIcon';
-import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
-import { _fuzzySuggestions } from '../agStack/utils/fuzzyMatch';
+import type { AgPropertyChangedSource, IconValue } from 'ag-stack';
+import { _fuzzySuggestions } from 'ag-stack';
+
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';

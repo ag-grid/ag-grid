@@ -1,0 +1,58 @@
+import type { AgEvent } from './agEvent';
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface AgCheckboxChangedEvent extends AgEvent<'checkboxChanged'> {
+    id: string;
+    name: string;
+    selected?: boolean;
+    previousValue: boolean | undefined;
+}
+
+export type ScrollDirection = 'horizontal' | 'vertical';
+
+interface AgBodyScrollEvent extends AgEvent<'bodyScroll'> {
+    direction: ScrollDirection;
+    left: number;
+    top: number;
+}
+
+interface AgBaseDragEvent<
+    TEventType extends 'dragStarted' | 'dragStopped' | 'dragCancelled',
+> extends AgEvent<TEventType> {
+    target: Element;
+}
+
+interface AgDragStartedEvent extends AgBaseDragEvent<'dragStarted'> {}
+interface AgDragStoppedEvent extends AgBaseDragEvent<'dragStopped'> {}
+interface AgDragCancelledEvent extends AgBaseDragEvent<'dragCancelled'> {}
+
+interface AgTooltipEvent<TEventType extends 'tooltipShow' | 'tooltipHide'> extends AgEvent<TEventType> {
+    parentGui: HTMLElement;
+}
+
+interface AgTooltipShowEvent extends AgTooltipEvent<'tooltipShow'> {
+    tooltipGui: HTMLElement;
+}
+
+interface AgTooltipHideEvent extends AgTooltipEvent<'tooltipHide'> {}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface AgStylesChangedEvent extends AgEvent<'stylesChanged'> {
+    themeChanged?: boolean;
+    listItemHeightChanged?: boolean;
+}
+
+/**
+ * Events required by AG Stack
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export interface BaseEvents {
+    checkboxChanged: AgCheckboxChangedEvent;
+    bodyScroll: AgBodyScrollEvent;
+    dragStarted: AgDragStartedEvent;
+    dragStopped: AgDragStoppedEvent;
+    dragCancelled: AgDragCancelledEvent;
+    tooltipShow: AgTooltipShowEvent;
+    tooltipHide: AgTooltipHideEvent;
+    stylesChanged: AgStylesChangedEvent;
+}

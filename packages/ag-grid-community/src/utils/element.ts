@@ -1,5 +1,6 @@
-import type { AgElementParams } from '../agStack/utils/dom';
-import { _createAgElement } from '../agStack/utils/dom';
+import type { AgElementParams } from 'ag-stack';
+import { _createAgElement } from 'ag-stack';
+
 import type { AgComponentSelectorType } from '../widgets/component';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

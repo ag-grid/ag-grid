@@ -1,3 +1,5 @@
+import { _doOnce, _exists } from 'ag-stack';
+
 import type {
     AgColumn,
     BeanCollection,
@@ -9,8 +11,6 @@ import type {
 import {
     BeanStub,
     RowNode,
-    _doOnce,
-    _exists,
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowHeightForNode,

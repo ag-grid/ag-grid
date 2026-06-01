@@ -1,12 +1,12 @@
 import type {
-    AgInputFieldParams,
-    _AgComponentSelector,
-    _AgCoreBeanCollection,
-    _AgWidgetSelectorType,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-} from 'ag-grid-community';
+    AgComponentSelector,
+    AgCoreBeanCollection,
+    BaseEvents,
+    BaseProperties,
+    IPropertiesService,
+} from 'ag-stack';
+
+import type { AgInputFieldParams, _AgWidgetSelectorType } from 'ag-grid-community';
 import { AgAbstractInputField } from 'ag-grid-community';
 
 export interface AgInputRangeParams<
@@ -18,11 +18,11 @@ export interface AgInputRangeParams<
 }
 
 export class AgInputRange<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
 > extends AgAbstractInputField<
     TBeanCollection,
@@ -107,7 +107,7 @@ export class AgInputRange<
     }
 }
 
-export const AgInputRangeSelector: _AgComponentSelector<_AgWidgetSelectorType> = {
+export const AgInputRangeSelector: AgComponentSelector<_AgWidgetSelectorType> = {
     selector: 'AG-INPUT-RANGE',
     component: AgInputRange,
 };

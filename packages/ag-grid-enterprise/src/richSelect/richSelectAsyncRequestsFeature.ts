@@ -1,4 +1,5 @@
-import type { _VerticalDirection } from 'ag-grid-community';
+import type { VerticalDirection } from 'ag-stack';
+
 import { _consoleError } from 'ag-grid-community';
 
 const DEFAULT_VALUES_PAGE_SIZE = 100;
@@ -53,7 +54,7 @@ export function createRichSelectAsyncRequestBindings<TValue>(params: {
     controller: RichSelectAsyncRequestsFeature<TValue>;
     hasPagedSource: boolean;
     onSearch?: (searchString: string) => void;
-    onLoadMoreRows?: (direction?: _VerticalDirection) => void;
+    onLoadMoreRows?: (direction?: VerticalDirection) => void;
 } {
     const { host, source, useAsyncSearch, onMisconfiguredSearchSource, onFirstValuesPageLoaded } = params;
     const controller = new RichSelectAsyncRequestsFeature<TValue>({
@@ -69,7 +70,7 @@ export function createRichSelectAsyncRequestBindings<TValue>(params: {
         hasPagedSource,
         onSearch: useAsyncSearch ? (searchString: string) => controller.onSearch(searchString) : undefined,
         onLoadMoreRows: hasPagedSource
-            ? (direction?: _VerticalDirection) => controller.loadValuesPage(direction ?? 'down')
+            ? (direction?: VerticalDirection) => controller.loadValuesPage(direction ?? 'down')
             : undefined,
     };
 }
@@ -174,7 +175,7 @@ export class RichSelectAsyncRequestsFeature<TValue = any> {
         this.loadValuesPage('down');
     }
 
-    public loadValuesPage(direction: _VerticalDirection): void {
+    public loadValuesPage(direction: VerticalDirection): void {
         if (this.destroyed) {
             return;
         }
@@ -243,7 +244,7 @@ export class RichSelectAsyncRequestsFeature<TValue = any> {
         pageResult: RichSelectAsyncValuesPageResult<TValue> | undefined,
         pageSize: number,
         requestVersion: number,
-        direction: _VerticalDirection,
+        direction: VerticalDirection,
         requestStartRow: number,
         requestEndRow: number
     ): void {

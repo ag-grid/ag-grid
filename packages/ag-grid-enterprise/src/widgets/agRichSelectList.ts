@@ -1,15 +1,15 @@
-import type { Component, HighlightTooltipEventType, RichSelectParams, _VerticalDirection } from 'ag-grid-community';
+import type { HighlightTooltipEventType, VerticalDirection } from 'ag-stack';
 import {
-    KeyCode,
     _addOrRemoveAttribute,
-    _createElement,
-    _createIconNoSpan,
     _requestAnimationFrame,
     _setAriaActiveDescendant,
     _setAriaControlsAndLabel,
     _setAriaLabel,
     _setDisplayed,
-} from 'ag-grid-community';
+} from 'ag-stack';
+
+import type { Component, RichSelectParams } from 'ag-grid-community';
+import { KeyCode, _createElement, _createIconNoSpan } from 'ag-grid-community';
 
 import { resolveRichSelectValueFormatter } from './agRichSelect';
 import { RichSelectRow } from './agRichSelectRow';
@@ -40,7 +40,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private loadingState = STATE_READY_FOR_INPUT;
     private eStateCompLabel: HTMLElement;
     private eLoadingIcon: Element | undefined;
-    private loadMoreRowsCallback?: (direction?: _VerticalDirection) => void;
+    private loadMoreRowsCallback?: (direction?: VerticalDirection) => void;
     private loadMoreRowsThreshold = 10;
     private stateAnnouncementCallback?: (value: string) => void;
     private readonly valueFormatter: (value: TValue | TValue[] | null | undefined) => string;
@@ -166,7 +166,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         this.scheduleMaybeRequestMoreRows();
     }
 
-    public setLoadMoreRowsCallback(callback?: (direction?: _VerticalDirection) => void, thresholdRows = 10): void {
+    public setLoadMoreRowsCallback(callback?: (direction?: VerticalDirection) => void, thresholdRows = 10): void {
         this.loadMoreRowsCallback = callback;
         this.loadMoreRowsThreshold = Math.max(thresholdRows, 1);
         this.maybeRequestMoreRows();

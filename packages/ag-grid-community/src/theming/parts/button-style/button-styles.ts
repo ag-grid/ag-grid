@@ -1,12 +1,6 @@
-import type { Part } from '../../../agStack/theming/part';
-import { createPart } from '../../../agStack/theming/partImpl';
-import type { BorderValue, ColorValue, FontWeightValue, LengthValue } from '../../../agStack/theming/themeTypes';
-import {
-    accentColor,
-    backgroundColor,
-    foregroundBackgroundMix,
-    foregroundColor,
-} from '../../../agStack/theming/themeUtils';
+import type { BorderValue, ColorValue, FontWeightValue, LengthValue, Part } from 'ag-stack';
+import { accentColor, backgroundColor, createPart, foregroundBackgroundMix, foregroundColor } from 'ag-stack';
+
 import buttonStyleBaseCSS from './button-style-base.css';
 
 export type ButtonStyleParams = {

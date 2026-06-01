@@ -1,5 +1,6 @@
-import { AgTabGuardComp } from '../agStack/focus/agTabGuardComp';
-import type { AgTabGuardParams } from '../agStack/focus/agTabGuardFeature';
+import type { AgTabGuardParams } from 'ag-stack';
+import { AgTabGuardComp } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';

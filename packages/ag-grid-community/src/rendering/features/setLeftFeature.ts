@@ -1,5 +1,5 @@
-import { _setAriaColSpan } from '../../agStack/utils/aria';
-import { _exists } from '../../agStack/utils/generic';
+import { _exists, _setAriaColSpan } from 'ag-stack';
+
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';

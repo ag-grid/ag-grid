@@ -1,3 +1,5 @@
+import { _clearElement, _findFocusableElements, _getActiveDomElement, _removeFromParent } from 'ag-stack';
+
 import type {
     ComponentSelector,
     ComponentType,
@@ -20,12 +22,8 @@ import {
     ManagedFocusFeature,
     _addFocusableContainerListener,
     _addGridCommonParams,
-    _clearElement,
     _createElement,
     _error,
-    _findFocusableElements,
-    _getActiveDomElement,
-    _removeFromParent,
     _unwrapUserComp,
     _warn,
 } from 'ag-grid-community';

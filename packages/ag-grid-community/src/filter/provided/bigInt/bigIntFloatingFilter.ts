@@ -1,4 +1,5 @@
-import { _parseBigIntOrNull } from '../../../agStack/utils/bigInt';
+import { _parseBigIntOrNull } from 'ag-stack';
+
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';

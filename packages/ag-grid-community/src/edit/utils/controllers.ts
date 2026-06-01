@@ -1,4 +1,5 @@
-import { _getTabIndex } from '../../agStack/utils/browser';
+import { _getTabIndex } from 'ag-stack';
+
 import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';

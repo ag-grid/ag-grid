@@ -1,6 +1,6 @@
-import type { TooltipCtrl } from '../agStack/interfaces/iTooltip';
-import type { AgTooltipFeature } from '../agStack/tooltip/agTooltipFeature';
-import { _isElementOverflowingCallback } from '../agStack/utils/dom';
+import type { AgTooltipFeature, TooltipCtrl } from 'ag-stack';
+import { _isElementOverflowingCallback } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';

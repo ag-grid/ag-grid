@@ -1,3 +1,5 @@
+import { _downloadFile } from 'ag-stack';
+
 import type {
     AgColumn,
     AgColumnGroup,
@@ -13,7 +15,6 @@ import type {
 import {
     BaseCreator,
     _addGridCommonParams,
-    _downloadFile,
     _getHeaderClassesFromColDef,
     _getHeaderRowCount,
     _warn,

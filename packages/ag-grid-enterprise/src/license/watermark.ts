@@ -1,5 +1,7 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type { BeanCollection, ComponentSelector, ElementParams } from 'ag-grid-community';
-import { Component, RefPlaceholder } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 import watermarkCSS from './watermark.css';

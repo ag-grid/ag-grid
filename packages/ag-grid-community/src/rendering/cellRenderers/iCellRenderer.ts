@@ -1,4 +1,5 @@
-import type { IComponent } from '../../agStack/interfaces/iComponent';
+import type { IComponent } from 'ag-stack';
+
 import type { ColDef } from '../../entities/colDef';
 import type { GetCellsParams } from '../../interfaces/iCellsParams';
 import type { Column } from '../../interfaces/iColumn';

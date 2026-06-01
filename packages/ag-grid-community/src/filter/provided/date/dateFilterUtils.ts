@@ -1,4 +1,5 @@
-import { _parseDateTimeFromString } from '../../../agStack/utils/date';
+import { _parseDateTimeFromString } from 'ag-stack';
+
 import type { Tuple } from '../iSimpleFilter';
 import type { OptionsFactory } from '../optionsFactory';
 import { getNumberOfInputs } from '../simpleFilterUtils';

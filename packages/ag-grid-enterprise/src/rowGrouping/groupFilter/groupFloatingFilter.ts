@@ -1,3 +1,5 @@
+import { RefPlaceholder, _clearElement } from 'ag-stack';
+
 import type {
     AgColumn,
     ColumnEvent,
@@ -8,14 +10,7 @@ import type {
     IFloatingFilterComp,
     IFloatingFilterParams,
 } from 'ag-grid-community';
-import {
-    AgInputTextField,
-    AgPromise,
-    Component,
-    RefPlaceholder,
-    _clearElement,
-    _isGroupMultiAutoColumn,
-} from 'ag-grid-community';
+import { AgInputTextField, AgPromise, Component, _isGroupMultiAutoColumn } from 'ag-grid-community';
 
 import type { GroupFilter } from './groupFilter';
 import type { GroupFilterHandler } from './groupFilterHandler';

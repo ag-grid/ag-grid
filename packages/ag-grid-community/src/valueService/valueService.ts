@@ -1,6 +1,5 @@
-import { _exists, _missing } from '../agStack/utils/generic';
-import { _isExpressionString } from '../agStack/utils/string';
-import { _getValueUsingDotField } from '../agStack/utils/value';
+import { _exists, _getValueUsingDotField, _isExpressionString, _missing } from 'ag-stack';
+
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
 import type { NamedBean } from '../context/bean';

@@ -1,5 +1,7 @@
+import { _exists, _last } from 'ag-stack';
+
 import type { AgColumn, IAggFunc, IAggFuncParams, IAggFuncService, NamedBean } from 'ag-grid-community';
-import { BeanStub, _exists, _last } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 const defaultAggFuncNames = {
     sum: 'Sum',

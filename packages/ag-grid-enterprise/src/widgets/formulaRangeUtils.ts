@@ -1,5 +1,5 @@
-import { _getRowNode, isSpecialCol } from 'ag-grid-community';
 import type { AgColumn, BeanCollection, CellRange, IClientSideRowModel } from 'ag-grid-community';
+import { _getRowNode, isSpecialCol } from 'ag-grid-community';
 
 import { getRefTokenMatches, parseA1Ref } from '../formula/refUtils';
 

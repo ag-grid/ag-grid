@@ -1,3 +1,5 @@
+import { _getDocument, _setDisplayed } from 'ag-stack';
+
 import type {
     BeanCollection,
     ChartDataPanel as ChartDataPanelType,
@@ -5,7 +7,7 @@ import type {
     GridToggleButton,
     IChartService,
 } from 'ag-grid-community';
-import { AgToggleButton, Component, _getDocument, _setDisplayed, _warn } from 'ag-grid-community';
+import { AgToggleButton, Component, _warn } from 'ag-grid-community';
 
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';

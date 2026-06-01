@@ -62,6 +62,7 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     '@ag-grid-community/locale/dist/**': 'community-modules/locale/dist/**/*.{cjs,js,map}',
 
     // packages
+    'ag-stack/dist/**': 'packages/ag-stack/dist/**/*.{cjs,js,map}',
     'ag-grid-community/styles/**': 'packages/ag-grid-community/styles/**/*.css',
     'ag-grid-community/dist/**': 'packages/ag-grid-community/dist/**/*.{cjs,js,map}',
     'ag-grid-enterprise/styles/**': 'packages/ag-grid-enterprise/styles/**/*.css',

@@ -1,4 +1,3 @@
-import { ProvidedFilter } from 'ag-grid-community';
 import type {
     AgColumn,
     BeanCollection,
@@ -8,6 +7,7 @@ import type {
     IMultiFilterParams,
     SharedFilterUi,
 } from 'ag-grid-community';
+import { ProvidedFilter } from 'ag-grid-community';
 
 export function getMultiFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
     const { filters } = params;

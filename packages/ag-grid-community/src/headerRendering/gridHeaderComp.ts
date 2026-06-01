@@ -1,8 +1,8 @@
 import { BeanStub } from '../context/beanStub';
 import type { ElementParams } from '../utils/element';
 import { _createElement } from '../utils/element';
-import { GridHeaderCtrl } from './gridHeaderCtrl';
 import type { IGridHeaderComp } from './gridHeaderCtrl';
+import { GridHeaderCtrl } from './gridHeaderCtrl';
 import { HeaderRowsComp } from './rowContainer/headerRowsComp';
 
 const HeaderWrapperElement: ElementParams = {

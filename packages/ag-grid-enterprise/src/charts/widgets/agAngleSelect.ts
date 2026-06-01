@@ -1,3 +1,5 @@
+import { RefPlaceholder, _exists, _getActiveDomElement, _setFixedWidth } from 'ag-stack';
+
 import type {
     AgComponentSelectorType,
     AgEventTypeParams,
@@ -10,14 +12,7 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import {
-    AgAbstractLabel,
-    AgInputNumberFieldSelector,
-    RefPlaceholder,
-    _exists,
-    _getActiveDomElement,
-    _setFixedWidth,
-} from 'ag-grid-community';
+import { AgAbstractLabel, AgInputNumberFieldSelector } from 'ag-grid-community';
 
 interface AgAngleSelectParams extends AgLabelParams {
     value?: number;

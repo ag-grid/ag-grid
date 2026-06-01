@@ -1,25 +1,25 @@
 import type { IColor, _IUtil } from 'ag-charts-types';
-
 import type {
-    AgInputTextFieldParams,
-    _AgComponentSelector,
-    _AgCoreBeanCollection,
-    _AgWidgetSelectorType,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-} from 'ag-grid-community';
-import { AgInputTextField, RefPlaceholder } from 'ag-grid-community';
+    AgComponentSelector,
+    AgCoreBeanCollection,
+    BaseEvents,
+    BaseProperties,
+    IPropertiesService,
+} from 'ag-stack';
+import { RefPlaceholder } from 'ag-stack';
+
+import type { AgInputTextFieldParams, _AgWidgetSelectorType } from 'ag-grid-community';
+import { AgInputTextField } from 'ag-grid-community';
 
 import type { IAgChartsExports } from './iAgChartsExports';
 
 type AgColorInputEvent = 'colorChanged';
 export class AgColorInput<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
 > extends AgInputTextField<
     TBeanCollection,
@@ -84,7 +84,7 @@ export class AgColorInput<
     }
 }
 
-export const AgColorInputSelector: _AgComponentSelector<_AgWidgetSelectorType> = {
+export const AgColorInputSelector: AgComponentSelector<_AgWidgetSelectorType> = {
     selector: 'AG-COLOR-INPUT',
     component: AgColorInput,
 };

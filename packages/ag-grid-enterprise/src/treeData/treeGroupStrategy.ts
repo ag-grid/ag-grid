@@ -1,3 +1,5 @@
+import { _removeFromArray } from 'ag-stack';
+
 import type {
     ChangedPath,
     GridOptions,
@@ -5,7 +7,7 @@ import type {
     RefreshModelParams,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _removeFromArray, _warn } from 'ag-grid-community';
+import { BeanStub, RowNode, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { IRowGroupingStrategy } from '../rowHierarchy/rowHierarchyUtils';

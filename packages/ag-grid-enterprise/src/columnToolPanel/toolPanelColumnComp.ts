@@ -1,3 +1,5 @@
+import { RefPlaceholder, _setAriaDescribedBy, _setAriaLabel, _setDisplayed } from 'ag-stack';
+
 import type {
     AgColumn,
     DragItem,
@@ -13,14 +15,10 @@ import {
     Component,
     DragSourceType,
     KeyCode,
-    RefPlaceholder,
     TouchListener,
     _createIconNoSpan,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
-    _setAriaDescribedBy,
-    _setAriaLabel,
-    _setDisplayed,
     _warn,
 } from 'ag-grid-community';
 

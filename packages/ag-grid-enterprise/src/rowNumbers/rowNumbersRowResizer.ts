@@ -1,5 +1,7 @@
-import { Component, Direction, _getRowNode } from 'ag-grid-community';
+import { Direction } from 'ag-stack';
+
 import type { CellCtrl, ElementParams, RowNode } from 'ag-grid-community';
+import { Component, _getRowNode } from 'ag-grid-community';
 
 const RowNumbersRowResizerElement: ElementParams = {
     tag: 'div',

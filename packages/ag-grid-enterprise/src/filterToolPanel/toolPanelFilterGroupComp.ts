@@ -1,3 +1,5 @@
+import { RefPlaceholder, _clearElement, _setAriaLabel, _setAriaRole } from 'ag-stack';
+
 import type {
     AgColumn,
     AgProvidedColumnGroup,
@@ -6,16 +8,7 @@ import type {
     IconName,
     TooltipFeature,
 } from 'ag-grid-community';
-import {
-    Component,
-    RefPlaceholder,
-    _clearElement,
-    _createIconNoSpan,
-    _getShouldDisplayTooltip,
-    _setAriaLabel,
-    _setAriaRole,
-    isProvidedColumnGroup,
-} from 'ag-grid-community';
+import { Component, _createIconNoSpan, _getShouldDisplayTooltip, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../agStack/agGroupComponent';
 import type { GroupComponent, GroupComponentParams } from '../widgets/gridEnterpriseWidgetTypes';

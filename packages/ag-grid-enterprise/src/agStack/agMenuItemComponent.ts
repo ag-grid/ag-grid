@@ -1,29 +1,19 @@
 import type {
-    AgEvent,
-    AgPromise,
-    IComponent,
-    IMenuConfigParams,
-    IMenuItem,
-    _AgComponent,
-    _AgCoreBean,
-    _AgCoreBeanCollection,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-    _ITooltipFeature,
-    _StopPropagationCallbacks,
-    _TooltipCtrl,
-    _WithoutCommon,
-} from 'ag-grid-community';
-import {
-    KeyCode,
-    _AgBeanStub,
-    _createElement,
-    _setAriaDisabled,
-    _setAriaExpanded,
-    _setAriaHasPopup,
-    _setAriaRole,
-} from 'ag-grid-community';
+    AgComponent,
+    AgCoreBean,
+    AgCoreBeanCollection,
+    BaseEvents,
+    BaseProperties,
+    IPropertiesService,
+    ITooltipFeature,
+    StopPropagationCallbacks,
+    TooltipCtrl,
+    WithoutCommon,
+} from 'ag-stack';
+import { AgBeanStub, _setAriaDisabled, _setAriaExpanded, _setAriaHasPopup, _setAriaRole } from 'ag-stack';
+
+import type { AgEvent, AgPromise, IComponent, IMenuConfigParams, IMenuItem } from 'ag-grid-community';
+import { KeyCode, _createElement } from 'ag-grid-community';
 
 import { AgMenuList } from './agMenuList';
 import { AgMenuPanel } from './agMenuPanel';
@@ -85,11 +75,11 @@ export interface AgCloseMenuEvent extends AgEvent<'closeMenu'> {
 }
 
 export interface AgMenuItemActivatedEvent<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
 > extends AgEvent<'menuItemActivated'> {
@@ -109,7 +99,7 @@ interface AgMenuItemComponentParams<TMenuActionParams extends TCommon, TCommon> 
     isAnotherSubMenuOpen: () => boolean;
     level: number;
     childComponent?: IComponent<any>;
-    contextParams: _WithoutCommon<TCommon, TMenuActionParams>;
+    contextParams: WithoutCommon<TCommon, TMenuActionParams>;
 }
 
 export type AgMenuItemComponentEvent = 'closeMenu' | 'menuItemActivated';
@@ -150,21 +140,21 @@ export interface AgMenuItemCallbacks<TBeanCollection, TMenuActionParams extends 
         def: AgMenuItemDef<TMenuActionParams, TCommon>,
         params: AgMenuItemParams<TMenuActionParams, TCommon>
     ) => AgPromise<(IComponent<AgMenuItemParams<TMenuActionParams, TCommon>> & IMenuItem) | undefined>;
-    getPostProcessPopupParams: (contextParams: _WithoutCommon<TCommon, TMenuActionParams>) => any;
+    getPostProcessPopupParams: (contextParams: WithoutCommon<TCommon, TMenuActionParams>) => any;
     preserveRangesWhile: (beans: TBeanCollection, fn: () => void) => void;
-    stopPropagationCallbacks: _StopPropagationCallbacks;
+    stopPropagationCallbacks: StopPropagationCallbacks;
     warnNoItem?: (menuItem: string) => void;
 }
 
 export class AgMenuItemComponent<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
-> extends _AgBeanStub<
+> extends AgBeanStub<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -179,7 +169,7 @@ export class AgMenuItemComponent<
     private isAnotherSubMenuOpen: () => boolean;
     private level: number;
     private childComponent?: IComponent<any>;
-    private contextParams: _WithoutCommon<TCommon, TMenuActionParams>;
+    private contextParams: WithoutCommon<TCommon, TMenuActionParams>;
     private menuItemComp: IComponent<AgMenuItemParams<TMenuActionParams, TCommon>> & IMenuItem;
     private isActive = false;
     private hideSubMenu: (() => void) | null;
@@ -187,9 +177,9 @@ export class AgMenuItemComponent<
     private subMenuIsOpening = false;
     private activateTimeoutId: number;
     private deactivateTimeoutId: number;
-    private parentComponent?: _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>;
+    private parentComponent?: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>;
     private tooltip?: string;
-    private tooltipFeature?: _ITooltipFeature;
+    private tooltipFeature?: ITooltipFeature;
     private suppressRootStyles: boolean = true;
     private suppressAria: boolean = true;
     private suppressFocus: boolean = true;
@@ -453,11 +443,11 @@ export class AgMenuItemComponent<
         return this.menuItemComp.getGui();
     }
 
-    public getParentComponent(): _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> | undefined {
+    public getParentComponent(): AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> | undefined {
         return this.parentComponent;
     }
 
-    public setParentComponent(component: _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>): void {
+    public setParentComponent(component: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>): void {
         this.parentComponent = component;
     }
 
@@ -649,7 +639,7 @@ export class AgMenuItemComponent<
             return;
         }
 
-        const tooltipFeature = this.beans.registry.createDynamicBean<_ITooltipFeature & _AgCoreBean<TBeanCollection>>(
+        const tooltipFeature = this.beans.registry.createDynamicBean<ITooltipFeature & AgCoreBean<TBeanCollection>>(
             'tooltipFeature',
             false,
             {
@@ -657,7 +647,7 @@ export class AgMenuItemComponent<
                 getTooltipValue: () => this.tooltip,
                 getLocation: () => 'menu',
                 shouldDisplayTooltip,
-            } as _TooltipCtrl<string, any>
+            } as TooltipCtrl<string, any>
         );
 
         if (tooltipFeature) {

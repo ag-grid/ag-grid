@@ -1,5 +1,7 @@
+import { _setAriaExpanded } from 'ag-stack';
+
 import type { IsGroupOpenByDefaultParams, RowCtrl, RowGroupOpenedEvent, RowNode } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _createGlobalRowEvent, _setAriaExpanded } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _createGlobalRowEvent } from 'ag-grid-community';
 
 export abstract class BaseExpansionService extends BeanStub {
     protected abstract dispatchExpandedEvent(event: RowGroupOpenedEvent, forceSync?: boolean): void;

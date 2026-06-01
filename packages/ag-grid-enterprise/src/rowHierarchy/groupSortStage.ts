@@ -1,3 +1,5 @@
+import { _reuseArrayIfEqual } from 'ag-stack';
+
 import type {
     AgColumn,
     ChangedPath,
@@ -9,13 +11,7 @@ import type {
     _ChangedRowNodes,
     _IRowNodeSortStage,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _doDeltaSort,
-    _forEachChangedGroupDepthFirst,
-    _reuseArrayIfEqual,
-    _updateRowNodeAfterSort,
-} from 'ag-grid-community';
+import { BeanStub, _doDeltaSort, _forEachChangedGroupDepthFirst, _updateRowNodeAfterSort } from 'ag-grid-community';
 
 export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSortStage {
     beanName = 'groupSortStage' as const;

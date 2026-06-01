@@ -1,8 +1,6 @@
-import type { BaseCssChangeKeys, CssVariable } from './agStack/core/baseEnvironment';
-import { BaseEnvironment } from './agStack/core/baseEnvironment';
-import type { Theme } from './agStack/theming/theme';
-import type { ThemeImpl } from './agStack/theming/themeImpl';
-import type { ParamType } from './agStack/theming/themeTypeUtils';
+import type { BaseCssChangeKeys, CssVariable, ParamType, Theme, ThemeImpl } from 'ag-stack';
+import { BaseEnvironment } from 'ag-stack';
+
 import type { NamedBean } from './context/bean';
 import type { BeanCollection } from './context/context';
 import type { AgEventTypeParams } from './events';

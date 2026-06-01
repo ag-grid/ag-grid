@@ -1,6 +1,11 @@
-import { KeyCode, _normaliseQwertyAzerty } from '../../agStack/constants/keyCode';
-import { _isEventFromThisInstance, _isEventSupported } from '../../agStack/utils/event';
-import { _isEventFromPrintableCharacter } from '../../agStack/utils/keyboard';
+import {
+    KeyCode,
+    _isEventFromPrintableCharacter,
+    _isEventFromThisInstance,
+    _isEventSupported,
+    _normaliseQwertyAzerty,
+} from 'ag-stack';
+
 import { BeanStub } from '../../context/beanStub';
 import type { EditService } from '../../edit/editService';
 import type { AgColumn } from '../../entities/agColumn';

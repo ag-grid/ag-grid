@@ -1,4 +1,5 @@
-import { BaseEventService } from './agStack/events/baseEventService';
+import { BaseEventService } from 'ag-stack';
+
 import type { NamedBean } from './context/bean';
 import type { BeanCollection } from './context/context';
 import type { AgEventTypeParams } from './events';

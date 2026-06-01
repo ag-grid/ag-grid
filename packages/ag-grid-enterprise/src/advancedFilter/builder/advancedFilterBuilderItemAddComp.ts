@@ -1,3 +1,5 @@
+import { RefPlaceholder, _setAriaLabel, _setAriaLevel } from 'ag-stack';
+
 import type {
     BeanCollection,
     ElementParams,
@@ -6,7 +8,7 @@ import type {
     Registry,
     TooltipFeature,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _setAriaLabel, _setAriaLevel } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import { AddDropdownComp } from './addDropdownComp';

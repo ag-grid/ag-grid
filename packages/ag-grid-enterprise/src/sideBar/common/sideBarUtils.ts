@@ -1,5 +1,6 @@
+import { _last } from 'ag-stack';
+
 import type { AbstractColDef, ColDef, ColGroupDef } from 'ag-grid-community';
-import { _last } from 'ag-grid-community';
 
 export function isColGroupDef(colDef: AbstractColDef): colDef is ColGroupDef {
     return !!colDef && typeof (colDef as ColGroupDef).children !== 'undefined';

@@ -1,5 +1,7 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type { BeanCollection } from 'ag-grid-community';
-import { Component, RefPlaceholder } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import type { GroupComponent, GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';

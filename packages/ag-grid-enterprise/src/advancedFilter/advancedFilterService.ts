@@ -1,3 +1,5 @@
+import { _exists } from 'ag-stack';
+
 import type {
     AdvancedFilterModel,
     BeanCollection,
@@ -11,7 +13,7 @@ import type {
     NewColumnsLoadedEvent,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _exists, _isClientSideRowModel, _isServerSideRowModel, _warn } from 'ag-grid-community';
+import { BeanStub, _isClientSideRowModel, _isServerSideRowModel, _warn } from 'ag-grid-community';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';

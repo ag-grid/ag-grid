@@ -1,3 +1,5 @@
+import { _exists, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-stack';
+
 import type {
     AgColumn,
     BaseCellDataType,
@@ -11,7 +13,7 @@ import type {
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _exists, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';

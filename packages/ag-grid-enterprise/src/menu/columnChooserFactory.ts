@@ -1,5 +1,7 @@
+import { _findNextFocusableElement } from 'ag-stack';
+
 import type { AgColumn, ColumnChooserParams, HeaderPosition, NamedBean } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _findNextFocusableElement } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams } from 'ag-grid-community';
 
 import { AgPrimaryCols } from '../columnToolPanel/agPrimaryCols';
 import { Dialog } from '../widgets/dialog';

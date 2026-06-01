@@ -1,3 +1,5 @@
+import { MONTHS, _getDateParts, _parseDateTimeFromString } from 'ag-stack';
+
 import type {
     AgColumn,
     BeanCollection,
@@ -6,7 +8,6 @@ import type {
     IRowNode,
     ValueGetterParams,
 } from 'ag-grid-community';
-import { _MONTHS, _getDateParts, _parseDateTimeFromString } from 'ag-grid-community';
 
 const getDate = (
     { valueSvc, dataTypeSvc }: BeanCollection,
@@ -47,10 +48,10 @@ export const getHeaderValueGetter =
     };
 
 /** Map from named month to corresponding key in provided localeText maps (in @ag-grid-community/locale) */
-const MONTH_TO_LOCALE_KEY = Object.fromEntries(_MONTHS.map((m) => [m, m.toLowerCase()]));
+const MONTH_TO_LOCALE_KEY = Object.fromEntries(MONTHS.map((m) => [m, m.toLowerCase()]));
 
 export const numericalMonthToNamedMonth = (monthStr: string): { month: string; localeKey: string } => {
-    const month = _MONTHS[Number.parseInt(monthStr, 10) - 1] ?? monthStr;
+    const month = MONTHS[Number.parseInt(monthStr, 10) - 1] ?? monthStr;
     const localeKey = MONTH_TO_LOCALE_KEY[month] ?? monthStr;
     return { month, localeKey };
 };

@@ -1,3 +1,5 @@
+import { _getDocument, _getWindow, _placeCaretAtEnd } from 'ag-stack';
+
 import type {
     AgComponentSelectorType,
     AgEventTypeParams,
@@ -6,7 +8,7 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { AgContentEditableField, _createElement, _getDocument, _getWindow, _placeCaretAtEnd } from 'ag-grid-community';
+import { AgContentEditableField, _createElement } from 'ag-grid-community';
 
 import agAutocompleteCSS from '../advancedFilter/autocomplete/agAutocomplete.css';
 import { getRefTokenMatches } from '../formula/refUtils';

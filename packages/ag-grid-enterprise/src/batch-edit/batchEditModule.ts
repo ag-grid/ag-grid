@@ -1,5 +1,5 @@
-import { _EditCoreModule } from 'ag-grid-community';
 import type { _BatchEditApi, _ModuleWithApi } from 'ag-grid-community';
+import { _EditCoreModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';

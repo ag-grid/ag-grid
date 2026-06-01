@@ -1,4 +1,5 @@
-import { _parseBigIntOrNull } from '../../../agStack/utils/bigInt';
+import { _parseBigIntOrNull } from 'ag-stack';
+
 import type { Tuple } from '../iSimpleFilter';
 import type { OptionsFactory } from '../optionsFactory';
 import { getNumberOfInputs } from '../simpleFilterUtils';

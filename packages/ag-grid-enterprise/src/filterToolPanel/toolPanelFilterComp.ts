@@ -1,17 +1,7 @@
+import { RefPlaceholder, _clearElement, _setAriaExpanded, _setAriaLabel, _setAriaRole, _setDisplayed } from 'ag-stack';
+
 import type { AgColumn, ElementParams, FilterOpenedEvent, IFilterComp, IconName } from 'ag-grid-community';
-import {
-    Component,
-    FilterComp,
-    KeyCode,
-    RefPlaceholder,
-    _clearElement,
-    _createElement,
-    _createIconNoSpan,
-    _setAriaExpanded,
-    _setAriaLabel,
-    _setAriaRole,
-    _setDisplayed,
-} from 'ag-grid-community';
+import { Component, FilterComp, KeyCode, _createElement, _createIconNoSpan } from 'ag-grid-community';
 
 type ToolPanelFilterCompEvent = 'filterChanged';
 

@@ -1,4 +1,5 @@
-import { _escapeString } from 'ag-grid-community';
+import { _escapeString } from 'ag-stack';
+
 import type { ExcelOOXMLTemplate } from 'ag-grid-community';
 
 import type { ExcelDataTable } from '../../assets/excelInterfaces';

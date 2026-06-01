@@ -1,4 +1,5 @@
-import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { IComponent } from 'ag-stack';
+
 import type { ToolbarItemComponentName } from '../context/context';
 import type { IconName } from '../utils/icon';
 import type { AgGridCommon } from './iCommon';

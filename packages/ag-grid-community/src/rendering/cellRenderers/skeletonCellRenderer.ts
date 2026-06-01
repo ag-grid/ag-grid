@@ -1,4 +1,5 @@
-import { _setAriaLabel, _setAriaLabelledBy } from '../../agStack/utils/aria';
+import { _setAriaLabel, _setAriaLabelledBy } from 'ag-stack';
+
 import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from '../../interfaces/iLoadingCellRenderer';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';

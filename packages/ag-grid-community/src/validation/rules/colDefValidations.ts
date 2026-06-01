@@ -2,8 +2,8 @@ import type { UserComponentName } from '../../context/context';
 import { _isSortDefValid, _isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import { buildAllValidNames } from '../validationTypes';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
+import { buildAllValidNames } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
 function quote(s: string): string {

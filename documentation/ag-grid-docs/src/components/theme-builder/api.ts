@@ -12,7 +12,7 @@ export type {
     ShadowValue,
     ShadowValueParams,
 } from 'ag-grid-community';
-export { _getParamType as getParamType, _paramValueToCss as paramValueToCss } from 'ag-grid-community';
+export { getParamType, paramValueToCss } from 'ag-stack';
 
 export type ParamType =
     | 'colorScheme'

@@ -1,3 +1,5 @@
+import { RefPlaceholder, _missing } from 'ag-stack';
+
 import type {
     BeanCollection,
     Context,
@@ -9,7 +11,7 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererParams,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _getGridRegisteredModules, _missing, _warn, createGrid } from 'ag-grid-community';
+import { Component, _getGridRegisteredModules, _warn, createGrid } from 'ag-grid-community';
 
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailFrameworkComponentWrapper } from './detailFrameworkComponentWrapper';

@@ -1,4 +1,5 @@
-import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { IComponent } from 'ag-stack';
+
 import type { AgGridCommon } from './iCommon';
 import type { FilterAction } from './iFilter';
 

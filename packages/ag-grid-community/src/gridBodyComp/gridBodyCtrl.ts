@@ -1,4 +1,5 @@
-import { _getInnerWidth, _getScrollLeft, _isElementChildOfClass, _setScrollLeft } from '../agStack/utils/dom';
+import { _getInnerWidth, _getScrollLeft, _isElementChildOfClass, _setScrollLeft } from 'ag-stack';
+
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

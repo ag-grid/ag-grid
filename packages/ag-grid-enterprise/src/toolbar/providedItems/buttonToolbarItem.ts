@@ -1,5 +1,7 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type { ElementParams, IToolbarItemComp, IToolbarItemParams, ToolbarItemActionParams } from 'ag-grid-community';
-import { Component, RefPlaceholder, _addGridCommonParams } from 'ag-grid-community';
+import { Component, _addGridCommonParams } from 'ag-grid-community';
 
 import { renderToolbarButtonContents } from './toolbarItemUtils';
 

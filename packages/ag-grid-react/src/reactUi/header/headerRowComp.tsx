@@ -1,3 +1,4 @@
+import { _setAriaRowIndex } from 'ag-stack';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import type {
@@ -9,7 +10,7 @@ import type {
     IHeaderRowComp,
     PinnedSectionWidthsCache,
 } from 'ag-grid-community';
-import { _EmptyBean, _partitionByPinned, _setAriaRowIndex, _updatePinnedSectionWidths } from 'ag-grid-community';
+import { _EmptyBean, _partitionByPinned, _updatePinnedSectionWidths } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { agFlushSync, getNextValueIfDifferent } from '../utils';

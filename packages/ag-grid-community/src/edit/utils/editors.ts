@@ -1,5 +1,5 @@
-import { _setAriaInvalid } from '../../agStack/utils/aria';
-import { _getLocaleTextFunc } from '../../agStack/utils/locale';
+import { _getLocaleTextFunc, _setAriaInvalid } from 'ag-stack';
+
 import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';

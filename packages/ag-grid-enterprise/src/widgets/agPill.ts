@@ -1,5 +1,7 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type { ElementParams } from 'ag-grid-community';
-import { Component, RefPlaceholder } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 interface PillConfig {
     onKeyDown?: (e?: KeyboardEvent) => void;

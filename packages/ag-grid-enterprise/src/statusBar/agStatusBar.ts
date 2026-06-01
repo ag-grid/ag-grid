@@ -1,3 +1,5 @@
+import { RefPlaceholder, _clearElement, _removeFromParent } from 'ag-stack';
+
 import type {
     BeanCollection,
     ComponentSelector,
@@ -12,16 +14,7 @@ import type {
     UserCompDetails,
     UserComponentFactory,
 } from 'ag-grid-community';
-import {
-    AgPromise,
-    Component,
-    RefPlaceholder,
-    _addFocusableContainerListener,
-    _addGridCommonParams,
-    _clearElement,
-    _removeFromParent,
-    _warn,
-} from 'ag-grid-community';
+import { AgPromise, Component, _addFocusableContainerListener, _addGridCommonParams, _warn } from 'ag-grid-community';
 
 import agStatusBarCSS from './agStatusBar.css';
 import type { StatusBarService } from './statusBarService';

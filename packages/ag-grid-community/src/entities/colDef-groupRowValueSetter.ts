@@ -114,7 +114,7 @@ export interface GroupRowValueSetterParams<TData = any, TValue = any, TContext =
  * @example
  * ```ts
  * // Use the built-in distributeGroupValue with custom options
- * import { distributeGroupValue } from 'ag-grid-enterprise';
+ * import  { distributeGroupValue } from 'ag-grid-enterprise';
  *
  * colDef.groupRowValueSetter = (params) =>
  *     distributeGroupValue(params, { distribution: 'percentage' });

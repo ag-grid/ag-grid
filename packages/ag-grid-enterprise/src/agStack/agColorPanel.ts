@@ -1,13 +1,14 @@
 import type { IColor, _IUtil } from 'ag-charts-types';
-
 import type {
-    _AgComponentSelector,
-    _AgCoreBeanCollection,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-} from 'ag-grid-community';
-import { KeyCode, RefPlaceholder, _AgComponentStub, _exists, _setDisplayed } from 'ag-grid-community';
+    AgComponentSelector,
+    AgCoreBeanCollection,
+    BaseEvents,
+    BaseProperties,
+    IPropertiesService,
+} from 'ag-stack';
+import { AgComponentStub, RefPlaceholder, _exists, _setDisplayed } from 'ag-stack';
+
+import { KeyCode } from 'ag-grid-community';
 
 import type { AgColorInput } from './agColorInput';
 import { AgColorInputSelector } from './agColorInput';
@@ -19,13 +20,13 @@ const maxRecentColors = 8;
 let sharedRecentColors: string[] = [];
 
 export class AgColorPanel<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
-> extends _AgComponentStub<
+> extends AgComponentStub<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -109,7 +110,7 @@ export class AgColorPanel<
                 <div data-ref="recentColors" class="ag-recent-colors"></div>
             </div>
         </div>`,
-            [AgColorInputSelector] as _AgComponentSelector<TComponentSelectorType>[]
+            [AgColorInputSelector] as AgComponentSelector<TComponentSelectorType>[]
         );
         this.picker = config.picker;
     }
