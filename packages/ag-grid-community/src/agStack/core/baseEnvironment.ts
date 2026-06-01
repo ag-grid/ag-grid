@@ -41,6 +41,7 @@ export abstract class BaseEnvironment<
     public eStyleContainer: HTMLElement;
     public cssLayer: string | undefined;
     public styleNonce: string | undefined;
+    private mutationObserver: MutationObserver;
     private readonly sizeEls = new Map<CssVariable<TChangeKeys>, HTMLElement>();
     private readonly lastKnownValues = new Map<CssVariable<TChangeKeys>, number>();
     private eMeasurementContainer: HTMLElement | undefined;
@@ -83,35 +84,46 @@ export abstract class BaseEnvironment<
         this.addManagedPropertyListener('theme', () => this.handleThemeChange());
         this.handleThemeChange();
 
+        this.mutationObserver = new MutationObserver(() => {
+            this.fireStylesChangedEvent('theme');
+        });
+        this.addDestroyFunc(() => this.mutationObserver.disconnect());
+
         this.addDestroyFunc(_initStyledRootFromInnerOfThreeElements(this, eRootDiv));
         this.getSizeEl(LIST_ITEM_HEIGHT);
         this.initVariables();
 
         this.addDestroyFunc(() => _unregisterInstanceUsingThemingAPI(this));
+    }
 
-        const mutationObserver = new MutationObserver(() => {
-            this.fireStylesChangedEvent('theme');
-        });
-        let node = eRootDiv.parentElement;
+    public getStyledRootClasses(): [inheritClass: string, applyClass: string, directionClass: string] {
+        const { theme } = this;
+        const [inheritClass, applyClass] = theme ? theme._getCssClasses() : ['', this.applyLegacyThemeClasses()];
+        const directionClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
+        return [inheritClass, applyClass, directionClass];
+    }
+
+    private applyLegacyThemeClasses(): string {
+        const themeClasses = new Set<string>();
+        this.mutationObserver.disconnect();
+        let node = this.eRootDiv.parentElement;
         while (node) {
-            if (node.className.includes('ag-theme-')) {
-                mutationObserver.observe(node, {
+            let isThemeEl = false;
+            for (const cls of node.classList) {
+                if (cls.startsWith('ag-theme-')) {
+                    isThemeEl = true;
+                    themeClasses.add(cls);
+                }
+            }
+            if (isThemeEl) {
+                this.mutationObserver.observe(node, {
                     attributes: true,
                     attributeFilter: ['class'],
                 });
             }
             node = node.parentElement;
         }
-        this.addDestroyFunc(() => mutationObserver.disconnect());
-    }
-
-    public getStyledRootClasses(): [inheritClass: string, applyClass: string, directionClass: string] {
-        const { theme } = this;
-        const [inheritClass, applyClass] = theme
-            ? theme._getCssClasses()
-            : ['', getLegacyThemeClasses(this.eRootDiv.parentElement)];
-        const directionClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
-        return [inheritClass, applyClass, directionClass];
+        return [...themeClasses].join(' ');
     }
 
     public onThemeChanged(handler: () => void): () => void {
@@ -291,19 +303,6 @@ export abstract class BaseEnvironment<
             [`${change}Changed`]: true,
         });
     }
-}
-
-function getLegacyThemeClasses(node: HTMLElement | null): string {
-    const themeClasses = new Set<string>();
-    while (node) {
-        for (const cls of node.classList) {
-            if (cls.startsWith('ag-theme-')) {
-                themeClasses.add(cls);
-            }
-        }
-        node = node.parentElement;
-    }
-    return [...themeClasses].join(' ');
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
