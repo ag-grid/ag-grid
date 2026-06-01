@@ -1465,9 +1465,12 @@ describe('ag-grid calculated columns', () => {
         `);
 
         showColumnMenu(api, 'profit');
-        await asyncSetTimeout(10);
 
-        const headerMenuEntries = getOpenMenuEntries();
+        const headerMenuEntries = await waitFor(() => {
+            const entries = getOpenMenuEntries();
+            expect(entries).toContain('Edit Calculated Column');
+            return entries;
+        });
         const editIndex = headerMenuEntries.indexOf('Edit Calculated Column');
         const addIndex = headerMenuEntries.indexOf('Add Calculated Column');
         expect(headerMenuEntries[editIndex - 1]).toBe('separator');
@@ -1483,9 +1486,12 @@ describe('ag-grid calculated columns', () => {
             value: 7,
             source: 'api',
         });
-        await asyncSetTimeout(10);
 
-        const contextMenuEntries = getOpenMenuEntries();
+        const contextMenuEntries = await waitFor(() => {
+            const entries = getOpenMenuEntries();
+            expect(entries).toContain('Remove Calculated Column');
+            return entries;
+        });
         const removeIndex = contextMenuEntries.indexOf('Remove Calculated Column');
         expect(contextMenuEntries[removeIndex - 1]).toBe('separator');
         expect(contextMenuEntries[removeIndex + 1]).toBe('separator');
