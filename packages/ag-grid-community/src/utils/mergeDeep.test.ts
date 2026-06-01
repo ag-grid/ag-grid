@@ -77,8 +77,8 @@ describe('_mergeDeep', () => {
     });
 
     test('NaN value assigns (NaN === NaN is false → no early-exit)', () => {
-        const dest: any = { x: NaN };
-        _mergeDeep(dest, { x: NaN, y: 1 });
+        const dest: any = { x: Number.NaN };
+        _mergeDeep(dest, { x: Number.NaN, y: 1 });
         expect(Number.isNaN(dest.x)).toBe(true);
         expect(dest.y).toBe(1);
     });
