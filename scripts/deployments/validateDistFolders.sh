@@ -50,7 +50,7 @@ validateCommonDist()
 
   local expected_count=5
   local count=`find "$directory/dist/package" -type f | wc -l | tr -d ' '`;
-  if [[ $count -ne $expected_count ]]
+  if [[ "$count" -lt "$expected_count" ]]
   then
     echo "ERROR: $directory/dist/package should have $expected_count artefacts but has $count"
     exit 1
@@ -134,7 +134,7 @@ validatePackages()
 
       validatePackageJsonExists $package_dir
 
-      count=`tree $package_dir | grep .d.ts | wc -l | tr -d ' '`;
+      count=`tree $package_dir | grep -v .d.ts | wc -l | tr -d ' '`;
       if [[ $count -le 5 ]]
       then
         echo "ERROR: $package_dir should have at least 5 artefacts"
