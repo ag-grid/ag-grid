@@ -7,7 +7,7 @@ import type {
     UserCompDetails,
     UserComponentFactory,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _createAgElement, _initStyledRoot } from 'ag-grid-community';
+import { Component, RefPlaceholder, _createAgElement, _initDetachedStyledRoot } from 'ag-grid-community';
 
 import { AgHorizontalResize } from './agHorizontalResize';
 
@@ -69,9 +69,9 @@ export class ToolPanelWrapper extends Component {
         const innerGui = this.getGui();
         const externalDiv = _createAgElement({ tag: 'div', cls: 'ag-tool-panel-external' });
         externalDiv.appendChild(innerGui);
-        const newGui = _createAgElement({ tag: 'div', cls: 'ag-styled-root' });
-        this.addDestroyFunc(_initStyledRoot(this.beans.environment, newGui, externalDiv));
-        this.setGui(newGui);
+        const [styledRootOuter, styledRootDestroy] = _initDetachedStyledRoot(this.beans.environment, externalDiv);
+        this.addDestroyFunc(styledRootDestroy);
+        this.setGui(styledRootOuter);
     }
 
     public getToolPanelId(): string {

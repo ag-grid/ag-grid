@@ -26,7 +26,7 @@ import type {
     UpdateChartParams,
     VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _focusInto, _initStyledRoot, _warn } from 'ag-grid-community';
+import { BeanStub, _focusInto, _initDetachedStyledRoot, _warn } from 'ag-grid-community';
 
 import { VERSION as GRID_VERSION } from '../version';
 import type { AgChartsExports } from './agChartsExports';
@@ -269,12 +269,13 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const { chartType, chartContainer } = params;
 
         const createChartContainerFunc = this.gos.getCallback('createChartContainer');
+        const insideDialog = !(chartContainer || createChartContainerFunc);
 
         const gridChartParams: GridChartParams = {
             ...params,
             chartId: this.generateId(),
             chartType: getCanonicalChartType(chartType),
-            insideDialog: !(chartContainer || createChartContainerFunc),
+            insideDialog,
             crossFilteringContext: this.crossFilteringContext,
             crossFilteringResetCallback: () => {
                 for (const c of this.activeChartComps) {
@@ -286,15 +287,21 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const chartComp = new GridChartComp(gridChartParams);
         this.createBean(chartComp);
 
-        const styledRootDisconnect = chartContainer
-            ? _initStyledRoot(this.beans.environment, chartContainer, chartComp.getGui())
-            : undefined;
+        let chartElement = chartComp.getGui();
+        let styledRootDestroy: (() => void) | undefined;
+        if (!insideDialog) {
+            [chartElement, styledRootDestroy] = _initDetachedStyledRoot(this.beans.environment, chartElement);
+            chartContainer?.appendChild(chartElement);
+        }
 
         const chartRef: ChartRef = {
             destroyChart: () => {
                 if (this.activeCharts.has(chartRef)) {
                     this.destroyBean(chartComp);
-                    styledRootDisconnect?.();
+                    styledRootDestroy?.();
+                    if (chartContainer) {
+                        chartElement.remove();
+                    }
                     this.activeChartComps.delete(chartComp);
                     this.activeCharts.delete(chartRef);
                 }
@@ -302,7 +309,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             focusChart: () => {
                 _focusInto(chartComp.getGui());
             },
-            chartElement: chartComp.getGui(),
+            chartElement,
             chart: chartComp.getUnderlyingChart(),
             chartId: chartComp.getChartModel().chartId,
             setMaximized: chartComp.setMaximized.bind(chartComp),

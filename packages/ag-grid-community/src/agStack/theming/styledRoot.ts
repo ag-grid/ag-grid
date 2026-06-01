@@ -2,14 +2,23 @@ import type { IEnvironment } from '../interfaces/iEnvironment';
 import { _createAgElement } from '../utils/dom';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _initStyledRoot(env: IEnvironment, parent: HTMLElement | ShadowRoot, child: HTMLElement): () => void {
+export function _initDetachedStyledRoot(
+    env: IEnvironment,
+    child: HTMLElement
+): [element: HTMLElement, destroy: () => void] {
     const [outer, inner] = _createStyledRootElements();
     inner.appendChild(child);
-    parent.appendChild(outer);
-    const baseDisconnect = _initStyledRootFromInnerOfThreeElements(env, inner);
+    const destroy = _initStyledRootFromInnerOfThreeElements(env, inner);
+    return [outer, destroy];
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _initStyledRoot(env: IEnvironment, parent: HTMLElement | ShadowRoot, child: HTMLElement): () => void {
+    const [element, destroy] = _initDetachedStyledRoot(env, child);
+    parent.appendChild(element);
     return () => {
-        baseDisconnect();
-        outer.remove();
+        destroy();
+        element.remove();
     };
 }
 
