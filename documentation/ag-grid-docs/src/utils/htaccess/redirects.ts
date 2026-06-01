@@ -1537,6 +1537,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-grid/component-date/', to: '/javascript-data-grid/filter-date/' },
     { from: '/javascript-grid/component-filter/', to: '/javascript-data-grid/component-filter/' },
     { from: '/javascript-grid/component-floating-filter/', to: '/javascript-data-grid/component-floating-filter/' },
+    { from: '/javascript-grid/component-header/', to: '/javascript-data-grid/column-headers/' },
     {
         from: '/javascript-grid/component-loading-cell-renderer/',
         to: '/javascript-data-grid/component-loading-cell-renderer/',
@@ -1631,6 +1632,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     },
     { from: '/javascript-grid/integrated-charts-toolbar/', to: '/javascript-data-grid/integrated-charts-menu/' },
     { from: '/javascript-grid/keyboard-navigation/', to: '/javascript-data-grid/keyboard-navigation/' },
+    { from: '/javascript-grid/licensing/', to: '/javascript-data-grid/community-vs-enterprise/' },
     { from: '/javascript-grid/localisation/', to: '/javascript-data-grid/localisation/' },
     { from: '/javascript-grid/massive-row-count/', to: '/javascript-data-grid/massive-row-count/' },
     { from: '/javascript-grid/master-detail/', to: '/javascript-data-grid/master-detail/' },
@@ -1798,6 +1800,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-grid/component-date/', to: '/angular-data-grid/filter-date/' },
     { from: '/angular-grid/component-filter/', to: '/angular-data-grid/component-filter/' },
     { from: '/angular-grid/component-floating-filter/', to: '/angular-data-grid/component-floating-filter/' },
+    { from: '/angular-grid/component-header/', to: '/angular-data-grid/column-headers/' },
     {
         from: '/angular-grid/component-loading-cell-renderer/',
         to: '/angular-data-grid/component-loading-cell-renderer/',
@@ -1880,6 +1883,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-grid/integrated-charts-time-series/', to: '/angular-data-grid/integrated-charts-time-series/' },
     { from: '/angular-grid/integrated-charts-toolbar/', to: '/angular-data-grid/integrated-charts-menu/' },
     { from: '/angular-grid/keyboard-navigation/', to: '/angular-data-grid/keyboard-navigation/' },
+    { from: '/angular-grid/licensing/', to: '/angular-data-grid/community-vs-enterprise/' },
     { from: '/angular-grid/localisation/', to: '/angular-data-grid/localisation/' },
     { from: '/angular-grid/massive-row-count/', to: '/angular-data-grid/massive-row-count/' },
     { from: '/angular-grid/master-detail/', to: '/angular-data-grid/master-detail/' },
@@ -2025,6 +2029,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-grid/component-date/', to: '/react-data-grid/filter-date/' },
     { from: '/react-grid/component-filter/', to: '/react-data-grid/component-filter/' },
     { from: '/react-grid/component-floating-filter/', to: '/react-data-grid/component-floating-filter/' },
+    { from: '/react-grid/component-header/', to: '/react-data-grid/column-headers/' },
     { from: '/react-grid/component-loading-cell-renderer/', to: '/react-data-grid/component-loading-cell-renderer/' },
     { from: '/react-grid/component-overlay/', to: '/react-data-grid/overlays/' },
     { from: '/react-grid/component-status-bar/', to: '/react-data-grid/status-bar/' },
@@ -2104,6 +2109,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-grid/integrated-charts-time-series/', to: '/react-data-grid/integrated-charts-time-series/' },
     { from: '/react-grid/integrated-charts-toolbar/', to: '/react-data-grid/integrated-charts-menu/' },
     { from: '/react-grid/keyboard-navigation/', to: '/react-data-grid/keyboard-navigation/' },
+    { from: '/react-grid/licensing/', to: '/react-data-grid/community-vs-enterprise/' },
     { from: '/react-grid/localisation/', to: '/react-data-grid/localisation/' },
     { from: '/react-grid/massive-row-count/', to: '/react-data-grid/massive-row-count/' },
     { from: '/react-grid/master-detail/', to: '/react-data-grid/master-detail/' },
@@ -2246,6 +2252,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/vue-grid/component-date/', to: '/vue-data-grid/filter-date/' },
     { from: '/vue-grid/component-filter/', to: '/vue-data-grid/component-filter/' },
     { from: '/vue-grid/component-floating-filter/', to: '/vue-data-grid/component-floating-filter/' },
+    { from: '/vue-grid/component-header/', to: '/vue-data-grid/column-headers/' },
     { from: '/vue-grid/component-loading-cell-renderer/', to: '/vue-data-grid/component-loading-cell-renderer/' },
     { from: '/vue-grid/component-overlay/', to: '/vue-data-grid/overlays/' },
     { from: '/vue-grid/component-status-bar/', to: '/vue-data-grid/status-bar/' },
@@ -2322,6 +2329,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/vue-grid/integrated-charts-time-series/', to: '/vue-data-grid/integrated-charts-time-series/' },
     { from: '/vue-grid/integrated-charts-toolbar/', to: '/vue-data-grid/integrated-charts-menu/' },
     { from: '/vue-grid/keyboard-navigation/', to: '/vue-data-grid/keyboard-navigation/' },
+    { from: '/vue-grid/licensing/', to: '/vue-data-grid/community-vs-enterprise/' },
     { from: '/vue-grid/localisation/', to: '/vue-data-grid/localisation/' },
     { from: '/vue-grid/massive-row-count/', to: '/vue-data-grid/massive-row-count/' },
     { from: '/vue-grid/master-detail/', to: '/vue-data-grid/master-detail/' },
@@ -2585,6 +2593,11 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/component-cell-editor/', to: '/react-data-grid/cell-editors/' },
     { from: '/vue-data-grid/component-cell-editor/', to: '/vue-data-grid/cell-editors/' },
 
+    { from: '/javascript-data-grid/component-header/', to: '/javascript-data-grid/column-headers/' },
+    { from: '/angular-data-grid/component-header/', to: '/angular-data-grid/column-headers/' },
+    { from: '/react-data-grid/component-header/', to: '/react-data-grid/column-headers/' },
+    { from: '/vue-data-grid/component-header/', to: '/vue-data-grid/column-headers/' },
+
     { from: '/javascript-data-grid/component-status-bar/', to: '/javascript-data-grid/status-bar/' },
     { from: '/angular-data-grid/component-status-bar/', to: '/angular-data-grid/status-bar/' },
     { from: '/react-data-grid/component-status-bar/', to: '/react-data-grid/status-bar/' },
@@ -2679,6 +2692,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/component-date-imperative-react/', to: '/react-data-grid/filter-date/' },
     { from: '/react-data-grid/component-cell-editor-imperative-react/', to: '/react-data-grid/cell-editors/' },
 
+    { from: '/cookies.php', to: '/cookies' },
     { from: '/privacy.php', to: '/privacy' },
     { from: '/about.php', to: '/about' },
     { from: '/license-pricing.php', to: '/license-pricing' },
@@ -2690,6 +2704,11 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-data-grid/whats-new', to: '/whats-new' },
     { from: '/javascript-data-grid/whats-new', to: '/whats-new' },
     { from: '/vue-data-grid/framework-data-flow', to: '/vue-data-grid/getting-started/' },
+
+    { from: '/react-data-grid/licensing/', to: '/react-data-grid/community-vs-enterprise/' },
+    { from: '/vue-data-grid/licensing/', to: '/vue-data-grid/community-vs-enterprise/' },
+    { from: '/angular-data-grid/licensing/', to: '/angular-data-grid/community-vs-enterprise/' },
+    { from: '/javascript-data-grid/licensing/', to: '/javascript-data-grid/community-vs-enterprise/' },
 
     // AG Charts Flyer QR Code Link Redirects
     { from: '/ag-charts-flyer-2025-angular-front/', to: 'https://www.ag-grid.com/charts/' },
