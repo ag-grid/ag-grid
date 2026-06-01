@@ -62,7 +62,9 @@ export class ToolPanelWrapper extends Component {
     }
 
     public ensureStyledRoot(): void {
-        if (this.hasStyledRoot) return;
+        if (this.hasStyledRoot) {
+            return;
+        }
         this.hasStyledRoot = true;
         const innerGui = this.getGui();
         const externalDiv = _createAgElement({ tag: 'div', cls: 'ag-tool-panel-external' });

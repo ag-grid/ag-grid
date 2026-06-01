@@ -59,7 +59,6 @@ import { LicenseContext, ModulesContext } from './agGridProvider';
 import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
-import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
 
 const deprecatedProps: Pick<InternalAgGridReactProps, 'setGridApi' | 'children' | 'maxComponentCreationTimeMs'> = {

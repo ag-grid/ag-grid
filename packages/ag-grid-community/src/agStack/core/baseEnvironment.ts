@@ -116,7 +116,9 @@ export abstract class BaseEnvironment<
 
     public onThemeChanged(handler: () => void): () => void {
         const listener = (e: AgStylesChangedEvent) => {
-            if (e.themeChanged) handler();
+            if (e.themeChanged) {
+                handler();
+            }
         };
         this.eventSvc.addListener('stylesChanged', listener);
         return () => this.eventSvc.removeListener('stylesChanged', listener);
@@ -292,7 +294,7 @@ export abstract class BaseEnvironment<
 }
 
 function getLegacyThemeClasses(node: HTMLElement | null): string {
-    let themeClasses = new Set<string>();
+    const themeClasses = new Set<string>();
     while (node) {
         for (const cls of node.classList) {
             if (cls.startsWith('ag-theme-')) {
