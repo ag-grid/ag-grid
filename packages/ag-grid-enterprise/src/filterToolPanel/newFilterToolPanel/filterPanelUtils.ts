@@ -1,4 +1,4 @@
-import type { LocaleTextFunc} from 'ag-stack';
+import type { LocaleTextFunc } from 'ag-stack';
 import { _removeFromParent, _translate } from 'ag-stack';
 
 const DEFAULT_LOCALE_TEXT = {

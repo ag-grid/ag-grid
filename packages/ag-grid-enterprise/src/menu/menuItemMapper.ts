@@ -1,4 +1,4 @@
-import type { LocaleTextFunc} from 'ag-stack';
+import type { LocaleTextFunc } from 'ag-stack';
 import { _exists } from 'ag-stack';
 
 import type {

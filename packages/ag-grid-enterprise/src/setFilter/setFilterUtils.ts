@@ -1,4 +1,4 @@
-import type { LocaleTextFunc} from 'ag-stack';
+import type { LocaleTextFunc } from 'ag-stack';
 import { _defaultComparator, _last, _makeNull, _toStringOrNull, _translate } from 'ag-stack';
 
 import type { ISetFilterParams } from 'ag-grid-community';

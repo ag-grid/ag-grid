@@ -1,4 +1,4 @@
-import type { LocaleTextFunc} from 'ag-stack';
+import type { LocaleTextFunc } from 'ag-stack';
 import { RefPlaceholder, _exists, _missing, _parseBigIntOrNull } from 'ag-stack';
 
 import type {
