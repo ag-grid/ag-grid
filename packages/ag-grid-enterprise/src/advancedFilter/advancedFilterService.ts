@@ -11,7 +11,14 @@ import type {
     NewColumnsLoadedEvent,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _exists, _isClientSideRowModel, _isServerSideRowModel, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    _exists,
+    _isClientSideRowModel,
+    _isServerSideRowModel,
+    _isViewportRowModel,
+    _warn,
+} from 'ag-grid-community';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -164,7 +171,8 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
     private setEnabled(enabled: boolean, silent?: boolean): void {
         const previousValue = this.enabled;
-        const isValidRowModel = _isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos);
+        const isValidRowModel =
+            _isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos) || _isViewportRowModel(this.gos);
         if (enabled && !isValidRowModel) {
             _warn(123);
         }

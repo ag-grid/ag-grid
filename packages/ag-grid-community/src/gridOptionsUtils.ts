@@ -37,6 +37,7 @@ import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
+import type { iViewportRowModel } from './interfaces/iViewportRowModel';
 import { _warn } from './validation/logging';
 
 function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
@@ -57,6 +58,11 @@ export function _isServerSideRowModel(
     _rowModel?: IRowModel
 ): _rowModel is IServerSideRowModel {
     return isRowModelType(gos, 'serverSide');
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _isViewportRowModel(gos: GridOptionsService, rowModel?: IRowModel): rowModel is iViewportRowModel {
+    return isRowModelType(gos, 'viewport');
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
