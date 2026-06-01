@@ -61,6 +61,11 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.googletagmanager.com',
             'https://cdn.jsdelivr.net',
             'https://cdnjs.cloudflare.com',
+            'https://js.zi-scripts.com', // ZoomInfo tag (injected via GTM)
+            'https://*.zoominfo.com', // ZoomInfo FormComplete
+            'https://www.google.com', // reCAPTCHA
+            'https://www.gstatic.com', // reCAPTCHA
+            'https://www.youtube.com', // YouTube iframe JS API (loads into the page)
             UNSAFE_INLINE,
             UNSAFE_EVAL,
         ],
@@ -80,17 +85,10 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://cdnjs.cloudflare.com',
             'data:',
         ],
-        'img-src': [
-            SELF,
-            'data:',
-            'blob:',
-            AG_GRID_HOSTS,
-            'https://img.youtube.com',
-            'https://i.ytimg.com',
-            'https://flagcdn.com',
-            'https://www.googletagmanager.com',
-            'https://www.google-analytics.com',
-        ],
+        // Relaxed to https:. Images/media are open-ended (badges, flag CDNs,
+        // podcast audio, blog/showcase images) and a weak XSS vector — the strict
+        // script-src/connect-src/frame-src below carry the protection.
+        'img-src': [SELF, 'data:', 'blob:', 'https:'],
         'connect-src': [
             SELF,
             AG_GRID_HOSTS,
@@ -102,9 +100,17 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://stats.g.doubleclick.net',
             'https://flagcdn.com',
             'https://www.googletagmanager.com',
+            'https://js.zi-scripts.com', // ZoomInfo
+            'https://*.zoominfo.com', // ZoomInfo
             trialFormOrigin,
         ],
-        'frame-src': [SELF, 'https://www.googletagmanager.com', 'https://www.youtube.com'],
+        'frame-src': [
+            SELF,
+            'https://www.googletagmanager.com',
+            'https://www.youtube.com',
+            'https://www.google.com', // reCAPTCHA challenge iframe
+        ],
+        'media-src': [SELF, 'data:', 'blob:', 'https:'],
         'worker-src': [SELF, 'blob:'],
         'object-src': [NONE],
         'base-uri': [SELF],
