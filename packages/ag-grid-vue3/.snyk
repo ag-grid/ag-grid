@@ -10,14 +10,6 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-03-27T11:48:29.577Z
-    - npm-run-all2@6.2.6 > minimatch@9.0.5 > brace-expansion@2.0.2:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-03-27T11:48:29.567Z
-    - replace-in-file@4.3.1 > glob@7.2.3 > minimatch@3.1.2 > brace-expansion@1.1.12:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-03-27T11:48:29.560Z
   SNYK-JS-ROLLUP-15340920:
     - vite@5.4.21 > rollup@4.52.5:
         reason: Used in build & dev - not included in final production build
@@ -28,10 +20,6 @@ ignore:
         reason: Used in testing - not included in final production build
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-03-02T10:38:08.380Z
-    - npm-run-all2@6.2.6 > minimatch@9.0.5:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-03-02T10:38:08.369Z
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > editorconfig@1.0.4 > minimatch@9.0.1":
         reason: Used in testing - not included in final production build
         expires: 2026-06-08T00:00:00.000Z
@@ -41,35 +29,19 @@ ignore:
         reason: Used in testing - not included in final production build
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-03-02T10:23:37.372Z
-    - npm-run-all2@6.2.6 > minimatch@9.0.5:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-03-02T10:23:37.365Z
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > editorconfig@1.0.4 > minimatch@9.0.1":
         reason: Used in testing - not included in final production build
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-03-02T10:23:37.362Z
-    - replace-in-file@4.3.1 > glob@7.2.3 > minimatch@3.1.2:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-03-02T10:23:37.359Z
   SNYK-JS-MINIMATCH-15309438:
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > glob@10.4.5 > minimatch@9.0.5":
         reason: Used in testing - ReDOS attack would only affect developer machines
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-02-27T20:27:04.483Z
-    - npm-run-all2@6.2.6 > minimatch@9.0.5:
-        reason: Used in dev - ReDOS attack would only affect developer machines
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-02-27T20:27:04.475Z
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > editorconfig@1.0.4 > minimatch@9.0.1":
         reason: Used in testing - ReDOS attack would only affect developer machines
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-02-27T20:27:04.469Z
-    - replace-in-file@4.3.1 > glob@7.2.3 > minimatch@3.1.2:
-        reason: Used in dev - ReDOS attack would only affect developer machines
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-02-27T20:27:04.466Z
   SNYK-JS-GLOB-14040952:
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > glob@10.4.5":
         reason: Glob is only used for testing and we control what files are passed in

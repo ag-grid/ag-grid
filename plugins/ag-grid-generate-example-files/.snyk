@@ -2,10 +2,6 @@
 version: v1.25.1
 ignore:
   SNYK-JS-BRACEEXPANSION-15789759:
-    - glob@8.0.3 > minimatch@5.1.6 > brace-expansion@2.0.2:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-03-27T11:48:29.532Z
     - '@nx/devkit@20.8.4 > minimatch@9.0.3 > brace-expansion@2.0.2':
         reason: Not included in final production build
         expires: 2026-08-28T00:00:00.000Z
@@ -20,10 +16,6 @@ ignore:
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-03-27T11:44:17.276Z
   SNYK-JS-MINIMATCH-15353389:
-    - glob@8.0.3 > minimatch@5.1.6:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-03-02T10:14:13.155Z
     - "@nx/devkit@20.8.4 > minimatch@9.0.3":
         reason: Used in build & dev - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
@@ -37,10 +29,6 @@ ignore:
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-MINIMATCH-15309438:
-    - glob@8.0.3 > minimatch@5.1.6:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-03-02T09:16:27.114Z
     - "@nx/devkit@20.8.4 > minimatch@9.0.3":
         reason: Used in build & dev - not included in final production build
         expires: 2026-08-28T00:00:00.000Z

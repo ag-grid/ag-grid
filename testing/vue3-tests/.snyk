@@ -11,10 +11,6 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-03-27T11:48:29.506Z
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > brace-expansion@2.0.2:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
   SNYK-JS-PICOMATCH-15765511:
     - vite@6.4.1 > tinyglobby@0.2.15 > picomatch@4.0.3:
         reason: Used in build & dev - not included in final production build
@@ -50,41 +46,11 @@ ignore:
         reason: Test dependency - not included in final production build
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-03-02T10:15:14.605Z
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > glob@10.4.5 > minimatch@9.0.5:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > minimatch@9.0.1:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
   SNYK-JS-MINIMATCH-15309438:
     - npm-run-all@4.1.5 > minimatch@3.1.2:
         reason: Test dependency - not included in final production build
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-03-02T09:21:25.523Z
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > glob@10.4.5 > minimatch@9.0.5:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > minimatch@9.0.1:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-  SNYK-JS-GLOB-14040952:
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > glob@10.4.5:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-  SNYK-JS-MINIMATCH-15353387:
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > glob@10.4.5 > minimatch@9.0.5:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > minimatch@9.0.1:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
   SNYK-JS-SHELLQUOTE-16799355:
     - 'npm-run-all@4.1.5 > shell-quote@1.8.3':
         reason: Dev dependency - not included in final production build
