@@ -178,9 +178,9 @@
         border-bottom: none;
         background-color: transparent;
 
-        /* Prevent scrolling - necessary because tabbing to select a drop zone pill
-        scrolls the container to show the pill, and we want the containing scroll
-        container to be the toolbar, not the drop zone panel within it */
+        // Prevent scrolling - necessary because tabbing to select a drop zone pill
+        // scrolls the container to show the pill, and we want the containing scroll
+        // container to be the toolbar, not the drop zone panel within it
         overflow: visible;
     }
 
