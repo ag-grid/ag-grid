@@ -763,13 +763,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     private getDataTypeOptions(currentDataType?: string): CalculatedColumnDataTypeOption[] {
         const configuredDataTypes = this.gos.get('calculatedColumns')?.dataTypes;
-        const dataTypes = this.getValidDataTypes(configuredDataTypes ?? DEFAULT_CALCULATED_COLUMN_DATA_TYPES);
+        const dataTypes = this.getDataTypes(configuredDataTypes ?? DEFAULT_CALCULATED_COLUMN_DATA_TYPES);
 
-        if (
-            currentDataType != null &&
-            dataTypes.indexOf(currentDataType) < 0 &&
-            this.isValidDataType(currentDataType)
-        ) {
+        if (currentDataType != null && dataTypes.indexOf(currentDataType) < 0) {
             dataTypes.push(currentDataType);
         }
 
@@ -779,25 +775,15 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }));
     }
 
-    private getValidDataTypes(dataTypes: readonly string[]): CalculatedColumnType[] {
-        const validDataTypes: CalculatedColumnType[] = [];
+    private getDataTypes(dataTypes: readonly string[]): CalculatedColumnType[] {
+        const uniqueDataTypes: CalculatedColumnType[] = [];
         for (const dataType of dataTypes) {
-            if (validDataTypes.indexOf(dataType) >= 0) {
-                continue;
-            }
-
-            if (this.isValidDataType(dataType)) {
-                validDataTypes.push(dataType);
-            } else {
-                _warnOnce(`calculatedColumns.dataTypes contains an unknown cell data type: "${dataType}".`);
+            if (uniqueDataTypes.indexOf(dataType) < 0) {
+                uniqueDataTypes.push(dataType);
             }
         }
 
-        return validDataTypes.length ? validDataTypes : [...DEFAULT_CALCULATED_COLUMN_DATA_TYPES];
-    }
-
-    private isValidDataType(dataType: string): boolean {
-        return this.beans.dataTypeSvc?.isDataTypeRegistered(dataType) ?? dataType in BASE_DATA_TYPE_LOCALE_KEYS;
+        return uniqueDataTypes;
     }
 
     private getDataTypeDisplayName(dataType: string): string {

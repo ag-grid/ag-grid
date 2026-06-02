@@ -90,7 +90,7 @@ const gridOptions = {
 };
 ```
 
-Values must match a built-in cell data type or a custom type from `dataTypeDefinitions`. Built-in types use the grid's locale text, while custom type names are capitalised in the dialog.
+Built-in types use the grid's locale text, while custom type names are capitalised in the dialog. If a selected value does not match a registered cell data type, the grid's normal `cellDataType` validation applies when the calculated column is created.
 
 {% gridExampleRunner title="Dialog Data Types" name="calculated-columns-dialog-data-types" exampleHeight=350 /%}
 

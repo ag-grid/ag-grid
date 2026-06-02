@@ -1914,43 +1914,35 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
-    test('dialog type list uses configured valid data types and custom data type definitions', async () => {
-        const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        try {
-            const api = createGrid('calculated-dialog-configured-types', {
-                calculatedColumns: {
-                    dataTypes: ['number', 'customStatus', 'missingType', 'boolean'],
+    test('dialog type list uses configured data types', async () => {
+        const api = createGrid('calculated-dialog-configured-types', {
+            calculatedColumns: {
+                dataTypes: ['number', 'customStatus', 'missingType', 'boolean'],
+            },
+            dataTypeDefinitions: {
+                customStatus: {
+                    baseDataType: 'text',
+                    extendsDataType: 'text',
                 },
-                dataTypeDefinitions: {
-                    customStatus: {
-                        baseDataType: 'text',
-                        extendsDataType: 'text',
-                    },
-                },
-                rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
-                columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
-            });
+            },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
 
-            showColumnMenu(api, 'revenue');
-            await asyncSetTimeout(10);
-            await clickColumnMenuItem('Add Calculated Column');
-            await asyncSetTimeout(1);
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
 
-            getCalculatedColumnDialog()
-                .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
-                .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-            await asyncSetTimeout(1);
+        getCalculatedColumnDialog()
+            .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
+            .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        await asyncSetTimeout(1);
 
-            const typeOptions = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).map((element) =>
-                element.textContent?.trim()
-            );
-            expect(typeOptions).toEqual(['Number', 'Custom Status', 'Boolean']);
-            expect(consoleWarnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('calculatedColumns.dataTypes contains an unknown cell data type: "missingType"')
-            );
-        } finally {
-            consoleWarnSpy.mockRestore();
-        }
+        const typeOptions = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).map((element) =>
+            element.textContent?.trim()
+        );
+        expect(typeOptions).toEqual(['Number', 'Custom Status', 'Missing Type', 'Boolean']);
     });
 
     test('dialog helper list config hides helper buttons without disabling inline autocomplete', async () => {
