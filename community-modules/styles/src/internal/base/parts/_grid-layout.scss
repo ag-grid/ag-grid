@@ -352,8 +352,8 @@
 
     .ag-layout-auto-height,
     .ag-layout-print {
-        .ag-grid-scrolling-container {
-            min-height: 50px;
+        .ag-grid-scrolling-rows {
+            min-height: var(--ag-auto-height-min-body-height);
         }
     }
 

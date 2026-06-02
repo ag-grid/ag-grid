@@ -140,7 +140,7 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
 
     /**
      * The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
-     * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components) for framework specific implementation details.
+     * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/column-headers/#header-group-components) for framework specific implementation details.
      */
     headerGroupComponent?: any;
     /** The params used to configure the `headerGroupComponent`. */
@@ -584,7 +584,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     // *** Column Headers *** //
     /**
      * The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
-     * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.
+     * See [Header Component](https://www.ag-grid.com/javascript-data-grid/column-headers/) for framework specific implementation detail.
      */
     headerComponent?: any;
     /** The parameters to be passed to the `headerComponent`. */

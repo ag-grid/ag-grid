@@ -245,6 +245,9 @@ export function serializeFormula(
             if (typeof v === 'boolean') {
                 return v ? 'TRUE' : 'FALSE';
             }
+            if (v == null) {
+                return 'NULL';
+            }
             return useRefFormat
                 ? serializeCellREF(beans, v as Cell, useCalculatedRefs)
                 : serializeCellA1(beans, v as Cell, unsafe, useCalculatedRefs);

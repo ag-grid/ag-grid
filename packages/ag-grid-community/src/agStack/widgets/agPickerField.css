@@ -20,7 +20,7 @@
     border: var(--ag-picker-button-border);
     border-radius: var(--ag-picker-button-border-radius);
     background-color: var(--ag-picker-button-background-color);
-    min-height: max(var(--ag-list-item-height), calc(var(--ag-spacing) * 4));
+    min-height: var(--ag-picker-field-height);
 
     &:where(.invalid) {
         background-color: var(--ag-input-invalid-background-color);

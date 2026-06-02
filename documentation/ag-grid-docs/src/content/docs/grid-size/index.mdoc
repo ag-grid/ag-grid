@@ -133,12 +133,14 @@ When viewed inline below, the scroll bars shown are for the containing iframe, n
 
 ### Min Height with Auto Height
 
-When using Auto Height, there is a minimum of 150px set to the grid rows section. This is to avoid an empty grid which would look weird. To remove this minimum height, add the following CSS:
+When using Auto Height, the grid rows section has a minimum height of 150px. This is to avoid a zero-height grid which looks weird.
 
-```css
-.ag-grid-scrolling-container {
-    min-height: unset !important;
-}
+Use the `autoHeightMinBodyHeight` [theme parameter](./theming-parameters/) to change this minimum:
+
+```js
+const myTheme = themeQuartz.withParams({
+    autoHeightMinBodyHeight: 40,
+});
 ```
 
 It is not possible to specify a max height when using auto-height.

@@ -3,7 +3,7 @@ import type { FormulaErrorId, FormulaErrorType } from '../i18n';
 
 interface FormulaOperand {
     type: 'operand';
-    value: string | number | boolean | Cell;
+    value: string | number | boolean | Cell | null;
 }
 
 export interface FormulaOperation {

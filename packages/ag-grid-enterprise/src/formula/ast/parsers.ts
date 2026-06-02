@@ -14,7 +14,7 @@ import { FormulaParseError } from './utils';
  * @param beans Helpers for looking up rows/columns (used to resolve cell refs).
  * @param operand The raw text of the operand (e.g. `"123"`, `"true"`, `"A1"`).
  * @param unsafe If `true` it will not validate if the row/column exists when parsing the formula.
- * @returns A JS value (string/number/boolean) or a Cell object, or null if unknown.
+ * @returns A JS value (string/number/boolean/null), a Cell object, or undefined if unknown.
  * @throws FormulaParseError if a cell reference is invalid.
  *
  * @example
@@ -26,11 +26,11 @@ const parseOperand = (
     beans: BeanCollection,
     operand: string,
     unsafe: boolean
-): string | number | boolean | Cell | null => {
+): string | number | boolean | Cell | null | undefined => {
     const trimmed = operand.trim();
 
     // string literal
-    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length > 2) {
+    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2) {
         return trimmed.slice(1, -1);
     }
 
@@ -40,6 +40,9 @@ const parseOperand = (
     }
     if (trimmed.toLowerCase() === 'false') {
         return false;
+    }
+    if (trimmed.toLowerCase() === 'null') {
+        return null;
     }
 
     // numbers
@@ -105,7 +108,7 @@ const parseOperand = (
         return start;
     }
 
-    return null;
+    return undefined;
 };
 
 /**
@@ -395,6 +398,11 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
 
         // Argument separator ','
         if (token === ',') {
+            const prevToken = tokens[i - 1];
+            if (prevToken == null || prevToken === '(' || prevToken === ',') {
+                throw new FormulaParseError(10, i, i + 1);
+            }
+
             // reduce until '('
             while (true) {
                 const top = ops[ops.length - 1];
@@ -426,6 +434,10 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
 
         // Closing ')'
         if (token === ')') {
+            if (tokens[i - 1] === ',') {
+                throw new FormulaParseError(10, i, i + 1);
+            }
+
             // reduce until '('
             while (true) {
                 const top = ops[ops.length - 1];
@@ -483,7 +495,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
 
         // Operand
         const parsed = parseOperand(beans, token, unsafe);
-        if (parsed == null) {
+        if (parsed === undefined) {
             throw new FormulaParseError(14, 0, token.length, [token]);
         }
         output.push({ type: 'operand', value: parsed });

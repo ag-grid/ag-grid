@@ -60,6 +60,7 @@
     --ag-icon-size: 18px;
     --ag-header-height: calc(var(--ag-grid-size) * 7);
     --ag-row-height: calc(var(--ag-grid-size) * 6);
+    --ag-auto-height-min-body-height: 150px;
     --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 3);
     --ag-list-item-height: calc(var(--ag-grid-size) * 4);
     --ag-row-group-indent-size: calc(var(--ag-grid-size) * 3 + var(--ag-icon-size));
