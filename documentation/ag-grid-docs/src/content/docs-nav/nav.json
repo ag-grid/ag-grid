@@ -545,6 +545,17 @@
                             "url": "https://www.ag-grid.com/studio"
                         }
                     ]
+                },
+                {
+                    "type": "group",
+                    "title": "Gantt Charts",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "See Bryntum Gantt",
+                            "url": "https://www.ag-grid.com/campaigns/bryntum-gantt"
+                        }
+                    ]
                 }
             ]
         },
