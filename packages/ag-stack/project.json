@@ -183,37 +183,6 @@
         "cwd": "{projectRoot}"
       }
     },
-    "test:e2e": {
-      "dependsOn": ["test:umd:browser", "test:umd"]
-    },
-    "test:umd": {
-      "command": "npx vitest run --config vitest.umd.config.ts",
-      "dependsOn": ["build:umd"],
-      "options": {
-        "cwd": "{projectRoot}"
-      },
-      "configurations": {
-        "production": {},
-        "staging": {}
-      }
-    },
-    "test:umd:browser": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build:umd", "setup"],
-      "options": {
-        "commands": ["echo 'Skipping test:umd:browser - requires staging or production configuration'"],
-        "parallel": false,
-        "cwd": "packages/ag-stack"
-      },
-      "configurations": {
-        "production": {
-          "commands": ["npx playwright test"]
-        },
-        "staging": {
-          "commands": ["npx playwright test"]
-        }
-      }
-    },
     "pack": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
