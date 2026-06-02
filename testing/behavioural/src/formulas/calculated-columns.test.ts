@@ -1944,7 +1944,7 @@ describe('ag-grid calculated columns', () => {
             const typeOptions = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).map((element) =>
                 element.textContent?.trim()
             );
-            expect(typeOptions).toEqual(['Number', 'CustomStatus', 'Boolean']);
+            expect(typeOptions).toEqual(['Number', 'Custom Status', 'Boolean']);
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('calculatedColumns.dataTypes contains an unknown cell data type: "missingType"')
             );

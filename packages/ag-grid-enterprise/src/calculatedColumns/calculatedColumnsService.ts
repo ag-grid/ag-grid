@@ -15,7 +15,7 @@ import type {
     ICalculatedColumnsService,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _isStringLargerThan, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _camelCaseToHumanText, _isStringLargerThan, _warnOnce } from 'ag-grid-community';
 
 import type { FormulaError } from '../formula/ast/utils';
 import { Dialog } from '../widgets/dialog';
@@ -808,8 +808,7 @@ export class CalculatedColumnsService
 
     private getValidDataTypes(dataTypes: readonly string[]): CalculatedColumnType[] {
         const validDataTypes: CalculatedColumnType[] = [];
-        for (let i = 0, len = dataTypes.length; i < len; i++) {
-            const dataType = dataTypes[i];
+        for (const dataType of dataTypes) {
             if (validDataTypes.indexOf(dataType) >= 0) {
                 continue;
             }
@@ -831,14 +830,14 @@ export class CalculatedColumnsService
     private getDataTypeDisplayName(dataType: string): string {
         const localeKey = BASE_DATA_TYPE_LOCALE_KEYS[dataType];
         if (localeKey != null) {
-            return this.getLocaleTextFunc()(localeKey, this.capitaliseDataType(dataType));
+            return this.getLocaleTextFunc()(localeKey, this.formatDataTypeName(dataType));
         }
 
-        return this.capitaliseDataType(dataType);
+        return this.formatDataTypeName(dataType);
     }
 
-    private capitaliseDataType(dataType: string): string {
-        return dataType.length ? dataType[0].toLocaleUpperCase() + dataType.slice(1) : dataType;
+    private formatDataTypeName(dataType: string): string {
+        return _camelCaseToHumanText(dataType.replace(/[_-]+/g, '.')) ?? dataType;
     }
 
     private getHelperLists(): CalculatedColumnHelperList[] {
