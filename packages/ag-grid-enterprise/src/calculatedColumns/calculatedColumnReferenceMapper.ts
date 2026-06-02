@@ -38,7 +38,16 @@ export function createCalculatedColumnReferenceMapper(
 ): CalculatedColumnReferenceMapper {
     const entries = createHeaderReferenceEntries(beans, columns, excludedColId);
     const referenceToColId = new Map(entries.map((entry) => [entry.reference, entry.colId]));
+    const caseInsensitiveReferenceToColIds = new Map<string, string[]>();
     const colIdToReference = new Map(entries.map((entry) => [entry.colId, entry.reference]));
+
+    for (let i = 0, len = entries.length; i < len; ++i) {
+        const entry = entries[i];
+        const normalisedReference = normaliseReference(entry.reference);
+        const colIds = caseInsensitiveReferenceToColIds.get(normalisedReference) ?? [];
+        colIds.push(entry.colId);
+        caseInsensitiveReferenceToColIds.set(normalisedReference, colIds);
+    }
 
     return {
         suggestions: entries.map(({ leafName, reference }) => ({
@@ -50,12 +59,20 @@ export function createCalculatedColumnReferenceMapper(
         toInternalExpression(expression: string) {
             let error: CalculatedColumnReferenceError | undefined;
             const internalExpression = replaceBracketReferences(expression, (ref) => {
-                const colId = referenceToColId.get(ref);
+                const exactColId = referenceToColId.get(ref);
+                if (exactColId != null) {
+                    return exactColId;
+                }
+
+                const caseInsensitiveColIds = caseInsensitiveReferenceToColIds.get(normaliseReference(ref));
+                const colId = caseInsensitiveColIds?.length === 1 ? caseInsensitiveColIds[0] : undefined;
                 if (colId != null) {
                     return colId;
                 }
+                const isAmbiguous =
+                    (caseInsensitiveColIds?.length ?? 0) > 1 || isAmbiguousHeaderReference(entries, ref, true);
                 error ??= {
-                    type: isAmbiguousHeaderReference(entries, ref) ? 'ambiguous' : 'unknown',
+                    type: isAmbiguous ? 'ambiguous' : 'unknown',
                     reference: ref,
                 };
                 return ref;
@@ -66,4 +83,8 @@ export function createCalculatedColumnReferenceMapper(
             return replaceBracketReferences(expression, (ref) => colIdToReference.get(ref) ?? ref);
         },
     };
+}
+
+function normaliseReference(reference: string): string {
+    return reference.toLocaleLowerCase();
 }

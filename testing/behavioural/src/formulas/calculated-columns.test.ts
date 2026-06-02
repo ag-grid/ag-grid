@@ -147,6 +147,14 @@ describe('ag-grid calculated columns', () => {
         );
     }
 
+    function clickSuggestion(label: string): void {
+        const suggestion = Array.from(document.querySelectorAll<HTMLElement>('.ag-calculated-column-suggestion')).find(
+            (element) => element.textContent?.trim() === label
+        );
+        expect(suggestion).toBeTruthy();
+        suggestion!.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    }
+
     function getOpenMenuEntries(): string[] {
         return Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option, .ag-menu-separator')).map(
             (element) =>
@@ -1095,6 +1103,64 @@ describe('ag-grid calculated columns', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 server-revenue-9d5101c8-4c2a-48e0-9ad2:10 calculated_1:7 server-cost-81f3431b-e4aa-4ef8-bef0:3
         `);
+    });
+
+    test('dialog accepts column references in any case', async () => {
+        const api = createGrid('calculated-dialog-case-insensitive-references', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        setExpression('[REVENUE] - [cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        const rowNode = api.getRowNode('r1')!;
+        expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBe('[revenue] - [cost]');
+        expect(api.getCellValue({ rowNode, colKey: 'calculated_1', useFormatter: false })).toBe(7);
+    });
+
+    test('dialog operator suggestions replace existing operators near the caret', async () => {
+        const api = createGrid('calculated-dialog-operator-replacement', {
+            rowData: [{ id: 'r1', age: 23, medals: 8 }],
+            columnDefs: [{ field: 'age' }, { field: 'medals' }],
+        });
+
+        showColumnMenu(api, 'age');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        const input = getExpressionInput();
+
+        setExpression('[Age] + [Medals]');
+        input.setSelectionRange('[Age] +'.length, '[Age] +'.length);
+        clickDialogButton('Operators');
+        clickSuggestion('*');
+        expect(input.value).toBe('[Age] * [Medals]');
+
+        setExpression('[Age] + [Medals]');
+        input.setSelectionRange('[Age] + '.length, '[Age] + '.length);
+        clickDialogButton('Operators');
+        clickSuggestion('/');
+        expect(input.value).toBe('[Age] / [Medals]');
+
+        setExpression('[Age] >= [Medals]');
+        input.setSelectionRange('[Age] >='.length, '[Age] >='.length);
+        clickDialogButton('Operators');
+        clickSuggestion('<');
+        expect(input.value).toBe('[Age] < [Medals]');
+
+        setExpression('[Age] + [Medals]');
+        input.setSelectionRange('[Age] '.length, '[Age] +'.length);
+        clickDialogButton('Operators');
+        clickSuggestion('-');
+        expect(input.value).toBe('[Age] - [Medals]');
     });
 
     test('dialog adds calculated columns inside groups without mutating provided column definitions', async () => {

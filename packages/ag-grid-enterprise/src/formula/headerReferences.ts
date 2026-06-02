@@ -40,17 +40,24 @@ export function createHeaderReferenceEntries(
     return entries;
 }
 
-export function isAmbiguousHeaderReference(entries: HeaderReferenceEntry[], reference: string): boolean {
-    const selectedReferences = new Set(entries.map((entry) => entry.reference));
+export function isAmbiguousHeaderReference(
+    entries: HeaderReferenceEntry[],
+    reference: string,
+    caseInsensitive = false
+): boolean {
+    const selectedReferences = new Set(entries.map((entry) => normaliseReference(entry.reference, caseInsensitive)));
     const candidateCounts = new Map<string, number>();
+    const normalisedReference = normaliseReference(reference, caseInsensitive);
 
-    for (const entry of entries) {
-        for (const candidate of getReferenceCandidates(entry.path)) {
+    for (let i = 0, len = entries.length; i < len; ++i) {
+        const candidates = getReferenceCandidates(entries[i].path);
+        for (let j = 0, candidatesLen = candidates.length; j < candidatesLen; ++j) {
+            const candidate = normaliseReference(candidates[j], caseInsensitive);
             candidateCounts.set(candidate, (candidateCounts.get(candidate) ?? 0) + 1);
         }
     }
 
-    return (candidateCounts.get(reference) ?? 0) > 1 && !selectedReferences.has(reference);
+    return (candidateCounts.get(normalisedReference) ?? 0) > 1 && !selectedReferences.has(normalisedReference);
 }
 
 function getColumnPath(beans: BeanCollection, column: AgColumn): string[] {
@@ -94,4 +101,8 @@ function joinReferencePath(path: string[]): string {
 
 function getStableReferenceSuffix(colId: string): string {
     return encodeURIComponent(colId);
+}
+
+function normaliseReference(reference: string, caseInsensitive: boolean): string {
+    return caseInsensitive ? reference.toLocaleLowerCase() : reference;
 }

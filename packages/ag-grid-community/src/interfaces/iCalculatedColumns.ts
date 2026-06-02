@@ -18,6 +18,7 @@ export interface ICalculatedColumnsService extends Bean {
     openCalculatedColumnDialog(column: AgColumn | null, mode: 'add' | 'edit'): void;
     createProjectedColumnDefs(columnDefs: (ColDef | ColGroupDef)[] | undefined): (ColDef | ColGroupDef)[] | undefined;
     orderDynamicColumns(columns: AgColumn[]): void;
+    shouldPreserveColumnOrderOnRefresh(): boolean;
     resetDynamicColumnDefs(preserveCreatedColumns?: boolean): boolean;
     restoreDynamicColumnDefs(colIds: string[]): boolean;
 }
