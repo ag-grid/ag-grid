@@ -108,10 +108,10 @@
         left: 0;
         // Two side-by-side product columns (AG and Bryntum). Wider so each
         // column has enough room for title + description without truncation.
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        // display: grid;
+        // grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: $spacing-size-3;
-        width: 720px;
+        width: 400px;
     }
 }
 
@@ -250,7 +250,6 @@
 // foreground so it reads quieter than a top-of-column heading.
 .inlineHeading {
     margin-top: $spacing-size-2;
-    padding-left: $spacing-size-5;
     color: var(--color-fg-quinary);
 
     #{$selector-darkmode}:has([data-is-homepage='false']) &,

@@ -24,30 +24,5 @@
                 "inlineHeading": "Bryntum"
             }
         ]
-    },
-    {
-        "label": "",
-        "items": [
-            {
-                "title": "Bryntum Scheduler",
-                "description": "Resource scheduling timeline component",
-                "url": "/campaigns/bryntum-scheduler"
-            },
-            {
-                "title": "Bryntum Scheduler Pro",
-                "description": "Scheduler with auto-scheduling and constraints",
-                "url": "/campaigns/bryntum-scheduler-pro"
-            },
-            {
-                "title": "Bryntum Calendar",
-                "description": "Flexible JavaScript event calendar",
-                "url": "/campaigns/bryntum-calendar"
-            },
-            {
-                "title": "Bryntum Task Board",
-                "description": "Kanban-style task board component",
-                "url": "/campaigns/bryntum-task-board"
-            }
-        ]
     }
 ]
