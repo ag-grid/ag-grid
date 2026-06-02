@@ -843,7 +843,7 @@ export class CalculatedColumnsService
 
     private getHelperLists(): CalculatedColumnHelperList[] {
         const helperLists = this.gos.get('calculatedColumns')?.helperLists;
-        return helperLists?.length ? helperLists : [...DEFAULT_CALCULATED_COLUMN_HELPER_LISTS];
+        return helperLists === undefined ? [...DEFAULT_CALCULATED_COLUMN_HELPER_LISTS] : (helperLists ?? []);
     }
 
     private toDraft(column: AgColumn): CalculatedColumnDraft {

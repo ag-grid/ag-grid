@@ -1982,6 +1982,28 @@ describe('ag-grid calculated columns', () => {
         expect(getSuggestionLabels()).toEqual(expect.arrayContaining(['Revenue']));
     });
 
+    test.each([
+        ['empty array', []],
+        ['null', null],
+    ] as const)('dialog helper list config supports hiding all helper buttons with %s', async (_label, helperLists) => {
+        const api = createGrid(`calculated-dialog-helper-lists-${_label.replace(' ', '-')}`, {
+            calculatedColumns: {
+                helperLists,
+            },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        expect(getDialogButton('Columns')).toHaveClass('ag-hidden');
+        expect(getDialogButton('Functions')).toHaveClass('ag-hidden');
+        expect(getDialogButton('Operators')).toHaveClass('ag-hidden');
+    });
+
     test('dialog validates formula syntax and function names before apply', async () => {
         const api = createGrid('calculated-dialog-validation', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],

@@ -15,7 +15,7 @@ export interface CalculatedColumnsOptions {
      * Helper buttons shown in the Calculated Column dialog expression editor.
      * @default ['columns', 'functions', 'operators']
      */
-    helperLists?: CalculatedColumnHelperList[];
+    helperLists?: CalculatedColumnHelperList[] | null;
     /**
      * Highlight the calculated column currently being edited by the dialog.
      * @default false
