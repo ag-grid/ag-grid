@@ -169,19 +169,6 @@
         "commands": ["node external/ag-shared/scripts/watch/watch.js grid", "nx run ag-grid-docs:dev"]
       }
     },
-    "generate-csp": {
-      "executor": "nx:run-commands",
-      "cache": false,
-      "options": {
-        "cwd": "{workspaceRoot}",
-        "command": "tsx documentation/ag-grid-docs/scripts/csp/generate-csp.ts --env=staging"
-      },
-      "configurations": {
-        "production": {
-          "command": "tsx documentation/ag-grid-docs/scripts/csp/generate-csp.ts --env=production"
-        }
-      }
-    },
     "format-write": {
       "command": "nx format:write --all --sort-root-tsconfig-paths=false"
     },

@@ -16,9 +16,12 @@ import { getCspHeaderName, getCspHtaccessLine, getCspValue } from '../../src/uti
  *       [--out=<file>]
  *
  * Run via Nx:
- *   nx run all:generate-csp                  # staging, report-only, .htaccess line
- *   nx run all:generate-csp -c production
- *   nx run all:generate-csp --mode=enforce --format=value
+ *   nx run ag-grid-docs:generate-csp                       # staging, report-only, .htaccess line
+ *   nx run ag-grid-docs:generate-csp --mode=enforce --format=value
+ *
+ * Nx's run-commands reserves --env, so pass a non-default env by running the script
+ * directly:
+ *   tsx documentation/ag-grid-docs/scripts/csp/generate-csp.ts --env=production
  *
  * The policy itself lives in src/utils/htaccess/cspRules.ts (single source of
  * truth, shared with the .htaccess generator).

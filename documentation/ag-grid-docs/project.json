@@ -106,6 +106,12 @@
         "cwd": "{projectRoot}"
       }
     },
+    "generate-csp": {
+      "command": "tsx scripts/csp/generate-csp.ts",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "test": {
       "executor": "nx:noop",
       "dependsOn": ["test:vitest", "test:validate-example-specs"],
