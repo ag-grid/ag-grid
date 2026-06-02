@@ -252,6 +252,22 @@ describe('calculated columns - display ordering', () => {
         expect(order(api)).toEqual(['revenue', id, 'cost']);
     });
 
+    test('dialog add lands after the anchor leaf column when maintainColumnOrder is enabled', async () => {
+        const api = createGrid('dialog-after-anchor-maintain-order', {
+            maintainColumnOrder: true,
+            rowData: [{ id: 'r1', athlete: 'A', age: 23, country: 'US', total: 3 }],
+            columnDefs: [
+                { field: 'athlete', colId: 'athlete', headerName: 'Athlete' },
+                { field: 'age', colId: 'age', headerName: 'Age' },
+                { field: 'country', colId: 'country', headerName: 'Country' },
+                { field: 'total', colId: 'total', headerName: 'Total' },
+            ],
+        });
+
+        const id = await addViaDialog(api, 'athlete', '[Age] + [Total]');
+        expect(order(api)).toEqual(['athlete', id, 'age', 'country', 'total']);
+    });
+
     test('dialog add lands inside the group, after a grouped anchor leaf', async () => {
         const api = createGrid('dialog-after-anchor-group', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
