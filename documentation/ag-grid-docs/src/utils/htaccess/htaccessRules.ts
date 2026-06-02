@@ -172,6 +172,12 @@ Header always set X-Frame-Options "SAMEORIGIN"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
+# Content-Security-Policy — report-only while validating the tightened policy on production.
+# Ships alongside the existing loose enforcing CSP on the vhost: that one still allows
+# everything (nothing breaks), this one reports what the tightened policy would block.
+# Flip to enforce + remove the vhost wildcard once the report-only window is clean.
+${getCspHtaccessLine({ env: 'production' }, 'report-only')}
+
 # CORS settings
 Header add Access-Control-Allow-Origin "*"
 Header add Access-Control-Allow-Methods: "GET,POST,OPTIONS,DELETE,PUT"
