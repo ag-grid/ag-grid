@@ -1578,8 +1578,14 @@
     //  ****************************
     // */
     .ag-paging-panel {
-        align-items: center;
         display: flex;
+    }
+
+    .ag-paging-panel-content {
+        display: flex;
+        flex: 0 0 auto;
+        min-width: 100%;
+        align-items: center;
         justify-content: flex-end;
     }
 
