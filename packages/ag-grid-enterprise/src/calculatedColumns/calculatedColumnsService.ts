@@ -223,10 +223,15 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             this.showDialog(draft, (nextDraft) => {
                 const isDynamicAnchor = column != null && this.getDynamicColumn(column.colId) != null;
                 const anchorColDef = isDynamicAnchor ? undefined : column?.getUserProvidedColDef();
+                const nextColDef = this.toColDef(nextDraft);
+                const columnGroupShow = column?.colDef.columnGroupShow;
+                if (columnGroupShow != null) {
+                    nextColDef.columnGroupShow = columnGroupShow;
+                }
                 this.removeInactiveDynamicColumn(nextDraft.colId);
                 this.dynamicColumns.push({
                     colId: nextDraft.colId,
-                    colDef: this.toColDef(nextDraft),
+                    colDef: nextColDef,
                     anchorColId: column?.colId,
                     anchorColDef,
                     visibleAnchorColId: anchorColDef == null || isDynamicAnchor ? column?.colId : undefined,
