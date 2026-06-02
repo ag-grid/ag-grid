@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridOptions, Module } from 'ag-grid-community';
 import {
+    CellSpanModule,
     ClientSideRowModelModule,
     InfiniteRowModelModule,
     NumberEditorModule,
@@ -11,6 +12,7 @@ import {
     RowSelectionModule,
     TextEditorModule,
     ValidationModule,
+    getGridElement,
 } from 'ag-grid-community';
 import {
     CalculatedColumnsModule,
@@ -41,6 +43,7 @@ describe('ag-grid calculated columns', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
+            CellSpanModule,
             InfiniteRowModelModule,
             ServerSideRowModelModule,
             ViewportRowModelModule,
@@ -296,6 +299,96 @@ describe('ag-grid calculated columns', () => {
             ├── LEAF id:r1 revenueCol:40 cost:25 first:"Ada" last:"Lovelace" profit:15 profitable:"yes" name:"Ada Lovelace"
             └── LEAF id:r2 revenueCol:30 cost:9 first:"Grace" last:"Hopper" profit:21 profitable:"yes" name:"Grace Hopper"
         `);
+    });
+
+    test('static calculated columns inherit spanRows and span by evaluated values', async () => {
+        const api = createGrid('calculated-static-span-rows', {
+            enableCellSpan: true,
+            defaultColDef: {
+                spanRows: true,
+            },
+            rowData: [
+                { id: 'r1', athlete: 'A' },
+                { id: 'r2', athlete: 'A' },
+                { id: 'r3', athlete: 'B' },
+            ],
+            columnDefs: [{ field: 'athlete' }, { colId: 'athleteCopy', calculatedExpression: '[athlete]' }],
+        });
+        await new GridRows(api, 'static calculated span rows', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 athlete:"A" athleteCopy:"A"
+            ├── LEAF id:r2 athlete:"A" athleteCopy:"A"
+            └── LEAF id:r3 athlete:"B" athleteCopy:"B"
+        `);
+        await asyncSetTimeout(1);
+
+        const gridEl = getGridElement(api)!;
+        const spannedCell = gridEl.querySelector('.ag-spanned-row [col-id="athleteCopy"]');
+        const coveredCell = gridEl.querySelector('.ag-center-cols-container [row-index="1"] [col-id="athleteCopy"]');
+        const unspannedCell = gridEl.querySelector('[row-index="2"] [col-id="athleteCopy"]');
+        expect(spannedCell).not.toBeNull();
+        expect(spannedCell!.getAttribute('aria-rowspan')).toBe('2');
+        expect(coveredCell).toBeNull();
+        expect(unspannedCell).not.toBeNull();
+    });
+
+    test('dynamic calculated columns inherit spanRows and span by evaluated values', async () => {
+        const api = createGrid('calculated-dynamic-span-rows', {
+            enableCellSpan: true,
+            defaultColDef: {
+                spanRows: true,
+            },
+            rowData: [
+                { id: 'r1', athlete: 'A' },
+                { id: 'r2', athlete: 'A' },
+                { id: 'r3', athlete: 'B' },
+            ],
+            columnDefs: [{ field: 'athlete' }],
+        });
+
+        api.addCalculatedColumn({ colId: 'athleteCopy', calculatedExpression: '[athlete]' });
+        await asyncSetTimeout(1);
+        await new GridRows(api, 'dynamic calculated span rows', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 athlete:"A" athleteCopy:"A"
+            ├── LEAF id:r2 athlete:"A" athleteCopy:"A"
+            └── LEAF id:r3 athlete:"B" athleteCopy:"B"
+        `);
+
+        const gridEl = getGridElement(api)!;
+        const spannedCell = gridEl.querySelector('.ag-spanned-row [col-id="athleteCopy"]');
+        const coveredCell = gridEl.querySelector('.ag-center-cols-container [row-index="1"] [col-id="athleteCopy"]');
+        const unspannedCell = gridEl.querySelector('[row-index="2"] [col-id="athleteCopy"]');
+        expect(spannedCell).not.toBeNull();
+        expect(spannedCell!.getAttribute('aria-rowspan')).toBe('2');
+        expect(coveredCell).toBeNull();
+        expect(unspannedCell).not.toBeNull();
+    });
+
+    test('calculated columns with equal evaluated values still span all matching rows', async () => {
+        const api = createGrid('calculated-constant-span-rows', {
+            enableCellSpan: true,
+            defaultColDef: {
+                spanRows: true,
+            },
+            rowData: [{ id: 'r1' }, { id: 'r2' }, { id: 'r3' }],
+            columnDefs: [{ colId: 'constant', calculatedExpression: '"Same"' }],
+        });
+        await new GridRows(api, 'constant calculated span rows', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 constant:"Same"
+            ├── LEAF id:r2 constant:"Same"
+            └── LEAF id:r3 constant:"Same"
+        `);
+        await asyncSetTimeout(1);
+
+        const gridEl = getGridElement(api)!;
+        const spannedCell = gridEl.querySelector('.ag-spanned-row [col-id="constant"]');
+        const coveredCell = gridEl.querySelector('.ag-center-cols-container [row-index="2"] [col-id="constant"]');
+        expect(spannedCell).not.toBeNull();
+        expect(spannedCell!.getAttribute('aria-rowspan')).toBe('3');
+        expect(spannedCell!.textContent).toContain('Same');
+        expect(coveredCell).toBeNull();
     });
 
     test('sorting, filtering and value formatters use evaluated values', async () => {

@@ -78,8 +78,26 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     public postConstruct(): void {
         this.addManagedEventListeners({
             newColumnsLoaded: (event) => this.checkValidationStates(event.source),
+            gridColumnsChanged: () => this.refreshCalculatedColumnSpans(),
             columnMoved: (event) => this.releaseVisibleAnchors(event.columns),
         });
+    }
+
+    private refreshCalculatedColumnSpans(): void {
+        const rowSpanSvc = this.beans.rowSpanSvc;
+        if (!rowSpanSvc?.active) {
+            return;
+        }
+
+        const columns = this.beans.colModel.getCols() ?? [];
+        const calculatedColumns: AgColumn[] = [];
+        for (const column of columns) {
+            if (column.isCalculatedCol) {
+                calculatedColumns.push(column);
+            }
+        }
+
+        rowSpanSvc.refreshColumnSpansForCols(calculatedColumns);
     }
 
     private releaseVisibleAnchors(columns: Column[] | null | undefined): void {

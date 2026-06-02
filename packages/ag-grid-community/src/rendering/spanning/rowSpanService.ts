@@ -46,11 +46,45 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
         this.spanningColumns.set(column, cache);
 
         // make sure if row model already run we prep this cache
+        this.buildCache(cache);
+
+        this.debouncePinnedEvent();
+        this.debounceModelEvent();
+    }
+
+    public refreshColumnSpansForCols(columns: AgColumn[]): void {
+        if (!this.active) {
+            return;
+        }
+
+        const caches: RowSpanCache[] = [];
+        const seenCaches = new Set<RowSpanCache>();
+        for (const column of columns) {
+            const cache = this.spanningColumns.get(column);
+            if (!cache || seenCaches.has(cache)) {
+                continue;
+            }
+
+            seenCaches.add(cache);
+            caches.push(cache);
+        }
+
+        if (!caches.length) {
+            return;
+        }
+
+        for (const cache of caches) {
+            this.buildCache(cache);
+        }
+
+        this.debouncePinnedEvent();
+        this.debounceModelEvent();
+    }
+
+    private buildCache(cache: RowSpanCache): void {
         cache.buildCache('top');
         cache.buildCache('bottom');
         cache.buildCache('center');
-        this.debouncePinnedEvent();
-        this.debounceModelEvent();
     }
 
     // debounced to allow spannedRowRenderer to run first, removing any old spanned rows
