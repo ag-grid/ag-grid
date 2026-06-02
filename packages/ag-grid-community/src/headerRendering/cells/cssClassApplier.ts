@@ -9,6 +9,7 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { ICellComp } from '../../rendering/cell/cellCtrl';
+import { _getCalculatedColumnCssClasses } from '../../styling/calculatedColumnCss';
 import type { IAbstractHeaderCellComp } from './abstractCell/abstractHeaderCellCtrl';
 
 const CSS_FIRST_COLUMN = 'ag-column-first';
@@ -21,16 +22,14 @@ export function _getHeaderClassesFromColDef(
     column: AgColumn | null,
     columnGroup: AgColumnGroup | null
 ): string[] {
-    const providerClasses = beans.columnCssClassSvc.hasHeaderProviders()
-        ? beans.columnCssClassSvc.getHeaderClasses(column, columnGroup)
-        : [];
+    const calculatedColumnClasses = _getCalculatedColumnCssClasses(column, beans.calculatedColsSvc);
 
     if (_missing(abstractColDef)) {
-        return providerClasses.length ? [...providerClasses] : [];
+        return calculatedColumnClasses.length ? [...calculatedColumnClasses] : [];
     }
 
     return [
-        ...providerClasses,
+        ...calculatedColumnClasses,
         ...getColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, beans.gos, column, columnGroup),
     ];
 }

@@ -134,7 +134,6 @@ import type { SpannedRowRenderer } from '../rendering/spanning/spannedRowRendere
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { SortService } from '../sort/sortService';
 import type { CellStyleService } from '../styling/cellStyleService';
-import type { ColumnCssClassService } from '../styling/columnCssClassService';
 import type { RowStyleService } from '../styling/rowStyleService';
 import type { SyncService } from '../syncService';
 import type { TooltipService } from '../tooltip/tooltipService';
@@ -287,7 +286,6 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     focusSvc: FocusService;
     popupSvc?: PopupService;
     cellStyles?: CellStyleService;
-    columnCssClassSvc: ColumnCssClassService;
     colHover?: ColumnHoverService;
     userCompFactory: UserComponentFactory;
     registry: Registry;

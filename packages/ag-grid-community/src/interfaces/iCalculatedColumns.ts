@@ -42,4 +42,5 @@ export interface ICalculatedColumnsService extends Bean {
     shouldPreserveColumnOrderOnRefresh(): boolean;
     resetDynamicColumnDefs(preserveCreatedColumns?: boolean): boolean;
     restoreDynamicColumnDefs(colIds: string[]): boolean;
+    isHighlightedColumn(column: AgColumn | null): boolean;
 }

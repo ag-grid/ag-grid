@@ -8,7 +8,6 @@ import type {
     ColGroupDef,
     ColKey,
     Column,
-    ColumnCssClassProvider,
     ColumnEventType,
     ICalculatedColumnsService,
     NamedBean,
@@ -55,12 +54,6 @@ const BASE_DATA_TYPE_LOCALE_KEYS: Record<string, string> = {
     object: 'dataTypeObject',
 };
 
-const CSS_CALCULATED_COLUMN = 'ag-calculated-column';
-const CSS_CALCULATED_COLUMN_HIGHLIGHTED = 'ag-calculated-column-highlighted';
-const EMPTY_CALCULATED_COLUMN_CSS_CLASSES: readonly string[] = [];
-const CALCULATED_COLUMN_CSS_CLASSES = [CSS_CALCULATED_COLUMN];
-const HIGHLIGHTED_CALCULATED_COLUMN_CSS_CLASSES = [CSS_CALCULATED_COLUMN, CSS_CALCULATED_COLUMN_HIGHLIGHTED];
-
 type CalcColEventCommonParams = {
     column: AgColumn;
     columns: AgColumn[];
@@ -87,10 +80,7 @@ type DynamicCalculatedColumnSuppression = {
     targetColDef: ColDef | null;
 };
 
-export class CalculatedColumnsService
-    extends BeanStub
-    implements NamedBean, ICalculatedColumnsService, ColumnCssClassProvider
-{
+export class CalculatedColumnsService extends BeanStub implements NamedBean, ICalculatedColumnsService {
     public readonly beanName = 'calculatedColsSvc' as const;
 
     // calculated columns added via API/dialog, projected into the column tree (not in user `columnDefs`).
@@ -110,8 +100,6 @@ export class CalculatedColumnsService
     private highlightedColumn: AgColumn | null = null;
 
     public postConstruct(): void {
-        this.beans.columnCssClassSvc.addProvider(this);
-
         this.addManagedEventListeners({
             newColumnsLoaded: (event) => this.checkValidationStates(event.source),
             gridColumnsChanged: () => this.refreshCalculatedColumnSpans(),
@@ -136,22 +124,8 @@ export class CalculatedColumnsService
         rowSpanSvc.refreshColumnSpansForCols(calculatedColumns);
     }
 
-    public getCellCssClasses(column: AgColumn): readonly string[] {
-        return this.getColumnCssClasses(column);
-    }
-
-    public getHeaderCssClasses(column: AgColumn | null): readonly string[] {
-        return this.getColumnCssClasses(column);
-    }
-
-    private getColumnCssClasses(column: AgColumn | null): readonly string[] {
-        if (column?.colDef.calculatedExpression == null) {
-            return EMPTY_CALCULATED_COLUMN_CSS_CLASSES;
-        }
-
-        return column === this.highlightedColumn
-            ? HIGHLIGHTED_CALCULATED_COLUMN_CSS_CLASSES
-            : CALCULATED_COLUMN_CSS_CLASSES;
+    public isHighlightedColumn(column: AgColumn | null): boolean {
+        return column != null && column === this.highlightedColumn;
     }
 
     private setHighlightedColumn(column: AgColumn | null | undefined): void {
@@ -172,8 +146,8 @@ export class CalculatedColumnsService
         }
 
         const cellCtrls = this.beans.rowRenderer.getCellCtrls(null, [column]);
-        for (let i = 0, len = cellCtrls.length; i < len; i++) {
-            cellCtrls[i].refreshServiceCssClasses();
+        for (const cellCtrl of cellCtrls) {
+            cellCtrl.refreshCalculatedColumnCss();
         }
         this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
     }

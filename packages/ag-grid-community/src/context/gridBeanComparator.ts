@@ -54,7 +54,6 @@ const orderedCoreBeans: BeanName[] = [
     'focusSvc',
     'cellNavigation',
     'cellStyles',
-    'columnCssClassSvc',
     'scrollVisibleSvc',
     'sortSvc',
     'colHover',

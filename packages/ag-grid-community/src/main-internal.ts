@@ -549,7 +549,6 @@ export type { RowRangeSelectionContext } from './selection/rowRangeSelectionCont
 export type { RowNodeSorter } from './sort/rowNodeSorter';
 export type { SortService } from './sort/sortService';
 export type { CellStyleService } from './styling/cellStyleService';
-export type { ColumnCssClassProvider } from './styling/columnCssClassService';
 export { coreDefaults as _coreThemeDefaults } from './theming/core/core-css';
 export {
     themeAlpineParams as _themeAlpineParams,
