@@ -6,7 +6,11 @@
         border-top-color: var(--ag-border-color);
         color: var(--ag-secondary-foreground-color);
         height: var(--ag-pagination-panel-height);
+        overflow: auto hidden;
+        scrollbar-width: thin;
+    }
 
+    .ag-paging-panel-content {
         > * {
             margin: 0 var(--ag-cell-horizontal-padding);
         }
@@ -40,6 +44,8 @@
         padding-right: calc(var(--ag-grid-size) * 4);
         padding-left: calc(var(--ag-grid-size) * 4);
         line-height: 1.5;
+        overflow: auto hidden;
+        scrollbar-width: thin;
     }
 
     .ag-status-name-value-value {
