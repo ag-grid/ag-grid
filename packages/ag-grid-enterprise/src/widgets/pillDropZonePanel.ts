@@ -171,7 +171,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
         const target = e.target as HTMLElement | null;
         if (target) {
-            _scrollContainerHorizontallyToShowChild(root, target);
+            _scrollHorizontallyToShow(target);
         }
     }
 
@@ -202,7 +202,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
             if (el) {
                 el.focus();
-                _scrollContainerHorizontallyToShowChild(root, el);
+                _scrollHorizontallyToShow(el);
             }
         }
     }
@@ -684,8 +684,16 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 }
 
-// Like Element.scrollIntoView, but only scrolls the container not the page
-function _scrollContainerHorizontallyToShowChild(container: HTMLElement, target: HTMLElement): void {
+// Like Element.scrollIntoView, but only scrolls within the grid, not the page.
+function _scrollHorizontallyToShow(target: HTMLElement): void {
+    let container: HTMLElement | null = target;
+    while (container && !_canScrollHorizontally(container)) {
+        const parentEl: HTMLElement | null = container.parentElement;
+        container = parentEl?.className.startsWith('ag-') ? parentEl : null;
+    }
+    if (!container) {
+        return;
+    }
     if (target === _findFocusableElements(container, null, true)[0]) {
         container.scrollLeft = 0;
     }
@@ -696,4 +704,9 @@ function _scrollContainerHorizontallyToShowChild(container: HTMLElement, target:
     } else if (t.right > c.right) {
         container.scrollLeft += t.right - c.right;
     }
+}
+
+function _canScrollHorizontally(el: HTMLElement): boolean {
+    const overflowX = getComputedStyle(el).overflowX;
+    return overflowX === 'auto' || overflowX === 'scroll';
 }
