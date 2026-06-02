@@ -135,6 +135,7 @@ import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
 import type { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
+import type { CalculatedColumnsOptions } from '../interfaces/iCalculatedColumns';
 import type {
     DoesExternalFilterPass,
     FillOperation,
@@ -409,6 +410,11 @@ export interface GridOptions<TData = any> {
      * or can be custom data types.
      */
     dataTypeDefinitions?: DataTypeDefinitions<TData>;
+    /**
+     * Configures the Calculated Columns dialog.
+     * @agModule `CalculatedColumnsModule`
+     */
+    calculatedColumns?: CalculatedColumnsOptions;
     /**
      * Keeps the order of Columns maintained after new Column Definitions are updated.
      *

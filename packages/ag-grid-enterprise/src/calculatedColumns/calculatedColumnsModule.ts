@@ -4,7 +4,12 @@ import { ColumnApiModule, TooltipModule, _PopupModule } from 'ag-grid-community'
 import { FormulaModule } from '../formula/formulaModule';
 import { VERSION } from '../version';
 import calculatedColumnsCSS from './calculatedColumns.css';
-import { addCalculatedColumn, removeCalculatedColumn, updateCalculatedColumn } from './calculatedColumnsApi';
+import {
+    addCalculatedColumn,
+    openCalculatedColumnDialog,
+    removeCalculatedColumn,
+    updateCalculatedColumn,
+} from './calculatedColumnsApi';
 import { CalculatedColumnsService } from './calculatedColumnsService';
 
 /**
@@ -18,6 +23,7 @@ export const CalculatedColumnsModule: _ModuleWithApi<_CalculatedColumnsGridApi<a
         addCalculatedColumn,
         updateCalculatedColumn,
         removeCalculatedColumn,
+        openCalculatedColumnDialog,
     },
     dependsOn: [FormulaModule, _PopupModule, ColumnApiModule, TooltipModule],
     icons: {

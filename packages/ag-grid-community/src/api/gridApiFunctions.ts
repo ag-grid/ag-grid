@@ -382,6 +382,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         addCalculatedColumn: 0,
         updateCalculatedColumn: 0,
         removeCalculatedColumn: 0,
+        openCalculatedColumnDialog: 0,
     }),
 
     ...mod<_ContextMenuGridApi>('ContextMenu', {

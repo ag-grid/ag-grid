@@ -109,6 +109,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     alignedGrids: 'AlignedGrids',
     allowContextMenuWithControlKey: 'ContextMenu',
     autoSizeStrategy: 'ColumnAutoSize',
+    calculatedColumns: 'CalculatedColumns',
     cellSelection: 'CellSelection',
     columnHoverHighlight: 'ColumnHover',
     datasource: 'InfiniteRowModel',
@@ -173,6 +174,37 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         autoSizePadding: {
             validate({ autoSizePadding }) {
                 return toConstrainedNum('autoSizePadding', autoSizePadding, 0);
+            },
+        },
+        calculatedColumns: {
+            validate({ calculatedColumns }) {
+                if (calculatedColumns == null) {
+                    return null;
+                }
+                if (typeof calculatedColumns !== 'object' || Array.isArray(calculatedColumns)) {
+                    return 'calculatedColumns should be an object.';
+                }
+
+                const { dataTypes, helperLists, columnHighlighting } = calculatedColumns;
+                if (dataTypes != null) {
+                    if (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string')) {
+                        return 'calculatedColumns.dataTypes should be an array of strings.';
+                    }
+                }
+                if (helperLists != null) {
+                    const validHelperLists = new Set(['columns', 'functions', 'operators']);
+                    if (
+                        !Array.isArray(helperLists) ||
+                        helperLists.some((helperList) => !validHelperLists.has(helperList))
+                    ) {
+                        return "calculatedColumns.helperLists should contain only 'columns', 'functions' or 'operators'.";
+                    }
+                }
+                if (columnHighlighting != null && typeof columnHighlighting !== 'boolean') {
+                    return 'calculatedColumns.columnHighlighting should be a boolean.';
+                }
+
+                return null;
             },
         },
         cacheBlockSize: {

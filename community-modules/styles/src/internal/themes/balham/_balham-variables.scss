@@ -58,6 +58,7 @@
     --ag-header-column-separator-color: #{color.change(#bdc3c7, $alpha: 0.5)};
     --ag-input-disabled-border-color: #{color.change(#95a5a6, $alpha: 0.3)};
     --ag-row-numbers-selected-color: color-mix(in srgb, transparent, var(--ag-balham-active-color) 50%);
+    --ag-calculated-column-highlight-color: color-mix(in srgb, transparent, var(--ag-balham-active-color) 50%);
 
     --ag-toolbar-text-color: var(--ag-header-foreground-color);
 

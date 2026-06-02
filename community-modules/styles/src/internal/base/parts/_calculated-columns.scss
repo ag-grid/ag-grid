@@ -82,4 +82,8 @@
     .ag-calculated-column-action {
         min-width: 72px;
     }
+
+    .ag-calculated-column-highlighted {
+        background-color: var(--ag-calculated-column-highlight-color);
+    }
 }

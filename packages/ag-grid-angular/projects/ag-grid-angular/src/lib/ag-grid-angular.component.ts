@@ -34,6 +34,7 @@ import type {
     CalculatedColumnExpressionChangedEvent,
     CalculatedColumnRemovedEvent,
     CalculatedColumnValidationStateChangedEvent,
+    CalculatedColumnsOptions,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -575,6 +576,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * or can be custom data types.
      */
     @Input() public dataTypeDefinitions: DataTypeDefinitions<TData> | undefined = undefined;
+    /** Configures the Calculated Columns dialog.
+     * @agModule `CalculatedColumnsModule`
+     */
+    @Input() public calculatedColumns: CalculatedColumnsOptions | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
      *
      * @default false

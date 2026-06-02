@@ -539,6 +539,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return this.formatValueFuncs[cellDataType];
     }
 
+    public isDataTypeRegistered(cellDataType: string): boolean {
+        return this.dataTypeDefinitions[cellDataType] != null;
+    }
+
     public isColPendingInference(colId: string): boolean {
         return this.isPendingInference && !!this.columnStateUpdatesPendingInference[colId];
     }

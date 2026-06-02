@@ -1,13 +1,17 @@
 import type {
     AgColumn,
     CalculatedColumnDef,
+    CalculatedColumnHelperList,
     CalculatedColumnUpdate,
     CalculatedColumnValidationReason,
+    CellCssClassProviderParams,
     ColDef,
     ColGroupDef,
     ColKey,
     Column,
+    ColumnCssClassProvider,
     ColumnEventType,
+    HeaderCssClassProviderParams,
     ICalculatedColumnsService,
     NamedBean,
 } from 'ag-grid-community';
@@ -15,8 +19,18 @@ import { BeanStub, _isStringLargerThan, _warnOnce } from 'ag-grid-community';
 
 import type { FormulaError } from '../formula/ast/utils';
 import { Dialog } from '../widgets/dialog';
-import type { CalculatedColumnDraft, CalculatedColumnType, ColumnSuggestion } from './calculatedColumnForm';
-import { CALCULATED_COLUMN_TYPES, CalculatedColumnForm, DEFAULT_DRAFT } from './calculatedColumnForm';
+import type {
+    CalculatedColumnDataTypeOption,
+    CalculatedColumnDraft,
+    CalculatedColumnType,
+    ColumnSuggestion,
+} from './calculatedColumnForm';
+import {
+    CalculatedColumnForm,
+    DEFAULT_CALCULATED_COLUMN_DATA_TYPES,
+    DEFAULT_CALCULATED_COLUMN_HELPER_LISTS,
+    DEFAULT_DRAFT,
+} from './calculatedColumnForm';
 import {
     createCalculatedColumnReferenceMapper,
     translateCalculatedColumnReferenceError,
@@ -30,6 +44,23 @@ import {
 } from './calculatedColumnUtils';
 
 type ValidationState = 'valid' | CalculatedColumnValidationReason;
+
+const BASE_DATA_TYPE_LOCALE_KEYS: Record<string, string> = {
+    text: 'dataTypeText',
+    number: 'dataTypeNumber',
+    bigint: 'dataTypeBigInt',
+    boolean: 'dataTypeBoolean',
+    date: 'dataTypeDate',
+    dateString: 'dataTypeDateString',
+    dateTime: 'dataTypeDateTime',
+    dateTimeString: 'dataTypeDateTimeString',
+    object: 'dataTypeObject',
+};
+
+const CSS_CALCULATED_COLUMN = 'ag-calculated-column';
+const CSS_CALCULATED_COLUMN_HIGHLIGHTED = 'ag-calculated-column-highlighted';
+const CALCULATED_COLUMN_CSS_CLASSES = [CSS_CALCULATED_COLUMN];
+const HIGHLIGHTED_CALCULATED_COLUMN_CSS_CLASSES = [CSS_CALCULATED_COLUMN, CSS_CALCULATED_COLUMN_HIGHLIGHTED];
 
 type CalcColEventCommonParams = {
     column: AgColumn;
@@ -57,7 +88,10 @@ type DynamicCalculatedColumnSuppression = {
     targetColDef: ColDef | null;
 };
 
-export class CalculatedColumnsService extends BeanStub implements NamedBean, ICalculatedColumnsService {
+export class CalculatedColumnsService
+    extends BeanStub
+    implements NamedBean, ICalculatedColumnsService, ColumnCssClassProvider
+{
     public readonly beanName = 'calculatedColsSvc' as const;
 
     // calculated columns added via API/dialog, projected into the column tree (not in user `columnDefs`).
@@ -74,8 +108,11 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private validationStatesInitialised = false;
     // re-entry counter: when > 0, projection-triggered refreshes skip validation checks.
     private suppressValidationChecks = 0;
+    private highlightedColumn: AgColumn | null = null;
 
     public postConstruct(): void {
+        this.beans.columnCssClassSvc.addProvider(this);
+
         this.addManagedEventListeners({
             newColumnsLoaded: (event) => this.checkValidationStates(event.source),
             gridColumnsChanged: () => this.refreshCalculatedColumnSpans(),
@@ -98,6 +135,48 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
 
         rowSpanSvc.refreshColumnSpansForCols(calculatedColumns);
+    }
+
+    public getCellCssClasses(params: CellCssClassProviderParams): string[] {
+        return this.getColumnCssClasses(params.column);
+    }
+
+    public getHeaderCssClasses(params: HeaderCssClassProviderParams): string[] {
+        return this.getColumnCssClasses(params.column);
+    }
+
+    private getColumnCssClasses(column: AgColumn | null): string[] {
+        if (column?.colDef.calculatedExpression == null) {
+            return [];
+        }
+
+        return column === this.highlightedColumn
+            ? HIGHLIGHTED_CALCULATED_COLUMN_CSS_CLASSES
+            : CALCULATED_COLUMN_CSS_CLASSES;
+    }
+
+    private setHighlightedColumn(column: AgColumn | null | undefined): void {
+        const nextColumn = this.gos.get('calculatedColumns')?.columnHighlighting === true ? (column ?? null) : null;
+        if (this.highlightedColumn === nextColumn) {
+            return;
+        }
+
+        const previousColumn = this.highlightedColumn;
+        this.highlightedColumn = nextColumn;
+        this.refreshCalculatedColumnHighlight(previousColumn);
+        this.refreshCalculatedColumnHighlight(nextColumn);
+    }
+
+    private refreshCalculatedColumnHighlight(column: AgColumn | null): void {
+        if (column == null) {
+            return;
+        }
+
+        const cellCtrls = this.beans.rowRenderer.getCellCtrls(null, [column]);
+        for (let i = 0, len = cellCtrls.length; i < len; i++) {
+            cellCtrls[i].refreshServiceCssClasses();
+        }
+        this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
     }
 
     private releaseVisibleAnchors(columns: Column[] | null | undefined): void {
@@ -237,7 +316,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (mode === 'add') {
             const colId = this.createUniqueColId();
             const headerName = this.getLocaleTextFunc()('calculatedColumnDefaultTitle', 'New title');
-            const draft: CalculatedColumnDraft = { colId, headerName, ...DEFAULT_DRAFT };
+            const draft: CalculatedColumnDraft = { colId, headerName, ...this.getDefaultDraft() };
             this.showDialog(draft, (nextDraft) => {
                 const isDynamicAnchor = column != null && this.getDynamicColumn(column.colId) != null;
                 const anchorColDef = isDynamicAnchor ? undefined : column?.getUserProvidedColDef();
@@ -276,11 +355,14 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             return;
         }
         const draft = this.toDraft(column);
-        this.focusCalculatedColumn(draft.colId);
-        this.showDialog(draft, (nextDraft) => {
-            const { colId: _, ...update } = this.toColDef(nextDraft);
-            this.updateCalculatedColumn(column.colId, update, 'calculatedColumn');
-        });
+        this.showDialog(
+            draft,
+            (nextDraft) => {
+                const { colId: _, ...update } = this.toColDef(nextDraft);
+                this.updateCalculatedColumn(column.colId, update, 'calculatedColumn');
+            },
+            column
+        );
     }
 
     public removeCalculatedColumn(column: AgColumn | null, source: 'api' | 'calculatedColumn' = 'api'): void {
@@ -610,7 +692,11 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
     }
 
-    private showDialog(draft: CalculatedColumnDraft, onApply: (draft: CalculatedColumnDraft) => void): void {
+    private showDialog(
+        draft: CalculatedColumnDraft,
+        onApply: (draft: CalculatedColumnDraft) => void,
+        columnToHighlight?: AgColumn | null
+    ): void {
         const state: { close?: () => void; resolved: boolean } = { resolved: false };
         const mapper = createCalculatedColumnReferenceMapper(
             this.beans,
@@ -655,10 +741,13 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             state.resolved = true;
             state.close?.();
         };
+        const dataTypeOptions = this.getDataTypeOptions(draft.cellDataType);
 
         const form = this.createManagedBean(
             new CalculatedColumnForm(
                 draft,
+                dataTypeOptions,
+                this.getHelperLists(),
                 () => mapper.suggestions,
                 () => this.getFunctionSuggestions(),
                 handleValidate,
@@ -682,11 +771,79 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             })
         );
         state.close = () => dialog.close();
+        this.setHighlightedColumn(columnToHighlight);
         const destroyDialogMouseListeners = this.addManagedElementListeners(dialog.getGui(), {
             mousedown: () => form.hideSuggestions(),
         });
         dialog.addDestroyFunc(() => destroyDialogMouseListeners.forEach((destroyFunc) => destroyFunc()));
+        dialog.addDestroyFunc(() => this.setHighlightedColumn(null));
         dialog.addEventListener('destroyed', () => this.destroyBean(form));
+    }
+
+    private getDefaultDraft(): Omit<CalculatedColumnDraft, 'colId' | 'headerName'> {
+        const firstDataType = this.getDataTypeOptions()[0]?.value ?? DEFAULT_DRAFT.cellDataType;
+        return {
+            ...DEFAULT_DRAFT,
+            cellDataType: firstDataType,
+        };
+    }
+
+    private getDataTypeOptions(currentDataType?: string): CalculatedColumnDataTypeOption[] {
+        const configuredDataTypes = this.gos.get('calculatedColumns')?.dataTypes;
+        const dataTypes = this.getValidDataTypes(configuredDataTypes ?? DEFAULT_CALCULATED_COLUMN_DATA_TYPES);
+
+        if (
+            currentDataType != null &&
+            dataTypes.indexOf(currentDataType) < 0 &&
+            this.isValidDataType(currentDataType)
+        ) {
+            dataTypes.push(currentDataType);
+        }
+
+        return dataTypes.map((dataType) => ({
+            value: dataType,
+            text: this.getDataTypeDisplayName(dataType),
+        }));
+    }
+
+    private getValidDataTypes(dataTypes: readonly string[]): CalculatedColumnType[] {
+        const validDataTypes: CalculatedColumnType[] = [];
+        for (let i = 0, len = dataTypes.length; i < len; i++) {
+            const dataType = dataTypes[i];
+            if (validDataTypes.indexOf(dataType) >= 0) {
+                continue;
+            }
+
+            if (this.isValidDataType(dataType)) {
+                validDataTypes.push(dataType);
+            } else {
+                _warnOnce(`calculatedColumns.dataTypes contains an unknown cell data type: "${dataType}".`);
+            }
+        }
+
+        return validDataTypes.length ? validDataTypes : [...DEFAULT_CALCULATED_COLUMN_DATA_TYPES];
+    }
+
+    private isValidDataType(dataType: string): boolean {
+        return this.beans.dataTypeSvc?.isDataTypeRegistered(dataType) ?? dataType in BASE_DATA_TYPE_LOCALE_KEYS;
+    }
+
+    private getDataTypeDisplayName(dataType: string): string {
+        const localeKey = BASE_DATA_TYPE_LOCALE_KEYS[dataType];
+        if (localeKey != null) {
+            return this.getLocaleTextFunc()(localeKey, this.capitaliseDataType(dataType));
+        }
+
+        return this.capitaliseDataType(dataType);
+    }
+
+    private capitaliseDataType(dataType: string): string {
+        return dataType.length ? dataType[0].toLocaleUpperCase() + dataType.slice(1) : dataType;
+    }
+
+    private getHelperLists(): CalculatedColumnHelperList[] {
+        const helperLists = this.gos.get('calculatedColumns')?.helperLists;
+        return helperLists?.length ? helperLists : [...DEFAULT_CALCULATED_COLUMN_HELPER_LISTS];
     }
 
     private toDraft(column: AgColumn): CalculatedColumnDraft {
@@ -698,10 +855,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return {
             colId,
             headerName: colDef.headerName ?? displayName ?? colId,
-            cellDataType:
-                typeof cellDataType === 'string' && cellDataType in CALCULATED_COLUMN_TYPES
-                    ? (cellDataType as CalculatedColumnType)
-                    : DEFAULT_DRAFT.cellDataType,
+            cellDataType: typeof cellDataType === 'string' ? cellDataType : DEFAULT_DRAFT.cellDataType,
             calculatedExpression: createCalculatedColumnReferenceMapper(
                 this.beans,
                 this.beans.colModel.getCols() ?? [],

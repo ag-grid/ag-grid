@@ -13,7 +13,6 @@ import type { IAbstractHeaderCellComp } from './abstractCell/abstractHeaderCellC
 
 const CSS_FIRST_COLUMN = 'ag-column-first';
 const CSS_LAST_COLUMN = 'ag-column-last';
-const CSS_CALCULATED_COLUMN = 'ag-calculated-column';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getHeaderClassesFromColDef(
@@ -22,15 +21,14 @@ export function _getHeaderClassesFromColDef(
     column: AgColumn | null,
     columnGroup: AgColumnGroup | null
 ): string[] {
-    const calculatedClasses =
-        column?.colDef.calculatedExpression != null && beans.calculatedColsSvc != null ? [CSS_CALCULATED_COLUMN] : [];
+    const providerClasses = beans.columnCssClassSvc.getHeaderClasses(column, columnGroup);
 
     if (_missing(abstractColDef)) {
-        return calculatedClasses;
+        return providerClasses;
     }
 
     return [
-        ...calculatedClasses,
+        ...providerClasses,
         ...getColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, beans.gos, column, columnGroup),
     ];
 }

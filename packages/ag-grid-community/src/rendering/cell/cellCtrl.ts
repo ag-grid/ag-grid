@@ -60,7 +60,6 @@ const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
 const CSS_CELL_LAST_LEFT_PINNED = 'ag-cell-last-left-pinned';
 const CSS_CELL_NOT_INLINE_EDITING = 'ag-cell-not-inline-editing';
 const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
-const CSS_CALCULATED_COLUMN = 'ag-calculated-column';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ICellComp {
@@ -116,6 +115,7 @@ export class CellCtrl extends BeanStub {
     public editStyleFeature: ICellStyleFeature | undefined = undefined;
     private mouseListener: CellMouseListenerFeature | undefined = undefined;
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
+    private serviceCssClasses: Set<string> = new Set();
 
     public cellPosition: CellPosition;
 
@@ -990,7 +990,7 @@ export class CellCtrl extends BeanStub {
         const autoHeight = this.column.isAutoHeight() == true;
         comp.toggleCss(CSS_AUTO_HEIGHT, autoHeight);
         comp.toggleCss(CSS_NORMAL_HEIGHT, !autoHeight);
-        this.setCalculatedColumnCss();
+        this.setServiceCssClasses();
     }
 
     public onColumnHover(): void {
@@ -1010,7 +1010,7 @@ export class CellCtrl extends BeanStub {
         }
 
         this.setWrapText();
-        this.setCalculatedColumnCss();
+        this.setServiceCssClasses();
 
         if (this.editSvc?.isEditing(this)) {
             this.editSvc?.handleColDefChanged(this);
@@ -1025,12 +1025,30 @@ export class CellCtrl extends BeanStub {
         this.comp.toggleCss(CSS_CELL_WRAP_TEXT, value);
     }
 
-    private setCalculatedColumnCss(): void {
-        this.comp.toggleCss(CSS_CALCULATED_COLUMN, this.isCalculatedColumn());
+    private setServiceCssClasses(): void {
+        const classes = this.beans.columnCssClassSvc.getCellClasses(this.column, this.rowNode);
+        const oldClasses = this.serviceCssClasses;
+        this.serviceCssClasses = new Set(classes);
+
+        for (const cssClass of classes) {
+            if (oldClasses.has(cssClass)) {
+                oldClasses.delete(cssClass);
+            } else {
+                this.comp.toggleCss(cssClass, true);
+            }
+        }
+
+        for (const cssClass of oldClasses) {
+            this.comp.toggleCss(cssClass, false);
+        }
     }
 
     private isCalculatedColumn(): boolean {
         return this.column.isCalculatedCol;
+    }
+
+    public refreshServiceCssClasses(): void {
+        this.setServiceCssClasses();
     }
 
     public dispatchCellContextMenuEvent(event: Event | null) {

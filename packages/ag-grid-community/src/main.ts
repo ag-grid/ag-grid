@@ -243,6 +243,8 @@ export type { IAdvancedFilterParams } from './interfaces/iAdvancedFilterParams';
 export type { ContainerType, IAfterGuiAttachedParams } from './interfaces/iAfterGuiAttachedParams';
 export type {
     CalculatedColumnDef,
+    CalculatedColumnHelperList,
+    CalculatedColumnsOptions,
     CalculatedColumnUpdate,
     ICalculatedColumnsService,
 } from './interfaces/iCalculatedColumns';

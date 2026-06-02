@@ -425,6 +425,7 @@
         "rangeSelectionBorderStyle": {},
         "rangeSelectionHighlightColor": {},
         "rangeHeaderHighlightColor": {},
+        "calculatedColumnHighlightColor": {},
         "rangeSelectionChartBackgroundColor": {},
         "rangeSelectionChartCategoryBackgroundColor": {}
     },

@@ -419,6 +419,11 @@ export interface CoreParams extends SharedThemeParams {
     rangeHeaderHighlightColor: ColorValue;
 
     /**
+     * Background color for the calculated column currently being edited.
+     */
+    calculatedColumnHighlightColor: ColorValue;
+
+    /**
      * Color of the indicator line used to show where a row will be inserted when dragging to reorder rows
      */
     rowDragIndicatorColor: ColorValue;
@@ -884,6 +889,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     rangeSelectionChartCategoryBackgroundColor: '#00FF841A',
     rangeSelectionHighlightColor: accentMix(0.5),
     rangeHeaderHighlightColor: foregroundHeaderBackgroundMix(0.08),
+    calculatedColumnHighlightColor: accentMix(0.5),
     rowNumbersSelectedColor: accentMix(0.5),
     rowHoverColor: accentMix(0.08),
     columnHoverColor: accentMix(0.05),

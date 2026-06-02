@@ -1423,6 +1423,12 @@
                 "name": "Calculated Columns API",
                 "url": "./calculated-columns/#api"
             }
+        },
+        "openCalculatedColumnDialog": {
+            "more": {
+                "name": "Calculated Columns API",
+                "url": "./calculated-columns/#api"
+            }
         }
     }
 }

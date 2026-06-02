@@ -203,6 +203,12 @@
                 "url": "./cell-data-types/#providing-custom-cell-data-types"
             }
         },
+        "calculatedColumns": {
+            "more": {
+                "name": "Calculated Columns",
+                "url": "./calculated-columns/"
+            }
+        },
         "maintainColumnOrder": {
             "more": {
                 "name": "Maintain Column Order",

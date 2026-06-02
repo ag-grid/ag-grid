@@ -43,6 +43,7 @@ import { OverlayModule } from './rendering/overlays/overlayModule';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
 import { SortModule } from './sort/sortModule';
+import { ColumnCssClassService } from './styling/columnCssClassService';
 import { SyncService } from './syncService';
 import { ChangeDetectionModule, ExpressionModule } from './valueService/valueModule';
 import { ValueService } from './valueService/valueService';
@@ -76,6 +77,7 @@ export const CommunityCoreModule: _ModuleWithApi<_CoreGridApi> = {
         ColumnNameService,
         ColumnViewportService,
         IconService,
+        ColumnCssClassService,
     ],
     icons: {
         // icon on select dropdowns (select cell editor, charts tool panels)
