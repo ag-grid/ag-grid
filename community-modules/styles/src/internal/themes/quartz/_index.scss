@@ -601,13 +601,6 @@
         margin: 0;
     }
 
-    .ag-layout-auto-height,
-    .ag-layout-print {
-        .ag-grid-scrolling-container {
-            min-height: 150px;
-        }
-    }
-
     .ag-date-time-list-page-entry-is-current {
         background-color: var(--ag-active-color);
     }

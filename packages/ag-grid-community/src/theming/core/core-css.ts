@@ -54,6 +54,11 @@ export interface CoreParams extends SharedThemeParams {
     advancedFilterBuilderValuePillColor: ColorValue;
 
     /**
+     * Minimum height of the grid's rows section when using auto-height or print layout. This prevents an empty grid from collapsing to nothing. Set to `0` to remove the minimum height.
+     */
+    autoHeightMinBodyHeight: LengthValue;
+
+    /**
      * Padding at the start and end of grid cells and header cells.
      */
     cellHorizontalPadding: LengthValue;
@@ -454,7 +459,12 @@ export interface CoreParams extends SharedThemeParams {
     rowHeight: LengthValue;
 
     /**
-     * Height of the pagination panel at the bottom of the grid. Defaults to the higher of rowHeight or 22px.
+     * Minimum height of picker fields such as select dropdowns and color pickers. Picker fields may be taller than this if they contain larger content.
+     */
+    pickerFieldHeight: LengthValue;
+
+    /**
+     * Height of the pagination panel at the bottom of the grid.
      */
     paginationPanelHeight: LengthValue;
 
@@ -893,6 +903,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
         calc: 'spacing * 1.5',
     },
     cellHorizontalPaddingScale: 1,
+    autoHeightMinBodyHeight: 150,
     rowGroupIndentSize: {
         calc: 'cellWidgetSpacing + iconSize',
     },
@@ -903,9 +914,13 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
         calc: 'max(iconSize, cellFontSize) + spacing * 3.25 * rowVerticalPaddingScale',
     },
     rowVerticalPaddingScale: 1,
+    // Unlike other picker field params, pickerFieldHeight must be a core param
+    // because the pagination panel height depends on it
+    pickerFieldHeight: {
+        calc: 'max(iconSize, fontSize) + spacing * 2',
+    },
     paginationPanelHeight: {
-        ref: 'rowHeight',
-        calc: 'max(rowHeight, 22px)',
+        calc: 'pickerFieldHeight + spacing * 2',
     },
     dragHandleColor: foregroundMix(0.7),
     headerColumnResizeHandleHeight: '30%',

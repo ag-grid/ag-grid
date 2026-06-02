@@ -197,6 +197,8 @@
 
         --ag-row-height: calc(var(--ag-grid-size) * 6 + 1px);
 
+        --ag-auto-height-min-body-height: 50px;
+
         --ag-header-height: var(--ag-row-height);
 
         --ag-pagination-panel-height: var(--ag-header-height);

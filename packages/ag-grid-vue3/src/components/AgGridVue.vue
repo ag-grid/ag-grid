@@ -1,9 +1,9 @@
 <script setup lang="ts" generic="TData = any">
 
-import { VueFrameworkComponentWrapper } from '@/components/VueFrameworkComponentWrapper';
-import { VueFrameworkOverrides } from '@/components/VueFrameworkOverrides';
-import type { Props } from '@/components/utils';
-import { debounce, deepToRaw, getProps } from '@/components/utils';
+import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
+import { VueFrameworkOverrides } from './VueFrameworkOverrides';
+import type { Props } from './utils';
+import { debounce, deepToRaw, getProps } from './utils';
 import type { Ref } from 'vue';
 import { getCurrentInstance, markRaw, onMounted, onUnmounted, shallowRef, toRefs, useTemplateRef, watch } from 'vue';
 
