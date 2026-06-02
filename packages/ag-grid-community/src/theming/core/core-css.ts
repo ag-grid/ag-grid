@@ -54,6 +54,11 @@ export interface CoreParams extends SharedThemeParams {
     advancedFilterBuilderValuePillColor: ColorValue;
 
     /**
+     * Minimum height of the grid's rows section when using auto-height or print layout. This prevents an empty grid from collapsing to nothing. Set to `0` to remove the minimum height.
+     */
+    autoHeightMinBodyHeight: LengthValue;
+
+    /**
      * Padding at the start and end of grid cells and header cells.
      */
     cellHorizontalPadding: LengthValue;
@@ -893,6 +898,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
         calc: 'spacing * 1.5',
     },
     cellHorizontalPaddingScale: 1,
+    autoHeightMinBodyHeight: 150,
     rowGroupIndentSize: {
         calc: 'cellWidgetSpacing + iconSize',
     },

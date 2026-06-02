@@ -393,6 +393,10 @@
             "description": "Height of grid rows",
             "type": "CSS length (e.g. `0`, `4px` or `50%`)"
         },
+        "--ag-auto-height-min-body-height": {
+            "description": "Minimum height of the grid's rows section when using auto-height or print layout. This prevents an empty grid from collapsing to nothing. Set to `0` to remove the minimum height.",
+            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+        },
         "--ag-header-height": {
             "description": "Height of header rows",
             "type": "CSS length (e.g. `0`, `4px` or `50%`)"
