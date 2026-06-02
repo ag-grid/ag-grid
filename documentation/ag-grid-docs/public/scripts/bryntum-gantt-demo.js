@@ -395,9 +395,16 @@ bryntumDemoInit('gantt', 'live-gantt-demo', function (api) {
         },
     });
 
-    project.load().then(() => {
-        const stm = gantt.project.stm;
-        stm.enable();
-        stm.autoRecord = true;
-    });
+    project
+        .load()
+        .then(() => {
+            const stm = gantt.project.stm;
+            stm.enable();
+            stm.autoRecord = true;
+        })
+        .catch((err) => {
+            // Data fetch from bryntum.com failed (offline, CDN/path change, or
+            // CSP block). Warn rather than leaving an unexplained empty Gantt.
+            console.warn('[bryntum-demo] Gantt data failed to load:', err);
+        });
 });

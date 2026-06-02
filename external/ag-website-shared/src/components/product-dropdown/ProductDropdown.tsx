@@ -41,8 +41,13 @@ interface ProductGroup {
  */
 type ProductMenu = ProductGroup[] | ProductItem[];
 
-const isGrouped = (menu: ProductMenu): menu is ProductGroup[] =>
-    menu.length > 0 && (menu as ProductGroup[])[0].items !== undefined;
+const isGrouped = (menu: ProductMenu): menu is ProductGroup[] => {
+    // Inspect the first element to decide which shape we were handed. Guard
+    // against an empty array or a malformed/non-object first entry so a stray
+    // `menu.json` can't crash this shared component.
+    const first = menu[0];
+    return first != null && typeof first === 'object' && 'items' in first;
+};
 
 export const ProductDropdown = ({ items, children }: { items: ProductMenu; children?: React.ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false);

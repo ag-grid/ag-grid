@@ -79,6 +79,19 @@ const resolveBryntumBodyHref = (href: string): string | null => {
     return null;
 };
 
+// Defence-in-depth before the curated body_html reaches Astro's `set:html`.
+// The content originates from scraped bryntum.com markup, so strip anything
+// that could execute if a future re-scrape introduced it: <script>/<iframe>/
+// <object>/<embed> tags, inline event-handler attributes (onclick=…), and
+// `javascript:` URIs. The content currently carries none of these — this turns
+// "we eyeballed it once" into an enforced invariant rather than a manual check.
+const stripActiveMarkup = (html: string): string =>
+    html
+        .replace(/<\s*(script|iframe|object|embed)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi, '')
+        .replace(/<\s*(script|iframe|object|embed)\b[^>]*\/?>/gi, '')
+        .replace(/\son\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+        .replace(/((?:href|src)\s*=\s*)(["'])\s*javascript:[^"']*\2/gi, '$1$2#$2');
+
 // Walk an HTML string and rewrite every anchor href that targets Bryntum —
 // either an absolute bryntum.com URL or a curated relative path from the
 // scraped content (e.g. "/products/scheduler/examples/export/") — to its
@@ -88,7 +101,7 @@ export const decorateBryntumHtml = (html: string | undefined): string => {
     if (!html) {
         return '';
     }
-    return html.replace(/(<a\b[^>]*\bhref=)(["'])([^"']+)\2/gi, (match, prefix, quote, url) => {
+    return stripActiveMarkup(html).replace(/(<a\b[^>]*\bhref=)(["'])([^"']+)\2/gi, (match, prefix, quote, url) => {
         const resolved = resolveBryntumBodyHref(url);
         return resolved ? `${prefix}${quote}${resolved}${quote}` : match;
     });
