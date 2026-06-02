@@ -93,7 +93,7 @@ export function evalAst(
 ): unknown {
     if (node.type === 'operand') {
         const v = node.value;
-        if (typeof v !== 'object') {
+        if (typeof v !== 'object' || v == null) {
             return v; // primitive
         }
 
@@ -126,7 +126,7 @@ function operandToArg(
 ): FormulaParam {
     if (node.type === 'operand') {
         const v = node.value;
-        if (typeof v !== 'object') {
+        if (typeof v !== 'object' || v == null) {
             return { kind: 'value', value: v };
         }
 

@@ -255,7 +255,7 @@ const shiftRowRef = (beans: BeanCollection, rowDelta: number, ref?: CellRef, uns
 };
 
 const isCellOperand = (
-    value: string | number | boolean | Cell
+    value: string | number | boolean | Cell | null
 ): value is { column: CellRef; row: CellRef; endColumn?: CellRef; endRow?: CellRef } => {
     return (
         !!value && typeof value === 'object' && value !== null && 'row' in (value as any) && 'column' in (value as any)

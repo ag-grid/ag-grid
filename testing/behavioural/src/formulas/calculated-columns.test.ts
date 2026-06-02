@@ -1852,6 +1852,15 @@ describe('ag-grid calculated columns', () => {
         expect(getExpressionInput().validationMessage).toContain('Unsupported operation BOGUS');
         expect(api.getColumn('calculated_1')).toBeNull();
 
+        setExpression('IF([Revenue] > [Cost], "Allowed", "")');
+        expect(getExpressionInput()).not.toHaveClass('invalid');
+        expect(getExpressionInput().validationMessage).toBe('');
+
+        setExpression('IF([Revenue] > [Cost], "Allowed", )');
+        expect(getExpressionInput()).toHaveClass('invalid');
+        expect(getExpressionInput().validationMessage).toContain('Misplaced comma');
+        expect(api.getColumn('calculated_1')).toBeNull();
+
         setExpression('[Revenue] - [Cost]');
         expect(getExpressionInput()).not.toHaveClass('invalid');
         expect(getExpressionInput().validationMessage).toBe('');
