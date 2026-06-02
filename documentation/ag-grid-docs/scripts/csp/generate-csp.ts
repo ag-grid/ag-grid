@@ -3,7 +3,12 @@
 import { writeFileSync } from 'fs';
 
 import type { CspEnv, CspMode } from '../../src/utils/htaccess/cspRules';
-import { getCspHeaderName, getCspHtaccessLine, getCspValue } from '../../src/utils/htaccess/cspRules';
+import {
+    getCspHeaderName,
+    getCspHtaccessBlock,
+    getCspHtaccessLine,
+    getCspValue,
+} from '../../src/utils/htaccess/cspRules';
 
 /**
  * Generate the Content-Security-Policy for a given environment
@@ -73,7 +78,9 @@ function render(format: Format, env: CspEnv, mode: CspMode): string {
     if (format === 'header') {
         return `${getCspHeaderName(mode)}: ${getCspValue({ env })}`;
     }
-    return getCspHtaccessLine({ env }, mode);
+    // Staging unsets the legacy vhost wildcard and fully owns the policy (block);
+    // production runs dual-policy during its report-only window (bare line).
+    return env === 'staging' ? getCspHtaccessBlock({ env }, mode) : getCspHtaccessLine({ env }, mode);
 }
 
 function main(): void {

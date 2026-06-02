@@ -1,6 +1,6 @@
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
 import type { CspEnv } from './cspRules';
-import { getCspHtaccessLine } from './cspRules';
+import { getCspHtaccessBlock, getCspHtaccessLine } from './cspRules';
 import { SITE_301_REDIRECTS } from './redirects';
 
 export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
@@ -155,8 +155,9 @@ AddType application/x-gzip .gz .tgz
 function getStagingHtaccessContent(): string {
     return `${baseRules}
 
-# Content-Security-Policy — report-only while validating on staging
-${getCspHtaccessLine({ env: 'staging' }, 'report-only')}
+# Content-Security-Policy — report-only while validating on staging. Unsets the
+# legacy wildcard CSP on the staging vhost so this is the only policy in effect.
+${getCspHtaccessBlock({ env: 'staging' }, 'report-only')}
 
 Options -Indexes
 `;

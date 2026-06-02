@@ -159,3 +159,22 @@ export function getCspHeaderName(mode: CspMode): string {
 export function getCspHtaccessLine(options: CspOptions, mode: CspMode): string {
     return `Header always set ${getCspHeaderName(mode)} "${getCspValue(options)}"`;
 }
+
+/**
+ * Build the full `.htaccess` CSP block.
+ *
+ * Unsets both inherited header forms first so the page is governed only by this
+ * policy — clears the legacy wildcard CSP set on the staging vhost (otherwise it
+ * would be served alongside this one). Use for staging, where this .htaccess fully
+ * owns the policy; production keeps the vhost wildcard during its report-only window
+ * (dual-policy), so it uses getCspHtaccessLine instead.
+ */
+export function getCspHtaccessBlock(options: CspOptions, mode: CspMode): string {
+    return [
+        '# Clear any CSP set on the staging vhost (the legacy wildcard) so the page is',
+        '# governed only by the policy below.',
+        'Header always unset Content-Security-Policy',
+        'Header always unset Content-Security-Policy-Report-Only',
+        getCspHtaccessLine(options, mode),
+    ].join('\n');
+}
