@@ -290,7 +290,9 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         let chartElement = chartComp.getGui();
         let styledRootDestroy: (() => void) | undefined;
         if (!insideDialog) {
+            // The chart is being created outside the grid so we need to create a styled root
             [chartElement, styledRootDestroy] = _initDetachedStyledRoot(this.beans.environment, chartElement);
+            // If a container was supplied, append the chart (otherwise the chart will be passed to createChartContainerFunc)
             chartContainer?.appendChild(chartElement);
         }
 
@@ -300,6 +302,8 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
                     this.destroyBean(chartComp);
                     styledRootDestroy?.();
                     if (chartContainer) {
+                        // Only remove the chart if we added it (in the createChartContainerFunc case,
+                        // the application inserted it and is responsible for removing it)
                         chartElement.remove();
                     }
                     this.activeChartComps.delete(chartComp);

@@ -337,9 +337,8 @@ function getDefaultRowModelType(passedRowModelType?: RowModelType): RowModelType
  * The `gridElement` argument can be:
  * - the grid ID as determined by the `gridId` grid option
  * - a DOM node or a CSS selector string identifying a DOM node. This can point
- *   to any element within a grid, or to the application-owned element
- *   containing the grid. If the same application-owned element contains more
- *   than one grid, the GridApi for the first grid within it will be returned.
+ *   to any element within a grid, or to the parent element of the grid if the
+ *   grid is the first child.
  */
 export function getGridApi(gridElement: Element | string | null | undefined): GridApi | undefined {
     if (typeof gridElement === 'string') {
