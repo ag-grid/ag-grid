@@ -132,7 +132,6 @@ export interface AgDropTarget<
     external?: boolean;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IDragAndDropImage {
     setIcon(iconName: string | null, shake: boolean): void;
     setLabel(label: string): void;

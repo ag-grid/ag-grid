@@ -1104,5 +1104,5 @@ export type { IconName, Icons } from './utils/icon';
 export { agTestIdFor, wrapAgTestIdFor } from './testing/testIdUtils';
 export { setupAgTestIds } from './testing/testingModule';
 
-// Re export all the AG Grid Internals that are required by ag-grid-enterprise and ag-dash
+// Re export all the AG Grid Internals that are required by ag-grid-enterprise
 export * from './main-internal';

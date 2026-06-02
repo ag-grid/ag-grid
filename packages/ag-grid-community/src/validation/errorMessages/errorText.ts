@@ -18,7 +18,7 @@ import { USER_COMP_MODULES } from '../rules/userCompValidations';
 /** Formats a code snippet showing how to register modules — via AgGridProvider for React, or ModuleRegistry otherwise. */
 const moduleRegistrationSnippet = (imports: string[], moduleList: string, usesAgGridProvider?: boolean): string => {
     if (usesAgGridProvider) {
-        const allImports = ["import  { AgGridProvider, AgGridReact } from 'ag-grid-react';", ...imports];
+        const allImports = ["import { AgGridProvider, AgGridReact } from 'ag-grid-react';", ...imports];
         return `${allImports.join(' \n')}
 
 const modules = [ ${moduleList} ];
@@ -41,7 +41,7 @@ export const NoModulesRegisteredError = (usesAgGridProvider?: boolean) => {
     // For React users without AgGridProvider (false), guide them toward AgGridProvider
     const showAgGridProvider = usesAgGridProvider !== undefined;
     const imports = [
-        `import  { ${showAgGridProvider ? '' : 'ModuleRegistry, '}AllCommunityModule } from 'ag-grid-community';`,
+        `import { ${showAgGridProvider ? '' : 'ModuleRegistry, '}AllCommunityModule } from 'ag-grid-community';`,
     ];
 
     return `No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:
@@ -53,19 +53,19 @@ ${moduleRegistrationSnippet(imports, 'AllCommunityModule', showAgGridProvider)}
 const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean) => {
     const imports = moduleNames.map(
         (moduleName) =>
-            `import  { ${convertToUserModuleName(moduleName)} } from '${ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] ? 'ag-grid-enterprise' : 'ag-grid-community'}';`
+            `import { ${convertToUserModuleName(moduleName)} } from '${ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] ? 'ag-grid-enterprise' : 'ag-grid-community'}';`
     );
 
     const includeCharts = moduleNames.some((m) => m === 'IntegratedCharts' || m === 'Sparklines');
     if (includeCharts) {
-        const chartImport = `import  { AgChartsEnterpriseModule } from 'ag-charts-enterprise';`;
+        const chartImport = `import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';`;
         imports.push(chartImport);
     }
 
     const moduleList = moduleNames.map((m) => convertToUserModuleName(m, true)).join(', ');
 
     if (!usesAgGridProvider) {
-        imports.unshift("import  { ModuleRegistry } from 'ag-grid-community';");
+        imports.unshift("import { ModuleRegistry } from 'ag-grid-community';");
     }
     return `${moduleRegistrationSnippet(imports, moduleList, usesAgGridProvider)}
 
@@ -152,9 +152,9 @@ ${moduleImportMsg(resolvedModuleNames, usesAgGridProvider)}` + (additionalText ?
 const missingChartsWithModule = (gridModule: 'IntegratedChartsModule' | 'SparklinesModule') => {
     return `${gridModule} must be initialised with an AG Charts module. One of 'AgChartsCommunityModule' / 'AgChartsEnterpriseModule'.
 
-import  { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
-import  { ModuleRegistry } from 'ag-grid-community';
-import  { ${gridModule} } from 'ag-grid-enterprise';
+import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ${gridModule} } from 'ag-grid-enterprise';
     
 ModuleRegistry.registerModules([${gridModule}.with(AgChartsEnterpriseModule)]);
     ` as const;
