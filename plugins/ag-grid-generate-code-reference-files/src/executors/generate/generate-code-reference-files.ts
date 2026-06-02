@@ -814,14 +814,19 @@ export function getColumnTypes(columnFile: string, interfaces: string[]) {
     return members;
 }
 
-export function getThemeParams(themesFile: string) {
+export function getThemeParams(themesFile: string, stackThemesFile: string) {
     const srcFile = parseFile(themesFile);
     const auxSrcFiles = parseImportedDefinitions(path.dirname(themesFile), srcFile);
+    const stackSrcFile = parseFile(stackThemesFile);
+    const stackAuxSrcFiles = parseImportedDefinitions(path.dirname(stackThemesFile), stackSrcFile);
 
     let members = {};
 
     const resolveAndCollect = (name: string) => {
-        const node = silentFindNode(name, srcFile, auxSrcFiles);
+        let node = silentFindNode(name, srcFile, auxSrcFiles);
+        if (!node) {
+            node = silentFindNode(name, stackSrcFile, stackAuxSrcFiles);
+        }
         if (node) {
             collectMembers(node);
         }
@@ -859,5 +864,6 @@ export function getThemeParams(themesFile: string) {
     };
 
     resolveAndCollect('AllThemeParamsForAPIDocumentation');
+    resolveAndCollect('SharedThemeParams');
     return members;
 }
