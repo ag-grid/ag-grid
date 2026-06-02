@@ -23,7 +23,7 @@ import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
-import { _getHeaderClassesFromColDef } from '../cssClassApplier';
+import { _getHeaderClassesFromColDef, _refreshCssClasses } from '../cssClassApplier';
 import type { AgColumnHeader } from './agColumnHeader';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -60,7 +60,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private userCompDetails: UserCompDetails;
 
-    private userHeaderClasses: Set<string> = new Set();
+    private userHeaderClasses: Set<string> | undefined;
     private readonly ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
     private tooltipFeature: TooltipFeature | undefined;
 
@@ -146,7 +146,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             (this.selectAllFeature as any) = null;
             this.dragSourceElement = undefined;
             (this.userCompDetails as any) = null;
-            this.userHeaderClasses.clear();
+            this.userHeaderClasses?.clear();
             this.ariaDescriptionProperties.clear();
             // Make sure this is the last destroy func as it clears the gui and comp
             this.clearComponent();
@@ -342,23 +342,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             const colDef = this.column.colDef;
             const classes = _getHeaderClassesFromColDef(colDef, this.beans, this.column, null);
 
-            const oldClasses = this.userHeaderClasses;
-            this.userHeaderClasses = new Set(classes);
-
-            for (const c of classes) {
-                if (oldClasses.has(c)) {
-                    // class already added, no need to apply it, but remove from old set
-                    oldClasses.delete(c);
-                } else {
-                    // class new since last time, so apply it
-                    this.comp.toggleCss(c, true);
-                }
-            }
-
-            // now old set only has classes that were applied last time, but not this time, so remove them
-            for (const c of oldClasses) {
-                this.comp.toggleCss(c, false);
-            }
+            this.userHeaderClasses = _refreshCssClasses(this.comp, this.userHeaderClasses, classes);
         };
 
         this.setRefreshFunction('headerClasses', refreshHeaderClasses);

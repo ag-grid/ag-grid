@@ -24,7 +24,7 @@ import {
     _isCellSelectionEnabled,
     _setDomData,
 } from '../../gridOptionsUtils';
-import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
+import { _refreshCssClasses, refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
@@ -115,7 +115,7 @@ export class CellCtrl extends BeanStub {
     public editStyleFeature: ICellStyleFeature | undefined = undefined;
     private mouseListener: CellMouseListenerFeature | undefined = undefined;
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
-    private serviceCssClasses: Set<string> = new Set();
+    private serviceCssClasses: Set<string> | undefined;
 
     public cellPosition: CellPosition;
 
@@ -1026,21 +1026,13 @@ export class CellCtrl extends BeanStub {
     }
 
     private setServiceCssClasses(): void {
-        const classes = this.beans.columnCssClassSvc.getCellClasses(this.column, this.rowNode);
-        const oldClasses = this.serviceCssClasses;
-        this.serviceCssClasses = new Set(classes);
-
-        for (const cssClass of classes) {
-            if (oldClasses.has(cssClass)) {
-                oldClasses.delete(cssClass);
-            } else {
-                this.comp.toggleCss(cssClass, true);
-            }
+        const columnCssClassSvc = this.beans.columnCssClassSvc;
+        if (!columnCssClassSvc.hasCellProviders()) {
+            return;
         }
 
-        for (const cssClass of oldClasses) {
-            this.comp.toggleCss(cssClass, false);
-        }
+        const classes = columnCssClassSvc.getCellClasses(this.column, this.rowNode);
+        this.serviceCssClasses = _refreshCssClasses(this.comp, this.serviceCssClasses, classes);
     }
 
     private isCalculatedColumn(): boolean {

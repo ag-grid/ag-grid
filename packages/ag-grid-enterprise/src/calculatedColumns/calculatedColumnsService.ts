@@ -4,14 +4,12 @@ import type {
     CalculatedColumnHelperList,
     CalculatedColumnUpdate,
     CalculatedColumnValidationReason,
-    CellCssClassProviderParams,
     ColDef,
     ColGroupDef,
     ColKey,
     Column,
     ColumnCssClassProvider,
     ColumnEventType,
-    HeaderCssClassProviderParams,
     ICalculatedColumnsService,
     NamedBean,
 } from 'ag-grid-community';
@@ -59,6 +57,7 @@ const BASE_DATA_TYPE_LOCALE_KEYS: Record<string, string> = {
 
 const CSS_CALCULATED_COLUMN = 'ag-calculated-column';
 const CSS_CALCULATED_COLUMN_HIGHLIGHTED = 'ag-calculated-column-highlighted';
+const EMPTY_CALCULATED_COLUMN_CSS_CLASSES: readonly string[] = [];
 const CALCULATED_COLUMN_CSS_CLASSES = [CSS_CALCULATED_COLUMN];
 const HIGHLIGHTED_CALCULATED_COLUMN_CSS_CLASSES = [CSS_CALCULATED_COLUMN, CSS_CALCULATED_COLUMN_HIGHLIGHTED];
 
@@ -137,17 +136,17 @@ export class CalculatedColumnsService
         rowSpanSvc.refreshColumnSpansForCols(calculatedColumns);
     }
 
-    public getCellCssClasses(params: CellCssClassProviderParams): string[] {
-        return this.getColumnCssClasses(params.column);
+    public getCellCssClasses(column: AgColumn): readonly string[] {
+        return this.getColumnCssClasses(column);
     }
 
-    public getHeaderCssClasses(params: HeaderCssClassProviderParams): string[] {
-        return this.getColumnCssClasses(params.column);
+    public getHeaderCssClasses(column: AgColumn | null): readonly string[] {
+        return this.getColumnCssClasses(column);
     }
 
-    private getColumnCssClasses(column: AgColumn | null): string[] {
+    private getColumnCssClasses(column: AgColumn | null): readonly string[] {
         if (column?.colDef.calculatedExpression == null) {
-            return [];
+            return EMPTY_CALCULATED_COLUMN_CSS_CLASSES;
         }
 
         return column === this.highlightedColumn

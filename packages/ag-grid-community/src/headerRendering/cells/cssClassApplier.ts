@@ -21,10 +21,12 @@ export function _getHeaderClassesFromColDef(
     column: AgColumn | null,
     columnGroup: AgColumnGroup | null
 ): string[] {
-    const providerClasses = beans.columnCssClassSvc.getHeaderClasses(column, columnGroup);
+    const providerClasses = beans.columnCssClassSvc.hasHeaderProviders()
+        ? beans.columnCssClassSvc.getHeaderClasses(column, columnGroup)
+        : [];
 
     if (_missing(abstractColDef)) {
-        return providerClasses;
+        return providerClasses.length ? [...providerClasses] : [];
     }
 
     return [
@@ -54,6 +56,44 @@ export function refreshFirstAndLastStyles(
 ) {
     comp.toggleCss(CSS_FIRST_COLUMN, presentedColsService.isColAtEdge(column, 'first'));
     comp.toggleCss(CSS_LAST_COLUMN, presentedColsService.isColAtEdge(column, 'last'));
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _refreshCssClasses<TComp extends IAbstractHeaderCellComp | ICellComp>(
+    comp: TComp,
+    oldClasses: Set<string> | undefined,
+    classes: readonly string[]
+): Set<string> | undefined {
+    if (!classes.length) {
+        if (oldClasses) {
+            for (const cssClass of oldClasses) {
+                comp.toggleCss(cssClass, false);
+            }
+        }
+        return undefined;
+    }
+
+    if (!oldClasses) {
+        for (const cssClass of classes) {
+            comp.toggleCss(cssClass, true);
+        }
+        return new Set(classes);
+    }
+
+    const oldClassesToRemove = oldClasses;
+    for (const cssClass of classes) {
+        if (oldClassesToRemove.has(cssClass)) {
+            oldClassesToRemove.delete(cssClass);
+        } else {
+            comp.toggleCss(cssClass, true);
+        }
+    }
+
+    for (const cssClass of oldClassesToRemove) {
+        comp.toggleCss(cssClass, false);
+    }
+
+    return new Set(classes);
 }
 
 function getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(
