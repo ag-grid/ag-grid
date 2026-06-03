@@ -91,16 +91,16 @@ export function patchBeansToJson(api: GridApi): void {
     }
 
     // rowModel is always present in the collection and is a bean, so its root prototype is the
-    // shared bean base that every column/group/service descends from.
+    // shared bean base that every column/group/service descends from. Row nodes are not beans,
+    // so the root node's prototype is patched separately.
     const rowModel = getBeanCollection(api)?.rowModel;
-    if (rowModel) {
-        installToJson(rootPrototypeOf(rowModel));
+    const rootNode = rowModel?.rootNode;
+    if (!rootNode) {
+        return; // No bean collection yet (no row/column API) — retry on the next grid.
     }
 
-    const rootNode = rowModel?.rootNode;
-    if (rootNode) {
-        installToJson(rootPrototypeOf(rootNode));
-    }
+    installToJson(rootPrototypeOf(rowModel));
+    installToJson(rootPrototypeOf(rootNode));
 
     patched = true;
 }
