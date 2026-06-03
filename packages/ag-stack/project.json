@@ -1,0 +1,226 @@
+{
+  "name": "ag-stack",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/ag-stack/src",
+  "projectType": "library",
+  "targets": {
+    "setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx playwright install --with-deps chromium"],
+        "parallel": false,
+        "cwd": "packages/ag-stack"
+      }
+    },
+    "build": {
+      "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
+      "dependsOn": ["build:types", "build:package", "build:umd"]
+    },
+    "build:umd": {
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": ["^build:package", "build:package"],
+      "inputs": ["tsDefaults", "styleOutputs"],
+      "outputs": ["{projectRoot}/dist/ag-stack*.js"],
+      "options": {
+        "outputPath": "{projectRoot}/dist",
+        "deleteOutputPath": false,
+        "main": "{projectRoot}/src/main-umd.ts",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json",
+        "esbuildConfig": "packages/ag-stack/esbuildBuild.cjs",
+        "platform": "browser",
+        "target": "es2020",
+        "format": ["cjs"],
+        "bundle": true,
+        "thirdParty": true,
+        "sourcemap": false,
+        "metafile": false
+      },
+      "cache": true
+    },
+    "build:umd:watch": {
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": [],
+      "inputs": ["tsDefaults", "styleOutputs"],
+      "outputs": ["{projectRoot}/dist/ag-stack*.js"],
+      "options": {
+        "outputPath": "{projectRoot}/dist",
+        "deleteOutputPath": false,
+        "main": "{projectRoot}/src/main-umd.ts",
+        "tsConfig": "{projectRoot}/tsconfig.watch.json",
+        "esbuildConfig": "packages/ag-stack/esbuildBuild.cjs",
+        "platform": "browser",
+        "target": "es2020",
+        "format": ["cjs"],
+        "bundle": true,
+        "thirdParty": true,
+        "sourcemap": false,
+        "metafile": false
+      },
+      "configurations": {
+        "watch": {}
+      },
+      "cache": true
+    },
+    "build:types": {
+      "executor": "@nx/js:tsc",
+      "dependsOn": ["^build:types"],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/ag-stack/dist/types",
+        "main": "packages/ag-stack/src/main.ts",
+        "tsConfig": "packages/ag-stack/tsconfig.types.json",
+        "compiler": "tsc"
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "packages/ag-stack/tsconfig.types.watch.json"
+        },
+        "production": {}
+      }
+    },
+    "build:package": {
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": ["^build:package"],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "{projectRoot}/dist/package",
+        "main": "{projectRoot}/src/main.ts",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json",
+        "esbuildConfig": "esbuild.config.cjs",
+        "platform": "browser",
+        "target": "es2020",
+        "format": ["cjs", "esm"],
+        "sourcemap": true,
+        "metafile": false
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "{projectRoot}/tsconfig.watch.json"
+        },
+        "staging": {
+          "sourcemap": false,
+          "metafile": false
+        },
+        "production": {
+          "sourcemap": false,
+          "metafile": false
+        }
+      }
+    },
+    "build:package:watch": {
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": [],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:esbuild"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "{projectRoot}/dist/package",
+        "deleteOutputPath": false,
+        "main": "{projectRoot}/src/main.ts",
+        "tsConfig": "{projectRoot}/tsconfig.watch.json",
+        "skipTypeCheck": true,
+        "esbuildConfig": "esbuild.config.cjs",
+        "platform": "browser",
+        "target": "es2020",
+        "format": ["cjs", "esm"],
+        "sourcemap": true,
+        "metafile": false
+      },
+      "configurations": {
+        "watch": {}
+      },
+      "cache": true
+    },
+    "lint:knip": {
+      "command": "knip",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint": {
+      "dependsOn": ["lint:knip"],
+      "command": "eslint && stylelint './src/**/*css'",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "command": "npx vitest run",
+      "outputs": ["{workspaceRoot}/reports/ag-stack.xml"],
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "pack": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "inputs": ["allTransitiveOutputs"],
+      "outputs": ["{workspaceRoot}/dist/artifacts/{projectRoot}.tgz"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "parallel": false,
+        "commands": [
+          "mkdir -p ../../dist/artifacts/{projectRoot}",
+          "yarn pack -f ../../dist/artifacts/{projectRoot}.tgz",
+          "rm -rf ../../dist/artifacts/{projectRoot}"
+        ]
+      }
+    },
+    "pack:extract": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["pack"],
+      "inputs": ["allOutputs"],
+      "outputs": ["{workspaceRoot}/dist/artifacts/contents/{projectRoot}"],
+      "options": {
+        "command": "scripts/package/extract-contents.sh {projectRoot}"
+      }
+    },
+    "pack:verify": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["pack:extract"],
+      "inputs": ["allOutputs"],
+      "options": {
+        "commands": [
+          "node scripts/package/sanity-check-package.js --allowed-ext css scss -- dist/artifacts/contents/{projectRoot}/package"
+        ]
+      },
+      "configurations": {
+        "production": {},
+        "archive": {}
+      }
+    }
+  },
+  "tags": ["package", "stack", "core"]
+}

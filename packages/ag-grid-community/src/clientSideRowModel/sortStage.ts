@@ -1,4 +1,5 @@
-import { _reuseArrayIfEqual } from '../agStack/utils/array';
+import { _reuseArrayIfEqual } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';

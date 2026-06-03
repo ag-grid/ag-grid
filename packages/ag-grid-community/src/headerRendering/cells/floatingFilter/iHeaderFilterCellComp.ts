@@ -1,4 +1,5 @@
-import type { AgPromise } from '../../../agStack/utils/promise';
+import type { AgPromise } from 'ag-stack';
+
 import type { IFloatingFilter } from '../../../filter/floating/floatingFilter';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';

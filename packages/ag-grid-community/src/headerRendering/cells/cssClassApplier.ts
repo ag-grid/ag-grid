@@ -1,4 +1,5 @@
-import { _missing } from '../../agStack/utils/generic';
+import { _missing } from 'ag-stack';
+
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';

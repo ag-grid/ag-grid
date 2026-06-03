@@ -1,5 +1,5 @@
-import type { LocalEventService } from '../agStack/events/localEventService';
-import type { AgFrameworkOverrides } from '../agStack/interfaces/agFrameworkOverrides';
+import type { AgFrameworkOverrides, LocalEventService } from 'ag-stack';
+
 import type { IFrameworkEventListenerService } from './iFrameworkEventListenerService';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

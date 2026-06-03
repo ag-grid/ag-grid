@@ -1,5 +1,5 @@
-import { EventApiModule } from 'ag-grid-community';
 import type { _MasterDetailGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
+import { EventApiModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { CsrmHierarchyModule, GroupCellRendererModule, StickyRowModule } from '../rowHierarchy/rowHierarchyModule';

@@ -1,10 +1,11 @@
-import { _isExpressionString } from 'ag-grid-community';
+import { _isExpressionString } from 'ag-stack';
+
 import type { BeanCollection } from 'ag-grid-community';
 
 import { isFormulaIdentChar, isFormulaIdentStart, isStandaloneRefToken, parseA1Ref } from '../refUtils';
 import { getFormulaRowByIndex } from '../rowAccess';
-import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
 import type { OperatorDef } from './operators';
+import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
 import { FormulaParseError } from './utils';
 

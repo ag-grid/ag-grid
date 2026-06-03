@@ -1,5 +1,6 @@
-import type { IComponent } from '../agStack/interfaces/iComponent';
-import type { SortDef, SortDirection } from '../entities/colDef';
+import type { IComponent } from 'ag-stack';
+
+import type { SortDef, SortDirection } from '../interfaces/iSort';
 import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
 

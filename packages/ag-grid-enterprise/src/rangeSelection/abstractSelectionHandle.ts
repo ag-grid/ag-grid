@@ -1,14 +1,7 @@
+import { _getPageBody, _isVisible, _last, _setDisplayed } from 'ag-stack';
+
 import type { CellCtrl, CellPosition, CellRange, CellSelectionChangedEvent, RowPosition } from 'ag-grid-community';
-import {
-    Component,
-    _areCellsEqual,
-    _getCellPositionForEvent,
-    _getPageBody,
-    _isRowBefore,
-    _isVisible,
-    _last,
-    _setDisplayed,
-} from 'ag-grid-community';
+import { Component, _areCellsEqual, _getCellPositionForEvent, _isRowBefore } from 'ag-grid-community';
 
 import type { RangeService } from './rangeService';
 

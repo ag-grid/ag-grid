@@ -2,209 +2,8 @@
  * AG Grid Internals: These are not for public use, and can change / be removed at any point in time.
  *
  */
-export { AgBeanStub as _AgBeanStub } from './agStack/core/agBeanStub';
-export type { AgBeanStubEvent as _AgBeanStubEvent } from './agStack/core/agBeanStub';
-export { AgComponentStub as _AgComponentStub } from './agStack/core/agComponentStub';
-export { AgContext as _AgContext } from './agStack/core/agContext';
-export type { AgSingletonBeanClass as _AgSingletonBeanClass } from './agStack/core/agContext';
-export { BaseDragAndDropService as _BaseDragAndDropService } from './agStack/core/baseDragAndDropService';
-export { BaseDragService as _BaseDragService } from './agStack/core/baseDragService';
-export { BaseEnvironment as _BaseEnvironment } from './agStack/core/baseEnvironment';
-export type {
-    BaseCssChangeKeys as _BaseCssChangeKeys,
-    CssVariable as _CssVariable,
-} from './agStack/core/baseEnvironment';
-export { BaseRegistry as _BaseRegistry } from './agStack/core/baseRegistry';
-export { BaseEventService as _BaseEventService } from './agStack/events/baseEventService';
-export { LocalEventService } from './agStack/events/localEventService';
-export { FOCUS_MANAGED_CLASS as _FOCUS_MANAGED_CLASS } from './agStack/focus/agManagedFocusFeature';
-export type {
-    StopPropagationCallbacks as _StopPropagationCallbacks,
-    ManagedFocusCallbacks,
-} from './agStack/focus/agManagedFocusFeature';
-export { AgTabGuardComp as _AgTabGuardComp } from './agStack/focus/agTabGuardComp';
-export { AgTabGuardFeature as _AgTabGuardFeature } from './agStack/focus/agTabGuardFeature';
-export type { AgTabGuardParams as _AgTabGuardParams } from './agStack/focus/agTabGuardFeature';
-export { TabGuardClassNames } from './agStack/focus/tabGuardCtrl';
-export type { ITabGuard } from './agStack/focus/tabGuardCtrl';
-export { _isComponent, RefPlaceholder } from './agStack/interfaces/agComponent';
-export type {
-    AgComponent as _AgComponent,
-    AgComponentEvent as _AgComponentEvent,
-    AgComponentSelector as _AgComponentSelector,
-    AgBaseComponent,
-    VisibleChangedEvent,
-} from './agStack/interfaces/agComponent';
-export type { AgCoreBean as _AgCoreBean } from './agStack/interfaces/agCoreBean';
-export type { AgCoreBeanCollection as _AgCoreBeanCollection } from './agStack/interfaces/agCoreBeanCollection';
-export type {
-    AgFrameworkOverrides as _AgFrameworkOverrides,
-    FrameworkOverridesIncomingSource,
-} from './agStack/interfaces/agFrameworkOverrides';
-export type {
-    AgStylesChangedEvent as _AgStylesChangedEvent,
-    BaseEvents as _BaseEvents,
-} from './agStack/interfaces/baseEvents';
-export type { BaseProperties as _BaseProperties } from './agStack/interfaces/baseProperties';
-export type { AfterGuiAttachedParams as _AfterGuiAttachedParams } from './agStack/interfaces/iAfterGuiAttachedParams';
-export type { IAriaAnnouncementService } from './agStack/interfaces/iAriaAnnouncementService';
-export type { IDragService as _IDragService } from './agStack/interfaces/iDrag';
-export type {
-    AgDraggingEvent as _AgDraggingEvent,
-    AgDragSource as _AgDragSource,
-    AgDropTarget as _AgDropTarget,
-    IDragAndDropService as _IDragAndDropService,
-    IDragAndDropImage,
-} from './agStack/interfaces/iDragAndDrop';
-export type { AgEventService as _AgEventService, WithoutCommon as _WithoutCommon } from './agStack/interfaces/iEvent';
-export type { IconValue as _IconValue } from './agStack/interfaces/iIcon';
-export type { IIconService as _IIconService } from './agStack/interfaces/iIconService';
-export type { ILocaleService as _ILocaleService, LocaleTextFunc } from './agStack/interfaces/iLocaleService';
-export type { AddPopupParams as _AddPopupParams, AddPopupResult as _AddPopupResult } from './agStack/interfaces/iPopup';
-export type { IPopupService as _IPopupService } from './agStack/interfaces/iPopupService';
-export type {
-    AgPropertyChangedSource as _AgPropertyChangedSource,
-    AgPropertyChangeSet as _AgPropertyChangeSet,
-    AgPropertyKey as _AgPropertyKey,
-    AgPropertyValueChangedEvent as _AgPropertyValueChangedEvent,
-    AgPropertyValueChangedListener as _AgPropertyValueChangedListener,
-    IPropertiesService as _IPropertiesService,
-} from './agStack/interfaces/iProperties';
-export type { ITooltipFeature as _ITooltipFeature, TooltipCtrl as _TooltipCtrl } from './agStack/interfaces/iTooltip';
-export { AgPopupComponent } from './agStack/popup/agPopupComponent';
-export { BasePopupService as _BasePopupService } from './agStack/popup/basePopupService';
-export {
-    computeAlignedPosition as _computeAlignedPosition,
-    findBestPlacement as _findBestPlacement,
-    getEffectivePlacements as _getEffectivePlacements,
-    getRectSize as _getRectSize,
-    fitsWithinBounds as _fitsWithinBounds,
-    toRelativeRect as _toRelativeRect,
-} from './agStack/popup/popupPositionUtils';
-export type { Alignment as _Alignment, Anchor as _Anchor } from './agStack/popup/popupPositionUtils';
-export { AgPositionableFeature as _AgPositionableFeature } from './agStack/rendering/agPositionableFeature';
-export type {
-    PositionableOptions,
-    ResizableSides,
-    ResizableStructure,
-} from './agStack/rendering/agPositionableFeature';
-export { AutoScrollService } from './agStack/rendering/autoScrollService';
-export { CssClassManager } from './agStack/rendering/cssClassManager';
-export { sharedDefaults as _sharedThemeDefaults } from './agStack/theming/shared/shared-css';
-export type { SharedThemeParams as _SharedThemeParams } from './agStack/theming/shared/shared-css';
-export { _asThemeImpl, createSharedTheme as _createSharedTheme } from './agStack/theming/themeImpl';
-export type { ThemeLogger as _ThemeLogger } from './agStack/theming/themeLogger';
-export { getParamType as _getParamType, paramValueToCss as _paramValueToCss } from './agStack/theming/themeTypeUtils';
-export { paramToVariableName as _paramToVariableName } from './agStack/theming/themeUtils';
-export type { HighlightTooltipEventType } from './agStack/tooltip/agHighlightTooltipFeature';
-export { AgTooltipComponent as _AgTooltipComponent } from './agStack/tooltip/agTooltipComponent';
-export { AgTooltipFeature as _AgTooltipFeature } from './agStack/tooltip/agTooltipFeature';
-export { BaseTooltipStateManager as _BaseTooltipStateManager } from './agStack/tooltip/baseTooltipStateManager';
-export type { BaseTooltipParams as _BaseTooltipParams } from './agStack/tooltip/baseTooltipStateManager';
-export {
-    _getAriaPosInSet,
-    _removeAriaExpanded,
-    _removeAriaSort,
-    _setAriaActiveDescendant,
-    _setAriaChecked,
-    _setAriaColCount,
-    _setAriaColIndex,
-    _setAriaColSpan,
-    _setAriaControls,
-    _setAriaControlsAndLabel,
-    _setAriaDescribedBy,
-    _setAriaDisabled,
-    _setAriaExpanded,
-    _setAriaHasPopup,
-    _setAriaHidden,
-    _setAriaInvalid,
-    _setAriaLabel,
-    _setAriaLabelledBy,
-    _setAriaLevel,
-    _setAriaMultiSelectable,
-    _setAriaOrientation,
-    _setAriaPosInSet,
-    _setAriaRole,
-    _setAriaRowCount,
-    _setAriaRowIndex,
-    _setAriaSelected,
-    _setAriaSetSize,
-    _setAriaSort,
-} from './agStack/utils/aria';
-export type { AriaSortState } from './agStack/utils/aria';
-export {
-    _areEqual,
-    _flatten,
-    _last,
-    _removeAllFromArray,
-    _removeFromArray,
-    _reuseArrayIfEqual,
-} from './agStack/utils/array';
-export { _parseBigIntOrNull } from './agStack/utils/bigInt';
-export { _isBrowserFirefox, _isBrowserSafari, _isIOSUserAgent } from './agStack/utils/browser';
-export { _getDateParts, MONTHS as _MONTHS, _parseDateTimeFromString, _serialiseDate } from './agStack/utils/date';
-export {
-    _getActiveDomElement,
-    _getDocument,
-    _getPageBody,
-    _getRootNode,
-    _getWindow,
-    _isNothingFocused,
-} from './agStack/utils/document';
-export {
-    _addOrRemoveAttribute,
-    _clearElement,
-    _createAgElement,
-    _getAbsoluteHeight,
-    _getAbsoluteWidth,
-    _getInnerHeight,
-    _getInnerWidth,
-    _isElementOverflowingCallback,
-    _isFocusableFormField,
-    _isNodeOrElement,
-    _isVisible,
-    _loadTemplate,
-    _observeResize,
-    _placeCaretAtEnd,
-    _radioCssClass,
-    _removeFromParent,
-    _requestAnimationFrame,
-    _setDisabled,
-    _setDisplayed,
-    _setFixedWidth,
-    _setScrollLeft,
-    _setVisible,
-} from './agStack/utils/dom';
-export type { AgElementParams as _AgElementParams } from './agStack/utils/dom';
-export { _anchorElementToMouseMoveEvent, _isElementInEventPath } from './agStack/utils/event';
-export {
-    _findFocusableElements,
-    _findNextFocusableElement,
-    _findTabbableParent,
-    _focusInto,
-    _isKeyboardMode,
-} from './agStack/utils/focus';
-export { _batchCall, _debounce, _doOnce, _waitUntil } from './agStack/utils/function';
-export { _fuzzySuggestions } from './agStack/utils/fuzzyMatch';
-export {
-    _defaultComparator,
-    _exists,
-    _jsonEquals,
-    _makeNull,
-    _missing,
-    _toStringOrNull,
-} from './agStack/utils/generic';
-export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';
-export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './agStack/utils/locale';
-export { _isPromise } from './agStack/utils/promise';
-export {
-    _camelCaseToHumanText,
-    _escapeString,
-    _isExpressionString,
-    _isStringLargerThan,
-    _toString,
-} from './agStack/utils/string';
-export type { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
+
+export type { AgWidgetSelectorType as _AgWidgetSelectorType } from './agWidgets/agWidgetSelectorType';
 export type {
     _AdvancedFilterGridApi,
     _AggregationGridApi,
@@ -333,7 +132,7 @@ export type { Environment } from './environment';
 export { _GET_ALL_EVENTS, _PUBLIC_EVENTS, ALWAYS_SYNC_GLOBAL_EVENTS } from './eventTypes';
 export { BaseCreator } from './export/baseCreator';
 export { BaseGridSerializingSession } from './export/baseGridSerializingSession';
-export { _downloadFile } from './agStack/utils/download';
+
 export {
     _getFilterModel,
     _refreshFilterUi,
@@ -596,34 +395,33 @@ export { TabGuardCtrl, TabGuardFeature } from './widgets/tabGuard';
 export { TabGuardComp } from './widgets/tabGuardComp';
 
 // AG Stack Widgets
-export { Direction } from './agStack/constants/direction';
-export type { VerticalDirection as _VerticalDirection } from './agStack/constants/direction';
-export { AgAbstractInputField } from './agStack/widgets/agAbstractInputField';
-export { AgAbstractLabel } from './agStack/widgets/agAbstractLabel';
-export { AgCheckbox, AgCheckboxSelector } from './agStack/widgets/agCheckbox';
-export { AgContentEditableField, AgContentEditableFieldSelector } from './agStack/widgets/agContentEditableField';
+
+export { AgAbstractInputField } from './agWidgets/agAbstractInputField';
+export { AgAbstractLabel } from './agWidgets/agAbstractLabel';
+export { AgCheckbox, AgCheckboxSelector } from './agWidgets/agCheckbox';
+export { AgContentEditableField, AgContentEditableFieldSelector } from './agWidgets/agContentEditableField';
 export type {
     AgCheckboxParams,
     AgFieldParams,
     AgInputFieldParams,
     AgLabelParams,
     LabelAlignment,
-} from './agStack/widgets/agFieldParams';
-export { AgInputDateField } from './agStack/widgets/agInputDateField';
-export { AgInputNumberField, AgInputNumberFieldSelector } from './agStack/widgets/agInputNumberField';
-export type { AgInputNumberFieldParams } from './agStack/widgets/agInputNumberField';
-export { AgInputTextArea, AgInputTextAreaSelector } from './agStack/widgets/agInputTextArea';
-export { AgInputTextField, AgInputTextFieldSelector } from './agStack/widgets/agInputTextField';
-export type { AgInputTextFieldParams } from './agStack/widgets/agInputTextField';
-export type { ListOption } from './agStack/widgets/agList';
-export { AgPickerField } from './agStack/widgets/agPickerField';
-export type { AgPickerFieldParams } from './agStack/widgets/agPickerFieldParams';
-export { AgRadioButton, AgRadioButtonSelector } from './agStack/widgets/agRadioButton';
-export type { AgRadioButtonParams } from './agStack/widgets/agRadioButton';
-export { AgSelect, AgSelectSelector } from './agStack/widgets/agSelect';
-export type { AgSelectParams } from './agStack/widgets/agSelect';
-export { AgToggleButton, AgToggleButtonSelector } from './agStack/widgets/agToggleButton';
-export type { AgToggleButtonParams } from './agStack/widgets/agToggleButton';
+} from './agWidgets/agFieldParams';
+export { AgInputDateField } from './agWidgets/agInputDateField';
+export { AgInputNumberField, AgInputNumberFieldSelector } from './agWidgets/agInputNumberField';
+export type { AgInputNumberFieldParams } from './agWidgets/agInputNumberField';
+export { AgInputTextArea, AgInputTextAreaSelector } from './agWidgets/agInputTextArea';
+export { AgInputTextField, AgInputTextFieldSelector } from './agWidgets/agInputTextField';
+export type { AgInputTextFieldParams } from './agWidgets/agInputTextField';
+export type { ListOption } from './agWidgets/agList';
+export { AgPickerField } from './agWidgets/agPickerField';
+export type { AgPickerFieldParams } from './agWidgets/agPickerFieldParams';
+export { AgRadioButton, AgRadioButtonSelector } from './agWidgets/agRadioButton';
+export type { AgRadioButtonParams } from './agWidgets/agRadioButton';
+export { AgSelect, AgSelectSelector } from './agWidgets/agSelect';
+export type { AgSelectParams } from './agWidgets/agSelect';
+export { AgToggleButton, AgToggleButtonSelector } from './agWidgets/agToggleButton';
+export type { AgToggleButtonParams } from './agWidgets/agToggleButton';
 export type { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from './export/iGridSerializer';
 
 // These should have been exported with _ as only used in SSRM and end users should be using them via the gridApi

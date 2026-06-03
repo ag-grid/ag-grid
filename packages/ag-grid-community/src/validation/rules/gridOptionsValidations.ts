@@ -4,8 +4,8 @@ import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } fr
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import { buildAllValidNames } from '../validationTypes';
 import type { Deprecations, OptionsValidator, RequiredModule, Validations } from '../validationTypes';
+import { buildAllValidNames } from '../validationTypes';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.

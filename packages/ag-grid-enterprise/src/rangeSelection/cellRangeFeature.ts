@@ -1,3 +1,5 @@
+import { _last, _missing, _requestAnimationFrame, _setAriaSelected } from 'ag-stack';
+
 import type {
     AgColumn,
     BeanCollection,
@@ -8,14 +10,7 @@ import type {
     ICellRangeFeature,
     IRangeService,
 } from 'ag-grid-community';
-import {
-    CellRangeType,
-    _isSameRow,
-    _last,
-    _missing,
-    _requestAnimationFrame,
-    _setAriaSelected,
-} from 'ag-grid-community';
+import { CellRangeType, _isSameRow } from 'ag-grid-community';
 
 import { SelectionHandleType } from './abstractSelectionHandle';
 import type { AgFillHandle } from './agFillHandle';

@@ -1,8 +1,9 @@
+import { _doOnce } from 'ag-stack';
 import type { MockInstance } from 'vitest';
 import { vi } from 'vitest';
 
 import type { GridOptions, Module } from 'ag-grid-community';
-import { ClientSideRowModelModule, _doOnce } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { FormulaModule, MasterDetailModule, PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';

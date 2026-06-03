@@ -1,8 +1,7 @@
-import { KeyCode } from '../../agStack/constants/keyCode';
-import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
-import { _missing } from '../../agStack/utils/generic';
-import type { ListOption } from '../../agStack/widgets/agList';
-import { AgSelectSelector } from '../../agStack/widgets/agSelect';
+import { KeyCode, RefPlaceholder, _missing } from 'ag-stack';
+
+import type { ListOption } from '../../agWidgets/agList';
+import { AgSelectSelector } from '../../agWidgets/agSelect';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';

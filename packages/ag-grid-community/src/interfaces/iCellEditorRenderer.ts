@@ -1,4 +1,5 @@
-import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { IComponent } from 'ag-stack';
+
 import type { AgGridCommon } from './iCommon';
 
 export interface ICellEditorRendererParams<TValue = any, TData = any, TContext = any> extends AgGridCommon<

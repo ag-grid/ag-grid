@@ -1,3 +1,5 @@
+import { _debounce, _jsonEquals, _missing, _toString } from 'ag-stack';
+
 import type {
     Column,
     FindCellValueParams,
@@ -17,12 +19,8 @@ import type {
 import {
     BeanStub,
     _addGridCommonParams,
-    _debounce,
     _isClientSideRowModel,
     _isFullWidthGroupRow,
-    _jsonEquals,
-    _missing,
-    _toString,
     isSpecialCol,
 } from 'ag-grid-community';
 

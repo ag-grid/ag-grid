@@ -1,5 +1,5 @@
-import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
-import { _ensureDomOrder, _setDisplayed } from '../../agStack/utils/dom';
+import { RefPlaceholder, _ensureDomOrder, _setDisplayed } from 'ag-stack';
+
 import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';

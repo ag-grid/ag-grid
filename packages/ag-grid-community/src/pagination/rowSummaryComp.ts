@@ -1,4 +1,5 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
+import { RefPlaceholder } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import { Component } from '../widgets/component';
 import type { PaginationService } from './paginationService';

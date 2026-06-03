@@ -1,5 +1,7 @@
+import { _focusInto } from 'ag-stack';
+
 import type { DefaultMenuItem, MenuItemDef, NamedBean } from 'ag-grid-community';
-import { BeanStub, _createElement, _focusInto } from 'ag-grid-community';
+import { BeanStub, _createElement } from 'ag-grid-community';
 
 import { MenuList } from '../widgets/menuList';
 import type { MenuItemMapper } from './menuItemMapper';

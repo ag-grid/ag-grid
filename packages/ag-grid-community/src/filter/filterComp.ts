@@ -1,6 +1,5 @@
-import { _clearElement } from '../agStack/utils/dom';
-import { _exists } from '../agStack/utils/generic';
-import { AgPromise } from '../agStack/utils/promise';
+import { AgPromise, _clearElement, _exists } from 'ag-stack';
+
 import type { AgColumn } from '../entities/agColumn';
 import type { FilterDestroyedEvent } from '../events';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';

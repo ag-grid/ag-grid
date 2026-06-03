@@ -1,5 +1,5 @@
-import { AutoScrollService } from '../agStack/rendering/autoScrollService';
-import { _areEqual } from '../agStack/utils/array';
+import { AutoScrollService, _areEqual } from 'ag-stack';
+
 import { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import { _csrmFirstLeaf, _csrmReorderAllLeafs } from '../clientSideRowModel/clientSideRowModelUtils';
 import { BeanStub } from '../context/beanStub';

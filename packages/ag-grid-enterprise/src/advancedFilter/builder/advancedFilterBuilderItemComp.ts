@@ -1,3 +1,14 @@
+import {
+    RefPlaceholder,
+    _removeAriaExpanded,
+    _setAriaDisabled,
+    _setAriaExpanded,
+    _setAriaLabel,
+    _setAriaLevel,
+    _setDisplayed,
+    _setVisible,
+} from 'ag-stack';
+
 import type {
     BeanCollection,
     DragAndDropService,
@@ -12,17 +23,9 @@ import type {
 import {
     DragSourceType,
     KeyCode,
-    RefPlaceholder,
     TabGuardComp,
     _createElement,
     _createIconNoSpan,
-    _removeAriaExpanded,
-    _setAriaDisabled,
-    _setAriaExpanded,
-    _setAriaLabel,
-    _setAriaLevel,
-    _setDisplayed,
-    _setVisible,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 

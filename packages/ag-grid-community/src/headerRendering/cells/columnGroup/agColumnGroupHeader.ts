@@ -1,8 +1,6 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
-import type { IComponent } from '../../../agStack/interfaces/iComponent';
-import { _setDisplayed } from '../../../agStack/utils/dom';
-import { _exists } from '../../../agStack/utils/generic';
-import { _toString } from '../../../agStack/utils/string';
+import type { IComponent } from 'ag-stack';
+import { RefPlaceholder, _exists, _setDisplayed, _toString } from 'ag-stack';
+
 import { _getInnerHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';

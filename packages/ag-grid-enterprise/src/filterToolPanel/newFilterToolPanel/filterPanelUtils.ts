@@ -1,5 +1,5 @@
-import { _removeFromParent, _translate } from 'ag-grid-community';
-import type { LocaleTextFunc } from 'ag-grid-community';
+import type { LocaleTextFunc } from 'ag-stack';
+import { _removeFromParent, _translate } from 'ag-stack';
 
 const DEFAULT_LOCALE_TEXT = {
     addFilterCard: 'Add Filter',

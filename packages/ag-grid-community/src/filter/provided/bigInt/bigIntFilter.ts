@@ -1,6 +1,6 @@
-import { _parseBigIntOrNull } from '../../../agStack/utils/bigInt';
-import { _isBrowserFirefox } from '../../../agStack/utils/browser';
-import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
+import { _isBrowserFirefox, _parseBigIntOrNull } from 'ag-stack';
+
+import { AgInputTextField } from '../../../agWidgets/agInputTextField';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';

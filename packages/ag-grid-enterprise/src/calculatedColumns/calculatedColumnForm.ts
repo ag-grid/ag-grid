@@ -1,3 +1,5 @@
+import { RefPlaceholder, _getDocument, _setDisplayed } from 'ag-stack';
+
 import type {
     CalculatedColumnHelperList,
     ElementParams,
@@ -13,9 +15,6 @@ import {
     AgSelectSelector,
     Component,
     KeyCode,
-    RefPlaceholder,
-    _getDocument,
-    _setDisplayed,
 } from 'ag-grid-community';
 
 import { getOperatorReplacementRange } from './calculatedColumnUtils';

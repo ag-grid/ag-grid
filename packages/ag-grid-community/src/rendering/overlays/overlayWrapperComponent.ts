@@ -1,10 +1,15 @@
-import { KeyCode } from '../../agStack/constants/keyCode';
-import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
-import { _last } from '../../agStack/utils/array';
-import { _getActiveDomElement, _isNothingFocused } from '../../agStack/utils/document';
-import { _clearElement } from '../../agStack/utils/dom';
-import { _findNextFocusableElement, _focusInto } from '../../agStack/utils/focus';
-import { AgPromise } from '../../agStack/utils/promise';
+import {
+    AgPromise,
+    KeyCode,
+    RefPlaceholder,
+    _clearElement,
+    _findNextFocusableElement,
+    _focusInto,
+    _getActiveDomElement,
+    _isNothingFocused,
+    _last,
+} from 'ag-stack';
+
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import type { ElementParams } from '../../utils/element';

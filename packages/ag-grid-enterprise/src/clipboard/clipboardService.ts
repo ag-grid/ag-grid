@@ -1,3 +1,5 @@
+import { _exists, _getActiveDomElement, _getDocument, _last, _removeFromArray } from 'ag-stack';
+
 import type {
     AgColumn,
     CellPosition,
@@ -21,16 +23,11 @@ import type {
 import {
     BeanStub,
     _createCellId,
-    _exists,
     _forEachChangedGroupDepthFirst,
-    _getActiveDomElement,
-    _getDocument,
     _getRowBelow,
     _getRowNode,
     _isClientSideRowModel,
     _isSameRow,
-    _last,
-    _removeFromArray,
     _warn,
     isColumnSelectionCol,
     isSpecialCol,

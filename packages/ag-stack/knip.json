@@ -1,0 +1,11 @@
+{
+    "entry": ["./src/main.ts"],
+    "project": ["./src/**"],
+    "ignore": ["./src/typings.ts", "./src/main-umd.ts", "./**/*.test.ts", "./src/test-utils/**"],
+    "rules": {
+        "unlisted": "off",
+        "unresolved": "off",
+        "dependencies": "off"
+    },
+    "tags": ["-knipIgnore"]
+}

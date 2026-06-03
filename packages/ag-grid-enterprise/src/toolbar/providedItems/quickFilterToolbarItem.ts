@@ -1,5 +1,7 @@
+import { _debounce } from 'ag-stack';
+
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _debounce, _error } from 'ag-grid-community';
+import { Component, _error } from 'ag-grid-community';
 
 import { createToolbarInput } from './toolbarItemUtils';
 

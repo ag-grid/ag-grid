@@ -1,7 +1,8 @@
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-types';
+import { RefPlaceholder, _removeFromParent } from 'ag-stack';
 
 import type { BeanCollection, GridSelect, ListOption } from 'ag-grid-community';
-import { AgSelect, Component, RefPlaceholder, _error, _removeFromParent } from 'ag-grid-community';
+import { AgSelect, Component, _error } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSlider } from '../../../../../agStack/agSlider';

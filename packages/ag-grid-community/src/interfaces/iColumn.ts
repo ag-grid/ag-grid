@@ -1,8 +1,10 @@
-import type { IEventEmitter } from '../agStack/interfaces/iEventEmitter';
+import type { IEventEmitter } from 'ag-stack';
+
 import type { AgProvidedColumnGroupEvent } from '../entities/agProvidedColumnGroup';
-import type { AbstractColDef, ColDef, ColGroupDef, IAggFunc, SortDef, SortDirection } from '../entities/colDef';
+import type { AbstractColDef, ColDef, ColGroupDef, IAggFunc } from '../entities/colDef';
 import type { ColumnEvent } from '../events';
 import type { BrandedType } from '../interfaces/brandedType';
+import type { SortDef, SortDirection } from '../interfaces/iSort';
 import type { IRowNode } from './iRowNode';
 
 export type HeaderColumnId = BrandedType<string, 'HeaderColumnId'>;

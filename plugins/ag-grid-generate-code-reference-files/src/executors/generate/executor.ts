@@ -40,12 +40,14 @@ async function generateFile(options: ExecutorOptions) {
     const gridApiFile = workspaceRoot + '/packages/ag-grid-community/src/api/gridApi.ts';
     const columnFile = workspaceRoot + '/packages/ag-grid-community/src/interfaces/iColumn.ts';
     const rowNodeFile = workspaceRoot + '/packages/ag-grid-community/src/interfaces/iRowNode.ts';
+    const stackThemesFile = workspaceRoot + '/packages/ag-stack/src/theming/shared/shared-css.ts';
     const themesFile = workspaceRoot + '/packages/ag-grid-community/src/theming/parts/theme/themes.ts';
 
     const distFolder = workspaceRoot + '/' + options.output;
 
     // Matches the inputs in generate-doc-references task
     const INTERFACE_GLOBS = [
+        ...inputGlob(workspaceRoot + '/packages/ag-stack/src'),
         ...inputGlob(workspaceRoot + '/packages/ag-grid-community/src'),
         ...inputGlob(workspaceRoot + '/packages/ag-grid-angular/projects/ag-grid-angular/src/lib'),
         ...inputGlob(workspaceRoot + '/packages/ag-grid-react/src/shared'),
@@ -62,7 +64,7 @@ async function generateFile(options: ExecutorOptions) {
     const providedColumnGroup = getColumnTypes(columnFile, ['ProvidedColumnGroup', 'IProvidedColumn']);
     const interfaces = getInterfaces(INTERFACE_GLOBS);
     const docInterfaces = buildInterfaceProps(INTERFACE_GLOBS);
-    const themeParams = getThemeParams(themesFile);
+    const themeParams = getThemeParams(themesFile, stackThemesFile);
 
     await Promise.all([
         writeJSONFile(distFolder + '/grid-options.AUTO.json', gridOptions),

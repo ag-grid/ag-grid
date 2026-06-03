@@ -1,6 +1,6 @@
-import type { Theme } from '../agStack/theming/theme';
-import { createSharedTheme } from '../agStack/theming/themeImpl';
-import type { ThemeLogger } from '../agStack/theming/themeLogger';
+import type { Theme, ThemeLogger } from 'ag-stack';
+import { createSharedTheme } from 'ag-stack';
+
 import { _error, _logPreInitErr, _warn } from '../validation/logging';
 import type { CoreParams } from './core/core-css';
 import { coreDefaults } from './core/core-css';

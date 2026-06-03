@@ -1,5 +1,6 @@
-import { AgPopupComponent } from '../../agStack/popup/agPopupComponent';
-import type { AgAbstractField } from '../../agStack/widgets/agAbstractField';
+import { AgPopupComponent } from 'ag-stack';
+
+import type { AgAbstractField } from '../../agWidgets/agAbstractField';
 import type { BeanCollection } from '../../context/context';
 import type { AgEventTypeParams } from '../../events';
 import type { GridOptionsWithDefaults } from '../../gridOptionsDefault';

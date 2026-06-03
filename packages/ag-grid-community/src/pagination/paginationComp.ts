@@ -1,4 +1,5 @@
-import { _removeFromParent } from '../agStack/utils/dom';
+import { _removeFromParent } from 'ag-stack';
+
 import type { PaginationPanel } from '../entities/gridOptions';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';

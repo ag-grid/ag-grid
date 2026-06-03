@@ -1,3 +1,5 @@
+import { _exists, _removeFromArray } from 'ag-stack';
+
 import type {
     AgColumn,
     ColDef,
@@ -8,7 +10,7 @@ import type {
     IColsService,
     NamedBean,
 } from 'ag-grid-community';
-import { BaseColsService, _exists, _removeFromArray, _warn } from 'ag-grid-community';
+import { BaseColsService, _warn } from 'ag-grid-community';
 
 export class ValueColsSvc extends BaseColsService implements NamedBean, IColsService {
     beanName = 'valueColsSvc' as const;

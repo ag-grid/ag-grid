@@ -1,5 +1,6 @@
-import { _debounce } from '../../agStack/utils/function';
-import type { AgPromise } from '../../agStack/utils/promise';
+import type { AgPromise } from 'ag-stack';
+import { _debounce } from 'ag-stack';
+
 import type { AgColumn } from '../../entities/agColumn';
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type {

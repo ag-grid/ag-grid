@@ -1,7 +1,7 @@
 import type { IntegratedModule } from 'ag-charts-types';
 
-import { _preInitErrMsg } from 'ag-grid-community';
 import type { _ModuleWithoutApi } from 'ag-grid-community';
+import { _preInitErrMsg } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
