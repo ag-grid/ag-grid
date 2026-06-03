@@ -110,6 +110,8 @@ const excludeErrors = [
     // Browsers warn that such a policy can't report — benign for our validation window.
     'has a Report-Only policy without a report-uri directive nor a report-to directive', // Firefox
     "was delivered in report-only mode, but does not specify a 'report-uri'", // Chromium
+    "was delivered in report-only mode, but does not specify a 'report-to'", // Chromium
+    "directive 'frame-ancestors' is ignored when delivered in a report-only policy",
     // React warnings from examples that intentionally render read-only controls / raw style props.
     'You provided a `checked` prop to a form field without an `onChange` handler.',
     'Unsupported style property %s. Did you mean %s? white-space whiteSpace',
