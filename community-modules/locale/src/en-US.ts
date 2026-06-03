@@ -783,6 +783,15 @@ export const AG_GRID_LOCALE_EN = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Text',
+    dataTypeNumber: 'Number',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Boolean',
+    dataTypeDate: 'Date',
+    dataTypeDateString: 'Date String',
+    dataTypeDateTime: 'Date Time',
+    dataTypeDateTimeString: 'Date Time String',
+    dataTypeObject: 'Object',
     true: 'True',
     false: 'False',
     invalidDate: 'Invalid Date',
@@ -821,6 +830,26 @@ export const AG_GRID_LOCALE_EN = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Calculated Columns
+    calculatedColumn: 'Calculated Column',
+    calculatedColumnAdd: 'Add Calculated Column',
+    calculatedColumnEdit: 'Edit Calculated Column',
+    calculatedColumnRemove: 'Remove Calculated Column',
+    calculatedColumnTitle: 'Title',
+    calculatedColumnType: 'Type',
+    calculatedColumnExpression: 'Expression',
+    calculatedColumnExpressionPlaceholder: 'Type here',
+    calculatedColumnColumns: 'Columns',
+    calculatedColumnFunctions: 'Functions',
+    calculatedColumnOperators: 'Operators',
+    calculatedColumnSuggestions: 'Calculated Column Suggestions',
+    calculatedColumnDefaultTitle: 'New title',
+    calculatedColumnExpressionAmbiguousReference:
+        'Ambiguous column reference "${variable}". Use the Columns list or a more specific group path.',
+    calculatedColumnExpressionUnknownReference: 'Unknown column reference "${variable}".',
+    calculatedColumnApply: 'Apply',
+    calculatedColumnCancel: 'Cancel',
 
     // Notes
     note: 'Note',

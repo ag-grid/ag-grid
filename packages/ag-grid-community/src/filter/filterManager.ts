@@ -1,4 +1,5 @@
-import { AgPromise } from '../agStack/utils/promise';
+import { AgPromise } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

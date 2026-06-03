@@ -6,6 +6,7 @@ import type {
     AutoGenerateColumnDefsConfig,
     AutoGroupColumnDef,
     AutoSizeStrategy,
+    CalculatedColumnsOptions,
     CellSelectionOptions,
     ChartToolPanelsDef,
     ColDef,
@@ -127,6 +128,10 @@ import type {
     BodyScrollEvent,
     BulkEditingStartedEvent,
     BulkEditingStoppedEvent,
+    CalculatedColumnCreatedEvent,
+    CalculatedColumnExpressionChangedEvent,
+    CalculatedColumnRemovedEvent,
+    CalculatedColumnValidationStateChangedEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -407,6 +412,10 @@ export interface Props<TData> {
          * or can be custom data types.
          */
     dataTypeDefinitions?: DataTypeDefinitions<TData>,
+    /** Configures the Calculated Columns dialog.
+         * @agModule `CalculatedColumnsModule`
+         */
+    calculatedColumns?: CalculatedColumnsOptions,
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
          *
          * @default false
@@ -955,10 +964,11 @@ export interface Props<TData> {
          */
     suppressPaginationPanel?: boolean,
     /** Controls which built-in components appear in the pagination panel and in what order.
-         * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+         * Accepts an array of panel names (`'pageSize'`, `'rowSummary'`, `'pageSummary'`) or config objects.
          * Components render in the order they appear in the array. Omitted components are hidden.
          * An empty array hides the pagination panel entirely.
          * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+         * Use `{ type: 'pageSummary', suppressPageInput: true }` to render a read-only page summary.
          * @agModule `PaginationModule`
          */
     paginationPanels?: PaginationPanel[],
@@ -1986,6 +1996,10 @@ export interface Props<TData> {
    'onCut-end'?: CutEndEvent<TData>,
    'onPaste-start'?: PasteStartEvent<TData>,
    'onPaste-end'?: PasteEndEvent<TData>,
+   'onCalculated-column-created'?: CalculatedColumnCreatedEvent<TData>,
+   'onCalculated-column-expression-changed'?: CalculatedColumnExpressionChangedEvent<TData>,
+   'onCalculated-column-removed'?: CalculatedColumnRemovedEvent<TData>,
+   'onCalculated-column-validation-state-changed'?: CalculatedColumnValidationStateChangedEvent<TData>,
    'onColumn-visible'?: ColumnVisibleEvent<TData>,
    'onColumn-pinned'?: ColumnPinnedEvent<TData>,
    'onColumn-resized'?: ColumnResizedEvent<TData>,
@@ -2127,6 +2141,7 @@ export function getProps() {
         defaultColGroupDef: undefined,
         columnTypes: undefined,
         dataTypeDefinitions: undefined,
+        calculatedColumns: undefined,
         maintainColumnOrder: undefined,
         enableStrictPivotColumnOrder: undefined,
         suppressFieldDotNotation: undefined,
@@ -2485,6 +2500,10 @@ export function getProps() {
         'onCut-end': undefined,
         'onPaste-start': undefined,
         'onPaste-end': undefined,
+        'onCalculated-column-created': undefined,
+        'onCalculated-column-expression-changed': undefined,
+        'onCalculated-column-removed': undefined,
+        'onCalculated-column-validation-state-changed': undefined,
         'onFill-start': undefined,
         'onFill-end': undefined,
         'onCell-selection-delete-start': undefined,

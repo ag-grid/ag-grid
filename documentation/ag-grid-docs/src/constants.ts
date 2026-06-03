@@ -37,6 +37,7 @@ export const DISABLE_EXAMPLE_RUNNER = isTruthy(import.meta.env?.DISABLE_EXAMPLE_
 
 export const agChartsVersion = gridEnterprisePackageJson.optionalDependencies['ag-charts-enterprise'];
 export const agGridVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? corePackageJson.version;
+export const agStackVersion = agGridVersion;
 export const agGridEnterpriseVersion = agGridVersion;
 export const agGridReactVersion = agGridVersion;
 export const agGridAngularVersion = agGridVersion;
@@ -48,6 +49,7 @@ export const agLibraryVersion = agGridVersion;
 export const NPM_CDN = 'https://cdn.jsdelivr.net/npm';
 export const PUBLISHED_URLS = {
     '@ag-grid-community/styles': `${NPM_CDN}/@ag-grid-community/styles@${agGridVersion}`,
+    'ag-stack': `${NPM_CDN}/ag-stack@${agStackVersion}`,
     'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}`,
     'ag-grid-enterprise': `${NPM_CDN}/ag-grid-enterprise@${agGridEnterpriseVersion}/`,
     'ag-grid-angular': `${NPM_CDN}/ag-grid-angular@${agGridAngularVersion}/`,
@@ -60,6 +62,7 @@ export const PUBLISHED_URLS = {
 export const integratedChartsUsesChartsEnterprise = false;
 export const PUBLISHED_UMD_URLS = {
     'ag-charts-core': `${NPM_CDN}/ag-charts-core@${agChartsVersion}/dist/umd/ag-charts-core.min.js`,
+    'ag-stack': `${NPM_CDN}/ag-stack@${agGridVersion}/dist/ag-stack.min.js`,
     'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/ag-grid-community.min.js`,
     'ag-grid-enterprise': `${NPM_CDN}/ag-grid-enterprise@${agGridVersion}/dist/ag-grid-enterprise.min.js`,
     'ag-charts-community': `${NPM_CDN}/ag-charts-community@${agChartsVersion}/dist/umd/ag-charts-community.min.js`,

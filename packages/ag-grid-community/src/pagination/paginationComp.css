@@ -43,6 +43,10 @@
     }
 }
 
+:where(.ag-number-field).ag-paging-number {
+    display: inline-block;
+}
+
 .ag-paging-number,
 .ag-paging-row-summary-panel-number {
     font-weight: 500;

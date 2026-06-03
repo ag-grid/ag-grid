@@ -1,6 +1,7 @@
 import type { BeanCollection, StructuredSchemaParams } from 'ag-grid-community';
 
 import type { MultiFilterHandler } from '../../multiFilter/multiFilterHandler';
+import { getMultiFilterDefs } from '../../multiFilter/multiFilterUtil';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
 import type { SchemaBuilder } from '../schemaBuilder';
 import { s } from '../schemaBuilder';
@@ -92,7 +93,7 @@ function buildColumnFilterSchema(
     filterParams: any | undefined,
     defaultFilter: string,
     getKeys?: (isMulti?: boolean, index?: number) => (string | null)[]
-) {
+): SchemaBuilder | null {
     let filterKey: string | undefined = undefined;
 
     if (typeof filter === 'string') {
@@ -128,7 +129,7 @@ function buildColumnFilterSchema(
     } else if (filterKey === SetFilterKey) {
         return buildSetFilterSchema(getKeys);
     } else if (filterKey === MultiFilterKey) {
-        return buildMultiFilterSchema(filterParams.filters, defaultFilter, getKeys);
+        return buildMultiFilterSchema(getMultiFilterDefs(filterParams ?? {}), defaultFilter, getKeys);
     }
 
     return null;
@@ -255,23 +256,24 @@ const buildSetFilterSchema = (getKeys?: () => (string | null)[]) => {
 };
 
 const buildMultiFilterSchema = (
-    filters: any,
+    filters: any[],
     defaultFilter: string,
     getKeys: (isMulti: boolean, index?: number) => (string | null)[] = () => []
-) => {
+): SchemaBuilder | null => {
+    const childSchemas = filters
+        .map((filter: any, index: number) =>
+            buildColumnFilterSchema(filter.filter, filter.filterParams, defaultFilter, () => getKeys(true, index))
+        )
+        .filter((schema: SchemaBuilder | null): schema is SchemaBuilder => schema !== null);
+
+    if (childSchemas.length === 0) {
+        return null;
+    }
+
     return s.object({
         filterType: s.literal('multi', 'Filter type identifier for multi-condition filters'),
         filterModels: s.array(
-            s
-                .union(
-                    filters.map((filter: any, index: number) =>
-                        buildColumnFilterSchema(filter.filter, filter.filterParams, defaultFilter, () =>
-                            getKeys(true, index)
-                        )
-                    ),
-                    'Union of different filter types that can be combined'
-                )
-                .nullable(),
+            s.union(childSchemas, 'Union of different filter types that can be combined').nullable(),
             'Array of filter conditions to be combined with AND/OR logic'
         ),
     });

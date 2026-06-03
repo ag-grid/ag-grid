@@ -1,7 +1,6 @@
-import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
-import { _parseBigIntOrNull } from '../agStack/utils/bigInt';
-import { _getDateParts } from '../agStack/utils/date';
-import { _exists } from '../agStack/utils/generic';
+import type { LocaleTextFunc } from 'ag-stack';
+import { _exists, _getDateParts, _parseBigIntOrNull } from 'ag-stack';
+
 import type { BeanCollection, UserComponentName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ValueFormatterParams, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';

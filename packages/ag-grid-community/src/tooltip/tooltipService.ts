@@ -1,7 +1,6 @@
-import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
-import { _isElementOverflowingCallback } from '../agStack/utils/dom';
-import { _exists } from '../agStack/utils/generic';
-import { _getValueUsingDotField } from '../agStack/utils/value';
+import type { LocaleTextFunc } from 'ag-stack';
+import { _exists, _getValueUsingDotField, _isElementOverflowingCallback } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -134,7 +133,8 @@ const resolveCellTooltip = ({
     const colDef = column.colDef;
 
     // 1) formula error tooltip has highest priority.
-    if (colDef.allowFormula && formula?.active) {
+    const isCalculatedColumn = colDef.calculatedExpression != null && beans.calculatedColsSvc != null;
+    if ((colDef.allowFormula && formula?.active) || (isCalculatedColumn && formula)) {
         const error = formula.getFormulaError(column, rowNode);
         if (error) {
             return {

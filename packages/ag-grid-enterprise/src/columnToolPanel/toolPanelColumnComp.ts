@@ -1,3 +1,5 @@
+import { RefPlaceholder, _setAriaDescribedBy, _setAriaLabel, _setDisplayed } from 'ag-stack';
+
 import type {
     AgColumn,
     DragItem,
@@ -13,14 +15,10 @@ import {
     Component,
     DragSourceType,
     KeyCode,
-    RefPlaceholder,
     TouchListener,
     _createIconNoSpan,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
-    _setAriaDescribedBy,
-    _setAriaLabel,
-    _setDisplayed,
     _warn,
 } from 'ag-grid-community';
 
@@ -138,7 +136,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.setupTooltip();
 
-        const classes = _getToolPanelClassesFromColDef(column.colDef, gos, column, null);
+        const classes = _getToolPanelClassesFromColDef(column.colDef, this.beans, column, null);
         for (const c of classes) {
             this.toggleCss(c, true);
         }

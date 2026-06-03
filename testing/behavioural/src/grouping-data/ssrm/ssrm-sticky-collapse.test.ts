@@ -2,7 +2,7 @@ import type { IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-co
 import { ScrollApiModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../../test-utils';
 
 describe('SSRM grouping sticky collapse', () => {
     const gridsManager = new TestGridsManager({
@@ -65,6 +65,17 @@ describe('SSRM grouping sticky collapse', () => {
             suppressRowVirtualisation: false,
             suppressAnimationFrame: true,
         });
+        await new GridColumns(api, `collapsing a sticky SSRM group via setExpanded leaves the group row visible setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `collapsing a sticky SSRM group via setExpanded leaves the group row visible setup`)
+            .check(`
+                ROOT id:<no-id>
+                └── LEAF_GROUP collapsed id:rowIndex:0
+            `);
 
         await waitForNoLoadingRows(api);
 
@@ -91,6 +102,15 @@ describe('SSRM grouping sticky collapse', () => {
         expect(groupNode.expanded).toBe(false);
         expect(groupNode.rowIndex).toBeGreaterThanOrEqual(api.getFirstDisplayedRowIndex());
         expect(groupNode.rowIndex).toBeLessThanOrEqual(api.getLastDisplayedRowIndex());
+        await new GridRows(
+            api,
+            `collapsing a sticky SSRM group via setExpanded leaves the group row visible final state`
+        ).check(`
+            ROOT id:<no-id>
+            ├── GROUP-leafGroup collapsed id:g-A ag-Grid-AutoColumn:"A" group:"A" value:null
+            ├── GROUP-leafGroup collapsed id:g-B ag-Grid-AutoColumn:"B" group:"B" value:null
+            └── GROUP-leafGroup collapsed id:g-C ag-Grid-AutoColumn:"C" group:"C" value:null
+        `);
     });
 
     // Documents the batch-collapse behaviour change introduced by moving the
@@ -160,6 +180,21 @@ describe('SSRM grouping sticky collapse', () => {
             suppressRowVirtualisation: false,
             suppressAnimationFrame: true,
         });
+        await new GridColumns(
+            api,
+            `api.collapseAll() with nested sticky groups moves the viewport to the outermost  setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(
+            api,
+            `api.collapseAll() with nested sticky groups moves the viewport to the outermost  setup`
+        ).check(`
+            ROOT id:<no-id>
+            └── filler collapsed id:rowIndex:0
+        `);
 
         await waitForNoLoadingRows(api);
 
@@ -194,6 +229,15 @@ describe('SSRM grouping sticky collapse', () => {
         // updateAllNodes → super.setExpanded per node; the sticky check in the
         // base service fires for every currently-sticky group being collapsed.
         api.collapseAll();
+        await new GridRows(
+            api,
+            `api.collapseAll() with nested sticky groups moves the viewport to the outermost  after collapseAll`
+        ).check(`
+            ROOT id:<no-id>
+            ├── GROUP collapsed id:g-A ag-Grid-AutoColumn:"A" group:"A" subgroup:null value:null
+            ├── GROUP collapsed id:g-B ag-Grid-AutoColumn:"B" group:"B" subgroup:null value:null
+            └── GROUP collapsed id:g-C ag-Grid-AutoColumn:"C" group:"C" subgroup:null value:null
+        `);
         await asyncSetTimeout(0);
 
         const scrollAfter = api.getVerticalPixelRange().top;

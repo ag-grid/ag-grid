@@ -2,7 +2,7 @@ import type { GridApi, ValueGetterParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValueCacheModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 interface Person {
     firstName: string;
@@ -25,29 +25,69 @@ describe('ValueService init in wireBeans', () => {
 
     afterEach(() => gridsManager.reset());
 
-    test('field path: api.getCellValue works synchronously after createGrid', () => {
+    test('field path: api.getCellValue works synchronously after createGrid', async () => {
         const api: GridApi<Person> = gridsManager.createGrid('grid-field', {
             columnDefs: [{ colId: 'firstName', field: 'firstName' }],
             rowData: PEOPLE,
         });
+        await new GridColumns(api, `field path: api.getCellValue works synchronously after createGrid setup`)
+            .checkColumns(`
+                CENTER
+                └── firstName "First Name" width:200
+            `);
+        await new GridRows(api, `field path: api.getCellValue works synchronously after createGrid setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 firstName:"Ada"
+            └── LEAF id:1 firstName:"Alan"
+        `);
 
         const node = api.getRowNode('0')!;
         expect(api.getCellValue({ rowNode: node, colKey: 'firstName' })).toBe('Ada');
+        await new GridRows(api, `field path: api.getCellValue works synchronously after createGrid final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 firstName:"Ada"
+                └── LEAF id:1 firstName:"Alan"
+            `
+        );
     });
 
-    test('valueGetter path: getCellValue runs the function getter immediately after createGrid', () => {
+    test('valueGetter path: getCellValue runs the function getter immediately after createGrid', async () => {
         const fullName = (params: ValueGetterParams<Person>) => `${params.data!.firstName} ${params.data!.lastName}`;
 
         const api: GridApi<Person> = gridsManager.createGrid('grid-fn-getter', {
             columnDefs: [{ colId: 'fullName', valueGetter: fullName }],
             rowData: PEOPLE,
         });
+        await new GridColumns(
+            api,
+            `valueGetter path: getCellValue runs the function getter immediately after create setup`
+        ).checkColumns(`
+            CENTER
+            └── fullName width:200
+        `);
+        await new GridRows(
+            api,
+            `valueGetter path: getCellValue runs the function getter immediately after create setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID fullName:"<ERROR>"
+            ├── LEAF id:0 fullName:"Ada Lovelace"
+            └── LEAF id:1 fullName:"Alan Turing"
+        `);
 
         const node = api.getRowNode('0')!;
         expect(api.getCellValue({ rowNode: node, colKey: 'fullName' })).toBe('Ada Lovelace');
+        await new GridRows(
+            api,
+            `valueGetter path: getCellValue runs the function getter immediately after create final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID fullName:"<ERROR>"
+            ├── LEAF id:0 fullName:"Ada Lovelace"
+            └── LEAF id:1 fullName:"Alan Turing"
+        `);
     });
 
-    test('valueCache path: cache-variant executeValueGetter is bound in postConstruct', () => {
+    test('valueCache path: cache-variant executeValueGetter is bound in postConstruct', async () => {
         let calls = 0;
         const countingGetter = (params: ValueGetterParams<Person>) => {
             calls++;
@@ -63,6 +103,17 @@ describe('ValueService init in wireBeans', () => {
             },
             { modules: [ValueCacheModule] }
         );
+        await new GridColumns(api, `valueCache path: cache-variant executeValueGetter is bound in postConstruct setup`)
+            .checkColumns(`
+                CENTER
+                └── shouted width:200
+            `);
+        await new GridRows(api, `valueCache path: cache-variant executeValueGetter is bound in postConstruct setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID shouted:"<ERROR>"
+                ├── LEAF id:0 shouted:"ADA"
+                └── LEAF id:1 shouted:"ALAN"
+            `);
 
         const node = api.getRowNode('0')!;
 
@@ -72,9 +123,17 @@ describe('ValueService init in wireBeans', () => {
         expect(api.getCellValue({ rowNode: node, colKey: 'shouted' })).toBe('ADA');
         // Cache hit — getter not re-invoked.
         expect(calls).toBe(callsBeforeApi);
+        await new GridRows(
+            api,
+            `valueCache path: cache-variant executeValueGetter is bound in postConstruct final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID shouted:"<ERROR>"
+            ├── LEAF id:0 shouted:"ADA"
+            └── LEAF id:1 shouted:"ALAN"
+        `);
     });
 
-    test('valueCache: by the time createGrid returns, the cache is populated and the first API read is a hit', () => {
+    test('valueCache: by the time createGrid returns, the cache is populated and the first API read is a hit', async () => {
         // Cache variant is bound in init() (wireBeans), so the very first render writes to
         // the cache. The first user API read after createGrid must therefore be a cache hit.
         let calls = 0;
@@ -92,6 +151,21 @@ describe('ValueService init in wireBeans', () => {
             },
             { modules: [ValueCacheModule] }
         );
+        await new GridColumns(
+            api,
+            `valueCache: by the time createGrid returns, the cache is populated and the first setup`
+        ).checkColumns(`
+            CENTER
+            └── shouted width:200
+        `);
+        await new GridRows(
+            api,
+            `valueCache: by the time createGrid returns, the cache is populated and the first setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID shouted:"<ERROR>"
+            ├── LEAF id:0 shouted:"ADA"
+            └── LEAF id:1 shouted:"ALAN"
+        `);
 
         const node = api.getRowNode('0')!;
 
@@ -99,9 +173,17 @@ describe('ValueService init in wireBeans', () => {
         const callsAfterCreate = calls;
         api.getCellValue({ rowNode: node, colKey: 'shouted' });
         expect(calls).toBe(callsAfterCreate);
+        await new GridRows(
+            api,
+            `valueCache: by the time createGrid returns, the cache is populated and the first final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID shouted:"<ERROR>"
+            ├── LEAF id:0 shouted:"ADA"
+            └── LEAF id:1 shouted:"ALAN"
+        `);
     });
 
-    test('no-valueCache path: every getCellValue call re-invokes the getter when ValueCacheModule is NOT registered', () => {
+    test('no-valueCache path: every getCellValue call re-invokes the getter when ValueCacheModule is NOT registered', async () => {
         let calls = 0;
         const countingGetter = (params: ValueGetterParams<Person>) => {
             calls++;
@@ -112,6 +194,21 @@ describe('ValueService init in wireBeans', () => {
             columnDefs: [{ colId: 'shouted', valueGetter: countingGetter }],
             rowData: PEOPLE,
         });
+        await new GridColumns(
+            api,
+            `no-valueCache path: every getCellValue call re-invokes the getter when ValueCach setup`
+        ).checkColumns(`
+            CENTER
+            └── shouted width:200
+        `);
+        await new GridRows(
+            api,
+            `no-valueCache path: every getCellValue call re-invokes the getter when ValueCach setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID shouted:"<ERROR>"
+            ├── LEAF id:0 shouted:"ADA"
+            └── LEAF id:1 shouted:"ALAN"
+        `);
 
         const node = api.getRowNode('0')!;
 
@@ -121,21 +218,46 @@ describe('ValueService init in wireBeans', () => {
         expect(api.getCellValue({ rowNode: node, colKey: 'shouted' })).toBe('ADA');
         // No cache — every api call re-invokes the getter.
         expect(calls).toBe(callsBeforeApi + 3);
+        await new GridRows(
+            api,
+            `no-valueCache path: every getCellValue call re-invokes the getter when ValueCach final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID shouted:"<ERROR>"
+            ├── LEAF id:0 shouted:"ADA"
+            └── LEAF id:1 shouted:"ALAN"
+        `);
     });
 
-    test('cellExpressions path: string valueGetter is evaluated as an expression', () => {
-        // ExpressionModule is part of the core bundle, so no extra module registration is needed.
+    test('cellExpressions path: string valueGetter is evaluated as an expression', async () => {
         const api: GridApi<Person> = gridsManager.createGrid('grid-expressions', {
-            columnDefs: [{ colId: 'doubled', valueGetter: 'data.age * 2' }],
+            columnDefs: [{ colId: 'doubled', valueGetter: 'data ? data.age * 2 : null' }],
             rowData: PEOPLE,
             enableCellExpressions: true,
         });
+        await new GridColumns(api, `cellExpressions path: string valueGetter is evaluated as an expression setup`)
+            .checkColumns(`
+                CENTER
+                └── doubled width:200
+            `);
+        await new GridRows(api, `cellExpressions path: string valueGetter is evaluated as an expression setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID doubled:null
+                ├── LEAF id:0 doubled:72
+                └── LEAF id:1 doubled:82
+            `
+        );
 
         const node = api.getRowNode('0')!;
         expect(api.getCellValue({ rowNode: node, colKey: 'doubled' })).toBe(72);
+        await new GridRows(api, `cellExpressions path: string valueGetter is evaluated as an expression final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID doubled:null
+                ├── LEAF id:0 doubled:72
+                └── LEAF id:1 doubled:82
+            `);
     });
 
-    test('treeData option change is picked up by the listener registered in postConstruct', () => {
+    test('treeData option change is picked up by the listener registered in postConstruct', async () => {
         interface TreePerson extends Person {
             children?: TreePerson[];
         }
@@ -154,16 +276,45 @@ describe('ValueService init in wireBeans', () => {
             },
             { modules: [TreeDataModule] }
         );
+        await new GridColumns(
+            api,
+            `treeData option change is picked up by the listener registered in postConstruct setup`
+        ).checkColumns(`
+            CENTER
+            └── firstName "First Name" width:200
+        `);
+        await new GridRows(api, `treeData option change is picked up by the listener registered in postConstruct setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 firstName:"Ada"
+                └── LEAF id:1 firstName:"Alan"
+            `);
 
         const node = api.getRowNode('0')!;
         expect(api.getCellValue({ rowNode: node, colKey: 'firstName' })).toBe('Ada');
 
         // Flipping treeData after init must still update ValueService's cached isTreeData.
         api.setGridOption('treeData', true);
+        await new GridColumns(
+            api,
+            `treeData option change is picked up by the listener registered in postConstruct after setGridOption treeData`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── firstName "First Name" width:200
+        `);
+        await new GridRows(
+            api,
+            `treeData option change is picked up by the listener registered in postConstruct after setGridOption treeData`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── 0 LEAF id:0 ag-Grid-AutoColumn:"0" firstName:"Ada"
+            └── 1 LEAF id:1 ag-Grid-AutoColumn:"1" firstName:"Alan"
+        `);
         expect(api.getCellValue({ rowNode: node, colKey: 'firstName' })).toBe('Ada');
     });
 
-    test('valueGetter.getValue callback resolves cross-column values during the initial render', () => {
+    test('valueGetter.getValue callback resolves cross-column values during the initial render', async () => {
         // params.getValue fires during rowRenderer.postConstruct's initial render — the exact
         // window that motivated the original race-condition hack.
         const observed: Array<string | undefined> = [];
@@ -181,11 +332,36 @@ describe('ValueService init in wireBeans', () => {
             rowData: PEOPLE,
         });
 
-        // Cross-column lookups during the initial render must resolve, not return undefined.
-        expect(observed.length).toBeGreaterThan(0);
-        expect(observed.every((v) => typeof v === 'string')).toBe(true);
+        const observedFromInitialRender = observed.slice();
+        expect(observedFromInitialRender.length).toBeGreaterThan(0);
+        expect(observedFromInitialRender.every((v) => typeof v === 'string')).toBe(true);
+
+        await new GridColumns(
+            api,
+            `valueGetter.getValue callback resolves cross-column values during the initial re setup`
+        ).checkColumns(`
+            CENTER
+            ├── firstName "First Name" width:200
+            └── composite width:200
+        `);
+        await new GridRows(
+            api,
+            `valueGetter.getValue callback resolves cross-column values during the initial re setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID composite:"<ERROR>"
+            ├── LEAF id:0 firstName:"Ada" composite:"Ada (36)"
+            └── LEAF id:1 firstName:"Alan" composite:"Alan (41)"
+        `);
 
         const node = api.getRowNode('0')!;
         expect(api.getCellValue({ rowNode: node, colKey: 'composite' })).toBe('Ada (36)');
+        await new GridRows(
+            api,
+            `valueGetter.getValue callback resolves cross-column values during the initial re final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID composite:"<ERROR>"
+            ├── LEAF id:0 firstName:"Ada" composite:"Ada (36)"
+            └── LEAF id:1 firstName:"Alan" composite:"Alan (41)"
+        `);
     });
 });

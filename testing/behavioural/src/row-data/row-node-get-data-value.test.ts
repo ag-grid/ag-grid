@@ -11,7 +11,7 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule, FormulaModule, PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 /** Tests for RowNode.getDataValue() method (AG-16600) */
 describe('RowNode.getDataValue', () => {
@@ -44,6 +44,16 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue returns cell value for simple data setup`).checkColumns(`
+                CENTER
+                ├── name "Name" width:200
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `getDataValue returns cell value for simple data setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 name:"Alice" value:100
+                └── LEAF id:2 name:"Bob" value:200
+            `);
 
             const rowNode1 = api.getRowNode('1')!;
             const rowNode2 = api.getRowNode('2')!;
@@ -52,6 +62,11 @@ describe('RowNode.getDataValue', () => {
             expect(rowNode1.getDataValue('value')).toBe(100);
             expect(rowNode2.getDataValue('name')).toBe('Bob');
             expect(rowNode2.getDataValue('value')).toBe(200);
+            await new GridRows(api, `getDataValue returns cell value for simple data final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 name:"Alice" value:100
+                └── LEAF id:2 name:"Bob" value:200
+            `);
         });
 
         test('getDataValue returns undefined for non-existent column', async () => {
@@ -60,9 +75,21 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', name: 'Alice' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue returns undefined for non-existent column setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `getDataValue returns undefined for non-existent column setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 name:"Alice"
+            `);
 
             const rowNode = api.getRowNode('1')!;
             expect(rowNode.getDataValue('nonexistent')).toBeUndefined();
+            await new GridRows(api, `getDataValue returns undefined for non-existent column final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 name:"Alice"
+            `);
         });
 
         test('getDataValue returns undefined for nullish colKey', async () => {
@@ -75,6 +102,14 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', name: 'Alice' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue returns undefined for nullish colKey setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `getDataValue returns undefined for nullish colKey setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 name:"Alice"
+            `);
 
             const rowNode = api.getRowNode('1')!;
             expect(rowNode.getDataValue(null as any)).toBeUndefined();
@@ -84,6 +119,10 @@ describe('RowNode.getDataValue', () => {
             expect(rowNode.getDataValue(null as any, 'batch')).toBeUndefined();
             expect(rowNode.getDataValue(null as any, 'value')).toBeUndefined();
             expect(rowNode.getDataValue(null as any, 'data-raw')).toBeUndefined();
+            await new GridRows(api, `getDataValue returns undefined for nullish colKey final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 name:"Alice"
+            `);
         });
 
         test('getDataValue returns null for null cell value', async () => {
@@ -92,9 +131,22 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', name: 'Alice', value: null }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue returns null for null cell value setup`).checkColumns(`
+                CENTER
+                ├── name "Name" width:200
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `getDataValue returns null for null cell value setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 name:"Alice" value:null
+            `);
 
             const rowNode = api.getRowNode('1')!;
             expect(rowNode.getDataValue('value')).toBeNull();
+            await new GridRows(api, `getDataValue returns null for null cell value final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 name:"Alice" value:null
+            `);
         });
 
         test('getDataValue returns undefined for undefined cell value', async () => {
@@ -103,9 +155,24 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', name: 'Alice' }], // value not set
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue returns undefined for undefined cell value setup`).checkColumns(
+                `
+                    CENTER
+                    ├── name "Name" width:200
+                    └── value "Value" width:200
+                `
+            );
+            await new GridRows(api, `getDataValue returns undefined for undefined cell value setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 name:"Alice"
+            `);
 
             const rowNode = api.getRowNode('1')!;
             expect(rowNode.getDataValue('value')).toBeUndefined();
+            await new GridRows(api, `getDataValue returns undefined for undefined cell value final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 name:"Alice"
+            `);
         });
 
         test('getDataValue uses valueGetter when defined', async () => {
@@ -121,9 +188,23 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', firstName: 'Alice', lastName: 'Smith' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue uses valueGetter when defined setup`).checkColumns(`
+                CENTER
+                ├── firstName "First Name" width:200
+                ├── lastName "Last Name" width:200
+                └── fullName width:200
+            `);
+            await new GridRows(api, `getDataValue uses valueGetter when defined setup`).check(`
+                ROOT id:ROOT_NODE_ID fullName:"<ERROR>"
+                └── LEAF id:1 firstName:"Alice" lastName:"Smith" fullName:"Alice Smith"
+            `);
 
             const rowNode = api.getRowNode('1')!;
             expect(rowNode.getDataValue('fullName')).toBe('Alice Smith');
+            await new GridRows(api, `getDataValue uses valueGetter when defined final state`).check(`
+                ROOT id:ROOT_NODE_ID fullName:"<ERROR>"
+                └── LEAF id:1 firstName:"Alice" lastName:"Smith" fullName:"Alice Smith"
+            `);
         });
 
         test('getDataValue is symmetric with setDataValue', async () => {
@@ -135,6 +216,15 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', name: 'Alice', value: 100 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue is symmetric with setDataValue setup`).checkColumns(`
+                CENTER
+                ├── name "Name" width:200 editable
+                └── value "Value" width:200 editable
+            `);
+            await new GridRows(api, `getDataValue is symmetric with setDataValue setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 name:"Alice" value:100
+            `);
 
             const rowNode = api.getRowNode('1')!;
 
@@ -147,6 +237,10 @@ describe('RowNode.getDataValue', () => {
             // Get updated value
             expect(rowNode.getDataValue('value')).toBe(200);
             expect(rowNode.data.value).toBe(200);
+            await new GridRows(api, `getDataValue is symmetric with setDataValue final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 name:"Alice" value:200
+            `);
         });
 
         test('getDataValue matches api.getCellValue', async () => {
@@ -155,11 +249,24 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', name: 'Alice', value: 100 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue matches api.getCellValue setup`).checkColumns(`
+                CENTER
+                ├── name "Name" width:200
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `getDataValue matches api.getCellValue setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 name:"Alice" value:100
+            `);
 
             const rowNode = api.getRowNode('1')!;
 
             expect(rowNode.getDataValue('name')).toBe(api.getCellValue({ rowNode, colKey: 'name' }));
             expect(rowNode.getDataValue('value')).toBe(api.getCellValue({ rowNode, colKey: 'value' }));
+            await new GridRows(api, `getDataValue matches api.getCellValue final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 name:"Alice" value:100
+            `);
         });
     });
 
@@ -170,6 +277,14 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '0', a: 'initial' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue returns committed data during batch edit setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `getDataValue returns committed data during batch edit setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
             api.startBatchEdit();
 
@@ -200,6 +315,10 @@ describe('RowNode.getDataValue', () => {
             await asyncSetTimeout(1);
 
             expect(rowNode.getDataValue('a')).toBe('initial');
+            await new GridRows(api, `getDataValue returns committed data during batch edit final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
         });
 
         test('getDataValue reflects committed batch edit', async () => {
@@ -208,6 +327,14 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '0', a: 'initial' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue reflects committed batch edit setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `getDataValue reflects committed batch edit setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
             api.startBatchEdit();
 
@@ -232,6 +359,10 @@ describe('RowNode.getDataValue', () => {
             // After commit, getDataValue returns committed value
             expect(rowNode.getDataValue('a')).toBe('committed');
             expect(rowNode.data.a).toBe('committed');
+            await new GridRows(api, `getDataValue reflects committed batch edit final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"committed"
+            `);
         });
     });
 
@@ -250,6 +381,19 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `getDataValue returns aggregated value on group rows setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── value "Value" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `getDataValue returns aggregated value on group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" value:300
+                │ ├── LEAF id:1 country:"Ireland" value:100
+                │ └── LEAF id:2 country:"Ireland" value:200
+                └─┬ LEAF_GROUP id:row-group-country-UK ag-Grid-AutoColumn:"UK" value:300
+                · └── LEAF id:3 country:"UK" value:300
+            `);
 
             await asyncSetTimeout(1);
 
@@ -260,6 +404,14 @@ describe('RowNode.getDataValue', () => {
                     irelandGroup = node;
                 }
             });
+            await new GridRows(api, `getDataValue returns aggregated value on group rows after forEachNode`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" value:300
+                │ ├── LEAF id:1 country:"Ireland" value:100
+                │ └── LEAF id:2 country:"Ireland" value:200
+                └─┬ LEAF_GROUP id:row-group-country-UK ag-Grid-AutoColumn:"UK" value:300
+                · └── LEAF id:3 country:"UK" value:300
+            `);
 
             expect(irelandGroup).toBeDefined();
             expect(irelandGroup!.getDataValue('value')).toBe(300); // 100 + 200
@@ -282,6 +434,17 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `getDataValue on group row matches getCellValue setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── value "Value" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `getDataValue on group row matches getCellValue setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" value:300
+                · ├── LEAF id:1 country:"Ireland" value:100
+                · └── LEAF id:2 country:"Ireland" value:200
+            `);
 
             await asyncSetTimeout(1);
 
@@ -291,6 +454,12 @@ describe('RowNode.getDataValue', () => {
                     irelandGroup = node;
                 }
             });
+            await new GridRows(api, `getDataValue on group row matches getCellValue after forEachNode`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" value:300
+                · ├── LEAF id:1 country:"Ireland" value:100
+                · └── LEAF id:2 country:"Ireland" value:200
+            `);
 
             expect(irelandGroup!.getDataValue('value')).toBe(
                 api.getCellValue({ rowNode: irelandGroup!, colKey: 'value' })
@@ -311,6 +480,19 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `getDataValue returns group key from auto-group column setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── value "Value" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `getDataValue returns group key from auto-group column setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" value:300
+                │ ├── LEAF id:1 country:"Ireland" value:100
+                │ └── LEAF id:2 country:"Ireland" value:200
+                └─┬ LEAF_GROUP id:row-group-country-UK ag-Grid-AutoColumn:"UK" value:300
+                · └── LEAF id:3 country:"UK" value:300
+            `);
 
             await asyncSetTimeout(1);
 
@@ -328,6 +510,16 @@ describe('RowNode.getDataValue', () => {
                     ukGroup = node;
                 }
             });
+            await new GridRows(api, `getDataValue returns group key from auto-group column after forEachNode`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" value:300
+                    │ ├── LEAF id:1 country:"Ireland" value:100
+                    │ └── LEAF id:2 country:"Ireland" value:200
+                    └─┬ LEAF_GROUP id:row-group-country-UK ag-Grid-AutoColumn:"UK" value:300
+                    · └── LEAF id:3 country:"UK" value:300
+                `
+            );
 
             // Group key should be returned from auto-group column
             expect(irelandGroup!.getDataValue(autoGroupCol)).toBe('Ireland');
@@ -360,6 +552,18 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `getDataValue works with tree data nodes setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── name "Name" width:200
+                └── value "Value" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `getDataValue works with tree data nodes setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"Parent" value:50
+                · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"Child 1" value:20
+                · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"Child 2" value:30
+            `);
 
             await asyncSetTimeout(1);
 
@@ -373,6 +577,12 @@ describe('RowNode.getDataValue', () => {
             // Child node
             expect(child1Node.getDataValue('name')).toBe('Child 1');
             expect(child1Node.getDataValue('value')).toBe(20);
+            await new GridRows(api, `getDataValue works with tree data nodes final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"Parent" value:50
+                · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"Child 1" value:20
+                · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"Child 2" value:30
+            `);
         });
 
         test('getDataValue runs valueGetter on tree-data rows', async () => {
@@ -396,6 +606,18 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `getDataValue runs valueGetter on tree-data rows setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── name "Name" width:200
+                └── shouted width:200
+            `);
+            await new GridRows(api, `getDataValue runs valueGetter on tree-data rows setup`).check(`
+                ROOT id:ROOT_NODE_ID shouted:null
+                └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"Parent" shouted:"PARENT"
+                · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"ChildA" shouted:"CHILDA"
+                · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"ChildB" shouted:"CHILDB"
+            `);
 
             await asyncSetTimeout(1);
 
@@ -405,6 +627,12 @@ describe('RowNode.getDataValue', () => {
             // Child rows
             expect(api.getRowNode('1-1')!.getDataValue('shouted')).toBe('CHILDA');
             expect(api.getRowNode('1-2')!.getDataValue('shouted')).toBe('CHILDB');
+            await new GridRows(api, `getDataValue runs valueGetter on tree-data rows final state`).check(`
+                ROOT id:ROOT_NODE_ID shouted:null
+                └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"Parent" shouted:"PARENT"
+                · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"ChildA" shouted:"CHILDA"
+                · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"ChildB" shouted:"CHILDB"
+            `);
         });
     });
 
@@ -415,6 +643,15 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', value: 100 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue reflects changes from setDataValue immediately setup`)
+                .checkColumns(`
+                    CENTER
+                    └── value "Value" width:200 editable
+                `);
+            await new GridRows(api, `getDataValue reflects changes from setDataValue immediately setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:100
+            `);
 
             const rowNode = api.getRowNode('1')!;
 
@@ -424,6 +661,12 @@ describe('RowNode.getDataValue', () => {
 
             expect(rowNode.getDataValue('value')).toBe(200);
             expect(api.getCellValue({ rowNode, colKey: 'value' })).toBe(200);
+            await new GridRows(api, `getDataValue reflects changes from setDataValue immediately final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:1 value:200
+                `
+            );
         });
 
         test('getDataValue and setDataValue work together for computed values', async () => {
@@ -439,6 +682,17 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', price: 10, quantity: 5 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue and setDataValue work together for computed values setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── price "Price" width:200 editable
+                    ├── quantity "Quantity" width:200 editable
+                    └── total width:200
+                `);
+            await new GridRows(api, `getDataValue and setDataValue work together for computed values setup`).check(`
+                ROOT id:ROOT_NODE_ID total:"<ERROR>"
+                └── LEAF id:1 price:10 quantity:5 total:50
+            `);
 
             const rowNode = api.getRowNode('1')!;
 
@@ -446,7 +700,12 @@ describe('RowNode.getDataValue', () => {
 
             rowNode.setDataValue('price', 20);
 
-            expect(rowNode.getDataValue('total')).toBe(100); // 20 * 5
+            expect(rowNode.getDataValue('total')).toBe(100);
+            await new GridRows(api, `getDataValue and setDataValue work together for computed values final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID total:"<ERROR>"
+                    └── LEAF id:1 price:20 quantity:5 total:100
+                `); // 20 * 5
         });
     });
 
@@ -457,9 +716,21 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', value: 100 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue works with column id string setup`).checkColumns(`
+                CENTER
+                └── myCol "Value" width:200
+            `);
+            await new GridRows(api, `getDataValue works with column id string setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 myCol:100
+            `);
 
             const rowNode = api.getRowNode('1')!;
             expect(rowNode.getDataValue('myCol')).toBe(100);
+            await new GridRows(api, `getDataValue works with column id string final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 myCol:100
+            `);
         });
 
         test('getDataValue works with column object', async () => {
@@ -468,11 +739,23 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', value: 100 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue works with column object setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `getDataValue works with column object setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:100
+            `);
 
             const rowNode = api.getRowNode('1')!;
             const column = api.getColumn('value')!;
 
             expect(rowNode.getDataValue(column)).toBe(100);
+            await new GridRows(api, `getDataValue works with column object final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:100
+            `);
         });
     });
 
@@ -491,6 +774,18 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue returns resolved formula value by default setup`).checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `getDataValue returns resolved formula value by default setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:raw row-number:"1" value:10
+                ├── LEAF id:constant row-number:"2" value:3.14
+                └── LEAF id:sum row-number:"3" value:15
+            `);
 
             await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -502,6 +797,12 @@ describe('RowNode.getDataValue', () => {
 
             // Reference formula - should return resolved value (10 + 5 = 15)
             expect(api.getRowNode('sum')!.getDataValue('value')).toBe(15);
+            await new GridRows(api, `getDataValue returns resolved formula value by default final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:raw row-number:"1" value:10
+                ├── LEAF id:constant row-number:"2" value:3.14
+                └── LEAF id:sum row-number:"3" value:15
+            `);
         });
 
         test('getDataValue with formulas matches getCellValue', async () => {
@@ -515,6 +816,17 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue with formulas matches getCellValue setup`).checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `getDataValue with formulas matches getCellValue setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:a row-number:"1" value:20
+                └── LEAF id:formula row-number:"2" value:40
+            `);
 
             await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -522,7 +834,12 @@ describe('RowNode.getDataValue', () => {
 
             // getDataValue should match getCellValue
             expect(formulaNode.getDataValue('value')).toBe(api.getCellValue({ rowNode: formulaNode, colKey: 'value' }));
-            expect(formulaNode.getDataValue('value')).toBe(40); // 20 * 2
+            expect(formulaNode.getDataValue('value')).toBe(40);
+            await new GridRows(api, `getDataValue with formulas matches getCellValue final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:a row-number:"1" value:20
+                └── LEAF id:formula row-number:"2" value:40
+            `); // 20 * 2
         });
 
         test('getDataValue returns resolved formula with cell references', async () => {
@@ -535,11 +852,29 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue returns resolved formula with cell references setup`).checkColumns(
+                `
+                    LEFT
+                    └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                    CENTER
+                    ├── A width:200
+                    ├── B width:200
+                    └── result "Result" width:200
+                `
+            );
+            await new GridRows(api, `getDataValue returns resolved formula with cell references setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:calc row-number:"1" A:10 B:5 result:15
+            `);
 
             await asyncSetTimeout(rowNumberRefreshBufferMs);
 
             const calcNode = api.getRowNode('calc')!;
-            expect(calcNode.getDataValue('result')).toBe(15); // 10 + 5
+            expect(calcNode.getDataValue('result')).toBe(15);
+            await new GridRows(api, `getDataValue returns resolved formula with cell references final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:calc row-number:"1" A:10 B:5 result:15
+            `); // 10 + 5
         });
 
         test('getDataValue returns resolved formula for formula cell reference', async () => {
@@ -553,6 +888,18 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue returns resolved formula for formula cell reference setup`)
+                .checkColumns(`
+                    LEFT
+                    └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                    CENTER
+                    └── value "Value" width:200
+                `);
+            await new GridRows(api, `getDataValue returns resolved formula for formula cell reference setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:raw row-number:"1" value:100
+                └── LEAF id:formula row-number:"2" value:50
+            `);
 
             await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -561,6 +908,12 @@ describe('RowNode.getDataValue', () => {
             // getDataValue always returns the resolved formula value
             expect(formulaNode.getDataValue('value')).toBe(50);
             expect(formulaNode.getDataValue('value')).toBe(api.getCellValue({ rowNode: formulaNode, colKey: 'value' }));
+            await new GridRows(api, `getDataValue returns resolved formula for formula cell reference final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:raw row-number:"1" value:100
+                    └── LEAF id:formula row-number:"2" value:50
+                `);
         });
 
         test("getDataValue returns raw formula string for 'edit' and 'batch' (mirrors edit-pipeline buffer)", async () => {
@@ -575,6 +928,23 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(
+                api,
+                `getDataValue returns raw formula string for 'edit' and 'batch' (mirrors edit-pip setup`
+            ).checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(
+                api,
+                `getDataValue returns raw formula string for 'edit' and 'batch' (mirrors edit-pip setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:raw row-number:"1" value:7
+                └── LEAF id:formula row-number:"2" value:21
+            `);
 
             await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -591,6 +961,14 @@ describe('RowNode.getDataValue', () => {
 
             // 'data-raw': already documented as raw (no formula resolution)
             expect(formulaNode.getDataValue('value', 'data-raw')).toBe(formulaString);
+            await new GridRows(
+                api,
+                `getDataValue returns raw formula string for 'edit' and 'batch' (mirrors edit-pip final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:raw row-number:"1" value:7
+                └── LEAF id:formula row-number:"2" value:21
+            `);
         });
 
         test('getDataValue does NOT evaluate "=..." when allowFormula is false', async () => {
@@ -601,6 +979,15 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: 'row1', value: notAFormula }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue does NOT evaluate "=..." when allowFormula is false setup`)
+                .checkColumns(`
+                    CENTER
+                    └── value "Value" width:200
+                `);
+            await new GridRows(api, `getDataValue does NOT evaluate "=..." when allowFormula is false setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:row1 value:"=1+2"
+            `);
 
             const node = api.getRowNode('row1')!;
 
@@ -611,6 +998,11 @@ describe('RowNode.getDataValue', () => {
             expect(node.getDataValue('value', 'edit')).toBe(notAFormula);
             expect(node.getDataValue('value', 'batch')).toBe(notAFormula);
             expect(node.getDataValue('value', 'data-raw')).toBe(notAFormula);
+            await new GridRows(api, `getDataValue does NOT evaluate "=..." when allowFormula is false final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:row1 value:"=1+2"
+                `);
         });
 
         test('getDataValue returns error string when formula evaluation fails', async () => {
@@ -624,6 +1016,17 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue returns error string when formula evaluation fails setup`)
+                .checkColumns(`
+                    LEFT
+                    └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                    CENTER
+                    └── value "Value" width:200
+                `);
+            await new GridRows(api, `getDataValue returns error string when formula evaluation fails setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:bad row-number:"1" value:"#REF!"
+            `);
 
             await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -634,6 +1037,11 @@ describe('RowNode.getDataValue', () => {
             expect(typeof resolved).toBe('string');
             expect(resolved as string).toMatch(/^#/);
             expect(resolved).not.toBe(node.data!.value);
+            await new GridRows(api, `getDataValue returns error string when formula evaluation fails final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:bad row-number:"1" value:"#REF!"
+                `);
         });
 
         test('getDataValue round-trips formula through setDataValue', async () => {
@@ -647,6 +1055,17 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue round-trips formula through setDataValue setup`).checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                └── value "Value" width:200 editable
+            `);
+            await new GridRows(api, `getDataValue round-trips formula through setDataValue setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:source row-number:"1" value:10
+                └── LEAF id:target row-number:"2" value:1
+            `);
 
             await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -663,6 +1082,11 @@ describe('RowNode.getDataValue', () => {
             expect(target.getDataValue('value', 'edit')).toBe(formulaString);
             expect(target.getDataValue('value', 'batch')).toBe(formulaString);
             expect(target.getDataValue('value', 'data-raw')).toBe(formulaString);
+            await new GridRows(api, `getDataValue round-trips formula through setDataValue final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:source row-number:"1" value:10
+                └── LEAF id:target row-number:"2" value:40
+            `);
         });
 
         test('getDataValue during batch edit of a formula column', async () => {
@@ -677,6 +1101,17 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue during batch edit of a formula column setup`).checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                └── value "Value" width:200 editable
+            `);
+            await new GridRows(api, `getDataValue during batch edit of a formula column setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:a row-number:"1" value:5
+                └── LEAF id:b row-number:"2" value:6
+            `);
 
             await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -705,6 +1140,11 @@ describe('RowNode.getDataValue', () => {
             // After cancelling, state reverts to the original formula
             expect(b.getDataValue('value')).toBe(6);
             expect(b.getDataValue('value', 'batch')).toBe(originalFormula);
+            await new GridRows(api, `getDataValue during batch edit of a formula column final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:a row-number:"1" value:5
+                └── LEAF id:b row-number:"2" value:6
+            `);
         });
 
         test('getDataValue evaluates chained formula references', async () => {
@@ -719,6 +1159,18 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue evaluates chained formula references setup`).checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `getDataValue evaluates chained formula references setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:a row-number:"1" value:2
+                ├── LEAF id:b row-number:"2" value:6
+                └── LEAF id:c row-number:"3" value:7
+            `);
 
             await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -726,6 +1178,12 @@ describe('RowNode.getDataValue', () => {
             expect(api.getRowNode('a')!.getDataValue('value')).toBe(2);
             expect(api.getRowNode('b')!.getDataValue('value')).toBe(6);
             expect(api.getRowNode('c')!.getDataValue('value')).toBe(7);
+            await new GridRows(api, `getDataValue evaluates chained formula references final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:a row-number:"1" value:2
+                ├── LEAF id:b row-number:"2" value:6
+                └── LEAF id:c row-number:"3" value:7
+            `);
         });
 
         test('getDataValue on formula returning null/undefined operands', async () => {
@@ -741,6 +1199,19 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `getDataValue on formula returning null/undefined operands setup`).checkColumns(
+                `
+                    LEFT
+                    └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                    CENTER
+                    └── value "Value" width:200
+                `
+            );
+            await new GridRows(api, `getDataValue on formula returning null/undefined operands setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:nullCell row-number:"1" value:null
+                └── LEAF id:sum row-number:"2" value:5
+            `);
 
             await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -754,6 +1225,11 @@ describe('RowNode.getDataValue', () => {
             // but it must not be the raw formula string (i.e. resolution did run).
             const sumResolved = sumNode.getDataValue('value');
             expect(sumResolved).not.toBe(sumNode.data!.value);
+            await new GridRows(api, `getDataValue on formula returning null/undefined operands final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:nullCell row-number:"1" value:null
+                └── LEAF id:sum row-number:"2" value:5
+            `);
         });
     });
 
@@ -779,6 +1255,23 @@ describe('RowNode.getDataValue', () => {
                 getRowId: ({ data }) => data.id,
                 rowData: createPivotRowData(),
             });
+            await new GridColumns(api, `getDataValue on leaf row with pivot columns setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+            `);
+            await new GridRows(api, `getDataValue on leaf row with pivot columns setup`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            `);
 
             await asyncSetTimeout(1);
 
@@ -800,6 +1293,15 @@ describe('RowNode.getDataValue', () => {
             expect(franceNode.getDataValue(pivotCol2020!)).toBe(
                 api.getCellValue({ rowNode: franceNode, colKey: pivotCol2020! })
             );
+            await new GridRows(api, `getDataValue on leaf row with pivot columns final state`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            `);
         });
 
         test('getDataValue on leaf group with pivot columns', async () => {
@@ -814,6 +1316,23 @@ describe('RowNode.getDataValue', () => {
                 getRowId: ({ data }) => data.id,
                 rowData: createPivotRowData(),
             });
+            await new GridColumns(api, `getDataValue on leaf group with pivot columns setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+            `);
+            await new GridRows(api, `getDataValue on leaf group with pivot columns setup`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            `);
 
             await asyncSetTimeout(1);
 
@@ -835,6 +1354,15 @@ describe('RowNode.getDataValue', () => {
             // Aggregated values for Germany: 2020=1500, 2021=1800
             expect(germanyGroup.getDataValue(pivotCol2020!)).toBe(1500);
             expect(germanyGroup.getDataValue(pivotCol2021!)).toBe(1800);
+            await new GridRows(api, `getDataValue on leaf group with pivot columns final state`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            `);
         });
 
         test('getDataValue on nested groups with pivot columns', async () => {
@@ -859,6 +1387,28 @@ describe('RowNode.getDataValue', () => {
                 getRowId: ({ data }) => data.id,
                 rowData,
             });
+            await new GridColumns(api, `getDataValue on nested groups with pivot columns setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+            `);
+            await new GridRows(api, `getDataValue on nested groups with pivot columns setup`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:4500 pivot_year_2021_sales:5200
+                ├─┬ filler id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-region-Europe-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                │ └─┬ LEAF_GROUP collapsed id:row-group-region-Europe-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                │ · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                │ · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+                └─┬ filler id:row-group-region-Americas ag-Grid-AutoColumn:"Americas" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                · └─┬ LEAF_GROUP collapsed id:row-group-region-Americas-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                · · ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+                · · └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+            `);
 
             await asyncSetTimeout(1);
 
@@ -887,6 +1437,20 @@ describe('RowNode.getDataValue', () => {
             expect(franceLeafGroup.getDataValue(pivotCol2021!)).toBe(
                 api.getCellValue({ rowNode: franceLeafGroup, colKey: pivotCol2021! })
             );
+            await new GridRows(api, `getDataValue on nested groups with pivot columns final state`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:4500 pivot_year_2021_sales:5200
+                ├─┬ filler id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-region-Europe-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                │ └─┬ LEAF_GROUP collapsed id:row-group-region-Europe-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                │ · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                │ · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+                └─┬ filler id:row-group-region-Americas ag-Grid-AutoColumn:"Americas" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                · └─┬ LEAF_GROUP collapsed id:row-group-region-Americas-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                · · ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+                · · └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+            `);
         });
 
         test('getDataValue returns aggregated value on pivot columns', async () => {
@@ -901,6 +1465,23 @@ describe('RowNode.getDataValue', () => {
                 getRowId: ({ data }) => data.id,
                 rowData: createPivotRowData(),
             });
+            await new GridColumns(api, `getDataValue returns aggregated value on pivot columns setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+            `);
+            await new GridRows(api, `getDataValue returns aggregated value on pivot columns setup`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            `);
 
             await asyncSetTimeout(1);
 
@@ -914,6 +1495,15 @@ describe('RowNode.getDataValue', () => {
             expect(franceGroup.getDataValue(pivotCol2020!)).toBe(
                 api.getCellValue({ rowNode: franceGroup, colKey: pivotCol2020! })
             );
+            await new GridRows(api, `getDataValue returns aggregated value on pivot columns final state`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            `);
         });
 
         test('getDataValue on true leaf data row resolves pivot column to underlying value column', async () => {
@@ -928,6 +1518,29 @@ describe('RowNode.getDataValue', () => {
                 getRowId: ({ data }) => data.id,
                 rowData: createPivotRowData(),
             });
+            await new GridColumns(
+                api,
+                `getDataValue on true leaf data row resolves pivot column to underlying value col setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+            `);
+            await new GridRows(
+                api,
+                `getDataValue on true leaf data row resolves pivot column to underlying value col setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            `);
 
             await asyncSetTimeout(1);
 
@@ -952,6 +1565,18 @@ describe('RowNode.getDataValue', () => {
 
             expect(leafRow2021.getDataValue(pivotCol2020!)).toBe(1200);
             expect(leafRow2021.getDataValue(pivotCol2021!)).toBe(1200);
+            await new GridRows(
+                api,
+                `getDataValue on true leaf data row resolves pivot column to underlying value col final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            `);
         });
 
         test('getDataValue on true leaf data row: all from modes return underlying value column', async () => {
@@ -966,6 +1591,29 @@ describe('RowNode.getDataValue', () => {
                 getRowId: ({ data }) => data.id,
                 rowData: createPivotRowData(),
             });
+            await new GridColumns(
+                api,
+                `getDataValue on true leaf data row: all from modes return underlying value colum setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+            `);
+            await new GridRows(
+                api,
+                `getDataValue on true leaf data row: all from modes return underlying value colum setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            `);
 
             await asyncSetTimeout(1);
 
@@ -984,6 +1632,18 @@ describe('RowNode.getDataValue', () => {
             expect(leafRow.getDataValue(pivotCol2020!, 'edit')).toBe(1000);
             expect(leafRow.getDataValue(pivotCol2020!, 'batch')).toBe(1000);
             expect(leafRow.getDataValue(pivotCol2020!, 'value')).toBe(1000);
+            await new GridRows(
+                api,
+                `getDataValue on true leaf data row: all from modes return underlying value colum final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            `);
         });
     });
 
@@ -1003,6 +1663,21 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `getDataValue returns aggregated value on non-pivot group rows setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── value "Value" width:200 aggFunc:sum
+                    └── min "Min" width:200 aggFunc:min
+                `);
+            await new GridRows(api, `getDataValue returns aggregated value on non-pivot group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" value:300 min:5
+                │ ├── LEAF id:1 category:"A" value:100 min:10
+                │ └── LEAF id:2 category:"A" value:200 min:5
+                └─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B" value:300 min:20
+                · └── LEAF id:3 category:"B" value:300 min:20
+            `);
 
             await asyncSetTimeout(1);
 
@@ -1013,6 +1688,15 @@ describe('RowNode.getDataValue', () => {
                     groupA = node;
                 }
             });
+            await new GridRows(api, `getDataValue returns aggregated value on non-pivot group rows after forEachNode`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" value:300 min:5
+                    │ ├── LEAF id:1 category:"A" value:100 min:10
+                    │ └── LEAF id:2 category:"A" value:200 min:5
+                    └─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B" value:300 min:20
+                    · └── LEAF id:3 category:"B" value:300 min:20
+                `);
 
             expect(groupA).toBeDefined();
             expect(groupA!.getDataValue('value')).toBe(300); // 100 + 200
@@ -1035,6 +1719,20 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `getDataValue with multiple aggregation functions setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── quantity "Quantity" width:200 aggFunc:sum
+                ├── revenue "Revenue" width:200 aggFunc:max
+                └── cost "Cost" width:200 aggFunc:min
+            `);
+            await new GridRows(api, `getDataValue with multiple aggregation functions setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-group-X ag-Grid-AutoColumn:"X" quantity:10 revenue:60 cost:8
+                · ├── LEAF id:1 group:"X" quantity:5 revenue:50 cost:10
+                · ├── LEAF id:2 group:"X" quantity:3 revenue:60 cost:8
+                · └── LEAF id:3 group:"X" quantity:2 revenue:40 cost:12
+            `);
 
             await asyncSetTimeout(1);
 
@@ -1044,6 +1742,13 @@ describe('RowNode.getDataValue', () => {
                     groupX = node;
                 }
             });
+            await new GridRows(api, `getDataValue with multiple aggregation functions after forEachNode`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-group-X ag-Grid-AutoColumn:"X" quantity:10 revenue:60 cost:8
+                · ├── LEAF id:1 group:"X" quantity:5 revenue:50 cost:10
+                · ├── LEAF id:2 group:"X" quantity:3 revenue:60 cost:8
+                · └── LEAF id:3 group:"X" quantity:2 revenue:40 cost:12
+            `);
 
             expect(groupX).toBeDefined();
             expect(groupX!.getDataValue('quantity')).toBe(10); // sum of 5, 3, 2
@@ -1064,6 +1769,18 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `getDataValue on group row matches getCellValue for aggregations setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── amount "Amount" width:200 aggFunc:sum
+                `);
+            await new GridRows(api, `getDataValue on group row matches getCellValue for aggregations setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-type-Income ag-Grid-AutoColumn:"Income" amount:1500
+                · ├── LEAF id:1 type:"Income" amount:1000
+                · └── LEAF id:2 type:"Income" amount:500
+            `);
 
             await asyncSetTimeout(1);
 
@@ -1073,6 +1790,13 @@ describe('RowNode.getDataValue', () => {
                     incomeGroup = node;
                 }
             });
+            await new GridRows(api, `getDataValue on group row matches getCellValue for aggregations after forEachNode`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ LEAF_GROUP id:row-group-type-Income ag-Grid-AutoColumn:"Income" amount:1500
+                    · ├── LEAF id:1 type:"Income" amount:1000
+                    · └── LEAF id:2 type:"Income" amount:500
+                `);
 
             expect(incomeGroup!.getDataValue('amount')).toBe(
                 api.getCellValue({ rowNode: incomeGroup!, colKey: 'amount' })
@@ -1105,6 +1829,17 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `sum returns a plain scalar on group rows setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `sum returns a plain scalar on group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:30
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:20
+            `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1112,6 +1847,12 @@ describe('RowNode.getDataValue', () => {
 
             expect(typeof val).toBe('number');
             expect(val).toBe(30);
+            await new GridRows(api, `sum returns a plain scalar on group rows final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:30
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:20
+            `);
         });
 
         test('min returns a plain scalar on group rows', async () => {
@@ -1127,6 +1868,17 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `min returns a plain scalar on group rows setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:min
+            `);
+            await new GridRows(api, `min returns a plain scalar on group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:10
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:20
+            `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1134,6 +1886,12 @@ describe('RowNode.getDataValue', () => {
 
             expect(typeof val).toBe('number');
             expect(val).toBe(10);
+            await new GridRows(api, `min returns a plain scalar on group rows final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:10
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:20
+            `);
         });
 
         test('max returns a plain scalar on group rows', async () => {
@@ -1149,6 +1907,17 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `max returns a plain scalar on group rows setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:max
+            `);
+            await new GridRows(api, `max returns a plain scalar on group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:20
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:20
+            `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1156,6 +1925,12 @@ describe('RowNode.getDataValue', () => {
 
             expect(typeof val).toBe('number');
             expect(val).toBe(20);
+            await new GridRows(api, `max returns a plain scalar on group rows final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:20
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:20
+            `);
         });
 
         test('first returns a plain scalar on group rows', async () => {
@@ -1171,6 +1946,17 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `first returns a plain scalar on group rows setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:first
+            `);
+            await new GridRows(api, `first returns a plain scalar on group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:"alpha"
+                · ├── LEAF id:1 cat:"A" v:"alpha"
+                · └── LEAF id:2 cat:"A" v:"beta"
+            `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1178,6 +1964,12 @@ describe('RowNode.getDataValue', () => {
 
             expect(typeof val).toBe('string');
             expect(val).toBe('alpha');
+            await new GridRows(api, `first returns a plain scalar on group rows final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:"alpha"
+                · ├── LEAF id:1 cat:"A" v:"alpha"
+                · └── LEAF id:2 cat:"A" v:"beta"
+            `);
         });
 
         test('last returns a plain scalar on group rows', async () => {
@@ -1193,6 +1985,17 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `last returns a plain scalar on group rows setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:last
+            `);
+            await new GridRows(api, `last returns a plain scalar on group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:"beta"
+                · ├── LEAF id:1 cat:"A" v:"alpha"
+                · └── LEAF id:2 cat:"A" v:"beta"
+            `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1200,6 +2003,12 @@ describe('RowNode.getDataValue', () => {
 
             expect(typeof val).toBe('string');
             expect(val).toBe('beta');
+            await new GridRows(api, `last returns a plain scalar on group rows final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:"beta"
+                · ├── LEAF id:1 cat:"A" v:"alpha"
+                · └── LEAF id:2 cat:"A" v:"beta"
+            `);
         });
 
         test('avg returns a wrapped object (not a scalar) on group rows', async () => {
@@ -1216,6 +2025,20 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `avg returns a wrapped object (not a scalar) on group rows setup`).checkColumns(
+                `
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── v "V" width:200 aggFunc:avg
+                `
+            );
+            await new GridRows(api, `avg returns a wrapped object (not a scalar) on group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":3,"value":20}
+                · ├── LEAF id:1 cat:"A" v:10
+                · ├── LEAF id:2 cat:"A" v:20
+                · └── LEAF id:3 cat:"A" v:30
+            `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1231,6 +2054,13 @@ describe('RowNode.getDataValue', () => {
 
             // Leaf rows return plain scalars
             expect(api.getRowNode('1')!.getDataValue('v')).toBe(10);
+            await new GridRows(api, `avg returns a wrapped object (not a scalar) on group rows final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":3,"value":20}
+                · ├── LEAF id:1 cat:"A" v:10
+                · ├── LEAF id:2 cat:"A" v:20
+                · └── LEAF id:3 cat:"A" v:30
+            `);
         });
 
         test('count returns a wrapped object (not a scalar) on group rows', async () => {
@@ -1247,6 +2077,20 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `count returns a wrapped object (not a scalar) on group rows setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── v "V" width:200 aggFunc:count
+                `);
+            await new GridRows(api, `count returns a wrapped object (not a scalar) on group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"value":2}
+                │ ├── LEAF id:1 cat:"A" v:"x"
+                │ └── LEAF id:2 cat:"A" v:"y"
+                └─┬ LEAF_GROUP id:row-group-cat-B ag-Grid-AutoColumn:"B" v:{"value":1}
+                · └── LEAF id:3 cat:"B" v:"z"
+            `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1258,6 +2102,16 @@ describe('RowNode.getDataValue', () => {
             expect(val.value).toBe(2);
             expect(val.toNumber()).toBe(2);
             expect(val.toString()).toBe('2');
+            await new GridRows(api, `count returns a wrapped object (not a scalar) on group rows final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    ├─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"value":2}
+                    │ ├── LEAF id:1 cat:"A" v:"x"
+                    │ └── LEAF id:2 cat:"A" v:"y"
+                    └─┬ LEAF_GROUP id:row-group-cat-B ag-Grid-AutoColumn:"B" v:{"value":1}
+                    · └── LEAF id:3 cat:"B" v:"z"
+                `
+            );
         });
 
         test('avg with nested groups returns wrapped objects at all levels', async () => {
@@ -1276,6 +2130,22 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `avg with nested groups returns wrapped objects at all levels setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── v "V" width:200 aggFunc:avg
+                `);
+            await new GridRows(api, `avg with nested groups returns wrapped objects at all levels setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-EU ag-Grid-AutoColumn:"EU" v:{"count":4,"value":25}
+                · ├─┬ LEAF_GROUP id:row-group-region-EU-country-FR ag-Grid-AutoColumn:"FR" v:{"count":2,"value":15}
+                · │ ├── LEAF id:1 region:"EU" country:"FR" v:10
+                · │ └── LEAF id:2 region:"EU" country:"FR" v:20
+                · └─┬ LEAF_GROUP id:row-group-region-EU-country-DE ag-Grid-AutoColumn:"DE" v:{"count":2,"value":35}
+                · · ├── LEAF id:3 region:"EU" country:"DE" v:30
+                · · └── LEAF id:4 region:"EU" country:"DE" v:40
+            `);
             await asyncSetTimeout(1);
 
             let euGroup: any, frGroup: any;
@@ -1286,6 +2156,17 @@ describe('RowNode.getDataValue', () => {
                     frGroup = node;
                 }
             });
+            await new GridRows(api, `avg with nested groups returns wrapped objects at all levels after forEachNode`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ filler id:row-group-region-EU ag-Grid-AutoColumn:"EU" v:{"count":4,"value":25}
+                    · ├─┬ LEAF_GROUP id:row-group-region-EU-country-FR ag-Grid-AutoColumn:"FR" v:{"count":2,"value":15}
+                    · │ ├── LEAF id:1 region:"EU" country:"FR" v:10
+                    · │ └── LEAF id:2 region:"EU" country:"FR" v:20
+                    · └─┬ LEAF_GROUP id:row-group-region-EU-country-DE ag-Grid-AutoColumn:"DE" v:{"count":2,"value":35}
+                    · · ├── LEAF id:3 region:"EU" country:"DE" v:30
+                    · · └── LEAF id:4 region:"EU" country:"DE" v:40
+                `);
 
             // FR: avg(10,20) = 15, count=2
             const frAvg = frGroup!.getDataValue('v');
@@ -1347,6 +2228,18 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `custom aggFunc returning plain object preserves it on group rows setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── v "V" width:200 aggFunc:custom
+                `);
+            await new GridRows(api, `custom aggFunc returning plain object preserves it on group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"total":300,"items":2,"label":"300/2"}
+                · ├── LEAF id:1 cat:"A" v:100
+                · └── LEAF id:2 cat:"A" v:200
+            `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1359,6 +2252,13 @@ describe('RowNode.getDataValue', () => {
 
             // Leaf rows return plain scalar
             expect(api.getRowNode('1')!.getDataValue('v')).toBe(100);
+            await new GridRows(api, `custom aggFunc returning plain object preserves it on group rows final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"total":300,"items":2,"label":"300/2"}
+                    · ├── LEAF id:1 cat:"A" v:100
+                    · └── LEAF id:2 cat:"A" v:200
+                `);
         });
 
         test('custom aggFunc returning object with toNumber() preserves the full object', async () => {
@@ -1402,6 +2302,21 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(
+                api,
+                `custom aggFunc returning object with toNumber() preserves the full object setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:custom
+            `);
+            await new GridRows(api, `custom aggFunc returning object with toNumber() preserves the full object setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:"30"
+                    · ├── LEAF id:1 cat:"A" v:10
+                    · └── LEAF id:2 cat:"A" v:20
+                `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1413,6 +2328,15 @@ describe('RowNode.getDataValue', () => {
             expect(val.count).toBe(2);
             expect(val.toNumber()).toBe(30);
             expect(val.toString()).toBe('sum=30');
+            await new GridRows(
+                api,
+                `custom aggFunc returning object with toNumber() preserves the full object final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:"30"
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:20
+            `);
         });
 
         test('custom aggFunc returning object with toString() but no toNumber() preserves object', async () => {
@@ -1439,6 +2363,23 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(
+                api,
+                `custom aggFunc returning object with toString() but no toNumber() preserves obje setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:custom
+            `);
+            await new GridRows(
+                api,
+                `custom aggFunc returning object with toString() but no toNumber() preserves obje setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"items":["hello","world"]}
+                · ├── LEAF id:1 cat:"A" v:"hello"
+                · └── LEAF id:2 cat:"A" v:"world"
+            `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1447,7 +2388,16 @@ describe('RowNode.getDataValue', () => {
             expect(typeof val).toBe('object');
             expect(val.items).toEqual(['hello', 'world']);
             expect(val.toString()).toBe('hello, world');
-            expect(val.toNumber).toBeUndefined(); // no toNumber
+            expect(val.toNumber).toBeUndefined();
+            await new GridRows(
+                api,
+                `custom aggFunc returning object with toString() but no toNumber() preserves obje final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"items":["hello","world"]}
+                · ├── LEAF id:1 cat:"A" v:"hello"
+                · └── LEAF id:2 cat:"A" v:"world"
+            `); // no toNumber
         });
     });
 
@@ -1473,6 +2423,17 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `valueGetter returning object with amount/currency preserves it setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── name "Name" width:200
+                    └── price width:200
+                `);
+            await new GridRows(api, `valueGetter returning object with amount/currency preserves it setup`).check(`
+                ROOT id:ROOT_NODE_ID price:"<ERROR>"
+                ├── LEAF id:1 name:"Widget" price:{"amount":9.99,"currency":"USD"}
+                └── LEAF id:2 name:"Gadget" price:{"amount":19.99,"currency":"EUR"}
+            `);
 
             const row1 = api.getRowNode('1')!;
             const val1 = row1.getDataValue('price') as Money;
@@ -1486,6 +2447,13 @@ describe('RowNode.getDataValue', () => {
 
             expect(val2.amount).toBe(19.99);
             expect(val2.currency).toBe('EUR');
+            await new GridRows(api, `valueGetter returning object with amount/currency preserves it final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID price:"<ERROR>"
+                    ├── LEAF id:1 name:"Widget" price:{"amount":9.99,"currency":"USD"}
+                    └── LEAF id:2 name:"Gadget" price:{"amount":19.99,"currency":"EUR"}
+                `
+            );
         });
 
         test('valueGetter returning object with toNumber() preserves the full object', async () => {
@@ -1512,6 +2480,17 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `valueGetter returning object with toNumber() preserves the full object setup`)
+                .checkColumns(`
+                    CENTER
+                    └── measurement width:200
+                `);
+            await new GridRows(api, `valueGetter returning object with toNumber() preserves the full object setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID measurement:"<ERROR>"
+                    ├── LEAF id:1 measurement:{"value":42,"unit":"kg"}
+                    └── LEAF id:2 measurement:{"value":100,"unit":"cm"}
+                `);
 
             const row = api.getRowNode('1')!;
             const val = row.getDataValue('measurement');
@@ -1522,6 +2501,14 @@ describe('RowNode.getDataValue', () => {
             expect(val.unit).toBe('kg');
             expect(val.toNumber()).toBe(42);
             expect(val.toString()).toBe('42kg');
+            await new GridRows(
+                api,
+                `valueGetter returning object with toNumber() preserves the full object final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID measurement:"<ERROR>"
+                ├── LEAF id:1 measurement:{"value":42,"unit":"kg"}
+                └── LEAF id:2 measurement:{"value":100,"unit":"cm"}
+            `);
         });
 
         test('valueGetter returning object with value property preserves the full object', async () => {
@@ -1539,6 +2526,18 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', score: 95, confidence: 0.8 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(
+                api,
+                `valueGetter returning object with value property preserves the full object setup`
+            ).checkColumns(`
+                CENTER
+                └── wrapper width:200
+            `);
+            await new GridRows(api, `valueGetter returning object with value property preserves the full object setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID wrapper:"<ERROR>"
+                    └── LEAF id:1 wrapper:{"value":95,"confidence":0.8}
+                `);
 
             const row = api.getRowNode('1')!;
             const val = row.getDataValue('wrapper');
@@ -1546,6 +2545,13 @@ describe('RowNode.getDataValue', () => {
             expect(typeof val).toBe('object');
             expect(val.value).toBe(95);
             expect(val.confidence).toBe(0.8);
+            await new GridRows(
+                api,
+                `valueGetter returning object with value property preserves the full object final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID wrapper:"<ERROR>"
+                └── LEAF id:1 wrapper:{"value":95,"confidence":0.8}
+            `);
         });
 
         test('field data containing object with toNumber/toString preserves it', async () => {
@@ -1565,6 +2571,15 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', data: customObj }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `field data containing object with toNumber/toString preserves it setup`)
+                .checkColumns(`
+                    CENTER
+                    └── data "Data" width:200
+                `);
+            await new GridRows(api, `field data containing object with toNumber/toString preserves it setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 data:{"raw":123}
+            `);
 
             const row = api.getRowNode('1')!;
             const val = row.getDataValue('data');
@@ -1573,6 +2588,11 @@ describe('RowNode.getDataValue', () => {
             expect(val.raw).toBe(123);
             expect(val.toNumber()).toBe(123);
             expect(val.toString()).toBe('custom-123');
+            await new GridRows(api, `field data containing object with toNumber/toString preserves it final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:1 data:{"raw":123}
+                `);
         });
     });
 
@@ -1596,6 +2616,20 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `avg aggregation on tree data parent returns wrapped object setup`).checkColumns(
+                `
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── name "Name" width:200
+                    └── v "V" width:200 aggFunc:avg
+                `
+            );
+            await new GridRows(api, `avg aggregation on tree data parent returns wrapped object setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"Parent" v:{"count":2,"value":30}
+                · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"Child 1" v:20
+                · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"Child 2" v:40
+            `);
             await asyncSetTimeout(1);
 
             const parent = api.getRowNode('1')!;
@@ -1609,6 +2643,12 @@ describe('RowNode.getDataValue', () => {
 
             // Child returns plain scalar
             expect(child.getDataValue('v')).toBe(20);
+            await new GridRows(api, `avg aggregation on tree data parent returns wrapped object final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"Parent" v:{"count":2,"value":30}
+                · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"Child 1" v:20
+                · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"Child 2" v:40
+            `);
         });
 
         test('sum aggregation on tree data parent returns plain scalar', async () => {
@@ -1630,13 +2670,33 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `sum aggregation on tree data parent returns plain scalar setup`).checkColumns(
+                `
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── name "Name" width:200
+                    └── v "V" width:200 aggFunc:sum
+                `
+            );
+            await new GridRows(api, `sum aggregation on tree data parent returns plain scalar setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"Parent" v:50
+                · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"A" v:20
+                · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"B" v:30
+            `);
             await asyncSetTimeout(1);
 
             const parent = api.getRowNode('1')!;
             const parentVal = parent.getDataValue('v');
 
             expect(typeof parentVal).toBe('number');
-            expect(parentVal).toBe(50); // 20 + 30
+            expect(parentVal).toBe(50);
+            await new GridRows(api, `sum aggregation on tree data parent returns plain scalar final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"Parent" v:50
+                · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"A" v:20
+                · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"B" v:30
+            `); // 20 + 30
         });
 
         test('custom aggFunc on tree data preserves full object', async () => {
@@ -1670,6 +2730,18 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `custom aggFunc on tree data preserves full object setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── name "Name" width:200
+                └── v "V" width:200 aggFunc:custom
+            `);
+            await new GridRows(api, `custom aggFunc on tree data preserves full object setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"Root" v:{"sum":30,"source":"custom"}
+                · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"A" v:10
+                · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"B" v:20
+            `);
             await asyncSetTimeout(1);
 
             const root = api.getRowNode('1')!;
@@ -1678,6 +2750,12 @@ describe('RowNode.getDataValue', () => {
             expect(typeof val).toBe('object');
             expect(val.sum).toBe(30);
             expect(val.source).toBe('custom');
+            await new GridRows(api, `custom aggFunc on tree data preserves full object final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"Root" v:{"sum":30,"source":"custom"}
+                · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"A" v:10
+                · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"B" v:20
+            `);
         });
     });
 
@@ -1705,6 +2783,19 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `avg: getDataValue returns object, getCellValue also returns same object setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── v "V" width:200 aggFunc:avg
+                `);
+            await new GridRows(api, `avg: getDataValue returns object, getCellValue also returns same object setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                    · ├── LEAF id:1 cat:"A" v:10
+                    · └── LEAF id:2 cat:"A" v:30
+                `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1723,6 +2814,15 @@ describe('RowNode.getDataValue', () => {
             // Are they the same reference?
             expect(dataVal).toBe(cellVal);
             expect(dataVal).toBe(cellValData);
+            await new GridRows(
+                api,
+                `avg: getDataValue returns object, getCellValue also returns same object final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:30
+            `);
         });
 
         test('avg: expanded group with footer — getDataValue returns aggData, getCellValue skips it', async () => {
@@ -1742,6 +2842,24 @@ describe('RowNode.getDataValue', () => {
                 groupDefaultExpanded: 1,
                 groupTotalRow: 'bottom',
             });
+            await new GridColumns(
+                api,
+                `avg: expanded group with footer — getDataValue returns aggData, getCellValue ski setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:avg
+            `);
+            await new GridRows(
+                api,
+                `avg: expanded group with footer — getDataValue returns aggData, getCellValue ski setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A"
+                · ├── LEAF id:1 cat:"A" v:10
+                · ├── LEAF id:2 cat:"A" v:30
+                · └─ footer id:rowGroupFooter_row-group-cat-A ag-Grid-AutoColumn:"Total A" v:{"count":2,"value":20}
+            `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1764,6 +2882,16 @@ describe('RowNode.getDataValue', () => {
             const footerVal = footer.getDataValue('v');
             expect(typeof footerVal).toBe('object');
             expect(footerVal.value).toBe(20);
+            await new GridRows(
+                api,
+                `avg: expanded group with footer — getDataValue returns aggData, getCellValue ski final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A"
+                · ├── LEAF id:1 cat:"A" v:10
+                · ├── LEAF id:2 cat:"A" v:30
+                · └─ footer id:rowGroupFooter_row-group-cat-A ag-Grid-AutoColumn:"Total A" v:{"count":2,"value":20}
+            `);
         });
 
         test('avg: expanded group with footer + groupSuppressBlankHeader — aggData is preserved', async () => {
@@ -1783,6 +2911,24 @@ describe('RowNode.getDataValue', () => {
                 groupTotalRow: 'bottom',
                 groupSuppressBlankHeader: true,
             });
+            await new GridColumns(
+                api,
+                `avg: expanded group with footer + groupSuppressBlankHeader — aggData is preserve setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:avg
+            `);
+            await new GridRows(
+                api,
+                `avg: expanded group with footer + groupSuppressBlankHeader — aggData is preserve setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                · ├── LEAF id:1 cat:"A" v:10
+                · ├── LEAF id:2 cat:"A" v:30
+                · └─ footer id:rowGroupFooter_row-group-cat-A ag-Grid-AutoColumn:"Total A" v:{"count":2,"value":20}
+            `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1798,6 +2944,16 @@ describe('RowNode.getDataValue', () => {
             expect(typeof cellVal).toBe('object');
             expect(cellVal.value).toBe(20);
             expect(dataVal).toBe(cellVal);
+            await new GridRows(
+                api,
+                `avg: expanded group with footer + groupSuppressBlankHeader — aggData is preserve final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                · ├── LEAF id:1 cat:"A" v:10
+                · ├── LEAF id:2 cat:"A" v:30
+                · └─ footer id:rowGroupFooter_row-group-cat-A ag-Grid-AutoColumn:"Total A" v:{"count":2,"value":20}
+            `);
         });
 
         test('pivot + avg: getDataValue on group row returns wrapped object', async () => {
@@ -1816,6 +2972,22 @@ describe('RowNode.getDataValue', () => {
                     { id: '3', country: 'FR', year: 2021, score: 50 },
                 ],
             });
+            await new GridColumns(api, `pivot + avg: getDataValue on group row returns wrapped object setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├─┬ "2020" GROUP
+                    │ └── pivot_year_2020_score "Score" width:200 columnGroupShow:open
+                    └─┬ "2021" GROUP
+                      └── pivot_year_2021_score "Score" width:200 columnGroupShow:open
+                `);
+            await new GridRows(api, `pivot + avg: getDataValue on group row returns wrapped object setup`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_score:{"count":2,"value":20} pivot_year_2021_score:{"count":1,"value":50}
+                └─┬ LEAF_GROUP collapsed id:row-group-country-FR ag-Grid-AutoColumn:"FR" pivot_year_2020_score:{"count":2,"value":20} pivot_year_2021_score:{"count":1,"value":50}
+                · ├── LEAF hidden id:1 pivot_year_2020_score:10 pivot_year_2021_score:10
+                · ├── LEAF hidden id:2 pivot_year_2020_score:30 pivot_year_2021_score:30
+                · └── LEAF hidden id:3 pivot_year_2020_score:50 pivot_year_2021_score:50
+            `);
             await asyncSetTimeout(1);
 
             const pivotColumns = api.getPivotResultColumns();
@@ -1836,6 +3008,15 @@ describe('RowNode.getDataValue', () => {
             // getCellValue should return same thing
             expect(typeof cellVal).toBe('object');
             expect(cellVal.value).toBe(20);
+            await new GridRows(api, `pivot + avg: getDataValue on group row returns wrapped object final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID pivot_year_2020_score:{"count":2,"value":20} pivot_year_2021_score:{"count":1,"value":50}
+                    └─┬ LEAF_GROUP collapsed id:row-group-country-FR ag-Grid-AutoColumn:"FR" pivot_year_2020_score:{"count":2,"value":20} pivot_year_2021_score:{"count":1,"value":50}
+                    · ├── LEAF hidden id:1 pivot_year_2020_score:10 pivot_year_2021_score:10
+                    · ├── LEAF hidden id:2 pivot_year_2020_score:30 pivot_year_2021_score:30
+                    · └── LEAF hidden id:3 pivot_year_2020_score:50 pivot_year_2021_score:50
+                `
+            );
         });
 
         test('pivot + avg: getDataValue on leaf row resolves pivotValueColumn', async () => {
@@ -1853,6 +3034,21 @@ describe('RowNode.getDataValue', () => {
                     { id: '2', country: 'FR', year: 2021, score: 50 },
                 ],
             });
+            await new GridColumns(api, `pivot + avg: getDataValue on leaf row resolves pivotValueColumn setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├─┬ "2020" GROUP
+                    │ └── pivot_year_2020_score "Score" width:200 columnGroupShow:open
+                    └─┬ "2021" GROUP
+                      └── pivot_year_2021_score "Score" width:200 columnGroupShow:open
+                `);
+            await new GridRows(api, `pivot + avg: getDataValue on leaf row resolves pivotValueColumn setup`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_score:{"count":1,"value":10} pivot_year_2021_score:{"count":1,"value":50}
+                └─┬ LEAF_GROUP collapsed id:row-group-country-FR ag-Grid-AutoColumn:"FR" pivot_year_2020_score:{"count":1,"value":10} pivot_year_2021_score:{"count":1,"value":50}
+                · ├── LEAF hidden id:1 pivot_year_2020_score:10 pivot_year_2021_score:10
+                · └── LEAF hidden id:2 pivot_year_2020_score:50 pivot_year_2021_score:50
+            `);
             await asyncSetTimeout(1);
 
             const pivotColumns = api.getPivotResultColumns();
@@ -1870,6 +3066,13 @@ describe('RowNode.getDataValue', () => {
             // Should return plain scalar (the original score value), not a wrapped object
             expect(dataVal).toBe(10);
             expect(cellVal).toBe(10);
+            await new GridRows(api, `pivot + avg: getDataValue on leaf row resolves pivotValueColumn final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID pivot_year_2020_score:{"count":1,"value":10} pivot_year_2021_score:{"count":1,"value":50}
+                    └─┬ LEAF_GROUP collapsed id:row-group-country-FR ag-Grid-AutoColumn:"FR" pivot_year_2020_score:{"count":1,"value":10} pivot_year_2021_score:{"count":1,"value":50}
+                    · ├── LEAF hidden id:1 pivot_year_2020_score:10 pivot_year_2021_score:10
+                    · └── LEAF hidden id:2 pivot_year_2020_score:50 pivot_year_2021_score:50
+                `);
         });
 
         test('count: getDataValue returns object, getCellValue returns same', async () => {
@@ -1885,6 +3088,18 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `count: getDataValue returns object, getCellValue returns same setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── v "V" width:200 aggFunc:count
+                `);
+            await new GridRows(api, `count: getDataValue returns object, getCellValue returns same setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"value":2}
+                · ├── LEAF id:1 cat:"A" v:"x"
+                · └── LEAF id:2 cat:"A" v:"y"
+            `);
             await asyncSetTimeout(1);
 
             const group = findGroup(api, 'A')!;
@@ -1896,6 +3111,14 @@ describe('RowNode.getDataValue', () => {
             expect(typeof cellVal).toBe('object');
             expect(cellVal.value).toBe(2);
             expect(dataVal).toBe(cellVal);
+            await new GridRows(api, `count: getDataValue returns object, getCellValue returns same final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"value":2}
+                    · ├── LEAF id:1 cat:"A" v:"x"
+                    · └── LEAF id:2 cat:"A" v:"y"
+                `
+            );
         });
     });
 
@@ -1906,6 +3129,17 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '0', a: 'original' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `from defaults to data — returns committed value during batch edit setup`)
+                .checkColumns(`
+                    CENTER
+                    └── a "A" width:200 editable
+                `);
+            await new GridRows(api, `from defaults to data — returns committed value during batch edit setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 a:"original"
+                `
+            );
 
             api.startBatchEdit();
             const rowNode = api.getRowNode('0')!;
@@ -1917,6 +3151,11 @@ describe('RowNode.getDataValue', () => {
             expect(rowNode.getDataValue('a', 'data')).toBe('original');
 
             api.cancelBatchEdit();
+            await new GridRows(api, `from defaults to data — returns committed value during batch edit final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 a:"original"
+                `);
         });
 
         test('from: batch returns pending batch value', async () => {
@@ -1925,6 +3164,14 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '0', a: 'original' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `from: batch returns pending batch value setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `from: batch returns pending batch value setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"original"
+            `);
 
             api.startBatchEdit();
             const rowNode = api.getRowNode('0')!;
@@ -1937,6 +3184,10 @@ describe('RowNode.getDataValue', () => {
             expect(rowNode.getDataValue('a', 'data')).toBe('original');
 
             api.cancelBatchEdit();
+            await new GridRows(api, `from: batch returns pending batch value final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"original"
+            `);
         });
 
         test('from: edit returns editor value when cell is being edited', async () => {
@@ -1945,6 +3196,16 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '0', a: 'original' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `from: edit returns editor value when cell is being edited setup`).checkColumns(
+                `
+                    CENTER
+                    └── a "A" width:200 editable
+                `
+            );
+            await new GridRows(api, `from: edit returns editor value when cell is being edited setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"original"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
             await asyncSetTimeout(1);
@@ -1967,6 +3228,10 @@ describe('RowNode.getDataValue', () => {
 
             // default (no from) returns committed
             expect(rowNode.getDataValue('a')).toBe('original');
+            await new GridRows(api, `from: edit returns editor value when cell is being edited final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️"typing" "original"
+            `);
         });
 
         test('from: edit outside editor returns committed value', async () => {
@@ -1975,6 +3240,14 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '0', a: 'value' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `from: edit outside editor returns committed value setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `from: edit outside editor returns committed value setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"value"
+            `);
 
             const rowNode = api.getRowNode('0')!;
 
@@ -1982,6 +3255,10 @@ describe('RowNode.getDataValue', () => {
             expect(rowNode.getDataValue('a', 'edit')).toBe('value');
             expect(rowNode.getDataValue('a', 'data')).toBe('value');
             expect(rowNode.getDataValue('a')).toBe('value');
+            await new GridRows(api, `from: edit outside editor returns committed value final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"value"
+            `);
         });
 
         test('from: batch outside batch mode returns committed value', async () => {
@@ -1990,11 +3267,23 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '0', a: 'value' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `from: batch outside batch mode returns committed value setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `from: batch outside batch mode returns committed value setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"value"
+            `);
 
             const rowNode = api.getRowNode('0')!;
 
             // No batch active — from: 'batch' returns committed data
             expect(rowNode.getDataValue('a', 'batch')).toBe('value');
+            await new GridRows(api, `from: batch outside batch mode returns committed value final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"value"
+            `);
         });
 
         test('from: data returns raw agg object on group rows', async () => {
@@ -2010,6 +3299,17 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `from: data returns raw agg object on group rows setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:avg editable
+            `);
+            await new GridRows(api, `from: data returns raw agg object on group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:30
+            `);
             await asyncSetTimeout(1);
 
             let group: any;
@@ -2018,6 +3318,12 @@ describe('RowNode.getDataValue', () => {
                     group = node;
                 }
             });
+            await new GridRows(api, `from: data returns raw agg object on group rows after forEachNode`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:30
+            `);
 
             // default returns avg wrapper object
             const aggVal = group!.getDataValue('v');
@@ -2043,6 +3349,17 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `from: edit resolves agg object to scalar on group rows setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:avg editable
+            `);
+            await new GridRows(api, `from: edit resolves agg object to scalar on group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:30
+            `);
             await asyncSetTimeout(1);
 
             let group: any;
@@ -2051,6 +3368,14 @@ describe('RowNode.getDataValue', () => {
                     group = node;
                 }
             });
+            await new GridRows(api, `from: edit resolves agg object to scalar on group rows after forEachNode`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                    · ├── LEAF id:1 cat:"A" v:10
+                    · └── LEAF id:2 cat:"A" v:30
+                `
+            );
 
             // 'data' returns raw wrapper
             const rawVal = group!.getDataValue('v', 'data');
@@ -2076,6 +3401,19 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `from: batch resolves agg object to scalar on group rows setup`).checkColumns(
+                `
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── v "V" width:200 aggFunc:avg editable
+                `
+            );
+            await new GridRows(api, `from: batch resolves agg object to scalar on group rows setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:30
+            `);
             await asyncSetTimeout(1);
 
             let group: any;
@@ -2084,6 +3422,14 @@ describe('RowNode.getDataValue', () => {
                     group = node;
                 }
             });
+            await new GridRows(api, `from: batch resolves agg object to scalar on group rows after forEachNode`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                    · ├── LEAF id:1 cat:"A" v:10
+                    · └── LEAF id:2 cat:"A" v:30
+                `
+            );
 
             // 'batch' resolves the wrapper via toNumber()
             const batchVal = group!.getDataValue('v', 'batch');
@@ -2105,6 +3451,18 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `from: edit resolves count agg object to scalar setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:count
+            `);
+            await new GridRows(api, `from: edit resolves count agg object to scalar setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"value":3}
+                · ├── LEAF id:1 cat:"A" v:"x"
+                · ├── LEAF id:2 cat:"A" v:"y"
+                · └── LEAF id:3 cat:"A" v:"z"
+            `);
             await asyncSetTimeout(1);
 
             let group: any;
@@ -2113,6 +3471,13 @@ describe('RowNode.getDataValue', () => {
                     group = node;
                 }
             });
+            await new GridRows(api, `from: edit resolves count agg object to scalar after forEachNode`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"value":3}
+                · ├── LEAF id:1 cat:"A" v:"x"
+                · ├── LEAF id:2 cat:"A" v:"y"
+                · └── LEAF id:3 cat:"A" v:"z"
+            `);
 
             // 'data' returns count wrapper
             const rawVal = group!.getDataValue('v', 'data');
@@ -2136,6 +3501,17 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `from: edit does not resolve sum (already scalar) setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `from: edit does not resolve sum (already scalar) setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:30
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:20
+            `);
             await asyncSetTimeout(1);
 
             let group: any;
@@ -2144,6 +3520,12 @@ describe('RowNode.getDataValue', () => {
                     group = node;
                 }
             });
+            await new GridRows(api, `from: edit does not resolve sum (already scalar) after forEachNode`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:30
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:20
+            `);
 
             // sum returns plain scalar for both modes
             expect(group!.getDataValue('v', 'data')).toBe(30);
@@ -2156,11 +3538,23 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', v: 42 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `from: edit on leaf row returns same value as data setup`).checkColumns(`
+                CENTER
+                └── v "V" width:200 editable
+            `);
+            await new GridRows(api, `from: edit on leaf row returns same value as data setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 v:42
+            `);
 
             const row = api.getRowNode('1')!;
             expect(row.getDataValue('v', 'edit')).toBe(42);
             expect(row.getDataValue('v', 'data')).toBe(42);
             expect(row.getDataValue('v')).toBe(42);
+            await new GridRows(api, `from: edit on leaf row returns same value as data final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 v:42
+            `);
         });
 
         test('from: value resolves avg agg object to scalar (committed data)', async () => {
@@ -2176,6 +3570,18 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `from: value resolves avg agg object to scalar (committed data) setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── v "V" width:200 aggFunc:avg
+                `);
+            await new GridRows(api, `from: value resolves avg agg object to scalar (committed data) setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:30
+            `);
             await asyncSetTimeout(1);
 
             let group: any;
@@ -2184,6 +3590,13 @@ describe('RowNode.getDataValue', () => {
                     group = node;
                 }
             });
+            await new GridRows(api, `from: value resolves avg agg object to scalar (committed data) after forEachNode`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                    · ├── LEAF id:1 cat:"A" v:10
+                    · └── LEAF id:2 cat:"A" v:30
+                `);
 
             // 'data' returns raw wrapper
             const rawVal = group!.getDataValue('v', 'data');
@@ -2209,6 +3622,18 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `from: value resolves count agg object to scalar (committed data) setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── v "V" width:200 aggFunc:count
+                `);
+            await new GridRows(api, `from: value resolves count agg object to scalar (committed data) setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"value":2}
+                · ├── LEAF id:1 cat:"A" v:"x"
+                · └── LEAF id:2 cat:"A" v:"y"
+            `);
             await asyncSetTimeout(1);
 
             let group: any;
@@ -2217,6 +3642,15 @@ describe('RowNode.getDataValue', () => {
                     group = node;
                 }
             });
+            await new GridRows(
+                api,
+                `from: value resolves count agg object to scalar (committed data) after forEachNode`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"value":2}
+                · ├── LEAF id:1 cat:"A" v:"x"
+                · └── LEAF id:2 cat:"A" v:"y"
+            `);
 
             // 'data' returns count wrapper
             const rawVal = group!.getDataValue('v', 'data');
@@ -2233,10 +3667,22 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', v: 42 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `from: value on leaf row returns same as data setup`).checkColumns(`
+                CENTER
+                └── v "V" width:200
+            `);
+            await new GridRows(api, `from: value on leaf row returns same as data setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 v:42
+            `);
 
             const row = api.getRowNode('1')!;
             expect(row.getDataValue('v', 'value')).toBe(42);
             expect(row.getDataValue('v', 'data')).toBe(42);
+            await new GridRows(api, `from: value on leaf row returns same as data final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 v:42
+            `);
         });
 
         test('from: value ignores pending batch edits', async () => {
@@ -2245,6 +3691,14 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '0', a: 'original' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `from: value ignores pending batch edits setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `from: value ignores pending batch edits setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"original"
+            `);
 
             api.startBatchEdit();
             const rowNode = api.getRowNode('0')!;
@@ -2257,6 +3711,10 @@ describe('RowNode.getDataValue', () => {
             expect(rowNode.getDataValue('a', 'batch')).toBe('pending');
 
             api.cancelBatchEdit();
+            await new GridRows(api, `from: value ignores pending batch edits final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"original"
+            `);
         });
 
         test('from: value does not resolve non-agg column objects with toNumber', async () => {
@@ -2275,6 +3733,17 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', v: 42 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `from: value does not resolve non-agg column objects with toNumber setup`)
+                .checkColumns(`
+                    CENTER
+                    └── measurement width:200
+                `);
+            await new GridRows(api, `from: value does not resolve non-agg column objects with toNumber setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID measurement:"<ERROR>"
+                    └── LEAF id:1 measurement:{"value":42}
+                `
+            );
 
             const row = api.getRowNode('1')!;
             const val = row.getDataValue('measurement', 'value');
@@ -2283,6 +3752,11 @@ describe('RowNode.getDataValue', () => {
             expect(typeof val).toBe('object');
             expect(val.value).toBe(42);
             expect(val.toNumber()).toBe(42);
+            await new GridRows(api, `from: value does not resolve non-agg column objects with toNumber final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID measurement:"<ERROR>"
+                    └── LEAF id:1 measurement:{"value":42}
+                `);
         });
 
         test('from: value resolves custom aggFunc object via .value fallback (no toNumber)', async () => {
@@ -2312,6 +3786,23 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(
+                api,
+                `from: value resolves custom aggFunc object via .value fallback (no toNumber) setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── v "V" width:200 aggFunc:custom
+            `);
+            await new GridRows(
+                api,
+                `from: value resolves custom aggFunc object via .value fallback (no toNumber) setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:"300"
+                · ├── LEAF id:1 cat:"A" v:100
+                · └── LEAF id:2 cat:"A" v:200
+            `);
             await asyncSetTimeout(1);
 
             let group: any;
@@ -2320,6 +3811,15 @@ describe('RowNode.getDataValue', () => {
                     group = node;
                 }
             });
+            await new GridRows(
+                api,
+                `from: value resolves custom aggFunc object via .value fallback (no toNumber) after forEachNode`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:"300"
+                · ├── LEAF id:1 cat:"A" v:100
+                · └── LEAF id:2 cat:"A" v:200
+            `);
 
             // 'data' returns the raw custom object
             const rawVal = group!.getDataValue('v', 'data');
@@ -2345,6 +3845,20 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `from: data-raw on group row bypasses aggregation, returns undefined setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── v "V" width:200 aggFunc:avg
+                `);
+            await new GridRows(api, `from: data-raw on group row bypasses aggregation, returns undefined setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                    · ├── LEAF id:1 cat:"A" v:10
+                    · └── LEAF id:2 cat:"A" v:30
+                `
+            );
             await asyncSetTimeout(1);
 
             let group: any;
@@ -2353,6 +3867,15 @@ describe('RowNode.getDataValue', () => {
                     group = node;
                 }
             });
+            await new GridRows(
+                api,
+                `from: data-raw on group row bypasses aggregation, returns undefined after forEachNode`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:{"count":2,"value":20}
+                · ├── LEAF id:1 cat:"A" v:10
+                · └── LEAF id:2 cat:"A" v:30
+            `);
 
             // 'data' returns the agg wrapper
             const dataVal = group!.getDataValue('v', 'data');
@@ -2370,11 +3893,23 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', v: 42 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `from: data-raw on leaf row returns same value as data setup`).checkColumns(`
+                CENTER
+                └── v "V" width:200
+            `);
+            await new GridRows(api, `from: data-raw on leaf row returns same value as data setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 v:42
+            `);
 
             const row = api.getRowNode('1')!;
             // On leaf rows there's no aggregation, so data-raw returns the same as data
             expect(row.getDataValue('v', 'data-raw')).toBe(42);
             expect(row.getDataValue('v', 'data')).toBe(42);
+            await new GridRows(api, `from: data-raw on leaf row returns same value as data final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 v:42
+            `);
         });
 
         test('from: data-raw on tree data parent bypasses aggregation', async () => {
@@ -2396,6 +3931,20 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `from: data-raw on tree data parent bypasses aggregation setup`).checkColumns(
+                `
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── name "Name" width:200
+                    └── v "V" width:200 aggFunc:sum
+                `
+            );
+            await new GridRows(api, `from: data-raw on tree data parent bypasses aggregation setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"Parent" v:50
+                · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"Child 1" v:20
+                · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"Child 2" v:30
+            `);
             await asyncSetTimeout(1);
 
             const parent = api.getRowNode('1')!;
@@ -2405,6 +3954,12 @@ describe('RowNode.getDataValue', () => {
 
             // 'data-raw' bypasses aggregation — returns the parent's own data value
             expect(parent.getDataValue('v', 'data-raw')).toBe(5);
+            await new GridRows(api, `from: data-raw on tree data parent bypasses aggregation final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"Parent" v:50
+                · ├── "1-1" LEAF id:"1-1" ag-Grid-AutoColumn:"1-1" name:"Child 1" v:20
+                · └── "1-2" LEAF id:"1-2" ag-Grid-AutoColumn:"1-2" name:"Child 2" v:30
+            `);
         });
     });
 
@@ -2422,6 +3977,16 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', price: 10, quantity: 5 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `from: all modes call valueGetter on leaf rows setup`).checkColumns(`
+                CENTER
+                ├── price "Price" width:200
+                ├── quantity "Quantity" width:200
+                └── total width:200
+            `);
+            await new GridRows(api, `from: all modes call valueGetter on leaf rows setup`).check(`
+                ROOT id:ROOT_NODE_ID total:"<ERROR>"
+                └── LEAF id:1 price:10 quantity:5 total:50
+            `);
 
             const row = api.getRowNode('1')!;
 
@@ -2432,6 +3997,10 @@ describe('RowNode.getDataValue', () => {
             expect(row.getDataValue('total', 'edit')).toBe(50);
             expect(row.getDataValue('total', 'batch')).toBe(50);
             expect(row.getDataValue('total', 'value')).toBe(50);
+            await new GridRows(api, `from: all modes call valueGetter on leaf rows final state`).check(`
+                ROOT id:ROOT_NODE_ID total:"<ERROR>"
+                └── LEAF id:1 price:10 quantity:5 total:50
+            `);
         });
 
         test('from: data-raw calls valueGetter (skips aggData, not valueGetters)', async () => {
@@ -2454,6 +4023,21 @@ describe('RowNode.getDataValue', () => {
                 getRowId: (params) => params.data.id,
                 groupDefaultExpanded: 1,
             });
+            await new GridColumns(api, `from: data-raw calls valueGetter (skips aggData, not valueGetters) setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── v "V" width:200 aggFunc:sum
+                    └── label width:200
+                `);
+            await new GridRows(api, `from: data-raw calls valueGetter (skips aggData, not valueGetters) setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID label:null
+                    └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:30 label:null
+                    · ├── LEAF id:1 cat:"A" v:10 label:"item-10"
+                    · └── LEAF id:2 cat:"A" v:20 label:"item-20"
+                `
+            );
 
             await asyncSetTimeout(1);
 
@@ -2471,6 +4055,15 @@ describe('RowNode.getDataValue', () => {
                     group = node;
                 }
             });
+            await new GridRows(
+                api,
+                `from: data-raw calls valueGetter (skips aggData, not valueGetters) after forEachNode`
+            ).check(`
+                ROOT id:ROOT_NODE_ID label:null
+                └─┬ LEAF_GROUP id:row-group-cat-A ag-Grid-AutoColumn:"A" v:30 label:null
+                · ├── LEAF id:1 cat:"A" v:10 label:"item-10"
+                · └── LEAF id:2 cat:"A" v:20 label:"item-20"
+            `);
             expect(group!.getDataValue('label', 'data-raw')).toBeNull();
             expect(group!.getDataValue('label', 'data')).toBeNull();
         });
@@ -2488,6 +4081,22 @@ describe('RowNode.getDataValue', () => {
                 rowData: [{ id: '1', price: 10, quantity: 5 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(
+                api,
+                `from: batch returns pending value for field column; valueGetter always reads com setup`
+            ).checkColumns(`
+                CENTER
+                ├── price "Price" width:200 editable
+                ├── quantity "Quantity" width:200
+                └── total width:200
+            `);
+            await new GridRows(
+                api,
+                `from: batch returns pending value for field column; valueGetter always reads com setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID total:"<ERROR>"
+                └── LEAF id:1 price:10 quantity:5 total:50
+            `);
 
             api.startBatchEdit();
             const row = api.getRowNode('1')!;
@@ -2503,6 +4112,13 @@ describe('RowNode.getDataValue', () => {
             expect(row.getDataValue('total', 'batch')).toBe(50); // still 10 * 5 (valueGetter sees committed data)
 
             api.cancelBatchEdit();
+            await new GridRows(
+                api,
+                `from: batch returns pending value for field column; valueGetter always reads com final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID total:"<ERROR>"
+                └── LEAF id:1 price:10 quantity:5 total:50
+            `);
         });
     });
 
@@ -2532,6 +4148,23 @@ describe('RowNode.getDataValue', () => {
                     { id: '2', country: 'USA', athlete: 'Ryan', gold: 2 },
                 ],
             });
+            await new GridColumns(api, `getDataValue returns null if display-level showRowGroup check fails setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── countryGroupCol width:200
+                    ├── athleteGroupCol width:200
+                    └── gold "Gold" width:200 aggFunc:sum
+                `);
+            await new GridRows(api, `getDataValue returns null if display-level showRowGroup check fails setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID countryGroupCol:null athleteGroupCol:null
+                    └─┬ filler id:row-group-country-USA countryGroupCol:"USA" athleteGroupCol:null gold:10
+                    · ├─┬ LEAF_GROUP id:row-group-country-USA-athlete-Michael athleteGroupCol:"Michael" gold:8
+                    · │ └── LEAF id:1 country:"USA" athlete:"Michael" gold:8
+                    · └─┬ LEAF_GROUP id:row-group-country-USA-athlete-Ryan athleteGroupCol:"Ryan" gold:2
+                    · · └── LEAF id:2 country:"USA" athlete:"Ryan" gold:2
+                `
+            );
             await asyncSetTimeout(1);
 
             // Country group node (level 0)
@@ -2557,6 +4190,15 @@ describe('RowNode.getDataValue', () => {
             // Aggregated gold values work on both levels
             expect(countryGroup.getDataValue('gold')).toBe(10);
             expect(athleteGroup.getDataValue('gold')).toBe(8);
+            await new GridRows(api, `getDataValue returns null if display-level showRowGroup check fails final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID countryGroupCol:null athleteGroupCol:null
+                    └─┬ filler id:row-group-country-USA countryGroupCol:"USA" athleteGroupCol:null gold:10
+                    · ├─┬ LEAF_GROUP id:row-group-country-USA-athlete-Michael athleteGroupCol:"Michael" gold:8
+                    · │ └── LEAF id:1 country:"USA" athlete:"Michael" gold:8
+                    · └─┬ LEAF_GROUP id:row-group-country-USA-athlete-Ryan athleteGroupCol:"Ryan" gold:2
+                    · · └── LEAF id:2 country:"USA" athlete:"Ryan" gold:2
+                `);
         });
 
         test('getDataValue returns edited value on group row after setDataValue with enableGroupEdit', async () => {
@@ -2580,6 +4222,24 @@ describe('RowNode.getDataValue', () => {
                     { id: '2', country: 'USA', gold: 2, notes: '' },
                 ],
             });
+            await new GridColumns(
+                api,
+                `getDataValue returns edited value on group row after setDataValue with enableGro setup`
+            ).checkColumns(`
+                CENTER
+                ├── countryGroupCol width:200
+                ├── gold "Gold" width:200 aggFunc:sum
+                └── notes "Notes" width:200 editable
+            `);
+            await new GridRows(
+                api,
+                `getDataValue returns edited value on group row after setDataValue with enableGro setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID countryGroupCol:null
+                └─┬ LEAF_GROUP id:row-group-country-USA countryGroupCol:"USA" gold:10
+                · ├── LEAF id:1 country:"USA" gold:8 notes:"leaf note"
+                · └── LEAF id:2 country:"USA" gold:2 notes:""
+            `);
             await asyncSetTimeout(1);
 
             const countryGroup = api.getRowNode('row-group-country-USA')!;
@@ -2600,6 +4260,15 @@ describe('RowNode.getDataValue', () => {
 
             // Aggregated gold values still work
             expect(countryGroup.getDataValue('gold')).toBe(10);
+            await new GridRows(
+                api,
+                `getDataValue returns edited value on group row after setDataValue with enableGro final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID countryGroupCol:null
+                └─┬ GROUP-leafGroup id:row-group-country-USA countryGroupCol:"USA" gold:10 notes:"group note"
+                · ├── LEAF id:1 country:"USA" gold:8 notes:"leaf note"
+                · └── LEAF id:2 country:"USA" gold:2 notes:""
+            `);
         });
 
         test('getDataValue ignores valueGetter on a showRowGroup column for group rows (groupData wins; level guard returns null at deeper levels)', async () => {
@@ -2636,6 +4305,26 @@ describe('RowNode.getDataValue', () => {
                     { id: '2', country: 'USA', athlete: 'Ryan', gold: 2 },
                 ],
             });
+            await new GridColumns(
+                api,
+                `getDataValue ignores valueGetter on a showRowGroup column for group rows (groupD setup`
+            ).checkColumns(`
+                CENTER
+                ├── countryGroupCol width:200
+                ├── athleteGroupCol width:200
+                └── gold "Gold" width:200 aggFunc:sum
+            `);
+            await new GridRows(
+                api,
+                `getDataValue ignores valueGetter on a showRowGroup column for group rows (groupD setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID countryGroupCol:null athleteGroupCol:null
+                └─┬ filler id:row-group-country-USA countryGroupCol:"USA" athleteGroupCol:null gold:10
+                · ├─┬ LEAF_GROUP id:row-group-country-USA-athlete-Michael athleteGroupCol:"Michael" gold:8
+                · │ └── LEAF id:1 countryGroupCol:"getter:USA" athleteGroupCol:"getter:athlete" country:"USA" athlete:"Michael" gold:8
+                · └─┬ LEAF_GROUP id:row-group-country-USA-athlete-Ryan athleteGroupCol:"Ryan" gold:2
+                · · └── LEAF id:2 countryGroupCol:"getter:USA" athleteGroupCol:"getter:athlete" country:"USA" athlete:"Ryan" gold:2
+            `);
             await asyncSetTimeout(1);
 
             const countryGroup = api.getRowNode('row-group-country-USA')!;
@@ -2654,6 +4343,17 @@ describe('RowNode.getDataValue', () => {
             expect(countryGroup.getDataValue('athleteGroupCol')).toBeNull();
 
             expect(valueGetterCalls).toBe(0);
+            await new GridRows(
+                api,
+                `getDataValue ignores valueGetter on a showRowGroup column for group rows (groupD final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID countryGroupCol:null athleteGroupCol:null
+                └─┬ filler id:row-group-country-USA countryGroupCol:"USA" athleteGroupCol:null gold:10
+                · ├─┬ LEAF_GROUP id:row-group-country-USA-athlete-Michael athleteGroupCol:"Michael" gold:8
+                · │ └── LEAF id:1 countryGroupCol:"getter:USA" athleteGroupCol:"getter:athlete" country:"USA" athlete:"Michael" gold:8
+                · └─┬ LEAF_GROUP id:row-group-country-USA-athlete-Ryan athleteGroupCol:"Ryan" gold:2
+                · · └── LEAF id:2 countryGroupCol:"getter:USA" athleteGroupCol:"getter:athlete" country:"USA" athlete:"Ryan" gold:2
+            `);
         });
 
         test('tree data group rows resolve showRowGroup columns from their own data', async () => {
@@ -2685,6 +4385,22 @@ describe('RowNode.getDataValue', () => {
                 ],
                 getRowId: ({ data }) => data.id,
             });
+            await new GridColumns(api, `tree data group rows resolve showRowGroup columns from their own data setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── regionGroupCol width:200
+                    ├── name "Name" width:200
+                    ├── region "Region" width:200
+                    └── value "Value" width:200 aggFunc:sum
+                `);
+            await new GridRows(api, `tree data group rows resolve showRowGroup columns from their own data setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" regionGroupCol:"1" name:"Parent" region:"North" value:50
+                    · ├── 2 LEAF id:2 ag-Grid-AutoColumn:"2" regionGroupCol:"2" name:"Child1" region:"East" value:20
+                    · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" regionGroupCol:"3" name:"Child2" region:"West" value:30
+                `);
             await asyncSetTimeout(1);
 
             const parent = api.getRowNode('1')!;
@@ -2707,6 +4423,13 @@ describe('RowNode.getDataValue', () => {
             expect(child.getDataValue('name')).toBe('Child1');
             expect(child.getDataValue('region')).toBe('East');
             expect(child.getDataValue('value')).toBe(20);
+            await new GridRows(api, `tree data group rows resolve showRowGroup columns from their own data final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" regionGroupCol:"1" name:"Parent" region:"North" value:50
+                    · ├── 2 LEAF id:2 ag-Grid-AutoColumn:"2" regionGroupCol:"2" name:"Child1" region:"East" value:20
+                    · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" regionGroupCol:"3" name:"Child2" region:"West" value:30
+                `);
         });
     });
 });

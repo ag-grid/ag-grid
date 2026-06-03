@@ -1,7 +1,8 @@
+import { CssClassManager } from 'ag-stack';
 import React, { memo, useCallback, useContext, useRef, useState } from 'react';
 
 import type { IGridHeaderComp } from 'ag-grid-community';
-import { CssClassManager, GridHeaderCtrl } from 'ag-grid-community';
+import { GridHeaderCtrl } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import HeaderRowsComp from './headerRowsComp';

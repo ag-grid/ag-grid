@@ -1,3 +1,5 @@
+import { _missing } from 'ag-stack';
+
 import type {
     ColDef,
     ColKey,
@@ -24,7 +26,6 @@ import {
     _isGroupMultiAutoColumn,
     _isGroupUseEntireRow,
     _mergeDeep,
-    _missing,
     _updateColsMap,
     _warn,
     isColumnGroupAutoCol,

@@ -1,5 +1,7 @@
+import { _clearElement } from 'ag-stack';
+
 import type { ElementParams, RichSelectParams } from 'ag-grid-community';
-import { Component, _clearElement, _createElement, _createIconNoSpan } from 'ag-grid-community';
+import { Component, _createElement, _createIconNoSpan } from 'ag-grid-community';
 
 import { AgRichSelect } from '../../widgets/agRichSelect';
 import { translateForFilterPanel } from './filterPanelUtils';

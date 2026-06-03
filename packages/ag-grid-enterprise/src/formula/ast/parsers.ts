@@ -1,9 +1,11 @@
-import { _getClientSideRowModel, _isExpressionString } from 'ag-grid-community';
+import { _isExpressionString } from 'ag-stack';
+
 import type { BeanCollection } from 'ag-grid-community';
 
 import { isFormulaIdentChar, isFormulaIdentStart, isStandaloneRefToken, parseA1Ref } from '../refUtils';
-import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
+import { getFormulaRowByIndex } from '../rowAccess';
 import type { OperatorDef } from './operators';
+import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
 import { FormulaParseError } from './utils';
 
@@ -13,7 +15,7 @@ import { FormulaParseError } from './utils';
  * @param beans Helpers for looking up rows/columns (used to resolve cell refs).
  * @param operand The raw text of the operand (e.g. `"123"`, `"true"`, `"A1"`).
  * @param unsafe If `true` it will not validate if the row/column exists when parsing the formula.
- * @returns A JS value (string/number/boolean) or a Cell object, or null if unknown.
+ * @returns A JS value (string/number/boolean/null), a Cell object, or undefined if unknown.
  * @throws FormulaParseError if a cell reference is invalid.
  *
  * @example
@@ -25,11 +27,11 @@ const parseOperand = (
     beans: BeanCollection,
     operand: string,
     unsafe: boolean
-): string | number | boolean | Cell | null => {
+): string | number | boolean | Cell | null | undefined => {
     const trimmed = operand.trim();
 
     // string literal
-    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length > 2) {
+    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2) {
         return trimmed.slice(1, -1);
     }
 
@@ -40,11 +42,30 @@ const parseOperand = (
     if (trimmed.toLowerCase() === 'false') {
         return false;
     }
+    if (trimmed.toLowerCase() === 'null') {
+        return null;
+    }
 
     // numbers
     const num = Number(trimmed);
     if (!isNaN(num)) {
         return num;
+    }
+
+    if (trimmed.startsWith('[') && trimmed.endsWith(']') && trimmed.length > 2) {
+        const columnReference = trimmed.slice(1, -1);
+        const column = beans.colModel.getColById(columnReference);
+
+        if (!unsafe && !column) {
+            throw new FormulaParseError(2, 0, trimmed.length, [trimmed]);
+        }
+
+        // Unsafe mode (e.g. paste-time parsing without grid context) stores the raw reference
+        // as the AST id — downstream lookups via getColById will not resolve it.
+        return {
+            column: { id: column?.getColId() ?? columnReference, absolute: false },
+            row: { id: '', absolute: false, current: true },
+        };
     }
 
     // cell/range
@@ -65,8 +86,7 @@ const parseOperand = (
 
         const toCell = (colAbs: boolean, colStr: string, rowAbs: boolean, rowStr: string, unsafe: boolean): Cell => {
             const col = colAbs || unsafe ? colStr.toUpperCase() : beans.formula?.getColByRef(colStr)?.colId;
-            const row =
-                rowAbs || unsafe ? rowStr : _getClientSideRowModel(beans)?.getFormulaRow(Number(rowStr) - 1)?.id; // TODO handle NaN
+            const row = rowAbs || unsafe ? rowStr : getFormulaRowByIndex(beans, Number(rowStr) - 1)?.id;
 
             if (col == null || row == null) {
                 throw new FormulaParseError(2, 0, 0, [trimmed]);
@@ -89,7 +109,7 @@ const parseOperand = (
         return start;
     }
 
-    return null;
+    return undefined;
 };
 
 /**
@@ -193,6 +213,17 @@ function tokenize(expr: string): string[] {
             }
             tokens.push(expr.slice(i, j));
             i = j;
+            continue;
+        }
+
+        // calculated-column same-row reference (e.g. [revenue])
+        if (ch === '[') {
+            const end = expr.indexOf(']', i + 1);
+            if (end < 0) {
+                throw new FormulaParseError(5, i, i + 1, [ch]);
+            }
+            tokens.push(expr.slice(i, end + 1));
+            i = end + 1;
             continue;
         }
 
@@ -368,6 +399,11 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
 
         // Argument separator ','
         if (token === ',') {
+            const prevToken = tokens[i - 1];
+            if (prevToken == null || prevToken === '(' || prevToken === ',') {
+                throw new FormulaParseError(10, i, i + 1);
+            }
+
             // reduce until '('
             while (true) {
                 const top = ops[ops.length - 1];
@@ -399,6 +435,10 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
 
         // Closing ')'
         if (token === ')') {
+            if (tokens[i - 1] === ',') {
+                throw new FormulaParseError(10, i, i + 1);
+            }
+
             // reduce until '('
             while (true) {
                 const top = ops[ops.length - 1];
@@ -456,7 +496,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
 
         // Operand
         const parsed = parseOperand(beans, token, unsafe);
-        if (parsed == null) {
+        if (parsed === undefined) {
             throw new FormulaParseError(14, 0, token.length, [token]);
         }
         output.push({ type: 'operand', value: parsed });

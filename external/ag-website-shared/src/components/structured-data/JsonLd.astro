@@ -1,0 +1,13 @@
+---
+import { buildJsonLdDocument, serializeJsonLd, type JsonLdObject } from '@ag-website-shared/utils/structuredData';
+
+interface Props {
+    data: JsonLdObject | JsonLdObject[];
+}
+
+const { data } = Astro.props;
+const nodes = Array.isArray(data) ? data : [data];
+const document = buildJsonLdDocument(nodes);
+---
+
+{nodes.length > 0 && <script type="application/ld+json" set:html={serializeJsonLd(document)} />}

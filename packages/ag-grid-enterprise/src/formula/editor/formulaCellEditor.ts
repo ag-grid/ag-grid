@@ -1,8 +1,10 @@
-import { AgAbstractCellEditor, KeyCode, RefPlaceholder, _isBrowserSafari, _placeCaretAtEnd } from 'ag-grid-community';
+import { RefPlaceholder, _isBrowserSafari, _placeCaretAtEnd } from 'ag-stack';
+
 import type { IFormulaCellEditorParams } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode } from 'ag-grid-community';
 
 import { AgFormulaInputField } from '../../widgets/agFormulaInputField';
-import { translateFormulaError } from '../i18n';
+import type { FormulaError } from '../ast/utils';
 
 export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extends AgAbstractCellEditor<
     IFormulaCellEditorParams<TData, TValue, TContext>,
@@ -152,10 +154,9 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
         const shouldValidate = validateFormulas === true || !!getValidationErrors;
 
         if (shouldValidate && typeof rawValue === 'string' && this.isFormulaText(rawValue)) {
-            const normalised = this.beans.formula?.normaliseFormula(rawValue, true);
-
-            if (!normalised) {
-                internalErrors = [translateFormulaError(translate, 1)];
+            const error = this.beans.formula?.validateExpression(rawValue);
+            if (error) {
+                internalErrors = [(error as FormulaError).getTranslatedMessage(translate)];
             }
         }
 

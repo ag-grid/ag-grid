@@ -503,6 +503,18 @@ describe('Cell Editing Start', () => {
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `valueGetter does not read live value from another cell editor (AG-16448) setup`)
+            .checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200
+            `);
+        await new GridRows(api, `valueGetter does not read live value from another cell editor (AG-16448) setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial" b:"initial"
+            `
+        );
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
@@ -564,6 +576,11 @@ describe('Cell Editing Start', () => {
             batchEditingStarted: 0,
             batchEditingStopped: 0,
         });
+        await new GridRows(api, `valueGetter does not read live value from another cell editor (AG-16448) final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"xx" b:"xx"
+            `);
     });
 
     test('valueCache does not store or cache editing values; cancel and commit both correct (AG-16448)', async () => {
@@ -591,6 +608,21 @@ describe('Cell Editing Start', () => {
             getRowId: (params) => params.data.id,
             valueCache: true,
         });
+        await new GridColumns(
+            api,
+            `valueCache does not store or cache editing values; cancel and commit both correc setup`
+        ).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── computed "Computed" width:200
+        `);
+        await new GridRows(
+            api,
+            `valueCache does not store or cache editing values; cancel and commit both correc setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID computed:"Echo: undefined"
+            └── LEAF id:0 a:"initial" computed:"Echo: initial"
+        `);
         const eventTracker = new EditEventTracker(api);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
@@ -666,6 +698,13 @@ describe('Cell Editing Start', () => {
             batchEditingStarted: 0,
             batchEditingStopped: 0,
         });
+        await new GridRows(
+            api,
+            `valueCache does not store or cache editing values; cancel and commit both correc final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID computed:"Echo: undefined"
+            └── LEAF id:0 a:"committed" computed:"Echo: committed"
+        `);
     });
 
     test('valueCache is actually caching values', async () => {
@@ -686,6 +725,15 @@ describe('Cell Editing Start', () => {
             getRowId: (params) => params.data.id,
             valueCache: true,
         });
+        await new GridColumns(api, `valueCache is actually caching values setup`).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── computed width:200
+        `);
+        await new GridRows(api, `valueCache is actually caching values setup`).check(`
+            ROOT id:ROOT_NODE_ID computed:"call-2"
+            └── LEAF id:0 a:"test" computed:"call-1"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -716,6 +764,10 @@ describe('Cell Editing Start', () => {
         await asyncSetTimeout(1);
 
         expect(valueGetterCallCount).toBeGreaterThan(initialCallCount);
+        await new GridRows(api, `valueCache is actually caching values final state`).check(`
+            ROOT id:ROOT_NODE_ID computed:"call-4"
+            └── LEAF id:0 a:"changed" computed:"call-3"
+        `);
     });
 
     test('cellValueChanged newRawValue is the raw edit value, newValue is the resolved value via valueGetter', async () => {
@@ -739,6 +791,20 @@ describe('Cell Editing Start', () => {
                 cellValueChangedEvents.push({ oldValue, newValue, newRawValue });
             },
         });
+        await new GridColumns(
+            api,
+            `cellValueChanged newRawValue is the raw edit value, newValue is the resolved val setup`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `cellValueChanged newRawValue is the raw edit value, newValue is the resolved val setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID a:null
+            └── LEAF id:0 a:"prefix_initial"
+        `);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'changed');
@@ -750,6 +816,13 @@ describe('Cell Editing Start', () => {
             newValue: 'prefix_changed',
             newRawValue: 'changed',
         });
+        await new GridRows(
+            api,
+            `cellValueChanged newRawValue is the raw edit value, newValue is the resolved val final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID a:null
+            └── LEAF id:0 a:"prefix_changed"
+        `);
     });
 
     test('cellValueChanged newRawValue equals newValue when no valueGetter is configured', async () => {
@@ -763,6 +836,18 @@ describe('Cell Editing Start', () => {
                 cellValueChangedEvents.push({ oldValue, newValue, newRawValue });
             },
         });
+        await new GridColumns(
+            api,
+            `cellValueChanged newRawValue equals newValue when no valueGetter is configured setup`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(api, `cellValueChanged newRawValue equals newValue when no valueGetter is configured setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'changed');
@@ -774,6 +859,13 @@ describe('Cell Editing Start', () => {
             newValue: 'changed',
             newRawValue: 'changed',
         });
+        await new GridRows(
+            api,
+            `cellValueChanged newRawValue equals newValue when no valueGetter is configured final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"changed"
+        `);
     });
 
     test('colDef onCellValueChanged receives newRawValue and source', async () => {
@@ -797,6 +889,14 @@ describe('Cell Editing Start', () => {
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `colDef onCellValueChanged receives newRawValue and source setup`).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(api, `colDef onCellValueChanged receives newRawValue and source setup`).check(`
+            ROOT id:ROOT_NODE_ID a:null
+            └── LEAF id:0 a:"prefix_initial"
+        `);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         rowNode.setDataValue('a', 'changed');
@@ -809,5 +909,9 @@ describe('Cell Editing Start', () => {
             newRawValue: 'changed',
             source: undefined,
         });
+        await new GridRows(api, `colDef onCellValueChanged receives newRawValue and source final state`).check(`
+            ROOT id:ROOT_NODE_ID a:null
+            └── LEAF id:0 a:"prefix_changed"
+        `);
     });
 });

@@ -37,6 +37,7 @@ external/ag-website-shared/src/components/documentation-archive/DocumentationArc
 testing/ag-grid-docs/e2e/.cache
 testing/ag-grid-docs/playwright-report/
 testing/ag-grid-docs/test-results/
+**/*.spec.ts-snapshots/
 testing/vue3-tests/test-results/
 testing/angular-package-tests/project.base.json
 

@@ -430,15 +430,27 @@ if (!baseMeta || !testMeta) {
     process.exit(1);
 }
 
-// Refuse to compare if the two sides were produced with incompatible settings — otherwise we'd
-// silently merge e.g. a filtered base run with an unfiltered test run, skewing the deltas.
+// Different filter values still compare — we only report on the intersection of benchmark keys
+// (unmatched ones land in the unmatched-benchmarks section). Warn so the user notices.
 if (baseMeta.filter !== testMeta.filter) {
-    console.error(
-        `Error: base and test were produced with different --filter values ` +
+    console.warn(
+        `Warning: base and test were produced with different --filter values ` +
             `(base: ${JSON.stringify(baseMeta.filter)}, test: ${JSON.stringify(testMeta.filter)}). ` +
-            `Re-run both sides with the same filter.`
+            `Comparison restricted to the intersection of benchmarks.\n`
     );
-    process.exit(1);
+}
+// Different runs counts are tolerated. Each side's rme already mixes run-to-run std with the
+// within-run rme (`Math.max` floor), so a side with fewer runs reports the larger of the two
+// uncertainties — its noise band widens naturally. Warn loudly when the gap is big enough that
+// the user should consider re-running.
+const baseRunsCount = baseMeta.runFiles?.length ?? 0;
+const testRunsCount = testMeta.runFiles?.length ?? 0;
+if (baseRunsCount !== testRunsCount) {
+    console.warn(
+        `Warning: unequal run counts (base: ${baseRunsCount}, test: ${testRunsCount}). ` +
+            `The side with fewer runs has a wider noise band; deltas near the margin may flip ` +
+            `after re-running with matched counts.\n`
+    );
 }
 const baseExcl = (baseMeta.excludedFiles ?? []).join(',');
 const testExcl = (testMeta.excludedFiles ?? []).join(',');

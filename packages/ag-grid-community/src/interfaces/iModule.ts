@@ -1,5 +1,5 @@
-import type { ClassImp } from '../agStack/interfaces/iContext';
-import type { IconValue } from '../agStack/interfaces/iIcon';
+import type { ClassImp, IconValue } from 'ag-stack';
+
 import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { ComponentMeta, DynamicBeanName, SingletonBean, UserComponentName } from '../context/context';
@@ -187,6 +187,7 @@ export type EnterpriseModuleName =
     | 'AiToolkit'
     | 'AllEnterprise'
     | 'BatchEdit'
+    | 'CalculatedColumns'
     | 'CellSelection'
     | 'Clipboard'
     | 'ColumnMenu'
@@ -274,6 +275,7 @@ export type AgModuleName =
     | 'AdvancedFilterModule'
     | 'AllEnterpriseModule'
     | 'BatchEditModule'
+    | 'CalculatedColumnsModule'
     | 'CellSelectionModule'
     | 'ClipboardModule'
     | 'ColumnMenuModule'

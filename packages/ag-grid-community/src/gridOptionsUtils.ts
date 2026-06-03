@@ -1,5 +1,5 @@
-import { _doOnce } from './agStack/utils/function';
-import { _missing } from './agStack/utils/generic';
+import { _doOnce, _missing } from 'ag-stack';
+
 import type { GridApi } from './api/gridApi';
 import type { BeanCollection } from './context/context';
 import type {

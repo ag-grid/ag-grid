@@ -86,7 +86,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
 
         await new GridRows(api, 'filter 1 rowData 2').check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" k:"A" name:"John Von Neumann" 
+            └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" k:"A" name:"John Von Neumann"
             · ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" k:"B" name:"Alan Turing"
             · │ └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" k:"E" name:"A. Church"
             · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" k:"C" name:"A. Church"
@@ -353,7 +353,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
 
         await new GridRows(api, 'sort value desc').check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" k:"A" value:12 x:1 
+            └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" k:"A" value:12 x:1
             · ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" k:"B" value:17 x:1
             · │ ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" k:"D" value:13 x:1
             · │ └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" k:"E" value:11 x:0

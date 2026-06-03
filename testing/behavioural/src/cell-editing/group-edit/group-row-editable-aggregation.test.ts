@@ -2,7 +2,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import type { NumberFilterModel, SetFilterModel } from 'ag-grid-community';
 
-import { GridRows, TestGridsManager } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 import {
     EDIT_MODES,
     asyncSetTimeout,
@@ -470,6 +470,26 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
             groupDefaultExpanded: 1,
             suppressAggFuncInHeader: true,
         });
+        await new GridColumns(
+            api,
+            `Total column using getValue() should not update while typing to start editing setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:143 flex:1
+            ├── group "Group" width:143 flex:1 rowGroup editable
+            ├── a "A" width:143 flex:1 aggFunc:sum editable
+            ├── b "B" width:142 flex:1 aggFunc:sum editable
+            ├── c "C" width:143 flex:1 aggFunc:sum editable
+            ├── d "D" width:143 flex:1 aggFunc:sum editable
+            └── total "Total" width:143 flex:1 aggFunc:sum
+        `);
+        await new GridRows(api, `Total column using getValue() should not update while typing to start editing setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID total:null
+                └─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" a:15 b:30 c:45 d:60 total:150
+                · ├── LEAF id:0 group:"A" a:10 b:20 c:30 d:40 total:100
+                · └── LEAF id:1 group:"A" a:5 b:10 c:15 d:20 total:50
+            `);
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         await asyncSetTimeout(1);
@@ -509,6 +529,15 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
         expect(cellA).toHaveTextContent('5');
         // Total should now be updated: 5+20+30+40=95
         expect(totalCell).toHaveTextContent('95');
+        await new GridRows(
+            api,
+            `Total column using getValue() should not update while typing to start editing final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID total:null
+            └─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" a:10 b:30 c:45 d:60 total:145
+            · ├── LEAF id:0 group:"A" a:5 b:20 c:30 d:40 total:95
+            · └── LEAF id:1 group:"A" a:5 b:10 c:15 d:20 total:50
+        `);
     });
 
     test('Total column should not update while double-click editing, only after commit', async () => {
@@ -535,6 +564,21 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
             rowData: [{ group: 'A', a: 10, b: 20 }],
             groupDefaultExpanded: 1,
         });
+        await new GridColumns(api, `Total column should not update while double-click editing, only after commit setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200 flex:1
+                ├── group "Group" width:200 flex:1 rowGroup editable
+                ├── a "A" width:200 flex:1 aggFunc:sum editable
+                ├── b "B" width:200 flex:1 aggFunc:sum editable
+                └── total "Total" width:200 flex:1 aggFunc:sum
+            `);
+        await new GridRows(api, `Total column should not update while double-click editing, only after commit setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID total:null
+                └─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" a:10 b:20 total:30
+                · └── LEAF id:0 group:"A" a:10 b:20 total:30
+            `);
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         await asyncSetTimeout(1);
@@ -571,6 +615,14 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
         // Now total should be updated: 25+20=45
         expect(cellA).toHaveTextContent('25');
         expect(totalCell).toHaveTextContent('45');
+        await new GridRows(
+            api,
+            `Total column should not update while double-click editing, only after commit final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID total:null
+            └─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" a:25 b:20 total:45
+            · └── LEAF id:0 group:"A" a:25 b:20 total:45
+        `);
     });
 
     test('Total column should not update during edit and should revert when cancelled', async () => {
@@ -597,6 +649,21 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
             rowData: [{ group: 'A', a: 10, b: 20 }],
             groupDefaultExpanded: 1,
         });
+        await new GridColumns(api, `Total column should not update during edit and should revert when cancelled setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200 flex:1
+                ├── group "Group" width:200 flex:1 rowGroup editable
+                ├── a "A" width:200 flex:1 aggFunc:sum editable
+                ├── b "B" width:200 flex:1 aggFunc:sum editable
+                └── total "Total" width:200 flex:1 aggFunc:sum
+            `);
+        await new GridRows(api, `Total column should not update during edit and should revert when cancelled setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID total:null
+                └─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" a:10 b:20 total:30
+                · └── LEAF id:0 group:"A" a:10 b:20 total:30
+            `);
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         await asyncSetTimeout(1);
@@ -629,6 +696,14 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
         // Total should remain unchanged
         expect(cellA).toHaveTextContent('10');
         expect(totalCell).toHaveTextContent('30');
+        await new GridRows(
+            api,
+            `Total column should not update during edit and should revert when cancelled final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID total:null
+            └─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" a:10 b:20 total:30
+            · └── LEAF id:0 group:"A" a:10 b:20 total:30
+        `);
     });
 
     test('Re-editing and committing different values updates Total correctly', async () => {
@@ -655,6 +730,20 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
             rowData: [{ group: 'A', a: 10, b: 20 }],
             groupDefaultExpanded: 1,
         });
+        await new GridColumns(api, `Re-editing and committing different values updates Total correctly setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200 flex:1
+                ├── group "Group" width:200 flex:1 rowGroup editable
+                ├── a "A" width:200 flex:1 aggFunc:sum editable
+                ├── b "B" width:200 flex:1 aggFunc:sum editable
+                └── total "Total" width:200 flex:1 aggFunc:sum
+            `);
+        await new GridRows(api, `Re-editing and committing different values updates Total correctly setup`).check(`
+            ROOT id:ROOT_NODE_ID total:null
+            └─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" a:10 b:20 total:30
+            · └── LEAF id:0 group:"A" a:10 b:20 total:30
+        `);
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         await asyncSetTimeout(1);
@@ -715,7 +804,14 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
         await asyncSetTimeout(1);
 
         expect(cellA).toHaveTextContent('5');
-        expect(totalCell).toHaveTextContent('25'); // 5+20
+        expect(totalCell).toHaveTextContent('25');
+        await new GridRows(api, `Re-editing and committing different values updates Total correctly final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID total:null
+                └─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" a:5 b:20 total:25
+                · └── LEAF id:0 group:"A" a:5 b:20 total:25
+            `
+        ); // 5+20
     });
 
     test('Editing multiple cells in sequence updates Total correctly', async () => {
@@ -742,6 +838,19 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
             rowData: [{ group: 'A', a: 10, b: 20 }],
             groupDefaultExpanded: 1,
         });
+        await new GridColumns(api, `Editing multiple cells in sequence updates Total correctly setup`).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200 flex:1
+            ├── group "Group" width:200 flex:1 rowGroup editable
+            ├── a "A" width:200 flex:1 aggFunc:sum editable
+            ├── b "B" width:200 flex:1 aggFunc:sum editable
+            └── total "Total" width:200 flex:1 aggFunc:sum
+        `);
+        await new GridRows(api, `Editing multiple cells in sequence updates Total correctly setup`).check(`
+            ROOT id:ROOT_NODE_ID total:null
+            └─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" a:10 b:20 total:30
+            · └── LEAF id:0 group:"A" a:10 b:20 total:30
+        `);
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         await asyncSetTimeout(1);
@@ -801,6 +910,11 @@ describe('AG-16448: valueGetter using getValue() during editing', () => {
         await asyncSetTimeout(1);
 
         expect(cellB).toHaveTextContent('1');
-        expect(totalCell).toHaveTextContent('1000'); // 999+1
+        expect(totalCell).toHaveTextContent('1000');
+        await new GridRows(api, `Editing multiple cells in sequence updates Total correctly final state`).check(`
+            ROOT id:ROOT_NODE_ID total:null
+            └─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" a:999 b:1 total:1000
+            · └── LEAF id:0 group:"A" a:999 b:1 total:1000
+        `); // 999+1
     });
 });

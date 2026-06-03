@@ -1,5 +1,5 @@
-import { BeanStub } from 'ag-grid-community';
 import type { AgColumnGroup } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 export class HeaderGroupCellMouseListenerFeature extends BeanStub {
     constructor(

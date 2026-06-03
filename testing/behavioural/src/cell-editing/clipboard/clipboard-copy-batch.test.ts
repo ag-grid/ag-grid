@@ -1,7 +1,7 @@
 import { TextEditorModule, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, clipboardUtils } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, clipboardUtils } from '../../test-utils';
 
 /**
  * Tests verifying that clipboard copy operations use 'batch' source values
@@ -186,6 +186,14 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
             rowData: [{ id: '0', value: 'original' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `copy after batch commit copies committed data setup`).checkColumns(`
+            CENTER
+            └── value "Value" width:200 editable
+        `);
+        await new GridRows(api, `copy after batch commit copies committed data setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 value:"original"
+        `);
 
         // Start batch, make change, commit
         api.startBatchEdit();
@@ -207,5 +215,9 @@ describe('Clipboard Copy: uses batch values not edit values', () => {
         await asyncSetTimeout(1);
 
         expect(clipboardUtils.getText()).toBe('committed-value');
+        await new GridRows(api, `copy after batch commit copies committed data final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 value:"committed-value"
+        `);
     });
 });

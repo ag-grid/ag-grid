@@ -4,6 +4,15 @@ import type {
     AgChartThemeOverrides,
     AgChartThemePalette,
 } from 'ag-charts-types';
+import {
+    RefPlaceholder,
+    _clearElement,
+    _focusInto,
+    _getAbsoluteHeight,
+    _getAbsoluteWidth,
+    _removeFromParent,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type {
     BeanCollection,
@@ -19,21 +28,7 @@ import type {
     SortModelItem,
     UpdateChartParams,
 } from 'ag-grid-community';
-import {
-    Component,
-    RefPlaceholder,
-    _addGridCommonParams,
-    _clearElement,
-    _errMsg,
-    _focusGridInnerElement,
-    _focusInto,
-    _getAbsoluteHeight,
-    _getAbsoluteWidth,
-    _mergeDeep,
-    _removeFromParent,
-    _setDisplayed,
-    _warn,
-} from 'ag-grid-community';
+import { Component, _addGridCommonParams, _errMsg, _focusGridInnerElement, _mergeDeep, _warn } from 'ag-grid-community';
 
 import { Dialog } from '../../widgets/dialog';
 import type { AgChartsExports } from '../agChartsExports';

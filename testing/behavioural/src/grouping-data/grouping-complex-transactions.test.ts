@@ -268,7 +268,7 @@ describe('ag-grid grouping complex transactions', () => {
         applyTransactionChecked(api, { remove: [rowA, rowB] });
 
         await new GridRows(api, 'Ireland 2020 group removed').check(`
-            ROOT id:ROOT_NODE_ID 
+            ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
             │ · └── LEAF id:c country:"Ireland" year:2021 athlete:"Bob Johnson"

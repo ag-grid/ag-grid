@@ -1,5 +1,5 @@
-import { _last } from '../agStack/utils/array';
-import { _getDocument } from '../agStack/utils/document';
+import { _getDocument, _last } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

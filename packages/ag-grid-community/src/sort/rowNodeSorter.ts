@@ -1,4 +1,5 @@
-import { _defaultComparator } from '../agStack/utils/generic';
+import { _defaultComparator } from 'ag-stack';
+
 import { _csrmFirstLeaf } from '../clientSideRowModel/clientSideRowModelUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';

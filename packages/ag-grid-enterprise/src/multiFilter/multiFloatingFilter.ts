@@ -1,3 +1,5 @@
+import { _clearElement, _setDisplayed } from 'ag-stack';
+
 import type {
     AgColumn,
     ElementParams,
@@ -14,12 +16,10 @@ import type {
 import {
     AgPromise,
     Component,
-    _clearElement,
     _error,
     _getDefaultFloatingFilterType,
     _getFloatingFilterCompDetails,
     _mergeDeep,
-    _setDisplayed,
 } from 'ag-grid-community';
 
 import { MultiFilter } from './multiFilter';

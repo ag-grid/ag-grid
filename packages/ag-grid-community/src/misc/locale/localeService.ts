@@ -1,5 +1,6 @@
-import type { ILocaleService, LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
-import { _getLocaleTextFromFunc, _getLocaleTextFromMap } from '../../agStack/utils/locale';
+import type { ILocaleService, LocaleTextFunc } from 'ag-stack';
+import { _getLocaleTextFromFunc, _getLocaleTextFromMap } from 'ag-stack';
+
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 

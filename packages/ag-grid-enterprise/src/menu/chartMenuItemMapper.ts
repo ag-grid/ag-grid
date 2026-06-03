@@ -1,9 +1,10 @@
+import type { LocaleTextFunc } from 'ag-stack';
+
 import type {
     BeanCollection,
     ChartGroupsDef,
     ChartType,
     IChartService,
-    LocaleTextFunc,
     MenuItemDef,
     NamedBean,
 } from 'ag-grid-community';

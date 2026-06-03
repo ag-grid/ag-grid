@@ -6,6 +6,7 @@ import { AllCommunityModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
 import { AiToolkitModule } from './aiToolkit/aiToolkitModule';
 import { BatchEditModule } from './batch-edit/batchEditModule';
+import { CalculatedColumnsModule } from './calculatedColumns/calculatedColumnsModule';
 import { IntegratedChartsModule } from './charts/integratedChartsModule';
 import { ClipboardModule } from './clipboard/clipboardModule';
 import { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
@@ -66,6 +67,7 @@ const dependsOn = [
     TreeDataModule,
     FindModule,
     BatchEditModule,
+    CalculatedColumnsModule,
     RowGroupingEditModule,
     AiToolkitModule,
 ];

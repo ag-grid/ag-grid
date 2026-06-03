@@ -8,7 +8,7 @@ import {
     ToolbarModule,
 } from 'ag-grid-enterprise';
 
-import { TestGridsManager, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
     const gridMgr = new TestGridsManager({
@@ -38,6 +38,14 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                     items: ['agRowGroupPanelToolbarItem'],
                 },
             });
+            await new GridColumns(api, `renders row group drop zone when configured in toolbar setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `renders row group drop zone when configured in toolbar setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -45,6 +53,10 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             const toolbarLeft = gridDiv.querySelector('.ag-toolbar')!;
             const dropZone = toolbarLeft.querySelector('.ag-column-drop');
             expect(dropZone).not.toBeNull();
+            await new GridRows(api, `renders row group drop zone when configured in toolbar final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
         });
 
         test('renders regardless of rowGroupPanelShow setting', async () => {
@@ -56,6 +68,14 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                     items: ['agRowGroupPanelToolbarItem'],
                 },
             });
+            await new GridColumns(api, `renders regardless of rowGroupPanelShow setting setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `renders regardless of rowGroupPanelShow setting setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -63,6 +83,10 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             const toolbarLeft = gridDiv.querySelector('.ag-toolbar')!;
             const dropZone = toolbarLeft.querySelector('.ag-column-drop');
             expect(dropZone).not.toBeNull();
+            await new GridRows(api, `renders regardless of rowGroupPanelShow setting final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
         });
     });
 
@@ -75,6 +99,14 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                     items: ['agPivotPanelToolbarItem'],
                 },
             });
+            await new GridColumns(api, `renders pivot drop zone when configured in toolbar setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `renders pivot drop zone when configured in toolbar setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -82,6 +114,10 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             const toolbarLeft = gridDiv.querySelector('.ag-toolbar')!;
             const dropZone = toolbarLeft.querySelector('.ag-column-drop');
             expect(dropZone).not.toBeNull();
+            await new GridRows(api, `renders pivot drop zone when configured in toolbar final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
         });
 
         test('renders regardless of pivotPanelShow setting', async () => {
@@ -93,6 +129,14 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                     items: ['agPivotPanelToolbarItem'],
                 },
             });
+            await new GridColumns(api, `renders regardless of pivotPanelShow setting setup`).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `renders regardless of pivotPanelShow setting setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -100,6 +144,10 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             const toolbarLeft = gridDiv.querySelector('.ag-toolbar')!;
             const dropZone = toolbarLeft.querySelector('.ag-column-drop');
             expect(dropZone).not.toBeNull();
+            await new GridRows(api, `renders regardless of pivotPanelShow setting final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
         });
     });
 
@@ -145,6 +193,27 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                     ],
                 },
             });
+            await new GridColumns(
+                api,
+                `rowGroupPanel and pivotPanel render independently of rowGroupPanelShow/pivotPane setup`
+            ).checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200 flex:1
+                ├── country "Country" width:200 flex:1
+                ├── sport "Sport" width:200 flex:1
+                ├── year "Year" width:100 flex:1
+                ├── gold "Gold" width:100 flex:1
+                ├── silver "Silver" width:100 flex:1
+                ├── bronze "Bronze" width:100 flex:1
+                └── total "Total" width:100 flex:1
+            `);
+            await new GridRows(
+                api,
+                `rowGroupPanel and pivotPanel render independently of rowGroupPanelShow/pivotPane setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"Alice" country:"US" sport:"Running" year:2024 gold:1 silver:0 bronze:0 total:1
+            `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -157,6 +226,13 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
 
             const dropZones = toolbar.querySelectorAll('.ag-column-drop');
             expect(dropZones).toHaveLength(2);
+            await new GridRows(
+                api,
+                `rowGroupPanel and pivotPanel render independently of rowGroupPanelShow/pivotPane final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"Alice" country:"US" sport:"Running" year:2024 gold:1 silver:0 bronze:0 total:1
+            `);
         });
     });
 
@@ -177,6 +253,19 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                     ],
                 },
             });
+            await new GridColumns(
+                api,
+                `Tab inside a toolbar row group panel does not force the next grid container setup`
+            ).checkColumns(`
+                CENTER
+                └── ag-Grid-AutoColumn "Group" width:200
+            `);
+            await new GridRows(api, `Tab inside a toolbar row group panel does not force the next grid container setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └─┬ LEAF_GROUP collapsed id:row-group-name-Alice ag-Grid-AutoColumn:"Alice"
+                    · └── LEAF hidden id:0 name:"Alice"
+                `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -191,6 +280,14 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             // Without preventDefault, native tab flow moves focus to the next focusable
             // element in DOM — which, inside the toolbar, is the following action button.
             expect(event.defaultPrevented).toBe(false);
+            await new GridRows(
+                api,
+                `Tab inside a toolbar row group panel does not force the next grid container final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP collapsed id:row-group-name-Alice ag-Grid-AutoColumn:"Alice"
+                · └── LEAF hidden id:0 name:"Alice"
+            `);
         });
 
         test('Tab inside a toolbar pivot panel does not force the next grid container', async () => {
@@ -213,6 +310,19 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                     ],
                 },
             });
+            await new GridColumns(api, `Tab inside a toolbar pivot panel does not force the next grid container setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └─┬ "Alice" GROUP
+                      └── pivot_name_Alice_value "Value" width:200 columnGroupShow:open
+                `);
+            await new GridRows(api, `Tab inside a toolbar pivot panel does not force the next grid container setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID pivot_name_Alice_value:1
+                    └─┬ LEAF_GROUP collapsed id:row-group-country-US ag-Grid-AutoColumn:"US" pivot_name_Alice_value:1
+                    · └── LEAF hidden id:0 pivot_name_Alice_value:1
+                `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -224,6 +334,14 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             panel.dispatchEvent(event);
 
             expect(event.defaultPrevented).toBe(false);
+            await new GridRows(
+                api,
+                `Tab inside a toolbar pivot panel does not force the next grid container final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_name_Alice_value:1
+                └─┬ LEAF_GROUP collapsed id:row-group-country-US ag-Grid-AutoColumn:"US" pivot_name_Alice_value:1
+                · └── LEAF hidden id:0 pivot_name_Alice_value:1
+            `);
         });
     });
 
@@ -244,6 +362,18 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                 rowData: [{ name: 'Alice' }],
                 toolbar: { items: ['agRowGroupPanelToolbarItem'] },
             });
+            await new GridColumns(
+                api,
+                `hides rowGroupPanel and logs error when RowGroupingModule is not registered setup`
+            ).checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+            await new GridRows(api, `hides rowGroupPanel and logs error when RowGroupingModule is not registered setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 name:"Alice"
+                `);
 
             await waitForEvent('firstDataRendered', api);
 
@@ -259,6 +389,13 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             );
 
             errorSpy.mockRestore();
+            await new GridRows(
+                api,
+                `hides rowGroupPanel and logs error when RowGroupingModule is not registered final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
         });
 
         test('hides pivotPanel and logs error when PivotModule is not registered', async () => {
@@ -269,6 +406,17 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                 rowData: [{ name: 'Alice' }],
                 toolbar: { items: ['agPivotPanelToolbarItem'] },
             });
+            await new GridColumns(api, `hides pivotPanel and logs error when PivotModule is not registered setup`)
+                .checkColumns(`
+                    CENTER
+                    └── name "Name" width:200
+                `);
+            await new GridRows(api, `hides pivotPanel and logs error when PivotModule is not registered setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 name:"Alice"
+                `
+            );
 
             await waitForEvent('firstDataRendered', api);
 
@@ -284,6 +432,11 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             );
 
             errorSpy.mockRestore();
+            await new GridRows(api, `hides pivotPanel and logs error when PivotModule is not registered final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 name:"Alice"
+                `);
         });
     });
 });

@@ -49,7 +49,7 @@
     },
     "build:umd:watch": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": [],
+      "dependsOn": ["ag-stack:build:package:watch"],
       "inputs": ["tsDefaults", "styleOutputs"],
       "outputs": ["{projectRoot}/dist/ag-grid-community*.js"],
       "options": {
@@ -129,6 +129,7 @@
         "main": "{projectRoot}/src/main.ts",
         "tsConfig": "{projectRoot}/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
+        "external": ["ag-stack"],
         "platform": "browser",
         "target": "es2020",
         "format": ["cjs", "esm"],
@@ -170,6 +171,7 @@
         "tsConfig": "{projectRoot}/tsconfig.watch.json",
         "skipTypeCheck": true,
         "esbuildConfig": "esbuild.config.cjs",
+        "external": ["ag-stack"],
         "platform": "browser",
         "target": "es2020",
         "format": ["cjs", "esm"],
@@ -272,5 +274,6 @@
       }
     }
   },
-  "tags": ["package", "community", "core"]
+  "tags": ["package", "community", "core"],
+  "implicitDependencies": ["ag-stack"]
 }

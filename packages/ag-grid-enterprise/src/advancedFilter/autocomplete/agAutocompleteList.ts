@@ -1,3 +1,5 @@
+import { AgPopupComponent, RefPlaceholder, _exists, _fuzzySuggestions, _isVisible } from 'ag-stack';
+
 import type {
     AgComponentSelectorType,
     AgEventTypeParams,
@@ -8,7 +10,7 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { AgPopupComponent, KeyCode, RefPlaceholder, _exists, _fuzzySuggestions, _isVisible } from 'ag-grid-community';
+import { KeyCode } from 'ag-grid-community';
 
 import { VirtualList } from '../../widgets/virtualList';
 import { AgAutocompleteRow } from './agAutocompleteRow';

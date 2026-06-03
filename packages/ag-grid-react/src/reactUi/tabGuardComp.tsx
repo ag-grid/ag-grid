@@ -1,8 +1,10 @@
+import type { ITabGuard } from 'ag-stack';
+import { TabGuardClassNames } from 'ag-stack';
 import type { ForwardRefRenderFunction } from 'react';
 import React, { forwardRef, memo, useCallback, useContext, useImperativeHandle, useRef } from 'react';
 
-import type { GridCtrl, ITabGuard } from 'ag-grid-community';
-import { TabGuardClassNames, TabGuardCtrl } from 'ag-grid-community';
+import type { GridCtrl } from 'ag-grid-community';
+import { TabGuardCtrl } from 'ag-grid-community';
 
 import { BeansContext } from './beansContext';
 

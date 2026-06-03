@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, test } from 'vitest';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping edge cases', () => {
     const gridsManager = new TestGridsManager({
@@ -167,7 +167,7 @@ describe('ag-grid grouping edge cases', () => {
     // colRowGroupIndex > rowNode.level.  After the fix the guard is restricted to group
     // rows only (rowNode.group === true), so leaf rows now correctly receive undefined
     // (no value) instead of null from this path.
-    test('showRowGroup column getDataValue: null on shallower group rows, undefined on leaf rows', () => {
+    test('showRowGroup column getDataValue: null on shallower group rows, undefined on leaf rows', async () => {
         const rowData = cachedJSONObjects.array([
             { id: '1', country: 'Ireland', year: '2000', athlete: 'Alice' },
             { id: '2', country: 'Italy', year: '2001', athlete: 'Bob' },
@@ -194,6 +194,28 @@ describe('ag-grid grouping edge cases', () => {
             rowData,
             getRowId: (params) => params.data.id,
         });
+        await asyncSetTimeout(10);
+        await new GridColumns(
+            api,
+            `showRowGroup column getDataValue: null on shallower group rows, undefined on lea setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── athlete "Athlete" width:200
+            └── showYear width:200
+        `);
+        await new GridRows(
+            api,
+            `showRowGroup column getDataValue: null on shallower group rows, undefined on lea setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID showYear:null
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" showYear:null
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"2000" showYear:"2000"
+            │ · └── LEAF id:1 country:"Ireland" year:"2000" athlete:"Alice"
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" showYear:null
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:"2001" showYear:"2001"
+            · · └── LEAF id:2 country:"Italy" year:"2001" athlete:"Bob"
+        `);
 
         // Find one country-level group row (level 0) and one leaf row (level 2).
         let countryGroupNode: any = null;
@@ -206,6 +228,18 @@ describe('ag-grid grouping edge cases', () => {
                 leafNode = node;
             }
         });
+        await new GridRows(
+            api,
+            `showRowGroup column getDataValue: null on shallower group rows, undefined on lea after forEachNode`
+        ).check(`
+            ROOT id:ROOT_NODE_ID showYear:null
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" showYear:null
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"2000" showYear:"2000"
+            │ · └── LEAF id:1 country:"Ireland" year:"2000" athlete:"Alice"
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" showYear:null
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:"2001" showYear:"2001"
+            · · └── LEAF id:2 country:"Italy" year:"2001" athlete:"Bob"
+        `);
 
         expect(countryGroupNode).not.toBeNull();
         expect(leafNode).not.toBeNull();

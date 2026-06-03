@@ -13,7 +13,7 @@ import {
 import type { SetFilter } from 'ag-grid-enterprise';
 import { PivotModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface Person {
     firstName: string;
@@ -111,10 +111,25 @@ describe('filterValueGetter', () => {
             ],
             rowData: ROW_DATA,
         });
+        await new GridColumns(api, `function form receives api and context on params setup`).checkColumns(`
+            CENTER
+            └── name "First Name" width:200
+        `);
+        await new GridRows(api, `function form receives api and context on params setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 name:"Ada"
+            ├── LEAF id:1 name:"Alan"
+            ├── LEAF id:2 name:"Grace"
+            └── LEAF id:3 name:"Linus"
+        `);
 
         api.setFilterModel({
             name: { filterType: 'text', type: 'contains', filter: 'Ada' },
         });
+        await new GridRows(api, `function form receives api and context on params after setFilterModel`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Ada"
+        `);
         await asyncSetTimeout(0);
 
         expect(seenApis.length).toBeGreaterThan(0);
@@ -309,6 +324,18 @@ describe('filterValueGetter', () => {
                 ],
                 rowData: ROW_DATA,
             });
+            await new GridColumns(api, `set filter popup lists values produced by filterValueGetter setup`)
+                .checkColumns(`
+                    CENTER
+                    └── ageGroup "Age" width:200
+                `);
+            await new GridRows(api, `set filter popup lists values produced by filterValueGetter setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 ageGroup:36
+                ├── LEAF id:1 ageGroup:41
+                ├── LEAF id:2 ageGroup:85
+                └── LEAF id:3 ageGroup:54
+            `);
 
             const setFilter = (await api.getColumnFilterInstance('ageGroup')) as SetFilter<any>;
             const keys = (await setFilter.handler.valueModel.allKeys) ?? [];
@@ -316,6 +343,15 @@ describe('filterValueGetter', () => {
             // The popup checkbox list should reflect the getter's output buckets,
             // not the raw ages.
             expect([...keys].sort()).toEqual(['OLD', 'YOUNG']);
+            await new GridRows(api, `set filter popup lists values produced by filterValueGetter final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 ageGroup:36
+                    ├── LEAF id:1 ageGroup:41
+                    ├── LEAF id:2 ageGroup:85
+                    └── LEAF id:3 ageGroup:54
+                `
+            );
         });
 
         test('applying set filter with getter-output value filters rows', async () => {
@@ -389,6 +425,26 @@ describe('filterValueGetter', () => {
                 pivotMode: true,
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(api, `colDef.valueGetter resolves pivot result column via params.getValue setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├─┬ "2020" GROUP
+                    │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                    └─┬ "2021" GROUP
+                      └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+                `);
+            await new GridRows(api, `colDef.valueGetter resolves pivot result column via params.getValue setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID pivot_year_2020_sales:400 pivot_year_2021_sales:600
+                    ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:100 pivot_year_2021_sales:200
+                    │ ├── LEAF hidden id:0 pivot_year_2020_sales:100 pivot_year_2021_sales:100
+                    │ └── LEAF hidden id:1 pivot_year_2020_sales:200 pivot_year_2021_sales:200
+                    └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:300 pivot_year_2021_sales:400
+                    · ├── LEAF hidden id:2 pivot_year_2020_sales:300 pivot_year_2021_sales:300
+                    · └── LEAF hidden id:3 pivot_year_2020_sales:400 pivot_year_2021_sales:400
+                `
+            );
 
             await asyncSetTimeout(0);
 
@@ -404,6 +460,16 @@ describe('filterValueGetter', () => {
             // and valueSvc.getValue returned its aggregated value.
             expect(api.getCellValue({ rowNode: franceGroup, colKey: 'doubled' })).toBe(200);
             expect(api.getCellValue({ rowNode: germanyGroup, colKey: 'doubled' })).toBe(600);
+            await new GridRows(api, `colDef.valueGetter resolves pivot result column via params.getValue final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID pivot_year_2020_sales:400 pivot_year_2021_sales:600
+                    ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:100 pivot_year_2021_sales:200
+                    │ ├── LEAF hidden id:0 pivot_year_2020_sales:100 pivot_year_2021_sales:100
+                    │ └── LEAF hidden id:1 pivot_year_2020_sales:200 pivot_year_2021_sales:200
+                    └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:300 pivot_year_2021_sales:400
+                    · ├── LEAF hidden id:2 pivot_year_2020_sales:300 pivot_year_2021_sales:300
+                    · └── LEAF hidden id:3 pivot_year_2020_sales:400 pivot_year_2021_sales:400
+                `);
         });
 
         test('colDef.filterValueGetter resolves pivot result column via params.getValue', async () => {
@@ -433,6 +499,27 @@ describe('filterValueGetter', () => {
                 pivotMode: true,
                 groupDefaultExpanded: -1,
             });
+            await new GridColumns(
+                api,
+                `colDef.filterValueGetter resolves pivot result column via params.getValue setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+            `);
+            await new GridRows(api, `colDef.filterValueGetter resolves pivot result column via params.getValue setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID pivot_year_2020_sales:400 pivot_year_2021_sales:600
+                    ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:100 pivot_year_2021_sales:200
+                    │ ├── LEAF hidden id:0 pivot_year_2020_sales:100 pivot_year_2021_sales:100
+                    │ └── LEAF hidden id:1 pivot_year_2020_sales:200 pivot_year_2021_sales:200
+                    └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:300 pivot_year_2021_sales:400
+                    · ├── LEAF hidden id:2 pivot_year_2020_sales:300 pivot_year_2021_sales:300
+                    · └── LEAF hidden id:3 pivot_year_2020_sales:400 pivot_year_2021_sales:400
+                `);
 
             await asyncSetTimeout(0);
 
@@ -445,6 +532,18 @@ describe('filterValueGetter', () => {
             api.setFilterModel({
                 salesFilter: { filterType: 'text', type: 'contains', filter: 'SALES' },
             });
+            await new GridRows(
+                api,
+                `colDef.filterValueGetter resolves pivot result column via params.getValue after setFilterModel`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:400 pivot_year_2021_sales:600
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:100 pivot_year_2021_sales:200
+                │ ├── LEAF hidden id:0 pivot_year_2020_sales:100 pivot_year_2021_sales:100
+                │ └── LEAF hidden id:1 pivot_year_2020_sales:200 pivot_year_2021_sales:200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:300 pivot_year_2021_sales:400
+                · ├── LEAF hidden id:2 pivot_year_2020_sales:300 pivot_year_2021_sales:300
+                · └── LEAF hidden id:3 pivot_year_2020_sales:400 pivot_year_2021_sales:400
+            `);
             await asyncSetTimeout(0);
 
             // The closure only recorded non-null values — proves getColDefColOrCol

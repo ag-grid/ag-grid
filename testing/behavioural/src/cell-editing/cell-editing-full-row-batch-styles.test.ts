@@ -4,7 +4,14 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
-import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from '../test-utils';
 
 describe('Cell Editing: full-row batch styles', () => {
     const gridMgr = new TestGridsManager({
@@ -112,6 +119,18 @@ describe('Cell Editing: full-row batch styles', () => {
 
     test('multiple rows retain batch edit styles when editing across rows', async () => {
         const api = await createGrid();
+        await new GridColumns(api, `multiple rows retain batch edit styles when editing across rows setup`)
+            .checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `);
+        await new GridRows(api, `multiple rows retain batch edit styles when editing across rows setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -173,10 +192,31 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 0,
         });
+        await new GridRows(api, `multiple rows retain batch edit styles when editing across rows final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF ⏳ id:ROW_0 a:⏳"R0_CHANGED" "A0" b:"B0"
+                ├── LEAF ⏳ id:ROW_1 a:⏳"R1_CHANGED" "A1" b:"B1"
+                └── LEAF 🖍️ id:ROW_2 a:"A2" b:"B2"
+            `
+        );
     });
 
     test('cancel removes batch edit styles from previously edited rows', async () => {
         const api = await createGrid();
+        await new GridColumns(api, `cancel removes batch edit styles from previously edited rows setup`).checkColumns(
+            `
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `
+        );
+        await new GridRows(api, `cancel removes batch edit styles from previously edited rows setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -225,10 +265,33 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 1,
         });
+        await new GridRows(api, `cancel removes batch edit styles from previously edited rows final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
     });
 
     test('editing cell back to original value removes cell style, re-changing re-applies it', async () => {
         const api = await createGrid();
+        await new GridColumns(
+            api,
+            `editing cell back to original value removes cell style, re-changing re-applies i setup`
+        ).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `editing cell back to original value removes cell style, re-changing re-applies i setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -318,10 +381,36 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 0,
         });
+        await new GridRows(
+            api,
+            `editing cell back to original value removes cell style, re-changing re-applies i final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳"CHANGED_AGAIN" "A0" b:"B0"
+            ├── LEAF 🖍️ id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
     });
 
     test('row style is removed only when all edited cells in the row are reverted to original', async () => {
         const api = await createGrid();
+        await new GridColumns(
+            api,
+            `row style is removed only when all edited cells in the row are reverted to origi setup`
+        ).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `row style is removed only when all edited cells in the row are reverted to origi setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -461,10 +550,33 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 0,
         });
+        await new GridRows(
+            api,
+            `row style is removed only when all edited cells in the row are reverted to origi final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳"A0_AGAIN" "A0" b:⏳"B0_AGAIN" "B0"
+            ├── LEAF 🖍️ id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
     });
 
     test('Escape cancels current row edit without affecting previously edited rows', async () => {
         const api = await createGrid();
+        await new GridColumns(api, `Escape cancels current row edit without affecting previously edited rows setup`)
+            .checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `);
+        await new GridRows(api, `Escape cancels current row edit without affecting previously edited rows setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 a:"A0" b:"B0"
+                ├── LEAF id:ROW_1 a:"A1" b:"B1"
+                └── LEAF id:ROW_2 a:"A2" b:"B2"
+            `
+        );
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -526,10 +638,29 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 0,
         });
+        await new GridRows(api, `Escape cancels current row edit without affecting previously edited rows final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF ⏳ id:ROW_0 a:⏳"CONFIRMED" "A0" b:"B0"
+                ├── LEAF id:ROW_1 a:"A1" b:"B1"
+                └── LEAF id:ROW_2 a:"A2" b:"B2"
+            `);
     });
 
     test('Escape on a re-edited batch row preserves the previous batch values', async () => {
         const api = await createGrid();
+        await new GridColumns(api, `Escape on a re-edited batch row preserves the previous batch values setup`)
+            .checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `);
+        await new GridRows(api, `Escape on a re-edited batch row preserves the previous batch values setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -586,10 +717,34 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 0,
         });
+        await new GridRows(api, `Escape on a re-edited batch row preserves the previous batch values final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF ⏳ id:ROW_0 a:⏳"FIRST_EDIT" "A0" b:"B0"
+                ├── LEAF id:ROW_1 a:"A1" b:"B1"
+                └── LEAF id:ROW_2 a:"A2" b:"B2"
+            `);
     });
 
     test('clearing a batch-edited cell with Backspace and typing original value removes styles', async () => {
         const api = await createGrid();
+        await new GridColumns(
+            api,
+            `clearing a batch-edited cell with Backspace and typing original value removes st setup`
+        ).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `clearing a batch-edited cell with Backspace and typing original value removes st setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -655,10 +810,30 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 0,
         });
+        await new GridRows(
+            api,
+            `clearing a batch-edited cell with Backspace and typing original value removes st final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF 🖍️ id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
     });
 
     test('Delete on a cleared batch cell keeps value cleared', async () => {
         const api = await createGrid();
+        await new GridColumns(api, `Delete on a cleared batch cell keeps value cleared setup`).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
+        await new GridRows(api, `Delete on a cleared batch cell keeps value cleared setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -713,10 +888,28 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 0,
         });
+        await new GridRows(api, `Delete on a cleared batch cell keeps value cleared final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳null "A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
     });
 
     test('commitBatchEdit removes cell and row styles and persists values', async () => {
         const api = await createGrid();
+        await new GridColumns(api, `commitBatchEdit removes cell and row styles and persists values setup`)
+            .checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `);
+        await new GridRows(api, `commitBatchEdit removes cell and row styles and persists values setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -796,10 +989,31 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 1,
         });
+        await new GridRows(api, `commitBatchEdit removes cell and row styles and persists values final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 a:"COMMIT_A0" b:"B0"
+                ├── LEAF id:ROW_1 a:"A1" b:"COMMIT_B1"
+                └── LEAF id:ROW_2 a:"A2" b:"B2"
+            `
+        );
     });
 
     test('commitBatchEdit clears styles when Enter closed editors on an unchanged row', async () => {
         const api = await createGrid();
+        await new GridColumns(api, `commitBatchEdit clears styles when Enter closed editors on an unchanged row setup`)
+            .checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `);
+        await new GridRows(api, `commitBatchEdit clears styles when Enter closed editors on an unchanged row setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 a:"A0" b:"B0"
+                ├── LEAF id:ROW_1 a:"A1" b:"B1"
+                └── LEAF id:ROW_2 a:"A2" b:"B2"
+            `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -860,10 +1074,32 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 1,
         });
+        await new GridRows(
+            api,
+            `commitBatchEdit clears styles when Enter closed editors on an unchanged row final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"CHANGED" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
     });
 
     test('commitBatchEdit persists every pending row after Enter on an unchanged row', async () => {
         const api = await createGrid();
+        await new GridColumns(api, `commitBatchEdit persists every pending row after Enter on an unchanged row setup`)
+            .checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `);
+        await new GridRows(api, `commitBatchEdit persists every pending row after Enter on an unchanged row setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 a:"A0" b:"B0"
+                ├── LEAF id:ROW_1 a:"A1" b:"B1"
+                └── LEAF id:ROW_2 a:"A2" b:"B2"
+            `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -931,12 +1167,34 @@ describe('Cell Editing: full-row batch styles', () => {
         expect(eventTracker.counts.batchEditingStopped).toBe(1);
         expect(eventTracker.counts.cellValueChanged).toBe(2);
         expect(eventTracker.counts.rowValueChanged).toBe(2);
+        await new GridRows(
+            api,
+            `commitBatchEdit persists every pending row after Enter on an unchanged row final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"R0_NEW" b:"B0"
+            ├── LEAF id:ROW_1 a:"R1_NEW" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
     });
 
     test('cancelBatchEdit clears styles when Enter closed editors on an unchanged row', async () => {
         // Symmetric case to the commit repro: after Enter purged the tracked row's UNEDITED
         // entries, cancelBatchEdit must still revert data and clear styles on previously-edited rows.
         const api = await createGrid();
+        await new GridColumns(api, `cancelBatchEdit clears styles when Enter closed editors on an unchanged row setup`)
+            .checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `);
+        await new GridRows(api, `cancelBatchEdit clears styles when Enter closed editors on an unchanged row setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:ROW_0 a:"A0" b:"B0"
+                ├── LEAF id:ROW_1 a:"A1" b:"B1"
+                └── LEAF id:ROW_2 a:"A2" b:"B2"
+            `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -982,10 +1240,32 @@ describe('Cell Editing: full-row batch styles', () => {
         expect(eventTracker.counts.batchEditingStopped).toBe(1);
         expect(eventTracker.counts.cellValueChanged).toBe(0);
         expect(eventTracker.counts.rowValueChanged).toBe(0);
+        await new GridRows(
+            api,
+            `cancelBatchEdit clears styles when Enter closed editors on an unchanged row final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
     });
 
     test('cancelBatchEdit removes cell and row styles and reverts values', async () => {
         const api = await createGrid();
+        await new GridColumns(api, `cancelBatchEdit removes cell and row styles and reverts values setup`).checkColumns(
+            `
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `
+        );
+        await new GridRows(api, `cancelBatchEdit removes cell and row styles and reverts values setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -1065,10 +1345,27 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 1,
         });
+        await new GridRows(api, `cancelBatchEdit removes cell and row styles and reverts values final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
     });
 
     test('Backspace to clear cell then Delete keeps value cleared', async () => {
         const api = await createGrid();
+        await new GridColumns(api, `Backspace to clear cell then Delete keeps value cleared setup`).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
+        await new GridRows(api, `Backspace to clear cell then Delete keeps value cleared setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
         await asyncSetTimeout(0);
@@ -1112,6 +1409,12 @@ describe('Cell Editing: full-row batch styles', () => {
         // Row should still have batch style (cell is still edited/cleared)
         const row0 = cellA0Still.closest('[row-index="0"]');
         expect(row0).toHaveClass(/ag-row-batch-edit/);
+        await new GridRows(api, `Backspace to clear cell then Delete keeps value cleared final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳null "A0" b:"B0"
+            ├── LEAF id:ROW_1 a:"A1" b:"B1"
+            └── LEAF id:ROW_2 a:"A2" b:"B2"
+        `);
     });
 
     test('range Delete on cleared cells keeps them cleared', async () => {
@@ -1129,6 +1432,16 @@ describe('Cell Editing: full-row batch styles', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `range Delete on cleared cells keeps them cleared setup`).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
+        await new GridRows(api, `range Delete on cleared cells keeps them cleared setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            └── LEAF id:ROW_1 a:"A1" b:"B1"
+        `);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
         await asyncSetTimeout(0);
@@ -1156,6 +1469,11 @@ describe('Cell Editing: full-row batch styles', () => {
         expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'a'))).toHaveTextContent('');
         expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'))).toHaveClass(/ag-cell-batch-edit/);
         expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'a'))).toHaveClass(/ag-cell-batch-edit/);
+        await new GridRows(api, `range Delete on cleared cells keeps them cleared final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:ROW_0 a:⏳null "A0" b:"B0"
+            └── LEAF ⏳ id:ROW_1 a:⏳null "A1" b:"B1"
+        `);
     });
 
     test('range Delete applies batch edit styles', async () => {
@@ -1173,6 +1491,16 @@ describe('Cell Editing: full-row batch styles', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `range Delete applies batch edit styles setup`).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
+        await new GridRows(api, `range Delete applies batch edit styles setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            └── LEAF id:ROW_1 a:"A1" b:"B1"
+        `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -1216,6 +1544,11 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 1,
         });
+        await new GridRows(api, `range Delete applies batch edit styles final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:null b:"B0"
+            └── LEAF id:ROW_1 a:null b:"B1"
+        `);
     });
 
     test('range Delete cancel reverts data and removes styles', async () => {
@@ -1233,6 +1566,16 @@ describe('Cell Editing: full-row batch styles', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `range Delete cancel reverts data and removes styles setup`).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
+        await new GridRows(api, `range Delete cancel reverts data and removes styles setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            └── LEAF id:ROW_1 a:"A1" b:"B1"
+        `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -1274,5 +1617,10 @@ describe('Cell Editing: full-row batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 1,
         });
+        await new GridRows(api, `range Delete cancel reverts data and removes styles final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"A0" b:"B0"
+            └── LEAF id:ROW_1 a:"A1" b:"B1"
+        `);
     });
 });

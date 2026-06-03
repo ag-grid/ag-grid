@@ -1,3 +1,5 @@
+import { LocalEventService, _removeFromArray } from 'ag-stack';
+
 import type {
     AgColumn,
     FilterAction,
@@ -22,12 +24,10 @@ import type {
 import {
     AgPromise,
     FilterWrapperComp,
-    LocalEventService,
     ProvidedFilter,
     _getFilterModel,
     _refreshFilterUi,
     _refreshHandlerAndUi,
-    _removeFromArray,
     _updateFilterModel,
 } from 'ag-grid-community';
 

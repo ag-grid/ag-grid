@@ -1,4 +1,3 @@
-import type { SortDef, SortDirection, SortType } from '../agStack/utils/aria';
 import type { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from '../events';
 import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column, ColumnGroup, ColumnGroupShowType, ProvidedColumnGroup } from '../interfaces/iColumn';
@@ -7,6 +6,7 @@ import type { IFilterDef } from '../interfaces/iFilter';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { RowDragTextFunc } from '../interfaces/iRowDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
+import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
@@ -25,8 +25,6 @@ import type {
 import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
 
 export type { BaseColDefParams, ColumnFunctionCallbackParams } from './colDef-base';
-
-export type { SortDirection, SortType, SortDef, DisplaySortDef } from '../agStack/utils/aria';
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef<TData = any, TValue = any> {
@@ -140,7 +138,7 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
 
     /**
      * The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
-     * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components) for framework specific implementation details.
+     * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/column-headers/#header-group-components) for framework specific implementation details.
      */
     headerGroupComponent?: any;
     /** The params used to configure the `headerGroupComponent`. */
@@ -320,6 +318,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `FormulaModule`
      */
     allowFormula?: boolean;
+    /**
+     * Expression used to calculate this column's value from other columns in the same row.
+     * Use bracket references to read other columns by `colId`, e.g. `[revenue] - [cost]`.
+     * Calculated columns are read-only.
+     * @agModule `CalculatedColumnsModule`
+     */
+    calculatedExpression?: string;
     /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
     /** A function or expression to format a value, should return a string. */
@@ -577,7 +582,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     // *** Column Headers *** //
     /**
      * The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
-     * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.
+     * See [Header Component](https://www.ag-grid.com/javascript-data-grid/column-headers/) for framework specific implementation detail.
      */
     headerComponent?: any;
     /** The parameters to be passed to the `headerComponent`. */

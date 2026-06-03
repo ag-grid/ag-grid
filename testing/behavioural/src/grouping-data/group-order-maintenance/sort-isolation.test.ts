@@ -209,7 +209,7 @@ describe('group order maintenance / sort isolation', () => {
         `);
     });
 
-    test('manual showRowGroup using source field (not colId) is not honoured by the grid — group order stays structural', async () => {
+    test('manual showRowGroup using a non-matching colId is not honoured by the grid — group order stays structural', async () => {
         const rowData = [
             { id: '1', country: 'Italy' },
             { id: '2', country: 'France' },
@@ -227,7 +227,7 @@ describe('group order maintenance / sort isolation', () => {
                 {
                     colId: 'manualDisplay',
                     headerName: 'Manual Display',
-                    showRowGroup: 'country', // field name, not colId — the grid does NOT resolve this
+                    showRowGroup: 'unresolvable-link',
                     sortable: true,
                 },
             ],
@@ -237,6 +237,16 @@ describe('group order maintenance / sort isolation', () => {
             rowData,
             getRowId: (p) => p.data.id,
         });
+
+        await new GridRows(api, 'unresolvable showRowGroup: initial structural order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-customCountry-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:1 customCountry:"Italy"
+            ├─┬ LEAF_GROUP id:row-group-customCountry-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:2 customCountry:"France"
+            └─┬ LEAF_GROUP id:row-group-customCountry-Spain ag-Grid-AutoColumn:"Spain"
+            · └── LEAF id:3 customCountry:"Spain"
+        `);
 
         const groupRowsBefore = api
             .getRenderedNodes()
@@ -250,6 +260,12 @@ describe('group order maintenance / sort isolation', () => {
             .filter((n) => n.group)
             .map((n) => n.key);
         expect(groupOrderAfterSort).toEqual(['Italy', 'France', 'Spain']);
+
+        await new GridColumns(api, 'unresolvable showRowGroup: column state after sort').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── manualDisplay "Manual Display" width:200 sort:desc
+        `);
     });
 
     test('unresolved showRowGroup colId with own field: group level unreachable, sort still applies at leaf level', async () => {
@@ -272,9 +288,7 @@ describe('group order maintenance / sort isolation', () => {
                 {
                     colId: 'manualDisplay',
                     headerName: 'Manual Display',
-                    // Misconfigured: 'country' is the field, not a colId. customCountry is the colId.
-                    // This does NOT match any active rowGroup column.
-                    showRowGroup: 'country',
+                    showRowGroup: 'unresolvable-link',
                     field: 'athlete',
                     sortable: true,
                 },
@@ -321,6 +335,59 @@ describe('group order maintenance / sort isolation', () => {
         `);
     });
 
+    test('showRowGroup string matching a `field`: link resolves via getColDefCol, coupled-sort engages', async () => {
+        const rowData = [
+            { id: '1', country: 'Italy', athlete: 'Charlie' },
+            { id: '2', country: 'Italy', athlete: 'Alpha' },
+            { id: '3', country: 'Italy', athlete: 'Bravo' },
+            { id: '4', country: 'France', athlete: 'Zeta' },
+            { id: '5', country: 'France', athlete: 'Yvette' },
+        ];
+
+        const api = gridsManager.createGrid('grid-showrowgroup-by-field', {
+            columnDefs: [
+                { colId: 'customCountry', field: 'country', rowGroup: true, hide: true },
+                {
+                    colId: 'manualDisplay',
+                    headerName: 'Manual Display',
+                    showRowGroup: 'country',
+                    field: 'athlete',
+                    sortable: true,
+                },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'manualDisplay', sort: 'asc' }] });
+
+        // Sort only set on manualDisplay; customCountry's sort is null. Production's mixed-check
+        // sees own=asc, linked=null → renders 'mixed'. Leaves still get sorted by 'athlete'.
+        await new GridRows(api, 'field-resolved showRowGroup: leaves sort by own data').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-customCountry-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:2 customCountry:"Italy" manualDisplay:"Alpha"
+            │ ├── LEAF id:3 customCountry:"Italy" manualDisplay:"Bravo"
+            │ └── LEAF id:1 customCountry:"Italy" manualDisplay:"Charlie"
+            └─┬ LEAF_GROUP id:row-group-customCountry-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:5 customCountry:"France" manualDisplay:"Yvette"
+            · └── LEAF id:4 customCountry:"France" manualDisplay:"Zeta"
+        `);
+
+        // Column state still records sort:asc on manualDisplay (the model state, not the
+        // displayed/rendered sort). The validator correctly accepts the resulting
+        // aria-sort='other' because the linked customCountry has no sort, producing a mixed
+        // displayed state.
+        await new GridColumns(api, 'field-resolved showRowGroup: column state shows sort recorded').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── manualDisplay "Manual Display" width:200 sort:asc
+        `);
+    });
+
     test('unresolved showRowGroup colId without own data: option dropped (nothing to sort by)', async () => {
         // Same misconfig as above, but the manual display column has NO `field`/`valueGetter`/
         // `comparator` of its own. The group level is unreachable AND there is no leaf data —
@@ -340,7 +407,7 @@ describe('group order maintenance / sort isolation', () => {
                 {
                     colId: 'manualDisplay',
                     headerName: 'Manual Display',
-                    showRowGroup: 'country', // unresolved link
+                    showRowGroup: 'unresolvable-link',
                     sortable: true,
                     // No field / valueGetter / comparator.
                 },

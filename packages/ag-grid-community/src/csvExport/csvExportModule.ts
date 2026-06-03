@@ -6,7 +6,7 @@ import { CsvCreator } from './csvCreator';
 import { exportDataAsCsv, getDataAsCsv } from './csvExportApi';
 
 /**
- * @feature Import & Export -> CSV Export
+ * @feature import & Export -> CSV Export
  */
 export const CsvExportModule: _ModuleWithApi<_CsvExportGridApi> = {
     moduleName: 'CsvExport',

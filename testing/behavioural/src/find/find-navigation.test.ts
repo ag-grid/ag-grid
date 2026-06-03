@@ -1,6 +1,6 @@
 import { FindModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /**
  * Tests for find navigation functionality (next, previous, goTo).
@@ -20,8 +20,32 @@ describe('Find Navigation', () => {
             columnDefs: [{ field: 'value' }],
             rowData: [{ value: 'cat' }, { value: 'dog' }, { value: 'car' }, { value: 'cup' }],
         });
+        await new GridColumns(api, `findNext navigates through matches in order setup`).checkColumns(`
+            CENTER
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `findNext navigates through matches in order setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 value:"cat"
+            ├── LEAF id:1 value:"dog"
+            ├── LEAF id:2 value:"car"
+            └── LEAF id:3 value:"cup"
+        `);
 
         api.setGridOption('findSearchValue', 'c');
+        await new GridColumns(api, `findNext navigates through matches in order after setGridOption findSearchValue`)
+            .checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `findNext navigates through matches in order after setGridOption findSearchValue`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 value:"cat"
+                ├── LEAF id:1 value:"dog"
+                ├── LEAF id:2 value:"car"
+                └── LEAF id:3 value:"cup"
+            `);
         await asyncSetTimeout(1);
 
         // 'cat', 'car', 'cup' contain 'c', so 3 matches
@@ -61,8 +85,34 @@ describe('Find Navigation', () => {
             columnDefs: [{ field: 'value' }],
             rowData: [{ value: 'cat' }, { value: 'dog' }, { value: 'car' }],
         });
+        await new GridColumns(api, `findPrevious navigates through matches in reverse order setup`).checkColumns(`
+            CENTER
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `findPrevious navigates through matches in reverse order setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 value:"cat"
+            ├── LEAF id:1 value:"dog"
+            └── LEAF id:2 value:"car"
+        `);
 
         api.setGridOption('findSearchValue', 'c');
+        await new GridColumns(
+            api,
+            `findPrevious navigates through matches in reverse order after setGridOption findSearchValue`
+        ).checkColumns(`
+            CENTER
+            └── value "Value" width:200
+        `);
+        await new GridRows(
+            api,
+            `findPrevious navigates through matches in reverse order after setGridOption findSearchValue`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 value:"cat"
+            ├── LEAF id:1 value:"dog"
+            └── LEAF id:2 value:"car"
+        `);
         await asyncSetTimeout(1);
 
         expect(api.findGetTotalMatches()).toBe(2); // 'cat' and 'car'
@@ -92,8 +142,31 @@ describe('Find Navigation', () => {
             columnDefs: [{ field: 'value' }],
             rowData: [{ value: 'xone' }, { value: 'xtwo' }, { value: 'xthree' }, { value: 'xfour' }],
         });
+        await new GridColumns(api, `findGoTo navigates to specific match setup`).checkColumns(`
+            CENTER
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `findGoTo navigates to specific match setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 value:"xone"
+            ├── LEAF id:1 value:"xtwo"
+            ├── LEAF id:2 value:"xthree"
+            └── LEAF id:3 value:"xfour"
+        `);
 
         api.setGridOption('findSearchValue', 'x');
+        await new GridColumns(api, `findGoTo navigates to specific match after setGridOption findSearchValue`)
+            .checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `findGoTo navigates to specific match after setGridOption findSearchValue`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 value:"xone"
+            ├── LEAF id:1 value:"xtwo"
+            ├── LEAF id:2 value:"xthree"
+            └── LEAF id:3 value:"xfour"
+        `);
         await asyncSetTimeout(1);
 
         // Each row has one 'x'
@@ -127,8 +200,34 @@ describe('Find Navigation', () => {
             rowData: [{ value: 'test' }, { value: 'other' }],
             onBodyScrollEnd: scrollListener,
         });
+        await new GridColumns(api, `findGoTo with force=true refreshes even when already at match setup`).checkColumns(
+            `
+                CENTER
+                └── value "Value" width:200
+            `
+        );
+        await new GridRows(api, `findGoTo with force=true refreshes even when already at match setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 value:"test"
+            └── LEAF id:1 value:"other"
+        `);
 
         api.setGridOption('findSearchValue', 'test');
+        await new GridColumns(
+            api,
+            `findGoTo with force=true refreshes even when already at match after setGridOption findSearchValue`
+        ).checkColumns(`
+            CENTER
+            └── value "Value" width:200
+        `);
+        await new GridRows(
+            api,
+            `findGoTo with force=true refreshes even when already at match after setGridOption findSearchValue`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 value:"test"
+            └── LEAF id:1 value:"other"
+        `);
         await asyncSetTimeout(1);
 
         api.findGoTo(1);
@@ -149,8 +248,29 @@ describe('Find Navigation', () => {
             columnDefs: [{ field: 'value' }],
             rowData: [{ value: 'xone' }, { value: 'xtwo' }],
         });
+        await new GridColumns(api, `findClearActive clears the active match setup`).checkColumns(`
+            CENTER
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `findClearActive clears the active match setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 value:"xone"
+            └── LEAF id:1 value:"xtwo"
+        `);
 
         api.setGridOption('findSearchValue', 'x');
+        await new GridColumns(api, `findClearActive clears the active match after setGridOption findSearchValue`)
+            .checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `findClearActive clears the active match after setGridOption findSearchValue`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 value:"xone"
+                └── LEAF id:1 value:"xtwo"
+            `
+        );
         await asyncSetTimeout(1);
 
         expect(api.findGetTotalMatches()).toBe(2);
@@ -177,8 +297,28 @@ describe('Find Navigation', () => {
             columnDefs: [{ field: 'value' }],
             rowData: [{ value: 'aaa' }, { value: 'bbb' }],
         });
+        await new GridColumns(api, `navigation with multiple matches in same cell setup`).checkColumns(`
+            CENTER
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `navigation with multiple matches in same cell setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 value:"aaa"
+            └── LEAF id:1 value:"bbb"
+        `);
 
         api.setGridOption('findSearchValue', 'a');
+        await new GridColumns(api, `navigation with multiple matches in same cell after setGridOption findSearchValue`)
+            .checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `navigation with multiple matches in same cell after setGridOption findSearchValue`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 value:"aaa"
+                └── LEAF id:1 value:"bbb"
+            `);
         await asyncSetTimeout(1);
 
         // 'aaa' has 3 matches of 'a'
@@ -214,8 +354,31 @@ describe('Find Navigation', () => {
                 { a: 'no', b: 'find', c: 'no' },
             ],
         });
+        await new GridColumns(api, `navigation across multiple columns setup`).checkColumns(`
+            CENTER
+            ├── a "A" width:200
+            ├── b "B" width:200
+            └── c "C" width:200
+        `);
+        await new GridRows(api, `navigation across multiple columns setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 a:"find" b:"no" c:"find"
+            └── LEAF id:1 a:"no" b:"find" c:"no"
+        `);
 
         api.setGridOption('findSearchValue', 'find');
+        await new GridColumns(api, `navigation across multiple columns after setGridOption findSearchValue`)
+            .checkColumns(`
+                CENTER
+                ├── a "A" width:200
+                ├── b "B" width:200
+                └── c "C" width:200
+            `);
+        await new GridRows(api, `navigation across multiple columns after setGridOption findSearchValue`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 a:"find" b:"no" c:"find"
+            └── LEAF id:1 a:"no" b:"find" c:"no"
+        `);
         await asyncSetTimeout(1);
 
         expect(api.findGetTotalMatches()).toBe(3);

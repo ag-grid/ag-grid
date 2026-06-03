@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { ToolbarModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 // jsdom's `offsetParent` is null for all elements because it does not compute layout. The
 // toolbar's arrow-key navigation uses `_findFocusableElements`, which filters by `_isVisible` —
@@ -153,6 +153,14 @@ describe('Toolbar keyboard navigation', () => {
                 ],
             },
         });
+        await new GridColumns(api, `focusing a toolbar item scrolls it into view setup`).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `focusing a toolbar item scrolls it into view setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -166,6 +174,10 @@ describe('Toolbar keyboard navigation', () => {
         button.focus();
 
         expect(scrollIntoViewSpy).toHaveBeenCalledWith({ block: 'nearest', inline: 'nearest' });
+        await new GridRows(api, `focusing a toolbar item scrolls it into view final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     test('arrow keys inside an input toolbar item do not move toolbar focus', async () => {
@@ -176,6 +188,15 @@ describe('Toolbar keyboard navigation', () => {
                 items: [{ key: 'one', label: 'One', icon: 'maximize', action: () => {} }, 'agQuickFilterToolbarItem'],
             },
         });
+        await new GridColumns(api, `arrow keys inside an input toolbar item do not move toolbar focus setup`)
+            .checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `arrow keys inside an input toolbar item do not move toolbar focus setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -190,5 +211,11 @@ describe('Toolbar keyboard navigation', () => {
         dispatchKeyDown(input, 'ArrowLeft');
         expect(document.activeElement).toBe(input);
         expect(document.activeElement).not.toBe(button);
+        await new GridRows(api, `arrow keys inside an input toolbar item do not move toolbar focus final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `
+        );
     });
 });

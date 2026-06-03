@@ -12,7 +12,15 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, clipboardUtils, waitForEvent, waitForInput } from '../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    clipboardUtils,
+    waitForEvent,
+    waitForInput,
+} from '../test-utils';
 
 const FLASH_CSS_CLASS = 'ag-cell-data-changed';
 
@@ -43,6 +51,17 @@ describe('Cell change flashing after edit', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `cell flashes after committing an edit setup`).checkColumns(`
+            CENTER
+            ├── make "Make" width:200 editable
+            ├── model "Model" width:200 editable
+            └── price "Price" width:200 editable
+        `);
+        await new GridRows(api, `cell flashes after committing an edit setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 make:"Toyota" model:"Celica" price:35000
+            └── LEAF id:ROW_1 make:"Ford" model:"Mondeo" price:32000
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -59,6 +78,11 @@ describe('Cell change flashing after edit', () => {
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.make).toBe('Honda');
         expect(cell).toHaveClass(FLASH_CSS_CLASS);
+        await new GridRows(api, `cell flashes after committing an edit final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 make:"Honda" model:"Celica" price:35000
+            └── LEAF id:ROW_1 make:"Ford" model:"Mondeo" price:32000
+        `);
     });
 });
 
@@ -89,6 +113,17 @@ describe('Cell change flashing after undo and redo', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `cell flashes after undo setup`).checkColumns(`
+            CENTER
+            ├── make "Make" width:200 editable
+            ├── model "Model" width:200 editable
+            └── price "Price" width:200 editable
+        `);
+        await new GridRows(api, `cell flashes after undo setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 make:"Toyota" model:"Celica" price:35000
+            └── LEAF id:ROW_1 make:"Ford" model:"Mondeo" price:32000
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -116,6 +151,11 @@ describe('Cell change flashing after undo and redo', () => {
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.make).toBe('Toyota');
         expect(cell).toHaveClass(FLASH_CSS_CLASS);
+        await new GridRows(api, `cell flashes after undo final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 make:"Toyota" model:"Celica" price:35000
+            └── LEAF id:ROW_1 make:"Ford" model:"Mondeo" price:32000
+        `);
     });
 
     test('cell flashes after redo', async () => {
@@ -132,6 +172,17 @@ describe('Cell change flashing after undo and redo', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `cell flashes after redo setup`).checkColumns(`
+            CENTER
+            ├── make "Make" width:200 editable
+            ├── model "Model" width:200 editable
+            └── price "Price" width:200 editable
+        `);
+        await new GridRows(api, `cell flashes after redo setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 make:"Toyota" model:"Celica" price:35000
+            └── LEAF id:ROW_1 make:"Ford" model:"Mondeo" price:32000
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -163,6 +214,11 @@ describe('Cell change flashing after undo and redo', () => {
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.make).toBe('Honda');
         expect(cell).toHaveClass(FLASH_CSS_CLASS);
+        await new GridRows(api, `cell flashes after redo final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 make:"Honda" model:"Celica" price:35000
+            └── LEAF id:ROW_1 make:"Ford" model:"Mondeo" price:32000
+        `);
     });
 });
 
@@ -205,6 +261,16 @@ describe('Cell change flashing suppressed when value not committed', () => {
             rowData: [{ id: 'ROW_0', make: 'Toyota' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `cell does not flash when undo valueSetter rejects the change setup`).checkColumns(
+            `
+                CENTER
+                └── make "Make" width:200 editable
+            `
+        );
+        await new GridRows(api, `cell does not flash when undo valueSetter rejects the change setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 make:"Toyota"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -233,6 +299,10 @@ describe('Cell change flashing suppressed when value not committed', () => {
         // Value should NOT have reverted and cell should NOT flash
         expect(api.getDisplayedRowAtIndex(0)?.data?.make).toBe('Honda');
         expect(cell).not.toHaveClass(FLASH_CSS_CLASS);
+        await new GridRows(api, `cell does not flash when undo valueSetter rejects the change final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 make:"Honda"
+        `);
     });
 });
 
@@ -262,6 +332,17 @@ describe('Cell change flashing after delete', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `cell flashes after pressing Delete setup`).checkColumns(`
+            CENTER
+            ├── make "Make" width:200 editable
+            ├── model "Model" width:200 editable
+            └── price "Price" width:200 editable
+        `);
+        await new GridRows(api, `cell flashes after pressing Delete setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 make:"Toyota" model:"Celica" price:35000
+            └── LEAF id:ROW_1 make:"Ford" model:"Mondeo" price:32000
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -274,6 +355,11 @@ describe('Cell change flashing after delete', () => {
 
         expect(api.getDisplayedRowAtIndex(0)?.data?.make).toBeNull();
         expect(cell).toHaveClass(FLASH_CSS_CLASS);
+        await new GridRows(api, `cell flashes after pressing Delete final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 make:null model:"Celica" price:35000
+            └── LEAF id:ROW_1 make:"Ford" model:"Mondeo" price:32000
+        `);
     });
 });
 
@@ -315,6 +401,18 @@ describe('Cell change flashing after fill handle', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `target cell flashes after fill handle setup`).checkColumns(`
+            CENTER
+            ├── make "Make" width:200 editable
+            ├── model "Model" width:200 editable
+            └── price "Price" width:200 editable
+        `);
+        await new GridRows(api, `target cell flashes after fill handle setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 make:"Toyota" model:"Celica" price:35000
+            ├── LEAF id:ROW_1 make:"Ford" model:"Mondeo" price:32000
+            └── LEAF id:ROW_2 make:"Porsche" model:"Boxster" price:72000
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(0);
@@ -341,6 +439,12 @@ describe('Cell change flashing after fill handle', () => {
         const targetCell2 = getByTestId(gridDiv, agTestIdFor.cell('ROW_2', 'make'));
         expect(targetCell1).toHaveClass(FLASH_CSS_CLASS);
         expect(targetCell2).toHaveClass(FLASH_CSS_CLASS);
+        await new GridRows(api, `target cell flashes after fill handle final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 make:"Toyota" model:"Celica" price:35000
+            ├── LEAF id:ROW_1 make:"Toyota" model:"Mondeo" price:32000
+            └── LEAF id:ROW_2 make:"Toyota" model:"Boxster" price:72000
+        `);
     });
 });
 
@@ -371,6 +475,16 @@ describe('Cell change flashing after bulk edit (Ctrl+Enter)', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `all changed cells flash after bulk edit setup`).checkColumns(`
+            CENTER
+            ├── make "Make" width:200 editable
+            └── model "Model" width:200 editable
+        `);
+        await new GridRows(api, `all changed cells flash after bulk edit setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 make:"Toyota" model:"Celica"
+            └── LEAF id:ROW_1 make:"Ford" model:"Mondeo"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const user = userEvent.setup({ skipHover: true });
@@ -393,5 +507,10 @@ describe('Cell change flashing after bulk edit (Ctrl+Enter)', () => {
         const cell1 = getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'make'));
         expect(cell0).toHaveClass(FLASH_CSS_CLASS);
         expect(cell1).toHaveClass(FLASH_CSS_CLASS);
+        await new GridRows(api, `all changed cells flash after bulk edit final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 make:"BulkValue" model:"Celica"
+            └── LEAF id:ROW_1 make:"BulkValue" model:"Mondeo"
+        `);
     });
 });

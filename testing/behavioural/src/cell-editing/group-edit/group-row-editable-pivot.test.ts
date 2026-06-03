@@ -937,6 +937,37 @@ describe('groupRowEditable with pivot mode', () => {
             };
 
             const api = await gridsManager.createGridAndWait('pivot-getCellValue', gridOptions);
+            await new GridColumns(
+                api,
+                `getCellValue and getDataValue return correct values for filler groups, leaf grou setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+            `);
+            await new GridRows(
+                api,
+                `getCellValue and getDataValue return correct values for filler groups, leaf grou setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:5300 pivot_year_2021_sales:6100
+                ├─┬ filler id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-region-Europe-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                │ └─┬ LEAF_GROUP collapsed id:row-group-region-Europe-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                │ · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                │ · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+                └─┬ filler id:row-group-region-Americas ag-Grid-AutoColumn:"Americas" pivot_year_2020_sales:2800 pivot_year_2021_sales:3100
+                · ├─┬ LEAF_GROUP collapsed id:row-group-region-Americas-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                · │ ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+                · │ └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+                · └─┬ LEAF_GROUP collapsed id:row-group-region-Americas-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
+                · · ├── LEAF hidden id:7 pivot_year_2020_sales:800 pivot_year_2021_sales:800
+                · · └── LEAF hidden id:8 pivot_year_2020_sales:900 pivot_year_2021_sales:900
+            `);
 
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
@@ -995,6 +1026,26 @@ describe('groupRowEditable with pivot mode', () => {
             // Verify RowNode.getDataValue matches api.getCellValue
             expect(americasNode!.getDataValue(pivotColId2020)).toBe(2800);
             expect(americasNode!.getDataValue(pivotColId2021)).toBe(3100);
+            await new GridRows(
+                api,
+                `getCellValue and getDataValue return correct values for filler groups, leaf grou final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:5300 pivot_year_2021_sales:6100
+                ├─┬ filler id:row-group-region-Europe ag-Grid-AutoColumn:"Europe" pivot_year_2020_sales:2500 pivot_year_2021_sales:3000
+                │ ├─┬ LEAF_GROUP collapsed id:row-group-region-Europe-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                │ └─┬ LEAF_GROUP collapsed id:row-group-region-Europe-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                │ · ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                │ · └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+                └─┬ filler id:row-group-region-Americas ag-Grid-AutoColumn:"Americas" pivot_year_2020_sales:2800 pivot_year_2021_sales:3100
+                · ├─┬ LEAF_GROUP collapsed id:row-group-region-Americas-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                · │ ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+                · │ └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+                · └─┬ LEAF_GROUP collapsed id:row-group-region-Americas-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
+                · · ├── LEAF hidden id:7 pivot_year_2020_sales:800 pivot_year_2021_sales:800
+                · · └── LEAF hidden id:8 pivot_year_2020_sales:900 pivot_year_2021_sales:900
+            `);
         });
 
         test('getCellValue with pivot columns returns aggregated values on group rows after edit', async () => {
@@ -1021,6 +1072,35 @@ describe('groupRowEditable with pivot mode', () => {
             };
 
             const api = await gridsManager.createGridAndWait('pivot-getCellValue-after-edit', gridOptions);
+            await new GridColumns(
+                api,
+                `getCellValue with pivot columns returns aggregated values on group rows after ed setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open editable
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open editable
+            `);
+            await new GridRows(
+                api,
+                `getCellValue with pivot columns returns aggregated values on group rows after ed setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:5300 pivot_year_2021_sales:6100
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                │ ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                │ └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                │ ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+                │ └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
+                · ├── LEAF hidden id:7 pivot_year_2020_sales:800 pivot_year_2021_sales:800
+                · └── LEAF hidden id:8 pivot_year_2020_sales:900 pivot_year_2021_sales:900
+            `);
 
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
@@ -1046,6 +1126,24 @@ describe('groupRowEditable with pivot mode', () => {
             expect(api.getCellValue({ rowNode: germanyLeaf2020!, colKey: pivotColId })).toBe(3000);
             // 2021 row wasn't edited (didn't match pivot keys), but getCellValue resolves to underlying sales value
             expect(api.getCellValue({ rowNode: germanyLeaf2021!, colKey: pivotColId })).toBe(1800);
+            await new GridRows(
+                api,
+                `getCellValue with pivot columns returns aggregated values on group rows after ed final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:6800 pivot_year_2021_sales:6100
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:3000 pivot_year_2021_sales:1800
+                │ ├── LEAF hidden id:3 pivot_year_2020_sales:3000 pivot_year_2021_sales:3000
+                │ └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                │ ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+                │ └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
+                · ├── LEAF hidden id:7 pivot_year_2020_sales:800 pivot_year_2021_sales:800
+                · └── LEAF hidden id:8 pivot_year_2020_sales:900 pivot_year_2021_sales:900
+            `);
         });
 
         test('getCellValue on leaf row with pivot column resolves to underlying value column', async () => {
@@ -1066,6 +1164,35 @@ describe('groupRowEditable with pivot mode', () => {
             };
 
             const api = await gridsManager.createGridAndWait('pivot-getCellValue-leaf', gridOptions);
+            await new GridColumns(
+                api,
+                `getCellValue on leaf row with pivot column resolves to underlying value column setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+            `);
+            await new GridRows(
+                api,
+                `getCellValue on leaf row with pivot column resolves to underlying value column setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:5300 pivot_year_2021_sales:6100
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                │ ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                │ └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                │ ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+                │ └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
+                · ├── LEAF hidden id:7 pivot_year_2020_sales:800 pivot_year_2021_sales:800
+                · └── LEAF hidden id:8 pivot_year_2020_sales:900 pivot_year_2021_sales:900
+            `);
 
             const pivotColumns = api.getPivotResultColumns();
             const pivotCol2020 = pivotColumns?.find((col) => col.getColId().includes('2020_sales'));
@@ -1090,6 +1217,24 @@ describe('groupRowEditable with pivot mode', () => {
             const usaGroup = api.getRowNode('row-group-country-USA');
             expect(api.getCellValue({ rowNode: usaGroup!, colKey: pivotColId2020 })).toBe(2000);
             expect(api.getCellValue({ rowNode: usaGroup!, colKey: pivotColId2021 })).toBe(2200);
+            await new GridRows(
+                api,
+                `getCellValue on leaf row with pivot column resolves to underlying value column final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:5300 pivot_year_2021_sales:6100
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                │ ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                │ └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                │ ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+                │ └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
+                · ├── LEAF hidden id:7 pivot_year_2020_sales:800 pivot_year_2021_sales:800
+                · └── LEAF hidden id:8 pivot_year_2020_sales:900 pivot_year_2021_sales:900
+            `);
         });
     });
 
@@ -1207,6 +1352,29 @@ describe('groupRowEditable with pivot mode', () => {
                 });
             },
         });
+        await new GridColumns(api, `cancelling pivot cell edit sets valueChanged to false setup`).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "2020" GROUP
+            │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open editable
+            └─┬ "2021" GROUP
+              └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open editable
+        `);
+        await new GridRows(api, `cancelling pivot cell edit sets valueChanged to false setup`).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:5300 pivot_year_2021_sales:6100
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+            │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+            │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+            │ ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+            │ └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+            │ ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+            │ └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
+            · ├── LEAF hidden id:7 pivot_year_2020_sales:800 pivot_year_2021_sales:800
+            · └── LEAF hidden id:8 pivot_year_2020_sales:900 pivot_year_2021_sales:900
+        `);
 
         await asyncSetTimeout(1);
 
@@ -1237,5 +1405,20 @@ describe('groupRowEditable with pivot mode', () => {
             value: 1000,
             valueChanged: false,
         });
+        await new GridRows(api, `cancelling pivot cell edit sets valueChanged to false final state`).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:5300 pivot_year_2021_sales:6100
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+            │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+            │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+            │ ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+            │ └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+            │ ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+            │ └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
+            · ├── LEAF hidden id:7 pivot_year_2020_sales:800 pivot_year_2021_sales:800
+            · └── LEAF hidden id:8 pivot_year_2020_sales:900 pivot_year_2021_sales:900
+        `);
     });
 });

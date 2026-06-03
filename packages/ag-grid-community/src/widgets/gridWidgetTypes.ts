@@ -1,16 +1,12 @@
-import type { AgCheckbox } from '../agStack/widgets/agCheckbox';
-import type { AgCheckboxParams } from '../agStack/widgets/agFieldParams';
-import type { AgInputDateField } from '../agStack/widgets/agInputDateField';
-import type { AgInputNumberField } from '../agStack/widgets/agInputNumberField';
-import type { AgInputTextArea } from '../agStack/widgets/agInputTextArea';
-import type {
-    AgInputTextField,
-    AgInputTextFieldEvent,
-    AgInputTextFieldParams,
-} from '../agStack/widgets/agInputTextField';
-import type { AgRadioButton } from '../agStack/widgets/agRadioButton';
-import type { AgSelect } from '../agStack/widgets/agSelect';
-import type { AgToggleButton } from '../agStack/widgets/agToggleButton';
+import type { AgCheckbox } from '../agWidgets/agCheckbox';
+import type { AgCheckboxParams } from '../agWidgets/agFieldParams';
+import type { AgInputDateField } from '../agWidgets/agInputDateField';
+import type { AgInputNumberField } from '../agWidgets/agInputNumberField';
+import type { AgInputTextArea } from '../agWidgets/agInputTextArea';
+import type { AgInputTextField, AgInputTextFieldEvent, AgInputTextFieldParams } from '../agWidgets/agInputTextField';
+import type { AgRadioButton } from '../agWidgets/agRadioButton';
+import type { AgSelect } from '../agWidgets/agSelect';
+import type { AgToggleButton } from '../agWidgets/agToggleButton';
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';

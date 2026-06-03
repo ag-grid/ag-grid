@@ -1,5 +1,7 @@
+import { RefPlaceholder, _setAriaExpanded } from 'ag-stack';
+
 import type { ElementParams, IconName, ToolPanelDef } from 'ag-grid-community';
-import { Component, RefPlaceholder, _createIconNoSpan, _setAriaExpanded } from 'ag-grid-community';
+import { Component, _createIconNoSpan } from 'ag-grid-community';
 
 type SideBarButtonCompEvent = 'toggleButtonClicked';
 const SideBarButtonElement: ElementParams = {

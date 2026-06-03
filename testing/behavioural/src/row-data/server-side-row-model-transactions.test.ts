@@ -2,7 +2,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('Server Side Row Model Transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -31,6 +31,15 @@ describe('Server Side Row Model Transactions', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
+        await new GridColumns(api, `repeated remove transaction does not remove unrelated rows setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `repeated remove transaction does not remove unrelated rows setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         expect(api.getDisplayedRowCount()).toBe(100);
@@ -38,12 +47,17 @@ describe('Server Side Row Model Transactions', () => {
         // Remove top toRemove rows
         const rowsToRemove = rowData.slice(0, toRemove);
         api.applyServerSideTransaction({ remove: rowsToRemove });
+        await new GridRows(
+            api,
+            `repeated remove transaction does not remove unrelated rows after applyServerSideTransaction`
+        ).check('skip-snapshot');
 
         expect(api.getDisplayedRowCount()).toBe(100 - toRemove);
         expect(api.getDisplayedRowAtIndex(0)?.data.id).toBe(toRemove);
 
         // Remove the same toRemove rows again (they are already removed)
         api.applyServerSideTransaction({ remove: rowsToRemove });
+        await new GridRows(api).check('skip-snapshot');
 
         expect(api.getDisplayedRowCount()).toBe(100 - toRemove);
 
@@ -67,11 +81,21 @@ describe('Server Side Row Model Transactions', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
+        await new GridColumns(api, `remove transaction honours supplied rowCount setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `remove transaction honours supplied rowCount setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         expect(api.getDisplayedRowCount()).toBe(100);
 
         api.applyServerSideTransaction({ remove: rowData.slice(0, 2), rowCount: 50 });
+        await new GridRows(api).check('skip-snapshot');
 
         expect(api.getDisplayedRowCount()).toBe(50);
         expect(api.getDisplayedRowAtIndex(0)?.data.id).toBe(2);
@@ -98,6 +122,18 @@ describe('Server Side Row Model Transactions', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
+        await new GridColumns(api, `removing cached and uncached rows marks non-contiguous rows for refresh setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `removing cached and uncached rows marks non-contiguous rows for refresh setup`).check(
+            `
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `
+        );
 
         await waitForEvent('firstDataRendered', api);
 
@@ -109,10 +145,13 @@ describe('Server Side Row Model Transactions', () => {
         expect(api.getRowNode('150')).toBeFalsy();
 
         api.applyServerSideTransaction({ remove: [rowData[0], rowData[150]] });
+        const farRowBeforeSnapshot = api.getRowNode('200');
+        const farRowNeedsRefresh = (farRowBeforeSnapshot as any)?.__needsRefreshWhenVisible === true;
 
-        const farRow = api.getRowNode('200');
-        expect(farRow).toBeTruthy();
-        expect((farRow as any).__needsRefreshWhenVisible).toBe(true);
+        await new GridRows(api).check('skip-snapshot');
+
+        expect(farRowBeforeSnapshot).toBeTruthy();
+        expect(farRowNeedsRefresh).toBe(true);
     });
 
     test('getRowNode does not throw when passed a numeric id', async () => {
@@ -132,10 +171,23 @@ describe('Server Side Row Model Transactions', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
+        await new GridColumns(api, `getRowNode does not throw when passed a numeric id setup`).checkColumns(`
+            CENTER
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `getRowNode does not throw when passed a numeric id setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await waitForEvent('firstDataRendered', api);
 
         // Passing a number should not throw, and should find the row via toString coercion
         expect(api.getRowNode(1 as any)).toBeTruthy();
         expect(api.getRowNode(999 as any)).toBeUndefined();
+        await new GridRows(api, `getRowNode does not throw when passed a numeric id final state`).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:1 value:"a"
+            └── LEAF id:2 value:"b"
+        `);
     });
 });

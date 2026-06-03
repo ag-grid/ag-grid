@@ -1,3 +1,5 @@
+import { RefPlaceholder, _setAriaLabel, _setDisplayed } from 'ag-stack';
+
 import type {
     AgEvent,
     ComponentSelector,
@@ -10,15 +12,7 @@ import type {
     ITooltipCtrl,
     TooltipFeature,
 } from 'ag-grid-community';
-import {
-    Component,
-    KeyCode,
-    RefPlaceholder,
-    TouchListener,
-    _createIconNoSpan,
-    _setAriaLabel,
-    _setDisplayed,
-} from 'ag-grid-community';
+import { Component, KeyCode, TouchListener, _createIconNoSpan } from 'ag-grid-community';
 
 type PillDragCompEvent = 'columnRemove';
 

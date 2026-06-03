@@ -1,7 +1,7 @@
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
 
-import { TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('ag-grid row highlight', () => {
     const gridsManager = new TestGridsManager({
@@ -32,6 +32,20 @@ describe('ag-grid row highlight', () => {
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
+        await new GridColumns(api, `row highlight setup`).checkColumns(`
+            CENTER
+            ├── country "Country" width:200
+            ├── year "Year" width:200
+            └── athlete "Athlete" width:200
+        `);
+        await new GridRows(api, `row highlight setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 country:"Ireland" year:"2000" athlete:"John Von Neumann"
+            ├── LEAF id:2 country:"Ireland" year:"2000" athlete:"Ada Lovelace"
+            ├── LEAF id:3 country:"Ireland" year:"2001" athlete:"Alan Turing"
+            ├── LEAF id:4 country:"Italy" year:"2000" athlete:"Donald Knuth"
+            └── LEAF id:5 country:"Italy" year:"2001" athlete:"Marvin Minsky"
+        `);
         const element = TestGridsManager.getHTMLElement(api)!;
 
         const getRowHighlight = () => {
@@ -91,6 +105,13 @@ describe('ag-grid row highlight', () => {
             'rowData',
             rowData.filter((data) => data.id !== '3')
         );
+        await new GridRows(api, `row highlight after setGridOption rowData`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 country:"Ireland" year:"2000" athlete:"John Von Neumann"
+            ├── LEAF id:2 country:"Ireland" year:"2000" athlete:"Ada Lovelace"
+            ├── LEAF id:4 country:"Italy" year:"2000" athlete:"Donald Knuth"
+            └── LEAF id:5 country:"Italy" year:"2001" athlete:"Marvin Minsky"
+        `);
 
         expect(node3.rowIndex).toBeNull();
         expect(getRowHighlight()).toEqual({ id: undefined, position: 'none' });

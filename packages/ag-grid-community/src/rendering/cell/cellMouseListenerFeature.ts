@@ -1,5 +1,5 @@
-import { _isBrowserSafari } from '../../agStack/utils/browser';
-import { _isElementChildOfClass, _isFocusableFormField } from '../../agStack/utils/dom';
+import { _isBrowserSafari, _isElementChildOfClass, _isFocusableFormField } from 'ag-stack';
+
 import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';

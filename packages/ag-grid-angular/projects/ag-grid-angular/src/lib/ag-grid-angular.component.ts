@@ -31,6 +31,11 @@ import type {
     BodyScrollEvent,
     BulkEditingStartedEvent,
     BulkEditingStoppedEvent,
+    CalculatedColumnCreatedEvent,
+    CalculatedColumnExpressionChangedEvent,
+    CalculatedColumnRemovedEvent,
+    CalculatedColumnValidationStateChangedEvent,
+    CalculatedColumnsOptions,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -573,6 +578,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * or can be custom data types.
      */
     @Input() public dataTypeDefinitions: DataTypeDefinitions<TData> | undefined = undefined;
+    /** Configures the Calculated Columns dialog.
+     * @agModule `CalculatedColumnsModule`
+     */
+    @Input() public calculatedColumns: CalculatedColumnsOptions | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
      *
      * @default false
@@ -1131,10 +1140,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public suppressPaginationPanel: boolean | undefined = undefined;
     /** Controls which built-in components appear in the pagination panel and in what order.
-     * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+     * Accepts an array of panel names (`'pageSize'`, `'rowSummary'`, `'pageSummary'`) or config objects.
      * Components render in the order they appear in the array. Omitted components are hidden.
      * An empty array hides the pagination panel entirely.
      * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+     * Use `{ type: 'pageSummary', suppressPageInput: true }` to render a read-only page summary.
      * @agModule `PaginationModule`
      */
     @Input() public paginationPanels: PaginationPanel[] | undefined = undefined;
@@ -2186,6 +2196,25 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Paste operation has ended.
      */
     @Output() public pasteEnd: EventEmitter<PasteEndEvent<TData>> = new EventEmitter<PasteEndEvent<TData>>();
+    /** A calculated column has been created.
+     */
+    @Output() public calculatedColumnCreated: EventEmitter<CalculatedColumnCreatedEvent<TData>> = new EventEmitter<
+        CalculatedColumnCreatedEvent<TData>
+    >();
+    /** A calculated column expression has changed.
+     */
+    @Output() public calculatedColumnExpressionChanged: EventEmitter<CalculatedColumnExpressionChangedEvent<TData>> =
+        new EventEmitter<CalculatedColumnExpressionChangedEvent<TData>>();
+    /** A calculated column has been removed.
+     */
+    @Output() public calculatedColumnRemoved: EventEmitter<CalculatedColumnRemovedEvent<TData>> = new EventEmitter<
+        CalculatedColumnRemovedEvent<TData>
+    >();
+    /** A calculated column expression has changed between valid and invalid.
+     */
+    @Output() public calculatedColumnValidationStateChanged: EventEmitter<
+        CalculatedColumnValidationStateChangedEvent<TData>
+    > = new EventEmitter<CalculatedColumnValidationStateChangedEvent<TData>>();
     /** A column, or group of columns, was hidden / shown.
      */
     @Output() public columnVisible: EventEmitter<ColumnVisibleEvent<TData>> = new EventEmitter<

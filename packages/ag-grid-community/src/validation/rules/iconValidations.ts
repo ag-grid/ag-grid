@@ -1,4 +1,5 @@
-import type { IconValue } from '../../agStack/interfaces/iIcon';
+import type { IconValue } from 'ag-stack';
+
 import type { ValidationModuleName } from '../../interfaces/iModule';
 import type { IconName } from '../../utils/icon';
 
@@ -97,6 +98,9 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     filtersToolPanel: 'FiltersToolPanel',
     columns: ['MenuCore'],
     columnsToolPanel: ['ColumnsToolPanel'],
+    calculatedColumnAdd: 'CalculatedColumns',
+    calculatedColumnEdit: 'CalculatedColumns',
+    calculatedColumnRemove: 'CalculatedColumns',
     maximize: 'EnterpriseCore',
     minimize: 'EnterpriseCore',
     save: 'MenuCore',

@@ -1,5 +1,7 @@
+import { _getDocument } from 'ag-stack';
+
 import type { Component, ComponentSelector, IWatermark, NamedBean } from 'ag-grid-community';
-import { BeanStub, _getDocument } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import type { ILicenseManager } from './shared/licenseManager';
 import { LicenseManager } from './shared/licenseManager';

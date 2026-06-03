@@ -26,6 +26,7 @@
 @use './parts/row-pinning';
 @use './parts/batch-edit';
 @use './parts/toolbar';
+@use './parts/calculated-columns';
 
 @mixin general-styles() {
     .ag-measurement-container {
@@ -53,6 +54,7 @@
     @include row-numbers.output();
     @include batch-edit.output();
     @include toolbar.output();
+    @include calculated-columns.output();
 }
 
 @mixin native-input-styles() {

@@ -1,11 +1,12 @@
-import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import util from 'util';
 import { expect } from 'vitest';
 
 import type { Column, EditingCellPosition, GridApi, IRowNode, RowNode } from 'ag-grid-community';
 
-import { log, unindentText } from '../utils';
-import { addDiagramToError, collectGridRows } from './grid-rows-helpers';
+import { log } from '../utils';
+import { addDiagramToError, collectGridRows, makeSnapshotTarget, runSnapshotCheck } from './grid-rows-helpers';
+import type { SnapshotCheckTarget } from './grid-rows-helpers';
+import { getGridHTMLElement, parseSpannedCell } from './gridHtmlRows';
 import type { GridRowsOptions } from './gridRowsOptions';
 import { GridRowsDiagramTree } from './rows-diagram/gridRowsDiagramTree';
 import { GridRowsDomValidator } from './rows-validation-dom/gridRowsDomValidator';
@@ -13,7 +14,7 @@ import type { GridRowsBugs } from './rows-validation/bugs';
 import { gridRowsBugs } from './rows-validation/bugs';
 import { GridRowsErrors } from './rows-validation/gridRowsErrors';
 import { GridRowsValidator } from './rows-validation/gridRowsValidator';
-import { getSnapshotUpdateMode, recordSnapshotMismatch } from './snapshot-updater';
+import { getSnapshotUpdateMode } from './snapshot-updater';
 
 export type { GridRowsDomCellValidatorParams, GridRowsDomRowValidatorParams, GridRowsOptions } from './gridRowsOptions';
 export type { GridRowsBugs } from './rows-validation/bugs';
@@ -48,6 +49,7 @@ export class GridRows<TData = any> {
     #editingCellKeys: Set<string> | null = null;
     #activeEditorCellKeys: Set<string> | null = null;
     readonly #detailGridRows: Map<IRowNode<TData> | GridApi, GridRows<any>>;
+    #rowSpanMap: Map<string, string> | null = null;
 
     /**
      * @param api The grid API instance
@@ -86,6 +88,38 @@ export class GridRows<TData = any> {
 
     public getDetailGridRows(row: IRowNode<TData> | GridApi | null | undefined): GridRows<any> | undefined {
         return row ? this.#detailGridRows.get(row) : undefined;
+    }
+
+    /** Rendered row-span marker for a cell: `↧N` on the span anchor (covers N rows), `↥` on a row
+     *  covered by the span above, or `''` when the cell does not participate in a row span. Read from
+     *  the rendered `.ag-spanned-row` cells (the same source the DOM validator uses). */
+    public rowSpanMarker(row: RowNode<TData>, colId: string): string {
+        if (row.rowIndex == null) {
+            return '';
+        }
+        const pinned = row.rowPinned ?? '';
+        return (this.#rowSpanMap ??= this.#buildRowSpanMap()).get(`${pinned}#${row.rowIndex}#${colId}`) ?? '';
+    }
+
+    #buildRowSpanMap(): Map<string, string> {
+        const map = new Map<string, string>();
+        const root = getGridHTMLElement(this.api);
+        if (!root) {
+            return map;
+        }
+        const cells = Array.from(root.querySelectorAll('.ag-spanned-row [col-id]'));
+        for (let i = 0, len = cells.length; i < len; ++i) {
+            const info = parseSpannedCell(cells[i]);
+            if (!info) {
+                continue;
+            }
+            const { colId, pinned, anchorIndex, span } = info;
+            map.set(`${pinned}#${anchorIndex}#${colId}`, `↧${span}`);
+            for (let j = 1; j < span; ++j) {
+                map.set(`${pinned}#${anchorIndex + j}#${colId}`, '↥');
+            }
+        }
+        return map;
     }
 
     public getAllRowNodesData(): (TData | undefined)[] {
@@ -172,10 +206,11 @@ export class GridRows<TData = any> {
     public loadErrors(): this {
         if (!this.errors.validated) {
             this.errors.validated = true;
-            new GridRowsValidator(this.errors).validate(this);
-
+            const validator: GridRowsValidator = new GridRowsValidator(this.errors);
+            validator.validate(this);
             if (this.options.checkDom ?? true) {
-                new GridRowsDomValidator(this.errors).validate(this);
+                const domValidator: GridRowsDomValidator = new GridRowsDomValidator(this.errors);
+                domValidator.validate(this);
             }
         }
         return this;
@@ -209,95 +244,27 @@ export class GridRows<TData = any> {
      *    If the snapshot does not match the generated diagram, an error will be thrown with the diagram included for debugging.
      *  - Run `./behave.sh --update-grid-rows` to generate or update snapshots automatically.
      *    In update mode, mismatches are recorded instead of throwing, allowing batch snapshot updates.
-     *  - 'empty': Assert that there are no displayed rows (empty diagram).
-     *  - true: Print the diagram to the console without performing any snapshot comparison or validation.
-     *  - false: Skip diagram generation and snapshot comparison, running only GridRowsValidator and GridRowsDomValidator.
-     *  - undefined: Logs an error to console reminding you to run `./behave.sh --update-grid-rows` to generate the snapshot.
+     *  - `'empty'`: assert that there are no displayed rows.
+     *  - `true`: print the diagram to the console without performing snapshot comparison.
+     *  - `'skip-snapshot'`: ⚠️ skip snapshot comparison entirely. **Use only temporarily** while
+     *    iterating on a test; commit-blocking convention is that no production test ships with
+     *    this value. Type accepts no `false` — every `check` call must opt into either a real
+     *    snapshot string, `'empty'`, `true`, or the explicit `'skip-snapshot'` escape.
+     *  - `undefined`: logs an error reminding you to run `./behave.sh --update-grid-rows`.
      */
-    public async check(diagramSnapshot: string | 'empty' | boolean | undefined): Promise<this> {
-        if (diagramSnapshot === undefined) {
-            console.error(
-                `'n❌ GridRows.check() called without a snapshot for "${this.label}". Run \`./behave.sh --update-grid-rows\` to generate one.\n`
-            );
-            diagramSnapshot = false;
-        }
-
-        this.loadErrors();
-
-        // Throw validation errors always — don't bake broken snapshots, and don't hide grid bugs.
-        if (this.errors.totalErrorsCount > 0) {
-            throw this.#makeError(this.check);
-        }
-
-        if (diagramSnapshot === true) {
-            this.printDiagram();
-            return this;
-        }
-
-        if (diagramSnapshot === false) {
-            return this;
-        }
-
-        if (getSnapshotUpdateMode()) {
-            // In snapshot update mode: enforce 'empty' assertions but record string mismatches
-            // instead of throwing, allowing batch snapshot updates across the whole suite.
-            if (diagramSnapshot === 'empty') {
-                expect(this.displayedRows.length).toBe(0);
-                return this;
-            }
-            const diagram = this.makeDiagram(false);
-            if (unindentText(diagram) !== unindentText(diagramSnapshot)) {
-                recordSnapshotMismatch(this.check, diagram, this.label, 'check');
-            }
-            return this;
-        }
-
-        // Retry loop: on failure, rebuild GridRows from scratch (re-reads all grid state) and retry
-        // with a short delay. This handles timing issues where the grid hasn't fully settled yet.
-        // If it keeps failing after all retries, warn loudly that the test needs an explicit delay.
-        const retryDelays = [10, 50, 100];
-        let attempt: GridRows<TData> = this;
-        let lastError: any;
-
-        for (let i = 0; i <= retryDelays.length; i++) {
-            attempt.loadErrors();
-            lastError = attempt.#tryCheck(diagramSnapshot);
-            if (!lastError) {
-                if (i > 0) {
-                    console.error(
-                        `GridRows flaky check detected for "${this.label}" — passed only after retrying with delays. ` +
-                            `Add \`await asyncSetTimeout(N)\` before this check to avoid intermittent failures.`
-                    );
-                }
-                return this;
-            }
-            if (i < retryDelays.length) {
-                await asyncSetTimeout(retryDelays[i]);
-                attempt = new GridRows<TData>(this.api, this.label, this.options);
-            }
-        }
-
-        addDiagramToError(lastError, attempt.makeDiagram(false), this.label);
-        Error.captureStackTrace(lastError, this.check);
-        throw lastError;
+    public async check(diagramSnapshot: string | 'empty' | 'skip-snapshot' | true | undefined): Promise<this> {
+        await runSnapshotCheck(this.#snapshotTarget(), diagramSnapshot, getSnapshotUpdateMode());
+        return this;
     }
 
-    /** Attempts snapshot check without throwing. Returns the error if failed, null if passed. */
-    #tryCheck(diagramSnapshot: string | 'empty'): any {
-        if (this.errors.totalErrorsCount > 0) {
-            return this.#makeError(this.check);
-        }
-        const diagram = this.makeDiagram(false);
-        try {
-            if (diagramSnapshot === 'empty') {
-                expect(this.displayedRows.length).toBe(0);
-            } else {
-                expect(unindentText(diagram)).toEqual(unindentText(diagramSnapshot));
-            }
-        } catch (e: any) {
-            return e;
-        }
-        return null;
+    #snapshotTarget(): SnapshotCheckTarget {
+        return makeSnapshotTarget(this, {
+            methodName: 'check',
+            methodRef: this.check,
+            rebuild: () => new GridRows<TData>(this.api, this.label, this.options).#snapshotTarget(),
+            makeError: () => this.#makeError(this.check),
+            assertEmpty: () => expect(this.displayedRows.length).toBe(0),
+        });
     }
 
     #makeByIdMap(): Map<string, RowNode<TData>> {

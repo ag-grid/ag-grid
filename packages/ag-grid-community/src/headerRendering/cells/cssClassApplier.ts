@@ -1,5 +1,7 @@
-import { _missing } from '../../agStack/utils/generic';
+import { _missing } from 'ag-stack';
+
 import type { VisibleColsService } from '../../columns/visibleColsService';
+import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
@@ -8,6 +10,7 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { ICellComp } from '../../rendering/cell/cellCtrl';
+import { _getCalculatedColumnCssClasses } from '../../styling/calculatedColumnCss';
 import type { IAbstractHeaderCellComp } from './abstractCell/abstractHeaderCellCtrl';
 
 const CSS_FIRST_COLUMN = 'ag-column-first';
@@ -16,21 +19,26 @@ const CSS_LAST_COLUMN = 'ag-column-last';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getHeaderClassesFromColDef(
     abstractColDef: AbstractColDef | null,
-    gos: GridOptionsService,
+    beans: BeanCollection,
     column: AgColumn | null,
     columnGroup: AgColumnGroup | null
 ): string[] {
+    const calculatedColumnClasses = _getCalculatedColumnCssClasses(column, beans.calculatedColsSvc);
+
     if (_missing(abstractColDef)) {
-        return [];
+        return calculatedColumnClasses.length ? [...calculatedColumnClasses] : [];
     }
 
-    return getColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, gos, column, columnGroup);
+    return [
+        ...calculatedColumnClasses,
+        ...getColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, beans.gos, column, columnGroup),
+    ];
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getToolPanelClassesFromColDef(
     abstractColDef: AbstractColDef | null,
-    gos: GridOptionsService,
+    beans: BeanCollection,
     column: AgColumn | null,
     columnGroup: AgProvidedColumnGroup | null
 ): string[] {
@@ -38,7 +46,7 @@ export function _getToolPanelClassesFromColDef(
         return [];
     }
 
-    return getColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, gos, column, columnGroup);
+    return getColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, beans.gos, column, columnGroup);
 }
 
 export function refreshFirstAndLastStyles(
@@ -48,6 +56,44 @@ export function refreshFirstAndLastStyles(
 ) {
     comp.toggleCss(CSS_FIRST_COLUMN, presentedColsService.isColAtEdge(column, 'first'));
     comp.toggleCss(CSS_LAST_COLUMN, presentedColsService.isColAtEdge(column, 'last'));
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _refreshCssClasses<TComp extends IAbstractHeaderCellComp | ICellComp>(
+    comp: TComp,
+    oldClasses: Set<string> | undefined,
+    classes: readonly string[]
+): Set<string> | undefined {
+    if (!classes.length) {
+        if (oldClasses) {
+            for (const cssClass of oldClasses) {
+                comp.toggleCss(cssClass, false);
+            }
+        }
+        return undefined;
+    }
+
+    if (!oldClasses) {
+        for (const cssClass of classes) {
+            comp.toggleCss(cssClass, true);
+        }
+        return new Set(classes);
+    }
+
+    const oldClassesToRemove = oldClasses;
+    for (const cssClass of classes) {
+        if (oldClassesToRemove.has(cssClass)) {
+            oldClassesToRemove.delete(cssClass);
+        } else {
+            comp.toggleCss(cssClass, true);
+        }
+    }
+
+    for (const cssClass of oldClassesToRemove) {
+        comp.toggleCss(cssClass, false);
+    }
+
+    return new Set(classes);
 }
 
 function getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(

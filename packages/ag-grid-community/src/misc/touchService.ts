@@ -1,6 +1,5 @@
-import { _isIOSUserAgent } from '../agStack/utils/browser';
-import { _isEventFromThisInstance, _isEventSupported } from '../agStack/utils/event';
-import { _exists } from '../agStack/utils/generic';
+import { _exists, _isEventFromThisInstance, _isEventSupported, _isIOSUserAgent } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';

@@ -1,4 +1,5 @@
-import { _areEqual, _forAll } from '../agStack/utils/array';
+import { _areEqual, _forAll } from 'ag-stack';
+
 import { placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -92,7 +93,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     // called from SyncService, when grid has finished initialising
-    private createColsFromColDefs(source: ColumnEventType): void {
+    private createColsFromColDefs(source: ColumnEventType, preserveColumnOrder = false): void {
         const { beans } = this;
         const {
             valueCache,
@@ -105,7 +106,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             groupHierarchyColSvc,
         } = beans;
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
-        const dispatchEventsFunc = this.colDefs ? _compareColumnStatesAndDispatchEvents(beans, source) : undefined;
+        const dispatchEventsFunc = this.colDefCols ? _compareColumnStatesAndDispatchEvents(beans, source) : undefined;
 
         // always invalidate cache on changing columns, as the column id's for the new columns
         // could overlap with the old id's, so the cache would return old values for new columns.
@@ -113,7 +114,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const oldCols = this.colDefCols?.list;
         const oldTree = this.colDefCols?.tree;
-        const newTree = _createColumnTree(beans, this.colDefs, true, oldTree, source);
+        const columnDefs = beans.calculatedColsSvc?.createProjectedColumnDefs(this.colDefs) ?? this.colDefs;
+        const newTree = _createColumnTree(beans, columnDefs, true, oldTree, source);
 
         _destroyColumnTree(beans, this.colDefCols?.tree, newTree.columnTree);
 
@@ -139,7 +141,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.ready = true;
 
         this.changeEventsDispatching = true;
-        this.refreshCols(true, source);
+        this.refreshCols(!preserveColumnOrder, source);
         this.changeEventsDispatching = false;
 
         visibleCols.refresh(source);
@@ -186,6 +188,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const {
             autoColSvc,
             selectionColSvc,
+            calculatedColsSvc,
             rowNumbersSvc,
             quickFilter,
             pivotResultCols,
@@ -210,6 +213,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.restoreColOrder(cols);
         }
 
+        calculatedColsSvc?.orderDynamicColumns(cols.list);
         this.positionLockedCols(cols);
         showRowGroupCols?.refresh();
         quickFilter?.refreshCols();
@@ -535,6 +539,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
         );
     }
 
+    public getProvidedColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
+        return this.colDefs;
+    }
+
     private setColSpanActive(): void {
         this.colSpanActive = !!this.cols?.list.some((col) => col.getColDef().colSpan != null);
     }
@@ -585,8 +593,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType) {
+        this.beans.calculatedColsSvc?.resetDynamicColumnDefs();
         this.colDefs = columnDefs;
         this.createColsFromColDefs(source);
+    }
+
+    public refreshDynamicColumns(source: ColumnEventType): void {
+        if (!this.ready) {
+            return;
+        }
+
+        this.createColsFromColDefs(source, this.beans.calculatedColsSvc?.shouldPreserveColumnOrderOnRefresh());
     }
 
     public override destroy(): void {

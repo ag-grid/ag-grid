@@ -1,5 +1,7 @@
+import { _clearElement, _toString } from 'ag-stack';
+
 import type { AgColumn, ElementParams, ICellRenderer, ICellRendererParams } from 'ag-grid-community';
-import { Component, _clearElement, _createElement, _toString } from 'ag-grid-community';
+import { Component, _createElement } from 'ag-grid-community';
 
 const FindCellRendererElement: ElementParams = { tag: 'span', cls: 'ag-find-cell' };
 export class FindCellRenderer extends Component implements ICellRenderer {

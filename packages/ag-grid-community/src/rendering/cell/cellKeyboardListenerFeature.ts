@@ -1,5 +1,5 @@
-import { KeyCode } from '../../agStack/constants/keyCode';
-import { _isMacOsUserAgent } from '../../agStack/utils/browser';
+import { KeyCode, _isMacOsUserAgent } from 'ag-stack';
+
 import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';

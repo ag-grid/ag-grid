@@ -1,7 +1,7 @@
 import type { ColDef, GridOptions } from 'ag-grid-community';
 import { ColumnMenuModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 const columnDefs: ColDef[] = [{ field: 'a' }, { field: 'b' }];
 const rowData = [{ a: 1, b: 2 }];
@@ -36,7 +36,7 @@ describe('ag-grid popup cleanup on destroy', () => {
         gridsManager.reset();
     });
 
-    test('popups are removed from DOM when grid is destroyed', () => {
+    test('popups are removed from DOM when grid is destroyed', async () => {
         const popupParent = document.createElement('div');
         document.body.appendChild(popupParent);
 
@@ -47,6 +47,15 @@ describe('ag-grid popup cleanup on destroy', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
+        await new GridColumns(api, `popups are removed from DOM when grid is destroyed setup`).checkColumns(`
+            CENTER
+            ├── a "A" width:200
+            └── b "B" width:200
+        `);
+        await new GridRows(api, `popups are removed from DOM when grid is destroyed setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:1 b:2
+        `);
 
         // Open the column chooser popup
         api.showColumnChooser();

@@ -1,3 +1,5 @@
+import { _isExpressionString } from 'ag-stack';
+
 import type {
     FormulaDataSource,
     FormulaDataSourceParams,
@@ -6,7 +8,7 @@ import type {
     NamedBean,
     SetFormulaParams,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _isExpressionString } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams } from 'ag-grid-community';
 
 export class FormulaDataService extends BeanStub implements IFormulaDataService, NamedBean {
     public readonly beanName = 'formulaDataSvc' as const;

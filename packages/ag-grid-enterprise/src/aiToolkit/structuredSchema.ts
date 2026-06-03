@@ -1,5 +1,5 @@
-import { STRUCTURED_SCHEMA_FEATURES } from 'ag-grid-community';
 import type { BeanCollection, StructuredSchemaFeature, StructuredSchemaParams } from 'ag-grid-community';
+import { STRUCTURED_SCHEMA_FEATURES } from 'ag-grid-community';
 
 import { buildAggregationFeatureSchema } from './features/aggregationFeatureSchema';
 import { buildColumnSizingFeatureSchema } from './features/columnSizingFeatureSchema';

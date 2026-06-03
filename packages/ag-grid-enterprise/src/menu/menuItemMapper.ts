@@ -1,3 +1,6 @@
+import type { LocaleTextFunc } from 'ag-stack';
+import { _exists } from 'ag-stack';
+
 import type {
     AgColumn,
     ColumnEventType,
@@ -8,7 +11,6 @@ import type {
     IMenuActionParams,
     INoteAccess,
     INotesService,
-    LocaleTextFunc,
     MenuItemDef,
     NamedBean,
     RowNode,
@@ -17,7 +19,6 @@ import type {
 import {
     BeanStub,
     _createIconNoSpan,
-    _exists,
     _getRowNode,
     _normalizeSortType,
     _resetColumnState,
@@ -114,6 +115,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             focusSvc,
             menuSvc,
             notesSvc,
+            calculatedColsSvc,
             pinnedCols,
             pinnedRowModel,
             rangeSvc,
@@ -477,6 +479,30 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 }
+                case 'calculatedColumn':
+                    return calculatedColsSvc
+                        ? {
+                              name: localeTextFunc('calculatedColumnAdd', 'Add Calculated Column'),
+                              icon: _createIconNoSpan('calculatedColumnAdd', beans, null),
+                              action: () => calculatedColsSvc.openCalculatedColumnDialog(column, 'add'),
+                          }
+                        : null;
+                case 'editCalculatedColumn':
+                    return calculatedColsSvc && column?.colDef.calculatedExpression != null
+                        ? {
+                              name: localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
+                              icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
+                              action: () => calculatedColsSvc.openCalculatedColumnDialog(column, 'edit'),
+                          }
+                        : null;
+                case 'removeCalculatedColumn':
+                    return calculatedColsSvc && column?.colDef.calculatedExpression != null
+                        ? {
+                              name: localeTextFunc('calculatedColumnRemove', 'Remove Calculated Column'),
+                              icon: _createIconNoSpan('calculatedColumnRemove', beans, null),
+                              action: () => calculatedColsSvc.removeCalculatedColumn(column, 'calculatedColumn'),
+                          }
+                        : null;
                 case 'sortUnSort':
                 case 'sortAscending':
                 case 'sortDescending':

@@ -1,3 +1,5 @@
+import { _clearElement, _exists, _getActiveDomElement, _setAriaLabel } from 'ag-stack';
+
 import type {
     AbstractColDef,
     AgColumn,
@@ -7,17 +9,7 @@ import type {
     ComponentSelector,
     FiltersToolPanelState,
 } from 'ag-grid-community';
-import {
-    Component,
-    _addGridCommonParams,
-    _clearElement,
-    _exists,
-    _getActiveDomElement,
-    _mergeDeep,
-    _setAriaLabel,
-    _warn,
-    isProvidedColumnGroup,
-} from 'ag-grid-community';
+import { Component, _addGridCommonParams, _mergeDeep, _warn, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common/toolPanelColDefService';
 import { EXPAND_STATE } from './agFiltersToolPanelHeader';

@@ -199,6 +199,23 @@ describe('Cell Selection', () => {
                     enableColumnSelection: true,
                 },
             });
+            await new GridColumns(api, `clicking selects column and clears all other ranges setup`).checkColumns(`
+                CENTER
+                ├── sport "Sport" width:200
+                ├── year "Year" width:200
+                ├── amount "Amount" width:200
+                └── day "Day" width:200
+            `);
+            await new GridRows(api, `clicking selects column and clears all other ranges setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -226,6 +243,16 @@ describe('Cell Selection', () => {
             await userSession.click(yearHeaderCell.querySelector('.ag-header-cell-label')!);
 
             assertColumnsSelected([['year']], api);
+            await new GridRows(api, `clicking selects column and clears all other ranges final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
         });
 
         test('clicking a column header only selects cells on the current page', async () => {
@@ -240,6 +267,31 @@ describe('Cell Selection', () => {
                 pagination: true,
                 paginationPageSize: 5,
             });
+            await new GridColumns(api, `clicking a column header only selects cells on the current page setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── sport "Sport" width:200
+                    ├── year "Year" width:200
+                    ├── amount "Amount" width:200
+                    └── day "Day" width:200
+                `);
+            await new GridRows(api, `clicking a column header only selects cells on the current page setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                ├── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                ├── LEAF id:7 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:8 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:9 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:10 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:11 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:12 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:13 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -255,6 +307,24 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{/Control}');
 
             assertColumnsSelected([['sport'], ['year']], api);
+            await new GridRows(api, `clicking a column header only selects cells on the current page final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                    ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                    ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                    ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                    ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                    ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                    ├── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                    ├── LEAF id:7 sport:"football" year:2021 amount:43 day:"monday"
+                    ├── LEAF id:8 sport:"rugby" year:2020 amount:102 day:"sunday"
+                    ├── LEAF id:9 sport:"tennis" year:2018 amount:235 day:"thursday"
+                    ├── LEAF id:10 sport:"cricket" year:2003 amount:11 day:"friday"
+                    ├── LEAF id:11 sport:"golf" year:2021 amount:7 day:"monday"
+                    ├── LEAF id:12 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                    └── LEAF id:13 sport:"rowing" year:2019 amount:32 day:"saturday"
+                `);
         });
 
         test('SHIFT-clicking a column selects all columns in the range, CTRL-SHIFT-click is additive', async () => {
@@ -267,6 +337,29 @@ describe('Cell Selection', () => {
                     enableColumnSelection: true,
                 },
             });
+            await new GridColumns(
+                api,
+                `SHIFT-clicking a column selects all columns in the range, CTRL-SHIFT-click is ad setup`
+            ).checkColumns(`
+                CENTER
+                ├── sport "Sport" width:200
+                ├── year "Year" width:200
+                ├── amount "Amount" width:200
+                └── day "Day" width:200
+            `);
+            await new GridRows(
+                api,
+                `SHIFT-clicking a column selects all columns in the range, CTRL-SHIFT-click is ad setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -296,6 +389,19 @@ describe('Cell Selection', () => {
             await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
 
             assertColumnsSelected([['day'], ['sport', 'year']], api);
+            await new GridRows(
+                api,
+                `SHIFT-clicking a column selects all columns in the range, CTRL-SHIFT-click is ad final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
         });
 
         test('Select range of columns, deselect middle of range, CTRL-SHIFT-click outside of range', async () => {
@@ -308,6 +414,29 @@ describe('Cell Selection', () => {
                     enableColumnSelection: true,
                 },
             });
+            await new GridColumns(
+                api,
+                `Select range of columns, deselect middle of range, CTRL-SHIFT-click outside of r setup`
+            ).checkColumns(`
+                CENTER
+                ├── sport "Sport" width:200
+                ├── year "Year" width:200
+                ├── amount "Amount" width:200
+                └── day "Day" width:200
+            `);
+            await new GridRows(
+                api,
+                `Select range of columns, deselect middle of range, CTRL-SHIFT-click outside of r setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -332,6 +461,19 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{/Shift}');
 
             assertColumnsSelected([['year', 'amount', 'day']], api);
+            await new GridRows(
+                api,
+                `Select range of columns, deselect middle of range, CTRL-SHIFT-click outside of r final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
         });
 
         test('click column header selects cells in pinned rows as well', async () => {
@@ -354,6 +496,28 @@ describe('Cell Selection', () => {
                     return null;
                 },
             });
+            await new GridColumns(api, `click column header selects cells in pinned rows as well setup`).checkColumns(
+                `
+                    CENTER
+                    ├── sport "Sport" width:200
+                    ├── year "Year" width:200
+                    ├── amount "Amount" width:200
+                    └── day "Day" width:200
+                `
+            );
+            await new GridRows(api, `click column header selects cells in pinned rows as well setup`).check(`
+                PINNED_TOP id:t-top-3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                PINNED_BOTTOM id:b-bottom-2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                PINNED_BOTTOM id:b-bottom-6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -362,6 +526,19 @@ describe('Cell Selection', () => {
             await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
 
             assertColumnsSelected([['sport']], api);
+            await new GridRows(api, `click column header selects cells in pinned rows as well final state`).check(`
+                PINNED_TOP id:t-top-3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                PINNED_BOTTOM id:b-bottom-2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                PINNED_BOTTOM id:b-bottom-6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
         });
 
         test('De-selecting column does not affect existing ranges', async () => {
@@ -384,6 +561,26 @@ describe('Cell Selection', () => {
                     return null;
                 },
             });
+            await new GridColumns(api, `De-selecting column does not affect existing ranges setup`).checkColumns(`
+                CENTER
+                ├── sport "Sport" width:200
+                ├── year "Year" width:200
+                ├── amount "Amount" width:200
+                └── day "Day" width:200
+            `);
+            await new GridRows(api, `De-selecting column does not affect existing ranges setup`).check(`
+                PINNED_TOP id:t-top-3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                PINNED_BOTTOM id:b-bottom-2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                PINNED_BOTTOM id:b-bottom-6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -425,6 +622,19 @@ describe('Cell Selection', () => {
             expect(ranges2[0].endRow?.rowIndex).toBe(4);
             expect(ranges2[0].columns).toHaveLength(2);
             expect(ranges2[0].columns[0]).toBe(yearCol);
+            await new GridRows(api, `De-selecting column does not affect existing ranges final state`).check(`
+                PINNED_TOP id:t-top-3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                PINNED_BOTTOM id:b-bottom-2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                PINNED_BOTTOM id:b-bottom-6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
         });
 
         test('click group column selects all child columns, CTRL-click deselects child columns', async () => {
@@ -454,6 +664,32 @@ describe('Cell Selection', () => {
                     enableColumnSelection: true,
                 },
             });
+            await new GridColumns(
+                api,
+                `click group column selects all child columns, CTRL-click deselects child columns setup`
+            ).checkColumns(`
+                CENTER
+                ├── sport "Sport" width:200
+                ├─┬ "Category A1" GROUP
+                │ └─┬ "Category A2" GROUP
+                │   ├── year "Year" width:200
+                │   └── amount "Amount" width:200
+                └─┬ "Category B1" GROUP
+                  └── day "Day" width:200
+            `);
+            await new GridRows(
+                api,
+                `click group column selects all child columns, CTRL-click deselects child columns setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -468,6 +704,19 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{/Control}');
 
             assertColumnsSelected([], api);
+            await new GridRows(
+                api,
+                `click group column selects all child columns, CTRL-click deselects child columns final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
         });
 
         test('Can partially de-select group column by CTRL-clicking child column', async () => {
@@ -497,6 +746,29 @@ describe('Cell Selection', () => {
                     enableColumnSelection: true,
                 },
             });
+            await new GridColumns(api, `Can partially de-select group column by CTRL-clicking child column setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── sport "Sport" width:200
+                    ├─┬ "Category A1" GROUP
+                    │ └─┬ "Category A2" GROUP
+                    │   ├── year "Year" width:200
+                    │   └── amount "Amount" width:200
+                    └─┬ "Category B1" GROUP
+                      └── day "Day" width:200
+                `);
+            await new GridRows(api, `Can partially de-select group column by CTRL-clicking child column setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                    ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                    ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                    ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                    ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                    ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                    └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                `
+            );
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -510,6 +782,17 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{/Control}');
 
             assertColumnsSelected([['amount']], api);
+            await new GridRows(api, `Can partially de-select group column by CTRL-clicking child column final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                    ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                    ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                    ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                    ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                    ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                    └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                `);
         });
 
         test('SHIFT-click group column and partial selections', async () => {
@@ -539,6 +822,26 @@ describe('Cell Selection', () => {
                     enableColumnSelection: true,
                 },
             });
+            await new GridColumns(api, `SHIFT-click group column and partial selections setup`).checkColumns(`
+                CENTER
+                ├── sport "Sport" width:200
+                ├─┬ "Category A1" GROUP
+                │ └─┬ "Category A2" GROUP
+                │   ├── year "Year" width:200
+                │   └── amount "Amount" width:200
+                └─┬ "Category B1" GROUP
+                  └── day "Day" width:200
+            `);
+            await new GridRows(api, `SHIFT-click group column and partial selections setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -552,6 +855,16 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{/Shift}');
 
             assertColumnsSelected([['sport', 'year']], api);
+            await new GridRows(api, `SHIFT-click group column and partial selections final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
         });
 
         test('Hidden columns do not form part of the cell selection', async () => {
@@ -564,6 +877,23 @@ describe('Cell Selection', () => {
                     enableColumnSelection: true,
                 },
             });
+            await new GridColumns(api, `Hidden columns do not form part of the cell selection setup`).checkColumns(`
+                CENTER
+                ├── sport "Sport" width:200
+                ├── year "Year" width:200
+                ├── amount "Amount" width:200
+                └── day "Day" width:200
+            `);
+            await new GridRows(api, `Hidden columns do not form part of the cell selection setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -573,6 +903,24 @@ describe('Cell Selection', () => {
             await userSession.click(sportHeader.querySelector('.ag-header-cell-label')!);
 
             api.applyColumnState({ state: [{ colId: 'year', hide: true }] });
+            await new GridColumns(api, `Hidden columns do not form part of the cell selection after applyColumnState`)
+                .checkColumns(`
+                    CENTER
+                    ├── sport "Sport" width:200
+                    ├── amount "Amount" width:200
+                    └── day "Day" width:200
+                `);
+            await new GridRows(api, `Hidden columns do not form part of the cell selection after applyColumnState`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                    ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                    ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                    ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                    ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                    ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                    └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                `);
 
             await userSession.keyboard('{Shift>}');
             await userSession.click(dayHeader.querySelector('.ag-header-cell-label')!);
@@ -589,6 +937,24 @@ describe('Cell Selection', () => {
                 rowData,
                 cellSelection: true,
             });
+            await new GridColumns(api, `Disabling column selection prevents column selection with mouse setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── sport "Sport" width:200
+                    ├── year "Year" width:200
+                    ├── amount "Amount" width:200
+                    └── day "Day" width:200
+                `);
+            await new GridRows(api, `Disabling column selection prevents column selection with mouse setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -600,6 +966,17 @@ describe('Cell Selection', () => {
 
             await userSession.click(yearHeaderCell.querySelector('.ag-header-cell-label')!);
             assertColumnsSelected([], api);
+            await new GridRows(api, `Disabling column selection prevents column selection with mouse final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                    ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                    ├── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                    ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                    ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                    ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                    └── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                `);
         });
 
         test('suppressMultiRanges prevents multiple column selections', async () => {
@@ -613,6 +990,25 @@ describe('Cell Selection', () => {
                     suppressMultiRanges: true,
                 },
             });
+            await new GridColumns(api, `suppressMultiRanges prevents multiple column selections setup`).checkColumns(
+                `
+                    CENTER
+                    ├── sport "Sport" width:200
+                    ├── year "Year" width:200
+                    ├── amount "Amount" width:200
+                    └── day "Day" width:200
+                `
+            );
+            await new GridRows(api, `suppressMultiRanges prevents multiple column selections setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -627,6 +1023,16 @@ describe('Cell Selection', () => {
             await userSession.click(dayHeader.querySelector('.ag-header-cell-label')!);
 
             assertColumnsSelected([['day']], api);
+            await new GridRows(api, `suppressMultiRanges prevents multiple column selections final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
         });
 
         test('suppressMultiRanges clears existing selections when selecting a column (header)', async () => {
@@ -640,6 +1046,29 @@ describe('Cell Selection', () => {
                     suppressMultiRanges: true,
                 },
             });
+            await new GridColumns(
+                api,
+                `suppressMultiRanges clears existing selections when selecting a column (header) setup`
+            ).checkColumns(`
+                CENTER
+                ├── sport "Sport" width:200
+                ├── year "Year" width:200
+                ├── amount "Amount" width:200
+                └── day "Day" width:200
+            `);
+            await new GridRows(
+                api,
+                `suppressMultiRanges clears existing selections when selecting a column (header) setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -658,6 +1087,19 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{/Control}');
 
             assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 6, columns: ['sport'] }], api);
+            await new GridRows(
+                api,
+                `suppressMultiRanges clears existing selections when selecting a column (header) final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
         });
 
         test('suppressMultiRanges clears existing selections when selecting a column (group header)', async () => {
@@ -685,6 +1127,32 @@ describe('Cell Selection', () => {
                 rowData,
                 cellSelection: { enableColumnSelection: true, suppressMultiRanges: true },
             });
+            await new GridColumns(
+                api,
+                `suppressMultiRanges clears existing selections when selecting a column (group he setup`
+            ).checkColumns(`
+                CENTER
+                ├── sport "Sport" width:200
+                ├─┬ "Category A1" GROUP
+                │ └─┬ "Category A2" GROUP
+                │   ├── year "Year" width:200
+                │   └── amount "Amount" width:200
+                └─┬ "Category B1" GROUP
+                  └── day "Day" width:200
+            `);
+            await new GridRows(
+                api,
+                `suppressMultiRanges clears existing selections when selecting a column (group he setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -703,6 +1171,19 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{/Control}');
 
             assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 6, columns: ['year', 'amount'] }], api);
+            await new GridRows(
+                api,
+                `suppressMultiRanges clears existing selections when selecting a column (group he final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
         });
 
         test('ALT-click sorts, does not select column', async () => {
@@ -762,6 +1243,28 @@ describe('Cell Selection', () => {
                 rowData,
                 cellSelection: { enableColumnSelection: true },
             });
+            await new GridColumns(api, `CTRL-click group header de-selects children from existing spanning range setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── sport "Sport" width:200
+                    ├─┬ "Category A1" GROUP
+                    │ └─┬ "Category A2" GROUP
+                    │   ├── year "Year" width:200
+                    │   └── amount "Amount" width:200
+                    └─┬ "Category B1" GROUP
+                      └── day "Day" width:200
+                `);
+            await new GridRows(api, `CTRL-click group header de-selects children from existing spanning range setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                    ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                    ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                    ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                    ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                    ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                    └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                `);
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -782,6 +1285,19 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{/Control}');
 
             assertColumnsSelected([['sport', 'day']], api);
+            await new GridRows(
+                api,
+                `CTRL-click group header de-selects children from existing spanning range final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+            `);
         });
 
         describe('ARIA announcements', () => {
@@ -790,6 +1306,26 @@ describe('Cell Selection', () => {
                     columnDefs: [{ field: 'sport', sortable: true }],
                     rowData,
                 });
+                await new GridColumns(
+                    api,
+                    `sortable leaf header announces ENTER sort when column selection is disabled setup`
+                ).checkColumns(`
+                    CENTER
+                    └── sport "Sport" width:200
+                `);
+                await new GridRows(
+                    api,
+                    `sortable leaf header announces ENTER sort when column selection is disabled setup`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
 
                 const gridDiv = getGridElement(api)! as HTMLElement;
                 const announcement = await focusHeaderAndGetAnnouncement(api, 'sport');
@@ -798,6 +1334,19 @@ describe('Cell Selection', () => {
                 expect(announcement).toContain('Press ENTER to sort');
                 expect(announcement).not.toContain('Press ALT ENTER to sort');
                 expect(sportHeader.getAttribute('aria-sort')).toBe('none');
+                await new GridRows(
+                    api,
+                    `sortable leaf header announces ENTER sort when column selection is disabled final state`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
             });
 
             test('sortable leaf header announces selection and ALT ENTER sort when column selection is enabled', async () => {
@@ -806,6 +1355,26 @@ describe('Cell Selection', () => {
                     rowData,
                     cellSelection: { enableColumnSelection: true },
                 });
+                await new GridColumns(
+                    api,
+                    `sortable leaf header announces selection and ALT ENTER sort when column selectio setup`
+                ).checkColumns(`
+                    CENTER
+                    └── sport "Sport" width:200
+                `);
+                await new GridRows(
+                    api,
+                    `sortable leaf header announces selection and ALT ENTER sort when column selectio setup`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
 
                 const gridDiv = getGridElement(api)! as HTMLElement;
                 const announcement = await focusHeaderAndGetAnnouncement(api, 'sport');
@@ -815,6 +1384,19 @@ describe('Cell Selection', () => {
                 expect(announcement).toContain('Press ALT ENTER to sort');
                 expect(announcement).not.toContain('Press ENTER to sort');
                 expect(sportHeader.getAttribute('aria-sort')).toBe('none');
+                await new GridRows(
+                    api,
+                    `sortable leaf header announces selection and ALT ENTER sort when column selectio final state`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
             });
 
             test('non-sortable leaf header only announces selection when column selection is enabled', async () => {
@@ -823,6 +1405,26 @@ describe('Cell Selection', () => {
                     rowData,
                     cellSelection: { enableColumnSelection: true },
                 });
+                await new GridColumns(
+                    api,
+                    `non-sortable leaf header only announces selection when column selection is enabl setup`
+                ).checkColumns(`
+                    CENTER
+                    └── sport "Sport" width:200 !sortable
+                `);
+                await new GridRows(
+                    api,
+                    `non-sortable leaf header only announces selection when column selection is enabl setup`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
 
                 const gridDiv = getGridElement(api)! as HTMLElement;
                 const announcement = await focusHeaderAndGetAnnouncement(api, 'sport');
@@ -832,6 +1434,19 @@ describe('Cell Selection', () => {
                 expect(announcement).not.toContain('Press ENTER to sort');
                 expect(announcement).not.toContain('Press ALT ENTER to sort');
                 expect(sportHeader.getAttribute('aria-sort')).toBeNull();
+                await new GridRows(
+                    api,
+                    `non-sortable leaf header only announces selection when column selection is enabl final state`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF id:1 sport:"rugby"
+                    ├── LEAF id:2 sport:"tennis"
+                    ├── LEAF id:3 sport:"cricket"
+                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF id:5 sport:"swimming"
+                    └── LEAF id:6 sport:"rowing"
+                `);
             });
 
             test('expandable group header announces ENTER expand or collapse when column selection is disabled', async () => {
@@ -850,6 +1465,29 @@ describe('Cell Selection', () => {
                     ],
                     rowData,
                 });
+                await new GridColumns(
+                    api,
+                    `expandable group header announces ENTER expand or collapse when column selection setup`
+                ).checkColumns(`
+                    CENTER
+                    └─┬ "Expandable Group" GROUP open
+                      ├── sport "Sport" width:200
+                      ├── year "Year" width:200 columnGroupShow:open
+                      └── amount "Amount" width:200 columnGroupShow:closed hidden
+                `);
+                await new GridRows(
+                    api,
+                    `expandable group header announces ENTER expand or collapse when column selection setup`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football" year:2021 amount:43
+                    ├── LEAF id:1 sport:"rugby" year:2020 amount:102
+                    ├── LEAF id:2 sport:"tennis" year:2018 amount:235
+                    ├── LEAF id:3 sport:"cricket" year:2003 amount:11
+                    ├── LEAF id:4 sport:"golf" year:2021 amount:7
+                    ├── LEAF id:5 sport:"swimming" year:2020 amount:93
+                    └── LEAF id:6 sport:"rowing" year:2019 amount:32
+                `);
 
                 const gridDiv = getGridElement(api)! as HTMLElement;
                 const announcement = await focusHeaderAndGetAnnouncement(api, 'expandableGroup');
@@ -860,6 +1498,19 @@ describe('Cell Selection', () => {
                     'Press Enter to toggle selection for all visible cells in this column group'
                 );
                 expect(groupHeader.getAttribute('aria-expanded')).toBe('true');
+                await new GridRows(
+                    api,
+                    `expandable group header announces ENTER expand or collapse when column selection final state`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football" year:2021 amount:43
+                    ├── LEAF id:1 sport:"rugby" year:2020 amount:102
+                    ├── LEAF id:2 sport:"tennis" year:2018 amount:235
+                    ├── LEAF id:3 sport:"cricket" year:2003 amount:11
+                    ├── LEAF id:4 sport:"golf" year:2021 amount:7
+                    ├── LEAF id:5 sport:"swimming" year:2020 amount:93
+                    └── LEAF id:6 sport:"rowing" year:2019 amount:32
+                `);
             });
 
             test('expandable group header announces selection and ALT ENTER expand or collapse when column selection is enabled', async () => {
@@ -879,6 +1530,29 @@ describe('Cell Selection', () => {
                     rowData,
                     cellSelection: { enableColumnSelection: true },
                 });
+                await new GridColumns(
+                    api,
+                    `expandable group header announces selection and ALT ENTER expand or collapse whe setup`
+                ).checkColumns(`
+                    CENTER
+                    └─┬ "Expandable Group" GROUP open
+                      ├── sport "Sport" width:200
+                      ├── year "Year" width:200 columnGroupShow:open
+                      └── amount "Amount" width:200 columnGroupShow:closed hidden
+                `);
+                await new GridRows(
+                    api,
+                    `expandable group header announces selection and ALT ENTER expand or collapse whe setup`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football" year:2021 amount:43
+                    ├── LEAF id:1 sport:"rugby" year:2020 amount:102
+                    ├── LEAF id:2 sport:"tennis" year:2018 amount:235
+                    ├── LEAF id:3 sport:"cricket" year:2003 amount:11
+                    ├── LEAF id:4 sport:"golf" year:2021 amount:7
+                    ├── LEAF id:5 sport:"swimming" year:2020 amount:93
+                    └── LEAF id:6 sport:"rowing" year:2019 amount:32
+                `);
 
                 const gridDiv = getGridElement(api)! as HTMLElement;
                 const announcement = await focusHeaderAndGetAnnouncement(api, 'expandableGroup');
@@ -890,6 +1564,19 @@ describe('Cell Selection', () => {
                 expect(announcement).toContain('Press ALT ENTER to expand or collapse this column group');
                 expect(announcement).not.toContain('Press ENTER to expand or collapse this column group');
                 expect(groupHeader.getAttribute('aria-expanded')).toBe('true');
+                await new GridRows(
+                    api,
+                    `expandable group header announces selection and ALT ENTER expand or collapse whe final state`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football" year:2021 amount:43
+                    ├── LEAF id:1 sport:"rugby" year:2020 amount:102
+                    ├── LEAF id:2 sport:"tennis" year:2018 amount:235
+                    ├── LEAF id:3 sport:"cricket" year:2003 amount:11
+                    ├── LEAF id:4 sport:"golf" year:2021 amount:7
+                    ├── LEAF id:5 sport:"swimming" year:2020 amount:93
+                    └── LEAF id:6 sport:"rowing" year:2019 amount:32
+                `);
             });
 
             test('non-expandable group header only announces selection when column selection is enabled', async () => {
@@ -904,6 +1591,28 @@ describe('Cell Selection', () => {
                     rowData,
                     cellSelection: { enableColumnSelection: true },
                 });
+                await new GridColumns(
+                    api,
+                    `non-expandable group header only announces selection when column selection is en setup`
+                ).checkColumns(`
+                    CENTER
+                    └─┬ "Static Group" GROUP
+                      ├── sport "Sport" width:200
+                      └── year "Year" width:200
+                `);
+                await new GridRows(
+                    api,
+                    `non-expandable group header only announces selection when column selection is en setup`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football" year:2021
+                    ├── LEAF id:1 sport:"rugby" year:2020
+                    ├── LEAF id:2 sport:"tennis" year:2018
+                    ├── LEAF id:3 sport:"cricket" year:2003
+                    ├── LEAF id:4 sport:"golf" year:2021
+                    ├── LEAF id:5 sport:"swimming" year:2020
+                    └── LEAF id:6 sport:"rowing" year:2019
+                `);
 
                 const gridDiv = getGridElement(api)! as HTMLElement;
                 const announcement = await focusHeaderAndGetAnnouncement(api, 'staticGroup');
@@ -915,6 +1624,19 @@ describe('Cell Selection', () => {
                 expect(announcement).not.toContain('Press ENTER to expand or collapse this column group');
                 expect(announcement).not.toContain('Press ALT ENTER to expand or collapse this column group');
                 expect(groupHeader.getAttribute('aria-expanded')).toBeNull();
+                await new GridRows(
+                    api,
+                    `non-expandable group header only announces selection when column selection is en final state`
+                ).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 sport:"football" year:2021
+                    ├── LEAF id:1 sport:"rugby" year:2020
+                    ├── LEAF id:2 sport:"tennis" year:2018
+                    ├── LEAF id:3 sport:"cricket" year:2003
+                    ├── LEAF id:4 sport:"golf" year:2021
+                    ├── LEAF id:5 sport:"swimming" year:2020
+                    └── LEAF id:6 sport:"rowing" year:2019
+                `);
             });
         });
     });

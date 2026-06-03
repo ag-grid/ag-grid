@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ToolbarModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('Toolbar action button item', () => {
     const gridMgr = new TestGridsManager({
@@ -27,6 +27,16 @@ describe('Toolbar action button item', () => {
                 ],
             },
         });
+        await new GridColumns(api, `label-only: renders visible label, title and aria-label fall back to label setup`)
+            .checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `label-only: renders visible label, title and aria-label fall back to label setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -38,6 +48,13 @@ describe('Toolbar action button item', () => {
         const label = button.querySelector<HTMLElement>('.ag-toolbar-button-label')!;
         expect(label.classList.contains('ag-hidden')).toBe(false);
         expect(label.textContent).toBe('Auto Size All');
+        await new GridRows(
+            api,
+            `label-only: renders visible label, title and aria-label fall back to label final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     test('tooltip-only: renders icon-only button with tooltip and aria-label from tooltip', async () => {
@@ -55,6 +72,18 @@ describe('Toolbar action button item', () => {
                 ],
             },
         });
+        await new GridColumns(
+            api,
+            `tooltip-only: renders icon-only button with tooltip and aria-label from tooltip setup`
+        ).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `tooltip-only: renders icon-only button with tooltip and aria-label from tooltip setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -64,6 +93,13 @@ describe('Toolbar action button item', () => {
         expect(button.getAttribute('aria-label')).toBe('Reset Columns');
         const label = button.querySelector<HTMLElement>('.ag-toolbar-button-label')!;
         expect(label.classList.contains('ag-hidden')).toBe(true);
+        await new GridRows(
+            api,
+            `tooltip-only: renders icon-only button with tooltip and aria-label from tooltip final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     test('label and tooltip: tooltip wins for title and aria-label; label is still shown', async () => {
@@ -82,6 +118,18 @@ describe('Toolbar action button item', () => {
                 ],
             },
         });
+        await new GridColumns(
+            api,
+            `label and tooltip: tooltip wins for title and aria-label; label is still shown setup`
+        ).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `label and tooltip: tooltip wins for title and aria-label; label is still shown setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -92,6 +140,13 @@ describe('Toolbar action button item', () => {
         const label = button.querySelector<HTMLElement>('.ag-toolbar-button-label')!;
         expect(label.classList.contains('ag-hidden')).toBe(false);
         expect(label.textContent).toBe('Auto Size');
+        await new GridRows(
+            api,
+            `label and tooltip: tooltip wins for title and aria-label; label is still shown final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     test('neither label nor tooltip: icon-only with no title or aria-label', async () => {
@@ -108,6 +163,15 @@ describe('Toolbar action button item', () => {
                 ],
             },
         });
+        await new GridColumns(api, `neither label nor tooltip: icon-only with no title or aria-label setup`)
+            .checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `neither label nor tooltip: icon-only with no title or aria-label setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -117,6 +181,12 @@ describe('Toolbar action button item', () => {
         expect(button.hasAttribute('aria-label')).toBe(false);
         const label = button.querySelector<HTMLElement>('.ag-toolbar-button-label')!;
         expect(label.classList.contains('ag-hidden')).toBe(true);
+        await new GridRows(api, `neither label nor tooltip: icon-only with no title or aria-label final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `
+        );
     });
 
     test('invokes action with grid api, context and key on click', async () => {
@@ -136,6 +206,14 @@ describe('Toolbar action button item', () => {
                 ],
             },
         });
+        await new GridColumns(api, `invokes action with grid api, context and key on click setup`).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(api, `invokes action with grid api, context and key on click setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -148,5 +226,9 @@ describe('Toolbar action button item', () => {
         expect(params.api).toBe(api);
         expect(params.context).toEqual({ userContext: 'hello' });
         expect(params.key).toBe('autoSizeAll');
+        await new GridRows(api, `invokes action with grid api, context and key on click final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 });

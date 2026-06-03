@@ -1,5 +1,7 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type { ElementParams, GridCheckbox } from 'ag-grid-community';
-import { AgToggleButtonSelector, Component, RefPlaceholder } from 'ag-grid-community';
+import { AgToggleButtonSelector, Component } from 'ag-grid-community';
 
 import { isDeferredMode } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';

@@ -13,7 +13,7 @@ import type {
 } from 'ag-grid-community';
 import { PaginationModule, getGridElement } from 'ag-grid-community';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface RowData {
     athlete: string;
@@ -133,6 +133,19 @@ describe('Focus Overrides', () => {
             },
             { modules: [PaginationModule] }
         );
+        await new GridColumns(api, `tabToNextGridContainer callback is invoked on backwards tab flow setup`)
+            .checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── country "Country" width:200
+                └── sport "Sport" width:200
+            `);
+        await new GridRows(api, `tabToNextGridContainer callback is invoked on backwards tab flow setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"A" country:"UK" sport:"S1"
+            ├── LEAF id:1 athlete:"B" country:"IE" sport:"S2"
+            └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
+        `);
 
         const gridElement = getGridElement(api) as HTMLElement;
         const pagingButtons = Array.from(gridElement.querySelectorAll<HTMLElement>('.ag-paging-button'));
@@ -151,6 +164,14 @@ describe('Focus Overrides', () => {
             expect.objectContaining({
                 backwards: true,
             })
+        );
+        await new GridRows(api, `tabToNextGridContainer callback is invoked on backwards tab flow final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"A" country:"UK" sport:"S1"
+                ├── LEAF id:1 athlete:"B" country:"IE" sport:"S2"
+                └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
+            `
         );
     });
 
@@ -175,6 +196,18 @@ describe('Focus Overrides', () => {
             rowData,
             tabToNextCell,
         });
+        await new GridColumns(api, `tabToNextCell override reroutes tabbing target setup`).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── country "Country" width:200
+            └── sport "Sport" width:200
+        `);
+        await new GridRows(api, `tabToNextCell override reroutes tabbing target setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"A" country:"UK" sport:"S1"
+            ├── LEAF id:1 athlete:"B" country:"IE" sport:"S2"
+            └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
+        `);
 
         api.setFocusedCell(0, 'athlete');
         await asyncSetTimeout(0);
@@ -189,6 +222,12 @@ describe('Focus Overrides', () => {
                 backwards: false,
             })
         );
+        await new GridRows(api, `tabToNextCell override reroutes tabbing target final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"A" country:"UK" sport:"S1"
+            ├── LEAF id:1 athlete:"B" country:"IE" sport:"S2"
+            └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
+        `);
     });
 
     test('navigateToNextCell override reroutes arrow navigation target', async () => {
@@ -209,6 +248,20 @@ describe('Focus Overrides', () => {
             rowData,
             navigateToNextCell,
         });
+        await new GridColumns(api, `navigateToNextCell override reroutes arrow navigation target setup`).checkColumns(
+            `
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── country "Country" width:200
+                └── sport "Sport" width:200
+            `
+        );
+        await new GridRows(api, `navigateToNextCell override reroutes arrow navigation target setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"A" country:"UK" sport:"S1"
+            ├── LEAF id:1 athlete:"B" country:"IE" sport:"S2"
+            └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
+        `);
 
         api.setFocusedCell(0, 'athlete');
         await asyncSetTimeout(0);
@@ -226,6 +279,12 @@ describe('Focus Overrides', () => {
                 key: 'ArrowRight',
             })
         );
+        await new GridRows(api, `navigateToNextCell override reroutes arrow navigation target final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"A" country:"UK" sport:"S1"
+            ├── LEAF id:1 athlete:"B" country:"IE" sport:"S2"
+            └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
+        `);
     });
 
     test('tabToNextHeader override reroutes header tab target', async () => {
@@ -242,6 +301,18 @@ describe('Focus Overrides', () => {
             rowData,
             tabToNextHeader,
         });
+        await new GridColumns(api, `tabToNextHeader override reroutes header tab target setup`).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── country "Country" width:200
+            └── sport "Sport" width:200
+        `);
+        await new GridRows(api, `tabToNextHeader override reroutes header tab target setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"A" country:"UK" sport:"S1"
+            ├── LEAF id:1 athlete:"B" country:"IE" sport:"S2"
+            └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
+        `);
 
         api.setFocusedHeader('athlete');
         await asyncSetTimeout(0);
@@ -253,6 +324,12 @@ describe('Focus Overrides', () => {
             'header focus moved to callback-selected header',
             () => getFocusedHeaderColId() === 'sport'
         );
+        await new GridRows(api, `tabToNextHeader override reroutes header tab target final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"A" country:"UK" sport:"S1"
+            ├── LEAF id:1 athlete:"B" country:"IE" sport:"S2"
+            └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
+        `);
     });
 
     test('navigateToNextHeader override reroutes arrow navigation target', async () => {
@@ -269,6 +346,20 @@ describe('Focus Overrides', () => {
             rowData,
             navigateToNextHeader,
         });
+        await new GridColumns(api, `navigateToNextHeader override reroutes arrow navigation target setup`).checkColumns(
+            `
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── country "Country" width:200
+                └── sport "Sport" width:200
+            `
+        );
+        await new GridRows(api, `navigateToNextHeader override reroutes arrow navigation target setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"A" country:"UK" sport:"S1"
+            ├── LEAF id:1 athlete:"B" country:"IE" sport:"S2"
+            └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
+        `);
 
         api.setFocusedHeader('athlete');
         await asyncSetTimeout(0);
@@ -283,5 +374,11 @@ describe('Focus Overrides', () => {
             'header focus moved to callback-selected header',
             () => getFocusedHeaderColId() === 'sport'
         );
+        await new GridRows(api, `navigateToNextHeader override reroutes arrow navigation target final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"A" country:"UK" sport:"S1"
+            ├── LEAF id:1 athlete:"B" country:"IE" sport:"S2"
+            └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
+        `);
     });
 });

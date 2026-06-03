@@ -3,7 +3,7 @@ import { waitFor } from '@testing-library/dom';
 import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('Advanced Filter Header DOM', () => {
     const gridsManager = new TestGridsManager({
@@ -42,13 +42,52 @@ describe('Advanced Filter Header DOM', () => {
             columnDefs,
             rowData,
         });
+        await new GridColumns(api, `mounts and unmounts advanced filter header when toggled setup`).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(api, `mounts and unmounts advanced filter header when toggled setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 athlete:"A" age:1
+        `);
 
         expect(document.querySelector('.ag-advanced-filter-header')).toBeNull();
 
         api.setGridOption('enableAdvancedFilter', true);
+        await new GridColumns(
+            api,
+            `mounts and unmounts advanced filter header when toggled after setGridOption enableAdvancedFilter`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `mounts and unmounts advanced filter header when toggled after setGridOption enableAdvancedFilter`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 athlete:"A" age:1
+        `);
         await waitFor(() => expect(document.querySelector('.ag-advanced-filter-header')).not.toBeNull());
 
         api.setGridOption('enableAdvancedFilter', false);
+        await new GridColumns(
+            api,
+            `mounts and unmounts advanced filter header when toggled after setGridOption enableAdvancedFilter #2`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            └── age "Age" width:200
+        `);
+        await new GridRows(
+            api,
+            `mounts and unmounts advanced filter header when toggled after setGridOption enableAdvancedFilter #2`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 athlete:"A" age:1
+        `);
         await waitFor(() => expect(document.querySelector('.ag-advanced-filter-header')).toBeNull());
     });
 

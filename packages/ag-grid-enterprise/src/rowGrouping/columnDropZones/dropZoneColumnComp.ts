@@ -1,3 +1,5 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type {
     AgColumn,
     DragAndDropIcon,
@@ -8,7 +10,7 @@ import type {
     SortDirection,
     SortIndicatorComp,
 } from 'ag-grid-community';
-import { Component, DragSourceType, KeyCode, RefPlaceholder, _createElement } from 'ag-grid-community';
+import { Component, DragSourceType, KeyCode, _createElement } from 'ag-grid-community';
 
 import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';

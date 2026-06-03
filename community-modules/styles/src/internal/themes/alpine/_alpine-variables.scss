@@ -16,6 +16,7 @@
     --ag-range-selection-background-color-3: #{color.change(#2196f3, $alpha: 0.49)};
     --ag-range-selection-background-color-4: #{color.change(#2196f3, $alpha: 0.59)};
     --ag-row-numbers-selected-color: color-mix(in srgb, transparent, var(--ag-alpine-active-color) 50%);
+    --ag-calculated-column-highlight-color: color-mix(in srgb, transparent, var(--ag-alpine-active-color) 20%);
     --ag-icon-button-hover-color: var(--ag-alpine-active-color);
 
     // main colours (overridden by alpine-dark)
@@ -77,6 +78,7 @@
     --ag-grid-size: 6px;
     --ag-icon-size: 16px;
     --ag-row-height: calc(var(--ag-grid-size) * 7); // if changed, update environment.ts
+    --ag-auto-height-min-body-height: 150px;
     --ag-header-height: calc(var(--ag-grid-size) * 8); // if changed, update environment.ts
     --ag-list-item-height: calc(var(--ag-grid-size) * 4); // if changed, update environment.ts
     --ag-column-select-indent-size: var(--ag-icon-size);
