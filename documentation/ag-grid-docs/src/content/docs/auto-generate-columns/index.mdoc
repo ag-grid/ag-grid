@@ -47,6 +47,10 @@ columnDefs: [
 ]
 ```
 
+{% note %}
+Row data keys that contain dots (e.g. `"user.name"`) are treated as nested paths by default, which causes incorrect lookups. Set `suppressFieldDotNotation` to `true` to treat dotted keys as literal field names. See [Accessing Row Data Values](./value-getters/#field) for details.
+{% /note %}
+
 ## Configuration
 
 An `AutoGenerateColumnDefsConfig` object can be passed instead of `true` to control how different value types are handled:
