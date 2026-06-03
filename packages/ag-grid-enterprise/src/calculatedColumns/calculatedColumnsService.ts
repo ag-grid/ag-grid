@@ -472,11 +472,17 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private refreshDynamicColumns(source: ColumnEventType): void {
+        const columnGroupState = this.beans.colGroupSvc?.getColumnGroupState();
+
         this.suppressValidationChecks++;
         try {
             this.beans.colModel.refreshDynamicColumns(source);
         } finally {
             this.suppressValidationChecks--;
+        }
+
+        if (columnGroupState?.length) {
+            this.beans.colGroupSvc?.setColumnGroupState(columnGroupState, source);
         }
     }
 

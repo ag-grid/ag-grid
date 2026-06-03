@@ -315,6 +315,44 @@ describe('calculated columns - display ordering', () => {
         expect(openCalculatedColDef?.columnGroupShow).toBe('open');
     });
 
+    test('dialog add preserves expanded state for generated-id column groups', async () => {
+        const api = createGrid('dialog-after-open-anchor-preserves-generated-group-expanded-state', {
+            rowData: [{ id: 'r1', product: 'Panel', revenue: 10, cost: 3, forecast: 4 }],
+            columnDefs: [
+                {
+                    headerName: 'Money',
+                    children: [
+                        { field: 'product', headerName: 'Product' },
+                        { field: 'revenue', headerName: 'Revenue', columnGroupShow: 'open' },
+                        { field: 'forecast', headerName: 'Forecast', columnGroupShow: 'closed' },
+                        { field: 'cost', headerName: 'Cost' },
+                    ],
+                } as ColGroupDef,
+            ],
+        });
+        const groupId = api.getColumnGroupState()[0].groupId;
+
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'product',
+            'forecast',
+            'cost',
+        ]);
+
+        api.setColumnGroupState([{ groupId, open: true }]);
+        expect(api.getColumnGroupState()[0].open).toBe(true);
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual(['product', 'revenue', 'cost']);
+
+        const openId = await addViaDialog(api, 'revenue', '[Revenue] - [Cost]');
+
+        expect(api.getColumnGroupState()[0].open).toBe(true);
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'product',
+            'revenue',
+            openId,
+            'cost',
+        ]);
+    });
+
     test('dialog add inherits closed columnGroupShow from the anchor leaf column', async () => {
         const api = createGrid('dialog-after-anchor-group-show-closed', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3, forecast: 4 }],
