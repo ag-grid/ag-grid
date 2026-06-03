@@ -769,7 +769,7 @@ describe('Auto-Generate Column Defs', () => {
 
         test('empty nested objects produce a leaf column with objectValues flat', async () => {
             const api = createGrid({
-                autoGenerateColumnDefs: { objectValues: 'flat' },
+                autoGenerateColumnDefs: { objectValues: 'include' },
                 rowData: [{ name: 'Alice', address: {}, score: 100 }],
             });
 
@@ -912,7 +912,7 @@ describe('Auto-Generate Column Defs', () => {
 
             test('objectValues: flat creates a leaf column for objects', async () => {
                 const api = createGrid({
-                    autoGenerateColumnDefs: { objectValues: 'flat' },
+                    autoGenerateColumnDefs: { objectValues: 'include' },
                     rowData: [{ name: 'Alice', address: { city: 'London' }, score: 100 }],
                 });
 
@@ -997,7 +997,7 @@ describe('Auto-Generate Column Defs', () => {
         describe('combined config', () => {
             test('config object with all options set', async () => {
                 const api = createGrid({
-                    autoGenerateColumnDefs: { objectValues: 'flat', arrayValues: 'include', nullishValues: 'skip' },
+                    autoGenerateColumnDefs: { objectValues: 'include', arrayValues: 'include', nullishValues: 'skip' },
                     rowData: [
                         { name: 'Alice', address: { city: 'London' }, tags: ['admin'], middle: null, score: 100 },
                     ],

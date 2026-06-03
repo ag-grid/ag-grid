@@ -65,7 +65,7 @@ function _buildColumnDefs(
                         children,
                     });
                 }
-            } else if (objectValues === 'flat') {
+            } else if (objectValues === 'include') {
                 defs.push(_makeLeafColDef(field, key, prefix));
             }
         } else if (Array.isArray(value)) {
