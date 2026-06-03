@@ -22,7 +22,7 @@ import type {
     AlignedGrid,
     AlwaysPassFilter,
     AsyncTransactionsFlushedEvent,
-    AutoGenerateColumnDefsConfig,
+    AutoGenerateColumnDefsOptions,
     AutoGroupColumnDef,
     AutoSizeStrategy,
     BatchEditingStartedEvent,
@@ -2114,11 +2114,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public resetRowDataOnUpdate: boolean | undefined = undefined;
     /** When enabled, column definitions are generated automatically from the first row of `rowData` whenever row data is set or updated.
-     * Set to `true` to use default settings, or provide an `AutoGenerateColumnDefsConfig` object to customise how values are handled.
+     * Set to `true` to use default settings, or provide an `AutoGenerateColumnDefsOptions` object to customise how values are handled.
      * @default false
      * @agModule `AutoGenerateColumnsModule`
      */
-    @Input() public autoGenerateColumnDefs: boolean | AutoGenerateColumnDefsConfig | undefined = undefined;
+    @Input() public autoGenerateColumnDefs: boolean | AutoGenerateColumnDefsOptions | undefined = undefined;
     /** Callback fired after auto-generating column definitions and before they are applied to the grid.
      * Return the final `(ColDef | ColGroupDef)[]` to use.
      * @agModule `AutoGenerateColumnsModule`

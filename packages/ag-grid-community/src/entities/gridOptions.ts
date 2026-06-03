@@ -2408,11 +2408,11 @@ export interface GridOptions<TData = any> {
     resetRowDataOnUpdate?: boolean;
     /**
      * When enabled, column definitions are generated automatically from the first row of `rowData` whenever row data is set or updated.
-     * Set to `true` to use default settings, or provide an `AutoGenerateColumnDefsConfig` object to customise how values are handled.
+     * Set to `true` to use default settings, or provide an `AutoGenerateColumnDefsOptions` object to customise how values are handled.
      * @default false
      * @agModule `AutoGenerateColumnsModule`
      */
-    autoGenerateColumnDefs?: boolean | AutoGenerateColumnDefsConfig;
+    autoGenerateColumnDefs?: boolean | AutoGenerateColumnDefsOptions;
     /**
      * Callback fired after auto-generating column definitions and before they are applied to the grid.
      * Return the final `(ColDef | ColGroupDef)[]` to use.
@@ -3393,7 +3393,7 @@ export type AgPublicEventHandlerType = `on${Capitalize<AgPublicEventType>}` & ke
 export type ProcessPivotResultColDef<TData = any, TValue = any> = (colDef: ColDef<TData, TValue>) => void;
 export type ProcessPivotResultColGroupDef<TData = any> = (colDef: ColGroupDef<TData>) => void;
 
-export interface AutoGenerateColumnDefsConfig {
+export interface AutoGenerateColumnDefsOptions {
     /** How to handle plain-object values. `'recurse'` creates column groups, `'skip'` ignores them, `'flat'` creates a leaf column.
      * @default 'recurse'
      */

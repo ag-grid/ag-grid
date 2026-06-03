@@ -3,7 +3,7 @@ import { _camelCaseToHumanText } from 'ag-stack';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { AutoGenerateColumnDefsConfig } from '../entities/gridOptions';
+import type { AutoGenerateColumnDefsOptions } from '../entities/gridOptions';
 
 export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
     beanName = 'autoGenColsSvc' as const;
@@ -27,7 +27,7 @@ export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
             return;
         }
 
-        const config: AutoGenerateColumnDefsConfig = typeof optionValue === 'object' ? optionValue : {};
+        const config: AutoGenerateColumnDefsOptions = typeof optionValue === 'object' ? optionValue : {};
         const firstRow = rowData[0] as Record<string, unknown>;
         let columnDefs = _buildColumnDefs(firstRow, undefined, config);
 
@@ -43,7 +43,7 @@ export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
 function _buildColumnDefs(
     obj: Record<string, unknown>,
     prefix: string | undefined,
-    config: AutoGenerateColumnDefsConfig
+    config: AutoGenerateColumnDefsOptions
 ): (ColDef | ColGroupDef)[] {
     const objectValues = config.objectValues ?? 'recurse';
     const arrayValues = config.arrayValues ?? 'include';

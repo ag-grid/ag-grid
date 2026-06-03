@@ -3,7 +3,7 @@
 import type {
     AlignedGrid,
     AlwaysPassFilter,
-    AutoGenerateColumnDefsConfig,
+    AutoGenerateColumnDefsOptions,
     AutoGroupColumnDef,
     AutoSizeStrategy,
     CalculatedColumnsOptions,
@@ -1935,11 +1935,11 @@ export interface Props<TData> {
          */
     resetRowDataOnUpdate?: boolean,
     /** When enabled, column definitions are generated automatically from the first row of `rowData` whenever row data is set or updated.
-         * Set to `true` to use default settings, or provide an `AutoGenerateColumnDefsConfig` object to customise how values are handled.
+         * Set to `true` to use default settings, or provide an `AutoGenerateColumnDefsOptions` object to customise how values are handled.
          * @default false
          * @agModule `AutoGenerateColumnsModule`
          */
-    autoGenerateColumnDefs?: boolean | AutoGenerateColumnDefsConfig,
+    autoGenerateColumnDefs?: boolean | AutoGenerateColumnDefsOptions,
     /** Callback fired after auto-generating column definitions and before they are applied to the grid.
          * Return the final `(ColDef | ColGroupDef)[]` to use.
          * @agModule `AutoGenerateColumnsModule`
