@@ -94,14 +94,14 @@ Built-in types use the grid's locale text, while custom type names are capitalis
 
 {% gridExampleRunner title="Dialog Data Types" name="calculated-columns-dialog-data-types" exampleHeight=350 /%}
 
-### helperLists
+### showHelpers
 
-Use `helperLists` to control which expression helper buttons are shown:
+Use `showHelpers` to control which expression helper buttons are shown:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     calculatedColumns: {
-        helperLists: ['columns'],
+        showHelpers: ['columns'],
     },
 };
 ```
@@ -130,7 +130,7 @@ When enabled, the highlighted header and cells highlight colour can also be cust
 
 ## Advanced Calculated Columns
 
-Calculated columns can use the same operators and functions as formulas, and can reference other calculated columns in the same row. This allows chained derived values such as profit, margin and status.
+Calculated columns can use the same operators and functions as [formulas](./formulas/), and can reference other calculated columns in the same row. This allows chained derived values such as profit, margin and status.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
