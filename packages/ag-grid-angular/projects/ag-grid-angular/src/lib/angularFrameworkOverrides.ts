@@ -1,10 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
+import { FrameworkOverridesIncomingSource, LocalEventService } from 'ag-stack';
 
-import type {
-    FrameworkOverridesIncomingSource,
-    IFrameworkEventListenerService,
-    LocalEventService,
-} from 'ag-grid-community';
+import type { IFrameworkEventListenerService } from 'ag-grid-community';
 import { VanillaFrameworkOverrides } from 'ag-grid-community';
 
 import { AngularFrameworkEventListenerService } from './angularFrameworkEventListenerService';

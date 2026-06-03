@@ -1,5 +1,5 @@
-import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
-import { _makeNull } from '../../agStack/utils/generic';
+import { RefPlaceholder, _makeNull } from 'ag-stack';
+
 import type { ElementParams } from '../../utils/element';
 import { _createIconNoSpan } from '../../utils/icon';
 import type {

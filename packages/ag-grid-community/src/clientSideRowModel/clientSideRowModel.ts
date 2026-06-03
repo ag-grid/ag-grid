@@ -1,4 +1,5 @@
-import { _debounce } from '../agStack/utils/function';
+import { _debounce } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';

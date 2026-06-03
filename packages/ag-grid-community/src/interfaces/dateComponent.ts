@@ -1,4 +1,5 @@
-import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { IComponent } from 'ag-stack';
+
 import type { DateFilterParams } from '../filter/provided/date/iDateFilter';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { AgGridCommon } from '../interfaces/iCommon';

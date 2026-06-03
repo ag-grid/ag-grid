@@ -1,6 +1,6 @@
-import { _getAriaCheckboxStateName, _setAriaRole } from '../agStack/utils/aria';
-import { _getActiveDomElement } from '../agStack/utils/document';
-import { AgCheckbox } from '../agStack/widgets/agCheckbox';
+import { _getActiveDomElement, _getAriaCheckboxStateName, _setAriaRole } from 'ag-stack';
+
+import { AgCheckbox } from '../agWidgets/agCheckbox';
 import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

@@ -1,5 +1,5 @@
-import { _last } from '../../agStack/utils/array';
-import { _exists, _missing } from '../../agStack/utils/generic';
+import { _exists, _last, _missing } from 'ag-stack';
+
 import { BeanStub } from '../../context/beanStub';
 import type { DragAndDropIcon, GridDraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';

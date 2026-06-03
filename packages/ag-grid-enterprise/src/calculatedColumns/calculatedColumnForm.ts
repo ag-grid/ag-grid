@@ -1,4 +1,7 @@
+import { RefPlaceholder, _getDocument, _setDisplayed } from 'ag-stack';
+
 import type {
+    CalculatedColumnHelperList,
     ElementParams,
     GridInputTextArea,
     GridInputTextField,
@@ -12,14 +15,16 @@ import {
     AgSelectSelector,
     Component,
     KeyCode,
-    RefPlaceholder,
-    _getDocument,
-    _setDisplayed,
 } from 'ag-grid-community';
 
 import { getOperatorReplacementRange } from './calculatedColumnUtils';
 
-export type CalculatedColumnType = 'text' | 'number' | 'boolean' | 'date';
+export type CalculatedColumnType = string;
+
+export interface CalculatedColumnDataTypeOption {
+    value: CalculatedColumnType;
+    text: string;
+}
 
 export interface CalculatedColumnDraft {
     colId: string;
@@ -40,12 +45,8 @@ export const DEFAULT_DRAFT: Omit<CalculatedColumnDraft, 'colId' | 'headerName'> 
     calculatedExpression: '',
 };
 
-export const CALCULATED_COLUMN_TYPES: Record<CalculatedColumnType, true> = {
-    text: true,
-    number: true,
-    boolean: true,
-    date: true,
-};
+export const DEFAULT_CALCULATED_COLUMN_DATA_TYPES = ['text', 'number', 'date', 'boolean'] as const;
+export const DEFAULT_CALCULATED_COLUMN_HELPER_LISTS = ['columns', 'functions', 'operators'] as const;
 
 const OPERATOR_VALUES = ['+', '-', '*', '/', '^', '&', '=', '<>', '>', '>=', '<', '<='] as const;
 const OPERATOR_REPLACEMENT_VALUES = [...OPERATOR_VALUES].sort((a, b) => b.length - a.length);
@@ -111,9 +112,12 @@ export class CalculatedColumnForm extends Component {
     private hideSuggestionPopup: (() => void) | undefined;
     private validationTooltipFeature?: TooltipFeature;
     private expressionValidationMessage: string | null = null;
+    private readonly helperLists: ReadonlySet<CalculatedColumnHelperList>;
 
     constructor(
         private draft: CalculatedColumnDraft,
+        private readonly dataTypeOptions: CalculatedColumnDataTypeOption[],
+        helperLists: readonly CalculatedColumnHelperList[],
         private readonly getColumnSuggestions: () => ColumnSuggestion[],
         private readonly getFunctionSuggestions: () => ColumnSuggestion[],
         private readonly onValidate: (draft: CalculatedColumnDraft) => string | null,
@@ -121,6 +125,7 @@ export class CalculatedColumnForm extends Component {
         private readonly onCancel: () => void
     ) {
         super(CalculatedColumnFormElement, [AgInputTextFieldSelector, AgSelectSelector, AgInputTextAreaSelector]);
+        this.helperLists = new Set(helperLists);
     }
 
     public postConstruct(): void {
@@ -147,12 +152,7 @@ export class CalculatedColumnForm extends Component {
         this.eTitle.setLabel(translate('calculatedColumnTitle', 'Title')).setValue(this.draft.headerName, true);
         this.eType
             .setLabel(translate('calculatedColumnType', 'Type'))
-            .addOptions([
-                { value: 'text', text: translate('dataTypeText', 'Text') },
-                { value: 'number', text: translate('dataTypeNumber', 'Number') },
-                { value: 'date', text: translate('dataTypeDate', 'Date') },
-                { value: 'boolean', text: translate('dataTypeBoolean', 'Boolean') },
-            ])
+            .addOptions(this.dataTypeOptions)
             .setValue(this.draft.cellDataType, true);
         this.eExpression
             .setLabel(translate('calculatedColumnExpression', 'Expression'))
@@ -170,6 +170,10 @@ export class CalculatedColumnForm extends Component {
             btn.textContent = translate(`calculatedColumn${action}`, action);
             btn.type = 'button';
         }
+
+        _setDisplayed(this.eColumns, this.helperLists.has('columns'));
+        _setDisplayed(this.eFunctions, this.helperLists.has('functions'));
+        _setDisplayed(this.eOperators, this.helperLists.has('operators'));
     }
 
     private setupSuggestions(): void {
@@ -180,7 +184,9 @@ export class CalculatedColumnForm extends Component {
     private addFormFieldListeners(): void {
         const initialHeaderName = this.draft.headerName;
         this.eTitle.onValueChange((value) => this.updateDraft({ headerName: value || initialHeaderName }));
-        this.eType.onValueChange((value) => this.updateDraft({ cellDataType: value ?? DEFAULT_DRAFT.cellDataType }));
+        this.eType.onValueChange((value) =>
+            this.updateDraft({ cellDataType: value ?? this.dataTypeOptions[0]?.value ?? DEFAULT_DRAFT.cellDataType })
+        );
         this.eExpression.onValueChange((value) => {
             this.updateDraft({ calculatedExpression: value ?? '' });
             this.setExpressionError(this.onValidate(this.draft));
@@ -201,15 +207,21 @@ export class CalculatedColumnForm extends Component {
     }
 
     private addActionListeners(): void {
-        this.addManagedElementListeners(this.eColumns, {
-            click: () => this.showSuggestions('column', '', null, this.eColumns),
-        });
-        this.addManagedElementListeners(this.eFunctions, {
-            click: () => this.showSuggestions('function', '', null, this.eFunctions),
-        });
-        this.addManagedElementListeners(this.eOperators, {
-            click: () => this.showSuggestions('operator', '', null, this.eOperators),
-        });
+        if (this.helperLists.has('columns')) {
+            this.addManagedElementListeners(this.eColumns, {
+                click: () => this.showSuggestions('column', '', null, this.eColumns),
+            });
+        }
+        if (this.helperLists.has('functions')) {
+            this.addManagedElementListeners(this.eFunctions, {
+                click: () => this.showSuggestions('function', '', null, this.eFunctions),
+            });
+        }
+        if (this.helperLists.has('operators')) {
+            this.addManagedElementListeners(this.eOperators, {
+                click: () => this.showSuggestions('operator', '', null, this.eOperators),
+            });
+        }
         this.addManagedElementListeners(this.eApply, {
             click: () => this.setExpressionError(this.onApply(this.draft)),
         });

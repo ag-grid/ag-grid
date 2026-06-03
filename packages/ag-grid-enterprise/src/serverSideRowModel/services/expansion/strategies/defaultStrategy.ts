@@ -1,10 +1,10 @@
-import { BeanStub } from 'ag-grid-community';
 import type {
     IRowNode,
     IsServerSideGroupOpenByDefaultParams,
     RowGroupExpansionState,
     WithoutGridCommon,
 } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import type { IExpansionStrategy } from './iExpansionStrategy';
 

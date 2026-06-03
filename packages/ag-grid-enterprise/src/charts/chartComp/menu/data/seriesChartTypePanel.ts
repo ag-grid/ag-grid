@@ -1,5 +1,7 @@
+import { _areEqual, _clearElement } from 'ag-stack';
+
 import type { BeanCollection, ChartType, GridCheckbox, GridSelect, SeriesChartType } from 'ag-grid-community';
-import { AgCheckbox, AgSelect, Component, _areEqual, _clearElement } from 'ag-grid-community';
+import { AgCheckbox, AgSelect, Component } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../../../../agStack/agGroupComponent';
 import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';

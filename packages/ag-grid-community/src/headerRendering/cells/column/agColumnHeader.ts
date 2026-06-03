@@ -1,6 +1,5 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
-import { _removeFromParent, _setDisplayed } from '../../../agStack/utils/dom';
-import { _toString } from '../../../agStack/utils/string';
+import { RefPlaceholder, _removeFromParent, _setDisplayed, _toString } from 'ag-stack';
+
 import { _getInnerHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { AgColumn } from '../../../entities/agColumn';

@@ -1,10 +1,15 @@
-import { KeyCode } from '../../agStack/constants/keyCode';
-import { _setAriaColIndex, _setAriaRowIndex } from '../../agStack/utils/aria';
-import { _getActiveDomElement } from '../../agStack/utils/document';
-import { _addOrRemoveAttribute, _placeCaretAtEnd } from '../../agStack/utils/dom';
-import { _findFocusableElements } from '../../agStack/utils/focus';
-import { _makeNull } from '../../agStack/utils/generic';
-import { AgPromise } from '../../agStack/utils/promise';
+import {
+    AgPromise,
+    KeyCode,
+    _addOrRemoveAttribute,
+    _findFocusableElements,
+    _getActiveDomElement,
+    _makeNull,
+    _placeCaretAtEnd,
+    _setAriaColIndex,
+    _setAriaRowIndex,
+} from 'ag-stack';
+
 import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
@@ -39,6 +44,7 @@ import type { IRowNumbersRowResizeFeature } from '../../interfaces/rowNumbers';
 import type { ILoadingCellRendererParams } from '../../main-umd-noStyles';
 import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
+import { CSS_CALCULATED_COLUMN, CSS_CALCULATED_COLUMN_HIGHLIGHTED } from '../../styling/calculatedColumnCss';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _isCellFocusSuppressed } from '../../utils/gridFocus';
@@ -60,7 +66,6 @@ const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
 const CSS_CELL_LAST_LEFT_PINNED = 'ag-cell-last-left-pinned';
 const CSS_CELL_NOT_INLINE_EDITING = 'ag-cell-not-inline-editing';
 const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
-const CSS_CALCULATED_COLUMN = 'ag-calculated-column';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ICellComp {
@@ -116,6 +121,8 @@ export class CellCtrl extends BeanStub {
     public editStyleFeature: ICellStyleFeature | undefined = undefined;
     private mouseListener: CellMouseListenerFeature | undefined = undefined;
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
+    private calculatedColumnCssApplied = false;
+    private calculatedColumnHighlightedCssApplied = false;
 
     public cellPosition: CellPosition;
 
@@ -1026,11 +1033,28 @@ export class CellCtrl extends BeanStub {
     }
 
     private setCalculatedColumnCss(): void {
-        this.comp.toggleCss(CSS_CALCULATED_COLUMN, this.isCalculatedColumn());
+        const calculatedColsSvc = this.beans.calculatedColsSvc;
+        const isCalculatedColumn = calculatedColsSvc != null && this.column.isCalculatedCol;
+
+        if (isCalculatedColumn || this.calculatedColumnCssApplied) {
+            this.comp.toggleCss(CSS_CALCULATED_COLUMN, isCalculatedColumn);
+            this.calculatedColumnCssApplied = isCalculatedColumn;
+        }
+
+        const isHighlightedColumn =
+            calculatedColsSvc != null && isCalculatedColumn && calculatedColsSvc.isHighlightedColumn(this.column);
+        if (isHighlightedColumn || this.calculatedColumnHighlightedCssApplied) {
+            this.comp.toggleCss(CSS_CALCULATED_COLUMN_HIGHLIGHTED, isHighlightedColumn);
+            this.calculatedColumnHighlightedCssApplied = isHighlightedColumn;
+        }
     }
 
     private isCalculatedColumn(): boolean {
         return this.column.isCalculatedCol;
+    }
+
+    public refreshCalculatedColumnCss(): void {
+        this.setCalculatedColumnCss();
     }
 
     public dispatchCellContextMenuEvent(event: Event | null) {

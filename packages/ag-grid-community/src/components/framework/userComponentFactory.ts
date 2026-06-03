@@ -1,5 +1,6 @@
-import type { IComponent } from '../../agStack/interfaces/iComponent';
-import { AgPromise } from '../../agStack/utils/promise';
+import type { IComponent } from 'ag-stack';
+import { AgPromise } from 'ag-stack';
+
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection, ProcessParamsFunc } from '../../context/context';

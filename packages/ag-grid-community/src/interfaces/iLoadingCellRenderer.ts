@@ -1,4 +1,5 @@
-import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { IComponent } from 'ag-stack';
+
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 
 export interface ILoadingCellRendererParams<TData = any, TValue = any, TContext = any> extends ICellRendererParams<

@@ -1,6 +1,5 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _removeFromParent } from '../agStack/utils/dom';
-import { _scrollHorizontallyToShow } from '../agStack/utils/focus';
+import { RefPlaceholder, _removeFromParent, _scrollHorizontallyToShow } from 'ag-stack';
+
 import type { PaginationPanel } from '../entities/gridOptions';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';

@@ -1,7 +1,8 @@
 import type { AgColorType } from 'ag-charts-types';
+import { _setAriaLabel } from 'ag-stack';
 
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
-import { Component, KeyCode, _setAriaLabel, _warn } from 'ag-grid-community';
+import { Component, KeyCode, _warn } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../../../../agStack/agGroupComponent';
 import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';

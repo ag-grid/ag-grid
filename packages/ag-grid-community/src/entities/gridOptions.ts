@@ -2,8 +2,8 @@
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
+import type { Theme } from 'ag-stack';
 
-import type { Theme } from '../agStack/theming/theme';
 import type { IsRowValidDropPositionCallback } from '../dragAndDrop/rowDragTypes';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
@@ -135,6 +135,7 @@ import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
 import type { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
+import type { CalculatedColumnsOptions } from '../interfaces/iCalculatedColumns';
 import type {
     DoesExternalFilterPass,
     FillOperation,
@@ -190,6 +191,7 @@ import type { RowModelType } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
 import type { SideBarDef } from '../interfaces/iSideBar';
+import type { SortDirection } from '../interfaces/iSort';
 import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { Toolbar } from '../interfaces/iToolbar';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
@@ -205,7 +207,6 @@ import type {
     ColTypeDefs,
     GroupHierarchyConfig,
     IAggFuncs,
-    SortDirection,
 } from './colDef';
 import type { DataTypeDefinitions } from './dataType';
 
@@ -409,6 +410,11 @@ export interface GridOptions<TData = any> {
      * or can be custom data types.
      */
     dataTypeDefinitions?: DataTypeDefinitions<TData>;
+    /**
+     * Configures the Calculated Columns dialog.
+     * @agModule `CalculatedColumnsModule`
+     */
+    calculatedColumns?: CalculatedColumnsOptions;
     /**
      * Keeps the order of Columns maintained after new Column Definitions are updated.
      *

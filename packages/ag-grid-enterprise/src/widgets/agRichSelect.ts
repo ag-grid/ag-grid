@@ -1,3 +1,19 @@
+import type { IAriaAnnouncementService, VerticalDirection } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _addOrRemoveAttribute,
+    _clearElement,
+    _debounce,
+    _exists,
+    _fuzzySuggestions,
+    _getActiveDomElement,
+    _isElementOverflowingCallback,
+    _isEventFromPrintableCharacter,
+    _isVisible,
+    _setAriaActiveDescendant,
+    _setScrollLeft,
+} from 'ag-stack';
+
 import type {
     AgComponentSelectorType,
     AgEventTypeParams,
@@ -9,7 +25,6 @@ import type {
     GridInputTextField,
     GridOptionsService,
     GridOptionsWithDefaults,
-    IAriaAnnouncementService,
     ICellRendererComp,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
@@ -20,27 +35,14 @@ import type {
     UserCompDetails,
     UserComponentFactory,
     WithoutGridCommon,
-    _VerticalDirection,
 } from 'ag-grid-community';
 import {
     AgInputTextFieldSelector,
     AgPickerField,
     KeyCode,
-    RefPlaceholder,
     _addGridCommonParams,
-    _addOrRemoveAttribute,
-    _clearElement,
     _createIconNoSpan,
-    _debounce,
-    _exists,
-    _fuzzySuggestions,
-    _getActiveDomElement,
     _getEditorRendererDetails,
-    _isElementOverflowingCallback,
-    _isEventFromPrintableCharacter,
-    _isVisible,
-    _setAriaActiveDescendant,
-    _setScrollLeft,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 
@@ -109,7 +111,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private listComponent: AgRichSelectList<TValue> | undefined;
     private pillContainer: AgPillContainer<TValue> | null;
     protected values: TValue[] | undefined;
-    private loadMoreRowsCallback?: (direction?: _VerticalDirection) => void;
+    private loadMoreRowsCallback?: (direction?: VerticalDirection) => void;
     private loadMoreRowsThreshold = 10;
     private asyncRequests?: RichSelectAsyncRequestsFeature<TValue>;
     private hasPagedAsyncSource = false;
@@ -409,7 +411,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.asyncRequests?.resetValuesPage(searchString);
     }
 
-    public setLoadMoreRowsCallback(callback?: (direction?: _VerticalDirection) => void, thresholdRows = 10): void {
+    public setLoadMoreRowsCallback(callback?: (direction?: VerticalDirection) => void, thresholdRows = 10): void {
         this.loadMoreRowsCallback = callback;
         this.loadMoreRowsThreshold = Math.max(thresholdRows, 1);
         this.listComponent?.setLoadMoreRowsCallback(this.loadMoreRowsCallback, this.loadMoreRowsThreshold);

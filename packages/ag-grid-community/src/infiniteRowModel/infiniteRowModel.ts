@@ -1,4 +1,5 @@
-import { _jsonEquals } from '../agStack/utils/generic';
+import { _jsonEquals } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { RowNode } from '../entities/rowNode';

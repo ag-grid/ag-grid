@@ -1,5 +1,6 @@
+import { _escapeString } from 'ag-stack';
+
 import type { AgColumn, RowHeightCallbackParams, XmlElement } from 'ag-grid-community';
-import { _escapeString } from 'ag-grid-community';
 
 import { INCH_TO_EMU } from './excelConstants';
 import type { ExcelCalculatedImage } from './excelInterfaces';

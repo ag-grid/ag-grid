@@ -1,6 +1,6 @@
+import { _areEqual } from 'ag-stack';
 import React, { useContext, useRef } from 'react';
 
-import { _areEqual } from 'ag-grid-community';
 import type { Module } from 'ag-grid-community';
 
 export interface AgGridProviderProps {

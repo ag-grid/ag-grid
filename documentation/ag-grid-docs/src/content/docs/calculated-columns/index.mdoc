@@ -54,6 +54,8 @@ const gridOptions = {
 
 Because the inputs are aggregated before the expression runs, `[revenue] / [cost]` on a group is `sum(revenue) / sum(cost)`, not the average of each leaf row's ratio. Choose expressions whose group-level result is meaningful under this rule.
 
+{% gridExampleRunner title="Row Groups with Calculated Columns" name="calculated-columns-row-groups" exampleHeight=420 /%}
+
 A group cell stays blank unless every referenced column produces an aggregated value. Reference a column with no `aggFunc`, and group rows for that calculated column are blank while the leaf rows still evaluate. Filler group rows in Tree Data, which have no aggregates of their own, stay blank for the same reason.
 
 Group and grand-total footer rows show the same calculated value as the group they total. Tree Data parent rows evaluate against their aggregated children in the same way as Row Group rows.
@@ -72,9 +74,63 @@ The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `202
 
 The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`.
 
+## Dialog Options
+
+The Calculated Column dialog can be configured with the `calculatedColumns` grid option.
+
+### dataTypes
+
+Use `dataTypes` to control which cell data types appear in the dialog type dropdown:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        dataTypes: ['number', 'boolean'],
+    },
+};
+```
+
+Built-in types use the grid's locale text, while custom type names are capitalised in the dialog. If a selected value does not match a registered cell data type, the grid's normal `cellDataType` validation applies when the calculated column is created.
+
+{% gridExampleRunner title="Dialog Data Types" name="calculated-columns-dialog-data-types" exampleHeight=350 /%}
+
+### showHelpers
+
+Use `showHelpers` to control which expression helper buttons are shown:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        showHelpers: ['columns'],
+    },
+};
+```
+
+This only controls the helper buttons. Use an empty array or `null` to hide all helper buttons. Inline autocomplete while typing in the expression editor remains available.
+
+{% gridExampleRunner title="Dialog Helper Lists" name="calculated-columns-dialog-helper-lists" exampleHeight=350 /%}
+
+### columnHighlighting
+
+Use `columnHighlighting` to highlight the calculated column while its edit dialog is open:
+
+```{% frameworkTransform=true %}
+
+const gridOptions = {
+    theme: myTheme,
+    calculatedColumns: {
+        columnHighlighting: true,
+    },
+};
+```
+
+When enabled, the highlighted header and cells highlight colour can also be customised with the `--ag-calculated-column-highlight-color` CSS variable.
+
+{% gridExampleRunner title="Dialog Column Highlighting" name="calculated-columns-dialog-highlighting" exampleHeight=350 /%}
+
 ## Advanced Calculated Columns
 
-Calculated columns can use the same operators and functions as formulas, and can reference other calculated columns in the same row. This allows chained derived values such as profit, margin and status.
+Calculated columns can use the same operators and functions as [formulas](./formulas/), and can reference other calculated columns in the same row. This allows chained derived values such as profit, margin and status.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -128,6 +184,8 @@ api.updateCalculatedColumn('profitMargin', {
     valueFormatter: params => `${(params.value * 100).toFixed(2)}%`,
 });
 
+api.openCalculatedColumnDialog('profitMargin');
+
 api.removeCalculatedColumn('profitMargin');
 ```
 
@@ -141,7 +199,11 @@ Calculated Column events also use stored `colId` references in their expression 
 
 ### Grid API
 
-{% apiDocumentation source="grid-api/api.json" section="calculatedColumns" names=["addCalculatedColumn", "updateCalculatedColumn", "removeCalculatedColumn"] /%}
+{% apiDocumentation source="grid-api/api.json" section="calculatedColumns" names=["addCalculatedColumn", "updateCalculatedColumn", "removeCalculatedColumn", "openCalculatedColumnDialog"] /%}
+
+### Grid Options
+
+{% apiDocumentation source="grid-options/properties.json" section="columns" names=["calculatedColumns"] /%}
 
 ### Events
 

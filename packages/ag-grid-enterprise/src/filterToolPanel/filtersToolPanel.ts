@@ -1,3 +1,5 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type {
     ColDef,
     ColGroupDef,
@@ -8,7 +10,7 @@ import type {
     IToolPanelFiltersCompParams,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import type { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
 import { AgFiltersToolPanelHeaderSelector } from './agFiltersToolPanelHeader';

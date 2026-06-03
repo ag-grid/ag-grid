@@ -1,4 +1,5 @@
-import type { AgEvent } from '../agStack/interfaces/agEvent';
+import type { AgEvent } from 'ag-stack';
+
 import type { ApplyColumnStateParams, ColumnState } from '../columns/columnStateUtils';
 import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragTypes';
 import type {
@@ -1803,6 +1804,13 @@ export interface _CalculatedColumnsGridApi<TData = any> {
      * @agModule `CalculatedColumnsModule`
      */
     removeCalculatedColumn(column: ColKey<TData>): void;
+
+    /**
+     * Open the Calculated Column dialog for an existing calculated column.
+     * No-op if the supplied column key does not resolve to a calculated column.
+     * @agModule `CalculatedColumnsModule`
+     */
+    openCalculatedColumnDialog(column: ColKey<TData>): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

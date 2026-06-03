@@ -1,4 +1,5 @@
-import type { AgPromise } from '../agStack/utils/promise';
+import type { AgPromise } from 'ag-stack';
+
 import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
 import type { FilterUiChangedEvent } from '../events';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';

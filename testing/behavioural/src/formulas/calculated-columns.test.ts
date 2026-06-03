@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridOptions, Module } from 'ag-grid-community';
 import {
+    CellSpanModule,
     ClientSideRowModelModule,
     InfiniteRowModelModule,
     NumberEditorModule,
@@ -11,6 +12,7 @@ import {
     RowSelectionModule,
     TextEditorModule,
     ValidationModule,
+    getGridElement,
 } from 'ag-grid-community';
 import {
     CalculatedColumnsModule,
@@ -41,6 +43,7 @@ describe('ag-grid calculated columns', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
+            CellSpanModule,
             InfiniteRowModelModule,
             ServerSideRowModelModule,
             ViewportRowModelModule,
@@ -296,6 +299,96 @@ describe('ag-grid calculated columns', () => {
             ├── LEAF id:r1 revenueCol:40 cost:25 first:"Ada" last:"Lovelace" profit:15 profitable:"yes" name:"Ada Lovelace"
             └── LEAF id:r2 revenueCol:30 cost:9 first:"Grace" last:"Hopper" profit:21 profitable:"yes" name:"Grace Hopper"
         `);
+    });
+
+    test('static calculated columns inherit spanRows and span by evaluated values', async () => {
+        const api = createGrid('calculated-static-span-rows', {
+            enableCellSpan: true,
+            defaultColDef: {
+                spanRows: true,
+            },
+            rowData: [
+                { id: 'r1', athlete: 'A' },
+                { id: 'r2', athlete: 'A' },
+                { id: 'r3', athlete: 'B' },
+            ],
+            columnDefs: [{ field: 'athlete' }, { colId: 'athleteCopy', calculatedExpression: '[athlete]' }],
+        });
+        await new GridRows(api, 'static calculated span rows', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 athlete:"A" athleteCopy:"A"
+            ├── LEAF id:r2 athlete:"A" athleteCopy:"A"
+            └── LEAF id:r3 athlete:"B" athleteCopy:"B"
+        `);
+        await asyncSetTimeout(1);
+
+        const gridEl = getGridElement(api)!;
+        const spannedCell = gridEl.querySelector('.ag-spanned-row [col-id="athleteCopy"]');
+        const coveredCell = gridEl.querySelector('.ag-center-cols-container [row-index="1"] [col-id="athleteCopy"]');
+        const unspannedCell = gridEl.querySelector('[row-index="2"] [col-id="athleteCopy"]');
+        expect(spannedCell).not.toBeNull();
+        expect(spannedCell!.getAttribute('aria-rowspan')).toBe('2');
+        expect(coveredCell).toBeNull();
+        expect(unspannedCell).not.toBeNull();
+    });
+
+    test('dynamic calculated columns inherit spanRows and span by evaluated values', async () => {
+        const api = createGrid('calculated-dynamic-span-rows', {
+            enableCellSpan: true,
+            defaultColDef: {
+                spanRows: true,
+            },
+            rowData: [
+                { id: 'r1', athlete: 'A' },
+                { id: 'r2', athlete: 'A' },
+                { id: 'r3', athlete: 'B' },
+            ],
+            columnDefs: [{ field: 'athlete' }],
+        });
+
+        api.addCalculatedColumn({ colId: 'athleteCopy', calculatedExpression: '[athlete]' });
+        await asyncSetTimeout(1);
+        await new GridRows(api, 'dynamic calculated span rows', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 athlete:"A" athleteCopy:"A"
+            ├── LEAF id:r2 athlete:"A" athleteCopy:"A"
+            └── LEAF id:r3 athlete:"B" athleteCopy:"B"
+        `);
+
+        const gridEl = getGridElement(api)!;
+        const spannedCell = gridEl.querySelector('.ag-spanned-row [col-id="athleteCopy"]');
+        const coveredCell = gridEl.querySelector('.ag-center-cols-container [row-index="1"] [col-id="athleteCopy"]');
+        const unspannedCell = gridEl.querySelector('[row-index="2"] [col-id="athleteCopy"]');
+        expect(spannedCell).not.toBeNull();
+        expect(spannedCell!.getAttribute('aria-rowspan')).toBe('2');
+        expect(coveredCell).toBeNull();
+        expect(unspannedCell).not.toBeNull();
+    });
+
+    test('calculated columns with equal evaluated values still span all matching rows', async () => {
+        const api = createGrid('calculated-constant-span-rows', {
+            enableCellSpan: true,
+            defaultColDef: {
+                spanRows: true,
+            },
+            rowData: [{ id: 'r1' }, { id: 'r2' }, { id: 'r3' }],
+            columnDefs: [{ colId: 'constant', calculatedExpression: '"Same"' }],
+        });
+        await new GridRows(api, 'constant calculated span rows', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 constant:"Same"
+            ├── LEAF id:r2 constant:"Same"
+            └── LEAF id:r3 constant:"Same"
+        `);
+        await asyncSetTimeout(1);
+
+        const gridEl = getGridElement(api)!;
+        const spannedCell = gridEl.querySelector('.ag-spanned-row [col-id="constant"]');
+        const coveredCell = gridEl.querySelector('.ag-center-cols-container [row-index="2"] [col-id="constant"]');
+        expect(spannedCell).not.toBeNull();
+        expect(spannedCell!.getAttribute('aria-rowspan')).toBe('3');
+        expect(spannedCell!.textContent).toContain('Same');
+        expect(coveredCell).toBeNull();
     });
 
     test('sorting, filtering and value formatters use evaluated values', async () => {
@@ -1821,6 +1914,88 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
+    test('dialog type list uses configured data types', async () => {
+        const api = createGrid('calculated-dialog-configured-types', {
+            calculatedColumns: {
+                dataTypes: ['number', 'customStatus', 'missingType', 'boolean'],
+            },
+            dataTypeDefinitions: {
+                customStatus: {
+                    baseDataType: 'text',
+                    extendsDataType: 'text',
+                },
+            },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        getCalculatedColumnDialog()
+            .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
+            .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        await asyncSetTimeout(1);
+
+        const typeOptions = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).map((element) =>
+            element.textContent?.trim()
+        );
+        expect(typeOptions).toEqual(['Number', 'Custom Status', 'Missing Type', 'Boolean']);
+    });
+
+    test('dialog helper list config hides helper buttons without disabling inline autocomplete', async () => {
+        const api = createGrid('calculated-dialog-helper-lists', {
+            calculatedColumns: {
+                helperLists: ['columns'],
+            },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        const dialog = getCalculatedColumnDialog();
+        expect(getDialogButton('Columns')).toBeVisible();
+        expect(getDialogButton('Functions')).toHaveClass('ag-hidden');
+        expect(getDialogButton('Operators')).toHaveClass('ag-hidden');
+
+        const input = getExpressionInput();
+        input.value = '[Rev';
+        input.setSelectionRange(input.value.length, input.value.length);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        await asyncSetTimeout(1);
+
+        expect(dialog).toBeTruthy();
+        expect(getSuggestionLabels()).toEqual(expect.arrayContaining(['Revenue']));
+    });
+
+    test.each([
+        ['empty array', []],
+        ['null', null],
+    ] as const)('dialog helper list config supports hiding all helper buttons with %s', async (_label, helperLists) => {
+        const api = createGrid(`calculated-dialog-helper-lists-${_label.replace(' ', '-')}`, {
+            calculatedColumns: {
+                helperLists,
+            },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        expect(getDialogButton('Columns')).toHaveClass('ag-hidden');
+        expect(getDialogButton('Functions')).toHaveClass('ag-hidden');
+        expect(getDialogButton('Operators')).toHaveClass('ag-hidden');
+    });
+
     test('dialog validates formula syntax and function names before apply', async () => {
         const api = createGrid('calculated-dialog-validation', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
@@ -1948,8 +2123,11 @@ describe('ag-grid calculated columns', () => {
         }
     });
 
-    test('calculated columns add calculated column classes to headers and cells', async () => {
-        createGrid('calculated-column-classes', {
+    test('calculated columns add calculated column classes and opt-in edit highlighting', async () => {
+        const api = createGrid('calculated-column-classes', {
+            calculatedColumns: {
+                columnHighlighting: true,
+            },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
                 { field: 'revenue' },
@@ -1967,6 +2145,99 @@ describe('ag-grid calculated columns', () => {
         expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).toHaveClass('ag-calculated-column');
         expect(gridDiv.querySelector('[row-index="0"] [col-id="revenue"]')).not.toHaveClass('ag-calculated-column');
         expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).toHaveClass('ag-calculated-column');
+        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+
+        showColumnMenu(api, 'profit');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Edit Calculated Column');
+        await asyncSetTimeout(1);
+
+        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+
+        clickDialogButton('Cancel');
+        await asyncSetTimeout(1);
+
+        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+    });
+
+    test('calculated column edit highlighting is disabled by default', async () => {
+        const api = createGrid('calculated-column-highlight-disabled', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                {
+                    colId: 'profit',
+                    calculatedExpression: '[revenue] - [cost]',
+                },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'profit');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Edit Calculated Column');
+        await asyncSetTimeout(1);
+
+        const gridDiv = document.querySelector('#calculated-column-highlight-disabled')!;
+        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+    });
+
+    test('openCalculatedColumnDialog opens the edit dialog for an existing calculated column', async () => {
+        const api = createGrid('calculated-column-open-dialog-api', {
+            calculatedColumns: {
+                columnHighlighting: true,
+            },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                {
+                    colId: 'profit',
+                    headerName: 'Profit',
+                    calculatedExpression: '[revenue] - [cost]',
+                },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        api.openCalculatedColumnDialog('profit');
+        await asyncSetTimeout(1);
+
+        const dialog = getCalculatedColumnDialog();
+        expect(dialog).toBeTruthy();
+        expect(dialog.querySelector('input')!.value).toBe('Profit');
+        expect(document.activeElement?.closest('[col-id="profit"].ag-header-cell')).toBeNull();
+
+        const gridDiv = document.querySelector('#calculated-column-open-dialog-api')!;
+        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+
+        clickDialogButton('Cancel');
     });
 
     test('unknown references, invalid syntax and cycles surface formula errors', async () => {
@@ -2003,6 +2274,20 @@ describe('ag-grid calculated columns', () => {
                     { field: 'cost' },
                     { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
                 ],
+            });
+
+            expect(consoleErrorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('error #200'),
+                expect.stringContaining('CalculatedColumnsModule'),
+                expect.any(String)
+            );
+
+            validationGridsManager.createGrid('calculated-option-validation', {
+                calculatedColumns: {
+                    columnHighlighting: true,
+                },
+                rowData: [{ revenue: 10 }],
+                columnDefs: [{ field: 'revenue' }],
             });
 
             expect(consoleErrorSpy).toHaveBeenCalledWith(

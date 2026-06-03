@@ -149,6 +149,10 @@
             "description": "Background colour of the grid header when any cell of that header is part of a range. This is not visible unless enabled in the cell selection options.",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
+        "--ag-calculated-column-highlight-color": {
+            "description": "Background colour of the calculated column currently being edited. This is not visible unless calculated column highlighting is enabled.",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
         "--ag-selected-tab-underline-color": {
             "description": "Colour of the border drawn under selected tabs",
             "type": "CSS color (e.g. `red` or `#fff`)"

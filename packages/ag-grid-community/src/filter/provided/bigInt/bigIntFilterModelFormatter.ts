@@ -1,4 +1,5 @@
-import { _parseBigIntOrNull } from '../../../agStack/utils/bigInt';
+import { _parseBigIntOrNull } from 'ag-stack';
+
 import type { OptionsFactory } from '../optionsFactory';
 import { SCALAR_FILTER_TYPE_KEYS, SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { BigIntFilterModel, IBigIntFilterParams } from './iBigIntFilter';

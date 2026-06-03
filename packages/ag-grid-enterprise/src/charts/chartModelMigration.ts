@@ -1,7 +1,7 @@
 import type { AgChartThemeName } from 'ag-charts-types';
 
-import { _errMsg } from 'ag-grid-community';
 import type { ChartModel } from 'ag-grid-community';
+import { _errMsg } from 'ag-grid-community';
 
 import { VERSION } from '../version';
 import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';

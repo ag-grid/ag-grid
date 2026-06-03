@@ -1,7 +1,11 @@
-import type { AgSingletonBeanClass } from '../agStack/core/agContext';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/agCoreBeanCollection';
-import type { IAriaAnnouncementService } from '../agStack/interfaces/iAriaAnnouncementService';
-import type { ClassImp, IContext } from '../agStack/interfaces/iContext';
+import type {
+    AgCoreBeanCollection,
+    AgSingletonBeanClass,
+    ClassImp,
+    IAriaAnnouncementService,
+    IContext,
+} from 'ag-stack';
+
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';

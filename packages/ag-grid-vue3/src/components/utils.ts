@@ -5,6 +5,7 @@ import type {
     AlwaysPassFilter,
     AutoGroupColumnDef,
     AutoSizeStrategy,
+    CalculatedColumnsOptions,
     CellSelectionOptions,
     ChartToolPanelsDef,
     ColDef,
@@ -409,6 +410,10 @@ export interface Props<TData> {
          * or can be custom data types.
          */
     dataTypeDefinitions?: DataTypeDefinitions<TData>,
+    /** Configures the Calculated Columns dialog.
+         * @agModule `CalculatedColumnsModule`
+         */
+    calculatedColumns?: CalculatedColumnsOptions,
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
          *
          * @default false
@@ -2123,6 +2128,7 @@ export function getProps() {
         defaultColGroupDef: undefined,
         columnTypes: undefined,
         dataTypeDefinitions: undefined,
+        calculatedColumns: undefined,
         maintainColumnOrder: undefined,
         enableStrictPivotColumnOrder: undefined,
         suppressFieldDotNotation: undefined,

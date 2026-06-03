@@ -1,8 +1,6 @@
-import { KeyCode } from '../../agStack/constants/keyCode';
-import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
-import { _exists } from '../../agStack/utils/generic';
-import { _isStringLargerThan } from '../../agStack/utils/string';
-import { AgInputTextAreaSelector } from '../../agStack/widgets/agInputTextArea';
+import { KeyCode, RefPlaceholder, _exists, _isStringLargerThan } from 'ag-stack';
+
+import { AgInputTextAreaSelector } from '../../agWidgets/agInputTextArea';
 import type { ElementParams } from '../../utils/element';
 import type { GridInputTextArea } from '../../widgets/gridWidgetTypes';
 import { AgAbstractCellEditor } from './agAbstractCellEditor';

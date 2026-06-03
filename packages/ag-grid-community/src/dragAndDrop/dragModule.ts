@@ -26,7 +26,7 @@ export const DragModule: _ModuleWithoutApi = {
 };
 
 /**
- * @feature Import & Export -> Drag & Drop
+ * @feature import & Export -> Drag & Drop
  * @colDef dndSource, dndSourceOnRowDrag
  */
 export const DragAndDropModule: _ModuleWithoutApi = {

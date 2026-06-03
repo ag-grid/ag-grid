@@ -1,4 +1,3 @@
-import type { SharedThemeParams } from '../../agStack/theming/shared/shared-css';
 import type {
     BorderStyleValue,
     BorderValue,
@@ -9,7 +8,8 @@ import type {
     LengthValue,
     ScaleValue,
     ShadowValue,
-} from '../../agStack/theming/themeTypes';
+    SharedThemeParams,
+} from 'ag-stack';
 import {
     accentColor,
     accentMix,
@@ -17,7 +17,7 @@ import {
     foregroundColor,
     foregroundHeaderBackgroundMix,
     foregroundMix,
-} from '../../agStack/theming/themeUtils';
+} from 'ag-stack';
 
 /**
  * All possible theme param types - the actual params available will be a subset of this type depending on the parts in use by the theme.
@@ -417,6 +417,11 @@ export interface CoreParams extends SharedThemeParams {
      * Background color of the grid header when any cell of that header is part of a range. This is not visible unless enabled in the cell selection options.
      */
     rangeHeaderHighlightColor: ColorValue;
+
+    /**
+     * Background color for the calculated column currently being edited.
+     */
+    calculatedColumnHighlightColor: ColorValue;
 
     /**
      * Color of the indicator line used to show where a row will be inserted when dragging to reorder rows
@@ -884,6 +889,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     rangeSelectionChartCategoryBackgroundColor: '#00FF841A',
     rangeSelectionHighlightColor: accentMix(0.5),
     rangeHeaderHighlightColor: foregroundHeaderBackgroundMix(0.08),
+    calculatedColumnHighlightColor: accentMix(0.5),
     rowNumbersSelectedColor: accentMix(0.5),
     rowHoverColor: accentMix(0.08),
     columnHoverColor: accentMix(0.05),

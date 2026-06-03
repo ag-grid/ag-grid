@@ -1,5 +1,7 @@
+import { _removeFromArray } from 'ag-stack';
+
 import type { AgColumn, ColDef, ColumnEventType, ColumnStateParams, IColsService, NamedBean } from 'ag-grid-community';
-import { BaseColsService, _removeFromArray } from 'ag-grid-community';
+import { BaseColsService } from 'ag-grid-community';
 
 export class PivotColsSvc extends BaseColsService implements NamedBean, IColsService {
     beanName = 'pivotColsSvc' as const;

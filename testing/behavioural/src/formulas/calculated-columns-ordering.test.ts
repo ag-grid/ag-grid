@@ -289,6 +289,57 @@ describe('calculated columns - display ordering', () => {
         expect(group.children.map((c) => ('children' in c ? c.groupId : c.colId))).toEqual(['revenue', id, 'cost']);
     });
 
+    test('dialog add inherits open columnGroupShow from the anchor leaf column', async () => {
+        const api = createGrid('dialog-after-anchor-group-show-open', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3, forecast: 4 }],
+            columnDefs: [
+                {
+                    groupId: 'money',
+                    openByDefault: true,
+                    children: [
+                        { field: 'revenue', headerName: 'Revenue', columnGroupShow: 'open' },
+                        { field: 'forecast', headerName: 'Forecast', columnGroupShow: 'closed' },
+                        { field: 'cost', headerName: 'Cost' },
+                    ],
+                } as ColGroupDef,
+            ],
+        });
+        const openId = await addViaDialog(api, 'revenue', '[Revenue] - [Cost]');
+        const group = api
+            .getColumnDefs()!
+            .find((def): def is ColGroupDef => 'groupId' in def && def.groupId === 'money')!;
+        const openCalculatedColDef = group.children.find(
+            (def): def is ColDef => !('children' in def) && def.colId === openId
+        );
+
+        expect(openCalculatedColDef?.columnGroupShow).toBe('open');
+    });
+
+    test('dialog add inherits closed columnGroupShow from the anchor leaf column', async () => {
+        const api = createGrid('dialog-after-anchor-group-show-closed', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3, forecast: 4 }],
+            columnDefs: [
+                {
+                    groupId: 'money',
+                    children: [
+                        { field: 'revenue', headerName: 'Revenue', columnGroupShow: 'open' },
+                        { field: 'forecast', headerName: 'Forecast', columnGroupShow: 'closed' },
+                        { field: 'cost', headerName: 'Cost' },
+                    ],
+                } as ColGroupDef,
+            ],
+        });
+        const closedId = await addViaDialog(api, 'forecast', '[Forecast] - [Cost]');
+        const group = api
+            .getColumnDefs()!
+            .find((def): def is ColGroupDef => 'groupId' in def && def.groupId === 'money')!;
+        const closedCalculatedColDef = group.children.find(
+            (def): def is ColDef => !('children' in def) && def.colId === closedId
+        );
+
+        expect(closedCalculatedColDef?.columnGroupShow).toBe('closed');
+    });
+
     // Solved by AG-17366 when it is completed
     test.skip('removing an anchor preserves the user reorder and keeps the dependent in place', async () => {
         const api = createGrid('reorder-then-remove-anchor', {

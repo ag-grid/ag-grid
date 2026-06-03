@@ -1,3 +1,5 @@
+import { _isExpressionString, _parseBigIntOrNull } from 'ag-stack';
+
 import type {
     AgColumn,
     CellValueChangedEvent,
@@ -9,13 +11,7 @@ import type {
     _ChangedRowNodes,
     _ColumnCollections,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _convertColumnEventSourceType,
-    _isExpressionString,
-    _parseBigIntOrNull,
-    _warn,
-} from 'ag-grid-community';
+import { BeanStub, _convertColumnEventSourceType, _warn } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';

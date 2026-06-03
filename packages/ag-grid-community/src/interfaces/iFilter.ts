@@ -1,5 +1,5 @@
-import type { IComponent } from '../agStack/interfaces/iComponent';
-import type { AgPromise } from '../agStack/utils/promise';
+import type { AgPromise, IComponent } from 'ag-stack';
+
 import type { ColDef, ColKey } from '../entities/colDef';
 import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';

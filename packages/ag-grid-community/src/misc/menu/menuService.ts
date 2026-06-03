@@ -1,5 +1,5 @@
-import { _isIOSUserAgent } from '../../agStack/utils/browser';
-import { _requestAnimationFrame } from '../../agStack/utils/dom';
+import { _isIOSUserAgent, _requestAnimationFrame } from 'ag-stack';
+
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';

@@ -1,9 +1,9 @@
-import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
-import { _areEqual } from '../agStack/utils/array';
-import { _exists } from '../agStack/utils/generic';
+import type { AgPropertyChangedSource } from 'ag-stack';
+import { _areEqual, _exists } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
-import { _getSortDefFromInput, _isSortDefValid, _isSortDirectionValid, isColumn } from '../entities/agColumn';
 import type { AgColumn } from '../entities/agColumn';
+import { _getSortDefFromInput, _isSortDefValid, _isSortDirectionValid, isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColKey } from '../entities/colDef';

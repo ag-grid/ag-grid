@@ -1,3 +1,5 @@
+import { _removeAllFromArray } from 'ag-stack';
+
 import type {
     ColDef,
     ColKey,
@@ -16,7 +18,6 @@ import {
     _areColIdsEqual,
     _columnsMatch,
     _destroyColumnTree,
-    _removeAllFromArray,
     _updateColsMap,
 } from 'ag-grid-community';
 

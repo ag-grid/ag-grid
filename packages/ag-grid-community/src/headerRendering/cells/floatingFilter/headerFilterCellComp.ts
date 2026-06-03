@@ -1,6 +1,6 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
-import { _addStylesToElement, _setDisplayed } from '../../../agStack/utils/dom';
-import type { AgPromise } from '../../../agStack/utils/promise';
+import type { AgPromise } from 'ag-stack';
+import { RefPlaceholder, _addStylesToElement, _setDisplayed } from 'ag-stack';
+
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';

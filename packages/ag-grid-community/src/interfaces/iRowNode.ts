@@ -1,4 +1,5 @@
-import type { AgEvent } from '../agStack/interfaces/agEvent';
+import type { AgEvent } from 'ag-stack';
+
 import type { ColKey, IAggFuncResult } from '../entities/colDef';
 import type { BuildEventTypeMap } from '../eventTypes';
 import type { SelectionEventSourceType } from '../events';

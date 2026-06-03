@@ -1,4 +1,5 @@
-import { _exists } from '../agStack/utils/generic';
+import { _exists } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import { _isGroupRowsSticky } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';

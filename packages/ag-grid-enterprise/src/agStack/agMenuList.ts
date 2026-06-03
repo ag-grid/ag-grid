@@ -1,12 +1,14 @@
 import type {
-    _AgCoreBeanCollection,
-    _AgElementParams,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-    _WithoutCommon,
-} from 'ag-grid-community';
-import { AgPromise, KeyCode, _AgTabGuardComp, _createAgElement, _last } from 'ag-grid-community';
+    AgCoreBeanCollection,
+    AgElementParams,
+    BaseEvents,
+    BaseProperties,
+    IPropertiesService,
+    WithoutCommon,
+} from 'ag-stack';
+import { AgTabGuardComp, _createAgElement, _last } from 'ag-stack';
+
+import { AgPromise, KeyCode } from 'ag-grid-community';
 
 import type {
     AgCloseMenuEvent,
@@ -20,14 +22,14 @@ import { AgMenuItemComponent } from './agMenuItemComponent';
 type AgMenuListEvent = AgMenuItemComponentEvent;
 
 export class AgMenuList<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
     TMenuActionParams extends TCommon,
-> extends _AgTabGuardComp<
+> extends AgTabGuardComp<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -56,7 +58,7 @@ export class AgMenuList<
     > | null;
     constructor(
         private readonly level = 0,
-        private readonly menuActionParams: _WithoutCommon<TCommon, TMenuActionParams>,
+        private readonly menuActionParams: WithoutCommon<TCommon, TMenuActionParams>,
         private readonly callbacks: AgMenuItemCallbacks<TBeanCollection, TMenuActionParams, TCommon>
     ) {
         super({ tag: 'div', cls: 'ag-menu-list', role: 'menu' });
@@ -255,7 +257,7 @@ export class AgMenuList<
     }
 
     private createSeparator(): HTMLElement {
-        const part: _AgElementParams<TComponentSelectorType> = { tag: 'div', cls: 'ag-menu-separator-part' };
+        const part: AgElementParams<TComponentSelectorType> = { tag: 'div', cls: 'ag-menu-separator-part' };
         return _createAgElement({
             tag: 'div',
             cls: 'ag-menu-separator',

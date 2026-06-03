@@ -1,4 +1,5 @@
-import { _areEqual, _forAll } from '../agStack/utils/array';
+import { _areEqual, _forAll } from 'ag-stack';
+
 import { placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
