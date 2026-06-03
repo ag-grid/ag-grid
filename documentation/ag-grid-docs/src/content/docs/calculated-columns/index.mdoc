@@ -94,21 +94,21 @@ Built-in types use the grid's locale text, while custom type names are capitalis
 
 {% gridExampleRunner title="Dialog Data Types" name="calculated-columns-dialog-data-types" exampleHeight=350 /%}
 
-### showHelpers
+### expressionPickers
 
-Use `showHelpers` to control which expression helper buttons are shown:
+Use `expressionPickers` to control which expression pickers are shown:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     calculatedColumns: {
-        showHelpers: ['columns'],
+        expressionPickers: ['columns'],
     },
 };
 ```
 
-This only controls the helper buttons. Use an empty array or `null` to hide all helper buttons. Inline autocomplete while typing in the expression editor remains available.
+This only controls the expression picker buttons. Use an empty array or `null` to hide all picker buttons. Inline autocomplete while typing in the expression editor remains available.
 
-{% gridExampleRunner title="Dialog Helper Lists" name="calculated-columns-dialog-helper-lists" exampleHeight=350 /%}
+{% gridExampleRunner title="Dialog Expression Pickers" name="calculated-columns-dialog-helper-lists" exampleHeight=350 /%}
 
 ### columnHighlighting
 

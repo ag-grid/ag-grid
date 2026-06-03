@@ -185,19 +185,19 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     return 'calculatedColumns should be an object.';
                 }
 
-                const { dataTypes, helperLists, columnHighlighting } = calculatedColumns;
+                const { dataTypes, expressionPickers, columnHighlighting } = calculatedColumns;
                 if (dataTypes != null) {
                     if (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string')) {
                         return 'calculatedColumns.dataTypes should be an array of strings.';
                     }
                 }
-                if (helperLists != null) {
-                    const validHelperLists = new Set(['columns', 'functions', 'operators']);
+                if (expressionPickers != null) {
+                    const validExpressionPickers = new Set(['columns', 'functions', 'operators']);
                     if (
-                        !Array.isArray(helperLists) ||
-                        helperLists.some((helperList) => !validHelperLists.has(helperList))
+                        !Array.isArray(expressionPickers) ||
+                        expressionPickers.some((expressionPicker) => !validExpressionPickers.has(expressionPicker))
                     ) {
-                        return "calculatedColumns.helperLists should contain only 'columns', 'functions' or 'operators'.";
+                        return "calculatedColumns.expressionPickers should contain only 'columns', 'functions' or 'operators'.";
                     }
                 }
                 if (columnHighlighting != null && typeof columnHighlighting !== 'boolean') {

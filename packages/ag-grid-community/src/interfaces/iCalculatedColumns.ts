@@ -2,7 +2,7 @@ import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 
-export type CalculatedColumnHelperList = 'columns' | 'functions' | 'operators';
+export type CalculatedColumnExpressionPicker = 'columns' | 'functions' | 'operators';
 
 export interface CalculatedColumnsOptions {
     /**
@@ -12,10 +12,10 @@ export interface CalculatedColumnsOptions {
      */
     dataTypes?: string[];
     /**
-     * Helper buttons shown in the Calculated Column dialog expression editor.
+     * Expression pickers shown in the Calculated Column dialog expression editor.
      * @default ['columns', 'functions', 'operators']
      */
-    helperLists?: CalculatedColumnHelperList[] | null;
+    expressionPickers?: CalculatedColumnExpressionPicker[] | null;
     /**
      * Highlight the calculated column currently being edited by the dialog.
      * @default false

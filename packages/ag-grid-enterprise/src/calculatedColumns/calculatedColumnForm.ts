@@ -1,7 +1,7 @@
 import { RefPlaceholder, _getDocument, _setDisplayed } from 'ag-stack';
 
 import type {
-    CalculatedColumnHelperList,
+    CalculatedColumnExpressionPicker,
     ElementParams,
     GridInputTextArea,
     GridInputTextField,
@@ -19,17 +19,15 @@ import {
 
 import { getOperatorReplacementRange } from './calculatedColumnUtils';
 
-export type CalculatedColumnType = string;
-
 export interface CalculatedColumnDataTypeOption {
-    value: CalculatedColumnType;
+    value: string;
     text: string;
 }
 
 export interface CalculatedColumnDraft {
     colId: string;
     headerName: string;
-    cellDataType: CalculatedColumnType;
+    cellDataType: string;
     calculatedExpression: string;
 }
 
@@ -46,7 +44,7 @@ export const DEFAULT_DRAFT: Omit<CalculatedColumnDraft, 'colId' | 'headerName'> 
 };
 
 export const DEFAULT_CALCULATED_COLUMN_DATA_TYPES = ['text', 'number', 'date', 'boolean'] as const;
-export const DEFAULT_CALCULATED_COLUMN_HELPER_LISTS = ['columns', 'functions', 'operators'] as const;
+export const DEFAULT_CALCULATED_COLUMN_EXPRESSION_PICKERS = ['columns', 'functions', 'operators'] as const;
 
 const OPERATOR_VALUES = ['+', '-', '*', '/', '^', '&', '=', '<>', '>', '>=', '<', '<='] as const;
 const OPERATOR_REPLACEMENT_VALUES = [...OPERATOR_VALUES].sort((a, b) => b.length - a.length);
@@ -96,7 +94,7 @@ const CalculatedColumnFormElement: ElementParams = {
 
 export class CalculatedColumnForm extends Component {
     private readonly eTitle: GridInputTextField = RefPlaceholder;
-    private readonly eType: GridSelect<CalculatedColumnType> = RefPlaceholder;
+    private readonly eType: GridSelect<string> = RefPlaceholder;
     private readonly eExpression: GridInputTextArea = RefPlaceholder;
     private readonly eSuggestions: HTMLElement = RefPlaceholder;
     private readonly eColumns: HTMLButtonElement = RefPlaceholder;
@@ -112,12 +110,12 @@ export class CalculatedColumnForm extends Component {
     private hideSuggestionPopup: (() => void) | undefined;
     private validationTooltipFeature?: TooltipFeature;
     private expressionValidationMessage: string | null = null;
-    private readonly helperLists: ReadonlySet<CalculatedColumnHelperList>;
+    private readonly expressionPickers: ReadonlySet<CalculatedColumnExpressionPicker>;
 
     constructor(
         private draft: CalculatedColumnDraft,
         private readonly dataTypeOptions: CalculatedColumnDataTypeOption[],
-        helperLists: readonly CalculatedColumnHelperList[],
+        expressionPickers: readonly CalculatedColumnExpressionPicker[],
         private readonly getColumnSuggestions: () => ColumnSuggestion[],
         private readonly getFunctionSuggestions: () => ColumnSuggestion[],
         private readonly onValidate: (draft: CalculatedColumnDraft) => string | null,
@@ -125,7 +123,7 @@ export class CalculatedColumnForm extends Component {
         private readonly onCancel: () => void
     ) {
         super(CalculatedColumnFormElement, [AgInputTextFieldSelector, AgSelectSelector, AgInputTextAreaSelector]);
-        this.helperLists = new Set(helperLists);
+        this.expressionPickers = new Set(expressionPickers);
     }
 
     public postConstruct(): void {
@@ -171,9 +169,9 @@ export class CalculatedColumnForm extends Component {
             btn.type = 'button';
         }
 
-        _setDisplayed(this.eColumns, this.helperLists.has('columns'));
-        _setDisplayed(this.eFunctions, this.helperLists.has('functions'));
-        _setDisplayed(this.eOperators, this.helperLists.has('operators'));
+        _setDisplayed(this.eColumns, this.expressionPickers.has('columns'));
+        _setDisplayed(this.eFunctions, this.expressionPickers.has('functions'));
+        _setDisplayed(this.eOperators, this.expressionPickers.has('operators'));
     }
 
     private setupSuggestions(): void {
@@ -207,17 +205,17 @@ export class CalculatedColumnForm extends Component {
     }
 
     private addActionListeners(): void {
-        if (this.helperLists.has('columns')) {
+        if (this.expressionPickers.has('columns')) {
             this.addManagedElementListeners(this.eColumns, {
                 click: () => this.showSuggestions('column', '', null, this.eColumns),
             });
         }
-        if (this.helperLists.has('functions')) {
+        if (this.expressionPickers.has('functions')) {
             this.addManagedElementListeners(this.eFunctions, {
                 click: () => this.showSuggestions('function', '', null, this.eFunctions),
             });
         }
-        if (this.helperLists.has('operators')) {
+        if (this.expressionPickers.has('operators')) {
             this.addManagedElementListeners(this.eOperators, {
                 click: () => this.showSuggestions('operator', '', null, this.eOperators),
             });

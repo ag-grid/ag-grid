@@ -3,7 +3,7 @@ import { _camelCaseToHumanText, _isStringLargerThan } from 'ag-stack';
 import type {
     AgColumn,
     CalculatedColumnDef,
-    CalculatedColumnHelperList,
+    CalculatedColumnExpressionPicker,
     CalculatedColumnUpdate,
     CalculatedColumnValidationReason,
     ColDef,
@@ -18,16 +18,11 @@ import { BeanStub, _warnOnce } from 'ag-grid-community';
 
 import type { FormulaError } from '../formula/ast/utils';
 import { Dialog } from '../widgets/dialog';
-import type {
-    CalculatedColumnDataTypeOption,
-    CalculatedColumnDraft,
-    CalculatedColumnType,
-    ColumnSuggestion,
-} from './calculatedColumnForm';
+import type { CalculatedColumnDataTypeOption, CalculatedColumnDraft, ColumnSuggestion } from './calculatedColumnForm';
 import {
     CalculatedColumnForm,
     DEFAULT_CALCULATED_COLUMN_DATA_TYPES,
-    DEFAULT_CALCULATED_COLUMN_HELPER_LISTS,
+    DEFAULT_CALCULATED_COLUMN_EXPRESSION_PICKERS,
     DEFAULT_DRAFT,
 } from './calculatedColumnForm';
 import {
@@ -472,11 +467,17 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private refreshDynamicColumns(source: ColumnEventType): void {
+        const columnGroupState = this.beans.colGroupSvc?.getColumnGroupState();
+
         this.suppressValidationChecks++;
         try {
             this.beans.colModel.refreshDynamicColumns(source);
         } finally {
             this.suppressValidationChecks--;
+        }
+
+        if (columnGroupState?.length) {
+            this.beans.colGroupSvc?.setColumnGroupState(columnGroupState, source);
         }
     }
 
@@ -722,7 +723,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             new CalculatedColumnForm(
                 draft,
                 dataTypeOptions,
-                this.getHelperLists(),
+                this.getExpressionPickers(),
                 () => mapper.suggestions,
                 () => this.getFunctionSuggestions(),
                 handleValidate,
@@ -765,7 +766,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     private getDataTypeOptions(currentDataType?: string): CalculatedColumnDataTypeOption[] {
         const configuredDataTypes = this.gos.get('calculatedColumns')?.dataTypes;
-        const dataTypes = this.getDataTypes(configuredDataTypes ?? DEFAULT_CALCULATED_COLUMN_DATA_TYPES);
+        const dataTypes = [...(configuredDataTypes ?? DEFAULT_CALCULATED_COLUMN_DATA_TYPES)];
 
         if (currentDataType != null && dataTypes.indexOf(currentDataType) < 0) {
             dataTypes.push(currentDataType);
@@ -775,17 +776,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             value: dataType,
             text: this.getDataTypeDisplayName(dataType),
         }));
-    }
-
-    private getDataTypes(dataTypes: readonly string[]): CalculatedColumnType[] {
-        const uniqueDataTypes: CalculatedColumnType[] = [];
-        for (const dataType of dataTypes) {
-            if (uniqueDataTypes.indexOf(dataType) < 0) {
-                uniqueDataTypes.push(dataType);
-            }
-        }
-
-        return uniqueDataTypes;
     }
 
     private getDataTypeDisplayName(dataType: string): string {
@@ -801,9 +791,11 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return _camelCaseToHumanText(dataType.replace(/[_-]+/g, '.')) ?? dataType;
     }
 
-    private getHelperLists(): CalculatedColumnHelperList[] {
-        const helperLists = this.gos.get('calculatedColumns')?.helperLists;
-        return helperLists === undefined ? [...DEFAULT_CALCULATED_COLUMN_HELPER_LISTS] : (helperLists ?? []);
+    private getExpressionPickers(): CalculatedColumnExpressionPicker[] {
+        const expressionPickers = this.gos.get('calculatedColumns')?.expressionPickers;
+        return expressionPickers === undefined
+            ? [...DEFAULT_CALCULATED_COLUMN_EXPRESSION_PICKERS]
+            : (expressionPickers ?? []);
     }
 
     private toDraft(column: AgColumn): CalculatedColumnDraft {

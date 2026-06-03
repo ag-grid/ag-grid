@@ -50,7 +50,7 @@ const gridOptions: GridOptions<SalesRow> = {
     columnDefs,
     rowData,
     calculatedColumns: {
-        helperLists: ['columns'],
+        expressionPickers: ['columns'],
     },
     defaultColDef: {
         flex: 1,
