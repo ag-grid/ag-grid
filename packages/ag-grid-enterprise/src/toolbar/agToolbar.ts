@@ -1,4 +1,10 @@
-import { _clearElement, _findFocusableElements, _getActiveDomElement, _removeFromParent } from 'ag-stack';
+import {
+    _clearElement,
+    _findFocusableElements,
+    _getActiveDomElement,
+    _removeFromParent,
+    _scrollHorizontallyToShow,
+} from 'ag-stack';
 
 import type {
     ComponentSelector,
@@ -132,10 +138,7 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
         if (!target || !eGui.contains(target) || target === eGui) {
             return;
         }
-        // JSDOM and some embedders omit scrollIntoView.
-        if (typeof target.scrollIntoView === 'function') {
-            target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-        }
+        _scrollHorizontallyToShow(target);
     }
 
     public getFocusableContainerName(): 'toolbar' {
