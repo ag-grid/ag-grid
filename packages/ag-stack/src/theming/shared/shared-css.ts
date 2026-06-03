@@ -255,6 +255,11 @@ export interface SharedThemeParams {
     panelTitleBarBorder: BorderValue;
 
     /**
+     * Minimum height of picker fields such as select dropdowns and color pickers. Picker fields may be taller than this if they contain larger content.
+     */
+    pickerFieldHeight: LengthValue;
+
+    /**
      * Default shadow for elements that float above the grid and are intended to appear separated from it e.g. dialogs and menus
      */
     popupShadow: ShadowValue;
@@ -474,6 +479,11 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
         ref: 'headerFontWeight',
     },
     panelTitleBarBorder: true,
+    // Unlike other picker field params, pickerFieldHeight must be a shared param
+    // because the pagination panel height depends on it
+    pickerFieldHeight: {
+        calc: 'max(iconSize, fontSize) + spacing * 2',
+    },
     dialogShadow: {
         ref: 'popupShadow',
     },
