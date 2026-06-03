@@ -170,11 +170,15 @@ export function getCspHtaccessLine(options: CspOptions, mode: CspMode): string {
  * (dual-policy), so it uses getCspHtaccessLine instead.
  */
 export function getCspHtaccessBlock(options: CspOptions, mode: CspMode): string {
-    return [
-        '# Clear any CSP set on the staging vhost (the legacy wildcard) so the page is',
-        '# governed only by the policy below.',
-        'Header always unset Content-Security-Policy',
-        'Header always unset Content-Security-Policy-Report-Only',
-        getCspHtaccessLine(options, mode),
-    ].join('\n');
+    const lines: string[] = ['# Override the CSP set on the staging vhost (the legacy wildcard).'];
+    // Always replace the inherited report-only header so it does not double-report. Only
+    // unset the inherited *enforced* wildcard when this block enforces — during the
+    // report-only window keep it for baseline protection rather than leaving the page
+    // with no enforced CSP.
+    if (mode === 'enforce') {
+        lines.push('Header always unset Content-Security-Policy');
+    }
+    lines.push('Header always unset Content-Security-Policy-Report-Only');
+    lines.push(getCspHtaccessLine(options, mode));
+    return lines.join('\n');
 }
