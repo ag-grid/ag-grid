@@ -781,6 +781,43 @@ describe('Auto-Generate Column Defs', () => {
             `);
         });
 
+        test('literal dotted keys render blank without suppressFieldDotNotation', async () => {
+            const api = createGrid({
+                autoGenerateColumnDefs: true,
+                rowData: [{ 'user.name': 'Alice', score: 100 }],
+            });
+
+            await new GridColumns(api, 'dotted key').checkColumns(`
+                CENTER
+                ├── user.name "User Name" width:200
+                └── score "Score" width:200
+            `);
+
+            await new GridRows(api, 'dotted key renders blank').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 score:100
+            `);
+        });
+
+        test('literal dotted keys render correctly with suppressFieldDotNotation', async () => {
+            const api = createGrid({
+                autoGenerateColumnDefs: true,
+                suppressFieldDotNotation: true,
+                rowData: [{ 'user.name': 'Alice', score: 100 }],
+            });
+
+            await new GridColumns(api, 'dotted key suppressed').checkColumns(`
+                CENTER
+                ├── user.name "User Name" width:200
+                └── score "Score" width:200
+            `);
+
+            await new GridRows(api, 'dotted key renders value').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 user.name:"Alice" score:100
+            `);
+        });
+
         test('handles many keys', async () => {
             const row: Record<string, number> = {};
             for (let i = 0; i < 50; ++i) {
