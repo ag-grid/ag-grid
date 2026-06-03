@@ -127,7 +127,13 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
         'worker-src': [SELF, 'blob:'],
         'object-src': [NONE],
         'base-uri': [SELF],
-        'form-action': [SELF, trialFormOrigin, salesforceFormOrigin],
+        'form-action': [
+            SELF,
+            trialFormOrigin,
+            salesforceFormOrigin,
+            'https://codesandbox.io', // example-runner "Open in CodeSandbox" form POST
+            'https://plnkr.co', // example-runner "Open in Plunker" form POST
+        ],
         'frame-ancestors': [SELF],
     };
 
