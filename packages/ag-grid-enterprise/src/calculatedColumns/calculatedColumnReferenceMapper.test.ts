@@ -1,3 +1,5 @@
+import { ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID } from 'ag-grid-community';
+
 import { createCalculatedColumnReferenceMapper } from './calculatedColumnReferenceMapper';
 
 const createGroup = (name: string, parent: any = null) => ({
@@ -46,6 +48,10 @@ describe('createCalculatedColumnReferenceMapper', () => {
         );
 
         expect(groupedMapper.suggestions.map(({ label }) => label)).toEqual(['2025 Q4', '2026 Q4']);
+        expect(groupedMapper.suggestions.map(({ displayPath }) => displayPath)).toEqual([
+            ['2025', 'Q4'],
+            ['2026', 'Q4'],
+        ]);
         expect(groupedMapper.toInternalExpression('[Q4]')).toEqual({
             error: { type: 'ambiguous', reference: 'Q4' },
         });
@@ -80,6 +86,23 @@ describe('createCalculatedColumnReferenceMapper', () => {
         expect(first.includes(']')).toBe(false);
         expect(mapper.toInternalExpression(`[${first}] + [${second}]`)).toEqual({
             expression: '[weird/name] + [plain]',
+        });
+    });
+
+    test('special columns are excluded from display references', () => {
+        const mapper = createCalculatedColumnReferenceMapper(
+            mockBeans,
+            [
+                createColumn(SELECTION_COLUMN_ID, 'Selection'),
+                createColumn(ROW_NUMBERS_COLUMN_ID, 'Row Number'),
+                createColumn('revenue', 'Revenue'),
+            ],
+            'calculated_1'
+        );
+
+        expect(mapper.suggestions.map(({ label }) => label)).toEqual(['Revenue']);
+        expect(mapper.toInternalExpression('[Selection] + [Row Number]')).toEqual({
+            error: { type: 'unknown', reference: 'Selection' },
         });
     });
 });

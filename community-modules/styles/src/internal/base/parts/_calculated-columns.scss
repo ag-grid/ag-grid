@@ -21,20 +21,6 @@
         margin-top: calc(var(--ag-grid-size) / 2);
     }
 
-    .ag-calculated-column-suggestions {
-        position: absolute;
-        z-index: 6;
-        top: calc(100% - 1px);
-        left: 0;
-        min-width: 190px;
-        max-height: 160px;
-        overflow-y: auto;
-        border: var(--ag-borders) var(--ag-border-color);
-        border-radius: var(--ag-border-radius);
-        background-color: var(--ag-background-color);
-        box-shadow: var(--ag-popup-shadow);
-    }
-
     .ag-calculated-column-expression-tools {
         display: flex;
         gap: calc(var(--ag-grid-size) / 2);
@@ -56,14 +42,30 @@
         }
     }
 
-    .ag-calculated-column-suggestion {
-        padding: var(--ag-grid-size);
-        cursor: pointer;
+    .ag-calculated-column-suggestion-path {
+        display: flex;
+        align-items: center;
+        gap: calc(var(--ag-grid-size) / 2);
     }
 
-    .ag-calculated-column-suggestion-active,
-    .ag-calculated-column-suggestion:hover {
-        background-color: var(--ag-row-hover-color);
+    .ag-calculated-column-suggestion-parent {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ag-calculated-column-suggestion-parent,
+    .ag-calculated-column-suggestion-separator {
+        color: var(--ag-calculated-column-parent-suggestion-color);
+    }
+
+    .ag-calculated-column-suggestion-separator {
+        flex: none;
+    }
+
+    .ag-calculated-column-suggestion-leaf {
+        overflow: hidden;
+        flex: none;
     }
 
     .ag-calculated-column-properties {
