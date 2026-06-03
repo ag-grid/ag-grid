@@ -3,7 +3,7 @@ import { _camelCaseToHumanText, _isStringLargerThan } from 'ag-stack';
 import type {
     AgColumn,
     CalculatedColumnDef,
-    CalculatedColumnHelperList,
+    CalculatedColumnExpressionPicker,
     CalculatedColumnUpdate,
     CalculatedColumnValidationReason,
     ColDef,
@@ -22,7 +22,7 @@ import type { CalculatedColumnDataTypeOption, CalculatedColumnDraft, ColumnSugge
 import {
     CalculatedColumnForm,
     DEFAULT_CALCULATED_COLUMN_DATA_TYPES,
-    DEFAULT_CALCULATED_COLUMN_HELPER_LISTS,
+    DEFAULT_CALCULATED_COLUMN_EXPRESSION_PICKERS,
     DEFAULT_DRAFT,
 } from './calculatedColumnForm';
 import {
@@ -717,7 +717,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             new CalculatedColumnForm(
                 draft,
                 dataTypeOptions,
-                this.getHelperLists(),
+                this.getExpressionPickers(),
                 () => mapper.suggestions,
                 () => this.getFunctionSuggestions(),
                 handleValidate,
@@ -785,9 +785,11 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return _camelCaseToHumanText(dataType.replace(/[_-]+/g, '.')) ?? dataType;
     }
 
-    private getHelperLists(): CalculatedColumnHelperList[] {
-        const helperLists = this.gos.get('calculatedColumns')?.helperLists;
-        return helperLists === undefined ? [...DEFAULT_CALCULATED_COLUMN_HELPER_LISTS] : (helperLists ?? []);
+    private getExpressionPickers(): CalculatedColumnExpressionPicker[] {
+        const expressionPickers = this.gos.get('calculatedColumns')?.expressionPickers;
+        return expressionPickers === undefined
+            ? [...DEFAULT_CALCULATED_COLUMN_EXPRESSION_PICKERS]
+            : (expressionPickers ?? []);
     }
 
     private toDraft(column: AgColumn): CalculatedColumnDraft {

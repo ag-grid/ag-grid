@@ -1945,10 +1945,10 @@ describe('ag-grid calculated columns', () => {
         expect(typeOptions).toEqual(['Number', 'Custom Status', 'Missing Type', 'Boolean']);
     });
 
-    test('dialog helper list config hides helper buttons without disabling inline autocomplete', async () => {
+    test('dialog expression picker config hides picker buttons without disabling inline autocomplete', async () => {
         const api = createGrid('calculated-dialog-helper-lists', {
             calculatedColumns: {
-                helperLists: ['columns'],
+                expressionPickers: ['columns'],
             },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
@@ -1977,24 +1977,27 @@ describe('ag-grid calculated columns', () => {
     test.each([
         ['empty array', []],
         ['null', null],
-    ] as const)('dialog helper list config supports hiding all helper buttons with %s', async (_label, helperLists) => {
-        const api = createGrid(`calculated-dialog-helper-lists-${_label.replace(' ', '-')}`, {
-            calculatedColumns: {
-                helperLists,
-            },
-            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
-            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
-        });
+    ] as const)(
+        'dialog expression picker config supports hiding all picker buttons with %s',
+        async (_label, expressionPickers) => {
+            const api = createGrid(`calculated-dialog-helper-lists-${_label.replace(' ', '-')}`, {
+                calculatedColumns: {
+                    expressionPickers,
+                },
+                rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+                columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+            });
 
-        showColumnMenu(api, 'revenue');
-        await asyncSetTimeout(10);
-        await clickColumnMenuItem('Add Calculated Column');
-        await asyncSetTimeout(1);
+            showColumnMenu(api, 'revenue');
+            await asyncSetTimeout(10);
+            await clickColumnMenuItem('Add Calculated Column');
+            await asyncSetTimeout(1);
 
-        expect(getDialogButton('Columns')).toHaveClass('ag-hidden');
-        expect(getDialogButton('Functions')).toHaveClass('ag-hidden');
-        expect(getDialogButton('Operators')).toHaveClass('ag-hidden');
-    });
+            expect(getDialogButton('Columns')).toHaveClass('ag-hidden');
+            expect(getDialogButton('Functions')).toHaveClass('ag-hidden');
+            expect(getDialogButton('Operators')).toHaveClass('ag-hidden');
+        }
+    );
 
     test('dialog validates formula syntax and function names before apply', async () => {
         const api = createGrid('calculated-dialog-validation', {
