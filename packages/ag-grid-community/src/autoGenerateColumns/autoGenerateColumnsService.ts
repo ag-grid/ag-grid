@@ -59,9 +59,7 @@ function _buildColumnDefs(
     prefix: string | undefined,
     config: AutoGenerateColumnDefsOptions
 ): (ColDef | ColGroupDef)[] {
-    const objectValues = config.objectValues ?? 'recurse';
-    const arrayValues = config.arrayValues ?? 'include';
-    const nullishValues = config.nullishValues ?? 'include';
+    const { objectValues = 'recurse', arrayValues = 'include', nullishValues = 'include' } = config;
 
     const keys = Object.keys(obj);
     const defs: (ColDef | ColGroupDef)[] = [];
@@ -74,25 +72,25 @@ function _buildColumnDefs(
             if (objectValues === 'recurse') {
                 const children = _buildColumnDefs(value, field, config);
                 if (children.length > 0) {
-                    defs.push({
-                        headerName: _camelCaseToHumanText(key) ?? key,
-                        children,
-                    });
+                    defs.push({ headerName: _camelCaseToHumanText(key) ?? key, children });
                 }
-            } else if (objectValues === 'include') {
-                defs.push(_makeLeafColDef(field, key, prefix));
+                continue;
+            }
+            if (objectValues !== 'include') {
+                continue;
             }
         } else if (Array.isArray(value)) {
-            if (arrayValues === 'include') {
-                defs.push(_makeLeafColDef(field, key, prefix));
+            if (arrayValues !== 'include') {
+                continue;
             }
         } else if (value == null) {
-            if (nullishValues === 'include') {
-                defs.push(_makeLeafColDef(field, key, prefix));
+            if (nullishValues !== 'include') {
+                continue;
             }
-        } else if (typeof value !== 'function') {
-            defs.push(_makeLeafColDef(field, key, prefix));
+        } else if (typeof value === 'function') {
+            continue;
         }
+        defs.push(_makeLeafColDef(field, key, prefix));
     }
     return defs;
 }
