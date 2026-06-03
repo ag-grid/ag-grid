@@ -176,7 +176,7 @@ describe('Auto-Generate Column Defs', () => {
                 └── b "B" width:200
             `);
 
-            api.setGridOption('autoGenerateColumnDefs' as any, false);
+            api.setGridOption('autoGenerateColumnDefs', false);
 
             await new GridColumns(api, 'after toggle off').checkColumns(`
                 CENTER
@@ -193,7 +193,7 @@ describe('Auto-Generate Column Defs', () => {
 
             await new GridColumns(api, 'flag off').checkColumns('empty');
 
-            api.setGridOption('autoGenerateColumnDefs' as any, true);
+            api.setGridOption('autoGenerateColumnDefs', true);
 
             await new GridColumns(api, 'after toggle on').checkColumns(`
                 CENTER

@@ -226,8 +226,8 @@ export type EnterpriseModuleName =
 export type AgModuleName =
     | 'AiToolkitModule'
     | 'AlignedGridsModule'
-    | 'AutoGenerateColumnsModule'
     | 'AllCommunityModule'
+    | 'AutoGenerateColumnsModule'
     | 'CellApiModule'
     | 'CellStyleModule'
     | 'CheckboxEditorModule'
