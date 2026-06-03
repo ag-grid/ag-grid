@@ -19,17 +19,15 @@ import {
 
 import { getOperatorReplacementRange } from './calculatedColumnUtils';
 
-export type CalculatedColumnType = string;
-
 export interface CalculatedColumnDataTypeOption {
-    value: CalculatedColumnType;
+    value: string;
     text: string;
 }
 
 export interface CalculatedColumnDraft {
     colId: string;
     headerName: string;
-    cellDataType: CalculatedColumnType;
+    cellDataType: string;
     calculatedExpression: string;
 }
 
@@ -96,7 +94,7 @@ const CalculatedColumnFormElement: ElementParams = {
 
 export class CalculatedColumnForm extends Component {
     private readonly eTitle: GridInputTextField = RefPlaceholder;
-    private readonly eType: GridSelect<CalculatedColumnType> = RefPlaceholder;
+    private readonly eType: GridSelect<string> = RefPlaceholder;
     private readonly eExpression: GridInputTextArea = RefPlaceholder;
     private readonly eSuggestions: HTMLElement = RefPlaceholder;
     private readonly eColumns: HTMLButtonElement = RefPlaceholder;
