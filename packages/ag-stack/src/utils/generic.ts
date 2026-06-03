@@ -1,26 +1,3 @@
-// Stable unique ids, kept off-instance in a WeakMap so objects carry no extra field (no
-// shape/memory cost in normal operation). Both the map and its entries are created lazily —
-// only once _debugId is actually called (e.g. by JSON.stringify or an assertion-failure diff).
-let debugObjectsIds: WeakMap<object, number> | undefined;
-let debugObjIdSeq = 0;
-
-/**
- * Returns a stable, process-unique numeric id for `obj`, assigned lazily on first call. Use it in a
- * `toJSON()` so two distinct objects never produce the same descriptor: a collision makes test
- * frameworks fall back to serialising the raw (cyclic, densely cross-linked) bean graph, which
- * grows exponentially and exhausts memory.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _debugId(obj: object): number {
-    let id = debugObjectsIds?.get(obj);
-    if (!id) {
-        id = ++debugObjIdSeq;
-        debugObjectsIds ??= new WeakMap<object, number>();
-        debugObjectsIds.set(obj, id);
-    }
-    return id;
-}
-
 /**
  * If value is undefined, null or blank, returns null, otherwise returns the value
  * @param {T} value

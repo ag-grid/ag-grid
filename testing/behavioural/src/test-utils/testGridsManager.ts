@@ -13,6 +13,7 @@ import {
     getGridElement,
 } from 'ag-grid-community';
 
+import { patchBeansToJson } from './patchBeansToJson';
 import { mockGridLayout } from './polyfills/mockGridLayout';
 import { waitForEvent } from './test-utils-events';
 import { ignoreConsoleLicenseKeyError } from './utils';
@@ -148,6 +149,10 @@ export class TestGridsManager {
             ? { ...TestGridsManager.defaultGridOptions, ...TestGridsManager.benchmarkGridOptions }
             : TestGridsManager.defaultGridOptions;
         const api = createGrid(element, { ...baseOptions, ...gridOptions }, { ...params, modules });
+
+        // Make beans serialise compactly so a failing expect(bean).toBe/toEqual(...) diff
+        // does not OOM walking the cyclic bean graph (see patchBeansToJson).
+        patchBeansToJson(api);
 
         this.gridsMap.set(element, api);
         gridApiHtmlElementsMap.set(api, element);

@@ -59,10 +59,6 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         this.expandable = undefined!;
     }
 
-    public override toJSON(): string {
-        return `PColGrp#${this.groupId}#${this.instanceId}`;
-    }
-
     public getInstanceId(): ColumnInstanceId {
         return this.instanceId;
     }
