@@ -96,15 +96,15 @@ jobs:
                   github-token: ${{ github.token }}
                   pr-number: ${{ github.event.pull_request.number || inputs.pr_number }}
 
-            # - name: Run Codex PR Review
-            #   if: steps.pr-meta.outputs.pr-number != ''
-            #   uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/codex-pr-review
-            #   with:
-            #       codex-api-key: ${{ secrets.CODEX_API_KEY }}
-            #       pr-number: ${{ steps.pr-meta.outputs.pr-number }}
-            #       base-ref: ${{ steps.pr-meta.outputs.base-ref }}
-            #       head-ref: ${{ steps.pr-meta.outputs.head-ref }}
-            #       pr-title: ${{ steps.pr-meta.outputs.pr-title }}
-            #       pr-author: ${{ steps.pr-meta.outputs.pr-author }}
-            #       github-token: ${{ github.token }}
-            #       inline-comments: 'true'
+            - name: Run Codex PR Review
+              if: steps.pr-meta.outputs.pr-number != ''
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/codex-pr-review
+              with:
+                  codex-api-key: ${{ secrets.CODEX_API_KEY }}
+                  pr-number: ${{ steps.pr-meta.outputs.pr-number }}
+                  base-ref: ${{ steps.pr-meta.outputs.base-ref }}
+                  head-ref: ${{ steps.pr-meta.outputs.head-ref }}
+                  pr-title: ${{ steps.pr-meta.outputs.pr-title }}
+                  pr-author: ${{ steps.pr-meta.outputs.pr-author }}
+                  github-token: ${{ github.token }}
+                  inline-comments: 'true'
