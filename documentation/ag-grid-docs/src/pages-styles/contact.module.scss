@@ -1,0 +1,253 @@
+@use 'design-system' as *;
+
+.pageContainer {
+    background-color: var(--color-bg-primary);
+}
+
+.hero {
+    padding: $spacing-size-12 var(--layout-horizontal-margins) 0;
+    background: linear-gradient(transparent, rgba(14, 68, 145, 0.06));
+    overflow: visible;
+
+    @media screen and (min-width: $breakpoint-studio-pricing-large) {
+        padding: $spacing-size-20 var(--layout-horizontal-margins) 0;
+        height: 500px;
+    }
+
+    #{$selector-darkmode} & {
+        background: linear-gradient(transparent, rgba(255, 255, 255, 0.05));
+    }
+}
+
+.heroInner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-size-8;
+    text-align: center;
+
+    @media screen and (min-width: $breakpoint-studio-pricing-large) {
+        flex-direction: row;
+        align-items: flex-start;
+        text-align: left;
+        gap: $spacing-size-12;
+    }
+}
+
+.heroText {
+    flex: 1;
+    min-width: 0;
+    padding-bottom: $spacing-size-12;
+
+    @media screen and (min-width: $breakpoint-studio-pricing-large) {
+        max-width: 480px;
+        padding-bottom: $spacing-size-16;
+    }
+}
+
+.contactFormWrapper {
+    flex: none;
+    min-width: 0;
+    position: relative;
+    z-index: 0;
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-xl);
+    padding: $spacing-size-6;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border-primary);
+
+    @media screen and (min-width: $breakpoint-studio-pricing-large) {
+        align-self: flex-start;
+        width: 480px;
+        margin-top: -360px;
+        margin-bottom: 140px;
+        z-index: 1;
+    }
+}
+
+.heroHeadline {
+    font-size: var(--text-fs-2xl);
+    font-weight: var(--text-bold);
+    color: var(--color-fg-primary);
+    margin: 0 0 $spacing-size-4;
+    line-height: 1.1;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        font-size: var(--text-fs-3xl);
+        margin: 0 0 $spacing-size-6;
+    }
+
+    @media screen and (min-width: $breakpoint-studio-pricing-large) {
+        font-size: 56px;
+        margin-top: $spacing-size-12;
+        white-space: nowrap;
+    }
+}
+
+.heroSubheadline {
+    font-size: var(--text-fs-base);
+    color: var(--color-fg-secondary);
+    margin: 0 auto;
+    max-width: 500px;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        font-size: var(--text-fs-lg);
+    }
+
+    @media screen and (min-width: $breakpoint-studio-pricing-large) {
+        margin: 0;
+    }
+}
+
+.contentWrapper {
+    max-width: var(--layout-max-width-small);
+    margin: 0 auto;
+    padding: 0 var(--layout-horizontal-margins);
+    display: flex;
+    flex-direction: column-reverse;
+    padding-top: $spacing-size-8;
+
+    @media screen and (min-width: $breakpoint-studio-pricing-large) {
+        gap: $spacing-size-12;
+        align-items: flex-start;
+        flex-direction: row;
+    }
+}
+
+.mainContent {
+    flex: 1;
+    min-width: 0;
+    padding-top: $spacing-size-8;
+    padding-bottom: $spacing-size-8;
+
+    @media screen and (min-width: $breakpoint-studio-pricing-large) {
+        padding-top: $spacing-size-16;
+        padding-bottom: $spacing-size-16;
+    }
+}
+
+.contactInfoSection {
+    margin-top: $spacing-size-6;
+    padding-top: $spacing-size-12;
+    border-top: 1px solid var(--color-border-primary);
+
+    &:first-child {
+        border-top: none;
+        padding-top: 0;
+    }
+
+    #{$selector-darkmode} & {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.sectionHeading {
+    font-size: var(--text-fs-xl);
+    font-weight: var(--text-bold);
+    color: var(--color-fg-primary);
+    margin: 0 0 $spacing-size-3;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        font-size: var(--text-fs-2xl);
+    }
+
+    #{$selector-darkmode} & {
+        color: var(--color-white);
+    }
+}
+
+.trustSignals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-4;
+    justify-content: center;
+    margin-top: $spacing-size-4;
+}
+
+.trustSignal {
+    font-size: var(--text-fs-xs);
+    color: var(--color-fg-tertiary);
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-1;
+
+    &::before {
+        content: '\2713';
+        color: var(--color-brand-500);
+    }
+
+    #{$selector-darkmode} & {
+        color: #64748b;
+
+        &::before {
+            color: #60a5fa;
+        }
+    }
+}
+
+.socialLinks {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    margin-left: 0;
+    margin-top: 24px;
+    flex-wrap: wrap;
+
+    @media (max-width: $breakpoint-about-small) {
+        gap: 12px;
+        margin-top: 16px;
+        justify-content: flex-start;
+    }
+
+    @media screen and (max-width: 400px) {
+        justify-content: center;
+    }
+}
+
+.socialLinkRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-brand-500);
+    font-weight: 500;
+    font-size: 16px;
+    text-decoration: none;
+    transition: color 0.15s;
+    min-width: 0;
+
+    &:hover,
+    &:focus {
+        color: var(--color-brand-700);
+        text-decoration: underline;
+    }
+
+    #{$selector-darkmode} & {
+        color: var(--color-link);
+
+        &:hover {
+            color: var(--color-link);
+        }
+    }
+
+    @media (max-width: 400px) {
+        font-size: 14px;
+        gap: 4px;
+    }
+}
+
+.contactOffice {
+    word-break: break-word;
+    max-width: 100%;
+    font-size: 16px;
+    line-height: 1.6;
+
+    p {
+        padding-top: $spacing-size-4;
+    }
+}
+
+.officeButton {
+    margin-top: $spacing-size-4;
+}
