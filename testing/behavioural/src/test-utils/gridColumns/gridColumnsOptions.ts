@@ -64,6 +64,12 @@ export const gridColumnsBugs = {
      * Solved by AG-17366 when it is completed.
      */
     columnStateEntriesExist: false,
+
+    /**
+     * Additional check for column state entries that verifies the colId exists in the grid.
+     * Solved by AG-17366 when it is completed.
+     */
+    columnStateColsMustExist: false,
 } as const;
 
 /** The type of the known bugs configuration object. */

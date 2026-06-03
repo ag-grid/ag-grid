@@ -17,6 +17,7 @@ import type {
     IPropertiesService,
 } from '../interfaces/iProperties';
 import { _addSafePassiveEventListener } from '../utils/event';
+import { _debugId } from '../utils/generic';
 import { _getLocaleTextFunc } from '../utils/locale';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -73,6 +74,10 @@ export abstract class AgBeanStub<
     //         }
     //     }, 5000);
     // }
+
+    public toJSON(): string {
+        return `${(this as { readonly beanName?: unknown }).beanName || this.constructor.name}#${_debugId(this)}`;
+    }
 
     public destroy(): void {
         const { destroyFunctions } = this;

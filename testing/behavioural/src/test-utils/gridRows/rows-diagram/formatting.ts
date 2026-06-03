@@ -146,6 +146,8 @@ export function formatRowColumns(
             result += ' ' + diagramColumnId + ':' + serialiseValue(value);
         }
 
+        result += gridRows.rowSpanMarker(row, columnId);
+
         const colDef = column.getColDef();
         if (colDef.field) {
             printedFields?.add(colDef.field);

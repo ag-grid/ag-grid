@@ -1,7 +1,7 @@
 import type { Column, GridApi, RowNode } from 'ag-grid-community';
 
 import { valuesEqual } from '../grid-rows-helpers';
-import { getGridHTMLElement } from '../gridHtmlRows';
+import { getGridHTMLElement, parseSpannedCell } from '../gridHtmlRows';
 import type { GridRows } from '../gridRows';
 import type { GridRowErrors } from '../rows-validation/gridRowErrors';
 import {
@@ -23,8 +23,9 @@ export class GridRowDomCellValidator {
     private readonly displayedSections: Column[][];
     private readonly isGroupRowsDisplay: boolean;
     private readonly autoGroupColumn?: Column;
-    /** colId → row-index values covered by a .ag-spanned-row (excluding the anchor). */
-    private readonly rowSpanCoveredIndexes: Map<string, Set<number>>;
+    /** colId → `${pinned}#${rowIndex}` keys covered by a .ag-spanned-row (excluding the anchor).
+     *  Pinned is part of the key so a centre span doesn't mark a pinned row at the same index. */
+    private readonly rowSpanCoveredIndexes: Map<string, Set<string>>;
     /** ids inside the current virtual column range, or null when virtualisation is suppressed. */
     private readonly colVirtIds: Set<string> | null;
 
@@ -52,29 +53,26 @@ export class GridRowDomCellValidator {
                 : null;
     }
 
-    private collectRowSpanCoverage(): Map<string, Set<number>> {
-        const result = new Map<string, Set<number>>();
+    private collectRowSpanCoverage(): Map<string, Set<string>> {
+        const result = new Map<string, Set<string>>();
         const rootEl = getGridHTMLElement(this.api);
         if (!rootEl) {
             return result;
         }
         const spannedCells = rootEl.querySelectorAll('.ag-spanned-row [col-id]');
         for (const cellNode of Array.from(spannedCells)) {
-            const cell = cellNode as HTMLElement;
-            const colId = cell.getAttribute('col-id');
-            const anchorRow = cell.closest<HTMLElement>('[row-index]');
-            const anchorIndex = Number(anchorRow?.getAttribute('row-index'));
-            const span = Number(cell.getAttribute('aria-rowspan'));
-            if (!colId || !Number.isFinite(anchorIndex) || !Number.isFinite(span) || span <= 1) {
+            const info = parseSpannedCell(cellNode);
+            if (!info) {
                 continue;
             }
+            const { colId, pinned, anchorIndex, span } = info;
             let covered = result.get(colId);
             if (!covered) {
-                covered = new Set<number>();
+                covered = new Set<string>();
                 result.set(colId, covered);
             }
             for (let i = 1; i < span; ++i) {
-                covered.add(anchorIndex + i);
+                covered.add(`${pinned}#${anchorIndex + i}`);
             }
         }
         return result;
@@ -102,6 +100,13 @@ export class GridRowDomCellValidator {
             return;
         }
 
+        // Full-width rows render a single full-width cell (the grid marks them `ag-full-width-row`)
+        // and must NOT render any per-column cells.
+        if (rowElements.some((el) => el.classList.contains('ag-full-width-row'))) {
+            this.validateFullWidthRow(rowElements, rowErrors);
+            return;
+        }
+
         if (this.isGroupRowsDisplay && row.group) {
             this.validateGroupRow(row, rowElements, rowErrors);
             return;
@@ -110,6 +115,16 @@ export class GridRowDomCellValidator {
         const coveredByColSpan = this.computeColSpanCoveredIds(row);
         for (const column of this.columns) {
             this.validateCell(row, column, rowElements, rowErrors, coveredByColSpan);
+        }
+    }
+
+    private validateFullWidthRow(rowElements: HTMLElement[], rowErrors: GridRowErrors<any>): void {
+        for (const column of this.columns) {
+            const columnId = column.getColId();
+            rowErrors.add(
+                findCellElement(rowElements, columnId) &&
+                    `Unexpected per-column cell id:"${columnId}" rendered for a full-width row`
+            );
         }
     }
 
@@ -142,7 +157,8 @@ export class GridRowDomCellValidator {
         const cellElement = findCellElement(rowElements, columnId);
         const isCovered =
             coveredByColSpan.has(columnId) ||
-            (typeof row.rowIndex === 'number' && this.rowSpanCoveredIndexes.get(columnId)?.has(row.rowIndex) === true);
+            (typeof row.rowIndex === 'number' &&
+                this.rowSpanCoveredIndexes.get(columnId)?.has(`${row.rowPinned ?? ''}#${row.rowIndex}`) === true);
 
         rowErrors.add(
             !cellElement &&

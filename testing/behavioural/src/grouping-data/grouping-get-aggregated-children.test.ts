@@ -316,7 +316,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             await new GridColumns(api, `without column key in pivot mode, returns all children setup`).checkColumns(`
                 CENTER
                 ├── ag-Grid-AutoColumn "Group" width:200
-                └── sales "Sales" width:200 aggFunc:sum
+                └── sales "Sales" width:200 aggFunc:sum !visible
             `);
             await new GridRows(api, `without column key in pivot mode, returns all children setup`).check(`
                 ROOT id:ROOT_NODE_ID
@@ -365,7 +365,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             ).checkColumns(`
                 CENTER
                 ├── ag-Grid-AutoColumn "Group" width:200
-                └── sales "Sales" width:200 aggFunc:sum
+                └── sales "Sales" width:200 aggFunc:sum !visible
             `);
             await new GridRows(
                 api,
@@ -442,7 +442,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
                 .checkColumns(`
                     CENTER
                     ├── ag-Grid-AutoColumn "Group" width:200
-                    └── sales "Sales" width:200 aggFunc:sum
+                    └── sales "Sales" width:200 aggFunc:sum !visible
                 `);
             await new GridRows(api, `pivot column for non-leaf group returns matching children from subgroups setup`)
                 .check(`
@@ -508,7 +508,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             await new GridColumns(api, `respects filtering in pivot mode setup`).checkColumns(`
                 CENTER
                 ├── ag-Grid-AutoColumn "Group" width:200
-                └── sales "Sales" width:200 aggFunc:sum
+                └── sales "Sales" width:200 aggFunc:sum !visible
             `);
             await new GridRows(api, `respects filtering in pivot mode setup`).check(`
                 ROOT id:ROOT_NODE_ID
@@ -576,7 +576,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             ).checkColumns(`
                 CENTER
                 ├── ag-Grid-AutoColumn "Group" width:200
-                └── sales "Sales" width:200 aggFunc:sum
+                └── sales "Sales" width:200 aggFunc:sum !visible
             `);
             await new GridRows(api, `pivot column group totals return all children (not filtered by pivot keys) setup`)
                 .check(`
@@ -910,7 +910,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             ).checkColumns(`
                 CENTER
                 ├── ag-Grid-AutoColumn "Group" width:200
-                └── sales "Sales" width:200 aggFunc:sum
+                └── sales "Sales" width:200 aggFunc:sum !visible
             `);
             await new GridRows(
                 api,
@@ -992,7 +992,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             ).checkColumns(`
                 CENTER
                 ├── ag-Grid-AutoColumn "Group" width:200
-                └── sales "Sales" width:200 aggFunc:sum
+                └── sales "Sales" width:200 aggFunc:sum !visible
             `);
             await new GridRows(
                 api,
@@ -1091,7 +1091,7 @@ describe('IRowNode.getAggregatedChildren()', () => {
             ).checkColumns(`
                 CENTER
                 ├── ag-Grid-AutoColumn "Group" width:200
-                └── sales "Sales" width:200 aggFunc:sum
+                └── sales "Sales" width:200 aggFunc:sum !visible
             `);
             await new GridRows(
                 api,

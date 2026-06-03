@@ -316,8 +316,8 @@ describe('ag-grid calculated columns', () => {
         });
         await new GridRows(api, 'static calculated span rows', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:r1 athlete:"A" athleteCopy:"A"
-            ├── LEAF id:r2 athlete:"A" athleteCopy:"A"
+            ├── LEAF id:r1 athlete:"A"↧2 athleteCopy:"A"↧2
+            ├── LEAF id:r2 athlete:"A"↥ athleteCopy:"A"↥
             └── LEAF id:r3 athlete:"B" athleteCopy:"B"
         `);
         await asyncSetTimeout(1);
@@ -350,8 +350,8 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
         await new GridRows(api, 'dynamic calculated span rows', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:r1 athlete:"A" athleteCopy:"A"
-            ├── LEAF id:r2 athlete:"A" athleteCopy:"A"
+            ├── LEAF id:r1 athlete:"A"↧2 athleteCopy:"A"↧2
+            ├── LEAF id:r2 athlete:"A"↥ athleteCopy:"A"↥
             └── LEAF id:r3 athlete:"B" athleteCopy:"B"
         `);
 
@@ -376,9 +376,9 @@ describe('ag-grid calculated columns', () => {
         });
         await new GridRows(api, 'constant calculated span rows', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:r1 constant:"Same"
-            ├── LEAF id:r2 constant:"Same"
-            └── LEAF id:r3 constant:"Same"
+            ├── LEAF id:r1 constant:"Same"↧3
+            ├── LEAF id:r2 constant:"Same"↥
+            └── LEAF id:r3 constant:"Same"↥
         `);
         await asyncSetTimeout(1);
 
@@ -429,6 +429,12 @@ describe('ag-grid calculated columns', () => {
             ROOT id:ROOT_NODE_ID profit:"$undefined"
             ├── LEAF id:high revenue:30 cost:12 profit:"$18"
             └── LEAF id:mid revenue:20 cost:11 profit:"$9"
+        `);
+        await new GridColumns(api, 'sorting, filtering and value formatters use evaluated values').checkColumns(`
+            CENTER
+            ├── revenue "Revenue" width:200
+            ├── cost "Cost" width:200
+            └── profit width:200 sort:desc filter
         `);
     });
 
@@ -521,6 +527,13 @@ describe('ag-grid calculated columns', () => {
 
         expect(findColumnDef(api.getColumnDefs()!, 'profit')?.calculatedExpression).toBe('[revenue] - [cost]');
         expect(findColumnDef(api.getColumnDefs()!, 'margin')).toBeUndefined();
+        await new GridColumns(api, 'grid api calculated column mutations do not mutate provided column definitions')
+            .checkColumns(`
+                CENTER
+                ├── revenue "Revenue" width:200
+                ├── cost "Cost" width:200
+                └── profit width:200
+            `);
     });
 
     test('reset column state removes dynamic calculated columns and restores provided calculated columns', async () => {
@@ -585,6 +598,16 @@ describe('ag-grid calculated columns', () => {
             'profit',
             'margin',
         ]);
+        await new GridColumns(
+            api,
+            'reset column state removes dynamic calculated columns and restores provided calculated columns'
+        ).checkColumns(`
+            CENTER
+            ├── revenue "Revenue" width:200
+            ├── cost "Cost" width:200
+            ├── profit "Profit" width:200
+            └── margin width:200
+        `);
     });
 
     test('grid api updates calculated column cellDataType without keeping stale boolean renderer', async () => {
@@ -621,6 +644,15 @@ describe('ag-grid calculated columns', () => {
             └── LEAF id:r1 revenue:10 cost:3 profitable:"yes"
         `);
         expect(api.getColumn('profitable')!.getColDef().cellRenderer).toBeUndefined();
+        await new GridColumns(
+            api,
+            'grid api updates calculated column cellDataType without keeping stale boolean renderer'
+        ).checkColumns(`
+            CENTER
+            ├── revenue "Revenue" width:200
+            ├── cost "Cost" width:200
+            └── profitable width:200
+        `);
     });
 
     test('grid api refreshes calculated-only formula caches', async () => {
@@ -1305,6 +1337,19 @@ describe('ag-grid calculated columns', () => {
         expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBe(
             '[revenue_2025] - [cost_2025]'
         );
+        await new GridColumns(
+            api,
+            'dialog adds calculated columns inside groups without mutating provided column definitions'
+        ).checkColumns(`
+            CENTER
+            ├─┬ "2025" GROUP
+            │ ├── revenue_2025 "Revenue" width:200
+            │ ├── calculated_1 "New title" width:200
+            │ └── cost_2025 "Cost" width:200
+            └─┬ "2026" GROUP
+              ├── revenue_2026 "Revenue" width:200
+              └── cost_2026 "Cost" width:200
+        `);
     });
 
     test('dialog inserts calculated columns after generated auto group columns in visible order', async () => {
@@ -1335,6 +1380,123 @@ describe('ag-grid calculated columns', () => {
             'cost',
         ]);
         expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBe('[revenue] - [cost]');
+        await new GridColumns(
+            api,
+            'dialog inserts calculated columns after generated auto group columns in visible order'
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── calculated_1 "New title" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+    });
+
+    test('calc col anchored to the auto-group col returns behind it after a grouping toggle', async () => {
+        const api = createGrid('calculated-autogroup-toggle', {
+            rowData: [{ id: 'r1', productType: 'A', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'productType', rowGroup: true, hide: true }, { field: 'revenue' }, { field: 'cost' }],
+        });
+        await new GridColumns(api, 'auto-group toggle - initial').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+
+        showColumnMenu(api, 'ag-Grid-AutoColumn');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+        await new GridColumns(api, 'auto-group toggle - after add').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── calculated_1 "New title" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+
+        api.setRowGroupColumns([]);
+        await asyncSetTimeout(1);
+        await new GridColumns(api, 'auto-group toggle - ungrouped').checkColumns(`
+            CENTER
+            ├── calculated_1 "New title" width:200
+            ├── productType "Product Type" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+
+        api.setRowGroupColumns(['productType']);
+        await asyncSetTimeout(1);
+        await new GridColumns(api, 'auto-group toggle - re-grouped').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── calculated_1 "New title" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+    });
+
+    // Solved by AG-17366 when it is completed
+    test.skip('calc col anchored to the first of two auto-group cols after a grouping toggle', async () => {
+        const api = createGrid('calculated-autogroup-toggle-multi', {
+            groupDisplayType: 'multipleColumns',
+            rowData: [{ id: 'r1', productType: 'A', country: 'UK', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'productType', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'revenue' },
+                { field: 'cost' },
+            ],
+        });
+        await new GridColumns(api, 'two auto-group toggle - initial').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-productType "Product Type" width:200
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+
+        showColumnMenu(api, 'ag-Grid-AutoColumn-productType');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+        await new GridColumns(api, 'two auto-group toggle - after add').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-productType "Product Type" width:200
+            ├── calculated_1 "New title" width:200
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+
+        api.setRowGroupColumns([]);
+        await asyncSetTimeout(1);
+        await new GridColumns(api, 'two auto-group toggle - ungrouped').checkColumns(`
+            CENTER
+            ├── calculated_1 "New title" width:200
+            ├── productType "Product Type" width:200
+            ├── country "Country" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+
+        api.setRowGroupColumns(['productType', 'country']);
+        await asyncSetTimeout(1);
+        await new GridColumns(api, 'two auto-group toggle - re-grouped').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-productType "Product Type" width:200
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            ├── calculated_1 "New title" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
     });
 
     test('dialog inserts calculated columns after the clicked generated auto group column in multiple-columns mode', async () => {
@@ -1373,6 +1535,17 @@ describe('ag-grid calculated columns', () => {
             'cost',
         ]);
         expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBe('[revenue] - [cost]');
+        await new GridColumns(
+            api,
+            'dialog inserts calculated columns after the clicked generated auto group column in multiple-columns mode'
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-productType "Product Type" width:200
+            ├── calculated_1 "New title" width:200
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
     });
 
     test('dialog-anchored calculated column can be moved away from its anchor and stays moved across refreshes', async () => {
@@ -1413,6 +1586,16 @@ describe('ag-grid calculated columns', () => {
             'other',
             'calculated_1',
         ]);
+        await new GridColumns(
+            api,
+            'dialog-anchored calculated column can be moved away from its anchor and stays moved across refreshes'
+        ).checkColumns(`
+            CENTER
+            ├── revenue "Revenue" width:200
+            ├── cost "Cost" width:200
+            ├── other "Other" width:200
+            └── calculated_1 "New title" width:200
+        `);
     });
 
     test('dialog columns from different auto group columns each stay under their own anchor', async () => {
@@ -1452,6 +1635,16 @@ describe('ag-grid calculated columns', () => {
             'revenue',
             'cost',
         ]);
+        await new GridColumns(api, 'dialog columns from different auto group columns each stay under their own anchor')
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-productType "Product Type" width:200
+                ├── calculated_1 "New title" width:200
+                ├── ag-Grid-AutoColumn-country "Country" width:200
+                ├── calculated_2 "New title" width:200
+                ├── revenue "Revenue" width:200
+                └── cost "Cost" width:200
+            `);
     });
 
     test('dispatches calculated column API lifecycle events', async () => {
@@ -1543,6 +1736,45 @@ describe('ag-grid calculated columns', () => {
     });
 
     // Solved by AG-17366 when it is completed
+    test.skip('removeCalculatedColumn then re-adding the same colId yields a working live column', async () => {
+        const api = createGrid('calc-col-readd-same-id', {
+            rowData: [
+                { id: 'r1', revenue: 10, cost: 3 },
+                { id: 'r2', revenue: 20, cost: 8 },
+            ],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+
+        api.addCalculatedColumn({ colId: 'profit', calculatedExpression: '[revenue] - [cost]' });
+        await asyncSetTimeout(1);
+
+        api.removeCalculatedColumn('profit');
+        await asyncSetTimeout(1);
+        expect(api.getColumn('profit')).toBeNull();
+
+        // Re-add the SAME colId. Must NOT resurrect the destroyed AgColumn from the first add.
+        api.addCalculatedColumn({ colId: 'profit', calculatedExpression: '[revenue] - [cost]' });
+        await asyncSetTimeout(1);
+
+        expect(api.getColumn('profit')).toBeTruthy();
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: false })).toBe(7);
+        expect(api.getCellValue({ rowNode: api.getRowNode('r2')!, colKey: 'profit', useFormatter: false })).toBe(12);
+
+        // It must behave as a live column: sorting through it must work.
+        api.applyColumnState({ state: [{ colId: 'profit', sort: 'desc' }] });
+        await asyncSetTimeout(1);
+        expect(api.getDisplayedRowAtIndex(0)?.data.id).toBe('r2');
+        expect(api.getDisplayedRowAtIndex(1)?.data.id).toBe('r1');
+        await new GridColumns(api, 'removeCalculatedColumn then re-adding the same colId yields a working live column')
+            .checkColumns(`
+                CENTER
+                ├── revenue "Revenue" width:200
+                ├── cost "Cost" width:200
+                └── profit width:200 sort:desc
+            `);
+    });
+
+    // Solved by AG-17366 when it is completed
     test.skip('updateCalculatedColumn with an unchanged expression does NOT dispatch newColumnsLoaded', async () => {
         const newColumnsLoaded = vi.fn();
         const api = createGrid('calc-col-noop-update', {
@@ -1627,6 +1859,16 @@ describe('ag-grid calculated columns', () => {
         const updatedMargin = api.getColumn('margin')!;
         expect(updatedMargin.getActualWidth()).toBe(260);
         expect(updatedMargin.getPinned()).toBe('right');
+        await new GridColumns(
+            api,
+            'updateCalculatedColumn applies column-state changes (width, pinned, hide) to the live column'
+        ).checkColumns(`
+            CENTER
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+            RIGHT
+            └── margin width:260
+        `);
     });
 
     test('does not dispatch calculated column lifecycle events for rejected API mutations', async () => {
@@ -2333,6 +2575,13 @@ describe('ag-grid calculated columns', () => {
             ├── LEAF id:r1 revenue:10 cost:3 profit:7
             └── LEAF id:r2 revenue:20 cost:8 profit:12
         `);
+        await new GridColumns(secondApi, 'calculated columns survive a getColumnDefs / createGrid roundtrip')
+            .checkColumns(`
+                CENTER
+                ├── revenue "Revenue" width:200
+                ├── cost "Cost" width:200
+                └── profit width:200
+            `);
     });
 
     test('warns when calculatedExpression is combined with field, valueGetter or valueSetter', () => {

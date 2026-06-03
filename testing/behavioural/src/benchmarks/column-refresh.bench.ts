@@ -2,7 +2,7 @@ import { bench, suite } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, RowSelectionModule } from 'ag-grid-community';
-import { GroupFilterModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { GroupFilterModule, PivotModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
 
@@ -13,6 +13,7 @@ const modules = [
     RowGroupingModule,
     PivotModule,
     GroupFilterModule,
+    RowNumbersModule,
 ];
 
 const tinyRows: { id: string; group: string; value: number; [key: string]: any }[] = [
@@ -204,4 +205,29 @@ suite('column refresh — pure col-model rebuild paths (tiny rowData)', () => {
     benchRefresh('setColumnDefs 20 flex cols (alternating defs)', { columnDefs: cols20FlexA }, (api, i) => {
         api.setGridOption('columnDefs', i & 1 ? cols20FlexA : cols20FlexB);
     });
+
+    // 100-col scenarios — setColumnDefs is the full rebuild path (refreshCols + visibleCols.refresh).
+    const cols100A = buildFlatCols(100, 'A');
+    const cols100B = buildFlatCols(100, 'B');
+    benchRefresh('setColumnDefs 100 flat cols (alternating defs)', { columnDefs: cols100A }, (api, i) => {
+        api.setGridOption('columnDefs', i & 1 ? cols100A : cols100B);
+    });
+    const grouped100A = buildGroupedCols(10, 10, 'A'); // 10 groups × 10 leaves = 100
+    const grouped100B = buildGroupedCols(10, 10, 'B');
+    benchRefresh('setColumnDefs 10 groups × 10 cols (alternating defs)', { columnDefs: grouped100A }, (api, i) => {
+        api.setGridOption('columnDefs', i & 1 ? grouped100A : grouped100B);
+    });
+
+    // Column move — near-pure `visibleCols.refresh` (no colDef rebuild): _moveInArray + refresh.
+    // Alternating target indices guarantee a real move (and a real refresh) every iteration.
+    benchRefresh('move column in 100 flat cols (pure visibleCols.refresh)', { columnDefs: cols100A }, (api, i) => {
+        api.moveColumns(['c10'], i & 1 ? 90 : 10);
+    });
+    benchRefresh(
+        'move column in 100 grouped cols (pure visibleCols.refresh)',
+        { columnDefs: grouped100A },
+        (api, i) => {
+            api.moveColumns(['g0_c0'], i & 1 ? 90 : 2);
+        }
+    );
 });

@@ -142,6 +142,10 @@ export class AgColumn<TValue = any>
         this.beans.rowSpanSvc?.deregister(this);
     }
 
+    public override toJSON(): string {
+        return `Col#${this.colId}#${this.instanceId}`;
+    }
+
     public getInstanceId(): ColumnInstanceId {
         return this.instanceId;
     }

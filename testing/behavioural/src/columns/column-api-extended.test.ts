@@ -434,9 +434,6 @@ describe('Column API — extended coverage', () => {
             expect(api.getValueColumns().map((c) => c.getColId())).toEqual(['silver']);
         });
 
-        // Locks in the runtime-consistency invariant: a column deactivated as a value col must
-        // also clear its runtime `getAggFunc()`. `colDef.aggFunc` (initial config) is preserved
-        // so re-activation via `addValueColumns` restores the original aggFunc.
         // Solved by AG-17366 when it is completed
         test.skip('removeValueColumns clears runtime aggFunc; addValueColumns restores it from colDef', async () => {
             const api = gridsManager.createGrid('myGrid', {

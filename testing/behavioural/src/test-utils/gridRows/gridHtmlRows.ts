@@ -23,6 +23,32 @@ export function getGridHTMLElement<TData = any>(api: GridApi<TData>): HTMLElemen
     return TestGridsManager.getHTMLElement(api) ?? null;
 }
 
+export interface SpannedCellInfo {
+    colId: string;
+    pinned: '' | 'top' | 'bottom';
+    anchorIndex: number;
+    span: number;
+}
+
+/** Parse a `.ag-spanned-row [col-id]` cell. Pinned rows carry a prefixed `row-index` (`t-0`/`b-0`);
+ *  the model index (matching `RowNode.rowIndex`) is the trailing number. Returns null if not a real span. */
+export function parseSpannedCell(cell: Element): SpannedCellInfo | null {
+    const colId = cell.getAttribute('col-id');
+    const span = Number(cell.getAttribute('aria-rowspan'));
+    const raw = cell.closest('[row-index]')?.getAttribute('row-index');
+    const anchorIndex = raw != null ? Number(raw.replace(/^\D+/, '')) : NaN;
+    if (!colId || !Number.isFinite(anchorIndex) || !Number.isFinite(span) || span <= 1) {
+        return null;
+    }
+    let pinned: '' | 'top' | 'bottom' = '';
+    if (cell.closest('.ag-grid-pinned-top-rows')) {
+        pinned = 'top';
+    } else if (cell.closest('.ag-grid-pinned-bottom-rows')) {
+        pinned = 'bottom';
+    }
+    return { colId, pinned, anchorIndex, span };
+}
+
 export function getGridOwnerDocument<TData = any>(api: GridApi<TData>): Document {
     return getGridHTMLElement(api)?.ownerDocument ?? document;
 }

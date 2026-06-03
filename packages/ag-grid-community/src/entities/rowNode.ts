@@ -342,6 +342,10 @@ export class RowNode<TData = any>
         this.beans = beans;
     }
 
+    public toJSON(): string {
+        return `Row#${this.id ?? this.key ?? '?'}@${this.rowIndex ?? '?'}#${this.__objectId}`;
+    }
+
     /**
      * Replaces the data on the `rowNode`. When this method is called, the grid refreshes the entire rendered row if it is displayed.
      */

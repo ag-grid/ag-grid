@@ -1,4 +1,4 @@
-import { _escapeString } from 'ag-stack';
+import { _debugId, _escapeString } from 'ag-stack';
 
 import { BeanStub } from '../context/beanStub';
 import type {
@@ -63,6 +63,10 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 
     public getParent(): AgColumnGroup | null {
         return this.parent;
+    }
+
+    public override toJSON(): string {
+        return `ColGrp#${this.getUniqueId()}#${_debugId(this)}`;
     }
 
     public getUniqueId(): HeaderColumnId {

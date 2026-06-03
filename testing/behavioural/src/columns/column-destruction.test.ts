@@ -469,6 +469,46 @@ describe('Column destruction', () => {
             expect((col as any).isAlive()).toBe(false);
         }
     });
+
+    test('destroys the displaced provided column group when its colGroupDef changes (stable groupId)', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ groupId: 'g', headerName: 'G-A', children: [{ colId: 'a' }, { colId: 'b' }] }],
+            rowData: [{ a: 1, b: 2 }],
+        });
+        const providedGroup = () => (api.getColumn('a') as any).getParent().getProvidedColumnGroup();
+
+        const before = providedGroup();
+        expect(before.isAlive()).toBe(true);
+
+        api.setGridOption('columnDefs', [
+            { groupId: 'g', headerName: 'G-B', children: [{ colId: 'a' }, { colId: 'b' }] },
+        ]);
+
+        const after = providedGroup();
+        expect(after).not.toBe(before);
+        expect(before.isAlive()).toBe(false);
+        expect(after.isAlive()).toBe(true);
+        await new GridColumns(api, 'rebuilt group G-B with the same leaves').checkColumns(`
+            CENTER
+            └─┬ "G-B" GROUP
+              ├── a width:200
+              └── b width:200
+        `);
+        await new GridRows(api, 'rows unaffected by the group rebuild').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0
+        `);
+
+        // Repeated structural changes must not accumulate live instances — only the current one stays.
+        const seen = [before, after];
+        for (let i = 0; i < 3; ++i) {
+            api.setGridOption('columnDefs', [
+                { groupId: 'g', headerName: `G-${i}`, children: [{ colId: 'a' }, { colId: 'b' }] },
+            ]);
+            seen.push(providedGroup());
+        }
+        expect(seen.filter((g) => g.isAlive()).length).toBe(1);
+    });
 });
 
 /** Walks `col.originalParent` upwards and returns the wrapper chain (excludes the leaf col).

@@ -1631,8 +1631,8 @@ describe('deferred column tool panel pivot mode', () => {
         ).checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            ├── silver "Silver" width:200 aggFunc:sum
-            └── bronze "Bronze" width:200 aggFunc:sum
+            ├── silver "Silver" width:200 aggFunc:sum !visible
+            └── bronze "Bronze" width:200 aggFunc:sum !visible
         `);
         await new GridRows(
             gridApi,

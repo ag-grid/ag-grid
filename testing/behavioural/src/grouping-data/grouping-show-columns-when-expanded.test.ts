@@ -1530,23 +1530,6 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
         expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('groupHideColumnsUntilExpanded with rowData unspecified — only level-0 auto col visible', async () => {
-        const api = gridsManager.createGrid('hide-rowData-unspecified', {
-            columnDefs: [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'year', rowGroup: true, hide: true },
-                { field: 'athlete' },
-            ],
-            groupDisplayType: 'multipleColumns',
-            groupHideColumnsUntilExpanded: true,
-        });
-
-        await asyncSetTimeout(0);
-
-        expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn-country']);
-    });
-
     test('changing row group in multi-auto-col mode rebuilds auto cols (slug mismatch path)', async () => {
         // Start with rowGroup country. Then change row groups via api.applyColumnState (so the
         // rowGroup state explicitly transitions) — verifies the auto col list rebuilds to the new

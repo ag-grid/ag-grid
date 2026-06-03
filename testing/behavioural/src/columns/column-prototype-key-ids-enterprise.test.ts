@@ -9,8 +9,7 @@ import { TestGridsManager } from '../test-utils';
 // Enterprise features that key internal lookup Records by user-supplied colId / groupId. With a
 // plain `{}` these collide with Object.prototype members; the grid uses `Object.create(null)`.
 
-// Solved by AG-17366 when it is completed
-describe.skip('Enterprise: prototype-name colIds / groupIds', () => {
+describe('Enterprise: prototype-name colIds / groupIds', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
@@ -25,7 +24,8 @@ describe.skip('Enterprise: prototype-name colIds / groupIds', () => {
     beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
-    test('advanced filter evaluates against a prototype-name colId (expressionEvaluatorParams map)', () => {
+    // Solved by AG-17366 when it is completed
+    test.skip('advanced filter evaluates against a prototype-name colId (expressionEvaluatorParams map)', () => {
         const api = gridsManager.createGrid('g', {
             columnDefs: [
                 { colId: 'toString', field: 'a', filter: true },
@@ -51,7 +51,8 @@ describe.skip('Enterprise: prototype-name colIds / groupIds', () => {
         expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe('keep');
     });
 
-    test('row grouping by prototype-name colIds keeps order (orderedColsService colId map)', () => {
+    // Solved by AG-17366 when it is completed
+    test.skip('row grouping by prototype-name colIds keeps order (orderedColsService colId map)', () => {
         const api = gridsManager.createGrid('g', {
             columnDefs: [
                 { colId: 'toString', field: 'a' },

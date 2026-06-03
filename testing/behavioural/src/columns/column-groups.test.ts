@@ -252,6 +252,57 @@ describe('Column Groups', () => {
                   └── b width:200
             `);
         });
+
+        test('collapsing/expanding clears the left of children that leave the displayed set (no stale offset)', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                {
+                    headerName: 'Expandable',
+                    groupId: 'expandable',
+                    openByDefault: true,
+                    children: [
+                        { colId: 'always' },
+                        { colId: 'open_only', columnGroupShow: 'open' },
+                        { colId: 'closed_only', columnGroupShow: 'closed' },
+                    ],
+                },
+            ];
+
+            const api = gridsManager.createGrid('myGrid', { columnDefs });
+
+            const openOnly = api.getColumn('open_only')!;
+            const closedOnly = api.getColumn('closed_only')!;
+            expect(openOnly.getLeft()).not.toBeNull();
+            expect(closedOnly.getLeft()).toBeNull();
+            await new GridColumns(api, 'open: open_only shown, closed_only hidden').checkColumns(`
+                CENTER
+                └─┬ "Expandable" GROUP open
+                  ├── always width:200
+                  ├── open_only width:200 columnGroupShow:open
+                  └── closed_only width:200 columnGroupShow:closed hidden
+            `);
+
+            api.setColumnGroupOpened('expandable', false);
+            expect(openOnly.getLeft()).toBeNull();
+            expect(closedOnly.getLeft()).not.toBeNull();
+            await new GridColumns(api, 'collapsed: open_only hidden, closed_only shown').checkColumns(`
+                CENTER
+                └─┬ "Expandable" GROUP closed
+                  ├── always width:200
+                  ├── open_only width:200 columnGroupShow:open hidden
+                  └── closed_only width:200 columnGroupShow:closed
+            `);
+
+            api.setColumnGroupOpened('expandable', true);
+            expect(openOnly.getLeft()).not.toBeNull();
+            expect(closedOnly.getLeft()).toBeNull();
+            await new GridColumns(api, 're-expanded: back to open_only shown, closed_only hidden').checkColumns(`
+                CENTER
+                └─┬ "Expandable" GROUP open
+                  ├── always width:200
+                  ├── open_only width:200 columnGroupShow:open
+                  └── closed_only width:200 columnGroupShow:closed hidden
+            `);
+        });
     });
 
     describe('columnGroupShow behaviour', () => {
@@ -1094,19 +1145,56 @@ describe('Column Groups', () => {
             `);
             await asyncSetTimeout(0);
 
-            // Group identity preserved across the toggle (skipTreeBuild path).
             expect((api.getColumn('innerAlways') as any).parent === innerGroup).toBe(true);
             expect(innerGroup.parent === outerGroup).toBe(true);
 
-            // Inner naturally dispatches — its children flipped.
             expect(innerEvents.length).toBeGreaterThan(0);
-            // Cascade: outer must dispatch — its own immediate children list is structurally
-            // identical, but inner's width changed, so listeners that aggregate descendant widths
-            // need to follow the cascade.
             expect(outerEvents.length).toBeGreaterThan(0);
-            // Outer's displayedChildren reference is preserved (lazy allocation when content match).
             const outerChildrenAfter = outerGroup.displayedChildren;
             expect(outerChildrenAfter === outerChildrenBefore).toBe(true);
+        });
+
+        test('re-setting identical columnDefs keeps the column instance stable', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { headerName: 'G1', groupId: 'g1', children: [{ colId: 'a' }, { colId: 'b' }] },
+                    { colId: 'c' },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+
+            const colA = api.getColumn('a');
+            expect(colA).not.toBeNull();
+
+            api.setGridOption('columnDefs', [
+                { headerName: 'G1', groupId: 'g1', children: [{ colId: 'a' }, { colId: 'b' }] },
+                { colId: 'c' },
+            ]);
+
+            // Columns are reused by colId across a no-op refresh.
+            expect(api.getColumn('a') === colA).toBe(true);
+        });
+
+        // Solved by AG-17366 when it is completed: on `latest` the displayed column-group instance
+        // is recreated on every refresh; the rewrite's wrapper cache reuses it across a no-op refresh.
+        test.skip('re-setting identical columnDefs keeps the column group instance stable', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { headerName: 'G1', groupId: 'g1', children: [{ colId: 'a' }, { colId: 'b' }] },
+                    { colId: 'c' },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+
+            const groupG1 = api.getColumnGroup('g1');
+            expect(groupG1).not.toBeNull();
+
+            api.setGridOption('columnDefs', [
+                { headerName: 'G1', groupId: 'g1', children: [{ colId: 'a' }, { colId: 'b' }] },
+                { colId: 'c' },
+            ]);
+
+            expect(api.getColumnGroup('g1') === groupG1).toBe(true);
         });
 
         test('toggle nested expandable groups independently', async () => {
@@ -1608,14 +1696,6 @@ describe('Column Groups', () => {
     });
 
     describe('group id uniqueness across refresh', () => {
-        // A reused padding chain keeps its previous-build groupId while buildPaddedChain reallocates
-        // the same numeric id to a fresh group — producing two provided groups with the same id in
-        // one build. The shared id makes the partId counter hand out partId 1 to one of them, so
-        // its `displayInstances` map is sparse. getColumnGroup / rendering must stay correct, and
-        // an id refresh must never leave a real group unresolvable.
-
-        // Padding column BEFORE the new group: the reused padding's id is reserved before the
-        // group is allocated, so the real (non-padding) group stays at partId 0.
         test('getColumnGroup resolves every group after a refresh — padding before group', async () => {
             // Leading plain `b` forces a padding chain (depth-equalising vs the deeper group).
             const api = gridsManager.createGrid('groupIdUniquePadFirst', {
@@ -1649,11 +1729,6 @@ describe('Column Groups', () => {
             `);
         });
 
-        // Padding column AFTER the new group: the group is allocated its id before the reused
-        // padding chain is processed, so a benign id collision remains and the padding group's
-        // `displayInstances` is sparse. Exercises the sparse path through pruneInstances /
-        // getColumnGroup / rendering — all must stay correct (and would crash if the map were ever
-        // turned into a packed array).
         test('getColumnGroup resolves every group after a refresh — group before padding', async () => {
             const api = gridsManager.createGrid('groupIdUniqueGroupFirst', {
                 columnDefs: [{ headerName: 'G', children: [{ colId: 'a' }] }, { colId: 'x' }],
@@ -1682,9 +1757,6 @@ describe('Column Groups', () => {
             `);
         });
 
-        // A group spanning two pinned sections has TWO display instances — partId 0 and 1 — which
-        // occupy adjacent `displayInstances` slots. Directly exercises the dense-array multi-slot
-        // path driven by `getInstanceIdForKey`, confirming no holes and correct per-instance lookup.
         // Solved by AG-17366 when it is completed
         test.skip('group split across pinned sections has dense partId-indexed instances', async () => {
             const api = gridsManager.createGrid('splitGroup', {

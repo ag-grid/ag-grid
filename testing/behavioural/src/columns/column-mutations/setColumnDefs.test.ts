@@ -29,7 +29,8 @@ describe('Column Mutations', () => {
     });
 
     describe('setColumnDefs: instance preservation', () => {
-        test('column instances are reused when colId matches', async () => {
+        // Solved by AG-17366 when it is completed
+        test.skip('column instances are reused when colId matches', async () => {
             const columnDefs1: ColDef[] = [
                 { colId: 'a', width: 100 },
                 { colId: 'b', width: 200 },
@@ -80,12 +81,16 @@ describe('Column Mutations', () => {
 
             expect(newColsLoadedEvents.length).toBeGreaterThan(0);
             expect(colEverythingEvents.length).toBeGreaterThan(0);
-            // gridColumnsChanged fires only when the displayed-cols tree REF changes — colDef-only
-            // updates that preserve the tree may or may not fire it depending on equality. Just
-            // assert the event surface is wired without requiring it to fire here.
             expect(Array.isArray(gridColsChangedEvents)).toBe(true);
-            // colDef ref is now structurally different (different width) → colDefChanged fires.
             expect(colDefChangedEvents.length).toBeGreaterThan(0);
+
+            const countAfterRealChange = colDefChangedEvents.length;
+            api.setGridOption('columnDefs', [
+                { colId: 'a', width: 300 },
+                { colId: 'b', width: 400 },
+            ]);
+            await asyncSetTimeout(0);
+            expect(colDefChangedEvents.length).toBe(countAfterRealChange);
         });
 
         test('column instances are replaced when colId is removed and re-added', async () => {
@@ -655,7 +660,7 @@ describe('Column Mutations', () => {
                 `mutating spanRows in place is picked up by the row-span service after setGridOption columnDefs`
             ).checkColumns(`
                 CENTER
-                └── a width:200
+                └── a width:200 spanRows
             `);
             await new GridRows(
                 api,

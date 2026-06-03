@@ -365,13 +365,13 @@ export class GridColumnsValidator {
 
     /** Tree leaves (flattened) per section must equal that section's flat column array. */
     private validateTreeMatchesFlat(gridColumns: GridColumns, isRtl: boolean): void {
-        if (!this.bugs.treeLeavesMatchFlatArray || !gridColumns.hasColumnGroups) {
+        if (!gridColumns.hasColumnGroups) {
             return;
         }
         const check = (tree: (Column | ColumnGroup)[], flat: Column[], label: 'left' | 'center' | 'right'): void => {
             const leaves: Column[] = [];
             this.collectLeaves(tree, leaves);
-            if (leaves.length !== flat.length) {
+            if (leaves.length !== flat.length && this.bugs.treeLeavesMatchFlatArray) {
                 this.errors.default.add(
                     `${label} tree has ${leaves.length} leaf columns but ${label}Cols flat array has ${flat.length}.`
                 );
@@ -706,7 +706,7 @@ export class GridColumnsValidator {
     /** Every colId in `getColumnState()` must be findable via `api.getColumn`. */
     private validateColumnStateColumnsExist(gridColumns: GridColumns): void {
         const api = gridColumns.api;
-        if (!this.bugs.columnStateEntriesExist || typeof api.getColumn !== 'function') {
+        if (typeof api.getColumn !== 'function') {
             return;
         }
         const stateArr = api.getColumnState?.();
@@ -716,7 +716,7 @@ export class GridColumnsValidator {
         for (let i = 0, len = stateArr.length; i < len; ++i) {
             const colId = stateArr[i].colId;
             const found = api.getColumn(colId);
-            if (!found) {
+            if (!found && this.bugs.columnStateColsMustExist) {
                 // Auto-group columns and other generated columns may appear in state without being looked up
                 // by id from `getColumn` in some legacy modes — only flag if the column id looks like a regular
                 // user-defined column (not ag-Grid-auto- prefix).

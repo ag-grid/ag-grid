@@ -2,7 +2,7 @@
  * Split from column-mutations.test.ts — see sibling files for related coverage.
  * Tests instantiate the full grid via TestGridsManager and exercise public APIs.
  */
-import type { ColDef, Column } from 'ag-grid-community';
+import type { ColDef, Column, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
@@ -22,6 +22,64 @@ describe('Column Mutations - applyColumnState', () => {
 
     afterEach(() => {
         gridsManager.reset();
+    });
+
+    describe('state round-trip — visual properties', () => {
+        // Captures a rich column state, scrambles every property, re-applies the captured state,
+        // and asserts getColumnState round-trips exactly (order, width, sort, sortIndex, hide, pinned, flex).
+        // Guards the column-state service against fidelity regressions.
+        const pick = (api: GridApi) =>
+            api.getColumnState().map((s) => ({
+                colId: s.colId,
+                width: s.width,
+                sort: s.sort ?? null,
+                sortIndex: s.sortIndex ?? null,
+                hide: !!s.hide,
+                pinned: s.pinned ?? null,
+                flex: s.flex ?? null,
+            }));
+
+        test('getColumnState ↔ applyColumnState preserves width/sort/pinned/hide/flex and order', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                    { colId: 'c', field: 'c' },
+                    { colId: 'd', field: 'd' },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+            });
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'd', width: 320, sort: 'asc', sortIndex: 0, pinned: 'right' },
+                    { colId: 'a', width: 90, sort: 'desc', sortIndex: 1, pinned: 'left' },
+                    { colId: 'b', hide: true },
+                    { colId: 'c', flex: 2 },
+                ],
+                applyOrder: true,
+            });
+
+            const captured = pick(api);
+
+            // Scramble everything: widths, sort, visibility, pinning and order.
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', width: 200, sort: null, sortIndex: null, pinned: null },
+                    { colId: 'b', hide: false },
+                    { colId: 'c', flex: null, width: 200 },
+                    { colId: 'd', width: 200, sort: null, sortIndex: null, pinned: null },
+                ],
+                applyOrder: true,
+                defaultState: { sort: null },
+            });
+            expect(pick(api)).not.toEqual(captured);
+
+            // Re-apply the captured state — it must restore the exact same observable state.
+            api.applyColumnState({ state: captured, applyOrder: true });
+
+            expect(pick(api)).toEqual(captured);
+        });
     });
 
     describe('applyColumnState resilience', () => {
@@ -1187,6 +1245,261 @@ describe('Column Mutations - applyColumnState', () => {
                 · └── LEAF hidden id:2
             `);
         });
+
+        test('defaultState alone is applied to pivot result cols', async () => {
+            const api = gridsManager.createGrid('defaultStatePivot', {
+                columnDefs: [
+                    { colId: 'country', rowGroup: true },
+                    { colId: 'sport', pivot: true },
+                    { colId: 'gold', aggFunc: 'sum' },
+                ],
+                pivotMode: true,
+                rowData: [
+                    { country: 'USA', sport: 'Swim', gold: 5 },
+                    { country: 'UK', sport: 'Run', gold: 3 },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            const pivotCols = api.getPivotResultColumns();
+            expect(pivotCols).not.toBeNull();
+            expect(pivotCols!.length).toBeGreaterThan(0);
+
+            api.applyColumnState({ defaultState: { width: 321 } });
+            await asyncSetTimeout(0);
+
+            for (const col of api.getPivotResultColumns()!) {
+                expect(col.getActualWidth()).toBe(321);
+            }
+        });
+    });
+
+    describe('applyColumnState service-col state created within the same call', () => {
+        test('activating rowGroup + auto-col state in one call lands on the freshly created auto col', async () => {
+            const api = gridsManager.createGrid('autoColCreatedSameCall', {
+                columnDefs: [{ colId: 'a' }, { colId: 'grp' }],
+                rowData: [{ a: 1, grp: 'x' }],
+            });
+            await asyncSetTimeout(0);
+            expect(api.getColumn('ag-Grid-AutoColumn')).toBeFalsy();
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'grp', rowGroup: true },
+                    { colId: 'ag-Grid-AutoColumn', width: 250, sort: 'asc' },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            const autoCol = api.getColumn('ag-Grid-AutoColumn');
+            expect(autoCol).toBeTruthy();
+            expect(autoCol!.getActualWidth()).toBe(250);
+            expect(autoCol!.getSort()).toBe('asc');
+            await new GridColumns(api, 'auto col state applied on creation').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:250 sort:asc
+                ├── a width:200
+                └── grp width:200 rowGroup
+            `);
+        });
+
+        test('multipleColumns: per-auto-col state lands on the right recreated instance', async () => {
+            const api = gridsManager.createGrid('multiAutoState', {
+                columnDefs: [{ colId: 'country' }, { colId: 'year' }, { colId: 'val' }],
+                groupDisplayType: 'multipleColumns',
+                rowData: [{ country: 'USA', year: 2020, val: 1 }],
+            });
+            await asyncSetTimeout(0);
+            expect(api.getColumn('ag-Grid-AutoColumn-country')).toBeFalsy();
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'country', rowGroup: true, rowGroupIndex: 0 },
+                    { colId: 'year', rowGroup: true, rowGroupIndex: 1 },
+                    { colId: 'ag-Grid-AutoColumn-country', width: 275 },
+                    { colId: 'ag-Grid-AutoColumn-year', sort: 'desc' },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            const autoCountry = api.getColumn('ag-Grid-AutoColumn-country');
+            const autoYear = api.getColumn('ag-Grid-AutoColumn-year');
+            expect(autoCountry).toBeTruthy();
+            expect(autoYear).toBeTruthy();
+            expect(autoCountry!.getActualWidth()).toBe(275);
+            expect(autoYear!.getSort()).toBe('desc');
+        });
+
+        test('resetColumnState orders correctly when multipleColumns auto cols are recreated', async () => {
+            const api = gridsManager.createGrid('resetMultiAuto', {
+                columnDefs: [
+                    { colId: 'country', rowGroup: true, rowGroupIndex: 0 },
+                    { colId: 'year', rowGroup: true, rowGroupIndex: 1 },
+                    { colId: 'val' },
+                ],
+                groupDisplayType: 'multipleColumns',
+                rowData: [{ country: 'USA', year: 2020, val: 1 }],
+            });
+            await asyncSetTimeout(0);
+
+            // Drop one rowGroup, reorder — diverges the live auto-col set from the colDef set.
+            api.applyColumnState({ state: [{ colId: 'year', rowGroup: false }] });
+            api.moveColumns(['val'], 0);
+            await asyncSetTimeout(0);
+
+            api.resetColumnState();
+            await asyncSetTimeout(0);
+
+            // Both group auto cols are back, in colDef-group order, ahead of the body cols.
+            await new GridColumns(api, 'reset multipleColumns auto cols recreated').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-country width:200
+                ├── ag-Grid-AutoColumn-year width:200
+                ├── country width:200 rowGroup rowGroupIndex:0
+                ├── year width:200 rowGroup rowGroupIndex:1
+                └── val width:200
+            `);
+            expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['country', 'year']);
+        });
+    });
+
+    describe('applyColumnState without defaultState leaves unlisted cols untouched', () => {
+        test('a partial apply changes only the named col; rowGroup/sort/pinned on others persist', async () => {
+            const api = gridsManager.createGrid('partialNoDefault', {
+                columnDefs: [
+                    { colId: 'a' },
+                    { colId: 'grp', rowGroup: true },
+                    { colId: 'sorted', sort: 'asc' },
+                    { colId: 'pinnedCol', pinned: 'left' },
+                ],
+                rowData: [{ a: 1, grp: 'x', sorted: 2, pinnedCol: 3 }],
+            });
+            await asyncSetTimeout(0);
+
+            api.applyColumnState({ state: [{ colId: 'a', width: 150 }] });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('a')!.getActualWidth()).toBe(150);
+            expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['grp']);
+            expect(api.getColumn('sorted')!.getSort()).toBe('asc');
+            expect(api.getColumn('pinnedCol')!.getPinned()).toBe('left');
+        });
+    });
+
+    describe('applyColumnState / resetColumnState event-emission baseline', () => {
+        const trackedEvents = [
+            'columnEverythingChanged',
+            'columnRowGroupChanged',
+            'columnPivotChanged',
+            'columnValueChanged',
+            'columnMoved',
+            'columnVisible',
+            'columnResized',
+            'columnPinned',
+            'sortChanged',
+            'columnsReset',
+        ] as const;
+
+        const trackEvents = (api: ReturnType<typeof gridsManager.createGrid>): Record<string, number> => {
+            const counts: Record<string, number> = {};
+            for (let i = 0; i < trackedEvents.length; ++i) {
+                const name = trackedEvents[i];
+                counts[name] = 0;
+                api.addEventListener(name, () => {
+                    counts[name]++;
+                });
+            }
+            return counts;
+        };
+
+        test('simple single-field apply emits one everythingChanged + one resized', async () => {
+            const api = gridsManager.createGrid('evtSimple', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            });
+            await asyncSetTimeout(0);
+
+            const counts = trackEvents(api);
+            api.applyColumnState({ state: [{ colId: 'a', width: 150 }] });
+            await asyncSetTimeout(0);
+
+            expect(counts).toEqual({
+                columnEverythingChanged: 1,
+                columnRowGroupChanged: 0,
+                columnPivotChanged: 0,
+                columnValueChanged: 0,
+                columnMoved: 0,
+                columnVisible: 0,
+                columnResized: 1,
+                columnPinned: 0,
+                sortChanged: 0,
+                columnsReset: 0,
+            });
+        });
+
+        // Solved by AG-17366 when it is completed
+        test.skip('grouping activation + auto-col state in one call is a single pass', async () => {
+            const api = gridsManager.createGrid('evtGroupActivate', {
+                columnDefs: [{ colId: 'a' }, { colId: 'grp' }],
+                rowData: [{ a: 1, grp: 'x' }],
+            });
+            await asyncSetTimeout(0);
+
+            const counts = trackEvents(api);
+            api.applyColumnState({
+                state: [
+                    { colId: 'grp', rowGroup: true },
+                    { colId: 'ag-Grid-AutoColumn', width: 250, sort: 'asc' },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            expect(counts.columnEverythingChanged).toBe(1);
+            expect(counts.columnRowGroupChanged).toBe(1);
+        });
+
+        // Solved by AG-17366 when it is completed
+        test.skip('pivot apply targeting a pivot-result col runs the leftover pass (single everythingChanged)', async () => {
+            const api = gridsManager.createGrid('evtPivotLeftover', {
+                columnDefs: [
+                    { colId: 'country', rowGroup: true },
+                    { colId: 'sport', pivot: true },
+                    { colId: 'gold', aggFunc: 'sum' },
+                ],
+                pivotMode: true,
+                rowData: [
+                    { country: 'USA', sport: 'Swim', gold: 5 },
+                    { country: 'UK', sport: 'Run', gold: 3 },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            const target = api.getPivotResultColumns()![0].getColId();
+            const counts = trackEvents(api);
+            api.applyColumnState({ state: [{ colId: target, sort: 'desc' }] });
+            await asyncSetTimeout(0);
+
+            expect(counts.columnEverythingChanged).toBe(1);
+        });
+
+        // Solved by AG-17366 when it is completed
+        test.skip('resetColumnState on a grouped grid emits one columnsReset and one everythingChanged', async () => {
+            const api = gridsManager.createGrid('evtReset', {
+                columnDefs: [{ colId: 'country', rowGroup: true }, { colId: 'a' }, { colId: 'b' }],
+                rowData: [{ country: 'USA', a: 1, b: 2 }],
+            });
+            await asyncSetTimeout(0);
+            api.applyColumnState({ state: [{ colId: 'a', width: 150 }] });
+            await asyncSetTimeout(0);
+
+            const counts = trackEvents(api);
+            api.resetColumnState();
+            await asyncSetTimeout(0);
+
+            // resetColumnState applies state + order in a single applyColumnState pass → one
+            // everythingChanged, dispatched once over the final (ordered) structure.
+            expect(counts.columnsReset).toBe(1);
+            expect(counts.columnEverythingChanged).toBe(1);
+        });
     });
 
     describe('columnStateUtils edge cases', () => {
@@ -1410,6 +1723,64 @@ describe('Column Mutations - applyColumnState', () => {
 
             const ids = api.getAllGridColumns().map((c) => c.getColId());
             expect(ids[0]).toBe('ag-Grid-SelectionColumn');
+        });
+
+        test('resetColumnState restores the original colDef order after a reorder', async () => {
+            const api = gridsManager.createGrid('resetOrder', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+            });
+            await new GridColumns(api, `resetColumnState restores the original colDef order after a reorder setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── a width:200
+                    ├── b width:200
+                    └── c width:200
+                `);
+
+            api.moveColumns(['c'], 0);
+            await new GridColumns(
+                api,
+                `resetColumnState restores the original colDef order after a reorder after moveColumns`
+            ).checkColumns(`
+                CENTER
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+
+            api.resetColumnState();
+            await new GridColumns(
+                api,
+                `resetColumnState restores the original colDef order after a reorder after resetColumnState`
+            ).checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── b width:200
+                └── c width:200
+            `);
+            expect(api.getAllGridColumns().map((col) => col.getColId())).toEqual(['a', 'b', 'c']);
+        });
+
+        test('resetColumnState honours lockPosition for a col not declared first', async () => {
+            const api = gridsManager.createGrid('resetLock', {
+                columnDefs: [{ colId: 'a' }, { colId: 'locked', lockPosition: 'left' }, { colId: 'c' }],
+            });
+            await new GridColumns(api, 'reset lockPosition setup').checkColumns(`
+                CENTER
+                ├── locked width:200 lockPosition:left
+                ├── a width:200
+                └── c width:200
+            `);
+
+            api.moveColumns(['c'], 0);
+            api.resetColumnState();
+            await new GridColumns(api, 'reset lockPosition after reset').checkColumns(`
+                CENTER
+                ├── locked width:200 lockPosition:left
+                ├── a width:200
+                └── c width:200
+            `);
+            expect(api.getAllGridColumns().map((col) => col.getColId())).toEqual(['locked', 'a', 'c']);
         });
 
         test('applyColumnState applyOrder: mix of indexed and non-indexed cols sorts indexed first', async () => {
@@ -1681,6 +2052,66 @@ describe('Column Mutations - applyColumnState', () => {
         });
     });
 
+    describe('columnMoved event payload', () => {
+        const captureMoved = async (
+            cols: string[],
+            order: string[]
+        ): Promise<{ columns: string[]; column: string | null }[]> => {
+            const api = gridsManager.createGrid('movedPayload', { columnDefs: cols.map((colId) => ({ colId })) });
+            await asyncSetTimeout(0);
+            const events: { columns: string[]; column: string | null }[] = [];
+            api.addEventListener('columnMoved', (e) => {
+                events.push({
+                    columns: (e.columns ?? []).map((c) => c.getColId()),
+                    column: e.column?.getColId() ?? null,
+                });
+            });
+            api.applyColumnState({ state: order.map((colId) => ({ colId })), applyOrder: true });
+            await asyncSetTimeout(0);
+            return events;
+        };
+
+        test('adjacent swap reports both swapped cols, column null', async () => {
+            expect(await captureMoved(['a', 'b', 'c'], ['b', 'a', 'c'])).toEqual([
+                { columns: ['a', 'b'], column: null },
+            ]);
+        });
+
+        test('odd reverse leaves the pivot col in place', async () => {
+            expect(await captureMoved(['a', 'b', 'c'], ['c', 'b', 'a'])).toEqual([
+                { columns: ['a', 'c'], column: null },
+            ]);
+        });
+
+        test('moving one col to the end reports every col it jumped', async () => {
+            expect(await captureMoved(['a', 'b', 'c', 'd'], ['b', 'c', 'd', 'a'])).toEqual([
+                { columns: ['a', 'b', 'c', 'd'], column: null },
+            ]);
+        });
+
+        test('no-op reorder (state already in order) fires no columnMoved', async () => {
+            expect(await captureMoved(['a', 'b', 'c'], ['a', 'b', 'c'])).toEqual([]);
+        });
+
+        test('col removed + reorder in one setColumnDefs reports only surviving moves', async () => {
+            const api = gridsManager.createGrid('movedRemove', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }, { colId: 'd' }],
+            });
+            await asyncSetTimeout(0);
+            const events: { columns: string[]; column: string | null }[] = [];
+            api.addEventListener('columnMoved', (e) => {
+                events.push({
+                    columns: (e.columns ?? []).map((col) => col.getColId()),
+                    column: e.column?.getColId() ?? null,
+                });
+            });
+            // Drop 'c', reverse the survivors: surviving before-order [a,b,d] vs after [d,b,a].
+            api.setGridOption('columnDefs', [{ colId: 'd' }, { colId: 'b' }, { colId: 'a' }]);
+            await asyncSetTimeout(0);
+            expect(events).toEqual([{ columns: ['a', 'd'], column: null }]);
+        });
+    });
+
     describe('applyColumnState full-state round-trip fidelity', () => {
         test('getColumnState captured, reset, and re-applied preserves every field per column', async () => {
             const api = gridsManager.createGrid('roundTrip', {
@@ -1733,5 +2164,133 @@ describe('Column Mutations - applyColumnState', () => {
                 └── d width:175
             `);
         });
+    });
+
+    describe('setColumnsVisible lean path', () => {
+        test('hiding then showing fires one batched columnVisible each and preserves order', async () => {
+            const api = gridsManager.createGrid('leanVisible', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+            });
+            await asyncSetTimeout(0);
+
+            const events: { visible: boolean | undefined; cols: string[] }[] = [];
+            api.addEventListener('columnVisible', (e) => {
+                events.push({ visible: e.visible, cols: (e.columns ?? []).map((col) => col.getColId()) });
+            });
+
+            await new GridColumns(api, 'lean before hide').checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── b width:200
+                └── c width:200
+            `);
+
+            api.setColumnsVisible(['a', 'b'], false);
+            await asyncSetTimeout(0);
+
+            // One event for the whole call (not one per column); order in colsList is untouched.
+            expect(events).toEqual([{ visible: false, cols: ['a', 'b'] }]);
+            const isVisible = () => ['a', 'b', 'c'].map((id) => api.getColumn(id)!.isVisible());
+            expect(isVisible()).toEqual([false, false, true]);
+            // Hidden top-level cols drop out of the displayed diagram.
+            await new GridColumns(api, 'lean hide a+b').checkColumns(`
+                CENTER
+                └── c width:200
+            `);
+
+            api.setColumnsVisible(['a', 'b'], true);
+            await asyncSetTimeout(0);
+
+            expect(events).toEqual([
+                { visible: false, cols: ['a', 'b'] },
+                { visible: true, cols: ['a', 'b'] },
+            ]);
+            expect(isVisible()).toEqual([true, true, true]);
+            await new GridColumns(api, 'lean show a+b').checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── b width:200
+                └── c width:200
+            `);
+        });
+    });
+});
+
+// Solved by AG-17366 when it is completed
+describe.skip('single displayedColumnsChanged per operation', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
+    });
+
+    afterEach(() => gridsManager.reset());
+
+    async function expectRefreshCount(api: GridApi, label: string, expected: number, op: () => void): Promise<void> {
+        let count = 0;
+        const listener = () => {
+            count++;
+        };
+        api.addEventListener('displayedColumnsChanged', listener);
+        op();
+        await asyncSetTimeout(0);
+        api.removeEventListener('displayedColumnsChanged', listener);
+        expect({ op: label, count }).toEqual({ op: label, count: expected });
+    }
+
+    test('column operations each refresh the displayed columns exactly once', async () => {
+        const api = gridsManager.createGrid('single-refresh', {
+            columnDefs: [{ field: 'country' }, { field: 'sport' }, { field: 'gold' }, { field: 'age' }],
+            rowData: [{ country: 'USA', sport: 'Swim', gold: 5, age: 20 }],
+        });
+        await asyncSetTimeout(0);
+
+        await expectRefreshCount(api, 'setColumnsVisible (hide)', 1, () => api.setColumnsVisible(['gold'], false));
+        await expectRefreshCount(api, 'setColumnsVisible (show)', 1, () => api.setColumnsVisible(['gold'], true));
+
+        await expectRefreshCount(api, 'moveColumns', 1, () => api.moveColumns(['age'], 0));
+        await expectRefreshCount(api, 'setColumnsPinned', 1, () => api.setColumnsPinned(['country'], 'left'));
+        await expectRefreshCount(api, 'setColumnsPinned (unpin)', 1, () => api.setColumnsPinned(['country'], null));
+
+        await expectRefreshCount(api, 'applyColumnState (sort + width)', 1, () =>
+            api.applyColumnState({ state: [{ colId: 'age', sort: 'asc', width: 123 }] })
+        );
+        await expectRefreshCount(api, 'applyColumnState (reset)', 1, () => api.applyColumnState({ defaultState: {} }));
+
+        await expectRefreshCount(api, 'setRowGroupColumns', 1, () => api.setRowGroupColumns(['sport']));
+        await expectRefreshCount(api, 'removeRowGroupColumns', 1, () => api.removeRowGroupColumns(['sport']));
+        await expectRefreshCount(api, 'applyColumnState (rowGroup)', 1, () =>
+            api.applyColumnState({ state: [{ colId: 'country', rowGroup: true }] })
+        );
+        await expectRefreshCount(api, 'applyColumnState (un-rowGroup)', 1, () =>
+            api.applyColumnState({ state: [{ colId: 'country', rowGroup: false }] })
+        );
+    });
+
+    test('replacing columnDefs refreshes exactly once', async () => {
+        const api = gridsManager.createGrid('single-refresh-replace', {
+            columnDefs: [{ field: 'country' }, { field: 'sport' }, { field: 'gold' }],
+            rowData: [{ country: 'USA', sport: 'Swim', gold: 5 }],
+        });
+        await asyncSetTimeout(0);
+
+        await expectRefreshCount(api, 'replace columnDefs (different cols)', 1, () =>
+            api.setGridOption('columnDefs', [{ field: 'country' }, { field: 'age' }])
+        );
+    });
+
+    test('updating existing columnDefs (reuse path) refreshes exactly once', async () => {
+        const columnDefs = [{ field: 'country' }, { field: 'sport' }, { field: 'gold' }];
+        const api = gridsManager.createGrid('single-refresh-update', {
+            columnDefs,
+            rowData: [{ country: 'USA', sport: 'Swim', gold: 5 }],
+        });
+        await asyncSetTimeout(0);
+
+        await expectRefreshCount(api, 'update columnDefs (headerName + width)', 1, () =>
+            api.setGridOption('columnDefs', [
+                { field: 'country', headerName: 'Country', width: 150 },
+                { field: 'sport' },
+                { field: 'gold' },
+            ])
+        );
     });
 });

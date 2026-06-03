@@ -74,6 +74,23 @@ describe('Row Numbers Cell Selection', () => {
         { sport: 'rowing', year: 2019, amount: 32, day: 'saturday' },
     ];
 
+    test('rowNumbers valueFormatter overrides the displayed row number', async () => {
+        const [api] = await createGrid({
+            columnDefs,
+            rowData: rowData.slice(0, 3),
+            rowNumbers: {
+                valueFormatter: (params) => `#${params.value}`,
+            },
+        });
+
+        await new GridRows(api, 'rowNumbers valueFormatter').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 row-number:"#1" sport:"football" year:2021 amount:43 day:"monday"
+            ├── LEAF id:1 row-number:"#2" sport:"rugby" year:2020 amount:102 day:"sunday"
+            └── LEAF id:2 row-number:"#3" sport:"tennis" year:2018 amount:235 day:"thursday"
+        `);
+    });
+
     test('click row number selects row cells, clears existing range', async () => {
         const [api] = await createGrid({
             columnDefs,

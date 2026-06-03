@@ -6,6 +6,7 @@ import type { Column, EditingCellPosition, GridApi, IRowNode, RowNode } from 'ag
 import { log } from '../utils';
 import { addDiagramToError, collectGridRows, makeSnapshotTarget, runSnapshotCheck } from './grid-rows-helpers';
 import type { SnapshotCheckTarget } from './grid-rows-helpers';
+import { getGridHTMLElement, parseSpannedCell } from './gridHtmlRows';
 import type { GridRowsOptions } from './gridRowsOptions';
 import { GridRowsDiagramTree } from './rows-diagram/gridRowsDiagramTree';
 import { GridRowsDomValidator } from './rows-validation-dom/gridRowsDomValidator';
@@ -48,6 +49,7 @@ export class GridRows<TData = any> {
     #editingCellKeys: Set<string> | null = null;
     #activeEditorCellKeys: Set<string> | null = null;
     readonly #detailGridRows: Map<IRowNode<TData> | GridApi, GridRows<any>>;
+    #rowSpanMap: Map<string, string> | null = null;
 
     /**
      * @param api The grid API instance
@@ -86,6 +88,38 @@ export class GridRows<TData = any> {
 
     public getDetailGridRows(row: IRowNode<TData> | GridApi | null | undefined): GridRows<any> | undefined {
         return row ? this.#detailGridRows.get(row) : undefined;
+    }
+
+    /** Rendered row-span marker for a cell: `↧N` on the span anchor (covers N rows), `↥` on a row
+     *  covered by the span above, or `''` when the cell does not participate in a row span. Read from
+     *  the rendered `.ag-spanned-row` cells (the same source the DOM validator uses). */
+    public rowSpanMarker(row: RowNode<TData>, colId: string): string {
+        if (row.rowIndex == null) {
+            return '';
+        }
+        const pinned = row.rowPinned ?? '';
+        return (this.#rowSpanMap ??= this.#buildRowSpanMap()).get(`${pinned}#${row.rowIndex}#${colId}`) ?? '';
+    }
+
+    #buildRowSpanMap(): Map<string, string> {
+        const map = new Map<string, string>();
+        const root = getGridHTMLElement(this.api);
+        if (!root) {
+            return map;
+        }
+        const cells = Array.from(root.querySelectorAll('.ag-spanned-row [col-id]'));
+        for (let i = 0, len = cells.length; i < len; ++i) {
+            const info = parseSpannedCell(cells[i]);
+            if (!info) {
+                continue;
+            }
+            const { colId, pinned, anchorIndex, span } = info;
+            map.set(`${pinned}#${anchorIndex}#${colId}`, `↧${span}`);
+            for (let j = 1; j < span; ++j) {
+                map.set(`${pinned}#${anchorIndex + j}#${colId}`, '↥');
+            }
+        }
+        return map;
     }
 
     public getAllRowNodesData(): (TData | undefined)[] {

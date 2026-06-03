@@ -1259,42 +1259,6 @@ describe('SortService', () => {
         });
     });
 
-    describe('sortingOrder per column', () => {
-        test('column with custom sortingOrder cycles through specified directions', async () => {
-            const api = gridMgr.createGrid('g', {
-                columnDefs: [
-                    {
-                        colId: 'a',
-                        field: 'a',
-                        sortingOrder: ['desc', 'asc'],
-                    },
-                ],
-                rowData,
-                getRowId: (p) => p.data.id,
-            });
-
-            // First sort should be desc (first in sortingOrder)
-            api.applyColumnState({ state: [{ colId: 'a', sort: 'desc' }] });
-
-            await new GridRows(api, 'desc first').check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:1 a:"z"
-                ├── LEAF id:3 a:"m"
-                └── LEAF id:2 a:"a"
-            `);
-
-            // Switch to asc
-            api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
-
-            await new GridRows(api, 'asc second').check(`
-                ROOT id:ROOT_NODE_ID
-                ├── LEAF id:2 a:"a"
-                ├── LEAF id:3 a:"m"
-                └── LEAF id:1 a:"z"
-            `);
-        });
-    });
-
     describe('defaultColDef sort', () => {
         test('defaultColDef.sort applies to all columns', async () => {
             const api = gridMgr.createGrid('g', {
@@ -1401,6 +1365,242 @@ describe('SortService', () => {
             `);
 
             expect(getSortModel(api)).toEqual([{ colId: 'a', sort: 'asc' }]);
+        });
+    });
+
+    describe('sort type availability and ordering (getAvailableSortTypes / getSortingOrder)', () => {
+        const signedRowData = [
+            { id: '1', n: -3 },
+            { id: '2', n: 2 },
+            { id: '3', n: -1 },
+        ];
+
+        function rowOrder(api: GridApi): string[] {
+            const ids: string[] = [];
+            api.forEachNodeAfterFilterAndSort((node) => ids.push(node.id!));
+            return ids;
+        }
+
+        function visibleSortIcons(api: GridApi, colId: string): string[] {
+            const root = TestGridsManager.getHTMLElement(api);
+            const header = root?.querySelector(`.ag-header-cell[col-id="${colId}"]`);
+            const icons = Array.from(header?.querySelectorAll<HTMLElement>('.ag-sort-indicator-icon') ?? []);
+            return icons
+                .filter((el) => !el.classList.contains('ag-hidden'))
+                .map(
+                    (el) =>
+                        Array.from(el.classList).find(
+                            (c) => c.startsWith('ag-sort-') && c.endsWith('-icon') && c !== 'ag-sort-indicator-icon'
+                        ) ?? ''
+                )
+                .filter(Boolean);
+        }
+
+        function clickHeader(api: GridApi, colId: string): void {
+            const root = TestGridsManager.getHTMLElement(api);
+            const label = root?.querySelector<HTMLElement>(`.ag-header-cell[col-id="${colId}"] .ag-header-cell-label`);
+            label?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        }
+
+        test('default sort orders by signed value and shows the default direction icon', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'n', field: 'n' }],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+
+            api.applyColumnState({ state: [{ colId: 'n', sort: 'asc' }] });
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['1', '3', '2']);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-ascending-icon']);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:asc
+            `);
+
+            api.applyColumnState({ state: [{ colId: 'n', sort: 'desc' }] });
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['2', '3', '1']);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-descending-icon']);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:desc
+            `);
+        });
+
+        test('absolute sort applied to a column that does not declare it still orders by magnitude, but shows no absolute icon', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'n', field: 'n' }],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200
+            `);
+
+            api.applyColumnState({ state: [{ colId: 'n', sort: 'asc', sortType: 'absolute' }] });
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['3', '2', '1']);
+            expect(visibleSortIcons(api, 'n')).toEqual([]);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:asc
+            `);
+        });
+
+        test('absolute sort declared via initialSort: applied on init, orders by magnitude and shows the absolute icon', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'n', field: 'n', initialSort: { type: 'absolute', direction: 'asc' } as any }],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+            await asyncSetTimeout(0);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:asc
+            `);
+            expect(rowOrder(api)).toEqual(['3', '2', '1']);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-absolute-ascending-icon']);
+
+            const state = api.getColumnState().find((s) => s.colId === 'n')!;
+            expect(state.sort).toBe('asc');
+            expect(state.sortType).toBe('absolute');
+        });
+
+        test('changing colDefs re-resolves available sort types: an absolute sortingOrder makes the absolute icon appear for the same absolute sort', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'n', field: 'n' }],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+
+            // Plain column: absolute not declared -> absolute sort runs, but no absolute icon.
+            api.applyColumnState({ state: [{ colId: 'n', sort: 'asc', sortType: 'absolute' }] });
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['3', '2', '1']);
+            expect(visibleSortIcons(api, 'n')).toEqual([]);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:asc
+            `);
+
+            api.setGridOption('columnDefs', [
+                {
+                    colId: 'n',
+                    field: 'n',
+                    sortingOrder: [
+                        { type: 'absolute', direction: 'asc' },
+                        { type: 'absolute', direction: 'desc' },
+                        null,
+                    ] as any,
+                },
+            ]);
+            api.applyColumnState({ state: [{ colId: 'n', sort: 'asc', sortType: 'absolute' }] });
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['3', '2', '1']);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-absolute-ascending-icon']);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:asc
+            `);
+        });
+
+        test('absolute sort declared via colDef.sort (not initialSort): applied on init with the absolute icon', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'n', field: 'n', sort: { type: 'absolute', direction: 'asc' } as any }],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+            await asyncSetTimeout(0);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:asc
+            `);
+            expect(rowOrder(api)).toEqual(['3', '2', '1']);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-absolute-ascending-icon']);
+        });
+
+        test('header click cycles through a custom sortingOrder (the real getSortingOrder / getNextSortDirection path)', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'n', field: 'n', sortingOrder: ['desc', 'asc'] }],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200
+            `);
+            clickHeader(api, 'n');
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['2', '3', '1']);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-descending-icon']);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:desc sortIndex:0
+            `);
+            clickHeader(api, 'n');
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['1', '3', '2']);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-ascending-icon']);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:asc sortIndex:0
+            `);
+            clickHeader(api, 'n');
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['2', '3', '1']);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-descending-icon']);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:desc sortIndex:0
+            `);
+        });
+
+        test('header click cycles through a custom absolute sortingOrder: abs-asc -> abs-desc -> none', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    {
+                        colId: 'n',
+                        field: 'n',
+                        sortingOrder: [
+                            { type: 'absolute', direction: 'asc' },
+                            { type: 'absolute', direction: 'desc' },
+                            null,
+                        ] as any,
+                    },
+                ],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+
+            clickHeader(api, 'n');
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['3', '2', '1']); // magnitude ascending
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-absolute-ascending-icon']);
+            expect(api.getColumnState().find((s) => s.colId === 'n')?.sortType).toBe('absolute');
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:asc sortIndex:0
+            `);
+            clickHeader(api, 'n');
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['1', '2', '3']); // magnitude descending
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-absolute-descending-icon']);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:desc sortIndex:0
+            `);
+            clickHeader(api, 'n');
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['1', '2', '3']);
+            expect(getSortModel(api)).toEqual([]);
+            expect(visibleSortIcons(api, 'n')).toEqual([]);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200
+            `);
         });
     });
 });

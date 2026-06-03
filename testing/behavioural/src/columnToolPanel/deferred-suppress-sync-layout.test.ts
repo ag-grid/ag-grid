@@ -115,6 +115,35 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
         });
     });
 
+    describe('resetColumnState after a tool-panel primary reorder', () => {
+        test('restores the original colDef order, not the reordered primary list', async () => {
+            const { gridApi, toolPanel } = await createGrid({ suppressSyncLayoutWithGrid: false });
+            const gold = gridApi.getColumn('gold')! as AgColumn;
+
+            getUpdateStrategy(toolPanel).moveColumns(false, [gold], 0, 'toolPanelUi');
+            await asyncSetTimeout(50);
+
+            expect(gridApi.getColumnState().map((s) => s.colId)).toEqual([
+                'gold',
+                'athlete',
+                'age',
+                'country',
+                'sport',
+            ]);
+
+            gridApi.resetColumnState();
+            await asyncSetTimeout(50);
+
+            expect(gridApi.getColumnState().map((s) => s.colId)).toEqual([
+                'athlete',
+                'age',
+                'country',
+                'sport',
+                'gold',
+            ]);
+        });
+    });
+
     describe('external change resets staged changes', () => {
         test('external sort change resets staged changes', async () => {
             const { gridApi, toolPanel, toolPanelGui } = await createGrid({ suppressSyncLayoutWithGrid: true });

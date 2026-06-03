@@ -522,6 +522,12 @@ describe('pivot with groupHierarchy (date-time)', () => {
             `applyColumnState row-group ordering sorts mixed hierarchy + plain cols correctly after applyColumnState`
         ).checkColumns(`
             CENTER
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year "Date (Year)" width:200
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month "Date (Month)" width:200
+            ├── ag-Grid-AutoColumn-date "Date" width:200
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year "Date2 (Year)" width:200
+            ├── ag-Grid-AutoColumn-date2 "Date2" width:200
             ├── date "Date" width:200 rowGroup
             ├── country "Country" width:200 rowGroup
             └── date2 "Date2" width:200 rowGroup
@@ -530,20 +536,20 @@ describe('pivot with groupHierarchy (date-time)', () => {
             api,
             `applyColumnState row-group ordering sorts mixed hierarchy + plain cols correctly after applyColumnState`
         ).check(`
-            ROOT id:ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
-            ├─┬ filler collapsed id:row-group-ag-Grid-HierarchyColumn-date-year-2020 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
-            │ └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
-            │ · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
-            │ · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-country-USA ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
-            │ · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-country-USA-ag-Grid-HierarchyColumn-date2-year-2019 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
-            │ · · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-country-USA-ag-Grid-HierarchyColumn-date2-year-2019-date2-2019-04-01 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:null ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            ├─┬ filler collapsed id:row-group-ag-Grid-HierarchyColumn-date-year-2020 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:null ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            │ └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:"1" ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            │ · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01 ag-Grid-AutoColumn-date:"2020-01-01" ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            │ · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-country-USA ag-Grid-AutoColumn-country:"USA" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            │ · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-country-USA-ag-Grid-HierarchyColumn-date2-year-2019 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:"2019" ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            │ · · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01-country-USA-ag-Grid-HierarchyColumn-date2-year-2019-date2-2019-04-01 ag-Grid-AutoColumn-date2:"2019-04-01" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
             │ · · · · · └── LEAF hidden id:0 date:"2020-01-01" country:"USA" date2:"2019-04-01" ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-month:"1" ag-Grid-HierarchyColumn-date2-year:"2019"
-            └─┬ filler collapsed id:row-group-ag-Grid-HierarchyColumn-date-year-2021 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
-            · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
-            · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
-            · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-country-UK ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
-            · · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-country-UK-ag-Grid-HierarchyColumn-date2-year-2018 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
-            · · · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-country-UK-ag-Grid-HierarchyColumn-date2-year-2018-date2-2018-09-20 ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            └─┬ filler collapsed id:row-group-ag-Grid-HierarchyColumn-date-year-2021 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:null ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month:"6" ag-Grid-AutoColumn-date:null ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15 ag-Grid-AutoColumn-date:"2021-06-15" ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-country-UK ag-Grid-AutoColumn-country:"UK" ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:null ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            · · · · └─┬ filler collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-country-UK-ag-Grid-HierarchyColumn-date2-year-2018 ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date2-year:"2018" ag-Grid-AutoColumn-date2:null ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
+            · · · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15-country-UK-ag-Grid-HierarchyColumn-date2-year-2018-date2-2018-09-20 ag-Grid-AutoColumn-date2:"2018-09-20" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date2-year:null
             · · · · · · └── LEAF hidden id:1 date:"2021-06-15" country:"UK" date2:"2018-09-20" ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-month:"6" ag-Grid-HierarchyColumn-date2-year:"2018"
         `);
         await asyncSetTimeout(0);
@@ -1032,6 +1038,110 @@ describe('pivot with groupHierarchy (date-time)', () => {
             · · └─┬ filler collapsed hidden id:row-group-country-UK-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6 ag-Grid-AutoColumn:"6" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
             · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-UK-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15 ag-Grid-AutoColumn:"2021-06-15" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
             · · · · └── LEAF hidden id:1 ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-month:"6" country:"UK" date:"2021-06-15"
+        `);
+    });
+
+    test('setRowGroupColumns adding a hierarchy col keeps rowGroupActiveIndex in order with suppressGroupChangesColumnVisibility', async () => {
+        const api = gridsManager.createGrid('setRowGroupHierarchyIndexSuppressed', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'date', enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+            ],
+            suppressGroupChangesColumnVisibility: true,
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1) },
+                { country: 'UK', date: new Date(2021, 5, 15) },
+            ],
+        });
+        await asyncSetTimeout(0);
+
+        api.setRowGroupColumns(['country', 'date']);
+        await asyncSetTimeout(0);
+
+        const stateById = new Map(api.getColumnState().map((s) => [s.colId, s.rowGroupIndex]));
+        expect(stateById.get('country')).toBe(0);
+        expect(stateById.get('ag-Grid-HierarchyColumn-date-year')).toBe(1);
+        expect(stateById.get('ag-Grid-HierarchyColumn-date-month')).toBe(2);
+        expect(stateById.get('date')).toBe(3);
+
+        await new GridColumns(api, 'suppress: columns after setRowGroupColumns with hierarchy').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── country "Country" width:200 rowGroup
+            └── date "Date" width:200 rowGroup
+        `);
+        await new GridRows(api, 'suppress: rows after setRowGroupColumns with hierarchy').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            ├─┬ filler collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            │ └─┬ filler collapsed hidden id:row-group-country-USA-ag-Grid-HierarchyColumn-date-year-2020 ag-Grid-AutoColumn:"2020" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            │ · └─┬ filler collapsed hidden id:row-group-country-USA-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1 ag-Grid-AutoColumn:"1" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            │ · · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-USA-ag-Grid-HierarchyColumn-date-year-2020-ag-Grid-HierarchyColumn-date-month-1-date-2020-01-01 ag-Grid-AutoColumn:"2020-01-01" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            │ · · · └── LEAF hidden id:0 ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-month:"1" country:"USA" date:"2020-01-01"
+            └─┬ filler collapsed id:row-group-country-UK ag-Grid-AutoColumn:"UK" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · └─┬ filler collapsed hidden id:row-group-country-UK-ag-Grid-HierarchyColumn-date-year-2021 ag-Grid-AutoColumn:"2021" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · · └─┬ filler collapsed hidden id:row-group-country-UK-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6 ag-Grid-AutoColumn:"6" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · · · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-UK-ag-Grid-HierarchyColumn-date-year-2021-ag-Grid-HierarchyColumn-date-month-6-date-2021-06-15 ag-Grid-AutoColumn:"2021-06-15" ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
+            · · · · └── LEAF hidden id:1 ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-month:"6" country:"UK" date:"2021-06-15"
+        `);
+    });
+
+    test('setPivotColumns adding a hierarchy col to an existing pivot keeps pivotActiveIndex in order', async () => {
+        const api = gridsManager.createGrid('setPivotHierarchyIndex', {
+            pivotMode: true,
+            columnDefs: [
+                { field: 'country', pivot: true },
+                { field: 'date', enablePivot: true, groupHierarchy: ['year', 'month'] },
+                { field: 'val', aggFunc: 'sum' },
+            ],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1), val: 1 },
+                { country: 'UK', date: new Date(2021, 5, 15), val: 2 },
+            ],
+        });
+        await asyncSetTimeout(0);
+
+        expect(api.getPivotColumns().map((c) => c.getColId())).toEqual(['country']);
+
+        api.setPivotColumns(['country', 'date']);
+        await asyncSetTimeout(0);
+
+        expect(api.getPivotColumns().map((c) => c.getColId())).toEqual([
+            'country',
+            'ag-Grid-HierarchyColumn-date-year',
+            'ag-Grid-HierarchyColumn-date-month',
+            'date',
+        ]);
+
+        const stateById = new Map(api.getColumnState().map((s) => [s.colId, s.pivotIndex]));
+        expect(stateById.get('country')).toBe(0);
+        expect(stateById.get('ag-Grid-HierarchyColumn-date-year')).toBe(1);
+        expect(stateById.get('ag-Grid-HierarchyColumn-date-month')).toBe(2);
+        expect(stateById.get('date')).toBe(3);
+
+        await new GridColumns(api, 'columns after setPivotColumns with hierarchy').checkColumns(`
+            CENTER
+            ├─┬ "UK" GROUP closed
+            │ ├─┬ "2021" GROUP closed hidden
+            │ │ ├─┬ "6" GROUP closed hidden
+            │ │ │ ├─┬ "2021-06-15" GROUP hidden
+            │ │ │ │ └── pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021-6-2021-06-15_val "Val" width:200 columnGroupShow:open hidden
+            │ │ │ └── pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021-6_val "Val" width:200 columnGroupShow:closed hidden
+            │ │ └── pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021_val "Val" width:200 columnGroupShow:closed hidden
+            │ └── pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK_val "Val" width:200 columnGroupShow:closed
+            └─┬ "USA" GROUP closed
+              ├─┬ "2020" GROUP closed hidden
+              │ ├─┬ "1" GROUP closed hidden
+              │ │ ├─┬ "2020-01-01" GROUP hidden
+              │ │ │ └── pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020-1-2020-01-01_val "Val" width:200 columnGroupShow:open hidden
+              │ │ └── pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020-1_val "Val" width:200 columnGroupShow:closed hidden
+              │ └── pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020_val "Val" width:200 columnGroupShow:closed hidden
+              └── pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA_val "Val" width:200 columnGroupShow:closed
+        `);
+        await new GridRows(api, 'rows after setPivotColumns with hierarchy').check(`
+            ROOT id:ROOT_NODE_ID pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021-6-2021-06-15_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021-6_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020-1-2020-01-01_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020-1_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA_val:1
+            ROOT id:ROOT_NODE_ID pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021-6-2021-06-15_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021-6_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020-1-2020-01-01_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020-1_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA_val:1
+            ├── LEAF hidden id:0 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021-6-2021-06-15_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021-6_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020-1-2020-01-01_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020-1_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020_val:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA_val:1
+            └── LEAF hidden id:1 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021-6-2021-06-15_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021-6_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK-2021_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_UK_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020-1-2020-01-01_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020-1_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA-2020_val:2 pivot_country-ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_USA_val:2
         `);
     });
 
