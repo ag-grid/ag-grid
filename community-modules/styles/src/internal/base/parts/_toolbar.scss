@@ -89,7 +89,7 @@
     .ag-toolbar-panel {
         display: inline-flex;
         // Grow to fill spare width, but never shrink below content — the toolbar
-        // scrolls instead of clipping embedded panels (AG-17395).
+        // scrolls instead of clipping embedded panels
         flex: 1 0 auto;
         min-width: 0;
     }

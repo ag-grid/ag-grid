@@ -183,6 +183,7 @@ export {
     _findTabbableParent,
     _focusInto,
     _isKeyboardMode,
+    _scrollHorizontallyToShow,
 } from './agStack/utils/focus';
 export { _batchCall, _debounce, _doOnce, _waitUntil } from './agStack/utils/function';
 export { _fuzzySuggestions } from './agStack/utils/fuzzyMatch';

@@ -1,5 +1,6 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _removeFromParent } from '../agStack/utils/dom';
+import { _scrollHorizontallyToShow } from '../agStack/utils/focus';
 import type { PaginationPanel } from '../entities/gridOptions';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';
@@ -67,6 +68,15 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         this.addManagedEventListeners({ paginationChanged: () => this.onPaginationEvent() });
 
         _addFocusableContainerListener(this.beans, this, this.getGui());
+
+        this.addManagedElementListeners(this.getGui(), {
+            focusin: (e: FocusEvent) => {
+                const target = e.target as HTMLElement | null;
+                if (target) {
+                    _scrollHorizontallyToShow(target);
+                }
+            },
+        });
 
         this.onPaginationChanged();
         this.announceAriaStatus();
