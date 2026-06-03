@@ -110,6 +110,10 @@
       "command": "tsx scripts/csp/generate-csp.ts",
       "options": {
         "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": { "args": "--env staging" },
+        "production": { "args": "--env production" }
       }
     },
     "test": {
