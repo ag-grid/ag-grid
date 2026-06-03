@@ -58,10 +58,13 @@ function _buildColumnDefs(
 
         if (_isPlainObject(value)) {
             if (objectValues === 'recurse') {
-                defs.push({
-                    headerName: _camelCaseToHumanText(key) ?? key,
-                    children: _buildColumnDefs(value as Record<string, unknown>, field, config),
-                });
+                const children = _buildColumnDefs(value as Record<string, unknown>, field, config);
+                if (children.length > 0) {
+                    defs.push({
+                        headerName: _camelCaseToHumanText(key) ?? key,
+                        children,
+                    });
+                }
             } else if (objectValues === 'flat') {
                 defs.push(_makeLeafColDef(field, key, prefix));
             }

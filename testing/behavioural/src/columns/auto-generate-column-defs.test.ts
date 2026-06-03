@@ -741,6 +741,46 @@ describe('Auto-Generate Column Defs', () => {
             `);
         });
 
+        test('empty nested objects do not produce empty column groups with recurse', async () => {
+            const api = createGrid({
+                autoGenerateColumnDefs: { objectValues: 'recurse' },
+                rowData: [{ name: 'Alice', address: {}, score: 100 }],
+            });
+
+            await new GridColumns(api, 'recurse empty').checkColumns(`
+                CENTER
+                ├── name "Name" width:200
+                └── score "Score" width:200
+            `);
+        });
+
+        test('empty nested objects are skipped with objectValues skip', async () => {
+            const api = createGrid({
+                autoGenerateColumnDefs: { objectValues: 'skip' },
+                rowData: [{ name: 'Alice', address: {}, score: 100 }],
+            });
+
+            await new GridColumns(api, 'skip empty').checkColumns(`
+                CENTER
+                ├── name "Name" width:200
+                └── score "Score" width:200
+            `);
+        });
+
+        test('empty nested objects produce a leaf column with objectValues flat', async () => {
+            const api = createGrid({
+                autoGenerateColumnDefs: { objectValues: 'flat' },
+                rowData: [{ name: 'Alice', address: {}, score: 100 }],
+            });
+
+            await new GridColumns(api, 'flat empty').checkColumns(`
+                CENTER
+                ├── name "Name" width:200
+                ├── address "Address" width:200
+                └── score "Score" width:200
+            `);
+        });
+
         test('handles many keys', async () => {
             const row: Record<string, number> = {};
             for (let i = 0; i < 50; ++i) {
