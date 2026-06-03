@@ -2,6 +2,13 @@
 
 # once tested this script will replace createAndDeployDocsToTC.sh
 
+set -euo pipefail
+
+: "${SSH_KEY_LOCATION:?SSH_KEY_LOCATION is required}"
+: "${SSH_USER:?SSH_USER is required}"
+: "${SSH_HOST:?SSH_HOST is required}"
+: "${WWW_ROOT_DIR:?WWW_ROOT_DIR is required}"
+
 ZIP_PREFIX=`date +%Y%m%d`
 
 echo "Deploying Docs to Build Server"
