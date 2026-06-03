@@ -617,6 +617,15 @@
         width: 100%;
     }
 
+    .ag-autocomplete-list-popup {
+        position: absolute;
+        user-select: none;
+        border-radius: var(--ag-border-radius);
+        box-shadow: var(--ag-dropdown-shadow);
+        background-color: var(--ag-background-color);
+        padding: 0;
+    }
+
     .ag-autocomplete-list {
         width: 100%;
         min-width: 200px;
@@ -624,6 +633,7 @@
     }
 
     .ag-autocomplete-virtual-list-item {
+        display: flex;
         cursor: default;
         height: var(--ag-list-item-height);
 
@@ -636,7 +646,17 @@
         }
     }
 
+    .ag-autocomplete-row {
+        display: flex;
+        flex: 1 1 auto;
+        align-items: center;
+        overflow: hidden;
+    }
+
     .ag-autocomplete-row-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         margin: 0px var(--ag-widget-container-horizontal-padding);
     }
 

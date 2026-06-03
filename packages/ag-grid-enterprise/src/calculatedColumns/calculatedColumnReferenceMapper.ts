@@ -1,7 +1,8 @@
 import type { AgColumn, BeanCollection } from 'ag-grid-community';
+import { isSpecialCol } from 'ag-grid-community';
 
 import { createHeaderReferenceEntries, isAmbiguousHeaderReference } from '../formula/headerReferences';
-import type { ColumnSuggestion } from './calculatedColumnForm';
+import type { ColumnSuggestion } from './calculatedColumnFormTypes';
 import { replaceBracketReferences } from './calculatedColumnUtils';
 
 interface CalculatedColumnReferenceError {
@@ -36,7 +37,8 @@ export function createCalculatedColumnReferenceMapper(
     columns: AgColumn[],
     excludedColId: string
 ): CalculatedColumnReferenceMapper {
-    const entries = createHeaderReferenceEntries(beans, columns, excludedColId);
+    const referenceColumns = columns.filter((column) => !isSpecialCol(column));
+    const entries = createHeaderReferenceEntries(beans, referenceColumns, excludedColId);
     const referenceToColId = new Map(entries.map((entry) => [entry.reference, entry.colId]));
     const caseInsensitiveReferenceToColIds = new Map<string, string[]>();
     const colIdToReference = new Map(entries.map((entry) => [entry.colId, entry.reference]));
@@ -50,11 +52,12 @@ export function createCalculatedColumnReferenceMapper(
     }
 
     return {
-        suggestions: entries.map(({ leafName, reference }) => ({
+        suggestions: entries.map(({ leafName, path, reference }) => ({
             type: 'column',
             label: reference,
             value: reference,
             searchText: `${reference} ${leafName}`,
+            displayPath: path,
         })),
         toInternalExpression(expression: string) {
             let error: CalculatedColumnReferenceError | undefined;

@@ -18,13 +18,17 @@ import { BeanStub, _warnOnce } from 'ag-grid-community';
 
 import type { FormulaError } from '../formula/ast/utils';
 import { Dialog } from '../widgets/dialog';
-import type { CalculatedColumnDataTypeOption, CalculatedColumnDraft, ColumnSuggestion } from './calculatedColumnForm';
 import {
     CalculatedColumnForm,
     DEFAULT_CALCULATED_COLUMN_DATA_TYPES,
     DEFAULT_CALCULATED_COLUMN_EXPRESSION_PICKERS,
     DEFAULT_DRAFT,
 } from './calculatedColumnForm';
+import type {
+    CalculatedColumnDataTypeOption,
+    CalculatedColumnDraft,
+    ColumnSuggestion,
+} from './calculatedColumnFormTypes';
 import {
     createCalculatedColumnReferenceMapper,
     translateCalculatedColumnReferenceError,

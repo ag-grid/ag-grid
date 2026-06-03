@@ -40,6 +40,7 @@ import {
 describe('ag-grid calculated columns', () => {
     const gridRowsOpts = { useFormatter: false } as const;
     let restoreOffsetParent: (() => void) | undefined;
+    let restoreVirtualListSize: (() => void) | undefined;
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
@@ -64,12 +65,15 @@ describe('ag-grid calculated columns', () => {
 
     beforeEach(() => {
         gridsManager.reset();
+        enableVirtualListSizePolyfill();
     });
 
     afterEach(() => {
         gridsManager.reset();
         restoreOffsetParent?.();
         restoreOffsetParent = undefined;
+        restoreVirtualListSize?.();
+        restoreVirtualListSize = undefined;
     });
 
     function createGrid(id: string, opts: Partial<GridOptions>) {
@@ -89,6 +93,11 @@ describe('ag-grid calculated columns', () => {
         Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
             configurable: true,
             get(this: HTMLElement) {
+                // Keep the theme measurement probes "detached" so AG's environment falls back to default
+                // list-item height (jsdom reports offsetWidth 0, which would otherwise zero the row height).
+                if (this.closest('.ag-measurement-container')) {
+                    return null;
+                }
                 return this.parentElement;
             },
         });
@@ -98,6 +107,52 @@ describe('ag-grid calculated columns', () => {
                 Object.defineProperty(HTMLElement.prototype, 'offsetParent', originalOffsetParent);
             } else {
                 delete (HTMLElement.prototype as any).offsetParent;
+            }
+        };
+    }
+
+    function enableVirtualListSizePolyfill(): void {
+        if (restoreVirtualListSize) {
+            return;
+        }
+
+        const originalOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
+        const originalClientHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'clientHeight');
+        const getVirtualListHeight = (element: HTMLElement): number | undefined => {
+            if (
+                !element.classList.contains('ag-virtual-list-viewport') &&
+                !element.classList.contains('ag-virtual-list-container')
+            ) {
+                return undefined;
+            }
+
+            const styleHeight = Number.parseFloat(element.style.height);
+            return Number.isFinite(styleHeight) && styleHeight > 0 ? styleHeight : 160;
+        };
+
+        Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+            configurable: true,
+            get(this: HTMLElement) {
+                return getVirtualListHeight(this) ?? originalOffsetHeight?.get?.call(this) ?? 0;
+            },
+        });
+        Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+            configurable: true,
+            get(this: HTMLElement) {
+                return getVirtualListHeight(this) ?? originalClientHeight?.get?.call(this) ?? 0;
+            },
+        });
+
+        restoreVirtualListSize = () => {
+            if (originalOffsetHeight) {
+                Object.defineProperty(HTMLElement.prototype, 'offsetHeight', originalOffsetHeight);
+            } else {
+                delete (HTMLElement.prototype as any).offsetHeight;
+            }
+            if (originalClientHeight) {
+                Object.defineProperty(HTMLElement.prototype, 'clientHeight', originalClientHeight);
+            } else {
+                delete (HTMLElement.prototype as any).clientHeight;
             }
         };
     }
@@ -145,17 +200,21 @@ describe('ag-grid calculated columns', () => {
     }
 
     function getSuggestionLabels(): string[] {
-        return Array.from(document.querySelectorAll<HTMLElement>('.ag-calculated-column-suggestion')).map(
-            (element) => element.textContent ?? ''
+        return Array.from(document.querySelectorAll<HTMLElement>('.ag-autocomplete-row-label')).map(
+            (element) => element.textContent?.trim() ?? ''
         );
     }
 
-    function clickSuggestion(label: string): void {
-        const suggestion = Array.from(document.querySelectorAll<HTMLElement>('.ag-calculated-column-suggestion')).find(
-            (element) => element.textContent?.trim() === label
-        );
-        expect(suggestion).toBeTruthy();
-        suggestion!.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    // The suggestion list (AgAutocompleteList) selects by hover/keyboard, not by clicking a specific row.
+    const OPERATOR_ORDER = ['+', '-', '*', '/', '^', '&', '=', '<>', '>', '>=', '<', '<='];
+    async function selectOperatorSuggestion(symbol: string): Promise<void> {
+        const input = getExpressionInput();
+        const index = OPERATOR_ORDER.indexOf(symbol);
+        for (let i = 0; i < index; i++) {
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        }
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        await asyncSetTimeout(1);
     }
 
     function getOpenMenuEntries(): string[] {
@@ -1230,6 +1289,42 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
+    test('dialog column picker renders group path and leaf as fixed-height clickable rows', async () => {
+        const api = createGrid('calculated-dialog-column-picker-group-path', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                {
+                    groupId: 'money',
+                    headerName: 'Money',
+                    children: [
+                        { field: 'revenue', headerName: 'Revenue' },
+                        { field: 'cost', headerName: 'Cost' },
+                    ],
+                } as ColGroupDef,
+            ],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+        clickDialogButton('Columns');
+        await asyncSetTimeout(1);
+
+        const revenueSuggestion = Array.from(
+            document.querySelectorAll<HTMLElement>('.ag-calculated-column-suggestion')
+        ).find((element) => element.getAttribute('aria-label') === 'Money > Revenue');
+
+        expect(revenueSuggestion).toBeTruthy();
+        expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-path')).toBeTruthy();
+        expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-parent')?.textContent).toBe('Money');
+        expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-separator')?.textContent).toBe('>');
+        expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-leaf')?.textContent).toBe('Revenue');
+        // Revenue is the first column entry, so it is selected by default; Enter inserts it.
+        getExpressionInput().dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        expect(getExpressionInput().value).toBe('[Revenue]');
+    });
+
     test('dialog accepts column references in any case', async () => {
         const api = createGrid('calculated-dialog-case-insensitive-references', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
@@ -1266,26 +1361,57 @@ describe('ag-grid calculated columns', () => {
         setExpression('[Age] + [Medals]');
         input.setSelectionRange('[Age] +'.length, '[Age] +'.length);
         clickDialogButton('Operators');
-        clickSuggestion('*');
+        await selectOperatorSuggestion('*');
         expect(input.value).toBe('[Age] * [Medals]');
 
         setExpression('[Age] + [Medals]');
         input.setSelectionRange('[Age] + '.length, '[Age] + '.length);
         clickDialogButton('Operators');
-        clickSuggestion('/');
+        await selectOperatorSuggestion('/');
         expect(input.value).toBe('[Age] / [Medals]');
 
         setExpression('[Age] >= [Medals]');
         input.setSelectionRange('[Age] >='.length, '[Age] >='.length);
         clickDialogButton('Operators');
-        clickSuggestion('<');
+        await selectOperatorSuggestion('<');
         expect(input.value).toBe('[Age] < [Medals]');
 
         setExpression('[Age] + [Medals]');
         input.setSelectionRange('[Age] '.length, '[Age] +'.length);
         clickDialogButton('Operators');
-        clickSuggestion('-');
+        await selectOperatorSuggestion('-');
         expect(input.value).toBe('[Age] - [Medals]');
+    });
+
+    test('dialog picker keeps button focus until suggestion is accepted', async () => {
+        const api = createGrid('calculated-dialog-picker-focus', {
+            rowData: [{ id: 'r1', age: 23, medals: 8 }],
+            columnDefs: [{ field: 'age' }, { field: 'medals' }],
+        });
+
+        showColumnMenu(api, 'age');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        const input = getExpressionInput();
+        setExpression('[Age] + [Medals]');
+        input.setSelectionRange('[Age] +'.length, '[Age] +'.length);
+
+        const operators = getDialogButton('Operators');
+        operators.focus();
+        operators.click();
+        await asyncSetTimeout(1);
+
+        expect(document.activeElement).toBe(operators);
+        operators.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        operators.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        operators.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        await asyncSetTimeout(1);
+
+        expect(input.value).toBe('[Age] * [Medals]');
+        expect(document.activeElement).toBe(input);
+        expect(input.selectionStart).toBe('[Age] * '.length);
     });
 
     test('dialog adds calculated columns inside groups without mutating provided column definitions', async () => {
