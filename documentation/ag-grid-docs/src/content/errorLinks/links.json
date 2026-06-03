@@ -435,5 +435,10 @@
         "errorIds": [291],
         "text": "Installing Your Licence Key",
         "url": "./license-install/"
+    },
+    {
+        "errorIds": [304],
+        "text": "Customising Generated Columns",
+        "url": "./auto-generate-columns/#customising-generated-columns"
     }
 ]
