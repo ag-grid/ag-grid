@@ -221,12 +221,12 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             if (node.rowPinned != null && node.pinnedSibling) {
                 return;
             }
-            // Always bump: a formula in another row may REF a non-formula column here, whose
-            // cells never enter this cache — only the version bump invalidates those computed
-            // values. `dropRow` additionally evicts this row's and its pinned sibling's own
-            // CellFormula entries so their captured `formulaString` re-queries `getFormula`.
+            // evicts this row's and its pinned sibling's own formulas so same-row calculated
+            // columns re-query their expression during the normal row refresh.
             this.dropRow(node);
-            this.bumpValueCacheAndRefresh();
+            if (this.active) {
+                this.bumpValueCacheAndRefresh();
+            }
         };
         const onNewColumnsLoaded = () => {
             if (!this.isEvaluationActive()) {

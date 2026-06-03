@@ -6,6 +6,7 @@ import type { ColDef, ColGroupDef, GridOptions, Module } from 'ag-grid-community
 import {
     CellSpanModule,
     ClientSideRowModelModule,
+    HighlightChangesModule,
     InfiniteRowModelModule,
     NumberEditorModule,
     NumberFilterModule,
@@ -38,6 +39,7 @@ import {
 } from '../test-utils';
 
 describe('ag-grid calculated columns', () => {
+    const flashCssClass = 'ag-cell-data-changed';
     const gridRowsOpts = { useFormatter: false } as const;
     let restoreOffsetParent: (() => void) | undefined;
     let restoreVirtualListSize: (() => void) | undefined;
@@ -60,6 +62,7 @@ describe('ag-grid calculated columns', () => {
             RowSelectionModule,
             PivotModule,
             RowNumbersModule,
+            HighlightChangesModule,
         ] as Module[],
     });
 
@@ -746,6 +749,27 @@ describe('ag-grid calculated columns', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 revenue:20 cost:3 profit:17
         `);
+    });
+
+    test('source cells keep change flashing after a calculated column is added', async () => {
+        const api = createGrid('calculated-change-flash', {
+            defaultColDef: {
+                enableCellChangeFlash: true,
+            },
+            rowData: [{ id: 'r1', a: 1, b: 2, c: 3 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
+        });
+        api.addCalculatedColumn({ colId: 'sum', calculatedExpression: '[a] + [b]' });
+        await asyncSetTimeout(600);
+
+        const gridDiv = getGridElement(api)!;
+        const sourceCell = gridDiv.querySelector('[row-index="0"] [col-id="a"]')!;
+        expect(sourceCell).not.toHaveClass(flashCssClass);
+
+        api.getRowNode('r1')!.setDataValue('a', 10);
+        await asyncSetTimeout(0);
+
+        expect(sourceCell).toHaveClass(flashCssClass);
     });
 
     test('calculated columns evaluate on row group aggregate values', async () => {
