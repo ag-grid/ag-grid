@@ -229,7 +229,7 @@ export const ContactForm: FunctionComponent<Props> = ({
                     href="https://ag-grid.zendesk.com/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class={styles.supportLink}
+                    className={styles.supportLink}
                 >
                     Zendesk portal
                 </a>
