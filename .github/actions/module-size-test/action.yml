@@ -25,6 +25,10 @@ inputs:
     description: 'Git ref to get .github/actions from (for testing older refs that lack these actions)'
     required: false
     default: ''
+  cache-mode:
+    description: 'Cache mode for setup-nx (rw, ro, off). Use off for release tags to avoid cross-version cache hits.'
+    required: false
+    default: 'ro'
 
 runs:
   using: composite
@@ -54,8 +58,13 @@ runs:
     - name: Setup
       uses: ./.github/actions/setup-nx
       with:
-        cache_mode: ro
+        cache_mode: ${{ inputs.cache-mode }}
         base_ref: ${{ inputs.base-ref || inputs.ref }}
+
+    - name: yarn install (no cache)
+      if: inputs.cache-mode == 'off'
+      shell: bash
+      run: yarn install --ci
 
     - name: Build dependencies
       shell: bash

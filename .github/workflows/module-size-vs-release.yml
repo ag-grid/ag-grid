@@ -153,6 +153,7 @@ jobs:
           shard: ${{ matrix.shard }}
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-release
+          cache-mode: 'off'
 
   # Cache release results (only when we had to build)
   cache-release-results:
