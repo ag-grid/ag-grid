@@ -6,6 +6,21 @@ import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { AutoGenerateColumnDefsOptions } from '../entities/gridOptions';
 import { _warn } from '../validation/logging';
 
+/**
+ * Calls `callback` for each leaf `ColDef` in `columnDefs`, recursing into `ColGroupDef` children as required.
+ * The `callback` is not called on column groups, only their leaf children.
+ */
+export function forEachColDef(columnDefs: (ColDef | ColGroupDef)[], callback: (colDef: ColDef) => void): void {
+    for (let i = 0, len = columnDefs.length; i < len; ++i) {
+        const def = columnDefs[i];
+        if ('children' in def) {
+            forEachColDef(def.children, callback);
+        } else {
+            callback(def);
+        }
+    }
+}
+
 export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
     beanName = 'autoGenColsSvc' as const;
 
