@@ -220,12 +220,12 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             if (node.rowPinned != null && node.pinnedSibling) {
                 return;
             }
-            // evicts this row's and its pinned sibling's own formulas so same-row calculated
-            // columns re-query their expression during the normal row refresh.
+            // Evict this row's (and its pinned sibling's) formulas so same-row calculated columns
+            // re-evaluate, then invalidate every cached value — an editable formula in another row
+            // may reference the changed cell. The refresh neither forces nor suppresses flash, so
+            // dependent cells flash on a genuine value change in step with the edited column.
             this.dropRow(node);
-            if (this.active) {
-                this.bumpValueCacheAndRefresh();
-            }
+            this.bumpValueCacheAndRefresh(false);
         };
         const onNewColumnsLoaded = () => {
             if (!this.isEvaluationActive()) {
@@ -384,9 +384,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * Bulk-invalidate every cached value via a version bump (ASTs preserved) and repaint.
      * O(1); entries become stale on next read.
      */
-    private bumpValueCacheAndRefresh(): void {
+    private bumpValueCacheAndRefresh(forceRefresh: boolean = true): void {
         this.valueCacheVersion++;
-        this.beans.rowRenderer.refreshCells(REFRESH_CELLS_PARAMS);
+        this.beans.rowRenderer.refreshCells(forceRefresh ? REFRESH_CELLS_PARAMS : undefined);
     }
 
     /**

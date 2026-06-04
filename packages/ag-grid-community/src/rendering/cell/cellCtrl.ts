@@ -639,7 +639,10 @@ export class CellCtrl extends BeanStub {
         // non of {field, valueGetter, showRowGroup} is bad in the users application, however for this edge case, it's
         // best always refresh and take the performance hit rather than never refresh and users complaining in support
         // that cells are not updating.
-        const noValueProvided = field == null && valueGetter == null && showRowGroup == null;
+        // a calculated column has no field/valueGetter/showRowGroup but DOES have a value (its
+        // expression), so it must not count as value-less here — otherwise it force-refreshes every
+        // pass and flashes on changes to unrelated columns instead of only when its value changes.
+        const noValueProvided = field == null && valueGetter == null && showRowGroup == null && !column.isCalculatedCol;
 
         const newData = params?.newData ?? false;
         const forceRefresh = noValueProvided || (params && (params.force || newData));
