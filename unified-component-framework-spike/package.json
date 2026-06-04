@@ -1,0 +1,26 @@
+{
+  "name": "component-model-prototype",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "prettier --write .",
+    "tsc": "tsc --noEmit --project ."
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "vite": "^7.3.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.8",
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
+    "happy-dom": "^20.5.0",
+    "prettier": "^3.7.4",
+    "react-scan": "^0.4.3",
+    "typescript": "^5.7.3"
+  }
+}

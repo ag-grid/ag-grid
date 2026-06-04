@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Component Model Prototype</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 20px;
+        font-family: system-ui, sans-serif;
+      }
+
+      .viewport {
+        width: 800px;
+        height: 600px;
+        overflow: auto;
+        border: 1px solid #ccc;
+        position: relative;
+      }
+
+      .row {
+        display: flex;
+        flex-direction: row;
+        width: 1000px;
+        height: 50px;
+
+        > * {
+          flex: none;
+        }
+      }
+
+      .cell {
+        width: 100px;
+        height: 50px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: solid 2px #ddd;
+      }
+
+      .header .cell,
+      .footer .cell {
+        background: #f5f5f5;
+        font-weight: bold;
+      }
+
+      .sticky {
+        position: sticky;
+      }
+
+      .absolute {
+        position: absolute;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="viewport">
+      <div
+        class="scrollable-area absolute"
+        style="
+          width: 1000px;
+          height: 1000px;
+          top: 0;
+          left: 0;
+          z-index: 0;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <div
+          class="pinned-top-rows sticky"
+          style="top: 0; width: 1000px; z-index: 2"
+        >
+          <div class="header row absolute" style="top: 0px">H1</div>
+          <div class="header row absolute" style="top: 50px">H2</div>
+        </div>
+        <div
+          class="scrolling-rows absolute"
+          style="width: 1000px; height: 800px; top: 100px; z-index: 1"
+        >
+          <div class="row absolute" style="top: 0px">1</div>
+          <div class="row absolute" style="top: 50px">2</div>
+          <div class="row absolute" style="top: 100px">3</div>
+          <div class="row absolute" style="top: 150px">4</div>
+          <div class="row absolute" style="top: 200px">5</div>
+          <div class="row absolute" style="top: 250px">6</div>
+          <div class="row absolute" style="top: 300px">7</div>
+          <div class="row absolute" style="top: 350px">8</div>
+          <div class="row absolute" style="top: 400px">9</div>
+          <div class="row absolute" style="top: 450px">10</div>
+          <div class="row absolute" style="top: 500px">11</div>
+          <div class="row absolute" style="top: 550px">12</div>
+          <div class="row absolute" style="top: 600px">13</div>
+          <div class="row absolute" style="top: 650px">14</div>
+          <div class="row absolute" style="top: 700px">15</div>
+          <div class="row absolute" style="top: 750px">16</div>
+        </div>
+        <div
+          class="pinned-bottom-rows sticky"
+          style="
+            bottom: 0;
+            margin-top: auto;
+            width: 1000px;
+            height: 100px;
+            margin-top: auto;
+            z-index: 2;
+          "
+        >
+          <div class="footer row absolute" style="top: 0px; z-index: 1">F1</div>
+          <div class="footer row absolute" style="top: 50px; z-index: 1">
+            F2
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <template id="grid-row">
+      <div class="pinned-left-cells sticky" style="left: 0; z-index: 2">
+        <div class="cell absolute" style="left: 0px">/1</div>
+        <div class="cell absolute" style="left: 100px">/2</div>
+      </div>
+      <div
+        class="scrolling-cells absolute"
+        style="width: 1000px; height: 50px; left: 0; z-index: 1"
+      >
+        <div class="cell absolute" style="left: 200px">/3</div>
+        <div class="cell absolute" style="left: 300px">/4</div>
+        <div class="cell absolute" style="left: 400px">/5</div>
+        <div class="cell absolute" style="left: 500px">/6</div>
+        <div class="cell absolute" style="left: 600px">/7</div>
+        <div class="cell absolute" style="left: 700px">/8</div>
+      </div>
+      <div
+        class="pinned-right-cells sticky"
+        style="right: 0; margin-left: auto; z-index: 2"
+      >
+        <div class="cell absolute" style="right: 100px; z-index: 2">/9</div>
+        <div class="cell absolute" style="right: 0px; z-index: 2">/10</div>
+      </div>
+    </template>
+
+    <script>
+      const template = document.getElementById("grid-row");
+      document.querySelectorAll(".row").forEach((row) => {
+        const prefix = row.textContent;
+        row.textContent = "";
+        const clone = template.content.cloneNode(true);
+        clone.querySelectorAll(".cell").forEach((cell) => {
+          cell.textContent = prefix + cell.textContent;
+        });
+        row.appendChild(clone);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,182 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: #f5f5f5;
+}
+
+.demo-wrapper {
+  display: flex;
+  gap: 20px;
+  height: calc(100vh - 40px);
+}
+
+.demo-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ReorderDemo */
+.reorder-demo {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.reorder-demo-header {
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reorder-demo-header h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Toolbar */
+.reorder-toolbar {
+  padding: 8px 16px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.reorder-toolbar button {
+  padding: 6px 12px;
+  font-size: 12px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.reorder-toolbar button:hover {
+  background: #e8e8e8;
+}
+
+.reorder-toolbar button:active {
+  background: #ddd;
+}
+
+/* Trays container */
+.reorder-trays-container {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  overflow: auto;
+}
+
+/* Tray */
+.reorder-tray {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+}
+
+.reorder-tray-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  padding: 8px 12px;
+  background: #f0f0f0;
+  border-radius: 6px 6px 0 0;
+  border: 1px solid #ddd;
+  border-bottom: none;
+}
+
+.reorder-tray-items {
+  flex: 1;
+  min-height: 60px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 0 0 6px 6px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Card */
+.reorder-card {
+  height: 52px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  user-select: none;
+}
+
+.reorder-card:hover {
+  filter: brightness(0.95);
+}
+
+.reorder-card-selected {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.3);
+}
+
+.reorder-card-reference {
+  border-color: #e65100;
+  border-style: dashed;
+  box-shadow: 0 0 0 2px rgba(230, 81, 0, 0.3);
+}
+
+.reorder-card-emoji {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.reorder-card-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Log */
+.reorder-log-container {
+  border-top: 1px solid #e0e0e0;
+  background: #f8f9fa;
+}
+
+.reorder-log-header {
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  border-bottom: 1px solid #eee;
+}
+
+.reorder-log {
+  padding: 8px 16px;
+  font-family: "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  color: #555;
+  height: 120px;
+  overflow-y: auto;
+  white-space: pre;
+  line-height: 1.6;
+}
