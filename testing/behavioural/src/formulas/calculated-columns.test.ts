@@ -2574,6 +2574,93 @@ describe('ag-grid calculated columns', () => {
         );
     });
 
+    test('adding a calculated column does not highlight the new column', async () => {
+        const api = createGrid('calculated-column-add-no-highlight', {
+            calculatedColumns: {
+                columnHighlighting: true,
+            },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        const gridDiv = document.querySelector('#calculated-column-add-no-highlight')!;
+        expect(gridDiv.querySelector('[col-id="calculated_1"].ag-header-cell')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[row-index="0"] [col-id="calculated_1"]')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+    });
+
+    test('multiple open calculated column dialogs highlight each edited column', async () => {
+        const api = createGrid('calculated-column-multi-highlight', {
+            calculatedColumns: {
+                columnHighlighting: true,
+            },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                {
+                    colId: 'profit',
+                    headerName: 'Profit',
+                    calculatedExpression: '[revenue] - [cost]',
+                },
+                {
+                    colId: 'margin',
+                    headerName: 'Margin',
+                    calculatedExpression: '[profit] / [revenue]',
+                },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        api.openCalculatedColumnDialog('profit');
+        api.openCalculatedColumnDialog('margin');
+        await asyncSetTimeout(1);
+
+        const gridDiv = document.querySelector('#calculated-column-multi-highlight')!;
+        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[col-id="margin"].ag-header-cell')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[row-index="0"] [col-id="margin"]')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+
+        const dialogs = Array.from(document.querySelectorAll<HTMLElement>('.ag-calculated-column-form'));
+        const profitDialog = dialogs.find((dialog) => dialog.querySelector('input')?.value === 'Profit')!;
+        const profitCancel = Array.from(profitDialog.querySelectorAll<HTMLButtonElement>('button')).find(
+            (button) => button.textContent?.trim() === 'Cancel'
+        )!;
+        profitCancel.click();
+        await asyncSetTimeout(1);
+
+        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[col-id="margin"].ag-header-cell')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+
+        clickDialogButton('Cancel');
+    });
+
     test('openCalculatedColumnDialog opens the edit dialog for an existing calculated column', async () => {
         const api = createGrid('calculated-column-open-dialog-api', {
             calculatedColumns: {
