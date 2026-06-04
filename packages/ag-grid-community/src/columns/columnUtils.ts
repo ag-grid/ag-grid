@@ -6,7 +6,7 @@ import type { AgColumn } from '../entities/agColumn';
 import { _getSortDefFromInput, _isSortDefValid, _isSortDirectionValid, isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColDef, ColKey } from '../entities/colDef';
+import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
 import { depthFirstOriginalTreeSearch } from './columnFactoryUtils';
@@ -195,4 +195,19 @@ export function _getSortDefFromColDef(colDef: ColDef) {
     }
 
     return null;
+}
+
+/**
+ * Calls `callback` for each leaf `ColDef` in `columnDefs`, recursing into `ColGroupDef` children as required.
+ * The `callback` is not called on column groups, only their leaf children.
+ */
+export function forEachColDef(columnDefs: (ColDef | ColGroupDef)[], callback: (colDef: ColDef) => void): void {
+    for (let i = 0, len = columnDefs.length; i < len; ++i) {
+        const def = columnDefs[i];
+        if ('children' in def) {
+            forEachColDef(def.children, callback);
+        } else {
+            callback(def);
+        }
+    }
 }

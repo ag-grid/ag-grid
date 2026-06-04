@@ -991,7 +991,7 @@ export type {
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 export { AllCommunityModule } from './allCommunityModule';
 export { AutoGenerateColumnsModule } from './autoGenerateColumns/autoGenerateColumnsModule';
-export { forEachColDef } from './autoGenerateColumns/autoGenerateColumnsService';
+export { forEachColDef } from './columns/columnUtils';
 export { RowApiModule, ScrollApiModule } from './api/apiModule';
 export { ClientSideRowModelApiModule, ClientSideRowModelModule } from './clientSideRowModel/clientSideRowModelModule';
 export { ColumnAutoSizeModule } from './columnAutosize/columnAutosizeModule';
