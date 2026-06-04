@@ -47,6 +47,49 @@ describe('calculated columns - pivot mode', () => {
         { field: 'cost', aggFunc: 'sum' },
     ];
 
+    test('calc col is gated by an active pivot column, not by enablePivot or pivot mode alone', async () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const api = createGrid('pivot-enabled-runtime-toggle', {
+            defaultColDef: { enablePivot: true, enableRowGroup: true, enableValue: true },
+            rowData,
+            columnDefs: [
+                { field: 'country' },
+                { field: 'year' },
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+        });
+        const profit = () =>
+            api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: false });
+        await asyncSetTimeout(10);
+
+        // enablePivot only allows pivoting; with no active pivot column the calc col evaluates.
+        expect(profit()).toBe(7);
+        expect(warn).not.toHaveBeenCalled();
+
+        // Turning pivot mode on without assigning a pivot column does not activate a pivot.
+        api.setGridOption('pivotMode', true);
+        await asyncSetTimeout(10);
+        expect(profit()).toBe(7);
+        expect(warn).not.toHaveBeenCalled();
+
+        // Assigning a pivot column at runtime activates the pivot, so the calc col is turned off
+        // (warning 295) while remaining a resolvable primary column.
+        api.applyColumnState({ state: [{ colId: 'country', pivot: true }] });
+        await asyncSetTimeout(10);
+        expect(warn).toHaveBeenCalled();
+        expect(api.getColumn('profit')).toBeTruthy();
+
+        // Removing the pivot column re-enables calc evaluation.
+        warn.mockClear();
+        api.applyColumnState({ state: [{ colId: 'country', pivot: false }] });
+        api.setGridOption('pivotMode', false);
+        await asyncSetTimeout(10);
+        expect(profit()).toBe(7);
+        expect(warn).not.toHaveBeenCalled();
+    });
+
     test('calc col is absent from the pivot display but remains a resolvable primary column', async () => {
         vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 295: expected — calc col blocked by pivot
         const api = createGrid('pivot-static-calc', {

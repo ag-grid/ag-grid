@@ -2570,6 +2570,43 @@ describe('ag-grid calculated columns', () => {
         );
     });
 
+    test('toggling columnHighlighting while the dialog is open updates the highlight live', async () => {
+        const api = createGrid('calculated-column-highlight-toggle', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'profit');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Edit Calculated Column');
+        await asyncSetTimeout(1);
+
+        const gridDiv = document.querySelector('#calculated-column-highlight-toggle')!;
+        const header = () => gridDiv.querySelector('[col-id="profit"].ag-header-cell');
+        const cell = () => gridDiv.querySelector('[row-index="0"] [col-id="profit"]');
+
+        // Highlighting is off by default, so an open edit dialog shows no highlight.
+        expect(header()).not.toHaveClass('ag-calculated-column-highlighted');
+        expect(cell()).not.toHaveClass('ag-calculated-column-highlighted');
+
+        // Enabling it while the dialog is open highlights the edited column immediately.
+        api.setGridOption('calculatedColumns', { columnHighlighting: true });
+        await asyncSetTimeout(1);
+        expect(header()).toHaveClass('ag-calculated-column-highlighted');
+        expect(cell()).toHaveClass('ag-calculated-column-highlighted');
+
+        // Disabling it again removes the highlight without closing the dialog.
+        api.setGridOption('calculatedColumns', { columnHighlighting: false });
+        await asyncSetTimeout(1);
+        expect(header()).not.toHaveClass('ag-calculated-column-highlighted');
+        expect(cell()).not.toHaveClass('ag-calculated-column-highlighted');
+    });
+
     test('calculated column edit highlighting is disabled by default', async () => {
         const api = createGrid('calculated-column-highlight-disabled', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],

@@ -166,9 +166,8 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
 
         const columns = cols.list;
-        for (let i = 0, len = columns.length; i < len; ++i) {
-            const col = columns[i];
-            if (col.isAllowPivot() || col.isPivotActive()) {
+        for (const col of columns) {
+            if (col.isPivotActive()) {
                 _warn(295, { blockedService: 'Column Pivoting' });
                 return false;
             }

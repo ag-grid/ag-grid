@@ -111,6 +111,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             gridColumnsChanged: () => this.refreshCalculatedColumnSpans(),
             columnMoved: (event) => this.releaseVisibleAnchors(event.columns),
         });
+
+        this.addManagedPropertyListener('calculatedColumns', () => this.refreshOpenDialogHighlights());
     }
 
     private refreshCalculatedColumnSpans(): void {
@@ -148,6 +150,15 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             cellCtrl.refreshCalculatedColumnCss();
         }
         this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
+    }
+
+    private refreshOpenDialogHighlights(): void {
+        const colModel = this.beans.colModel;
+        for (const [colId, openDialog] of this.openDialogsByColId) {
+            if (openDialog.highlight) {
+                this.refreshCalculatedColumnHighlight(colModel.getColById(colId));
+            }
+        }
     }
 
     private releaseVisibleAnchors(columns: Column[] | null | undefined): void {
