@@ -4,7 +4,7 @@ title: "Auto-Generate Columns"
 
 Column definitions can be generated automatically from `rowData`, without defining them upfront. This is useful when working with dynamic or unknown data shapes.
 
-Set `autoGenerateColumnDefs` to `true` and the grid reads the keys from the first row of `rowData`, creating a column for each one:
+Set `autoGenerateColumnDefs` to `true` and the grid scans `rowData` for the first non-null row, then creates a column for each of its keys:
 
 {% gridExampleRunner title="Auto-Generate Columns" name="nested-objects" exampleHeight=300 /%}
 
@@ -17,11 +17,12 @@ const gridOptions = {
 
 ## Column Generation
 
-The grid inspects the first row of `rowData` and creates columns based on value types:
+The grid scans `rowData` for the first non-null row and creates columns based on value types:
 
 - **Primitive values** (strings, numbers, booleans, bigints, Date instances) — a leaf column.
-- **Plain objects** — a column group, with nested keys recursed into. The `headerName` is derived from the key name.
-- **Arrays** and **null/undefined** values — a leaf column by default.
+- **Plain objects** — a column group by default, with nested keys recursed into. The `headerName` is derived from the key name.
+- **Arrays** — a leaf column if the first element is a primitive value; skipped if the array is empty or contains objects. Arrays render as a comma-separated string.
+- **null/undefined values** — a leaf column by default.
 - **Functions** — skipped.
 
 For example, given this row data:
@@ -53,26 +54,51 @@ Row data keys containing dots (e.g. `"user.name"`) are treated as nested paths b
 
 ## Configuration
 
-Pass an `AutoGenerateColumnDefsOptions` object instead of `true` to control how different value types are handled:
+Pass an `AutoGenerateColumnDefsOptions` object instead of `true` to control how each value type is handled. The example below lets you toggle each option to see how it affects the generated columns:
+
+{% gridExampleRunner title="Configuration" name="configuration" exampleHeight=350 /%}
+
+### objectValues
+
+Controls how plain-object values are handled:
+
+- **`'group'`** (default) — recurse into the object and create a column group.
+- **`'flatten'`** — recurse into the object and create flat leaf columns using dotted field paths.
+- **`'skip'`** — ignore the field entirely.
+
+Use `'flatten'` when you want all columns at the top level instead of nested groups:
 
 ```js
-const gridOptions = {
-    autoGenerateColumnDefs: {
-        objectValues: 'recurse',
-        arrayValues: 'include',
-        nullishValues: 'include',
-    },
-    rowData: myData,
-};
+// Row data: { name: 'Alice', address: { city: 'London' } }
+// With objectValues: 'flatten':
+columnDefs: [
+    { field: 'name' },
+    { field: 'address.city', headerName: 'City' },
+]
 ```
+
+### arrayValues
+
+Controls how array values are handled:
+
+- **`'primitives'`** (default) — create a leaf column only when the first array element is a primitive value. Arrays of objects or empty arrays are skipped. Array values render as a comma-separated string.
+- **`'include'`** — create a leaf column for all arrays regardless of content.
+- **`'skip'`** — ignore array fields entirely.
+
+### nullishValues
+
+Controls how `null` and `undefined` values are handled:
+
+- **`'include'`** (default) — create a leaf column for the field.
+- **`'skip'`** — ignore the field.
 
 {% interfaceDocumentation interfaceName="AutoGenerateColumnDefsOptions" /%}
 
 ## Updating Row Data
 
-Columns are regenerated each time `rowData` is set. Only the keys from the first row are used, so columns update when the data shape changes.
+Columns are regenerated each time `rowData` is set. Only the keys from the first non-null row are used, so columns update when the data shape changes.
 
-By default, column order matches the key order of the first row. Set `maintainColumnOrder` to `true` to preserve existing column positions when the data shape changes:
+By default, column order matches the key order of that first row. Set `maintainColumnOrder` to `true` to preserve existing column positions when the data shape changes:
 
 ```js
 const gridOptions = {
@@ -83,11 +109,7 @@ const gridOptions = {
 
 See [Maintain Column Order](./column-updating-definitions/#maintain-column-order) for details.
 
-Setting `rowData` to `[]` or `null` clears rows but preserves column definitions. To reset columns, clear them explicitly:
-
-```js
-api.setGridOption('columnDefs', []);
-```
+Setting `rowData` to `[]` or `null` clears both the rows and the column definitions.
 
 {% note %}
 Updating data via transactions (`applyTransaction` / `applyTransactionAsync`) does not trigger column generation.
@@ -97,7 +119,22 @@ Updating data via transactions (`applyTransaction` / `applyTransactionAsync`) do
 
 [Default Column Definitions](./column-definitions/#default-column-definitions) apply to auto-generated columns the same way as manually defined ones. This is the simplest way to set common properties like filtering or resizing.
 
-For per-column customisation, use the `processAutoGeneratedColumnDefs` callback to modify, reorder, or replace columns before they are applied. The callback receives `params.colDefs` (which may include `ColGroupDef` entries for nested objects) and `params.rowData`, and returns the final `(ColDef | ColGroupDef)[]`.
+For per-column customisation, use the `processAutoGeneratedColumnDefs` callback to modify, reorder, or replace columns before they are applied. The callback receives `params.columnDefs` (which may include `ColGroupDef` entries when row data contains nested objects) and `params.rowData`, and returns the final `(ColDef | ColGroupDef)[]`.
+
+```js
+const gridOptions = {
+    autoGenerateColumnDefs: true,
+    rowData: myData,
+    processAutoGeneratedColumnDefs: ({ columnDefs }) => {
+        const cols = columnDefs.map((colDef) => ({
+            ...colDef,
+            hide: colDef.field === 'internalId',
+        }));
+        cols.push({ field: 'actions', headerName: 'Actions', sortable: false });
+        return cols;
+    },
+};
+```
 
 The example below uses [Column Types](./column-definitions/#column-types) to apply a `currencyColumn` type to any column whose field contains `"profit"`:
 
