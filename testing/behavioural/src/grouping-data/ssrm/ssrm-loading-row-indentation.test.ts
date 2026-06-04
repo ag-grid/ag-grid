@@ -13,9 +13,10 @@ import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
  *      **row element** by rowCtrl.setupLoadingRowIndent().
  *
  *   2. Skeleton rows (suppressServerSideFullWidthLoadingRow=true) — per-cell loading
- *      indicators rendered as Normal-type rows. Indentation is handled by the group
- *      cell renderer (groupCellRendererCtrl), which sets --ag-indentation-level on
- *      the **cell element** — the same mechanism used for regular group rows.
+ *      indicators rendered as Normal-type rows. Indentation is applied via the
+ *      --ag-indentation-level CSS variable set on the **row element** by
+ *      rowCtrl.setupLoadingRowIndent(), which cascades to cells via the .ag-cell
+ *      padding rule.
  *
  * Both modes are tested at multiple group depths (level 0, 1, 2).
  */
@@ -164,7 +165,7 @@ describe('SSRM loading row indentation', () => {
     });
 
     describe('skeleton rows (suppressServerSideFullWidthLoadingRow=true)', () => {
-        test('top-level skeleton rows are Normal type (not full-width)', () => {
+        test('top-level skeleton rows have indentation level 0', () => {
             gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
@@ -177,10 +178,11 @@ describe('SSRM loading row indentation', () => {
 
             for (const row of stubRows) {
                 expect(row.classList.contains('ag-full-width-row')).toBe(false);
+                expect(getIndentationLevel(row)).toBe('0');
             }
         });
 
-        test('child skeleton rows at depth 1 are Normal type (not full-width)', async () => {
+        test('child skeleton rows at depth 1 have indentation level 1', async () => {
             const api = gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
@@ -198,6 +200,7 @@ describe('SSRM loading row indentation', () => {
 
             for (const row of stubRows) {
                 expect(row.classList.contains('ag-full-width-row')).toBe(false);
+                expect(getIndentationLevel(row)).toBe('1');
             }
         });
     });
