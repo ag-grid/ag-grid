@@ -636,8 +636,6 @@ jobs:
               "e2e": "${{ needs.e2e.result }}",
               "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
               "Docs": "${{ needs.docs.result }}"
-#              "SonarCommunity": "${{ needs.sonar_community.result }}",
-#              "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
             }
 
       - name: Fail job if workflow failed
