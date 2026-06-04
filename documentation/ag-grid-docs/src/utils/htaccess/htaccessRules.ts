@@ -169,7 +169,9 @@ ${modExpiresRules}
 ${modDeflateRules}
 ${getModRewriteRules()}
 
-Header always set X-Frame-Options "SAMEORIGIN"
+# X-Frame-Options intentionally omitted: it can't allow-list subdomains, so it blocks
+# blog.ag-grid.com (and other *.ag-grid.com) from embedding examples. Clickjacking
+# protection is handled by the CSP frame-ancestors directive instead (see cspRules.ts).
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
