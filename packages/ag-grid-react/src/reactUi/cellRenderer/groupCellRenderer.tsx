@@ -36,8 +36,11 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const [value, setValue] = useState<any>();
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [expandedCssClasses, setExpandedCssClasses] = useState<CssClasses>(() => new CssClasses('ag-hidden'));
+    const [expandedAriaHidden, setExpandedAriaHidden] = useState<boolean>(true);
     const [contractedCssClasses, setContractedCssClasses] = useState<CssClasses>(() => new CssClasses('ag-hidden'));
+    const [contractedAriaHidden, setContractedAriaHidden] = useState<boolean>(true);
     const [checkboxCssClasses, setCheckboxCssClasses] = useState<CssClasses>(() => new CssClasses('ag-invisible'));
+    const [checkboxAriaHidden, setCheckboxAriaHidden] = useState<boolean>(true);
 
     useImperativeHandle(ref, () => {
         return {
@@ -65,11 +68,18 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
             },
             setChildCount: (count) => setChildCount(count),
             toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
-            setContractedDisplayed: (displayed) =>
-                setContractedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
-            setExpandedDisplayed: (displayed) =>
-                setExpandedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
-            setCheckboxVisible: (visible) => setCheckboxCssClasses((prev) => prev.setClass('ag-invisible', !visible)),
+            setContractedDisplayed: (displayed) => {
+                setContractedCssClasses((prev) => prev.setClass('ag-hidden', !displayed));
+                setContractedAriaHidden(!displayed);
+            },
+            setExpandedDisplayed: (displayed) => {
+                setExpandedCssClasses((prev) => prev.setClass('ag-hidden', !displayed));
+                setExpandedAriaHidden(!displayed);
+            },
+            setCheckboxVisible: (visible) => {
+                setCheckboxCssClasses((prev) => prev.setClass('ag-invisible', !visible));
+                setCheckboxAriaHidden(!visible);
+            },
             setCheckboxSpacing: (add) =>
                 setCheckboxCssClasses((prev) => prev.setClass('ag-group-checkbox-spacing', add)),
         };
@@ -109,9 +119,9 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
             ref={setRef}
             {...(!props.colDef ? { role: ctrlRef.current?.getCellAriaRole() } : {})}
         >
-            <span className={expandedClassName} ref={eExpandedRef}></span>
-            <span className={contractedClassName} ref={eContractedRef}></span>
-            <span className={checkboxClassName} ref={eCheckboxRef}></span>
+            <span className={expandedClassName} ref={eExpandedRef} aria-hidden={expandedAriaHidden}></span>
+            <span className={contractedClassName} ref={eContractedRef} aria-hidden={contractedAriaHidden}></span>
+            <span className={checkboxClassName} ref={eCheckboxRef} aria-hidden={checkboxAriaHidden}></span>
             <span className="ag-group-value" ref={eValueRef}>
                 {useValue ? escapedValue : useFwRenderer ? <FwRenderer {...innerCompDetails!.params} /> : null}
             </span>
