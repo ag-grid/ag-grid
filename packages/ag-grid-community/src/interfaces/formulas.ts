@@ -75,12 +75,14 @@ export interface IFormulaDataService extends Bean {
 export interface IFormulaService extends Bean {
     active: boolean;
     hasCachedRows(): boolean;
+    isEvaluationActive(): boolean;
     isFormula(value: unknown): value is `=${string}`;
     setFormulasActive(cols: ColumnCollections): void;
     resolveValue(col: AgColumn, row: RowNode): unknown;
     getDataSourceFormula(row: RowNode, col: AgColumn): string | undefined;
     getFormulaError(col: AgColumn, row: RowNode): Error | null;
     normaliseFormula(value: string, shorthand: boolean): string | null;
+    validateExpression(expression: string): Error | null;
     getColByRef(ref: string): AgColumn | null;
     getColRef(col: AgColumn): string | null;
     updateFormulaByOffset(params: {

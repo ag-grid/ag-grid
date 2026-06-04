@@ -1,15 +1,7 @@
 import type { AgChartThemePalette } from 'ag-charts-types';
+import { RefPlaceholder, _areEqual, _clearElement, _getAbsoluteWidth, _radioCssClass, _setDisplayed } from 'ag-stack';
 
-import {
-    Component,
-    RefPlaceholder,
-    _areEqual,
-    _clearElement,
-    _createIconNoSpan,
-    _getAbsoluteWidth,
-    _radioCssClass,
-    _setDisplayed,
-} from 'ag-grid-community';
+import { Component, _createIconNoSpan } from 'ag-grid-community';
 
 import type { AgChartsExports } from '../../../agChartsExports';
 import type { ChartController } from '../../chartController';

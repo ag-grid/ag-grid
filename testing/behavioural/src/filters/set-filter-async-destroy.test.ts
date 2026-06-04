@@ -3,7 +3,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { SetFilter } from 'ag-grid-enterprise';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface Row {
     name: string;
@@ -74,6 +74,17 @@ describe('Set Filter async destroy safety', () => {
             ],
             rowData: ROW_DATA,
         });
+        await new GridColumns(api, `success() called after destroy does not resolve allKeys setup`).checkColumns(`
+            CENTER
+            ├── name "Name" width:200
+            └── category "Category" width:200
+        `);
+        await new GridRows(api, `success() called after destroy does not resolve allKeys setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 name:"Item 1" category:"A"
+            ├── LEAF id:1 name:"Item 2" category:"B"
+            └── LEAF id:2 name:"Item 3" category:"C"
+        `);
 
         // getColumnFilterInstance creates the filter and queues the values callback setTimeout
         // without blocking on allKeys resolution
@@ -154,6 +165,23 @@ describe('Set Filter async destroy safety', () => {
             ],
             rowData: ROW_DATA,
         });
+        await new GridColumns(
+            api,
+            `destroy during onAnyFilterChanged (another column filter change while values loa setup`
+        ).checkColumns(`
+            CENTER
+            ├── name "Name" width:200
+            └── category "Category" width:200
+        `);
+        await new GridRows(
+            api,
+            `destroy during onAnyFilterChanged (another column filter change while values loa setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 name:"Item 1" category:"A"
+            ├── LEAF id:1 name:"Item 2" category:"B"
+            └── LEAF id:2 name:"Item 3" category:"C"
+        `);
 
         // Flush the macrotask that fires the category values callback so capturedSuccess is populated
         await asyncSetTimeout(0);
@@ -167,6 +195,5 @@ describe('Set Filter async destroy safety', () => {
         api.destroy();
 
         expect(() => capturedSuccess?.(['A', 'B', 'C'])).not.toThrow();
-        await asyncSetTimeout(0);
     });
 });

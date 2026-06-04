@@ -2,7 +2,7 @@ import type { IAggFunc, IAggFuncParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, applyTransactionChecked, unindentText } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, unindentText } from '../test-utils';
 
 const qualifiedAggFunc: IAggFunc = ({ values }: IAggFuncParams) => {
     let qualified = 0;
@@ -70,6 +70,28 @@ describe('csv exports for grouped aggregations', () => {
             suppressAggFuncInHeader: true,
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `includes totals before and after transactions setup`).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── athlete "Athlete" width:200
+            ├── score "Score" width:200 aggFunc:sum
+            ├── rating "Rating" width:200 aggFunc:avg
+            ├── qualified "Qualified" width:200 aggFunc:custom
+            └── coach "Coaches" width:200 aggFunc:max
+        `);
+        await new GridRows(api, `includes totals before and after transactions setup`).check(`
+            ROOT id:ROOT_NODE_ID score:37 rating:{"count":5,"value":4.2} qualified:"3/5 Qualified" coach:null
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"Alice" score:10 rating:4.2 qualified:true coach:"Coach A"
+            │ ├── LEAF id:2 country:"Ireland" athlete:"Brendan" score:6 rating:3.9 qualified:false coach:"Coach B"
+            │ └─ footer id:rowGroupFooter_row-group-country-Ireland ag-Grid-AutoColumn:"Total Ireland" score:16 rating:{"count":2,"value":4.05} qualified:"1/2 Qualified" coach:null
+            ├─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
+            │ ├── LEAF id:3 country:"Spain" athlete:"Carlos" score:7 rating:4.5 qualified:true coach:"Coach C"
+            │ ├── LEAF id:4 country:"Spain" athlete:"Diana" score:9 rating:4.8 qualified:true coach:"Coach C"
+            │ ├── LEAF id:5 country:"Spain" athlete:"Elena" score:5 rating:3.6 qualified:false coach:"Coach D"
+            │ └─ footer id:rowGroupFooter_row-group-country-Spain ag-Grid-AutoColumn:"Total Spain" score:21 rating:{"count":3,"value":4.3} qualified:"2/3 Qualified" coach:null
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " score:37 rating:{"count":5,"value":4.2} qualified:"3/5 Qualified" coach:null
+        `);
 
         const initialCsv = api.getDataAsCsv({ suppressQuotes: true })!;
 
@@ -128,6 +150,21 @@ describe('csv exports for grouped aggregations', () => {
             ,Fritz,8,4.1,true,Coach E
              -> Total Germany,,8,4.1,1/1 Qualified,
             Total ,,43,4.3199999999999985,4/5 Qualified,
+        `);
+        await new GridRows(api, `includes totals before and after transactions final state`).check(`
+            ROOT id:ROOT_NODE_ID score:43 rating:{"count":5,"value":4.3199999999999985} qualified:"4/5 Qualified" coach:null
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"Alice" score:10 rating:4.2 qualified:true coach:"Coach A"
+            │ └─ footer id:rowGroupFooter_row-group-country-Ireland ag-Grid-AutoColumn:"Total Ireland" score:10 rating:{"count":1,"value":4.2} qualified:"1/1 Qualified" coach:null
+            ├─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
+            │ ├── LEAF id:3 country:"Spain" athlete:"Carlos" score:11 rating:4.9 qualified:true coach:"Coach C"
+            │ ├── LEAF id:4 country:"Spain" athlete:"Diana" score:9 rating:4.8 qualified:true coach:"Coach C"
+            │ ├── LEAF id:5 country:"Spain" athlete:"Elena" score:5 rating:3.6 qualified:false coach:"Coach D"
+            │ └─ footer id:rowGroupFooter_row-group-country-Spain ag-Grid-AutoColumn:"Total Spain" score:25 rating:{"count":3,"value":4.433333333333333} qualified:"2/3 Qualified" coach:null
+            ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany"
+            │ ├── LEAF id:6 country:"Germany" athlete:"Fritz" score:8 rating:4.1 qualified:true coach:"Coach E"
+            │ └─ footer id:rowGroupFooter_row-group-country-Germany ag-Grid-AutoColumn:"Total Germany" score:8 rating:{"count":1,"value":4.1} qualified:"1/1 Qualified" coach:null
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " score:43 rating:{"count":5,"value":4.3199999999999985} qualified:"4/5 Qualified" coach:null
         `);
     });
 });

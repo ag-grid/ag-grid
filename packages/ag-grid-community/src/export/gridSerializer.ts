@@ -1,4 +1,5 @@
-import { _last } from '../agStack/utils/array';
+import { _last } from 'ag-stack';
+
 import type { ColumnModel } from '../columns/columnModel';
 import { isColumnGroupAutoCol, isColumnSelectionCol, isRowNumberCol } from '../columns/columnUtils';
 import { GroupInstanceIdCreator } from '../columns/groupInstanceIdCreator';

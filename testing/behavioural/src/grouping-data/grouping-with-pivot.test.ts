@@ -5,7 +5,14 @@ import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from '
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    setRowDataChecked,
+} from '../test-utils';
 
 describe('ag-grid grouping with pivot', () => {
     const gridsManager = new TestGridsManager({
@@ -169,8 +176,8 @@ describe('ag-grid grouping with pivot', () => {
 
         const gridRows = new GridRows(api, 'multiple pivot columns', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID pivot_year-quarter_2020-Q1_sales:3000 pivot_year-quarter_2020-Q2_sales:3200 pivot_year-quarter_2020_sales:6200 pivot_year-quarter_2021-Q1_sales:3400 pivot_year-quarter_2021_sales:3400 
-            ├── LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year-quarter_2020-Q1_sales:1000 pivot_year-quarter_2020-Q2_sales:1100 pivot_year-quarter_2020_sales:2100 pivot_year-quarter_2021-Q1_sales:1200 pivot_year-quarter_2021_sales:1200 
+            ROOT id:ROOT_NODE_ID pivot_year-quarter_2020-Q1_sales:3000 pivot_year-quarter_2020-Q2_sales:3200 pivot_year-quarter_2020_sales:6200 pivot_year-quarter_2021-Q1_sales:3400 pivot_year-quarter_2021_sales:3400
+            ├── LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year-quarter_2020-Q1_sales:1000 pivot_year-quarter_2020-Q2_sales:1100 pivot_year-quarter_2020_sales:2100 pivot_year-quarter_2021-Q1_sales:1200 pivot_year-quarter_2021_sales:1200
             └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year-quarter_2020-Q1_sales:2000 pivot_year-quarter_2020-Q2_sales:2100 pivot_year-quarter_2020_sales:4100 pivot_year-quarter_2021-Q1_sales:2200 pivot_year-quarter_2021_sales:2200
         `);
 
@@ -230,18 +237,18 @@ describe('ag-grid grouping with pivot', () => {
 
         let gridRows = new GridRows(api, 'pivot with custom column ordering', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID 
-            ├─┬ LEAF_GROUP collapsed id:row-group-product-Laptop ag-Grid-AutoColumn:"Laptop" 
-            │ ├── LEAF hidden id:1 
-            │ ├── LEAF hidden id:2 
-            │ └── LEAF hidden id:3 
-            ├─┬ LEAF_GROUP collapsed id:row-group-product-Phone ag-Grid-AutoColumn:"Phone" 
-            │ ├── LEAF hidden id:4 
-            │ ├── LEAF hidden id:5 
-            │ └── LEAF hidden id:6 
-            └─┬ LEAF_GROUP collapsed id:row-group-product-Tablet ag-Grid-AutoColumn:"Tablet" 
-            · ├── LEAF hidden id:7 
-            · └── LEAF hidden id:8 
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP collapsed id:row-group-product-Laptop ag-Grid-AutoColumn:"Laptop"
+            │ ├── LEAF hidden id:1
+            │ ├── LEAF hidden id:2
+            │ └── LEAF hidden id:3
+            ├─┬ LEAF_GROUP collapsed id:row-group-product-Phone ag-Grid-AutoColumn:"Phone"
+            │ ├── LEAF hidden id:4
+            │ ├── LEAF hidden id:5
+            │ └── LEAF hidden id:6
+            └─┬ LEAF_GROUP collapsed id:row-group-product-Tablet ag-Grid-AutoColumn:"Tablet"
+            · ├── LEAF hidden id:7
+            · └── LEAF hidden id:8
         `);
 
         // Test sorting by pivot result columns
@@ -252,18 +259,18 @@ describe('ag-grid grouping with pivot', () => {
 
         gridRows = new GridRows(api, 'after sorting by South sales desc', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID 
-            ├─┬ LEAF_GROUP collapsed id:row-group-product-Laptop ag-Grid-AutoColumn:"Laptop" 
-            │ ├── LEAF hidden id:1 
-            │ ├── LEAF hidden id:2 
-            │ └── LEAF hidden id:3 
-            ├─┬ LEAF_GROUP collapsed id:row-group-product-Phone ag-Grid-AutoColumn:"Phone" 
-            │ ├── LEAF hidden id:4 
-            │ ├── LEAF hidden id:5 
-            │ └── LEAF hidden id:6 
-            └─┬ LEAF_GROUP collapsed id:row-group-product-Tablet ag-Grid-AutoColumn:"Tablet" 
-            · ├── LEAF hidden id:7 
-            · └── LEAF hidden id:8 
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP collapsed id:row-group-product-Laptop ag-Grid-AutoColumn:"Laptop"
+            │ ├── LEAF hidden id:1
+            │ ├── LEAF hidden id:2
+            │ └── LEAF hidden id:3
+            ├─┬ LEAF_GROUP collapsed id:row-group-product-Phone ag-Grid-AutoColumn:"Phone"
+            │ ├── LEAF hidden id:4
+            │ ├── LEAF hidden id:5
+            │ └── LEAF hidden id:6
+            └─┬ LEAF_GROUP collapsed id:row-group-product-Tablet ag-Grid-AutoColumn:"Tablet"
+            · ├── LEAF hidden id:7
+            · └── LEAF hidden id:8
         `);
     });
 
@@ -876,10 +883,10 @@ describe('ag-grid grouping with pivot', () => {
         const gridRows = new GridRows(api, 'pivot with expanded groups', gridRowsOptions);
 
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID pivot_quarter_Q1_budget:23000 pivot_quarter_Q1_expenses:19500 pivot_quarter_Q2_budget:18000 pivot_quarter_Q2_expenses:14200 
-            ├── LEAF_GROUP collapsed id:row-group-department-Engineering ag-Grid-AutoColumn:"Engineering" pivot_quarter_Q1_budget:10000 pivot_quarter_Q1_expenses:8000 pivot_quarter_Q2_budget:12000 pivot_quarter_Q2_expenses:9000 
-            ├── LEAF_GROUP collapsed id:row-group-department-Marketing ag-Grid-AutoColumn:"Marketing" pivot_quarter_Q1_budget:5000 pivot_quarter_Q1_expenses:4500 pivot_quarter_Q2_budget:6000 pivot_quarter_Q2_expenses:5200 
-            └── LEAF_GROUP collapsed id:row-group-department-Sales ag-Grid-AutoColumn:"Sales" pivot_quarter_Q1_budget:8000 pivot_quarter_Q1_expenses:7000 pivot_quarter_Q2_budget:null pivot_quarter_Q2_expenses:null 
+            ROOT id:ROOT_NODE_ID pivot_quarter_Q1_budget:23000 pivot_quarter_Q1_expenses:19500 pivot_quarter_Q2_budget:18000 pivot_quarter_Q2_expenses:14200
+            ├── LEAF_GROUP collapsed id:row-group-department-Engineering ag-Grid-AutoColumn:"Engineering" pivot_quarter_Q1_budget:10000 pivot_quarter_Q1_expenses:8000 pivot_quarter_Q2_budget:12000 pivot_quarter_Q2_expenses:9000
+            ├── LEAF_GROUP collapsed id:row-group-department-Marketing ag-Grid-AutoColumn:"Marketing" pivot_quarter_Q1_budget:5000 pivot_quarter_Q1_expenses:4500 pivot_quarter_Q2_budget:6000 pivot_quarter_Q2_expenses:5200
+            └── LEAF_GROUP collapsed id:row-group-department-Sales ag-Grid-AutoColumn:"Sales" pivot_quarter_Q1_budget:8000 pivot_quarter_Q1_expenses:7000 pivot_quarter_Q2_budget:null pivot_quarter_Q2_expenses:null
         `);
     });
 
@@ -922,9 +929,9 @@ describe('ag-grid grouping with pivot', () => {
 
         const gridRows = new GridRows(api, 'pivot with column customization', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID 
-            ├── LEAF_GROUP collapsed id:row-group-team-Alpha ag-Grid-AutoColumn:"Alpha" 
-            └── LEAF_GROUP collapsed id:row-group-team-Beta ag-Grid-AutoColumn:"Beta" 
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF_GROUP collapsed id:row-group-team-Alpha ag-Grid-AutoColumn:"Alpha"
+            └── LEAF_GROUP collapsed id:row-group-team-Beta ag-Grid-AutoColumn:"Beta"
         `);
     });
 
@@ -966,10 +973,10 @@ describe('ag-grid grouping with pivot', () => {
 
         let gridRows = new GridRows(api, 'before filtering pivot results', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID 
-            ├── LEAF_GROUP collapsed id:row-group-region-North ag-Grid-AutoColumn:"North" 
-            ├── LEAF_GROUP collapsed id:row-group-region-South ag-Grid-AutoColumn:"South" 
-            └── LEAF_GROUP collapsed id:row-group-region-East ag-Grid-AutoColumn:"East" 
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF_GROUP collapsed id:row-group-region-North ag-Grid-AutoColumn:"North"
+            ├── LEAF_GROUP collapsed id:row-group-region-South ag-Grid-AutoColumn:"South"
+            └── LEAF_GROUP collapsed id:row-group-region-East ag-Grid-AutoColumn:"East"
         `);
 
         // Get the actual pivot result columns to use for filtering
@@ -1053,6 +1060,7 @@ describe('ag-grid grouping with pivot', () => {
             { id: '3', country: 'United Kingdom', athlete: 'Chris', year: 2008, gold: 3 },
             { id: '4', country: 'United Kingdom', athlete: 'Mo', year: 2012, gold: 2 },
         ]);
+        await asyncSetTimeout(10);
 
         await vi.waitFor(async () => {
             await new GridRows(api, 'custom group columns before pivot').check(`
@@ -1089,6 +1097,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         api.setGridOption('pivotMode', false);
+        await asyncSetTimeout(10);
 
         await vi.waitFor(async () => {
             await new GridRows(api, 'custom group columns after pivot disabled').check(`
@@ -1174,6 +1183,154 @@ describe('ag-grid grouping with pivot', () => {
         const newPivotColumns = api.getPivotColumns();
         expect(newPivotColumns.length).toBe(1);
         expect(newPivotColumns[0].getColId()).toBe('year');
+    });
+
+    test('pivot column headers use refData to map keys to display values and sort by display name', async () => {
+        const carMappings: Record<string, string> = {
+            a: 'Zenith',
+            b: 'Alpha',
+            c: 'Mid',
+        };
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'make', pivot: true, hide: true, refData: carMappings },
+                { field: 'price', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        applyTransactionChecked(api, {
+            add: [
+                { id: '1', country: 'UK', make: 'a', price: 35000 },
+                { id: '2', country: 'UK', make: 'b', price: 32000 },
+                { id: '3', country: 'US', make: 'c', price: 30000 },
+            ],
+        });
+
+        await new GridColumns(api, 'pivot with refData sorts by display name').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "Alpha" GROUP
+            │ └── pivot_make_b_price "Price" width:200 columnGroupShow:open
+            ├─┬ "Mid" GROUP
+            │ └── pivot_make_c_price "Price" width:200 columnGroupShow:open
+            └─┬ "Zenith" GROUP
+              └── pivot_make_a_price "Price" width:200 columnGroupShow:open
+        `);
+
+        api.setGridOption('enableStrictPivotColumnOrder', true);
+        api.setGridOption('columnDefs', [
+            { field: 'country', rowGroup: true, hide: true },
+            {
+                field: 'make',
+                pivot: true,
+                hide: true,
+                refData: carMappings,
+                pivotComparator: (a, b) => b.localeCompare(a),
+            },
+            { field: 'price', aggFunc: 'sum', hide: true },
+        ]);
+
+        await new GridColumns(api, 'pivot with refData and reverse pivotComparator').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "Zenith" GROUP
+            │ └── pivot_make_a_price "Price" width:200 columnGroupShow:open
+            ├─┬ "Mid" GROUP
+            │ └── pivot_make_c_price "Price" width:200 columnGroupShow:open
+            └─┬ "Alpha" GROUP
+              └── pivot_make_b_price "Price" width:200 columnGroupShow:open
+        `);
+    });
+
+    test('pivot column headers use refData with multiple pivot columns', async () => {
+        const carMappings: Record<string, string> = {
+            tyt: 'Toyota',
+            frd: 'Ford',
+        };
+
+        const colourMappings: Record<string, string> = {
+            cb: 'Cadet Blue',
+            fg: 'Forest Green',
+        };
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'make', pivot: true, hide: true, refData: carMappings },
+                { field: 'colour', pivot: true, hide: true, refData: colourMappings },
+                { field: 'price', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        applyTransactionChecked(api, {
+            add: [
+                { id: '1', country: 'UK', make: 'tyt', colour: 'cb', price: 35000 },
+                { id: '2', country: 'UK', make: 'frd', colour: 'fg', price: 32000 },
+            ],
+        });
+
+        await new GridColumns(api, 'pivot with multiple refData columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "Ford" GROUP closed
+            │ ├─┬ "Forest Green" GROUP hidden
+            │ │ └── pivot_make-colour_frd-fg_price "Price" width:200 columnGroupShow:open hidden
+            │ └── pivot_make-colour_frd_price "Price" width:200 columnGroupShow:closed
+            └─┬ "Toyota" GROUP closed
+              ├─┬ "Cadet Blue" GROUP hidden
+              │ └── pivot_make-colour_tyt-cb_price "Price" width:200 columnGroupShow:open hidden
+              └── pivot_make-colour_tyt_price "Price" width:200 columnGroupShow:closed
+        `);
+    });
+
+    test('pivot column headers fall back to raw key when refData does not contain the key', async () => {
+        const carMappings: Record<string, string> = {
+            a: 'Alpha',
+        };
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'make', pivot: true, hide: true, refData: carMappings },
+                { field: 'price', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        applyTransactionChecked(api, {
+            add: [
+                { id: '1', country: 'UK', make: 'a', price: 35000 },
+                { id: '2', country: 'UK', make: 'b', price: 32000 },
+                { id: '3', country: 'US', make: 'c', price: 30000 },
+            ],
+        });
+
+        await new GridColumns(api, 'pivot with partial refData falls back to raw key').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "Alpha" GROUP
+            │ └── pivot_make_a_price "Price" width:200 columnGroupShow:open
+            ├─┬ "b" GROUP
+            │ └── pivot_make_b_price "Price" width:200 columnGroupShow:open
+            └─┬ "c" GROUP
+              └── pivot_make_c_price "Price" width:200 columnGroupShow:open
+        `);
     });
 
     test('aggregation value gets hidden on an expanded group if it has a group total row', async () => {

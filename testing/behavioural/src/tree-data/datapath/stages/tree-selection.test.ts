@@ -188,7 +188,7 @@ describe('ag-grid tree selection', () => {
         `);
     });
 
-    test('parent with unselectable children is selectable when groupSelects: "filteredDescendants" and isRowSelectable: true for parent', () => {
+    test('parent with unselectable children is selectable when groupSelects: "filteredDescendants" and isRowSelectable: true for parent', async () => {
         const rowData = cachedJSONObjects.array([
             { id: '1', name: 'John Von Neumann', orgHierarchy: ['A'] },
             { id: '2', name: 'Alan Turing', orgHierarchy: ['A', 'B'] },
@@ -216,6 +216,31 @@ describe('ag-grid tree selection', () => {
             getRowId: (params) => params.data.id,
             getDataPath: (data: any) => data.orgHierarchy,
         });
+        await new GridColumns(
+            api,
+            `parent with unselectable children is selectable when groupSelects: "filteredDesc setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+            ├── ag-Grid-AutoColumn "Hierarchy" width:200
+            └── name "Name" width:200
+        `);
+        await new GridRows(
+            api,
+            `parent with unselectable children is selectable when groupSelects: "filteredDesc setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP id:1 ag-Grid-AutoColumn:"A" name:"John Von Neumann"
+            │ ├─┬ B GROUP id:2 ag-Grid-AutoColumn:"B" name:"Alan Turing"
+            │ │ ├── D LEAF id:4 ag-Grid-AutoColumn:"D" name:"Donald Knuth"
+            │ │ └── E LEAF id:5 ag-Grid-AutoColumn:"E" name:"Grace Hopper"
+            │ └─┬ C GROUP id:3 ag-Grid-AutoColumn:"C" name:"A. Church"
+            │ · ├── F LEAF id:6 ag-Grid-AutoColumn:"F" name:"Linus Torvalds"
+            │ · ├── G LEAF id:7 ag-Grid-AutoColumn:"G" name:"Brian Kernighan"
+            │ · └─┬ H filler id:row-group-0-A-1-C-2-H ag-Grid-AutoColumn:"H"
+            │ · · └── I LEAF id:8 ag-Grid-AutoColumn:"I" name:"Claude Elwood Shannon"
+            └── J LEAF id:9 ag-Grid-AutoColumn:"J" name:"E. Dijkstra"
+        `);
 
         const actions = new GridActions(api, '#myGrid');
 
@@ -228,6 +253,31 @@ describe('ag-grid tree selection', () => {
             groupSelects: 'filteredDescendants',
             isRowSelectable: (node) => ['1', '9'].includes(node.id!),
         });
+        await new GridColumns(
+            api,
+            `parent with unselectable children is selectable when groupSelects: "filteredDesc after setGridOption rowSelection`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+            ├── ag-Grid-AutoColumn "Hierarchy" width:200
+            └── name "Name" width:200
+        `);
+        await new GridRows(
+            api,
+            `parent with unselectable children is selectable when groupSelects: "filteredDesc after setGridOption rowSelection`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP id:1 ag-Grid-AutoColumn:"A" name:"John Von Neumann"
+            │ ├─┬ B GROUP id:2 ag-Grid-AutoColumn:"B" name:"Alan Turing"
+            │ │ ├── D LEAF id:4 ag-Grid-AutoColumn:"D" name:"Donald Knuth"
+            │ │ └── E LEAF id:5 ag-Grid-AutoColumn:"E" name:"Grace Hopper"
+            │ └─┬ C GROUP id:3 ag-Grid-AutoColumn:"C" name:"A. Church"
+            │ · ├── F LEAF id:6 ag-Grid-AutoColumn:"F" name:"Linus Torvalds"
+            │ · ├── G LEAF id:7 ag-Grid-AutoColumn:"G" name:"Brian Kernighan"
+            │ · └─┬ H filler id:row-group-0-A-1-C-2-H ag-Grid-AutoColumn:"H"
+            │ · · └── I LEAF id:8 ag-Grid-AutoColumn:"I" name:"Claude Elwood Shannon"
+            └── J LEAF id:9 ag-Grid-AutoColumn:"J" name:"E. Dijkstra"
+        `);
 
         actions.toggleCheckboxById('2');
         assertSelectedRowElementsById([], api);

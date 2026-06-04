@@ -1,3 +1,5 @@
+import { _exists, _isIOSUserAgent } from 'ag-stack';
+
 import type {
     AgColumn,
     AgComponentSelectorType,
@@ -21,14 +23,7 @@ import type {
     TouchShowContextMenuParam,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _addGridCommonParams,
-    _attemptToRestoreCellFocus,
-    _exists,
-    _getGrandTotalRow,
-    _isIOSUserAgent,
-} from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _attemptToRestoreCellFocus, _getGrandTotalRow } from 'ag-grid-community';
 
 import { AgContextMenuService } from '../agStack/agContextMenuService';
 import { MENU_ITEM_CALLBACKS } from '../widgets/menuItemComponent';
@@ -91,7 +86,19 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         const defaultMenuOptions: DefaultMenuItem[] = [];
 
-        const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos, notesSvc } = this.beans;
+        const {
+            clipboardSvc,
+            chartSvc,
+            csvCreator,
+            excelCreator,
+            colModel,
+            rangeSvc,
+            gos,
+            notesSvc,
+            calculatedColsSvc,
+        } = this.beans;
+
+        const isCalculatedColumn = column?.getColDef().calculatedExpression != null && calculatedColsSvc != null;
 
         if (_exists(node) && clipboardSvc) {
             if (column) {
@@ -101,6 +108,10 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
                 }
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
+        }
+
+        if (_exists(node) && isCalculatedColumn) {
+            defaultMenuOptions.push('separator', 'removeCalculatedColumn', 'separator');
         }
 
         if (_exists(node) && column && notesSvc?.hasDataSource()) {

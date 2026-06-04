@@ -125,7 +125,8 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
 
         // sort by either user provided comparator, or our own one
-        const { pivotComparator } = primaryPivotColumns[index].colDef;
+        const primaryColDef = primaryPivotColumns[index].colDef;
+        const pivotComparator = primaryColDef.pivotComparator;
         const comparator = pivotComparator ? convertToHeaderNameComparator(pivotComparator) : headerNameComparator;
 
         const measureColumns = this.valueColsSvc?.columns;
@@ -139,7 +140,8 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
             for (const key of uniqueValue.keys()) {
                 const newPivotKeys = [...pivotKeys, key];
-                const colDef = this.createColDef(measureColumns[0], key, newPivotKeys);
+                const headerName = getPivotHeaderName(key, primaryColDef);
+                const colDef = this.createColDef(measureColumns[0], headerName, newPivotKeys);
                 colDef.columnGroupShow = 'open';
                 leafCols.push(colDef);
             }
@@ -162,7 +164,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                     maxDepth,
                     primaryPivotColumns
                 ),
-                headerName: key,
+                headerName: getPivotHeaderName(key, primaryColDef),
                 pivotKeys: newPivotKeys,
                 columnGroupShow: 'open',
                 openByDefault,
@@ -564,4 +566,8 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
         return res;
     }
+}
+
+function getPivotHeaderName(key: string, colDef: ColDef): string {
+    return colDef.refData?.[key] ?? key;
 }

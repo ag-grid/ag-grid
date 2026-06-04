@@ -3,7 +3,7 @@ import XLSX from 'xlsx';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ExcelExportModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, objectUrls } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, objectUrls } from '../../test-utils';
 
 describe('ag-grid hierarchical tree excel export', () => {
     const gridsManager = new TestGridsManager({
@@ -57,6 +57,19 @@ describe('ag-grid hierarchical tree excel export', () => {
             treeDataChildrenField: 'children',
             getRowId: (params) => params.data.uiId,
         });
+        await new GridColumns(api, `excel exports calls value getter for groups and leafs setup`).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── 0 "value" width:200
+        `);
+        await new GridRows(api, `excel exports calls value getter for groups and leafs setup`).check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"grp-null" 0:"filler"
+            └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"grp-0" 0:"value-100"
+            · ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"grp-1" 0:"value-200"
+            · │ ├── 3 LEAF id:3 ag-Grid-AutoColumn:"grp-2" 0:"value-300"
+            · │ └── 4 LEAF id:4 ag-Grid-AutoColumn:"grp-3" 0:"value-400"
+            · └── 5 LEAF id:5 ag-Grid-AutoColumn:"grp-4" 0:"value-500"
+        `);
 
         api.exportDataAsExcel({ fileName: 'test.xlsx' });
 
@@ -67,6 +80,14 @@ describe('ag-grid hierarchical tree excel export', () => {
             { Group: ' -> grp-0 -> grp-1 -> grp-3', value: 'value-400' },
             { Group: ' -> grp-0 -> grp-4', value: 'value-500' },
         ]);
+        await new GridRows(api, `excel exports calls value getter for groups and leafs final state`).check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"grp-null" 0:"filler"
+            └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"grp-0" 0:"value-100"
+            · ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"grp-1" 0:"value-200"
+            · │ ├── 3 LEAF id:3 ag-Grid-AutoColumn:"grp-2" 0:"value-300"
+            · │ └── 4 LEAF id:4 ag-Grid-AutoColumn:"grp-3" 0:"value-400"
+            · └── 5 LEAF id:5 ag-Grid-AutoColumn:"grp-4" 0:"value-500"
+        `);
     });
 
     // TODO: disabled due to AG-13994 - Remove the treeData flattening behavior (from the API, not the codebase)

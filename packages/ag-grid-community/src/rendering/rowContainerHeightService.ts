@@ -1,4 +1,5 @@
-import { _getMaxDivHeight } from '../agStack/utils/browser';
+import { _getMaxDivHeight } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { _logIfDebug } from '../utils/log';

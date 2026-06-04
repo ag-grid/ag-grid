@@ -22,15 +22,15 @@ describe('group order maintenance / delta sort', () => {
     ] as const;
 
     const ITALY_SIX_ROWS_ASC = `
-            ROOT id:ROOT_NODE_ID
-            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            · ├── LEAF id:2 country:"Italy" athlete:"Anna"
-            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
-            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
-            · ├── LEAF id:6 country:"Italy" athlete:"David"
-            · ├── LEAF id:1 country:"Italy" athlete:"Mark"
-            · └── LEAF id:5 country:"Italy" athlete:"Zed"
-        `;
+        ROOT id:ROOT_NODE_ID
+        └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+        · ├── LEAF id:2 country:"Italy" athlete:"Anna"
+        · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+        · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+        · ├── LEAF id:6 country:"Italy" athlete:"David"
+        · ├── LEAF id:1 country:"Italy" athlete:"Mark"
+        · └── LEAF id:5 country:"Italy" athlete:"Zed"
+    `;
 
     // Generic helper for delta-sort + groupMaintainOrder grids — each test supplies its own
     // columnDefs / rowData / extras. Shared options (animateRows, groupDefaultExpanded,

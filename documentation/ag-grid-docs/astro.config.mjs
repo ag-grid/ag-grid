@@ -11,6 +11,8 @@ import svgr from 'vite-plugin-svgr';
 import agCacheSitemap from '../../external/ag-website-shared/plugins/agCacheSitemap';
 import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecker';
 import agMkcertPreview from '../../external/ag-website-shared/plugins/agMkcertPreview';
+import agSitemapFilterNoindex from '../../external/ag-website-shared/plugins/agSitemapFilterNoindex';
+import agSitemapLastmod from '../../external/ag-website-shared/plugins/agSitemapLastmod';
 import agSourcemapCors from '../../external/ag-website-shared/plugins/agSourcemapCors';
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
@@ -251,12 +253,14 @@ export default defineConfig({
         react(),
         markdoc(),
         sitemap(getSitemapConfig({ chartsSitemap: CHARTS_SITEMAP_INDEX_URL, studioSitemap: STUDIO_SITEMAP_INDEX_URL })),
-        agHtaccessGen({ include: HTACCESS === 'true' }),
+        agHtaccessGen({ htaccessEnv: HTACCESS }),
         agRedirectsChecker({
             skip: CHECK_REDIRECTS !== 'true',
         }),
         agLinkChecker({ include: CHECK_LINKS === 'true' }),
 
+        agSitemapFilterNoindex(),
+        agSitemapLastmod(),
         agCacheSitemap({
             cacheFolder: SITEMAP_CACHE_DIR,
         }),

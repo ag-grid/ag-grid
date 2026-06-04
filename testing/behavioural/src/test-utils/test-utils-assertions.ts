@@ -1,7 +1,7 @@
+import { _areEqual } from 'ag-stack';
 import { expect } from 'vitest';
 
 import type { GridApi, IRowNode } from 'ag-grid-community';
-import { _areEqual } from 'ag-grid-community';
 
 export function assertSelectedRowsByIndex(indices: number[], api: GridApi): void {
     const actual = new Set(api.getSelectedNodes().map((n) => n.rowIndex));

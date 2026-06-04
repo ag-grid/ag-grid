@@ -1,3 +1,18 @@
+import {
+    _areEqual,
+    _clearElement,
+    _findFocusableElements,
+    _findNextFocusableElement,
+    _getActiveDomElement,
+    _isKeyboardMode,
+    _last,
+    _setAriaHidden,
+    _setAriaLabel,
+    _setAriaPosInSet,
+    _setAriaRole,
+    _setAriaSetSize,
+} from 'ag-stack';
+
 import type {
     DragAndDropIcon,
     DragItem,
@@ -11,20 +26,8 @@ import {
     KeyCode,
     ManagedFocusFeature,
     PositionableFeature,
-    _areEqual,
-    _clearElement,
     _createElement,
     _createIconNoSpan,
-    _findFocusableElements,
-    _findNextFocusableElement,
-    _getActiveDomElement,
-    _isKeyboardMode,
-    _last,
-    _setAriaHidden,
-    _setAriaLabel,
-    _setAriaPosInSet,
-    _setAriaRole,
-    _setAriaSetSize,
 } from 'ag-grid-community';
 
 import type { PillDragComp } from './pillDragComp';

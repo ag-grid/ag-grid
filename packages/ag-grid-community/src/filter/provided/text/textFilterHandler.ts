@@ -1,6 +1,6 @@
 import type { FilterHandlerParams, IDoesFilterPassParams } from '../../../interfaces/iFilter';
-import { isCombinedFilterModel } from '../iSimpleFilter';
 import type { ICombinedSimpleModel, ISimpleFilterModelType, Tuple } from '../iSimpleFilter';
+import { isCombinedFilterModel } from '../iSimpleFilter';
 import { SimpleFilterHandler } from '../simpleFilterHandler';
 import { isBlank } from '../simpleFilterUtils';
 import type { ITextFilterParams, TextFilterModel, TextFormatter, TextMatcher } from './iTextFilter';

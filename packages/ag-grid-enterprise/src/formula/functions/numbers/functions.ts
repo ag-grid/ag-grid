@@ -130,6 +130,15 @@ export const POWER = ({ values }: FormulaFunctionParams): number => {
     return Math.pow(na, nb);
 };
 
+export const ROUND = ({ values }: FormulaFunctionParams): number => {
+    const [value, digits = 0] = takeBetween(values, 'ROUND', 1, 2);
+    const number = coerceFiniteNumber('ROUND', value);
+    const precision = Math.trunc(coerceFiniteNumber('ROUND', digits));
+    const factor = Math.pow(10, precision);
+
+    return Math.round(number * factor) / factor;
+};
+
 export const AVERAGE = ({ values }: FormulaFunctionParams): number | Date => {
     let sum = 0;
     let count = 0;

@@ -1,5 +1,7 @@
+import { _exists } from 'ag-stack';
+
 import type { AgColumn, IAggColumnNameService, IAggFunc, NamedBean } from 'ag-grid-community';
-import { BeanStub, _exists } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 export class AggColumnNameService extends BeanStub implements NamedBean, IAggColumnNameService {
     beanName = 'aggColNameSvc' as const;

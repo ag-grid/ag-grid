@@ -1,3 +1,5 @@
+import { RefPlaceholder, _clearElement, _setDisplayed } from 'ag-stack';
+
 import type {
     AgColumn,
     BeanCollection,
@@ -9,17 +11,7 @@ import type {
     IFilterComp,
     IFilterParams,
 } from 'ag-grid-community';
-import {
-    AgPromise,
-    AgSelect,
-    FilterComp,
-    RefPlaceholder,
-    TabGuardComp,
-    _clearElement,
-    _createElement,
-    _setDisplayed,
-    _warn,
-} from 'ag-grid-community';
+import { AgPromise, AgSelect, FilterComp, TabGuardComp, _createElement, _warn } from 'ag-grid-community';
 
 import type { GroupFilterHandler } from './groupFilterHandler';
 import type { GroupFilterService } from './groupFilterService';

@@ -1,5 +1,7 @@
+import { _removeFromParent } from 'ag-stack';
+
 import type { ChartType, Component } from 'ag-grid-community';
-import { BeanStub, _removeFromParent } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import type { ChartController } from '../chartController';
 import type { ChartSeriesType } from '../utils/seriesTypeMapper';

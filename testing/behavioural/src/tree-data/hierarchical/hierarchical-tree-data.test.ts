@@ -1,5 +1,3 @@
-import type { MockInstance } from 'vitest';
-
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
@@ -18,8 +16,6 @@ describe('ag-grid hierarchical tree data', () => {
         modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
-    let consoleWarnSpy: MockInstance;
-
     function hasLoadingOverlay() {
         return !!document.querySelector('.ag-overlay-loading-center');
     }
@@ -34,7 +30,6 @@ describe('ag-grid hierarchical tree data', () => {
 
     afterEach(() => {
         gridsManager.reset();
-        consoleWarnSpy?.mockRestore();
     });
 
     test('ag-grid hierarchical tree data loading and no-show overlay', async () => {
@@ -227,7 +222,7 @@ describe('ag-grid hierarchical tree data', () => {
             │ └── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:"B"
             └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" x:"C"
             · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" x:"D"
-            `);
+        `);
 
         api.updateGridOptions({ rowData: rowData1 });
 

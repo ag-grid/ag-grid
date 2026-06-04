@@ -15,6 +15,7 @@ import {
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -151,6 +152,18 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(api, `needsGrandTotal is true for root store, false when grandTotalRow not set setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `needsGrandTotal is true for root store, false when grandTotalRow not set setup`).check(
+            `
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `
+        );
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -159,6 +172,14 @@ describe('SSRM grand total row', () => {
         // Root store call should have needsGrandTotal = true
         expect(getRowsCalls[0].needsGrandTotal).toBe(true);
         expect(getRowsCalls[0].groupKeys).toEqual([]);
+        await new GridRows(api, `needsGrandTotal is true for root store, false when grandTotalRow not set final state`)
+            .check(`
+                ROOT id:<no-id>
+                ├── LEAF id:1 id:"1" value:10
+                ├── LEAF id:2 id:"2" value:20
+                ├── LEAF id:3 id:"3" value:30
+                └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+            `);
     });
 
     test('needsGrandTotal is false when grandTotalRow option not set', async () => {
@@ -180,12 +201,27 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(api, `needsGrandTotal is false when grandTotalRow option not set setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `needsGrandTotal is false when grandTotalRow option not set setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
 
         expect(getRowsCalls.length).toBeGreaterThanOrEqual(1);
         expect(getRowsCalls[0].needsGrandTotal).toBe(false);
+        await new GridRows(api, `needsGrandTotal is false when grandTotalRow option not set final state`).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+        `);
     });
 
     test('needsGrandTotal becomes true again after filter change', async () => {
@@ -213,6 +249,15 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(api, `needsGrandTotal becomes true again after filter change setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `needsGrandTotal becomes true again after filter change setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -221,6 +266,12 @@ describe('SSRM grand total row', () => {
 
         const callsBeforeFilter = getRowsCalls.length;
         api.setFilterModel({ value: { type: 'greaterThan', filter: 15 } });
+        await new GridRows(api, `needsGrandTotal becomes true again after filter change after setFilterModel`).check(
+            `
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `
+        );
         await waitForNoLoadingRows(api);
 
         // A new root load must have occurred after the filter change, with needsGrandTotal=true
@@ -249,6 +300,17 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(api, `needsGrandTotal becomes true again after aggregation change setup`).checkColumns(
+            `
+                CENTER
+                ├── id "Id" width:200
+                └── value "Value" width:200 aggFunc:sum
+            `
+        );
+        await new GridRows(api, `needsGrandTotal becomes true again after aggregation change setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -257,6 +319,17 @@ describe('SSRM grand total row', () => {
 
         const callsBeforeAgg = getRowsCalls.length;
         api.setColumnAggFunc('value', 'avg');
+        await new GridColumns(api, `needsGrandTotal becomes true again after aggregation change after setColumnAggFunc`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                └── value "Value" width:200 aggFunc:avg
+            `);
+        await new GridRows(api, `needsGrandTotal becomes true again after aggregation change after setColumnAggFunc`)
+            .check(`
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `);
         await waitForNoLoadingRows(api);
 
         // Aggregation change resets the root store, so the next load requires fresh grand total data
@@ -290,6 +363,17 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(api, `needsGrandTotal stays false after sort change (grand total data retained) setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `needsGrandTotal stays false after sort change (grand total data retained) setup`)
+            .check(`
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -298,6 +382,24 @@ describe('SSRM grand total row', () => {
 
         const callsBeforeSort = getRowsCalls.length;
         api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await new GridColumns(
+            api,
+            `needsGrandTotal stays false after sort change (grand total data retained) after applyColumnState`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200 sort:asc
+        `);
+        await new GridRows(
+            api,
+            `needsGrandTotal stays false after sort change (grand total data retained) after applyColumnState`
+        ).check(`
+            ROOT id:<no-id>
+            ├── filler id:rowIndex:0
+            ├── filler id:rowIndex:1
+            ├── filler id:rowIndex:2
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
         await waitForNoLoadingRows(api);
 
         // Sort rebuilds the cache but the grand total data on the store is retained,
@@ -485,6 +587,15 @@ describe('SSRM grand total row', () => {
                 grandTotalRow: 'bottom',
             })
         );
+        await new GridColumns(api, `grand total row has correct properties setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `grand total row has correct properties setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -500,6 +611,13 @@ describe('SSRM grand total row', () => {
         const rootNode = api.getRowNode(ROOT_NODE_ID);
         expect(rootNode?.level).toBe(-1);
         expect(rootNode?.group).toBe(true);
+        await new GridRows(api, `grand total row has correct properties final state`).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
     });
 
     // --- Grand total does not break pagination / row count ---
@@ -511,6 +629,16 @@ describe('SSRM grand total row', () => {
                 grandTotalRow: 'bottom',
             })
         );
+        await new GridColumns(api, `grand total row does not inflate displayed row count for pagination setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `grand total row does not inflate displayed row count for pagination setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -523,6 +651,14 @@ describe('SSRM grand total row', () => {
         const displayedCount = api.getDisplayedRowCount();
         // 3 data rows + 1 grand total = 4 displayed rows
         expect(displayedCount).toBe(4);
+        await new GridRows(api, `grand total row does not inflate displayed row count for pagination final state`)
+            .check(`
+                ROOT id:<no-id>
+                ├── LEAF id:1 id:"1" value:10
+                ├── LEAF id:2 id:"2" value:20
+                ├── LEAF id:3 id:"3" value:30
+                └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+            `);
     });
 
     // --- Grouped grid with grand total ---
@@ -625,6 +761,15 @@ describe('SSRM grand total row', () => {
             paginationPageSizeSelector: false,
             serverSideDatasource: createFlatDatasource(),
         });
+        await new GridColumns(api, `grand total row with pagination setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `grand total row with pagination setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -635,6 +780,13 @@ describe('SSRM grand total row', () => {
 
         // getDisplayedRowCount includes the grand total
         expect(api.getDisplayedRowCount()).toBe(4);
+        await new GridRows(api, `grand total row with pagination final state`).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
     });
 
     test('grand total at pinnedBottom renders in pinned area, not inline', async () => {
@@ -932,12 +1084,32 @@ describe('SSRM grand total row', () => {
 
     test('pinned grand total updates when value changes via transaction update', async () => {
         const api = gridManager.createGrid(null, createFlatGridOptions({ grandTotalRow: 'pinnedTop' }));
+        await new GridColumns(api, `pinned grand total updates when value changes via transaction update setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `pinned grand total updates when value changes via transaction update setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
         expect(api.getPinnedTopRow(0)?.data?.value).toBe(60);
 
         api.applyServerSideTransaction({ update: [{ id: GRAND_TOTAL_ID, value: 321 }] });
+        await new GridRows(
+            api,
+            `pinned grand total updates when value changes via transaction update after applyServerSideTransaction`
+        ).check(`
+            PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:321
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+        `);
         await asyncSetTimeout(10);
 
         expect(api.getPinnedTopRow(0)?.data?.value).toBe(321);
@@ -964,6 +1136,19 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(
+            api,
+            `grand total updates when getRows returns a new value via grandTotalData field setup`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `grand total updates when getRows returns a new value via grandTotalData field setup`)
+            .check(`
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -976,6 +1161,16 @@ describe('SSRM grand total row', () => {
 
         expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(123);
         expect(api.getRowNode(GRAND_TOTAL_ID)?.id).toBe(originalNodeId);
+        await new GridRows(
+            api,
+            `grand total updates when getRows returns a new value via grandTotalData field final state`
+        ).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:123
+        `);
     });
 
     test('grand total is unaffected when getRows is called on a child group', async () => {
@@ -1039,6 +1234,16 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(api, `grand total is unaffected when getRows is called on a child group setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Category" width:200
+                └── value "Value" width:200 aggFunc:sum
+            `);
+        await new GridRows(api, `grand total is unaffected when getRows is called on a child group setup`).check(`
+            ROOT id:<no-id>
+            └── LEAF_GROUP collapsed id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -1056,6 +1261,16 @@ describe('SSRM grand total row', () => {
         // The root's grand total is the same instance with the same data
         expect(api.getRowNode(GRAND_TOTAL_ID)?.id).toBe(grandTotalNodeId);
         expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(60);
+        await new GridRows(api, `grand total is unaffected when getRows is called on a child group final state`).check(
+            `
+                ROOT id:<no-id>
+                ├─┬ GROUP-leafGroup id:"category:A" ag-Grid-AutoColumn:"A" category:"A" value:30
+                │ ├── LEAF id:a1 category:"A" value:10
+                │ └── LEAF id:a2 category:"A" value:20
+                ├── GROUP-leafGroup collapsed id:"category:B" ag-Grid-AutoColumn:"B" category:"B" value:30
+                └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " value:60
+            `
+        );
     });
 
     test('grand total updates when value changes via transaction (inline)', async () => {
@@ -1171,6 +1386,15 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(api, `grandTotalData field takes priority over rowData array setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `grandTotalData field takes priority over rowData array setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -1178,6 +1402,13 @@ describe('SSRM grand total row', () => {
         const grandTotal = api.getRowNode(GRAND_TOTAL_ID);
         expect(grandTotal).toBeDefined();
         expect(grandTotal!.data.value).toBe(999);
+        await new GridRows(api, `grandTotalData field takes priority over rowData array final state`).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:999
+        `);
     });
 
     test('grandTotalData: undefined does not override in-array grand total', async () => {
@@ -1486,6 +1717,21 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(
+            api,
+            `async grand total via transaction: transaction remove sets needsGrandTotal=false setup`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(
+            api,
+            `async grand total via transaction: transaction remove sets needsGrandTotal=false setup`
+        ).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -1496,6 +1742,213 @@ describe('SSRM grand total row', () => {
             expect(getRowsCalls[i].needsGrandTotal).toBe(false);
         }
         expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(expectedTotal);
+        await new GridRows(
+            api,
+            `async grand total via transaction: transaction remove sets needsGrandTotal=false final state`
+        ).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:0 id:"0" value:0
+            ├── LEAF id:1 id:"1" value:1
+            ├── LEAF id:2 id:"2" value:2
+            ├── LEAF id:3 id:"3" value:3
+            ├── LEAF id:4 id:"4" value:4
+            ├── LEAF id:5 id:"5" value:5
+            ├── LEAF id:6 id:"6" value:6
+            ├── LEAF id:7 id:"7" value:7
+            ├── LEAF id:8 id:"8" value:8
+            ├── LEAF id:9 id:"9" value:9
+            ├── LEAF id:10 id:"10" value:10
+            ├── LEAF id:11 id:"11" value:11
+            ├── LEAF id:12 id:"12" value:12
+            ├── LEAF id:13 id:"13" value:13
+            ├── LEAF id:14 id:"14" value:14
+            ├── LEAF id:15 id:"15" value:15
+            ├── LEAF id:16 id:"16" value:16
+            ├── LEAF id:17 id:"17" value:17
+            ├── LEAF id:18 id:"18" value:18
+            ├── LEAF id:19 id:"19" value:19
+            ├── LEAF id:20 id:"20" value:20
+            ├── LEAF id:21 id:"21" value:21
+            ├── LEAF id:22 id:"22" value:22
+            ├── LEAF id:23 id:"23" value:23
+            ├── LEAF id:24 id:"24" value:24
+            ├── LEAF id:25 id:"25" value:25
+            ├── LEAF id:26 id:"26" value:26
+            ├── LEAF id:27 id:"27" value:27
+            ├── LEAF id:28 id:"28" value:28
+            ├── LEAF id:29 id:"29" value:29
+            ├── LEAF id:30 id:"30" value:30
+            ├── LEAF id:31 id:"31" value:31
+            ├── LEAF id:32 id:"32" value:32
+            ├── LEAF id:33 id:"33" value:33
+            ├── LEAF id:34 id:"34" value:34
+            ├── LEAF id:35 id:"35" value:35
+            ├── LEAF id:36 id:"36" value:36
+            ├── LEAF id:37 id:"37" value:37
+            ├── LEAF id:38 id:"38" value:38
+            ├── LEAF id:39 id:"39" value:39
+            ├── LEAF id:40 id:"40" value:40
+            ├── LEAF id:41 id:"41" value:41
+            ├── LEAF id:42 id:"42" value:42
+            ├── LEAF id:43 id:"43" value:43
+            ├── LEAF id:44 id:"44" value:44
+            ├── LEAF id:45 id:"45" value:45
+            ├── LEAF id:46 id:"46" value:46
+            ├── LEAF id:47 id:"47" value:47
+            ├── LEAF id:48 id:"48" value:48
+            ├── LEAF id:49 id:"49" value:49
+            ├── LEAF id:50 id:"50" value:50
+            ├── LEAF id:51 id:"51" value:51
+            ├── LEAF id:52 id:"52" value:52
+            ├── LEAF id:53 id:"53" value:53
+            ├── LEAF id:54 id:"54" value:54
+            ├── LEAF id:55 id:"55" value:55
+            ├── LEAF id:56 id:"56" value:56
+            ├── LEAF id:57 id:"57" value:57
+            ├── LEAF id:58 id:"58" value:58
+            ├── LEAF id:59 id:"59" value:59
+            ├── LEAF id:60 id:"60" value:60
+            ├── LEAF id:61 id:"61" value:61
+            ├── LEAF id:62 id:"62" value:62
+            ├── LEAF id:63 id:"63" value:63
+            ├── LEAF id:64 id:"64" value:64
+            ├── LEAF id:65 id:"65" value:65
+            ├── LEAF id:66 id:"66" value:66
+            ├── LEAF id:67 id:"67" value:67
+            ├── LEAF id:68 id:"68" value:68
+            ├── LEAF id:69 id:"69" value:69
+            ├── LEAF id:70 id:"70" value:70
+            ├── LEAF id:71 id:"71" value:71
+            ├── LEAF id:72 id:"72" value:72
+            ├── LEAF id:73 id:"73" value:73
+            ├── LEAF id:74 id:"74" value:74
+            ├── LEAF id:75 id:"75" value:75
+            ├── LEAF id:76 id:"76" value:76
+            ├── LEAF id:77 id:"77" value:77
+            ├── LEAF id:78 id:"78" value:78
+            ├── LEAF id:79 id:"79" value:79
+            ├── LEAF id:80 id:"80" value:80
+            ├── LEAF id:81 id:"81" value:81
+            ├── LEAF id:82 id:"82" value:82
+            ├── LEAF id:83 id:"83" value:83
+            ├── LEAF id:84 id:"84" value:84
+            ├── LEAF id:85 id:"85" value:85
+            ├── LEAF id:86 id:"86" value:86
+            ├── LEAF id:87 id:"87" value:87
+            ├── LEAF id:88 id:"88" value:88
+            ├── LEAF id:89 id:"89" value:89
+            ├── LEAF id:90 id:"90" value:90
+            ├── LEAF id:91 id:"91" value:91
+            ├── LEAF id:92 id:"92" value:92
+            ├── LEAF id:93 id:"93" value:93
+            ├── LEAF id:94 id:"94" value:94
+            ├── LEAF id:95 id:"95" value:95
+            ├── LEAF id:96 id:"96" value:96
+            ├── LEAF id:97 id:"97" value:97
+            ├── LEAF id:98 id:"98" value:98
+            ├── LEAF id:99 id:"99" value:99
+            ├── LEAF id:100 id:"100" value:100
+            ├── LEAF id:101 id:"101" value:101
+            ├── LEAF id:102 id:"102" value:102
+            ├── LEAF id:103 id:"103" value:103
+            ├── LEAF id:104 id:"104" value:104
+            ├── LEAF id:105 id:"105" value:105
+            ├── LEAF id:106 id:"106" value:106
+            ├── LEAF id:107 id:"107" value:107
+            ├── LEAF id:108 id:"108" value:108
+            ├── LEAF id:109 id:"109" value:109
+            ├── LEAF id:110 id:"110" value:110
+            ├── LEAF id:111 id:"111" value:111
+            ├── LEAF id:112 id:"112" value:112
+            ├── LEAF id:113 id:"113" value:113
+            ├── LEAF id:114 id:"114" value:114
+            ├── LEAF id:115 id:"115" value:115
+            ├── LEAF id:116 id:"116" value:116
+            ├── LEAF id:117 id:"117" value:117
+            ├── LEAF id:118 id:"118" value:118
+            ├── LEAF id:119 id:"119" value:119
+            ├── LEAF id:120 id:"120" value:120
+            ├── LEAF id:121 id:"121" value:121
+            ├── LEAF id:122 id:"122" value:122
+            ├── LEAF id:123 id:"123" value:123
+            ├── LEAF id:124 id:"124" value:124
+            ├── LEAF id:125 id:"125" value:125
+            ├── LEAF id:126 id:"126" value:126
+            ├── LEAF id:127 id:"127" value:127
+            ├── LEAF id:128 id:"128" value:128
+            ├── LEAF id:129 id:"129" value:129
+            ├── LEAF id:130 id:"130" value:130
+            ├── LEAF id:131 id:"131" value:131
+            ├── LEAF id:132 id:"132" value:132
+            ├── LEAF id:133 id:"133" value:133
+            ├── LEAF id:134 id:"134" value:134
+            ├── LEAF id:135 id:"135" value:135
+            ├── LEAF id:136 id:"136" value:136
+            ├── LEAF id:137 id:"137" value:137
+            ├── LEAF id:138 id:"138" value:138
+            ├── LEAF id:139 id:"139" value:139
+            ├── LEAF id:140 id:"140" value:140
+            ├── LEAF id:141 id:"141" value:141
+            ├── LEAF id:142 id:"142" value:142
+            ├── LEAF id:143 id:"143" value:143
+            ├── LEAF id:144 id:"144" value:144
+            ├── LEAF id:145 id:"145" value:145
+            ├── LEAF id:146 id:"146" value:146
+            ├── LEAF id:147 id:"147" value:147
+            ├── LEAF id:148 id:"148" value:148
+            ├── LEAF id:149 id:"149" value:149
+            ├── LEAF id:150 id:"150" value:150
+            ├── LEAF id:151 id:"151" value:151
+            ├── LEAF id:152 id:"152" value:152
+            ├── LEAF id:153 id:"153" value:153
+            ├── LEAF id:154 id:"154" value:154
+            ├── LEAF id:155 id:"155" value:155
+            ├── LEAF id:156 id:"156" value:156
+            ├── LEAF id:157 id:"157" value:157
+            ├── LEAF id:158 id:"158" value:158
+            ├── LEAF id:159 id:"159" value:159
+            ├── LEAF id:160 id:"160" value:160
+            ├── LEAF id:161 id:"161" value:161
+            ├── LEAF id:162 id:"162" value:162
+            ├── LEAF id:163 id:"163" value:163
+            ├── LEAF id:164 id:"164" value:164
+            ├── LEAF id:165 id:"165" value:165
+            ├── LEAF id:166 id:"166" value:166
+            ├── LEAF id:167 id:"167" value:167
+            ├── LEAF id:168 id:"168" value:168
+            ├── LEAF id:169 id:"169" value:169
+            ├── LEAF id:170 id:"170" value:170
+            ├── LEAF id:171 id:"171" value:171
+            ├── LEAF id:172 id:"172" value:172
+            ├── LEAF id:173 id:"173" value:173
+            ├── LEAF id:174 id:"174" value:174
+            ├── LEAF id:175 id:"175" value:175
+            ├── LEAF id:176 id:"176" value:176
+            ├── LEAF id:177 id:"177" value:177
+            ├── LEAF id:178 id:"178" value:178
+            ├── LEAF id:179 id:"179" value:179
+            ├── LEAF id:180 id:"180" value:180
+            ├── LEAF id:181 id:"181" value:181
+            ├── LEAF id:182 id:"182" value:182
+            ├── LEAF id:183 id:"183" value:183
+            ├── LEAF id:184 id:"184" value:184
+            ├── LEAF id:185 id:"185" value:185
+            ├── LEAF id:186 id:"186" value:186
+            ├── LEAF id:187 id:"187" value:187
+            ├── LEAF id:188 id:"188" value:188
+            ├── LEAF id:189 id:"189" value:189
+            ├── LEAF id:190 id:"190" value:190
+            ├── LEAF id:191 id:"191" value:191
+            ├── LEAF id:192 id:"192" value:192
+            ├── LEAF id:193 id:"193" value:193
+            ├── LEAF id:194 id:"194" value:194
+            ├── LEAF id:195 id:"195" value:195
+            ├── LEAF id:196 id:"196" value:196
+            ├── LEAF id:197 id:"197" value:197
+            ├── LEAF id:198 id:"198" value:198
+            ├── LEAF id:199 id:"199" value:199
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:19900
+        `);
     });
 
     test('pinnedBottom grand total is replaced (not duplicated) after filter change', async () => {
@@ -1568,6 +2021,18 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(api, `pinnedTop grand total is replaced (not duplicated) after filter change setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `pinnedTop grand total is replaced (not duplicated) after filter change setup`).check(
+            `
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `
+        );
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -1576,6 +2041,13 @@ describe('SSRM grand total row', () => {
         expect(api.getPinnedTopRow(0)?.data?.value).toBe(60);
 
         api.setFilterModel({ value: { type: 'greaterThan', filter: 15 } });
+        await new GridRows(
+            api,
+            `pinnedTop grand total is replaced (not duplicated) after filter change after setFilterModel`
+        ).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await waitForNoLoadingRows(api);
         await asyncSetTimeout(20);
 
@@ -1604,6 +2076,15 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(api, `pinnedBottom grand total survives repeated filter changes setup`).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `pinnedBottom grand total survives repeated filter changes setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -1619,6 +2100,12 @@ describe('SSRM grand total row', () => {
             expect(api.getPinnedBottomRowCount()).toBe(1);
             expect(api.getPinnedBottomRow(0)?.data?.value).toBe(expectedValues[i]);
         }
+        await new GridRows(api, `pinnedBottom grand total survives repeated filter changes final state`).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:50
+        `);
     });
 
     test('pinnedBottom grand total is replaced after aggregation change', async () => {
@@ -1630,12 +2117,36 @@ describe('SSRM grand total row', () => {
             grandTotalRow: 'pinnedBottom',
             serverSideDatasource: createFlatDatasource(),
         });
+        await new GridColumns(api, `pinnedBottom grand total is replaced after aggregation change setup`).checkColumns(
+            `
+                CENTER
+                ├── id "Id" width:200
+                └── value "Value" width:200 aggFunc:sum
+            `
+        );
+        await new GridRows(api, `pinnedBottom grand total is replaced after aggregation change setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
         expect(api.getPinnedBottomRowCount()).toBe(1);
 
         api.setColumnAggFunc('value', 'avg');
+        await new GridColumns(
+            api,
+            `pinnedBottom grand total is replaced after aggregation change after setColumnAggFunc`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200 aggFunc:avg
+        `);
+        await new GridRows(api, `pinnedBottom grand total is replaced after aggregation change after setColumnAggFunc`)
+            .check(`
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `);
         await waitForNoLoadingRows(api);
         await asyncSetTimeout(20);
 
@@ -1659,6 +2170,19 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(
+            api,
+            `pinnedBottom grand total is replaced after refreshServerSide({ purge: true }) setup`
+        ).checkColumns(`
+            CENTER
+            ├── id "Id" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `pinnedBottom grand total is replaced after refreshServerSide({ purge: true }) setup`)
+            .check(`
+                ROOT id:<no-id>
+                └── filler id:rowIndex:0
+            `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -1672,6 +2196,16 @@ describe('SSRM grand total row', () => {
 
         expect(api.getPinnedBottomRowCount()).toBe(1);
         expect(api.getPinnedBottomRow(0)?.data?.value).toBe(123);
+        await new GridRows(
+            api,
+            `pinnedBottom grand total is replaced after refreshServerSide({ purge: true }) final state`
+        ).check(`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:123
+        `);
     });
 
     test('pinnedBottom grand total with grouped grid survives filter change', async () => {
@@ -1734,6 +2268,16 @@ describe('SSRM grand total row', () => {
                 },
             },
         });
+        await new GridColumns(api, `pinnedBottom grand total with grouped grid survives filter change setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Category" width:200
+                └── value "Value" width:200 aggFunc:sum
+            `);
+        await new GridRows(api, `pinnedBottom grand total with grouped grid survives filter change setup`).check(`
+            ROOT id:<no-id>
+            └── LEAF_GROUP collapsed id:rowIndex:0
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
@@ -1742,6 +2286,13 @@ describe('SSRM grand total row', () => {
 
         // Filter out category A entirely
         api.setFilterModel({ value: { type: 'greaterThan', filter: 25 } });
+        await new GridRows(
+            api,
+            `pinnedBottom grand total with grouped grid survives filter change after setFilterModel`
+        ).check(`
+            ROOT id:<no-id>
+            └── LEAF_GROUP collapsed id:rowIndex:0
+        `);
         await waitForNoLoadingRows(api);
         await asyncSetTimeout(20);
 

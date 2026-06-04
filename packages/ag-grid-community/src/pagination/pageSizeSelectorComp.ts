@@ -1,7 +1,7 @@
-import { _areEqual } from '../agStack/utils/array';
-import { _clearElement } from '../agStack/utils/dom';
-import type { ListOption } from '../agStack/widgets/agList';
-import { AgSelect } from '../agStack/widgets/agSelect';
+import { _areEqual, _clearElement } from 'ag-stack';
+
+import type { ListOption } from '../agWidgets/agList';
+import { AgSelect } from '../agWidgets/agSelect';
 import type { BeanCollection } from '../context/context';
 import type { PaginationChangedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';

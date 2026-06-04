@@ -1,12 +1,12 @@
-import { _getRootNode } from '../agStack/utils/document';
-import { _debounce } from '../agStack/utils/function';
+import { _debounce, _getRootNode } from 'ag-stack';
+
 import { getGridId } from '../api/coreApi';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { ITestIdService } from '../interfaces/iTestIdService';
-import { agTestIdFor } from './testIdUtils';
 import type { ColumnFilterSpec, FilterSpec } from './testIdUtils';
+import { agTestIdFor } from './testIdUtils';
 
 let TEST_ID_ATTR = 'data-testid';
 
@@ -356,12 +356,18 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             pagingPanel.querySelectorAll('.ag-paging-page-summary-panel .ag-paging-number').forEach((pagingNumber) => {
                 const dataRef = pagingNumber.getAttribute('data-ref');
                 switch (dataRef) {
-                    case 'lbCurrent':
+                    case 'lbCurrentStatic':
                         setTestId(
                             pagingNumber,
                             agTestIdFor.paginationSummaryPanelCurrentPage(pagingNumber.textContent)
                         );
                         break;
+                    case 'lbCurrentInput': {
+                        const inputValue =
+                            pagingNumber.querySelector<HTMLInputElement>('input')?.value ?? pagingNumber.textContent;
+                        setTestId(pagingNumber, agTestIdFor.paginationSummaryPanelCurrentPage(inputValue));
+                        break;
+                    }
                     case 'lbTotal':
                         setTestId(pagingNumber, agTestIdFor.paginationSummaryPanelTotalPage(pagingNumber.textContent));
                         break;

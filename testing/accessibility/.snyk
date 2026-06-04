@@ -6,70 +6,35 @@ ignore:
         reason: Test dependency - not included in final production build
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-03-02T12:21:25.919Z
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/core@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
   SNYK-JS-ANGULARCOMMON-14135651:
     - "@angular/common@19.2.15":
         reason: Only used for testing
         expires: 2026-06-08T00:00:00.000Z
         created: 2025-12-01T09:55:00.007Z
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/common@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
   SNYK-JS-ANGULARCOMPILER-14157154:
     - "@angular/compiler@19.2.15":
         reason: Only used for testing
         expires: 2026-06-08T00:00:00.000Z
         created: 2025-12-03T12:11:00.007Z
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/compiler@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
   SNYK-JS-ANGULARCOMPILER-14908872:
     - "@angular/compiler@19.2.15":
         reason: "@angular/compiler is only used during development so an attack would
           only affect developer machines"
         expires: 2026-06-08T00:00:00.000Z
         created: 2025-01-12T10:10:00.000Z
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/compiler@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
   SNYK-JS-ANGULARCORE-14908871:
     - "@angular/core@19.2.15":
         reason: "@angular/core is not used for SVG elements"
         expires: 2026-06-08T00:00:00.000Z
         created: 2025-01-12T10:10:00.000Z
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/core@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
   SNYK-JS-ANGULARCOMPILER-15610286:
     - "@angular/compiler@19.2.15":
         reason: Downstream dependency of angular - not included in final production
           build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/compiler@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
   SNYK-JS-ANGULARCORE-15610287:
     - "@angular/core@19.2.15":
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/core@18.2.14:
         reason: Downstream dependency of angular - not included in final production
           build
         expires: 2026-08-28T00:00:00.000Z

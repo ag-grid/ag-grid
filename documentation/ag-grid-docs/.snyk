@@ -1,6 +1,24 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-AXIOS-17111079:
+    - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.324Z
+  SNYK-JS-AXIOS-17111062:
+    - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.511Z
+  SNYK-JS-AXIOS-17111060:
+    - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:57:58.703Z
   SNYK-JS-AXIOS-16299904:
     - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
         reason: Dev dependency - not included in final production build
@@ -129,97 +147,22 @@ ignore:
           production build
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-02-12T10:10:00.000Z
-  SNYK-JS-ANGULARCOMMON-14135651:
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/common@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-  SNYK-JS-ANGULARCOMPILER-14157154:
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/compiler@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-  SNYK-JS-ANGULARCOMPILER-14908872:
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/compiler@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-  SNYK-JS-ANGULARCOMPILER-15610286:
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/compiler@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-  SNYK-JS-ANGULARCORE-14908871:
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/core@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-  SNYK-JS-ANGULARCORE-15353393:
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/core@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-  SNYK-JS-ANGULARCORE-15610287:
-    - ag-grid-angular@35.2.1-beta.20260419.2046 > @angular/core@18.2.14:
-        reason: Downstream dependency of angular - not included in final production
-          build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
   SNYK-JS-BRACEEXPANSION-15789759:
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > brace-expansion@2.0.2:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
     - '@trivago/prettier-plugin-sort-imports@6.0.2 > minimatch@9.0.5 > brace-expansion@2.0.2':
         reason: Not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
-  SNYK-JS-GLOB-14040952:
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > glob@10.4.5:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
   SNYK-JS-MINIMATCH-15309438:
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > glob@10.4.5 > minimatch@9.0.5:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > minimatch@9.0.1:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
     - '@trivago/prettier-plugin-sort-imports@6.0.2 > minimatch@9.0.5':
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-MINIMATCH-15353387:
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > glob@10.4.5 > minimatch@9.0.5:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > minimatch@9.0.1:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
     - '@trivago/prettier-plugin-sort-imports@6.0.2 > minimatch@9.0.5':
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-MINIMATCH-15353389:
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > glob@10.4.5 > minimatch@9.0.5:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
-    - ag-grid-vue3@35.2.1-beta.20260419.2046 > minimatch@9.0.1:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
     - '@trivago/prettier-plugin-sort-imports@6.0.2 > minimatch@9.0.5':
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
@@ -230,10 +173,6 @@ ignore:
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
   SNYK-JS-POSTCSS-16189065:
-    - ag-charts-vue3@13.2.1-beta.20260426 > postcss@8.5.6:
-        reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
-        created: 2026-04-28T11:46:21.570Z
     - "@astrojs/react@5.0.4 > vite@7.3.2 > postcss@8.5.6":
         reason: Used in build & dev - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
@@ -256,4 +195,41 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+  SNYK-JS-AXIOS-16417750:
+    - 'vite-plugin-mkcert@1.17.9 > axios@1.13.1':
+        reason: Build dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-BRACEEXPANSION-16755174:
+    - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-DEVALUE-16697433:
+    - '@astrojs/react@5.0.4 > devalue@5.7.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'astro@6.1.9 > devalue@5.7.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-FASTURI-16642394:
+    - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > volar-service-yaml@0.0.70 > yaml-language-server@1.20.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-FASTURI-16642399:
+    - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > volar-service-yaml@0.0.70 > yaml-language-server@1.20.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
 patch: {}

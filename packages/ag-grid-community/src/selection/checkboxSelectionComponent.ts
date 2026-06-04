@@ -1,6 +1,6 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _getAriaCheckboxStateName } from '../agStack/utils/aria';
-import { AgCheckboxSelector } from '../agStack/widgets/agCheckbox';
+import { RefPlaceholder, _getAriaCheckboxStateName } from 'ag-stack';
+
+import { AgCheckboxSelector } from '../agWidgets/agCheckbox';
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';

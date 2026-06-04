@@ -1,27 +1,24 @@
 import type {
     AgBaseComponent,
-    AgCheckbox,
-    AgEvent,
-    _AgComponentSelector,
-    _AgCoreBeanCollection,
-    _AgElementParams,
-    _AgWidgetSelectorType,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-} from 'ag-grid-community';
+    AgComponentSelector,
+    AgCoreBeanCollection,
+    AgElementParams,
+    BaseEvents,
+    BaseProperties,
+    IPropertiesService,
+} from 'ag-stack';
 import {
-    AgCheckboxSelector,
-    AgToggleButton,
-    KeyCode,
+    AgComponentStub,
     RefPlaceholder,
-    _AgComponentStub,
     _isComponent,
     _removeFromParent,
     _setAriaExpanded,
     _setAriaRole,
     _setDisplayed,
-} from 'ag-grid-community';
+} from 'ag-stack';
+
+import type { AgCheckbox, AgEvent, _AgWidgetSelectorType } from 'ag-grid-community';
+import { AgCheckboxSelector, AgToggleButton, KeyCode } from 'ag-grid-community';
 
 import agGroupComponentCSS from './agGroupComponent.css';
 
@@ -59,7 +56,7 @@ interface EnableChangeEvent extends AgEvent<'enableChange'> {
 
 function getAgGroupComponentTemplate<TBeanCollection>(
     params: AgGroupComponentParams<TBeanCollection>
-): _AgElementParams<_AgWidgetSelectorType> {
+): AgElementParams<_AgWidgetSelectorType> {
     const cssIdentifier = params.cssIdentifier || 'default';
     const direction: GroupDirection = params.direction || 'vertical';
 
@@ -84,13 +81,13 @@ function getAgGroupComponentTemplate<TBeanCollection>(
 }
 
 export class AgGroupComponent<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
-> extends _AgComponentStub<
+> extends AgComponentStub<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -138,8 +135,8 @@ export class AgGroupComponent<
 
     constructor(private readonly params: AgGroupComponentParams<TBeanCollection> = {}) {
         super(
-            getAgGroupComponentTemplate(params) as _AgElementParams<TComponentSelectorType>,
-            [AgCheckboxSelector] as _AgComponentSelector<TComponentSelectorType>[]
+            getAgGroupComponentTemplate(params) as AgElementParams<TComponentSelectorType>,
+            [AgCheckboxSelector] as AgComponentSelector<TComponentSelectorType>[]
         );
 
         this.registerCSS(agGroupComponentCSS);
@@ -467,7 +464,7 @@ export class AgGroupComponent<
 const TITLE_BAR_DISABLED_CLASS = 'ag-disabled-group-title-bar';
 function getDefaultTitleBarTemplate<TBeanCollection, TComponentSelectorType extends string>(
     params: AgGroupComponentParams<TBeanCollection>
-): _AgElementParams<TComponentSelectorType> {
+): AgElementParams<TComponentSelectorType> {
     const cssIdentifier = params.cssIdentifier ?? 'default';
 
     return {
@@ -492,13 +489,13 @@ function getDefaultTitleBarTemplate<TBeanCollection, TComponentSelectorType exte
     };
 }
 class DefaultTitleBar<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
-> extends _AgComponentStub<
+> extends AgComponentStub<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -645,7 +642,7 @@ class DefaultTitleBar<
     }
 }
 
-export const AgGroupComponentSelector: _AgComponentSelector<_AgWidgetSelectorType> = {
+export const AgGroupComponentSelector: AgComponentSelector<_AgWidgetSelectorType> = {
     selector: 'AG-GROUP-COMPONENT',
     component: AgGroupComponent,
 };

@@ -31,7 +31,7 @@ type FormValues = {
 } & Record<string, string>;
 
 interface Props {
-    formLocation: 'About page' | 'Grid pricing page' | 'Charts pricing page';
+    formLocation: 'About page' | 'Grid pricing page' | 'Charts pricing page' | 'Contact page';
     hideMessage?: boolean;
     submitLabel?: string;
 }
@@ -133,17 +133,14 @@ export const ContactForm: FunctionComponent<Props> = ({
             />
             <input type="hidden" name="oid" value={orgId} />
             <input type="hidden" name="retURL" value={returnUrl} />
-
             <input type="hidden" name="lead_source" id="lead_source" value={leadSource} />
             <input type="hidden" name={formLocationId} id={formLocationId} value={formLocation} />
-
             {isDebug && (
                 <>
                     <input type="hidden" name="debug" value={1} />
                     <input type="hidden" name="debugEmail" value="owner@ag-grid.com" />
                 </>
             )}
-
             <div className={styles.nameRow}>
                 <div className={classnames('input-field', { 'input-error': errors.first_name })}>
                     <label htmlFor="first_name">First Name</label>
@@ -170,7 +167,6 @@ export const ContactForm: FunctionComponent<Props> = ({
                     </div>
                 </div>
             </div>
-
             <div className={classnames('input-field', { 'input-error': errors.email })}>
                 <label htmlFor="email">Work email</label>
                 <span className={styles.emailInputOuter}>
@@ -212,14 +208,12 @@ export const ContactForm: FunctionComponent<Props> = ({
                     </div>
                 </div>
             )}
-
             <div className={classnames('input-field', { 'input-error': captchaError })}>
                 <div className="g-recaptcha" data-sitekey={RECAPTCHA_SITE_KEY} />
                 <div className={styles.errorContainer}>
                     {captchaError && <p className="error">Please click on the reCAPTCHA checkbox</p>}
                 </div>
             </div>
-
             <input
                 id="submit-contact-form"
                 className={classnames('button-primary', styles.submitButton, { disabled: isDisabled })}
@@ -229,6 +223,17 @@ export const ContactForm: FunctionComponent<Props> = ({
             <p className={styles.privacyMessage}>
                 By submitting this form you agree to our <a href={PRIVACY_POLICY_URL}>Privacy Policy</a>.
             </p>
+            <span>
+                For technical support, visit our{' '}
+                <a
+                    href="https://ag-grid.zendesk.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.supportLink}
+                >
+                    Zendesk portal
+                </a>
+            </span>
         </form>
     );
 };

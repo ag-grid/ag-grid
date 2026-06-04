@@ -105,6 +105,13 @@ const excludeErrors = [
     'Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content.',
     'Request to access cookie or storage on “<URL>” was blocked because it came from a tracker and Enhanced Tracking Protection is enabled.',
     'This site appears to use a scroll-linked positioning effect.',
+    // AG-17134: staging serves a Content-Security-Policy-Report-Only header with no report endpoint
+    // (violations are captured via the securitypolicyviolation JS listener, not report-uri/report-to).
+    // Browsers warn that such a policy can't report — benign for our validation window.
+    'has a Report-Only policy without a report-uri directive nor a report-to directive', // Firefox
+    "was delivered in report-only mode, but does not specify a 'report-uri'", // Chromium
+    "was delivered in report-only mode, but does not specify a 'report-to'", // Chromium
+    "directive 'frame-ancestors' is ignored when delivered in a report-only policy",
     // React warnings from examples that intentionally render read-only controls / raw style props.
     'You provided a `checked` prop to a form field without an `onChange` handler.',
     'Unsupported style property %s. Did you mean %s? white-space whiteSpace',
@@ -485,7 +492,7 @@ export async function dragOverTo(source: Locator, target: Locator, offsetPositio
 export async function waitForRowAnimations(page: Page) {
     // Flush any pending microtasks / rAF callbacks so DOM mutations from the
     // preceding action are visible before we start polling.
-    await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(resolve)));
+    await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
 
     await page.waitForFunction(() => {
         // AG Grid renders rows across several named containers. Zombie rows only

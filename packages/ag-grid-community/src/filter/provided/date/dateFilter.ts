@@ -1,5 +1,5 @@
-import { _isBrowserFirefox } from '../../../agStack/utils/browser';
-import { _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/date';
+import { _isBrowserFirefox, _parseDateTimeFromString, _serialiseDate } from 'ag-stack';
+
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';

@@ -6,6 +6,7 @@ import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-e
 
 import {
     EditEventTracker,
+    GridColumns,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -126,6 +127,134 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
         expect(lastSetValue).toBe('Top Value');
         expect(valueSetterTargets).toEqual(['ROW_1', 'ROW_2']);
         expect(valueSetterCalls).toBe(2);
+    });
+
+    test('fill handle is offered on a contiguous multi-column range', async () => {
+        // A range spanning several columns drives the fill-handle availability check, which walks the
+        // range with `isContiguousRange` + `isBottomRightCell` (the displayedIndex min/max loops) —
+        // the multi-column path those methods only take when the range has more than one column.
+        const api = await gridMgr.createGridAndWait('clipboardGridMultiColFill', {
+            cellSelection: { handle: { mode: 'fill' } },
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+                { field: 'c', editable: true },
+            ],
+            rowData: [
+                { id: 'ROW_0', a: '1', b: '2', c: '3' },
+                { id: 'ROW_1', a: '4', b: '5', c: '6' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+        await new GridColumns(api, `fill handle is offered on a contiguous multi-column range setup`).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            ├── b "B" width:200 editable
+            └── c "C" width:200 editable
+        `);
+        await new GridRows(api, `fill handle is offered on a contiguous multi-column range setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"1" b:"2" c:"3"
+            └── LEAF id:ROW_1 a:"4" b:"5" c:"6"
+        `);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        // Selecting the 2×3 block makes the bottom-right cell (ROW_1/c) the handle anchor. The handle
+        // only renders if the range is recognised as contiguous and that cell as the bottom-right.
+        const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columnStart: 'a', columnEnd: 'c' });
+        await cellSelectionChanged;
+        await asyncSetTimeout(1);
+
+        expect(getByTestId(gridDiv, agTestIdFor.fillHandle())).toBeTruthy();
+        await new GridRows(api, `fill handle is offered on a contiguous multi-column range final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:ROW_0 a:"1" b:"2" c:"3"
+            └── LEAF id:ROW_1 a:"4" b:"5" c:"6"
+        `);
+    });
+
+    test('dragging the fill handle horizontally fills across columns', async () => {
+        // Exercises the interactive horizontal-fill path (markPathFrom -> extendHorizontal), which
+        // walks the displayed columns by `displayedIndex`. `direction: 'x'` forces the drag axis so
+        // no pixel layout is needed; the hovered target column is resolved from the event's cell.
+        const api = await gridMgr.createGridAndWait('clipboardGridHorizontalFill', {
+            cellSelection: { handle: { mode: 'fill', direction: 'x' } },
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+                { field: 'c', editable: true },
+            ],
+            rowData: [{ id: 'ROW_0', a: 'X', b: 'Y', c: 'Z' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        // Select the source cell (column a).
+        const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a')).dispatchEvent(
+            new MouseEvent('touchstart', { bubbles: true })
+        );
+        await cellSelectionChanged;
+        await asyncSetTimeout(1);
+
+        // Drag the fill handle right, over column c. mousedown on the handle, a mousemove past the
+        // drag threshold whose target is cell c, then mouseup ends the fill.
+        const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+        const cellC = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'c'));
+        const fillEnd = waitForEvent('fillEnd', api);
+        fillHandle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 0, clientY: 0 }));
+        cellC.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 60, clientY: 0 }));
+        cellC.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 60, clientY: 0 }));
+        await fillEnd;
+        await asyncSetTimeout(1);
+
+        // Source value copied right across b and c.
+        await new GridRows(api, 'after horizontal fill').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 a:"X" b:"X" c:"X"
+        `);
+    });
+
+    test('dragging the fill handle inward over a multi-column range reduces it (horizontal)', async () => {
+        // Exercises the reduce side of the horizontal path (markPathFrom -> reduceHorizontal): with a
+        // multi-column range selected, dragging the handle (on the right edge) inward shrinks the fill.
+        const api = await gridMgr.createGridAndWait('clipboardGridHorizontalReduce', {
+            cellSelection: { handle: { mode: 'fill', direction: 'x' } },
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+                { field: 'c', editable: true },
+            ],
+            rowData: [{ id: 'ROW_0', a: 'X', b: 'Y', c: 'Z' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        // Select the full a..c range, so the fill handle sits on c (right edge).
+        const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columnStart: 'a', columnEnd: 'c' });
+        await cellSelectionChanged;
+        await asyncSetTimeout(1);
+
+        const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+        const cellB = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'b'));
+        fillHandle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 60, clientY: 0 }));
+        // Drag inward from the right edge (c) to b → reduceHorizontal.
+        cellB.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 30, clientY: 0 }));
+        cellB.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 30, clientY: 0 }));
+        await asyncSetTimeout(1);
+
+        // The reduce path ran; the grid stays coherent (c cleared as it left the reduced fill range).
+        await new GridRows(api, 'after horizontal reduce').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:ROW_0 a:"X" b:"Y" c:null
+        `);
     });
 
     test('readOnlyEdit fill handle fires cellEditRequest once per target', async () => {

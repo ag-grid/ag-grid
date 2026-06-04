@@ -1,4 +1,5 @@
-import { _fuzzySuggestions } from '../../agStack/utils/fuzzyMatch';
+import { _fuzzySuggestions } from 'ag-stack';
+
 import type { DynamicBeanName, UserComponentName } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
 import type {

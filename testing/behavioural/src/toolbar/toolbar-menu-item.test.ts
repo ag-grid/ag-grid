@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, ToolbarModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
 
 // `_focusInto` (used to focus the menu list on open and the button on close) relies on
 // `_isVisible`, which checks `offsetParent`. jsdom does not compute layout, so
@@ -50,6 +50,16 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 ],
             },
         });
+        await new GridColumns(api, `renders icon, label and chevron when menuItems are provided setup`).checkColumns(
+            `
+                CENTER
+                └── name "Name" width:200
+            `
+        );
+        await new GridRows(api, `renders icon, label and chevron when menuItems are provided setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -67,6 +77,10 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
         const chevron = button.querySelector<HTMLElement>('.ag-toolbar-button-chevron')!;
         expect(chevron.classList.contains('ag-hidden')).toBe(false);
         expect(chevron.querySelector('.ag-icon')).not.toBeNull();
+        await new GridRows(api, `renders icon, label and chevron when menuItems are provided final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 
     test('without menuItems the button is disabled and the chevron is hidden', async () => {
@@ -86,6 +100,15 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 ],
             },
         });
+        await new GridColumns(api, `without menuItems the button is disabled and the chevron is hidden setup`)
+            .checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `without menuItems the button is disabled and the chevron is hidden setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -98,6 +121,12 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
         // Clicking a disabled <button> is a no-op: no popup should appear.
         button.click();
         expect(gridDiv.querySelector('.ag-popup')).toBeNull();
+        await new GridRows(api, `without menuItems the button is disabled and the chevron is hidden final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `
+        );
     });
 
     test('clicking the button opens a popup with the configured menu items', async () => {
@@ -119,6 +148,15 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 ],
             },
         });
+        await new GridColumns(api, `clicking the button opens a popup with the configured menu items setup`)
+            .checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `clicking the button opens a popup with the configured menu items setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -136,6 +174,12 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
 
         const itemNames = Array.from(popup.querySelectorAll('.ag-menu-option-text')).map((el) => el.textContent);
         expect(itemNames).toEqual(['CSV', 'Excel']);
+        await new GridRows(api, `clicking the button opens a popup with the configured menu items final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `
+        );
     });
 
     test('pressing Escape closes the popup and returns focus to the button', async () => {
@@ -154,6 +198,15 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 ],
             },
         });
+        await new GridColumns(api, `pressing Escape closes the popup and returns focus to the button setup`)
+            .checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `pressing Escape closes the popup and returns focus to the button setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -170,6 +223,12 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
 
         expect(gridDiv.querySelector('.ag-popup')).toBeNull();
         expect(document.activeElement).toBe(button);
+        await new GridRows(api, `pressing Escape closes the popup and returns focus to the button final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `
+        );
     });
 
     test('mousedown outside the popup closes it and returns focus to the button', async () => {
@@ -188,6 +247,17 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 ],
             },
         });
+        await new GridColumns(api, `mousedown outside the popup closes it and returns focus to the button setup`)
+            .checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `mousedown outside the popup closes it and returns focus to the button setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `
+        );
 
         await waitForEvent('firstDataRendered', api);
 
@@ -202,6 +272,11 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
 
         expect(gridDiv.querySelector('.ag-popup')).toBeNull();
         expect(document.activeElement).toBe(button);
+        await new GridRows(api, `mousedown outside the popup closes it and returns focus to the button final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
     });
 
     test('refresh with populated menuItems enables a previously empty menu item', async () => {
@@ -220,6 +295,17 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 ],
             },
         });
+        await new GridColumns(api, `refresh with populated menuItems enables a previously empty menu item setup`)
+            .checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `refresh with populated menuItems enables a previously empty menu item setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `
+        );
 
         await waitForEvent('firstDataRendered', api);
 
@@ -238,6 +324,20 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 },
             ],
         });
+        await new GridColumns(
+            api,
+            `refresh with populated menuItems enables a previously empty menu item after setGridOption toolbar`
+        ).checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
+        await new GridRows(
+            api,
+            `refresh with populated menuItems enables a previously empty menu item after setGridOption toolbar`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         button = gridDiv.querySelector<HTMLButtonElement>('.ag-toolbar-button')!;
         expect(button.hasAttribute('disabled')).toBe(false);
@@ -277,6 +377,15 @@ describe('Toolbar menu item (agMenuToolbarItem) without a menu module', () => {
                 ],
             },
         });
+        await new GridColumns(api, `logs a module-registration error and does not open a popup on click setup`)
+            .checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `logs a module-registration error and does not open a popup on click setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -286,6 +395,11 @@ describe('Toolbar menu item (agMenuToolbarItem) without a menu module', () => {
         const button = gridDiv.querySelector<HTMLButtonElement>('.ag-toolbar-button')!;
         button.click();
         expect(gridDiv.querySelector('.ag-popup')).toBeNull();
+        await new GridRows(api, `logs a module-registration error and does not open a popup on click final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
     });
 });
 
@@ -314,6 +428,16 @@ describe('Toolbar menu item (agMenuToolbarItem) with ColumnMenuModule only', () 
                 ],
             },
         });
+        await new GridColumns(api, `clicking the button opens a popup when only ColumnMenuModule is registered setup`)
+            .checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `clicking the button opens a popup when only ColumnMenuModule is registered setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"Alice"
+            `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -324,5 +448,12 @@ describe('Toolbar menu item (agMenuToolbarItem) with ColumnMenuModule only', () 
         expect(popup).not.toBeNull();
         const itemNames = Array.from(popup.querySelectorAll('.ag-menu-option-text')).map((el) => el.textContent);
         expect(itemNames).toEqual(['CSV']);
+        await new GridRows(
+            api,
+            `clicking the button opens a popup when only ColumnMenuModule is registered final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
     });
 });

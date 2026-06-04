@@ -1,7 +1,6 @@
-import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
-import { _removeFromArray } from '../agStack/utils/array';
-import { _requestAnimationFrame } from '../agStack/utils/dom';
-import { _exists } from '../agStack/utils/generic';
+import type { IEventListener } from 'ag-stack';
+import { _exists, _removeFromArray, _requestAnimationFrame } from 'ag-stack';
+
 import type { ColumnModel } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';

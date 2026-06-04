@@ -1,5 +1,7 @@
+import { _focusInto } from 'ag-stack';
+
 import type { AgColumn, AgProvidedColumnGroup, IconName, MenuItemDef } from 'ag-grid-community';
-import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGroup } from 'ag-grid-community';
+import { Component, _createIconNoSpan, isColumn, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';

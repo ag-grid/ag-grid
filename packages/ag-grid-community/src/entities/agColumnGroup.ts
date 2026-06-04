@@ -1,4 +1,5 @@
-import { _escapeString } from '../agStack/utils/string';
+import { _escapeString } from 'ag-stack';
+
 import { BeanStub } from '../context/beanStub';
 import type {
     AgColumnGroupEvent,

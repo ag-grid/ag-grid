@@ -2,7 +2,7 @@ import type { BeanCollection, IRowNode, RowNode } from 'ag-grid-community';
 
 export function refreshFormulas(beans: BeanCollection, rowNode?: IRowNode | string): boolean {
     const formulaSvc = beans.formula;
-    if (!formulaSvc?.active) {
+    if (!formulaSvc?.isEvaluationActive()) {
         return false; // No-op if formulas are not active
     }
 

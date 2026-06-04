@@ -1,4 +1,5 @@
-import { KeyCode } from '../../agStack/constants/keyCode';
+import { KeyCode } from 'ag-stack';
+
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
@@ -74,6 +75,10 @@ export function isCellEditable(beans: BeanCollection, editPosition: Required<Edi
     const column = editPosition.column as AgColumn;
     const rowNode = editPosition.rowNode;
     const colDef = column.getColDef();
+
+    if (colDef.calculatedExpression != null && beans.calculatedColsSvc != null) {
+        return false;
+    }
 
     if (!rowNode) {
         return existingEditing(beans, editPosition);

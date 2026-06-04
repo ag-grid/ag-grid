@@ -8,6 +8,7 @@ import type {
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'BigIntFilterModule', number> = {
     AlignedGridsModule: 6.88,
     AllCommunityModule: 511.54,
+    AutoGenerateColumnsModule: 5,
     CellApiModule: 0.28,
     CellSpanModule: 8.08,
     CellStyleModule: 2.24,
@@ -56,6 +57,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     AllEnterpriseModule: 1627.32,
     AiToolkitModule: 36,
     BatchEditModule: 84.54,
+    CalculatedColumnsModule: 63.8,
     CellSelectionModule: 62.78,
     ClipboardModule: 49,
     ColumnMenuModule: 159.04,

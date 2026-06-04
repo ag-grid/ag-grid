@@ -1,4 +1,5 @@
-import { _makeNull } from '../../agStack/utils/generic';
+import { _makeNull } from 'ag-stack';
+
 import type { ElementParams } from '../../utils/element';
 import type {
     INoRowsOverlayParams,

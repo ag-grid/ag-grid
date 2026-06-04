@@ -1,7 +1,7 @@
-import { _isBrowserFirefox } from '../../../agStack/utils/browser';
-import { _makeNull } from '../../../agStack/utils/generic';
-import { AgInputNumberField } from '../../../agStack/widgets/agInputNumberField';
-import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
+import { _isBrowserFirefox, _makeNull } from 'ag-stack';
+
+import { AgInputNumberField } from '../../../agWidgets/agInputNumberField';
+import { AgInputTextField } from '../../../agWidgets/agInputTextField';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';

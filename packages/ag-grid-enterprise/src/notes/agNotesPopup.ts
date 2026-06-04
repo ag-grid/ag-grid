@@ -1,9 +1,5 @@
-import type { ElementParams, GridInputTextArea, Note, _Alignment } from 'ag-grid-community';
+import type { Alignment } from 'ag-stack';
 import {
-    AgInputTextAreaSelector,
-    BeanStub,
-    Component,
-    KeyCode,
     RefPlaceholder,
     _computeAlignedPosition,
     _findBestPlacement,
@@ -13,7 +9,10 @@ import {
     _getRectSize,
     _setDisplayed,
     _toRelativeRect,
-} from 'ag-grid-community';
+} from 'ag-stack';
+
+import type { ElementParams, GridInputTextArea, Note } from 'ag-grid-community';
+import { AgInputTextAreaSelector, BeanStub, Component, KeyCode } from 'ag-grid-community';
 
 import { Dialog } from '../widgets/dialog';
 import { cloneNote } from './notesUtils';
@@ -25,8 +24,8 @@ const DEFAULT_SIZE = {
     minHeight: 150,
 };
 
-const CELL_PLACEMENTS: _Alignment[] = ['tl-tr', 'tr-br', 'br-tr', 'tr-tl', 'br-tl'];
-const FULL_WIDTH_ROW_PLACEMENTS: _Alignment[] = ['tl-tr', 'tr-br', 'br-tr'];
+const CELL_PLACEMENTS: Alignment[] = ['tl-tr', 'tr-br', 'br-tr', 'tr-tl', 'br-tl'];
+const FULL_WIDTH_ROW_PLACEMENTS: Alignment[] = ['tl-tr', 'tr-br', 'br-tr'];
 type NotesPopupPlacementMode = 'cell' | 'fullWidthRow';
 type BoundsRect = Pick<DOMRectReadOnly, 'top' | 'left' | 'right' | 'bottom'>;
 type PopupSize = Pick<DOMRectReadOnly, 'width' | 'height'>;
@@ -289,7 +288,7 @@ export function findNotesPopupPosition(params: NotesPopupPositionParams): { x: n
 }
 
 /** @knipIgnore Used in tests */
-export function getNotesPopupPlacements(mode: NotesPopupPlacementMode, enableRtl?: boolean): _Alignment[] {
+export function getNotesPopupPlacements(mode: NotesPopupPlacementMode, enableRtl?: boolean): Alignment[] {
     const placements = mode === 'fullWidthRow' ? FULL_WIDTH_ROW_PLACEMENTS : CELL_PLACEMENTS;
     return _getEffectivePlacements(placements, enableRtl);
 }

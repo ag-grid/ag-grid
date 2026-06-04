@@ -1,15 +1,15 @@
-import { createPart } from '../../../agStack/theming/partImpl';
-import { defaultFontFamily } from '../../../agStack/theming/shared/shared-css';
-import type { Theme } from '../../../agStack/theming/theme';
-import type { ColorValue } from '../../../agStack/theming/themeTypes';
+import type { ColorValue, Theme } from 'ag-stack';
 import {
     accentColor,
     accentMix,
     backgroundColor,
+    createPart,
+    defaultFontFamily,
     foregroundBackgroundMix,
     foregroundColor,
     foregroundMix,
-} from '../../../agStack/theming/themeUtils';
+} from 'ag-stack';
+
 import type { CoreParams } from '../../core/core-css';
 import { createTheme } from '../../createTheme';
 import type { ButtonStyleParams } from '../button-style/button-styles';
@@ -19,8 +19,8 @@ import {
     buttonStyleBase,
     buttonStyleQuartz,
 } from '../button-style/button-styles';
-import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
 import type { CheckboxStyleParams } from '../checkbox-style/checkbox-styles';
+import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
 import { colorSchemeVariable } from '../color-scheme/color-schemes';
 import { columnDropStyleBordered, columnDropStylePlain } from '../column-drop-style/column-drop-styles';
 import { iconSetBalham } from '../icon-set/balham/icon-set-balham';

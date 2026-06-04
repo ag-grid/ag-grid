@@ -1,4 +1,4 @@
-import { TabGuardClassNames, _FOCUS_MANAGED_CLASS, _findFocusableElements } from 'ag-grid-community';
+import { FOCUS_MANAGED_CLASS, TabGuardClassNames, _findFocusableElements } from 'ag-stack';
 
 export function findFocusableElementBeforeTabGuard(
     rootNode: HTMLElement,
@@ -35,7 +35,7 @@ export function isTargetUnderManagedComponent(rootNode: HTMLElement, target?: HT
         return false;
     }
 
-    const managedContainers = rootNode.querySelectorAll(`.${_FOCUS_MANAGED_CLASS}`);
+    const managedContainers = rootNode.querySelectorAll(`.${FOCUS_MANAGED_CLASS}`);
 
     if (!managedContainers.length) {
         return false;

@@ -1,3 +1,5 @@
+import { _downloadFile } from 'ag-stack';
+
 import type {
     AgColumn,
     AgColumnGroup,
@@ -13,7 +15,6 @@ import type {
 import {
     BaseCreator,
     _addGridCommonParams,
-    _downloadFile,
     _getHeaderClassesFromColDef,
     _getHeaderRowCount,
     _warn,
@@ -520,7 +521,7 @@ export class ExcelCreator
                     headerClasses = headerClasses.concat(
                         _getHeaderClassesFromColDef(
                             col.getDefinition(),
-                            gos,
+                            this.beans,
                             (column as AgColumn) || null,
                             (columnGroup as AgColumnGroup) || null
                         )

@@ -1,10 +1,11 @@
 import type { BeanCollection } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
 import { AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColDef, ColGroupDef, SortDef, SortDirection } from '../entities/colDef';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
 import type { ColumnEventType } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
+import type { SortDef, SortDirection } from '../interfaces/iSort';
 import { _mergeDeep } from '../utils/mergeDeep';
 import { _warn } from '../validation/logging';
 import { createMergedColGroupDef } from './columnGroups/columnGroupUtils';

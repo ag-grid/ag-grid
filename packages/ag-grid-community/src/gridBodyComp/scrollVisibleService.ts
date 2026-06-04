@@ -1,4 +1,5 @@
-import { _getScrollbarWidth } from '../agStack/utils/browser';
+import { _getScrollbarWidth } from 'ag-stack';
+
 import type { ColumnAnimationService } from '../columnMove/columnAnimationService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';

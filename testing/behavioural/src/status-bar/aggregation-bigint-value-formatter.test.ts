@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 const getStatusBarValue = (gridDiv: HTMLElement, label: string): string | null => {
     const items = Array.from(gridDiv.querySelectorAll<HTMLElement>('.ag-status-name-value'));
@@ -45,6 +45,16 @@ describe('Status bar aggregation value formatter', () => {
                 ],
             },
         });
+        await new GridColumns(api, `uses valueFormatter for bigint aggregations setup`).checkColumns(`
+            CENTER
+            └── totalBigInt "Total Big Int" width:200
+        `);
+        await new GridRows(api, `uses valueFormatter for bigint aggregations setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 totalBigInt:"1000000000000000000000n"
+            ├── LEAF id:r2 totalBigInt:"2000000000000000000000n"
+            └── LEAF id:r3 totalBigInt:"3000000000000000000000n"
+        `);
 
         await waitForEvent('firstDataRendered', api);
         const selectionChanged = waitForEvent('cellSelectionChanged', api);
@@ -54,6 +64,12 @@ describe('Status bar aggregation value formatter', () => {
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         expect(getStatusBarValue(gridDiv, 'Sum')).toBe('bigint:6000000000000000000000');
+        await new GridRows(api, `uses valueFormatter for bigint aggregations final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 totalBigInt:"1000000000000000000000n"
+            ├── LEAF id:r2 totalBigInt:"2000000000000000000000n"
+            └── LEAF id:r3 totalBigInt:"3000000000000000000000n"
+        `);
     });
 
     test('avoids lossy number conversion for large bigint aggregations', async () => {
@@ -81,6 +97,17 @@ describe('Status bar aggregation value formatter', () => {
                 ],
             },
         });
+        await new GridColumns(api, `avoids lossy number conversion for large bigint aggregations setup`).checkColumns(
+            `
+                CENTER
+                └── totalBigInt "Total Big Int" width:200
+            `
+        );
+        await new GridRows(api, `avoids lossy number conversion for large bigint aggregations setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 totalBigInt:"9007199254740993n"
+            └── LEAF id:r2 totalBigInt:"10n"
+        `);
 
         await waitForEvent('firstDataRendered', api);
         const selectionChanged = waitForEvent('cellSelectionChanged', api);
@@ -90,5 +117,10 @@ describe('Status bar aggregation value formatter', () => {
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         expect(getStatusBarValue(gridDiv, 'Sum')).toBe('bigint:9007199254741003');
+        await new GridRows(api, `avoids lossy number conversion for large bigint aggregations final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 totalBigInt:"9007199254740993n"
+            └── LEAF id:r2 totalBigInt:"10n"
+        `);
     });
 });

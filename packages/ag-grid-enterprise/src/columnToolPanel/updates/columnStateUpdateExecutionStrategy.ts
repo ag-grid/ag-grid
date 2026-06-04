@@ -1,3 +1,5 @@
+import { _areEqual } from 'ag-stack';
+
 import type {
     AgColumn,
     BeanCollection,
@@ -7,7 +9,7 @@ import type {
     IColumnStateUpdateStrategy,
     SortDef,
 } from 'ag-grid-community';
-import { BeanStub, _applyColumnState, _areEqual, isColumnGroupAutoCol, isSpecialCol } from 'ag-grid-community';
+import { BeanStub, _applyColumnState, isColumnGroupAutoCol, isSpecialCol } from 'ag-grid-community';
 
 import type {
     ColumnStateConcreteUpdateStrategy,

@@ -1,4 +1,6 @@
-import { Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
+import { RefPlaceholder, _removeFromParent } from 'ag-stack';
+
+import { Component } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../agStack/agGroupComponent';
 import type { GroupComponent, GroupComponentParams } from '../../../../widgets/gridEnterpriseWidgetTypes';

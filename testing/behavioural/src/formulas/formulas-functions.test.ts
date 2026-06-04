@@ -365,6 +365,8 @@ describe('ag-grid formulas function semantics', () => {
                     numTruthy: '=IF(3,"yes","no")',
                     numZero: '=IF(0,"yes","no")',
                     strTruthy: '=IF("x","yes","no")',
+                    emptyFalse: '=IF(FALSE,"yes","")',
+                    nullFalse: '=IF(FALSE,"yes",NULL)',
                     boolTrue: '=IF(TRUE,1,2)',
                     boolFalse: '=IF(FALSE,1,2)',
                 },
@@ -373,6 +375,8 @@ describe('ag-grid formulas function semantics', () => {
                 { field: 'numTruthy' },
                 { field: 'numZero' },
                 { field: 'strTruthy' },
+                { field: 'emptyFalse' },
+                { field: 'nullFalse' },
                 { field: 'boolTrue' },
                 { field: 'boolFalse' },
             ],
@@ -381,7 +385,7 @@ describe('ag-grid formulas function semantics', () => {
 
         await new GridRows(api, 'IF truthy matrix', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
-            └── LEAF id:row row-number:"1" numTruthy:"yes" numZero:"no" strTruthy:"yes" boolTrue:1 boolFalse:2
+            └── LEAF id:row row-number:"1" numTruthy:"yes" numZero:"no" strTruthy:"yes" emptyFalse:"" nullFalse:null boolTrue:1 boolFalse:2
         `);
     });
 
@@ -399,6 +403,8 @@ describe('ag-grid formulas function semantics', () => {
                     negZero: '=-0',
                     parens: '=(1+2)',
                     strLit: '="hello"',
+                    emptyStrLit: '=""',
+                    nullLit: '=NULL',
                     trueLit: '=TRUE',
                     falseLit: '=FALSE',
                 },
@@ -412,6 +418,8 @@ describe('ag-grid formulas function semantics', () => {
                 { field: 'negZero' },
                 { field: 'parens' },
                 { field: 'strLit' },
+                { field: 'emptyStrLit' },
+                { field: 'nullLit' },
                 { field: 'trueLit' },
                 { field: 'falseLit' },
             ],
@@ -420,7 +428,27 @@ describe('ag-grid formulas function semantics', () => {
 
         await new GridRows(api, 'trivial constants', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
-            └── LEAF id:row row-number:"1" intLit:42 floatLit:3.14 smallDecimal:0.001 sciNotation:"#PARSE!" negative:-5 negZero:0 parens:3 strLit:"hello" trueLit:true falseLit:false
+            └── LEAF id:row row-number:"1" intLit:42 floatLit:3.14 smallDecimal:0.001 sciNotation:"#PARSE!" negative:-5 negZero:0 parens:3 strLit:"hello" emptyStrLit:"" nullLit:null trueLit:true falseLit:false
+        `);
+    });
+
+    test('missing function arguments are rejected during parsing', async () => {
+        const api = createGrid('fn-missing-function-arg', {
+            rowData: [
+                {
+                    id: 'row',
+                    trailingArg: '=IF(TRUE,"yes",)',
+                    leadingArg: '=IF(,"yes","no")',
+                    middleArg: '=IF(TRUE,,"no")',
+                },
+            ],
+            columnDefs: [{ field: 'trailingArg' }, { field: 'leadingArg' }, { field: 'middleArg' }],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        await new GridRows(api, 'missing function args parse errors', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:row row-number:"1" trailingArg:"#PARSE!" leadingArg:"#PARSE!" middleArg:"#PARSE!"
         `);
     });
 

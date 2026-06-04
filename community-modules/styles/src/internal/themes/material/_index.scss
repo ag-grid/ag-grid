@@ -272,13 +272,6 @@
         );
     }
 
-    .ag-layout-auto-height,
-    .ag-layout-print {
-        .ag-grid-scrolling-container {
-            min-height: 150px;
-        }
-    }
-
     .ag-picker-field-wrapper:focus-within {
         box-shadow: 0 0 0 1px var(--ag-material-primary-color);
     }

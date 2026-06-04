@@ -82,6 +82,7 @@ export { AggregationModule } from './aggregation/aggregationModule';
 export { PivotModule } from './pivot/pivotModule';
 export { FindModule } from './find/findModule';
 export { BatchEditModule } from './batch-edit/batchEditModule';
+export { CalculatedColumnsModule } from './calculatedColumns/calculatedColumnsModule';
 export { RowGroupingEditModule } from './rowGrouping/rowGroupingEditModule';
 export { distributeGroupValue } from './rowGrouping/distributeGroupValue/distributeGroupValue';
 

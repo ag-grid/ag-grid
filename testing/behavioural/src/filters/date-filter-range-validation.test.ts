@@ -12,7 +12,7 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Number Range Filter', () => {
     const gridsManager = new TestGridsManager({
@@ -41,6 +41,22 @@ describe('Number Range Filter', () => {
                 { country: 'Italy', gold: 3 },
             ],
         });
+        await new GridColumns(
+            api,
+            `Filter displays validation error state in last touched input when invalid range  setup`
+        ).checkColumns(`
+            CENTER
+            └── gold "Gold" width:200
+        `);
+        await new GridRows(
+            api,
+            `Filter displays validation error state in last touched input when invalid range  setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 gold:2
+            ├── LEAF id:1 gold:8
+            └── LEAF id:2 gold:3
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -100,6 +116,14 @@ describe('Number Range Filter', () => {
         expect(toNumberInput.valueAsNumber).toBe(5);
         expect(toNumberInput.validity.valid).toBe(true);
         expect(toNumberInput).toHaveAttribute('aria-invalid', 'false');
+        await new GridRows(
+            api,
+            `Filter displays validation error state in last touched input when invalid range  final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 gold:2
+            └── LEAF id:2 gold:3
+        `);
     });
 });
 
@@ -148,6 +172,18 @@ describe('Date Range Filter', () => {
             ],
             rowData: [{ date: '2024-01-15' }, { date: '2024-06-15' }, { date: '2024-12-15' }],
         });
+        await new GridColumns(api, `Switching from inRange to equals clears range validation on the from input setup`)
+            .checkColumns(`
+                CENTER
+                └── date "Date" width:200
+            `);
+        await new GridRows(api, `Switching from inRange to equals clears range validation on the from input setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 date:"2024-01-15"
+                ├── LEAF id:1 date:"2024-06-15"
+                └── LEAF id:2 date:"2024-12-15"
+            `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -208,6 +244,13 @@ describe('Date Range Filter', () => {
 
         // The from input should be valid - no range validation should apply for "equals"
         expect(fromDateInputEquals.validity.valid).toBe(true);
+        await new GridRows(
+            api,
+            `Switching from inRange to equals clears range validation on the from input final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 date:"2024-06-15"
+        `);
     });
 
     test('Switching from equals back to inRange re-enables range validation', async () => {
@@ -225,6 +268,17 @@ describe('Date Range Filter', () => {
             ],
             rowData: [{ date: '2024-01-15' }, { date: '2024-06-15' }, { date: '2024-12-15' }],
         });
+        await new GridColumns(api, `Switching from equals back to inRange re-enables range validation setup`)
+            .checkColumns(`
+                CENTER
+                └── date "Date" width:200
+            `);
+        await new GridRows(api, `Switching from equals back to inRange re-enables range validation setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 date:"2024-01-15"
+            ├── LEAF id:1 date:"2024-06-15"
+            └── LEAF id:2 date:"2024-12-15"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -284,5 +338,10 @@ describe('Date Range Filter', () => {
 
         // Range validation should now be active again - from > to is invalid
         expect(fromDateInputRange.validity.valid).toBe(false);
+        await new GridRows(api, `Switching from equals back to inRange re-enables range validation final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+            `
+        );
     });
 });

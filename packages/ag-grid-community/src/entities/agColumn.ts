@@ -1,8 +1,6 @@
-import { LocalEventService } from '../agStack/events/localEventService';
-import type { AgEvent } from '../agStack/interfaces/agEvent';
-import type { IAgEventEmitter } from '../agStack/interfaces/iEventEmitter';
-import { _exists, _missing } from '../agStack/utils/generic';
-import { _escapeString } from '../agStack/utils/string';
+import type { AgEvent, IAgEventEmitter } from 'ag-stack';
+import { LocalEventService, _escapeString, _exists, _missing } from 'ag-stack';
+
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -21,6 +19,7 @@ import type {
 } from '../interfaces/iColumn';
 import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type { IRowNode } from '../interfaces/iRowNode';
+import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import { _mergeDeep } from '../utils/mergeDeep';
 import { _warn } from '../validation/logging';
 import type { AgColumnGroup } from './agColumnGroup';
@@ -33,9 +32,6 @@ import type {
     ColumnFunctionCallbackParams,
     IAggFunc,
     RowSpanParams,
-    SortDef,
-    SortDirection,
-    SortType,
 } from './colDef';
 
 const COL_DEF_DEFAULTS: Partial<ColDef> = {
@@ -102,6 +98,8 @@ export class AgColumn<TValue = any>
     public menuVisible = false;
     public highlighted: ColumnHighlightPosition | null;
     public formulaRef: string | null = null;
+
+    public isCalculatedCol = false;
 
     private lastLeftPinned: boolean = false;
     private firstRightPinned: boolean = false;
@@ -177,6 +175,7 @@ export class AgColumn<TValue = any>
         const colSpanChanged = colDef.spanRows !== this.colDef.spanRows;
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
+        this.initCalculatedCol();
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
@@ -201,6 +200,8 @@ export class AgColumn<TValue = any>
 
     // this is done after constructor as it uses gridOptionsService
     public postConstruct(): void {
+        this.initCalculatedCol();
+
         this.initState();
 
         this.initMinAndMaxWidths();
@@ -385,7 +386,14 @@ export class AgColumn<TValue = any>
     }
 
     public isSuppressPaste(rowNode: IRowNode): boolean {
+        if (this.isCalculatedCol) {
+            return true;
+        }
         return this.isColumnFunc(rowNode, this.colDef?.suppressPaste ?? null);
+    }
+
+    private initCalculatedCol(): void {
+        this.isCalculatedCol = this.colDef.calculatedExpression != null && this.beans.calculatedColsSvc != null;
     }
 
     public isResizable(): boolean {

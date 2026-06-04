@@ -1,3 +1,14 @@
+import {
+    AutoScrollService,
+    _areEqual,
+    _exists,
+    _last,
+    _makeNull,
+    _missing,
+    _removeAllFromArray,
+    _removeFromArray,
+} from 'ag-stack';
+
 import type {
     AgColumn,
     AgColumnGroup,
@@ -25,12 +36,9 @@ import type {
     VisibleColsService,
 } from 'ag-grid-community';
 import {
-    AutoScrollService,
     BeanStub,
     KeyCode,
     _areCellsEqual,
-    _areEqual,
-    _exists,
     _getAbsoluteRowIndex,
     _getCellCtrlForEventTarget,
     _getEnableColumnSelection,
@@ -47,11 +55,6 @@ import {
     _isRowBefore,
     _isSameRow,
     _isUsingNewCellSelectionAPI,
-    _last,
-    _makeNull,
-    _missing,
-    _removeAllFromArray,
-    _removeFromArray,
     _warn,
 } from 'ag-grid-community';
 

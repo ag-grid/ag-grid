@@ -1,5 +1,6 @@
-import type { ManagedFocusCallbacks, StopPropagationCallbacks } from '../agStack/focus/agManagedFocusFeature';
-import { AgManagedFocusFeature } from '../agStack/focus/agManagedFocusFeature';
+import type { ManagedFocusCallbacks, StopPropagationCallbacks } from 'ag-stack';
+import { AgManagedFocusFeature } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';

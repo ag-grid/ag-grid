@@ -1,15 +1,14 @@
 import type {
-    _AfterGuiAttachedParams,
-    _AgCoreBeanCollection,
-    _AgElementParams,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-} from 'ag-grid-community';
+    AfterGuiAttachedParams,
+    AgCoreBeanCollection,
+    AgElementParams,
+    BaseEvents,
+    BaseProperties,
+    IPropertiesService,
+} from 'ag-stack';
 import {
-    KeyCode,
+    AgTabGuardComp,
     RefPlaceholder,
-    _AgTabGuardComp,
     _clearElement,
     _createAgElement,
     _findNextFocusableElement,
@@ -19,7 +18,9 @@ import {
     _isKeyboardMode,
     _setAriaLabel,
     _setAriaRole,
-} from 'ag-grid-community';
+} from 'ag-stack';
+
+import { KeyCode } from 'ag-grid-community';
 
 import { findFocusableElementBeforeTabGuard, isTargetUnderManagedComponent } from '../misc/enterpriseFocusUtils';
 import type { AgTabbedItem, AgTabbedLayoutParams } from './iTabbedLayout';
@@ -31,7 +32,7 @@ interface TabbedItemWrapper<TContainerType extends string> {
 
 function getTabbedLayoutTemplate<TComponentSelectorType extends string>(
     cssClass?: string
-): _AgElementParams<TComponentSelectorType> {
+): AgElementParams<TComponentSelectorType> {
     return {
         tag: 'div',
         cls: `ag-tabs ${cssClass}`,
@@ -48,14 +49,14 @@ function getTabbedLayoutTemplate<TComponentSelectorType extends string>(
 }
 
 export class AgTabbedLayout<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
     TContainerType extends string = string,
-> extends _AgTabGuardComp<
+> extends AgTabGuardComp<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -70,7 +71,7 @@ export class AgTabbedLayout<
     private eCloseButton?: HTMLElement;
 
     private readonly params: AgTabbedLayoutParams<TContainerType>;
-    private afterAttachedParams: _AfterGuiAttachedParams<TContainerType>;
+    private afterAttachedParams: AfterGuiAttachedParams<TContainerType>;
     private readonly items: TabbedItemWrapper<TContainerType>[] = [];
     private activeItem: TabbedItemWrapper<TContainerType>;
     private lastScrollListener: (() => null) | null | undefined;
@@ -245,7 +246,7 @@ export class AgTabbedLayout<
         return _focusInto(this.eBody, fromBottom);
     }
 
-    public setAfterAttachedParams(params: _AfterGuiAttachedParams<TContainerType>): void {
+    public setAfterAttachedParams(params: AfterGuiAttachedParams<TContainerType>): void {
         this.afterAttachedParams = params;
     }
 

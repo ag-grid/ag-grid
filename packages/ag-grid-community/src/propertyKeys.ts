@@ -109,6 +109,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'formulaDataSource',
     'formulaFuncs',
     'notesDataSource',
+    'calculatedColumns',
     'initialState',
     'autoSizeStrategy',
     'selectionColumnDef',

@@ -1,12 +1,7 @@
+import { RefPlaceholder, _debounce, _setDisplayed } from 'ag-stack';
+
 import type { AgColumn, AgEvent, ComponentSelector, ElementParams, GridInputTextField } from 'ag-grid-community';
-import {
-    AgInputTextFieldSelector,
-    Component,
-    RefPlaceholder,
-    _createIconNoSpan,
-    _debounce,
-    _setDisplayed,
-} from 'ag-grid-community';
+import { AgInputTextFieldSelector, Component, _createIconNoSpan } from 'ag-grid-community';
 
 import type { ToolPanelFiltersCompParams } from './filtersToolPanel';
 

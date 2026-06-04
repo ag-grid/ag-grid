@@ -1,0 +1,41 @@
+.ag-tooltip {
+    position: absolute;
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    background-color: var(--ag-tooltip-background-color);
+    color: var(--ag-tooltip-text-color);
+    border: var(--ag-tooltip-border);
+    border-radius: var(--ag-border-radius);
+    white-space: normal;
+
+    /* tooltips must sit above all in-grid layers and popups. */
+    z-index: 99999;
+
+    &:where(.ag-cell-editor-tooltip),
+    &:where(.ag-cell-formula-tooltip),
+    &:where(.ag-calculated-column-expression-tooltip) {
+        background-color: var(--ag-tooltip-error-background-color);
+        color: var(--ag-tooltip-error-text-color);
+        border: var(--ag-tooltip-error-border);
+        font-weight: 500;
+    }
+}
+
+.ag-tooltip-custom {
+    position: absolute;
+
+    /* custom tooltips share the same top-most layer as built-in tooltips. */
+    z-index: 99999;
+}
+
+.ag-tooltip:where(:not(.ag-tooltip-interactive)),
+.ag-tooltip-custom:where(:not(.ag-tooltip-interactive)) {
+    pointer-events: none;
+}
+
+.ag-tooltip-animate {
+    transition: opacity 1s;
+
+    &:where(.ag-tooltip-hiding) {
+        opacity: 0;
+    }
+}

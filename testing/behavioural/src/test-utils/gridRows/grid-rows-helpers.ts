@@ -1,9 +1,14 @@
+import { setTimeout as asyncSetTimeout } from 'timers/promises';
+import { expect } from 'vitest';
+
 import type { GridApi, IRowNode, RowNode } from 'ag-grid-community';
 import { ROOT_NODE_ID } from 'ag-grid-community';
 
+import { unindentText } from '../utils';
 import type { GridRows } from './gridRows';
 import type { GridRowsOptions } from './gridRowsOptions';
 import type { GridRowsErrors } from './rows-validation/gridRowsErrors';
+import { recordSnapshotMismatch } from './snapshot-updater';
 
 /** Adds the diagram text to a vitest assertion error so it appears in test output. */
 export function addDiagramToError(
@@ -33,6 +38,181 @@ export function addDiagramToError(
             enumerable: false,
         });
     }
+}
+
+/** Shared snapshot-check protocol that GridRows.check() and GridColumns.checkColumns() implement.
+ *  Standardises retry, validator-error throwing, and snapshot-mismatch recording across the two. */
+export interface SnapshotCheckTarget {
+    readonly label: string;
+    readonly methodName: 'check' | 'checkColumns';
+    /** Identity of the source-code method, used for stack-trace capture by the snapshot updater. */
+    readonly methodRef: (...args: any[]) => any;
+    rebuild(): SnapshotCheckTarget;
+    loadErrors(): void;
+    hasErrors(): boolean;
+    makeError(): any;
+    makeDiagram(): string;
+    /** Asserts that the empty-snapshot variant truly has nothing to render. */
+    assertEmpty(): void;
+    printDiagram(): void;
+}
+
+const RETRY_DELAYS_MS = [10, 50, 100] as const;
+const UNDEFINED_SNAPSHOT_NOTICE = (method: 'check' | 'checkColumns', label: string): string => {
+    const className = method === 'check' ? 'GridRows' : 'GridColumns';
+    return `\n❌ ${className}.${method}() called without a snapshot for "${label}". Run \`./behave.sh --update-grid-rows\` to generate one.\n`;
+};
+
+/** Common shape required from a GridRows/GridColumns owner; the rest of the SnapshotCheckTarget
+ *  fields are derived from this in `makeSnapshotTarget`. */
+export interface SnapshotCheckOwner {
+    readonly label: string;
+    loadErrors(): void;
+    readonly errors: { readonly totalErrorsCount: number };
+    makeDiagram(printArgument: false): string;
+    printDiagram(): void;
+}
+
+/** Builds a SnapshotCheckTarget from an owner + the bits that genuinely vary between GridRows
+ *  and GridColumns (method identity, rebuild factory, error/empty assertions). */
+export function makeSnapshotTarget<TOwner extends SnapshotCheckOwner>(
+    owner: TOwner,
+    spec: {
+        methodName: 'check' | 'checkColumns';
+        methodRef: (...args: any[]) => any;
+        rebuild: () => SnapshotCheckTarget;
+        makeError: () => any;
+        assertEmpty: () => void;
+    }
+): SnapshotCheckTarget {
+    return {
+        label: owner.label,
+        methodName: spec.methodName,
+        methodRef: spec.methodRef,
+        rebuild: spec.rebuild,
+        loadErrors: () => owner.loadErrors(),
+        hasErrors: () => owner.errors.totalErrorsCount > 0,
+        makeError: spec.makeError,
+        makeDiagram: () => owner.makeDiagram(false),
+        assertEmpty: spec.assertEmpty,
+        printDiagram: () => owner.printDiagram(),
+    };
+}
+
+/** Performs the standard snapshot-check protocol: handles `undefined`/`true`/`'skip-snapshot'`/
+ *  `'empty'`/string variants, retries transient validator errors and snapshot mismatches with the
+ *  same delay schedule, and records mismatches for the snapshot updater. Throws after retries are
+ *  exhausted, attaching the latest diagram to the error. */
+export async function runSnapshotCheck(
+    target: SnapshotCheckTarget,
+    diagramSnapshot: string | 'empty' | 'skip-snapshot' | true | undefined,
+    updateMode: 'update' | 'dry' | undefined
+): Promise<void> {
+    if (diagramSnapshot === undefined) {
+        if (updateMode) {
+            // Treat undefined as an empty snapshot in update mode so the updater can fill it in.
+            diagramSnapshot = '';
+        } else {
+            process.stderr.write(UNDEFINED_SNAPSHOT_NOTICE(target.methodName, target.label));
+            diagramSnapshot = 'skip-snapshot';
+        }
+    }
+
+    if (diagramSnapshot === true) {
+        target.loadErrors();
+        if (target.hasErrors()) {
+            throw target.makeError();
+        }
+        target.printDiagram();
+        return;
+    }
+
+    if (diagramSnapshot === 'skip-snapshot') {
+        target.loadErrors();
+        if (target.hasErrors()) {
+            throw target.makeError();
+        }
+        return;
+    }
+
+    if (updateMode) {
+        // Retry briefly so transient mid-render state doesn't bake broken snapshots. Even when
+        // retries exhaust and validator errors remain, record the snapshot mismatch first so an
+        // empty placeholder still gets filled in before the validator error rethrows.
+        let attempt = target;
+        for (let i = 0; i <= RETRY_DELAYS_MS.length; i++) {
+            attempt.loadErrors();
+            if (!attempt.hasErrors()) {
+                break;
+            }
+            if (i === RETRY_DELAYS_MS.length) {
+                if (diagramSnapshot !== 'empty') {
+                    recordMismatchIfDifferent(attempt, diagramSnapshot);
+                }
+                throw attempt.makeError();
+            }
+            await asyncSetTimeout(RETRY_DELAYS_MS[i]);
+            attempt = attempt.rebuild();
+        }
+        if (diagramSnapshot === 'empty') {
+            attempt.assertEmpty();
+            return;
+        }
+        recordMismatchIfDifferent(attempt, diagramSnapshot);
+        return;
+    }
+
+    // Normal mode: retry on validation errors AND snapshot mismatches — both can be transient when
+    // the grid is mid-render. Rebuild each retry to re-read the latest state.
+    let attempt = target;
+    let lastError: any;
+
+    for (let i = 0; i <= RETRY_DELAYS_MS.length; i++) {
+        attempt.loadErrors();
+        if (attempt.hasErrors()) {
+            lastError = attempt.makeError();
+        } else {
+            lastError = tryAssertSnapshot(attempt, diagramSnapshot);
+        }
+        if (!lastError) {
+            if (i > 0) {
+                process.stderr.write(
+                    `Grid${target.methodName === 'check' ? 'Rows' : 'Columns'} flaky ${target.methodName} detected for "${target.label}" — passed only after retrying with delays. ` +
+                        `Add \`await asyncSetTimeout(N)\` before this check to avoid intermittent failures.\n`
+                );
+            }
+            return;
+        }
+        if (i < RETRY_DELAYS_MS.length) {
+            await asyncSetTimeout(RETRY_DELAYS_MS[i]);
+            attempt = attempt.rebuild();
+        }
+    }
+
+    addDiagramToError(lastError, attempt.makeDiagram(), target.label);
+    Error.captureStackTrace(lastError, target.methodRef);
+    throw lastError;
+}
+
+function recordMismatchIfDifferent(target: SnapshotCheckTarget, expectedSnapshot: string): void {
+    const diagram = target.makeDiagram();
+    if (unindentText(diagram) !== unindentText(expectedSnapshot)) {
+        recordSnapshotMismatch(target.methodRef, diagram, target.label, target.methodName);
+    }
+}
+
+function tryAssertSnapshot(target: SnapshotCheckTarget, expected: string | 'empty'): any {
+    try {
+        if (expected === 'empty') {
+            target.assertEmpty();
+        } else {
+            const diagram = target.makeDiagram();
+            expect(unindentText(diagram)).toEqual(unindentText(expected));
+        }
+    } catch (e) {
+        return e;
+    }
+    return null;
 }
 
 export interface CollectedRows<TData> {
@@ -99,6 +279,19 @@ export function collectGridRows<TData>(
             : [],
         detailGridRows,
     };
+}
+
+/** Strict reference equality with an explicit Date carve-out (Dates compare by timestamp). Two
+ *  equivalent-but-distinct object instances are intentionally NOT equal — the grid keeps stable
+ *  references for unchanged values, so a difference indicates a real change. */
+export function valuesEqual(a: unknown, b: unknown): boolean {
+    if (a === b) {
+        return true;
+    }
+    if (a instanceof Date && b instanceof Date) {
+        return a.getTime() === b.getTime();
+    }
+    return false;
 }
 
 function collectPinnedRows<TData>(count: number, getter: (i: number) => any): RowNode<TData>[] {

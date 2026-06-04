@@ -1,9 +1,15 @@
-import { KeyCode } from '../agStack/constants/keyCode';
-import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
-import { _parseBigIntOrNull } from '../agStack/utils/bigInt';
-import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../agStack/utils/date';
-import { _toStringOrNull } from '../agStack/utils/generic';
-import { _getValueUsingDotField } from '../agStack/utils/value';
+import type { IEventListener } from 'ag-stack';
+import {
+    KeyCode,
+    _getValueUsingDotField,
+    _isValidDate,
+    _isValidDateTime,
+    _parseBigIntOrNull,
+    _parseDateTimeFromString,
+    _serialiseDate,
+    _toStringOrNull,
+} from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -55,6 +61,20 @@ const SORTED_CELL_DATA_TYPES_FOR_MATCHING: readonly Exclude<BaseCellDataType, 'd
     'boolean',
     'date',
 ] as const;
+
+// Properties that the data-type service may implicitly set when cellDataType is applied.
+// Keep this list aligned with columnDefinitionPropsPerDataType and data type value parsers/formatters.
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const DATA_TYPE_DERIVED_COL_DEF_PROPERTIES = [
+    'cellRenderer',
+    'cellEditorParams',
+    'comparator',
+    'getFindText',
+    'keyCreator',
+    'suppressKeyboardEvent',
+    'valueFormatter',
+    'valueParser',
+] as const satisfies readonly (keyof ColDef)[];
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class DataTypeService extends BeanStub implements NamedBean {
@@ -523,6 +543,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
     // noinspection JSUnusedGlobalSymbols
     public getFormatValue(cellDataType: string): DataTypeFormatValueFunc | undefined {
         return this.formatValueFuncs[cellDataType];
+    }
+
+    public isDataTypeRegistered(cellDataType: string): boolean {
+        return this.dataTypeDefinitions[cellDataType] != null;
     }
 
     public isColPendingInference(colId: string): boolean {

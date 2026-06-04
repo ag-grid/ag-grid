@@ -1,3 +1,4 @@
+import { CssClassManager, _removeFromParent } from 'ag-stack';
 import React, { Suspense, memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import type {
@@ -10,7 +11,7 @@ import type {
     ICellRendererComp,
     RowDragComp,
 } from 'ag-grid-community';
-import { CssClassManager, _EmptyBean, _removeFromParent } from 'ag-grid-community';
+import { _EmptyBean } from 'ag-grid-community';
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';

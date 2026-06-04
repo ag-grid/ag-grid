@@ -1,4 +1,5 @@
-import { _doOnce } from '../agStack/utils/function';
+import { _doOnce } from 'ag-stack';
+
 import type { GridOptionsService } from '../gridOptionsService';
 
 export function _logIfDebug(gos: GridOptionsService, message: string, ...args: any[]) {

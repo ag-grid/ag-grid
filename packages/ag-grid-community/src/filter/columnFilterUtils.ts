@@ -1,4 +1,5 @@
-import type { AgPromise } from '../agStack/utils/promise';
+import type { AgPromise } from 'ag-stack';
+
 import type { AgColumn } from '../entities/agColumn';
 import type {
     CreateFilterHandlerFunc,

@@ -1,3 +1,5 @@
+import { _areEqual, _clearElement, _last } from 'ag-stack';
+
 import type {
     BeanCollection,
     ColDef,
@@ -10,15 +12,7 @@ import type {
     IToolPanelComp,
     IToolPanelParams,
 } from 'ag-grid-community';
-import {
-    Component,
-    FilterButtonComp,
-    _addGridCommonParams,
-    _areEqual,
-    _clearElement,
-    _last,
-    _warn,
-} from 'ag-grid-community';
+import { Component, FilterButtonComp, _addGridCommonParams, _warn } from 'ag-grid-community';
 
 import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';

@@ -17,7 +17,7 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 /**
  * Tests for setDataValue('edit') behaviour — verifying that pushing a value via the 'edit'
@@ -53,6 +53,16 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `'edit' updates editor value during batch and preserves focus setup`).checkColumns(
+            `
+                CENTER
+                └── a "A" width:200 editable
+            `
+        );
+        await new GridRows(api, `'edit' updates editor value during batch and preserves focus setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial"
+        `);
 
         api.startBatchEdit();
         const gridDiv = getGridElement(api)! as HTMLElement;
@@ -94,6 +104,10 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
         expect(rowNode.getDataValue('a')).toBe('initial');
 
         api.cancelBatchEdit();
+        await new GridRows(api, `'edit' updates editor value during batch and preserves focus final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial"
+        `);
     });
 
     test("'batch' source with open editor: stages pending value without closing or modifying the editor", async () => {
@@ -102,6 +116,20 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(
+            api,
+            `'batch' source with open editor: stages pending value without closing or modifyi setup`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `'batch' source with open editor: stages pending value without closing or modifyi setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial"
+        `);
 
         api.startBatchEdit();
         const gridDiv = getGridElement(api)! as HTMLElement;
@@ -141,6 +169,13 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
         expect(rowNode.getDataValue('a')).toBe('initial');
 
         api.cancelBatchEdit();
+        await new GridRows(
+            api,
+            `'batch' source with open editor: stages pending value without closing or modifyi final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial"
+        `);
     });
 
     test("'batch' source with open editor: ESC closes editor and cell shows batch pending value", async () => {
@@ -431,6 +466,15 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `'edit' updates editor value outside batch mode and preserves focus setup`)
+            .checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+        await new GridRows(api, `'edit' updates editor value outside batch mode and preserves focus setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -458,6 +502,12 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
         // Data should NOT be changed (editor still open, not committed)
         expect(rowNode.data.a).toBe('initial');
+        await new GridRows(api, `'edit' updates editor value outside batch mode and preserves focus final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF 🖍️ id:0 a:🖍️"pushed" "initial"
+            `
+        );
     });
 
     test("'edit' stages as pending when no editor is open during batch", async () => {
@@ -493,6 +543,14 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `'edit' writes directly to data when no editor and no batch setup`).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(api, `'edit' writes directly to data when no editor and no batch setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial"
+        `);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
         const result = rowNode.setDataValue('a', 'direct', 'edit');
@@ -500,6 +558,10 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
         expect(result).toBe(true);
         expect(rowNode.data.a).toBe('direct');
         expect(rowNode.getDataValue('a')).toBe('direct');
+        await new GridRows(api, `'edit' writes directly to data when no editor and no batch final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"direct"
+        `);
     });
 
     test("'edit' does not fire cellValueChanged when updating editor value", async () => {
@@ -510,6 +572,15 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             getRowId: (params) => params.data.id,
             onCellValueChanged: cellValueChangedSpy,
         });
+        await new GridColumns(api, `'edit' does not fire cellValueChanged when updating editor value setup`)
+            .checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+        await new GridRows(api, `'edit' does not fire cellValueChanged when updating editor value setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial"
+        `);
 
         api.startBatchEdit();
         const gridDiv = getGridElement(api)! as HTMLElement;
@@ -533,6 +604,12 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
         expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('pushed');
 
         api.cancelBatchEdit();
+        await new GridRows(api, `'edit' does not fire cellValueChanged when updating editor value final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `
+        );
     });
 
     describe('built-in editor types', () => {
@@ -620,6 +697,14 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
                 rowData: [{ id: '0', a: new Date('2024-01-15') }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `agDateCellEditor: DOM value is updated in-place setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `agDateCellEditor: DOM value is updated in-place setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"2024-01-15"
+            `);
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -648,6 +733,10 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(rowNode.data.a).toEqual(new Date('2024-01-15'));
 
             api.cancelBatchEdit();
+            await new GridRows(api, `agDateCellEditor: DOM value is updated in-place final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"2024-01-15"
+            `);
         });
 
         test('agDateStringCellEditor: DOM value is updated in-place', async () => {
@@ -817,6 +906,15 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
                 rowData: [{ id: '0', a: '100' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `agTextCellEditor with useFormatter: formatted value is updated setup`)
+                .checkColumns(`
+                    CENTER
+                    └── a "A" width:200 editable
+                `);
+            await new GridRows(api, `agTextCellEditor with useFormatter: formatted value is updated setup`).check(`
+                ROOT id:ROOT_NODE_ID a:"$undefined"
+                └── LEAF id:0 a:"$100"
+            `);
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -844,6 +942,12 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(rowNode.data.a).toBe('100');
 
             api.cancelBatchEdit();
+            await new GridRows(api, `agTextCellEditor with useFormatter: formatted value is updated final state`).check(
+                `
+                    ROOT id:ROOT_NODE_ID a:"$undefined"
+                    └── LEAF id:0 a:"$100"
+                `
+            );
         });
     });
 
@@ -854,6 +958,16 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
                 rowData: [{ id: '0', a: 'initial' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `'edit' push is visible via getCellValue with from:'batch' setup`).checkColumns(
+                `
+                    CENTER
+                    └── a "A" width:200 editable
+                `
+            );
+            await new GridRows(api, `'edit' push is visible via getCellValue with from:'batch' setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -877,6 +991,10 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(rowNode.data.a).toBe('initial');
 
             api.cancelBatchEdit();
+            await new GridRows(api, `'edit' push is visible via getCellValue with from:'batch' final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
         });
 
         test("'edit' supports multiple sequential pushes", async () => {
@@ -885,6 +1003,14 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
                 rowData: [{ id: '0', a: 'initial' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `'edit' supports multiple sequential pushes setup`).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(api, `'edit' supports multiple sequential pushes setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -920,6 +1046,10 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(rowNode.data.a).toBe('initial');
 
             api.cancelBatchEdit();
+            await new GridRows(api, `'edit' supports multiple sequential pushes final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
         });
 
         test("'edit' pushed value is committed on commitBatchEdit", async () => {
@@ -1075,6 +1205,15 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
                 rowData: [{ id: '0', a: 'initial' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `custom editor with refresh() uses refresh path, not setEditValue setup`)
+                .checkColumns(`
+                    CENTER
+                    └── a "A" width:200 editable
+                `);
+            await new GridRows(api, `custom editor with refresh() uses refresh path, not setEditValue setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -1097,6 +1236,11 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(editor!.value).toBe('via-refresh');
 
             api.cancelBatchEdit();
+            await new GridRows(api, `custom editor with refresh() uses refresh path, not setEditValue final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 a:"initial"
+                `);
         });
 
         test('custom editor without refresh() recreates editor and preserves focus', async () => {
@@ -1134,6 +1278,17 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
                 rowData: [{ id: '0', a: 'initial' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `custom editor without refresh() recreates editor and preserves focus setup`)
+                .checkColumns(`
+                    CENTER
+                    └── a "A" width:200 editable
+                `);
+            await new GridRows(api, `custom editor without refresh() recreates editor and preserves focus setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 a:"initial"
+                `
+            );
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -1164,6 +1319,11 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(rowNode.data.a).toBe('initial');
 
             api.cancelBatchEdit();
+            await new GridRows(api, `custom editor without refresh() recreates editor and preserves focus final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 a:"initial"
+                `);
         });
     });
 
@@ -1311,6 +1471,20 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
                 rowData: [{ id: '0' }], // 'a' field absent — effectively undefined
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(
+                api,
+                `'batch' source creates pending from undefined cell (field absent from row data) setup`
+            ).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(
+                api,
+                `'batch' source creates pending from undefined cell (field absent from row data) setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
 
             api.startBatchEdit();
             await asyncSetTimeout(1);
@@ -1334,6 +1508,13 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
 
             expect(rowNode.data.a).toBe('val');
             expect(rowNode.getDataValue('a')).toBe('val');
+            await new GridRows(
+                api,
+                `'batch' source creates pending from undefined cell (field absent from row data) final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"val"
+            `);
         });
 
         test("'edit' on UNEDITED editor on null cell then 'batch' on second null cell both create pending, editor stays open", async () => {
@@ -1660,6 +1841,20 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
                 rowData: [{ id: '0', a: 50 }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(
+                api,
+                `setDataValue 'edit' with out-of-range value: validateEdit() reports error and se setup`
+            ).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(
+                api,
+                `setDataValue 'edit' with out-of-range value: validateEdit() reports error and se setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:50
+            `);
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -1693,6 +1888,13 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             expect(rowNode.data.a).toBe(50);
 
             api.cancelBatchEdit();
+            await new GridRows(
+                api,
+                `setDataValue 'edit' with out-of-range value: validateEdit() reports error and se final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:50
+            `);
         });
 
         test("setDataValue 'edit' restoring valid value: validateEdit() clears errors and removes ag-cell-editing-error class", async () => {
@@ -1770,6 +1972,20 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
                 rowData: [{ id: '0', a: 'hello' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(
+                api,
+                `setDataValue 'edit' with custom getValidationErrors function: errors reported an setup`
+            ).checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+            await new GridRows(
+                api,
+                `setDataValue 'edit' with custom getValidationErrors function: errors reported an setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"hello"
+            `);
 
             api.startBatchEdit();
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -1806,6 +2022,13 @@ describe('Cell Editing: setDataValue in Batch Mode — editor updates', () => {
             await asyncSetTimeout(1);
 
             expect(rowNode.data.a).toBe('valid-value');
+            await new GridRows(
+                api,
+                `setDataValue 'edit' with custom getValidationErrors function: errors reported an final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"valid-value"
+            `);
         });
     });
 });

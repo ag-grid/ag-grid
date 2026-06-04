@@ -1,7 +1,8 @@
 import type { AgTooltipMode } from 'ag-charts-types';
+import { RefPlaceholder } from 'ag-stack';
 
 import type { GridSelect } from 'ag-grid-community';
-import { AgSelectSelector, Component, RefPlaceholder } from 'ag-grid-community';
+import { AgSelectSelector, Component } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import type { GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';

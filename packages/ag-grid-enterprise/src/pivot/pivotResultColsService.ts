@@ -1,3 +1,5 @@
+import { _areEqual, _exists } from 'ag-stack';
+
 import type {
     AbstractColDef,
     AgColumn,
@@ -15,11 +17,9 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    _areEqual,
     _createColumnTree,
     _createColumnTreeWithIds,
     _destroyColumnTree,
-    _exists,
     _getColumnsFromTree,
 } from 'ag-grid-community';
 

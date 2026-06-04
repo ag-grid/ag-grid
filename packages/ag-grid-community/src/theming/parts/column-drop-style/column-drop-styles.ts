@@ -1,4 +1,5 @@
-import { createPart } from '../../../agStack/theming/partImpl';
+import { createPart } from 'ag-stack';
+
 import columnDropStyleBorderedCSS from './column-drop-style-bordered.css';
 import columnDropStylePlainCSS from './column-drop-style-plain.css';
 

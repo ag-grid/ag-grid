@@ -287,6 +287,21 @@ describe('Pinned rows', () => {
                 rowData: [{ athlete: 'body', sport: 'body', age: 0 }],
                 pinnedTopRowData: pinned,
             });
+            await new GridColumns(api, `rowTop re-stacks when pinned row heights grow after render setup`).checkColumns(
+                `
+                    CENTER
+                    ├── athlete "Athlete" width:200
+                    ├── sport "Sport" width:200
+                    └── age "Age" width:200
+                `
+            );
+            await new GridRows(api, `rowTop re-stacks when pinned row heights grow after render setup`).check(`
+                PINNED_TOP id:t-0 athlete:"A" sport:"SA" age:1
+                PINNED_TOP id:t-1 athlete:"B" sport:"SB" age:2
+                PINNED_TOP id:t-2 athlete:"C" sport:"SC" age:3
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"body" sport:"body" age:0
+            `);
 
             const initial = getPinnedRowLayout(api, 'top');
             expect(initial.tops).toEqual([0, initial.heights[0], initial.heights[0] + initial.heights[1]]);
@@ -299,6 +314,13 @@ describe('Pinned rows', () => {
             const after = getPinnedRowLayout(api, 'top');
             expect(after.heights).toEqual(newHeights);
             expect(after.tops).toEqual([0, newHeights[0], newHeights[0] + newHeights[1]]);
+            await new GridRows(api, `rowTop re-stacks when pinned row heights grow after render final state`).check(`
+                PINNED_TOP id:t-0 athlete:"A" sport:"SA" age:1
+                PINNED_TOP id:t-1 athlete:"B" sport:"SB" age:2
+                PINNED_TOP id:t-2 athlete:"C" sport:"SC" age:3
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"body" sport:"body" age:0
+            `);
         });
     });
 
@@ -313,7 +335,7 @@ describe('Pinned rows', () => {
             `);
         });
 
-        test('bottom pinned row keeps sticky left and right lanes in horizontal layouts', () => {
+        test('bottom pinned row keeps sticky left and right lanes in horizontal layouts', async () => {
             const wideColumnDefs: ColDef[] = [
                 { field: 'left', pinned: 'left', width: 180 },
                 { field: 'c1', width: 220 },
@@ -326,6 +348,25 @@ describe('Pinned rows', () => {
                 rowData: [{ left: 'L1', c1: 'C1', c2: 'C2', c3: 'C3', right: 'R1' }],
                 pinnedBottomRowData: [{ left: 'LB', c1: 'CB1', c2: 'CB2', c3: 'CB3', right: 'RB' }],
             });
+            await new GridColumns(
+                api,
+                `bottom pinned row keeps sticky left and right lanes in horizontal layouts setup`
+            ).checkColumns(`
+                LEFT
+                └── left "Left" width:180
+                CENTER
+                ├── c1 "C1" width:220
+                ├── c2 "C2" width:220
+                └── c3 "C3" width:220
+                RIGHT
+                └── right "Right" width:180
+            `);
+            await new GridRows(api, `bottom pinned row keeps sticky left and right lanes in horizontal layouts setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 left:"L1" c1:"C1" c2:"C2" c3:"C3" right:"R1"
+                    PINNED_BOTTOM id:b-0 left:"LB" c1:"CB1" c2:"CB2" c3:"CB3" right:"RB"
+                `);
 
             const root = TestGridsManager.getHTMLElement(api)!;
             const bottomContainer = root.querySelector<HTMLElement>('.ag-grid-pinned-bottom-rows-container')!;
@@ -337,6 +378,14 @@ describe('Pinned rows', () => {
             expect(leftLane).toBeTruthy();
             expect(rightLane).toBeTruthy();
             assertBottomPinnedContainerAllowsStickyLanes();
+            await new GridRows(
+                api,
+                `bottom pinned row keeps sticky left and right lanes in horizontal layouts final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 left:"L1" c1:"C1" c2:"C2" c3:"C3" right:"R1"
+                PINNED_BOTTOM id:b-0 left:"LB" c1:"CB1" c2:"CB2" c3:"CB3" right:"RB"
+            `);
         });
 
         test('are shown then updated', async () => {
@@ -559,6 +608,21 @@ describe('Pinned rows', () => {
                 rowData: [{ athlete: 'body', sport: 'body', age: 0 }],
                 pinnedBottomRowData: pinned,
             });
+            await new GridColumns(api, `rowTop re-stacks when pinned row heights grow after render setup`).checkColumns(
+                `
+                    CENTER
+                    ├── athlete "Athlete" width:200
+                    ├── sport "Sport" width:200
+                    └── age "Age" width:200
+                `
+            );
+            await new GridRows(api, `rowTop re-stacks when pinned row heights grow after render setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"body" sport:"body" age:0
+                PINNED_BOTTOM id:b-0 athlete:"A" sport:"SA" age:1
+                PINNED_BOTTOM id:b-1 athlete:"B" sport:"SB" age:2
+                PINNED_BOTTOM id:b-2 athlete:"C" sport:"SC" age:3
+            `);
 
             const initial = getPinnedRowLayout(api, 'bottom');
             expect(initial.tops).toEqual([0, initial.heights[0], initial.heights[0] + initial.heights[1]]);
@@ -571,6 +635,13 @@ describe('Pinned rows', () => {
             const after = getPinnedRowLayout(api, 'bottom');
             expect(after.heights).toEqual(newHeights);
             expect(after.tops).toEqual([0, newHeights[0], newHeights[0] + newHeights[1]]);
+            await new GridRows(api, `rowTop re-stacks when pinned row heights grow after render final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"body" sport:"body" age:0
+                PINNED_BOTTOM id:b-0 athlete:"A" sport:"SA" age:1
+                PINNED_BOTTOM id:b-1 athlete:"B" sport:"SB" age:2
+                PINNED_BOTTOM id:b-2 athlete:"C" sport:"SC" age:3
+            `);
         });
     });
 });

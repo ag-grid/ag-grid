@@ -1,4 +1,5 @@
-import type { IComponent } from '../../agStack/interfaces/iComponent';
+import type { IComponent } from 'ag-stack';
+
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import { Component } from '../../widgets/component';
 

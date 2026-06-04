@@ -1,6 +1,6 @@
 import { FindModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /**
  * Tests for findGetNumMatches and findGetParts API functions.
@@ -21,8 +21,32 @@ describe('Find Cell Info API', () => {
                 columnDefs: [{ field: 'value' }],
                 rowData: [{ value: 'aaa' }, { value: 'aba' }, { value: 'bbb' }],
             });
+            await new GridColumns(api, `returns number of matches in a specific cell setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `returns number of matches in a specific cell setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 value:"aaa"
+                ├── LEAF id:1 value:"aba"
+                └── LEAF id:2 value:"bbb"
+            `);
 
             api.setGridOption('findSearchValue', 'a');
+            await new GridColumns(
+                api,
+                `returns number of matches in a specific cell after setGridOption findSearchValue`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `returns number of matches in a specific cell after setGridOption findSearchValue`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 value:"aaa"
+                    ├── LEAF id:1 value:"aba"
+                    └── LEAF id:2 value:"bbb"
+                `);
             await asyncSetTimeout(1);
 
             const column = api.getColumn('value')!;
@@ -45,11 +69,23 @@ describe('Find Cell Info API', () => {
                 columnDefs: [{ field: 'value' }],
                 rowData: [{ value: 'aaa' }],
             });
+            await new GridColumns(api, `returns 0 when no search value is set setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `returns 0 when no search value is set setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:"aaa"
+            `);
 
             const column = api.getColumn('value')!;
             const row = api.getDisplayedRowAtIndex(0)!;
 
             expect(api.findGetNumMatches({ node: row, column })).toBe(0);
+            await new GridRows(api, `returns 0 when no search value is set final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:"aaa"
+            `);
         });
 
         test('works with multiple columns', async () => {
@@ -57,8 +93,28 @@ describe('Find Cell Info API', () => {
                 columnDefs: [{ field: 'a' }, { field: 'b' }],
                 rowData: [{ a: 'test', b: 'testing test' }],
             });
+            await new GridColumns(api, `works with multiple columns setup`).checkColumns(`
+                CENTER
+                ├── a "A" width:200
+                └── b "B" width:200
+            `);
+            await new GridRows(api, `works with multiple columns setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"test" b:"testing test"
+            `);
 
             api.setGridOption('findSearchValue', 'test');
+            await new GridColumns(api, `works with multiple columns after setGridOption findSearchValue`).checkColumns(
+                `
+                    CENTER
+                    ├── a "A" width:200
+                    └── b "B" width:200
+                `
+            );
+            await new GridRows(api, `works with multiple columns after setGridOption findSearchValue`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"test" b:"testing test"
+            `);
             await asyncSetTimeout(1);
 
             const row = api.getDisplayedRowAtIndex(0)!;
@@ -79,8 +135,28 @@ describe('Find Cell Info API', () => {
                 columnDefs: [{ field: 'value' }],
                 rowData: [{ value: 'hello world hello' }],
             });
+            await new GridColumns(api, `returns parts with match info for cell value setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `returns parts with match info for cell value setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:"hello world hello"
+            `);
 
             api.setGridOption('findSearchValue', 'hello');
+            await new GridColumns(
+                api,
+                `returns parts with match info for cell value after setGridOption findSearchValue`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `returns parts with match info for cell value after setGridOption findSearchValue`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 value:"hello world hello"
+                `);
             await asyncSetTimeout(1);
 
             const row = api.getDisplayedRowAtIndex(0)!;
@@ -100,8 +176,26 @@ describe('Find Cell Info API', () => {
                 columnDefs: [{ field: 'value' }],
                 rowData: [{ value: 'aaa' }],
             });
+            await new GridColumns(api, `marks active match in parts setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `marks active match in parts setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:"aaa"
+            `);
 
             api.setGridOption('findSearchValue', 'a');
+            await new GridColumns(api, `marks active match in parts after setGridOption findSearchValue`).checkColumns(
+                `
+                    CENTER
+                    └── value "Value" width:200
+                `
+            );
+            await new GridRows(api, `marks active match in parts after setGridOption findSearchValue`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:"aaa"
+            `);
             await asyncSetTimeout(1);
 
             // Navigate to second match
@@ -124,8 +218,27 @@ describe('Find Cell Info API', () => {
                 columnDefs: [{ field: 'value' }],
                 rowData: [{ value: 'hello' }],
             });
+            await new GridColumns(api, `returns single part when no matches setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `returns single part when no matches setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:"hello"
+            `);
 
             api.setGridOption('findSearchValue', 'xyz');
+            await new GridColumns(api, `returns single part when no matches after setGridOption findSearchValue`)
+                .checkColumns(`
+                    CENTER
+                    └── value "Value" width:200
+                `);
+            await new GridRows(api, `returns single part when no matches after setGridOption findSearchValue`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 value:"hello"
+                `
+            );
             await asyncSetTimeout(1);
 
             const row = api.getDisplayedRowAtIndex(0)!;
@@ -143,8 +256,24 @@ describe('Find Cell Info API', () => {
                 columnDefs: [{ field: 'value' }],
                 rowData: [{ value: '' }],
             });
+            await new GridColumns(api, `handles empty value setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `handles empty value setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:""
+            `);
 
             api.setGridOption('findSearchValue', 'test');
+            await new GridColumns(api, `handles empty value after setGridOption findSearchValue`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `handles empty value after setGridOption findSearchValue`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:""
+            `);
             await asyncSetTimeout(1);
 
             const row = api.getDisplayedRowAtIndex(0)!;
@@ -161,8 +290,30 @@ describe('Find Cell Info API', () => {
                 columnDefs: [{ field: 'value' }],
                 rowData: [{ value: 'aa bb aa' }],
             });
+            await new GridColumns(api, `handles precedingNumMatches for multi-value cells setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `handles precedingNumMatches for multi-value cells setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:"aa bb aa"
+            `);
 
             api.setGridOption('findSearchValue', 'a');
+            await new GridColumns(
+                api,
+                `handles precedingNumMatches for multi-value cells after setGridOption findSearchValue`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(
+                api,
+                `handles precedingNumMatches for multi-value cells after setGridOption findSearchValue`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 value:"aa bb aa"
+            `);
             await asyncSetTimeout(1);
 
             // Navigate to third match (second 'aa')

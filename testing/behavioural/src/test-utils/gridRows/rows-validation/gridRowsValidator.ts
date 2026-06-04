@@ -17,13 +17,18 @@ type RowChildrenField =
     | 'childrenAfterSort'
     | 'allLeafChildren';
 
+interface NamedRowSet {
+    readonly name: RowChildrenField;
+    readonly set: ReadonlySet<IRowNode>;
+}
+
 export class GridRowsValidator {
     public validatedRows = new Set<IRowNode>();
     #allLeafsMap = new Map<RowNode, RowAllLeafs>();
 
     public constructor(public readonly errors: GridRowsErrors) {}
 
-    public validate(gridRows: GridRows): this {
+    public validate(gridRows: GridRows): void {
         const state = new GridRowsValidationState(gridRows);
 
         if (gridRows.rootRowNode) {
@@ -35,18 +40,215 @@ export class GridRowsValidator {
         this.validateSelectedRows(state);
         this.validateDisplayedRowCounts(state);
         this.validateNoAggDataWithoutGrouping(state);
-        return this;
+        this.validateApiGetDisplayedRowAtIndex(state);
+        this.validatePinnedRowCounts(state);
+        this.validateFooterIds(state);
+        this.validateGroupExpansion(state);
+        this.validateGroupData(state);
+        this.validateStubRows(state);
+        this.validateMasterDetailReferences(state);
     }
 
-    private validateRootNode({ csrm, gridRows }: GridRowsValidationState, root: RowNode): void {
+    /** Children of an expanded group must follow the group in displayedRows. Skipped when grouping
+     *  options that change parent/child visibility relationships are active. */
+    private validateGroupExpansion(state: GridRowsValidationState): void {
+        const { csrm, gridRows, groupHideOpenParents, groupHideParentOfSingleChild } = state;
+        if (!csrm || gridRows.treeData || groupHideOpenParents || groupHideParentOfSingleChild || state.pivotMode) {
+            return;
+        }
+        for (const row of gridRows.displayedRows) {
+            if (!row.group || row.footer) {
+                continue;
+            }
+            const childrenAfterSort = row.childrenAfterSort;
+            if (!childrenAfterSort || childrenAfterSort.length === 0) {
+                continue;
+            }
+            const firstChild = childrenAfterSort[0];
+            const expanded = !!row.expanded;
+            const firstChildDisplayed = gridRows.isRowDisplayed(firstChild);
+            // A child can be deliberately hidden by the grid (e.g. a formulas/calculated-column
+            // aggregation that flattens leaves into group rows) — `row.displayed===false` is the
+            // grid's authoritative signal that it's not meant to appear, so don't flag it.
+            if (expanded && !firstChildDisplayed && firstChild.displayed !== false) {
+                this.errors
+                    .get(row)
+                    .add(
+                        `Group is expanded but first child ${rowIdAndIndexToString(firstChild)} is not in displayedRows.`
+                    );
+            } else if (!expanded) {
+                // When collapsed, NO descendant should appear in displayedRows.
+                for (let i = 0, len = childrenAfterSort.length; i < len; ++i) {
+                    const child = childrenAfterSort[i];
+                    if (gridRows.isRowDisplayed(child)) {
+                        this.errors
+                            .get(row)
+                            .add(`Group is collapsed but child ${rowIdAndIndexToString(child)} is in displayedRows.`);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /** A group row's `groupData` must have an entry keyed by the auto-group / show-row-group
+     *  columns it represents — otherwise the group cell renderer can't read its display value. */
+    private validateGroupData(state: GridRowsValidationState): void {
+        if (!state.csrm || state.pivotMode) {
+            return;
+        }
+        const showRowGroupColumns = state.showRowGroupColumns;
+        if (showRowGroupColumns.length === 0) {
+            return;
+        }
+        for (const row of this.validatedRows) {
+            const node = row as RowNode;
+            if (!node.group || node.footer || node.level < 0) {
+                continue;
+            }
+            const groupData = node.groupData;
+            if (groupData == null) {
+                // Some rows (root group, intermediate paddings) may legitimately have no groupData.
+                continue;
+            }
+            // The group row must have ≥1 groupData entry — multipleColumns mode uses per-level cols.
+            const keys = Object.keys(groupData);
+            if (keys.length === 0) {
+                this.errors
+                    .get(node)
+                    .add(
+                        `Group row has groupData={} but ${showRowGroupColumns.length} show-row-group columns are active.`
+                    );
+            }
+        }
+    }
+
+    /** Stub rows are loading-placeholders; they must have no data. In SSRM a stub may legitimately
+     *  be marked as a group (the group node exists before its children load), but in that case no
+     *  children should be present yet. In other row models a stub must never be a group. */
+    private validateStubRows({ gridRows }: GridRowsValidationState): void {
+        const isSsrm = gridRows.api.getGridOption?.('rowModelType') === 'serverSide';
+        for (const row of gridRows.rowNodes) {
+            if (!row.stub) {
+                continue;
+            }
+            const rowErrors = this.errors.get(row);
+            if (row.data != null) {
+                rowErrors.add('Stub row has data — stubs should be placeholders with no payload.');
+            }
+            if (row.group) {
+                if (!isSsrm) {
+                    rowErrors.add('Stub row should not be marked as group.');
+                } else if (row.childrenAfterGroup?.length) {
+                    rowErrors.add(
+                        `SSRM stub group row has ${row.childrenAfterGroup.length} loaded children — stubs should be pending.`
+                    );
+                }
+            }
+        }
+    }
+
+    /** Detail rows must reference their master via `parent.master === true`. When a master is
+     *  expanded and the detail row is displayed, the detail row sits immediately after the master. */
+    private validateMasterDetailReferences({ gridRows }: GridRowsValidationState): void {
+        for (const row of this.validatedRows) {
+            const node = row as RowNode;
+            if (node.master) {
+                const detailNode = node.detailNode;
+                if (node.expanded && detailNode && gridRows.isRowDisplayed(detailNode)) {
+                    const masterIdx = node.rowIndex;
+                    const detailIdx = detailNode.rowIndex;
+                    if (masterIdx != null && detailIdx != null && detailIdx !== masterIdx + 1) {
+                        this.errors
+                            .get(node)
+                            .add(
+                                `Master at index ${masterIdx} is expanded but its detail row is at index ${detailIdx} (expected ${masterIdx + 1}).`
+                            );
+                    }
+                }
+            }
+            if (node.detail && node.parent && !node.parent.master) {
+                this.errors
+                    .get(node)
+                    .add(`Detail row's parent ${rowIdAndIndexToString(node.parent)} has master=false.`);
+            }
+        }
+    }
+
+    /** `api.getDisplayedRowAtIndex(i)` must return `displayedRows[i]` for every displayed row. */
+    private validateApiGetDisplayedRowAtIndex({ gridRows }: GridRowsValidationState): void {
+        const api = gridRows.api;
+        if (typeof api.getDisplayedRowAtIndex !== 'function') {
+            return;
+        }
+        const displayedRows = gridRows.displayedRows;
+        for (let i = 0, len = displayedRows.length; i < len; ++i) {
+            const expected = displayedRows[i];
+            const actual = api.getDisplayedRowAtIndex(i);
+            if (actual !== expected) {
+                this.errors.add(
+                    expected,
+                    `api.getDisplayedRowAtIndex(${i}) returned ${rowIdAndIndexToString(actual ?? undefined)} but displayedRows[${i}] is ${rowIdAndIndexToString(expected)}`
+                );
+            }
+        }
+    }
+
+    /** `api.getPinnedTopRowCount()` / `getPinnedBottomRowCount()` must match pinned arrays.
+     *  Only checked when the PinnedRowModule is registered — otherwise the calls log a module-missing warning. */
+    private validatePinnedRowCounts({ gridRows }: GridRowsValidationState): void {
+        const api = gridRows.api;
+        if (!(api.isModuleRegistered as (name: string) => boolean)('PinnedRowModule')) {
+            return;
+        }
+        const topCount = api.getPinnedTopRowCount?.();
+        if (topCount !== undefined && topCount !== gridRows.pinnedTopRows.length) {
+            this.errors.default.add(
+                `getPinnedTopRowCount()=${topCount} but ${gridRows.pinnedTopRows.length} pinned top rows were collected`
+            );
+        }
+        const bottomCount = api.getPinnedBottomRowCount?.();
+        if (bottomCount !== undefined && bottomCount !== gridRows.pinnedBottomRows.length) {
+            this.errors.default.add(
+                `getPinnedBottomRowCount()=${bottomCount} but ${gridRows.pinnedBottomRows.length} pinned bottom rows were collected`
+            );
+        }
+    }
+
+    /** Footer rows must have ids of the form `rowGroupFooter_${parentId}` where parent is the group they footer. */
+    private validateFooterIds(_state: GridRowsValidationState): void {
+        for (const row of this.validatedRows) {
+            if (!row.footer || typeof row.id !== 'string' || !row.id.startsWith('rowGroupFooter_')) {
+                continue;
+            }
+            const sibling = row.sibling;
+            if (!sibling || sibling.footer) {
+                continue;
+            }
+            // The non-footer sibling represents the group; its id should be the suffix after `rowGroupFooter_`.
+            const expectedSuffix = sibling.id;
+            if (expectedSuffix !== undefined && row.id !== `rowGroupFooter_${expectedSuffix}`) {
+                this.errors.add(
+                    row,
+                    `Footer id "${row.id}" does not match sibling id "rowGroupFooter_${expectedSuffix}"`
+                );
+            }
+        }
+    }
+
+    private validateRootNode({ csrm, gridRows, pivotMode }: GridRowsValidationState, root: RowNode): void {
         const rowErrors = this.errors.get(root);
         rowErrors.expectValueEqual('id', root.id, csrm ? 'ROOT_NODE_ID' : undefined);
         rowErrors.expectValueEqual('level', root.level, -1);
         rowErrors.add(!!root.key && 'Root node has key ' + root.key);
         rowErrors.add(root.destroyed && 'Root node is destroyed');
-        rowErrors.add(root.rowIndex !== null && 'Root node has rowIndex ' + root.rowIndex);
+        // In pivot mode without row grouping the root is the grand-totals row at rowIndex 0.
+        // Exempt ONLY that exact shape — any other rowIndex on root is still a real bug.
+        const pivotNoRowGroup = pivotMode && (gridRows.api.getRowGroupColumns?.()?.length ?? 0) === 0;
+        const isPivotGrandTotalsRoot = pivotNoRowGroup && root.rowIndex === 0;
+        rowErrors.add(!isPivotGrandTotalsRoot && root.rowIndex !== null && 'Root node has rowIndex ' + root.rowIndex);
         rowErrors.add(csrm && !Array.isArray(root.allLeafChildren) && 'Root node has no allLeafChildren');
-        rowErrors.add(gridRows.isRowDisplayed(root) && 'Root node is displayed');
+        rowErrors.add(!isPivotGrandTotalsRoot && gridRows.isRowDisplayed(root) && 'Root node is displayed');
         rowErrors.expectValueEqual('childIndex', root.childIndex, undefined);
         if (gridRows.treeData) {
             rowErrors.expectValueEqual('group', root.group, true);
@@ -98,8 +300,11 @@ export class GridRowsValidator {
     }
 
     private validateDisplayedRows(state: GridRowsValidationState): void {
-        const { csrm, gridRows } = state;
+        const { csrm, gridRows, pivotMode } = state;
         const displayedRows = gridRows.displayedRows;
+        // In pivot mode without row grouping the root node is displayed as the grand-totals row
+        // even though it isn't part of rowNodes. Allow this exemption.
+        const pivotNoRowGroup = pivotMode && (gridRows.api.getRowGroupColumns?.()?.length ?? 0) === 0;
         for (let index = 0; index < displayedRows.length; ++index) {
             const row = displayedRows[index];
             if (!(row instanceof RowNode)) {
@@ -107,10 +312,14 @@ export class GridRowsValidator {
                 continue;
             }
             const rowErrors = this.errors.get(row);
+            const isPivotRootTotals = pivotNoRowGroup && row === gridRows.rootRowNode;
 
+            const isSsrmFiller = row.stub === true;
             rowErrors.add(
                 !row.detail &&
                     !row.footer &&
+                    !isPivotRootTotals &&
+                    !isSsrmFiller &&
                     !gridRows.isInRowNodes(row) &&
                     `displayedRows[${index}] is not in rowNodes`
             );
@@ -142,7 +351,12 @@ export class GridRowsValidator {
 
         rowErrors.add(row.destroyed && 'Row ' + rowIdAndIndexToString(row) + ' is destroyed');
 
-        if (gridRows.isInRowNodes(row) && row.rowIndex !== null) {
+        // SSRM virtualises and pagination keeps off-page rows out of displayedRows even though
+        // they retain their absolute rowIndex. Only enforce the rowIndex⇄displayed pairing on CSRM
+        // without pagination.
+        const isSsrm = gridRows.api.getGridOption?.('rowModelType') === 'serverSide';
+        const isPaginated = !!gridRows.api.getGridOption?.('pagination');
+        if (gridRows.isInRowNodes(row) && row.rowIndex !== null && !isSsrm && !isPaginated) {
             rowErrors.add(!gridRows.isRowDisplayed(row) && `Not displayed row has rowIndex=${row.rowIndex}`);
         }
 
@@ -349,11 +563,10 @@ export class GridRowsValidator {
         state: GridRowsValidationState,
         parentRow: RowNode,
         name: RowChildrenField,
-        superset: (ReadonlySet<IRowNode> & { readonly name?: string }) | null
-    ): Set<IRowNode> & { name: string } {
+        superset: NamedRowSet | null
+    ): NamedRowSet {
         const { gridRows } = state;
         const set = new Set<IRowNode>();
-        (set as any).name = name;
         let children = parentRow[name];
         if (children && !Array.isArray(children)) {
             this.errors.add(parentRow, `${name} is not an array`);
@@ -399,8 +612,8 @@ export class GridRowsValidator {
             );
             parentErrors.add(
                 !!superset &&
-                    !superset.has(child) &&
-                    `${name}[${index}] ${rowIdAndIndexToString(child)} is not in ${superset?.name}`
+                    !superset.set.has(child) &&
+                    `${name}[${index}] ${rowIdAndIndexToString(child)} is not in ${superset.name}`
             );
             parentErrors.add(
                 !gridRows.isInRowNodes(child) &&
@@ -433,7 +646,7 @@ export class GridRowsValidator {
         }
         parentErrors.add(duplicatesCount > 0 && `${name} has ${duplicatesCount} duplicates.`);
 
-        return set as any;
+        return { name, set };
     }
 
     private validatePinnedRows(state: GridRowsValidationState): void {
@@ -482,6 +695,9 @@ export class GridRowsValidator {
         }
 
         for (const row of this.validatedRows) {
+            if (!gridRows.isInRowNodes(row)) {
+                continue;
+            }
             const rowErrors = this.errors.get(row);
             const selected = !!row.isSelected();
             rowErrors.add(selected && !row.selectable && 'Non-selectable node is selected');
@@ -489,9 +705,13 @@ export class GridRowsValidator {
             if (selected === selectedRowSetHasRow) {
                 continue;
             }
-            // Group rows are not part of the selection state when `groupSelects: 'descendants'` or `groupSelects: 'filteredDescendants'`
-            // So we ignore the case where we have a missing group row in this case.
             if (!selectedRowSetHasRow && row.group && state.groupSelectsDescendants) {
+                continue;
+            }
+            if (!selectedRowSetHasRow && row.footer && row.sibling?.isSelected() === selected) {
+                continue;
+            }
+            if (row.detail) {
                 continue;
             }
             rowErrors.add(
