@@ -103,7 +103,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         const styleNonce = this.gos.get('styleNonce');
 
         if (!this.sparklineInstance && params && width > 0 && height > 0) {
-            this.sparklineOptions = {
+            const sparklineOptions = {
                 container: this.eSparkline,
                 width,
                 height,
@@ -112,12 +112,21 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 data,
                 context: this.createContext(),
             } as AgSparklineOptions;
+            this.sparklineOptions = sparklineOptions;
 
-            this.sparklineOptions.type ??= 'line';
+            sparklineOptions.type ??= 'line';
+
+            const axis = sparklineOptions.axis;
+            if (axis && !axis.type) {
+                sparklineOptions.axis = {
+                    ...axis,
+                    type: 'category',
+                };
+            }
 
             // No default `tooltip.renderer` install — the chart-side sparkline preset
             // supplies one. A function here would poison the structural-options cache.
-            this.sparklineInstance = params.createSparkline!(this.sparklineOptions);
+            this.sparklineInstance = params.createSparkline!(sparklineOptions);
             return true;
         } else if (this.sparklineInstance) {
             this.sparklineInstance.update({
