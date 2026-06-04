@@ -501,6 +501,12 @@
     align-items: center;
 }
 
+.ag-row-loading .ag-loading {
+    padding-left: calc(
+        var(--ag-cell-horizontal-padding) + var(--ag-indentation-level, 0) * var(--ag-row-group-indent-size)
+    );
+}
+
 .ag-loading-icon {
     padding-right: var(--ag-cell-widget-spacing);
 }

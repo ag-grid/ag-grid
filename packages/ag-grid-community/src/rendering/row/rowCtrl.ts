@@ -274,6 +274,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
         this.executeSlideAndFadeAnimations();
 
+        if (this.rowType === 'FullWidthLoading') {
+            this.setupLoadingRowIndent(element, compBean);
+        }
+
         if (this.rowNode.group) {
             _setAriaExpanded(element, !!this.rowNode.expanded);
         }
@@ -922,6 +926,19 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.rowGui?.rowComp.toggleCss(classToRemove, false);
         }
         this.rowLevel = newLevel;
+    }
+
+    /**
+     * For full-width loading rows, sets the --ag-indentation-level CSS variable on the row element
+     * so that the loading spinner aligns with the group hierarchy depth.
+     */
+    private setupLoadingRowIndent(element: HTMLElement, compBean: BeanStub<any>): void {
+        const { rowNode } = this;
+        const setIndent = () => {
+            element.style.setProperty('--ag-indentation-level', String(rowNode.uiLevel));
+        };
+        setIndent();
+        compBean.addManagedListeners(rowNode, { uiLevelChanged: setIndent });
     }
 
     private isFirstRowOnPage(): boolean {
