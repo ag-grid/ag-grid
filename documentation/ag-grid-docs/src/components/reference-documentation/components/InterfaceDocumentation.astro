@@ -5,6 +5,9 @@ import { getInterfaceDocumentationModel } from '../utils/getInterfaceDocumentati
 import { getOverrides } from '../utils/getOverrides';
 import { getJsonFile } from '@utils/pages';
 import CodeShiki from '@ag-website-shared/components/code/CodeShiki';
+import { codeToHtml } from 'shiki';
+import agDocsTheme from '@ag-website-shared/components/code/theme.json';
+import { extractDecorations } from '@ag-website-shared/components/code/keepMarkup';
 
 const { interfaceName, overrideSrc, names, exclude, config } = Astro.props;
 
@@ -23,11 +26,21 @@ const model = getInterfaceDocumentationModel({
     codeLookup,
     interfaceLookup,
 });
+
+let preHighlightedHtml: string | undefined;
+if (model.type === 'code') {
+    const { cleanCode, decorations } = extractDecorations(model.code.trimEnd());
+    preHighlightedHtml = await codeToHtml(cleanCode, {
+        lang: 'typescript',
+        theme: agDocsTheme,
+        decorations,
+    } as any);
+}
 ---
 
 {
     model.type === 'code' ? (
-        <CodeShiki code={model.code} keepMarkup={true} />
+        <CodeShiki code={model.code} preHighlightedHtml={preHighlightedHtml} />
     ) : (
         <InterfaceDocumentation
             client:load
