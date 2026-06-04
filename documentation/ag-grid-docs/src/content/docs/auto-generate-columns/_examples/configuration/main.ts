@@ -62,3 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });
+
+if (typeof window !== 'undefined') {
+    // Attach external event handlers to window so they can be called from index.html
+    (<any>window).onObjectValues = onObjectValues;
+    (<any>window).onArrayValues = onArrayValues;
+    (<any>window).onNullishValues = onNullishValues;
+}
