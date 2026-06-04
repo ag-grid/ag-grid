@@ -1337,12 +1337,12 @@ describe('ag-grid calculated columns', () => {
 
         const revenueSuggestion = Array.from(
             document.querySelectorAll<HTMLElement>('.ag-calculated-column-suggestion')
-        ).find((element) => element.getAttribute('aria-label') === 'Money > Revenue');
+        ).find((element) => element.getAttribute('aria-label') === 'Money › Revenue');
 
         expect(revenueSuggestion).toBeTruthy();
         expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-path')).toBeTruthy();
         expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-parent')?.textContent).toBe('Money');
-        expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-separator')?.textContent).toBe('>');
+        expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-separator')?.textContent).toBe('›');
         expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-leaf')?.textContent).toBe('Revenue');
         // Revenue is the first column entry, so it is selected by default; Enter inserts it.
         getExpressionInput().dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
