@@ -99,6 +99,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     // re-entry counter: when > 0, projection-triggered refreshes skip validation checks.
     private suppressValidationChecks = 0;
     private highlightedColumn: AgColumn | null = null;
+    private readonly openDialogsByColId = new Map<string, Dialog>();
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -677,6 +678,12 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         onApply: (draft: CalculatedColumnDraft) => void,
         columnToHighlight?: AgColumn | null
     ): void {
+        const openDialog = this.openDialogsByColId.get(draft.colId);
+        if (openDialog) {
+            openDialog.getGui().focus({ preventScroll: true });
+            return;
+        }
+
         const state: { close?: () => void; resolved: boolean } = { resolved: false };
         const mapper = createCalculatedColumnReferenceMapper(
             this.beans,
@@ -751,12 +758,18 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             })
         );
         state.close = () => dialog.close();
+        this.openDialogsByColId.set(draft.colId, dialog);
         this.setHighlightedColumn(columnToHighlight);
         const destroyDialogMouseListeners = this.addManagedElementListeners(dialog.getGui(), {
             mousedown: () => form.hideSuggestions(),
         });
         dialog.addDestroyFunc(() => destroyDialogMouseListeners.forEach((destroyFunc) => destroyFunc()));
         dialog.addDestroyFunc(() => this.setHighlightedColumn(null));
+        dialog.addDestroyFunc(() => {
+            if (this.openDialogsByColId.get(draft.colId) === dialog) {
+                this.openDialogsByColId.delete(draft.colId);
+            }
+        });
         dialog.addEventListener('destroyed', () => this.destroyBean(form));
     }
 

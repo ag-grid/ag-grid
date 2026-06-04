@@ -2611,6 +2611,26 @@ describe('ag-grid calculated columns', () => {
         clickDialogButton('Cancel');
     });
 
+    test('openCalculatedColumnDialog does not open duplicate dialogs for the same column', async () => {
+        const api = createGrid('calculated-column-open-dialog-once', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        api.openCalculatedColumnDialog('profit');
+        api.openCalculatedColumnDialog('profit');
+        await asyncSetTimeout(1);
+
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
+
+        clickDialogButton('Cancel');
+    });
+
     test('unknown references, invalid syntax and cycles surface formula errors', async () => {
         const api = createGrid('calculated-errors', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
