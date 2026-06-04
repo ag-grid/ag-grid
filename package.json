@@ -11,7 +11,7 @@
     "postinstall:build-generators": "[ \"$AG_WORKTREE_FAST_PATH\" = \"1\" ] || yarn run build-generators",
     "postinstall:setup-git-hooks": "./external/ag-shared/scripts/git-hooks/setup-hooks.sh",
     "postinstall:setup-prompts": "./external/ag-shared/scripts/setup-prompts/setup-prompts.sh --postinstall",
-    "bootstrap": "SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY=\"https://registry.ag-grid.com\" yarn",
+    "bootstrap": "IBM_TELEMETRY_DISABLED=true SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY=\"https://registry.ag-grid.com\" yarn --ignore-scripts && npx --yes @lavamoat/allow-scripts && npx run-s postinstall:*",
     "git-clean": "git clean -fdx && git reset --hard HEAD",
     "git-purge-local-only": "git fetch -p && for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {sub(\"refs/heads/\", \"\", $1); print $1}'); do git branch -D $branch; done",
     "behave": "./behave.sh",
@@ -31,6 +31,7 @@
     "@axe-core/cli": "^4.10.2",
     "@axe-core/playwright": "^4.10.2",
     "@eslint/js": "^10.0.1",
+    "@lavamoat/allow-scripts": "^5.0.2",
     "@modelcontextprotocol/server-sequential-thinking": "^2025.12.18",
     "@nx/devkit": "20.8.4",
     "@nx/esbuild": "20.8.4",
@@ -129,5 +130,19 @@
   "resolutions": {
     "**/baseline-browser-mapping": "2.10.21"
   },
-  "packageManager": "yarn@1.22.21"
+  "packageManager": "yarn@1.22.21",
+  "lavamoat": {
+    "allowScripts": {
+      "@axe-core/cli>chromedriver#147.0.4": true,
+      "@swc/core#1.15.30": true,
+      "esbuild#0.28.0": true,
+      "eslint-plugin-import-x>unrs-resolver#1.11.1": true,
+      "nx#20.8.4": true,
+      "rulesync>fastmcp>mcp-proxy>pipenet>tldjs#2.3.2": true,
+      "tsx>esbuild#0.27.7": true,
+      "vite>esbuild#0.21.5": true,
+      "vite>sass>@parcel/watcher#2.5.1": true,
+      "vitest>jsdom>canvas#3.2.3": true
+    }
+  }
 }

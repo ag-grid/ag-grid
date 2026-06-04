@@ -32,6 +32,7 @@ on:
           - 'run-many'
 env:
   NX_NO_CLOUD: true
+  IBM_TELEMETRY_DISABLED: true
   NX_BRANCH: ${{ github.ref }}
   NX_COMMAND_TYPE: ${{ github.event.inputs.nx_command }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
