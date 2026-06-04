@@ -13,7 +13,7 @@
     },
     {
         "question": "How can I build dashboards with AG Grid?",
-        "answer": "Yes, [AG Studio](https://www.ag-grid.com/studio/) is built specifically for embedded analytics, letting you add web dashboards directly into your application. For fully custom solutions, developers can also build with AG Grid and AG Charts."
+        "answer": "[AG Studio](https://www.ag-grid.com/studio/) is built specifically for embedded analytics, letting you add web dashboards directly into your application. For fully custom solutions, developers can also build with AG Grid and AG Charts."
     },
     {
         "question": "Can I customise the style of my Data Grid?",
