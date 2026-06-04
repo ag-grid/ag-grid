@@ -22,10 +22,6 @@
     .ag-body-horizontal-scroll {
         display: none;
     }
-
-    &.ag-force-vertical-scroll {
-        overflow-y: visible !important;
-    }
 }
 
 @media print {
