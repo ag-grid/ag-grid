@@ -134,7 +134,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://codesandbox.io', // example-runner "Open in CodeSandbox" form POST
             'https://plnkr.co', // example-runner "Open in Plunker" form POST
         ],
-        'frame-ancestors': [SELF],
+        'frame-ancestors': [SELF, AG_GRID_HOSTS], // allow *.ag-grid.com (e.g. blog) to embed examples
     };
 
     if (env === 'dev') {
