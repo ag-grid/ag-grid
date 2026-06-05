@@ -4,21 +4,10 @@ import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise'
 import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 /**
- * Tests that SSRM loading/stub rows are indented to match their group hierarchy depth.
+ * Tests that SSRM full-width loading rows are indented to match their group hierarchy depth.
  *
- * Two loading modes exist:
- *
- *   1. Full-width loading rows (default) — a single spinner spanning the row.
- *      Indentation is applied via the --ag-indentation-level CSS variable set on the
- *      **row element** by rowCtrl.setupLoadingRowIndent().
- *
- *   2. Skeleton rows (suppressServerSideFullWidthLoadingRow=true) — per-cell loading
- *      indicators rendered as Normal-type rows. Indentation is applied via the
- *      --ag-indentation-level CSS variable set on the **row element** by
- *      rowCtrl.setupLoadingRowIndent(), which cascades to cells via the .ag-cell
- *      padding rule.
- *
- * Both modes are tested at multiple group depths (level 0, 1, 2).
+ * Indentation is applied via the --ag-indentation-level CSS variable set on the
+ * **row element** by rowCtrl.setupLoadingRowIndent().
  */
 
 const columnDefs = [
@@ -160,47 +149,6 @@ describe('SSRM loading row indentation', () => {
             for (const row of stubRows) {
                 expect(row.classList.contains('ag-full-width-row')).toBe(true);
                 expect(getIndentationLevel(row)).toBe('2');
-            }
-        });
-    });
-
-    describe('skeleton rows (suppressServerSideFullWidthLoadingRow=true)', () => {
-        test('top-level skeleton rows have indentation level 0', () => {
-            gridManager.createGrid('myGrid', {
-                columnDefs,
-                rowModelType: 'serverSide',
-                suppressServerSideFullWidthLoadingRow: true,
-                serverSideDatasource: createHangingDatasource(),
-            });
-
-            const stubRows = getStubRows();
-            expect(stubRows.length).toBeGreaterThan(0);
-
-            for (const row of stubRows) {
-                expect(row.classList.contains('ag-full-width-row')).toBe(false);
-                expect(getIndentationLevel(row)).toBe('0');
-            }
-        });
-
-        test('child skeleton rows at depth 1 have indentation level 1', async () => {
-            const api = gridManager.createGrid('myGrid', {
-                columnDefs,
-                rowModelType: 'serverSide',
-                suppressServerSideFullWidthLoadingRow: true,
-                serverSideDatasource: createPartialDatasource(0),
-            });
-
-            await waitForNonStubRow(api, 0);
-
-            const firstRowNode = api.getDisplayedRowAtIndex(0)!;
-            api.setRowNodeExpanded(firstRowNode, true);
-
-            const stubRows = getStubRows();
-            expect(stubRows.length).toBeGreaterThan(0);
-
-            for (const row of stubRows) {
-                expect(row.classList.contains('ag-full-width-row')).toBe(false);
-                expect(getIndentationLevel(row)).toBe('1');
             }
         });
     });

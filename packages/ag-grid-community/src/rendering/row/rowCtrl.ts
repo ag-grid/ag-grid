@@ -274,7 +274,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
         this.executeSlideAndFadeAnimations();
 
-        if (this.rowType === 'FullWidthLoading' || this.rowNode.stub) {
+        if (this.rowType === 'FullWidthLoading') {
             this.setupLoadingRowIndent(element, compBean);
         }
 
