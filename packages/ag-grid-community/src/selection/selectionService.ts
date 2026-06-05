@@ -167,7 +167,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
 
             if (this.groupSelectsDescendants && node.childrenAfterGroup?.length) {
-                updatedCount += this.selectChildren(node, newValue, source);
+                updatedCount += this.selectChildren(node, newValue, source, event);
             }
         }
 
@@ -184,7 +184,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
             // only if we selected something, then update groups and fire events
             if (updatedCount > 0) {
-                this.updateGroupsFromChildrenSelections(source);
+                this.updateGroupsFromChildrenSelections(source, undefined, event);
 
                 // this is the very end of the 'action node', so we finished all the updates,
                 // including any parent / child changes that this method caused
@@ -221,7 +221,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return updatedCount;
     }
 
-    private selectChildren(node: RowNode, newValue: boolean, source: SelectionEventSourceType): number {
+    private selectChildren(node: RowNode, newValue: boolean, source: SelectionEventSourceType, event?: Event): number {
         const children = this.groupSelectsFiltered ? node.childrenAfterAggFilter : node.childrenAfterGroup;
 
         if (!children) {
@@ -233,6 +233,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             clearSelection: false,
             suppressFinishActions: true,
             source,
+            event,
             nodes: children,
         });
     }
@@ -267,7 +268,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     public override updateGroupsFromChildrenSelections(
         source: SelectionEventSourceType,
-        changedPath?: ChangedPath
+        changedPath?: ChangedPath,
+        event?: Event
     ): boolean {
         // we only do this when group selection state depends on selected children
         if (!this.groupSelectsDescendants) {
@@ -290,7 +292,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             if (rowNode !== rootNode) {
                 const selected = this.calculateSelectedFromChildren(rowNode);
                 selectionChanged =
-                    this.selectRowNode(rowNode, selected === null ? false : selected, undefined, source) ||
+                    this.selectRowNode(rowNode, selected === null ? false : selected, event, source) ||
                     selectionChanged;
             }
         };

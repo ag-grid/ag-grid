@@ -111,7 +111,11 @@ export abstract class BaseSelectionService extends BeanStub {
         this.beans.ariaAnnounce?.announceValue(label, 'rowSelection');
     }
 
-    public updateGroupsFromChildrenSelections?(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean;
+    public updateGroupsFromChildrenSelections?(
+        source: SelectionEventSourceType,
+        changedPath?: ChangedPath,
+        event?: Event
+    ): boolean;
 
     public abstract setNodesSelected(params: ISetNodesSelectedParams): number;
 
