@@ -35,19 +35,19 @@ if (library === 'grid') {
 
 const result = { framework: new Set() };
 
-if (nxCommandType === 'run-many') {
+// if (nxCommandType === 'run-many') {
     for (const packageName in matches) {
         result.framework.add(matches[packageName]);
     }
-} else {
-    const affectedProjects = execSync(affectedProjectsCmd, { encoding: 'utf-8' }).split('\n');
-
-    for (const packageName in matches) {
-        if (affectedProjects.includes(packageName)) {
-            result.framework.add(matches[packageName]);
-        }
-    }
-}
+// } else {
+//     const affectedProjects = execSync(affectedProjectsCmd, { encoding: 'utf-8' }).split('\n');
+//
+//     for (const packageName in matches) {
+//         if (affectedProjects.includes(packageName)) {
+//             result.framework.add(matches[packageName]);
+//         }
+//     }
+// }
 
 if (result.framework.size === 0) {
     // Avoid failing GHA matrix execution due to zero matrix permutations.
