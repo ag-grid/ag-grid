@@ -107,7 +107,7 @@ function getImports(
 
     const localeImport = findLocaleImport(bindings.imports);
     if (localeImport) {
-        imports.push(`import { ${localeImport.imports[0]} } from '@ag-grid-community/locale';`);
+        imports.push(`import { ${localeImport.imports.join(', ')} } from '@ag-grid-community/locale';`);
     }
 
     addModuleImports(imports, bindings, exampleConfig, allStylesheets);
