@@ -52,6 +52,16 @@ const SALESFORCE_FORM_ORIGIN: Record<CspEnv, string> = {
     production: 'https://webto.salesforce.com',
 };
 
+// The ecommerce checkout renders the Realex/Global Payments Hosted Payment Page
+// (rxp-hpp.js) in an iframe and POSTs the payment form to it — sandbox host in
+// non-prod, live host in production (see globalPaymentsServiceUrl in the
+// ag-grid-ecommerce frontend environments). Governs frame-src and form-action.
+const REALEX_HPP_ORIGIN: Record<CspEnv, string> = {
+    dev: 'https://pay.sandbox.realexpayments.com',
+    staging: 'https://pay.sandbox.realexpayments.com',
+    production: 'https://pay.realexpayments.com',
+};
+
 // Dev-server-only extras (HMR + cross-port preview). Never emitted for staging
 // or production.
 const DEV_SCRIPT_SRC = ['https://localhost:4610', 'https://localhost:4611'];
@@ -61,6 +71,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
     const { env } = options;
     const trialFormOrigin = options.trialFormOrigin ?? TRIAL_FORM_ORIGIN[env];
     const salesforceFormOrigin = SALESFORCE_FORM_ORIGIN[env];
+    const realexHppOrigin = REALEX_HPP_ORIGIN[env];
 
     const directives: CspDirectives = {
         'default-src': [SELF],
@@ -119,6 +130,8 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.google.com', // reCAPTCHA (api2/clr XHR)
             'https://cdn.cookielaw.org', // OneTrust config/JSON/asset XHR (GTM-injected, prod-only)
             'https://*.onetrust.com', // OneTrust geolocation + consent-receipt endpoints
+            'https://www.googleapis.com', // Firebase Auth (ecommerce checkout): identitytoolkit REST
+            'https://securetoken.googleapis.com', // Firebase Auth ID-token refresh
             trialFormOrigin,
         ],
         'frame-src': [
@@ -126,6 +139,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.googletagmanager.com',
             'https://www.youtube.com',
             'https://www.google.com', // reCAPTCHA challenge iframe
+            realexHppOrigin, // ecommerce checkout: Realex Hosted Payment Page iframe
         ],
         'media-src': [SELF, 'data:', 'blob:', 'https:'],
         'worker-src': [SELF, 'blob:'],
@@ -135,6 +149,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             SELF,
             trialFormOrigin,
             salesforceFormOrigin,
+            realexHppOrigin, // ecommerce checkout: payment form POST to Realex HPP
             'https://codesandbox.io', // example-runner "Open in CodeSandbox" form POST
             'https://plnkr.co', // example-runner "Open in Plunker" form POST
         ],
