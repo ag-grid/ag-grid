@@ -35,24 +35,15 @@ const gridOptions: GridOptions = {
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
-                const workbook = XLSX.read(e.target?.result, { type: 'binary' });
+                const workbook = XLSX.read(new Uint8Array(e.target?.result as ArrayBuffer));
                 event.resolve(parseWorkbook(workbook));
             } catch {
-                event.reject('Failed to parse Excel file');
+                event.reject('Failed to parse file');
             }
         };
-        reader.readAsBinaryString(file);
+        reader.readAsArrayBuffer(file);
     },
 };
-
-function toBinaryString(buffer: ArrayBuffer): string {
-    const data = new Uint8Array(buffer);
-    const arr = [];
-    for (let i = 0, len = data.length; i < len; ++i) {
-        arr[i] = String.fromCharCode(data[i]);
-    }
-    return arr.join('');
-}
 
 function parseWorkbook(workbook: any): Record<string, unknown>[] {
     const firstSheetName = workbook.SheetNames[0];
@@ -69,7 +60,7 @@ function importExcel() {
     fetch('https://www.ag-grid.com/example-assets/olympic-data.xlsx')
         .then((response) => response.arrayBuffer())
         .then((data: ArrayBuffer) => {
-            const workbook = XLSX.read(toBinaryString(data), { type: 'binary' });
+            const workbook = XLSX.read(new Uint8Array(data));
             gridApi.setGridOption('rowData', parseWorkbook(workbook));
         });
 }
