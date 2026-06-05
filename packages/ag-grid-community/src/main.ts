@@ -461,6 +461,9 @@ export type {
     IToolPanelParams,
 } from './interfaces/iToolPanel';
 
+// File Processor
+export type { IFileProcessor, IFileProcessorParams } from './interfaces/iFileProcessor';
+
 // Overlays
 export type { IExportingOverlay, IExportingOverlayComp } from './rendering/overlays/exportingOverlayComponent';
 export type { IFileInputOverlay, IFileInputOverlayComp } from './rendering/overlays/fileInputOverlayComponent';

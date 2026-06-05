@@ -84,7 +84,6 @@ export const _PUBLIC_EVENTS = [
     'virtualRowRemoved',
     'rowClicked',
     'rowDoubleClicked',
-    'fileInput',
     'gridReady',
     'gridPreDestroyed',
     'gridSizeChanged',

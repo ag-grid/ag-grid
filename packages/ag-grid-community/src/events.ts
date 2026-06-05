@@ -101,7 +101,6 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         virtualRowRemoved: VirtualRowRemovedEvent<TData, TContext>;
         rowClicked: RowClickedEvent<TData, TContext>;
         rowDoubleClicked: RowDoubleClickedEvent<TData, TContext>;
-        fileInput: FileInputEvent<TData, TContext>;
         gridReady: GridReadyEvent<TData, TContext>;
         gridPreDestroyed: GridPreDestroyedEvent<TData, TContext>;
         gridSizeChanged: GridSizeChangedEvent<TData, TContext>;
@@ -479,15 +478,6 @@ export interface SortChangedEvent<TData = any, TContext = any> extends AgGlobalE
      * The list of columns impacted by the sort change.
      */
     columns?: Column[];
-}
-
-export interface FileInputEvent<TData = any, TContext = any> extends AgGlobalEvent<'fileInput', TData, TContext> {
-    /** The files received via drag-and-drop or file browser. */
-    files: File[];
-    /** Call with parsed row data to load it into the grid. Sets rowData under the hood. */
-    resolve(rowData: TData[]): void;
-    /** Call with an error message to show the error state in the overlay. */
-    reject(errorMessage: string): void;
 }
 
 export interface GridReadyEvent<TData = any, TContext = any> extends AgGlobalEvent<'gridReady', TData, TContext> {}
