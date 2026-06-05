@@ -144,7 +144,7 @@ if ${production} ; then
     npm i ag-grid-${fw} @playwright/test@${playwright_version} --cache ${cache_location}
 else
     echo ">>> npm i ../ag-grid*.tgz"
-    npm i ../ag-grid-stack.tgz ../ag-grid-community.tgz ../ag-grid-enterprise.tgz ../ag-grid-${fw}.tgz @playwright/test@${playwright_version} --cache ${cache_location} --registry http://52.50.158.57:4873
+    npm i ../ag-stack.tgz ../ag-grid-community.tgz ../ag-grid-enterprise.tgz ../ag-grid-${fw}.tgz @playwright/test@${playwright_version} --cache ${cache_location} --registry http://52.50.158.57:4873
 fi
 
 patch_dir=../patches
