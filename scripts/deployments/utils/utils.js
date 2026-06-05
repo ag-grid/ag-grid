@@ -5,7 +5,8 @@ const fs = require('fs');
 const readFile = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
 
 const isAgDependency = (dependency) => dependency.startsWith('ag-') || dependency.startsWith('@ag-');
-const gridDependency = (dependency) => dependency.startsWith('ag-grid') || dependency.startsWith('@ag-grid');
+const gridDependency = (dependency) =>
+    dependency.startsWith('ag-grid') || dependency.startsWith('@ag-grid') || dependency === 'ag-stack';
 const chartDependency = (dependency) => dependency.startsWith('ag-charts');
 
 const getAgDependencies = (packageJson) =>

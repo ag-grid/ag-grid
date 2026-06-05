@@ -435,6 +435,7 @@ export type BeanName = keyof BeanCollection;
 type UntypedBeanNames =
     | 'advFilterExpSvc'
     | 'advSettingsMenuFactory'
+    | 'autoGenColsSvc'
     | 'agChartsExports'
     | 'chartCrossFilterSvc'
     | 'chartMenuItemMapper'

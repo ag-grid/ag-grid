@@ -81,6 +81,11 @@ type DynamicCalculatedColumnSuppression = {
     targetColDef: ColDef | null;
 };
 
+type OpenCalculatedColumnDialog = {
+    dialog: Dialog;
+    highlight: boolean;
+};
+
 export class CalculatedColumnsService extends BeanStub implements NamedBean, ICalculatedColumnsService {
     public readonly beanName = 'calculatedColsSvc' as const;
 
@@ -98,7 +103,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private validationStatesInitialised = false;
     // re-entry counter: when > 0, projection-triggered refreshes skip validation checks.
     private suppressValidationChecks = 0;
-    private highlightedColumn: AgColumn | null = null;
+    private readonly openDialogsByColId = new Map<string, OpenCalculatedColumnDialog>();
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -106,6 +111,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             gridColumnsChanged: () => this.refreshCalculatedColumnSpans(),
             columnMoved: (event) => this.releaseVisibleAnchors(event.columns),
         });
+
+        this.addManagedPropertyListener('calculatedColumns', () => this.refreshOpenDialogHighlights());
     }
 
     private refreshCalculatedColumnSpans(): void {
@@ -126,19 +133,11 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     public isHighlightedColumn(column: AgColumn | null): boolean {
-        return column != null && column === this.highlightedColumn;
-    }
-
-    private setHighlightedColumn(column: AgColumn | null | undefined): void {
-        const nextColumn = this.gos.get('calculatedColumns')?.columnHighlighting === true ? (column ?? null) : null;
-        if (this.highlightedColumn === nextColumn) {
-            return;
-        }
-
-        const previousColumn = this.highlightedColumn;
-        this.highlightedColumn = nextColumn;
-        this.refreshCalculatedColumnHighlight(previousColumn);
-        this.refreshCalculatedColumnHighlight(nextColumn);
+        return (
+            column != null &&
+            this.gos.get('calculatedColumns')?.columnHighlighting === true &&
+            this.openDialogsByColId.get(column.colId)?.highlight === true
+        );
     }
 
     private refreshCalculatedColumnHighlight(column: AgColumn | null): void {
@@ -151,6 +150,15 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             cellCtrl.refreshCalculatedColumnCss();
         }
         this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
+    }
+
+    private refreshOpenDialogHighlights(): void {
+        const colModel = this.beans.colModel;
+        for (const [colId, openDialog] of this.openDialogsByColId) {
+            if (openDialog.highlight) {
+                this.refreshCalculatedColumnHighlight(colModel.getColById(colId));
+            }
+        }
     }
 
     private releaseVisibleAnchors(columns: Column[] | null | undefined): void {
@@ -677,6 +685,12 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         onApply: (draft: CalculatedColumnDraft) => void,
         columnToHighlight?: AgColumn | null
     ): void {
+        const openDialogState = this.openDialogsByColId.get(draft.colId);
+        if (openDialogState) {
+            openDialogState.dialog.getGui().focus({ preventScroll: true });
+            return;
+        }
+
         const state: { close?: () => void; resolved: boolean } = { resolved: false };
         const mapper = createCalculatedColumnReferenceMapper(
             this.beans,
@@ -751,12 +765,18 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             })
         );
         state.close = () => dialog.close();
-        this.setHighlightedColumn(columnToHighlight);
+        this.openDialogsByColId.set(draft.colId, { dialog, highlight: columnToHighlight != null });
+        this.refreshCalculatedColumnHighlight(columnToHighlight ?? null);
         const destroyDialogMouseListeners = this.addManagedElementListeners(dialog.getGui(), {
             mousedown: () => form.hideSuggestions(),
         });
         dialog.addDestroyFunc(() => destroyDialogMouseListeners.forEach((destroyFunc) => destroyFunc()));
-        dialog.addDestroyFunc(() => this.setHighlightedColumn(null));
+        dialog.addDestroyFunc(() => {
+            if (this.openDialogsByColId.get(draft.colId)?.dialog === dialog) {
+                this.openDialogsByColId.delete(draft.colId);
+                this.refreshCalculatedColumnHighlight(columnToHighlight ?? null);
+            }
+        });
         dialog.addEventListener('destroyed', () => this.destroyBean(form));
     }
 

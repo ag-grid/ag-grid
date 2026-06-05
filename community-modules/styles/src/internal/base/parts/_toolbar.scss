@@ -4,7 +4,8 @@
     .ag-toolbar {
         display: flex;
         align-items: center;
-        overflow: hidden;
+        overflow: auto hidden;
+        scrollbar-width: thin;
         border-bottom: var(--ag-borders) var(--ag-border-color);
         min-height: var(--ag-header-height);
         background-color: var(--ag-toolbar-background-color);
@@ -87,8 +88,10 @@
 
     .ag-toolbar-panel {
         display: inline-flex;
-        flex: 1;
-        min-width: 260px;
+        // Grow to fill spare width, but never shrink below content — the toolbar
+        // scrolls instead of clipping embedded panels
+        flex: 1 0 auto;
+        min-width: 0;
     }
 
     .ag-toolbar-input {
@@ -171,10 +174,14 @@
         font-family: var(--ag-font-family);
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar .ag-column-drop-horizontal {
         border-bottom: none;
         background-color: transparent;
+
+        // Prevent scrolling - necessary because tabbing to select a drop zone pill
+        // scrolls the container to show the pill, and we want the containing scroll
+        // container to be the toolbar, not the drop zone panel within it
+        overflow: visible;
     }
 
     .ag-toolbar-button-chevron {

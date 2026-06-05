@@ -18,7 +18,7 @@ import { Component } from '../widgets/component';
 import { FakeHScrollSelector } from './fakeHScrollComp';
 import { FakeVScrollSelector } from './fakeVScrollComp';
 import type { IGridBodyComp, PinnedSectionState } from './gridBodyCtrl';
-import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
+import { GridBodyCtrl } from './gridBodyCtrl';
 import type { RowContainerComp } from './rowContainer/rowContainerComp';
 import { RowContainerSelector } from './rowContainer/rowContainerComp';
 import type { RowContainerName } from './rowContainer/rowContainerCtrl';
@@ -164,8 +164,6 @@ export class GridBodyComp extends Component implements FocusableContainer {
                 this.toggleCss(LayoutCssClasses.NORMAL, params.normal);
                 this.toggleCss(LayoutCssClasses.PRINT, params.print);
             },
-            setAlwaysVerticalScrollClass: (cssClass, on) =>
-                this.eGridViewport.classList.toggle(CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
             setCellSelectableCss: (cssClass: string | null, selectable: boolean) => {
                 if (!cssClass) {
                     return;

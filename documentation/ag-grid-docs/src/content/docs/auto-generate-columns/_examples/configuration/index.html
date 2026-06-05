@@ -1,0 +1,28 @@
+<div class="example-wrapper">
+    <div class="example-header">
+        <label>
+            objectValues:
+            <select id="objectValues" onchange="onObjectValues()">
+                <option value="group">group</option>
+                <option value="flatten">flatten</option>
+                <option value="skip">skip</option>
+            </select>
+        </label>
+        <label>
+            arrayValues:
+            <select id="arrayValues" onchange="onArrayValues()">
+                <option value="primitives">primitives</option>
+                <option value="include">include</option>
+                <option value="skip">skip</option>
+            </select>
+        </label>
+        <label>
+            nullishValues:
+            <select id="nullishValues" onchange="onNullishValues()">
+                <option value="include">include</option>
+                <option value="skip">skip</option>
+            </select>
+        </label>
+    </div>
+    <div id="myGrid"></div>
+</div>

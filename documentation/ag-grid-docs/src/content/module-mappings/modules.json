@@ -24,6 +24,11 @@
                     "path": "grid-api/#reference-colHover-isColumnHovered"
                 },
                 {
+                    "moduleName": "AutoGenerateColumnsModule",
+                    "name": "Auto-Generate Columns",
+                    "path": "auto-generate-columns"
+                },
+                {
                     "moduleName": "CalculatedColumnsModule",
                     "name": "Calculated Columns",
                     "path": "calculated-columns",

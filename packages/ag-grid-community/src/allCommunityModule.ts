@@ -1,5 +1,6 @@
 import { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 import { RowApiModule, ScrollApiModule } from './api/apiModule';
+import { AutoGenerateColumnsModule } from './autoGenerateColumns/autoGenerateColumnsModule';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule } from './clientSideRowModel/clientSideRowModelModule';
 import { ColumnAutoSizeModule } from './columnAutosize/columnAutosizeModule';
 import { ColumnHoverModule } from './columns/columnHover/columnHoverModule';
@@ -93,5 +94,6 @@ export const AllCommunityModule: _ModuleWithoutApi = {
         DragAndDropModule,
         ClientSideRowModelApiModule,
         CellSpanModule,
+        AutoGenerateColumnsModule,
     ],
 };
