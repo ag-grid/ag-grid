@@ -281,12 +281,11 @@ export const AG_GRID_LOCALE_EN = {
     noRowsToShow: 'No Rows To Show',
     noMatchingRows: 'No Matching Rows',
     exportingOoo: 'Exporting...',
-    fileInputOverlay: 'Drop files here',
-    fileInputOverlayOr: 'or',
+    fileInputOverlay: 'Drag & Drop file to import data',
     fileInputOverlayBrowse: 'Browse files',
-    fileInputProcessing: 'Processing file...',
+    fileInputProcessing: 'Processing ${variable}',
+    fileInputProcessingFailed: 'Error processing ${variable}',
     fileInputNoHandler: 'No file handler configured',
-    fileInputTryAgain: 'Try again by dropping or selecting a new file',
     enabled: 'Enabled',
 
     // Menu

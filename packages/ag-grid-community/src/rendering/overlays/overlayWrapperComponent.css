@@ -93,12 +93,6 @@
     gap: calc(var(--ag-spacing) * 0.75);
 }
 
-.ag-file-input-icon {
-    width: 1.2em;
-    height: 1.2em;
-    flex-shrink: 0;
-}
-
 .ag-file-input-text {
     font-weight: 600;
 }

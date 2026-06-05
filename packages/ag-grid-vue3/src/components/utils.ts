@@ -928,6 +928,11 @@ export interface Props<TData> {
     /** Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`. Updating the params will trigger a refresh of the active overlay.
          */
     activeOverlayParams?: any,
+    /** Provide a file processor to handle files received via the file drop overlay (drag-and-drop or file browser).
+         * When provided, the file input overlay is shown when there is no row data.
+         * Call `params.success(rowData)` to load parsed data into the grid, or `params.fail(message)` to show an error.
+         */
+    fileProcessor?: IFileProcessor<TData>,
     /** Set whether pagination is enabled.
          * @default false
          * @agModule `PaginationModule`
@@ -2250,6 +2255,7 @@ export function getProps() {
         overlayComponentSelector: undefined,
         activeOverlay: undefined,
         activeOverlayParams: undefined,
+        fileProcessor: undefined,
         pagination: undefined,
         paginationPageSize: undefined,
         paginationPageSizeSelector: undefined,

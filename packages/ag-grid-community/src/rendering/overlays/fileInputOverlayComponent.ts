@@ -1,7 +1,9 @@
-import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
-import type { FileInputEvent } from '../../events';
+import { RefPlaceholder, _clearElement } from 'ag-stack';
+
 import { _addGridCommonParams } from '../../gridOptionsUtils';
+import type { IFileProcessorParams } from '../../interfaces/iFileProcessor';
 import type { ElementParams } from '../../utils/element';
+import { _createElement } from '../../utils/element';
 import { _createIconNoSpan } from '../../utils/icon';
 import { _warn } from '../../validation/logging';
 import type {
@@ -31,9 +33,9 @@ const FileInputOverlayElement: ElementParams = {
     tag: 'div',
     cls: 'ag-overlay-file-input-center',
     children: [
-        { tag: 'div', ref: 'eReadyState', cls: 'ag-file-input-ready' },
+        { tag: 'div', ref: 'eErrorBanner', cls: 'ag-file-input-error-banner' },
+        { tag: 'div', ref: 'eDropZone', cls: 'ag-file-input-drop-zone' },
         { tag: 'div', ref: 'eProcessingState', cls: 'ag-file-input-processing' },
-        { tag: 'div', ref: 'eErrorState', cls: 'ag-file-input-error' },
     ],
 };
 
@@ -41,9 +43,9 @@ export class FileInputOverlayComponent
     extends OverlayComponent<any, any, IOverlayParams & OverlayComponentUserParams>
     implements IFileInputOverlayComp<any, any>
 {
-    private readonly eReadyState: HTMLElement = RefPlaceholder;
+    private readonly eErrorBanner: HTMLElement = RefPlaceholder;
+    private readonly eDropZone: HTMLElement = RefPlaceholder;
     private readonly eProcessingState: HTMLElement = RefPlaceholder;
-    private readonly eErrorState: HTMLElement = RefPlaceholder;
 
     private eFileInput: HTMLInputElement | undefined;
     private state: FileInputState = 'ready';
@@ -51,43 +53,43 @@ export class FileInputOverlayComponent
 
     public init(params: IFileInputOverlayParams & OverlayComponentUserParams): void {
         this.setTemplate(FileInputOverlayElement);
-        this.buildReadyState(params);
-        this.buildProcessingState();
-        this.buildErrorState();
+        this.buildDropZone(params);
         this.showState('ready');
         this.setupDragListeners();
     }
-
-    public refresh(): void {}
 
     public override destroy(): void {
         this.eFileInput = undefined;
         super.destroy();
     }
 
-    private buildReadyState(params: IFileInputOverlayParams & OverlayComponentUserParams): void {
+    private buildDropZone(params: IFileInputOverlayParams & OverlayComponentUserParams): void {
         const { beans } = this;
         const localeTextFunc = this.getLocaleTextFunc();
 
-        const text = params.fileInput?.overlayText ?? localeTextFunc('fileInputOverlay', 'Drop files here');
-        const eText = document.createElement('span');
-        eText.classList.add('ag-file-input-text');
-        eText.textContent = text;
-        this.eReadyState.appendChild(eText);
+        const text =
+            params.fileInput?.overlayText ?? localeTextFunc('fileInputOverlay', 'Drag & Drop file to import data');
 
-        const eOr = document.createElement('span');
-        eOr.classList.add('ag-file-input-or');
-        eOr.textContent = localeTextFunc('fileInputOverlayOr', 'or');
-        this.eReadyState.appendChild(eOr);
+        const eTextRow = _createElement({
+            tag: 'div',
+            cls: 'ag-file-input-text-row',
+            children: [
+                () => _createIconNoSpan('csvExport', beans, null) ?? document.createElement('span'),
+                { tag: 'span', cls: 'ag-file-input-text', children: text },
+            ],
+        });
 
-        this.appendBrowseButton(this.eReadyState);
+        this.eDropZone.appendChild(eTextRow);
+        this.appendBrowseButton(this.eDropZone);
 
         beans.ariaAnnounce.announceValue(text, 'overlay');
     }
 
-    private buildProcessingState(): void {
+    private updateProcessingState(fileName: string): void {
         const { beans } = this;
         const localeTextFunc = this.getLocaleTextFunc();
+
+        _clearElement(this.eProcessingState);
 
         const eIcon = _createIconNoSpan('overlayLoading', beans, null);
         if (eIcon) {
@@ -95,34 +97,22 @@ export class FileInputOverlayComponent
             this.eProcessingState.appendChild(eIcon);
         }
 
-        const eText = document.createElement('span');
-        eText.classList.add('ag-file-input-text');
-        eText.textContent = localeTextFunc('fileInputProcessing', 'Processing file...');
+        const eText = _createElement({
+            tag: 'span',
+            cls: 'ag-file-input-text',
+            children: localeTextFunc('fileInputProcessing', `Processing ${fileName}`, [fileName]),
+        });
         this.eProcessingState.appendChild(eText);
-    }
-
-    private buildErrorState(): void {
-        const localeTextFunc = this.getLocaleTextFunc();
-
-        const eMessage = document.createElement('span');
-        eMessage.classList.add('ag-file-input-error-message');
-        this.eErrorState.appendChild(eMessage);
-
-        const eHint = document.createElement('span');
-        eHint.classList.add('ag-file-input-hint');
-        eHint.textContent = localeTextFunc('fileInputTryAgain', 'Try again by dropping or selecting a new file');
-        this.eErrorState.appendChild(eHint);
-
-        this.appendBrowseButton(this.eErrorState);
     }
 
     private appendBrowseButton(parent: HTMLElement): void {
         const localeTextFunc = this.getLocaleTextFunc();
 
-        const eFileInput = document.createElement('input');
-        eFileInput.type = 'file';
-        eFileInput.classList.add('ag-file-input-input');
-        eFileInput.style.display = 'none';
+        const eFileInput = _createElement<HTMLInputElement>({
+            tag: 'input',
+            cls: 'ag-file-input-input',
+            attrs: { type: 'file', style: 'display:none' },
+        });
         eFileInput.addEventListener('change', () => this.onFileInputChange(eFileInput));
         parent.appendChild(eFileInput);
 
@@ -130,19 +120,21 @@ export class FileInputOverlayComponent
             this.eFileInput = eFileInput;
         }
 
-        const eButton = document.createElement('button');
-        eButton.classList.add('ag-file-input-browse');
-        eButton.type = 'button';
-        eButton.textContent = localeTextFunc('fileInputOverlayBrowse', 'Browse files');
+        const eButton = _createElement<HTMLButtonElement>({
+            tag: 'button',
+            cls: 'ag-file-input-browse',
+            attrs: { type: 'button' },
+            children: localeTextFunc('fileInputOverlayBrowse', 'Browse files'),
+        });
         eButton.addEventListener('click', () => eFileInput.click());
         parent.appendChild(eButton);
     }
 
     private showState(state: FileInputState): void {
         this.state = state;
-        this.eReadyState.style.display = state === 'ready' ? '' : 'none';
+        this.eErrorBanner.style.display = state === 'error' ? '' : 'none';
+        this.eDropZone.style.display = state === 'processing' ? 'none' : '';
         this.eProcessingState.style.display = state === 'processing' ? '' : 'none';
-        this.eErrorState.style.display = state === 'error' ? '' : 'none';
     }
 
     private setupDragListeners(): void {
@@ -155,7 +147,7 @@ export class FileInputOverlayComponent
             e.preventDefault();
             this.dragCounter++;
             if (this.dragCounter === 1) {
-                eGui.classList.add('ag-file-input-active');
+                this.eDropZone.classList.add('ag-file-input-drop-zone-active');
             }
         });
 
@@ -177,14 +169,14 @@ export class FileInputOverlayComponent
             this.dragCounter--;
             if (this.dragCounter <= 0) {
                 this.dragCounter = 0;
-                eGui.classList.remove('ag-file-input-active');
+                this.eDropZone.classList.remove('ag-file-input-drop-zone-active');
             }
         });
 
         eGui.addEventListener('drop', (e: DragEvent) => {
             e.preventDefault();
             this.dragCounter = 0;
-            eGui.classList.remove('ag-file-input-active');
+            this.eDropZone.classList.remove('ag-file-input-drop-zone-active');
 
             const files = e.dataTransfer?.files;
             if (files && files.length > 0) {
@@ -210,36 +202,34 @@ export class FileInputOverlayComponent
             return;
         }
 
-        if (!this.gos.exists('onFileInput')) {
+        const fileProcessor = this.gos.get('fileProcessor');
+        if (!fileProcessor) {
             _warn(304);
             this.showError(this.getLocaleTextFunc()('fileInputNoHandler', 'No file handler configured'));
             return;
         }
 
+        const fileName = files[0].name;
+        this.updateProcessingState(fileName);
         this.showState('processing');
-        this.beans.ariaAnnounce.announceValue(
-            this.getLocaleTextFunc()('fileInputProcessing', 'Processing file...'),
-            'overlay'
-        );
+        const processingText = this.getLocaleTextFunc()('fileInputProcessing', 'Processing ${variable}', [fileName]);
+        this.beans.ariaAnnounce.announceValue(processingText, 'overlay');
 
-        const resolve = (rowData: any[]) => {
+        const success = (rowData: any[]) => {
             this.gos.updateGridOptions({ options: { rowData }, source: 'api' });
         };
 
-        const reject = (errorMessage: string) => {
-            this.showError(errorMessage);
+        const fail = (errorMessage?: string) => {
+            const localeTextFunc = this.getLocaleTextFunc();
+            const message = localeTextFunc('fileInputProcessingFailed', `Error processing ${fileName}`, [fileName]);
+            this.showError(errorMessage ?? message);
         };
 
-        this.eventSvc.dispatchEvent(
-            _addGridCommonParams<FileInputEvent>(this.gos, { type: 'fileInput', files, resolve, reject })
-        );
+        fileProcessor.processFiles(_addGridCommonParams<IFileProcessorParams>(this.gos, { files, success, fail }));
     }
 
     private showError(errorMessage: string): void {
-        const eMessage = this.eErrorState.querySelector('.ag-file-input-error-message');
-        if (eMessage) {
-            eMessage.textContent = errorMessage;
-        }
+        this.eErrorBanner.textContent = errorMessage;
         this.showState('error');
         this.beans.ariaAnnounce.announceValue(errorMessage, 'overlay');
     }

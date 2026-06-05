@@ -1104,6 +1104,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`. Updating the params will trigger a refresh of the active overlay.
      */
     @Input() public activeOverlayParams: any = undefined;
+    /** Provide a file processor to handle files received via the file drop overlay (drag-and-drop or file browser).
+     * When provided, the file input overlay is shown when there is no row data.
+     * Call `params.success(rowData)` to load parsed data into the grid, or `params.fail(message)` to show an error.
+     */
+    @Input() public fileProcessor: IFileProcessor<TData> | undefined = undefined;
     /** Set whether pagination is enabled.
      * @default false
      * @agModule `PaginationModule`
