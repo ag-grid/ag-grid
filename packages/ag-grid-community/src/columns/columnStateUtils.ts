@@ -106,7 +106,7 @@ export function _applyColumnState(
             colIds[i] = state[i].colId;
         }
         if (calculatedColsSvc?.restoreDynamicColumnDefs(colIds)) {
-            colModel.refreshDynamicColumns(source);
+            calculatedColsSvc.refreshProjectedColumns(source);
         }
     }
 
@@ -301,7 +301,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
     const { colModel, autoColSvc, selectionColSvc, eventSvc, gos, calculatedColsSvc } = beans;
 
     if (calculatedColsSvc?.resetDynamicColumnDefs(true)) {
-        colModel.refreshDynamicColumns(source);
+        calculatedColsSvc.refreshProjectedColumns(source);
     }
 
     const primaryCols = colModel.getColDefCols();

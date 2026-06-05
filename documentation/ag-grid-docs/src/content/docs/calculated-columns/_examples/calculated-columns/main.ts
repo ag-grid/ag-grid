@@ -7,11 +7,12 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { CalculatedColumnsModule } from 'ag-grid-enterprise';
+import { CalculatedColumnsModule, ColumnMenuModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     CalculatedColumnsModule,
+    ColumnMenuModule,
     NumberEditorModule,
     NumberFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),

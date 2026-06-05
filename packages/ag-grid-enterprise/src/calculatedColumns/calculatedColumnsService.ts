@@ -185,11 +185,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
     }
 
-    public updateCalculatedColumn(
-        column: ColKey,
-        colDef: CalculatedColumnUpdate,
-        source: 'api' | 'calculatedColumn' = 'api'
-    ): void {
+    private updateCalculatedColumn(column: ColKey, colDef: CalculatedColumnUpdate): void {
         const targetColumn = this.beans.colModel.getColDefColOrCol(column);
         if (targetColumn?.colDef.calculatedExpression == null) {
             return;
@@ -221,16 +217,16 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             });
             this.dynamicSuppressions.delete(targetColId);
         }
-        this.refreshDynamicColumns(source);
+        this.refreshDynamicColumns('calculatedColumn');
         const nextColumn = this.beans.colModel.getColById(targetColId) ?? targetColumn;
         const newExpression = nextColumn.colDef.calculatedExpression ?? oldExpression;
         if (colDef.calculatedExpression !== undefined && oldExpression !== newExpression) {
             this.dispatchExpressionChangedEvent(
-                this.getEventCommonParams(nextColumn, newExpression, source),
+                this.getEventCommonParams(nextColumn, newExpression, 'calculatedColumn'),
                 oldExpression
             );
         }
-        this.checkValidationStates(source, true);
+        this.checkValidationStates('calculatedColumn', true);
         this.refreshCalculatedColumn(targetColId);
     }
 
@@ -328,14 +324,14 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             draft,
             (nextDraft) => {
                 const { colId: _, ...update } = this.toColDef(nextDraft);
-                this.updateCalculatedColumn(column.colId, update, 'calculatedColumn');
+                this.updateCalculatedColumn(column.colId, update);
             },
             column,
             focusDialog
         );
     }
 
-    public removeCalculatedColumn(column: AgColumn | null, source: 'api' | 'calculatedColumn' = 'api'): void {
+    public removeCalculatedColumn(column: AgColumn | null): void {
         if (column?.colDef.calculatedExpression == null) {
             return;
         }
@@ -352,12 +348,12 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 targetColDef: column.getUserProvidedColDef(),
             });
         }
-        this.refreshDynamicColumns(source);
+        this.refreshDynamicColumns('calculatedColumn');
         this.dispatchCreatedOrRemovedEvent(
             'calculatedColumnRemoved',
-            this.getEventCommonParams(column, expression, source)
+            this.getEventCommonParams(column, expression, 'calculatedColumn')
         );
-        this.checkValidationStates(source, true);
+        this.checkValidationStates('calculatedColumn', true);
     }
 
     public createProjectedColumnDefs(
@@ -469,15 +465,21 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private refreshDynamicColumns(source: ColumnEventType): void {
         const columnGroupState = this.beans.colGroupSvc?.getColumnGroupState();
 
+        this.refreshProjectedColumns(source);
+
+        if (columnGroupState?.length) {
+            this.beans.colGroupSvc?.setColumnGroupState(columnGroupState, source);
+        }
+    }
+
+    // re-runs the column projection with lifecycle/validation checks suppressed, so column-state
+    // operations (reset/restore of dynamic calc cols) do not emit spurious created/removed events.
+    public refreshProjectedColumns(source: ColumnEventType): void {
         this.suppressValidationChecks++;
         try {
             this.beans.colModel.refreshDynamicColumns(source);
         } finally {
             this.suppressValidationChecks--;
-        }
-
-        if (columnGroupState?.length) {
-            this.beans.colGroupSvc?.setColumnGroupState(columnGroupState, source);
         }
     }
 
@@ -692,6 +694,14 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const getValidatedExpression = (
             nextDraft: CalculatedColumnDraft
         ): { valid: true; expression: string } | { valid: false; error: string } => {
+            // An empty expression is "incomplete", not a malformed formula — surface a calc-column
+            // message rather than the formula parser's "Formulas must begin with =." error.
+            if (!_isStringLargerThan(nextDraft.calculatedExpression, 0, true)) {
+                return {
+                    valid: false,
+                    error: this.getLocaleTextFunc()('calculatedColumnExpressionEmpty', 'Enter an expression.'),
+                };
+            }
             const result = mapper.toInternalExpression(nextDraft.calculatedExpression);
             if ('error' in result) {
                 return {

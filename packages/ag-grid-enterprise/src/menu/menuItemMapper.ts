@@ -500,7 +500,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('calculatedColumnRemove', 'Remove Calculated Column'),
                               icon: _createIconNoSpan('calculatedColumnRemove', beans, null),
-                              action: () => calculatedColsSvc.removeCalculatedColumn(column, 'calculatedColumn'),
+                              action: () => calculatedColsSvc.removeCalculatedColumn(column),
                           }
                         : null;
                 case 'sortUnSort':

@@ -241,6 +241,18 @@ describe('ag-grid calculated columns', () => {
         return button!;
     }
 
+    async function selectDataType(label: string): Promise<void> {
+        getCalculatedColumnDialog()
+            .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
+            .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        await asyncSetTimeout(1);
+        const option = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).find(
+            (element) => element.textContent?.trim() === label
+        );
+        expect(option).toBeTruthy();
+        option!.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    }
+
     function getSuggestionLabels(): string[] {
         return Array.from(document.querySelectorAll<HTMLElement>('.ag-autocomplete-row-label')).map(
             (element) => element.textContent?.trim() ?? ''
@@ -719,7 +731,7 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
-    test('grid api updates calculated column cellDataType without keeping stale boolean renderer', async () => {
+    test('edit dialog updates calculated column cellDataType without keeping stale boolean renderer', async () => {
         const api = createGrid('calculated-grid-api-cell-data-type', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
@@ -734,18 +746,20 @@ describe('ag-grid calculated columns', () => {
         });
         await asyncSetTimeout(1);
 
-        updateCalculatedColumnDef(api, 'profitable', {
-            calculatedExpression: '[revenue] > [cost]',
-            cellDataType: 'boolean',
-        });
+        api.openCalculatedColumnDialog('profitable');
+        await asyncSetTimeout(1);
+        setExpression('[revenue] > [cost]');
+        await selectDataType('Boolean');
+        clickDialogButton('Apply');
         await asyncSetTimeout(1);
 
         expect(api.getColumn('profitable')!.getColDef().cellRenderer).toBe('agCheckboxCellRenderer');
 
-        updateCalculatedColumnDef(api, 'profitable', {
-            calculatedExpression: 'IF([revenue] > [cost], "yes", "no")',
-            cellDataType: 'text',
-        });
+        api.openCalculatedColumnDialog('profitable');
+        await asyncSetTimeout(1);
+        setExpression('IF([revenue] > [cost], "yes", "no")');
+        await selectDataType('Text');
+        clickDialogButton('Apply');
         await asyncSetTimeout(1);
 
         await new GridRows(api, 'updated calculated column cell data type', gridRowsOpts).check(`
@@ -1358,6 +1372,33 @@ describe('ag-grid calculated columns', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 server-revenue-9d5101c8-4c2a-48e0-9ad2:10 calculated_1:7 server-cost-81f3431b-e4aa-4ef8-bef0:3
         `);
+    });
+
+    test('clearing the expression shows an empty-expression message, not the formula error', async () => {
+        const api = createGrid('calculated-empty-expression', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        // Type a reference, then clear it back to empty (the reported scenario).
+        setExpression('[gold]');
+        setExpression('');
+
+        const input = getExpressionInput();
+        expect(input.validationMessage).toBe('Enter an expression.');
+        expect(input.validationMessage).not.toContain('begin with');
+        expect(input).toHaveClass('invalid');
+        expect(getDialogButton('Apply')).toBeDisabled();
+
+        // Applying an empty expression must not create a column.
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+        expect(api.getColumn('calculated_1')).toBeNull();
     });
 
     test('dialog column picker renders group path and leaf as fixed-height clickable rows', async () => {
