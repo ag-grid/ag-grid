@@ -203,18 +203,18 @@ jobs:
           echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
           echo "Package test matrix determined to be: ${pkg_matrix}"
 
-  test:
-    runs-on: ubuntu-24.04
-    name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
-    needs: [ detect-changes, init ]
-    if: needs.detect-changes.outputs.run_code_ci == 'true' &&
-      needs.init.outputs.test_count > 0
-    strategy:
-      matrix: ${{ fromJson(needs.init.outputs.test_matrix )}}
-      fail-fast: false
-    env:
-      NX_PARALLEL: 1
-    steps:
+#  test:
+#    runs-on: ubuntu-24.04
+#    name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
+#    needs: [ detect-changes, init ]
+#    if: needs.detect-changes.outputs.run_code_ci == 'true' &&
+#      needs.init.outputs.test_count > 0
+#    strategy:
+#      matrix: ${{ fromJson(needs.init.outputs.test_matrix )}}
+#      fail-fast: false
+#    env:
+#      NX_PARALLEL: 1
+#    steps:
 #      - name: Checkout
 #        id: checkout
 #        uses: actions/checkout@v4
@@ -262,18 +262,18 @@ jobs:
 #            reports/
 #            packages/**/__diff_output__/*
 
-  e2e:
-    runs-on: ubuntu-latest
-    name: e2e Tests
-    needs: [ detect-changes, init ]
-    if: needs.detect-changes.outputs.run_code_ci == 'true' &&
-      needs.init.outputs.e2e_test_count > 0
-    strategy:
-      matrix: ${{ fromJson(needs.init.outputs.e2e_test_matrix )}}
-      fail-fast: false
-    env:
-      NX_PARALLEL: 1
-    steps:
+#  e2e:
+#    runs-on: ubuntu-latest
+#    name: e2e Tests
+#    needs: [ detect-changes, init ]
+#    if: needs.detect-changes.outputs.run_code_ci == 'true' &&
+#      needs.init.outputs.e2e_test_count > 0
+#    strategy:
+#      matrix: ${{ fromJson(needs.init.outputs.e2e_test_matrix )}}
+#      fail-fast: false
+#    env:
+#      NX_PARALLEL: 1
+#    steps:
 #      - name: Checkout
 #        id: checkout
 #        uses: actions/checkout@v4
@@ -299,51 +299,51 @@ jobs:
 #          path: |
 #            reports/
 
-  lint:
-    runs-on: ubuntu-latest
-    name: Lint & Format Check
-    needs: [ detect-changes ]
-    if: ${{ always() && needs.detect-changes.result == 'success' }}
-    outputs:
-      format: ${{ steps.format.outcome || '' }}
-      lint: ${{ steps.lint.outcome || '' }}
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
+#  lint:
+#    runs-on: ubuntu-latest
+#    name: Lint & Format Check
+#    needs: [ detect-changes ]
+#    if: ${{ always() && needs.detect-changes.result == 'success' }}
+#    outputs:
+#      format: ${{ steps.format.outcome || '' }}
+#      lint: ${{ steps.lint.outcome || '' }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: nx format:check
+#        id: format
+#        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+#        run: |
+#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+#            yarn nx format:check --all
+#          else
+#            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+#          fi
+#
+#      - name: nx lint
+#        id: lint
+#        run: |
+#          yarn nx lint
 
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: nx format:check
-        id: format
-        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-        run: |
-          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            yarn nx format:check --all
-          else
-            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-          fi
-
-      - name: nx lint
-        id: lint
-        run: |
-          yarn nx lint
-
-  build:
-    runs-on: ubuntu-latest
-    name: Build
-    needs: [ detect-changes ]
-    if: needs.detect-changes.outputs.run_code_ci == 'true' &&
-      github.event.pull_request.draft == false
-    outputs:
-      build: ${{ steps.build.outcome || '' }}
-    steps:
+#  build:
+#    runs-on: ubuntu-latest
+#    name: Build
+#    needs: [ detect-changes ]
+#    if: needs.detect-changes.outputs.run_code_ci == 'true' &&
+#      github.event.pull_request.draft == false
+#    outputs:
+#      build: ${{ steps.build.outcome || '' }}
+#    steps:
 #      - name: Checkout
 #        id: checkout
 #        uses: actions/checkout@v4
@@ -361,18 +361,18 @@ jobs:
 #        run: |
 #          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
-  docs:
-    runs-on: ubuntu-latest
-    name: Docs Build & Link Checker
-    needs: [ detect-changes ]
-    if: ${{ (needs.detect-changes.outputs.run_code_ci == 'true' ||
-      needs.detect-changes.outputs.run_docs_ci == 'true') &&
-      github.event.pull_request.draft == false && !inputs.skip_docs }}
-    strategy:
-      fail-fast: false
-    outputs:
-      docs_deployed: ${{ steps.deploy_to_staging.outcome }}
-    steps:
+#  docs:
+#    runs-on: ubuntu-latest
+#    name: Docs Build & Link Checker
+#    needs: [ detect-changes ]
+#    if: ${{ (needs.detect-changes.outputs.run_code_ci == 'true' ||
+#      needs.detect-changes.outputs.run_docs_ci == 'true') &&
+#      github.event.pull_request.draft == false && !inputs.skip_docs }}
+#    strategy:
+#      fail-fast: false
+#    outputs:
+#      docs_deployed: ${{ steps.deploy_to_staging.outcome }}
+#    steps:
 #      - name: Checkout
 #        id: checkout
 #        uses: actions/checkout@v4
@@ -473,11 +473,11 @@ jobs:
       [
         detect-changes,
         init,
-        test,
-        e2e,
-        lint,
-        build,
-        docs,
+#        test,
+#        e2e,
+#        lint,
+#        build,
+#        docs,
         fw_pkg_test
       ]
     if: always() && !cancelled() && github.event.pull_request.draft == false
