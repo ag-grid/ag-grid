@@ -242,7 +242,7 @@ export class GridBodyCtrl extends BeanStub {
 
     private updateAnchorWidth(): void {
         const anchorWidth = this.getViewportWidthWithoutScrollbar();
-        this.eGridViewport.style.setProperty('--ag-fw-anchor-width', `${anchorWidth}px`);
+        this.eGridViewport.style.setProperty('--ag-internal-fw-anchor-width', `${anchorWidth}px`);
     }
 
     private setGridRole(): void {
@@ -325,8 +325,8 @@ export class GridBodyCtrl extends BeanStub {
         const leftOffset = isRtl ? scrollbarWidth : 0;
         const rightOffset = isRtl ? 0 : scrollbarWidth;
 
-        eGridBody.style.setProperty('--ag-pinned-left-sticky-offset', `${leftOffset}px`);
-        eGridBody.style.setProperty('--ag-pinned-right-sticky-offset', `${rightOffset}px`);
+        eGridBody.style.setProperty('--ag-internal-pinned-left-sticky-offset', `${leftOffset}px`);
+        eGridBody.style.setProperty('--ag-internal-pinned-right-sticky-offset', `${rightOffset}px`);
     }
 
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
