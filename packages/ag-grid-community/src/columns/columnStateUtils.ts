@@ -40,7 +40,7 @@ export interface ColumnStateParams {
     /** The sort direction of the column */
     sort?: SortDirection;
     /** The type of sort applied to the column */
-    sortType?: SortType;
+    sortType?: SortType | null;
     /** The order of the sort, if sorting by many columns */
     sortIndex?: number | null;
     /** The aggregation function applied */
@@ -506,7 +506,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
             hide: !column.isVisible(),
             pinned: column.getPinned(),
             sort: column.getSort(),
-            sortType: column.getSortDef()?.type,
+            sortType: column.getSortDef()?.type ?? null,
             sortIndex,
             aggFunc,
             rowGroup: column.isRowGroupActive(),

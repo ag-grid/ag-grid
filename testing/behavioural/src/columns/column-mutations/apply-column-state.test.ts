@@ -1960,6 +1960,37 @@ describe('Column Mutations - applyColumnState', () => {
                 └── a width:200 sort:desc
             `);
         });
+
+        test('unsorted column returns sortType as null for JSON serialization safety', () => {
+            const api = gridsManager.createGrid('sortTypeNull', {
+                columnDefs: [{ colId: 'a' }],
+            });
+            const a = api.getColumnState().find((s) => s.colId === 'a')!;
+            expect(a.sort).toBeNull();
+            expect(a.sortType).toBeNull();
+
+            const roundTripped = JSON.parse(JSON.stringify(api.getColumnState()));
+            api.applyColumnState({ state: roundTripped });
+            const after = api.getColumnState().find((s) => s.colId === 'a')!;
+            expect(after.sort).toBeNull();
+            expect(after.sortType).toBeNull();
+        });
+
+        test('getColumnState never contains undefined values — all unset properties use null', () => {
+            const api = gridsManager.createGrid('noUndefined', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            });
+            const states = api.getColumnState();
+            for (const state of states) {
+                for (const [key, value] of Object.entries(state)) {
+                    expect({ colId: state.colId, key, isUndefined: value === undefined }).toEqual({
+                        colId: state.colId,
+                        key,
+                        isUndefined: false,
+                    });
+                }
+            }
+        });
     });
 
     describe('applyColumnState pivotIndex ordering', () => {
