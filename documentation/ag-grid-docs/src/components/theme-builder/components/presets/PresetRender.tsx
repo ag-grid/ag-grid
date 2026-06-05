@@ -49,7 +49,7 @@ const previewHTML = `
 	<div class="ag-root-wrapper ag-ltr ag-layout-normal" role="presentation" grid-id="2">
 		<div class="ag-root-wrapper-body ag-focus-managed ag-layout-normal" role="presentation">
 			<div class="ag-root ag-unselectable ag-layout-normal ag-body-horizontal-content-no-gap ag-has-left-pinned-cols ag-body-vertical-content-no-gap" role="presentation" style="--ag-internal-pinned-left-sticky-offset: 0px; --ag-internal-pinned-right-sticky-offset: 15px;">
-				<div class="ag-grid-viewport ag-layout-normal" role="grid" aria-colcount="7" aria-multiselectable="true" aria-rowcount="501" style="--ag-fw-anchor-width: 1320px;">
+				<div class="ag-grid-viewport ag-layout-normal" role="grid" aria-colcount="7" aria-multiselectable="true" aria-rowcount="501">
 					<div class="ag-grid-scrollable-area" role="rowgroup" style="width: 1335px;">
 						<div class="ag-grid-pinned-top-rows" role="presentation" style="--ag-top-rows-height: 0px; min-height: calc(var(--ag-header-rows-height, 0px) + 0px); height: calc(var(--ag-header-rows-height, 0px) + 0px); --ag-header-rows-height: 49px;">
 							<div role="presentation" class="ag-header ag-pivot-off ag-header-allow-overflow" style="height: 49px;">
