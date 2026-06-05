@@ -1,12 +1,6 @@
-import { BaseDragAndDropService } from '../agStack/core/baseDragAndDropService';
-import type { IComponent } from '../agStack/interfaces/iComponent';
-import type {
-    AgDragSource,
-    AgDraggingEvent,
-    AgDropTarget,
-    IDragAndDropImage,
-} from '../agStack/interfaces/iDragAndDrop';
-import type { AgPromise } from '../agStack/utils/promise';
+import type { AgDragSource, AgDraggingEvent, AgDropTarget, AgPromise, IComponent, IDragAndDropImage } from 'ag-stack';
+import { BaseDragAndDropService } from 'ag-stack';
+
 import { _getDragAndDropImageCompDetails } from '../components/framework/userCompUtils';
 import type { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

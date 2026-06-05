@@ -1,5 +1,5 @@
-import { BeanStub } from 'ag-grid-community';
 import type { IRowNode, RowGroupBulkExpansionState } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import type { IExpansionStrategy } from './iExpansionStrategy';
 

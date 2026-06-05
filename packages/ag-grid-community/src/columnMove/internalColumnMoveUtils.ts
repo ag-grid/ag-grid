@@ -1,5 +1,6 @@
-import type { HorizontalDirection } from '../agStack/constants/direction';
-import { _areEqual, _last } from '../agStack/utils/array';
+import type { HorizontalDirection } from 'ag-stack';
+import { _areEqual, _last } from 'ag-stack';
+
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { CtrlsService } from '../ctrlsService';

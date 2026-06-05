@@ -1,3 +1,6 @@
+import type { LocaleTextFunc } from 'ag-stack';
+import { _exists } from 'ag-stack';
+
 import type {
     AgColumn,
     ColumnEventType,
@@ -8,7 +11,6 @@ import type {
     IMenuActionParams,
     INoteAccess,
     INotesService,
-    LocaleTextFunc,
     MenuItemDef,
     NamedBean,
     RowNode,
@@ -17,7 +19,6 @@ import type {
 import {
     BeanStub,
     _createIconNoSpan,
-    _exists,
     _getRowNode,
     _normalizeSortType,
     _resetColumnState,

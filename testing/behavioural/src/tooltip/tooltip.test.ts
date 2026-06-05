@@ -5,7 +5,7 @@ import { TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-g
 import type { GridOptions, Module } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Tooltips', () => {
     const gridMgr = new TestGridsManager({
@@ -29,6 +29,14 @@ describe('Tooltips', () => {
         };
 
         const api = await gridMgr.createGridAndWait('myGrid-tooltip-base', gridOptions);
+        await new GridColumns(api, `shows tooltip when configured setup`).checkColumns(`
+            CENTER
+            └── A width:200
+        `);
+        await new GridRows(api, `shows tooltip when configured setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 A:"value"
+        `);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
 
@@ -36,6 +44,10 @@ describe('Tooltips', () => {
         await asyncSetTimeout(250);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Base tooltip');
+        await new GridRows(api, `shows tooltip when configured final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 A:"value"
+        `);
     });
 
     test('respects tooltipShowDelay and tooltipHideDelay', async () => {
@@ -47,6 +59,14 @@ describe('Tooltips', () => {
         };
 
         const api = await gridMgr.createGridAndWait('myGrid-tooltip-delay', gridOptions);
+        await new GridColumns(api, `respects tooltipShowDelay and tooltipHideDelay setup`).checkColumns(`
+            CENTER
+            └── A width:200
+        `);
+        await new GridRows(api, `respects tooltipShowDelay and tooltipHideDelay setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 A:"value"
+        `);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
 
@@ -64,6 +84,10 @@ describe('Tooltips', () => {
 
         await asyncSetTimeout(200);
         await waitFor(() => expect(tooltip.classList.contains('ag-tooltip-hiding')).toBe(true));
+        await new GridRows(api, `respects tooltipShowDelay and tooltipHideDelay final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 A:"value"
+        `);
     });
 
     test('respects tooltipSwitchShowDelay when moving between cells', async () => {
@@ -76,6 +100,15 @@ describe('Tooltips', () => {
         };
 
         const api = await gridMgr.createGridAndWait('myGrid-tooltip-switch', gridOptions);
+        await new GridColumns(api, `respects tooltipSwitchShowDelay when moving between cells setup`).checkColumns(`
+            CENTER
+            └── A width:200
+        `);
+        await new GridRows(api, `respects tooltipSwitchShowDelay when moving between cells setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 A:"one"
+            └── LEAF id:1 A:"two"
+        `);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const firstCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
         const secondCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('1', 'A')));
@@ -93,6 +126,11 @@ describe('Tooltips', () => {
 
         await asyncSetTimeout(120);
         await waitFor(() => expect(hasTooltipText('Row 1')).toBe(true));
+        await new GridRows(api, `respects tooltipSwitchShowDelay when moving between cells final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 A:"one"
+            └── LEAF id:1 A:"two"
+        `);
     });
 
     test('does not duplicate after formula errors toggle during edits', async () => {
@@ -129,6 +167,20 @@ describe('Tooltips', () => {
         };
 
         const api = await gridMgr.createGridAndWait('myGrid-tooltip-dup', gridOptions);
+        await new GridColumns(api, `does not duplicate after formula errors toggle during edits setup`).checkColumns(
+            `
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                ├── A width:200 editable
+                └── result "Result" width:200 editable
+            `
+        );
+        await new GridRows(api, `does not duplicate after formula errors toggle during edits setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" A:1
+            └── LEAF id:r2 row-number:"2" A:2 result:"#ERROR!"
+        `);
         const gridDiv = getGridElement(api)! as HTMLElement;
         const resultCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r2', 'result')));
         await userEvent.hover(resultCell);
@@ -159,5 +211,10 @@ describe('Tooltips', () => {
         await asyncSetTimeout(250);
         await waitForTooltips(1);
         expect(getTooltips()[0].classList.contains('ag-cell-formula-tooltip')).toBe(true);
+        await new GridRows(api, `does not duplicate after formula errors toggle during edits final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" A:1
+            └── LEAF id:r2 row-number:"2" A:2 result:"#ERROR!"
+        `);
     });
 });

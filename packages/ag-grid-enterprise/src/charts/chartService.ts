@@ -1,4 +1,5 @@
 import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types';
+import { _focusInto, _initDetachedStyledRoot } from 'ag-stack';
 
 import type {
     BaseCreateChartParams,
@@ -26,7 +27,7 @@ import type {
     UpdateChartParams,
     VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _focusInto, _initDetachedStyledRoot, _warn } from 'ag-grid-community';
+import { BeanStub, _warn } from 'ag-grid-community';
 
 import { VERSION as GRID_VERSION } from '../version';
 import type { AgChartsExports } from './agChartsExports';

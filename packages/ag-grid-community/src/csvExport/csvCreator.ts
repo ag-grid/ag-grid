@@ -1,4 +1,5 @@
-import { _downloadFile } from '../agStack/utils/download';
+import { _downloadFile } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BaseCreator } from '../export/baseCreator';
 import { _addGridCommonParams } from '../gridOptionsUtils';

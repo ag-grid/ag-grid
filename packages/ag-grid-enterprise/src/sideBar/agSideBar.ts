@@ -1,3 +1,13 @@
+import {
+    RefPlaceholder,
+    _findNextFocusableElement,
+    _focusInto,
+    _getActiveDomElement,
+    _isVisible,
+    _removeFromParent,
+    _setAriaControlsAndLabel,
+} from 'ag-stack';
+
 import type {
     ComponentSelector,
     ElementParams,
@@ -13,16 +23,9 @@ import {
     Component,
     KeyCode,
     ManagedFocusFeature,
-    RefPlaceholder,
     _addFocusableContainerListener,
     _addGridCommonParams,
-    _findNextFocusableElement,
-    _focusInto,
     _focusNextGridCoreContainer,
-    _getActiveDomElement,
-    _isVisible,
-    _removeFromParent,
-    _setAriaControlsAndLabel,
     _skipFocusableContainerListenerForAgGrid,
     _warn,
 } from 'ag-grid-community';

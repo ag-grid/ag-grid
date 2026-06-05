@@ -1,5 +1,7 @@
+import { _last } from 'ag-stack';
+
 import type { GridBodyCtrl, IStickyRowFeature, RowCtrl, RowNode, VerticalSection } from 'ag-grid-community';
-import { BeanStub, _getRowHeightForNode, _isClientSideRowModel, _isGroupRowsSticky, _last } from 'ag-grid-community';
+import { BeanStub, _getRowHeightForNode, _isClientSideRowModel, _isGroupRowsSticky } from 'ag-grid-community';
 
 export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
     public stickyTopRowCtrls: RowCtrl[] = [];

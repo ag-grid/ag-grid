@@ -1,3 +1,5 @@
+import { RefPlaceholder, _setAriaRole, _setDisplayed, _setVisible } from 'ag-stack';
+
 import type {
     ElementParams,
     GroupCellRendererParams,
@@ -5,7 +7,7 @@ import type {
     IGroupCellRenderer,
     UserCompDetails,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _setAriaRole, _setDisplayed, _setVisible } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import { GroupCellRendererCtrl } from './groupCellRendererCtrl';
 

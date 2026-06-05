@@ -10,7 +10,7 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Date Filter - Equals', () => {
     const gridsManager = new TestGridsManager({
@@ -27,6 +27,17 @@ describe('Date Filter - Equals', () => {
             columnDefs: [{ field: 'date', filter: 'agDateColumnFilter' }],
             rowData: [{ date: '2024-01-15' }, { date: '2024-03-20' }, { date: '2024-01-15' }, { date: '2024-07-04' }],
         });
+        await new GridColumns(api, `filters string date column (YYYY-MM-DD) with equals setup`).checkColumns(`
+            CENTER
+            └── date "Date" width:200
+        `);
+        await new GridRows(api, `filters string date column (YYYY-MM-DD) with equals setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 date:"2024-01-15"
+            ├── LEAF id:1 date:"2024-03-20"
+            ├── LEAF id:2 date:"2024-01-15"
+            └── LEAF id:3 date:"2024-07-04"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(0);
@@ -54,6 +65,11 @@ describe('Date Filter - Equals', () => {
         expect(api.getDisplayedRowCount()).toBe(2);
         expect(api.getDisplayedRowAtIndex(0)?.data.date).toBe('2024-01-15');
         expect(api.getDisplayedRowAtIndex(1)?.data.date).toBe('2024-01-15');
+        await new GridRows(api, `filters string date column (YYYY-MM-DD) with equals final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 date:"2024-01-15"
+            └── LEAF id:2 date:"2024-01-15"
+        `);
     });
 
     test('filters Date object column (cellDataType: dateTime) with equals', async () => {
@@ -69,6 +85,18 @@ describe('Date Filter - Equals', () => {
                 { date: new Date(2024, 6, 4, 0, 0, 0) }, // Jul 4 midnight — no match
             ],
         });
+        await new GridColumns(api, `filters Date object column (cellDataType: dateTime) with equals setup`)
+            .checkColumns(`
+                CENTER
+                └── date "Date" width:200
+            `);
+        await new GridRows(api, `filters Date object column (cellDataType: dateTime) with equals setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 date:"2024-01-15T00:00:00"
+            ├── LEAF id:1 date:"2024-03-20T00:00:00"
+            ├── LEAF id:2 date:"2024-01-15T00:00:00"
+            └── LEAF id:3 date:"2024-07-04T00:00:00"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(0);
@@ -98,6 +126,13 @@ describe('Date Filter - Equals', () => {
         expect(api.getDisplayedRowCount()).toBe(2);
         expect(api.getDisplayedRowAtIndex(0)?.data.date).toEqual(new Date(2024, 0, 15, 0, 0, 0));
         expect(api.getDisplayedRowAtIndex(1)?.data.date).toEqual(new Date(2024, 0, 15, 0, 0, 0));
+        await new GridRows(api, `filters Date object column (cellDataType: dateTime) with equals final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 date:"2024-01-15T00:00:00"
+                └── LEAF id:2 date:"2024-01-15T00:00:00"
+            `
+        );
     });
 
     test('filters Date object column (cellDataType: dateTime) by exact non-midnight time with equals', async () => {
@@ -112,6 +147,23 @@ describe('Date Filter - Equals', () => {
                 { date: new Date(2024, 2, 20, 10, 30, 0) }, // Mar 20 10:30:00 — different date
             ],
         });
+        await new GridColumns(
+            api,
+            `filters Date object column (cellDataType: dateTime) by exact non-midnight time w setup`
+        ).checkColumns(`
+            CENTER
+            └── date "Date" width:200
+        `);
+        await new GridRows(
+            api,
+            `filters Date object column (cellDataType: dateTime) by exact non-midnight time w setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 date:"2024-01-15T10:30:00"
+            ├── LEAF id:1 date:"2024-01-15T14:00:00"
+            ├── LEAF id:2 date:"2024-01-15T10:30:00"
+            └── LEAF id:3 date:"2024-03-20T10:30:00"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(0);
@@ -140,5 +192,13 @@ describe('Date Filter - Equals', () => {
         expect(api.getDisplayedRowCount()).toBe(2);
         expect(api.getDisplayedRowAtIndex(0)?.data.date).toEqual(new Date(2024, 0, 15, 10, 30, 0));
         expect(api.getDisplayedRowAtIndex(1)?.data.date).toEqual(new Date(2024, 0, 15, 10, 30, 0));
+        await new GridRows(
+            api,
+            `filters Date object column (cellDataType: dateTime) by exact non-midnight time w final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 date:"2024-01-15T10:30:00"
+            └── LEAF id:2 date:"2024-01-15T10:30:00"
+        `);
     });
 });

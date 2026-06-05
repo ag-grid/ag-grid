@@ -1,3 +1,19 @@
+import {
+    _areEqual,
+    _clearElement,
+    _findFocusableElements,
+    _findNextFocusableElement,
+    _getActiveDomElement,
+    _isKeyboardMode,
+    _last,
+    _scrollHorizontallyToShow,
+    _setAriaHidden,
+    _setAriaLabel,
+    _setAriaPosInSet,
+    _setAriaRole,
+    _setAriaSetSize,
+} from 'ag-stack';
+
 import type {
     DragAndDropIcon,
     DragItem,
@@ -11,20 +27,8 @@ import {
     KeyCode,
     ManagedFocusFeature,
     PositionableFeature,
-    _areEqual,
-    _clearElement,
     _createElement,
     _createIconNoSpan,
-    _findFocusableElements,
-    _findNextFocusableElement,
-    _getActiveDomElement,
-    _isKeyboardMode,
-    _last,
-    _setAriaHidden,
-    _setAriaLabel,
-    _setAriaPosInSet,
-    _setAriaRole,
-    _setAriaSetSize,
 } from 'ag-grid-community';
 
 import type { PillDragComp } from './pillDragComp';
@@ -171,7 +175,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
         const target = e.target as HTMLElement | null;
         if (target) {
-            _scrollContainerHorizontallyToShowChild(root, target);
+            _scrollHorizontallyToShow(target);
         }
     }
 
@@ -202,7 +206,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
             if (el) {
                 el.focus();
-                _scrollContainerHorizontallyToShowChild(root, el);
+                _scrollHorizontallyToShow(el);
             }
         }
     }
@@ -681,19 +685,5 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             this.addElementClasses(icon, 'cell-separator');
             eParent.appendChild(icon);
         }
-    }
-}
-
-// Like Element.scrollIntoView, but only scrolls the container not the page
-function _scrollContainerHorizontallyToShowChild(container: HTMLElement, target: HTMLElement): void {
-    if (target === _findFocusableElements(container, null, true)[0]) {
-        container.scrollLeft = 0;
-    }
-    const c = container.getBoundingClientRect();
-    const t = target.getBoundingClientRect();
-    if (t.left < c.left) {
-        container.scrollLeft -= c.left - t.left;
-    } else if (t.right > c.right) {
-        container.scrollLeft += t.right - c.right;
     }
 }

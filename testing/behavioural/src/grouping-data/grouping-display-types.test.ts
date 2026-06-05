@@ -357,6 +357,60 @@ describe('ag-grid grouping display types and footers', () => {
             rowData,
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `groupTotalRow: bottom footers never become top sticky rows while scrolling setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── value "Value" width:200 aggFunc:sum
+            `);
+        await new GridRows(api, `groupTotalRow: bottom footers never become top sticky rows while scrolling setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+                │ ├── LEAF id:1 group:"A" value:1
+                │ ├── LEAF id:2 group:"A" value:2
+                │ ├── LEAF id:3 group:"A" value:3
+                │ ├── LEAF id:4 group:"A" value:4
+                │ ├── LEAF id:5 group:"A" value:5
+                │ ├── LEAF id:6 group:"A" value:6
+                │ ├── LEAF id:7 group:"A" value:7
+                │ ├── LEAF id:8 group:"A" value:8
+                │ ├── LEAF id:9 group:"A" value:9
+                │ ├── LEAF id:10 group:"A" value:10
+                │ ├── LEAF id:11 group:"A" value:11
+                │ ├── LEAF id:12 group:"A" value:12
+                │ ├── LEAF id:13 group:"A" value:13
+                │ ├── LEAF id:14 group:"A" value:14
+                │ ├── LEAF id:15 group:"A" value:15
+                │ ├── LEAF id:16 group:"A" value:16
+                │ ├── LEAF id:17 group:"A" value:17
+                │ ├── LEAF id:18 group:"A" value:18
+                │ ├── LEAF id:19 group:"A" value:19
+                │ ├── LEAF id:20 group:"A" value:20
+                │ └─ footer id:rowGroupFooter_row-group-group-A ag-Grid-AutoColumn:"Total A" value:210
+                └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+                · ├── LEAF id:21 group:"B" value:21
+                · ├── LEAF id:22 group:"B" value:22
+                · ├── LEAF id:23 group:"B" value:23
+                · ├── LEAF id:24 group:"B" value:24
+                · ├── LEAF id:25 group:"B" value:25
+                · ├── LEAF id:26 group:"B" value:26
+                · ├── LEAF id:27 group:"B" value:27
+                · ├── LEAF id:28 group:"B" value:28
+                · ├── LEAF id:29 group:"B" value:29
+                · ├── LEAF id:30 group:"B" value:30
+                · ├── LEAF id:31 group:"B" value:31
+                · ├── LEAF id:32 group:"B" value:32
+                · ├── LEAF id:33 group:"B" value:33
+                · ├── LEAF id:34 group:"B" value:34
+                · ├── LEAF id:35 group:"B" value:35
+                · ├── LEAF id:36 group:"B" value:36
+                · ├── LEAF id:37 group:"B" value:37
+                · ├── LEAF id:38 group:"B" value:38
+                · ├── LEAF id:39 group:"B" value:39
+                · ├── LEAF id:40 group:"B" value:40
+                · └─ footer id:rowGroupFooter_row-group-group-B ag-Grid-AutoColumn:"Total B" value:610
+            `);
 
         const root = TestGridsManager.getHTMLElement(api)!;
         const viewport = root.querySelector<HTMLElement>('.ag-grid-viewport')!;
@@ -375,6 +429,56 @@ describe('ag-grid grouping display types and footers', () => {
         }
 
         expect(sawBottomStickyFooter).toBe(true);
+        await new GridRows(
+            api,
+            `groupTotalRow: bottom footers never become top sticky rows while scrolling final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:1
+            │ ├── LEAF id:2 group:"A" value:2
+            │ ├── LEAF id:3 group:"A" value:3
+            │ ├── LEAF id:4 group:"A" value:4
+            │ ├── LEAF id:5 group:"A" value:5
+            │ ├── LEAF id:6 group:"A" value:6
+            │ ├── LEAF id:7 group:"A" value:7
+            │ ├── LEAF id:8 group:"A" value:8
+            │ ├── LEAF id:9 group:"A" value:9
+            │ ├── LEAF id:10 group:"A" value:10
+            │ ├── LEAF id:11 group:"A" value:11
+            │ ├── LEAF id:12 group:"A" value:12
+            │ ├── LEAF id:13 group:"A" value:13
+            │ ├── LEAF id:14 group:"A" value:14
+            │ ├── LEAF id:15 group:"A" value:15
+            │ ├── LEAF id:16 group:"A" value:16
+            │ ├── LEAF id:17 group:"A" value:17
+            │ ├── LEAF id:18 group:"A" value:18
+            │ ├── LEAF id:19 group:"A" value:19
+            │ ├── LEAF id:20 group:"A" value:20
+            │ └─ footer id:rowGroupFooter_row-group-group-A ag-Grid-AutoColumn:"Total A" value:210
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · ├── LEAF id:21 group:"B" value:21
+            · ├── LEAF id:22 group:"B" value:22
+            · ├── LEAF id:23 group:"B" value:23
+            · ├── LEAF id:24 group:"B" value:24
+            · ├── LEAF id:25 group:"B" value:25
+            · ├── LEAF id:26 group:"B" value:26
+            · ├── LEAF id:27 group:"B" value:27
+            · ├── LEAF id:28 group:"B" value:28
+            · ├── LEAF id:29 group:"B" value:29
+            · ├── LEAF id:30 group:"B" value:30
+            · ├── LEAF id:31 group:"B" value:31
+            · ├── LEAF id:32 group:"B" value:32
+            · ├── LEAF id:33 group:"B" value:33
+            · ├── LEAF id:34 group:"B" value:34
+            · ├── LEAF id:35 group:"B" value:35
+            · ├── LEAF id:36 group:"B" value:36
+            · ├── LEAF id:37 group:"B" value:37
+            · ├── LEAF id:38 group:"B" value:38
+            · ├── LEAF id:39 group:"B" value:39
+            · ├── LEAF id:40 group:"B" value:40
+            · └─ footer id:rowGroupFooter_row-group-group-B ag-Grid-AutoColumn:"Total B" value:610
+        `);
     });
 
     test('top sticky rows are inserted in reverse visual DOM order', async () => {
@@ -399,6 +503,80 @@ describe('ag-grid grouping display types and footers', () => {
             rowData,
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `top sticky rows are inserted in reverse visual DOM order setup`).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `top sticky rows are inserted in reverse visual DOM order setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-region-North ag-Grid-AutoColumn:"North"
+            │ ├─┬ LEAF_GROUP id:row-group-region-North-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ │ ├── LEAF id:1 region:"North" country:"Ireland" value:1
+            │ │ ├── LEAF id:3 region:"North" country:"Ireland" value:3
+            │ │ ├── LEAF id:5 region:"North" country:"Ireland" value:5
+            │ │ ├── LEAF id:7 region:"North" country:"Ireland" value:7
+            │ │ ├── LEAF id:9 region:"North" country:"Ireland" value:9
+            │ │ ├── LEAF id:11 region:"North" country:"Ireland" value:11
+            │ │ ├── LEAF id:13 region:"North" country:"Ireland" value:13
+            │ │ ├── LEAF id:15 region:"North" country:"Ireland" value:15
+            │ │ ├── LEAF id:17 region:"North" country:"Ireland" value:17
+            │ │ ├── LEAF id:19 region:"North" country:"Ireland" value:19
+            │ │ ├── LEAF id:21 region:"North" country:"Ireland" value:21
+            │ │ ├── LEAF id:23 region:"North" country:"Ireland" value:23
+            │ │ ├── LEAF id:25 region:"North" country:"Ireland" value:25
+            │ │ ├── LEAF id:27 region:"North" country:"Ireland" value:27
+            │ │ └── LEAF id:29 region:"North" country:"Ireland" value:29
+            │ └─┬ LEAF_GROUP id:row-group-region-North-country-UK ag-Grid-AutoColumn:"UK"
+            │ · ├── LEAF id:2 region:"North" country:"UK" value:2
+            │ · ├── LEAF id:4 region:"North" country:"UK" value:4
+            │ · ├── LEAF id:6 region:"North" country:"UK" value:6
+            │ · ├── LEAF id:8 region:"North" country:"UK" value:8
+            │ · ├── LEAF id:10 region:"North" country:"UK" value:10
+            │ · ├── LEAF id:12 region:"North" country:"UK" value:12
+            │ · ├── LEAF id:14 region:"North" country:"UK" value:14
+            │ · ├── LEAF id:16 region:"North" country:"UK" value:16
+            │ · ├── LEAF id:18 region:"North" country:"UK" value:18
+            │ · ├── LEAF id:20 region:"North" country:"UK" value:20
+            │ · ├── LEAF id:22 region:"North" country:"UK" value:22
+            │ · ├── LEAF id:24 region:"North" country:"UK" value:24
+            │ · ├── LEAF id:26 region:"North" country:"UK" value:26
+            │ · ├── LEAF id:28 region:"North" country:"UK" value:28
+            │ · └── LEAF id:30 region:"North" country:"UK" value:30
+            └─┬ filler id:row-group-region-South ag-Grid-AutoColumn:"South"
+            · ├─┬ LEAF_GROUP id:row-group-region-South-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            · │ ├── LEAF id:31 region:"South" country:"Ireland" value:31
+            · │ ├── LEAF id:33 region:"South" country:"Ireland" value:33
+            · │ ├── LEAF id:35 region:"South" country:"Ireland" value:35
+            · │ ├── LEAF id:37 region:"South" country:"Ireland" value:37
+            · │ ├── LEAF id:39 region:"South" country:"Ireland" value:39
+            · │ ├── LEAF id:41 region:"South" country:"Ireland" value:41
+            · │ ├── LEAF id:43 region:"South" country:"Ireland" value:43
+            · │ ├── LEAF id:45 region:"South" country:"Ireland" value:45
+            · │ ├── LEAF id:47 region:"South" country:"Ireland" value:47
+            · │ ├── LEAF id:49 region:"South" country:"Ireland" value:49
+            · │ ├── LEAF id:51 region:"South" country:"Ireland" value:51
+            · │ ├── LEAF id:53 region:"South" country:"Ireland" value:53
+            · │ ├── LEAF id:55 region:"South" country:"Ireland" value:55
+            · │ ├── LEAF id:57 region:"South" country:"Ireland" value:57
+            · │ └── LEAF id:59 region:"South" country:"Ireland" value:59
+            · └─┬ LEAF_GROUP id:row-group-region-South-country-UK ag-Grid-AutoColumn:"UK"
+            · · ├── LEAF id:32 region:"South" country:"UK" value:32
+            · · ├── LEAF id:34 region:"South" country:"UK" value:34
+            · · ├── LEAF id:36 region:"South" country:"UK" value:36
+            · · ├── LEAF id:38 region:"South" country:"UK" value:38
+            · · ├── LEAF id:40 region:"South" country:"UK" value:40
+            · · ├── LEAF id:42 region:"South" country:"UK" value:42
+            · · ├── LEAF id:44 region:"South" country:"UK" value:44
+            · · ├── LEAF id:46 region:"South" country:"UK" value:46
+            · · ├── LEAF id:48 region:"South" country:"UK" value:48
+            · · ├── LEAF id:50 region:"South" country:"UK" value:50
+            · · ├── LEAF id:52 region:"South" country:"UK" value:52
+            · · ├── LEAF id:54 region:"South" country:"UK" value:54
+            · · ├── LEAF id:56 region:"South" country:"UK" value:56
+            · · ├── LEAF id:58 region:"South" country:"UK" value:58
+            · · └── LEAF id:60 region:"South" country:"UK" value:60
+        `);
 
         const root = TestGridsManager.getHTMLElement(api)!;
         const viewport = root.querySelector<HTMLElement>('.ag-grid-viewport')!;
@@ -422,5 +600,74 @@ describe('ag-grid grouping display types and footers', () => {
         }
 
         expect(observedTwoStickyRows).toBe(true);
+        await new GridRows(api, `top sticky rows are inserted in reverse visual DOM order final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-region-North ag-Grid-AutoColumn:"North"
+            │ ├─┬ LEAF_GROUP id:row-group-region-North-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ │ ├── LEAF id:1 region:"North" country:"Ireland" value:1
+            │ │ ├── LEAF id:3 region:"North" country:"Ireland" value:3
+            │ │ ├── LEAF id:5 region:"North" country:"Ireland" value:5
+            │ │ ├── LEAF id:7 region:"North" country:"Ireland" value:7
+            │ │ ├── LEAF id:9 region:"North" country:"Ireland" value:9
+            │ │ ├── LEAF id:11 region:"North" country:"Ireland" value:11
+            │ │ ├── LEAF id:13 region:"North" country:"Ireland" value:13
+            │ │ ├── LEAF id:15 region:"North" country:"Ireland" value:15
+            │ │ ├── LEAF id:17 region:"North" country:"Ireland" value:17
+            │ │ ├── LEAF id:19 region:"North" country:"Ireland" value:19
+            │ │ ├── LEAF id:21 region:"North" country:"Ireland" value:21
+            │ │ ├── LEAF id:23 region:"North" country:"Ireland" value:23
+            │ │ ├── LEAF id:25 region:"North" country:"Ireland" value:25
+            │ │ ├── LEAF id:27 region:"North" country:"Ireland" value:27
+            │ │ └── LEAF id:29 region:"North" country:"Ireland" value:29
+            │ └─┬ LEAF_GROUP id:row-group-region-North-country-UK ag-Grid-AutoColumn:"UK"
+            │ · ├── LEAF id:2 region:"North" country:"UK" value:2
+            │ · ├── LEAF id:4 region:"North" country:"UK" value:4
+            │ · ├── LEAF id:6 region:"North" country:"UK" value:6
+            │ · ├── LEAF id:8 region:"North" country:"UK" value:8
+            │ · ├── LEAF id:10 region:"North" country:"UK" value:10
+            │ · ├── LEAF id:12 region:"North" country:"UK" value:12
+            │ · ├── LEAF id:14 region:"North" country:"UK" value:14
+            │ · ├── LEAF id:16 region:"North" country:"UK" value:16
+            │ · ├── LEAF id:18 region:"North" country:"UK" value:18
+            │ · ├── LEAF id:20 region:"North" country:"UK" value:20
+            │ · ├── LEAF id:22 region:"North" country:"UK" value:22
+            │ · ├── LEAF id:24 region:"North" country:"UK" value:24
+            │ · ├── LEAF id:26 region:"North" country:"UK" value:26
+            │ · ├── LEAF id:28 region:"North" country:"UK" value:28
+            │ · └── LEAF id:30 region:"North" country:"UK" value:30
+            └─┬ filler id:row-group-region-South ag-Grid-AutoColumn:"South"
+            · ├─┬ LEAF_GROUP id:row-group-region-South-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            · │ ├── LEAF id:31 region:"South" country:"Ireland" value:31
+            · │ ├── LEAF id:33 region:"South" country:"Ireland" value:33
+            · │ ├── LEAF id:35 region:"South" country:"Ireland" value:35
+            · │ ├── LEAF id:37 region:"South" country:"Ireland" value:37
+            · │ ├── LEAF id:39 region:"South" country:"Ireland" value:39
+            · │ ├── LEAF id:41 region:"South" country:"Ireland" value:41
+            · │ ├── LEAF id:43 region:"South" country:"Ireland" value:43
+            · │ ├── LEAF id:45 region:"South" country:"Ireland" value:45
+            · │ ├── LEAF id:47 region:"South" country:"Ireland" value:47
+            · │ ├── LEAF id:49 region:"South" country:"Ireland" value:49
+            · │ ├── LEAF id:51 region:"South" country:"Ireland" value:51
+            · │ ├── LEAF id:53 region:"South" country:"Ireland" value:53
+            · │ ├── LEAF id:55 region:"South" country:"Ireland" value:55
+            · │ ├── LEAF id:57 region:"South" country:"Ireland" value:57
+            · │ └── LEAF id:59 region:"South" country:"Ireland" value:59
+            · └─┬ LEAF_GROUP id:row-group-region-South-country-UK ag-Grid-AutoColumn:"UK"
+            · · ├── LEAF id:32 region:"South" country:"UK" value:32
+            · · ├── LEAF id:34 region:"South" country:"UK" value:34
+            · · ├── LEAF id:36 region:"South" country:"UK" value:36
+            · · ├── LEAF id:38 region:"South" country:"UK" value:38
+            · · ├── LEAF id:40 region:"South" country:"UK" value:40
+            · · ├── LEAF id:42 region:"South" country:"UK" value:42
+            · · ├── LEAF id:44 region:"South" country:"UK" value:44
+            · · ├── LEAF id:46 region:"South" country:"UK" value:46
+            · · ├── LEAF id:48 region:"South" country:"UK" value:48
+            · · ├── LEAF id:50 region:"South" country:"UK" value:50
+            · · ├── LEAF id:52 region:"South" country:"UK" value:52
+            · · ├── LEAF id:54 region:"South" country:"UK" value:54
+            · · ├── LEAF id:56 region:"South" country:"UK" value:56
+            · · ├── LEAF id:58 region:"South" country:"UK" value:58
+            · · └── LEAF id:60 region:"South" country:"UK" value:60
+        `);
     });
 });

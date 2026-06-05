@@ -1,7 +1,13 @@
-import { Direction } from '../agStack/constants/direction';
-import { _isIOSUserAgent } from '../agStack/utils/browser';
-import { _getInnerHeight, _getInnerWidth, _getScrollLeft, _setScrollLeft } from '../agStack/utils/dom';
-import { _debounce } from '../agStack/utils/function';
+import {
+    Direction,
+    _debounce,
+    _getInnerHeight,
+    _getInnerWidth,
+    _getScrollLeft,
+    _isIOSUserAgent,
+    _setScrollLeft,
+} from 'ag-stack';
+
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

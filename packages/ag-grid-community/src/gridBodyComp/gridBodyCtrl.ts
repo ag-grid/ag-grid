@@ -1,4 +1,5 @@
-import { _getInnerWidth, _getScrollLeft, _isElementChildOfClass, _setScrollLeft } from '../agStack/utils/dom';
+import { _getInnerWidth, _getScrollLeft, _isElementChildOfClass, _setScrollLeft } from 'ag-stack';
+
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -15,8 +16,6 @@ import { LayoutFeature } from '../styling/layoutFeature';
 import type { PopupService } from '../widgets/popupService';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
-
-export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 
 const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
@@ -37,7 +36,6 @@ export interface IGridBodyComp extends LayoutView {
     setRowCount(count: number): void;
     setRowAnimationCssOnScrollableArea(animate: boolean): void;
     setPreventRowAnimationCssOnContainers(prevent: boolean): void;
-    setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean): void;
     setGridScrollableAreaWidth(width: string): void;
     setGridRole(role: 'grid' | 'treegrid'): void;
 }
@@ -96,9 +94,6 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedPropertyListener('enableCellTextSelection', (props) =>
             this.setCellTextSelection(props.currentValue)
         );
-        this.syncAlwaysVerticalScrollClass();
-        this.addManagedPropertyListener('alwaysShowVerticalScroll', () => this.syncAlwaysVerticalScrollClass());
-
         this.createManagedBean(new LayoutFeature(this.comp));
         this.scrollFeature = this.createManagedBean(new GridBodyScrollFeature(eGridViewport));
         this.beans.rowDragSvc?.setupRowDrag(eScrollingRows, this);
@@ -162,13 +157,6 @@ export class GridBodyCtrl extends BeanStub {
     private toggleRowResizeStyles(params: RowResizeStartedEvent | RowResizeEndedEvent) {
         const isResizingRow = params.type === 'rowResizeStarted';
         this.comp.setPreventRowAnimationCssOnContainers(isResizingRow);
-    }
-
-    private syncAlwaysVerticalScrollClass(): void {
-        this.comp.setAlwaysVerticalScrollClass(
-            CSS_CLASS_FORCE_VERTICAL_SCROLL,
-            this.gos.get('alwaysShowVerticalScroll')
-        );
     }
 
     private onGridColumnsChanged(): void {
@@ -254,7 +242,7 @@ export class GridBodyCtrl extends BeanStub {
 
     private updateAnchorWidth(): void {
         const anchorWidth = this.getViewportWidthWithoutScrollbar();
-        this.eGridViewport.style.setProperty('--ag-fw-anchor-width', `${anchorWidth}px`);
+        this.eGridViewport.style.setProperty('--ag-internal-fw-anchor-width', `${anchorWidth}px`);
     }
 
     private setGridRole(): void {
@@ -337,8 +325,8 @@ export class GridBodyCtrl extends BeanStub {
         const leftOffset = isRtl ? scrollbarWidth : 0;
         const rightOffset = isRtl ? 0 : scrollbarWidth;
 
-        eGridBody.style.setProperty('--ag-pinned-left-sticky-offset', `${leftOffset}px`);
-        eGridBody.style.setProperty('--ag-pinned-right-sticky-offset', `${rightOffset}px`);
+        eGridBody.style.setProperty('--ag-internal-pinned-left-sticky-offset', `${leftOffset}px`);
+        eGridBody.style.setProperty('--ag-internal-pinned-right-sticky-offset', `${rightOffset}px`);
     }
 
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)

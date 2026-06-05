@@ -8,7 +8,14 @@ import type {
 import { RowDragModule, RowSelectionModule } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { RowDragDispatcher, TestGridsManager, ssrmExpandAndLoadAll, waitForNoLoadingRows } from '../../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    RowDragDispatcher,
+    TestGridsManager,
+    ssrmExpandAndLoadAll,
+    waitForNoLoadingRows,
+} from '../../test-utils';
 import { createFakeServer, createServerSideDatasource, getSmallTreeDataSet } from './ssrmSmallTreeDataSet';
 
 describe('ag-grid SSRM treeData managed drag and drop', () => {
@@ -55,9 +62,26 @@ describe('ag-grid SSRM treeData managed drag and drop', () => {
         };
 
         const api = gridsManager.createGrid('ssrm-managed-dnd', gridOptions);
+        await new GridColumns(api, `simple ssrm tree-data managed drag and drop (smoke) setup`).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── employeeName "Employee Name" width:200
+            ├── employeeId "Employee Id" width:200
+            └── jobTitle "Job Title" width:200
+        `);
+        await new GridRows(api, `simple ssrm tree-data managed drag and drop (smoke) setup`).check(`
+            ROOT id:<no-id>
+        `);
 
         // attach datasource after grid creation similar to other ssrm tests
         api.setGridOption('serverSideDatasource', datasource);
+        await new GridRows(
+            api,
+            `simple ssrm tree-data managed drag and drop (smoke) after setGridOption serverSideDatasource`
+        ).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
 
         // Expand and load all groups so rows are rendered in the DOM
         await ssrmExpandAndLoadAll(api);

@@ -1,4 +1,3 @@
-import { _STOP_PROPAGATION_CALLBACKS } from 'ag-grid-community';
 import type {
     AgComponentSelectorType,
     AgEventTypeParams,
@@ -9,6 +8,7 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
+import { _STOP_PROPAGATION_CALLBACKS } from 'ag-grid-community';
 
 import type { VirtualListParams } from '../agStack/agVirtualList';
 import { AgVirtualList } from '../agStack/agVirtualList';

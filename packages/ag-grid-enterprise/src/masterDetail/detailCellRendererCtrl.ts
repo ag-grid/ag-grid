@@ -1,3 +1,5 @@
+import { _focusInto, _missing } from 'ag-stack';
+
 import type {
     AgEventTypeParams,
     AgModuleName,
@@ -16,7 +18,7 @@ import type {
     RowSelectedEvent,
     SelectionChangedEvent,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _isSameRow, _warn } from 'ag-grid-community';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
     private params: IDetailCellRendererParams;

@@ -1,5 +1,6 @@
-import type { IComponent } from '../agStack/interfaces/iComponent';
-import { BaseTooltipStateManager } from '../agStack/tooltip/baseTooltipStateManager';
+import type { IComponent } from 'ag-stack';
+import { BaseTooltipStateManager } from 'ag-stack';
+
 import { _getTooltipCompDetails } from '../components/framework/userCompUtils';
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams } from '../events';

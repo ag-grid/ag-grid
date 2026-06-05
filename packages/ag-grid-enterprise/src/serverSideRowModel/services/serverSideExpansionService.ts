@@ -1,4 +1,5 @@
-import { RowNode, _exists, _getRowHeightForNode } from 'ag-grid-community';
+import { _exists } from 'ag-stack';
+
 import type {
     BeanCollection,
     GridApi,
@@ -8,6 +9,7 @@ import type {
     RowGroupExpansionState,
     RowGroupOpenedEvent,
 } from 'ag-grid-community';
+import { RowNode, _getRowHeightForNode } from 'ag-grid-community';
 
 import { BaseExpansionService } from '../../rowHierarchy/baseExpansionService';
 import type { ServerSideRowModel } from '../serverSideRowModel';

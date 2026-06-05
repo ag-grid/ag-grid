@@ -1,4 +1,5 @@
-import { _loadTemplate } from '../../agStack/utils/dom';
+import { _loadTemplate } from 'ag-stack';
+
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { ComponentType } from '../../interfaces/iUserCompDetails';

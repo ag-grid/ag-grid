@@ -56,7 +56,32 @@ jobs:
     #           id: rulesync-codexcli
     #           run: ./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh . codexcli
 
+    determine-threshold:
+        runs-on: ubuntu-latest
+        outputs:
+            severity: ${{ steps.set-threshold.outputs.severity }}
+        steps:
+            - name: Set severity threshold based on trigger and day of week
+              id: set-threshold
+              env:
+                  EVENT_NAME: ${{ github.event_name }}
+              run: |
+                  if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+                    echo "Manual run: using 'high' severity threshold (critical + high)"
+                    echo "severity=high" >> "$GITHUB_OUTPUT"
+                  else
+                    DAY=$(date -u +%u)
+                    if [ "$DAY" -ge 6 ]; then
+                      echo "Weekend run: using 'high' severity threshold (critical + high)"
+                      echo "severity=high" >> "$GITHUB_OUTPUT"
+                    else
+                      echo "Weekday run: using 'critical' severity threshold (critical only)"
+                      echo "severity=critical" >> "$GITHUB_OUTPUT"
+                    fi
+                  fi
+
     code-dependency-scan:
+        needs: [determine-threshold]
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -71,6 +96,7 @@ jobs:
               continue-on-error: true
               with:
                   snyk_token: ${{ secrets.SNYK_TOKEN }}
+                  severity_threshold: ${{ needs.determine-threshold.outputs.severity }}
                   remote_repo_url: ${{env.REPO_URL}}
                   output_dir: ${{ env.OUTPUT_DIR }}
                   report_file: ${{ env.REPORT_FILE }}
@@ -97,6 +123,7 @@ jobs:
                   exit 1
 
     sast-code-scan:
+        needs: [determine-threshold]
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -111,6 +138,7 @@ jobs:
               continue-on-error: true
               with:
                   snyk_token: ${{ secrets.SNYK_TOKEN }}
+                  severity_threshold: ${{ needs.determine-threshold.outputs.severity }}
                   output_dir: ${{ env.OUTPUT_DIR }}
                   report_file: ${{ env.REPORT_FILE }}
 
@@ -230,3 +258,4 @@ jobs:
           with:
             path: ${{ env.PREV_COMMIT_SHA_FILE }}
             key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
+

@@ -1,5 +1,5 @@
-import { _getClientSideRowModel } from 'ag-grid-community';
 import type { BeanCollection, RowNode } from 'ag-grid-community';
+import { _getClientSideRowModel } from 'ag-grid-community';
 
 export function getFormulaRowByIndex(beans: BeanCollection, rowIndex: number): RowNode | null {
     if (!Number.isFinite(rowIndex) || rowIndex < 0) {

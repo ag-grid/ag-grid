@@ -3,7 +3,7 @@ import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 import type { SetFilter } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface Country {
     name: string;
@@ -72,14 +72,56 @@ describe('Set Filter Complex Objects', () => {
 
     test('filter keys are created from keyCreator', async () => {
         const api = await createGridWithComplexObjects();
+        await new GridColumns(api, `filter keys are created from keyCreator setup`).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            └── country "Country" width:200
+        `);
+        await new GridRows(api, `filter keys are created from keyCreator setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+            ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            ├── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+            ├── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+            └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+        `);
         const setFilter = await getSetFilter(api);
 
         const keys = (await setFilter.handler.valueModel.allKeys) ?? [];
         expect([...keys].sort()).toEqual(['GB', 'JM', 'US', 'ZA']);
+        await new GridRows(api, `filter keys are created from keyCreator final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+            ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            ├── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+            ├── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+            └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+        `);
     });
 
     test('filtering with complex object values filters rows correctly', async () => {
         const api = await createGridWithComplexObjects();
+        await new GridColumns(api, `filtering with complex object values filters rows correctly setup`).checkColumns(
+            `
+                CENTER
+                ├── athlete "Athlete" width:200
+                └── country "Country" width:200
+            `
+        );
+        await new GridRows(api, `filtering with complex object values filters rows correctly setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+            ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            ├── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+            ├── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+            └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+        `);
 
         await api.setColumnFilterModel('country', { filterType: 'set', values: ['US'] });
         api.onFilterChanged();
@@ -93,10 +135,30 @@ describe('Set Filter Complex Objects', () => {
         });
 
         expect(displayedRows.sort()).toEqual(['Allyson Felix', 'Michael Phelps']);
+        await new GridRows(api, `filtering with complex object values filters rows correctly final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            └── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+        `);
     });
 
     test('filtering with multiple complex object keys', async () => {
         const api = await createGridWithComplexObjects();
+        await new GridColumns(api, `filtering with multiple complex object keys setup`).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            └── country "Country" width:200
+        `);
+        await new GridRows(api, `filtering with multiple complex object keys setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+            ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            ├── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+            ├── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+            └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+        `);
 
         await api.setColumnFilterModel('country', { filterType: 'set', values: ['US', 'JM'] });
         api.onFilterChanged();
@@ -115,10 +177,34 @@ describe('Set Filter Complex Objects', () => {
             'Shelly-Ann Fraser-Pryce',
             'Usain Bolt',
         ]);
+        await new GridRows(api, `filtering with multiple complex object keys final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            └── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+        `);
     });
 
     test('getModelAsString returns formatted values for complex objects', async () => {
         const api = await createGridWithComplexObjects();
+        await new GridColumns(api, `getModelAsString returns formatted values for complex objects setup`).checkColumns(
+            `
+                CENTER
+                ├── athlete "Athlete" width:200
+                └── country "Country" width:200
+            `
+        );
+        await new GridRows(api, `getModelAsString returns formatted values for complex objects setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+            ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            ├── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+            ├── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+            └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+        `);
         const setFilter = await getSetFilter(api);
 
         await api.setColumnFilterModel('country', { filterType: 'set', values: ['US', 'GB'] });
@@ -130,10 +216,33 @@ describe('Set Filter Complex Objects', () => {
 
         expect(modelAsString).toContain('United States');
         expect(modelAsString).toContain('Great Britain');
+        await new GridRows(api, `getModelAsString returns formatted values for complex objects final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            └── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+        `);
     });
 
     test('set filter list items display formatted values, not [object Object]', async () => {
         const api = await createGridWithComplexObjects();
+        await new GridColumns(api, `set filter list items display formatted values, not [object Object] setup`)
+            .checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                └── country "Country" width:200
+            `);
+        await new GridRows(api, `set filter list items display formatted values, not [object Object] setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+            ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            ├── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+            ├── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+            └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+        `);
         const setFilter = await getSetFilter(api);
 
         const allKeys = (await setFilter.handler.valueModel.allKeys) ?? [];
@@ -143,10 +252,37 @@ describe('Set Filter Complex Objects', () => {
             expect(value).toBeDefined();
             expect(typeof value).toBe('object');
         }
+        await new GridRows(api, `set filter list items display formatted values, not [object Object] final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+                ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+                ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+                ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+                ├── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+                ├── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+                └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+            `);
     });
 
     test('mini filter searches against formatted values for complex objects', async () => {
         const api = await createGridWithComplexObjects();
+        await new GridColumns(api, `mini filter searches against formatted values for complex objects setup`)
+            .checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                └── country "Country" width:200
+            `);
+        await new GridRows(api, `mini filter searches against formatted values for complex objects setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+            ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            ├── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+            ├── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+            └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+        `);
         const setFilter = await getSetFilter(api);
 
         // Open the filter to initialise the mini filter
@@ -158,6 +294,18 @@ describe('Set Filter Complex Objects', () => {
 
         const displayedKeys = (setFilter as any).displayValueModel.getDisplayedKeys();
         expect(displayedKeys).toEqual(['US']);
+        await new GridRows(api, `mini filter searches against formatted values for complex objects final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+                ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+                ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+                ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+                ├── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+                ├── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+                └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+            `
+        );
     });
 
     test('mini filter with no valueFormatter on filterParams falls back to column valueFormatter', async () => {
@@ -176,6 +324,26 @@ describe('Set Filter Complex Objects', () => {
             ],
             rowData: ROW_DATA,
         });
+        await new GridColumns(
+            api,
+            `mini filter with no valueFormatter on filterParams falls back to column valueFor setup`
+        ).checkColumns(`
+            CENTER
+            └── country "Country" width:200
+        `);
+        await new GridRows(
+            api,
+            `mini filter with no valueFormatter on filterParams falls back to column valueFor setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States"
+            ├── LEAF id:1 country:"Jamaica"
+            ├── LEAF id:2 country:"Great Britain"
+            ├── LEAF id:3 country:"United States"
+            ├── LEAF id:4 country:"Jamaica"
+            ├── LEAF id:5 country:"Great Britain"
+            └── LEAF id:6 country:"South Africa"
+        `);
 
         const setFilter = await getSetFilter(api);
 
@@ -187,6 +355,19 @@ describe('Set Filter Complex Objects', () => {
 
         const displayedKeys = (setFilter as any).displayValueModel.getDisplayedKeys();
         expect(displayedKeys).toEqual(['JM']);
+        await new GridRows(
+            api,
+            `mini filter with no valueFormatter on filterParams falls back to column valueFor final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States"
+            ├── LEAF id:1 country:"Jamaica"
+            ├── LEAF id:2 country:"Great Britain"
+            ├── LEAF id:3 country:"United States"
+            ├── LEAF id:4 country:"Jamaica"
+            ├── LEAF id:5 country:"Great Britain"
+            └── LEAF id:6 country:"South Africa"
+        `);
     });
 
     test('mini filter with cellDataType false does not pass colDef valueFormatter to filter', async () => {
@@ -208,6 +389,26 @@ describe('Set Filter Complex Objects', () => {
             ],
             rowData: ROW_DATA,
         });
+        await new GridColumns(
+            api,
+            `mini filter with cellDataType false does not pass colDef valueFormatter to filte setup`
+        ).checkColumns(`
+            CENTER
+            └── country "Country" width:200
+        `);
+        await new GridRows(
+            api,
+            `mini filter with cellDataType false does not pass colDef valueFormatter to filte setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States"
+            ├── LEAF id:1 country:"Jamaica"
+            ├── LEAF id:2 country:"Great Britain"
+            ├── LEAF id:3 country:"United States"
+            ├── LEAF id:4 country:"Jamaica"
+            ├── LEAF id:5 country:"Great Britain"
+            └── LEAF id:6 country:"South Africa"
+        `);
 
         const setFilter = await getSetFilter(api);
 
@@ -223,6 +424,19 @@ describe('Set Filter Complex Objects', () => {
         expect(displayedKeys).toEqual([]);
 
         vi.restoreAllMocks();
+        await new GridRows(
+            api,
+            `mini filter with cellDataType false does not pass colDef valueFormatter to filte final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States"
+            ├── LEAF id:1 country:"Jamaica"
+            ├── LEAF id:2 country:"Great Britain"
+            ├── LEAF id:3 country:"United States"
+            ├── LEAF id:4 country:"Jamaica"
+            ├── LEAF id:5 country:"Great Britain"
+            └── LEAF id:6 country:"South Africa"
+        `);
     });
 
     test('mini filter with explicit cellDataType object uses colDef valueFormatter in filter', async () => {
@@ -249,6 +463,26 @@ describe('Set Filter Complex Objects', () => {
             },
             rowData: ROW_DATA,
         });
+        await new GridColumns(
+            api,
+            `mini filter with explicit cellDataType object uses colDef valueFormatter in filt setup`
+        ).checkColumns(`
+            CENTER
+            └── country "Country" width:200
+        `);
+        await new GridRows(
+            api,
+            `mini filter with explicit cellDataType object uses colDef valueFormatter in filt setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States"
+            ├── LEAF id:1 country:"Jamaica"
+            ├── LEAF id:2 country:"Great Britain"
+            ├── LEAF id:3 country:"United States"
+            ├── LEAF id:4 country:"Jamaica"
+            ├── LEAF id:5 country:"Great Britain"
+            └── LEAF id:6 country:"South Africa"
+        `);
 
         const setFilter = await getSetFilter(api);
 
@@ -263,6 +497,19 @@ describe('Set Filter Complex Objects', () => {
         expect(displayedKeys).toEqual(['JM']);
 
         warnSpy.mockRestore();
+        await new GridRows(
+            api,
+            `mini filter with explicit cellDataType object uses colDef valueFormatter in filt final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States"
+            ├── LEAF id:1 country:"Jamaica"
+            ├── LEAF id:2 country:"Great Britain"
+            ├── LEAF id:3 country:"United States"
+            ├── LEAF id:4 country:"Jamaica"
+            ├── LEAF id:5 country:"Great Britain"
+            └── LEAF id:6 country:"South Africa"
+        `);
     });
 
     test('mini filter with inferred cellDataType object uses colDef valueFormatter in filter', async () => {
@@ -289,6 +536,26 @@ describe('Set Filter Complex Objects', () => {
             },
             rowData: ROW_DATA,
         });
+        await new GridColumns(
+            api,
+            `mini filter with inferred cellDataType object uses colDef valueFormatter in filt setup`
+        ).checkColumns(`
+            CENTER
+            └── country "Country" width:200
+        `);
+        await new GridRows(
+            api,
+            `mini filter with inferred cellDataType object uses colDef valueFormatter in filt setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States"
+            ├── LEAF id:1 country:"Jamaica"
+            ├── LEAF id:2 country:"Great Britain"
+            ├── LEAF id:3 country:"United States"
+            ├── LEAF id:4 country:"Jamaica"
+            ├── LEAF id:5 country:"Great Britain"
+            └── LEAF id:6 country:"South Africa"
+        `);
 
         const setFilter = await getSetFilter(api);
 
@@ -303,10 +570,38 @@ describe('Set Filter Complex Objects', () => {
         expect(displayedKeys).toEqual(['JM']);
 
         warnSpy.mockRestore();
+        await new GridRows(
+            api,
+            `mini filter with inferred cellDataType object uses colDef valueFormatter in filt final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States"
+            ├── LEAF id:1 country:"Jamaica"
+            ├── LEAF id:2 country:"Great Britain"
+            ├── LEAF id:3 country:"United States"
+            ├── LEAF id:4 country:"Jamaica"
+            ├── LEAF id:5 country:"Great Britain"
+            └── LEAF id:6 country:"South Africa"
+        `);
     });
 
     test('clearing filter restores all rows', async () => {
         const api = await createGridWithComplexObjects();
+        await new GridColumns(api, `clearing filter restores all rows setup`).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            └── country "Country" width:200
+        `);
+        await new GridRows(api, `clearing filter restores all rows setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+            ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            ├── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+            ├── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+            └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+        `);
 
         await api.setColumnFilterModel('country', { filterType: 'set', values: ['US'] });
         api.onFilterChanged();
@@ -323,10 +618,35 @@ describe('Set Filter Complex Objects', () => {
             }
         });
         expect(rowCount).toBe(ROW_DATA.length);
+        await new GridRows(api, `clearing filter restores all rows final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+            ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            ├── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+            ├── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+            └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+        `);
     });
 
     test('getFilterModel returns keys, not objects', async () => {
         const api = await createGridWithComplexObjects();
+        await new GridColumns(api, `getFilterModel returns keys, not objects setup`).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            └── country "Country" width:200
+        `);
+        await new GridRows(api, `getFilterModel returns keys, not objects setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:1 athlete:"Usain Bolt" country:"Jamaica"
+            ├── LEAF id:2 athlete:"Mo Farah" country:"Great Britain"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            ├── LEAF id:4 athlete:"Shelly-Ann Fraser-Pryce" country:"Jamaica"
+            ├── LEAF id:5 athlete:"Greg Rutherford" country:"Great Britain"
+            └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+        `);
 
         await api.setColumnFilterModel('country', { filterType: 'set', values: ['US', 'ZA'] });
         api.onFilterChanged();
@@ -337,6 +657,12 @@ describe('Set Filter Complex Objects', () => {
             filterType: 'set',
             values: ['US', 'ZA'],
         });
+        await new GridRows(api, `getFilterModel returns keys, not objects final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Michael Phelps" country:"United States"
+            ├── LEAF id:3 athlete:"Allyson Felix" country:"United States"
+            └── LEAF id:6 athlete:"Wayde van Niekerk" country:"South Africa"
+        `);
     });
 
     test('editable column with valueParser prevents cellDataType object inference so valueFormatter is not applied', async () => {
@@ -367,6 +693,26 @@ describe('Set Filter Complex Objects', () => {
             },
             rowData: ROW_DATA,
         });
+        await new GridColumns(
+            api,
+            `editable column with valueParser prevents cellDataType object inference so value setup`
+        ).checkColumns(`
+            CENTER
+            └── country "Country" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `editable column with valueParser prevents cellDataType object inference so value setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:{"name":"United States","code":"US"}
+            ├── LEAF id:1 country:{"name":"Jamaica","code":"JM"}
+            ├── LEAF id:2 country:{"name":"Great Britain","code":"GB"}
+            ├── LEAF id:3 country:{"name":"United States","code":"US"}
+            ├── LEAF id:4 country:{"name":"Jamaica","code":"JM"}
+            ├── LEAF id:5 country:{"name":"Great Britain","code":"GB"}
+            └── LEAF id:6 country:{"name":"South Africa","code":"ZA"}
+        `);
 
         const setFilter = await getSetFilter(api);
 
@@ -383,6 +729,19 @@ describe('Set Filter Complex Objects', () => {
         expect(displayedKeys).toEqual([]);
 
         vi.restoreAllMocks();
+        await new GridRows(
+            api,
+            `editable column with valueParser prevents cellDataType object inference so value final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:{"name":"United States","code":"US"}
+            ├── LEAF id:1 country:{"name":"Jamaica","code":"JM"}
+            ├── LEAF id:2 country:{"name":"Great Britain","code":"GB"}
+            ├── LEAF id:3 country:{"name":"United States","code":"US"}
+            ├── LEAF id:4 country:{"name":"Jamaica","code":"JM"}
+            ├── LEAF id:5 country:{"name":"Great Britain","code":"GB"}
+            └── LEAF id:6 country:{"name":"South Africa","code":"ZA"}
+        `);
     });
 
     test('editable column with explicit cellDataType object and valueParser still applies valueFormatter', async () => {
@@ -411,6 +770,26 @@ describe('Set Filter Complex Objects', () => {
             },
             rowData: ROW_DATA,
         });
+        await new GridColumns(
+            api,
+            `editable column with explicit cellDataType object and valueParser still applies  setup`
+        ).checkColumns(`
+            CENTER
+            └── country "Country" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `editable column with explicit cellDataType object and valueParser still applies  setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States"
+            ├── LEAF id:1 country:"Jamaica"
+            ├── LEAF id:2 country:"Great Britain"
+            ├── LEAF id:3 country:"United States"
+            ├── LEAF id:4 country:"Jamaica"
+            ├── LEAF id:5 country:"Great Britain"
+            └── LEAF id:6 country:"South Africa"
+        `);
 
         const setFilter = await getSetFilter(api);
 
@@ -426,6 +805,19 @@ describe('Set Filter Complex Objects', () => {
         expect(displayedKeys).toEqual(['JM']);
 
         vi.restoreAllMocks();
+        await new GridRows(
+            api,
+            `editable column with explicit cellDataType object and valueParser still applies  final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States"
+            ├── LEAF id:1 country:"Jamaica"
+            ├── LEAF id:2 country:"Great Britain"
+            ├── LEAF id:3 country:"United States"
+            ├── LEAF id:4 country:"Jamaica"
+            ├── LEAF id:5 country:"Great Britain"
+            └── LEAF id:6 country:"South Africa"
+        `);
     });
 
     test('editable column without valueParser on colDef infers cellDataType object and applies valueFormatter', async () => {
@@ -454,6 +846,26 @@ describe('Set Filter Complex Objects', () => {
             },
             rowData: ROW_DATA,
         });
+        await new GridColumns(
+            api,
+            `editable column without valueParser on colDef infers cellDataType object and app setup`
+        ).checkColumns(`
+            CENTER
+            └── country "Country" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `editable column without valueParser on colDef infers cellDataType object and app setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States"
+            ├── LEAF id:1 country:"Jamaica"
+            ├── LEAF id:2 country:"Great Britain"
+            ├── LEAF id:3 country:"United States"
+            ├── LEAF id:4 country:"Jamaica"
+            ├── LEAF id:5 country:"Great Britain"
+            └── LEAF id:6 country:"South Africa"
+        `);
 
         const setFilter = await getSetFilter(api);
 
@@ -468,6 +880,19 @@ describe('Set Filter Complex Objects', () => {
         expect(displayedKeys).toEqual(['JM']);
 
         vi.restoreAllMocks();
+        await new GridRows(
+            api,
+            `editable column without valueParser on colDef infers cellDataType object and app final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:"United States"
+            ├── LEAF id:1 country:"Jamaica"
+            ├── LEAF id:2 country:"Great Britain"
+            ├── LEAF id:3 country:"United States"
+            ├── LEAF id:4 country:"Jamaica"
+            ├── LEAF id:5 country:"Great Britain"
+            └── LEAF id:6 country:"South Africa"
+        `);
     });
 
     test('complex objects with no keyCreator or valueFormatter warns and does not show [object Object] in filter list', async () => {
@@ -483,6 +908,26 @@ describe('Set Filter Complex Objects', () => {
             ],
             rowData: ROW_DATA,
         });
+        await new GridColumns(
+            api,
+            `complex objects with no keyCreator or valueFormatter warns and does not show [ob setup`
+        ).checkColumns(`
+            CENTER
+            └── country "Country" width:200
+        `);
+        await new GridRows(
+            api,
+            `complex objects with no keyCreator or valueFormatter warns and does not show [ob setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:{"name":"United States","code":"US"}
+            ├── LEAF id:1 country:{"name":"Jamaica","code":"JM"}
+            ├── LEAF id:2 country:{"name":"Great Britain","code":"GB"}
+            ├── LEAF id:3 country:{"name":"United States","code":"US"}
+            ├── LEAF id:4 country:{"name":"Jamaica","code":"JM"}
+            ├── LEAF id:5 country:{"name":"Great Britain","code":"GB"}
+            └── LEAF id:6 country:{"name":"South Africa","code":"ZA"}
+        `);
 
         await asyncSetTimeout(0);
 
@@ -503,5 +948,18 @@ describe('Set Filter Complex Objects', () => {
         }
 
         warnSpy.mockRestore();
+        await new GridRows(
+            api,
+            `complex objects with no keyCreator or valueFormatter warns and does not show [ob final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 country:{"name":"United States","code":"US"}
+            ├── LEAF id:1 country:{"name":"Jamaica","code":"JM"}
+            ├── LEAF id:2 country:{"name":"Great Britain","code":"GB"}
+            ├── LEAF id:3 country:{"name":"United States","code":"US"}
+            ├── LEAF id:4 country:{"name":"Jamaica","code":"JM"}
+            ├── LEAF id:5 country:{"name":"Great Britain","code":"GB"}
+            └── LEAF id:6 country:{"name":"South Africa","code":"ZA"}
+        `);
     });
 });

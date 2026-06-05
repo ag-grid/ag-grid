@@ -10,9 +10,11 @@
       "outputs": [],
       "dependsOn": [
         "test:package:local-21",
+        "test:package:local-22",
         "test:package:local-latest",
         "test:package:production-20",
-        "test:package:production-21"
+        "test:package:production-21",
+        "test:package:production-22"
       ],
       "configurations": {
         "update": {}
@@ -44,6 +46,25 @@
       "configurations": {
         "update": {
           "command": "{projectRoot}/run.sh -p -u 21"
+        }
+      }
+    },
+    "test:package:local-22": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh 22",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -u 22"
+        }
+      }
+    },
+    "test:package:production-22": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -p 22",
+      "cache": false,
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -p -u 22"
         }
       }
     },

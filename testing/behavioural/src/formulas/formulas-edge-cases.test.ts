@@ -4,7 +4,14 @@ import type { FormulaDataSource, FormulaFunctionParams, GridOptions, Module, Row
 import { ClientSideRowModelModule, PinnedRowModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout, waitForEvent } from '../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    waitForEvent,
+} from '../test-utils';
 
 describe('ag-grid formulas edge cases', () => {
     const rowNumberRefreshBufferMs = 25;
@@ -402,6 +409,18 @@ describe('ag-grid formulas edge cases', () => {
                 { field: 'out', editable: true },
             ],
         });
+        await new GridColumns(api, `cell editor displays REF longhand formulas as A1 shorthand setup`).checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            ├── a "A" width:200 editable
+            ├── b "B" width:200 editable
+            └── out "Out" width:200 editable
+        `);
+        await new GridRows(api, `cell editor displays REF longhand formulas as A1 shorthand setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" a:10 b:20 out:30
+        `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         const editingStarted = waitForEvent('cellEditingStarted', api);
@@ -420,6 +439,10 @@ describe('ag-grid formulas edge cases', () => {
         const editingStopped = waitForEvent('cellEditingStopped', api);
         api.stopEditing(false);
         await editingStopped;
+        await new GridRows(api, `cell editor displays REF longhand formulas as A1 shorthand final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" a:10 b:20 out:30
+        `);
     });
 
     test('committing a shorthand formula via the editor normalises the stored value to REF longhand', async () => {
@@ -431,6 +454,24 @@ describe('ag-grid formulas edge cases', () => {
                 { field: 'out', editable: true },
             ],
         });
+        await new GridColumns(
+            api,
+            `committing a shorthand formula via the editor normalises the stored value to REF setup`
+        ).checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            ├── a "A" width:200 editable
+            ├── b "B" width:200 editable
+            └── out "Out" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `committing a shorthand formula via the editor normalises the stored value to REF setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" a:3 b:4 out:0
+        `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         const editingStarted = waitForEvent('cellEditingStarted', api);
@@ -456,6 +497,13 @@ describe('ag-grid formulas edge cases', () => {
 
         const rowNode = api.getRowNode('r1')!;
         expect(api.getCellValue({ rowNode, colKey: 'out', useFormatter: false })).toBe(12);
+        await new GridRows(
+            api,
+            `committing a shorthand formula via the editor normalises the stored value to REF final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" a:3 b:4 out:12
+        `);
     });
 
     test('committing invalid formula text preserves the raw input unchanged', async () => {
@@ -463,6 +511,17 @@ describe('ag-grid formulas edge cases', () => {
             rowData: [{ id: 'r1', out: '=1+1' }],
             columnDefs: [{ field: 'out', editable: true }],
         });
+        await new GridColumns(api, `committing invalid formula text preserves the raw input unchanged setup`)
+            .checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                └── out "Out" width:200 editable
+            `);
+        await new GridRows(api, `committing invalid formula text preserves the raw input unchanged setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" out:2
+        `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         const editingStarted = waitForEvent('cellEditingStarted', api);
@@ -478,6 +537,12 @@ describe('ag-grid formulas edge cases', () => {
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expect(api.getRowNode('r1')?.data?.out).toBe('=1+');
+        await new GridRows(api, `committing invalid formula text preserves the raw input unchanged final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" out:"#PARSE!"
+            `
+        );
     });
 
     test('cancelling a formula edit with stopEditing(true) leaves the cell untouched', async () => {
@@ -489,6 +554,20 @@ describe('ag-grid formulas edge cases', () => {
                 { field: 'out', editable: true },
             ],
         });
+        await new GridColumns(api, `cancelling a formula edit with stopEditing(true) leaves the cell untouched setup`)
+            .checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                ├── a "A" width:200 editable
+                ├── b "B" width:200 editable
+                └── out "Out" width:200 editable
+            `);
+        await new GridRows(api, `cancelling a formula edit with stopEditing(true) leaves the cell untouched setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" a:2 b:3 out:5
+            `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         const before = api.getRowNode('r1')?.data?.out;
@@ -508,6 +587,13 @@ describe('ag-grid formulas edge cases', () => {
         expect(api.getRowNode('r1')?.data?.out).toBe(before);
         const rowNode = api.getRowNode('r1')!;
         expect(api.getCellValue({ rowNode, colKey: 'out', useFormatter: false })).toBe(5);
+        await new GridRows(
+            api,
+            `cancelling a formula edit with stopEditing(true) leaves the cell untouched final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" a:2 b:3 out:5
+        `);
     });
 
     test('serializer output covers operand types, precedence and parens branches', async () => {
@@ -523,6 +609,23 @@ describe('ag-grid formulas edge cases', () => {
                 { field: 'x', editable: true },
             ],
         });
+        await new GridColumns(api, `serializer output covers operand types, precedence and parens branches setup`)
+            .checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                ├── a "A" width:200 editable
+                ├── b "B" width:200 editable
+                ├── c "C" width:200 editable
+                └── x "X" width:200 editable
+            `);
+        await new GridRows(api, `serializer output covers operand types, precedence and parens branches setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:r1 row-number:"1" a:1 b:2 c:3 x:null
+                └── LEAF id:r2 row-number:"2" a:10 b:20 c:30 x:null
+            `
+        );
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         const commitAndRead = async (input: string): Promise<string> => {
@@ -594,6 +697,12 @@ describe('ag-grid formulas edge cases', () => {
             }
         }
         expect(failures.join('\n')).toBe('');
+        await new GridRows(api, `serializer output covers operand types, precedence and parens branches final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:r1 row-number:"1" a:1 b:2 c:3 x:2
+                └── LEAF id:r2 row-number:"2" a:10 b:20 c:30 x:null
+            `);
     });
 
     test('normaliseFormula is idempotent across successive edit round-trips', async () => {
@@ -605,6 +714,19 @@ describe('ag-grid formulas edge cases', () => {
                 { field: 'out', editable: true },
             ],
         });
+        await new GridColumns(api, `normaliseFormula is idempotent across successive edit round-trips setup`)
+            .checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                ├── a "A" width:200 editable
+                ├── b "B" width:200 editable
+                └── out "Out" width:200 editable
+            `);
+        await new GridRows(api, `normaliseFormula is idempotent across successive edit round-trips setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" a:1 b:2 out:3
+        `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         const roundTrip = async (): Promise<string> => {
@@ -624,6 +746,12 @@ describe('ag-grid formulas edge cases', () => {
 
         expect(first).toBe(second);
         expect(second).toBe(third);
+        await new GridRows(api, `normaliseFormula is idempotent across successive edit round-trips final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" a:1 b:2 out:3
+            `
+        );
     });
 
     test('undoing a formula edit reverts to the previous formula and value', async () => {
@@ -637,6 +765,19 @@ describe('ag-grid formulas edge cases', () => {
             ],
             undoRedoCellEditing: true,
         });
+        await new GridColumns(api, `undoing a formula edit reverts to the previous formula and value setup`)
+            .checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                ├── a "A" width:200 editable
+                ├── b "B" width:200 editable
+                └── out "Out" width:200 editable
+            `);
+        await new GridRows(api, `undoing a formula edit reverts to the previous formula and value setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" a:5 b:10 out:15
+        `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         const rowNode = api.getRowNode('r1')!;
@@ -660,6 +801,12 @@ describe('ag-grid formulas edge cases', () => {
         api.redoCellEditing();
         await asyncSetTimeout(rowNumberRefreshBufferMs);
         expect(api.getCellValue({ rowNode, colKey: 'out', useFormatter: false })).toBe(50);
+        await new GridRows(api, `undoing a formula edit reverts to the previous formula and value final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" a:5 b:10 out:50
+            `
+        );
     });
 
     test('formulaDataSource provides formula strings out-of-band from row data', async () => {
@@ -961,11 +1108,23 @@ describe('ag-grid formulas edge cases', () => {
                 rowData: [{ id: 'r1', value: 1 }],
                 columnDefs: [{ field: 'value' }], // no allowFormula anywhere
             });
+            await new GridColumns(api, `returns false when the formula service is inactive setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `returns false when the formula service is inactive setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 value:1
+            `);
             await asyncSetTimeout(rowNumberRefreshBufferMs);
 
             const r1 = api.getRowNode('r1')!;
             expect(api.refreshFormulas(r1)).toBe(false);
             expect(api.refreshFormulas('r1')).toBe(false);
+            await new GridRows(api, `returns false when the formula service is inactive final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 value:1
+            `);
         });
 
         test('cellValueChanged walks the sibling chain — pinned cache does not diverge after a body edit', async () => {
@@ -1050,6 +1209,23 @@ describe('ag-grid formulas edge cases', () => {
                 isRowPinned: () => 'top',
                 formulaDataSource: { getFormula, setFormula: vi.fn() },
             });
+            await new GridColumns(
+                api,
+                `cellValueChanged does not double-refresh when valueService fires both body and p setup`
+            ).checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                ├── plain "Plain" width:200
+                └── out "Out" width:200
+            `);
+            await new GridRows(
+                api,
+                `cellValueChanged does not double-refresh when valueService fires both body and p setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" plain:2 out:4
+            `);
             await asyncSetTimeout(rowNumberRefreshBufferMs);
 
             // Clear the spy after initial render populates both caches.
@@ -1063,7 +1239,15 @@ describe('ag-grid formulas edge cases', () => {
             // then re-populated once each by the repaint. With the old always-bump handler the
             // second event would wipe + refresh again, doubling the getFormula calls.
             const outCalls = getFormula.mock.calls.filter(([p]) => p.column.getColId() === 'out');
-            expect(outCalls.length).toBe(2); // one for body, one for pinned sibling
+            expect(outCalls.length).toBe(2);
+            await new GridRows(
+                api,
+                `cellValueChanged does not double-refresh when valueService fires both body and p final state`
+            ).check(`
+                PINNED_TOP id:t-top-r1 row-number:"1" plain:10 out:12
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" plain:10 out:12
+            `); // one for body, one for pinned sibling
         });
 
         test('refreshFormulas propagates through the pinned-sibling chain from either side', async () => {

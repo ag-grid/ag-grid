@@ -1,5 +1,5 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../agStack/utils/dom';
+import { RefPlaceholder, _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from 'ag-stack';
+
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { BeanCollection } from '../context/context';
 import type { ElementParams } from '../utils/element';

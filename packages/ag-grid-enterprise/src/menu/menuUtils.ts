@@ -1,12 +1,7 @@
+import { _findTabbableParent, _getActiveDomElement, _isNothingFocused, _isVisible, _last } from 'ag-stack';
+
 import type { AgColumn, HeaderPosition, NamedBean, PopupEventParams } from 'ag-grid-community';
-import {
-    BeanStub,
-    _findTabbableParent,
-    _getActiveDomElement,
-    _isNothingFocused,
-    _isVisible,
-    _last,
-} from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import type { AgCloseMenuEvent } from '../agStack/agMenuItemComponent';
 

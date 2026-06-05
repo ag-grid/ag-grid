@@ -1,6 +1,5 @@
-import { KeyCode } from '../agStack/constants/keyCode';
-import { _isVisible } from '../agStack/utils/dom';
-import { _findNextFocusableElement, _findTabbableParent, _focusInto } from '../agStack/utils/focus';
+import { KeyCode, _findNextFocusableElement, _findTabbableParent, _focusInto, _isVisible } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

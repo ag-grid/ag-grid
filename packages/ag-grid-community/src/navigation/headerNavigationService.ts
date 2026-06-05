@@ -1,5 +1,5 @@
-import { _last } from '../agStack/utils/array';
-import { _getDocument } from '../agStack/utils/document';
+import { _getDocument, _last } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -183,7 +183,10 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         event: KeyboardEvent
     ): boolean {
         const { focusSvc, gos } = this.beans;
-        const focusedHeader = { ...focusSvc.focusedHeader! };
+        if (!focusSvc.focusedHeader) {
+            return false;
+        }
+        const focusedHeader = { ...focusSvc.focusedHeader };
         let nextHeader: HeaderPosition;
         let normalisedDirection: 'Before' | 'After';
 

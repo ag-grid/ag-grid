@@ -1,10 +1,16 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCount } from '../agStack/utils/aria';
+import {
+    RefPlaceholder,
+    _setAriaColCount,
+    _setAriaMultiSelectable,
+    _setAriaRole,
+    _setAriaRowCount,
+    _setDisplayed,
+} from 'ag-stack';
+
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { VerticalSection, VerticalSectionMap } from '../interfaces/iGridSection';
-import { _setDisplayed } from '../main-internal';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
@@ -12,7 +18,7 @@ import { Component } from '../widgets/component';
 import { FakeHScrollSelector } from './fakeHScrollComp';
 import { FakeVScrollSelector } from './fakeVScrollComp';
 import type { IGridBodyComp, PinnedSectionState } from './gridBodyCtrl';
-import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
+import { GridBodyCtrl } from './gridBodyCtrl';
 import type { RowContainerComp } from './rowContainer/rowContainerComp';
 import { RowContainerSelector } from './rowContainer/rowContainerComp';
 import type { RowContainerName } from './rowContainer/rowContainerCtrl';
@@ -158,8 +164,6 @@ export class GridBodyComp extends Component implements FocusableContainer {
                 this.toggleCss(LayoutCssClasses.NORMAL, params.normal);
                 this.toggleCss(LayoutCssClasses.PRINT, params.print);
             },
-            setAlwaysVerticalScrollClass: (cssClass, on) =>
-                this.eGridViewport.classList.toggle(CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
             setCellSelectableCss: (cssClass: string | null, selectable: boolean) => {
                 if (!cssClass) {
                     return;

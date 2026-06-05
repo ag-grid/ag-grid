@@ -1,4 +1,5 @@
-import type { IconValue } from '../../agStack/interfaces/iIcon';
+import type { IconValue } from 'ag-stack';
+
 import type { ValidationModuleName } from '../../interfaces/iModule';
 import type { IconName } from '../../utils/icon';
 

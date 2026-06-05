@@ -4,7 +4,7 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, FindModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 /**
  * Tests for find functionality using batch values (AG-16448).
@@ -34,9 +34,37 @@ describe('Find with Batch Values', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(
+            api,
+            `find automatically updates when batch pending value is created via UI editing setup`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(api, `find automatically updates when batch pending value is created via UI editing setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 a:"apple"
+                └── LEAF id:1 a:"banana"
+            `);
 
         // Set up find to search for 'orange' - initially 0 matches
         api.setGridOption('findSearchValue', 'orange');
+        await new GridColumns(
+            api,
+            `find automatically updates when batch pending value is created via UI editing after setGridOption findSearchValue`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `find automatically updates when batch pending value is created via UI editing after setGridOption findSearchValue`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 a:"apple"
+            └── LEAF id:1 a:"banana"
+        `);
         expect(api.findGetTotalMatches()).toBe(0);
 
         // Start batch edit
@@ -67,6 +95,21 @@ describe('Find with Batch Values', () => {
 
         // Now search for 'apple' - should no longer be found
         api.setGridOption('findSearchValue', 'apple');
+        await new GridColumns(
+            api,
+            `find automatically updates when batch pending value is created via UI editing after setGridOption findSearchValue #2`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `find automatically updates when batch pending value is created via UI editing after setGridOption findSearchValue #2`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:0 a:⏳"orange" "apple"
+            └── LEAF id:1 a:"banana"
+        `);
         await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
 
@@ -78,6 +121,21 @@ describe('Find with Batch Values', () => {
         expect(api.findGetTotalMatches()).toBe(1);
 
         api.setGridOption('findSearchValue', 'orange');
+        await new GridColumns(
+            api,
+            `find automatically updates when batch pending value is created via UI editing after setGridOption findSearchValue #3`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `find automatically updates when batch pending value is created via UI editing after setGridOption findSearchValue #3`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 a:"apple"
+            └── LEAF id:1 a:"banana"
+        `);
         await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
     });
@@ -91,9 +149,39 @@ describe('Find with Batch Values', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(
+            api,
+            `find automatically updates when batch pending value is created via setDataValue  setup`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `find automatically updates when batch pending value is created via setDataValue  setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 a:"apple"
+            └── LEAF id:1 a:"banana"
+        `);
 
         // Set up find to search for 'orange' - initially 0 matches
         api.setGridOption('findSearchValue', 'orange');
+        await new GridColumns(
+            api,
+            `find automatically updates when batch pending value is created via setDataValue  after setGridOption findSearchValue`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `find automatically updates when batch pending value is created via setDataValue  after setGridOption findSearchValue`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 a:"apple"
+            └── LEAF id:1 a:"banana"
+        `);
         expect(api.findGetTotalMatches()).toBe(0);
 
         // Start batch edit
@@ -118,6 +206,21 @@ describe('Find with Batch Values', () => {
 
         // Now search for 'apple' - should no longer be found
         api.setGridOption('findSearchValue', 'apple');
+        await new GridColumns(
+            api,
+            `find automatically updates when batch pending value is created via setDataValue  after setGridOption findSearchValue #2`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `find automatically updates when batch pending value is created via setDataValue  after setGridOption findSearchValue #2`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:0 a:⏳"orange" "apple"
+            └── LEAF id:1 a:"banana"
+        `);
         await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
 
@@ -129,6 +232,21 @@ describe('Find with Batch Values', () => {
         expect(api.findGetTotalMatches()).toBe(1);
 
         api.setGridOption('findSearchValue', 'orange');
+        await new GridColumns(
+            api,
+            `find automatically updates when batch pending value is created via setDataValue  after setGridOption findSearchValue #3`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `find automatically updates when batch pending value is created via setDataValue  after setGridOption findSearchValue #3`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 a:"apple"
+            └── LEAF id:1 a:"banana"
+        `);
         await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
     });
@@ -139,6 +257,14 @@ describe('Find with Batch Values', () => {
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `find automatically updates when batch edit is committed setup`).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(api, `find automatically updates when batch edit is committed setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial"
+        `);
 
         api.startBatchEdit();
 
@@ -154,10 +280,38 @@ describe('Find with Batch Values', () => {
 
         // During batch edit, find should use batch values - automatically updated
         api.setGridOption('findSearchValue', 'changed');
+        await new GridColumns(
+            api,
+            `find automatically updates when batch edit is committed after setGridOption findSearchValue`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `find automatically updates when batch edit is committed after setGridOption findSearchValue`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF ⏳ id:0 a:⏳"changed" "initial"
+        `);
         await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(1);
 
         api.setGridOption('findSearchValue', 'initial');
+        await new GridColumns(
+            api,
+            `find automatically updates when batch edit is committed after setGridOption findSearchValue #2`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `find automatically updates when batch edit is committed after setGridOption findSearchValue #2`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF ⏳ id:0 a:⏳"changed" "initial"
+        `);
         await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
 
@@ -167,10 +321,38 @@ describe('Find with Batch Values', () => {
 
         // After commit, find should still find 'changed' (now the committed value)
         api.setGridOption('findSearchValue', 'changed');
+        await new GridColumns(
+            api,
+            `find automatically updates when batch edit is committed after setGridOption findSearchValue #3`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `find automatically updates when batch edit is committed after setGridOption findSearchValue #3`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"changed"
+        `);
         await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(1);
 
         api.setGridOption('findSearchValue', 'initial');
+        await new GridColumns(
+            api,
+            `find automatically updates when batch edit is committed after setGridOption findSearchValue #4`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `find automatically updates when batch edit is committed after setGridOption findSearchValue #4`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"changed"
+        `);
         await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
     });
@@ -188,9 +370,27 @@ describe('Find with Batch Values', () => {
             rowData: [{ id: '0', a: 'test' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `find uses batch values with value formatters setup`).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(api, `find uses batch values with value formatters setup`).check(`
+            ROOT id:ROOT_NODE_ID a:"formatted:undefined"
+            └── LEAF id:0 a:"formatted:test"
+        `);
 
         // Initially, find the formatted value
         api.setGridOption('findSearchValue', 'formatted:test');
+        await new GridColumns(api, `find uses batch values with value formatters after setGridOption findSearchValue`)
+            .checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+        await new GridRows(api, `find uses batch values with value formatters after setGridOption findSearchValue`)
+            .check(`
+                ROOT id:ROOT_NODE_ID a:"formatted:undefined"
+                └── LEAF id:0 a:"formatted:test"
+            `);
         expect(api.findGetTotalMatches()).toBe(1);
 
         api.startBatchEdit();
@@ -207,11 +407,35 @@ describe('Find with Batch Values', () => {
 
         // Find should use the formatted batch value - automatically updated
         api.setGridOption('findSearchValue', 'formatted:newvalue');
+        await new GridColumns(
+            api,
+            `find uses batch values with value formatters after setGridOption findSearchValue #2`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(api, `find uses batch values with value formatters after setGridOption findSearchValue #2`)
+            .check(`
+                ROOT id:ROOT_NODE_ID a:"formatted:undefined"
+                └── LEAF ⏳ id:0 a:⏳"formatted:newvalue" "formatted:test"
+            `);
         await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(1);
 
         // The old formatted value should not be found
         api.setGridOption('findSearchValue', 'formatted:test');
+        await new GridColumns(
+            api,
+            `find uses batch values with value formatters after setGridOption findSearchValue #3`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(api, `find uses batch values with value formatters after setGridOption findSearchValue #3`)
+            .check(`
+                ROOT id:ROOT_NODE_ID a:"formatted:undefined"
+                └── LEAF ⏳ id:0 a:⏳"formatted:newvalue" "formatted:test"
+            `);
         await asyncSetTimeout(1);
         expect(api.findGetTotalMatches()).toBe(0);
 

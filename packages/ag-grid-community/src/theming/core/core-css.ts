@@ -1,4 +1,3 @@
-import type { SharedThemeParams } from '../../agStack/theming/shared/shared-css';
 import type {
     BorderStyleValue,
     BorderValue,
@@ -9,7 +8,8 @@ import type {
     LengthValue,
     ScaleValue,
     ShadowValue,
-} from '../../agStack/theming/themeTypes';
+    SharedThemeParams,
+} from 'ag-stack';
 import {
     accentColor,
     accentMix,
@@ -17,7 +17,7 @@ import {
     foregroundColor,
     foregroundHeaderBackgroundMix,
     foregroundMix,
-} from '../../agStack/theming/themeUtils';
+} from 'ag-stack';
 
 /**
  * All possible theme param types - the actual params available will be a subset of this type depending on the parts in use by the theme.
@@ -52,6 +52,11 @@ export interface CoreParams extends SharedThemeParams {
      * Color of the value pills in the Advanced Filter Builder
      */
     advancedFilterBuilderValuePillColor: ColorValue;
+
+    /**
+     * Minimum height of the grid's rows section when using auto-height or print layout. This prevents an empty grid from collapsing to nothing. Set to `0` to remove the minimum height.
+     */
+    autoHeightMinBodyHeight: LengthValue;
 
     /**
      * Padding at the start and end of grid cells and header cells.
@@ -414,6 +419,16 @@ export interface CoreParams extends SharedThemeParams {
     rangeHeaderHighlightColor: ColorValue;
 
     /**
+     * Background color for the calculated column currently being edited.
+     */
+    calculatedColumnHighlightColor: ColorValue;
+
+    /**
+     * Color for the parent of columns in the suggestion list.
+     */
+    calculatedColumnParentSuggestionColor: ColorValue;
+
+    /**
      * Color of the indicator line used to show where a row will be inserted when dragging to reorder rows
      */
     rowDragIndicatorColor: ColorValue;
@@ -454,7 +469,7 @@ export interface CoreParams extends SharedThemeParams {
     rowHeight: LengthValue;
 
     /**
-     * Height of the pagination panel at the bottom of the grid. Defaults to the higher of rowHeight or 22px.
+     * Height of the pagination panel at the bottom of the grid.
      */
     paginationPanelHeight: LengthValue;
 
@@ -874,6 +889,8 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     rangeSelectionChartCategoryBackgroundColor: '#00FF841A',
     rangeSelectionHighlightColor: accentMix(0.5),
     rangeHeaderHighlightColor: foregroundHeaderBackgroundMix(0.08),
+    calculatedColumnHighlightColor: accentMix(0.2),
+    calculatedColumnParentSuggestionColor: foregroundMix(0.75),
     rowNumbersSelectedColor: accentMix(0.5),
     rowHoverColor: accentMix(0.08),
     columnHoverColor: accentMix(0.05),
@@ -893,6 +910,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
         calc: 'spacing * 1.5',
     },
     cellHorizontalPaddingScale: 1,
+    autoHeightMinBodyHeight: 150,
     rowGroupIndentSize: {
         calc: 'cellWidgetSpacing + iconSize',
     },
@@ -904,8 +922,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     },
     rowVerticalPaddingScale: 1,
     paginationPanelHeight: {
-        ref: 'rowHeight',
-        calc: 'max(rowHeight, 22px)',
+        calc: 'pickerFieldHeight + spacing * 2',
     },
     dragHandleColor: foregroundMix(0.7),
     headerColumnResizeHandleHeight: '30%',

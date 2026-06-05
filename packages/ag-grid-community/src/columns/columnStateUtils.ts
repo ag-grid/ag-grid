@@ -1,5 +1,5 @@
-import { _areEqual, _removeFromArray } from '../agStack/utils/array';
-import { _exists, _missing } from '../agStack/utils/generic';
+import { _areEqual, _exists, _missing, _removeFromArray } from 'ag-stack';
+
 import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -11,13 +11,14 @@ import {
     _normalizeSortDirection,
     _normalizeSortType,
 } from '../entities/agColumn';
-import type { IAggFunc, SortDirection, SortType } from '../entities/colDef';
+import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType, ColumnsResetEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IEventService } from '../interfaces/iEventService';
+import type { SortDirection, SortType } from '../interfaces/iSort';
 import { _warn } from '../validation/logging';
 import {
     dispatchColumnChangedEvent,
@@ -79,6 +80,7 @@ export function _applyColumnState(
     const {
         colModel,
         rowGroupColsSvc,
+        calculatedColsSvc,
         pivotColsSvc,
         autoColSvc,
         selectionColSvc,
@@ -91,15 +93,26 @@ export function _applyColumnState(
         gos,
     } = beans;
 
-    const providedCols = colModel.getColDefCols() ?? [];
-    const selectionCols = selectionColSvc?.getColumns();
-    if (!providedCols.length && !selectionCols?.length) {
+    const state = params?.state;
+    if (state && !state.forEach) {
+        // state is not an array
+        _warn(32);
         return false;
     }
 
-    if (params?.state && !params.state.forEach) {
-        // state is not an array
-        _warn(32);
+    if (state) {
+        const colIds = new Array<string>(state.length);
+        for (let i = 0, len = state.length; i < len; ++i) {
+            colIds[i] = state[i].colId;
+        }
+        if (calculatedColsSvc?.restoreDynamicColumnDefs(colIds)) {
+            colModel.refreshDynamicColumns(source);
+        }
+    }
+
+    const providedCols = colModel.getColDefCols() ?? [];
+    const selectionCols = selectionColSvc?.getColumns();
+    if (!providedCols.length && !selectionCols?.length) {
         return false;
     }
 
@@ -264,7 +277,7 @@ export function _applyColumnState(
 
     colAnimation?.start();
 
-    let { unmatchedAndAutoStates, unmatchedCount } = applyStates(params.state || [], providedCols, (id) =>
+    let { unmatchedAndAutoStates, unmatchedCount } = applyStates(state || [], providedCols, (id) =>
         colModel.getColDefCol(id)
     );
 
@@ -285,7 +298,11 @@ export function _applyColumnState(
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
-    const { colModel, autoColSvc, selectionColSvc, eventSvc, gos } = beans;
+    const { colModel, autoColSvc, selectionColSvc, eventSvc, gos, calculatedColsSvc } = beans;
+
+    if (calculatedColsSvc?.resetDynamicColumnDefs(true)) {
+        colModel.refreshDynamicColumns(source);
+    }
 
     const primaryCols = colModel.getColDefCols();
     if (!primaryCols?.length) {

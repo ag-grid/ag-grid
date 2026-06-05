@@ -1,5 +1,7 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type { BeanCollection, GridSelect, GridToggleButton, IChartService } from 'ag-grid-community';
-import { AgSelect, AgToggleButton, Component, RefPlaceholder } from 'ag-grid-community';
+import { AgSelect, AgToggleButton, Component } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../agStack/agGroupComponent';
 import type { GroupComponent, GroupComponentParams } from '../../../../widgets/gridEnterpriseWidgetTypes';

@@ -1,5 +1,5 @@
-import { _removeFromArray } from '../agStack/utils/array';
-import { _debounce } from '../agStack/utils/function';
+import { _debounce, _removeFromArray } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { _getMaxConcurrentDatasourceRequests } from '../gridOptionsUtils';

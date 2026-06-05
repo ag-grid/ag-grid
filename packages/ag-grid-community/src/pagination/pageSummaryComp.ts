@@ -1,7 +1,6 @@
-import { KeyCode } from '../agStack/constants/keyCode';
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _setAriaDisabled } from '../agStack/utils/aria';
-import { AgInputNumberFieldSelector } from '../agStack/widgets/agInputNumberField';
+import { KeyCode, RefPlaceholder, _setAriaDisabled } from 'ag-stack';
+
+import { AgInputNumberFieldSelector } from '../agWidgets/agInputNumberField';
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _createIconNoSpan } from '../utils/icon';
@@ -244,9 +243,11 @@ export class PageSummaryComp extends Component {
         if (this.suppressPageInput) {
             lbCurrentStatic.textContent = lbCurrent;
         } else {
+            // Before data loads totalPages is 0; clamp to 1 to avoid an invalid input while data loads
+            const pageCount = Math.max(1, totalPages);
             lbCurrentInput.setMin(1);
-            lbCurrentInput.setMax(totalPages);
-            lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(totalPages) + 3)}ch`; // log10 returns number of digits (as an integer part + fraction) - 1
+            lbCurrentInput.setMax(pageCount);
+            lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(pageCount) + 3)}ch`; // log10 returns number of digits (as an integer part + fraction) - 1
             lbCurrentInput.setValue(lbCurrentValue.toString());
         }
 

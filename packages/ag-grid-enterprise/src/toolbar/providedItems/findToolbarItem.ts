@@ -1,5 +1,7 @@
+import { _debounce, _setDisabled } from 'ag-stack';
+
 import type { FindChangedEvent, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _createElement, _debounce, _error, _setDisabled } from 'ag-grid-community';
+import { Component, _createElement, _error } from 'ag-grid-community';
 
 import { createToolbarIconButton, createToolbarInput } from './toolbarItemUtils';
 

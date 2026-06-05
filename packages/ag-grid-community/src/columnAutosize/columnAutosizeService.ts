@@ -1,5 +1,5 @@
-import { _removeFromArray } from '../agStack/utils/array';
-import { _getInnerWidth } from '../agStack/utils/dom';
+import { _getInnerWidth, _removeFromArray } from 'ag-stack';
+
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import { _columnsMatch, getWidthOfColsInList, isRowNumberCol, isSpecialCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';

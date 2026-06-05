@@ -4,8 +4,8 @@ import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } fr
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import { buildAllValidNames } from '../validationTypes';
 import type { Deprecations, OptionsValidator, RequiredModule, Validations } from '../validationTypes';
+import { buildAllValidNames } from '../validationTypes';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -106,9 +106,11 @@ function toConstrainedNum(key: keyof GridOptions, value: any, min: number): stri
 }
 
 export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredModule<GridOptions>>> = {
+    autoGenerateColumnDefs: 'AutoGenerateColumns',
     alignedGrids: 'AlignedGrids',
     allowContextMenuWithControlKey: 'ContextMenu',
     autoSizeStrategy: 'ColumnAutoSize',
+    calculatedColumns: 'CalculatedColumns',
     cellSelection: 'CellSelection',
     columnHoverHighlight: 'ColumnHover',
     datasource: 'InfiniteRowModel',
@@ -173,6 +175,37 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         autoSizePadding: {
             validate({ autoSizePadding }) {
                 return toConstrainedNum('autoSizePadding', autoSizePadding, 0);
+            },
+        },
+        calculatedColumns: {
+            validate({ calculatedColumns }) {
+                if (calculatedColumns == null) {
+                    return null;
+                }
+                if (typeof calculatedColumns !== 'object' || Array.isArray(calculatedColumns)) {
+                    return 'calculatedColumns should be an object.';
+                }
+
+                const { dataTypes, expressionPickers, columnHighlighting } = calculatedColumns;
+                if (dataTypes != null) {
+                    if (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string')) {
+                        return 'calculatedColumns.dataTypes should be an array of strings.';
+                    }
+                }
+                if (expressionPickers != null) {
+                    const validExpressionPickers = new Set(['columns', 'functions', 'operators']);
+                    if (
+                        !Array.isArray(expressionPickers) ||
+                        expressionPickers.some((expressionPicker) => !validExpressionPickers.has(expressionPicker))
+                    ) {
+                        return "calculatedColumns.expressionPickers should contain only 'columns', 'functions' or 'operators'.";
+                    }
+                }
+                if (columnHighlighting != null && typeof columnHighlighting !== 'boolean') {
+                    return 'calculatedColumns.columnHighlighting should be a boolean.';
+                }
+
+                return null;
             },
         },
         cacheBlockSize: {

@@ -4,6 +4,15 @@ import type {
     AgChartThemeOverrides,
     AgChartThemePalette,
 } from 'ag-charts-types';
+import {
+    RefPlaceholder,
+    _clearElement,
+    _focusInto,
+    _getAbsoluteHeight,
+    _getAbsoluteWidth,
+    _removeFromParent,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type {
     BeanCollection,
@@ -18,21 +27,7 @@ import type {
     SortModelItem,
     UpdateChartParams,
 } from 'ag-grid-community';
-import {
-    Component,
-    RefPlaceholder,
-    _addGridCommonParams,
-    _clearElement,
-    _errMsg,
-    _focusGridInnerElement,
-    _focusInto,
-    _getAbsoluteHeight,
-    _getAbsoluteWidth,
-    _mergeDeep,
-    _removeFromParent,
-    _setDisplayed,
-    _warn,
-} from 'ag-grid-community';
+import { Component, _addGridCommonParams, _errMsg, _focusGridInnerElement, _mergeDeep, _warn } from 'ag-grid-community';
 
 import { Dialog } from '../../widgets/dialog';
 import type { AgChartsExports } from '../agChartsExports';
@@ -186,32 +181,34 @@ export class GridChartComp extends Component {
             this.crossFilterService.filter(event, reset);
         };
 
-        const chartType = this.chartController.getChartType();
+        const { gos, chartController, beans, params, eChart } = this;
+        const chartType = chartController.getChartType();
         const chartProxyParams: ChartProxyParams = {
-            agChartsExports: this.beans.agChartsExports as AgChartsExports,
+            agChartsExports: beans.agChartsExports as AgChartsExports,
             chartType,
             chartInstance,
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
-            customChartThemes: this.gos.get('customChartThemes'),
-            styleNonce: this.gos.get('styleNonce'),
+            customChartThemes: gos.get('customChartThemes'),
+            styleNonce: gos.get('styleNonce'),
             getGridOptionsChartThemeOverrides: () => this.getGridOptionsChartThemeOverrides(),
             getExtraPaddingDirections: () => this.chartMenu?.getExtraPaddingDirections() ?? [],
-            apiChartThemeOverrides: this.params.chartThemeOverrides,
-            crossFiltering: this.params.crossFiltering ?? false,
+            apiChartThemeOverrides: params.chartThemeOverrides,
+            crossFiltering: params.crossFiltering ?? false,
             crossFilterCallback,
-            parentElement: this.eChart,
-            grouping: this.chartController.isGrouping(),
-            chartThemeToRestore: this.params.chartThemeName,
-            chartOptionsToRestore: this.params.chartOptionsToRestore,
-            chartPaletteToRestore: this.params.chartPaletteToRestore,
-            seriesChartTypes: this.chartController.getSeriesChartTypes(),
+            parentElement: eChart,
+            grouping: chartController.isGrouping(),
+            chartThemeToRestore: params.chartThemeName,
+            chartOptionsToRestore: params.chartOptionsToRestore,
+            chartPaletteToRestore: params.chartPaletteToRestore,
+            seriesChartTypes: chartController.getSeriesChartTypes(),
             translate: (toTranslate: ChartTranslationKey) => this.chartTranslation.translate(toTranslate),
-            context: _addGridCommonParams(this.gos, {}),
+            context: _addGridCommonParams(gos, {}),
+            enableRtl: gos.get('enableRtl'),
         };
 
         // ensure 'restoring' options are not reused when switching chart types
-        this.params.chartOptionsToRestore = undefined;
+        params.chartOptionsToRestore = undefined;
 
         // set local state used to detect when chart changes
         this.chartType = chartType;
@@ -222,7 +219,7 @@ export class GridChartComp extends Component {
             return;
         }
 
-        this.chartController.setChartProxy(this.chartProxy);
+        chartController.setChartProxy(this.chartProxy);
         this.createMenuContext();
     }
 

@@ -1,3 +1,5 @@
+import { AgPopupComponent, RefPlaceholder, _exists, _fuzzySuggestions, _isVisible } from 'ag-stack';
+
 import type {
     AgComponentSelectorType,
     AgEventTypeParams,
@@ -8,11 +10,17 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { AgPopupComponent, KeyCode, RefPlaceholder, _exists, _fuzzySuggestions, _isVisible } from 'ag-grid-community';
+import { KeyCode } from 'ag-grid-community';
 
 import { VirtualList } from '../../widgets/virtualList';
+import agAutocompleteCSS from './agAutocomplete.css';
 import { AgAutocompleteRow } from './agAutocompleteRow';
 import type { AutocompleteEntry } from './autocompleteParams';
+
+type AutocompleteRowComponent = Component & {
+    updateSelected(selected: boolean): void;
+    setSearchString(searchString: string): void;
+};
 
 const AgAutocompleteListElement: ElementParams = {
     tag: 'div',
@@ -35,7 +43,7 @@ export class AgAutocompleteList extends AgPopupComponent<
 > {
     private readonly eList: HTMLElement = RefPlaceholder;
 
-    private virtualList: VirtualList<any>;
+    private virtualList: VirtualList<AutocompleteRowComponent, AutocompleteEntry>;
 
     private autocompleteEntries: AutocompleteEntry[];
 
@@ -54,10 +62,12 @@ export class AgAutocompleteList extends AgPopupComponent<
             autoSizeList?: boolean;
             maxVisibleItems?: number;
             onListHeightChanged?: () => void;
+            rowComponentCreator?: (value: AutocompleteEntry, selected: boolean) => AutocompleteRowComponent;
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
         }
     ) {
         super(AgAutocompleteListElement);
+        this.registerCSS(agAutocompleteCSS);
     }
 
     public postConstruct(): void {
@@ -193,7 +203,7 @@ export class AgAutocompleteList extends AgPopupComponent<
     }
 
     private updateSearchInList(): void {
-        this.virtualList.forEachRenderedRow((row: AgAutocompleteRow) => row.setSearchString(this.searchString));
+        this.virtualList.forEachRenderedRow((row) => row.setSearchString(this.searchString));
     }
 
     private updateListHeight(): void {
@@ -239,12 +249,18 @@ export class AgAutocompleteList extends AgPopupComponent<
         this.selectedValue = value;
         this.virtualList.ensureIndexVisible(index);
 
-        this.virtualList.forEachRenderedRow((cmp: AgAutocompleteRow, idx: number) => {
+        this.virtualList.forEachRenderedRow((cmp, idx) => {
             cmp.updateSelected(index === idx);
         });
     }
 
-    private createRowComponent(value: AutocompleteEntry): Component {
+    private createRowComponent(value: AutocompleteEntry): AutocompleteRowComponent {
+        const customRow = this.params.rowComponentCreator?.(value, value === this.selectedValue);
+        if (customRow) {
+            this.createBean(customRow);
+            return customRow;
+        }
+
         const row = new AgAutocompleteRow();
 
         this.createBean(row);

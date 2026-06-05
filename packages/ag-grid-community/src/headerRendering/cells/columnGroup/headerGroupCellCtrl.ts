@@ -1,5 +1,5 @@
-import { KeyCode } from '../../../agStack/constants/keyCode';
-import { _last } from '../../../agStack/utils/array';
+import { KeyCode, _getActiveDomElement, _last } from 'ag-stack';
+
 import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
 import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
@@ -11,7 +11,6 @@ import type { ColumnEventType } from '../../../events';
 import { _addGridCommonParams, _getEnableColumnSelection } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import { _getActiveDomElement } from '../../../main';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';

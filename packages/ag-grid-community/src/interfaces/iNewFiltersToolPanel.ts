@@ -1,4 +1,5 @@
-import type { IEventEmitter } from '../agStack/interfaces/iEventEmitter';
+import type { IEventEmitter } from 'ag-stack';
+
 import type { AgColumn } from '../entities/agColumn';
 import type { ValueGetterFunc } from '../entities/colDef';
 import type { NewFiltersToolPanelState } from './gridState';

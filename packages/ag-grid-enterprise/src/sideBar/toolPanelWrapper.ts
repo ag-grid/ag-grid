@@ -1,3 +1,5 @@
+import { RefPlaceholder, _createAgElement, _initDetachedStyledRoot } from 'ag-stack';
+
 import type {
     ComponentType,
     ElementParams,
@@ -7,7 +9,7 @@ import type {
     UserCompDetails,
     UserComponentFactory,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _createAgElement, _initDetachedStyledRoot } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import { AgHorizontalResize } from './agHorizontalResize';
 

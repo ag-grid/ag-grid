@@ -21,7 +21,7 @@ function getImports(bindings: ParsedBindings, currFile: string): string[] {
 
     const localeImport = findLocaleImport(bindingImports);
     if (localeImport) {
-        imports.push(`import { ${localeImport.imports[0]} } from '@ag-grid-community/locale';`);
+        imports.push(`import { ${localeImport.imports.join(', ')} } from '@ag-grid-community/locale';`);
     }
 
     const bImports = [...(bindingImports || [])];

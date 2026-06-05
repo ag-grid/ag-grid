@@ -1,3 +1,5 @@
+import { _exists, _setAriaLabel, _setAriaLevel } from 'ag-stack';
+
 import type {
     AbstractColDef,
     AgColumn,
@@ -11,15 +13,7 @@ import type {
     ColumnToolPanelState,
     ComponentSelector,
 } from 'ag-grid-community';
-import {
-    Component,
-    DragSourceType,
-    _exists,
-    _setAriaLabel,
-    _setAriaLevel,
-    _warn,
-    isProvidedColumnGroup,
-} from 'ag-grid-community';
+import { Component, DragSourceType, _warn, isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../agStack/iVirtualList';
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';

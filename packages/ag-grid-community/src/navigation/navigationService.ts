@@ -1,7 +1,5 @@
-import { KeyCode } from '../agStack/constants/keyCode';
-import { _last } from '../agStack/utils/array';
-import { _throttle } from '../agStack/utils/function';
-import { _exists, _missing } from '../agStack/utils/generic';
+import { KeyCode, _exists, _last, _missing, _throttle } from 'ag-stack';
+
 import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';

@@ -68,6 +68,7 @@ describe('Edit API', () => {
                 hasEdits: vi.fn(() => editMap && editMap.size > 0),
             } as unknown as EditModelService,
             colModel: {
+                colsById: { col1: column1, col2: column2 },
                 getCol: vi.fn((col: Column | string) => {
                     const colId = typeof col === 'string' ? col : col.getColId();
                     if (colId === 'col1') {

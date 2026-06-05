@@ -1,4 +1,5 @@
-import { _areEqual, _forAll } from '../agStack/utils/array';
+import { _areEqual, _forAll } from 'ag-stack';
+
 import { placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -92,7 +93,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     // called from SyncService, when grid has finished initialising
-    private createColsFromColDefs(source: ColumnEventType): void {
+    private createColsFromColDefs(source: ColumnEventType, preserveColumnOrder = false): void {
         const { beans } = this;
         const {
             valueCache,
@@ -140,7 +141,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.ready = true;
 
         this.changeEventsDispatching = true;
-        this.refreshCols(true, source);
+        this.refreshCols(!preserveColumnOrder, source);
         this.changeEventsDispatching = false;
 
         visibleCols.refresh(source);
@@ -187,6 +188,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const {
             autoColSvc,
             selectionColSvc,
+            calculatedColsSvc,
             rowNumbersSvc,
             quickFilter,
             pivotResultCols,
@@ -211,6 +213,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.restoreColOrder(cols);
         }
 
+        calculatedColsSvc?.orderDynamicColumns(cols.list);
         this.positionLockedCols(cols);
         showRowGroupCols?.refresh();
         quickFilter?.refreshCols();
@@ -600,7 +603,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return;
         }
 
-        this.createColsFromColDefs(source);
+        this.createColsFromColDefs(source, this.beans.calculatedColsSvc?.shouldPreserveColumnOrderOnRefresh());
     }
 
     public override destroy(): void {

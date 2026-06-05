@@ -1,7 +1,7 @@
+import { _getActiveDomElement } from 'ag-stack';
 import { memo, useContext, useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { _getActiveDomElement } from 'ag-grid-community';
 import type { CellCtrl, PopupEditorWrapper } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';

@@ -1,3 +1,5 @@
+import { RefPlaceholder, _focusInto } from 'ag-stack';
+
 import type {
     AgColumn,
     AgEvent,
@@ -19,11 +21,9 @@ import {
     BeanStub,
     Component,
     FilterComp,
-    RefPlaceholder,
     _createElement,
     _createIconNoSpan,
     _error,
-    _focusInto,
     _isColumnMenuAnchoringEnabled,
     _isLegacyMenuEnabled,
     _setColMenuVisible,

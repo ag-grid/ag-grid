@@ -1,3 +1,5 @@
+import { RefPlaceholder, _areEqual, _exists, _getActiveDomElement, _makeNull, _setDisplayed } from 'ag-stack';
+
 import type {
     AgColumn,
     AgPromise,
@@ -15,19 +17,7 @@ import type {
     SetFilterUi,
     TextFormatter,
 } from 'ag-grid-community';
-import {
-    AgInputTextFieldSelector,
-    KeyCode,
-    ProvidedFilter,
-    RefPlaceholder,
-    _areEqual,
-    _createIconNoSpan,
-    _exists,
-    _getActiveDomElement,
-    _makeNull,
-    _setDisplayed,
-    _warn,
-} from 'ag-grid-community';
+import { AgInputTextFieldSelector, KeyCode, ProvidedFilter, _createIconNoSpan, _warn } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../agStack/iVirtualList';
 import { VirtualList } from '../widgets/virtualList';

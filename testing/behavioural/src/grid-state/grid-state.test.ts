@@ -1,7 +1,7 @@
 import type { GridState, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../test-utils';
 
 describe('StateService - Grid State Management', () => {
     const gridsManager = new TestGridsManager({
@@ -33,6 +33,21 @@ describe('StateService - Grid State Management', () => {
                 columnDefs: defaultColumnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(api, `should capture column order state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture column order state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             expect(api.getState().columnOrder).toEqual({ orderedColIds: ['id', 'name', 'age', 'sport'] });
 
@@ -41,6 +56,21 @@ describe('StateService - Grid State Management', () => {
                 state: [{ colId: 'sport' }, { colId: 'id' }, { colId: 'name' }, { colId: 'age' }],
                 applyOrder: true,
             });
+            await new GridColumns(api, `should capture column order state after applyColumnState`).checkColumns(`
+                CENTER
+                ├── sport "Sport" width:200
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `should capture column order state after applyColumnState`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 sport:"Football" id:"1" name:"Alice" age:30
+                ├── LEAF id:1 sport:"Tennis" id:"2" name:"Bob" age:25
+                ├── LEAF id:2 sport:"Golf" id:"3" name:"Charlie" age:35
+                ├── LEAF id:3 sport:"Basketball" id:"4" name:"David" age:28
+                └── LEAF id:4 sport:"Swimming" id:"5" name:"Eve" age:32
+            `);
 
             expect(api.getState().columnOrder).toEqual({ orderedColIds: ['sport', 'id', 'name', 'age'] });
         });
@@ -50,11 +80,34 @@ describe('StateService - Grid State Management', () => {
                 columnDefs: defaultColumnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(api, `should capture column visibility state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture column visibility state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             expect(api.getState().columnVisibility).toBeUndefined();
 
             // Hide a column
             api.setColumnsVisible(['age'], false);
+            await new GridColumns(api, `should capture column visibility state after setColumnsVisible`).checkColumns(
+                `
+                    CENTER
+                    ├── id "Id" width:200
+                    ├── name "Name" width:200
+                    └── sport "Sport" width:200
+                `
+            );
 
             expect(api.getState().columnVisibility).toEqual({ hiddenColIds: ['age'] });
         });
@@ -64,9 +117,31 @@ describe('StateService - Grid State Management', () => {
                 columnDefs: defaultColumnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(api, `should capture column sizing state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture column sizing state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             // Set column width
             api.setColumnWidths([{ key: 'name', newWidth: 222 }]);
+            await new GridColumns(api, `should capture column sizing state after setColumnWidths`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:222
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
 
             expect(api.getState().columnSizing).toEqual({
                 columnSizingModel: [
@@ -99,6 +174,21 @@ describe('StateService - Grid State Management', () => {
                 columnDefs: defaultColumnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(api, `should capture column pinning state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture column pinning state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             // Pin column
             api.applyColumnState({
@@ -107,6 +197,23 @@ describe('StateService - Grid State Management', () => {
                     { colId: 'age', pinned: 'right' },
                 ],
             });
+            await new GridColumns(api, `should capture column pinning state after applyColumnState`).checkColumns(`
+                LEFT
+                └── id "Id" width:200
+                CENTER
+                ├── name "Name" width:200
+                └── sport "Sport" width:200
+                RIGHT
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `should capture column pinning state after applyColumnState`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             expect(api.getState().columnPinning).toEqual({ leftColIds: ['id'], rightColIds: ['age'] });
         });
@@ -116,6 +223,21 @@ describe('StateService - Grid State Management', () => {
                 columnDefs: defaultColumnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(api, `should capture sort state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture sort state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             // Apply sort
             api.applyColumnState({
@@ -124,6 +246,21 @@ describe('StateService - Grid State Management', () => {
                     { colId: 'age', sort: 'desc', sortType: 'absolute' },
                 ],
             });
+            await new GridColumns(api, `should capture sort state after applyColumnState`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200 sort:asc
+                ├── age "Age" width:200 sort:desc
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture sort state after applyColumnState`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             expect(api.getState().sort?.sortModel).toEqual([
                 {
@@ -150,10 +287,44 @@ describe('StateService - Grid State Management', () => {
                 columnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(api, `should capture row group state setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── id "Id" width:200
+                ├── sport "Sport" width:200 rowGroup
+                ├── name "Name" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `should capture row group state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Football ag-Grid-AutoColumn:"Football"
+                │ └── LEAF hidden id:0 id:"1" sport:"Football" name:"Alice" age:30
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Tennis ag-Grid-AutoColumn:"Tennis"
+                │ └── LEAF hidden id:1 id:"2" sport:"Tennis" name:"Bob" age:25
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Golf ag-Grid-AutoColumn:"Golf"
+                │ └── LEAF hidden id:2 id:"3" sport:"Golf" name:"Charlie" age:35
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Basketball ag-Grid-AutoColumn:"Basketball"
+                │ └── LEAF hidden id:3 id:"4" sport:"Basketball" name:"David" age:28
+                └─┬ LEAF_GROUP collapsed id:row-group-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                · └── LEAF hidden id:4 id:"5" sport:"Swimming" name:"Eve" age:32
+            `);
 
             expect(api.getState().rowGroup).toEqual({
                 groupColIds: ['sport'],
             });
+            await new GridRows(api, `should capture row group state final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Football ag-Grid-AutoColumn:"Football"
+                │ └── LEAF hidden id:0 id:"1" sport:"Football" name:"Alice" age:30
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Tennis ag-Grid-AutoColumn:"Tennis"
+                │ └── LEAF hidden id:1 id:"2" sport:"Tennis" name:"Bob" age:25
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Golf ag-Grid-AutoColumn:"Golf"
+                │ └── LEAF hidden id:2 id:"3" sport:"Golf" name:"Charlie" age:35
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Basketball ag-Grid-AutoColumn:"Basketball"
+                │ └── LEAF hidden id:3 id:"4" sport:"Basketball" name:"David" age:28
+                └─┬ LEAF_GROUP collapsed id:row-group-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                · └── LEAF hidden id:4 id:"5" sport:"Swimming" name:"Eve" age:32
+            `);
         });
 
         test('should capture aggregation state', async () => {
@@ -166,6 +337,26 @@ describe('StateService - Grid State Management', () => {
                 columnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(api, `should capture aggregation state setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── id "Id" width:200
+                ├── sport "Sport" width:200 rowGroup
+                └── age "Age" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `should capture aggregation state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Football ag-Grid-AutoColumn:"Football" age:30
+                │ └── LEAF hidden id:0 id:"1" sport:"Football" age:30
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Tennis ag-Grid-AutoColumn:"Tennis" age:25
+                │ └── LEAF hidden id:1 id:"2" sport:"Tennis" age:25
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Golf ag-Grid-AutoColumn:"Golf" age:35
+                │ └── LEAF hidden id:2 id:"3" sport:"Golf" age:35
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Basketball ag-Grid-AutoColumn:"Basketball" age:28
+                │ └── LEAF hidden id:3 id:"4" sport:"Basketball" age:28
+                └─┬ LEAF_GROUP collapsed id:row-group-sport-Swimming ag-Grid-AutoColumn:"Swimming" age:32
+                · └── LEAF hidden id:4 id:"5" sport:"Swimming" age:32
+            `);
 
             expect(api.getState().aggregation).toEqual({
                 aggregationModel: [
@@ -175,6 +366,19 @@ describe('StateService - Grid State Management', () => {
                     },
                 ],
             });
+            await new GridRows(api, `should capture aggregation state final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Football ag-Grid-AutoColumn:"Football" age:30
+                │ └── LEAF hidden id:0 id:"1" sport:"Football" age:30
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Tennis ag-Grid-AutoColumn:"Tennis" age:25
+                │ └── LEAF hidden id:1 id:"2" sport:"Tennis" age:25
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Golf ag-Grid-AutoColumn:"Golf" age:35
+                │ └── LEAF hidden id:2 id:"3" sport:"Golf" age:35
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Basketball ag-Grid-AutoColumn:"Basketball" age:28
+                │ └── LEAF hidden id:3 id:"4" sport:"Basketball" age:28
+                └─┬ LEAF_GROUP collapsed id:row-group-sport-Swimming ag-Grid-AutoColumn:"Swimming" age:32
+                · └── LEAF hidden id:4 id:"5" sport:"Swimming" age:32
+            `);
         });
 
         test('should capture pivot state', async () => {
@@ -188,6 +392,21 @@ describe('StateService - Grid State Management', () => {
                 columnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(api, `should capture pivot state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── sport "Sport" width:200
+                ├── name "Name" width:200
+                └── age "Age" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `should capture pivot state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" sport:"Football" name:"Alice" age:30
+                ├── LEAF id:1 id:"2" sport:"Tennis" name:"Bob" age:25
+                ├── LEAF id:2 id:"3" sport:"Golf" name:"Charlie" age:35
+                ├── LEAF id:3 id:"4" sport:"Basketball" name:"David" age:28
+                └── LEAF id:4 id:"5" sport:"Swimming" name:"Eve" age:32
+            `);
 
             // Apply pivot state via setState
             api.setState({
@@ -201,6 +420,9 @@ describe('StateService - Grid State Management', () => {
                 pivotColIds: ['sport'],
                 pivotMode: true,
             });
+            await new GridRows(api, `should capture pivot state final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
 
         test('should capture column group state', async () => {
@@ -224,11 +446,41 @@ describe('StateService - Grid State Management', () => {
                 columnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(api, `should capture column group state setup`).checkColumns(`
+                CENTER
+                ├─┬ "Name & Country" GROUP
+                │ ├── athlete "Athlete" width:200
+                │ └── country "Country" width:200
+                └─┬ "Sports Results" GROUP closed
+                  ├── total "Total" width:200 columnGroupShow:closed
+                  ├── gold "Gold" width:200 columnGroupShow:open hidden
+                  ├── silver "Silver" width:200 columnGroupShow:open hidden
+                  └── bronze "Bronze" width:200 columnGroupShow:open hidden
+            `);
+            await new GridRows(api, `should capture column group state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0
+                ├── LEAF id:1
+                ├── LEAF id:2
+                ├── LEAF id:3
+                └── LEAF id:4
+            `);
 
             expect(api.getState().columnGroup).toEqual(undefined);
 
             // Open a group
             api.setColumnGroupOpened('sportsGroup', true);
+            await new GridColumns(api, `should capture column group state after setColumnGroupOpened`).checkColumns(`
+                CENTER
+                ├─┬ "Name & Country" GROUP
+                │ ├── athlete "Athlete" width:200
+                │ └── country "Country" width:200
+                └─┬ "Sports Results" GROUP open
+                  ├── total "Total" width:200 columnGroupShow:closed hidden
+                  ├── gold "Gold" width:200 columnGroupShow:open
+                  ├── silver "Silver" width:200 columnGroupShow:open
+                  └── bronze "Bronze" width:200 columnGroupShow:open
+            `);
 
             expect(api.getState().columnGroup).toEqual({
                 openColumnGroupIds: ['sportsGroup'],
@@ -236,6 +488,19 @@ describe('StateService - Grid State Management', () => {
 
             // Collapse a group
             api.setColumnGroupOpened('sportsGroup', false);
+            await new GridColumns(api, `should capture column group state after setColumnGroupOpened #2`).checkColumns(
+                `
+                    CENTER
+                    ├─┬ "Name & Country" GROUP
+                    │ ├── athlete "Athlete" width:200
+                    │ └── country "Country" width:200
+                    └─┬ "Sports Results" GROUP closed
+                      ├── total "Total" width:200 columnGroupShow:closed
+                      ├── gold "Gold" width:200 columnGroupShow:open hidden
+                      ├── silver "Silver" width:200 columnGroupShow:open hidden
+                      └── bronze "Bronze" width:200 columnGroupShow:open hidden
+                `
+            );
             expect(api.getState().columnGroup).toEqual(undefined);
         });
     });
@@ -248,6 +513,22 @@ describe('StateService - Grid State Management', () => {
                 rowData: defaultRowData,
                 rowSelection: { mode: 'multiRow' },
             });
+            await new GridColumns(api, `should capture row selection state setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture row selection state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             // Apply row selection via setState
             api.setState({
@@ -255,6 +536,14 @@ describe('StateService - Grid State Management', () => {
             });
 
             expect(api.getState().rowSelection).toEqual(['0', '2']);
+            await new GridRows(api, `should capture row selection state final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF selected id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF selected id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
         });
 
         test('CSRM: getState captures rowGroupExpansion, setState restores it', async () => {
@@ -269,6 +558,28 @@ describe('StateService - Grid State Management', () => {
                 rowData: defaultRowData,
                 getRowId: ({ data }) => data.id,
             });
+            await new GridColumns(api, `CSRM: getState captures rowGroupExpansion, setState restores it setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── id "Id" width:200
+                    ├── sport "Sport" width:200 rowGroup
+                    ├── name "Name" width:200
+                    └── age "Age" width:200
+                `);
+            await new GridRows(api, `CSRM: getState captures rowGroupExpansion, setState restores it setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Football ag-Grid-AutoColumn:"Football"
+                │ └── LEAF hidden id:1 id:"1" sport:"Football" name:"Alice" age:30
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Tennis ag-Grid-AutoColumn:"Tennis"
+                │ └── LEAF hidden id:2 id:"2" sport:"Tennis" name:"Bob" age:25
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Golf ag-Grid-AutoColumn:"Golf"
+                │ └── LEAF hidden id:3 id:"3" sport:"Golf" name:"Charlie" age:35
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Basketball ag-Grid-AutoColumn:"Basketball"
+                │ └── LEAF hidden id:4 id:"4" sport:"Basketball" name:"David" age:28
+                └─┬ LEAF_GROUP collapsed id:row-group-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                · └── LEAF hidden id:5 id:"5" sport:"Swimming" name:"Eve" age:32
+            `);
 
             // Initially all groups collapsed
             expect(api.getState().rowGroupExpansion).toEqual({
@@ -278,6 +589,20 @@ describe('StateService - Grid State Management', () => {
             expect(api.getState().ssrmRowGroupExpansion).toBeUndefined();
 
             api.expandAll();
+            await new GridRows(api, `CSRM: getState captures rowGroupExpansion, setState restores it after expandAll`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├─┬ LEAF_GROUP id:row-group-sport-Football ag-Grid-AutoColumn:"Football"
+                    │ └── LEAF id:1 id:"1" sport:"Football" name:"Alice" age:30
+                    ├─┬ LEAF_GROUP id:row-group-sport-Tennis ag-Grid-AutoColumn:"Tennis"
+                    │ └── LEAF id:2 id:"2" sport:"Tennis" name:"Bob" age:25
+                    ├─┬ LEAF_GROUP id:row-group-sport-Golf ag-Grid-AutoColumn:"Golf"
+                    │ └── LEAF id:3 id:"3" sport:"Golf" name:"Charlie" age:35
+                    ├─┬ LEAF_GROUP id:row-group-sport-Basketball ag-Grid-AutoColumn:"Basketball"
+                    │ └── LEAF id:4 id:"4" sport:"Basketball" name:"David" age:28
+                    └─┬ LEAF_GROUP id:row-group-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    · └── LEAF id:5 id:"5" sport:"Swimming" name:"Eve" age:32
+                `);
 
             const savedState = api.getState();
             expect(savedState.rowGroupExpansion).toEqual({
@@ -327,6 +652,16 @@ describe('StateService - Grid State Management', () => {
                 serverSideDatasource: datasource,
                 getRowId: ({ data }) => data.id,
             });
+            await new GridColumns(api, `SSRM: getState captures rowGroupExpansion, setState restores it setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    └── medals "Medals" width:200
+                `);
+            await new GridRows(api, `SSRM: getState captures rowGroupExpansion, setState restores it setup`).check(`
+                ROOT id:<no-id>
+                └── LEAF_GROUP collapsed id:rowIndex:0
+            `);
 
             await waitForNoLoadingRows(api);
 
@@ -336,6 +671,15 @@ describe('StateService - Grid State Management', () => {
 
             // Expand Ireland
             api.setRowNodeExpanded(api.getRowNode('ie')!, true);
+            await new GridRows(
+                api,
+                `SSRM: getState captures rowGroupExpansion, setState restores it after setRowNodeExpanded`
+            ).check(`
+                ROOT id:<no-id>
+                ├─┬ GROUP-leafGroup id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                │ └── filler id:rowIndex:1
+                └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
+            `);
             await waitForNoLoadingRows(api);
 
             const savedState = api.getState();
@@ -347,6 +691,14 @@ describe('StateService - Grid State Management', () => {
 
             // Collapse Ireland
             api.setRowNodeExpanded(api.getRowNode('ie')!, false);
+            await new GridRows(
+                api,
+                `SSRM: getState captures rowGroupExpansion, setState restores it after setRowNodeExpanded #2`
+            ).check(`
+                ROOT id:<no-id>
+                ├── GROUP-leafGroup collapsed id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
+            `);
             expect(api.getRowNode('ie')!.expanded).toBe(false);
 
             // Restore the saved state
@@ -384,14 +736,48 @@ describe('StateService - Grid State Management', () => {
             };
 
             const api = gridsManager.createGrid('ssrmBulkSource', gridOpts);
+            await new GridColumns(
+                api,
+                `SSRM expandAll strategy: getState captures RowGroupBulkExpansionState, setState  setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── medals "Medals" width:200
+            `);
+            await new GridRows(
+                api,
+                `SSRM expandAll strategy: getState captures RowGroupBulkExpansionState, setState  setup`
+            ).check(`
+                ROOT id:<no-id>
+                └── LEAF_GROUP collapsed id:rowIndex:0
+            `);
             await waitForNoLoadingRows(api);
 
             // Expand all — switches to ExpandAllStrategy
             api.expandAll();
+            await new GridRows(
+                api,
+                `SSRM expandAll strategy: getState captures RowGroupBulkExpansionState, setState  after expandAll`
+            ).check(`
+                ROOT id:<no-id>
+                ├─┬ GROUP-leafGroup id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                │ └── filler id:rowIndex:1
+                └─┬ GROUP-leafGroup id:fr ag-Grid-AutoColumn:"France" country:"France"
+                · └── filler id:rowIndex:3
+            `);
             await waitForNoLoadingRows(api);
 
             // Collapse France individually — recorded as an exception in ExpandAllStrategy
             api.setRowNodeExpanded(api.getRowNode('fr')!, false);
+            await new GridRows(
+                api,
+                `SSRM expandAll strategy: getState captures RowGroupBulkExpansionState, setState  after setRowNodeExpanded`
+            ).check(`
+                ROOT id:<no-id>
+                ├─┬ GROUP-leafGroup id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                │ └── LEAF id:Ireland-leaf country:"Ireland" medals:1
+                └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
+            `);
             await asyncSetTimeout(0); // allow debounced state update to flush
 
             const savedState = api.getState();
@@ -403,6 +789,14 @@ describe('StateService - Grid State Management', () => {
 
             // Collapse all to reset state
             api.collapseAll();
+            await new GridRows(
+                api,
+                `SSRM expandAll strategy: getState captures RowGroupBulkExpansionState, setState  after collapseAll`
+            ).check(`
+                ROOT id:<no-id>
+                ├── GROUP-leafGroup collapsed id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
+            `);
             expect(api.getRowNode('ie')!.expanded).toBe(false);
             expect(api.getRowNode('fr')!.expanded).toBe(false);
 
@@ -447,11 +841,35 @@ describe('StateService - Grid State Management', () => {
             };
 
             const api = gridsManager.createGrid('ssrmBulkInit', gridOpts);
+            await new GridColumns(
+                api,
+                `SSRM expandAll strategy: initialState with ssrmRowGroupExpansion restores on gri setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── medals "Medals" width:200
+            `);
+            await new GridRows(
+                api,
+                `SSRM expandAll strategy: initialState with ssrmRowGroupExpansion restores on gri setup`
+            ).check(`
+                ROOT id:<no-id>
+                └── LEAF_GROUP collapsed id:rowIndex:0
+            `);
             await waitForNoLoadingRows(api);
 
             // Ireland should be expanded (expandAll: true), France collapsed (in invertedRowGroupIds)
             expect(api.getRowNode('ie')!.expanded).toBe(true);
             expect(api.getRowNode('fr')!.expanded).toBe(false);
+            await new GridRows(
+                api,
+                `SSRM expandAll strategy: initialState with ssrmRowGroupExpansion restores on gri final state`
+            ).check(`
+                ROOT id:<no-id>
+                ├─┬ GROUP-leafGroup id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                │ └── LEAF id:Ireland-leaf country:"Ireland" medals:1
+                └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
+            `);
         });
 
         test('CSRM: getState reflects new node IDs after group column change via setGridOption', async () => {
@@ -466,9 +884,49 @@ describe('StateService - Grid State Management', () => {
                 rowData: defaultRowData,
                 getRowId: ({ data }) => data.id,
             });
+            await new GridColumns(
+                api,
+                `CSRM: getState reflects new node IDs after group column change via setGridOption setup`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(
+                api,
+                `CSRM: getState reflects new node IDs after group column change via setGridOption setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Football ag-Grid-AutoColumn:"Football"
+                │ └── LEAF hidden id:1 sport:"Football" name:"Alice" age:30
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Tennis ag-Grid-AutoColumn:"Tennis"
+                │ └── LEAF hidden id:2 sport:"Tennis" name:"Bob" age:25
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Golf ag-Grid-AutoColumn:"Golf"
+                │ └── LEAF hidden id:3 sport:"Golf" name:"Charlie" age:35
+                ├─┬ LEAF_GROUP collapsed id:row-group-sport-Basketball ag-Grid-AutoColumn:"Basketball"
+                │ └── LEAF hidden id:4 sport:"Basketball" name:"David" age:28
+                └─┬ LEAF_GROUP collapsed id:row-group-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                · └── LEAF hidden id:5 sport:"Swimming" name:"Eve" age:32
+            `);
 
             // expandAll uses the synchronous onGroupExpandedOrCollapsed path
             api.expandAll();
+            await new GridRows(
+                api,
+                `CSRM: getState reflects new node IDs after group column change via setGridOption after expandAll`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-sport-Football ag-Grid-AutoColumn:"Football"
+                │ └── LEAF id:1 sport:"Football" name:"Alice" age:30
+                ├─┬ LEAF_GROUP id:row-group-sport-Tennis ag-Grid-AutoColumn:"Tennis"
+                │ └── LEAF id:2 sport:"Tennis" name:"Bob" age:25
+                ├─┬ LEAF_GROUP id:row-group-sport-Golf ag-Grid-AutoColumn:"Golf"
+                │ └── LEAF id:3 sport:"Golf" name:"Charlie" age:35
+                ├─┬ LEAF_GROUP id:row-group-sport-Basketball ag-Grid-AutoColumn:"Basketball"
+                │ └── LEAF id:4 sport:"Basketball" name:"David" age:28
+                └─┬ LEAF_GROUP id:row-group-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                · └── LEAF id:5 sport:"Swimming" name:"Eve" age:32
+            `);
             await asyncSetTimeout(0);
             expect(api.getState().rowGroupExpansion?.expandedRowGroupIds).toContain('row-group-sport-Football');
 
@@ -478,6 +936,30 @@ describe('StateService - Grid State Management', () => {
                 { field: 'name', rowGroup: true, hide: true },
                 { field: 'age' },
             ]);
+            await new GridColumns(
+                api,
+                `CSRM: getState reflects new node IDs after group column change via setGridOption after setGridOption columnDefs`
+            ).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(
+                api,
+                `CSRM: getState reflects new node IDs after group column change via setGridOption after setGridOption columnDefs`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP collapsed id:row-group-name-Alice ag-Grid-AutoColumn:"Alice"
+                │ └── LEAF hidden id:1 sport:"Football" name:"Alice" age:30
+                ├─┬ LEAF_GROUP collapsed id:row-group-name-Bob ag-Grid-AutoColumn:"Bob"
+                │ └── LEAF hidden id:2 sport:"Tennis" name:"Bob" age:25
+                ├─┬ LEAF_GROUP collapsed id:row-group-name-Charlie ag-Grid-AutoColumn:"Charlie"
+                │ └── LEAF hidden id:3 sport:"Golf" name:"Charlie" age:35
+                ├─┬ LEAF_GROUP collapsed id:row-group-name-David ag-Grid-AutoColumn:"David"
+                │ └── LEAF hidden id:4 sport:"Basketball" name:"David" age:28
+                └─┬ LEAF_GROUP collapsed id:row-group-name-Eve ag-Grid-AutoColumn:"Eve"
+                · └── LEAF hidden id:5 sport:"Swimming" name:"Eve" age:32
+            `);
             await asyncSetTimeout(0);
 
             // Cached state must reflect the new name-based IDs, not stale sport-based IDs
@@ -493,6 +975,21 @@ describe('StateService - Grid State Management', () => {
                 paginationPageSize: 2,
                 paginationPageSizeSelector: [2],
             });
+            await new GridColumns(api, `should capture pagination state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture pagination state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             // Go to page 2
             api.paginationGoToPage(1);
@@ -520,6 +1017,14 @@ describe('StateService - Grid State Management', () => {
                 page: 0,
                 pageSize: 2,
             });
+            await new GridRows(api, `should capture pagination state final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
         });
 
         test('should capture row pinning state', async () => {
@@ -528,6 +1033,21 @@ describe('StateService - Grid State Management', () => {
                 rowData: defaultRowData,
                 enableRowPinning: true,
             });
+            await new GridColumns(api, `should capture row pinning state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture row pinning state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             // Apply row pinning state
             api.setState({
@@ -538,6 +1058,16 @@ describe('StateService - Grid State Management', () => {
             });
 
             expect(api.getState().rowPinning).toEqual({ bottom: ['1'], top: ['0'] });
+            await new GridRows(api, `should capture row pinning state final state`).check(`
+                PINNED_TOP id:t-top-0 id:"1" name:"Alice" age:30 sport:"Football"
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+                PINNED_BOTTOM id:b-bottom-1 id:"2" name:"Bob" age:25 sport:"Tennis"
+            `);
         });
 
         test('should capture filter state', async () => {
@@ -546,6 +1076,21 @@ describe('StateService - Grid State Management', () => {
                 rowData: defaultRowData,
                 defaultColDef: { filter: 'agTextColumnFilter' },
             });
+            await new GridColumns(api, `should capture filter state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture filter state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             expect(api.getState().filter).toEqual({
                 advancedFilterModel: undefined,
@@ -558,6 +1103,10 @@ describe('StateService - Grid State Management', () => {
             api.setFilterModel({
                 name: { filterType: 'text', type: 'startsWith', filter: 'A' },
             });
+            await new GridRows(api, `should capture filter state after setFilterModel`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+            `);
 
             await asyncSetTimeout(50);
 
@@ -583,10 +1132,28 @@ describe('StateService - Grid State Management', () => {
                 columnDefs,
                 rowData,
             });
+            await new GridColumns(api, `should serialise bigint filter state and rehydrate on setState setup`)
+                .checkColumns(`
+                    CENTER
+                    └── id "Id" width:200
+                `);
+            await new GridRows(api, `should serialise bigint filter state and rehydrate on setState setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1n"
+                ├── LEAF id:1 id:"2n"
+                └── LEAF id:2 id:"3n"
+            `);
 
             api.setFilterModel({
                 id: { filterType: 'bigint', type: 'equals', filter: '2n' },
             });
+            await new GridRows(
+                api,
+                `should serialise bigint filter state and rehydrate on setState after setFilterModel`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 id:"2n"
+            `);
 
             await asyncSetTimeout(20);
 
@@ -614,6 +1181,21 @@ describe('StateService - Grid State Management', () => {
                 columnDefs: defaultColumnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(api, `should capture focused cell state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture focused cell state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             await asyncSetTimeout(20);
 
@@ -627,6 +1209,14 @@ describe('StateService - Grid State Management', () => {
                 rowIndex: 0,
                 rowPinned: null,
             });
+            await new GridRows(api, `should capture focused cell state final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
         });
 
         test('should capture cell selection state', async () => {
@@ -635,6 +1225,21 @@ describe('StateService - Grid State Management', () => {
                 rowData: defaultRowData,
                 cellSelection: true,
             });
+            await new GridColumns(api, `should capture cell selection state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture cell selection state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['name'] });
 
@@ -662,6 +1267,14 @@ describe('StateService - Grid State Management', () => {
             api.clearCellSelection();
 
             expect(api.getState().cellSelection).toEqual(undefined);
+            await new GridRows(api, `should capture cell selection state final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
         });
 
         test('should capture scroll state', async () => {
@@ -676,6 +1289,46 @@ describe('StateService - Grid State Management', () => {
                     ...defaultRowData,
                 ],
             });
+            await new GridColumns(api, `should capture scroll state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture scroll state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+                ├── LEAF id:5 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:6 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:7 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:8 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:9 id:"5" name:"Eve" age:32 sport:"Swimming"
+                ├── LEAF id:10 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:11 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:12 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:13 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:14 id:"5" name:"Eve" age:32 sport:"Swimming"
+                ├── LEAF id:15 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:16 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:17 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:18 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:19 id:"5" name:"Eve" age:32 sport:"Swimming"
+                ├── LEAF id:20 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:21 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:22 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:23 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:24 id:"5" name:"Eve" age:32 sport:"Swimming"
+                ├── LEAF id:25 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:26 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:27 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:28 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:29 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             expect(api.getState().scroll).toEqual(undefined);
 
@@ -687,6 +1340,39 @@ describe('StateService - Grid State Management', () => {
                 left: 0,
                 top: 840,
             });
+            await new GridRows(api, `should capture scroll state final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+                ├── LEAF id:5 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:6 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:7 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:8 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:9 id:"5" name:"Eve" age:32 sport:"Swimming"
+                ├── LEAF id:10 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:11 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:12 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:13 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:14 id:"5" name:"Eve" age:32 sport:"Swimming"
+                ├── LEAF id:15 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:16 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:17 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:18 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:19 id:"5" name:"Eve" age:32 sport:"Swimming"
+                ├── LEAF id:20 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:21 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:22 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:23 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:24 id:"5" name:"Eve" age:32 sport:"Swimming"
+                ├── LEAF id:25 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:26 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:27 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:28 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:29 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
         });
     });
 
@@ -709,6 +1395,21 @@ describe('StateService - Grid State Management', () => {
                     defaultToolPanel: 'columns',
                 },
             });
+            await new GridColumns(api, `should capture sidebar state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should capture sidebar state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             expect(api.getState().sideBar).toEqual({
                 openToolPanel: 'columns',
@@ -733,6 +1434,14 @@ describe('StateService - Grid State Management', () => {
                 },
                 visible: true,
             });
+            await new GridRows(api, `should capture sidebar state final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
         });
     });
 
@@ -747,6 +1456,22 @@ describe('StateService - Grid State Management', () => {
                 paginationPageSize: 2,
                 paginationPageSizeSelector: [2],
             });
+            await new GridColumns(api, `should set state and apply all features setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should set state and apply all features setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             const stateToApply: GridState = {
                 sort: {
@@ -772,6 +1497,14 @@ describe('StateService - Grid State Management', () => {
             expect(state.sort?.sortModel).toHaveLength(1);
             expect(state.columnVisibility?.hiddenColIds).toContain('age');
             expect(state.pagination?.page).toBe(1);
+            await new GridRows(api, `should set state and apply all features final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"Alice" id:"1" sport:"Football" age:30
+                ├── LEAF selected id:1 name:"Bob" id:"2" sport:"Tennis" age:25
+                ├── LEAF id:2 name:"Charlie" id:"3" sport:"Golf" age:35
+                ├── LEAF selected id:3 name:"David" id:"4" sport:"Basketball" age:28
+                └── LEAF id:4 name:"Eve" id:"5" sport:"Swimming" age:32
+            `);
         });
 
         test('should setState with propertiesToIgnore parameter', async () => {
@@ -780,6 +1513,22 @@ describe('StateService - Grid State Management', () => {
                 rowData: defaultRowData,
                 rowSelection: { mode: 'multiRow' },
             });
+            await new GridColumns(api, `should setState with propertiesToIgnore parameter setup`).checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should setState with propertiesToIgnore parameter setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             // First select some rows
             api.selectAll('filtered');
@@ -802,6 +1551,14 @@ describe('StateService - Grid State Management', () => {
                 expect(state.rowSelection).toContain('1');
                 expect(state.rowSelection).toContain('2');
             }
+            await new GridRows(api, `should setState with propertiesToIgnore parameter final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF selected id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF selected id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF selected id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF selected id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF selected id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
         });
     });
 
@@ -850,16 +1607,76 @@ describe('StateService - Grid State Management', () => {
                 columnDefs: defaultColumnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(api, `should preserve absolute sort type when restoring state via setState setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── id "Id" width:200
+                    ├── name "Name" width:200
+                    ├── age "Age" width:200
+                    └── sport "Sport" width:200
+                `);
+            await new GridRows(api, `should preserve absolute sort type when restoring state via setState setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                    ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                    ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                    ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                    └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+                `
+            );
 
             api.applyColumnState({
                 state: [{ colId: 'age', sort: 'asc', sortType: 'absolute' }],
             });
+            await new GridColumns(
+                api,
+                `should preserve absolute sort type when restoring state via setState after applyColumnState`
+            ).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200 sort:asc
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(
+                api,
+                `should preserve absolute sort type when restoring state via setState after applyColumnState`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+                └── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+            `);
 
             const savedState = api.getState();
             expect(savedState.sort?.sortModel).toEqual([{ colId: 'age', sort: 'asc', type: 'absolute' }]);
 
             // Clear sort and restore from saved state
             api.applyColumnState({ state: [{ colId: 'age', sort: null }] });
+            await new GridColumns(
+                api,
+                `should preserve absolute sort type when restoring state via setState after applyColumnState #2`
+            ).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(
+                api,
+                `should preserve absolute sort type when restoring state via setState after applyColumnState #2`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
             expect(api.getState().sort?.sortModel ?? []).toHaveLength(0);
 
             api.setState(savedState);
@@ -873,6 +1690,27 @@ describe('StateService - Grid State Management', () => {
                 columnDefs: defaultColumnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(
+                api,
+                `should clear absolute sort from a column not present in the restored sort state setup`
+            ).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(
+                api,
+                `should clear absolute sort from a column not present in the restored sort state setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             // Set absolute sort on 'age', default sort on 'name'
             api.applyColumnState({
@@ -881,6 +1719,27 @@ describe('StateService - Grid State Management', () => {
                     { colId: 'name', sort: 'desc', sortIndex: 1 },
                 ],
             });
+            await new GridColumns(
+                api,
+                `should clear absolute sort from a column not present in the restored sort state after applyColumnState`
+            ).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200 sort:desc sortIndex:1
+                ├── age "Age" width:200 sort:asc sortIndex:0
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(
+                api,
+                `should clear absolute sort from a column not present in the restored sort state after applyColumnState`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+                └── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+            `);
 
             expect(api.getState().sort?.sortModel).toEqual([
                 { colId: 'age', sort: 'asc', type: 'absolute' },
@@ -916,6 +1775,20 @@ describe('StateService - Grid State Management', () => {
                 paginationPageSize: 3,
                 paginationPageSizeSelector: [3],
             });
+            await new GridColumns(api, `should initialize grid with initial state setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200 sort:desc sortIndex:0
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, `should initialize grid with initial state setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                └── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+            `);
 
             const state = api.getState();
             expect(state.sort).toEqual({
@@ -935,6 +1808,14 @@ describe('StateService - Grid State Management', () => {
                 page: 0,
                 pageSize: 3,
             });
+            await new GridRows(api, `should initialize grid with initial state final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                └── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+            `);
         });
     });
 
@@ -945,6 +1826,21 @@ describe('StateService - Grid State Management', () => {
                 columnDefs: defaultColumnDefs,
                 rowData: defaultRowData,
             });
+            await new GridColumns(api, `should emit stateUpdated event when state changes setup`).checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                ├── age "Age" width:200
+                └── sport "Sport" width:200
+            `);
+            await new GridRows(api, `should emit stateUpdated event when state changes setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
 
             await asyncSetTimeout(20);
 
@@ -957,6 +1853,24 @@ describe('StateService - Grid State Management', () => {
             });
 
             api.applyColumnState({ state: [{ colId: 'name', sort: 'asc' }] });
+            await new GridColumns(api, `should emit stateUpdated event when state changes after applyColumnState`)
+                .checkColumns(`
+                    CENTER
+                    ├── id "Id" width:200
+                    ├── name "Name" width:200 sort:asc
+                    ├── age "Age" width:200
+                    └── sport "Sport" width:200
+                `);
+            await new GridRows(api, `should emit stateUpdated event when state changes after applyColumnState`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                    ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                    ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                    ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                    └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+                `
+            );
             await asyncSetTimeout(50);
 
             expect(eventFired).toBe(true);

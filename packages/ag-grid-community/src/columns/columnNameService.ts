@@ -1,4 +1,5 @@
-import { _camelCaseToHumanText } from '../agStack/utils/string';
+import { _camelCaseToHumanText } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';

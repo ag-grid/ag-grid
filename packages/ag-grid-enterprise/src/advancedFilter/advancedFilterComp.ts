@@ -1,3 +1,5 @@
+import { RefPlaceholder, _makeNull, _setDisabled, _setDisplayed } from 'ag-stack';
+
 import type {
     BeanCollection,
     ElementParams,
@@ -8,15 +10,7 @@ import type {
     Registry,
     TooltipFeature,
 } from 'ag-grid-community';
-import {
-    AgFilterButtonSelector,
-    Component,
-    RefPlaceholder,
-    _createIconNoSpan,
-    _makeNull,
-    _setDisabled,
-    _setDisplayed,
-} from 'ag-grid-community';
+import { AgFilterButtonSelector, Component, _createIconNoSpan } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';

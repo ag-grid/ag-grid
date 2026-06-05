@@ -1,10 +1,17 @@
-import type { HorizontalDirection } from '../../../agStack/constants/direction';
-import { KeyCode, _normaliseQwertyAzerty } from '../../../agStack/constants/keyCode';
-import { _setAriaColIndex } from '../../../agStack/utils/aria';
-import { _getActiveDomElement, _getDocument } from '../../../agStack/utils/document';
-import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../../agStack/utils/dom';
-import { _batchCall } from '../../../agStack/utils/function';
-import { _exists } from '../../../agStack/utils/generic';
+import type { HorizontalDirection } from 'ag-stack';
+import {
+    KeyCode,
+    _addOrRemoveAttribute,
+    _batchCall,
+    _exists,
+    _getActiveDomElement,
+    _getDocument,
+    _getElementSize,
+    _normaliseQwertyAzerty,
+    _observeResize,
+    _setAriaColIndex,
+} from 'ag-stack';
+
 import { BeanStub } from '../../../context/beanStub';
 import type { GridDragSource } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';

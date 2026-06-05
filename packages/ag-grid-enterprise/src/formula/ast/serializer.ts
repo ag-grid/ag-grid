@@ -1,10 +1,10 @@
 import type { AgColumn, BeanCollection, ColumnModel } from 'ag-grid-community';
 
 import { getFormulaRowByIndex, getFormulaRowIndex } from '../rowAccess';
-import { getDefBySymbol } from './operators';
 import type { InfixOpDef } from './operators';
-import { FormulaError } from './utils';
+import { getDefBySymbol } from './operators';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
+import { FormulaError } from './utils';
 
 const isOperationNode = (n: FormulaNode): n is FormulaOperation => n.type === 'operation';
 
@@ -244,6 +244,9 @@ export function serializeFormula(
             }
             if (typeof v === 'boolean') {
                 return v ? 'TRUE' : 'FALSE';
+            }
+            if (v == null) {
+                return 'NULL';
             }
             return useRefFormat
                 ? serializeCellREF(beans, v as Cell, useCalculatedRefs)

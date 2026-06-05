@@ -4,66 +4,66 @@ ignore:
   SNYK-JS-BRACEEXPANSION-15789759:
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > glob@10.4.5 > minimatch@9.0.5 > brace-expansion@2.0.2":
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-27T11:48:29.582Z
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > editorconfig@1.0.4 > minimatch@9.0.1 > brace-expansion@2.0.2":
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-27T11:48:29.577Z
   SNYK-JS-ROLLUP-15340920:
     - vite@5.4.21 > rollup@4.52.5:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-02T11:40:04.704Z
   SNYK-JS-MINIMATCH-15353387:
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > glob@10.4.5 > minimatch@9.0.5":
         reason: Used in testing - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-02T10:38:08.380Z
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > editorconfig@1.0.4 > minimatch@9.0.1":
         reason: Used in testing - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-02T10:38:08.355Z
   SNYK-JS-MINIMATCH-15353389:
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > glob@10.4.5 > minimatch@9.0.5":
         reason: Used in testing - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-02T10:23:37.372Z
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > editorconfig@1.0.4 > minimatch@9.0.1":
         reason: Used in testing - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-02T10:23:37.362Z
   SNYK-JS-MINIMATCH-15309438:
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > glob@10.4.5 > minimatch@9.0.5":
         reason: Used in testing - ReDOS attack would only affect developer machines
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-02-27T20:27:04.483Z
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > editorconfig@1.0.4 > minimatch@9.0.1":
         reason: Used in testing - ReDOS attack would only affect developer machines
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-02-27T20:27:04.469Z
   SNYK-JS-GLOB-14040952:
     - "@vue/test-utils@2.4.6 > js-beautify@1.15.4 > glob@10.4.5":
         reason: Glob is only used for testing and we control what files are passed in
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2025-11-20T10:29:00.007Z
   SNYK-JS-PICOMATCH-15765511:
     - 'npm-run-all2@8.0.4 > picomatch@4.0.3':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
     - 'vite-plugin-vue-devtools@8.1.1 > vite-plugin-inspect@11.3.3 > unplugin-utils@0.3.1 > picomatch@4.0.3':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-BRACEEXPANSION-16755174:
     - 'replace-in-file@8.4.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
         reason: Dev dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-SHELLQUOTE-16799355:
     - 'npm-run-all2@8.0.4 > shell-quote@1.8.3':
         reason: Dev dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
 patch: {}

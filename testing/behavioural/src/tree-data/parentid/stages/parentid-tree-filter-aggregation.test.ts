@@ -74,7 +74,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 │ · · └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" n:"I" x:18 y:3
                 └─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" n:"J" x:20 y:4
                 · └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" n:"K" x:20 y:5
-          `);
+            `);
 
             // Set filter: only show rows with y > 4
             api.setFilterModel({
@@ -89,7 +89,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 │ · └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" n:"E" x:15 y:5
                 └─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" n:"J" x:20 y:4
                 · └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" n:"K" x:20 y:5
-          `);
+            `);
 
             // Update the y value for row D (id: '3')
             if (mode === 'transactions') {
@@ -112,7 +112,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 │ · └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" n:"E" x:15 y:5
                 └─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" n:"J" x:20 y:4
                 · └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" n:"K" x:20 y:5
-          `);
+            `);
 
             // Update the y value for row K (id: '9')
             // (Note: with the additional filler row, row with id '9' is at index 10)
@@ -130,7 +130,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 · └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" n:"B" x:29 y:2
                 · · ├── 3 LEAF id:3 ag-Grid-AutoColumn:"3" n:"D" x:14 y:200
                 · · └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" n:"E" x:15 y:5
-          `);
+            `);
 
             // Remove row D (id: '3')
             if (mode === 'transactions') {
@@ -146,7 +146,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" n:"A" x:15 y:1
                 · └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" n:"B" x:15 y:2
                 · · └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" n:"E" x:15 y:5
-          `);
+            `);
 
             // Change filter: show rows with y < 2
             api.setFilterModel({
@@ -166,7 +166,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 │ · · └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" n:"I" x:18 y:3
                 └─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" n:"J" x:20 y:4
                 · └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" n:"K" x:20 y:0
-          `);
+            `);
 
             api.setGridOption('excludeChildrenWhenTreeDataFiltering', true);
 
@@ -178,7 +178,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 │ · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" n:"F" x:16 y:1
                 └─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" n:"J" x:20 y:4
                 · └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" n:"K" x:20 y:0
-          `);
+            `);
 
             api.setGridOption('suppressAggFilteredOnly', true);
 
@@ -190,7 +190,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 │ · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" n:"F" x:16 y:1
                 └─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" n:"J" x:20 y:4
                 · └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" n:"K" x:20 y:0
-          `);
+            `);
 
             api.setGridOption('suppressAggFilteredOnly', false);
             api.setGridOption('grandTotalRow', 'bottom');
@@ -203,7 +203,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 ├─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" n:"J" x:20 y:4
                 │ └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" n:"K" x:20 y:0
                 └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:36
-          `);
+            `);
 
             api.setGridOption('groupTotalRow', 'bottom');
 
@@ -218,7 +218,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 │ ├── 9 LEAF id:9 ag-Grid-AutoColumn:"9" n:"K" x:20 y:0
                 │ └─ footer id:rowGroupFooter_8 ag-Grid-AutoColumn:"Total 8" n:"J" x:20 y:4
                 └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:36
-          `);
+            `);
 
             await new GridColumns(api, 'columns').checkColumns(`
                 CENTER

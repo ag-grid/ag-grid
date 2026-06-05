@@ -5,7 +5,14 @@ import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from '
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    setRowDataChecked,
+} from '../test-utils';
 
 describe('ag-grid grouping with pivot', () => {
     const gridsManager = new TestGridsManager({
@@ -169,8 +176,8 @@ describe('ag-grid grouping with pivot', () => {
 
         const gridRows = new GridRows(api, 'multiple pivot columns', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID pivot_year-quarter_2020-Q1_sales:3000 pivot_year-quarter_2020-Q2_sales:3200 pivot_year-quarter_2020_sales:6200 pivot_year-quarter_2021-Q1_sales:3400 pivot_year-quarter_2021_sales:3400 
-            ├── LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year-quarter_2020-Q1_sales:1000 pivot_year-quarter_2020-Q2_sales:1100 pivot_year-quarter_2020_sales:2100 pivot_year-quarter_2021-Q1_sales:1200 pivot_year-quarter_2021_sales:1200 
+            ROOT id:ROOT_NODE_ID pivot_year-quarter_2020-Q1_sales:3000 pivot_year-quarter_2020-Q2_sales:3200 pivot_year-quarter_2020_sales:6200 pivot_year-quarter_2021-Q1_sales:3400 pivot_year-quarter_2021_sales:3400
+            ├── LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year-quarter_2020-Q1_sales:1000 pivot_year-quarter_2020-Q2_sales:1100 pivot_year-quarter_2020_sales:2100 pivot_year-quarter_2021-Q1_sales:1200 pivot_year-quarter_2021_sales:1200
             └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year-quarter_2020-Q1_sales:2000 pivot_year-quarter_2020-Q2_sales:2100 pivot_year-quarter_2020_sales:4100 pivot_year-quarter_2021-Q1_sales:2200 pivot_year-quarter_2021_sales:2200
         `);
 
@@ -230,18 +237,18 @@ describe('ag-grid grouping with pivot', () => {
 
         let gridRows = new GridRows(api, 'pivot with custom column ordering', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID 
-            ├─┬ LEAF_GROUP collapsed id:row-group-product-Laptop ag-Grid-AutoColumn:"Laptop" 
-            │ ├── LEAF hidden id:1 
-            │ ├── LEAF hidden id:2 
-            │ └── LEAF hidden id:3 
-            ├─┬ LEAF_GROUP collapsed id:row-group-product-Phone ag-Grid-AutoColumn:"Phone" 
-            │ ├── LEAF hidden id:4 
-            │ ├── LEAF hidden id:5 
-            │ └── LEAF hidden id:6 
-            └─┬ LEAF_GROUP collapsed id:row-group-product-Tablet ag-Grid-AutoColumn:"Tablet" 
-            · ├── LEAF hidden id:7 
-            · └── LEAF hidden id:8 
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP collapsed id:row-group-product-Laptop ag-Grid-AutoColumn:"Laptop"
+            │ ├── LEAF hidden id:1
+            │ ├── LEAF hidden id:2
+            │ └── LEAF hidden id:3
+            ├─┬ LEAF_GROUP collapsed id:row-group-product-Phone ag-Grid-AutoColumn:"Phone"
+            │ ├── LEAF hidden id:4
+            │ ├── LEAF hidden id:5
+            │ └── LEAF hidden id:6
+            └─┬ LEAF_GROUP collapsed id:row-group-product-Tablet ag-Grid-AutoColumn:"Tablet"
+            · ├── LEAF hidden id:7
+            · └── LEAF hidden id:8
         `);
 
         // Test sorting by pivot result columns
@@ -252,18 +259,18 @@ describe('ag-grid grouping with pivot', () => {
 
         gridRows = new GridRows(api, 'after sorting by South sales desc', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID 
-            ├─┬ LEAF_GROUP collapsed id:row-group-product-Laptop ag-Grid-AutoColumn:"Laptop" 
-            │ ├── LEAF hidden id:1 
-            │ ├── LEAF hidden id:2 
-            │ └── LEAF hidden id:3 
-            ├─┬ LEAF_GROUP collapsed id:row-group-product-Phone ag-Grid-AutoColumn:"Phone" 
-            │ ├── LEAF hidden id:4 
-            │ ├── LEAF hidden id:5 
-            │ └── LEAF hidden id:6 
-            └─┬ LEAF_GROUP collapsed id:row-group-product-Tablet ag-Grid-AutoColumn:"Tablet" 
-            · ├── LEAF hidden id:7 
-            · └── LEAF hidden id:8 
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP collapsed id:row-group-product-Laptop ag-Grid-AutoColumn:"Laptop"
+            │ ├── LEAF hidden id:1
+            │ ├── LEAF hidden id:2
+            │ └── LEAF hidden id:3
+            ├─┬ LEAF_GROUP collapsed id:row-group-product-Phone ag-Grid-AutoColumn:"Phone"
+            │ ├── LEAF hidden id:4
+            │ ├── LEAF hidden id:5
+            │ └── LEAF hidden id:6
+            └─┬ LEAF_GROUP collapsed id:row-group-product-Tablet ag-Grid-AutoColumn:"Tablet"
+            · ├── LEAF hidden id:7
+            · └── LEAF hidden id:8
         `);
     });
 
@@ -876,10 +883,10 @@ describe('ag-grid grouping with pivot', () => {
         const gridRows = new GridRows(api, 'pivot with expanded groups', gridRowsOptions);
 
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID pivot_quarter_Q1_budget:23000 pivot_quarter_Q1_expenses:19500 pivot_quarter_Q2_budget:18000 pivot_quarter_Q2_expenses:14200 
-            ├── LEAF_GROUP collapsed id:row-group-department-Engineering ag-Grid-AutoColumn:"Engineering" pivot_quarter_Q1_budget:10000 pivot_quarter_Q1_expenses:8000 pivot_quarter_Q2_budget:12000 pivot_quarter_Q2_expenses:9000 
-            ├── LEAF_GROUP collapsed id:row-group-department-Marketing ag-Grid-AutoColumn:"Marketing" pivot_quarter_Q1_budget:5000 pivot_quarter_Q1_expenses:4500 pivot_quarter_Q2_budget:6000 pivot_quarter_Q2_expenses:5200 
-            └── LEAF_GROUP collapsed id:row-group-department-Sales ag-Grid-AutoColumn:"Sales" pivot_quarter_Q1_budget:8000 pivot_quarter_Q1_expenses:7000 pivot_quarter_Q2_budget:null pivot_quarter_Q2_expenses:null 
+            ROOT id:ROOT_NODE_ID pivot_quarter_Q1_budget:23000 pivot_quarter_Q1_expenses:19500 pivot_quarter_Q2_budget:18000 pivot_quarter_Q2_expenses:14200
+            ├── LEAF_GROUP collapsed id:row-group-department-Engineering ag-Grid-AutoColumn:"Engineering" pivot_quarter_Q1_budget:10000 pivot_quarter_Q1_expenses:8000 pivot_quarter_Q2_budget:12000 pivot_quarter_Q2_expenses:9000
+            ├── LEAF_GROUP collapsed id:row-group-department-Marketing ag-Grid-AutoColumn:"Marketing" pivot_quarter_Q1_budget:5000 pivot_quarter_Q1_expenses:4500 pivot_quarter_Q2_budget:6000 pivot_quarter_Q2_expenses:5200
+            └── LEAF_GROUP collapsed id:row-group-department-Sales ag-Grid-AutoColumn:"Sales" pivot_quarter_Q1_budget:8000 pivot_quarter_Q1_expenses:7000 pivot_quarter_Q2_budget:null pivot_quarter_Q2_expenses:null
         `);
     });
 
@@ -922,9 +929,9 @@ describe('ag-grid grouping with pivot', () => {
 
         const gridRows = new GridRows(api, 'pivot with column customization', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID 
-            ├── LEAF_GROUP collapsed id:row-group-team-Alpha ag-Grid-AutoColumn:"Alpha" 
-            └── LEAF_GROUP collapsed id:row-group-team-Beta ag-Grid-AutoColumn:"Beta" 
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF_GROUP collapsed id:row-group-team-Alpha ag-Grid-AutoColumn:"Alpha"
+            └── LEAF_GROUP collapsed id:row-group-team-Beta ag-Grid-AutoColumn:"Beta"
         `);
     });
 
@@ -966,10 +973,10 @@ describe('ag-grid grouping with pivot', () => {
 
         let gridRows = new GridRows(api, 'before filtering pivot results', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID 
-            ├── LEAF_GROUP collapsed id:row-group-region-North ag-Grid-AutoColumn:"North" 
-            ├── LEAF_GROUP collapsed id:row-group-region-South ag-Grid-AutoColumn:"South" 
-            └── LEAF_GROUP collapsed id:row-group-region-East ag-Grid-AutoColumn:"East" 
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF_GROUP collapsed id:row-group-region-North ag-Grid-AutoColumn:"North"
+            ├── LEAF_GROUP collapsed id:row-group-region-South ag-Grid-AutoColumn:"South"
+            └── LEAF_GROUP collapsed id:row-group-region-East ag-Grid-AutoColumn:"East"
         `);
 
         // Get the actual pivot result columns to use for filtering
@@ -1053,6 +1060,7 @@ describe('ag-grid grouping with pivot', () => {
             { id: '3', country: 'United Kingdom', athlete: 'Chris', year: 2008, gold: 3 },
             { id: '4', country: 'United Kingdom', athlete: 'Mo', year: 2012, gold: 2 },
         ]);
+        await asyncSetTimeout(10);
 
         await vi.waitFor(async () => {
             await new GridRows(api, 'custom group columns before pivot').check(`
@@ -1089,6 +1097,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         api.setGridOption('pivotMode', false);
+        await asyncSetTimeout(10);
 
         await vi.waitFor(async () => {
             await new GridRows(api, 'custom group columns after pivot disabled').check(`

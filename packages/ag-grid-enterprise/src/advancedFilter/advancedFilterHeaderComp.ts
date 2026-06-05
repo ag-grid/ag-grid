@@ -1,19 +1,18 @@
-import type { BeanCollection, ColumnModel, CtrlsService, ElementParams, FocusService } from 'ag-grid-community';
 import {
-    Component,
-    KeyCode,
     RefPlaceholder,
     _clearElement,
     _findNextFocusableElement,
     _focusInto,
     _getActiveDomElement,
-    _getFloatingFiltersHeight,
     _setAriaColIndex,
     _setAriaColSpan,
     _setAriaRole,
     _setAriaRowIndex,
     _setDisplayed,
-} from 'ag-grid-community';
+} from 'ag-stack';
+
+import type { BeanCollection, ColumnModel, CtrlsService, ElementParams, FocusService } from 'ag-grid-community';
+import { Component, KeyCode, _getFloatingFiltersHeight } from 'ag-grid-community';
 
 import { AdvancedFilterComp } from './advancedFilterComp';
 

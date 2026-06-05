@@ -8,6 +8,7 @@ on:
 
 env:
   CI: true
+  IBM_TELEMETRY_DISABLED: true
   DEPLOYMENT_APP_ID: 957224
   TAG_NAME: ${{ github.head_ref || github.ref_name }}
 
@@ -21,7 +22,7 @@ jobs:
     environment: production
     steps:
       - name: Authenticate with GitHub App
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
         id: app-token
         with:
           app-id: ${{ env.DEPLOYMENT_APP_ID }}
@@ -29,7 +30,7 @@ jobs:
 
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 1 # shallow copy
@@ -43,7 +44,7 @@ jobs:
           RELEASE_VERSION=$(echo $TAG_NAME | sed 's/release-//')
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: package.json
           registry-url: 'https://registry.npmjs.org'

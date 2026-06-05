@@ -1,3 +1,5 @@
+import { _removeFromArray } from 'ag-stack';
+
 import type {
     AgColumn,
     AllEventsWithoutGridCommon,
@@ -7,7 +9,7 @@ import type {
     IColsService,
     NamedBean,
 } from 'ag-grid-community';
-import { BaseColsService, _removeFromArray, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
+import { BaseColsService, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
 export class RowGroupColsSvc extends BaseColsService implements NamedBean, IColsService {
     beanName = 'rowGroupColsSvc' as const;

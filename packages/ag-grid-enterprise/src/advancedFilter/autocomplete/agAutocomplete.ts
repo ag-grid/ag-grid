@@ -1,5 +1,7 @@
+import type { AgComponentPopupPositionParams } from 'ag-stack';
+import { RefPlaceholder, _isNothingFocused, _makeNull } from 'ag-stack';
+
 import type {
-    AgComponentPopupPositionParams,
     AgEvent,
     BeanCollection,
     ComponentSelector,
@@ -8,14 +10,7 @@ import type {
     PopupPositionParams,
     PopupService,
 } from 'ag-grid-community';
-import {
-    AgInputTextFieldSelector,
-    Component,
-    KeyCode,
-    RefPlaceholder,
-    _isNothingFocused,
-    _makeNull,
-} from 'ag-grid-community';
+import { AgInputTextFieldSelector, Component, KeyCode } from 'ag-grid-community';
 
 import agAutocompleteCSS from './agAutocomplete.css';
 import { AgAutocompleteList } from './agAutocompleteList';

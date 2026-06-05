@@ -1,6 +1,27 @@
 import type { ColDef, ColGroupDef } from 'ag-grid-community';
 import { _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES } from 'ag-grid-community';
 
+/** Returns the index of the first item with a matching `colId`, or -1. Works for any colId-keyed list (dynamic column records, `AgColumn`s, etc.). */
+export function indexOfColId<T extends { colId: string }>(items: T[], colId: string): number {
+    for (let i = 0, len = items.length; i < len; ++i) {
+        if (items[i].colId === colId) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+/** Returns the index of the first leaf colDef whose `colId` or `field` matches, or -1. Column groups are skipped. */
+export function indexOfColDef(columnDefs: (ColDef | ColGroupDef)[], colId: string): number {
+    for (let i = 0, len = columnDefs.length; i < len; ++i) {
+        const colDef = columnDefs[i];
+        if (!('children' in colDef) && (colDef.colId === colId || colDef.field === colId)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 /**
  * Walks a (possibly nested) columnDefs tree and returns every `colId` and `field` it encounters
  * on leaf columns. Used by `createUniqueColId` to scan the user-provided source of truth for id
@@ -101,4 +122,136 @@ export function replaceBracketReferences(expression: string, replaceReference: (
         }
     }
     return result + expression.slice(lastIndex);
+}
+
+export function getOperatorReplacementRange(
+    expression: string,
+    selectionStart: number,
+    selectionEnd: number,
+    operators: readonly string[]
+): { start: number; end: number } {
+    const start = Math.min(selectionStart, selectionEnd);
+    const end = Math.max(selectionStart, selectionEnd);
+
+    if (start !== end) {
+        if (isOperator(expression.slice(start, end).trim(), operators)) {
+            return expandWhitespace(expression, start, end);
+        }
+        return { start, end };
+    }
+
+    if (isInsideStringLiteral(expression, start) || isInsideBracketReference(expression, start)) {
+        return { start, end };
+    }
+
+    const token = findOperatorTokenNearCaret(expression, start, operators);
+    if (!token) {
+        return { start, end };
+    }
+
+    return expandWhitespace(expression, token.start, token.end);
+}
+
+function isOperator(value: string, operators: readonly string[]): boolean {
+    for (let i = 0, len = operators.length; i < len; ++i) {
+        if (operators[i] === value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function findOperatorTokenNearCaret(
+    expression: string,
+    caret: number,
+    operators: readonly string[]
+): { start: number; end: number } | null {
+    const direct = getOperatorTokenContainingPosition(expression, caret, operators);
+    if (direct) {
+        return direct;
+    }
+
+    const previous = getPreviousNonSpaceIndex(expression, caret);
+    if (previous != null) {
+        const previousToken = getOperatorTokenContainingPosition(expression, previous, operators);
+        if (previousToken) {
+            return previousToken;
+        }
+    }
+
+    const next = getNextNonSpaceIndex(expression, caret);
+    if (next != null) {
+        return getOperatorTokenContainingPosition(expression, next, operators);
+    }
+
+    return null;
+}
+
+function getOperatorTokenContainingPosition(
+    expression: string,
+    position: number,
+    operators: readonly string[]
+): { start: number; end: number } | null {
+    for (let i = 0, len = operators.length; i < len; ++i) {
+        const operator = operators[i];
+        for (let offset = 0, operatorLen = operator.length; offset < operatorLen; ++offset) {
+            const start = position - offset;
+            if (start >= 0 && expression.startsWith(operator, start)) {
+                return { start, end: start + operatorLen };
+            }
+        }
+    }
+
+    return null;
+}
+
+function expandWhitespace(expression: string, start: number, end: number): { start: number; end: number } {
+    while (start > 0 && expression[start - 1].trim() === '') {
+        start--;
+    }
+    while (end < expression.length && expression[end].trim() === '') {
+        end++;
+    }
+    return { start, end };
+}
+
+function getPreviousNonSpaceIndex(expression: string, offset: number): number | null {
+    for (let i = offset - 1; i >= 0; --i) {
+        if (expression[i].trim() !== '') {
+            return i;
+        }
+    }
+    return null;
+}
+
+function getNextNonSpaceIndex(expression: string, offset: number): number | null {
+    for (let i = offset, len = expression.length; i < len; ++i) {
+        if (expression[i].trim() !== '') {
+            return i;
+        }
+    }
+    return null;
+}
+
+function isInsideBracketReference(expression: string, offset: number): boolean {
+    const bracketStart = expression.lastIndexOf('[', offset - 1);
+    const bracketEnd = expression.lastIndexOf(']', offset - 1);
+    return bracketStart > bracketEnd;
+}
+
+function isInsideStringLiteral(expression: string, offset: number): boolean {
+    let inString = false;
+    for (let i = 0; i < offset && i < expression.length; ++i) {
+        if (expression[i] !== '"') {
+            continue;
+        }
+
+        if (expression[i + 1] === '"') {
+            i++;
+            continue;
+        }
+
+        inString = !inString;
+    }
+    return inString;
 }

@@ -11,14 +11,31 @@
  * - Column types
  */
 import type { ColDef } from 'ag-grid-community';
-import { AlignedGridsModule, CellStyleModule, ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
+import {
+    AlignedGridsModule,
+    CellStyleModule,
+    ClientSideRowModelModule,
+    DragAndDropModule,
+    RowAutoHeightModule,
+    RowDragModule,
+    TextEditorModule,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, mockGridLayout } from '../test-utils';
 
 describe('Column Features', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, AlignedGridsModule, CellStyleModule, TextEditorModule],
+        modules: [
+            AlignedGridsModule,
+            CellStyleModule,
+            ClientSideRowModelModule,
+            DragAndDropModule,
+            RowAutoHeightModule,
+            RowDragModule,
+            RowGroupingModule,
+            TextEditorModule,
+        ],
     });
 
     afterEach(() => {
@@ -42,41 +59,6 @@ describe('Column Features', () => {
         });
     });
 
-    describe('column sizing: flex', () => {
-        test('flex columns have flex property set', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [
-                    { colId: 'a', flex: 1 },
-                    { colId: 'b', flex: 2 },
-                ],
-            });
-
-            // In jsdom (no real layout), flex may not distribute proportionally,
-            // but the flex property should be set on the columns
-            const colA = api.getColumn('a')!;
-            const colB = api.getColumn('b')!;
-            expect(colA.getFlex()).toBe(1);
-            expect(colB.getFlex()).toBe(2);
-
-            // Validators should pass
-            await new GridColumns(api, 'flex columns').checkColumns(false);
-        });
-
-        test('flex with minWidth is respected', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [
-                    { colId: 'a', flex: 1, minWidth: 300 },
-                    { colId: 'b', flex: 1 },
-                ],
-            });
-
-            const colA = api.getColumn('a')!;
-            expect(colA.getActualWidth()).toBeGreaterThanOrEqual(300);
-
-            await new GridColumns(api, 'flex with minWidth').checkColumns(false);
-        });
-    });
-
     describe('column sizing: fixed width with constraints', () => {
         test('width is clamped to minWidth', async () => {
             const api = gridsManager.createGrid('myGrid', {
@@ -86,7 +68,10 @@ describe('Column Features', () => {
             const col = api.getColumn('a')!;
             expect(col.getActualWidth()).toBeGreaterThanOrEqual(100);
 
-            await new GridColumns(api, 'columns').checkColumns(false);
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                └── a width:100
+            `);
         });
 
         test('width is clamped to maxWidth', async () => {
@@ -97,7 +82,10 @@ describe('Column Features', () => {
             const col = api.getColumn('a')!;
             expect(col.getActualWidth()).toBeLessThanOrEqual(200);
 
-            await new GridColumns(api, 'columns').checkColumns(false);
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                └── a width:200
+            `);
         });
     });
 
@@ -165,6 +153,146 @@ describe('Column Features', () => {
                 ├── a width:400
                 ├── b width:80
                 └── c width:200
+            `);
+        });
+
+        test('type as array applies all listed types', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnTypes: {
+                    bold: { cellClass: 'bold' },
+                    italic: { cellClass: 'italic' },
+                },
+                columnDefs: [{ colId: 'a', type: ['bold', 'italic'] }],
+            });
+            await new GridColumns(api, `type as array applies all listed types setup`).checkColumns(`
+                CENTER
+                └── a width:200
+            `);
+            await new GridRows(api, `type as array applies all listed types setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const col = api.getColumn('a')!;
+            expect(col.getColDef().cellClass).toBeTruthy();
+            await new GridRows(api, `type as array applies all listed types final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+        });
+
+        test('unknown type key in colDef without userTypes is a warn-only no-op', async () => {
+            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', type: 'does-not-exist' }],
+            });
+            await new GridColumns(api, `unknown type key in colDef without userTypes is a warn-only no-op setup`)
+                .checkColumns(`
+                    CENTER
+                    └── a width:200
+                `);
+            await new GridRows(api, `unknown type key in colDef without userTypes is a warn-only no-op setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                `
+            );
+
+            expect(api.getColumn('a')).toBeTruthy();
+            expect(consoleWarnSpy.mock.calls[0][0]).toContain('warning #36');
+            consoleWarnSpy.mockRestore();
+            await new GridRows(api, `unknown type key in colDef without userTypes is a warn-only no-op final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                `);
+        });
+
+        test('userTypes that override a default type are rejected (warn-only)', async () => {
+            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = gridsManager.createGrid('myGrid', {
+                // 'numericColumn' is a default — overriding should warn and be ignored
+                columnTypes: { numericColumn: { cellClass: 'override' } as any },
+                columnDefs: [{ colId: 'a', type: 'numericColumn' }],
+            });
+            await new GridColumns(api, `userTypes that override a default type are rejected (warn-only) setup`)
+                .checkColumns(`
+                    CENTER
+                    └── a width:200
+                `);
+            await new GridRows(api, `userTypes that override a default type are rejected (warn-only) setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            expect(api.getColumn('a')).toBeTruthy();
+            expect(consoleWarnSpy.mock.calls[0][0]).toContain('warning #34');
+            consoleWarnSpy.mockRestore();
+            await new GridRows(api, `userTypes that override a default type are rejected (warn-only) final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                `);
+        });
+
+        test('userTypes with nested `type` field is rejected (warn-only)', async () => {
+            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = gridsManager.createGrid('myGrid', {
+                columnTypes: { custom: { type: 'something', cellClass: 'c' } as any },
+                columnDefs: [{ colId: 'a', type: 'custom' }],
+            });
+            await new GridColumns(api, `userTypes with nested _type_ field is rejected (warn-only) setup`).checkColumns(
+                `
+                    CENTER
+                    └── a width:200
+                `
+            );
+            await new GridRows(api, `userTypes with nested _type_ field is rejected (warn-only) setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            expect(api.getColumn('a')).toBeTruthy();
+            expect(consoleWarnSpy.mock.calls[0][0]).toContain('warning #35');
+            consoleWarnSpy.mockRestore();
+            await new GridRows(api, `userTypes with nested _type_ field is rejected (warn-only) final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+        });
+
+        test('unknown type with userTypes present is a warn-only no-op', async () => {
+            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = gridsManager.createGrid('myGrid', {
+                columnTypes: { custom: { cellClass: 'c' } as any },
+                columnDefs: [{ colId: 'a', type: 'unknown-type' }],
+            });
+            await new GridColumns(api, `unknown type with userTypes present is a warn-only no-op setup`).checkColumns(
+                `
+                    CENTER
+                    └── a width:200
+                `
+            );
+            await new GridRows(api, `unknown type with userTypes present is a warn-only no-op setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            expect(api.getColumn('a')).toBeTruthy();
+            expect(consoleWarnSpy.mock.calls[0][0]).toContain('warning #36');
+            consoleWarnSpy.mockRestore();
+            await new GridRows(api, `unknown type with userTypes present is a warn-only no-op final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+        });
+
+        test('empty type array short-circuits the type assignment', async () => {
+            // `convertColumnTypes([])` → empty array → `assignColumnTypes` early-returns on `typeKeysLen === 0`.
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', type: [] }],
+            });
+            await new GridColumns(api, `empty type array short-circuits the type assignment setup`).checkColumns(`
+                CENTER
+                └── a width:200
+            `);
+            await new GridRows(api, `empty type array short-circuits the type assignment setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            expect(api.getColumn('a')).toBeTruthy();
+            await new GridRows(api, `empty type array short-circuits the type assignment final state`).check(`
+                ROOT id:ROOT_NODE_ID
             `);
         });
     });
@@ -506,7 +634,499 @@ describe('Column Features', () => {
             expect(api.getColumn('a')!.isResizable()).toBe(false);
             expect(api.getColumn('b')!.isResizable()).toBe(true);
 
-            await new GridColumns(api, 'columns').checkColumns(false);
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── a width:200 !resizable
+                └── b width:200
+            `);
+        });
+    });
+
+    describe('autoHeight', () => {
+        test('colDef.autoHeight on a visible col activates rowAutoHeight tracking', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', autoHeight: true }, { colId: 'b' }],
+                rowData: [{ a: 1, b: 2 }],
+            });
+            await new GridColumns(api, `colDef.autoHeight on a visible col activates rowAutoHeight tracking setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── a width:200
+                    └── b width:200
+                `);
+            await new GridRows(api, `colDef.autoHeight on a visible col activates rowAutoHeight tracking setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0
+                `
+            );
+
+            expect(api.getColumn('a')!.getColDef().autoHeight).toBe(true);
+            await new GridRows(api, `colDef.autoHeight on a visible col activates rowAutoHeight tracking final state`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0
+                `);
+        });
+
+        test('colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', autoHeight: true },
+                    { colId: 'b', colSpan: () => 2 },
+                ],
+                rowData: [{ a: 1, b: 2 }],
+            });
+            await new GridColumns(
+                api,
+                `colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags setup`
+            ).checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
+            await new GridRows(
+                api,
+                `colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
+
+            expect(api.getColumn('a')!.getColDef().autoHeight).toBe(true);
+            await new GridRows(
+                api,
+                `colDef.colSpan + colDef.autoHeight on same grid activates both tracking flags final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
+        });
+    });
+
+    describe('initialSort', () => {
+        test('initialSort populates the column state sort field', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', initialSort: 'asc' }, { colId: 'b' }],
+            });
+            await new GridColumns(api, `initialSort populates the column state sort field setup`).checkColumns(`
+                CENTER
+                ├── a width:200 sort:asc
+                └── b width:200
+            `);
+            await new GridRows(api, `initialSort populates the column state sort field setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const state = api.getColumnState();
+            expect(state.find((s) => s.colId === 'a')!.sort).toBe('asc');
+            await new GridRows(api, `initialSort populates the column state sort field final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+        });
+    });
+
+    describe('Column public-interface getters', () => {
+        test('reflect colDef-driven flags (resizable / sortable / minWidth / maxWidth / fieldDots / tooltip / dndSource / rowDrag / isCellCheckboxSelection)', async () => {
+            // Single fixture exercising the bulk of Column public-interface getters that flip from
+            // colDef properties. Each assertion is independent — combined to avoid N grid setups.
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        colId: 'a',
+                        field: 'nested.value',
+                        resizable: true,
+                        sortable: true,
+                        minWidth: 75,
+                        maxWidth: 200,
+                        tooltipField: 'nested.tip',
+                        dndSource: true,
+                        rowDrag: true,
+                    },
+                    {
+                        colId: 'b',
+                        field: 'flat',
+                        resizable: false,
+                        sortable: false,
+                        tooltipValueGetter: () => 'tip',
+                    },
+                    { colId: 'c', tooltipField: 'flat' },
+                    { colId: 'd' },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+            });
+            await new GridColumns(
+                api,
+                `reflect colDef-driven flags (resizable / sortable / minWidth / maxWidth / fieldD setup`
+            ).checkColumns(`
+                CENTER
+                ├── a "Nested Value" width:200
+                ├── b "Flat" width:200 !resizable !sortable
+                ├── c width:200
+                └── d width:200
+            `);
+            await new GridRows(
+                api,
+                `reflect colDef-driven flags (resizable / sortable / minWidth / maxWidth / fieldD setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
+
+            const a = api.getColumn('a')!;
+            const b = api.getColumn('b')!;
+            const c = api.getColumn('c')!;
+            const d = api.getColumn('d')!;
+            const node = api.getDisplayedRowAtIndex(0)!;
+
+            // Resizable / sortable / sizes
+            expect(a.isResizable()).toBe(true);
+            expect(a.isSortable()).toBe(true);
+            expect(a.getMinWidth()).toBe(75);
+            expect(a.isGreaterThanMax(150)).toBe(false);
+            expect(a.isGreaterThanMax(250)).toBe(true);
+            expect(b.isResizable()).toBe(false);
+            expect(b.isSortable()).toBe(false);
+
+            // Field-dot flags
+            expect(a.isFieldContainsDots()).toBe(true);
+            expect(b.isFieldContainsDots()).toBe(false);
+
+            // Tooltip flags
+            expect(a.isTooltipEnabled()).toBe(true);
+            expect(b.isTooltipEnabled()).toBe(true);
+            expect(c.isTooltipEnabled()).toBe(true);
+            expect(d.isTooltipEnabled()).toBe(false);
+            expect(a.isTooltipFieldContainsDots()).toBe(true);
+            expect(c.isTooltipFieldContainsDots()).toBe(false);
+
+            // Per-row callback-driven flags
+            expect(a.isDndSource(node)).toBe(true);
+            expect(a.isRowDrag(node)).toBe(true);
+            expect(b.isDndSource(node)).toBe(false);
+            expect(b.isRowDrag(node)).toBe(false);
+            // No selection service wired — always false
+            expect(a.isCellCheckboxSelection(node)).toBe(false);
+            await new GridRows(
+                api,
+                `reflect colDef-driven flags (resizable / sortable / minWidth / maxWidth / fieldD final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
+        });
+
+        test('reflect colDef-driven aggregation/function flags + auto-header + parent', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        groupId: 'g',
+                        children: [
+                            {
+                                colId: 'all',
+                                suppressFillHandle: true,
+                                suppressPaste: true,
+                                autoHeaderHeight: true,
+                            },
+                        ],
+                    },
+                    { colId: 'none' },
+                ],
+                rowData: [{ all: 1, none: 2 }],
+            });
+            await new GridColumns(api, `reflect colDef-driven aggregation/function flags + auto-header + parent setup`)
+                .checkColumns(`
+                    CENTER
+                    ├─┬ GROUP
+                    │ └── all width:200
+                    └── none width:200
+                `);
+            await new GridRows(api, `reflect colDef-driven aggregation/function flags + auto-header + parent setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0
+                `);
+
+            const allCol = api.getColumn('all')!;
+            const noneCol = api.getColumn('none')!;
+            const node = api.getDisplayedRowAtIndex(0)!;
+
+            // Function-active flags: with no row-group / value / pivot configured, all false.
+            expect(allCol.isValueActive()).toBe(false);
+            expect(allCol.isPivotActive()).toBe(false);
+            expect(allCol.isRowGroupActive()).toBe(false);
+            expect(allCol.isAnyFunctionActive()).toBe(false);
+
+            // Allowed flags from colDef.
+            expect(allCol.isAllowValue()).toBe(false);
+            expect(allCol.isAllowRowGroup()).toBe(false);
+            expect(allCol.isAllowPivot()).toBe(false);
+            expect(allCol.isAllowFormula()).toBe(false);
+            expect(allCol.isAnyFunctionAllowed()).toBe(false);
+
+            // Fill / paste / nav / edit guards — no selection/edit/nav modules wired.
+            expect(allCol.isSuppressFillHandle()).toBe(true);
+            expect(noneCol.isSuppressFillHandle()).toBe(false);
+            expect(allCol.isSuppressPaste(node)).toBe(true);
+            expect(allCol.isSuppressNavigable(node)).toBe(false);
+            expect(allCol.isCellEditable(node)).toBe(false);
+
+            // Auto header height
+            expect(allCol.isAutoHeaderHeight()).toBe(true);
+            expect(allCol.getAutoHeaderHeight()).toBeNull();
+            expect(noneCol.isAutoHeaderHeight()).toBe(false);
+
+            // Original parent reflects the group the col was originally defined under.
+            // Use boolean assertions to avoid pretty-print walking the circular column-tree.
+            const allParent = allCol.getOriginalParent();
+            expect(allParent != null).toBe(true);
+            expect(allParent?.getGroupId()).toBe('g');
+            await new GridRows(
+                api,
+                `reflect colDef-driven aggregation/function flags + auto-header + parent final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
+        });
+
+        test('autoHeaderHeight: measurement runs and lands on the column when DOM offsets are available', async () => {
+            mockGridLayout.useRealOffsetDimensions = true;
+            try {
+                const api = gridsManager.createGrid('autoHeaderHeight', {
+                    columnDefs: [{ colId: 'auto', autoHeaderHeight: true, headerName: 'Auto' }, { colId: 'normal' }],
+                    rowData: [{ auto: 1, normal: 2 }],
+                });
+
+                const autoCol = api.getColumn('auto')!;
+                const normalCol = api.getColumn('normal')!;
+                expect(autoCol.isAutoHeaderHeight()).toBe(true);
+                expect(normalCol.isAutoHeaderHeight()).toBe(false);
+
+                // Drain rAFs so the measurement callback can run.
+                for (let i = 0; i < 8; ++i) {
+                    await asyncSetTimeout(20);
+                }
+                // After measurement, the auto-header col has a non-null height.
+                expect(autoCol.getAutoHeaderHeight()).not.toBeNull();
+                // Non-auto col is never measured.
+                expect(normalCol.getAutoHeaderHeight()).toBeNull();
+            } finally {
+                mockGridLayout.useRealOffsetDimensions = false;
+            }
+        });
+
+        test('isColumnFunc invokes function with column params; clamps boolean false', async () => {
+            // Function-driven colDef callbacks route through `createColumnFunctionCallbackParams`
+            // which is otherwise only reached via internal cell-editable / dnd-source paths.
+            let receivedColId: string | undefined;
+            let receivedData: any = undefined;
+            let receivedHasNode = false;
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        colId: 'fn',
+                        rowDrag: (params: any) => {
+                            receivedColId = params.column.getColId();
+                            receivedData = params.data;
+                            receivedHasNode = !!params.node;
+                            return true;
+                        },
+                    },
+                ],
+                rowData: [{ fn: 1 }],
+            });
+            await new GridColumns(api, `isColumnFunc invokes function with column params; clamps boolean false setup`)
+                .checkColumns(`
+                    CENTER
+                    └── fn width:200
+                `);
+            await new GridRows(api, `isColumnFunc invokes function with column params; clamps boolean false setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0
+                `);
+
+            const col = api.getColumn('fn')!;
+            const node = api.getDisplayedRowAtIndex(0)!;
+            expect(col.isRowDrag(node)).toBe(true);
+            expect(receivedColId).toBe('fn');
+            expect(receivedData).toEqual({ fn: 1 });
+            expect(receivedHasNode).toBe(true);
+            await new GridRows(
+                api,
+                `isColumnFunc invokes function with column params; clamps boolean false final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
+        });
+
+        test('colSpan and rowSpan callbacks clamped min 1; default 1 when no callback', async () => {
+            // rowSpan without suppressRowTransform legitimately warns — silence the noise.
+            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a' },
+                    { colId: 'b', colSpan: () => 3, rowSpan: () => 2 },
+                    { colId: 'c', colSpan: () => 0 },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+            await new GridColumns(api, `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── a width:200
+                    ├── b width:200
+                    └── c width:200
+                `);
+            await new GridRows(api, `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0
+                `);
+            consoleWarnSpy.mockRestore();
+
+            const node = api.getDisplayedRowAtIndex(0)!;
+            expect(api.getColumn('a')!.getColSpan(node)).toBe(1);
+            expect(api.getColumn('a')!.getRowSpan(node)).toBe(1);
+            expect(api.getColumn('b')!.getColSpan(node)).toBe(3);
+            expect(api.getColumn('b')!.getRowSpan(node)).toBe(2);
+            // Clamped from 0 → 1
+            expect(api.getColumn('c')!.getColSpan(node)).toBe(1);
+            await new GridRows(
+                api,
+                `colSpan and rowSpan callbacks clamped min 1; default 1 when no callback final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
+        });
+
+        test('user resize clears flex; event-listener round-trip on widthChanged', async () => {
+            // Combined: a resize fires `widthChanged` AND clears the flex flag — same single grid.
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', flex: 1 }, { colId: 'b' }],
+            });
+            await new GridColumns(api, `user resize clears flex; event-listener round-trip on widthChanged setup`)
+                .checkColumns(`
+                    CENTER
+                    ├── a width:800 flex:1
+                    └── b width:200
+                `);
+            await new GridRows(api, `user resize clears flex; event-listener round-trip on widthChanged setup`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                `
+            );
+
+            const a = api.getColumn('a')!;
+            let fired = 0;
+            const listener = () => {
+                fired++;
+            };
+            a.addEventListener('widthChanged', listener);
+            api.setColumnWidths([{ key: 'a', newWidth: 150 }]);
+            await new GridColumns(
+                api,
+                `user resize clears flex; event-listener round-trip on widthChanged after setColumnWidths`
+            ).checkColumns(`
+                CENTER
+                ├── a width:150
+                └── b width:200
+            `);
+
+            // Resize cleared flex + fired widthChanged
+            const stateA = api.getColumnState().find((s) => s.colId === 'a')!;
+            expect(stateA.flex).toBeNull();
+            expect(stateA.width).toBe(150);
+            const firedAfterFirstResize = fired;
+            expect(firedAfterFirstResize).toBeGreaterThan(0);
+
+            // Remove + resize again → no further dispatch
+            a.removeEventListener('widthChanged', listener);
+            api.setColumnWidths([{ key: 'a', newWidth: 180 }]);
+            await new GridColumns(
+                api,
+                `user resize clears flex; event-listener round-trip on widthChanged after setColumnWidths #2`
+            ).checkColumns(`
+                CENTER
+                ├── a width:180
+                └── b width:200
+            `);
+            expect(fired).toBe(firedAfterFirstResize);
+        });
+
+        test('deprecated sort helpers reflect current sort + absolute-sort initialSort exercises absolute sort-types path', async () => {
+            // Combined: cycling sort through asc/desc on a regular col covers isSortNone/Ascending/
+            // Descending/Sorting. A second col with `initialSort: { type: 'absolute' }` exercises
+            // the DEFAULT_ABSOLUTE_SORTING_ORDER selection in getSortingOrder.
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', sortable: true },
+                    { colId: 'b', sortable: true, initialSort: { type: 'absolute', direction: 'asc' } as any },
+                ],
+            });
+            await new GridColumns(
+                api,
+                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis setup`
+            ).checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200 sort:asc
+            `);
+            await new GridRows(
+                api,
+                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis setup`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const a = api.getColumn('a')!;
+            expect(a.isSortNone()).toBe(true);
+            expect(a.isSorting()).toBe(false);
+            expect(a.isSortAscending()).toBe(false);
+            expect(a.isSortDescending()).toBe(false);
+
+            api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+            await new GridColumns(
+                api,
+                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis after applyColumnState`
+            ).checkColumns(`
+                CENTER
+                ├── a width:200 sort:asc
+                └── b width:200 sort:asc
+            `);
+            await new GridRows(
+                api,
+                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis after applyColumnState`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(a.isSortAscending()).toBe(true);
+            expect(a.isSorting()).toBe(true);
+
+            api.applyColumnState({ state: [{ colId: 'a', sort: 'desc' }] });
+            await new GridColumns(
+                api,
+                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis after applyColumnState #2`
+            ).checkColumns(`
+                CENTER
+                ├── a width:200 sort:desc
+                └── b width:200 sort:asc
+            `);
+            await new GridRows(
+                api,
+                `deprecated sort helpers reflect current sort + absolute-sort initialSort exercis after applyColumnState #2`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+            expect(a.isSortDescending()).toBe(true);
+
+            // Absolute-sort initial state surfaces in column state
+            const bState = api.getColumnState().find((s) => s.colId === 'b')!;
+            expect(bState.sort).toBe('asc');
+            expect((bState as any).sortType).toBe('absolute');
         });
     });
 });

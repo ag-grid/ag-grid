@@ -104,11 +104,20 @@ export class GridColumnsDomValidator {
             const hasPivotOn = headerRoot.classList.contains('ag-pivot-on');
             const hasPivotOff = headerRoot.classList.contains('ag-pivot-off');
 
-            if (isPivotMode && !hasPivotOn) {
+            // Toggling pivotMode on a grid created without columnDefs (the !ready window) takes an
+            // early-return path that never fires `columnPivotModeChanged`, so the header stays
+            // stamped with whatever class it had at construction. The regular build pipeline
+            // re-stamps on next pivotMode toggle once cols arrive. Look at pivot-related column
+            // state to decide whether the pivot mode is "in effect" enough to require the class.
+            const hasPivotConfig =
+                api.isPivotMode() &&
+                (api.isModuleRegistered as (n: string) => boolean)('SharedPivot') &&
+                ((api.getPivotColumns?.()?.length ?? 0) > 0 || (api.getValueColumns?.()?.length ?? 0) > 0);
+            if (isPivotMode && hasPivotConfig && !hasPivotOn) {
                 this.errors.default.add('Grid is in pivot mode but .ag-header is missing ag-pivot-on class.');
             }
-            if (!isPivotMode && !hasPivotOff) {
-                this.errors.default.add('Grid is NOT in pivot mode but .ag-header is missing ag-pivot-off class.');
+            if (!isPivotMode && hasPivotOn) {
+                this.errors.default.add('Grid is NOT in pivot mode but .ag-header still has ag-pivot-on class.');
             }
             if (hasPivotOn && hasPivotOff) {
                 this.errors.default.add('.ag-header has both ag-pivot-on and ag-pivot-off classes simultaneously.');
@@ -161,14 +170,26 @@ export class GridColumnsDomValidator {
 
     private validateColumnHeaders(gridColumns: GridColumns, headerRoot: HTMLElement): void {
         const { allDisplayedCols, options } = gridColumns;
+        const api = gridColumns.api;
 
         const sortContext = buildDisplayedSortContext(gridColumns.api);
+        const expectedAriaColIndex = buildExpectedAriaColIndex(gridColumns.api);
+
+        // Off-screen displayed columns have no DOM header when virtualisation runs.
+        // `getAllDisplayedVirtualColumns()` returns the full displayed set when virt is effectively
+        // suppressed (viewport=0 in mocked layout), so this is also correct in that case.
+        const virtualColIds =
+            api.getGridOption?.('suppressColumnVirtualisation') !== true
+                ? new Set((api.getAllDisplayedVirtualColumns?.() ?? []).map((c) => c.getColId()))
+                : null;
 
         for (const col of allDisplayedCols) {
             const colId = col.getColId();
             const headerCell = this.findHeaderCell(headerRoot, colId);
             if (!headerCell) {
-                this.errors.get(col).add(`No .ag-header-cell[col-id="${colId}"] found in DOM.`);
+                if (!virtualColIds || virtualColIds.has(colId)) {
+                    this.errors.get(col).add(`No .ag-header-cell[col-id="${colId}"] found in DOM.`);
+                }
                 continue;
             }
 
@@ -290,8 +311,14 @@ export class GridColumnsDomValidator {
 
             // ── aria-colindex attribute ──────────────────────────────────────
             const ariaColIndex = headerCell.getAttribute('aria-colindex');
+            const expectedIndex = expectedAriaColIndex.get(col);
             if (ariaColIndex == null) {
                 colErrors.add('Header cell is missing aria-colindex attribute.');
+            } else if (expectedIndex !== undefined && parseInt(ariaColIndex, 10) !== expectedIndex) {
+                colErrors.add(
+                    `Header cell aria-colindex is ${ariaColIndex} but expected ${expectedIndex} ` +
+                        `(1-based position in [left-pinned, center, right-pinned] order).`
+                );
             }
 
             // ── ag-header-cell-wrap-text CSS class ──────────────────────────
@@ -379,6 +406,7 @@ export class GridColumnsDomValidator {
     private validateGroupHeaders(gridColumns: GridColumns, headerRoot: HTMLElement): void {
         const { options } = gridColumns;
 
+        const expectedAriaColIndex = buildExpectedAriaColIndex(gridColumns.api);
         const allGroups = this.collectGroups([
             ...gridColumns.leftTree,
             ...gridColumns.centerTree,
@@ -469,9 +497,18 @@ export class GridColumnsDomValidator {
             }
 
             // ── aria-colindex attribute ──────────────────────────────────────
+            // For groups, expected aria-colindex is the FIRST leaf col's index (matches
+            // `VisibleColsService.getAriaColIndex` for groups).
             const ariaColIndex = headerCell.getAttribute('aria-colindex');
+            const firstLeaf = group.getLeafColumns()[0];
+            const expectedIndex = firstLeaf ? expectedAriaColIndex.get(firstLeaf) : undefined;
             if (ariaColIndex == null) {
                 groupErrors.add('Group header cell is missing aria-colindex attribute.');
+            } else if (expectedIndex !== undefined && parseInt(ariaColIndex, 10) !== expectedIndex) {
+                groupErrors.add(
+                    `Group header cell aria-colindex is ${ariaColIndex} but expected ${expectedIndex} ` +
+                        `(first leaf col's 1-based position in [left-pinned, center, right-pinned] order).`
+                );
             }
 
             // ── ag-header-cell-wrap-text CSS class ──────────────────────────
@@ -621,12 +658,15 @@ export class GridColumnsDomValidator {
 
 /**
  * Grid-wide context for `getDisplayedSort`, computed once per validation pass:
+ * - `api`: needed to resolve string `showRowGroup` via the same lookup production uses
+ *   (`getColDefCol`, which matches by colId and by `field`).
  * - `rowGroupCols`: the current rowGroup columns, or `null` when the SharedRowGrouping module is
  *   not registered (e.g. tree-data-only tests). `getRowGroupColumns` is part of that module.
  * - `isSortingCoupled`: mirrors `_isColumnsSortingCoupledToGroup(gos)` — false when a custom
  *   `autoGroupColumnDef.comparator` or `treeData` is configured.
  */
 interface DisplayedSortContext {
+    api: GridApi;
     rowGroupCols: Column[] | null;
     isSortingCoupled: boolean;
 }
@@ -637,71 +677,93 @@ function isCoupledSortMode(api: GridApi): boolean {
     return !api.getGridOption('autoGroupColumnDef')?.comparator && !api.getGridOption('treeData');
 }
 
+/** Compute the expected `aria-colindex` (1-based) for every column in `colsList`, partitioning
+ *  by pinned section: `[left-pinned, center, right-pinned]`. Includes hidden cols (they still
+ *  occupy aria-colindex slots — keeps aria-colcount and aria-colindex consistent for screen
+ *  readers). Mirrors `VisibleColsService.stampHeaderIndexes` so the DOM validator catches any
+ *  drift between the rendered attribute and the canonical ordering. */
+function buildExpectedAriaColIndex(api: GridApi): Map<Column, number> {
+    const cols = api.getAllGridColumns() ?? [];
+    const expected = new Map<Column, number>();
+
+    let leftCount = 0;
+    let centerCount = 0;
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        const pinned = cols[i].getPinned();
+        if (pinned === 'right') {
+            continue;
+        }
+        if (pinned) {
+            ++leftCount;
+        } else {
+            ++centerCount;
+        }
+    }
+    let leftCursor = 0;
+    let centerCursor = leftCount;
+    let rightCursor = leftCount + centerCount;
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        const col = cols[i];
+        const pinned = col.getPinned();
+        if (pinned === 'right') {
+            expected.set(col, ++rightCursor); // 1-based
+        } else if (pinned) {
+            expected.set(col, ++leftCursor);
+        } else {
+            expected.set(col, ++centerCursor);
+        }
+    }
+    return expected;
+}
+
 function buildDisplayedSortContext(api: GridApi): DisplayedSortContext {
     // `getRowGroupColumns` is gated on the SharedRowGrouping module; when not registered (e.g.
     // tree-data-only tests), the API call would log a warning and return `undefined`. Cast for
     // the internal module name matches the existing pattern in `validateHeaderRoot` above.
     const isModuleRegistered = api.isModuleRegistered as (name: string) => boolean;
     const rowGroupCols = isModuleRegistered('SharedRowGrouping') ? api.getRowGroupColumns() : null;
-    return { rowGroupCols, isSortingCoupled: isCoupledSortMode(api) };
+    return { api, rowGroupCols, isSortingCoupled: isCoupledSortMode(api) };
 }
 
-/**
- * Effective displayed sort direction for a column, or `null` when none. Mirrors
- * `SortService.getDisplaySortForColumn` using public API only, and compares direction only —
- * that's what the validator asserts against `aria-sort` in the DOM.
- *
- * INTENTIONAL DUPLICATION of `getDisplaySortForColumn` / `_isColumnsSortingCoupledToGroup`: the
- * validator is a black-box DOM check, so computing the expected answer from the production
- * helpers would let both agree on the same bug. Keep in sync when those helpers change.
- *
- * Approximation: string `showRowGroup` is resolved against `getRowGroupColumns()` only, not
- * all defined columns; no current test config triggers a divergence.
- */
+/** Mirrors `SortService.getDisplaySortForColumn` via public API only.
+ *  Intentional duplication for black-box DOM checks — keep in sync if the production helper changes.
+ *  When `showRowGroup` is set and coupling is active, an own sort is NOT a short-circuit:
+ *  divergent linked cols still render as 'mixed' (aria-sort='other'). */
 function getDisplayedSort(col: Column, ctx: DisplayedSortContext): SortDirection | 'mixed' | null {
     const ownSort = col.getSort() ?? null;
-    if (ownSort) {
+    const colDef = col.getColDef();
+    const showRowGroup = colDef.showRowGroup;
+
+    if (showRowGroup == null || !ctx.isSortingCoupled || !ctx.rowGroupCols) {
         return ownSort;
     }
 
-    const colDef = col.getColDef();
-    const showRowGroup = colDef.showRowGroup;
-    if (showRowGroup == null) {
-        return null;
-    }
-
-    // Coupling OFF → display column shows only its own sort (null at this point).
-    if (!ctx.isSortingCoupled || !ctx.rowGroupCols) {
-        return null;
-    }
-
-    // `=== true` cascades to all rowGroup columns; string resolves to at most one column by colId.
     let linked: Column[];
     if (showRowGroup === true) {
         linked = ctx.rowGroupCols;
-    } else {
-        const found = ctx.rowGroupCols.find((c) => c.getColId() === showRowGroup);
-        if (!found) {
-            return null;
+    } else if (typeof showRowGroup === 'string') {
+        // String `showRowGroup` resolves through `api.getColumn` (matches `getColDefCol`'s lookup
+        // — colId, then field fallback) and excludes pivot result cols.
+        const found = ctx.api.getColumn(showRowGroup);
+        if (!found || found.getColDef().pivotKeys != null) {
+            return ownSort;
         }
         linked = [found];
+    } else {
+        // showRowGroup === false — explicit opt-out; treat as no linking.
+        return ownSort;
     }
     if (linked.length === 0) {
-        return null;
+        return ownSort;
     }
 
-    // When the display column has own data (field/valueGetter), its own (null) sort joins the
-    // mix-check — any non-null linked source then renders as 'mixed'. See `columnHasUniqueData`
-    // in `getDisplaySortForColumn`.
     const columnHasUniqueData = colDef.field != null || colDef.valueGetter != null;
-    let firstSort: SortDirection | null | undefined = columnHasUniqueData ? null : undefined;
-    for (const c of linked) {
-        const s = c.getSort() ?? null;
-        if (firstSort === undefined) {
-            firstSort = s;
-        } else if (firstSort !== s) {
+    const sortableColumns: Column[] = columnHasUniqueData ? [col, ...linked] : linked;
+    const firstSort = sortableColumns[0].getSort() ?? null;
+    for (let i = 1, len = sortableColumns.length; i < len; ++i) {
+        if ((sortableColumns[i].getSort() ?? null) !== firstSort) {
             return 'mixed';
         }
     }
-    return firstSort ?? null;
+    return firstSort;
 }

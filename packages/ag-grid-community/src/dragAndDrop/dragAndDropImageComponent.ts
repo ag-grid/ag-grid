@@ -1,7 +1,6 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import type { IComponent } from '../agStack/interfaces/iComponent';
-import type { IDragAndDropImage } from '../agStack/interfaces/iDragAndDrop';
-import { _clearElement } from '../agStack/utils/dom';
+import type { IComponent, IDragAndDropImage } from 'ag-stack';
+import { RefPlaceholder, _clearElement } from 'ag-stack';
+
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';

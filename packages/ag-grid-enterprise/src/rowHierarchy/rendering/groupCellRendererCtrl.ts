@@ -1,3 +1,5 @@
+import { _isElementInEventPath, _removeAriaExpanded, _setAriaExpanded } from 'ag-stack';
+
 import type {
     AgColumn,
     CheckboxSelectionComponent,
@@ -16,11 +18,8 @@ import {
     _getCheckboxLocation,
     _getCheckboxes,
     _getInnerCellRendererDetails,
-    _isElementInEventPath,
     _isRowSelection,
     _isStopPropagationForAgGrid,
-    _removeAriaExpanded,
-    _setAriaExpanded,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 

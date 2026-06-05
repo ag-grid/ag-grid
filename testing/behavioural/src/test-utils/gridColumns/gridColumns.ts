@@ -1,12 +1,12 @@
-import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import util from 'util';
 import { expect } from 'vitest';
 
 import type { Column, ColumnGroup, GridApi } from 'ag-grid-community';
 
-import { addDiagramToError } from '../gridRows/grid-rows-helpers';
-import { getSnapshotUpdateMode, recordSnapshotMismatch } from '../gridRows/snapshot-updater';
-import { log, unindentText } from '../utils';
+import { addDiagramToError, makeSnapshotTarget, runSnapshotCheck } from '../gridRows/grid-rows-helpers';
+import type { SnapshotCheckTarget } from '../gridRows/grid-rows-helpers';
+import { getSnapshotUpdateMode } from '../gridRows/snapshot-updater';
+import { log } from '../utils';
 import { buildColumnsDiagram } from './columns-diagram/gridColumnsDiagramTree';
 import { GridColumnsDomValidator } from './columns-validation-dom/gridColumnsDomValidator';
 import { GridColumnsErrors } from './columns-validation/gridColumnsErrors';
@@ -91,7 +91,7 @@ export class GridColumns<TData = any> {
     public loadErrors(): this {
         if (!this.errors.validated) {
             this.errors.validated = true;
-            new GridColumnsValidator(this.errors).validate(this);
+            new GridColumnsValidator(this.errors, this.bugs).validate(this);
 
             if (this.options.checkDom ?? true) {
                 new GridColumnsDomValidator(this.errors).validate(this);
@@ -120,97 +120,27 @@ export class GridColumns<TData = any> {
      * @param diagramSnapshot The grid columns diagram snapshot.
      *  - Pass a template literal snapshot string to compare against the current diagram output.
      *  - Run `./behave.sh --update-grid-rows` to generate or update snapshots automatically.
-     *  - 'empty': Assert that there are no displayed columns (empty diagram).
-     *  - true: Print the diagram to the console without performing any snapshot comparison or validation.
-     *  - false: Skip diagram generation and snapshot comparison, running only validators.
-     *  - undefined: Logs an error to console reminding you to run `./behave.sh --update-grid-rows`.
+     *  - `'empty'`: assert that there are no displayed columns.
+     *  - `true`: print the diagram to the console without performing snapshot comparison.
+     *  - `'skip-snapshot'`: ⚠️ skip snapshot comparison entirely. **Use only temporarily** while
+     *    iterating on a test; commit-blocking convention is that no production test ships with
+     *    this value. Type accepts no `false` — every `checkColumns` call must opt into either a
+     *    real snapshot string, `'empty'`, `true`, or the explicit `'skip-snapshot'` escape.
+     *  - `undefined`: logs an error reminding you to run `./behave.sh --update-grid-rows`.
      */
-    public async checkColumns(diagramSnapshot: string | 'empty' | boolean | undefined): Promise<this> {
-        if (diagramSnapshot === undefined) {
-            if (getSnapshotUpdateMode()) {
-                // In update mode, treat undefined as an empty string to trigger a mismatch recording
-                // so the snapshot updater can replace `undefined` with the actual diagram template literal.
-                diagramSnapshot = '';
-            } else {
-                console.error(
-                    `\n❌ GridColumns.checkColumns() called without a snapshot for "${this.label}". Run \`./behave.sh --update-grid-rows\` to generate one.\n`
-                );
-                diagramSnapshot = false;
-            }
-        }
-
-        this.loadErrors();
-
-        // Throw validation errors always — don't bake broken snapshots
-        if (this.errors.totalErrorsCount > 0) {
-            throw this.#makeError(this.checkColumns);
-        }
-
-        if (diagramSnapshot === true) {
-            this.printDiagram();
-            return this;
-        }
-
-        if (diagramSnapshot === false) {
-            return this;
-        }
-
-        if (getSnapshotUpdateMode()) {
-            if (diagramSnapshot === 'empty') {
-                expect(this.allDisplayedCols.length).toBe(0);
-                return this;
-            }
-            const diagram = this.makeDiagram(false);
-            if (unindentText(diagram) !== unindentText(diagramSnapshot)) {
-                recordSnapshotMismatch(this.checkColumns, diagram, this.label, 'checkColumns');
-            }
-            return this;
-        }
-
-        // Retry loop: on failure, rebuild from scratch and retry with a short delay
-        const retryDelays = [10, 50, 100];
-        let attempt: GridColumns<TData> = this;
-        let lastError: any;
-
-        for (let i = 0; i <= retryDelays.length; i++) {
-            attempt.loadErrors();
-            lastError = attempt.#tryCheck(diagramSnapshot);
-            if (!lastError) {
-                if (i > 0) {
-                    console.error(
-                        `GridColumns flaky check detected for "${this.label}" — passed only after retrying with delays. ` +
-                            `Add \`await asyncSetTimeout(N)\` before this check to avoid intermittent failures.`
-                    );
-                }
-                return this;
-            }
-            if (i < retryDelays.length) {
-                await asyncSetTimeout(retryDelays[i]);
-                attempt = new GridColumns<TData>(this.api, this.label, this.options);
-            }
-        }
-
-        addDiagramToError(lastError, attempt.makeDiagram(false), this.label);
-        Error.captureStackTrace(lastError, this.checkColumns);
-        throw lastError;
+    public async checkColumns(diagramSnapshot: string | 'empty' | 'skip-snapshot' | true | undefined): Promise<this> {
+        await runSnapshotCheck(this.#snapshotTarget(), diagramSnapshot, getSnapshotUpdateMode());
+        return this;
     }
 
-    /** Attempts snapshot check without throwing. Returns the error if failed, null if passed. */
-    #tryCheck(diagramSnapshot: string | 'empty'): any {
-        if (this.errors.totalErrorsCount > 0) {
-            return this.#makeError(this.checkColumns);
-        }
-        const diagram = this.makeDiagram(false);
-        try {
-            if (diagramSnapshot === 'empty') {
-                expect(this.allDisplayedCols.length).toBe(0);
-            } else {
-                expect(unindentText(diagram)).toEqual(unindentText(diagramSnapshot));
-            }
-        } catch (e: any) {
-            return e;
-        }
-        return null;
+    #snapshotTarget(): SnapshotCheckTarget {
+        return makeSnapshotTarget(this, {
+            methodName: 'checkColumns',
+            methodRef: this.checkColumns,
+            rebuild: () => new GridColumns<TData>(this.api, this.label, this.options).#snapshotTarget(),
+            makeError: () => this.#makeError(this.checkColumns),
+            assertEmpty: () => expect(this.allDisplayedCols.length).toBe(0),
+        });
     }
 
     #makeError(callerFn: (...args: any[]) => any, message = 'Grid columns errors:'): Error {

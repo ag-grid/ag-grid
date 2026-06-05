@@ -1,4 +1,5 @@
-import { _setAriaRowIndex, _setAriaRowSpan } from '../../agStack/utils/aria';
+import { _setAriaRowIndex, _setAriaRowSpan } from 'ag-stack';
+
 import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';

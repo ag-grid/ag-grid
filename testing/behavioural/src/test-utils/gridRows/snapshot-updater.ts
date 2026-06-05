@@ -171,7 +171,8 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
             continue;
         }
 
-        const replacements = findReplacements(ts, source, file, fileMismatches, relPath);
+        const { replacements, skipped: findSkipped } = findReplacements(ts, source, file, fileMismatches, relPath);
+        totalSkipped += findSkipped;
 
         if (!replacements.length) {
             continue;
@@ -276,12 +277,39 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
 // ─── AST-based replacement finder ────────────────────────────────────────────
 
 /** Information about a .check() or .checkColumns() call found in the AST. */
+/** Walks the receiver chain of a `.check()` / `.checkColumns()` call and extracts the second
+ *  argument of the underlying `new GridRows(api, LABEL, ...)` / `new GridColumns(api, LABEL, ...)`
+ *  constructor when it's a statically-resolvable string/template literal. Returns undefined when
+ *  the label is built dynamically (variable interpolation, computed expression, etc.). */
+function extractGridInstanceLabel(ts: Typescript, expr: any): string | undefined {
+    let cursor: any = expr;
+    while (cursor && ts.isParenthesizedExpression(cursor)) {
+        cursor = cursor.expression;
+    }
+    while (cursor && (ts.isCallExpression(cursor) || ts.isPropertyAccessExpression(cursor))) {
+        cursor = (cursor as any).expression;
+        while (cursor && ts.isParenthesizedExpression(cursor)) {
+            cursor = cursor.expression;
+        }
+    }
+    if (!cursor || !ts.isNewExpression(cursor) || !cursor.arguments || cursor.arguments.length < 2) {
+        return undefined;
+    }
+    const labelArg = cursor.arguments[1];
+    if (ts.isStringLiteral(labelArg) || ts.isNoSubstitutionTemplateLiteral(labelArg)) {
+        return labelArg.text;
+    }
+    return undefined;
+}
+
 interface CheckCallInfo {
     callLine: number;
     node: any;
     arg: any;
     /** The method name: 'check' or 'checkColumns'. */
     methodName: string;
+    /** The label passed to `new GridRows(api, LABEL)` / `new GridColumns(api, LABEL)`, when statically resolvable. */
+    label: string | undefined;
 }
 
 function findReplacements(
@@ -290,9 +318,10 @@ function findReplacements(
     file: string,
     mismatches: SnapshotMismatch[],
     relPath: string
-): Replacement[] {
+): { replacements: Replacement[]; skipped: number } {
     const sourceFile = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, /* setParentNodes */ true);
     const replacements: Replacement[] = [];
+    let skipped = 0;
 
     // Collect all variable declarations with template literal initialisers
     // for resolving identifier references. Warn on shadowed names.
@@ -325,45 +354,103 @@ function findReplacements(
                 node.arguments.length >= 1
             ) {
                 const callLine = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1; // 1-based
-                checkCalls.push({ callLine, node, arg: node.arguments[0], methodName: expr.name.text });
+                const label = extractGridInstanceLabel(ts, expr.expression);
+                checkCalls.push({ callLine, node, arg: node.arguments[0], methodName: expr.name.text, label });
             }
         }
         ts.forEachChild(node, visit);
     }
     visit(sourceFile);
 
+    // Pre-pass: collapse mismatches that share the same `(line, methodName)` tuple. When a
+    // `test.each` / `describe.each` block runs multiple iterations, each one records a mismatch at
+    // the same source line but with different `actualDiagram` content. Keeping only one of those
+    // would silently freeze the snapshot to whichever iteration ran first; instead we drop ALL of
+    // them so the conflict is surfaced (the user must expand `.each` or use `'skip-snapshot'`).
+    const byLine = new Map<string, SnapshotMismatch[]>();
+    for (const m of mismatches) {
+        const key = `${m.line}|${m.methodName ?? ''}`;
+        let arr = byLine.get(key);
+        if (!arr) {
+            arr = [];
+            byLine.set(key, arr);
+        }
+        arr.push(m);
+    }
+    const filteredMismatches: SnapshotMismatch[] = [];
+    const collectFiltered = (group: SnapshotMismatch[]): void => {
+        if (group.length === 1) {
+            filteredMismatches.push(group[0]);
+            return;
+        }
+        const allEqual = group.every((m) => m.actualDiagram === group[0].actualDiagram);
+        if (allEqual) {
+            filteredMismatches.push(group[0]);
+            return;
+        }
+        const m = group[0];
+        logWarning(
+            `  ⚠️ Skipped ${relPath}:${m.line} — "${m.label}" (${group.length} iterations produced different snapshots — expand test.each/describe.each or use 'skip-snapshot')`
+        );
+        skipped += group.length;
+    };
+    byLine.forEach(collectFiltered);
+
     // Match mismatches to .check() calls using nearest-line matching.
     // Sort mismatches by line so we process them in source order.
-    const sortedMismatches = [...mismatches].sort((a, b) => a.line - b.line);
+    const sortedMismatches = filteredMismatches.sort((a, b) => a.line - b.line);
     const usedCheckCalls = new Set<CheckCallInfo>();
 
     for (const mismatch of sortedMismatches) {
-        // Find the closest unused call to this mismatch's line.
-        // When the mismatch has a methodName, only match calls with the same method name
-        // (prevents .checkColumns() mismatches from replacing .check() snapshots and vice versa).
+        // Prefer matching by label when the AST has a unique unused call with that exact label —
+        // matching by line alone is fragile when V8's stack-trace line drifts from the AST start
+        // line, or when multiple check calls cluster within a few lines of each other.
         let bestMatch: CheckCallInfo | undefined;
         let bestDistance = Infinity;
-
-        for (const cc of checkCalls) {
-            if (usedCheckCalls.has(cc)) {
-                continue;
-            }
-            // Filter by method name when available
-            if (mismatch.methodName && cc.methodName !== mismatch.methodName) {
-                continue;
-            }
-            const distance = Math.abs(cc.callLine - mismatch.line);
-            if (distance < bestDistance) {
-                bestDistance = distance;
-                bestMatch = cc;
+        if (mismatch.label) {
+            const labelMatches = checkCalls.filter(
+                (cc) =>
+                    !usedCheckCalls.has(cc) &&
+                    cc.label === mismatch.label &&
+                    (!mismatch.methodName || cc.methodName === mismatch.methodName)
+            );
+            if (labelMatches.length === 1) {
+                bestMatch = labelMatches[0];
+                bestDistance = Math.abs(bestMatch.callLine - mismatch.line);
+            } else if (labelMatches.length > 1) {
+                // Multiple calls share the same label — disambiguate by nearest-line within the set.
+                for (const cc of labelMatches) {
+                    const distance = Math.abs(cc.callLine - mismatch.line);
+                    if (distance < bestDistance) {
+                        bestDistance = distance;
+                        bestMatch = cc;
+                    }
+                }
             }
         }
 
-        // Require the match to be within a reasonable tolerance
+        if (!bestMatch) {
+            // Fallback: nearest-line match across all unused calls with matching methodName.
+            for (const cc of checkCalls) {
+                if (usedCheckCalls.has(cc)) {
+                    continue;
+                }
+                if (mismatch.methodName && cc.methodName !== mismatch.methodName) {
+                    continue;
+                }
+                const distance = Math.abs(cc.callLine - mismatch.line);
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    bestMatch = cc;
+                }
+            }
+        }
+
         if (!bestMatch || bestDistance > 5) {
             logWarning(
                 `  ⚠️ Skipped ${relPath}:${mismatch.line} — "${mismatch.label}" (could not find .check() call in AST)`
             );
+            skipped++;
             continue;
         }
 
@@ -383,7 +470,7 @@ function findReplacements(
         }
     }
 
-    return replacements;
+    return { replacements, skipped };
 }
 
 /**
@@ -582,9 +669,19 @@ function buildReplacementText(
     }
     const indentFixed = originalLines.length > 1 && existingContentIndent !== contentIndent;
 
-    // Build the new diagram with correct indentation
+    // Build the new diagram with correct indentation. Escape every character that a template
+    // literal interprets so the file bytes round-trip back to the same runtime string:
+    //   - `\` → `\\`  (escape backslash itself FIRST — otherwise the next two passes
+    //                  would add backslashes that get re-interpreted)
+    //   - `` ` `` → `` \` ``  (close-template character)
+    //   - `${` → `\${`         (interpolation prefix)
+    // The diagram generator (`optionalEscapeString`) avoids emitting raw `\` in the common case
+    // by picking single-quote vs double-quote wrapping, so the backslash branch should be a
+    // safety-net rather than a hot path.
+    const escapeForTemplate = (s: string): string =>
+        s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
     const diagramLines = unindentText(actualDiagram).split('\n');
-    const indentedLines = diagramLines.map((line) => (line.trim() ? contentIndent + line : ''));
+    const indentedLines = diagramLines.map((line) => (line.trim() ? contentIndent + escapeForTemplate(line) : ''));
 
     return { text: '`\n' + indentedLines.join('\n') + '\n' + closingIndent + '`', indentFixed };
 }

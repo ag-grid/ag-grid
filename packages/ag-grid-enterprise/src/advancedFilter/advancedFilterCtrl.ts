@@ -1,3 +1,5 @@
+import { _getAbsoluteHeight, _getAbsoluteWidth, _initStyledRoot } from 'ag-stack';
+
 import type {
     BeanCollection,
     CtrlsService,
@@ -6,7 +8,7 @@ import type {
     IPinnedSectionCompHost,
     PopupService,
 } from 'ag-grid-community';
-import { BeanStub, _getAbsoluteHeight, _getAbsoluteWidth, _initStyledRoot } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import { Dialog } from '../widgets/dialog';
 import { AdvancedFilterComp } from './advancedFilterComp';

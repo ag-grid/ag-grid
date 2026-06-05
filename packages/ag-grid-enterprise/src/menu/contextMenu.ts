@@ -1,3 +1,5 @@
+import { _exists, _isIOSUserAgent } from 'ag-stack';
+
 import type {
     AgColumn,
     AgComponentSelectorType,
@@ -21,14 +23,7 @@ import type {
     TouchShowContextMenuParam,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _addGridCommonParams,
-    _attemptToRestoreCellFocus,
-    _exists,
-    _getGrandTotalRow,
-    _isIOSUserAgent,
-} from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _attemptToRestoreCellFocus, _getGrandTotalRow } from 'ag-grid-community';
 
 import { AgContextMenuService } from '../agStack/agContextMenuService';
 import { MENU_ITEM_CALLBACKS } from '../widgets/menuItemComponent';

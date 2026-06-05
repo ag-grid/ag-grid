@@ -1,7 +1,6 @@
-import type { AgContextParams } from './agStack/core/agContext';
-import { AgContext } from './agStack/core/agContext';
-import { _createStyledRootElements } from './agStack/theming/styledRoot';
-import { _missing } from './agStack/utils/generic';
+import type { AgContextParams } from 'ag-stack';
+import { AgContext, _createStyledRootElements, _missing } from 'ag-stack';
+
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';

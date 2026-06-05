@@ -1,4 +1,5 @@
-import { _missing } from '../../agStack/utils/generic';
+import { _missing } from 'ag-stack';
+
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -9,11 +10,11 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { ICellComp } from '../../rendering/cell/cellCtrl';
+import { _getCalculatedColumnCssClasses } from '../../styling/calculatedColumnCss';
 import type { IAbstractHeaderCellComp } from './abstractCell/abstractHeaderCellCtrl';
 
 const CSS_FIRST_COLUMN = 'ag-column-first';
 const CSS_LAST_COLUMN = 'ag-column-last';
-const CSS_CALCULATED_COLUMN = 'ag-calculated-column';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getHeaderClassesFromColDef(
@@ -22,15 +23,14 @@ export function _getHeaderClassesFromColDef(
     column: AgColumn | null,
     columnGroup: AgColumnGroup | null
 ): string[] {
-    const calculatedClasses =
-        column?.colDef.calculatedExpression != null && beans.calculatedColsSvc != null ? [CSS_CALCULATED_COLUMN] : [];
+    const calculatedColumnClasses = _getCalculatedColumnCssClasses(column, beans.calculatedColsSvc);
 
     if (_missing(abstractColDef)) {
-        return calculatedClasses;
+        return calculatedColumnClasses.length ? [...calculatedColumnClasses] : [];
     }
 
     return [
-        ...calculatedClasses,
+        ...calculatedColumnClasses,
         ...getColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, beans.gos, column, columnGroup),
     ];
 }
@@ -56,6 +56,44 @@ export function refreshFirstAndLastStyles(
 ) {
     comp.toggleCss(CSS_FIRST_COLUMN, presentedColsService.isColAtEdge(column, 'first'));
     comp.toggleCss(CSS_LAST_COLUMN, presentedColsService.isColAtEdge(column, 'last'));
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _refreshCssClasses<TComp extends IAbstractHeaderCellComp | ICellComp>(
+    comp: TComp,
+    oldClasses: Set<string> | undefined,
+    classes: readonly string[]
+): Set<string> | undefined {
+    if (!classes.length) {
+        if (oldClasses) {
+            for (const cssClass of oldClasses) {
+                comp.toggleCss(cssClass, false);
+            }
+        }
+        return undefined;
+    }
+
+    if (!oldClasses) {
+        for (const cssClass of classes) {
+            comp.toggleCss(cssClass, true);
+        }
+        return new Set(classes);
+    }
+
+    const oldClassesToRemove = oldClasses;
+    for (const cssClass of classes) {
+        if (oldClassesToRemove.has(cssClass)) {
+            oldClassesToRemove.delete(cssClass);
+        } else {
+            comp.toggleCss(cssClass, true);
+        }
+    }
+
+    for (const cssClass of oldClassesToRemove) {
+        comp.toggleCss(cssClass, false);
+    }
+
+    return new Set(classes);
 }
 
 function getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(

@@ -1,4 +1,7 @@
+import { RefPlaceholder, _getDocument, _setDisplayed } from 'ag-stack';
+
 import type {
+    CalculatedColumnExpressionPicker,
     ElementParams,
     GridInputTextArea,
     GridInputTextField,
@@ -12,46 +15,42 @@ import {
     AgSelectSelector,
     Component,
     KeyCode,
-    RefPlaceholder,
-    _getDocument,
-    _setDisplayed,
 } from 'ag-grid-community';
 
-export type CalculatedColumnType = 'text' | 'number' | 'boolean' | 'date';
-
-export interface CalculatedColumnDraft {
-    colId: string;
-    headerName: string;
-    cellDataType: CalculatedColumnType;
-    calculatedExpression: string;
-}
-
-export interface ColumnSuggestion {
-    type: 'column' | 'function' | 'operator';
-    label: string;
-    value: string;
-    searchText?: string;
-}
+import { AgAutocompleteList } from '../advancedFilter/autocomplete/agAutocompleteList';
+import type { AutocompleteEntry } from '../advancedFilter/autocomplete/autocompleteParams';
+import { CalculatedColumnAutocompleteRow } from './calculatedColumnAutocompleteRow';
+import type {
+    CalculatedColumnDataTypeOption,
+    CalculatedColumnDraft,
+    ColumnSuggestion,
+} from './calculatedColumnFormTypes';
+import { getOperatorReplacementRange } from './calculatedColumnUtils';
 
 export const DEFAULT_DRAFT: Omit<CalculatedColumnDraft, 'colId' | 'headerName'> = {
     cellDataType: 'text',
     calculatedExpression: '',
 };
 
-export const CALCULATED_COLUMN_TYPES: Record<CalculatedColumnType, true> = {
-    text: true,
-    number: true,
-    boolean: true,
-    date: true,
-};
+export const DEFAULT_CALCULATED_COLUMN_DATA_TYPES = ['text', 'number', 'date', 'boolean'] as const;
+export const DEFAULT_CALCULATED_COLUMN_EXPRESSION_PICKERS = ['columns', 'functions', 'operators'] as const;
 
-const OPERATOR_SUGGESTIONS: ColumnSuggestion[] = ['+', '-', '*', '/', '^', '&', '=', '<>', '>', '>=', '<', '<='].map(
-    (operator) => ({
-        type: 'operator' as const,
-        label: operator,
-        value: operator,
-    })
-);
+const OPERATOR_VALUES = ['+', '-', '*', '/', '^', '&', '=', '<>', '>', '>=', '<', '<='] as const;
+const OPERATOR_REPLACEMENT_VALUES = [...OPERATOR_VALUES].sort((a, b) => b.length - a.length);
+const OPERATOR_SUGGESTIONS: ColumnSuggestion[] = OPERATOR_VALUES.map((operator) => ({
+    type: 'operator' as const,
+    label: operator,
+    value: operator,
+}));
+const MAX_VISIBLE_SUGGESTIONS = 6;
+
+type CalculatedColumnAutocompleteEntry = AutocompleteEntry & { suggestion: ColumnSuggestion };
+
+/** Search string for an entry: grouped columns render segments, so the matched text and displayed text can differ. */
+function getSuggestionSearchValue(suggestion: ColumnSuggestion): string {
+    const isGroupedColumn = suggestion.displayPath != null && suggestion.displayPath.length >= 2;
+    return isGroupedColumn ? (suggestion.searchText ?? suggestion.label) : suggestion.label;
+}
 
 const CalculatedColumnFormElement: ElementParams = {
     tag: 'div',
@@ -62,10 +61,7 @@ const CalculatedColumnFormElement: ElementParams = {
         {
             tag: 'div',
             cls: 'ag-calculated-column-expression-wrap',
-            children: [
-                { tag: 'ag-input-text-area', ref: 'eExpression' },
-                { tag: 'div', ref: 'eSuggestions', cls: 'ag-calculated-column-suggestions' },
-            ],
+            children: [{ tag: 'ag-input-text-area', ref: 'eExpression' }],
         },
         {
             tag: 'div',
@@ -93,25 +89,30 @@ const CalculatedColumnFormElement: ElementParams = {
 
 export class CalculatedColumnForm extends Component {
     private readonly eTitle: GridInputTextField = RefPlaceholder;
-    private readonly eType: GridSelect<CalculatedColumnType> = RefPlaceholder;
+    private readonly eType: GridSelect<string> = RefPlaceholder;
     private readonly eExpression: GridInputTextArea = RefPlaceholder;
-    private readonly eSuggestions: HTMLElement = RefPlaceholder;
     private readonly eColumns: HTMLButtonElement = RefPlaceholder;
     private readonly eFunctions: HTMLButtonElement = RefPlaceholder;
     private readonly eOperators: HTMLButtonElement = RefPlaceholder;
     private readonly eApply: HTMLButtonElement = RefPlaceholder;
     private readonly eCancel: HTMLButtonElement = RefPlaceholder;
 
-    private suggestions: ColumnSuggestion[] = [];
-    private activeSuggestion = 0;
     private activeReplacement: { start: number; end: number } | null = null;
     private suggestionSource: HTMLElement | null = null;
     private hideSuggestionPopup: (() => void) | undefined;
     private validationTooltipFeature?: TooltipFeature;
     private expressionValidationMessage: string | null = null;
+    private readonly expressionPickers: ReadonlySet<CalculatedColumnExpressionPicker>;
+    /** The open suggestion list, recreated whenever the picker type (column/function/operator) changes. */
+    private autocompleteList: AgAutocompleteList | null = null;
+    private suggestionType: ColumnSuggestion['type'] | null = null;
+    private openSuggestions: ColumnSuggestion[] = [];
+    private expressionSelection: { start: number; end: number } | null = null;
 
     constructor(
         private draft: CalculatedColumnDraft,
+        private readonly dataTypeOptions: CalculatedColumnDataTypeOption[],
+        expressionPickers: readonly CalculatedColumnExpressionPicker[],
         private readonly getColumnSuggestions: () => ColumnSuggestion[],
         private readonly getFunctionSuggestions: () => ColumnSuggestion[],
         private readonly onValidate: (draft: CalculatedColumnDraft) => string | null,
@@ -119,12 +120,12 @@ export class CalculatedColumnForm extends Component {
         private readonly onCancel: () => void
     ) {
         super(CalculatedColumnFormElement, [AgInputTextFieldSelector, AgSelectSelector, AgInputTextAreaSelector]);
+        this.expressionPickers = new Set(expressionPickers);
     }
 
     public postConstruct(): void {
         this.setupFormFields();
         this.setupActionButtons();
-        this.setupSuggestions();
         this.setupValidationTooltip();
         this.addFormFieldListeners();
         this.setupExpressionEditor();
@@ -135,7 +136,6 @@ export class CalculatedColumnForm extends Component {
 
     public hideSuggestions(): void {
         this.activeReplacement = null;
-        this.suggestions = [];
         this.closeSuggestionPopup();
     }
 
@@ -145,12 +145,7 @@ export class CalculatedColumnForm extends Component {
         this.eTitle.setLabel(translate('calculatedColumnTitle', 'Title')).setValue(this.draft.headerName, true);
         this.eType
             .setLabel(translate('calculatedColumnType', 'Type'))
-            .addOptions([
-                { value: 'text', text: translate('dataTypeText', 'Text') },
-                { value: 'number', text: translate('dataTypeNumber', 'Number') },
-                { value: 'date', text: translate('dataTypeDate', 'Date') },
-                { value: 'boolean', text: translate('dataTypeBoolean', 'Boolean') },
-            ])
+            .addOptions(this.dataTypeOptions)
             .setValue(this.draft.cellDataType, true);
         this.eExpression
             .setLabel(translate('calculatedColumnExpression', 'Expression'))
@@ -168,17 +163,18 @@ export class CalculatedColumnForm extends Component {
             btn.textContent = translate(`calculatedColumn${action}`, action);
             btn.type = 'button';
         }
-    }
 
-    private setupSuggestions(): void {
-        this.eSuggestions.remove();
-        _setDisplayed(this.eSuggestions, false);
+        _setDisplayed(this.eColumns, this.expressionPickers.has('columns'));
+        _setDisplayed(this.eFunctions, this.expressionPickers.has('functions'));
+        _setDisplayed(this.eOperators, this.expressionPickers.has('operators'));
     }
 
     private addFormFieldListeners(): void {
         const initialHeaderName = this.draft.headerName;
         this.eTitle.onValueChange((value) => this.updateDraft({ headerName: value || initialHeaderName }));
-        this.eType.onValueChange((value) => this.updateDraft({ cellDataType: value ?? DEFAULT_DRAFT.cellDataType }));
+        this.eType.onValueChange((value) =>
+            this.updateDraft({ cellDataType: value ?? this.dataTypeOptions[0]?.value ?? DEFAULT_DRAFT.cellDataType })
+        );
         this.eExpression.onValueChange((value) => {
             this.updateDraft({ calculatedExpression: value ?? '' });
             this.setExpressionError(this.onValidate(this.draft));
@@ -192,22 +188,36 @@ export class CalculatedColumnForm extends Component {
         input.setAttribute('spellcheck', 'false');
 
         this.addManagedElementListeners(input, {
-            click: () => this.refreshContextSuggestions(),
+            click: () => {
+                this.rememberExpressionSelection();
+                this.refreshContextSuggestions();
+            },
+            input: () => this.rememberExpressionSelection(),
             keydown: (event: KeyboardEvent) => this.onExpressionKeyDown(event),
             keyup: (event: KeyboardEvent) => this.onExpressionKeyUp(event),
+            select: () => this.rememberExpressionSelection(),
         });
     }
 
     private addActionListeners(): void {
-        this.addManagedElementListeners(this.eColumns, {
-            click: () => this.showSuggestions('column', '', null, this.eColumns),
-        });
-        this.addManagedElementListeners(this.eFunctions, {
-            click: () => this.showSuggestions('function', '', null, this.eFunctions),
-        });
-        this.addManagedElementListeners(this.eOperators, {
-            click: () => this.showSuggestions('operator', '', null, this.eOperators),
-        });
+        if (this.expressionPickers.has('columns')) {
+            this.addManagedElementListeners(this.eColumns, {
+                mousedown: () => this.rememberExpressionSelection(),
+                click: () => this.openPicker('column', this.eColumns),
+            });
+        }
+        if (this.expressionPickers.has('functions')) {
+            this.addManagedElementListeners(this.eFunctions, {
+                mousedown: () => this.rememberExpressionSelection(),
+                click: () => this.openPicker('function', this.eFunctions),
+            });
+        }
+        if (this.expressionPickers.has('operators')) {
+            this.addManagedElementListeners(this.eOperators, {
+                mousedown: () => this.rememberExpressionSelection(),
+                click: () => this.openPicker('operator', this.eOperators),
+            });
+        }
         this.addManagedElementListeners(this.eApply, {
             click: () => this.setExpressionError(this.onApply(this.draft)),
         });
@@ -219,10 +229,8 @@ export class CalculatedColumnForm extends Component {
     private addFormListeners(): void {
         this.addManagedElementListeners(this.getGui(), {
             keydown: (event: KeyboardEvent) => {
-                if (this.suggestions.length && event.key === KeyCode.ESCAPE) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    this.hideSuggestions();
+                if (event.target !== this.eExpression.getInputElement()) {
+                    this.onSuggestionKeyDown(event);
                 }
             },
             focusout: () =>
@@ -263,6 +271,14 @@ export class CalculatedColumnForm extends Component {
         this.draft = { ...this.draft, ...partial };
     }
 
+    private rememberExpressionSelection(): void {
+        const input = this.eExpression.getInputElement();
+        const valueLength = input.value.length;
+        const start = input.selectionStart ?? valueLength;
+        const end = input.selectionEnd ?? start;
+        this.expressionSelection = { start, end };
+    }
+
     private refreshContextSuggestions(): void {
         const input = this.eExpression.getInputElement();
         const value = input.value;
@@ -295,125 +311,174 @@ export class CalculatedColumnForm extends Component {
         }
     }
 
+    private openPicker(type: ColumnSuggestion['type'], button: HTMLButtonElement): void {
+        this.rememberExpressionSelection();
+        this.showSuggestions(type, '', this.expressionSelection, button);
+    }
+
+    private getSuggestionsForType(type: ColumnSuggestion['type']): ColumnSuggestion[] {
+        if (type === 'column') {
+            return this.getColumnSuggestions();
+        }
+        if (type === 'function') {
+            return this.getFunctionSuggestions();
+        }
+        return OPERATOR_SUGGESTIONS;
+    }
+
     private showSuggestions(
         type: ColumnSuggestion['type'],
         search: string = '',
         replacement: { start: number; end: number } | null = null,
         source: HTMLElement = this.eExpression.getInputElement()
     ): void {
-        let suggestions: ColumnSuggestion[];
-        if (type === 'column') {
-            suggestions = this.getColumnSuggestions();
-        } else if (type === 'function') {
-            suggestions = this.getFunctionSuggestions();
-        } else {
-            suggestions = OPERATOR_SUGGESTIONS;
-        }
-
+        const suggestions = this.getSuggestionsForType(type);
         const searchLower = search.toLocaleLowerCase();
-        this.suggestions = searchLower
-            ? suggestions.filter(({ label, value, searchText }) =>
-                  (searchText ?? `${label} ${value}`).toLocaleLowerCase().includes(searchLower)
-              )
-            : suggestions;
-        this.suggestionSource = source;
-        this.activeReplacement = replacement;
-        this.activeSuggestion = Math.min(this.activeSuggestion, Math.max(this.suggestions.length - 1, 0));
-        this.renderSuggestions();
-    }
-
-    private renderSuggestions(): void {
-        this.eSuggestions.textContent = '';
-        if (!this.suggestions.length) {
-            this.closeSuggestionPopup();
-            return;
-        }
-
-        for (let i = 0; i < this.suggestions.length; i++) {
-            const suggestion = this.suggestions[i];
-            const row = _getDocument(this.beans).createElement('div');
-            row.className = `ag-calculated-column-suggestion${
-                i === this.activeSuggestion ? ' ag-calculated-column-suggestion-active' : ''
-            }`;
-            row.textContent = suggestion.label;
-            this.addManagedElementListeners(row, {
-                mousedown: (event: MouseEvent) => {
-                    event.preventDefault();
-                    this.acceptSuggestion(i);
-                },
-            });
-            this.eSuggestions.appendChild(row);
-        }
-
-        this.openSuggestionPopup();
-    }
-
-    private openSuggestionPopup(): void {
-        const source = this.suggestionSource;
-        const popupSvc = this.beans.popupSvc;
-        if (!source || !popupSvc) {
-            return;
-        }
-
-        const positionPopup = () =>
-            popupSvc.positionPopupByComponent({
-                ePopup: this.eSuggestions,
-                type: 'calculatedColumnAutocomplete',
-                eventSource: source,
-                position: 'under',
-                alignSide: this.gos.get('enableRtl') ? 'right' : 'left',
-                keepWithinBounds: true,
-            });
-
-        _setDisplayed(this.eSuggestions, true);
-
-        if (this.hideSuggestionPopup) {
-            positionPopup();
-            popupSvc.bringPopupToFront(this.eSuggestions);
-            return;
-        }
-
-        this.hideSuggestionPopup = popupSvc.addPopup({
-            eChild: this.eSuggestions,
-            positionCallback: positionPopup,
-            alwaysOnTop: true,
-            ariaLabel: this.getLocaleTextFunc()('calculatedColumnSuggestions', 'Calculated Column Suggestions'),
-        }).hideFunc;
-        popupSvc.bringPopupToFront(this.eSuggestions);
-    }
-
-    private closeSuggestionPopup(): void {
-        _setDisplayed(this.eSuggestions, false);
-        this.suggestionSource = null;
-        this.hideSuggestionPopup?.();
-        this.hideSuggestionPopup = undefined;
-    }
-
-    private onExpressionKeyDown(event: KeyboardEvent): void {
-        if (this.suggestions.length && event.key === KeyCode.ESCAPE) {
-            event.preventDefault();
-            event.stopPropagation();
+        const hasMatch =
+            !searchLower ||
+            suggestions.some((suggestion) =>
+                getSuggestionSearchValue(suggestion).toLocaleLowerCase().includes(searchLower)
+            );
+        if (!hasMatch) {
             this.hideSuggestions();
             return;
         }
 
-        if (!this.suggestions.length) {
+        this.activeReplacement = replacement;
+        this.suggestionSource = source;
+        this.openSuggestionPopup(type, suggestions);
+        this.autocompleteList?.setSearch(search);
+        this.positionSuggestionPopup();
+    }
+
+    private openSuggestionPopup(type: ColumnSuggestion['type'], suggestions: ColumnSuggestion[]): void {
+        const popupSvc = this.beans.popupSvc;
+        if (!popupSvc) {
             return;
         }
 
-        if (event.key === KeyCode.UP || event.key === KeyCode.DOWN) {
-            event.preventDefault();
-            event.stopPropagation();
-            const delta = event.key === KeyCode.UP ? -1 : 1;
-            this.activeSuggestion = (this.activeSuggestion + delta + this.suggestions.length) % this.suggestions.length;
-            this.renderSuggestions();
+        if (this.autocompleteList && this.suggestionType !== type) {
+            this.closeSuggestionPopup();
+        }
+        if (this.autocompleteList) {
             return;
         }
 
-        if (event.key === KeyCode.TAB || event.key === KeyCode.ENTER) {
-            event.preventDefault();
-            event.stopPropagation();
-            this.acceptSuggestion(this.activeSuggestion);
+        this.suggestionType = type;
+        this.openSuggestions = suggestions;
+        const list = this.createManagedBean(
+            new AgAutocompleteList({
+                autocompleteEntries: this.createAutocompleteEntries(suggestions),
+                onConfirmed: () => this.confirmSelectedSuggestion(),
+                autoSizeList: true,
+                maxVisibleItems: MAX_VISIBLE_SUGGESTIONS,
+                onListHeightChanged: () => this.positionSuggestionPopup(),
+                rowComponentCreator:
+                    type === 'column'
+                        ? (entry, selected) => this.createColumnSuggestionRow(entry, selected)
+                        : undefined,
+            })
+        );
+        this.autocompleteList = list;
+        this.hideSuggestionPopup = popupSvc.addPopup({
+            eChild: list.getGui(),
+            positionCallback: () => this.positionSuggestionPopup(),
+            alwaysOnTop: true,
+            ariaLabel: this.getLocaleTextFunc()('calculatedColumnSuggestions', 'Calculated Column Suggestions'),
+        }).hideFunc;
+        list.afterGuiAttached();
+    }
+
+    private createAutocompleteEntries(suggestions: ColumnSuggestion[]): AutocompleteEntry[] {
+        const entries: AutocompleteEntry[] = [];
+        for (let i = 0, len = suggestions.length; i < len; ++i) {
+            const suggestion = suggestions[i];
+            const entry: CalculatedColumnAutocompleteEntry = {
+                key: `${i}`,
+                displayValue: getSuggestionSearchValue(suggestion),
+                suggestion,
+            };
+            entries.push(entry);
+        }
+        return entries;
+    }
+
+    private createColumnSuggestionRow(entry: AutocompleteEntry, selected: boolean): CalculatedColumnAutocompleteRow {
+        const row = new CalculatedColumnAutocompleteRow();
+        row.setState((entry as CalculatedColumnAutocompleteEntry).suggestion, selected);
+        return row;
+    }
+
+    private positionSuggestionPopup(): void {
+        const source = this.suggestionSource;
+        const list = this.autocompleteList;
+        const popupSvc = this.beans.popupSvc;
+        if (!source || !list || !popupSvc) {
+            return;
+        }
+
+        popupSvc.positionPopupByComponent({
+            ePopup: list.getGui(),
+            type: 'calculatedColumnAutocomplete',
+            eventSource: source,
+            position: 'under',
+            alignSide: this.gos.get('enableRtl') ? 'right' : 'left',
+            keepWithinBounds: true,
+        });
+        // Keep the list above the (non-modal) dialog it was opened from.
+        popupSvc.bringPopupToFront(list.getGui());
+    }
+
+    private confirmSelectedSuggestion(): void {
+        const selected = this.autocompleteList?.getSelectedValue();
+        const suggestion = selected ? this.openSuggestions[Number(selected.key)] : undefined;
+        if (suggestion) {
+            this.acceptSuggestion(suggestion);
+        } else {
+            this.hideSuggestions();
+        }
+    }
+
+    private closeSuggestionPopup(): void {
+        this.suggestionSource = null;
+        this.suggestionType = null;
+        this.openSuggestions = [];
+        this.hideSuggestionPopup?.();
+        this.hideSuggestionPopup = undefined;
+        if (this.autocompleteList) {
+            this.destroyBean(this.autocompleteList);
+            this.autocompleteList = null;
+        }
+    }
+
+    private onExpressionKeyDown(event: KeyboardEvent): void {
+        this.onSuggestionKeyDown(event);
+    }
+
+    private onSuggestionKeyDown(event: KeyboardEvent): void {
+        const list = this.autocompleteList;
+        if (!list) {
+            return;
+        }
+
+        switch (event.key) {
+            case KeyCode.ESCAPE:
+                event.preventDefault();
+                event.stopPropagation();
+                this.hideSuggestions();
+                return;
+            case KeyCode.UP:
+            case KeyCode.DOWN:
+                // onNavigationKeyDown calls preventDefault; stop the dialog handling the same key.
+                event.stopPropagation();
+                list.onNavigationKeyDown(event, event.key);
+                return;
+            case KeyCode.TAB:
+            case KeyCode.ENTER:
+                event.preventDefault();
+                event.stopPropagation();
+                this.confirmSelectedSuggestion();
+                return;
         }
     }
 
@@ -430,22 +495,23 @@ export class CalculatedColumnForm extends Component {
         this.refreshContextSuggestions();
     }
 
-    private acceptSuggestion(index: number): void {
-        const suggestion = this.suggestions[index];
-        if (!suggestion) {
-            return;
-        }
-
+    private acceptSuggestion(suggestion: ColumnSuggestion): void {
         const input = this.eExpression.getInputElement();
         const value = input.value;
-        const start = this.activeReplacement?.start ?? input.selectionStart ?? value.length;
-        const end = this.activeReplacement?.end ?? input.selectionEnd ?? start;
         const token = this.getSuggestionInsertText(suggestion);
+        const replacement = this.activeReplacement ?? this.expressionSelection;
+        const initialStart = replacement?.start ?? input.selectionStart ?? value.length;
+        const initialEnd = replacement?.end ?? input.selectionEnd ?? initialStart;
+        const { start, end } =
+            suggestion.type === 'operator'
+                ? getOperatorReplacementRange(value, initialStart, initialEnd, OPERATOR_REPLACEMENT_VALUES)
+                : { start: initialStart, end: initialEnd };
         const nextValue = `${value.slice(0, start)}${token}${value.slice(end)}`;
         this.eExpression.setValue(nextValue);
         const nextCaret =
             suggestion.type === 'function' && token.endsWith('()') ? start + token.length - 1 : start + token.length;
         input.setSelectionRange(nextCaret, nextCaret);
+        this.expressionSelection = { start: nextCaret, end: nextCaret };
         input.focus();
         this.hideSuggestions();
     }

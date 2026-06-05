@@ -146,7 +146,7 @@ describe('ag-grid tree data custom aggregation object display value', () => {
         `);
     });
 
-    test('does not unwrap .value for leaf row data', () => {
+    test('does not unwrap .value for leaf row data', async () => {
         const api = gridMgr.createGrid('tree-data-agg-object-leaf-noop', {
             columnDefs: [
                 {
@@ -166,6 +166,17 @@ describe('ag-grid tree data custom aggregation object display value', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `does not unwrap .value for leaf row data setup`).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:500 flex:1
+            └── stats "Stats" width:500 flex:1 aggFunc:first
+        `);
+        await new GridRows(api, `does not unwrap .value for leaf row data setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Ireland filler id:row-group-0-Ireland ag-Grid-AutoColumn:"Ireland" stats:'{"value":42,"extra":"data"}'
+            · ├── Row1 LEAF id:ie-1 ag-Grid-AutoColumn:"Row1" stats:'{"value":42,"extra":"data"}'
+            · └── Row2 LEAF id:ie-2 ag-Grid-AutoColumn:"Row2" stats:'{"value":99,"extra":"more"}'
+        `);
 
         // Find a leaf row
         let leafNode: IRowNode | undefined;
@@ -174,6 +185,12 @@ describe('ag-grid tree data custom aggregation object display value', () => {
                 leafNode = node;
             }
         });
+        await new GridRows(api, `does not unwrap .value for leaf row data after forEachNode`).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Ireland filler id:row-group-0-Ireland ag-Grid-AutoColumn:"Ireland" stats:'{"value":42,"extra":"data"}'
+            · ├── Row1 LEAF id:ie-1 ag-Grid-AutoColumn:"Row1" stats:'{"value":42,"extra":"data"}'
+            · └── Row2 LEAF id:ie-2 ag-Grid-AutoColumn:"Row2" stats:'{"value":99,"extra":"more"}'
+        `);
         expect(leafNode).toBeDefined();
         expect(leafNode!.group).toBe(false);
 
@@ -239,7 +256,7 @@ describe('ag-grid tree data custom aggregation object display value', () => {
         expect(irelandGroup.aggData?.rangeTotal).toEqual({ max: 5, min: 5, value: 0 });
     });
 
-    test('groupSafeValueFormatter unwraps .value from bigint aggregation results', () => {
+    test('groupSafeValueFormatter unwraps .value from bigint aggregation results', async () => {
         const bigintRangeAggFunc = (params: IAggFuncParams) => {
             const { values } = params;
             if (typeof values[0] === 'bigint') {
@@ -275,6 +292,20 @@ describe('ag-grid tree data custom aggregation object display value', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `groupSafeValueFormatter unwraps .value from bigint aggregation results setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:500 flex:1
+                └── rangeAmount "Amount" width:500 flex:1 aggFunc:custom
+            `);
+        await new GridRows(api, `groupSafeValueFormatter unwraps .value from bigint aggregation results setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └─┬ Ireland filler id:row-group-0-Ireland ag-Grid-AutoColumn:"Ireland" rangeAmount:"20"
+                · ├── Row1 LEAF id:ie-1 ag-Grid-AutoColumn:"Row1" rangeAmount:"10n"
+                · └── Row2 LEAF id:ie-2 ag-Grid-AutoColumn:"Row2" rangeAmount:"30n"
+            `
+        );
 
         const irelandGroup = findGroupRow(api, 'Ireland');
         expect(irelandGroup.aggData?.rangeAmount).toEqual({ max: 30n, min: 10n, value: 20n });
@@ -286,9 +317,16 @@ describe('ag-grid tree data custom aggregation object display value', () => {
             useFormatter: true,
         });
         expect(formatted).toBe('20');
+        await new GridRows(api, `groupSafeValueFormatter unwraps .value from bigint aggregation results final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ Ireland filler id:row-group-0-Ireland ag-Grid-AutoColumn:"Ireland" rangeAmount:"20"
+                · ├── Row1 LEAF id:ie-1 ag-Grid-AutoColumn:"Row1" rangeAmount:"10n"
+                · └── Row2 LEAF id:ie-2 ag-Grid-AutoColumn:"Row2" rangeAmount:"30n"
+            `);
     });
 
-    test('groupSafeValueFormatter calls formatter when .value is null (v35.0.0 compat)', () => {
+    test('groupSafeValueFormatter calls formatter when .value is null (v35.0.0 compat)', async () => {
         const nullValueAggFunc = () => ({ value: null });
 
         const api = gridMgr.createGrid('tree-data-agg-null-value', {
@@ -303,6 +341,19 @@ describe('ag-grid tree data custom aggregation object display value', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `groupSafeValueFormatter calls formatter when .value is null (v35.0.0 compat) setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:500 flex:1
+                └── nullTotal "Total" width:500 flex:1 aggFunc:custom
+            `);
+        await new GridRows(api, `groupSafeValueFormatter calls formatter when .value is null (v35.0.0 compat) setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ Ireland filler id:row-group-0-Ireland ag-Grid-AutoColumn:"Ireland" nullTotal:""
+                · ├── Row1 LEAF id:ie-1 ag-Grid-AutoColumn:"Row1" nullTotal:10
+                · └── Row2 LEAF id:ie-2 ag-Grid-AutoColumn:"Row2" nullTotal:30
+            `);
 
         const irelandGroup = findGroupRow(api, 'Ireland');
         // v35.0.0 behavior: formatter is called with null, default number formatter returns ''
@@ -312,9 +363,18 @@ describe('ag-grid tree data custom aggregation object display value', () => {
             useFormatter: true,
         });
         expect(formatted).toBe('');
+        await new GridRows(
+            api,
+            `groupSafeValueFormatter calls formatter when .value is null (v35.0.0 compat) final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Ireland filler id:row-group-0-Ireland ag-Grid-AutoColumn:"Ireland" nullTotal:""
+            · ├── Row1 LEAF id:ie-1 ag-Grid-AutoColumn:"Row1" nullTotal:10
+            · └── Row2 LEAF id:ie-2 ag-Grid-AutoColumn:"Row2" nullTotal:30
+        `);
     });
 
-    test('groupSafeValueFormatter calls toNumber() for BigDecimal-like aggregation results', () => {
+    test('groupSafeValueFormatter calls toNumber() for BigDecimal-like aggregation results', async () => {
         const toNumberAggFunc = (params: IAggFuncParams) => {
             const sum = params.values.reduce((a: number, b: number) => a + b, 0);
             return { toNumber: () => sum };
@@ -332,6 +392,23 @@ describe('ag-grid tree data custom aggregation object display value', () => {
             ],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(
+            api,
+            `groupSafeValueFormatter calls toNumber() for BigDecimal-like aggregation results setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:500 flex:1
+            └── sumTotal "Total" width:500 flex:1 aggFunc:custom
+        `);
+        await new GridRows(
+            api,
+            `groupSafeValueFormatter calls toNumber() for BigDecimal-like aggregation results setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Ireland filler id:row-group-0-Ireland ag-Grid-AutoColumn:"Ireland" sumTotal:"40"
+            · ├── Row1 LEAF id:ie-1 ag-Grid-AutoColumn:"Row1" sumTotal:10
+            · └── Row2 LEAF id:ie-2 ag-Grid-AutoColumn:"Row2" sumTotal:30
+        `);
 
         const irelandGroup = findGroupRow(api, 'Ireland');
         // toNumber() should be called and its result passed to formatter
@@ -341,5 +418,14 @@ describe('ag-grid tree data custom aggregation object display value', () => {
             useFormatter: true,
         });
         expect(formatted).toBe('40');
+        await new GridRows(
+            api,
+            `groupSafeValueFormatter calls toNumber() for BigDecimal-like aggregation results final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Ireland filler id:row-group-0-Ireland ag-Grid-AutoColumn:"Ireland" sumTotal:"40"
+            · ├── Row1 LEAF id:ie-1 ag-Grid-AutoColumn:"Row1" sumTotal:10
+            · └── Row2 LEAF id:ie-2 ag-Grid-AutoColumn:"Row2" sumTotal:30
+        `);
     });
 });
