@@ -1,4 +1,4 @@
-import { RefPlaceholder, _clearElement } from 'ag-stack';
+import { RefPlaceholder, _clearElement, _setDisplayed } from 'ag-stack';
 
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { IFileProcessorParams } from '../../interfaces/iFileProcessor';
@@ -56,6 +56,9 @@ export class FileInputOverlayComponent
         this.buildDropZone(params);
         this.showState('ready');
         this.setupDragListeners();
+        if (!this.gos.get('fileProcessor')) {
+            _warn(304);
+        }
     }
 
     public override destroy(): void {
@@ -132,9 +135,9 @@ export class FileInputOverlayComponent
 
     private showState(state: FileInputState): void {
         this.state = state;
-        this.eErrorBanner.style.display = state === 'error' ? '' : 'none';
-        this.eDropZone.style.display = state === 'processing' ? 'none' : '';
-        this.eProcessingState.style.display = state === 'processing' ? '' : 'none';
+        _setDisplayed(this.eErrorBanner, state === 'error');
+        _setDisplayed(this.eDropZone, state !== 'processing');
+        _setDisplayed(this.eProcessingState, state === 'processing');
     }
 
     private setupDragListeners(): void {
@@ -202,35 +205,28 @@ export class FileInputOverlayComponent
             return;
         }
 
-        const fileProcessor = this.gos.get('fileProcessor');
-        if (!fileProcessor) {
-            _warn(304);
-            this.showError(this.getLocaleTextFunc()('fileInputNoHandler', 'No file handler configured'));
-            return;
-        }
+        const { gos, beans } = this;
+        const fileProcessor = gos.get('fileProcessor');
 
         const fileName = files[0].name;
         this.updateProcessingState(fileName);
         this.showState('processing');
         const processingText = this.getLocaleTextFunc()('fileInputProcessing', 'Processing ${variable}', [fileName]);
-        this.beans.ariaAnnounce.announceValue(processingText, 'overlay');
+        beans.ariaAnnounce.announceValue(processingText, 'overlay');
 
         const success = (rowData: any[]) => {
-            this.gos.updateGridOptions({ options: { rowData }, source: 'api' });
+            gos.updateGridOptions({ options: { rowData }, source: 'api' });
         };
 
         const fail = (errorMessage?: string) => {
             const localeTextFunc = this.getLocaleTextFunc();
-            const message = localeTextFunc('fileInputProcessingFailed', `Error processing ${fileName}`, [fileName]);
-            this.showError(errorMessage ?? message);
+            const message =
+                errorMessage ?? localeTextFunc('fileInputProcessingFailed', `Error processing ${fileName}`, [fileName]);
+            this.eErrorBanner.textContent = message;
+            this.showState('error');
+            beans.ariaAnnounce.announceValue(message, 'overlay');
         };
 
-        fileProcessor.processFiles(_addGridCommonParams<IFileProcessorParams>(this.gos, { files, success, fail }));
-    }
-
-    private showError(errorMessage: string): void {
-        this.eErrorBanner.textContent = errorMessage;
-        this.showState('error');
-        this.beans.ariaAnnounce.announceValue(errorMessage, 'overlay');
+        fileProcessor?.processFiles(_addGridCommonParams<IFileProcessorParams>(gos, { files, success, fail }));
     }
 }
