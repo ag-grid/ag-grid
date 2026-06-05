@@ -4,56 +4,56 @@ ignore:
   SNYK-JS-VITE-15922242:
     - vite@6.4.1:
         reason: Test dependency - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-14T15:40:46.089Z
   SNYK-JS-BRACEEXPANSION-15789759:
     - npm-run-all@4.1.5 > minimatch@3.1.2 > brace-expansion@1.1.12:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-27T11:48:29.506Z
   SNYK-JS-PICOMATCH-15765511:
     - vite@6.4.1 > tinyglobby@0.2.15 > picomatch@4.0.3:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-27T11:44:22.391Z
     - vite@6.4.1 > picomatch@4.0.3:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-27T11:44:22.384Z
     - 'vue-router@5.0.6 > picomatch@4.0.3':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
     - 'vue-router@5.0.6 > tinyglobby@0.2.15 > picomatch@4.0.3':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
     - 'vue-router@5.0.6 > unplugin@3.0.0 > picomatch@4.0.3':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
     - 'vue-router@5.0.6 > @vue-macros/common@3.1.2 > unplugin-utils@0.3.1 > picomatch@4.0.3':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-ROLLUP-15340920:
     - vite@6.4.1 > rollup@4.52.5:
         reason: Test dependency - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-02T11:40:40.923Z
   SNYK-JS-MINIMATCH-15353389:
     - npm-run-all@4.1.5 > minimatch@3.1.2:
         reason: Test dependency - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-02T10:15:14.605Z
   SNYK-JS-MINIMATCH-15309438:
     - npm-run-all@4.1.5 > minimatch@3.1.2:
         reason: Test dependency - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-02T09:21:25.523Z
   SNYK-JS-SHELLQUOTE-16799355:
     - 'npm-run-all@4.1.5 > shell-quote@1.8.3':
         reason: Dev dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
 patch: {}

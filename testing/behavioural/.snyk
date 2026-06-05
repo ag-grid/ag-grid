@@ -1,44 +1,50 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-VITEST-17120326:
+    - vitest@2.1.9:
+        reason: >-
+            Test dependency - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-05T10:18:57.070Z
   SNYK-JS-MINIMATCH-15353389:
     - '@vitest/coverage-v8@2.1.9 > test-exclude@7.0.2 > glob@10.5.0 > minimatch@9.0.5':
         reason: >-
             Test dependency - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-02T08:38:46.640Z
   SNYK-JS-MINIMATCH-15353387:
     - '@vitest/coverage-v8@2.1.9 > test-exclude@7.0.2 > glob@10.5.0 > minimatch@9.0.5':
         reason: >-
             Test dependency - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-02T08:38:30.373Z
   SNYK-JS-MINIMATCH-15309438:
     - '@vitest/coverage-v8@2.1.9 > test-exclude@7.0.2 > glob@10.5.0 > minimatch@9.0.5':
         reason: >-
             Test dependency - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-02T08:38:01.040Z
   SNYK-JS-BRACEEXPANSION-16755174:
     - '@vitest/coverage-v8@2.1.9 > test-exclude@7.0.2 > minimatch@10.2.5 > brace-expansion@5.0.5':
         reason: >-
             Test dependency - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-02T08:37:45.807Z
   SNYK-JS-BRACEEXPANSION-15789759:
     - '@vitest/coverage-v8@2.1.9 > test-exclude@7.0.2 > glob@10.5.0 > minimatch@9.0.5 > brace-expansion@2.0.2':
         reason: >-
             Test dependency - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-02T08:37:32.442Z
   SNYK-JS-ROLLUP-15340920:
     - vitest@2.1.9 > vite@5.4.21 > rollup@4.52.5:
         reason: Test dependency - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-02T11:40:13.320Z
   SNYK-JS-XLSX-6252523:
     - xlsx@0.18.5:
         reason: Only used for behavioural tests and is dev only
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2025-06-06T14:47:25.226Z
 patch: {}

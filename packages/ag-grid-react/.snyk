@@ -4,6 +4,6 @@ ignore:
   SNYK-JS-BABELPLUGINTRANSFORMMODULESSYSTEMJS-16624576:
     - 'babel-preset-react-app@10.1.0 > @babel/preset-env@7.28.5 > @babel/plugin-transform-modules-systemjs@7.28.5':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
 patch: {}
