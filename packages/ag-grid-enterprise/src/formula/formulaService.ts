@@ -23,8 +23,8 @@ import { evalAst, formulaVisitorSetVisited, formulaVisitorSetVisiting, unresolve
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
 import { shiftNode } from './functions/utils';
 import type { FormulaErrorId, FormulaErrorType } from './i18n';
-import { isValidFunctionName, visitCalculatedColumnReferences } from './refUtils';
-import { isCalculatedColumnRowAvailable } from './rowAccess';
+import { isValidFunctionName } from './refUtils';
+import { isFormulaRowAvailable } from './rowAccess';
 
 /** Shared params object for `rowRenderer.refreshCells`, hoisted to avoid per-call allocation. */
 const REFRESH_CELLS_PARAMS = { suppressFlash: true, force: true } as const;
@@ -690,7 +690,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     private ensureCalculatedCellFormula(row: RowNode, col: AgColumn, calculatedExpression: string): CellFormula | null {
-        if (!isCalculatedColumnRowAvailable(row)) {
+        if (!isFormulaRowAvailable(row) || row.group) {
             return null;
         }
 
@@ -708,10 +708,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         rowMap.set(col, null);
 
         try {
-            if (row.group && !this.canEvaluateCalculatedColumnForRow(row, col, new Set<string>())) {
-                return null;
-            }
-
             const trimmedExpression = calculatedExpression.trim();
             if (!trimmedExpression) {
                 return null;
@@ -724,35 +720,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             rowMap.delete(col);
             throw e;
         }
-    }
-
-    private canEvaluateCalculatedColumnForRow(row: RowNode, col: AgColumn, visiting: Set<string>): boolean {
-        const calculatedExpression = col.colDef.calculatedExpression;
-        if (calculatedExpression == null) {
-            return this.fetchRawValue(col, row) !== undefined;
-        }
-
-        if (visiting.has(col.colId)) {
-            return true;
-        }
-
-        visiting.add(col.colId);
-        let canEvaluate = true;
-        visitCalculatedColumnReferences(calculatedExpression, (reference) => {
-            if (!canEvaluate) {
-                return;
-            }
-
-            const referencedColumn = this.beans.colModel.getColById(reference);
-            if (!referencedColumn) {
-                canEvaluate = false;
-                return;
-            }
-
-            canEvaluate = this.canEvaluateCalculatedColumnForRow(row, referencedColumn, visiting);
-        });
-        visiting.delete(col.colId);
-        return canEvaluate;
     }
 
     private coerceFormulaValue(cell: CellFormula, value: unknown): unknown {

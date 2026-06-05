@@ -13,7 +13,7 @@ import type {
     ICalculatedColumnsService,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _warn, _warnOnce } from 'ag-grid-community';
 
 import type { FormulaError } from '../formula/ast/utils';
 import { Dialog } from '../widgets/dialog';
@@ -756,7 +756,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 component: form,
                 width: 300,
                 height: 320,
-                minWidth: 260,
+                minWidth: 300,
                 minHeight: 280,
                 centered: true,
                 movable: true,
@@ -794,7 +794,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     private getDataTypeOptions(currentDataType?: string): CalculatedColumnDataTypeOption[] {
         const configuredDataTypes = this.gos.get('calculatedColumns')?.dataTypes;
-        const dataTypes = [...(configuredDataTypes ?? DEFAULT_CALCULATED_COLUMN_DATA_TYPES)];
+        const dataTypes = configuredDataTypes
+            ? this.getValidConfiguredDataTypes(configuredDataTypes)
+            : [...DEFAULT_CALCULATED_COLUMN_DATA_TYPES];
 
         if (currentDataType != null && dataTypes.indexOf(currentDataType) < 0) {
             dataTypes.push(currentDataType);
@@ -804,6 +806,23 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             value: dataType,
             text: this.getDataTypeDisplayName(dataType),
         }));
+    }
+
+    private getValidConfiguredDataTypes(dataTypes: string[]): string[] {
+        const dataTypeSvc = this.beans.dataTypeSvc;
+        if (!dataTypeSvc) {
+            return [...dataTypes];
+        }
+
+        const validDataTypes: string[] = [];
+        for (const dataType of dataTypes) {
+            if (dataTypeSvc.isDataTypeRegistered(dataType)) {
+                validDataTypes.push(dataType);
+            } else {
+                _warn(304, { dataType });
+            }
+        }
+        return validDataTypes;
     }
 
     private getDataTypeDisplayName(dataType: string): string {

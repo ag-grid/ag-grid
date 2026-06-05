@@ -37,28 +37,13 @@ Calculated columns are always read-only. They cannot be edited through cell edit
 
 ## Row Groups and Tree Data
 
-Calculated columns are full columns, so [Row Grouping](./grouping/), [Tree Data](./tree-data/), [Aggregation](./aggregation/), sorting and filtering apply to them the same way they apply to any other column.
+Calculated columns are full columns, so [Row Grouping](./grouping/), [Tree Data](./tree-data/), [Aggregation](./aggregation/), sorting and filtering apply to them the same way as any other column.
 
-On a group row, the expression evaluates against the **aggregated** values of the columns it references. With the setup below, the `profit` cell on a region group shows `sum(revenue) - sum(cost)` for that region:
+Calculated values appear on leaf rows only. Row group rows, Tree Data parents (including parents that carry their own data), group footers and the grand-total row show no calculated value.
 
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'region', rowGroup: true, hide: true },
-        { field: 'revenue', aggFunc: 'sum' },
-        { field: 'cost', aggFunc: 'sum' },
-        { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
-    ],
-};
-```
-
-Because the inputs are aggregated before the expression runs, `[revenue] / [cost]` on a group is `sum(revenue) / sum(cost)`, not the average of each leaf row's ratio. Choose expressions whose group-level result is meaningful under this rule.
+This avoids a misleading result. Evaluating the expression against aggregated inputs does not match the aggregate of the per-row results for non-linear expressions: `[revenue] / [cost]` on a group would be `sum(revenue) / sum(cost)`, not the average of each leaf row's ratio.
 
 {% gridExampleRunner title="Row Groups with Calculated Columns" name="calculated-columns-row-groups" exampleHeight=420 /%}
-
-A group cell stays blank unless every referenced column produces an aggregated value. Reference a column with no `aggFunc`, and group rows for that calculated column are blank while the leaf rows still evaluate. Filler group rows in Tree Data, which have no aggregates of their own, stay blank for the same reason.
-
-Group and grand-total footer rows show the same calculated value as the group they total. Tree Data parent rows evaluate against their aggregated children in the same way as Row Group rows.
 
 ## References with Column Groups
 

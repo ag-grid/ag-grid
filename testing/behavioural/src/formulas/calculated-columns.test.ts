@@ -833,7 +833,7 @@ describe('ag-grid calculated columns', () => {
         expect(sourceCell).toHaveClass(flashCssClass);
     });
 
-    test('calculated columns evaluate on row group aggregate values', async () => {
+    test('calculated columns stay blank on row group rows while leaf rows evaluate', async () => {
         const api = createGrid('calculated-row-groups', {
             rowData: [
                 { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
@@ -849,7 +849,7 @@ describe('ag-grid calculated columns', () => {
             ],
             groupDefaultExpanded: -1,
         });
-        await new GridColumns(api, `calculated columns evaluate on row group aggregate values setup`).checkColumns(`
+        await new GridColumns(api, `calculated columns stay blank on row group rows setup`).checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
             ├── revenue "Revenue" width:200 aggFunc:sum
@@ -857,12 +857,13 @@ describe('ag-grid calculated columns', () => {
             ├── profit width:200
             └── doubleProfit width:200
         `);
-        await new GridRows(api, `calculated columns evaluate on row group aggregate values setup`).check(`
+        // Group rows show no calculated value; leaf rows still evaluate.
+        await new GridRows(api, `calculated columns stay blank on row group rows`).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-region-EMEA ag-Grid-AutoColumn:"EMEA" revenue:30 cost:11 profit:19 doubleProfit:38
+            ├─┬ LEAF_GROUP id:row-group-region-EMEA ag-Grid-AutoColumn:"EMEA" revenue:30 cost:11
             │ ├── LEAF id:r1 region:"EMEA" revenue:10 cost:3 profit:7 doubleProfit:14
             │ └── LEAF id:r2 region:"EMEA" revenue:20 cost:8 profit:12 doubleProfit:24
-            └─┬ LEAF_GROUP id:row-group-region-APAC ag-Grid-AutoColumn:"APAC" revenue:15 cost:5 profit:10 doubleProfit:20
+            └─┬ LEAF_GROUP id:row-group-region-APAC ag-Grid-AutoColumn:"APAC" revenue:15 cost:5
             · └── LEAF id:r3 region:"APAC" revenue:15 cost:5 profit:10 doubleProfit:20
         `);
         await asyncSetTimeout(1);
@@ -879,19 +880,14 @@ describe('ag-grid calculated columns', () => {
         });
 
         expect(emeaGroup.group).toBe(true);
-        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'profit', useFormatter: false })).toBe(19);
-        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'doubleProfit', useFormatter: false })).toBe(38);
+        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'profit', useFormatter: false })).toBeUndefined();
+        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'doubleProfit', useFormatter: false })).toBeUndefined();
         expect(apacGroup.group).toBe(true);
-        expect(api.getCellValue({ rowNode: apacGroup, colKey: 'profit', useFormatter: false })).toBe(10);
-        expect(api.getCellValue({ rowNode: apacGroup, colKey: 'doubleProfit', useFormatter: false })).toBe(20);
-        await new GridRows(api, `calculated columns evaluate on row group aggregate values final state`).check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-region-EMEA ag-Grid-AutoColumn:"EMEA" revenue:30 cost:11 profit:19 doubleProfit:38
-            │ ├── LEAF id:r1 region:"EMEA" revenue:10 cost:3 profit:7 doubleProfit:14
-            │ └── LEAF id:r2 region:"EMEA" revenue:20 cost:8 profit:12 doubleProfit:24
-            └─┬ LEAF_GROUP id:row-group-region-APAC ag-Grid-AutoColumn:"APAC" revenue:15 cost:5 profit:10 doubleProfit:20
-            · └── LEAF id:r3 region:"APAC" revenue:15 cost:5 profit:10 doubleProfit:20
-        `);
+        expect(api.getCellValue({ rowNode: apacGroup, colKey: 'profit', useFormatter: false })).toBeUndefined();
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: false })).toBe(7);
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'doubleProfit', useFormatter: false })).toBe(
+            14
+        );
     });
 
     test('calculated columns stay blank on row groups without aggregate source values while leaf rows still evaluate', async () => {
@@ -924,7 +920,7 @@ describe('ag-grid calculated columns', () => {
         expect(api.getCellValue({ rowNode: api.getRowNode('r2')!, colKey: 'profit', useFormatter: false })).toBe(26000);
     });
 
-    test('calculated columns evaluate on tree data rows and stay blank on filler groups', async () => {
+    test('calculated columns evaluate on tree data leaves and stay blank on parent and filler groups', async () => {
         const parentApi = createGrid('calculated-tree-data-parent', {
             treeData: true,
             treeDataChildrenField: 'children',
@@ -947,9 +943,10 @@ describe('ag-grid calculated columns', () => {
         });
         await asyncSetTimeout(1);
 
+        // A tree parent is a non-leaf row, so it shows no calculated value even though it carries its own data.
         expect(
             parentApi.getCellValue({ rowNode: parentApi.getRowNode('parent')!, colKey: 'profit', useFormatter: false })
-        ).toBe(60);
+        ).toBeUndefined();
         expect(
             parentApi.getCellValue({ rowNode: parentApi.getRowNode('child')!, colKey: 'profit', useFormatter: false })
         ).toBe(20);
@@ -981,7 +978,7 @@ describe('ag-grid calculated columns', () => {
         ).toBe(20);
     });
 
-    test('calculated columns evaluate on group and grand total footer rows', async () => {
+    test('calculated columns stay blank on group and grand total footer rows', async () => {
         const api = createGrid('calculated-row-group-footers', {
             rowData: [
                 { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
@@ -1005,85 +1002,14 @@ describe('ag-grid calculated columns', () => {
         const grandTotal = api.getRowNode('rowGroupFooter_ROOT_NODE_ID')!;
 
         expect(emeaFooter).toBeTruthy();
-        expect(api.getCellValue({ rowNode: emeaFooter, colKey: 'profit', useFormatter: false })).toBe(19);
+        expect(api.getCellValue({ rowNode: emeaFooter, colKey: 'profit', useFormatter: false })).toBeUndefined();
         expect(apacFooter).toBeTruthy();
-        expect(api.getCellValue({ rowNode: apacFooter, colKey: 'profit', useFormatter: false })).toBe(10);
+        expect(api.getCellValue({ rowNode: apacFooter, colKey: 'profit', useFormatter: false })).toBeUndefined();
         expect(grandTotal).toBeTruthy();
-        expect(api.getCellValue({ rowNode: grandTotal, colKey: 'profit', useFormatter: false })).toBe(29);
+        expect(api.getCellValue({ rowNode: grandTotal, colKey: 'profit', useFormatter: false })).toBeUndefined();
     });
 
-    test('calculated columns aggregate across multiple group levels', async () => {
-        const api = createGrid('calculated-multi-level-groups', {
-            rowData: [
-                { id: 'r1', region: 'EMEA', country: 'UK', revenue: 10, cost: 3 },
-                { id: 'r2', region: 'EMEA', country: 'DE', revenue: 20, cost: 8 },
-                { id: 'r3', region: 'EMEA', country: 'DE', revenue: 5, cost: 1 },
-            ],
-            columnDefs: [
-                { field: 'region', rowGroup: true, hide: true },
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'revenue', aggFunc: 'sum' },
-                { field: 'cost', aggFunc: 'sum' },
-                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
-            ],
-            groupDefaultExpanded: -1,
-        });
-        await asyncSetTimeout(1);
-
-        const emeaGroup = api.getRowNode('row-group-region-EMEA')!;
-        const ukGroup = api.getRowNode('row-group-region-EMEA-country-UK')!;
-        const deGroup = api.getRowNode('row-group-region-EMEA-country-DE')!;
-
-        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'profit', useFormatter: false })).toBe(23);
-        expect(api.getCellValue({ rowNode: ukGroup, colKey: 'profit', useFormatter: false })).toBe(7);
-        expect(api.getCellValue({ rowNode: deGroup, colKey: 'profit', useFormatter: false })).toBe(16);
-    });
-
-    test('sorting on a calculated column orders group rows by aggregate result', async () => {
-        const api = createGrid('calculated-sort-grouped', {
-            rowData: [
-                { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
-                { id: 'r2', region: 'EMEA', revenue: 20, cost: 8 },
-                { id: 'r3', region: 'APAC', revenue: 15, cost: 5 },
-            ],
-            columnDefs: [
-                { field: 'region', rowGroup: true, hide: true },
-                { field: 'revenue', aggFunc: 'sum' },
-                { field: 'cost', aggFunc: 'sum' },
-                {
-                    colId: 'profit',
-                    calculatedExpression: '[revenue] - [cost]',
-                    cellDataType: 'number',
-                    sortable: true,
-                },
-            ],
-        });
-        await asyncSetTimeout(1);
-
-        api.applyColumnState({ state: [{ colId: 'profit', sort: 'asc' }], defaultState: { sort: null } });
-        await asyncSetTimeout(1);
-
-        const ascOrder: string[] = [];
-        api.forEachNodeAfterFilterAndSort((node) => {
-            if (node.group && node.key) {
-                ascOrder.push(node.key);
-            }
-        });
-        expect(ascOrder).toEqual(['APAC', 'EMEA']);
-
-        api.applyColumnState({ state: [{ colId: 'profit', sort: 'desc' }], defaultState: { sort: null } });
-        await asyncSetTimeout(1);
-
-        const descOrder: string[] = [];
-        api.forEachNodeAfterFilterAndSort((node) => {
-            if (node.group && node.key) {
-                descOrder.push(node.key);
-            }
-        });
-        expect(descOrder).toEqual(['EMEA', 'APAC']);
-    });
-
-    test('grid api adds a calculated column while grouped and it evaluates on group rows', async () => {
+    test('grid api adds a calculated column while grouped and it evaluates on leaf rows', async () => {
         const api = createGrid('calculated-api-while-grouped', {
             rowData: [
                 { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
@@ -1109,43 +1035,10 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         const emeaGroup = api.getRowNode('row-group-region-EMEA')!;
-        const apacGroup = api.getRowNode('row-group-region-APAC')!;
-        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'profit', useFormatter: false })).toBe(19);
-        expect(api.getCellValue({ rowNode: apacGroup, colKey: 'profit', useFormatter: false })).toBe(10);
-    });
-
-    test('calculated columns aggregate on tree data parents with aggregated inputs', async () => {
-        const api = createGrid('calculated-tree-data-aggregated', {
-            treeData: true,
-            getDataPath: (data) => data.path,
-            rowData: [
-                { id: 'l1', path: ['Dept', 'Team A', 'Leaf 1'], revenue: 30, cost: 10 },
-                { id: 'l2', path: ['Dept', 'Team A', 'Leaf 2'], revenue: 20, cost: 5 },
-                { id: 'l3', path: ['Dept', 'Team B', 'Leaf 3'], revenue: 40, cost: 25 },
-            ],
-            columnDefs: [
-                { field: 'revenue', aggFunc: 'sum' },
-                { field: 'cost', aggFunc: 'sum' },
-                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
-            ],
-            groupDefaultExpanded: -1,
-        });
-        await asyncSetTimeout(1);
-
-        let deptGroup: any;
-        let teamAGroup: any;
-        api.forEachNode((node) => {
-            if (node.key === 'Dept') {
-                deptGroup = node;
-            }
-            if (node.key === 'Team A') {
-                teamAGroup = node;
-            }
-        });
-
-        expect(api.getCellValue({ rowNode: teamAGroup, colKey: 'profit', useFormatter: false })).toBe(35);
-        expect(api.getCellValue({ rowNode: deptGroup, colKey: 'profit', useFormatter: false })).toBe(50);
-        expect(api.getCellValue({ rowNode: api.getRowNode('l3')!, colKey: 'profit', useFormatter: false })).toBe(15);
+        // Group rows stay blank; the leaf rows under them evaluate the newly added column.
+        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'profit', useFormatter: false })).toBeUndefined();
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: false })).toBe(7);
+        expect(api.getCellValue({ rowNode: api.getRowNode('r3')!, colKey: 'profit', useFormatter: false })).toBe(10);
     });
 
     test.each([
@@ -2398,9 +2291,11 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
-    test('dialog type list uses configured data types', async () => {
+    test('dialog type list uses configured data types and ignores unregistered ones', async () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('calculated-dialog-configured-types', {
             calculatedColumns: {
+                // `customStatus` is registered below; `missingType` has no definition and must be ignored.
                 dataTypes: ['number', 'customStatus', 'missingType', 'boolean'],
             },
             dataTypeDefinitions: {
@@ -2426,7 +2321,10 @@ describe('ag-grid calculated columns', () => {
         const typeOptions = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).map((element) =>
             element.textContent?.trim()
         );
-        expect(typeOptions).toEqual(['Number', 'Custom Status', 'Missing Type', 'Boolean']);
+        expect(typeOptions).toEqual(['Number', 'Custom Status', 'Boolean']);
+        expect(warn.mock.calls.flat().join(' ')).toContain('missingType');
+
+        warn.mockRestore();
     });
 
     test('dialog expression picker config hides picker buttons without disabling inline autocomplete', async () => {

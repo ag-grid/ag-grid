@@ -7,6 +7,26 @@
     flex-direction: column;
     gap: var(--ag-spacing);
     min-width: 260px;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.ag-calculated-column-expression-wrap {
+    display: flex;
+    flex: 1 1 auto;
+}
+
+.ag-calculated-column-expression-wrap :where(.ag-text-area) {
+    flex: 1 1 auto;
+}
+
+.ag-calculated-column-expression-wrap :where(.ag-text-area-input-wrapper) {
+    height: 100%;
+}
+
+.ag-calculated-column-expression-wrap :where(.ag-text-area-input) {
+    height: 100%;
+    resize: none;
 }
 
 .ag-calculated-column-expression-tools {
