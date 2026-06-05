@@ -1,6 +1,6 @@
 import { AG_GRID_LOCALE_EG, AG_GRID_LOCALE_IL } from '@ag-grid-community/locale';
 
-import type { ColDef, GridApi, GridOptions, LocaleTextFunc } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     LocaleModule,
@@ -24,7 +24,7 @@ ModuleRegistry.registerModules([
 ]);
 
 interface LanguageConfig {
-    localeText: Record<string, string | LocaleTextFunc> | undefined;
+    localeText: Record<string, string> | undefined;
     enableRtl: boolean;
     columnDefs: ColDef[];
     rowData: Record<string, any>[];

@@ -1,1 +1,11 @@
-<div id="myGrid" style="height: 100%"></div>
+<div class="example-wrapper">
+    <div style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center">
+        <label for="language">Language:</label>
+        <select id="language" onchange="onLanguageChange()">
+            <option value="arabic" selected>العربية (Arabic)</option>
+            <option value="hebrew">עברית (Hebrew)</option>
+            <option value="english">English</option>
+        </select>
+    </div>
+    <div id="myGrid"></div>
+</div>
