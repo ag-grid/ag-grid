@@ -831,7 +831,6 @@
 
     .ag-rtl .ag-row .ag-grid-scrolling-cells {
         // when scrollable, offset for the vertical scrollbar on the left in rtl.
-        // scoped to body rows: header rows have no vertical scrollbar of their own.
         margin-left: var(--ag-internal-pinned-left-sticky-offset, 0px);
     }
 
