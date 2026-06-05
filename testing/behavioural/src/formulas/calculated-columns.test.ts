@@ -6,6 +6,7 @@ import type { ColDef, ColGroupDef, GridOptions, Module } from 'ag-grid-community
 import {
     CellSpanModule,
     ClientSideRowModelModule,
+    HighlightChangesModule,
     InfiniteRowModelModule,
     NumberEditorModule,
     NumberFilterModule,
@@ -38,8 +39,10 @@ import {
 } from '../test-utils';
 
 describe('ag-grid calculated columns', () => {
+    const flashCssClass = 'ag-cell-data-changed';
     const gridRowsOpts = { useFormatter: false } as const;
     let restoreOffsetParent: (() => void) | undefined;
+    let restoreVirtualListSize: (() => void) | undefined;
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
@@ -59,17 +62,21 @@ describe('ag-grid calculated columns', () => {
             RowSelectionModule,
             PivotModule,
             RowNumbersModule,
+            HighlightChangesModule,
         ] as Module[],
     });
 
     beforeEach(() => {
         gridsManager.reset();
+        enableVirtualListSizePolyfill();
     });
 
     afterEach(() => {
         gridsManager.reset();
         restoreOffsetParent?.();
         restoreOffsetParent = undefined;
+        restoreVirtualListSize?.();
+        restoreVirtualListSize = undefined;
     });
 
     function createGrid(id: string, opts: Partial<GridOptions>) {
@@ -89,6 +96,11 @@ describe('ag-grid calculated columns', () => {
         Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
             configurable: true,
             get(this: HTMLElement) {
+                // Keep the theme measurement probes "detached" so AG's environment falls back to default
+                // list-item height (jsdom reports offsetWidth 0, which would otherwise zero the row height).
+                if (this.closest('.ag-measurement-container')) {
+                    return null;
+                }
                 return this.parentElement;
             },
         });
@@ -98,6 +110,52 @@ describe('ag-grid calculated columns', () => {
                 Object.defineProperty(HTMLElement.prototype, 'offsetParent', originalOffsetParent);
             } else {
                 delete (HTMLElement.prototype as any).offsetParent;
+            }
+        };
+    }
+
+    function enableVirtualListSizePolyfill(): void {
+        if (restoreVirtualListSize) {
+            return;
+        }
+
+        const originalOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
+        const originalClientHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'clientHeight');
+        const getVirtualListHeight = (element: HTMLElement): number | undefined => {
+            if (
+                !element.classList.contains('ag-virtual-list-viewport') &&
+                !element.classList.contains('ag-virtual-list-container')
+            ) {
+                return undefined;
+            }
+
+            const styleHeight = Number.parseFloat(element.style.height);
+            return Number.isFinite(styleHeight) && styleHeight > 0 ? styleHeight : 160;
+        };
+
+        Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+            configurable: true,
+            get(this: HTMLElement) {
+                return getVirtualListHeight(this) ?? originalOffsetHeight?.get?.call(this) ?? 0;
+            },
+        });
+        Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+            configurable: true,
+            get(this: HTMLElement) {
+                return getVirtualListHeight(this) ?? originalClientHeight?.get?.call(this) ?? 0;
+            },
+        });
+
+        restoreVirtualListSize = () => {
+            if (originalOffsetHeight) {
+                Object.defineProperty(HTMLElement.prototype, 'offsetHeight', originalOffsetHeight);
+            } else {
+                delete (HTMLElement.prototype as any).offsetHeight;
+            }
+            if (originalClientHeight) {
+                Object.defineProperty(HTMLElement.prototype, 'clientHeight', originalClientHeight);
+            } else {
+                delete (HTMLElement.prototype as any).clientHeight;
             }
         };
     }
@@ -145,17 +203,21 @@ describe('ag-grid calculated columns', () => {
     }
 
     function getSuggestionLabels(): string[] {
-        return Array.from(document.querySelectorAll<HTMLElement>('.ag-calculated-column-suggestion')).map(
-            (element) => element.textContent ?? ''
+        return Array.from(document.querySelectorAll<HTMLElement>('.ag-autocomplete-row-label')).map(
+            (element) => element.textContent?.trim() ?? ''
         );
     }
 
-    function clickSuggestion(label: string): void {
-        const suggestion = Array.from(document.querySelectorAll<HTMLElement>('.ag-calculated-column-suggestion')).find(
-            (element) => element.textContent?.trim() === label
-        );
-        expect(suggestion).toBeTruthy();
-        suggestion!.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    // The suggestion list (AgAutocompleteList) selects by hover/keyboard, not by clicking a specific row.
+    const OPERATOR_ORDER = ['+', '-', '*', '/', '^', '&', '=', '<>', '>', '>=', '<', '<='];
+    async function selectOperatorSuggestion(symbol: string): Promise<void> {
+        const input = getExpressionInput();
+        const index = OPERATOR_ORDER.indexOf(symbol);
+        for (let i = 0; i < index; i++) {
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        }
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        await asyncSetTimeout(1);
     }
 
     function getOpenMenuEntries(): string[] {
@@ -687,6 +749,27 @@ describe('ag-grid calculated columns', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 revenue:20 cost:3 profit:17
         `);
+    });
+
+    test('source cells keep change flashing after a calculated column is added', async () => {
+        const api = createGrid('calculated-change-flash', {
+            defaultColDef: {
+                enableCellChangeFlash: true,
+            },
+            rowData: [{ id: 'r1', a: 1, b: 2, c: 3 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
+        });
+        api.addCalculatedColumn({ colId: 'sum', calculatedExpression: '[a] + [b]' });
+        await asyncSetTimeout(600);
+
+        const gridDiv = getGridElement(api)!;
+        const sourceCell = gridDiv.querySelector('[row-index="0"] [col-id="a"]')!;
+        expect(sourceCell).not.toHaveClass(flashCssClass);
+
+        api.getRowNode('r1')!.setDataValue('a', 10);
+        await asyncSetTimeout(0);
+
+        expect(sourceCell).toHaveClass(flashCssClass);
     });
 
     test('calculated columns evaluate on row group aggregate values', async () => {
@@ -1230,6 +1313,42 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
+    test('dialog column picker renders group path and leaf as fixed-height clickable rows', async () => {
+        const api = createGrid('calculated-dialog-column-picker-group-path', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                {
+                    groupId: 'money',
+                    headerName: 'Money',
+                    children: [
+                        { field: 'revenue', headerName: 'Revenue' },
+                        { field: 'cost', headerName: 'Cost' },
+                    ],
+                } as ColGroupDef,
+            ],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+        clickDialogButton('Columns');
+        await asyncSetTimeout(1);
+
+        const revenueSuggestion = Array.from(
+            document.querySelectorAll<HTMLElement>('.ag-calculated-column-suggestion')
+        ).find((element) => element.getAttribute('aria-label') === 'Money › Revenue');
+
+        expect(revenueSuggestion).toBeTruthy();
+        expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-path')).toBeTruthy();
+        expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-parent')?.textContent).toBe('Money');
+        expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-separator')?.textContent).toBe('›');
+        expect(revenueSuggestion!.querySelector('.ag-calculated-column-suggestion-leaf')?.textContent).toBe('Revenue');
+        // Revenue is the first column entry, so it is selected by default; Enter inserts it.
+        getExpressionInput().dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        expect(getExpressionInput().value).toBe('[Revenue]');
+    });
+
     test('dialog accepts column references in any case', async () => {
         const api = createGrid('calculated-dialog-case-insensitive-references', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
@@ -1266,26 +1385,57 @@ describe('ag-grid calculated columns', () => {
         setExpression('[Age] + [Medals]');
         input.setSelectionRange('[Age] +'.length, '[Age] +'.length);
         clickDialogButton('Operators');
-        clickSuggestion('*');
+        await selectOperatorSuggestion('*');
         expect(input.value).toBe('[Age] * [Medals]');
 
         setExpression('[Age] + [Medals]');
         input.setSelectionRange('[Age] + '.length, '[Age] + '.length);
         clickDialogButton('Operators');
-        clickSuggestion('/');
+        await selectOperatorSuggestion('/');
         expect(input.value).toBe('[Age] / [Medals]');
 
         setExpression('[Age] >= [Medals]');
         input.setSelectionRange('[Age] >='.length, '[Age] >='.length);
         clickDialogButton('Operators');
-        clickSuggestion('<');
+        await selectOperatorSuggestion('<');
         expect(input.value).toBe('[Age] < [Medals]');
 
         setExpression('[Age] + [Medals]');
         input.setSelectionRange('[Age] '.length, '[Age] +'.length);
         clickDialogButton('Operators');
-        clickSuggestion('-');
+        await selectOperatorSuggestion('-');
         expect(input.value).toBe('[Age] - [Medals]');
+    });
+
+    test('dialog picker keeps button focus until suggestion is accepted', async () => {
+        const api = createGrid('calculated-dialog-picker-focus', {
+            rowData: [{ id: 'r1', age: 23, medals: 8 }],
+            columnDefs: [{ field: 'age' }, { field: 'medals' }],
+        });
+
+        showColumnMenu(api, 'age');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        const input = getExpressionInput();
+        setExpression('[Age] + [Medals]');
+        input.setSelectionRange('[Age] +'.length, '[Age] +'.length);
+
+        const operators = getDialogButton('Operators');
+        operators.focus();
+        operators.click();
+        await asyncSetTimeout(1);
+
+        expect(document.activeElement).toBe(operators);
+        operators.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        operators.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        operators.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        await asyncSetTimeout(1);
+
+        expect(input.value).toBe('[Age] * [Medals]');
+        expect(document.activeElement).toBe(input);
+        expect(input.selectionStart).toBe('[Age] * '.length);
     });
 
     test('dialog adds calculated columns inside groups without mutating provided column definitions', async () => {
@@ -2420,6 +2570,43 @@ describe('ag-grid calculated columns', () => {
         );
     });
 
+    test('toggling columnHighlighting while the dialog is open updates the highlight live', async () => {
+        const api = createGrid('calculated-column-highlight-toggle', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'profit');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Edit Calculated Column');
+        await asyncSetTimeout(1);
+
+        const gridDiv = document.querySelector('#calculated-column-highlight-toggle')!;
+        const header = () => gridDiv.querySelector('[col-id="profit"].ag-header-cell');
+        const cell = () => gridDiv.querySelector('[row-index="0"] [col-id="profit"]');
+
+        // Highlighting is off by default, so an open edit dialog shows no highlight.
+        expect(header()).not.toHaveClass('ag-calculated-column-highlighted');
+        expect(cell()).not.toHaveClass('ag-calculated-column-highlighted');
+
+        // Enabling it while the dialog is open highlights the edited column immediately.
+        api.setGridOption('calculatedColumns', { columnHighlighting: true });
+        await asyncSetTimeout(1);
+        expect(header()).toHaveClass('ag-calculated-column-highlighted');
+        expect(cell()).toHaveClass('ag-calculated-column-highlighted');
+
+        // Disabling it again removes the highlight without closing the dialog.
+        api.setGridOption('calculatedColumns', { columnHighlighting: false });
+        await asyncSetTimeout(1);
+        expect(header()).not.toHaveClass('ag-calculated-column-highlighted');
+        expect(cell()).not.toHaveClass('ag-calculated-column-highlighted');
+    });
+
     test('calculated column edit highlighting is disabled by default', async () => {
         const api = createGrid('calculated-column-highlight-disabled', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
@@ -2446,6 +2633,93 @@ describe('ag-grid calculated columns', () => {
         expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).not.toHaveClass(
             'ag-calculated-column-highlighted'
         );
+    });
+
+    test('adding a calculated column does not highlight the new column', async () => {
+        const api = createGrid('calculated-column-add-no-highlight', {
+            calculatedColumns: {
+                columnHighlighting: true,
+            },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        const gridDiv = document.querySelector('#calculated-column-add-no-highlight')!;
+        expect(gridDiv.querySelector('[col-id="calculated_1"].ag-header-cell')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[row-index="0"] [col-id="calculated_1"]')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+    });
+
+    test('multiple open calculated column dialogs highlight each edited column', async () => {
+        const api = createGrid('calculated-column-multi-highlight', {
+            calculatedColumns: {
+                columnHighlighting: true,
+            },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                {
+                    colId: 'profit',
+                    headerName: 'Profit',
+                    calculatedExpression: '[revenue] - [cost]',
+                },
+                {
+                    colId: 'margin',
+                    headerName: 'Margin',
+                    calculatedExpression: '[profit] / [revenue]',
+                },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        api.openCalculatedColumnDialog('profit');
+        api.openCalculatedColumnDialog('margin');
+        await asyncSetTimeout(1);
+
+        const gridDiv = document.querySelector('#calculated-column-multi-highlight')!;
+        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[col-id="margin"].ag-header-cell')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[row-index="0"] [col-id="margin"]')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+
+        const dialogs = Array.from(document.querySelectorAll<HTMLElement>('.ag-calculated-column-form'));
+        const profitDialog = dialogs.find((dialog) => dialog.querySelector('input')?.value === 'Profit')!;
+        const profitCancel = Array.from(profitDialog.querySelectorAll<HTMLButtonElement>('button')).find(
+            (button) => button.textContent?.trim() === 'Cancel'
+        )!;
+        profitCancel.click();
+        await asyncSetTimeout(1);
+
+        expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[col-id="margin"].ag-header-cell')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+
+        clickDialogButton('Cancel');
     });
 
     test('openCalculatedColumnDialog opens the edit dialog for an existing calculated column', async () => {
@@ -2481,6 +2755,26 @@ describe('ag-grid calculated columns', () => {
         expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).toHaveClass(
             'ag-calculated-column-highlighted'
         );
+
+        clickDialogButton('Cancel');
+    });
+
+    test('openCalculatedColumnDialog does not open duplicate dialogs for the same column', async () => {
+        const api = createGrid('calculated-column-open-dialog-once', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        api.openCalculatedColumnDialog('profit');
+        api.openCalculatedColumnDialog('profit');
+        await asyncSetTimeout(1);
+
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
 
         clickDialogButton('Cancel');
     });

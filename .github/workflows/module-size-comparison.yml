@@ -177,6 +177,7 @@ jobs:
           artifact-prefix: module-size-base
           artifact-suffix: ${{ needs.prepare.outputs.pr-number }}
           base-ref: ${{ needs.prepare.outputs.base-ref }}
+          actions-ref: ${{ needs.prepare.outputs.head-sha }}
 
   # Merge base shards and save to cache (only when we had to build)
   cache-base-results:

@@ -33,7 +33,7 @@ function getButtonIconName(panel: HTMLElement, ariaLabel: string): string | unde
 }
 
 function getChildElements(panel: HTMLElement): Element[] {
-    return Array.from(panel.children).filter((el) => !el.classList.contains('ag-tab-guard'));
+    return Array.from(panel.querySelector('.ag-paging-panel-content')!.children);
 }
 
 describe('paginationPanels', () => {

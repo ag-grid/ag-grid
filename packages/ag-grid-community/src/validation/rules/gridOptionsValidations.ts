@@ -106,6 +106,7 @@ function toConstrainedNum(key: keyof GridOptions, value: any, min: number): stri
 }
 
 export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredModule<GridOptions>>> = {
+    autoGenerateColumnDefs: 'AutoGenerateColumns',
     alignedGrids: 'AlignedGrids',
     allowContextMenuWithControlKey: 'ContextMenu',
     autoSizeStrategy: 'ColumnAutoSize',

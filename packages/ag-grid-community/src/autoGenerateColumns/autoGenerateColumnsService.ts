@@ -55,7 +55,8 @@ export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
 function _buildColumnDefs(
     obj: Record<string, unknown>,
     prefix: string | undefined,
-    config: AutoGenerateColumnDefsOptions
+    config: AutoGenerateColumnDefsOptions,
+    visited: Set<object> = new Set()
 ): (ColDef | ColGroupDef)[] {
     const { objectValues = 'group', arrayValues = 'primitives', nullishValues = 'include' } = config;
 
@@ -67,13 +68,17 @@ function _buildColumnDefs(
         const field = prefix ? `${prefix}.${key}` : key;
 
         if (_isPlainObject(value)) {
+            if (visited.has(value)) {
+                continue;
+            }
+            visited.add(value);
             if (objectValues === 'group') {
-                const children = _buildColumnDefs(value, field, config);
+                const children = _buildColumnDefs(value, field, config, visited);
                 if (children.length > 0) {
                     defs.push({ headerName: _camelCaseToHumanText(key) ?? key, children });
                 }
             } else if (objectValues === 'flatten') {
-                const children = _buildColumnDefs(value, field, config);
+                const children = _buildColumnDefs(value, field, config, visited);
                 defs.push(...children);
             }
             continue;

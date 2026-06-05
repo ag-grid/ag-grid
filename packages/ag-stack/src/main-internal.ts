@@ -231,6 +231,7 @@ export {
     _focusInto,
     _isKeyboardMode,
     _registerKeyboardFocusEvents,
+    _scrollHorizontallyToShow,
 } from './utils/focus';
 export { _batchCall, _debounce, _doOnce, _throttle, _waitUntil } from './utils/function';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';

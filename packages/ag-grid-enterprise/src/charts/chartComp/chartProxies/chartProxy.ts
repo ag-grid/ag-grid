@@ -40,6 +40,7 @@ export interface ChartProxyParams {
     seriesChartTypes: SeriesChartType[];
     translate: (toTranslate: string, defaultText?: string) => string;
     context: GridChartContext;
+    enableRtl?: boolean;
 }
 
 export type ExtraPaddingDirection = 'top' | 'right' | 'bottom' | 'left';
@@ -185,10 +186,11 @@ export abstract class ChartProxy<
         const existingOptions = (this.clearThemeOverrides ? {} : (this.chart?.getOptions() ?? {})) as TOptions;
         const formattingPanelOverrides = this.chart != null ? this.getActiveFormattingPanelOverrides() : undefined;
         this.clearThemeOverrides = false;
-        const styleNonce = this.chartProxyParams.styleNonce;
+        const chartProxyParams = this.chartProxyParams;
+        const styleNonce = chartProxyParams.styleNonce;
 
         const theme = createAgChartTheme(
-            this.chartProxyParams,
+            chartProxyParams,
             this,
             this.agChartsExports.isEnterprise,
             this.getChartThemeDefaults(),
@@ -201,7 +203,8 @@ export abstract class ChartProxy<
             ...(styleNonce ? { styleNonce } : {}),
             suppressFieldDotNotation: true,
             theme,
-            container: this.chartProxyParams.parentElement,
+            container: chartProxyParams.parentElement,
+            enableRtl: chartProxyParams.enableRtl,
         };
 
         return newOptions as TOptions & { mode: 'integrated' };

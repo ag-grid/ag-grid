@@ -288,5 +288,6 @@
         --ag-note-popup-padding: calc(var(--ag-grid-size) / 2);
 
         --ag-calculated-column-highlight-color: #bbb;
+        --ag-calculated-column-parent-suggestion-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 80%);
     }
 }
