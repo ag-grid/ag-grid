@@ -1018,6 +1018,12 @@
                 "name": "Overlay Component",
                 "url": "./overlays/"
             }
+        },
+        "fileProcessor": {
+            "more": {
+                "name": "File Input Overlay",
+                "url": "./overlays-overview/#file-input-overlay"
+            }
         }
     },
     "nav": {

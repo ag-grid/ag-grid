@@ -17,8 +17,39 @@ The grid provides the following overlays that will be shown automatically based 
 - [No Rows](./overlays-provided/#no-rows) - shown when there are no rows to display
 - [No Matching Rows](./overlays-provided/#no-matching-rows) - shown when no rows match the current filter
 - [Exporting](./overlays-provided/#exporting) - shown when data is exporting to CSV / Excel
+- [File Input](#file-input-overlay) - shown when `autoGenerateColumnDefs` is enabled and no row data is present
 
 For details about the provided overlays and how to customise them see: [Provided Overlays](./overlays-provided).
+
+## File Input Overlay
+
+When a `fileProcessor` is provided and `rowData` is not set, the grid shows a built-in file input overlay. Users can drag a file onto the overlay or click the browse button to select one.
+
+Provide a `fileProcessor` object with a `processFiles` method. The `params` object contains the selected `files` array along with `success` and `fail` callbacks. Call `success(rowData)` to load the parsed data, or `fail(message)` to display an error in the overlay.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    fileProcessor: {
+        processFiles: ({ files, success, fail }) => {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const rowData = parseCsv(e.target.result);
+                    success(rowData);
+                } catch {
+                    fail('Failed to parse file');
+                }
+            };
+            reader.readAsText(file);
+        },
+    },
+};
+```
+
+The example below shows the file input overlay. Drag a CSV file onto the overlay or use the browse button to load it. For a complete example with Excel support and toolbar integration, see [Auto-Generate Columns](./auto-generate-columns/).
+
+{% gridExampleRunner title="File Input Overlay" name="file-input-overlay" exampleHeight=400 /%}
 
 ## Active Overlay
 
