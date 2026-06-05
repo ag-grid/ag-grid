@@ -349,21 +349,17 @@ describe('ag-grid grouping selection', () => {
 
         const groupNode = api.getRowNode('row-group-country-Ireland')!;
         const mouseEvent = new MouseEvent('click', { bubbles: true });
+        const { selectionSvc } = (groupNode as any).beans;
+        selectionSvc.handleSelectionEvent(mouseEvent, groupNode, 'rowClicked');
 
-        // Access the selection service via the internal bean collection
-        const beans = (groupNode as any).beans;
-        beans.selectionSvc.handleSelectionEvent(mouseEvent, groupNode, 'rowClicked');
-
-        // The grid dispatches rowSelected events asynchronously via setTimeout
+        // gridOptions callbacks are dispatched asynchronously via setTimeout
         await new Promise((resolve) => setTimeout(resolve, 0));
 
-        // All three rowSelected events (group + 2 leaves) should carry the browser event
         expect(events.length).toBe(3);
         for (const e of events) {
             expect(e.event).toBe(mouseEvent);
         }
 
-        // Verify the group and its children are all selected
         await new GridRows(api, 'after group selection').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP selected id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
