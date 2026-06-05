@@ -7,7 +7,7 @@ Calculated Columns let you add read-only values to the grid without storing thos
 
 ## Enabling Calculated Columns
 
-Calculated columns are enabled by registering `CalculatedColumnsModule` and setting `calculatedExpression` on a column definition. In source code and Grid API calls, bracket references such as `[revenue]` resolve to the same-row value from the column with that `colId`.
+Calculated columns are enabled by registering `CalculatedColumnsModule` and setting `calculatedExpression` on a column definition. In source code, bracket references such as `[revenue]` resolve to the same-row value from the column with that `colId`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -110,23 +110,23 @@ This only controls the expression picker buttons. Use an empty array or `null` t
 
 {% gridExampleRunner title="Dialog Expression Pickers" name="calculated-columns-dialog-helper-lists" exampleHeight=350 /%}
 
-### columnHighlighting
+### suppressColumnHighlighting
 
-Use `columnHighlighting` to highlight the calculated column while its edit dialog is open:
+Calculated columns are highlighted by default while their edit dialog is open. Use `suppressColumnHighlighting` to disable this highlight:
 
 ```{% frameworkTransform=true %}
 
 const gridOptions = {
     theme: myTheme,
     calculatedColumns: {
-        columnHighlighting: true,
+        suppressColumnHighlighting: true,
     },
 };
 ```
 
-When enabled, the highlighted header and cells highlight colour can also be customised with the `--ag-calculated-column-highlight-color` CSS variable.
+When highlighting is not suppressed, the header and cells highlight colour can be customised with the `--ag-calculated-column-highlight-color` CSS variable.
 
-{% gridExampleRunner title="Dialog Column Highlighting" name="calculated-columns-dialog-highlighting" exampleHeight=350 /%}
+{% gridExampleRunner title="Suppress Dialog Column Highlighting" name="calculated-columns-dialog-highlighting" exampleHeight=350 /%}
 
 ## Advanced Calculated Columns
 
@@ -161,32 +161,40 @@ const gridOptions = {
 
 Header cells and grid cells for calculated columns include the `ag-calculated-column` CSS class, which can be used for custom styling.
 
-Calculated columns can also be managed from the Grid API. API-created columns are appended to the current column tree; use the column moving API afterwards if you need a specific display position. The original application-provided `columnDefs` are not mutated, but `api.getColumnDefs()` includes dynamic calculated columns for persistence.
+Calculated columns are managed through column definitions, like other columns. To add, update or remove a calculated column from application code, update the `columnDefs` grid option.
 
-A column added from the header menu is placed after the column it was created from, where that anchor is a leaf column. When the anchor is a column-group header or the auto-group column, or when the anchor column is later removed, the calculated column falls back to the end of the column tree.
-
-Replacing the grid's columns with `setColumnDefs` (or `updateGridOptions({ columnDefs })`) is a full reset: it clears calculated columns added through the API or the dialog. To keep user-created calculated columns across a replacement, read the current definitions from `api.getColumnDefs()` and include them in the new array.
+A column added from the header menu is placed after the column it was created from. The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`.
 
 ```{% frameworkTransform=true %}
 const calculatedColumns = api
     .getColumns()
     .filter(column => column.getColDef().calculatedExpression != null);
 
-api.addCalculatedColumn({
-    colId: 'profitMargin',
-    calculatedExpression: '([revenue] - [cost]) / [revenue]',
-    cellDataType: 'number',
-    valueFormatter: params => `${(params.value * 100).toFixed(1)}%`,
-});
+api.setGridOption('columnDefs', [
+    ...(api.getColumnDefs() ?? []),
+    {
+        colId: 'profitMargin',
+        calculatedExpression: '([revenue] - [cost]) / [revenue]',
+        cellDataType: 'number',
+        valueFormatter: params => `${(params.value * 100).toFixed(1)}%`,
+    },
+]);
 
-api.updateCalculatedColumn('profitMargin', {
-    calculatedExpression: '([revenue] - [cost]) / [revenue]',
-    valueFormatter: params => `${(params.value * 100).toFixed(2)}%`,
-});
+api.setGridOption(
+    'columnDefs',
+    (api.getColumnDefs() ?? []).map(colDef =>
+        colDef.colId === 'profitMargin'
+            ? { ...colDef, calculatedExpression: '([revenue] - [cost]) / [revenue]' }
+            : colDef
+    )
+);
 
 api.openCalculatedColumnDialog('profitMargin');
 
-api.removeCalculatedColumn('profitMargin');
+api.setGridOption(
+    'columnDefs',
+    (api.getColumnDefs() ?? []).filter(colDef => colDef.colId !== 'profitMargin')
+);
 ```
 
 Calculated Column events also use stored `colId` references in their expression payloads. For example, an event raised from the dialog still reports `[revenue]`, not `[Revenue]`.
@@ -199,7 +207,7 @@ Calculated Column events also use stored `colId` references in their expression 
 
 ### Grid API
 
-{% apiDocumentation source="grid-api/api.json" section="calculatedColumns" names=["addCalculatedColumn", "updateCalculatedColumn", "removeCalculatedColumn", "openCalculatedColumnDialog"] /%}
+{% apiDocumentation source="grid-api/api.json" section="calculatedColumns" names=["openCalculatedColumnDialog"] /%}
 
 ### Grid Options
 

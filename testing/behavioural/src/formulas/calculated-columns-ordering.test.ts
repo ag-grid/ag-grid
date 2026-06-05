@@ -61,6 +61,27 @@ describe('calculated columns - display ordering', () => {
         return gridsManager.createGrid(id, { getRowId: (params) => params.data?.id, ...opts });
     }
 
+    function addCalculatedColumnDef(api: GridApi, colDef: ColDef): void {
+        api.setGridOption('columnDefs', [...(api.getColumnDefs() ?? []), colDef]);
+    }
+
+    function removeColumnDef(api: GridApi, colId: string): void {
+        api.setGridOption('columnDefs', removeColumnDefFromDefs(api.getColumnDefs() ?? [], colId));
+    }
+
+    function removeColumnDefFromDefs(columnDefs: (ColDef | ColGroupDef)[], colId: string): (ColDef | ColGroupDef)[] {
+        const nextColumnDefs: (ColDef | ColGroupDef)[] = [];
+        for (let i = 0, len = columnDefs.length; i < len; ++i) {
+            const colDef = columnDefs[i];
+            if ('children' in colDef) {
+                nextColumnDefs.push({ ...colDef, children: removeColumnDefFromDefs(colDef.children, colId) });
+            } else if ((colDef.colId ?? colDef.field) !== colId) {
+                nextColumnDefs.push(colDef);
+            }
+        }
+        return nextColumnDefs;
+    }
+
     function order(api: GridApi): string[] {
         return api.getAllGridColumns()!.map((col) => col.getColId());
     }
@@ -227,7 +248,7 @@ describe('calculated columns - display ordering', () => {
         });
         expect(order(api)).toEqual(['revenue', 'profit', 'cost']);
 
-        api.removeCalculatedColumn('profit');
+        removeColumnDef(api, 'profit');
         await asyncSetTimeout(1);
 
         // The group's only child is gone — the group must be pruned, not left empty in the colId tree.
@@ -251,7 +272,7 @@ describe('calculated columns - display ordering', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
@@ -271,13 +292,13 @@ describe('calculated columns - display ordering', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         });
         await asyncSetTimeout(1);
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'margin',
             calculatedExpression: '[profit] / [revenue]',
             cellDataType: 'number',
@@ -301,7 +322,7 @@ describe('calculated columns - display ordering', () => {
         });
         api.moveColumns(['c'], 0);
         expect(order(api)).toEqual(['c', 'a', 'b']);
-        api.addCalculatedColumn({ colId: 'sum', calculatedExpression: '[a] + [b]', cellDataType: 'number' });
+        addCalculatedColumnDef(api, { colId: 'sum', calculatedExpression: '[a] + [b]', cellDataType: 'number' });
         await asyncSetTimeout(1);
         expect(order(api)).toEqual(['c', 'a', 'b', 'sum']);
         await new GridColumns(api, 'addCalculatedColumn appends after a manual reorder, preserving the reorder')
@@ -484,7 +505,7 @@ describe('calculated columns - display ordering', () => {
         api.moveColumns(['c'], 0);
         expect(order(api)).toEqual(['c', 'a', first, second, 'b']);
 
-        api.removeCalculatedColumn(first);
+        removeColumnDef(api, first);
         await asyncSetTimeout(1);
         expect(order(api)).toEqual(['c', 'a', second, 'b']);
         await new GridColumns(api, 'removing an anchor preserves the user reorder and keeps the dependent in place')
@@ -824,7 +845,7 @@ describe('calculated columns - display ordering', () => {
         const second = await addViaDialog(api, first, '[Revenue] - [Cost]');
         expect(order(api)).toEqual(['revenue', first, second, 'cost']);
 
-        api.removeCalculatedColumn(first);
+        removeColumnDef(api, first);
         await asyncSetTimeout(1);
         // Only `first` is removed; `second` lost its anchor but keeps its displayed slot (order
         // maintained) rather than jumping to the end.
@@ -851,7 +872,7 @@ describe('calculated columns - display ordering', () => {
         const second = await addViaDialog(api, first, '[Revenue] - [Cost]');
         expect(order(api)).toEqual(['revenue', first, second, 'cost', 'tax']);
 
-        api.removeCalculatedColumn(first);
+        removeColumnDef(api, first);
         await asyncSetTimeout(1);
         // `second` is in the MIDDLE (cost + tax follow it) — it stays between revenue and cost, and the
         // trailing columns are untouched.
@@ -873,13 +894,13 @@ describe('calculated columns - display ordering', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         });
         await asyncSetTimeout(1);
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'margin',
             calculatedExpression: '[profit] / [revenue]',
             cellDataType: 'number',
@@ -887,7 +908,7 @@ describe('calculated columns - display ordering', () => {
         await asyncSetTimeout(1);
         expect(order(api)).toEqual(['revenue', 'cost', 'profit', 'margin']);
 
-        api.removeCalculatedColumn('profit');
+        removeColumnDef(api, 'profit');
         await asyncSetTimeout(1);
         expect(order(api)).toEqual(['revenue', 'cost', 'margin']);
         await new GridColumns(api, 'removing a dynamic calc col leaves the remaining order intact').checkColumns(`
@@ -908,7 +929,7 @@ describe('calculated columns - display ordering', () => {
             ],
         });
         expect(order(api)).toEqual(['revenue', 'profit', 'cost']);
-        api.removeCalculatedColumn('profit');
+        removeColumnDef(api, 'profit');
         await asyncSetTimeout(1);
         expect(order(api)).toEqual(['revenue', 'cost']);
         await new GridColumns(api, 'removing a static calc col (suppression) leaves the remaining order intact')
@@ -927,7 +948,7 @@ describe('calculated columns - display ordering', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: baseDefs,
         });
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
@@ -950,7 +971,7 @@ describe('calculated columns - display ordering', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
@@ -984,7 +1005,7 @@ describe('calculated columns - display ordering', () => {
             rowNumbers: true,
         });
         await asyncSetTimeout(1);
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',

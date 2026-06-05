@@ -17,10 +17,10 @@ export interface CalculatedColumnsOptions {
      */
     expressionPickers?: CalculatedColumnExpressionPicker[] | null;
     /**
-     * Highlight the calculated column currently being edited by the dialog.
+     * Suppress highlighting the calculated column currently being edited by the dialog.
      * @default false
      */
-    columnHighlighting?: boolean;
+    suppressColumnHighlighting?: boolean;
 }
 
 export type CalculatedColumnDef<TData = any, TValue = any> = ColDef<TData, TValue> & {
@@ -33,10 +33,9 @@ export type CalculatedColumnUpdate<TData = any, TValue = any> = Partial<ColDef<T
 };
 
 export interface ICalculatedColumnsService extends Bean {
-    addCalculatedColumn(colDef: CalculatedColumnDef, source?: 'api' | 'calculatedColumn'): void;
     updateCalculatedColumn(column: ColKey, colDef: CalculatedColumnUpdate, source?: 'api' | 'calculatedColumn'): void;
     removeCalculatedColumn(column: AgColumn | null, source?: 'api' | 'calculatedColumn'): void;
-    openCalculatedColumnDialog(column: AgColumn | null, mode: 'add' | 'edit'): void;
+    openCalculatedColumnDialog(column: AgColumn | null, mode: 'add' | 'edit', focusDialog?: boolean): void;
     createProjectedColumnDefs(columnDefs: (ColDef | ColGroupDef)[] | undefined): (ColDef | ColGroupDef)[] | undefined;
     orderDynamicColumns(columns: AgColumn[]): void;
     shouldPreserveColumnOrderOnRefresh(): boolean;

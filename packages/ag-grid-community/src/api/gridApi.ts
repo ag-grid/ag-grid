@@ -38,7 +38,6 @@ import type {
 } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
-import type { CalculatedColumnDef, CalculatedColumnUpdate } from '../interfaces/iCalculatedColumns';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type {
     EditingCellPosition,
@@ -1780,31 +1779,6 @@ export interface _FormulaGridApi<TData = any> {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _CalculatedColumnsGridApi<TData = any> {
-    /**
-     * Add a new calculated column to the end of the column definitions.
-     * The `calculatedExpression` should reference other columns by `colId`, e.g. `[revenue] - [cost]`.
-     * @agModule `CalculatedColumnsModule`
-     */
-    addCalculatedColumn<TValue = any>(colDef: CalculatedColumnDef<TData, TValue>): void;
-
-    /**
-     * Update an existing calculated column.
-     * The `calculatedExpression` should reference other columns by `colId`, e.g. `[revenue] - [cost]`.
-     * No-op if the supplied column key does not resolve to a calculated column.
-     * @agModule `CalculatedColumnsModule`
-     */
-    updateCalculatedColumn<TValue = any>(
-        column: ColKey<TData, TValue>,
-        colDef: CalculatedColumnUpdate<TData, TValue>
-    ): void;
-
-    /**
-     * Remove an existing calculated column.
-     * No-op if the supplied column key does not resolve to a calculated column.
-     * @agModule `CalculatedColumnsModule`
-     */
-    removeCalculatedColumn(column: ColKey<TData>): void;
-
     /**
      * Open the Calculated Column dialog for an existing calculated column.
      * No-op if the supplied column key does not resolve to a calculated column.

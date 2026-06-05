@@ -186,7 +186,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     return 'calculatedColumns should be an object.';
                 }
 
-                const { dataTypes, expressionPickers, columnHighlighting } = calculatedColumns;
+                const { dataTypes, expressionPickers, suppressColumnHighlighting } = calculatedColumns;
                 if (dataTypes != null) {
                     if (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string')) {
                         return 'calculatedColumns.dataTypes should be an array of strings.';
@@ -201,8 +201,8 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                         return "calculatedColumns.expressionPickers should contain only 'columns', 'functions' or 'operators'.";
                     }
                 }
-                if (columnHighlighting != null && typeof columnHighlighting !== 'boolean') {
-                    return 'calculatedColumns.columnHighlighting should be a boolean.';
+                if (suppressColumnHighlighting != null && typeof suppressColumnHighlighting !== 'boolean') {
+                    return 'calculatedColumns.suppressColumnHighlighting should be a boolean.';
                 }
 
                 return null;

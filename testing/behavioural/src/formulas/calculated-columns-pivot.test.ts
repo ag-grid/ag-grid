@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-import type { GridApi, GridOptions, Module } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { CalculatedColumnsModule, FormulaModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -28,6 +28,10 @@ describe('calculated columns - pivot mode', () => {
 
     function createGrid(id: string, opts: Partial<GridOptions>): GridApi {
         return gridsManager.createGrid(id, { getRowId: (params) => params.data?.id, ...opts });
+    }
+
+    function addCalculatedColumnDef(api: GridApi, colDef: ColDef): void {
+        api.setGridOption('columnDefs', [...(api.getColumnDefs() ?? []), colDef]);
     }
 
     function order(api: GridApi): string[] {
@@ -128,7 +132,7 @@ describe('calculated columns - pivot mode', () => {
         await asyncSetTimeout(10);
         const before = order(api);
 
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
