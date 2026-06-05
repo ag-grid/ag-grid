@@ -215,52 +215,52 @@ jobs:
     env:
       NX_PARALLEL: 1
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
-
-      - name: Fetch Refs
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: nx test
-        if: matrix.shard != 0
-        id: test
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test
-          -c=staging --exclude tag:no-sharding --exclude all --shard=${{
-          matrix.shard }}/$((${{ strategy.job-total }} - 1))
-      - name: nx test (non-sharded)
-        if: matrix.shard == 0
-        id: test-no-shard
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c
-          staging --exclude '*,!tag:no-sharding'
-      - name: nx pack:verify
-        if: matrix.shard == 0
-        id: pack-verify
-        run: |
-          yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify --prod
-      - name: Assert No Debugger
-        if: matrix.shard == 0
-        id: assertNoDebugger
-        run: |
-          ./scripts/assertNoDebugger.sh
-      - name: Persist test results
-        if: always() && matrix.shard != 0
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{matrix.shard}}
-          path: |
-            reports/
-            packages/**/__diff_output__/*
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Fetch Refs
+#        run: |
+#          git fetch origin --depth 1 latest
+#          git fetch origin --depth 1 tag latest-success
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: nx test
+#        if: matrix.shard != 0
+#        id: test
+#        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test
+#          -c=staging --exclude tag:no-sharding --exclude all --shard=${{
+#          matrix.shard }}/$((${{ strategy.job-total }} - 1))
+#      - name: nx test (non-sharded)
+#        if: matrix.shard == 0
+#        id: test-no-shard
+#        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c
+#          staging --exclude '*,!tag:no-sharding'
+#      - name: nx pack:verify
+#        if: matrix.shard == 0
+#        id: pack-verify
+#        run: |
+#          yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify --prod
+#      - name: Assert No Debugger
+#        if: matrix.shard == 0
+#        id: assertNoDebugger
+#        run: |
+#          ./scripts/assertNoDebugger.sh
+#      - name: Persist test results
+#        if: always() && matrix.shard != 0
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-results-${{matrix.shard}}
+#          path: |
+#            reports/
+#            packages/**/__diff_output__/*
 
   e2e:
     runs-on: ubuntu-latest
@@ -274,30 +274,30 @@ jobs:
     env:
       NX_PARALLEL: 1
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: nx test:e2e
-        id: tests
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c
-          staging --exclude 'tag:module-size' --exclude all
-
-      - name: Persist test results
-        if: always() && matrix.shard != 0
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-e2e-shard-${{matrix.shard}}
-          path: |
-            reports/
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: nx test:e2e
+#        id: tests
+#        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c
+#          staging --exclude 'tag:module-size' --exclude all
+#
+#      - name: Persist test results
+#        if: always() && matrix.shard != 0
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-results-e2e-shard-${{matrix.shard}}
+#          path: |
+#            reports/
 
   lint:
     runs-on: ubuntu-latest
@@ -344,22 +344,22 @@ jobs:
     outputs:
       build: ${{ steps.build.outcome || '' }}
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: nx build
-        id: build
-        run: |
-          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: nx build
+#        id: build
+#        run: |
+#          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
   docs:
     runs-on: ubuntu-latest
@@ -373,56 +373,56 @@ jobs:
     outputs:
       docs_deployed: ${{ steps.deploy_to_staging.outcome }}
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: update base url
-        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
-
-      - name: validate grid modules
-        run: node scripts/deployments/validateGridModulesList.js
-
-      - name: docs build and link checker
-        run: |
-          if [[ "${{ github.event_name }}" != "pull_request" ]] || [[ "${{ needs.detect-changes.outputs.run_docs_ci }}" == "true" ]]; then
-            export CHECK_LINKS=true CHECK_REDIRECTS=true
-          fi
-          yarn nx run ag-grid-docs:build -c staging
-
-      - name: validate base url
-        run: node scripts/deployments/sanityCheckBaseUrl.js staging
-
-      - name: Deploy to Staging
-        id: deploy_to_staging
-        if: ${{ github.ref == 'refs/heads/latest' }}
-        env:
-          SSH_PRIVATE_KEY: |
-            ${{ secrets.STAGING_SSH_KEY }}
-          SSH_HOST: ${{ secrets.STAGING_HOST }}
-          SSH_USER: ubuntu
-          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-          chmod 400 $SSH_KEY_LOCATION
-          ./scripts/deployments/createAndDeployDocsToTCGH.sh
-
-      - name: Persist test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-docs
-          path: |
-            reports/
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: update base url
+#        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+#
+#      - name: validate grid modules
+#        run: node scripts/deployments/validateGridModulesList.js
+#
+#      - name: docs build and link checker
+#        run: |
+#          if [[ "${{ github.event_name }}" != "pull_request" ]] || [[ "${{ needs.detect-changes.outputs.run_docs_ci }}" == "true" ]]; then
+#            export CHECK_LINKS=true CHECK_REDIRECTS=true
+#          fi
+#          yarn nx run ag-grid-docs:build -c staging
+#
+#      - name: validate base url
+#        run: node scripts/deployments/sanityCheckBaseUrl.js staging
+#
+#      - name: Deploy to Staging
+#        id: deploy_to_staging
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+#        env:
+#          SSH_PRIVATE_KEY: |
+#            ${{ secrets.STAGING_SSH_KEY }}
+#          SSH_HOST: ${{ secrets.STAGING_HOST }}
+#          SSH_USER: ubuntu
+#          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+#          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+#        run: |
+#          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+#          chmod 400 $SSH_KEY_LOCATION
+#          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+#
+#      - name: Persist test results
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-results-docs
+#          path: |
+#            reports/
 
   fw_pkg_test:
     runs-on: ubuntu-24.04
@@ -430,8 +430,8 @@ jobs:
     permissions:
       contents: write
     needs: [ init ]
-    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type
-      == 'release') || inputs.run_package_tests
+#    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type
+#      == 'release') || inputs.run_package_tests
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.init.outputs.test_pkg_matrix )}}

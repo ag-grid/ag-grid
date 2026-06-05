@@ -37,5 +37,5 @@
       "command": "{projectRoot}/run.sh -n -e latest"
     }
   },
-  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-vue3"]
+  "implicitDependencies": ["ag-stack", "ag-grid-community", "ag-grid-enterprise", "ag-grid-vue3"]
 }

@@ -86,7 +86,6 @@ else
         project=$(mktemp -d -p $(pwd)/.tmp)
     fi
 
-
     cp -R ${project_dir}/../shared/* $project/
     cp -R ${project_dir}/* $project/
     cp dist/artifacts/packages/*.tgz $project/
