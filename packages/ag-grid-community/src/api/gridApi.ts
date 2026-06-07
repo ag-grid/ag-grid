@@ -6,7 +6,15 @@ import type {
     RowDropPositionIndicator,
     SetRowDropPositionIndicatorParams,
 } from '../dragAndDrop/rowDropHighlightService';
-import type { ColDef, ColGroupDef, ColKey, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
+import type {
+    ColAggFunc,
+    ColDef,
+    ColGroupDef,
+    ColKey,
+    ColumnChooserParams,
+    HeaderLocation,
+    IAggFunc,
+} from '../entities/colDef';
 import type { ChartRef, GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
@@ -1542,10 +1550,7 @@ export interface _AggregationGridApi<TData> {
      * Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function.
      * @agModule `RowGroupingModule / PivotModule / TreeDataModule`
      */
-    setColumnAggFunc<TValue = any>(
-        key: ColKey<TData, TValue>,
-        aggFunc: string | IAggFunc<TData, TValue> | null | undefined
-    ): void;
+    setColumnAggFunc<TValue = any>(key: ColKey<TData, TValue>, aggFunc: ColAggFunc<TData, TValue>): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

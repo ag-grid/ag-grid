@@ -326,16 +326,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         // first move start column in last cell range (i.e. series chart range)
         this.refreshLastRangeStart();
 
-        const allColumns = this.visibleCols.allCols;
-
         // check that the columns in each range still exist and are visible
         for (const cellRange of this.cellRanges) {
             const beforeCols = cellRange.columns;
 
-            // remove hidden or removed cols from cell range
-            cellRange.columns = cellRange.columns.filter(
-                (col: AgColumn) => col.isVisible() && allColumns.indexOf(col) !== -1
-            );
+            // remove hidden or removed cols from cell range (`displayed` ⇔ in allCols)
+            cellRange.columns = cellRange.columns.filter((col: AgColumn) => col.isVisible() && col.displayed);
 
             const colsInRangeChanged = !_areEqual(beforeCols, cellRange.columns);
 
@@ -364,15 +360,26 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
     public isContiguousRange(cellRange: CellRange): boolean {
         const rangeColumns = cellRange.columns as AgColumn[];
+        const len = rangeColumns.length;
 
-        if (!rangeColumns.length) {
+        if (!len) {
             return false;
         }
 
-        const allColumns = this.visibleCols.allCols;
-        const allPositions = rangeColumns.map((c) => allColumns.indexOf(c)).sort((a, b) => a - b);
+        // Contiguous ⇔ displayed positions span exactly `len` slots with no gaps. Single min/max
+        // pass — no sort, no intermediate array (was O(n log n) + alloc).
+        let min = rangeColumns[0].allColsIndex;
+        let max = min;
+        for (let i = 1; i < len; ++i) {
+            const idx = rangeColumns[i].allColsIndex;
+            if (idx < min) {
+                min = idx;
+            } else if (idx > max) {
+                max = idx;
+            }
+        }
 
-        return _last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
+        return max - min + 1 === len;
     }
 
     public getRangeStartRow(cellRange: PartialCellRange): RowPosition {
@@ -772,14 +779,24 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
     public getRangeEdgeColumns(cellRange: CellRange): { left: AgColumn; right: AgColumn } {
         const allColumns = this.visibleCols.allCols;
-        const allIndices = cellRange.columns
-            .map((c: AgColumn) => allColumns.indexOf(c))
-            .filter((i) => i > -1)
-            .sort((a, b) => a - b);
+        const cols = cellRange.columns;
+        let minIdx = -1;
+        let maxIdx = -1;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const idx = (cols[i] as AgColumn).allColsIndex;
+            if (idx > -1) {
+                if (minIdx === -1 || idx < minIdx) {
+                    minIdx = idx;
+                }
+                if (idx > maxIdx) {
+                    maxIdx = idx;
+                }
+            }
+        }
 
         return {
-            left: allColumns[allIndices[0]],
-            right: allColumns[_last(allIndices)],
+            left: allColumns[minIdx],
+            right: allColumns[maxIdx],
         };
     }
 
@@ -1135,12 +1152,18 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     }
 
     public isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean {
-        const allColumns = this.visibleCols.allCols;
-        const allPositions = cellRange.columns.map((c: AgColumn) => allColumns.indexOf(c)).sort((a, b) => a - b);
+        const cols = cellRange.columns as AgColumn[];
+        let maxIdx = -1;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const idx = cols[i].allColsIndex;
+            if (idx > maxIdx) {
+                maxIdx = idx;
+            }
+        }
         const { startRow, endRow } = cellRange;
         const lastRow = _isRowBefore(startRow!, endRow!) ? endRow : startRow;
 
-        const isRightColumn = allColumns.indexOf(cell.column as AgColumn) === _last(allPositions);
+        const isRightColumn = (cell.column as AgColumn).allColsIndex === maxIdx;
         const isLastRow =
             cell.rowIndex === lastRow!.rowIndex && _makeNull(cell.rowPinned) === _makeNull(lastRow!.rowPinned);
 
@@ -1421,7 +1444,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         });
     }
 
-    private getColumnFromModel(col: string | AgColumn): AgColumn | null {
+    private getColumnFromModel(col: string | AgColumn): AgColumn | undefined {
         return typeof col === 'string' ? this.colModel.getCol(col) : col;
     }
 
@@ -1470,10 +1493,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             return preferredStartColumn ?? firstColumn;
         }
 
-        const allColumns = this.visibleCols.allCols;
-        const preferredStartIndex = allColumns.indexOf(preferredStartColumn);
-        const firstIndex = allColumns.indexOf(firstColumn);
-        const lastIndex = allColumns.indexOf(lastColumn);
+        const preferredStartIndex = preferredStartColumn.allColsIndex;
+        const firstIndex = firstColumn.allColsIndex;
+        const lastIndex = lastColumn.allColsIndex;
 
         if (preferredStartIndex < 0 || firstIndex < 0 || lastIndex < 0) {
             return firstColumn;
@@ -1489,14 +1511,14 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         const toColumn = this.getColumnFromModel(columnB)!;
 
         const isSameColumn = fromColumn === toColumn;
-        const fromIndex = allColumns.indexOf(fromColumn);
+        const fromIndex = fromColumn.allColsIndex;
 
         if (fromIndex < 0) {
             _warn(178, { colId: fromColumn.getId() });
             return;
         }
 
-        const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(toColumn);
+        const toIndex = isSameColumn ? fromIndex : toColumn.allColsIndex;
 
         if (toIndex < 0) {
             _warn(178, { colId: toColumn.getId() });

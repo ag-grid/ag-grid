@@ -19,7 +19,6 @@ import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IFormulaDataService } from '../interfaces/formulas';
-import type { IColsService } from '../interfaces/iColsService';
 import type { CellValueResolveFrom } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
@@ -52,7 +51,6 @@ export class ValueService extends BeanStub implements NamedBean {
     // exists in the same shape from construction time.
     private editSvc: EditService | undefined = undefined;
     private valueCache: ValueCache | undefined = undefined;
-    private rowGroupColsSvc: IColsService | undefined = undefined;
     private colModel!: ColumnModel;
     private expressionSvc: ExpressionService | undefined = undefined;
     private dataTypeSvc: DataTypeService | undefined = undefined;
@@ -65,7 +63,6 @@ export class ValueService extends BeanStub implements NamedBean {
         this.dataTypeSvc = beans.dataTypeSvc;
         this.editSvc = beans.editSvc;
         this.formulaDataSvc = beans.formulaDataSvc;
-        this.rowGroupColsSvc = beans.rowGroupColsSvc;
         this.init();
     }
 
@@ -217,8 +214,8 @@ export class ValueService extends BeanStub implements NamedBean {
             if (isGroup) {
                 const rowGroupColId = colDef.showRowGroup;
                 if (typeof rowGroupColId === 'string') {
-                    const colRowGroupIndex = this.rowGroupColsSvc?.getColumnIndex(rowGroupColId);
-                    if (colRowGroupIndex != null && colRowGroupIndex > rowNode.level) {
+                    const col = this.beans.colModel.colsById[rowGroupColId];
+                    if (col && col.rowGroupActive && col.rowGroupActiveIndex > rowNode.level) {
                         return null;
                     }
                 }
@@ -825,7 +822,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private getValueCallback(node: IRowNode, field: string): any {
-        const otherColumn = this.colModel.getColDefColOrCol(field);
+        const otherColumn = this.colModel.getCol(field);
         return otherColumn ? this.getValue(otherColumn, node, 'data') : null;
     }
 

@@ -1,5 +1,5 @@
 import type { BeanCollection, NamedBean, SortModelItem, SortService, StoreRefreshAfterParams } from 'ag-grid-community';
-import { BeanStub, _isServerSideRowModel } from 'ag-grid-community';
+import { BeanStub, _getSortModel, _isServerSideRowModel } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';
@@ -32,7 +32,7 @@ export class SortListener extends BeanStub implements NamedBean {
             return;
         } // params is undefined if no datasource set
 
-        const newSortModel = this.sortSvc.getSortModel();
+        const newSortModel = _getSortModel(this.sortSvc);
         const oldSortModel = storeParams.sortModel;
 
         const changedColumns = this.findChangedColumnsInSort(newSortModel, oldSortModel);

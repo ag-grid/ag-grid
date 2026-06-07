@@ -242,10 +242,7 @@ export function isCheckboxSelection({ gos, selectionColSvc }: BeanCollection, co
         const isAutoCol = isColumnGroupAutoCol(column);
         // default to displaying header checkbox in the selection column
         const location = _getCheckboxLocation(rowSelection);
-        if (
-            (location === 'autoGroupColumn' && isAutoCol) ||
-            (isSelectionCol && selectionColSvc?.isSelectionColumnEnabled())
-        ) {
+        if ((location === 'autoGroupColumn' && isAutoCol) || (isSelectionCol && selectionColSvc?.isEnabled())) {
             result = _getHeaderCheckbox(rowSelection);
         }
     }

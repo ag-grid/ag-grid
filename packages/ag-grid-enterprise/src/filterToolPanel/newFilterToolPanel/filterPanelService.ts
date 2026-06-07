@@ -105,7 +105,7 @@ export class FilterPanelService
     public getAvailable(): { id: string; name: string }[] {
         const beans = this.beans;
         const availableFilters: { id: string; name: string }[] = [];
-        for (const column of beans.colModel.getColDefCols() ?? []) {
+        for (const column of beans.colModel.colDefList) {
             const id = column.colId;
             if (column.isFilterAllowed() && !column.colDef.suppressFiltersToolPanel && !this.states.get(id)) {
                 availableFilters.push({
@@ -260,7 +260,7 @@ export class FilterPanelService
 
     private createFilterStateWrapper(id: string, expanded?: boolean): StateWrapper | undefined {
         const { colModel, colFilter } = this.beans;
-        const column = colModel.getColDefCol(id);
+        const column = colModel.getNonPivotColById(id);
 
         if (column && !column.colDef.suppressFiltersToolPanel) {
             const handler = colFilter!.getHandler(column, true);

@@ -699,6 +699,53 @@ describe('Column Autosize', () => {
             expect(api.getColumn('a')!.getActualWidth()).toBe(80);
             expect(api.getColumn('b')!.getActualWidth()).toBe(80);
         });
+
+        // Autosize refreshes visible cols with skipTreeBuild=true (widths don't change liveCols). This
+        // exercises the multi-section + grouped (colsTreeDepth > 0) reuse path: group trees and the
+        // left/centre/right partition must survive the width-only refresh unchanged.
+        test('grouped + pinned columns keep their tree and sections after autosize', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        headerName: 'Pinned',
+                        children: [
+                            { colId: 'p1', pinned: 'left', width: 200, minWidth: 70 },
+                            { colId: 'p2', pinned: 'left', width: 200, minWidth: 90 },
+                        ],
+                    },
+                    {
+                        headerName: 'Body',
+                        children: [
+                            { colId: 'c1', width: 200, minWidth: 110 },
+                            { colId: 'c2', width: 200, minWidth: 130 },
+                        ],
+                    },
+                ],
+            });
+            await new GridColumns(api, `grouped + pinned setup`).checkColumns(`
+                LEFT
+                └─┬ "Pinned" GROUP
+                  ├── p1 width:200
+                  └── p2 width:200
+                CENTER
+                └─┬ "Body" GROUP
+                  ├── c1 width:200
+                  └── c2 width:200
+            `);
+
+            api.autoSizeAllColumns();
+            await new GridColumns(api, `grouped + pinned after autosize`).checkColumns(`
+                LEFT
+                └─┬ "Pinned" GROUP
+                  ├── p1 width:70
+                  └── p2 width:90
+                CENTER
+                └─┬ "Body" GROUP
+                  ├── c1 width:110
+                  └── c2 width:130
+            `);
+            await asyncSetTimeout(0);
+        });
     });
 
     describe('autoSizeAllColumns', () => {

@@ -1,6 +1,7 @@
 import type { AgEvent } from 'ag-stack';
 
 import type { GridApi } from '../api/gridApi';
+import { _setColGroupOpen } from '../columns/columnGroups/columnGroupState';
 import { _applyColumnState } from '../columns/columnStateUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -169,23 +170,21 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     }
 
     private processGroupOpenedEvent(groupOpenedEvent: ColumnGroupOpenedEvent): void {
-        const { colGroupSvc } = this.beans;
-        if (!colGroupSvc) {
-            return;
-        }
+        const beans = this.beans;
+        const colsGroupsById = beans.colModel.colsGroupsById;
         for (const masterGroup of groupOpenedEvent.columnGroups) {
             // likewise for column group
-            let otherColumnGroup: AgProvidedColumnGroup | null = null;
+            let otherColumnGroup: AgProvidedColumnGroup | undefined;
 
             if (masterGroup) {
-                otherColumnGroup = colGroupSvc.getProvidedColGroup(masterGroup.getGroupId());
+                otherColumnGroup = colsGroupsById.get(masterGroup.getGroupId());
             }
 
             if (masterGroup && !otherColumnGroup) {
                 continue;
             }
 
-            colGroupSvc.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), 'alignedGridChanged');
+            _setColGroupOpen(beans, otherColumnGroup, masterGroup.isExpanded(), 'alignedGridChanged');
         }
     }
 
@@ -193,12 +192,12 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         // the column in the event is from the master grid. need to
         // look up the equivalent from this (other) grid
         const masterColumn = colEvent.column;
-        let otherColumn: AgColumn | null = null;
+        let otherColumn: AgColumn | undefined;
 
         const beans = this.beans;
         const { colResize, colModel, scrollVisibleSvc } = beans;
         if (masterColumn) {
-            otherColumn = colModel.getColDefCol(masterColumn.getColId());
+            otherColumn = colModel.getNonPivotCol(masterColumn.getColId());
         }
         // if event was with respect to a master column, that is not present in this
         // grid, then we ignore the event

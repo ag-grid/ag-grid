@@ -605,14 +605,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
             if (initialColumn === currentColumn) {
                 return;
             }
-            const displayedColumns = this.beans.visibleCols.allCols;
-            const initialIndex = displayedColumns.indexOf(initialColumn);
-            const currentIndex = displayedColumns.indexOf(currentColumn);
+            const initialIndex = initialColumn.allColsIndex;
+            const currentIndex = currentColumn.allColsIndex;
 
-            if (
-                currentIndex <= initialIndex &&
-                currentIndex >= displayedColumns.indexOf(this.cellRange.columns[0] as AgColumn)
-            ) {
+            if (currentIndex <= initialIndex && currentIndex >= (this.cellRange.columns[0] as AgColumn).allColsIndex) {
                 this.reduceHorizontal(initialPosition, currentPosition);
                 this.isReduce = true;
             } else {
@@ -704,8 +700,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
         const beans = this.beans;
         const { visibleCols } = beans;
         const allCols = visibleCols.allCols;
-        const startCol = allCols.indexOf((isMovingLeft ? endPosition.column : initialPosition.column) as AgColumn);
-        const endCol = allCols.indexOf((isMovingLeft ? this.cellRange.columns[0] : endPosition.column) as AgColumn);
+        const startCol = ((isMovingLeft ? endPosition.column : initialPosition.column) as AgColumn).allColsIndex;
+        const endCol = ((isMovingLeft ? this.cellRange.columns[0] : endPosition.column) as AgColumn).allColsIndex;
         const offset = isMovingLeft ? 0 : 1;
 
         const colsToMark = allCols.slice(startCol + offset, endCol + offset);
@@ -746,8 +742,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
         const beans = this.beans;
         const { visibleCols } = beans;
         const allCols = visibleCols.allCols;
-        const startCol = allCols.indexOf(endPosition.column as AgColumn);
-        const endCol = allCols.indexOf(initialPosition.column as AgColumn);
+        const startCol = (endPosition.column as AgColumn).allColsIndex;
+        const endCol = (initialPosition.column as AgColumn).allColsIndex;
 
         const colsToMark = allCols.slice(startCol, endCol);
         const { rangeStartRow, rangeEndRow } = this;

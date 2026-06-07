@@ -1,5 +1,6 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { ColumnEvent, ColumnEventType } from '../events';
+import type { ColumnChangedEventType } from '../interfaces/iColsService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IEventService } from '../interfaces/iEventService';
 
@@ -45,6 +46,7 @@ export function dispatchColumnPinnedEvent(
     });
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function dispatchColumnVisibleEvent(
     eventSvc: IEventService,
     changedColumns: AgColumn[],
@@ -69,9 +71,13 @@ export function dispatchColumnVisibleEvent(
     });
 }
 
-export function dispatchColumnChangedEvent<
-    T extends 'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged',
->(eventSvc: IEventService, type: T, columns: AgColumn[], source: ColumnEventType): void {
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _dispatchColumnChangedEvent<T extends ColumnChangedEventType>(
+    eventSvc: IEventService,
+    type: T,
+    columns: AgColumn[],
+    source: ColumnEventType
+): void {
     eventSvc.dispatchEvent({
         type,
         columns,

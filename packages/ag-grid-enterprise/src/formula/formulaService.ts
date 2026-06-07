@@ -9,7 +9,6 @@ import type {
     NamedBean,
     RowNode,
     _ChangedRowNodes,
-    _ColumnCollections,
 } from 'ag-grid-community';
 import { BeanStub, _convertColumnEventSourceType, _warn } from 'ag-grid-community';
 
@@ -107,8 +106,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * Recompute `active`, the `formulaColumnsPresent` cache, and trigger a full formula refresh
      * if the active state changed. Called by `columnModel` whenever the column set changes.
      */
-    public setFormulasActive(cols: _ColumnCollections): void {
-        const columns = cols.list;
+    public setFormulasActive(columns: AgColumn[]): void {
         const calculatedColumnsEnabled = this.beans.calculatedColsSvc != null;
         let editableFormulaColumnsPresent = false;
         let calculatedColumnsPresent = false;
@@ -127,9 +125,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         const formulaColumnsPresent = editableFormulaColumnsPresent || calculatedColumnsPresent;
         this.formulaColumnsPresent = formulaColumnsPresent;
         const editableFormulasCompatible =
-            editableFormulaColumnsPresent && this.checkForEditableFormulaIncompatibleServices(cols);
+            editableFormulaColumnsPresent && this.checkForEditableFormulaIncompatibleServices(columns);
         const calculatedColumnsCompatible =
-            calculatedColumnsPresent && this.checkForCalculatedColumnIncompatibleServices(cols);
+            calculatedColumnsPresent && this.checkForCalculatedColumnIncompatibleServices(columns);
         const editableFormulasSupported = this.beans.rowModel.getType() === 'clientSide';
         const active = editableFormulasCompatible && editableFormulasSupported;
         const calculatedColumnsActive = calculatedColumnsCompatible;
@@ -151,42 +149,35 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             _warn(295, { blockedService: 'Master Detail' });
             return false;
         }
-
         if (this.gos.get('enableCellExpressions')) {
             _warn(295, { blockedService: 'Cell Expressions' });
             return false;
         }
-
         return true;
     }
 
-    private checkForCalculatedColumnIncompatibleServices(cols: _ColumnCollections): boolean {
+    private checkForCalculatedColumnIncompatibleServices(columns: AgColumn[]): boolean {
         if (!this.checkForBaseIncompatibleServices()) {
             return false;
         }
-
-        const columns = cols.list;
-        for (const col of columns) {
+        for (let i = 0, len = columns.length; i < len; ++i) {
+            const col = columns[i];
             if (col.isPivotActive()) {
                 _warn(295, { blockedService: 'Column Pivoting' });
                 return false;
             }
         }
-
         return true;
     }
 
-    private checkForEditableFormulaIncompatibleServices(cols: _ColumnCollections): boolean {
+    private checkForEditableFormulaIncompatibleServices(columns: AgColumn[]): boolean {
         if (!this.checkForBaseIncompatibleServices()) {
             return false;
         }
-
         if (this.gos.get('treeData')) {
             _warn(295, { blockedService: 'Tree Data' });
             return false;
         }
-
-        const columns = cols.list;
         for (let i = 0, len = columns.length; i < len; ++i) {
             const col = columns[i];
             if (col.isAllowPivot() || col.isPivotActive()) {
@@ -202,7 +193,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 return false;
             }
         }
-
         return true;
     }
 
@@ -467,7 +457,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (!this.isEvaluationActive()) {
             return;
         }
-        const list = beans.colModel.getCols();
+        const list = beans.colModel.colsList;
         if (!list) {
             return;
         }
@@ -743,7 +733,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 return;
             }
 
-            const referencedColumn = this.beans.colModel.getColById(reference);
+            const referencedColumn = this.beans.colModel.colsById[reference];
             if (!referencedColumn) {
                 canEvaluate = false;
                 return;

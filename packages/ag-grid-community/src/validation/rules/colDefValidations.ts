@@ -1,5 +1,5 @@
 import type { UserComponentName } from '../../context/context';
-import { _isSortDefValid, _isSortDirectionValid } from '../../entities/agColumn';
+import { _isSortDefValid, isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
@@ -209,7 +209,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         },
         sort: {
             validate: (_options) => {
-                if (_isSortDefValid(_options.sort) || _isSortDirectionValid(_options.sort)) {
+                if (_isSortDefValid(_options.sort) || isSortDirectionValid(_options.sort)) {
                     return null;
                 }
 
@@ -218,7 +218,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         },
         initialSort: {
             validate: (_options) => {
-                if (_isSortDefValid(_options.initialSort) || _isSortDirectionValid(_options.initialSort)) {
+                if (_isSortDefValid(_options.initialSort) || isSortDirectionValid(_options.initialSort)) {
                     return null;
                 }
 
@@ -231,7 +231,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
 
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
                     const invalidItems = sortingOrder.filter((a) => {
-                        return !(_isSortDefValid(a) || _isSortDirectionValid(a));
+                        return !(_isSortDefValid(a) || isSortDirectionValid(a));
                     });
                     if (invalidItems.length > 0) {
                         return `sortingOrder must be an array of type non-null (SortDirection | SortDef)[], incorrect items are: [${invalidItems

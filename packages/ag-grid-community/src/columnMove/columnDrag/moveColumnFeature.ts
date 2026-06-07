@@ -1,5 +1,6 @@
 import { _exists, _last, _missing } from 'ag-stack';
 
+import { _setColsVisible } from '../../columns/columnStateUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { DragAndDropIcon, GridDraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
@@ -171,28 +172,17 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
-        if (!columns?.length) {
-            return;
+        if (columns?.length) {
+            _setColsVisible(this.beans, columns, visible, source, true);
         }
-
-        const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-        if (!allowedCols.length) {
-            return;
-        }
-        this.beans.colModel.setColsVisible(allowedCols, visible, source);
     }
 
     private finishColumnMoving(): void {
         this.clearHighlighted();
-
         const lastMovedInfo = this.lastMovedInfo;
-        if (!lastMovedInfo) {
-            return;
+        if (lastMovedInfo) {
+            this.beans.colMoves!.moveColumns(lastMovedInfo.columns, lastMovedInfo.toIndex, 'uiColumnMoved', true);
         }
-
-        const { columns, toIndex } = lastMovedInfo;
-
-        this.beans.colMoves!.moveColumns(columns, toIndex, 'uiColumnMoved', true);
     }
 
     private updateDragItemContainerType(): void {
@@ -429,8 +419,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         }
 
         const visibleColumns = visibleCols.allCols;
-        const movingColIndex = visibleColumns.indexOf(firstMovingCol);
-        const targetIndex = visibleColumns.indexOf(column);
+        const movingColIndex = firstMovingCol.allColsIndex;
+        const targetIndex = column.allColsIndex;
         const isBefore = position === ColumnHighlightPosition.Before;
         const fromLeft = movingColIndex < targetIndex || (movingColIndex === targetIndex && !isBefore);
         let diff: number = 0;

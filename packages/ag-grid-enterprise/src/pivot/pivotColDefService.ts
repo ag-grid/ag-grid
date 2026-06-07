@@ -5,8 +5,9 @@ import type {
     ColGroupDef,
     ColumnModel,
     ColumnNameService,
-    IColsService,
     IPivotColDefService,
+    IPivotColsService,
+    IValueColsService,
     NamedBean,
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
@@ -41,8 +42,8 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
     beanName = 'pivotColDefSvc' as const;
 
     private colModel: ColumnModel;
-    private pivotColsSvc?: IColsService;
-    private valueColsSvc?: IColsService;
+    private pivotColsSvc?: IPivotColsService;
+    private valueColsSvc?: IValueColsService;
     private colNames: ColumnNameService;
 
     public wireBeans(beans: BeanCollection) {
@@ -522,7 +523,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             }
 
             if (children.length === 0) {
-                const potentialAggCol = this.colModel.getColDefCol(key);
+                const potentialAggCol = this.colModel.getNonPivotCol(key);
                 if (potentialAggCol) {
                     const headerName = this.colNames.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
                     const colDef = this.createColDef(potentialAggCol, headerName, undefined, false);

@@ -2,11 +2,11 @@ import { _areEqual, _clearElement, _last } from 'ag-stack';
 
 import type {
     BeanCollection,
+    ColAggFunc,
     ColDef,
     ColGroupDef,
     ColumnToolPanelAction,
     ColumnToolPanelState,
-    IAggFunc,
     IColumnToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
@@ -35,7 +35,7 @@ interface GridStateSnapshot {
     columnOrder: string[];
     visibleColIds: string[];
     sortState: string[];
-    aggFuncState: (string | IAggFunc | null | undefined)[];
+    aggFuncState: ColAggFunc[];
     widthState: string[];
 }
 

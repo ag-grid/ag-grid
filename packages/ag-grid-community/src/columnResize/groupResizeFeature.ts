@@ -1,6 +1,8 @@
+import { getColGroupAtDirection } from '../columns/columnGroups/columnGroupNavigation';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
+import { edgeLeafColumn } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -105,7 +107,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         let groupAfter: AgColumnGroup | null = null;
 
         if (shiftKey) {
-            groupAfter = this.beans.colGroupSvc?.getGroupAtDirection(this.columnGroup, 'After') ?? null;
+            groupAfter = getColGroupAtDirection(this.beans.visibleCols, this.columnGroup, 'After');
         }
 
         if (groupAfter) {
@@ -208,7 +210,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private normaliseDragChange(dragChange: number): number {
         let result = dragChange;
         const { columnGroup } = this;
-        const firstDisplayedLeafCol = columnGroup.getDisplayedLeafColumns()[0];
+        const firstDisplayedLeafCol = edgeLeafColumn(columnGroup, true, false);
         const pinned = firstDisplayedLeafCol?.getPinned() ?? columnGroup.getPinned();
 
         if (this.gos.get('enableRtl')) {

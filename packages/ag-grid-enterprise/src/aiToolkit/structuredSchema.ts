@@ -26,38 +26,32 @@ const StructuredSchemaBuilderMap: Record<
 } as const;
 
 export function getStructuredSchema(beans: BeanCollection, params?: StructuredSchemaParams): JSONSchema | undefined {
-    const allColumnIds = beans.colModel.getCols().map((col) => col.colId);
-
     const features: Record<string, SchemaBuilder> = {};
 
     for (const feature of STRUCTURED_SCHEMA_FEATURES) {
         if (params?.exclude?.includes(feature)) {
             continue;
         }
-
-        const builder = StructuredSchemaBuilderMap[feature];
-
-        const schema = builder(beans, params);
-
+        const schema = StructuredSchemaBuilderMap[feature](beans, params);
         if (schema) {
             features[feature] = schema.nullable();
         }
     }
 
+    // Single pass over colsList — collect ids and build descriptions in one go.
+    const colsList = beans.colModel.colsList;
     const columnParams = params?.columns ?? {};
+    const allColumnIds = new Array<string>(colsList.length);
+    let descriptions = '';
+    for (let i = 0, len = colsList.length; i < len; ++i) {
+        const colId = colsList[i].colId;
+        allColumnIds[i] = colId;
+        const desc = columnParams[colId]?.description;
+        if (i > 0) {
+            descriptions += '\n';
+        }
+        descriptions += desc ? `${colId}: ${desc}` : colId;
+    }
 
-    const descriptions = allColumnIds
-        .map((colId) => {
-            if (columnParams[colId]?.description) {
-                return `${colId}: ${columnParams[colId].description}`;
-            } else {
-                return colId;
-            }
-        })
-        .filter(Boolean)
-        .join('\n');
-
-    const schema = s.object(features).define('allColumnIds', s.enum(allColumnIds, descriptions));
-
-    return schema.toJSON();
+    return s.object(features).define('allColumnIds', s.enum(allColumnIds, descriptions)).toJSON();
 }

@@ -1508,7 +1508,7 @@ export class EditService extends BeanStub implements NamedBean {
         const edits: EditMap = new Map();
 
         for (let { colId, column, colKey, rowIndex, rowPinned, newValue: pendingValue, state } of cells) {
-            const col = colId ? colModel.getCol(colId) : colKey ? colModel.getCol(colKey) : column;
+            const col = colId ? colModel.colsById[colId] : colKey ? colModel.getCol(colKey) : column;
 
             if (!col) {
                 continue;
