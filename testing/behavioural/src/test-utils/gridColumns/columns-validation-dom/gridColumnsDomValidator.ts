@@ -497,8 +497,8 @@ export class GridColumnsDomValidator {
             }
 
             // ── aria-colindex attribute ──────────────────────────────────────
-            // For groups, expected aria-colindex is the FIRST leaf col's index (matches
-            // `VisibleColsService.getAriaColIndex` for groups).
+            // For groups, expected aria-colindex is the FIRST leaf col's index — a group header
+            // spans its leaves, so the leftmost leaf's index applies.
             const ariaColIndex = headerCell.getAttribute('aria-colindex');
             const firstLeaf = group.getLeafColumns()[0];
             const expectedIndex = firstLeaf ? expectedAriaColIndex.get(firstLeaf) : undefined;
@@ -680,8 +680,8 @@ function isCoupledSortMode(api: GridApi): boolean {
 /** Compute the expected `aria-colindex` (1-based) for every column in `colsList`, partitioning
  *  by pinned section: `[left-pinned, center, right-pinned]`. Includes hidden cols (they still
  *  occupy aria-colindex slots — keeps aria-colcount and aria-colindex consistent for screen
- *  readers). Mirrors `VisibleColsService.stampHeaderIndexes` so the DOM validator catches any
- *  drift between the rendered attribute and the canonical ordering. */
+ *  readers). This is the black-box expected ordering; the validator asserts the rendered DOM
+ *  attribute matches it, catching drift independently of how the grid computes it. */
 function buildExpectedAriaColIndex(api: GridApi): Map<Column, number> {
     const cols = api.getAllGridColumns() ?? [];
     const expected = new Map<Column, number>();

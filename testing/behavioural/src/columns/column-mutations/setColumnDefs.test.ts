@@ -29,8 +29,7 @@ describe('Column Mutations', () => {
     });
 
     describe('setColumnDefs: instance preservation', () => {
-        // Solved by AG-17366 when it is completed
-        test.skip('column instances are reused when colId matches', async () => {
+        test('column instances are reused when colId matches', async () => {
             const columnDefs1: ColDef[] = [
                 { colId: 'a', width: 100 },
                 { colId: 'b', width: 200 },
@@ -1356,8 +1355,7 @@ describe('Column Mutations', () => {
             expect(afterIds).not.toContain('b');
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('group instance is reused when colGroupDef is structurally unchanged', async () => {
+        test('group instance is reused when colGroupDef is structurally unchanged', async () => {
             const api = gridsManager.createGrid('groupReuse', {
                 columnDefs: [{ headerName: 'G', groupId: 'g', children: [{ colId: 'a' }, { colId: 'b' }] }],
             });
@@ -1441,8 +1439,7 @@ describe('Column Mutations', () => {
             expect(groupAfter.colGroupDef.headerName).toBe('Changed');
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('reused group has its colGroupDef updated to reflect the latest children array', async () => {
+        test('reused group has its colGroupDef updated to reflect the latest children array', async () => {
             // Even though `children` is excluded from the structural compare (refs change per
             // call), the reused instance's `colGroupDef.children` MUST point to the latest
             // user-supplied array so consumers reading `getColGroupDef().children` don't see
@@ -1497,8 +1494,7 @@ describe('Column Mutations', () => {
             expect(groupAfter.colGroupDef.children[1].colId).toBe('b');
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('reused group picks up new children when cols are added to it', async () => {
+        test('reused group picks up new children when cols are added to it', async () => {
             const api = gridsManager.createGrid('groupChildrenAdd', {
                 columnDefs: [{ headerName: 'G', groupId: 'g', children: [{ colId: 'a' }, { colId: 'b' }] }],
             });
@@ -1561,8 +1557,7 @@ describe('Column Mutations', () => {
         // Cascade: when AgProvidedColumnGroup is reused, the displayed AgColumnGroup wrapper
         // also reuses (its lookup gated on `columnGroup.providedColumnGroup === providedGroup`).
         // Before AgProvidedColumnGroup reuse, this cascade was always broken.
-        // Solved by AG-17366 when it is completed
-        test.skip('displayed AgColumnGroup is reused when AgProvidedColumnGroup is reused', async () => {
+        test('displayed AgColumnGroup is reused when AgProvidedColumnGroup is reused', async () => {
             const api = gridsManager.createGrid('groupCascade', {
                 columnDefs: [{ headerName: 'G', groupId: 'g', children: [{ colId: 'a' }] }],
             });
@@ -1825,8 +1820,7 @@ describe('Column Mutations', () => {
             expect(column.getColDef()).not.toBe(initialMergedRef);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('AgProvidedColumnGroup adopts new colGroupDef ref when structurally equal', async () => {
+        test('AgProvidedColumnGroup adopts new colGroupDef ref when structurally equal', async () => {
             const initialGroup: ColGroupDef = {
                 groupId: 'g',
                 headerName: 'G',

@@ -555,8 +555,7 @@ describe('Column Edge Cases', () => {
             api.removeEventListener('sortChanged', listener);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('applyColumnState dispatches all 5 change events in one call when every category changes', async () => {
+        test('applyColumnState dispatches all 5 change events in one call when every category changes', async () => {
             // Each col mutates a single category so the test can attribute events to specific cols.
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
@@ -1512,8 +1511,7 @@ describe('Column Edge Cases', () => {
             await new GridColumns(api, 'all hidden incl selection').checkColumns('empty');
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('selection column auto-hide keeps tree and flat representations consistent', async () => {
+        test('selection column auto-hide keeps tree and flat representations consistent', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a', hide: true }],
                 rowData: [{ a: 1 }],
@@ -1934,8 +1932,7 @@ describe('Column Edge Cases', () => {
             `);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('column with empty string colId', async () => {
+        test('column with empty string colId', async () => {
             const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
             const api = gridsManager.createGrid('myGrid', {

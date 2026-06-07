@@ -129,8 +129,7 @@ describe('Column lookup', () => {
             expect(resolved!.getColId()).toBe('alpha');
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('resolves a column by ColDef reference when colDef has no explicit colId (field fast-path)', async () => {
+        test('resolves a column by ColDef reference when colDef has no explicit colId (field fast-path)', async () => {
             const nameCol: ColDef = { field: 'name' };
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [nameCol, { field: 'age' }],
@@ -161,8 +160,7 @@ describe('Column lookup', () => {
             `);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('resolves a column by ColDef reference when colDef has no colId or field (reference scan)', async () => {
+        test('resolves a column by ColDef reference when colDef has no colId or field (reference scan)', async () => {
             const anonCol: ColDef = { headerName: 'Anonymous' };
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'name' }, anonCol],
@@ -215,8 +213,7 @@ describe('Column lookup', () => {
             );
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('resolves a column by string key matching a `field` when the field differs from colId', async () => {
+        test('resolves a column by string key matching a `field` when the field differs from colId', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { colId: 'X', field: 'name' },
@@ -278,8 +275,7 @@ describe('Column lookup', () => {
             );
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('resolves a column by fresh ColDef object with only a field (no shared ref)', async () => {
+        test('resolves a column by fresh ColDef object with only a field (no shared ref)', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'X', field: 'name' }, { field: 'age' }],
             });
@@ -310,8 +306,7 @@ describe('Column lookup', () => {
             `);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('resolves correct column when two ColDefs share the same field', async () => {
+        test('resolves correct column when two ColDefs share the same field', async () => {
             const firstCol: ColDef = { field: 'value', headerName: 'First' };
             const secondCol: ColDef = { field: 'value', headerName: 'Second' };
             const api = gridsManager.createGrid('myGrid', {
@@ -342,8 +337,7 @@ describe('Column lookup', () => {
             );
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('string field lookup with two cols sharing field: first registered wins', async () => {
+        test('string field lookup with two cols sharing field: first registered wins', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { colId: 'X', field: 'shared' },
@@ -374,8 +368,7 @@ describe('Column lookup', () => {
     });
 
     describe('getColDefCol — ColDef without colId', () => {
-        // Solved by AG-17366 when it is completed
-        test.skip('setColumnsPinned resolves column by ColDef reference when colDef has no colId', async () => {
+        test('setColumnsPinned resolves column by ColDef reference when colDef has no colId', async () => {
             const nameCol: ColDef = { field: 'name' };
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [nameCol, { field: 'age' }],
@@ -572,6 +565,47 @@ describe('Column lookup', () => {
         });
     });
 
+    describe('numeric colId ordering', () => {
+        test('change-dispatch reports columns in display order with numeric-like colIds (not Object.values key order)', async () => {
+            const columnDefs: ColDef[] = [
+                { colId: 'z', field: 'z' },
+                { colId: '3', field: 'c3' },
+                { colId: '1', field: 'c1' },
+                { colId: '10', field: 'c10' },
+                { colId: '2', field: 'c2' },
+            ];
+            const api = gridsManager.createGrid('numericOrder', {
+                columnDefs,
+                rowData: [{ z: 'a', c3: 'b', c1: 'c', c10: 'd', c2: 'e' }],
+            });
+            await new GridColumns(api, 'numeric colId display order').checkColumns(`
+                CENTER
+                ├── z "Z" width:200
+                ├── 3 "C3" width:200
+                ├── 1 "C1" width:200
+                ├── 10 "C10" width:200
+                └── 2 "C2" width:200
+            `);
+            await new GridRows(api, 'numeric colId display order').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 z:"a" 3:"b" 1:"c" 10:"d" 2:"e"
+            `);
+
+            const resizedEvents: string[][] = [];
+            api.addEventListener('columnResized', (e) => {
+                resizedEvents.push(((e.columns ?? []) as Column[]).map((c) => c.getColId()));
+            });
+
+            api.applyColumnState({ state: columnDefs.map((cd) => ({ colId: cd.colId!, width: 333 })) });
+            await asyncSetTimeout(10);
+
+            expect(resizedEvents.length).toBeGreaterThan(0);
+            const lastEvent = resizedEvents[resizedEvents.length - 1];
+            // Display order is preserved. The old `Object.values` bug would yield ['1','2','3','10','z'].
+            expect(lastEvent).toEqual(['z', '3', '1', '10', '2']);
+        });
+    });
+
     // `getColumnState()` iterates every col known to the grid via the internal `getAllCols()`.
     // Asserting no duplicate entries catches silent over-inclusion of service / hierarchy cols.
     describe('getColumnState() — every col appears exactly once', () => {
@@ -628,6 +662,46 @@ describe('Column lookup', () => {
                 └─┬ LEAF_GROUP collapsed id:row-group-country- ag-Grid-AutoColumn:"(Blanks)"
                 · └── LEAF hidden id:0
             `);
+        });
+
+        test('pivot mode — parked primaries + pivot result + service cols appear exactly once', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'country', field: 'country', rowGroup: true },
+                    { colId: 'sport', field: 'sport', pivot: true },
+                    { colId: 'gold', field: 'gold', aggFunc: 'sum' },
+                    { colId: 'silver', field: 'silver' },
+                ],
+                pivotMode: true,
+                rowNumbers: true,
+                rowData: [
+                    { country: 'A', sport: 'x', gold: 1, silver: 2 },
+                    { country: 'B', sport: 'y', gold: 3, silver: 4 },
+                ],
+            });
+            await asyncSetTimeout(0);
+            await new GridColumns(api, 'pivot parked-primaries dedup').checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "x" GROUP
+                │ └── pivot_sport_x_gold "Gold" width:200 columnGroupShow:open
+                └─┬ "y" GROUP
+                  └── pivot_sport_y_gold "Gold" width:200 columnGroupShow:open
+            `);
+            await new GridRows(api, 'pivot parked-primaries dedup').check(`
+                ROOT id:ROOT_NODE_ID pivot_sport_x_gold:1 pivot_sport_y_gold:3
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-A row-number:"1" ag-Grid-AutoColumn:"A" pivot_sport_x_gold:1 pivot_sport_y_gold:null
+                │ └── LEAF hidden id:0 row-number:"1" pivot_sport_x_gold:1 pivot_sport_y_gold:1
+                └─┬ LEAF_GROUP collapsed id:row-group-country-B row-number:"2" ag-Grid-AutoColumn:"B" pivot_sport_x_gold:null pivot_sport_y_gold:3
+                · └── LEAF hidden id:1 row-number:"1" pivot_sport_x_gold:3 pivot_sport_y_gold:3
+            `);
+
+            const ids = api.getColumnState().map((s) => s.colId!);
+            expect(hasNoDuplicates(ids)).toBe(true);
+            // Parked primaries (country/sport/gold/silver) must still be present alongside the pivot/service cols.
+            expect(ids).toEqual(expect.arrayContaining(['country', 'sport', 'gold', 'silver']));
         });
 
         test('with row selection — selection col appears exactly once', async () => {
@@ -1068,6 +1142,45 @@ describe('Column lookup', () => {
             `);
         });
 
+        test('reused groups re-point originalParent: leaf moved between same-id groups exports under new parent', async () => {
+            // Groups are reused across builds (same groupId). buildColumnTree re-sets group.originalParent
+            // and group.children every build, so getColumnDefs must reflect the NEW structure, not a stale
+            // reused-parent link. Here leaf2 moves from groupB to groupA while both groups are reused.
+            const api = gridsManager.createGrid('reuseRestructure', {
+                columnDefs: [
+                    { headerName: 'A', groupId: 'groupA', children: [{ colId: 'leaf1' }] },
+                    { headerName: 'B', groupId: 'groupB', children: [{ colId: 'leaf2' }] },
+                ],
+            });
+            await new GridColumns(api, 'reuse restructure: before').checkColumns(`
+                CENTER
+                ├─┬ "A" GROUP
+                │ └── leaf1 width:200
+                └─┬ "B" GROUP
+                  └── leaf2 width:200
+            `);
+
+            // Move leaf2 into groupA; both groupA and groupB are reused (ids unchanged).
+            api.setGridOption('columnDefs', [
+                { headerName: 'A', groupId: 'groupA', children: [{ colId: 'leaf1' }, { colId: 'leaf2' }] },
+                { headerName: 'B', groupId: 'groupB', children: [{ colId: 'leaf3' }] },
+            ]);
+            await new GridColumns(api, 'reuse restructure: leaf2 moved to groupA').checkColumns(`
+                CENTER
+                ├─┬ "A" GROUP
+                │ ├── leaf1 width:200
+                │ └── leaf2 width:200
+                └─┬ "B" GROUP
+                  └── leaf3 width:200
+            `);
+
+            const defs = api.getColumnDefs()!;
+            const groupA = defs.find((d) => (d as ColGroupDef).groupId === 'groupA') as ColGroupDef;
+            const groupB = defs.find((d) => (d as ColGroupDef).groupId === 'groupB') as ColGroupDef;
+            expect(groupA.children.map((c) => (c as ColDef).colId)).toEqual(['leaf1', 'leaf2']);
+            expect(groupB.children.map((c) => (c as ColDef).colId)).toEqual(['leaf3']);
+        });
+
         test('padding groups (from depth balancing) are skipped in exported defs', async () => {
             // The flat 'a' leaf has no parent group; the 'deep' leaf is nested in 'L1'.
             // balanceColumnTree pads 'a' with synthetic groups so the displayed tree balances,
@@ -1322,8 +1435,7 @@ describe('Column lookup', () => {
             return new Set(ids).size === ids.length;
         }
 
-        // Solved by AG-17366 when it is completed
-        test.skip('groupHierarchy virtuals appear exactly once in getColumnState()', async () => {
+        test('groupHierarchy virtuals appear exactly once in getColumnState()', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { field: 'country' },

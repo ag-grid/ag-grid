@@ -939,7 +939,10 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
             · · └── LEAF hidden id:4 country:"France" year:"2021" athlete:"Jean Dupont" gold:1
         `);
 
-        // Enable feature
+        // Enable feature — `groupHideColumnsUntilExpanded` is owned by autoColSvc (visibility only), so
+        // columnModel no longer also refreshes: the toggle must be a single displayed-cols refresh.
+        let displayedRefreshes = 0;
+        api.addEventListener('displayedColumnsChanged', () => displayedRefreshes++);
         api.updateGridOptions({ groupHideColumnsUntilExpanded: true });
 
         // Now only level 0 should be visible
@@ -958,6 +961,10 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2021 ag-Grid-AutoColumn-year:"2021"
             · · └── LEAF hidden id:4 country:"France" year:"2021" athlete:"Jean Dupont" gold:1
         `);
+
+        // Single refresh for the toggle (events are async — the awaited check above flushed them).
+        await asyncSetTimeout(0);
+        expect(displayedRefreshes).toBe(1);
     });
 
     test('runtime toggle - turning option off restores all columns', async () => {
@@ -1511,7 +1518,6 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
 
     test.each([
         ['rowData=[]', { rowData: [] }],
-        // Solved by AG-17366 when it is completed
         // ['rowData unspecified', {}],
     ])('groupHideColumnsUntilExpanded with %s — only level-0 auto col visible', async (_label, extraOpts) => {
         const api = gridsManager.createGrid(`hide-${_label}`, {

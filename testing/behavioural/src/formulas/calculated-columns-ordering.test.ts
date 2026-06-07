@@ -157,6 +157,16 @@ describe('calculated columns - display ordering', () => {
         return added[0];
     }
 
+    /** Removes a dynamic (dialog-added) calc col through its header menu — dynamic calc cols are not in
+     *  `columnDefs`, so they can only be removed via the menu's "Remove Calculated Column" action. */
+    async function removeViaMenu(api: GridApi, colId: string): Promise<void> {
+        enableOffsetParentPolyfill();
+        api.showColumnMenu(colId);
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Remove Calculated Column');
+        await asyncSetTimeout(1);
+    }
+
     // === Rule 6: static calc cols keep their declared columnDefs position ========================
 
     test('static calc col keeps its declared position among regular columns', async () => {
@@ -314,8 +324,31 @@ describe('calculated columns - display ordering', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('addCalculatedColumn appends after a manual reorder, preserving the reorder', async () => {
+    test('an unanchored calc col (its calc-col anchor removed) re-appends at the top level, not into a group', async () => {
+        const api = createGrid('calc-anchor-calc-removed', {
+            rowData: [{ id: 'r1', a: 1, b: 2 }],
+            columnDefs: [{ groupId: 'G', headerName: 'G', children: [{ field: 'a' }, { field: 'b' }] }],
+        });
+        // c1 anchored to 'b' (sits inside group G); c2 anchored to c1.
+        const c1 = await addViaDialog(api, 'b', '[a]');
+        const c2 = await addViaDialog(api, c1, '[a]');
+
+        // Removing c1 nulls c2's anchor → c2 becomes truly unanchored (no order-restoration anchor). The last
+        // displayed leaf is inside group 'G', so the unanchored re-append must NOT smuggle c2 into 'G'.
+        await removeViaMenu(api, c1);
+        await asyncSetTimeout(1);
+
+        expect(c2).toBe('calculated_2');
+        await new GridColumns(api, 'unanchored calc col stays top-level, not in group').checkColumns(`
+            CENTER
+            ├── calculated_2 "New title" width:200
+            └─┬ "G" GROUP
+              ├── a "A" width:200
+              └── b "B" width:200
+        `);
+    });
+
+    test('addCalculatedColumn appends after a manual reorder, preserving the reorder', async () => {
         const api = createGrid('api-append-after-move', {
             rowData: [{ id: 'r1', a: 1, b: 2, c: 3 }],
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
@@ -353,6 +386,21 @@ describe('calculated columns - display ordering', () => {
             ├── calculated_1 "New title" width:200
             └── cost "Cost" width:200
         `);
+    });
+
+    test('two calc cols from the same anchor stack newest-first (tree + display agree)', async () => {
+        const api = createGrid('dialog-same-anchor', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue', headerName: 'Revenue' },
+                { field: 'cost', headerName: 'Cost' },
+            ],
+        });
+        const first = await addViaDialog(api, 'revenue', '[Revenue] - [Cost]');
+        const second = await addViaDialog(api, 'revenue', '[Revenue] * [Cost]');
+
+        // Each insert lands immediately after the anchor, so the newest sits closest to it.
+        expect(order(api)).toEqual(['revenue', second, first, 'cost']);
     });
 
     test('dialog add lands after the anchor leaf column when maintainColumnOrder is enabled', async () => {
@@ -488,8 +536,7 @@ describe('calculated columns - display ordering', () => {
         expect(closedCalculatedColDef?.columnGroupShow).toBe('closed');
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('removing an anchor preserves the user reorder and keeps the dependent in place', async () => {
+    test('removing an anchor preserves the user reorder and keeps the dependent in place', async () => {
         const api = createGrid('reorder-then-remove-anchor', {
             rowData: [{ id: 'r1', a: 1, b: 2, c: 3 }],
             columnDefs: [
@@ -505,7 +552,7 @@ describe('calculated columns - display ordering', () => {
         api.moveColumns(['c'], 0);
         expect(order(api)).toEqual(['c', 'a', first, second, 'b']);
 
-        removeColumnDef(api, first);
+        await removeViaMenu(api, first);
         await asyncSetTimeout(1);
         expect(order(api)).toEqual(['c', 'a', second, 'b']);
         await new GridColumns(api, 'removing an anchor preserves the user reorder and keeps the dependent in place')
@@ -567,8 +614,7 @@ describe('calculated columns - display ordering', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('two dialog adds on the same anchor: later add sits between the anchor and the earlier add', async () => {
+    test('two dialog adds on the same anchor: later add sits between the anchor and the earlier add', async () => {
         const api = createGrid('dialog-same-anchor', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
@@ -832,8 +878,7 @@ describe('calculated columns - display ordering', () => {
 
     // === Rule 4: anchor removed — orphaned dependent keeps its displayed position ================
 
-    // Solved by AG-17366 when it is completed
-    test.skip('removing the anchor calc col keeps its orphaned dependent in place', async () => {
+    test('removing the anchor calc col keeps its orphaned dependent in place', async () => {
         const api = createGrid('dialog-anchor-removed', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
@@ -845,7 +890,7 @@ describe('calculated columns - display ordering', () => {
         const second = await addViaDialog(api, first, '[Revenue] - [Cost]');
         expect(order(api)).toEqual(['revenue', first, second, 'cost']);
 
-        removeColumnDef(api, first);
+        await removeViaMenu(api, first);
         await asyncSetTimeout(1);
         // Only `first` is removed; `second` lost its anchor but keeps its displayed slot (order
         // maintained) rather than jumping to the end.
@@ -858,8 +903,7 @@ describe('calculated columns - display ordering', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('removing the anchor calc col keeps a mid-list dependent between its neighbours', async () => {
+    test('removing the anchor calc col keeps a mid-list dependent between its neighbours', async () => {
         const api = createGrid('dialog-anchor-removed-mid', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3, tax: 1 }],
             columnDefs: [
@@ -872,7 +916,7 @@ describe('calculated columns - display ordering', () => {
         const second = await addViaDialog(api, first, '[Revenue] - [Cost]');
         expect(order(api)).toEqual(['revenue', first, second, 'cost', 'tax']);
 
-        removeColumnDef(api, first);
+        await removeViaMenu(api, first);
         await asyncSetTimeout(1);
         // `second` is in the MIDDLE (cost + tax follow it) — it stays between revenue and cost, and the
         // trailing columns are untouched.

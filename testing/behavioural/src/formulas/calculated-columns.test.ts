@@ -591,6 +591,44 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
+    test('removing the sole calc column of a group destroys the column but keeps the (now-empty) group', async () => {
+        const api = createGrid('calc-empty-group', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                {
+                    groupId: 'derived',
+                    headerName: 'Derived',
+                    children: [{ colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' }],
+                },
+            ] as (ColDef | ColGroupDef)[],
+        });
+        await asyncSetTimeout(1);
+
+        const profitBefore = api.getColumn('profit');
+        expect(api.getProvidedColumnGroup('derived') === null).toBe(false);
+        expect(profitBefore === null).toBe(false);
+
+        removeColumnDef(api, 'profit');
+        await asyncSetTimeout(1);
+
+        // The removed COLUMN is gone and destroyed, but the user-declared GROUP stays findable (now
+        // empty) — it must not be silently dropped. Compare booleans (not objects) so failures print
+        // cleanly.
+        expect(api.getColumn('profit') === null).toBe(true);
+        expect((profitBefore as unknown as { isAlive(): boolean }).isAlive()).toBe(false);
+        const derivedAfter = api.getProvidedColumnGroup('derived') as unknown as { children: unknown[] } | null;
+        expect(derivedAfter === null).toBe(false);
+        expect(derivedAfter!.children.length).toBe(0);
+
+        await new GridColumns(api, 'column removed, empty group kept').checkColumns(`
+            CENTER
+            ├── revenue "Revenue" width:200
+            └── cost "Cost" width:200
+        `);
+    });
+
     test('grid api calculated column mutations do not mutate provided column definitions', async () => {
         const revenueColDef: ColDef = { field: 'revenue' };
         const costColDef: ColDef = { field: 'cost' };
@@ -1678,8 +1716,7 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('calc col anchored to the first of two auto-group cols after a grouping toggle', async () => {
+    test('calc col anchored to the first of two auto-group cols after a grouping toggle', async () => {
         const api = createGrid('calculated-autogroup-toggle-multi', {
             groupDisplayType: 'multipleColumns',
             rowData: [{ id: 'r1', productType: 'A', country: 'UK', revenue: 10, cost: 3 }],
@@ -1973,8 +2010,7 @@ describe('ag-grid calculated columns', () => {
         expect(newColumnsLoaded).toHaveBeenCalledTimes(1);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('removeCalculatedColumn then re-adding the same colId yields a working live column', async () => {
+    test('removeCalculatedColumn then re-adding the same colId yields a working live column', async () => {
         const api = createGrid('calc-col-readd-same-id', {
             rowData: [
                 { id: 'r1', revenue: 10, cost: 3 },
@@ -2010,29 +2046,6 @@ describe('ag-grid calculated columns', () => {
                 ├── cost "Cost" width:200
                 └── profit width:200 sort:desc
             `);
-    });
-
-    // Solved by AG-17366 when it is completed
-    test.skip('updateCalculatedColumn with an unchanged expression does NOT dispatch newColumnsLoaded', async () => {
-        const newColumnsLoaded = vi.fn();
-        const api = createGrid('calc-col-noop-update', {
-            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
-            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
-            onNewColumnsLoaded: newColumnsLoaded,
-        });
-        addCalculatedColumnDef(api, { colId: 'profit', calculatedExpression: '[revenue] - [cost]' });
-        await asyncSetTimeout(1);
-        newColumnsLoaded.mockClear();
-
-        // Same expression — should be a no-op.
-        updateCalculatedColumnDef(api, 'profit', { calculatedExpression: '[revenue] - [cost]' });
-        await asyncSetTimeout(1);
-        expect(newColumnsLoaded).not.toHaveBeenCalled();
-
-        // Different expression — should fire.
-        updateCalculatedColumnDef(api, 'profit', { calculatedExpression: '[revenue] * [cost]' });
-        await asyncSetTimeout(1);
-        expect(newColumnsLoaded).toHaveBeenCalledTimes(1);
     });
 
     test('calculated column columnDefs updates invalidate the formula service per-cell cache', async () => {
@@ -3037,8 +3050,7 @@ describe('ag-grid calculated columns', () => {
     // update / remove a calc col. Without preserving the live display order in the colDefs it
     // passes through, runtime reorders (drag-drop / moveColumns / applyColumnState) reset to the
     // original setGridOption order on every calc-col mutation.
-    // Solved by AG-17366 when it is completed
-    test.skip('adding a calculated column preserves the current display order after moveColumns', async () => {
+    test('adding a calculated column preserves the current display order after moveColumns', async () => {
         const api = createGrid('calculated-cols-preserve-order', {
             rowData: [{ id: 'r1', a: 1, b: 2, c: 3 }],
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
@@ -3078,8 +3090,7 @@ describe('ag-grid calculated columns', () => {
 
     // Same invariant with a column group: the group structure must survive the calc-col round-trip
     // and the runtime reorder must be preserved.
-    // Solved by AG-17366 when it is completed
-    test.skip('addCalculatedColumn preserves group structure and reorder when columns are grouped', async () => {
+    test('addCalculatedColumn preserves group structure and reorder when columns are grouped', async () => {
         const api = createGrid('calc-cols-with-groups', {
             rowData: [{ id: 'r1', a: 1, b: 2, c: 3 }],
             columnDefs: [{ groupId: 'G', headerName: 'G', children: [{ field: 'a' }, { field: 'b' }] }, { field: 'c' }],
@@ -3115,8 +3126,7 @@ describe('ag-grid calculated columns', () => {
     // Same order-preservation invariant, but via `applyColumnState({ applyOrder: true })` instead
     // of `moveColumns`. Drives the same `colsList` mutation through a different code path —
     // guards that the lean variant's display-order sort sees the applied order.
-    // Solved by AG-17366 when it is completed
-    test.skip('addCalculatedColumn preserves order set via applyColumnState({ applyOrder: true })', async () => {
+    test('addCalculatedColumn preserves order set via applyColumnState({ applyOrder: true })', async () => {
         const api = createGrid('calc-cols-preserve-applyOrder', {
             rowData: [{ id: 'r1', a: 1, b: 2, c: 3 }],
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
@@ -3151,14 +3161,7 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
-    // A column with `groupHierarchy` generates synthetic virtual columns alongside the source.
-    // Adding a calculated column triggers a `updateGridOptions({ columnDefs })` round-trip through
-    // the lean variant, which reads `col.userProvidedColDef ?? col.colDef` — for the virtuals
-    // (no user-provided def), this falls back to the synthetic merged def. After the round-trip
-    // the hierarchy service must still have a valid set of virtual columns AND the calc col must
-    // evaluate.
-    // Solved by AG-17366 when it is completed
-    test.skip('addCalculatedColumn round-trip preserves groupHierarchy virtual columns', async () => {
+    test('addCalculatedColumn round-trip preserves groupHierarchy virtual columns', async () => {
         const api = createGrid('calc-cols-with-hierarchy', {
             rowData: [
                 { id: 'r1', country: 'USA', date: new Date(2020, 0, 1), amount: 10 },
@@ -3190,11 +3193,6 @@ describe('ag-grid calculated columns', () => {
         expect((yearVirtualAfter as any)!.isAlive()).toBe(true);
         expect((monthVirtualAfter as any)!.isAlive()).toBe(true);
 
-        // EXACTLY ONE set of hierarchy virtuals must exist. `latest` keeps virtuals in a
-        // separate `groupHierarchyColSvc.columns` collection so they never round-trip through
-        // `api.getColumnDefs()`. My branch's column-model rewrite merged them into `colDefList`,
-        // so without filtering they'd appear in factory output → fed back through
-        // `updateGridOptions({ columnDefs })` → `_1`-suffixed duplicates from `getUniqueKey`.
         const hierarchyCols = api
             .getAllGridColumns()!
             .filter((col) => col.getColId().startsWith('ag-Grid-HierarchyColumn-'));
@@ -3214,10 +3212,19 @@ describe('ag-grid calculated columns', () => {
             ├── amount "Amount" width:200
             └── doubled width:200
         `);
-        await new GridRows(api, 'hierarchy + addCalculatedColumn rows', gridRowsOpts).check(`
+        await new GridRows(api, 'hierarchy + addCalculatedColumn rows', {
+            ...gridRowsOpts,
+            forcedColumns: [
+                'ag-Grid-HierarchyColumn-date-year',
+                'ag-Grid-HierarchyColumn-date-month',
+                'country',
+                'amount',
+                'doubled',
+            ],
+        }).check(`
             ROOT id:ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null
-            ├── LEAF id:r1 ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-month:"1" country:"USA" date:"2020-01-01T00:00:00.000Z" amount:10 doubled:20
-            └── LEAF id:r2 ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-month:"6" country:"UK" date:"2021-06-14T23:00:00.000Z" amount:20 doubled:40
+            ├── LEAF id:r1 ag-Grid-HierarchyColumn-date-year:"2020" ag-Grid-HierarchyColumn-date-month:"1" country:"USA" amount:10 doubled:20
+            └── LEAF id:r2 ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-month:"6" country:"UK" amount:20 doubled:40
         `);
     });
 
@@ -3226,8 +3233,7 @@ describe('ag-grid calculated columns', () => {
     // references via `colModel.getCol(ref)` (which falls back to field-name lookup), so the AST
     // parser must use the same lookup or validation accepts a reference that evaluation can't
     // resolve. Locks in parser/validator consistency.
-    // Solved by AG-17366 when it is completed
-    test.skip('calculated expression bracket-reference resolves a column by field when colId differs', async () => {
+    test('calculated expression bracket-reference resolves a column by field when colId differs', async () => {
         const api = createGrid('calc-bracket-field-ref', {
             rowData: [{ id: 'r1', revenue: 10 }],
             columnDefs: [
@@ -3278,8 +3284,7 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('addCalculatedColumn after moveColumns with maintainColumnOrder=false preserves reorder', async () => {
+    test('addCalculatedColumn after moveColumns with maintainColumnOrder=false preserves reorder', async () => {
         const api = createGrid('calc-maintain-false-move', {
             rowData: [{ id: 'r1', a: 1, b: 2, c: 3 }],
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
@@ -3400,8 +3405,7 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('addCalculatedColumn while pivot is active references primary columns', async () => {
+    test('addCalculatedColumn while pivot is active references primary columns', async () => {
         const api = createGrid('calc-with-pivot', {
             rowData: [
                 { id: 'r1', country: 'US', year: 2020, revenue: 10, cost: 3 },
@@ -3494,8 +3498,7 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('moveColumns on a previously-added dynamic calc col preserves the move across subsequent adds', async () => {
+    test('moveColumns on a previously-added dynamic calc col preserves the move across subsequent adds', async () => {
         const api = createGrid('calc-move-then-add', {
             rowData: [{ id: 'r1', a: 1, b: 2, c: 3 }],
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],

@@ -269,8 +269,7 @@ describe('Column API — extended coverage', () => {
     });
 
     describe('setValueColumns', () => {
-        // Solved by AG-17366 when it is completed
-        test.skip('replaces the value-column set wholesale', async () => {
+        test('replaces the value-column set wholesale', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'gold' }, { field: 'silver' }, { field: 'bronze' }],
             });
@@ -383,8 +382,7 @@ describe('Column API — extended coverage', () => {
             `);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('removeValueColumns removes the listed cols only', async () => {
+        test('removeValueColumns removes the listed cols only', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { field: 'country', rowGroup: true, hide: true },
@@ -434,28 +432,28 @@ describe('Column API — extended coverage', () => {
             expect(api.getValueColumns().map((c) => c.getColId())).toEqual(['silver']);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('removeValueColumns clears runtime aggFunc; addValueColumns restores it from colDef', async () => {
+        test('removeValueColumns keeps the runtime aggFunc; addValueColumns restores the remembered one', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'gold', aggFunc: 'sum' }],
                 rowData: [{ gold: 5 }],
             });
 
             const gold = api.getColumn('gold')!;
+            api.setColumnAggFunc('gold', 'avg');
             expect(gold.isValueActive()).toBe(true);
-            expect(gold.getAggFunc()).toBe('sum');
+            expect(gold.getAggFunc()).toBe('avg');
 
+            // Deactivating keeps the last aggFunc (legacy behaviour) so re-adding restores it.
             api.removeValueColumns(['gold']);
             expect(gold.isValueActive()).toBe(false);
-            expect(gold.getAggFunc()).toBeNull();
+            expect(gold.getAggFunc()).toBe('avg');
 
             api.addValueColumns(['gold']);
             expect(gold.isValueActive()).toBe(true);
-            expect(gold.getAggFunc()).toBe('sum');
+            expect(gold.getAggFunc()).toBe('avg');
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('applyColumnState({ aggFunc: null }) clears runtime aggFunc and deactivates', async () => {
+        test('applyColumnState({ aggFunc: null }) deactivates but keeps the runtime aggFunc', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'gold', aggFunc: 'sum' }],
                 rowData: [{ gold: 5 }],
@@ -467,14 +465,11 @@ describe('Column API — extended coverage', () => {
 
             api.applyColumnState({ state: [{ colId: 'gold', aggFunc: null }] });
             expect(gold.isValueActive()).toBe(false);
-            expect(gold.getAggFunc()).toBeNull();
+            expect(gold.getAggFunc()).toBe('sum');
         });
 
-        // `setColumnAggFunc` must maintain the same `isValueActive() ↔ getAggFunc() != null`
-        // invariant the validator now enforces — i.e. setting a non-null aggFunc activates,
-        // setting null deactivates.
-        // Solved by AG-17366 when it is completed
-        test.skip('setColumnAggFunc activates an inactive col when given a non-null aggFunc', async () => {
+        // Setting a non-null aggFunc activates the col; setting null deactivates it (keeping the last aggFunc).
+        test('setColumnAggFunc activates an inactive col when given a non-null aggFunc', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'gold' }],
                 rowData: [{ gold: 5 }],
@@ -490,8 +485,7 @@ describe('Column API — extended coverage', () => {
             expect(api.getValueColumns().map((c) => c.getColId())).toEqual(['gold']);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('setColumnAggFunc(col, null) deactivates an active value col and clears aggFunc', async () => {
+        test('setColumnAggFunc(col, null) deactivates an active value col (keeping the last aggFunc)', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'gold', aggFunc: 'sum' }],
                 rowData: [{ gold: 5 }],
@@ -503,7 +497,7 @@ describe('Column API — extended coverage', () => {
 
             api.setColumnAggFunc('gold', null);
             expect(gold.isValueActive()).toBe(false);
-            expect(gold.getAggFunc()).toBeNull();
+            expect(gold.getAggFunc()).toBe('sum');
             expect(api.getValueColumns()).toEqual([]);
         });
 
@@ -673,8 +667,7 @@ describe('Column API — extended coverage', () => {
     });
 
     describe('applyColumnState with aggFunc', () => {
-        // Solved by AG-17366 when it is completed
-        test.skip('non-string aggFunc in state is rejected with a warning (value col left unchanged)', async () => {
+        test('non-string aggFunc in state is rejected with a warning (value col left unchanged)', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { field: 'country', rowGroup: true, hide: true },
@@ -842,8 +835,7 @@ describe('Column API — extended coverage', () => {
             `);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('toIndex past the end clamps to last slot; fromIndex out of range is a no-op', async () => {
+        test('toIndex past the end clamps to last slot; fromIndex out of range is a no-op', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { field: 'country', rowGroup: true },
@@ -910,8 +902,7 @@ describe('Column API — extended coverage', () => {
             `);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('leftward move reports impacted columns', async () => {
+        test('leftward move reports impacted columns', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { field: 'country', rowGroup: true },
@@ -1188,8 +1179,7 @@ describe('Column API — extended coverage', () => {
             `);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('looks up by ColDef ref (object identity)', async () => {
+        test('looks up by ColDef ref (object identity)', async () => {
             const def: ColDef = { colId: 'a' };
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [def],

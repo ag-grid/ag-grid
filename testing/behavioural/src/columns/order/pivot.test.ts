@@ -468,8 +468,7 @@ describe('pivotMode=true', () => {
             expect(getColumnOrder(gridApi, pinned)).toEqual(expected);
         });
 
-        // Solved by AG-17366 when it is completed
-        describe.skip.each([
+        describe.each([
             [true, true],
             [true, false],
             [false, true],
@@ -1696,8 +1695,7 @@ describe('pivotMode=true', () => {
         getColumnOrderFromState(api as any).filter((id): id is string => !!id?.startsWith('pivot_'));
 
     // Example 1: 3 pivot keys, two value cols per group (sport `last` + total `sum`).
-    // Solved by AG-17366 when it is completed
-    test.skip('re-sorts pivot columns on re-entry when the comparator changes (3 keys, 2 value cols)', () => {
+    test('re-sorts pivot columns on re-entry when the comparator changes (3 keys, 2 value cols)', () => {
         let order = 1;
         const columnDefs: (ColDef | ColGroupDef)[] = [
             {
@@ -1731,8 +1729,7 @@ describe('pivotMode=true', () => {
     });
 
     // Example 2: 2 pivot keys, one value col per group.
-    // Solved by AG-17366 when it is completed
-    test.skip('re-sorts pivot columns on re-entry when the comparator changes (2 keys)', () => {
+    test('re-sorts pivot columns on re-entry when the comparator changes (2 keys)', () => {
         let order = 1;
         const columnDefs: (ColDef | ColGroupDef)[] = [
             {

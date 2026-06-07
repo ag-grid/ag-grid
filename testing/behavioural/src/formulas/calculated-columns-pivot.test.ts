@@ -122,8 +122,7 @@ describe('calculated columns - pivot mode', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('addCalculatedColumn while pivot active keeps the pivot result intact', async () => {
+    test('addCalculatedColumn while pivot active keeps the pivot result intact', async () => {
         const api = createGrid('pivot-add-calc', {
             rowData,
             columnDefs: pivotColumnDefs,

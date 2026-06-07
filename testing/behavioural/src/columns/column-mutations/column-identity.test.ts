@@ -78,8 +78,7 @@ describe('Column identity & id allocation', () => {
             expect(colIds(api)).toEqual(['0', 'b']);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('anonymous col keeps a stable id (no drift) when its colDef object is recreated', async () => {
+        test('anonymous col keeps a stable id (no drift) when its colDef object is recreated', async () => {
             const def0: ColDef = { headerName: 'X', width: 100 };
             const api = gridsManager.createGrid('myGrid', { columnDefs: [def0, { field: 'b' }] });
 
@@ -165,6 +164,144 @@ describe('Column identity & id allocation', () => {
                 columnDefs: [{ colId: 'x' }, { colId: 'x' }],
             });
             expect(colIds(api)).toEqual(['x', 'x_1']);
+        });
+
+        test('both duplicate-field cols keep their instances (and state) across a rebuild', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'a', width: 100 },
+                    { field: 'a', width: 100 },
+                ],
+            });
+            const first = api.getColumn('a')!;
+            const second = api.getColumn('a_1')!; // the suffixed duplicate the buggy path recreated
+            expect(first).toBeTruthy();
+            expect(second).toBeTruthy();
+
+            api.applyColumnState({ state: [{ colId: 'a_1', width: 222 }] });
+            api.setGridOption('columnDefs', [
+                { field: 'a', headerName: 'A1' },
+                { field: 'a', headerName: 'A2' },
+            ]);
+            await asyncSetTimeout(0);
+
+            expect(colIds(api)).toEqual(['a', 'a_1']);
+            expect(api.getColumn('a')).toBe(first);
+            expect(api.getColumn('a_1')).toBe(second);
+            expect(api.getColumn('a_1')!.getActualWidth()).toBe(222);
+        });
+
+        test('both duplicate-colId cols keep their instances across a rebuild', async () => {
+            vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'x' }, { colId: 'x' }],
+            });
+            const first = api.getColumn('x')!;
+            const second = api.getColumn('x_1')!;
+
+            api.setGridOption('columnDefs', [
+                { colId: 'x', headerName: 'X1' },
+                { colId: 'x', headerName: 'X2' },
+            ]);
+            await asyncSetTimeout(0);
+
+            expect(colIds(api)).toEqual(['x', 'x_1']);
+            expect(api.getColumn('x')).toBe(first);
+            expect(api.getColumn('x_1')).toBe(second);
+        });
+
+        test('the SAME colDef instance used for two columns yields two distinct cols, reused across rebuild', async () => {
+            const shared: ColDef = { field: 'a', width: 100 };
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [shared, shared],
+            });
+
+            const first = api.getColumn('a')!;
+            const second = api.getColumn('a_1')!;
+            expect(first).toBeTruthy();
+            expect(second).toBeTruthy();
+            expect(first).not.toBe(second);
+            expect(colIds(api)).toEqual(['a', 'a_1']);
+
+            api.setGridOption('columnDefs', [shared, shared]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumns()!.length).toBe(2);
+            expect(colIds(api)).toEqual(['a', 'a_1']);
+            expect(api.getColumn('a')).toBe(first);
+            expect(api.getColumn('a_1')).toBe(second);
+        });
+
+        test('the SAME colDef instance with an explicit colId used twice yields two distinct cols, reused across rebuild', async () => {
+            vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
+            const shared: ColDef = { colId: 'x', width: 100 };
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [shared, shared],
+            });
+
+            const first = api.getColumn('x')!;
+            const second = api.getColumn('x_1')!;
+            expect(first).toBeTruthy();
+            expect(second).toBeTruthy();
+            expect(first).not.toBe(second);
+            expect(colIds(api)).toEqual(['x', 'x_1']);
+
+            api.setGridOption('columnDefs', [shared, shared]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumns()!.length).toBe(2);
+            expect(colIds(api)).toEqual(['x', 'x_1']);
+            expect(api.getColumn('x')).toBe(first);
+            expect(api.getColumn('x_1')).toBe(second);
+        });
+
+        test('duplicate-field cols with stable refs follow their ref (not position) when reordered', async () => {
+            const defA: ColDef = { field: 'a' };
+            const defB: ColDef = { field: 'a' };
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [defA, defB] });
+
+            const first = api.getColumn('a')!; // built from defA
+            const second = api.getColumn('a_1')!; // built from defB
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', width: 111 },
+                    { colId: 'a_1', width: 222 },
+                ],
+            });
+
+            api.setGridOption('columnDefs', [defB, defA]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumns()![0]).toBe(second);
+            expect(api.getColumns()![1]).toBe(first);
+            expect(api.getColumn('a_1')!.getActualWidth()).toBe(222);
+            expect(api.getColumn('a')!.getActualWidth()).toBe(111);
+        });
+
+        test('swapping the colId of two stable colDef refs keeps each col with its colId (not its ref)', async () => {
+            const defA: ColDef = { colId: 'x' };
+            const defB: ColDef = { colId: 'y' };
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [defA, defB] });
+
+            const colX = api.getColumn('x')!;
+            const colY = api.getColumn('y')!;
+            api.applyColumnState({
+                state: [
+                    { colId: 'x', width: 111 },
+                    { colId: 'y', width: 222 },
+                ],
+            });
+
+            defA.colId = 'y';
+            defB.colId = 'x';
+            api.setGridOption('columnDefs', [defA, defB]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('x')).toBe(colX);
+            expect(api.getColumn('y')).toBe(colY);
+            expect(api.getColumn('x')!.getActualWidth()).toBe(111);
+            expect(api.getColumn('y')!.getActualWidth()).toBe(222);
+            expect(colIds(api)).toEqual(['y', 'x']); // defA (now 'y') first, defB (now 'x') second
         });
     });
 

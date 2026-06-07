@@ -1602,8 +1602,7 @@ describe('Row Numbers Keyboard Navigation', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('rowNumbers options mutated at runtime propagate via updateColumns', async () => {
+    test('rowNumbers options mutated at runtime propagate via updateColumns', async () => {
         const api = await createGrid({
             columnDefs,
             rowData,
@@ -1678,5 +1677,84 @@ describe('Row Numbers Keyboard Navigation', () => {
             └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:right
         `);
         expect(api.getDisplayedRightColumns().map((c) => c.getColId())).toContain(ROW_NUMBERS_COLUMN_ID);
+    });
+});
+
+describe('Row Numbers refresh coalescing', () => {
+    const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, RowNumbersModule] });
+
+    afterEach(() => gridMgr.reset());
+
+    function countRefreshes(api: GridApi): { displayed: number } {
+        const counts = { displayed: 0 };
+        api.addEventListener('displayedColumnsChanged', () => counts.displayed++);
+        return counts;
+    }
+
+    test('changing a rowNumbers def prop refreshes once, not twice', async () => {
+        const api = gridMgr.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [{ a: 1, b: 2 }],
+            rowNumbers: { width: 60 },
+        });
+        await new GridColumns(api, 'rowNumbers width 60').checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            ├── a "A" width:200
+            └── b "B" width:200
+        `);
+        await new GridRows(api, 'rowNumbers width 60').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 row-number:"1" a:1 b:2
+        `);
+        const counts = countRefreshes(api);
+
+        api.setGridOption('rowNumbers', { width: 90 });
+        await asyncSetTimeout(20);
+        await new GridColumns(api, 'rowNumbers width 90').checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:90 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            ├── a "A" width:200
+            └── b "B" width:200
+        `);
+
+        // Single pass: rowNumbersSvc owns the refresh (columnModel no longer also refreshes on `rowNumbers`).
+        expect(counts.displayed).toBe(1);
+        expect(api.getColumn(ROW_NUMBERS_COLUMN_ID)!.getActualWidth()).toBe(90);
+    });
+
+    test('toggling rowNumbers on then off adds/removes the column in a single refresh each', async () => {
+        const api = gridMgr.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [{ a: 1, b: 2 }],
+        });
+        expect(api.getColumn(ROW_NUMBERS_COLUMN_ID)).toBeNull();
+
+        const counts = countRefreshes(api);
+        api.setGridOption('rowNumbers', true);
+        await asyncSetTimeout(20);
+        expect(api.getColumn(ROW_NUMBERS_COLUMN_ID)).not.toBeNull();
+        expect(counts.displayed).toBe(1);
+        await new GridColumns(api, 'rowNumbers toggled on').checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            ├── a "A" width:200
+            └── b "B" width:200
+        `);
+
+        api.setGridOption('rowNumbers', false);
+        await asyncSetTimeout(20);
+        expect(api.getColumn(ROW_NUMBERS_COLUMN_ID)).toBeNull();
+        // Exactly one displayed-cols refresh per toggle (2 total).
+        expect(counts.displayed).toBe(2);
+        expect(api.getAllGridColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
+        await new GridColumns(api, 'rowNumbers toggled off').checkColumns(`
+            CENTER
+            ├── a "A" width:200
+            └── b "B" width:200
+        `);
     });
 });

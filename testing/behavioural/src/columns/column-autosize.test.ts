@@ -597,8 +597,7 @@ describe('Column Autosize', () => {
             expect(api.getColumn('b')!.getActualWidth()).toBe(175);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('selection col (colKind="selection") is excluded', async () => {
+        test('selection col (colKind="selection") is excluded', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { colId: 'a', width: 200, minWidth: 80 },
@@ -633,8 +632,7 @@ describe('Column Autosize', () => {
             expect(selectionCol!.getActualWidth()).toBe(selectionBefore);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('row-number col (colKind="row-number") is excluded', async () => {
+        test('row-number col (colKind="row-number") is excluded', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a', width: 200, minWidth: 80 }],
                 rowNumbers: true,
@@ -881,8 +879,7 @@ describe('Column Autosize', () => {
             expect(hiddenLeft.getActualWidth()).toBe(123);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('row-number col is excluded from both passes', async () => {
+        test('row-number col is excluded from both passes', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a', width: 200, minWidth: 80 }],
                 rowNumbers: true,
