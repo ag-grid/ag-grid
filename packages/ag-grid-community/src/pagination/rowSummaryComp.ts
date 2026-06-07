@@ -35,23 +35,29 @@ export class RowSummaryComp extends Component {
             children: [
                 {
                     tag: 'span',
-                    ref: 'lbFirstRowOnPage',
-                    cls: 'ag-paging-row-summary-panel-number',
-                    attrs: { id: `${idPrefix}-first-row` },
-                },
-                { tag: 'span', attrs: { id: `${idPrefix}-to` }, children: localeTextFunc('to', 'to') },
-                {
-                    tag: 'span',
-                    ref: 'lbLastRowOnPage',
-                    cls: 'ag-paging-row-summary-panel-number',
-                    attrs: { id: `${idPrefix}-last-row` },
-                },
-                { tag: 'span', attrs: { id: `${idPrefix}-of` }, children: localeTextFunc('of', 'of') },
-                {
-                    tag: 'span',
-                    ref: 'lbRecordCount',
-                    cls: 'ag-paging-row-summary-panel-number',
-                    attrs: { id: `${idPrefix}-row-count` },
+                    cls: 'ag-paging-row-summary-content',
+                    children: [
+                        {
+                            tag: 'span',
+                            ref: 'lbFirstRowOnPage',
+                            cls: 'ag-paging-row-summary-panel-number',
+                            attrs: { id: `${idPrefix}-first-row` },
+                        },
+                        { tag: 'span', attrs: { id: `${idPrefix}-to` }, children: localeTextFunc('to', 'to') },
+                        {
+                            tag: 'span',
+                            ref: 'lbLastRowOnPage',
+                            cls: 'ag-paging-row-summary-panel-number',
+                            attrs: { id: `${idPrefix}-last-row` },
+                        },
+                        { tag: 'span', attrs: { id: `${idPrefix}-of` }, children: localeTextFunc('of', 'of') },
+                        {
+                            tag: 'span',
+                            ref: 'lbRecordCount',
+                            cls: 'ag-paging-row-summary-panel-number',
+                            attrs: { id: `${idPrefix}-row-count` },
+                        },
+                    ],
                 },
             ],
         });
@@ -116,5 +122,10 @@ export class RowSummaryComp extends Component {
         const strTo = localeTextFunc('to', 'to');
         const strOf = localeTextFunc('of', 'of');
         this.ariaStatus = `${lbFirstRowOnPage} ${strTo} ${lbLastRowOnPage} ${strOf} ${lbRecordCount}`;
+
+        this.getGui().style.setProperty(
+            '--ag-internal-pagination-width-string',
+            `'${lbRecordCount} ${strTo} ${lbRecordCount} ${strOf} ${lbRecordCount}'`.replaceAll(/\d/g, '0')
+        );
     }
 }
