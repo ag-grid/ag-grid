@@ -38,6 +38,23 @@
         line-height: 0;
     }
 
+    .ag-paging-row-summary-panel {
+        display: inline-grid;
+
+        &::before {
+            content: var(--ag-internal-pagination-width-string);
+            grid-area: 1/1;
+            visibility: hidden;
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+
+    .ag-paging-row-summary-content {
+        grid-area: 1/1;
+        justify-self: center;
+    }
+
     .ag-status-bar {
         border-top: var(--ag-borders) var(--ag-border-color);
         color: var(--ag-disabled-foreground-color);
