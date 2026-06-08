@@ -71,10 +71,9 @@ export interface IRowComp {
     toggleCss(cssClassName: string, on: boolean): void;
     setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
     getPinnedLeftRowElement(): HTMLElement | undefined;
-    getPinnedLeftSectionElement(): HTMLElement | undefined;
     getScrollingRowElement(): HTMLElement | undefined;
     getPinnedRightRowElement(): HTMLElement | undefined;
-    getPinnedRightSectionElement(): HTMLElement | undefined;
+    refreshPinnedSections(widths: PinnedCellGroupWidths): void;
     showFullWidth(compDetails: UserCompDetails): void;
     showEmbeddedFullWidth?(compDetails: HorizontalSectionMap<UserCompDetails>): void;
     getFullWidthCellRenderers(): (ICellRenderer | null | undefined)[];
@@ -471,24 +470,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (!rowGui) {
             return;
         }
-        const { rowComp } = rowGui;
-        const widths = this.getMappedPinnedCellGroupWidths();
-
-        this.setPinnedSectionWidth(
-            rowComp.getPinnedLeftRowElement(),
-            rowComp.getPinnedLeftSectionElement(),
-            widths.leftWidth
-        );
-        this.setPinnedSectionWidth(
-            rowComp.getPinnedRightRowElement(),
-            rowComp.getPinnedRightSectionElement(),
-            widths.rightWidth
-        );
-
-        const eScrolling = rowComp.getScrollingRowElement();
-        if (eScrolling) {
-            eScrolling.style.width = `${widths.centerWidth}px`;
-        }
+        rowGui.rowComp.refreshPinnedSections(this.getMappedPinnedCellGroupWidths());
     }
 
     public getMappedPinnedCellGroupWidths(): PinnedCellGroupWidths {
@@ -507,29 +489,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 baseWidths.centerWidth + (hasLeft ? 0 : baseWidths.leftWidth) + (hasRight ? 0 : baseWidths.rightWidth),
             rightWidth: hasRight ? baseWidths.rightWidth : 0,
         };
-    }
-
-    private setPinnedSectionWidth(
-        wrapper: HTMLElement | undefined,
-        section: HTMLElement | undefined,
-        width: number
-    ): void {
-        if (!wrapper) {
-            return;
-        }
-        const display = width > 0 ? '' : 'none';
-        const widthPx = `${width}px`;
-
-        const setStyles = (e: HTMLElement) => {
-            e.style.width = widthPx;
-            e.style.display = display;
-        };
-
-        setStyles(wrapper);
-
-        if (section) {
-            setStyles(section);
-        }
     }
 
     public getPinnedCellGroupWidths(): PinnedCellGroupWidths {

@@ -120,19 +120,25 @@
     --ag-internal-row-overlay-image: none;
 }
 
-/* rows need a solid background to avoid being transparent when dragging */
-.ag-row .ag-grid-container-wrapper {
+.ag-grid-container-wrapper {
     width: 100%;
     height: 100%;
-    background-color: inherit;
 }
 
 .ag-row:not(.ag-header-row) {
+    /* Pinned rows need an opaque background, but the row background might be semi-transparent (very common
+       for --ag-odd-row-background-color) so we use inheritance to pass the background down from the row */
     > .ag-grid-pinned-left-cells,
-    > .ag-grid-pinned-right-cells,
-    > .ag-grid-scrolling-cells {
+    > .ag-grid-pinned-right-cells {
         background-color: inherit;
+
+        /* apply an opaque background */
         background-image: linear-gradient(var(--ag-data-background-color), var(--ag-data-background-color));
+    }
+
+    .ag-grid-container-wrapper {
+        /* re-apply the transparent row color over the opaque background */
+        background-color: inherit;
     }
 }
 
