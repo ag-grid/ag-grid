@@ -1,6 +1,7 @@
 import type { LocaleTextFunc } from 'ag-stack';
 import { _exists, _getValueUsingDotField, _isElementOverflowingCallback } from 'ag-stack';
 
+import { _hasCalculatedExpression } from '../columns/calculatedColumnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -133,7 +134,7 @@ const resolveCellTooltip = ({
     const colDef = column.colDef;
 
     // 1) formula error tooltip has highest priority.
-    const isCalculatedColumn = colDef.calculatedExpression != null && beans.calculatedColsSvc != null;
+    const isCalculatedColumn = _hasCalculatedExpression(colDef) && beans.calculatedColsSvc != null;
     if ((colDef.allowFormula && formula?.active) || (isCalculatedColumn && formula)) {
         const error = formula.getFormulaError(column, rowNode);
         if (error) {

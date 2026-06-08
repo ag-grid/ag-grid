@@ -23,7 +23,13 @@ import type {
     TouchShowContextMenuParam,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _attemptToRestoreCellFocus, _getGrandTotalRow } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _attemptToRestoreCellFocus,
+    _getGrandTotalRow,
+    _hasCalculatedExpression,
+} from 'ag-grid-community';
 
 import { AgContextMenuService } from '../agStack/agContextMenuService';
 import { MENU_ITEM_CALLBACKS } from '../widgets/menuItemComponent';
@@ -98,7 +104,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             calculatedColsSvc,
         } = this.beans;
 
-        const isCalculatedColumn = column?.getColDef().calculatedExpression != null && calculatedColsSvc != null;
+        const isCalculatedColumn = _hasCalculatedExpression(column?.getColDef()) && calculatedColsSvc != null;
 
         if (_exists(node) && clipboardSvc) {
             if (column) {

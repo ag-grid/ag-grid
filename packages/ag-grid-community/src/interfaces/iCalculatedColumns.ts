@@ -24,6 +24,11 @@ export interface CalculatedColumnsOptions {
      * @default false
      */
     suppressColumnHighlighting?: boolean;
+    /**
+     * Apply Calculated Column dialog changes immediately, without Apply or Cancel buttons.
+     * @default false
+     */
+    livePreview?: boolean;
 }
 
 export type CalculatedColumnDef<TData = any, TValue = any> = ColDef<TData, TValue> & {
@@ -36,7 +41,7 @@ export type CalculatedColumnUpdate<TData = any, TValue = any> = Partial<ColDef<T
 };
 
 export interface ICalculatedColumnsService extends Bean {
-    removeCalculatedColumn(column: AgColumn | undefined): void;
+    removeCalculatedColumn(column: AgColumn | null | undefined): void;
     openCalculatedColumnDialog(column: AgColumn | null | undefined, mode: 'add' | 'edit', focusDialog?: boolean): void;
     /** Build hook for static (user-declared) calc cols: `null` if removed (never build), the replacement
      *  `ColDef` if updated, `undefined` if unchanged. Applied during the build, so removed cols are never materialised. */

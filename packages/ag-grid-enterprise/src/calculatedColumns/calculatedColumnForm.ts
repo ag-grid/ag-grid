@@ -74,6 +74,7 @@ const CalculatedColumnFormElement: ElementParams = {
         },
         {
             tag: 'div',
+            ref: 'eActions',
             cls: 'ag-calculated-column-actions',
             children: [
                 { tag: 'button', ref: 'eCancel', cls: 'ag-button ag-standard-button ag-calculated-column-action' },
@@ -96,6 +97,7 @@ export class CalculatedColumnForm extends Component {
     private readonly eOperators: HTMLButtonElement = RefPlaceholder;
     private readonly eApply: HTMLButtonElement = RefPlaceholder;
     private readonly eCancel: HTMLButtonElement = RefPlaceholder;
+    private readonly eActions: HTMLElement = RefPlaceholder;
 
     private activeReplacement: { start: number; end: number } | null = null;
     private suggestionSource: HTMLElement | null = null;
@@ -117,7 +119,9 @@ export class CalculatedColumnForm extends Component {
         private readonly getFunctionSuggestions: () => ColumnSuggestion[],
         private readonly onValidate: (draft: CalculatedColumnDraft) => string | null,
         private readonly onApply: (draft: CalculatedColumnDraft) => string | null,
-        private readonly onCancel: () => void
+        private readonly onCancel: () => void,
+        private readonly livePreview = false,
+        private readonly onDraftChange?: (draft: CalculatedColumnDraft) => void
     ) {
         super(CalculatedColumnFormElement, [AgInputTextFieldSelector, AgSelectSelector, AgInputTextAreaSelector]);
         this.expressionPickers = new Set(expressionPickers);
@@ -126,7 +130,9 @@ export class CalculatedColumnForm extends Component {
     public postConstruct(): void {
         this.setupFormFields();
         this.setupActionButtons();
-        this.setupValidationTooltip();
+        if (!this.livePreview) {
+            this.setupValidationTooltip();
+        }
         this.addFormFieldListeners();
         this.setupExpressionEditor();
         this.addActionListeners();
@@ -172,17 +178,20 @@ export class CalculatedColumnForm extends Component {
         _setDisplayed(this.eColumns, this.expressionPickers.has('columns'));
         _setDisplayed(this.eFunctions, this.expressionPickers.has('functions'));
         _setDisplayed(this.eOperators, this.expressionPickers.has('operators'));
+        _setDisplayed(this.eActions, !this.livePreview);
     }
 
     private addFormFieldListeners(): void {
         const initialHeaderName = this.draft.headerName;
         this.eTitle.onValueChange((value) => this.updateDraft({ headerName: value || initialHeaderName }));
-        this.eType.onValueChange((value) =>
-            this.updateDraft({ cellDataType: value ?? this.dataTypeOptions[0]?.value ?? DEFAULT_DRAFT.cellDataType })
-        );
+        this.eType.onValueChange((value) => {
+            this.updateDraft({ cellDataType: value ?? this.dataTypeOptions[0]?.value ?? DEFAULT_DRAFT.cellDataType });
+        });
         this.eExpression.onValueChange((value) => {
             this.updateDraft({ calculatedExpression: value ?? '' });
-            this.setExpressionError(this.onValidate(this.draft));
+            if (!this.livePreview) {
+                this.setExpressionError(this.onValidate(this.draft));
+            }
             this.refreshContextSuggestions();
         });
     }
@@ -223,12 +232,14 @@ export class CalculatedColumnForm extends Component {
                 click: () => this.openPicker('operator', this.eOperators),
             });
         }
-        this.addManagedElementListeners(this.eApply, {
-            click: () => this.setExpressionError(this.onApply(this.draft)),
-        });
-        this.addManagedElementListeners(this.eCancel, {
-            click: () => this.onCancel(),
-        });
+        if (!this.livePreview) {
+            this.addManagedElementListeners(this.eApply, {
+                click: () => this.setExpressionError(this.onApply(this.draft)),
+            });
+            this.addManagedElementListeners(this.eCancel, {
+                click: () => this.onCancel(),
+            });
+        }
     }
 
     private addFormListeners(): void {
@@ -274,6 +285,7 @@ export class CalculatedColumnForm extends Component {
 
     private updateDraft(partial: Partial<CalculatedColumnDraft>): void {
         this.draft = { ...this.draft, ...partial };
+        this.onDraftChange?.(this.draft);
     }
 
     private rememberExpressionSelection(): void {

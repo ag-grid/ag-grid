@@ -10,7 +10,7 @@ import type {
     RowNode,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, _convertColumnEventSourceType, _warn } from 'ag-grid-community';
+import { BeanStub, _convertColumnEventSourceType, _hasCalculatedExpression, _warn } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
@@ -115,7 +115,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             if (col.isAllowFormula()) {
                 editableFormulaColumnsPresent = true;
             }
-            if (calculatedColumnsEnabled && col.colDef.calculatedExpression != null) {
+            if (calculatedColumnsEnabled && _hasCalculatedExpression(col.colDef)) {
                 calculatedColumnsPresent = true;
             }
             if (editableFormulaColumnsPresent && (calculatedColumnsPresent || !calculatedColumnsEnabled)) {
@@ -627,9 +627,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             }
 
             const calculatedExpression = col.colDef.calculatedExpression;
-            return calculatedExpression == null
+            return calculatedExpression === undefined
                 ? this.ensureEditableCellFormula(row, col)
-                : this.ensureCalculatedCellFormula(row, col, calculatedExpression);
+                : this.ensureCalculatedCellFormula(row, col, calculatedExpression ?? '');
         }
 
         if (!calculatedColumnsActive) {
@@ -637,7 +637,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
 
         const calculatedExpression = col.colDef.calculatedExpression;
-        return calculatedExpression == null ? null : this.ensureCalculatedCellFormula(row, col, calculatedExpression);
+        return calculatedExpression === undefined
+            ? null
+            : this.ensureCalculatedCellFormula(row, col, calculatedExpression ?? '');
     }
 
     private ensureEditableCellFormula(row: RowNode, col: AgColumn): CellFormula | null {
@@ -731,7 +733,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Fetch a non-formula value from the grid without triggering nested formula calc. */
     private fetchRawValue(col: AgColumn, row: RowNode): unknown {
         if (col.isCalculatedCol) {
-            return undefined;
+            return col.colDef.calculatedExpression?.trim() ? undefined : '';
         }
 
         return this.beans.valueSvc.getValue(col, row, 'data');

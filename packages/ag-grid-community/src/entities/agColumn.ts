@@ -1,6 +1,7 @@
 import type { AgEvent, IAgEventEmitter } from 'ag-stack';
 import { LocalEventService, _escapeString } from 'ag-stack';
 
+import { _hasCalculatedExpression } from '../columns/calculatedColumnUtils';
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
 import { updateSomeColumnState } from '../columns/columnStateUtils';
 import type { ColumnState } from '../columns/columnStateUtils';
@@ -412,7 +413,7 @@ export class AgColumn<TValue = any>
     }
 
     private initCalculatedCol(): void {
-        this.isCalculatedCol = this.colDef.calculatedExpression != null && this.beans.calculatedColsSvc != null;
+        this.isCalculatedCol = _hasCalculatedExpression(this.colDef) && this.beans.calculatedColsSvc != null;
     }
 
     public isResizable(): boolean {
