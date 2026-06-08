@@ -503,6 +503,36 @@ describe('StateService - Grid State Management', () => {
             );
             expect(api.getState().columnGroup).toEqual(undefined);
         });
+
+        test('should restore an open generated-id group from saved state', async () => {
+            // A generated-id (positional) group gets the same id when rebuilt from identical colDefs,
+            // so an open one round-trips through saved state like an explicit-id group would.
+            const columnDefs = [
+                { headerName: 'G', children: [{ field: 'athlete' }, { field: 'country', columnGroupShow: 'open' }] },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: defaultRowData,
+            });
+
+            // The sole group carries a generated (numeric) id — no groupId was provided.
+            const groupId = api.getColumnGroupState()[0].groupId;
+            expect(/^\d+$/.test(groupId)).toBe(true);
+
+            api.setColumnGroupOpened(groupId, true);
+            const savedState = api.getState();
+            expect(savedState.columnGroup).toEqual({ openColumnGroupIds: [groupId] });
+
+            // Restore into a fresh grid from identical colDefs: the same positional id is regenerated.
+            const api2 = gridsManager.createGrid('target', {
+                columnDefs,
+                rowData: defaultRowData,
+                initialState: savedState,
+            });
+
+            expect(api2.getState().columnGroup).toEqual({ openColumnGroupIds: [groupId] });
+            expect(api2.getColumnGroupState()[0].open).toBe(true);
+        });
     });
 
     // ===== ROW STATE TESTS =====

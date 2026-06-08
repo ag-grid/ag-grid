@@ -1,57 +1,5 @@
-import type { ColDef, ColGroupDef } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
 import { _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES } from 'ag-grid-community';
-
-/** Returns the index of the first item with a matching `colId`, or -1. Works for any colId-keyed list (dynamic column records, `AgColumn`s, etc.). */
-export function indexOfColId<T extends { colId: string }>(items: T[], colId: string): number {
-    for (let i = 0, len = items.length; i < len; ++i) {
-        if (items[i].colId === colId) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-/** Returns the index of the first leaf colDef whose `colId` or `field` matches, or -1. Column groups are skipped. */
-export function indexOfColDef(columnDefs: (ColDef | ColGroupDef)[], colId: string): number {
-    for (let i = 0, len = columnDefs.length; i < len; ++i) {
-        const colDef = columnDefs[i];
-        if (!('children' in colDef) && (colDef.colId === colId || colDef.field === colId)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-/**
- * Walks a (possibly nested) columnDefs tree and returns every `colId` and `field` it encounters
- * on leaf columns. Used by `createUniqueColId` to scan the user-provided source of truth for id
- * collisions, matching the same `colId ?? field` lookup the insert/update/remove paths use.
- */
-export function collectColIdsAndFields(columnDefs: (ColDef | ColGroupDef)[]): Set<string> {
-    const used = new Set<string>();
-
-    const visit = (defs: (ColDef | ColGroupDef)[]) => {
-        for (const colDef of defs) {
-            if ('children' in colDef) {
-                visit(colDef.children);
-                continue;
-            }
-
-            const { colId, field } = colDef;
-
-            if (colId) {
-                used.add(colId);
-            }
-
-            if (field) {
-                used.add(field);
-            }
-        }
-    };
-
-    visit(columnDefs);
-    return used;
-}
 
 /**
  * When `cellDataType` changes on a calculated column (e.g. via the Edit dialog moving Boolean →

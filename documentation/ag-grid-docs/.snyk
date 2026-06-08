@@ -1,235 +1,247 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-AXIOS-17172681:
+    - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-05T10:20:01.251Z
+  SNYK-JS-VITEST-17120326:
+    - vitest@2.1.9:
+        reason: >-
+            Test dependency - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-05T10:18:57.066Z
   SNYK-JS-AXIOS-17111079:
     - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
         reason: >-
             Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-01T10:58:16.324Z
   SNYK-JS-AXIOS-17111062:
     - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
         reason: >-
             Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-01T10:58:09.511Z
   SNYK-JS-AXIOS-17111060:
     - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
         reason: >-
             Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-01T10:57:58.703Z
   SNYK-JS-AXIOS-16299904:
     - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
         reason: Dev dependency - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T11:57:52.760Z
   SNYK-JS-AXIOS-16298058:
     - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
         reason: Dev dependency - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T11:57:02.639Z
   SNYK-JS-AXIOS-15969258:
     - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-14T15:33:08.513Z
   SNYK-JS-AXIOS-15930944:
     - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-14T15:31:10.568Z
   SNYK-JS-AXIOS-15965856:
     - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-14T13:46:02.658Z
   SNYK-JS-PICOMATCH-15765511:
     - "@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > tinyglobby@0.2.15 > picomatch@4.0.3":
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-24T11:43:15.253Z
     - vite-plugin-svgr@4.5.0 > @rollup/pluginutils@5.3.0 > picomatch@4.0.3:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-27T11:43:45.855Z
     - astro@6.1.9 > vite@7.3.2 > picomatch@4.0.3:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
     - 'astro@6.1.9 > tinyglobby@0.2.15 > picomatch@4.0.3':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
     - '@astrojs/react@5.0.4 > vite@7.3.2 > picomatch@4.0.3':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
     - 'astro@6.1.9 > @rollup/pluginutils@5.3.0 > picomatch@4.0.3':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
     - '@astrojs/react@5.0.4 > vite@7.3.2 > tinyglobby@0.2.15 > picomatch@4.0.3':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
     - 'astro@6.1.9 > vite@7.3.2 > tinyglobby@0.2.15 > picomatch@4.0.3':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
     - 'astro@6.1.9 > unstorage@1.17.5 > anymatch@3.1.3 > picomatch@2.3.1':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-IMMUTABLE-15423650:
     - sass@1.93.3 > immutable@5.1.4:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-05T11:42:22.184Z
   SNYK-JS-ROLLUP-15340920:
     - vitest@2.1.9 > vite@5.4.21 > rollup@4.52.5:
         reason: Used in testing - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-02T11:39:51.305Z
   SNYK-JS-QS-15268416:
     - react-instantsearch@7.22.1 > instantsearch.js@4.86.1 > qs@6.14.1:
         reason: Only parses search query strings generated by the user in their own
           browser session on the docs site - low risk of exploitation
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-02T11:37:48.363Z
   SNYK-JS-AJV-15274295:
     - "@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > volar-service-yaml@0.0.70 > yaml-language-server@1.20.0 > ajv@8.17.1":
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-24T11:38:57.296Z
     - gif-frames@1.0.1 > get-pixels-frame-info-update@3.3.2 > request@2.88.2 > har-validator@5.1.5 > ajv@6.12.6:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-03-02T11:00:13.555Z
     - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv@8.17.1':
         reason: Testing dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
     - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv-formats@3.0.1 > ajv@8.17.1':
         reason: Testing dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-JPEGJS-2859218:
     - 'gif-frames@1.0.1 > get-pixels-frame-info-update@3.3.2 > jpeg-js@0.3.7':
         reason: Used by gif-frames, and that is only run during build with gif images
           that are in our control
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2025-06-05T14:36:23.503Z
     - 'gif-frames@1.0.1 > save-pixels-jpeg-js-upgrade@2.3.4-jpeg-js-upgrade.0 > jpeg-js@0.3.7':
         reason: Used by gif-frames, and that is only run during build with gif images
           that are in our control
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2025-06-05T14:36:23.503Z
   SNYK-JS-FORMDATA-10841150:
     - gif-frames@1.0.1 > get-pixels-frame-info-update@3.3.2 > request@2.88.2 > form-data@2.3.3:
         reason: Gif frames is only used for building the website so form-data is not
           exposed outside of development and CI
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2025-07-22T10:35:00.007Z
   SNYK-JS-QS-14724253:
     - gif-frames@1.0.1 > get-pixels-frame-info-update@3.3.2 > request@2.88.2 > qs@6.5.3:
         reason: qs is not used on the server
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2025-01-05T10:10:00.000Z
   SNYK-JS-PREACT-14897824:
     - react-instantsearch@7.22.1 > instantsearch.js@4.86.1 > preact@10.27.2:
         reason: We don't use preact
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2025-01-12T10:00:00.000Z
   SNYK-JS-AXIOS-15252993:
     - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
         reason: mkcert is only used during development - it's not used in the final
           production build
-        expires: 2026-06-08T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-02-12T10:10:00.000Z
   SNYK-JS-BRACEEXPANSION-15789759:
     - '@trivago/prettier-plugin-sort-imports@6.0.2 > minimatch@9.0.5 > brace-expansion@2.0.2':
         reason: Not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-MINIMATCH-15309438:
     - '@trivago/prettier-plugin-sort-imports@6.0.2 > minimatch@9.0.5':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-MINIMATCH-15353387:
     - '@trivago/prettier-plugin-sort-imports@6.0.2 > minimatch@9.0.5':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-MINIMATCH-15353389:
     - '@trivago/prettier-plugin-sort-imports@6.0.2 > minimatch@9.0.5':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-PICOMATCH-15765513:
     - astro@6.1.9 > vite@7.3.2 > picomatch@4.0.3:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
   SNYK-JS-POSTCSS-16189065:
     - "@astrojs/react@5.0.4 > vite@7.3.2 > postcss@8.5.6":
         reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
     - astro@6.1.9 > vite@7.3.2 > postcss@8.5.6:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
     - vue@3.5.22 > @vue/compiler-sfc@3.5.22 > postcss@8.5.6:
         reason: Used in build & dev - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
   SNYK-JS-AXIOS-16299921:
     - 'vite-plugin-mkcert@1.17.9 > axios@1.13.1':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-AXIOS-16299923:
     - 'vite-plugin-mkcert@1.17.9 > axios@1.13.1':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-AXIOS-16417750:
     - 'vite-plugin-mkcert@1.17.9 > axios@1.13.1':
         reason: Build dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-BRACEEXPANSION-16755174:
     - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
         reason: Testing dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-DEVALUE-16697433:
     - '@astrojs/react@5.0.4 > devalue@5.7.1':
         reason: Dev dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
     - 'astro@6.1.9 > devalue@5.7.1':
         reason: Dev dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-FASTURI-16642394:
     - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv@8.17.1 > fast-uri@3.1.0':
         reason: Testing dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
     - '@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > volar-service-yaml@0.0.70 > yaml-language-server@1.20.0 > ajv@8.17.1 > fast-uri@3.1.0':
         reason: Dev dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-FASTURI-16642399:
     - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv@8.17.1 > fast-uri@3.1.0':
         reason: Testing dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
     - '@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > volar-service-yaml@0.0.70 > yaml-language-server@1.20.0 > ajv@8.17.1 > fast-uri@3.1.0':
         reason: Dev dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
 patch: {}

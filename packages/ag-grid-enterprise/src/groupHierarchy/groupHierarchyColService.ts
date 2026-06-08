@@ -1,315 +1,261 @@
-import { _removeAllFromArray } from 'ag-stack';
+import type { LocaleTextFunc } from 'ag-stack';
 
 import type {
     ColDef,
-    ColKey,
-    GridOptions,
+    ColumnEventType,
+    ColumnTreeBuild,
+    GroupHierarchyConfig,
     IGroupHierarchyColService,
     NamedBean,
-    PropertyChangedEvent,
-    PropertyValueChangedEvent,
-    _ColumnCollections,
 } from 'ag-grid-community';
-import {
-    AgColumn,
-    BeanStub,
-    GROUP_HIERARCHY_COLUMN_ID_PREFIX,
-    _addColumnDefaultAndTypes,
-    _areColIdsEqual,
-    _columnsMatch,
-    _destroyColumnTree,
-    _updateColsMap,
-} from 'ag-grid-community';
+import { AgColumn, BeanStub, GROUP_HIERARCHY_COLUMN_ID_PREFIX, _addColumnDefaultAndTypes } from 'ag-grid-community';
 
-import {
-    _getGroupHierarchy,
-    getDatePartValueGetter,
-    getHeaderValueGetter,
-    numericalMonthToNamedMonth,
-} from './groupHierarchyUtils';
+import { prependWrappedColumnsToTree } from '../columns/columnTreeEdit';
+import { getDatePartValueGetter, getHeaderValueGetter, numericalMonthToNamedMonth } from './groupHierarchyUtils';
+
+/** A canonical date part: header label (+ optional distinct locale key), the date-part index its value
+ *  getter reads, and an optional value mapper (quarter derives from month; formattedMonth localises it). */
+interface DatePartSpec {
+    label: string;
+    localeKey?: string;
+    index: number;
+    map?: (value: string, translate: LocaleTextFunc) => string;
+}
+
+const DATE_PART_SPECS = {
+    year: { label: 'Year', index: 0 },
+    // `index: 1` is the 1-based month (1-12); quarter = ceil(month / 3): Q1=1-3, Q2=4-6, Q3=7-9, Q4=10-12.
+    quarter: { label: 'Quarter', index: 1, map: (m) => Math.ceil(Number(m) / 3).toString() },
+    month: { label: 'Month', index: 1 },
+    formattedMonth: {
+        label: 'Month',
+        localeKey: 'month',
+        index: 1,
+        map: (m, translate) => {
+            const named = numericalMonthToNamedMonth(m);
+            return translate(named.localeKey, named.month);
+        },
+    },
+    day: { label: 'Day', index: 2 },
+    hour: { label: 'Hour', index: 3 },
+    minute: { label: 'Minute', index: 4 },
+    second: { label: 'Second', index: 5 },
+} satisfies Record<string, DatePartSpec>;
+
+type HierarchyDatePart = keyof typeof DATE_PART_SPECS;
+
+/** Cheap projection of one expected hierarchy col; ColDef construction is deferred until needed. */
+interface HierarchyPlanEntry {
+    sourceCol: AgColumn;
+    part: string | ColDef;
+    colId: string;
+}
+
+/** Reverse-lookup for a virtual col: source col + position in that source's bucket. The stored index
+ *  lets `compareVirtualColumns` rank siblings in O(1) without re-scanning the bucket. */
+interface VirtualColInfo {
+    source: AgColumn;
+    index: number;
+}
 
 export class GroupHierarchyColService extends BeanStub implements NamedBean, IGroupHierarchyColService {
     beanName = 'groupHierarchyColSvc' as const;
 
-    public columns: _ColumnCollections | null = null;
-    /** Map from primary column to virtual (i.e. generated) columns */
-    private sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();
-    /** Map from virtual column to associated primary column. Inverse of `sourceColumnMap` */
-    private inverseColumnMap = new WeakMap<AgColumn, AgColumn>();
+    /** Generated hierarchy cols (year, quarter, month, …). `contributeTo` prepends these into the builder's
+     *  tree; the builder owns their padding wrappers via ColumnModel's wrapper cache. */
+    public columns: AgColumn[] = [];
 
-    public addColumns(cols: _ColumnCollections): void {
-        const groupHierarchyCols = this.columns;
-        if (groupHierarchyCols == null) {
+    /** Source col → its generated virtuals. */
+    private readonly sourceColumnMap = new Map<AgColumn, AgColumn[]>();
+    /** Virtual col → `{ source, index }` — the inverse of `sourceColumnMap`. */
+    private readonly virtualColInfo = new Map<AgColumn, VirtualColInfo>();
+
+    /** Plan the expected colIds: rebuild the cols when they differ, else refresh their defs in place so a
+     *  config / inline-part change is picked up without churning beans on a no-op refresh. */
+    public contributeTo(build: ColumnTreeBuild): void {
+        const { plan, matches } = this.planHierarchy(build.columns);
+        if (plan.length === 0) {
+            if (this.columns.length > 0) {
+                this.clearColumns();
+            }
             return;
         }
-
-        cols.list = groupHierarchyCols.list
-            .filter((col) => !cols.list.some((c) => c.colId === col.colId))
-            .concat(cols.list);
-
-        cols.tree = groupHierarchyCols.tree
-            .filter((col) => !cols.tree.some((c) => c.getId() === col.getId()))
-            .concat(cols.tree);
-
-        _updateColsMap(cols);
-    }
-
-    public createColumns(cols: _ColumnCollections): void {
-        const newSourceColumnMap = new WeakMap();
-        const newInverseColumnMap = new WeakMap();
-
-        const list = this.createGroupHierarchyColumns(cols, newSourceColumnMap, newInverseColumnMap);
-        const areSame = _areColIdsEqual(list, this.columns?.list ?? []);
-
-        if (areSame) {
-            return;
+        if (matches) {
+            this.reapplyDefs(plan, build.source);
+        } else {
+            this.rebuildColumns(plan);
         }
-
-        _destroyColumnTree(this.beans, this.columns?.tree);
-        this.columns = null;
-        const { colGroupSvc } = this.beans;
-        const treeDepth = colGroupSvc?.findDepth(cols.tree) ?? 0;
-        const tree = colGroupSvc?.balanceTreeForAutoCols(list, treeDepth) ?? [];
-        this.columns = {
-            list,
-            tree,
-            treeDepth,
-            map: {},
-        };
-        this.sourceColumnMap = newSourceColumnMap;
-        this.inverseColumnMap = newInverseColumnMap;
+        prependWrappedColumnsToTree(build, this.columns);
     }
 
-    public updateColumns(_event: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void {
-        // No-op
-    }
-
-    public getColumn(key: ColKey): AgColumn | null {
-        return this.columns?.list.find((col) => _columnsMatch(col, key)) ?? null;
-    }
-
-    public getColumns(): AgColumn[] | null {
-        return this.columns?.list ?? null;
-    }
-
-    public expandColumnInto(target: AgColumn[], col: AgColumn): void {
-        const expanded = this.getVirtualColumnsForColumn(col).concat(col);
-        for (const expandedCol of expanded) {
-            if (!target.some((_c) => _columnsMatch(_c, expandedCol) || _c.colId === expandedCol.colId)) {
-                target.push(expandedCol);
+    /** Same colIds: refresh each def in place. Reusing the live getters keeps an unchanged part a `setColDef`
+     *  no-op, so only a real change (config / inline part / `defaultColDef`) re-applies. */
+    private reapplyDefs(plan: HierarchyPlanEntry[], source: ColumnEventType): void {
+        const { columns, gos } = this;
+        for (let i = 0, len = plan.length; i < len; ++i) {
+            const { sourceCol, part, colId } = plan[i];
+            const col = columns[i];
+            const colDef = this.createColDefForPart(part, sourceCol, colId, col.colDef);
+            if (col.setColDef(colDef, null, source)) {
+                gos.validateColDef(colDef, colId, true);
             }
         }
+    }
+
+    /** Allocate fresh hierarchy AgColumns from a plan whose colIds differ from current. */
+    private rebuildColumns(plan: HierarchyPlanEntry[]): void {
+        const { sourceColumnMap, virtualColInfo, beans, gos } = this;
+        sourceColumnMap.clear();
+        virtualColInfo.clear();
+        const cols: AgColumn[] = new Array(plan.length);
+        for (let i = 0, len = plan.length; i < len; ++i) {
+            const { sourceCol, part, colId } = plan[i];
+            const colDef = this.createColDefForPart(part, sourceCol, colId);
+            gos.validateColDef(colDef, colId, true);
+            const col = new AgColumn(colDef, null, colId, true, 'hierarchy');
+            beans.context.createBean(col);
+            cols[i] = col;
+            const bucket = sourceColumnMap.get(sourceCol);
+            virtualColInfo.set(col, { source: sourceCol, index: bucket?.length ?? 0 });
+            if (bucket) {
+                bucket.push(col);
+            } else {
+                sourceColumnMap.set(sourceCol, [col]);
+            }
+        }
+        this.columns = cols;
+    }
+
+    /** Project the hierarchy cols expected for `colDefList`; `matches` is true when their colIds equal the
+     *  current `columns` (same count, same order), so the cols can be reused rather than rebuilt. */
+    private planHierarchy(colDefList: AgColumn[]): { plan: HierarchyPlanEntry[]; matches: boolean } {
+        const config = this.gos.get('groupHierarchyConfig');
+        const current = this.columns;
+        const plan: HierarchyPlanEntry[] = [];
+        let matches = true;
+        for (let i = 0, len = colDefList.length; i < len; ++i) {
+            const sourceCol = colDefList[i];
+            const parts = hierarchyPartsForCol(sourceCol);
+            if (parts == null) {
+                continue;
+            }
+            for (let j = 0, m = parts.length; j < m; ++j) {
+                const part = parts[j];
+                const colId = makeHierarchyColId(sourceCol.colId, part, config);
+                if (colId === null) {
+                    continue;
+                }
+                const k = plan.length;
+                if (matches && (k >= current.length || current[k].colId !== colId)) {
+                    matches = false;
+                }
+                plan.push({ sourceCol, part, colId });
+            }
+        }
+        // Trailing current cols with no expected counterpart also count as a mismatch.
+        return { plan, matches: matches && plan.length === current.length };
+    }
+
+    public override destroy(): void {
+        this.clearColumns();
+        super.destroy();
+    }
+
+    private clearColumns(): void {
+        this.columns = [];
+        this.sourceColumnMap.clear();
+        this.virtualColInfo.clear();
     }
 
     public compareVirtualColumns(colA: AgColumn, colB: AgColumn): number | null {
-        const sourceA = this.inverseColumnMap.get(colA);
-        const sourceB = this.inverseColumnMap.get(colB);
-        if (sourceA && sourceA === sourceB) {
-            const hierarchyCols = this.sourceColumnMap.get(sourceA) ?? [];
-            return hierarchyCols?.indexOf(colA) - hierarchyCols?.indexOf(colB);
+        const virtualInfo = this.virtualColInfo;
+        const infoA = virtualInfo.get(colA);
+        const infoB = virtualInfo.get(colB);
+        // Both virtuals: same source ⇒ rank by stored bucket index; otherwise defer to caller (null).
+        if (infoA !== undefined && infoB !== undefined) {
+            return infoA.source === infoB.source ? infoA.index - infoB.index : null;
         }
-
-        if (this.sourceColumnMap.get(colA)?.includes(colB)) {
+        // A virtual sorts BEFORE its own source col.
+        if (infoB?.source === colA) {
             return 1;
         }
-
-        if (this.sourceColumnMap.get(colB)?.includes(colA)) {
+        if (infoA?.source === colB) {
             return -1;
         }
-
         return null;
     }
 
-    public insertVirtualColumnsForCol(columns: AgColumn<any>[], col: AgColumn<any>): AgColumn[] {
-        const hierarchyCols = this.getVirtualColumnsForColumn(col);
-        if (!hierarchyCols) {
-            return [];
-        }
-
-        // Index at which to insert the virtual columns
-        let idxCol = columns.indexOf(col);
-        if (idxCol < 0) {
-            idxCol = columns.length - 1;
-        }
-
-        // For simplicity, reset the `columns` array by removing all associated
-        // virtual columns first
-        _removeAllFromArray(columns, hierarchyCols);
-
-        // Insert the virtual columns in the given order
-        columns.splice(idxCol, 0, ...hierarchyCols);
-
-        return hierarchyCols;
+    /** This source col's generated virtuals, in order (seated immediately before it); undefined if none. */
+    public getVirtualCols(sourceCol: AgColumn): AgColumn[] | undefined {
+        return this.sourceColumnMap.get(sourceCol);
     }
 
-    private getVirtualColumnsForColumn(col: AgColumn): AgColumn[] {
-        if (this.isGroupHierarchyColsEnabledForCol(col)) {
-            return this.sourceColumnMap.get(col) ?? [];
-        }
-        return [];
-    }
-
-    private isGroupHierarchyColsEnabled(cols: _ColumnCollections): boolean {
-        return cols.list.some((col) => this.isGroupHierarchyColsEnabledForCol(col));
-    }
-
-    private isGroupHierarchyColsEnabledForCol(col: AgColumn): boolean {
-        const def = col.colDef;
-        const groupHierarchy = _getGroupHierarchy(def);
-        return !!(
-            groupHierarchy &&
-            (def.rowGroup ||
-                def.enableRowGroup ||
-                def.rowGroupIndex != null ||
-                def.pivot ||
-                def.enablePivot ||
-                def.pivotIndex != null)
-        );
-    }
-
-    private createGroupHierarchyColDefs(sourceCol: AgColumn): ColDef[] {
-        const colDefs: ColDef[] = [];
-        const sourceColDef = sourceCol.colDef;
-        const groupHierarchy = _getGroupHierarchy(sourceColDef);
-
-        if (!groupHierarchy) {
-            return colDefs;
-        }
-
-        if (!this.isGroupHierarchyColsEnabledForCol(sourceCol)) {
-            return colDefs;
-        }
-
-        for (const part of groupHierarchy) {
-            const colDef: ColDef | null =
-                typeof part === 'string' ? this.createColDefForPart(part, sourceCol, sourceColDef) : part;
-            if (colDef) {
-                colDefs.push(colDef);
-            }
-        }
-
-        return colDefs;
-    }
-
-    private createGroupHierarchyColumns(
-        cols: _ColumnCollections,
-        sourceColMap: WeakMap<AgColumn, AgColumn[]>,
-        inverseColMap: WeakMap<AgColumn, AgColumn>
-    ): AgColumn[] {
-        if (!this.isGroupHierarchyColsEnabled(cols)) {
-            return [];
-        }
-
-        const newCols: AgColumn[] = [];
-
-        for (const col of cols.list) {
-            for (const colDef of this.createGroupHierarchyColDefs(col)) {
-                const colId = colDef.colId!;
-                this.gos.validateColDef(colDef, colId, true);
-                const newCol = new AgColumn(colDef, null, colId, true);
-                this.createBean(newCol);
-                newCols.push(newCol);
-                updateMap(sourceColMap, col, newCol);
-                inverseColMap.set(newCol, col);
-            }
-        }
-
-        return newCols;
-    }
-
-    private createColDefForPart(part: string, sourceCol: AgColumn, sourceColDef: ColDef): ColDef | null {
+    /** Build the ColDef for one part. Inline parts merge directly; configured parts overlay the config; a
+     *  canonical date part takes its header/value getters from {@link DATE_PART_SPECS}. `reuse` (a same-col
+     *  refresh) supplies the prior getters, so they aren't re-minted as fresh closures every refresh. */
+    private createColDefForPart(part: string | ColDef, sourceCol: AgColumn, colId: string, reuse?: ColDef): ColDef {
         const { beans, gos } = this;
 
-        const colId = `${GROUP_HIERARCHY_COLUMN_ID_PREFIX}-${sourceCol.colId}-${part}`;
-        const defaults: Partial<ColDef> = {
-            enableRowGroup: sourceColDef.enableRowGroup,
-            rowGroup: sourceColDef.rowGroup,
-            enablePivot: sourceColDef.enablePivot,
-            hide: true,
-            editable: false,
-        };
+        if (typeof part !== 'string') {
+            return _addColumnDefaultAndTypes(beans, part, colId, true);
+        }
 
-        const groupHierarchyConfig = gos.get('groupHierarchyConfig') ?? {};
-        if (part in groupHierarchyConfig) {
-            const colDef = { ...defaults, ...groupHierarchyConfig[part] };
+        const defaults: Partial<ColDef> = { hide: true, editable: false };
+
+        const config = gos.get('groupHierarchyConfig') ?? {};
+        if (part in config) {
+            const colDef = { ...defaults, ...config[part] };
             colDef.colId ??= colId;
             return _addColumnDefaultAndTypes(beans, colDef, colDef.colId, true);
         }
 
-        const base: ColDef = _addColumnDefaultAndTypes(beans, { colId, ...defaults }, colId, true);
-
-        const translate = this.getLocaleTextFunc();
-        const translatePart = (part: string, fallback: string) => translate?.(part, fallback) ?? fallback;
-
-        switch (part) {
-            case 'year':
-                return {
-                    ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translatePart(part, 'Year')),
-                    valueGetter: getDatePartValueGetter(beans, sourceCol, 0),
-                };
-
-            case 'quarter':
-                return {
-                    ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translatePart(part, 'Quarter')),
-                    valueGetter: getDatePartValueGetter(beans, sourceCol, 1, (month) =>
-                        (Math.floor(Number(month) / 4) + 1).toString()
-                    ),
-                };
-
-            case 'month':
-                return {
-                    ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translatePart(part, 'Month')),
-                    valueGetter: getDatePartValueGetter(beans, sourceCol, 1),
-                };
-
-            case 'formattedMonth':
-                return {
-                    ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translatePart('month', 'Month')),
-                    valueGetter: getDatePartValueGetter(beans, sourceCol, 1, (month) => {
-                        const nm = numericalMonthToNamedMonth(month);
-                        return translatePart(nm.localeKey, nm.month);
-                    }),
-                };
-
-            case 'day':
-                return {
-                    ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translatePart(part, 'Day')),
-                    valueGetter: getDatePartValueGetter(beans, sourceCol, 2),
-                };
-
-            case 'hour':
-                return {
-                    ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translatePart(part, 'Hour')),
-                    valueGetter: getDatePartValueGetter(beans, sourceCol, 3),
-                };
-
-            case 'minute':
-                return {
-                    ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translatePart(part, 'Minute')),
-                    valueGetter: getDatePartValueGetter(beans, sourceCol, 4),
-                };
-
-            case 'second':
-                return {
-                    ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translatePart(part, 'Second')),
-                    valueGetter: getDatePartValueGetter(beans, sourceCol, 5),
-                };
-
-            default:
-                return null;
+        const base = _addColumnDefaultAndTypes(beans, { colId, ...defaults }, colId, true);
+        if (reuse?.valueGetter) {
+            return { ...base, headerValueGetter: reuse.headerValueGetter, valueGetter: reuse.valueGetter };
         }
+
+        // `makeHierarchyColId` only admits configured (handled above) or canonical parts, so the spec exists.
+        const spec: DatePartSpec = DATE_PART_SPECS[part as HierarchyDatePart];
+        const translate = this.getLocaleTextFunc();
+        const { map } = spec;
+        return {
+            ...base,
+            headerValueGetter: getHeaderValueGetter(beans, sourceCol, translate(spec.localeKey ?? part, spec.label)),
+            valueGetter: getDatePartValueGetter(beans, sourceCol, spec.index, map && ((v) => map(v, translate))),
+        };
     }
 }
 
-function updateMap<T extends object>(wm: WeakMap<T, T[]>, key: T, value: T): void {
-    const existing = wm.get(key);
-    wm.set(key, (existing ?? []).concat(value));
-}
+/** colId for `(sourceColId, part)`, or null when the part is invalid and must be skipped — an unrecognised
+ *  string part (not configured, not canonical), or an inline ColDef without colId. */
+const makeHierarchyColId = (
+    sourceColId: string,
+    part: string | ColDef,
+    config: GroupHierarchyConfig | undefined
+): string | null => {
+    if (typeof part !== 'string') {
+        return part.colId || null;
+    }
+    if (config?.[part] === undefined && !(part in DATE_PART_SPECS)) {
+        return null;
+    }
+    return `${GROUP_HIERARCHY_COLUMN_ID_PREFIX}-${sourceColId}-${part}`;
+};
+
+/** The hierarchy parts iff the col is eligible for hierarchy generation, else null. */
+const hierarchyPartsForCol = (col: AgColumn): NonNullable<ColDef['groupHierarchy']> | null | undefined => {
+    const def = col.colDef;
+    // Cheap eligibility gate first — only read hierarchy parts when the col participates in row-group / pivot.
+    if (
+        !def.rowGroup &&
+        !def.enableRowGroup &&
+        def.rowGroupIndex == null &&
+        !def.pivot &&
+        !def.enablePivot &&
+        def.pivotIndex == null
+    ) {
+        return null;
+    }
+
+    return def.groupHierarchy ?? def.rowGroupingHierarchy;
+};

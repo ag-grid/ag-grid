@@ -29,8 +29,7 @@ describe('Column Mutations', () => {
     });
 
     describe('setColumnDefs: instance preservation', () => {
-        // Solved by AG-17366 when it is completed
-        test.skip('column instances are reused when colId matches', async () => {
+        test('column instances are reused when colId matches', async () => {
             const columnDefs1: ColDef[] = [
                 { colId: 'a', width: 100 },
                 { colId: 'b', width: 200 },
@@ -1356,8 +1355,7 @@ describe('Column Mutations', () => {
             expect(afterIds).not.toContain('b');
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('group instance is reused when colGroupDef is structurally unchanged', async () => {
+        test('group instance is reused when colGroupDef is structurally unchanged', async () => {
             const api = gridsManager.createGrid('groupReuse', {
                 columnDefs: [{ headerName: 'G', groupId: 'g', children: [{ colId: 'a' }, { colId: 'b' }] }],
             });
@@ -1441,8 +1439,7 @@ describe('Column Mutations', () => {
             expect(groupAfter.colGroupDef.headerName).toBe('Changed');
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('reused group has its colGroupDef updated to reflect the latest children array', async () => {
+        test('reused group has its colGroupDef updated to reflect the latest children array', async () => {
             // Even though `children` is excluded from the structural compare (refs change per
             // call), the reused instance's `colGroupDef.children` MUST point to the latest
             // user-supplied array so consumers reading `getColGroupDef().children` don't see
@@ -1497,8 +1494,7 @@ describe('Column Mutations', () => {
             expect(groupAfter.colGroupDef.children[1].colId).toBe('b');
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('reused group picks up new children when cols are added to it', async () => {
+        test('reused group picks up new children when cols are added to it', async () => {
             const api = gridsManager.createGrid('groupChildrenAdd', {
                 columnDefs: [{ headerName: 'G', groupId: 'g', children: [{ colId: 'a' }, { colId: 'b' }] }],
             });
@@ -1561,8 +1557,7 @@ describe('Column Mutations', () => {
         // Cascade: when AgProvidedColumnGroup is reused, the displayed AgColumnGroup wrapper
         // also reuses (its lookup gated on `columnGroup.providedColumnGroup === providedGroup`).
         // Before AgProvidedColumnGroup reuse, this cascade was always broken.
-        // Solved by AG-17366 when it is completed
-        test.skip('displayed AgColumnGroup is reused when AgProvidedColumnGroup is reused', async () => {
+        test('displayed AgColumnGroup is reused when AgProvidedColumnGroup is reused', async () => {
             const api = gridsManager.createGrid('groupCascade', {
                 columnDefs: [{ headerName: 'G', groupId: 'g', children: [{ colId: 'a' }] }],
             });
@@ -1825,8 +1820,7 @@ describe('Column Mutations', () => {
             expect(column.getColDef()).not.toBe(initialMergedRef);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('AgProvidedColumnGroup adopts new colGroupDef ref when structurally equal', async () => {
+        test('AgProvidedColumnGroup adopts new colGroupDef ref when structurally equal', async () => {
             const initialGroup: ColGroupDef = {
                 groupId: 'g',
                 headerName: 'G',
@@ -1983,6 +1977,64 @@ describe('Column Mutations', () => {
 
             expect(innerGroup2.isAlive()).toBe(false);
             expect(colB.isAlive()).toBe(false);
+        });
+    });
+
+    describe('setColumnDefs: stateful colDef attrs still apply on update (BC)', () => {
+        test('a present pinned colDef re-applies, overwriting a runtime unpin', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                rowData: [{ a: 1, b: 2 }],
+                columnDefs: [{ colId: 'a', pinned: 'left' }, { colId: 'b' }],
+            });
+            await new GridColumns(api, 'pinned via colDef').checkColumns(`
+                LEFT
+                └── a width:200
+                CENTER
+                └── b width:200
+            `);
+
+            api.setColumnsPinned(['a'], null);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('a')!.getPinned()).toBeNull();
+
+            api.setGridOption('columnDefs', [{ colId: 'a', pinned: 'left' }, { colId: 'b' }]);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('a')!.getPinned()).toBe('left');
+            await new GridColumns(api, 'pinned re-applied on update').checkColumns(`
+                LEFT
+                └── a width:200
+                CENTER
+                └── b width:200
+            `);
+            await new GridRows(api, 'pinned re-applied on update - rows').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
+        });
+
+        test('an absent pinned colDef preserves a runtime pin', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                rowData: [{ a: 1, b: 2 }],
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            });
+
+            api.setColumnsPinned(['a'], 'left');
+            await asyncSetTimeout(0);
+            expect(api.getColumn('a')!.getPinned()).toBe('left');
+
+            api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'Alpha' }, { colId: 'b' }]);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('a')!.getPinned()).toBe('left');
+            await new GridColumns(api, 'runtime pin preserved on absent-pinned update').checkColumns(`
+                LEFT
+                └── a "Alpha" width:200
+                CENTER
+                └── b width:200
+            `);
+            await new GridRows(api, 'runtime pin preserved on absent-pinned update - rows').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
         });
     });
 });

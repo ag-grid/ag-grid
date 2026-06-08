@@ -1,4 +1,4 @@
-import { _getSortDefFromInput } from '../../entities/agColumn';
+import { getSortDefFromInput } from '../../entities/agColumn';
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
@@ -186,7 +186,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     return 'calculatedColumns should be an object.';
                 }
 
-                const { dataTypes, expressionPickers, columnHighlighting } = calculatedColumns;
+                const { dataTypes, expressionPickers, suppressColumnHighlighting } = calculatedColumns;
                 if (dataTypes != null) {
                     if (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string')) {
                         return 'calculatedColumns.dataTypes should be an array of strings.';
@@ -201,8 +201,8 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                         return "calculatedColumns.expressionPickers should contain only 'columns', 'functions' or 'operators'.";
                     }
                 }
-                if (columnHighlighting != null && typeof columnHighlighting !== 'boolean') {
-                    return 'calculatedColumns.columnHighlighting should be a boolean.';
+                if (suppressColumnHighlighting != null && typeof suppressColumnHighlighting !== 'boolean') {
+                    return 'calculatedColumns.suppressColumnHighlighting should be a boolean.';
                 }
 
                 return null;
@@ -525,7 +525,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const sortingOrder = _options.sortingOrder;
 
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                    const invalidItems = sortingOrder.filter((a) => !_getSortDefFromInput(a));
+                    const invalidItems = sortingOrder.filter((a) => !getSortDefFromInput(a));
                     if (invalidItems.length > 0) {
                         return `sortingOrder must be an array of type (SortDirection | SortDef)[], incorrect items are: ${invalidItems.map(
                             (item) =>

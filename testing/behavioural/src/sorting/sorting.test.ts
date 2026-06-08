@@ -60,6 +60,34 @@ describe('Sorting', () => {
         gridMgr.reset();
     });
 
+    test('the sort-order index badge shows only in a multi-column sort', async () => {
+        const api = await gridMgr.createGridAndWait('sort-order-badge', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [{ a: 1, b: 2 }],
+        });
+        await asyncSetTimeout(0);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const sortOrderEl = (colId: string) =>
+            getByTestId(gridDiv, agTestIdFor.headerCell(colId)).querySelector('.ag-sort-order');
+
+        // Single-column sort: no ordinal badge (the lone sorted column needs no priority number).
+        api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }], defaultState: { sort: null } });
+        await asyncSetTimeout(1);
+        expect(sortOrderEl('a')?.classList.contains('ag-hidden')).toBe(true);
+
+        // Multi-column sort: every sorted column shows its 1-based priority.
+        api.applyColumnState({
+            state: [
+                { colId: 'a', sort: 'asc', sortIndex: 0 },
+                { colId: 'b', sort: 'asc', sortIndex: 1 },
+            ],
+        });
+        await asyncSetTimeout(1);
+        expect(sortOrderEl('a')?.classList.contains('ag-hidden')).toBe(false);
+        expect(sortOrderEl('a')?.textContent).toBe('1');
+        expect(sortOrderEl('b')?.textContent).toBe('2');
+    });
+
     const columnDefs = [{ field: 'sport', sortable: false }, { field: 'year' }, { field: 'amount' }, { field: 'day' }];
     const rowData = [
         { sport: 'football', year: 2021, amount: 43, day: 'monday' },

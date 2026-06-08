@@ -4,7 +4,6 @@ import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { ColDef } from '../../entities/colDef';
 import type { CellEditingStoppedEvent } from '../../events';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type {
@@ -265,7 +264,7 @@ function _createEditorParams(
     const rowIndex = position.rowNode?.rowIndex ?? (undefined as unknown as number);
     const batchEdit = editSvc?.isBatchEditing();
 
-    const agColumn = beans.colModel.getCol(position.column.getId())!;
+    const agColumn = beans.colModel.getCol(position.column)!;
     const { rowNode, column } = position;
 
     const editor = cellCtrl.comp?.getCellEditor();
@@ -636,12 +635,9 @@ function dispatchEditingStopped(
     }
 }
 
-function _columnDefsRequireValidation(columnDefs?: ColDef[]): boolean {
-    if (!columnDefs) {
-        return false;
-    }
-    for (let i = 0, len = columnDefs.length; i < len; ++i) {
-        const colDef = columnDefs[i];
+function _columnDefsRequireValidation(cols: AgColumn[]): boolean {
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        const colDef = cols[i].colDef;
         const params = colDef.cellEditorParams;
         if (!params || (!colDef.editable && !colDef.groupRowEditable)) {
             continue;
@@ -677,7 +673,7 @@ function _editorsRequireValidation(beans: BeanCollection): boolean {
 function _hasValidationRules(beans: BeanCollection): boolean {
     return (
         !!beans.gos.get('getFullRowEditValidationErrors') ||
-        _columnDefsRequireValidation(beans.colModel.getColumnDefs()) ||
+        _columnDefsRequireValidation(beans.colModel.colDefList) ||
         _editorsRequireValidation(beans)
     );
 }

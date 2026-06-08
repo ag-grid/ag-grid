@@ -55,7 +55,7 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
 
         // Resolve groupRowValueSetter: true or groupRowEditable → built-in distributeGroupValue,
         // false → explicitly disabled, function/object → as-is.
-        // colDef is already deep-merged with defaultColDef (via _mergeDeep in columnFactoryUtils),
+        // colDef is already deep-merged with defaultColDef (via _mergeDeep in colDefUtils),
         // so object-type options inherit and merge with defaultColDef automatically.
         // When groupRowEditable is a callback, evaluate it against the current row — only enable
         // implicit distribution for rows where the callback returns true.

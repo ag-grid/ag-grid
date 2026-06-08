@@ -230,25 +230,26 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
         if (colsFromPrev.length) {
             for (const [colInstanceId, cellCtrl] of colsFromPrev) {
-                const index = res.list.findIndex((ctrl) => ctrl.column.getLeft()! > cellCtrl.column.getLeft()!);
+                const index = res.list.findIndex((ctrl) => ctrl.column.left! > cellCtrl.column.left!);
                 const normalisedIndex = index === -1 ? undefined : Math.max(index - 1, 0);
 
                 addCell(colInstanceId, cellCtrl, normalisedIndex);
             }
         }
 
-        const { focusSvc, visibleCols } = this.beans;
+        const { focusSvc } = this.beans;
         const focusedCell = focusSvc.getFocusedCell();
+        const focusedCol = focusedCell?.column as AgColumn | undefined;
         // if a cell is focused, might need to be force rendered if it belongs to this pinned section
-        if (focusedCell && focusedCell.column.getPinned() == pinned) {
-            const focusedColInstanceId = (focusedCell.column as AgColumn).getInstanceId();
+        if (focusedCol && focusedCol.pinned == pinned) {
+            const focusedColInstanceId = focusedCol.getInstanceId();
             const focusedCellCtrl = res.map[focusedColInstanceId];
 
             // if focused col is visible, and there's no cell here for it, try to create one
-            if (!focusedCellCtrl && visibleCols.allCols.includes(focusedCell.column as AgColumn)) {
+            if (!focusedCellCtrl && focusedCol.displayed) {
                 const cellCtrl = this.createFocusedCellCtrl();
                 if (cellCtrl) {
-                    const index = res.list.findIndex((ctrl) => ctrl.column.getLeft()! > cellCtrl.column.getLeft()!);
+                    const index = res.list.findIndex((ctrl) => ctrl.column.left! > cellCtrl.column.left!);
                     const normalisedIndex = index === -1 ? undefined : Math.max(index - 1, 0);
                     addCell(focusedColInstanceId, cellCtrl, normalisedIndex);
                 }
@@ -286,7 +287,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
         // always remove the cell if it's not rendered or if it's in the wrong pinned location
         const { column } = cellCtrl;
-        if (column.getPinned() != nextContainerPinned) {
+        if (column.pinned != nextContainerPinned) {
             return REMOVE_CELL;
         }
 
@@ -296,15 +297,14 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         }
 
         // we want to try and keep editing and focused cells
-        const { visibleCols, editSvc } = this.beans;
+        const { editSvc } = this.beans;
         const editing = editSvc?.isEditing(cellCtrl);
         const focused = cellCtrl.isCellFocused();
 
         const mightWantToKeepCell = editing || focused;
 
         if (mightWantToKeepCell) {
-            const cellStillDisplayed = visibleCols.allCols.indexOf(column) >= 0;
-            return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
+            return column.displayed ? KEEP_CELL : REMOVE_CELL;
         }
 
         return REMOVE_CELL;

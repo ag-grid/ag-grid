@@ -800,7 +800,9 @@ export const AG_GRID_ERRORS = {
         }),
     303: ({ key }: { key: string }) =>
         `Multiple toolbar items share the explicit key '${key}'. Only the first item is rendered.` as const,
-    304: () =>
+    304: ({ dataType }: { dataType: string }) =>
+        `Invalid calculatedColumns.dataTypes entry "${dataType}" - it must be a built-in data type or registered via dataTypeDefinitions. It has been ignored.` as const,
+    305: () =>
         `The file input overlay is shown but no 'fileProcessor' is configured. The overlay will not work without a 'fileProcessor'.` as const,
 };
 

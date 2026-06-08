@@ -4,12 +4,7 @@ import { ColumnApiModule, TooltipModule, _PopupModule } from 'ag-grid-community'
 import { FormulaModule } from '../formula/formulaModule';
 import { VERSION } from '../version';
 import calculatedColumnsCSS from './calculatedColumns.css';
-import {
-    addCalculatedColumn,
-    openCalculatedColumnDialog,
-    removeCalculatedColumn,
-    updateCalculatedColumn,
-} from './calculatedColumnsApi';
+import { openCalculatedColumnDialog } from './calculatedColumnsApi';
 import { CalculatedColumnsService } from './calculatedColumnsService';
 
 /**
@@ -20,9 +15,6 @@ export const CalculatedColumnsModule: _ModuleWithApi<_CalculatedColumnsGridApi<a
     version: VERSION,
     beans: [CalculatedColumnsService],
     apiFunctions: {
-        addCalculatedColumn,
-        updateCalculatedColumn,
-        removeCalculatedColumn,
         openCalculatedColumnDialog,
     },
     dependsOn: [FormulaModule, _PopupModule, ColumnApiModule, TooltipModule],

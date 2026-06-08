@@ -387,8 +387,7 @@ describe('Column Mutations', () => {
     });
 
     describe('insertVirtualColumnsForCol splice position', () => {
-        // Solved by AG-17366 when it is completed
-        test.skip('hierarchy virtuals precede source col, in declared order', async () => {
+        test('hierarchy virtuals precede source col, in declared order', async () => {
             const api = gridsManager.createGrid('splicePos', {
                 columnDefs: [
                     { colId: 'a' },
@@ -549,8 +548,7 @@ describe('Column Mutations', () => {
             `);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('col removed via columnDefs change has lastLeftPinned cleared (no stale flag on destroyed bean)', async () => {
+        test('col removed via columnDefs change has lastLeftPinned cleared (no stale flag on destroyed bean)', async () => {
             const api = gridsManager.createGrid('removedAfterPin', {
                 columnDefs: [{ colId: 'a', pinned: 'left' }, { colId: 'b', pinned: 'left' }, { colId: 'c' }],
             });

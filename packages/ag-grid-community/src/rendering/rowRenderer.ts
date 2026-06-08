@@ -403,7 +403,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private refreshListenersToColumnsForCellComps(): void {
         this.removeGridColumnListeners();
 
-        const cols = this.colModel.getCols();
+        const cols = this.colModel.colsList;
 
         for (const col of cols) {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
@@ -971,7 +971,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (_exists(columns)) {
             colIdsMap = {};
             columns.forEach((colKey: string | AgColumn) => {
-                const column: AgColumn | null = this.colModel.getCol(colKey);
+                const column = this.colModel.getCol(colKey);
                 if (_exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }
@@ -1227,8 +1227,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private onDisplayedColumnsChanged(): void {
         const { visibleCols } = this.beans;
-        const pinningLeft = visibleCols.isPinningLeft();
-        const pinningRight = visibleCols.isPinningRight();
+        const pinningLeft = visibleCols.leftCols.length > 0;
+        const pinningRight = visibleCols.rightCols.length > 0;
         const atLeastOneChanged = this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight;
 
         if (atLeastOneChanged) {

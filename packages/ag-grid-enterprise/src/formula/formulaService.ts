@@ -9,7 +9,6 @@ import type {
     NamedBean,
     RowNode,
     _ChangedRowNodes,
-    _ColumnCollections,
 } from 'ag-grid-community';
 import { BeanStub, _convertColumnEventSourceType, _warn } from 'ag-grid-community';
 
@@ -23,8 +22,8 @@ import { evalAst, formulaVisitorSetVisited, formulaVisitorSetVisiting, unresolve
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
 import { shiftNode } from './functions/utils';
 import type { FormulaErrorId, FormulaErrorType } from './i18n';
-import { isValidFunctionName, visitCalculatedColumnReferences } from './refUtils';
-import { isCalculatedColumnRowAvailable } from './rowAccess';
+import { isValidFunctionName } from './refUtils';
+import { isFormulaRowAvailable } from './rowAccess';
 
 /** Shared params object for `rowRenderer.refreshCells`, hoisted to avoid per-call allocation. */
 const REFRESH_CELLS_PARAMS = { suppressFlash: true, force: true } as const;
@@ -107,8 +106,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * Recompute `active`, the `formulaColumnsPresent` cache, and trigger a full formula refresh
      * if the active state changed. Called by `columnModel` whenever the column set changes.
      */
-    public setFormulasActive(cols: _ColumnCollections): void {
-        const columns = cols.list;
+    public setFormulasActive(columns: AgColumn[]): void {
         const calculatedColumnsEnabled = this.beans.calculatedColsSvc != null;
         let editableFormulaColumnsPresent = false;
         let calculatedColumnsPresent = false;
@@ -127,9 +125,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         const formulaColumnsPresent = editableFormulaColumnsPresent || calculatedColumnsPresent;
         this.formulaColumnsPresent = formulaColumnsPresent;
         const editableFormulasCompatible =
-            editableFormulaColumnsPresent && this.checkForEditableFormulaIncompatibleServices(cols);
+            editableFormulaColumnsPresent && this.checkForEditableFormulaIncompatibleServices(columns);
         const calculatedColumnsCompatible =
-            calculatedColumnsPresent && this.checkForCalculatedColumnIncompatibleServices(cols);
+            calculatedColumnsPresent && this.checkForCalculatedColumnIncompatibleServices(columns);
         const editableFormulasSupported = this.beans.rowModel.getType() === 'clientSide';
         const active = editableFormulasCompatible && editableFormulasSupported;
         const calculatedColumnsActive = calculatedColumnsCompatible;
@@ -151,42 +149,35 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             _warn(295, { blockedService: 'Master Detail' });
             return false;
         }
-
         if (this.gos.get('enableCellExpressions')) {
             _warn(295, { blockedService: 'Cell Expressions' });
             return false;
         }
-
         return true;
     }
 
-    private checkForCalculatedColumnIncompatibleServices(cols: _ColumnCollections): boolean {
+    private checkForCalculatedColumnIncompatibleServices(columns: AgColumn[]): boolean {
         if (!this.checkForBaseIncompatibleServices()) {
             return false;
         }
-
-        const columns = cols.list;
-        for (const col of columns) {
+        for (let i = 0, len = columns.length; i < len; ++i) {
+            const col = columns[i];
             if (col.isPivotActive()) {
                 _warn(295, { blockedService: 'Column Pivoting' });
                 return false;
             }
         }
-
         return true;
     }
 
-    private checkForEditableFormulaIncompatibleServices(cols: _ColumnCollections): boolean {
+    private checkForEditableFormulaIncompatibleServices(columns: AgColumn[]): boolean {
         if (!this.checkForBaseIncompatibleServices()) {
             return false;
         }
-
         if (this.gos.get('treeData')) {
             _warn(295, { blockedService: 'Tree Data' });
             return false;
         }
-
-        const columns = cols.list;
         for (let i = 0, len = columns.length; i < len; ++i) {
             const col = columns[i];
             if (col.isAllowPivot() || col.isPivotActive()) {
@@ -202,7 +193,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 return false;
             }
         }
-
         return true;
     }
 
@@ -220,12 +210,12 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             if (node.rowPinned != null && node.pinnedSibling) {
                 return;
             }
-            // evicts this row's and its pinned sibling's own formulas so same-row calculated
-            // columns re-query their expression during the normal row refresh.
+            // Evict this row's (and its pinned sibling's) formulas so same-row calculated columns
+            // re-evaluate, then invalidate every cached value — an editable formula in another row
+            // may reference the changed cell. The refresh neither forces nor suppresses flash, so
+            // dependent cells flash on a genuine value change in step with the edited column.
             this.dropRow(node);
-            if (this.active) {
-                this.bumpValueCacheAndRefresh();
-            }
+            this.bumpValueCacheAndRefresh(false);
         };
         const onNewColumnsLoaded = () => {
             if (!this.isEvaluationActive()) {
@@ -384,9 +374,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * Bulk-invalidate every cached value via a version bump (ASTs preserved) and repaint.
      * O(1); entries become stale on next read.
      */
-    private bumpValueCacheAndRefresh(): void {
+    private bumpValueCacheAndRefresh(forceRefresh: boolean = true): void {
         this.valueCacheVersion++;
-        this.beans.rowRenderer.refreshCells(REFRESH_CELLS_PARAMS);
+        this.beans.rowRenderer.refreshCells(forceRefresh ? REFRESH_CELLS_PARAMS : undefined);
     }
 
     /**
@@ -467,7 +457,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (!this.isEvaluationActive()) {
             return;
         }
-        const list = beans.colModel.getCols();
+        const list = beans.colModel.colsList;
         if (!list) {
             return;
         }
@@ -690,7 +680,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     private ensureCalculatedCellFormula(row: RowNode, col: AgColumn, calculatedExpression: string): CellFormula | null {
-        if (!isCalculatedColumnRowAvailable(row)) {
+        if (!isFormulaRowAvailable(row) || row.group) {
             return null;
         }
 
@@ -708,10 +698,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         rowMap.set(col, null);
 
         try {
-            if (row.group && !this.canEvaluateCalculatedColumnForRow(row, col, new Set<string>())) {
-                return null;
-            }
-
             const trimmedExpression = calculatedExpression.trim();
             if (!trimmedExpression) {
                 return null;
@@ -724,35 +710,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             rowMap.delete(col);
             throw e;
         }
-    }
-
-    private canEvaluateCalculatedColumnForRow(row: RowNode, col: AgColumn, visiting: Set<string>): boolean {
-        const calculatedExpression = col.colDef.calculatedExpression;
-        if (calculatedExpression == null) {
-            return this.fetchRawValue(col, row) !== undefined;
-        }
-
-        if (visiting.has(col.colId)) {
-            return true;
-        }
-
-        visiting.add(col.colId);
-        let canEvaluate = true;
-        visitCalculatedColumnReferences(calculatedExpression, (reference) => {
-            if (!canEvaluate) {
-                return;
-            }
-
-            const referencedColumn = this.beans.colModel.getColById(reference);
-            if (!referencedColumn) {
-                canEvaluate = false;
-                return;
-            }
-
-            canEvaluate = this.canEvaluateCalculatedColumnForRow(row, referencedColumn, visiting);
-        });
-        visiting.delete(col.colId);
-        return canEvaluate;
     }
 
     private coerceFormulaValue(cell: CellFormula, value: unknown): unknown {

@@ -1,20 +1,3 @@
-/**
- * Characterises AgColumn identity + colId-allocation across builds. Two distinct mechanisms,
- * kept separate on purpose:
- *
- *  1. Reuse — does an AgColumn instance survive a colDef change? Keyed by `colId ?? field ??
- *     userColDefRef` (see `_createColumnTree` / `buildColumn`). Plain colId reuse is covered in
- *     setColumnDefs.test.ts; this file adds field-keyed and anonymous (no colId/no field) cases,
- *     the latter being the React inline-`{...}` colDef scenario.
- *  2. Auto-id allocation — anonymous cols receive deterministic integer ids ('0','1',…), avoiding
- *     collisions with explicit user colIds.
- *
- * Id generation itself is a fixed contract and is NOT being changed; these tests pin its current
- * behaviour (including the order-dependent anonymous/explicit-colId interaction) so the upcoming
- * order-maintenance rework can be verified against a stable id baseline.
- *
- * Tests instantiate the full grid via TestGridsManager and exercise public APIs only.
- */
 import { vi } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
@@ -78,8 +61,7 @@ describe('Column identity & id allocation', () => {
             expect(colIds(api)).toEqual(['0', 'b']);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('anonymous col keeps a stable id (no drift) when its colDef object is recreated', async () => {
+        test('anonymous col keeps a stable id (no drift) when its colDef object is recreated', async () => {
             const def0: ColDef = { headerName: 'X', width: 100 };
             const api = gridsManager.createGrid('myGrid', { columnDefs: [def0, { field: 'b' }] });
 
@@ -120,13 +102,8 @@ describe('Column identity & id allocation', () => {
         });
     });
 
-    describe('auto-id vs explicit colId collision', () => {
-        test('anonymous-first takes "0", so a later explicit colId:"0" is suffixed to "0_1"', () => {
-            // Auto-ids are allocated in def order: the anonymous col is FIRST so it grabs '0', and the
-            // later explicit `colId: '0'` then collides and is suffixed to '0_1' (with warning 273).
-            // Documented, order-dependent behaviour — pinned to guard the id-allocation contract while
-            // order-maintenance is reworked around it.
-            vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
+    describe('explicit colId wins over anonymous integer ids (order-independent)', () => {
+        test('anonymous-first: explicit colId:"0" is still honoured, the anonymous col skips to "1"', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ headerName: 'anon' }, { colId: '0', headerName: 'explicit' }],
             });
@@ -134,8 +111,8 @@ describe('Column identity & id allocation', () => {
             const headerById = Object.fromEntries(
                 api.getColumns()!.map((c) => [c.getColId(), c.getColDef().headerName])
             );
-            expect(colIds(api)).toEqual(['0', '0_1']);
-            expect(headerById).toEqual({ '0': 'anon', '0_1': 'explicit' });
+            expect(colIds(api)).toEqual(['1', '0']);
+            expect(headerById).toEqual({ '1': 'anon', '0': 'explicit' });
         });
 
         test('explicit-first keeps its id; the anonymous col skips to "1"', () => {
@@ -148,6 +125,17 @@ describe('Column identity & id allocation', () => {
             );
             expect(colIds(api)).toEqual(['0', '1']);
             expect(headerById).toEqual({ '0': 'explicit', '1': 'anon' });
+        });
+
+        test('grouped: explicit numeric colId is not stolen by generated anonymous or padding-group ids', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { groupId: 'g', children: [{ headerName: 'anon' }, { colId: '0', field: 'a' }] },
+                    { field: 'b' }, // top-level leaf next to a group → wrapped in a generated padding group
+                ],
+            });
+            expect(api.getColumn('0')?.getColDef().field).toBe('a');
+            expect(colIds(api)).toEqual(['1', '0', 'b']);
         });
     });
 
@@ -165,6 +153,144 @@ describe('Column identity & id allocation', () => {
                 columnDefs: [{ colId: 'x' }, { colId: 'x' }],
             });
             expect(colIds(api)).toEqual(['x', 'x_1']);
+        });
+
+        test('both duplicate-field cols keep their instances (and state) across a rebuild', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'a', width: 100 },
+                    { field: 'a', width: 100 },
+                ],
+            });
+            const first = api.getColumn('a')!;
+            const second = api.getColumn('a_1')!; // the suffixed duplicate the buggy path recreated
+            expect(first).toBeTruthy();
+            expect(second).toBeTruthy();
+
+            api.applyColumnState({ state: [{ colId: 'a_1', width: 222 }] });
+            api.setGridOption('columnDefs', [
+                { field: 'a', headerName: 'A1' },
+                { field: 'a', headerName: 'A2' },
+            ]);
+            await asyncSetTimeout(0);
+
+            expect(colIds(api)).toEqual(['a', 'a_1']);
+            expect(api.getColumn('a')).toBe(first);
+            expect(api.getColumn('a_1')).toBe(second);
+            expect(api.getColumn('a_1')!.getActualWidth()).toBe(222);
+        });
+
+        test('both duplicate-colId cols keep their instances across a rebuild', async () => {
+            vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'x' }, { colId: 'x' }],
+            });
+            const first = api.getColumn('x')!;
+            const second = api.getColumn('x_1')!;
+
+            api.setGridOption('columnDefs', [
+                { colId: 'x', headerName: 'X1' },
+                { colId: 'x', headerName: 'X2' },
+            ]);
+            await asyncSetTimeout(0);
+
+            expect(colIds(api)).toEqual(['x', 'x_1']);
+            expect(api.getColumn('x')).toBe(first);
+            expect(api.getColumn('x_1')).toBe(second);
+        });
+
+        test('the SAME colDef instance used for two columns yields two distinct cols, reused across rebuild', async () => {
+            const shared: ColDef = { field: 'a', width: 100 };
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [shared, shared],
+            });
+
+            const first = api.getColumn('a')!;
+            const second = api.getColumn('a_1')!;
+            expect(first).toBeTruthy();
+            expect(second).toBeTruthy();
+            expect(first).not.toBe(second);
+            expect(colIds(api)).toEqual(['a', 'a_1']);
+
+            api.setGridOption('columnDefs', [shared, shared]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumns()!.length).toBe(2);
+            expect(colIds(api)).toEqual(['a', 'a_1']);
+            expect(api.getColumn('a')).toBe(first);
+            expect(api.getColumn('a_1')).toBe(second);
+        });
+
+        test('the SAME colDef instance with an explicit colId used twice yields two distinct cols, reused across rebuild', async () => {
+            vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
+            const shared: ColDef = { colId: 'x', width: 100 };
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [shared, shared],
+            });
+
+            const first = api.getColumn('x')!;
+            const second = api.getColumn('x_1')!;
+            expect(first).toBeTruthy();
+            expect(second).toBeTruthy();
+            expect(first).not.toBe(second);
+            expect(colIds(api)).toEqual(['x', 'x_1']);
+
+            api.setGridOption('columnDefs', [shared, shared]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumns()!.length).toBe(2);
+            expect(colIds(api)).toEqual(['x', 'x_1']);
+            expect(api.getColumn('x')).toBe(first);
+            expect(api.getColumn('x_1')).toBe(second);
+        });
+
+        test('duplicate-field cols with stable refs follow their ref (not position) when reordered', async () => {
+            const defA: ColDef = { field: 'a' };
+            const defB: ColDef = { field: 'a' };
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [defA, defB] });
+
+            const first = api.getColumn('a')!; // built from defA
+            const second = api.getColumn('a_1')!; // built from defB
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', width: 111 },
+                    { colId: 'a_1', width: 222 },
+                ],
+            });
+
+            api.setGridOption('columnDefs', [defB, defA]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumns()![0]).toBe(second);
+            expect(api.getColumns()![1]).toBe(first);
+            expect(api.getColumn('a_1')!.getActualWidth()).toBe(222);
+            expect(api.getColumn('a')!.getActualWidth()).toBe(111);
+        });
+
+        test('swapping the colId of two stable colDef refs keeps each col with its colId (not its ref)', async () => {
+            const defA: ColDef = { colId: 'x' };
+            const defB: ColDef = { colId: 'y' };
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [defA, defB] });
+
+            const colX = api.getColumn('x')!;
+            const colY = api.getColumn('y')!;
+            api.applyColumnState({
+                state: [
+                    { colId: 'x', width: 111 },
+                    { colId: 'y', width: 222 },
+                ],
+            });
+
+            defA.colId = 'y';
+            defB.colId = 'x';
+            api.setGridOption('columnDefs', [defA, defB]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('x')).toBe(colX);
+            expect(api.getColumn('y')).toBe(colY);
+            expect(api.getColumn('x')!.getActualWidth()).toBe(111);
+            expect(api.getColumn('y')!.getActualWidth()).toBe(222);
+            expect(colIds(api)).toEqual(['y', 'x']); // defA (now 'y') first, defB (now 'x') second
         });
     });
 

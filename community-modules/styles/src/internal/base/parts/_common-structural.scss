@@ -282,7 +282,7 @@
     .ag-full-width-anchor {
         position: sticky;
         left: 0;
-        width: var(--ag-fw-anchor-width, 100%);
+        width: var(--ag-internal-fw-anchor-width, 100%);
         height: 100%;
         display: flex;
         align-items: center;
@@ -802,11 +802,11 @@
     }
 
     .ag-grid-pinned-left-cells {
-        left: var(--ag-pinned-left-sticky-offset, 0px);
+        left: var(--ag-internal-pinned-left-sticky-offset, 0px);
     }
 
     .ag-grid-pinned-right-cells {
-        right: var(--ag-pinned-right-sticky-offset, 0px);
+        right: var(--ag-internal-pinned-right-sticky-offset, 0px);
     }
 
     // place pinned-right after the ::after spacer so the spacer fills the gap between
@@ -829,9 +829,9 @@
         }
     }
 
-    .ag-rtl .ag-body-horizontal-scroll .ag-grid-scrolling-cells {
+    .ag-rtl .ag-row .ag-grid-scrolling-cells {
         // when scrollable, offset for the vertical scrollbar on the left in rtl.
-        margin-left: var(--ag-pinned-left-sticky-offset, 0px);
+        margin-left: var(--ag-internal-pinned-left-sticky-offset, 0px);
     }
 
     .ag-row-position-absolute {

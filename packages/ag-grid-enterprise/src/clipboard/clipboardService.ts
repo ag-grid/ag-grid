@@ -948,15 +948,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             Object.assign(allCellsToFlash, cellsToFlash);
         }
 
-        const allColumns = this.beans.visibleCols.allCols;
         const exportedColumns = Array.from(columnsSet);
 
-        exportedColumns.sort((a, b) => {
-            const posA = allColumns.indexOf(a);
-            const posB = allColumns.indexOf(b);
-
-            return posA - posB;
-        });
+        exportedColumns.sort((a, b) => a.allColsIndex - b.allColsIndex);
 
         const data = this.buildExportParams({
             columns: exportedColumns,

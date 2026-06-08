@@ -1,18 +1,3 @@
-/**
- * Comprehensive tests for the column API methods to ensure they remain consistent
- * after internal ColumnModel refactoring (AG-17060-get-col-perf).
- *
- * Tests cover:
- * - getAllGridColumns / getAllDisplayedColumns / getDisplayedLeft/Center/RightColumns
- * - getColumn / getColumns
- * - getColumnDefs (sorted and unsorted)
- * - Column state API (getColumnState, applyColumnState, resetColumnState)
- * - Column group state API (getColumnGroupState, setColumnGroupState)
- * - Pivot columns API (isPivotMode, getPivotColumns, getValueColumns, getRowGroupColumns)
- * - Column visibility and pinning API
- * - Column moving API
- * - Auto-generated columns (selection, auto-group, row numbers)
- */
 import type { ColDef, Column, ColumnState } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
@@ -492,6 +477,39 @@ describe('Column API', () => {
                 ROOT id:ROOT_NODE_ID
             `);
         });
+
+        test('reports rowGroupIndex/pivotIndex in active order, tracking reorders', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+            });
+
+            const indexById = (prop: 'rowGroupIndex' | 'pivotIndex') =>
+                Object.fromEntries(api.getColumnDefs()!.map((d) => [(d as ColDef).colId, (d as ColDef)[prop]]));
+
+            // Activate row groups in a non-colDef order: c=0, a=1, b=2.
+            api.applyColumnState({
+                state: [
+                    { colId: 'c', rowGroupIndex: 0 },
+                    { colId: 'a', rowGroupIndex: 1 },
+                    { colId: 'b', rowGroupIndex: 2 },
+                ],
+            });
+            expect(indexById('rowGroupIndex')).toEqual({ a: 1, b: 2, c: 0 });
+
+            // Reorder the active group columns and confirm getColumnDefs tracks the restamp.
+            api.moveRowGroupColumn(0, 2); // c (level 0) moves to the end → a=0, b=1, c=2
+            expect(indexById('rowGroupIndex')).toEqual({ a: 0, b: 1, c: 2 });
+
+            // Same for pivot, also non-colDef order.
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', rowGroup: false, pivotIndex: 1 },
+                    { colId: 'b', rowGroup: false, pivotIndex: 0 },
+                    { colId: 'c', rowGroup: false },
+                ],
+            });
+            expect(indexById('pivotIndex')).toEqual({ a: 1, b: 0, c: null });
+        });
     });
 
     describe('getColumnState and applyColumnState', () => {
@@ -829,6 +847,41 @@ describe('Column API', () => {
                 ├── a width:200
                 └── b width:200
             `);
+        });
+
+        // A primary column group is parked (not displayed) while pivoting. `getProvidedColumnGroup`
+        // returns the definition and must still resolve it by id (mirroring `getColumn` for parked
+        // primary columns); `getColumnGroup` returns the displayed instance, which is gone while pivoting.
+        test('getProvidedColumnGroup resolves a parked primary group while pivoting', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { groupId: 'locationGroup', children: [{ field: 'country' }, { field: 'athlete' }] },
+                    { field: 'sport', pivot: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { country: 'USA', athlete: 'Phelps', sport: 'Swimming', gold: 2 },
+                    { country: 'Russia', athlete: 'Ivanov', sport: 'Gymnastics', gold: 3 },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            // Normal mode: both the provided definition and the displayed instance resolve.
+            expect(api.getProvidedColumnGroup('locationGroup')?.getGroupId()).toBe('locationGroup');
+            expect(api.getColumnGroup('locationGroup')).not.toBeNull();
+
+            api.setGridOption('pivotMode', true);
+            await asyncSetTimeout(0);
+            // Pivot is active (result columns generated), so the primary group is parked.
+            expect((api.getPivotResultColumns() ?? []).length).toBeGreaterThan(0);
+
+            // Provided group still resolves via the parked-primary fallback; displayed instance is gone.
+            expect(api.getProvidedColumnGroup('locationGroup')?.getGroupId()).toBe('locationGroup');
+            expect(api.getColumnGroup('locationGroup')).toBeNull();
+
+            // Unknown ids are null in both APIs.
+            expect(api.getProvidedColumnGroup('does-not-exist')).toBeNull();
+            expect(api.getColumnGroup('does-not-exist')).toBeNull();
         });
     });
 
@@ -1313,6 +1366,42 @@ describe('Column API', () => {
                 ├── gold width:200 aggFunc:sum
                 └── silver width:200 aggFunc:sum
             `);
+        });
+
+        test('getColumnDefs reflects a primary-column move made before entering pivot mode', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'country', rowGroup: true },
+                    { colId: 'sport', pivot: true },
+                    { colId: 'gold', aggFunc: 'sum' },
+                    { colId: 'a' },
+                    { colId: 'b' },
+                ],
+                rowData: [
+                    { country: 'USA', sport: 'Swimming', gold: 3 },
+                    { country: 'UK', sport: 'Running', gold: 2 },
+                ],
+            });
+
+            api.moveColumns(['b'], 0);
+
+            api.setGridOption('pivotMode', true);
+            expect(api.getPivotResultColumns()?.length).toBeGreaterThan(0); // primaries now parked
+
+            const inPivot = api.getColumnDefs()!.map((d) => (d as ColDef).colId);
+            expect(inPivot).toEqual(['b', 'country', 'sport', 'gold', 'a']);
+
+            api.setGridOption('pivotMode', false);
+            const afterPivot = api.getColumnDefs()!.map((d) => (d as ColDef).colId);
+            expect(afterPivot).toEqual(['b', 'country', 'sport', 'gold', 'a']);
+            expect(api.getAllDisplayedColumns().map((c: Column) => c.getColId())).toEqual([
+                'b',
+                'ag-Grid-AutoColumn',
+                'country',
+                'sport',
+                'gold',
+                'a',
+            ]);
         });
 
         test('adding columns to existing grid maintains prior column order', async () => {

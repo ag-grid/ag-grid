@@ -3,21 +3,23 @@ import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { HeaderLocation } from '../../entities/colDef';
 import type { Column, ColumnGroup, ProvidedColumnGroup } from '../../interfaces/iColumn';
+import { _getColGroupState, _resetColGroupState, _setColGroupOpen, _setColGroupState } from './columnGroupState';
 
 export function setColumnGroupOpened(
     beans: BeanCollection,
     group: ProvidedColumnGroup | string,
     newValue: boolean
 ): void {
-    beans.colGroupSvc?.setColumnGroupOpened(group as AgProvidedColumnGroup | string, newValue, 'api');
+    _setColGroupOpen(beans, group as AgProvidedColumnGroup | string, newValue, 'api');
 }
 
 export function getColumnGroup(beans: BeanCollection, name: string, instanceId?: number): ColumnGroup | null {
-    return beans.colGroupSvc?.getColumnGroup(name, instanceId) ?? null;
+    const instances = name != null ? beans.colModel.colsGroupsById.get(name)?.displayInstances : undefined;
+    return (instances && (typeof instanceId === 'number' ? instances[instanceId] : instances[0])) || null;
 }
 
 export function getProvidedColumnGroup(beans: BeanCollection, name: string): ProvidedColumnGroup | null {
-    return beans.colGroupSvc?.getProvidedColGroup(name) ?? null;
+    return beans.colModel.getColGroup(name) ?? null;
 }
 
 export function getDisplayNameForColumnGroup(
@@ -29,15 +31,15 @@ export function getDisplayNameForColumnGroup(
 }
 
 export function getColumnGroupState(beans: BeanCollection): { groupId: string; open: boolean }[] {
-    return beans.colGroupSvc?.getColumnGroupState() ?? [];
+    return _getColGroupState(beans);
 }
 
 export function setColumnGroupState(beans: BeanCollection, stateItems: { groupId: string; open: boolean }[]): void {
-    beans.colGroupSvc?.setColumnGroupState(stateItems, 'api');
+    _setColGroupState(beans, stateItems, 'api');
 }
 
 export function resetColumnGroupState(beans: BeanCollection): void {
-    beans.colGroupSvc?.resetColumnGroupState('api');
+    _resetColGroupState(beans, 'api');
 }
 
 export function getLeftDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {
@@ -53,5 +55,6 @@ export function getRightDisplayedColumnGroups(beans: BeanCollection): (Column | 
 }
 
 export function getAllDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] | null {
-    return beans.visibleCols.getAllTrees();
+    const { treeLeft, treeCenter, treeRight } = beans.visibleCols;
+    return treeLeft.concat(treeCenter, treeRight);
 }

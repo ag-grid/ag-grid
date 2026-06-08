@@ -163,15 +163,13 @@ export class GridSerializer extends BeanStub implements NamedBean {
         return (gridSerializingSession) => {
             if (!params.skipColumnGroupHeaders) {
                 const idCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
-                const { colGroupSvc } = this.beans;
-                const displayedGroups: (AgColumn | AgColumnGroup)[] = colGroupSvc
-                    ? colGroupSvc.createColumnGroups({
-                          columns: columnsToExport,
-                          idCreator,
-                          pinned: null,
-                          isStandaloneStructure: true,
-                      })
-                    : columnsToExport;
+                const displayedGroups: (AgColumn | AgColumnGroup)[] = this.beans.colGroupSvc.createGroups(
+                    columnsToExport,
+                    idCreator,
+                    null,
+                    /* buildToken */ undefined,
+                    /* isStandaloneStructure */ true
+                );
 
                 this.recursivelyAddHeaderGroups(
                     displayedGroups,
@@ -353,7 +351,14 @@ export class GridSerializer extends BeanStub implements NamedBean {
         };
 
         if (columnKeys?.length) {
-            return colModel.getColsForKeys(columnKeys).filter(filterSpecialColumns);
+            const result: AgColumn[] = [];
+            for (let i = 0, len = columnKeys.length; i < len; ++i) {
+                const col = colModel.getCol(columnKeys[i]);
+                if (col && filterSpecialColumns(col)) {
+                    result.push(col);
+                }
+            }
+            return result;
         }
 
         const isTreeData = gos.get('treeData');
@@ -361,7 +366,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         let columnsToExport: AgColumn[];
 
         if (allColumns && !isPivotMode) {
-            columnsToExport = colModel.getCols();
+            columnsToExport = colModel.colsList;
         } else {
             columnsToExport = visibleCols.allCols;
         }
@@ -381,11 +386,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
     ): void {
         const directChildrenHeaderGroups: (AgColumn | AgColumnGroup)[] = [];
         for (const columnGroupChild of displayedGroups) {
-            const columnGroup = columnGroupChild as AgColumnGroup;
-            if (!columnGroup.getChildren) {
+            if (!isColumnGroup(columnGroupChild)) {
                 continue;
             }
-            for (const it of columnGroup.getChildren() ?? []) {
+            for (const it of columnGroupChild.children ?? []) {
                 directChildrenHeaderGroups.push(it);
             }
         }

@@ -57,7 +57,7 @@ export class FileInputOverlayComponent
         this.showState('ready');
         this.setupDragListeners();
         if (!this.gos.get('fileProcessor')) {
-            _warn(304);
+            _warn(305);
             this.eErrorBanner.textContent = 'gridOptions.fileProcessor is missing';
 
             this.showState('error');

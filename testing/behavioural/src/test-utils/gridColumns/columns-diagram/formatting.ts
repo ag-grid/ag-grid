@@ -62,8 +62,7 @@ export function columnDiagram(col: Column, api: GridApi, isHidden: boolean): str
         }
     }
 
-    // Aggregation
-    const aggFunc = col.getAggFunc();
+    const aggFunc = col.isValueActive() ? col.getAggFunc() : null;
     if (aggFunc != null) {
         parts.push('aggFunc:' + (typeof aggFunc === 'string' ? aggFunc : 'custom'));
     }

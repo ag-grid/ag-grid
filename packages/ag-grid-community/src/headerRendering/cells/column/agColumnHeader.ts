@@ -133,7 +133,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         this.params = params;
 
         const { sortSvc, touchSvc, rowNumbersSvc, userCompFactory } = this.beans;
-        const sortComp = sortSvc?.getSortIndicatorSelector();
+        const sortComp = sortSvc?.SortIndicatorSelector;
         this.currentTemplate = this.workOutTemplate(params, !!sortComp);
         this.setTemplate(this.currentTemplate, sortComp ? [sortComp] : undefined);
 
@@ -282,7 +282,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         // templates, in that case, we need to look for provided sort elements and
         // manually create eSortIndicator.
         if (!this.eSortIndicator) {
-            this.eSortIndicator = this.createBean(sortSvc.createSortIndicator(true));
+            this.eSortIndicator = this.createBean(new sortSvc.SortIndicatorComp(true));
             const {
                 eSortIndicator,
                 eSortOrder,

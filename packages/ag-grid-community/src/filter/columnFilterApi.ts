@@ -19,7 +19,7 @@ export function getColumnFilterInstance<TFilter = IFilter>(
 }
 
 export function destroyFilter(beans: BeanCollection, key: string | Column) {
-    const column = beans.colModel.getColDefColOrCol(key);
+    const column = beans.colModel.getCol(key);
     if (column) {
         return beans.colFilter?.destroyFilter(column, 'api');
     }
@@ -43,7 +43,7 @@ export function getColumnFilterModel<TModel>(
         _warn(288);
         useUnapplied = false;
     }
-    const column = colModel.getColDefColOrCol(key);
+    const column = colModel.getCol(key);
     return column ? (colFilter?.getModelForColumn(column, useUnapplied) ?? null) : null;
 }
 
@@ -56,7 +56,7 @@ export function setColumnFilterModel<TModel>(
 }
 
 export function showColumnFilter(beans: BeanCollection, colKey: string | Column): void {
-    const column = beans.colModel.getColDefColOrCol(colKey);
+    const column = beans.colModel.getCol(colKey);
     if (!column) {
         // Column not found, can't show filter
         _error(12, { colKey });
@@ -74,7 +74,7 @@ export function hideColumnFilter(beans: BeanCollection): void {
 }
 
 export function getColumnFilterHandler(beans: BeanCollection, colKey: string | Column): FilterHandler | undefined {
-    const column = beans.colModel.getColDefColOrCol(colKey);
+    const column = beans.colModel.getCol(colKey);
     if (!column) {
         // Column not found, can't show filter
         _error(12, { colKey });
@@ -91,7 +91,7 @@ export function doFilterAction(beans: BeanCollection, params: FilterActionParams
     }
     const { colId, action } = params;
     if (colId) {
-        const column = colModel.getColById(colId);
+        const column = colModel.colsById[colId];
         if (column) {
             colFilter?.updateModel(column, action);
         }

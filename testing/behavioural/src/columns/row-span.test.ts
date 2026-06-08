@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, IRowNode } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
     CellSpanModule,
     ClientSideRowModelModule,
@@ -46,6 +46,31 @@ describe('row spanning', () => {
 
     function createGrid(options: GridOptions): GridApi {
         return gridsManager.createGrid('myGrid', { enableCellSpan: true, ...options });
+    }
+
+    function addCalculatedColumnDef(api: GridApi, colDef: ColDef): void {
+        api.setGridOption('columnDefs', [...(api.getColumnDefs() ?? []), colDef]);
+    }
+
+    function updateCalculatedColumnDef(api: GridApi, colId: string, colDefUpdate: ColDef): void {
+        api.setGridOption('columnDefs', updateColumnDef(api.getColumnDefs() ?? [], colId, colDefUpdate));
+    }
+
+    function updateColumnDef(
+        columnDefs: (ColDef | ColGroupDef)[],
+        colId: string,
+        colDefUpdate: ColDef
+    ): (ColDef | ColGroupDef)[] {
+        const nextColumnDefs: (ColDef | ColGroupDef)[] = [];
+        for (let i = 0, len = columnDefs.length; i < len; ++i) {
+            const colDef = columnDefs[i];
+            if ('children' in colDef) {
+                nextColumnDefs.push({ ...colDef, children: updateColumnDef(colDef.children, colId, colDefUpdate) });
+            } else {
+                nextColumnDefs.push((colDef.colId ?? colDef.field) === colId ? { ...colDef, ...colDefUpdate } : colDef);
+            }
+        }
+        return nextColumnDefs;
     }
 
     // ── Basic / documented behaviour ────────────────────────────────────────────────────────────
@@ -633,7 +658,7 @@ describe('row spanning', () => {
                 └── LEAF id:2 athlete:"B"
             `);
 
-            api.addCalculatedColumn({ colId: 'copy', calculatedExpression: '[athlete]' });
+            addCalculatedColumnDef(api, { colId: 'copy', calculatedExpression: '[athlete]' });
             await settle();
             // regression guard: 'copy' must span 0-1 (by evaluated value), not 0-2.
             await new GridColumns(api, 'calc-add columns after').checkColumns(`
@@ -661,7 +686,7 @@ describe('row spanning', () => {
                     { a: 'Y', b: 'Q' },
                 ],
             });
-            api.addCalculatedColumn({ colId: 'calc', calculatedExpression: '[a]', spanRows: true } as any);
+            addCalculatedColumnDef(api, { colId: 'calc', calculatedExpression: '[a]', spanRows: true } as any);
             await settle();
             await new GridRows(api, 'calc-update rows by a').check(`
                 ROOT id:ROOT_NODE_ID
@@ -670,7 +695,7 @@ describe('row spanning', () => {
                 └── LEAF id:2 a:"Y" b:"Q" calc:"Y"
             `);
 
-            api.updateCalculatedColumn('calc', { calculatedExpression: '[b]' });
+            updateCalculatedColumnDef(api, 'calc', { calculatedExpression: '[b]' });
             await settle();
             await new GridRows(api, 'calc-update rows by b').check(`
                 ROOT id:ROOT_NODE_ID

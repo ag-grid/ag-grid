@@ -417,6 +417,11 @@ export class CalculatedColumnForm extends Component {
             return;
         }
 
+        const editorWidth = this.eExpression.getInputElement().offsetWidth;
+        if (editorWidth > 0) {
+            list.getGui().style.width = `${editorWidth}px`;
+        }
+
         popupSvc.positionPopupByComponent({
             ePopup: list.getGui(),
             type: 'calculatedColumnAutocomplete',

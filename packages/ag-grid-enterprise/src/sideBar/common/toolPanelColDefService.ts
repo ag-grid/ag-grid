@@ -23,13 +23,13 @@ export function toolPanelCreateColumnTree(
                     children.push(child);
                 }
             }
-            group.setChildren(children);
+            group.children = children;
 
             return group;
         } else {
             const colDef = abstractColDef as ColDef;
             const key = colDef.colId ? colDef.colId : colDef.field;
-            const column = colModel.getColDefCol(key!)!;
+            const column = colModel.getNonPivotCol(key!)!;
 
             if (!column) {
                 invalidColIds.push(colDef);
@@ -122,7 +122,7 @@ function getLeafPathTrees(columns: AgColumn[]): AbstractColDef[] {
 }
 
 function getGridPrimaryColumns(colModel: ColumnModel): AgColumn[] {
-    return colModel.getCols().filter((column) => {
+    return colModel.colsList.filter((column) => {
         return column.primary && !column.colDef.showRowGroup;
     });
 }

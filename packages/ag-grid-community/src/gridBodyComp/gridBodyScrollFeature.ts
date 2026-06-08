@@ -8,7 +8,6 @@ import {
     _setScrollLeft,
 } from 'ag-stack';
 
-import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
@@ -49,7 +48,6 @@ interface HorizontalScrollComp extends ScrollPartner {
 export class GridBodyScrollFeature extends BeanStub {
     private ctrlsSvc: CtrlsService;
     private animationFrameSvc?: AnimationFrameService;
-    private visibleCols: VisibleColsService;
 
     // listeners for when ensureIndexVisible is waiting for SSRM data to load
     private clearRetryListenerFncs: (() => void)[] = [];
@@ -57,7 +55,6 @@ export class GridBodyScrollFeature extends BeanStub {
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
         this.animationFrameSvc = beans.animationFrameSvc;
-        this.visibleCols = beans.visibleCols;
     }
 
     private enableRtl: boolean;
@@ -711,14 +708,12 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        // calling ensureColumnVisible on a pinned column doesn't make sense
         if (column.isPinned()) {
-            return;
+            return; // calling ensureColumnVisible on a pinned column doesn't make sense
         }
 
-        // defensive
-        if (!this.visibleCols.isColDisplayed(column)) {
-            return;
+        if (!column.displayed) {
+            return; // defensive
         }
 
         const newHorizontalScroll: number | null = this.getPositionedHorizontalScroll(column, position);

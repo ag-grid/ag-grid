@@ -61,6 +61,27 @@ describe('calculated columns - display ordering', () => {
         return gridsManager.createGrid(id, { getRowId: (params) => params.data?.id, ...opts });
     }
 
+    function addCalculatedColumnDef(api: GridApi, colDef: ColDef): void {
+        api.setGridOption('columnDefs', [...(api.getColumnDefs() ?? []), colDef]);
+    }
+
+    function removeColumnDef(api: GridApi, colId: string): void {
+        api.setGridOption('columnDefs', removeColumnDefFromDefs(api.getColumnDefs() ?? [], colId));
+    }
+
+    function removeColumnDefFromDefs(columnDefs: (ColDef | ColGroupDef)[], colId: string): (ColDef | ColGroupDef)[] {
+        const nextColumnDefs: (ColDef | ColGroupDef)[] = [];
+        for (let i = 0, len = columnDefs.length; i < len; ++i) {
+            const colDef = columnDefs[i];
+            if ('children' in colDef) {
+                nextColumnDefs.push({ ...colDef, children: removeColumnDefFromDefs(colDef.children, colId) });
+            } else if ((colDef.colId ?? colDef.field) !== colId) {
+                nextColumnDefs.push(colDef);
+            }
+        }
+        return nextColumnDefs;
+    }
+
     function order(api: GridApi): string[] {
         return api.getAllGridColumns()!.map((col) => col.getColId());
     }
@@ -134,6 +155,16 @@ describe('calculated columns - display ordering', () => {
         const added = order(api).filter((id) => !before.has(id));
         expect(added).toHaveLength(1);
         return added[0];
+    }
+
+    /** Removes a dynamic (dialog-added) calc col through its header menu — dynamic calc cols are not in
+     *  `columnDefs`, so they can only be removed via the menu's "Remove Calculated Column" action. */
+    async function removeViaMenu(api: GridApi, colId: string): Promise<void> {
+        enableOffsetParentPolyfill();
+        api.showColumnMenu(colId);
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Remove Calculated Column');
+        await asyncSetTimeout(1);
     }
 
     // === Rule 6: static calc cols keep their declared columnDefs position ========================
@@ -227,7 +258,7 @@ describe('calculated columns - display ordering', () => {
         });
         expect(order(api)).toEqual(['revenue', 'profit', 'cost']);
 
-        api.removeCalculatedColumn('profit');
+        removeColumnDef(api, 'profit');
         await asyncSetTimeout(1);
 
         // The group's only child is gone — the group must be pruned, not left empty in the colId tree.
@@ -251,7 +282,7 @@ describe('calculated columns - display ordering', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
@@ -271,13 +302,13 @@ describe('calculated columns - display ordering', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         });
         await asyncSetTimeout(1);
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'margin',
             calculatedExpression: '[profit] / [revenue]',
             cellDataType: 'number',
@@ -293,15 +324,38 @@ describe('calculated columns - display ordering', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('addCalculatedColumn appends after a manual reorder, preserving the reorder', async () => {
+    test('an unanchored calc col (its calc-col anchor removed) re-appends at the top level, not into a group', async () => {
+        const api = createGrid('calc-anchor-calc-removed', {
+            rowData: [{ id: 'r1', a: 1, b: 2 }],
+            columnDefs: [{ groupId: 'G', headerName: 'G', children: [{ field: 'a' }, { field: 'b' }] }],
+        });
+        // c1 anchored to 'b' (sits inside group G); c2 anchored to c1.
+        const c1 = await addViaDialog(api, 'b', '[a]');
+        const c2 = await addViaDialog(api, c1, '[a]');
+
+        // Removing c1 nulls c2's anchor → c2 becomes truly unanchored (no order-restoration anchor). The last
+        // displayed leaf is inside group 'G', so the unanchored re-append must NOT smuggle c2 into 'G'.
+        await removeViaMenu(api, c1);
+        await asyncSetTimeout(1);
+
+        expect(c2).toBe('calculated_2');
+        await new GridColumns(api, 'unanchored calc col stays top-level, not in group').checkColumns(`
+            CENTER
+            ├── calculated_2 "New title" width:200
+            └─┬ "G" GROUP
+              ├── a "A" width:200
+              └── b "B" width:200
+        `);
+    });
+
+    test('addCalculatedColumn appends after a manual reorder, preserving the reorder', async () => {
         const api = createGrid('api-append-after-move', {
             rowData: [{ id: 'r1', a: 1, b: 2, c: 3 }],
             columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
         });
         api.moveColumns(['c'], 0);
         expect(order(api)).toEqual(['c', 'a', 'b']);
-        api.addCalculatedColumn({ colId: 'sum', calculatedExpression: '[a] + [b]', cellDataType: 'number' });
+        addCalculatedColumnDef(api, { colId: 'sum', calculatedExpression: '[a] + [b]', cellDataType: 'number' });
         await asyncSetTimeout(1);
         expect(order(api)).toEqual(['c', 'a', 'b', 'sum']);
         await new GridColumns(api, 'addCalculatedColumn appends after a manual reorder, preserving the reorder')
@@ -332,6 +386,117 @@ describe('calculated columns - display ordering', () => {
             ├── calculated_1 "New title" width:200
             └── cost "Cost" width:200
         `);
+    });
+
+    test('dialog add preserves runtime unpinned state from an initially pinned colDef', async () => {
+        const api = createGrid('calculated-dialog-preserves-unpinned-state', {
+            rowData: [{ id: 'r1', athlete: 'Michael Phelps', age: 23 }],
+            columnDefs: [{ field: 'athlete', pinned: 'left' }, { field: 'age' }],
+        });
+
+        await new GridColumns(api, 'dialog add preserves unpinned state setup').checkColumns(`
+            LEFT
+            └── athlete "Athlete" width:200
+            CENTER
+            └── age "Age" width:200
+        `);
+
+        api.setColumnsPinned(['athlete'], null);
+        await asyncSetTimeout(0);
+
+        await new GridColumns(api, 'dialog add preserves unpinned state after unpin').checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            └── age "Age" width:200
+        `);
+
+        api.showColumnMenu('age');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        setExpression('[Age] * 2');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        await new GridColumns(api, 'dialog add preserves unpinned state after calculated column add').checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── age "Age" width:200
+            └── calculated_1 "New title" width:200
+        `);
+        await new GridRows(api, 'dialog add preserves unpinned state - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 athlete:"Michael Phelps" age:23 calculated_1:46
+        `);
+    });
+
+    test('dialog add preserves a runtime sort that diverged from the colDef sort', async () => {
+        const api = createGrid('calculated-dialog-preserves-sort', {
+            rowData: [{ id: 'r1', a: 1, b: 2 }],
+            columnDefs: [{ field: 'a', sort: 'asc' }, { field: 'b' }],
+        });
+
+        api.applyColumnState({ state: [{ colId: 'a', sort: 'desc' }] });
+        await asyncSetTimeout(0);
+        expect(api.getColumn('a')!.getSort()).toBe('desc');
+
+        const calc = await addViaDialog(api, 'b', '[a] + [b]');
+
+        // Adding a calc col must not reset 'a' back to its colDef sort ('asc').
+        expect(api.getColumn('a')!.getSort()).toBe('desc');
+        expect(order(api)).toEqual(['a', 'b', calc]);
+        await new GridColumns(api, 'preserved runtime sort after calc add').checkColumns(`
+            CENTER
+            ├── a "A" width:200 sort:desc
+            ├── b "B" width:200
+            └── calculated_1 "New title" width:200
+        `);
+        await new GridRows(api, 'preserved runtime sort after calc add - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 a:1 b:2 calculated_1:3
+        `);
+    });
+
+    test('dialog add preserves a runtime column width that diverged from the colDef width', async () => {
+        const api = createGrid('calculated-dialog-preserves-width', {
+            rowData: [{ id: 'r1', a: 1, b: 2 }],
+            columnDefs: [{ field: 'a', width: 150 }, { field: 'b' }],
+        });
+
+        api.applyColumnState({ state: [{ colId: 'a', width: 250 }] });
+        await asyncSetTimeout(0);
+        expect(api.getColumn('a')!.getActualWidth()).toBe(250);
+
+        const calc = await addViaDialog(api, 'b', '[a] + [b]');
+
+        expect(api.getColumn('a')!.getActualWidth()).toBe(250);
+        expect(order(api)).toEqual(['a', 'b', calc]);
+        await new GridColumns(api, 'preserved runtime width after calc add').checkColumns(`
+            CENTER
+            ├── a "A" width:250
+            ├── b "B" width:200
+            └── calculated_1 "New title" width:200
+        `);
+        await new GridRows(api, 'preserved runtime width after calc add - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 a:1 b:2 calculated_1:3
+        `);
+    });
+
+    test('two calc cols from the same anchor stack newest-first (tree + display agree)', async () => {
+        const api = createGrid('dialog-same-anchor', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue', headerName: 'Revenue' },
+                { field: 'cost', headerName: 'Cost' },
+            ],
+        });
+        const first = await addViaDialog(api, 'revenue', '[Revenue] - [Cost]');
+        const second = await addViaDialog(api, 'revenue', '[Revenue] * [Cost]');
+
+        // Each insert lands immediately after the anchor, so the newest sits closest to it.
+        expect(order(api)).toEqual(['revenue', second, first, 'cost']);
     });
 
     test('dialog add lands after the anchor leaf column when maintainColumnOrder is enabled', async () => {
@@ -467,8 +632,7 @@ describe('calculated columns - display ordering', () => {
         expect(closedCalculatedColDef?.columnGroupShow).toBe('closed');
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('removing an anchor preserves the user reorder and keeps the dependent in place', async () => {
+    test('removing an anchor preserves the user reorder and keeps the dependent in place', async () => {
         const api = createGrid('reorder-then-remove-anchor', {
             rowData: [{ id: 'r1', a: 1, b: 2, c: 3 }],
             columnDefs: [
@@ -484,7 +648,7 @@ describe('calculated columns - display ordering', () => {
         api.moveColumns(['c'], 0);
         expect(order(api)).toEqual(['c', 'a', first, second, 'b']);
 
-        api.removeCalculatedColumn(first);
+        await removeViaMenu(api, first);
         await asyncSetTimeout(1);
         expect(order(api)).toEqual(['c', 'a', second, 'b']);
         await new GridColumns(api, 'removing an anchor preserves the user reorder and keeps the dependent in place')
@@ -546,8 +710,7 @@ describe('calculated columns - display ordering', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('two dialog adds on the same anchor: later add sits between the anchor and the earlier add', async () => {
+    test('two dialog adds on the same anchor: later add sits between the anchor and the earlier add', async () => {
         const api = createGrid('dialog-same-anchor', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
@@ -811,8 +974,7 @@ describe('calculated columns - display ordering', () => {
 
     // === Rule 4: anchor removed — orphaned dependent keeps its displayed position ================
 
-    // Solved by AG-17366 when it is completed
-    test.skip('removing the anchor calc col keeps its orphaned dependent in place', async () => {
+    test('removing the anchor calc col keeps its orphaned dependent in place', async () => {
         const api = createGrid('dialog-anchor-removed', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
@@ -824,7 +986,7 @@ describe('calculated columns - display ordering', () => {
         const second = await addViaDialog(api, first, '[Revenue] - [Cost]');
         expect(order(api)).toEqual(['revenue', first, second, 'cost']);
 
-        api.removeCalculatedColumn(first);
+        await removeViaMenu(api, first);
         await asyncSetTimeout(1);
         // Only `first` is removed; `second` lost its anchor but keeps its displayed slot (order
         // maintained) rather than jumping to the end.
@@ -837,8 +999,7 @@ describe('calculated columns - display ordering', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('removing the anchor calc col keeps a mid-list dependent between its neighbours', async () => {
+    test('removing the anchor calc col keeps a mid-list dependent between its neighbours', async () => {
         const api = createGrid('dialog-anchor-removed-mid', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3, tax: 1 }],
             columnDefs: [
@@ -851,7 +1012,7 @@ describe('calculated columns - display ordering', () => {
         const second = await addViaDialog(api, first, '[Revenue] - [Cost]');
         expect(order(api)).toEqual(['revenue', first, second, 'cost', 'tax']);
 
-        api.removeCalculatedColumn(first);
+        await removeViaMenu(api, first);
         await asyncSetTimeout(1);
         // `second` is in the MIDDLE (cost + tax follow it) — it stays between revenue and cost, and the
         // trailing columns are untouched.
@@ -873,13 +1034,13 @@ describe('calculated columns - display ordering', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
         });
         await asyncSetTimeout(1);
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'margin',
             calculatedExpression: '[profit] / [revenue]',
             cellDataType: 'number',
@@ -887,7 +1048,7 @@ describe('calculated columns - display ordering', () => {
         await asyncSetTimeout(1);
         expect(order(api)).toEqual(['revenue', 'cost', 'profit', 'margin']);
 
-        api.removeCalculatedColumn('profit');
+        removeColumnDef(api, 'profit');
         await asyncSetTimeout(1);
         expect(order(api)).toEqual(['revenue', 'cost', 'margin']);
         await new GridColumns(api, 'removing a dynamic calc col leaves the remaining order intact').checkColumns(`
@@ -908,7 +1069,7 @@ describe('calculated columns - display ordering', () => {
             ],
         });
         expect(order(api)).toEqual(['revenue', 'profit', 'cost']);
-        api.removeCalculatedColumn('profit');
+        removeColumnDef(api, 'profit');
         await asyncSetTimeout(1);
         expect(order(api)).toEqual(['revenue', 'cost']);
         await new GridColumns(api, 'removing a static calc col (suppression) leaves the remaining order intact')
@@ -927,7 +1088,7 @@ describe('calculated columns - display ordering', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: baseDefs,
         });
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
@@ -950,7 +1111,7 @@ describe('calculated columns - display ordering', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',
@@ -984,7 +1145,7 @@ describe('calculated columns - display ordering', () => {
             rowNumbers: true,
         });
         await asyncSetTimeout(1);
-        api.addCalculatedColumn({
+        addCalculatedColumnDef(api, {
             colId: 'profit',
             calculatedExpression: '[revenue] - [cost]',
             cellDataType: 'number',

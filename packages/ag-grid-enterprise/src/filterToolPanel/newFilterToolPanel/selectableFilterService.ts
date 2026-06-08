@@ -180,7 +180,7 @@ export class SelectableFilterService
         this.clearAll();
         const colModel = this.beans.colModel;
         for (const colId of Object.keys(state)) {
-            const column = colModel.getColDefCol(colId);
+            const column = colModel.getNonPivotColById(colId);
             if (column) {
                 const defs = this.getDefs(column, column.colDef, state[colId]);
                 if (defs) {

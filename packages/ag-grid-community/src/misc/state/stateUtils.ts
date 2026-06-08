@@ -52,7 +52,7 @@ export function convertColumnState(
         } = columnState[i];
         columns.push(colId);
         if (sort) {
-            sortColumns[sortIndex ?? defaultSortIndex++] = { colId, sort, type: sortType };
+            sortColumns[sortIndex ?? defaultSortIndex++] = { colId, sort, type: sortType ?? undefined };
         }
         if (rowGroup) {
             groupColIds[rowGroupIndex ?? 0] = colId;

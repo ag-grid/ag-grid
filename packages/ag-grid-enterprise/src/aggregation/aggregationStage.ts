@@ -3,6 +3,7 @@ import type {
     ChangedCellsPath,
     ChangedPath,
     ClientSideRowModelStage,
+    ColAggFunc,
     ColDef,
     ColumnModel,
     GridOptions,
@@ -339,20 +340,16 @@ const aggregateValuesAndPivot = (
 };
 
 /** Resolves aggFunc from a string name or returns the function directly. Returns null with a warning for invalid names. */
-const resolveAggFunc = (
-    aggFuncOrString: string | IAggFunc | null | undefined,
-    aggFuncSvc: IAggFuncService,
-    column: AgColumn
-): IAggFunc | null => {
-    if (typeof aggFuncOrString === 'function') {
-        return aggFuncOrString;
+const resolveAggFunc = (colAggFunc: ColAggFunc, aggFuncSvc: IAggFuncService, column: AgColumn): IAggFunc | null => {
+    if (typeof colAggFunc === 'function') {
+        return colAggFunc;
     }
-    if (aggFuncOrString == null) {
+    if (colAggFunc == null) {
         return null;
     }
-    const aggFunc = aggFuncSvc.getAggFunc(aggFuncOrString);
+    const aggFunc = aggFuncSvc.getAggFunc(colAggFunc);
     if (typeof aggFunc !== 'function') {
-        _warn(109, { inputValue: aggFuncOrString.toString(), allSuggestions: aggFuncSvc.getFuncNames(column) });
+        _warn(109, { inputValue: colAggFunc.toString(), allSuggestions: aggFuncSvc.getFuncNames(column) });
         return null;
     }
     return aggFunc;

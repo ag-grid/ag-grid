@@ -663,6 +663,7 @@ export type {
     CellStyleFunc,
     CheckboxSelectionCallback,
     CheckboxSelectionCallbackParams,
+    ColAggFunc,
     ColDef,
     ColDefField,
     ColGroupDef,

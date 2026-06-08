@@ -1,6 +1,8 @@
+import type { HorizontalDirection } from 'ag-stack';
+
 import type { CtrlsService } from '../ctrlsService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
-import { clientXToSectionX, normaliseX } from './internalColumnMoveUtils';
+import { clientXToSectionX, normaliseDirection, normaliseX } from './internalColumnMoveUtils';
 
 function createSectionElements(layout: { left: number; pinnedLeftWidth: number; scrollingWidth: number }) {
     const { left, pinnedLeftWidth, scrollingWidth } = layout;
@@ -48,6 +50,52 @@ describe('normaliseX', () => {
         });
 
         expect(result).toBe(250);
+    });
+
+    test('RTL mirrors x within the section width', () => {
+        const viewport = createSectionElements({ left: 100, pinnedLeftWidth: 50, scrollingWidth: 900 });
+        // center section width = 900; mirrored x = 900 - 250 = 650
+        const result = normaliseX({ x: 250, pinned: undefined, isRtl: true, ctrlsSvc: createCtrlsSvc(viewport) });
+
+        expect(result).toBe(650);
+    });
+
+    test('RTL leaves pinned-left untouched (left section is not mirrored)', () => {
+        const viewport = createSectionElements({ left: 100, pinnedLeftWidth: 50, scrollingWidth: 900 });
+        const result = normaliseX({ x: 30, pinned: 'left', isRtl: true, ctrlsSvc: createCtrlsSvc(viewport) });
+
+        expect(result).toBe(30);
+    });
+
+    test('RTL returns 0 when the section element is not found', () => {
+        const viewport = document.createElement('div'); // no section elements
+        const result = normaliseX({ x: 250, pinned: undefined, isRtl: true, ctrlsSvc: createCtrlsSvc(viewport) });
+
+        expect(result).toBe(0);
+    });
+});
+
+describe('normaliseDirection', () => {
+    test('returns the direction unchanged in LTR mode', () => {
+        expect(normaliseDirection('left', false, null)).toBe('left');
+        expect(normaliseDirection('right', false, null)).toBe('right');
+    });
+
+    test('flips the direction in RTL for centre and pinned-right sections', () => {
+        const cases: [HorizontalDirection, ColumnPinnedType, HorizontalDirection][] = [
+            ['left', null, 'right'],
+            ['right', null, 'left'],
+            ['left', 'right', 'right'],
+            ['right', 'right', 'left'],
+        ];
+        for (const [input, pinned, expected] of cases) {
+            expect(normaliseDirection(input, true, pinned)).toBe(expected);
+        }
+    });
+
+    test('does not flip the pinned-left section in RTL', () => {
+        expect(normaliseDirection('left', true, 'left')).toBe('left');
+        expect(normaliseDirection('right', true, 'left')).toBe('right');
     });
 });
 

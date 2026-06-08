@@ -101,30 +101,3 @@ export const getRefTokenMatches = (text: string): RefTokenMatch[] => {
     }
     return matches;
 };
-
-export function visitCalculatedColumnReferences(expression: string, callback: (reference: string) => void): void {
-    let inString = false;
-    for (let i = 0, len = expression.length; i < len; ++i) {
-        const char = expression[i];
-        if (char === '"') {
-            if (expression[i + 1] === '"') {
-                i++;
-            } else {
-                inString = !inString;
-            }
-            continue;
-        }
-
-        if (inString || char !== '[') {
-            continue;
-        }
-
-        const end = expression.indexOf(']', i + 1);
-        if (end < 0) {
-            return;
-        }
-
-        callback(expression.slice(i + 1, end));
-        i = end;
-    }
-}

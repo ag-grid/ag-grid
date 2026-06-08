@@ -34,6 +34,7 @@ import {
     RowNode,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
+    _getSortModel,
     _isGetRowHeightFunction,
     _isRowSelection,
     _warn,
@@ -238,7 +239,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return allColsUnchanged && !missingCols;
         };
 
-        const sortModelDifferent = !_jsonEquals(this.storeParams.sortModel, this.sortSvc?.getSortModel() ?? []);
+        const sortModelDifferent = !_jsonEquals(this.storeParams.sortModel, _getSortModel(this.sortSvc));
         const rowGroupDifferent = !areColsSame({
             oldCols: this.storeParams.rowGroupCols,
             newCols: rowGroupColumnVos,
@@ -399,7 +400,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             filterModel: this.filterManager?.isAdvFilterEnabled()
                 ? this.filterManager?.getAdvFilterModel()
                 : (this.filterManager?.getFilterModel() ?? {}),
-            sortModel: this.sortSvc?.getSortModel() ?? [],
+            sortModel: _getSortModel(this.sortSvc),
 
             datasource: this.datasource,
             lastAccessedSequence: { value: 0 },
