@@ -142,13 +142,18 @@ export class CalculatedColumnForm extends Component {
     private setupFormFields(): void {
         const translate = this.getLocaleTextFunc();
 
-        this.eTitle.setLabel(translate('calculatedColumnTitle', 'Title')).setValue(this.draft.headerName, true);
+        this.eTitle
+            .setLabel(translate('calculatedColumnTitle', 'Title'))
+            .setLabelAlignment('top')
+            .setValue(this.draft.headerName, true);
         this.eType
             .setLabel(translate('calculatedColumnType', 'Type'))
+            .setLabelAlignment('top')
             .addOptions(this.dataTypeOptions)
             .setValue(this.draft.cellDataType, true);
         this.eExpression
             .setLabel(translate('calculatedColumnExpression', 'Expression'))
+            .setLabelAlignment('top')
             .setInputPlaceholder(translate('calculatedColumnExpressionPlaceholder', 'Type here'))
             .setRows(3)
             .setValue(this.draft.calculatedExpression, true);
