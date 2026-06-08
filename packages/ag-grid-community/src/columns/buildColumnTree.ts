@@ -57,6 +57,7 @@ export function _buildColumnTree(
     const paddingDef = (defaultColGroupDef ?? null) as ColGroupDef | null;
     // Reserved = ids allocated this call + every live colId (primary / pivot / service / hierarchy).
     const allocatedKeys = new Set<string>();
+    const reservedUserKeys = new Set<string>();
     const isReserved = (id: string): boolean => allocatedKeys.has(id) || id in existingColsById;
 
     // Pre-walk for maxDepth + anonymous-slot count. Padded ids start AFTER anonymous-col ids
@@ -76,8 +77,13 @@ export function _buildColumnTree(
                         ++paddedIdHint;
                     }
                     measure(childDefs, level + 1);
-                } else if ((def as ColDef).colId == null && (def as ColDef).field == null) {
-                    ++paddedIdHint;
+                } else {
+                    const base = (def as ColDef).colId ?? (def as ColDef).field;
+                    if (base == null) {
+                        ++paddedIdHint;
+                    } else {
+                        reservedUserKeys.add(base);
+                    }
                 }
             }
         };
@@ -113,7 +119,7 @@ export function _buildColumnTree(
         if (groupId == null) {
             do {
                 id = `${userIdHint++}`;
-            } while (isReserved(id));
+            } while (isReserved(id) || reservedUserKeys.has(id));
             allocatedKeys.add(id);
             return id;
         }
@@ -145,7 +151,7 @@ export function _buildColumnTree(
     const buildAnonymousColumn = (def: ColDef): AgColumn => {
         while (true) {
             const id = `${userIdHint++}`;
-            if (allocatedKeys.has(id)) {
+            if (allocatedKeys.has(id) || reservedUserKeys.has(id)) {
                 continue;
             }
             const existing = existingColsById[id];
@@ -312,7 +318,7 @@ export function _buildColumnTree(
             let newId: string;
             do {
                 newId = `${paddedIdHint++}`;
-            } while (isReserved(newId));
+            } while (isReserved(newId) || reservedUserKeys.has(newId));
             allocatedKeys.add(newId);
             const padded = new AgProvidedColumnGroup(paddingDef, newId, true, j);
             padded.buildToken = buildToken;

@@ -1,20 +1,3 @@
-/**
- * Characterises AgColumn identity + colId-allocation across builds. Two distinct mechanisms,
- * kept separate on purpose:
- *
- *  1. Reuse — does an AgColumn instance survive a colDef change? Keyed by `colId ?? field ??
- *     userColDefRef` (see `_createColumnTree` / `buildColumn`). Plain colId reuse is covered in
- *     setColumnDefs.test.ts; this file adds field-keyed and anonymous (no colId/no field) cases,
- *     the latter being the React inline-`{...}` colDef scenario.
- *  2. Auto-id allocation — anonymous cols receive deterministic integer ids ('0','1',…), avoiding
- *     collisions with explicit user colIds.
- *
- * Id generation itself is a fixed contract and is NOT being changed; these tests pin its current
- * behaviour (including the order-dependent anonymous/explicit-colId interaction) so the upcoming
- * order-maintenance rework can be verified against a stable id baseline.
- *
- * Tests instantiate the full grid via TestGridsManager and exercise public APIs only.
- */
 import { vi } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
@@ -119,13 +102,8 @@ describe('Column identity & id allocation', () => {
         });
     });
 
-    describe('auto-id vs explicit colId collision', () => {
-        test('anonymous-first takes "0", so a later explicit colId:"0" is suffixed to "0_1"', () => {
-            // Auto-ids are allocated in def order: the anonymous col is FIRST so it grabs '0', and the
-            // later explicit `colId: '0'` then collides and is suffixed to '0_1' (with warning 273).
-            // Documented, order-dependent behaviour — pinned to guard the id-allocation contract while
-            // order-maintenance is reworked around it.
-            vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 273: expected colId collision
+    describe('explicit colId wins over anonymous integer ids (order-independent)', () => {
+        test('anonymous-first: explicit colId:"0" is still honoured, the anonymous col skips to "1"', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ headerName: 'anon' }, { colId: '0', headerName: 'explicit' }],
             });
@@ -133,8 +111,8 @@ describe('Column identity & id allocation', () => {
             const headerById = Object.fromEntries(
                 api.getColumns()!.map((c) => [c.getColId(), c.getColDef().headerName])
             );
-            expect(colIds(api)).toEqual(['0', '0_1']);
-            expect(headerById).toEqual({ '0': 'anon', '0_1': 'explicit' });
+            expect(colIds(api)).toEqual(['1', '0']);
+            expect(headerById).toEqual({ '1': 'anon', '0': 'explicit' });
         });
 
         test('explicit-first keeps its id; the anonymous col skips to "1"', () => {
@@ -147,6 +125,17 @@ describe('Column identity & id allocation', () => {
             );
             expect(colIds(api)).toEqual(['0', '1']);
             expect(headerById).toEqual({ '0': 'explicit', '1': 'anon' });
+        });
+
+        test('grouped: explicit numeric colId is not stolen by generated anonymous or padding-group ids', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { groupId: 'g', children: [{ headerName: 'anon' }, { colId: '0', field: 'a' }] },
+                    { field: 'b' }, // top-level leaf next to a group → wrapped in a generated padding group
+                ],
+            });
+            expect(api.getColumn('0')?.getColDef().field).toBe('a');
+            expect(colIds(api)).toEqual(['1', '0', 'b']);
         });
     });
 

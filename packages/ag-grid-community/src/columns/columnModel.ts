@@ -35,6 +35,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private colBatchDepth = 0;
     /** Set when a staged change needs a display rebuild; consumed (cleared) once by {@link performRefresh}. */
     private pendingRefresh = false;
+    /** A batched `buildFromColDefs` already raised `columnEverythingChanged`; stops the batch flush re-raising it. */
+    private everythingChangedInBatch = false;
     public colsList: AgColumn[] = [];
     public colsTree: (AgColumn | AgProvidedColumnGroup)[] = [];
     public colsTreeDepth = 0;
@@ -248,6 +250,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         // unused by AG Grid but kept for backwards compatibility
         eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
+        if (this.colBatchDepth > 0) {
+            this.everythingChangedInBatch = true; // batch flush must not re-raise it
+        }
 
         if (stateChanges) {
             this.changeEventsDispatching = true;
@@ -288,6 +293,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
         const { rowGroupColsSvc, pivotColsSvc, valueColsSvc } = this.beans;
         const pendingRefresh = this.pendingRefresh;
+        // A batched `buildFromColDefs` may already have raised it; consume the flag either way.
+        const everythingAlreadyRaised = this.everythingChangedInBatch;
+        this.everythingChangedInBatch = false;
         const nothingStaged =
             !rowGroupColsSvc?.pendingChanged && !pivotColsSvc?.pendingChanged && !valueColsSvc?.pendingChanged;
         if (nothingStaged && !pendingRefresh) {
@@ -295,6 +303,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
         if (pendingRefresh) {
             this.performRefresh(source); // clears pendingRefresh
+            // Legacy compat: a role membership change (rowGroup/pivot/value add/remove/set) raised this.
+            if (!everythingAlreadyRaised) {
+                this.eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
+            }
         }
         rowGroupColsSvc?.dispatchColChange(source);
         pivotColsSvc?.dispatchColChange(source);

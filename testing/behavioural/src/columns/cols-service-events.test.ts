@@ -242,4 +242,48 @@ describe('Cols service events', () => {
             expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['b', 'a', 'c']);
         });
     });
+
+    // Legacy `columnEverythingChanged` (unused by AG Grid, kept for external listeners): a direct role
+    // membership change raises it once; order-only/width changes don't; a colDef rebuild isn't doubled.
+    describe('columnEverythingChanged legacy event', () => {
+        test('a direct row-group membership change raises it exactly once per change (never doubled)', async () => {
+            const api = gridsManager.createGrid('g', baseOptions());
+            await asyncSetTimeout(0);
+            const everything = capture(api, 'columnEverythingChanged');
+
+            api.addRowGroupColumns(['a']);
+            await asyncSetTimeout(0);
+            expect(everything.length).toBe(1);
+
+            api.setRowGroupColumns(['a', 'b']);
+            await asyncSetTimeout(0);
+            expect(everything.length).toBe(2);
+        });
+
+        test('order-only and width changes do not raise it', async () => {
+            const api = gridsManager.createGrid('g', baseOptions());
+            api.setRowGroupColumns(['a', 'b']);
+            await asyncSetTimeout(0);
+            const everything = capture(api, 'columnEverythingChanged');
+
+            api.moveColumns(['d'], 0);
+            api.moveRowGroupColumn(0, 1);
+            api.setColumnWidths([{ key: 'd', newWidth: 123 }]);
+            await asyncSetTimeout(0);
+            expect(everything.length).toBe(0);
+        });
+
+        test('a colDef rebuild raises it exactly once (a staged role flush must not double it)', async () => {
+            const api = gridsManager.createGrid('g', baseOptions());
+            await asyncSetTimeout(0);
+            const everything = capture(api, 'columnEverythingChanged');
+
+            api.setGridOption('columnDefs', [
+                { colId: 'a', field: 'a', rowGroup: true },
+                { colId: 'b', field: 'b' },
+            ]);
+            await asyncSetTimeout(0);
+            expect(everything.length).toBe(1);
+        });
+    });
 });
