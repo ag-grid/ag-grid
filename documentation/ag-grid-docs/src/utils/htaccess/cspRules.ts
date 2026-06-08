@@ -80,6 +80,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             AG_GRID_HOSTS,
             'https://plausible.io',
             'https://www.googletagmanager.com',
+            'https://www.google-analytics.com', // Universal Analytics analytics.js (GTM-injected after cookie consent)
             'https://cdn.jsdelivr.net',
             'https://cdnjs.cloudflare.com',
             'https://js.zi-scripts.com', // ZoomInfo tag (injected via GTM)
