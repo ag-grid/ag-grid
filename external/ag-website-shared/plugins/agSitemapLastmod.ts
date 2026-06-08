@@ -11,12 +11,23 @@ const execFileAsync = promisify(execFile);
  * Build a map of source path → last-modified Date by running a single `git log`
  * command over the docs and pages source directories.
  */
-async function buildDateMap(cwd: string): Promise<Map<string, Date>> {
+async function buildDateMap(cwd: string, logger: { info: (msg: string) => void }): Promise<Map<string, Date>> {
     const map = new Map<string, Date>();
     try {
         const { stdout: rootOut } = await execFileAsync('git', ['rev-parse', '--show-toplevel'], { cwd });
         const repoRoot = rootOut.trim();
         const docsBase = path.resolve(cwd, 'src', 'content', 'docs');
+
+        const { stdout: shallowOut } = await execFileAsync('git', ['rev-parse', '--is-shallow-repository'], { cwd });
+        if (shallowOut.trim() === 'true') {
+            logger.info('Shallow clone detected — fetching full history with blob filter for lastmod accuracy');
+            const t0 = performance.now();
+            await execFileAsync('git', ['fetch', '--unshallow', '--filter=blob:none'], {
+                cwd,
+                timeout: 120_000,
+            });
+            logger.info(`Unshallow fetch completed in ${((performance.now() - t0) / 1000).toFixed(1)}s`);
+        }
 
         const { stdout } = await execFileAsync(
             'git',
@@ -131,7 +142,7 @@ export default function agSitemapLastmod(): AstroIntegration {
                     return;
                 }
 
-                const dateMap = await buildDateMap(cwd);
+                const dateMap = await buildDateMap(cwd, logger);
                 if (dateMap.size === 0) {
                     logger.warn('Could not read git history — falling back to filesystem mtimes');
                 }
