@@ -239,13 +239,14 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
         const { focusSvc } = this.beans;
         const focusedCell = focusSvc.getFocusedCell();
+        const focusedCol = focusedCell?.column as AgColumn | undefined;
         // if a cell is focused, might need to be force rendered if it belongs to this pinned section
-        if (focusedCell && (focusedCell.column as AgColumn).pinned == pinned) {
-            const focusedColInstanceId = (focusedCell.column as AgColumn).getInstanceId();
+        if (focusedCol && focusedCol.pinned == pinned) {
+            const focusedColInstanceId = focusedCol.getInstanceId();
             const focusedCellCtrl = res.map[focusedColInstanceId];
 
             // if focused col is visible, and there's no cell here for it, try to create one
-            if (!focusedCellCtrl && (focusedCell.column as AgColumn).displayed) {
+            if (!focusedCellCtrl && focusedCol.displayed) {
                 const cellCtrl = this.createFocusedCellCtrl();
                 if (cellCtrl) {
                     const index = res.list.findIndex((ctrl) => ctrl.column.left! > cellCtrl.column.left!);

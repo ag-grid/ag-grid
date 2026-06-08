@@ -51,7 +51,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     /** Primary cols keyed by colId / userProvidedColDef ref / field; passed back for next-build reuse. */
     private colDefColsByKey: Map<string | ColDef, AgColumn> = new Map();
     /** Every primary group (padding + non-padding) — sweep uses this to find orphans whose parent's
-     *  `.children` was replaced via `setChildren`. */
+     *  `.children` was reassigned. */
     private colDefAllGroups: AgProvidedColumnGroup[] = [];
 
     /** Non-padding displayed groups by `groupId`. Pivot mode = pivot's groups; else = colDefGroupsById. */

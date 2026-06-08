@@ -214,7 +214,7 @@ export class HeaderRowCtrl extends BeanStub {
             this.recycleAndCreateHeaderCtrls(child, this.ctrlsById, oldCtrls);
         }
 
-        // we want to keep columns that are focused, otherwise keyboard navigation breaks. `column` may be a
+        // keep focused (and still-displayed) header ctrls alive, otherwise keyboard navigation breaks.
         const isFocusedAndDisplayed = (ctrl: HeaderCellCtrl) => {
             return ctrl.column.displayed && this.beans.focusSvc.isHeaderWrapperFocused(ctrl);
         };

@@ -61,7 +61,7 @@ const parseOperand = (
         }
 
         // Unsafe mode (e.g. paste-time parsing without grid context) stores the raw reference
-        // as the AST id — downstream lookups via getColById will not resolve it.
+        // as the AST id — downstream colsById lookups will not resolve it.
         return {
             column: { id: column?.colId ?? columnReference, absolute: false },
             row: { id: '', absolute: false, current: true },
