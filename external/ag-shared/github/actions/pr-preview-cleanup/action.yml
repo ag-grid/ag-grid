@@ -1,0 +1,72 @@
+name: 'PR preview — cleanup gh-pages'
+description: >
+    Remove a PR's published `pr-<N>/` preview directory from the publish branch
+    (`gh-pages`) when the PR closes. Product-agnostic and self-contained: it
+    operates on the publish branch via a token-authenticated shallow clone, so
+    the caller checks out the DEFAULT branch (which carries this shared action)
+    — NOT `gh-pages` (which does not contain `external/ag-shared/`, so a local
+    `uses:` would not resolve there). Tolerates a missing publish branch and a
+    missing `pr-<N>/` directory (both are no-ops).
+
+    Shared across AG consumer repos via the ag-shared subrepo — reference it as
+    `./external/ag-shared/github/actions/pr-preview-cleanup`. The caller must set
+    the job-level concurrency group `pr-preview-gh-pages` (cancel-in-progress:
+    false) so publishes and cleanups serialise. Typical caller:
+
+        gh_pages_cleanup:
+            permissions: { contents: write }
+            concurrency: { group: pr-preview-gh-pages, cancel-in-progress: false }
+            steps:
+                - uses: actions/checkout@v4          # default branch — carries the action
+                  with: { fetch-depth: 1 }
+                - uses: ./external/ag-shared/github/actions/pr-preview-cleanup
+                  with:
+                      pr_number: '${{ github.event.pull_request.number }}'
+                      github_token: '${{ secrets.GITHUB_TOKEN }}'
+
+inputs:
+    pr_number:
+        description: 'PR number — the pr-<pr_number>/ directory is removed.'
+        required: true
+    github_token:
+        description: 'Token with contents:write to push the removal to the publish branch.'
+        required: false
+        default: ${{ github.token }}
+    publish_branch:
+        description: 'Branch the preview was published to.'
+        required: false
+        default: gh-pages
+
+runs:
+    using: composite
+    steps:
+        - name: Remove PR preview directory
+          shell: bash
+          env:
+              PR_NUMBER: ${{ inputs.pr_number }}
+              GH_TOKEN: ${{ inputs.github_token }}
+              PUBLISH_BRANCH: ${{ inputs.publish_branch }}
+          run: |
+              set -euo pipefail
+              # Work in a throwaway shallow clone of the publish branch so this
+              # action does not depend on the caller having that branch checked
+              # out (it can't — gh-pages lacks external/ag-shared).
+              TMP="$(mktemp -d)"
+              REMOTE="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+              if ! git clone --quiet --branch "$PUBLISH_BRANCH" --depth 1 --single-branch "$REMOTE" "$TMP" 2>/dev/null; then
+                  echo "Publish branch '${PUBLISH_BRANCH}' does not exist; nothing to clean up."
+                  exit 0
+              fi
+              cd "$TMP"
+              DIR="pr-${PR_NUMBER}"
+              if [ ! -d "$DIR" ]; then
+                  echo "No $DIR directory on ${PUBLISH_BRANCH}; nothing to clean up."
+                  exit 0
+              fi
+              git config user.name 'github-actions[bot]'
+              git config user.email 'github-actions[bot]@users.noreply.github.com'
+              git rm -rf "$DIR"
+              git commit -m "pr-preview: cleanup pr-${PR_NUMBER}"
+              # Retry once on push race; the concurrency group should already serialise us,
+              # but a publish could have landed between our clone and push.
+              git push origin "$PUBLISH_BRANCH" || (git pull --rebase origin "$PUBLISH_BRANCH" && git push origin "$PUBLISH_BRANCH")
