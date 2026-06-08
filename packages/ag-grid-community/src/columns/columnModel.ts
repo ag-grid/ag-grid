@@ -185,14 +185,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const builder = _buildColumnTree(
             beans,
-            colDefs,
-            true,
-            this.colDefGroupsById,
-            this.colDefColsByKey,
-            this.colsById,
-            source,
-            this.nextBuildToken(),
-            this.hierarchyWrapperCache
+            /* defs */ colDefs,
+            /* primaryColumns */ true,
+            /* existingGroupsById */ this.colDefGroupsById,
+            /* existingColsByKey */ this.colDefColsByKey,
+            /* existingColsById */ this.colsById,
+            /* source */ source,
+            /* newColDefs */ newColDefs,
+            /* buildToken */ this.nextBuildToken(),
+            /* wrapperCache */ this.hierarchyWrapperCache
         );
         groupHierarchyColSvc?.contributeTo(builder);
         calculatedColsSvc?.contributeTo(builder);

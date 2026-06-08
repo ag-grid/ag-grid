@@ -220,24 +220,27 @@ export class AgColumn<TValue = any>
         return true;
     }
 
-    /** Re-apply `def` to `column`, keeping its colDef and runtime state in sync. */
-    public reapplyColDef(def: ColDef, source: ColumnEventType): void {
+    /** Re-apply `def` to a reused column. Stateful attrs are only (re)applied when the user authored the
+     *  definitions (`newColDefs`); an internal rebuild (e.g. calc-col add) must leave live state intact. */
+    public reapplyColDef(def: ColDef, source: ColumnEventType, newColDefs: boolean): void {
         const merged = _addColumnDefaultAndTypes(this.beans, def, this.colId);
         this.setColDef(merged, def, source);
-        updateSomeColumnState(
-            this.beans,
-            this,
-            merged.hide,
-            merged.sort,
-            merged.sortIndex,
-            merged.pinned,
-            merged.flex,
-            source
-        );
-        // Width is owned by the flex layout while flexing, so only set it when not.
-        const colFlex = this.flex;
-        if (colFlex == null || colFlex <= 0) {
-            this.setActualWidth(merged.width ?? this.actualWidth, source);
+        if (newColDefs) {
+            updateSomeColumnState(
+                this.beans,
+                this,
+                merged.hide,
+                merged.sort,
+                merged.sortIndex,
+                merged.pinned,
+                merged.flex,
+                source
+            );
+            // Read `flex` after the state update so a flex→fixed switch applies before width.
+            const colFlex = this.flex;
+            if (colFlex == null || colFlex <= 0) {
+                this.setActualWidth(merged.width ?? this.actualWidth, source);
+            }
         }
     }
 

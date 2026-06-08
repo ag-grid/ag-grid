@@ -1979,4 +1979,46 @@ describe('Column Mutations', () => {
             expect(colB.isAlive()).toBe(false);
         });
     });
+
+    describe('setColumnDefs: stateful colDef attrs still apply on update (BC)', () => {
+        test('a present pinned colDef re-applies, overwriting a runtime unpin', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', pinned: 'left' }, { colId: 'b' }],
+            });
+            await new GridColumns(api, 'pinned via colDef').checkColumns(`
+                LEFT
+                └── a width:200
+                CENTER
+                └── b width:200
+            `);
+
+            api.setColumnsPinned(['a'], null);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('a')!.getPinned()).toBeNull();
+
+            api.setGridOption('columnDefs', [{ colId: 'a', pinned: 'left' }, { colId: 'b' }]);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('a')!.getPinned()).toBe('left');
+            await new GridColumns(api, 'pinned re-applied on update').checkColumns(`
+                LEFT
+                └── a width:200
+                CENTER
+                └── b width:200
+            `);
+        });
+
+        test('an absent pinned colDef preserves a runtime pin', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            });
+
+            api.setColumnsPinned(['a'], 'left');
+            await asyncSetTimeout(0);
+            expect(api.getColumn('a')!.getPinned()).toBe('left');
+
+            api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'Alpha' }, { colId: 'b' }]);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('a')!.getPinned()).toBe('left');
+        });
+    });
 });

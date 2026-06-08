@@ -19,6 +19,7 @@ describe('column-model rewrite edge cases', () => {
     afterEach(() => {
         pivotGridsManager.reset();
         gridsManager.reset();
+        vi.restoreAllMocks();
     });
 
     const defColIds = (defs: (ColDef | any)[] | undefined): string[] => (defs ?? []).map((d) => d.colId ?? d.field);
@@ -54,6 +55,8 @@ describe('column-model rewrite edge cases', () => {
     // A pivot build must not reuse a user (primary) column whose colId collides with a generated pivot
     // colId — reuse is scoped to the same build kind (primary vs pivot result), not just colKind 'user'.
     test('pivot build does not reuse a user column that shares a generated pivot colId', async () => {
+        // The colliding colId is expected to raise warning #273 (colId suffixed) — capture and assert it.
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = pivotGridsManager.createGrid('g', {
             columnDefs: [
                 { field: 'country', rowGroup: true },
@@ -76,6 +79,9 @@ describe('column-model rewrite edge cases', () => {
         const pivotResult = api.getPivotResultColumns() ?? [];
         expect(pivotResult).not.toContain(userCol);
         expect(pivotResult.some((c) => c.getColId() === 'pivot_b_x_total_1')).toBe(true);
+
+        // Verify the suffixing warning was actually raised (not silently swallowed).
+        expect(warnSpy.mock.calls.some((args) => String(args[0]).includes('warning #273'))).toBe(true);
     });
 
     // P2-2: colId is imperative for REUSE — a column with a colId is never reused by field. Changing a

@@ -330,8 +330,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         // missing/removed anchor (or none) falls back to a plain append.
         const source = build.source;
         const buildToken = build.buildToken;
+        const newColDefs = build.newColDefs;
         dynamicColumns.forEach((dc, colId) => {
-            const agCol = this.getOrCreateAgColumn(dc, colId, buildToken, source);
+            const agCol = this.getOrCreateAgColumn(dc, colId, buildToken, source, newColDefs);
             agCol.buildToken = buildToken; // So the post-build sweep keeps the col alive.
             const anchorId = dc.anchorColId;
             if (anchorId != null && anchorId !== colId && staticColOverrides.get(anchorId) !== null) {
@@ -389,7 +390,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         dc: DynamicCalculatedColumn,
         colId: string,
         buildToken: number,
-        source: ColumnEventType
+        source: ColumnEventType,
+        newColDefs: boolean
     ): AgColumn {
         const beans = this.beans;
         const existing = dc.instance;
@@ -397,7 +399,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             // Reuse the owned instance (always alive: contributed/stamped every refresh, nulled when
             // parked/removed). Restamp + refresh colDef in case expression/cellDataType changed.
             existing.buildToken = buildToken;
-            existing.reapplyColDef(dc.colDef, source);
+            existing.reapplyColDef(dc.colDef, source, newColDefs);
             return existing;
         }
         const agCol = _createUserColumn(beans, dc.colDef, colId, true, buildToken);

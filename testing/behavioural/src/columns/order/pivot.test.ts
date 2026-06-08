@@ -2,7 +2,7 @@ import type { ColDef, ColGroupDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { PivotModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../../test-utils';
 import { getAutoGroupColumnIds, getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
 
 describe('pivotMode=true', () => {
@@ -1758,5 +1758,33 @@ describe('pivotMode=true', () => {
         api.setGridOption('pivotMode', true);
 
         expect(pivotOrder(api)).toEqual([...first].reverse());
+    });
+
+    describe('pivot toggle preserves primary column live state', () => {
+        test('runtime pinned + width on a primary column survive toggling pivotMode on then off', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                rowData: [{ country: 'US', sport: 'swim', val: 1 }],
+                columnDefs: [
+                    { field: 'country', pinned: 'left' },
+                    { field: 'sport', pivot: true },
+                    { field: 'val', aggFunc: 'sum' },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            api.setColumnsPinned(['country'], null);
+            api.applyColumnState({ state: [{ colId: 'country', width: 333 }] });
+            await asyncSetTimeout(0);
+            expect(api.getColumn('country')!.getPinned()).toBeNull();
+            expect(api.getColumn('country')!.getActualWidth()).toBe(333);
+
+            api.setGridOption('pivotMode', true);
+            await asyncSetTimeout(0);
+            api.setGridOption('pivotMode', false);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('country')!.getPinned()).toBeNull();
+            expect(api.getColumn('country')!.getActualWidth()).toBe(333);
+        });
     });
 });

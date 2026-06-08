@@ -185,14 +185,16 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         const buildToken = beans.colModel.nextBuildToken();
         const balanced = _buildColumnTree(
             beans,
-            colDefs,
-            false,
-            this.pivotGroupsById,
-            this.pivotColsByKey,
-            beans.colModel.colsById,
-            source,
-            buildToken,
-            null
+            /* defs */ colDefs,
+            /* primaryColumns */ false,
+            /* existingGroupsById */ this.pivotGroupsById,
+            /* existingColsByKey */ this.pivotColsByKey,
+            /* existingColsById */ beans.colModel.colsById,
+            /* source */ source,
+            // Generated cols: re-apply their stateful attrs each pivot rebuild (pre-live-state-flag behaviour).
+            /* newColDefs */ true,
+            /* buildToken */ buildToken,
+            /* wrapperCache */ null
         );
         // `previousTree` (not `currentPivotTree`) covers the clear/restore window where `currentPivotTree` is
         // null but saved bean refs survive. Skip the sweep when the tree is missing or unchanged.

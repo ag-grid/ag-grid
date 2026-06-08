@@ -28,6 +28,8 @@ export interface ColumnTreeBuild {
     /** Cols keyed by `colId` / `userProvidedColDef` ref / `field`; for O(1) reuse. */
     colsByKey: Map<string | ColDef, AgColumn>;
     source: ColumnEventType;
+    /** True = user (re)set the definitions, so reused cols re-apply stateful attrs; see {@link AgColumn.reapplyColDef}. */
+    newColDefs: boolean;
     buildToken: number;
     /** Padding-wrapper cache for the editable (hierarchy/calc) path; `null` for pivot result trees
      *  (a one-shot build that never splices). */
@@ -48,6 +50,7 @@ export function _buildColumnTree(
     existingColsByKey: Map<string | ColDef, AgColumn>,
     existingColsById: { readonly [id: string]: AgColumn },
     source: ColumnEventType,
+    newColDefs: boolean,
     buildToken: number,
     wrapperCache: ColWrapperCache | null
 ): ColumnTreeBuild {
@@ -160,7 +163,7 @@ export function _buildColumnTree(
                 if (isReusableUserCol(existing) && userDef && userDef.colId == null && userDef.field == null) {
                     allocatedKeys.add(id);
                     existing.buildToken = buildToken;
-                    existing.reapplyColDef(def, source);
+                    existing.reapplyColDef(def, source, newColDefs);
                     return existing;
                 }
                 continue;
@@ -177,7 +180,7 @@ export function _buildColumnTree(
         const keyed = existingColsByKey.get(base);
         if (keyed?.colId === base && isReusableUserCol(keyed)) {
             keyed.buildToken = buildToken;
-            keyed.reapplyColDef(def, source);
+            keyed.reapplyColDef(def, source, newColDefs);
             return keyed;
         }
         let count = 0;
@@ -201,7 +204,7 @@ export function _buildColumnTree(
             }
             if (existing !== undefined) {
                 existing.buildToken = buildToken;
-                existing.reapplyColDef(def, source);
+                existing.reapplyColDef(def, source, newColDefs);
                 return existing;
             }
             return _createUserColumn(beans, def, id, primaryColumns, buildToken);
@@ -230,7 +233,7 @@ export function _buildColumnTree(
         }
         if (column !== undefined) {
             column.buildToken = buildToken;
-            column.reapplyColDef(def, source);
+            column.reapplyColDef(def, source, newColDefs);
         } else {
             const field = def.field;
             column = colId == null && field == null ? buildAnonymousColumn(def) : buildKeyedColumn(def, colId, field);
@@ -275,6 +278,7 @@ export function _buildColumnTree(
             groupsById: newGroupsById,
             colsByKey: newColsByKey,
             source,
+            newColDefs,
             buildToken,
             wrapperCache,
         };
@@ -489,6 +493,7 @@ export function _buildColumnTree(
         groupsById: newGroupsById,
         colsByKey: newColsByKey,
         source,
+        newColDefs,
         buildToken,
         wrapperCache,
     };
