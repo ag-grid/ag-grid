@@ -13,7 +13,7 @@ import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import { _buildColumnTree, finalizeColumnTree } from './buildColumnTree';
 import { applyPrevColumnsOrder } from './colsApplyPrevOrder';
 import { ColWrapperCache } from './columnGroups/colWrapperCache';
-import { captureColumnStateChanges, dispatchColumnStateChanges } from './columnStateUtils';
+import { captureColumnStateChanges, dispatchColStateChanges } from './columnStateUtils';
 import { _convertColumnEventSourceType, _destroyColumnTreeAll, _destroyColumnTreeUnused } from './columnUtils';
 
 // Two parallel col representations:
@@ -252,7 +252,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (stateChanges) {
             this.changeEventsDispatching = true;
             try {
-                dispatchColumnStateChanges(beans, source, stateChanges);
+                dispatchColStateChanges(beans, source, stateChanges);
             } finally {
                 this.changeEventsDispatching = false;
             }

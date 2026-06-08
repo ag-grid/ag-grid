@@ -1,8 +1,8 @@
-import { getColGroupAtDirection } from '../columns/columnGroups/columnGroupNavigation';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
-import { edgeLeafColumn } from '../entities/agColumnGroup';
+import { edgeLeafColumn, getColGroupAtLevel } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -107,7 +107,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         let groupAfter: AgColumnGroup | null = null;
 
         if (shiftKey) {
-            groupAfter = getColGroupAtDirection(this.beans.visibleCols, this.columnGroup, 'After');
+            groupAfter = getColGroupAfter(this.beans.visibleCols, this.columnGroup);
         }
 
         if (groupAfter) {
@@ -236,3 +236,21 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         this.resizeTakeFromRatios = undefined;
     }
 }
+
+/** Scan leaf-by-leaf from `columnGroup`'s trailing edge to the adjacent displayed group at the same level. */
+const getColGroupAfter = (visibleCols: VisibleColsService, columnGroup: AgColumnGroup): AgColumnGroup | null => {
+    const requiredLevel = columnGroup.providedColumnGroup.level + columnGroup.getPaddingLevel();
+    let col = edgeLeafColumn(columnGroup, true, true);
+    while (col) {
+        const column = visibleCols.getColAfter(col);
+        if (!column) {
+            return null;
+        }
+        const groupPointer = getColGroupAtLevel(column, requiredLevel);
+        if (groupPointer !== columnGroup) {
+            return groupPointer;
+        }
+        col = column;
+    }
+    return null;
+};

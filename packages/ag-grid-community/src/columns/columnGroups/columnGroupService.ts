@@ -150,7 +150,6 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
             for (let j = 0, jLen = instances.length; j < jLen; ++j) {
                 const group = instances[j];
                 if (group.buildToken === buildToken) {
-                    group.displayed = true;
                     instances[live++] = group;
                 }
             }

@@ -1,11 +1,10 @@
 import { _getDocument, _last } from 'ag-stack';
 
-import { getColGroupAtLevel } from '../columns/columnGroups/columnGroupNavigation';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
-import { AgColumnGroup, edgeLeafColumn, isColumnGroup } from '../entities/agColumnGroup';
+import { AgColumnGroup, edgeLeafColumn, getColGroupAtLevel, isColumnGroup } from '../entities/agColumnGroup';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { HeaderRowType } from '../headerRendering/row/headerRowComp';

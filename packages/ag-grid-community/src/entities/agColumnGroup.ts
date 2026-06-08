@@ -38,8 +38,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     public oldLeft: number | null = null;
 
     public parent: AgColumnGroup | null = null;
-    /** Final render state: true while this group instance is in `VisibleColsService.tree*`. */
-    public displayed: boolean = false;
+
     /** Most recent build token that claimed this instance — sweeps use it to spot orphans. */
     public buildToken: number = 0;
 
@@ -56,7 +55,6 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 
     public override destroy(): void {
         super.destroy();
-        this.displayed = false;
     }
 
     public getParent(): AgColumnGroup | null {
@@ -310,4 +308,18 @@ const getLeafMoving = (group: AgProvidedColumnGroup): boolean | null => {
         }
     }
     return hasLeafColumn || null;
+};
+
+/** Walk up `column`'s parent chain to the group sitting at header-row `level`. */
+export const getColGroupAtLevel = (column: AgColumn, level: number): AgColumnGroup | null => {
+    // Decrement `paddingLevel` inline on each parent step.
+    let groupPointer = column.parent;
+    if (groupPointer) {
+        let paddingLevel = groupPointer.getPaddingLevel();
+        while (groupPointer && groupPointer.providedColumnGroup.level + paddingLevel > level) {
+            groupPointer = groupPointer.parent;
+            paddingLevel = paddingLevel > 0 ? paddingLevel - 1 : 0;
+        }
+    }
+    return groupPointer;
 };

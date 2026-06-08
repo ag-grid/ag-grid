@@ -313,15 +313,6 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             prevAll[i].allColsIndex = -1;
             prevAll[i].displayed = false;
         }
-        const allGroups = this.colModel.colsAllGroups;
-        for (let i = 0, len = allGroups.length; i < len; ++i) {
-            const instances = allGroups[i].displayInstances;
-            if (instances) {
-                for (let j = 0, jLen = instances.length; j < jLen; ++j) {
-                    instances[j].displayed = false;
-                }
-            }
-        }
         this.leftCols = [];
         this.rightCols = [];
         this.centerCols = [];

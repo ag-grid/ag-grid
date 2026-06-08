@@ -51,6 +51,33 @@ describe('column-model rewrite edge cases', () => {
         expect(defColIds(api.getColumnDefs())).toEqual(['a', 'b', 'd', 'c']);
     });
 
+    // A pivot build must not reuse a user (primary) column whose colId collides with a generated pivot
+    // colId — reuse is scoped to the same build kind (primary vs pivot result), not just colKind 'user'.
+    test('pivot build does not reuse a user column that shares a generated pivot colId', async () => {
+        const api = pivotGridsManager.createGrid('g', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'b', pivot: true },
+                { field: 'total', aggFunc: 'sum' },
+                // colId deliberately collides with the generated pivot result colId for b='x'.
+                { colId: 'pivot_b_x_total', field: 'extra' },
+            ],
+            rowData: [
+                { country: 'US', b: 'x', total: 5, extra: 'E' },
+                { country: 'US', b: 'y', total: 3, extra: 'F' },
+            ],
+            pivotMode: true,
+        });
+        await asyncSetTimeout(0);
+
+        // The user column keeps its colId; the colliding pivot result column is suffixed — neither is the other.
+        const userCol = api.getColumn('pivot_b_x_total');
+        expect(userCol?.getColDef().field).toBe('extra');
+        const pivotResult = api.getPivotResultColumns() ?? [];
+        expect(pivotResult).not.toContain(userCol);
+        expect(pivotResult.some((c) => c.getColId() === 'pivot_b_x_total_1')).toBe(true);
+    });
+
     // P2-2: colId is imperative for REUSE — a column with a colId is never reused by field. Changing a
     // colId therefore produces a NEW column with the new colId (whether via a fresh colDef object or by
     // mutating the colId on a retained colDef reference). Lookup by field is unaffected (still supported).

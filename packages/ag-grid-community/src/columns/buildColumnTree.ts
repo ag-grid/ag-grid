@@ -137,6 +137,9 @@ export function _buildColumnTree(
     let hasMarryChildren = false;
     const newColsByKey = new Map<string | ColDef, AgColumn>();
 
+    const isReusableUserCol = (col: AgColumn): boolean =>
+        col.colKind === 'user' && col.primary === primaryColumns && col.buildToken !== buildToken;
+
     /** Reuse/create an anonymous leaf (no colId/field) after the ref missed. Positional reuse on the
      *  `userIdHint` stream keeps a recreated `{...}` def on its id instead of drifting (losing state). */
     const buildAnonymousColumn = (def: ColDef): AgColumn => {
@@ -148,13 +151,7 @@ export function _buildColumnTree(
             const existing = existingColsById[id];
             if (existing !== undefined) {
                 const userDef = existing.userProvidedColDef;
-                if (
-                    existing.colKind === 'user' &&
-                    userDef &&
-                    userDef.colId == null &&
-                    userDef.field == null &&
-                    existing.buildToken !== buildToken
-                ) {
+                if (isReusableUserCol(existing) && userDef && userDef.colId == null && userDef.field == null) {
                     allocatedKeys.add(id);
                     existing.buildToken = buildToken;
                     existing.reapplyColDef(def, source);
@@ -172,7 +169,7 @@ export function _buildColumnTree(
     const buildKeyedColumn = (def: ColDef, colId: string | undefined, field: string | undefined): AgColumn => {
         const base = colId ?? field!;
         const keyed = existingColsByKey.get(base);
-        if (keyed?.colId === base && keyed.colKind === 'user' && keyed.buildToken !== buildToken) {
+        if (keyed?.colId === base && isReusableUserCol(keyed)) {
             keyed.buildToken = buildToken;
             keyed.reapplyColDef(def, source);
             return keyed;
@@ -188,8 +185,8 @@ export function _buildColumnTree(
             if (existing !== undefined) {
                 const existingDef = existing.userProvidedColDef;
                 const existingBase = existingDef ? (existingDef.colId ?? existingDef.field) : null;
-                if (existingBase !== base || existing.buildToken === buildToken || existing.colKind !== 'user') {
-                    continue; // a different col owns this id, it's already reused, or it's not a user col
+                if (existingBase !== base || !isReusableUserCol(existing)) {
+                    continue; // a different col owns this id, it's already claimed, or it's not a reusable user col
                 }
             }
             allocatedKeys.add(id);
@@ -220,13 +217,12 @@ export function _buildColumnTree(
         let column: AgColumn | undefined;
         if (colId != null) {
             const byId = existingColsByKey.get(colId);
-            column =
-                byId?.colId === colId && byId.colKind === 'user' && byId.buildToken !== buildToken ? byId : undefined;
+            column = byId?.colId === colId && isReusableUserCol(byId) ? byId : undefined;
         } else {
             const byRef = existingColsByKey.get(def);
-            column = byRef?.colKind === 'user' ? byRef : undefined;
+            column = byRef !== undefined && isReusableUserCol(byRef) ? byRef : undefined;
         }
-        if (column !== undefined && column.buildToken !== buildToken) {
+        if (column !== undefined) {
             column.buildToken = buildToken;
             column.reapplyColDef(def, source);
         } else {

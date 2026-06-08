@@ -66,7 +66,7 @@ export interface ApplyColumnStateParams {
     defaultState?: ColumnStateParams;
 }
 
-/** Pre-mutation snapshot; `dispatchColumnStateChanges` diffs against it to fire the right column events. */
+/** Pre-mutation snapshot; `dispatchColStateChanges` diffs against it to fire the right column events. */
 interface ColumnStateChanges {
     /** Pre-mutation snapshot (`sortColumns` mutates `.columns` in place); `undefined` when empty/absent. */
     rowGroupColumns: AgColumn[] | undefined;
@@ -483,7 +483,7 @@ function finalizeChange(
     orderLiveColsLikeState(beans, params);
     beans.visibleCols.refresh(source, false);
     beans.eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
-    dispatchColumnStateChanges(beans, source, changes);
+    dispatchColStateChanges(beans, source, changes);
 }
 
 /** Reorder `colsList`: state-ordered cols first, rest after (auto-group at front), locked cols at the edges.
@@ -548,7 +548,7 @@ function orderLiveColsLikeState(beans: BeanCollection, params: ApplyColumnStateP
     colModel.markColsListIndexDirty();
 }
 
-/** Snapshot column state before a mutation. Pair with {@link dispatchColumnStateChanges} after the
+/** Snapshot column state before a mutation. Pair with {@link dispatchColStateChanges} after the
  *  mutation to fire the resulting events. Used by both apply-column-state and apply-new-column-defs. */
 export function captureColumnStateChanges(beans: BeanCollection): ColumnStateChanges {
     const { rowGroupColsSvc, pivotColsSvc, colModel } = beans;
@@ -580,7 +580,7 @@ export function captureColumnStateChanges(beans: BeanCollection): ColumnStateCha
 
 /** Diff current column state against a {@link captureColumnStateChanges} snapshot and dispatch the changed
  *  column events (value/resize/pin/visible/sort/rowGroup/pivot/moved). */
-export function dispatchColumnStateChanges(
+export function dispatchColStateChanges(
     beans: BeanCollection,
     source: ColumnEventType,
     changes: ColumnStateChanges
@@ -721,7 +721,7 @@ export const _getColumnState = (beans: BeanCollection): ColumnState[] => {
         return [];
     }
     const cols = colModel.getColsInStateOrder();
-    const res: ColumnState[] = new Array(cols.length);
+    const res = new Array<ColumnState>(cols.length);
     for (let i = 0, len = cols.length; i < len; ++i) {
         const column = cols[i];
         const rowGroupActive = column.rowGroupActive;
