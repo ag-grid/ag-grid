@@ -1,32 +1,15 @@
 name: 'PR preview — publish UMD bundles'
-description: >
-    Stage a PR's pre-built UMD bundle files under `pr-<N>/` and deploy them to
-    the repo's `gh-pages` branch, so they are served at
-    `https://<owner>.github.io/<repo>/pr-<N>/<bundle>`. Product-agnostic: the
-    caller resolves and passes the bundle file paths (this action does not build
-    anything). Sourcemaps (`<bundle>.map`) sitting next to each bundle are
-    published too when present.
-
-    Shared across AG consumer repos via the ag-shared subrepo — reference it as
-    `./external/ag-shared/github/actions/pr-preview-publish`. The product-specific
-    build:umd step, artifact handoff, and the live-test PR comment stay in each
-    repo's workflow (the served URL differs per repo). The caller must set the
-    job-level concurrency group `pr-preview-gh-pages` (cancel-in-progress: false)
-    so publishes and cleanups serialise.
+description: Stage caller-supplied bundle files under pr-<N>/ and deploy them to gh-pages (served at https://<owner>.github.io/<repo>/pr-<N>/<bundle>). Skips cleanly when no bundle exists.
 
 inputs:
     pr_number:
         description: 'PR number — bundles are published under pr-<pr_number>/.'
         required: true
     files:
-        description: >
-            Newline-separated list of bundle file paths to publish. A sibling
-            `<file>.map` is published alongside each when it exists. If none of
-            the listed files exist (e.g. a tooling-only PR that built no
-            bundles), the deploy is skipped (not an error).
+        description: 'Newline-separated bundle paths to publish (a sibling <file>.map is included when present).'
         required: true
     github_token:
-        description: 'Token with contents:write to push to the publish branch.'
+        description: 'Token with contents:write for the publish branch.'
         required: false
         default: ${{ github.token }}
     publish_branch:
@@ -52,8 +35,6 @@ runs:
                   if [ -f "$f" ]; then
                       mkdir -p "$DEST"
                       cp "$f" "$DEST/"
-                      # Publish the sourcemap next to the bundle when present so
-                      # stack traces in Plunker resolve to original sources.
                       [ -f "${f}.map" ] && cp "${f}.map" "$DEST/"
                       found=$((found + 1))
                   else
@@ -66,8 +47,7 @@ runs:
                   echo "publish=false" >> "$GITHUB_OUTPUT"
                   exit 0
               fi
-              # .nojekyll at root disables Jekyll on gh-pages; keep_files preserves it across pushes.
-              touch _publish/.nojekyll
+              touch _publish/.nojekyll  # disable Jekyll on gh-pages
               echo "publish=true" >> "$GITHUB_OUTPUT"
 
         - name: Deploy to ${{ inputs.publish_branch }}

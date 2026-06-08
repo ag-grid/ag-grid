@@ -1,17 +1,5 @@
 name: 'Install @ag-grid/dev-prompts'
-description: >
-    Install the @ag-grid/dev-prompts npm package from GitHub Packages so the
-    composite actions shipped inside it (jira-pipeline, jira-ci-failure-preflight,
-    etc.) can be consumed via local-path `uses:` references. Required because
-    ag-dev-prompts is a private repo and the runner's GITHUB_TOKEN cannot resolve
-    `uses: ag-grid/ag-dev-prompts/...` cross-repo, but GitHub Packages honours the
-    same token with `packages: read`.
-
-    Shared across AG consumer repos (ag-charts, ag-grid, ag-studio) via the
-    ag-shared subrepo — reference it as
-    `./external/ag-shared/github/actions/install-ag-dev-prompts`. The engine
-    actions themselves stay on the npm package (channel-pinned); only this thin
-    install glue is shared.
+description: Install the private @ag-grid/dev-prompts package from GitHub Packages into .ag-dev-prompts/ so its shipped composite actions can be used via local-path uses:.
 
 inputs:
     channel:
@@ -22,11 +10,7 @@ inputs:
         required: false
         default: ${{ github.token }}
     node-version:
-        description: >
-            Optional explicit Node version. Defaults to empty, in which case the
-            consumer repo's root package.json (engines.node / volta) is used via
-            node-version-file. Set this only if a repo has no resolvable version
-            in package.json.
+        description: 'Optional Node version override; defaults to the repo package.json via node-version-file.'
         required: false
         default: ''
 
