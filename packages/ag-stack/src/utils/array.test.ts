@@ -1,4 +1,4 @@
-import { _areEqual, _removeAllFromArray } from './array';
+import { _areEqual, _indexMap, _pushToMapArray, _removeAllFromArray, _symmetricDiff } from './array';
 
 describe('areEqual', () => {
     it.each([
@@ -96,5 +96,94 @@ describe('_removeAllFromArray', () => {
         const array = [1, 2, 3, 1, 4];
         _removeAllFromArray(array, [1]);
         expect(array).toEqual([2, 3, 4]);
+    });
+});
+
+describe('_symmetricDiff', () => {
+    it.each([
+        [null, null],
+        [undefined, undefined],
+        [null, undefined],
+        [[], []],
+        [[], null],
+    ])('returns [] when both sides are empty or missing: a = %s, b = %s', (a, b) => {
+        expect(_symmetricDiff(a, b)).toEqual([]);
+    });
+
+    it('returns [] for the same array reference (fast path)', () => {
+        const a = [1, 2, 3];
+        expect(_symmetricDiff(a, a)).toEqual([]);
+    });
+
+    it('returns a copy of the non-empty side when the other is empty', () => {
+        const a = [1, 2, 3];
+        const result = _symmetricDiff(a, []);
+        expect(result).toEqual([1, 2, 3]);
+        expect(result).not.toBe(a);
+
+        expect(_symmetricDiff([], [4, 5])).toEqual([4, 5]);
+        expect(_symmetricDiff(null, [4, 5])).toEqual([4, 5]);
+    });
+
+    it('returns [] when both sides hold the same elements', () => {
+        expect(_symmetricDiff([1, 2, 3], [3, 2, 1])).toEqual([]);
+    });
+
+    it('returns survivors in a-order then additions in b-order', () => {
+        // 1 only in a (survives), 2 & 3 in both (cancel), 4 only in b (added).
+        expect(_symmetricDiff([1, 2, 3], [2, 3, 4])).toEqual([1, 4]);
+    });
+
+    it('handles a single differing element on each side', () => {
+        expect(_symmetricDiff([1], [2])).toEqual([1, 2]);
+    });
+
+    it('compares by reference identity for objects', () => {
+        const shared = { id: 1 };
+        const onlyA = { id: 2 };
+        const onlyB = { id: 3 };
+        expect(_symmetricDiff([shared, onlyA], [shared, onlyB])).toEqual([onlyA, onlyB]);
+    });
+});
+
+describe('_indexMap', () => {
+    it.each([[null], [undefined], [[]]])('returns an empty map for %s', (arr) => {
+        expect(_indexMap(arr).size).toBe(0);
+    });
+
+    it('maps each element to its index', () => {
+        const map = _indexMap(['a', 'b', 'c']);
+        expect(map.get('a')).toBe(0);
+        expect(map.get('b')).toBe(1);
+        expect(map.get('c')).toBe(2);
+    });
+
+    it('keeps the last index for duplicate elements', () => {
+        const map = _indexMap(['a', 'b', 'a']);
+        expect(map.get('a')).toBe(2);
+        expect(map.get('b')).toBe(1);
+    });
+});
+
+describe('_pushToMapArray', () => {
+    it('creates a new bucket on first use', () => {
+        const map = new Map<string, number[]>();
+        _pushToMapArray(map, 'k', 1);
+        expect(map.get('k')).toEqual([1]);
+    });
+
+    it('appends to an existing bucket', () => {
+        const map = new Map<string, number[]>();
+        _pushToMapArray(map, 'k', 1);
+        _pushToMapArray(map, 'k', 2);
+        expect(map.get('k')).toEqual([1, 2]);
+    });
+
+    it('keeps buckets separate per key', () => {
+        const map = new Map<string, number[]>();
+        _pushToMapArray(map, 'a', 1);
+        _pushToMapArray(map, 'b', 2);
+        expect(map.get('a')).toEqual([1]);
+        expect(map.get('b')).toEqual([2]);
     });
 });

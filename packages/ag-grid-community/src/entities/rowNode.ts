@@ -579,7 +579,7 @@ export class RowNode<TData = any>
             return false; // no column
         }
 
-        let column = colModel.getColOrColDefCol(colKey);
+        let column = colModel.getCol(colKey);
         if (!column) {
             return false; // column not found
         }
@@ -653,7 +653,7 @@ export class RowNode<TData = any>
 
         const beans = this.beans;
 
-        const column = beans.colModel.getColOrColDefCol(colKey);
+        const column = beans.colModel.getCol(colKey);
         if (!column) {
             return undefined;
         }

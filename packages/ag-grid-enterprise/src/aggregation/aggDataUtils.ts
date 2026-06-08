@@ -66,7 +66,7 @@ const fireAggDataChangedEvents = (
         const oldKeys = Object.keys(oldAggData);
         for (let i = 0, len = oldKeys.length; i < len; ++i) {
             const colId = oldKeys[i];
-            const column = colModel.getColById(colId);
+            const column = colModel.colsById[colId];
             if (column) {
                 rowNode.dispatchCellChangedEvent(column, undefined, oldAggData[colId]);
             }
@@ -82,7 +82,7 @@ const fireAggDataChangedEvents = (
         if (value === oldValue) {
             continue;
         }
-        const column = colModel.getColById(colId);
+        const column = colModel.colsById[colId];
         if (column) {
             rowNode.dispatchCellChangedEvent(column, value, oldValue);
         }
@@ -98,7 +98,7 @@ const fireAggDataChangedEvents = (
         if (colId in newAggData) {
             continue;
         }
-        const column = colModel.getColById(colId);
+        const column = colModel.colsById[colId];
         if (column) {
             rowNode.dispatchCellChangedEvent(column, undefined, oldAggData[colId]);
         }

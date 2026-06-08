@@ -13,21 +13,18 @@ export class ColumnNameService extends BeanStub implements NamedBean {
     beanName = 'colNames' as const;
 
     public getDisplayNameForColumn(
-        column: AgColumn | null,
+        column: AgColumn | null | undefined,
         location: HeaderLocation,
         includeAggFunc = false
     ): string | null {
         if (!column) {
             return null;
         }
-
-        const headerName: string | null = this.getHeaderName(column.getColDef(), column, null, null, location);
-
-        const { aggColNameSvc } = this.beans;
+        const headerName: string | null = this.getHeaderName(column.colDef, column, null, null, location);
+        const aggColNameSvc = this.beans.aggColNameSvc;
         if (includeAggFunc && aggColNameSvc) {
             return aggColNameSvc.getHeaderName(column, headerName);
         }
-
         return headerName;
     }
 
@@ -36,7 +33,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
         providedColumnGroup: AgProvidedColumnGroup | null,
         location: HeaderLocation
     ): string | null {
-        const colGroupDef = providedColumnGroup?.getColGroupDef();
+        const colGroupDef = providedColumnGroup?.colGroupDef;
 
         if (colGroupDef) {
             return this.getHeaderName(colGroupDef, null, columnGroup, providedColumnGroup, location);
@@ -46,7 +43,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
     }
 
     public getDisplayNameForColumnGroup(columnGroup: AgColumnGroup, location: HeaderLocation): string | null {
-        return this.getDisplayNameForProvidedColumnGroup(columnGroup, columnGroup.getProvidedColumnGroup(), location);
+        return this.getDisplayNameForProvidedColumnGroup(columnGroup, columnGroup.providedColumnGroup, location);
     }
 
     // location is where the column is going to appear, ie who is calling us

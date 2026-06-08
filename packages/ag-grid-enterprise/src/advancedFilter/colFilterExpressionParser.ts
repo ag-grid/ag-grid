@@ -93,7 +93,7 @@ class ColumnParser implements Parser {
             this.colId = colValue.colId;
             checkAndUpdateExpression(this.params, this.colName, colValue.columnName, endPosition - 1);
             this.colName = colValue.columnName;
-            this.column = this.params.colModel.getColDefCol(this.colId);
+            this.column = this.params.colModel.getNonPivotCol(this.colId);
             if (this.column) {
                 this.baseCellDataType = this.params.dataTypeSvc?.getBaseDataType(this.column) ?? 'text';
                 return true;

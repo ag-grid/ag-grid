@@ -1,6 +1,8 @@
+import type { ColumnTreeBuild } from '../columns/buildColumnTree';
+import type { ColumnState } from '../columns/columnStateUtils';
 import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 
 export type CalculatedColumnExpressionPicker = 'columns' | 'functions' | 'operators';
@@ -34,13 +36,18 @@ export type CalculatedColumnUpdate<TData = any, TValue = any> = Partial<ColDef<T
 };
 
 export interface ICalculatedColumnsService extends Bean {
-    removeCalculatedColumn(column: AgColumn | null): void;
-    openCalculatedColumnDialog(column: AgColumn | null, mode: 'add' | 'edit', focusDialog?: boolean): void;
-    createProjectedColumnDefs(columnDefs: (ColDef | ColGroupDef)[] | undefined): (ColDef | ColGroupDef)[] | undefined;
-    orderDynamicColumns(columns: AgColumn[]): void;
-    shouldPreserveColumnOrderOnRefresh(): boolean;
+    removeCalculatedColumn(column: AgColumn | undefined): void;
+    openCalculatedColumnDialog(column: AgColumn | null | undefined, mode: 'add' | 'edit', focusDialog?: boolean): void;
+    /** Build hook for static (user-declared) calc cols: `null` if removed (never build), the replacement
+     *  `ColDef` if updated, `undefined` if unchanged. Applied during the build, so removed cols are never materialised. */
+    overrideFor(colDef: ColDef): ColDef | null | undefined;
+    /** Build-time dynamic calc-col hook: keep owned AgColumns alive and splice them at anchors (`overrideFor` handles static cols). */
+    contributeTo(build: ColumnTreeBuild): void;
+    /** Clear dynamic calc-col state; with `preserveCreatedColumns`, park added cols for `restoreDynamicColumnDefs`, and return whether caller must rebuild. */
     resetDynamicColumnDefs(preserveCreatedColumns?: boolean): boolean;
-    restoreDynamicColumnDefs(colIds: string[]): boolean;
-    refreshProjectedColumns(source: ColumnEventType): void;
+    /** Re-add parked dynamic cols referenced by `state` and return whether any were restored (caller rebuilds). */
+    restoreDynamicColumnDefs(state: ColumnState[]): boolean;
+    /** Run a suppressed rebuild after calc-col mutation so column-state ops avoid spurious calc lifecycle events. */
+    refreshDynamicColumns(source: ColumnEventType): void;
     isHighlightedColumn(column: AgColumn | null): boolean;
 }

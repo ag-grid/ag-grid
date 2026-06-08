@@ -1,86 +1,97 @@
-import { _areEqual, _forAll } from 'ag-stack';
+import { _areEqual } from 'ag-stack';
 
 import { placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { AgColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
-import { _isGroupHideColumnsUntilExpanded, _isRowNumbers, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
-import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
-import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
-import { _createColumnTree } from './columnFactoryUtils';
-import type { ColumnState } from './columnStateUtils';
-import { _applyColumnState, _compareColumnStatesAndDispatchEvents } from './columnStateUtils';
-import {
-    _columnsMatch,
-    _convertColumnEventSourceType,
-    _destroyColumnTree,
-    _getColumnsFromTree,
-    isColumnGroupAutoCol,
-    isColumnSelectionCol,
-    isRowNumberCol,
-} from './columnUtils';
+import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
+import { _buildColumnTree, finalizeColumnTree } from './buildColumnTree';
+import { applyPrevColumnsOrder } from './colsApplyPrevOrder';
+import { ColWrapperCache } from './columnGroups/colWrapperCache';
+import { captureColumnStateChanges, dispatchColStateChanges } from './columnStateUtils';
+import { _convertColumnEventSourceType, _destroyColumnTreeAll, _destroyColumnTreeUnused } from './columnUtils';
 
-export type Maybe<T> = T | null | undefined;
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface ColumnCollections {
-    // columns in a tree, leaf levels are columns, everything above is group column
-    tree: (AgColumn | AgProvidedColumnGroup)[];
-    treeDepth: number; // depth of the tree above
-    // leaf level cols of the tree
-    list: AgColumn[];
-    // cols by id, for quick lookup
-    map: { [id: string]: AgColumn };
-}
+// Two parallel col representations:
+//   colDefList / colDefTree  — PRIMARY cols (user-defined leaves + hierarchy virtuals).
+//   colsList   / colsTree    — DISPLAY cols: [serviceCols, ...colDefList] (or pivot result).
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ColumnModel extends BeanStub implements NamedBean {
     beanName = 'colModel' as const;
 
-    // as provided by gridProp columnsDefs
-    private colDefs?: (ColDef | ColGroupDef)[];
-
-    // columns generated from columnDefs
-    // this doesn't change (including order) unless columnDefs prop changses.
-    public colDefCols?: ColumnCollections;
-
-    // [providedCols OR pivotResultCols] PLUS autoGroupCols PLUS selectionCols
-    // this cols.list maintains column order.
-    public cols?: ColumnCollections;
-
-    // if pivotMode is on, however pivot results are NOT shown if no pivot columns are set
     public pivotMode = false;
-
-    // true when pivotResultCols are in cols
-    private showingPivotResult: boolean;
-
-    private lastOrder: AgColumn[] | null;
-    private lastPivotOrder: AgColumn[] | null;
-
-    // true if we are doing column spanning
-    public colSpanActive: boolean;
-
+    public colSpanActive = false;
     public ready = false;
+    /** Suppresses row model refreshes during batch column state dispatching. */
     public changeEventsDispatching = false;
+    public showingPivotResult = false;
+
+    /** >0 inside a {@link beginColBatch}/{@link endColBatch} pair: cols services defer their flush to the outermost close. */
+    private colBatchDepth = 0;
+    /** Set when a staged change needs a display rebuild; consumed (cleared) once by {@link performRefresh}. */
+    private pendingRefresh = false;
+    /** A batched `buildFromColDefs` already raised `columnEverythingChanged`; stops the batch flush re-raising it. */
+    private everythingChangedInBatch = false;
+    public colsList: AgColumn[] = [];
+    public colsTree: (AgColumn | AgProvidedColumnGroup)[] = [];
+    public colsTreeDepth = 0;
+    public colDefList: AgColumn[] = [];
+    public colDefTree: (AgColumn | AgProvidedColumnGroup)[] = [];
+    public colDefTreeDepth = 0;
+    private colDefHasMarryChildren = false;
+    public hasMarryChildren = false;
+
+    /** Single source of truth for `getCol`. Pivot result colIds are namespaced (`pivot_…`). */
+    public colsById: { [id: string]: AgColumn } = Object.create(null);
+
+    public colDefGroupsById: Map<string, AgProvidedColumnGroup> = new Map();
+    /** Primary cols keyed by colId / userProvidedColDef ref / field; passed back for next-build reuse. */
+    private colDefColsByKey: Map<string | ColDef, AgColumn> = new Map();
+    /** Every primary group (padding + non-padding) — sweep uses this to find orphans whose parent's
+     *  `.children` was reassigned. */
+    private colDefAllGroups: AgProvidedColumnGroup[] = [];
+
+    /** Non-padding displayed groups by `groupId`. Pivot mode = pivot's groups; else = colDefGroupsById. */
+    public colsGroupsById: Map<string, AgProvidedColumnGroup> = new Map();
+    /** Every displayed group — padding groups carry `displayInstances` */
+    public colsAllGroups: AgProvidedColumnGroup[] = [];
+
+    /** Lazy fallback for ColDef-shaped keys not in `colsById`: by-ref (merged + user colDef) plus
+     *  `field` when distinct from colId (first-write-wins). */
+    private cachedColsByDef: Map<ColKey, AgColumn> | null = null;
+
+    private cachedAllCols: AgColumn[] | null = null;
+
+    /** Cache for getColsInStateOrder (pivot only). Invalidated on `colsList` mutation — ref equality
+     *  can't substitute, as `moveColumns` reorders in place. */
+    private cachedColsInStateOrder: AgColumn[] | null = null;
+
+    /** Prior display order per mode, as colId snapshots, so the next refresh can restore user moves. */
+    private lastOrder: string[] | null = null;
+    private lastPivotOrder: string[] | null = null;
+    /** Set when colsList order changes; {@link ensureColsListIndex} re-stamps `colsListIndex` lazily. */
+    private colsListIndexDirty = true;
+
+    /** User provided column definitions */
+    public colDefs: (ColDef | ColGroupDef)[] | undefined = undefined;
+
+    private buildTokenCounter = 0;
+
+    /** Persistent padding-group cache for hierarchy virtual cols, handed to each column-tree build
+     *  so `(col, depth)`-stable wrappers survive rebuilds. Owns the padding-group bean lifecycle. */
+    private hierarchyWrapperCache: ColWrapperCache;
 
     public postConstruct(): void {
         this.pivotMode = this.gos.get('pivotMode');
+        this.hierarchyWrapperCache = new ColWrapperCache(this.beans);
 
         this.addManagedPropertyListeners(
-            [
-                'groupDisplayType',
-                'treeData',
-                'treeDataDisplayType',
-                'groupHideOpenParents',
-                'groupHideColumnsUntilExpanded',
-                'rowNumbers',
-                'hidePaddedHeaderRows',
-            ],
+            ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents', 'hidePaddedHeaderRows'],
             (event) => this.refreshAll(_convertColumnEventSourceType(event.source))
         );
         this.addManagedPropertyListeners(
@@ -92,9 +103,64 @@ export class ColumnModel extends BeanStub implements NamedBean {
         );
     }
 
-    // called from SyncService, when grid has finished initialising
-    private createColsFromColDefs(source: ColumnEventType, preserveColumnOrder = false): void {
-        const { beans } = this;
+    public override destroy(): void {
+        _destroyColumnTreeAll(this.colDefList, this.colDefAllGroups);
+        this.hierarchyWrapperCache.destroy();
+        super.destroy();
+    }
+
+    public nextBuildToken(): number {
+        return ++this.buildTokenCounter;
+    }
+
+    public isPivotActive(): boolean {
+        return this.pivotMode && !!this.beans.pivotColsSvc?.columns?.length;
+    }
+
+    public getCols(): AgColumn[] {
+        return this.colsList;
+    }
+
+    /** Every column known to the grid (user, hierarchy, service, pivot result) in display (`colsList`)
+     *  order, with parked pivot primaries appended. Lazily computed on first read after invalidation. */
+    public getAllCols(): AgColumn[] {
+        let allCols = this.cachedAllCols;
+        if (!allCols) {
+            // While pivoting, pivot result cols are the full set (primaries are parked); `??` keeps an empty result.
+            const pivotAllCols = this.showingPivotResult ? this.beans.pivotResultCols?.buildAllCols() : undefined;
+            allCols = pivotAllCols ?? this.colsList;
+            this.cachedAllCols = allCols;
+        }
+        return allCols;
+    }
+
+    /** Resolve a provided group by id, falling back to parked primaries while pivoting (mirrors `getCol`). */
+    public getColGroup(groupId: string): AgProvidedColumnGroup | undefined {
+        return (
+            this.colsGroupsById.get(groupId) ??
+            (this.showingPivotResult ? this.colDefGroupsById.get(groupId) : undefined)
+        );
+    }
+
+    /** Columns in column-state order: hidden pivot primaries first, then `colsList`. Must not be mutated. */
+    public getColsInStateOrder(): AgColumn[] {
+        // Only pivot has hidden primaries (built enterprise-side); cached on colsList.
+        if (!this.showingPivotResult) {
+            return this.colsList;
+        }
+        let ordered = this.cachedColsInStateOrder;
+        if (ordered) {
+            return ordered;
+        }
+        ordered = this.beans.pivotResultCols?.buildColsInStateOrder() ?? this.colsList;
+        this.cachedColsInStateOrder = ordered;
+        return ordered;
+    }
+
+    /** `newColDefs`: true = colDefs changed (order restored only with `maintainColumnOrder`); false =
+     *  dynamic refresh with unchanged colDefs (prior order restored). */
+    private buildFromColDefs(source: ColumnEventType, newColDefs: boolean): void {
+        const beans = this.beans;
         const {
             valueCache,
             colAutosize,
@@ -104,633 +170,478 @@ export class ColumnModel extends BeanStub implements NamedBean {
             visibleCols,
             eventSvc,
             groupHierarchyColSvc,
+            calculatedColsSvc,
+            sortSvc,
         } = beans;
-        // only need to dispatch before/after events if updating columns, never if setting columns for first time
-        const dispatchEventsFunc = this.colDefCols ? _compareColumnStatesAndDispatchEvents(beans, source) : undefined;
 
-        // always invalidate cache on changing columns, as the column id's for the new columns
-        // could overlap with the old id's, so the cache would return old values for new columns.
-        valueCache?.expire();
+        // only dispatch before/after events when updating an existing column model, not on first set.
+        const colDefs = this.colDefs;
+        const stateChanges = this.ready ? captureColumnStateChanges(beans) : undefined;
+        valueCache?.expire(); // new ids may collide with old ids, so cached values would be wrong for new cols
 
-        const oldCols = this.colDefCols?.list;
-        const oldTree = this.colDefCols?.tree;
-        const columnDefs = beans.calculatedColsSvc?.createProjectedColumnDefs(this.colDefs) ?? this.colDefs;
-        const newTree = _createColumnTree(beans, columnDefs, true, oldTree, source);
+        const oldCols = this.colDefList;
+        const oldTree = this.colDefTree;
+        const oldAllGroups = this.colDefAllGroups;
 
-        _destroyColumnTree(beans, this.colDefCols?.tree, newTree.columnTree);
+        const builder = _buildColumnTree(
+            beans,
+            colDefs,
+            true,
+            this.colDefGroupsById,
+            this.colDefColsByKey,
+            this.colsById,
+            source,
+            this.nextBuildToken(),
+            this.hierarchyWrapperCache
+        );
+        groupHierarchyColSvc?.contributeTo(builder);
+        calculatedColsSvc?.contributeTo(builder);
+        finalizeColumnTree(builder);
 
-        const tree = newTree.columnTree;
-        const treeDepth = newTree.treeDepth;
-        const list = _getColumnsFromTree(tree);
-        const map: { [id: string]: AgColumn } = {};
+        const tree = builder.columnTree;
+        const cols = builder.columns;
+        this.colDefTree = tree;
+        this.colDefTreeDepth = builder.treeDepth;
+        this.colDefList = cols;
+        this.colDefHasMarryChildren = builder.marryChildren;
+        this.colDefGroupsById = builder.groupsById;
+        this.colDefColsByKey = builder.colsByKey;
+        this.colDefAllGroups = builder.allGroups;
 
-        for (const col of list) {
-            map[col.getId()] = col;
+        // Seed colsById from the finalized primary cols (user leaves + hierarchy virtuals + calc cols).
+        const colsById: { [id: string]: AgColumn } = Object.create(null);
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            colsById[cols[i].colId] = cols[i];
+        }
+        this.colsById = colsById;
+
+        if (oldTree !== tree) {
+            // Skip sweep when the tree ref is unchanged (group reuse + unchanged colDefs short-circuit).
+            _destroyColumnTreeUnused(oldCols, oldAllGroups, builder.buildToken);
         }
 
-        this.colDefCols = { tree, treeDepth, list, map };
+        this.cachedColsByDef = null;
+        this.cachedAllCols = null;
+        this.cachedColsInStateOrder = null;
+        sortSvc?.invalidate();
 
-        // Must create dateHierarchy columns before rowGroupSvc and pivotSvc run
-        // so that any groupable date columns exist beforehand.
-        this.createColumnsForService([groupHierarchyColSvc], this.colDefCols, source);
-
-        rowGroupColsSvc?.extractCols(source, oldCols);
-        pivotColsSvc?.extractCols(source, oldCols);
-        valueColsSvc?.extractCols(source, oldCols);
+        // Single shared scan: each service classifies independently, bucketing lazily until commit.
+        const oldProvidedSet = oldCols.length > 0 ? new Set(oldCols) : null;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const col = cols[i];
+            const colIsNew = !oldProvidedSet?.has(col);
+            rowGroupColsSvc?.extractCol(col, colIsNew);
+            pivotColsSvc?.extractCol(col, colIsNew);
+            valueColsSvc?.extractCol(col, colIsNew);
+        }
+        rowGroupColsSvc?.commitExtract(source);
+        pivotColsSvc?.commitExtract(source);
+        valueColsSvc?.commitExtract(source);
 
         this.ready = true;
-
         this.changeEventsDispatching = true;
-        this.refreshCols(!preserveColumnOrder, source);
-        this.changeEventsDispatching = false;
-
-        visibleCols.refresh(source);
-
-        // this event is not used by AG Grid, but left here for backwards compatibility,
-        // in case applications use it
-        eventSvc.dispatchEvent({
-            type: 'columnEverythingChanged',
-            source,
-        });
-
-        // Row Models react to all of these events as well as new columns loaded,
-        // this flag instructs row model to ignore these events to reduce refreshes.
-        if (dispatchEventsFunc) {
-            this.changeEventsDispatching = true;
-            dispatchEventsFunc();
+        try {
+            this.refreshCols(newColDefs, source);
+        } finally {
             this.changeEventsDispatching = false;
         }
 
-        eventSvc.dispatchEvent({
-            type: 'newColumnsLoaded',
-            source,
-        });
+        visibleCols.refresh(source, false);
+
+        // unused by AG Grid but kept for backwards compatibility
+        eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
+        if (this.colBatchDepth > 0) {
+            this.everythingChangedInBatch = true; // batch flush must not re-raise it
+        }
+
+        if (stateChanges) {
+            this.changeEventsDispatching = true;
+            try {
+                dispatchColStateChanges(beans, source, stateChanges);
+            } finally {
+                this.changeEventsDispatching = false;
+            }
+        }
+
+        eventSvc.dispatchEvent({ type: 'newColumnsLoaded', source });
 
         if (source === 'gridInitializing') {
             colAutosize?.applyAutosizeStrategy();
         }
     }
 
-    // called from: buildAutoGroupColumns (events 'groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents')
-    // createColsFromColDefs (recreateColumnDefs, setColumnsDefs),
-    // setPivotMode, applyColumnState,
-    // functionColsService.setPrimaryColList, functionColsService.updatePrimaryColList,
-    // pivotResultCols.setPivotResultCols
+    /** Open a column-change batch; mutations until the {@link endColBatch} share one flush. */
+    public beginColBatch(): void {
+        this.colBatchDepth++;
+    }
+
+    /** Close a {@link beginColBatch}; the outermost close flushes once (one source for the whole action). */
+    public endColBatch(source: ColumnEventType): void {
+        this.colBatchDepth--;
+        this.flushColChanges(source, false); // refresh only if a staged op accumulated one
+    }
+
+    /** Refresh once (if needed) + dispatch each touched service. Fires immediately, or defers to {@link endColBatch}
+     *  when batched. `refresh` accumulates into {@link pendingRefresh}: membership passes `true`, order/aggFunc-only
+     *  (`moveColumn`/`setColumnAggFunc`) pass `false` to dispatch without a rebuild. */
+    public flushColChanges(source: ColumnEventType, refresh: boolean): void {
+        if (refresh) {
+            this.pendingRefresh = true;
+        }
+        if (this.colBatchDepth > 0) {
+            return; // inside a batch: endColBatch will flush
+        }
+        const { rowGroupColsSvc, pivotColsSvc, valueColsSvc } = this.beans;
+        const pendingRefresh = this.pendingRefresh;
+        // A batched `buildFromColDefs` may already have raised it; consume the flag either way.
+        const everythingAlreadyRaised = this.everythingChangedInBatch;
+        this.everythingChangedInBatch = false;
+        const nothingStaged =
+            !rowGroupColsSvc?.pendingChanged && !pivotColsSvc?.pendingChanged && !valueColsSvc?.pendingChanged;
+        if (nothingStaged && !pendingRefresh) {
+            return; // no staged dispatch and no deferred refresh
+        }
+        if (pendingRefresh) {
+            this.performRefresh(source); // clears pendingRefresh
+            // Legacy compat: a role membership change (rowGroup/pivot/value add/remove/set) raised this.
+            if (!everythingAlreadyRaised) {
+                this.eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
+            }
+        }
+        rowGroupColsSvc?.dispatchColChange(source);
+        pivotColsSvc?.dispatchColChange(source);
+        valueColsSvc?.dispatchColChange(source);
+    }
+
     public refreshCols(newColDefs: boolean, source: ColumnEventType): void {
-        if (!this.colDefCols) {
-            return;
-        }
-
-        const prevColTree = this.cols?.tree;
-
-        this.saveColOrder();
-
-        const {
-            autoColSvc,
-            selectionColSvc,
-            calculatedColsSvc,
-            rowNumbersSvc,
-            quickFilter,
-            pivotResultCols,
-            showRowGroupCols,
-            rowAutoHeight,
-            visibleCols,
-            colViewport,
-            eventSvc,
-            formula,
-        } = this.beans;
-
-        const cols = this.selectCols(pivotResultCols, this.colDefCols);
-        // we need to initialise the formula service before
-        // attempting to create the column services as currently
-        // the rowNumbers will automatically activate with formulas
-        formula?.setFormulasActive(cols);
-
-        this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols, source);
-
-        const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
-        if (!newColDefs || shouldSortNewColDefs) {
-            this.restoreColOrder(cols);
-        }
-
-        calculatedColsSvc?.orderDynamicColumns(cols.list);
-        this.positionLockedCols(cols);
-        showRowGroupCols?.refresh();
-        quickFilter?.refreshCols();
-
-        this.setColSpanActive();
-        rowAutoHeight?.setAutoHeightActive(cols);
-
-        // make sure any part of the gui that tries to draw, eg the header,
-        // will get empty lists of columns rather than stale columns.
-        // for example, the header will received gridColumnsChanged event, so will try and draw,
-        // but it will draw successfully when it acts on the virtualColumnsChanged event
-        visibleCols.clear();
-        colViewport.clear();
-
-        if (!_areEqual(prevColTree, this.cols!.tree)) {
-            eventSvc.dispatchEvent({
-                type: 'gridColumnsChanged',
-            });
-        }
-    }
-
-    private createColumnsForService(
-        services: (IColumnCollectionService | undefined)[],
-        cols: ColumnCollections,
-        source: ColumnEventType
-    ): void {
-        for (const service of services) {
-            if (!service) {
-                continue;
-            }
-
-            service.createColumns(
-                cols,
-                (updateOrder) => {
-                    this.lastOrder = updateOrder(this.lastOrder);
-                    this.lastPivotOrder = updateOrder(this.lastPivotOrder);
-                },
-                source
-            );
-            service.addColumns(cols);
-        }
-    }
-
-    private selectCols(
-        pivotResultColsSvc: IPivotResultColsService | undefined,
-        colDefCols: ColumnCollections
-    ): ColumnCollections {
-        const pivotResultCols = this.pivotMode ? (pivotResultColsSvc?.getPivotResultCols() ?? null) : null;
-        this.showingPivotResult = pivotResultCols != null;
-
-        const { map, list, tree, treeDepth } = pivotResultCols ?? colDefCols;
-        this.cols = {
-            list: list.slice(),
-            map: { ...map },
-            tree: tree.slice(),
-            treeDepth,
-        };
-
-        if (pivotResultCols) {
-            // If the current columns are the same or a subset of the previous
-            // we keep the previous order, otherwise we go back to the order the pivot
-            // cols are generated in
-            const hasSameColumns = pivotResultCols.list.some((col) => this.cols?.map[col.colId] !== undefined);
-            if (!hasSameColumns) {
-                this.lastPivotOrder = null;
-            }
-        }
-        return this.cols;
-    }
-
-    public getColsToShow(): AgColumn[] {
-        if (!this.cols) {
-            return [];
-        }
-        // pivot mode is on, but we are not pivoting, so we only
-        // show columns we are aggregating on and possibly the selection/row numbers column
-        const { beans, showingPivotResult, cols } = this;
-
-        const { valueColsSvc, selectionColSvc, gos } = beans;
-        const showAutoGroupAndValuesOnly = this.pivotMode && !showingPivotResult;
-        const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
-        const showRowNumbers = _isRowNumbers(beans);
-        const valueColumns = valueColsSvc?.columns;
-        const hideEmptyAutoColGroups = _isGroupHideColumnsUntilExpanded(gos);
-
-        const res = cols.list.filter((col) => {
-            const isAutoGroupCol = isColumnGroupAutoCol(col);
-            if (showAutoGroupAndValuesOnly) {
-                const isValueCol = valueColumns?.includes(col);
-                return (
-                    isValueCol ||
-                    (isAutoGroupCol && (!hideEmptyAutoColGroups || col.isVisible())) ||
-                    (showSelectionColumn && isColumnSelectionCol(col)) ||
-                    (showRowNumbers && isRowNumberCol(col))
-                );
-            } else {
-                // keep col if a) it's auto-group (and feature not managing visibility) or b) it's visible
-                return (isAutoGroupCol && !hideEmptyAutoColGroups) || col.isVisible();
-            }
-        });
-
-        return res;
-    }
-
-    // on events 'groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'
-    public refreshAll(source: ColumnEventType) {
         if (!this.ready) {
             return;
         }
-        this.refreshCols(false, source);
-        this.beans.visibleCols.refresh(source);
-    }
-
-    public setColsVisible(keys: (string | AgColumn)[], visible = false, source: ColumnEventType): void {
-        _applyColumnState(
-            this.beans,
-            {
-                state: keys.map<ColumnState>((key) => ({
-                    colId: typeof key === 'string' ? key : key.colId,
-                    hide: !visible,
-                })),
-            },
-            source
-        );
-    }
-
-    /**
-     * Restores provided columns order to the previous order in this.lastPivotOrder / this.lastOrder
-     * If columns are not in the last order:
-     *  - Check column groups, and apply column after the last column in the lowest shared group
-     *  - If no sibling is found, apply the column at the end of the cols
-     */
-    private restoreColOrder(cols: ColumnCollections): void {
-        const lastOrder = this.showingPivotResult ? this.lastPivotOrder : this.lastOrder;
-        if (!lastOrder) {
-            return;
-        }
-
-        // get the cols present in both new list and last order, according to the last order
-        const preservedOrder = lastOrder.filter((col) => cols.map[col.getId()] != null);
-
-        // if no cols in last order are in the new, then order is already correct
-        if (preservedOrder.length === 0) {
-            return;
-        }
-
-        // if after removing all the cols that are not in the new set, we have no cols left,
-        // then we don't need to do anything further, as the new order is correct.
-        if (preservedOrder.length === cols.list.length) {
-            cols.list = preservedOrder;
-            return;
-        }
-
-        const hasSiblings = (col: AgColumn | AgProvidedColumnGroup): boolean => {
-            const ancestor = col.getOriginalParent();
-            if (!ancestor) {
-                return false;
-            }
-            const children = ancestor.getChildren();
-            if (children.length > 1) {
-                return true;
-            }
-            return hasSiblings(ancestor);
-        };
-
-        // if none of the preserved cols have siblings; shortcut, as all new cols can be added to the end
-        // this is a common scenario due to generated cols.
-        if (!preservedOrder.some((col) => hasSiblings(col))) {
-            const preservedOrderSet = new Set(preservedOrder);
-            for (const col of cols.list) {
-                if (!preservedOrderSet.has(col)) {
-                    preservedOrder.push(col);
-                }
-            }
-            cols.list = preservedOrder;
-            return;
-        }
-
-        // create map of known col positions and their indices
-        const colPositionMap = new Map<AgColumn, number>();
-        for (let i = 0; i < preservedOrder.length; i++) {
-            const col = preservedOrder[i];
-            colPositionMap.set(col, i);
-        }
-
-        // find any cols that have been introduced that are not in the last order
-        const additionalCols = cols.list.filter((col) => !colPositionMap.has(col));
-
-        // no additional cols to be inserted, probably means cols were removed, but preserved order is correct.
-        if (additionalCols.length === 0) {
-            cols.list = preservedOrder;
-            return;
-        }
-
-        // Function finds the sibling with the lowest shared parent and highest index in last order
-        const getPreviousSibling = (col: AgColumn, group: AgProvidedColumnGroup | null): AgColumn | null => {
-            const parent = group ? group.getOriginalParent() : col.getOriginalParent();
-            if (!parent) {
-                return null;
-            }
-
-            let highestIdx: number | null = null;
-            let highestSibling: AgColumn | null = null;
-            for (const child of parent.getChildren()) {
-                // shortcut - skip the group that has already been processed
-                if (child === group || child === col) {
-                    continue;
-                }
-
-                if (child instanceof AgColumn) {
-                    const colIdx = colPositionMap.get(child);
-                    // if col does not exist in last order, skip
-                    if (colIdx == null) {
-                        continue;
-                    }
-
-                    if (highestIdx == null || highestIdx < colIdx) {
-                        highestIdx = colIdx;
-                        highestSibling = child;
-                    }
-                    continue;
-                }
-
-                child.forEachLeafColumn((leafCol) => {
-                    const colIdx = colPositionMap.get(leafCol);
-                    // if col does not exist in last order, skip
-                    if (colIdx == null) {
-                        return;
-                    }
-
-                    if (highestIdx == null || highestIdx < colIdx) {
-                        highestIdx = colIdx;
-                        highestSibling = leafCol;
-                    }
-                });
-            }
-
-            if (highestSibling == null) {
-                return getPreviousSibling(col, parent);
-            }
-            return highestSibling;
-        };
-
-        // array of cols that have no siblings in the last order, to be added at the tail of the results
-        const noSiblingsAvailable: AgColumn[] = [];
-
-        // map is keyed by cols in last order, and values are the cols that should be added after them
-        // in results array
-        const previousSiblingPosMap: Map<AgColumn, AgColumn | AgColumn[]> = new Map();
-
-        // for each new col, find the col it needs inserted after and store for when array is constructed
-        for (const col of additionalCols) {
-            const prevSiblingIdx = getPreviousSibling(col, null);
-            if (prevSiblingIdx == null) {
-                noSiblingsAvailable.push(col);
-                continue;
-            }
-
-            const prev = previousSiblingPosMap.get(prevSiblingIdx);
-            if (prev === undefined) {
-                previousSiblingPosMap.set(prevSiblingIdx, col);
-            } else if (Array.isArray(prev)) {
-                prev.push(col);
+        const beans = this.beans;
+        const gos = this.gos;
+        const colDefList = this.colDefList;
+        const prevColTree = this.colsTree;
+        const prevWasPivot = this.showingPivotResult;
+        const resultColsSvc = this.pivotMode ? beans.pivotResultCols : null;
+        const pivotCols = resultColsSvc?.pivotCols ?? null;
+        const pivotResultCols = pivotCols != null ? resultColsSvc : null;
+        const showingPivotResult = !!pivotResultCols;
+        this.showingPivotResult = showingPivotResult;
+        const sourceList = pivotCols ?? colDefList;
+        const sourceTree = pivotResultCols ? pivotResultCols.pivotTree : this.colDefTree;
+        const sourceTreeDepth = pivotResultCols ? pivotResultCols.pivotTreeDepth : this.colDefTreeDepth;
+        this.colsTreeDepth = sourceTreeDepth;
+        this.hasMarryChildren = pivotResultCols ? pivotResultCols.pivotHasMarryChildren : this.colDefHasMarryChildren;
+        this.colsGroupsById = pivotResultCols ? pivotResultCols.pivotGroupsById : this.colDefGroupsById;
+        this.colsAllGroups = pivotResultCols ? pivotResultCols.pivotAllGroups : this.colDefAllGroups;
+        // Service refresh runs in dependency order
+        beans.formula?.setFormulasActive(sourceList);
+        const autoCols = beans.autoColSvc?.refreshCols(source);
+        const selectionCol = beans.selectionColSvc?.refreshCols();
+        const rowNumberCol = beans.rowNumbersSvc?.refreshCols();
+        // Snapshot prior colsList colIds into the mode's lastOrder so the next refresh restores user moves.
+        const oldColsList = this.colsList;
+        if (oldColsList.length > 0) {
+            if (prevWasPivot) {
+                this.lastPivotOrder = snapshotColIds(oldColsList, this.lastPivotOrder);
             } else {
-                // if we have a single col, then we need to add the new col to the array
-                previousSiblingPosMap.set(prevSiblingIdx, [prev, col]);
+                this.lastOrder = snapshotColIds(oldColsList, this.lastOrder);
+            }
+        }
+        // Emit in display order: rowNumbers → selection → autoGroup → user/pivot body cols.
+        const autoColsLen = autoCols?.length ?? 0;
+        const sourceListLen = sourceList.length;
+        const sourceTreeLen = sourceTree.length;
+        const serviceColsLen = (rowNumberCol ? 1 : 0) + (selectionCol ? 1 : 0) + autoColsLen;
+        // Pre-allocated at final size — the assemble loops below fill by index, not push.
+        const colsList = new Array<AgColumn>(serviceColsLen + sourceListLen);
+        const colsTree = new Array<AgColumn | AgProvidedColumnGroup>(serviceColsLen + sourceTreeLen);
+        const colsById: { [id: string]: AgColumn } = Object.create(null);
+        let colsIdx = 0;
+        if (rowNumberCol) {
+            colsList[colsIdx++] = rowNumberCol;
+        }
+        if (selectionCol) {
+            colsList[colsIdx++] = selectionCol;
+        }
+        for (let i = 0; i < autoColsLen; ++i) {
+            colsList[colsIdx++] = autoCols![i];
+        }
+        // At depth 0 the wrapper IS the col, so skip the wrap loop; still drop cached wrappers from
+        // a prior depth>0 build so service cols don't point at a stale wrapper.
+        const serviceWrapperCache = beans.colGroupSvc.wrapperCache;
+        if (sourceTreeDepth > 0) {
+            const buildToken = this.nextBuildToken();
+            for (let i = 0; i < serviceColsLen; ++i) {
+                const col = colsList[i];
+                colsById[col.colId] = col;
+                col.inColsList = true;
+                colsTree[i] = serviceWrapperCache.wrap(col, sourceTreeDepth, buildToken);
+            }
+            serviceWrapperCache.evict(buildToken);
+        } else {
+            serviceWrapperCache.destroy();
+            for (let i = 0; i < serviceColsLen; ++i) {
+                const col = colsList[i];
+                colsById[col.colId] = col;
+                col.inColsList = true;
+                col.originalParent = null;
+                colsTree[i] = col;
             }
         }
 
-        // the following code starts at the tail of the array and works backwards.
-        // first it applies all of the cols with no siblings (so no location in last order)
-        // then it works backwards through the preserved order - when a col has siblings, it adds
-        // them to the array and then adds the col itself.
-
-        const result = new Array(cols.list.length);
-        let resultPointer = result.length - 1;
-        // work backwards, first adding no siblings to end
-        for (let i = noSiblingsAvailable.length - 1; i >= 0; i--) {
-            result[resultPointer--] = noSiblingsAvailable[i];
-        }
-
-        for (let i = preservedOrder.length - 1; i >= 0; i--) {
-            const nextCol = preservedOrder[i];
-            const extraCols = previousSiblingPosMap.get(nextCol);
-            if (extraCols) {
-                if (Array.isArray(extraCols)) {
-                    // add the extra cols backwards.
-                    for (let x = extraCols.length - 1; x >= 0; x--) {
-                        const col = extraCols[x];
-                        result[resultPointer--] = col;
-                    }
+        // In pivot mode, sourceList = pivotCols; primaries (colDefList) need colsById entries for lookups
+        // but are parked out of colsList (`inColsList = false`). Non-pivot covers them via the next loop.
+        if (pivotResultCols) {
+            // Entering pivot: freeze the current display order so `getColumnDefs` keeps reporting it.
+            if (!prevWasPivot) {
+                this.ensureColsListIndex();
+            }
+            // A col added while pivoting has no frozen index (-1); seat it after its left colDef neighbour so
+            // `getColumnDefs` reports it in colDef order (stable sort breaks the tie) without disturbing others.
+            let lastIndex = -1;
+            for (let i = 0, len = colDefList.length; i < len; ++i) {
+                const col = colDefList[i];
+                colsById[col.colId] = col;
+                col.inColsList = false;
+                if (col.colsListIndex < 0) {
+                    col.colsListIndex = lastIndex;
                 } else {
-                    result[resultPointer--] = extraCols;
+                    lastIndex = col.colsListIndex;
                 }
             }
-            result[resultPointer--] = nextCol;
         }
-        cols.list = result;
-    }
-
-    private positionLockedCols(cols: ColumnCollections): void {
-        cols.list = placeLockedColumns(cols.list, this.gos);
-    }
-
-    private saveColOrder(): void {
-        if (this.showingPivotResult) {
-            this.lastPivotOrder = this.cols?.list ?? null;
-        } else {
-            this.lastOrder = this.cols?.list ?? null;
+        for (let i = 0; i < sourceListLen; ++i) {
+            const col = sourceList[i];
+            colsList[colsIdx++] = col;
+            colsById[col.colId] = col;
+            col.inColsList = true;
+        }
+        for (let i = 0; i < sourceTreeLen; ++i) {
+            colsTree[serviceColsLen + i] = sourceTree[i];
+        }
+        const restoreOrder = !newColDefs || _shouldMaintainColumnOrder(gos, showingPivotResult);
+        const lastOrder = showingPivotResult ? this.lastPivotOrder : this.lastOrder;
+        const prevOrder = restoreOrder ? lastOrder : null;
+        const ordered = prevOrder == null ? colsList : applyPrevColumnsOrder(colsList, colsById, prevOrder);
+        const finalColsList = placeLockedColumns(ordered, gos);
+        const colsListChanged = !_areEqual(finalColsList, oldColsList);
+        if (colsListChanged) {
+            this.colsListIndexDirty = true;
+        }
+        this.colsList = colsListChanged ? finalColsList : oldColsList;
+        this.colsTree = _areEqual(colsTree, prevColTree) ? prevColTree : colsTree;
+        this.colsById = colsById;
+        this.cachedColsByDef = null;
+        this.cachedAllCols = null;
+        this.cachedColsInStateOrder = null;
+        beans.sortSvc?.invalidate();
+        this.refreshColsDerivedState();
+        if (colsListChanged) {
+            beans.rowSpanSvc?.refreshCols();
+        }
+        if (this.colsTree !== prevColTree) {
+            this.eventSvc.dispatchEvent({ type: 'gridColumnsChanged' });
         }
     }
 
-    public getColumnDefs(sorted?: boolean): (ColDef | ColGroupDef)[] | undefined {
-        return (
-            this.colDefCols &&
-            this.beans.colDefFactory?.getColumnDefs(
-                this.colDefCols.list,
-                this.showingPivotResult,
-                this.lastOrder,
-                this.cols?.list ?? [],
-                sorted
-            )
-        );
+    /** Refresh state derived from `colsList` (group + quick-filter cols, colSpan/autoHeight flags) and
+     *  reset displayed-col + viewport caches, ahead of `visibleCols.refresh`. Shared by full refreshCols
+     *  and by a visibility-only change (which leaves `colsList` unchanged, so skips the rebuild). */
+    public refreshColsDerivedState(): void {
+        const beans = this.beans;
+        beans.showRowGroupCols?.refresh();
+        beans.quickFilter?.refreshCols();
+        this.computeColSpanAndAutoHeight();
+        beans.visibleCols.clear();
+        beans.colViewport.clear();
     }
 
-    public getProvidedColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
-        return this.colDefs;
+    /** Single pass: set `colSpanActive` and `rowAutoHeight.active` from `colsList`. */
+    private computeColSpanAndAutoHeight(): void {
+        const colsList = this.colsList;
+        const rowAutoHeight = this.beans.rowAutoHeight;
+        let colSpan = false;
+        let autoHeight = false;
+        for (let i = 0, len = colsList.length; i < len; ++i) {
+            const col = colsList[i];
+            const colDef = col.colDef;
+            colSpan ||= colDef.colSpan != null;
+            autoHeight ||= !!rowAutoHeight && !!colDef.autoHeight && col.visible;
+            if (colSpan && (autoHeight || !rowAutoHeight)) {
+                break;
+            }
+        }
+        this.colSpanActive = colSpan;
+        rowAutoHeight?.setAutoHeightActive(autoHeight);
     }
 
-    private setColSpanActive(): void {
-        this.colSpanActive = !!this.cols?.list.some((col) => col.getColDef().colSpan != null);
+    /** Full refresh (rebuild cols + recompute visible); immediate, or deferred to {@link endColBatch} when batched. */
+    public refreshAll(source: ColumnEventType): void {
+        if (!this.ready) {
+            return;
+        }
+        if (this.colBatchDepth > 0) {
+            this.pendingRefresh = true; // defer; the flush at endColBatch performs it
+            return;
+        }
+        this.performRefresh(source);
     }
 
-    public isPivotMode(): boolean {
-        return this.pivotMode;
+    private performRefresh(source: ColumnEventType): void {
+        this.pendingRefresh = false; // consumed: this refresh satisfies the pending request
+        if (this.ready) {
+            this.refreshCols(false, source);
+            this.beans.visibleCols.refresh(source, false);
+        }
+    }
+
+    /** Reorder `colDefList` only — `newList` MUST be a permutation of the existing col instances
+     *  (caller owns the invariant). A full refresh should follow to propagate to display cols.
+     *  `colsById` unchanged; `getAllCols` is order-agnostic. */
+    public replaceColDefList(newList: AgColumn[]): void {
+        if (this.ready) {
+            this.colDefList = newList;
+        }
     }
 
     private setPivotMode(pivotMode: boolean, source: ColumnEventType): void {
         if (pivotMode === this.pivotMode) {
             return;
         }
-
         this.pivotMode = pivotMode;
-
-        if (!this.ready) {
-            return;
+        if (this.ready) {
+            // Refresh in case the auto-group col must be added/removed: with `groupDisplayType: 'custom'`
+            // it's only used in pivot mode (where it's mandatory).
+            this.refreshCols(false, source);
+            this.beans.visibleCols.refresh(source, false);
+            this.eventSvc.dispatchEvent({ type: 'columnPivotModeChanged' });
         }
-
-        // we need to update grid columns to cover the scenario where user has groupDisplayType = 'custom', as
-        // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
-        // so need to updateCols() to check it autoGroupCol needs to be added / removed
-        this.refreshCols(false, source);
-        const { visibleCols, eventSvc } = this.beans;
-        visibleCols.refresh(source);
-
-        eventSvc.dispatchEvent({
-            type: 'columnPivotModeChanged',
-        });
     }
 
-    // + clientSideRowModel
-    public isPivotActive(): boolean {
-        const pivotColumns = this.beans.pivotColsSvc?.columns;
-        return this.pivotMode && !!pivotColumns?.length;
-    }
-
-    // called when dataTypes change
     public recreateColumnDefs(e: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void {
-        if (!this.cols) {
-            return;
+        if (this.ready) {
+            // Auto cols aren't in `colDefs`, so refresh their derived defs before the rebuild re-reads user colDefs.
+            this.beans.autoColSvc?.updateColumns(e);
+            this.buildFromColDefs(_convertColumnEventSourceType(e.source), true);
         }
-
-        // if we aren't going to force, update the auto cols in place
-        this.beans.autoColSvc?.updateColumns(e);
-        const source = _convertColumnEventSourceType(e.source);
-        this.createColsFromColDefs(source);
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType) {
         this.beans.calculatedColsSvc?.resetDynamicColumnDefs();
         this.colDefs = columnDefs;
-        this.createColsFromColDefs(source);
+        this.buildFromColDefs(source, true);
     }
 
-    public refreshDynamicColumns(source: ColumnEventType): void {
-        if (!this.ready) {
-            return;
-        }
-
-        this.createColsFromColDefs(source, this.beans.calculatedColsSvc?.shouldPreserveColumnOrderOnRefresh());
-    }
-
-    public override destroy(): void {
-        _destroyColumnTree(this.beans, this.colDefCols?.tree);
-        super.destroy();
-    }
-
-    public getColTree(): (AgColumn | AgProvidedColumnGroup)[] {
-        return this.cols?.tree ?? [];
-    }
-
-    // + columnSelectPanel
-    public getColDefColTree(): (AgColumn | AgProvidedColumnGroup)[] {
-        return this.colDefCols?.tree ?? [];
-    }
-
-    // + clientSideRowController -> sorting, building quick filter text
-    // + headerRenderer -> sorting (clearing icon)
-    public getColDefCols(): AgColumn[] | null {
-        return this.colDefCols?.list ?? null;
-    }
-
-    // + moveColumnController
-    public getCols(): AgColumn[] {
-        return this.cols?.list ?? [];
-    }
-
-    /**
-     * If callback returns true, exit early.
-     */
-    public forAllCols(callback: (column: AgColumn) => boolean | void): void {
-        const { pivotResultCols, autoColSvc, selectionColSvc, groupHierarchyColSvc } = this.beans;
-        if (_forAll(this.colDefCols?.list, callback)) {
-            return;
-        }
-        if (_forAll(autoColSvc?.columns?.list, callback)) {
-            return;
-        }
-        if (_forAll(selectionColSvc?.columns?.list, callback)) {
-            return;
-        }
-        if (_forAll(groupHierarchyColSvc?.columns?.list, callback)) {
-            return;
-        }
-        if (_forAll(pivotResultCols?.getPivotResultCols()?.list, callback)) {
-            return;
+    /** Full structural rebuild from current `colDefs` + all contributors (hierarchy, calc cols, …).
+     *  Used by contributors whose mutation changes tree structure (e.g. calc-col add/update/remove). */
+    public rebuildCols(source: ColumnEventType): void {
+        if (this.ready) {
+            this.buildFromColDefs(source, false);
         }
     }
 
-    public getColsForKeys(keys: ColKey[]): AgColumn[] {
-        if (!keys) {
-            return [];
-        }
-        return keys.map((key) => this.getCol(key)).filter((col): col is AgColumn => col != null);
+    /** Mark `AgColumn.colsListIndex` stale — called when `colsList`'s order changes outside a refresh
+     *  (`moveColumns`, `applyColumnState` with `applyOrder`); next `ensureColsListIndex` re-stamps. */
+    public markColsListIndexDirty(): void {
+        this.colsListIndexDirty = true;
+        this.cachedColsInStateOrder = null;
     }
 
-    public getColDefCol(key: ColKey): AgColumn | null {
-        return this.getColFromCollection(key, this.colDefCols) ?? this.getColFromServiceCols(key);
+    /** Lazily stamp each col's index in `colsList` onto `AgColumn.colsListIndex`, once per order change.
+     *  Readers (e.g. `getColumnDefs`) call this before reading `col.colsListIndex`, so a burst of moves
+     *  costs one O(N) pass on the next read, not one per move. */
+    public ensureColsListIndex(): void {
+        if (this.colsListIndexDirty) {
+            const colsList = this.colsList;
+            for (let i = 0, len = colsList.length; i < len; ++i) {
+                colsList[i].colsListIndex = i;
+            }
+            this.colsListIndexDirty = false;
+        }
     }
 
-    /** Look up by key across colDefCols, displayed cols, and service columns (auto-group, selection, row-number). */
-    public getColDefColOrCol(key: Maybe<ColKey>): AgColumn | null {
-        if (key == null) {
-            return null;
+    /** Resolve any key (colId string, AgColumn, or ColDef) to its current AgColumn. Fast path inline:
+     *  string colId, or object whose `colId` hits `colsById` (O(1)); misses delegate to `getColFallback`. */
+    public getCol(key: ColKey | null | undefined): AgColumn | undefined {
+        if (typeof key === 'string') {
+            return this.colsById[key] ?? this.getColFallback(key);
         }
-        return (
-            this.getColFromCollection(key, this.colDefCols) ??
-            this.getColFromCollection(key, this.cols) ??
-            this.getColFromServiceCols(key)
-        );
-    }
-
-    /** Look up by key across displayed cols, colDefCols, and service columns — prefers displayed cols. */
-    public getColOrColDefCol(key: Maybe<ColKey>): AgColumn | null {
-        if (key == null) {
-            return null;
-        }
-        return (
-            this.getColFromCollection(key, this.cols) ??
-            this.getColFromCollection(key, this.colDefCols) ??
-            this.getColFromServiceCols(key)
-        );
-    }
-
-    public getCol(key: Maybe<ColKey>): AgColumn | null {
-        if (key == null) {
-            return null;
-        }
-        return this.getColFromCollection(key, this.cols) ?? this.getColFromServiceCols(key);
-    }
-
-    /**
-     * Get column exclusively by ID.
-     *
-     * Note getCol/getColFromCollection have poor performance when col has been removed.
-     */
-    public getColById(key: string): AgColumn | null {
-        return this.cols?.map[key] ?? null;
-    }
-
-    public getColFromCollection(key: ColKey, cols?: ColumnCollections): AgColumn | null {
-        if (cols == null) {
-            return null;
-        }
-        const map = cols.map;
-        // most of the time this method gets called the key is a string, so we put this shortcut in
-        // for performance reasons, to see if we can match for ID (it doesn't do auto columns, that's done below)
-        if (typeof key == 'string' && map[key]) {
-            return map[key];
-        }
-
-        const list = cols.list;
-        for (let i = 0, len = list.length; i < len; ++i) {
-            if (_columnsMatch(list[i], key)) {
-                return list[i];
+        // `?.colId` collapses the null/undefined + non-object checks into one access: both yield
+        // `undefined`, falling through to the slow path.
+        const id = (key as { colId?: unknown } | null | undefined)?.colId;
+        if (typeof id === 'string') {
+            const col = this.colsById[id];
+            if (col !== undefined) {
+                return col;
             }
         }
-        return null;
+        return key == null ? undefined : this.getColFallback(key);
     }
 
-    private getColFromServiceCols(key: ColKey): AgColumn | null {
-        const beans = this.beans;
-        return (
-            beans.autoColSvc?.getColumn(key) ??
-            beans.selectionColSvc?.getColumn(key) ??
-            beans.groupHierarchyColSvc?.getColumn(key) ??
-            null
-        );
+    /** Slow-path fallback for `getCol`: ColDef/ColGroupDef ref lookup + `field`-string fallback, building
+     *  the lazy `colsByDef` map on first use. Stale AgColumn refs return `undefined` (unregistered, no `field`). */
+    private getColFallback(key: ColKey): AgColumn | undefined {
+        const map = this.cachedColsByDef ?? this.loadColsByDef();
+        const byRef = map.get(key);
+        if (byRef !== undefined) {
+            return byRef;
+        }
+        if (typeof key !== 'object') {
+            return undefined;
+        }
+        const field = (key as { field?: string }).field;
+        return typeof field === 'string' ? map.get(field) : undefined;
+    }
+
+    /** Find a column excluding pivot result cols. `pivotKeys` (grid-set) is an O(1) discriminator
+     *  standing in for a `pivotCols`-membership test, so `getColumnDefs()` doesn't round-trip them. */
+    public getNonPivotCol(key: ColKey): AgColumn | undefined {
+        const col = this.getCol(key);
+        return col !== undefined && col.colDef.pivotKeys == null ? col : undefined;
+    }
+
+    /** Like `getNonPivotCol` for hot paths where the key is a known colId string — skips the type-check + field-fallback. */
+    public getNonPivotColById(key: string): AgColumn | undefined {
+        const col = this.colsById[key];
+        return col !== undefined && col.colDef.pivotKeys == null ? col : undefined;
+    }
+
+    private loadColsByDef(): Map<ColKey, AgColumn> {
+        const map = new Map<ColKey, AgColumn>();
+        addColsToDefMap(map, this.colsList);
+        // In pivot mode colDefList cols are in colsById but not colsList — include them too
+        if (this.showingPivotResult) {
+            addColsToDefMap(map, this.colDefList);
+        }
+        this.cachedColsByDef = map;
+        return map;
     }
 }
+
+const snapshotColIds = (list: AgColumn[], out?: string[] | null): string[] => {
+    const len = list.length;
+    out ??= [];
+    out.length = len;
+    for (let i = 0; i < len; ++i) {
+        out[i] = list[i].colId;
+    }
+    return out;
+};
+
+/** Indexes each col by its colDef, its user-provided colDef and (as a fallback) its field. */
+const addColsToDefMap = (map: Map<ColKey, AgColumn>, list: AgColumn[]): void => {
+    for (let i = 0, len = list.length; i < len; ++i) {
+        const col = list[i];
+        const colDef = col.colDef;
+        map.set(colDef, col);
+        const provided = col.userProvidedColDef;
+        if (provided != null) {
+            map.set(provided, col);
+        }
+        const field = colDef.field;
+        if (field && field !== col.colId && !map.has(field)) {
+            map.set(field, col);
+        }
+    }
+};

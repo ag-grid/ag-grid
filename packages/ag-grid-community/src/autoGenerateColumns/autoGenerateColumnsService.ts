@@ -4,6 +4,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { AutoGenerateColumnDefsOptions } from '../entities/gridOptions';
+import { _isPlainObject } from '../utils/mergeDeep';
 
 export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
     beanName = 'autoGenColsSvc' as const;
@@ -117,12 +118,4 @@ function _isPrimitiveArray(arr: unknown[]): boolean {
     }
     const first = arr[0];
     return first != null && !Array.isArray(first) && !_isPlainObject(first) && typeof first !== 'function';
-}
-
-function _isPlainObject(value: unknown): value is Record<string, unknown> {
-    if (value === null || typeof value !== 'object' || Array.isArray(value) || value instanceof Date) {
-        return false;
-    }
-    const proto = Object.getPrototypeOf(value);
-    return proto === Object.prototype || proto === null;
 }

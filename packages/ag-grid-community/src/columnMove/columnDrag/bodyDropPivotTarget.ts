@@ -58,8 +58,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
     }
 
     /** Callback for when drag leaves */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public onDragLeave(draggingEvent: GridDraggingEvent): void {
+    public onDragLeave(_draggingEvent: GridDraggingEvent): void {
         // if we are taking columns out of the center, then we remove them from the report
         this.clearColumnsList();
     }
@@ -71,21 +70,24 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
     }
 
     /** Callback for when dragging */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public onDragging(draggingEvent: GridDraggingEvent): void {}
+    public onDragging(_draggingEvent: GridDraggingEvent): void {}
 
     /** Callback for when drag stops */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public onDragStop(draggingEvent: GridDraggingEvent): void {
-        const { valueColsSvc, rowGroupColsSvc, pivotColsSvc } = this.beans;
-        if (this.columnsToAggregate.length > 0) {
-            valueColsSvc?.addColumns(this.columnsToAggregate, 'toolPanelDragAndDrop');
-        }
-        if (this.columnsToGroup.length > 0) {
-            rowGroupColsSvc?.addColumns(this.columnsToGroup, 'toolPanelDragAndDrop');
-        }
-        if (this.columnsToPivot.length > 0) {
-            pivotColsSvc?.addColumns(this.columnsToPivot, 'toolPanelDragAndDrop');
+    public onDragStop(_draggingEvent: GridDraggingEvent): void {
+        const { colModel, valueColsSvc, rowGroupColsSvc, pivotColsSvc } = this.beans;
+        colModel.beginColBatch();
+        try {
+            if (this.columnsToAggregate.length > 0) {
+                valueColsSvc?.addColumns(this.columnsToAggregate, 'toolPanelDragAndDrop');
+            }
+            if (this.columnsToGroup.length > 0) {
+                rowGroupColsSvc?.addColumns(this.columnsToGroup, 'toolPanelDragAndDrop');
+            }
+            if (this.columnsToPivot.length > 0) {
+                pivotColsSvc?.addColumns(this.columnsToPivot, 'toolPanelDragAndDrop');
+            }
+        } finally {
+            colModel.endColBatch('toolPanelDragAndDrop');
         }
     }
 

@@ -1,5 +1,5 @@
 import type { HorizontalDirection } from 'ag-stack';
-import { _areEqual, _last } from 'ag-stack';
+import { _areEqual } from 'ag-stack';
 
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
@@ -27,21 +27,19 @@ export interface ColumnMoveParams {
 
 // returns the provided cols sorted in same order as they appear in this.cols, eg if this.cols
 // contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
-function sortColsLikeCols(colsList: AgColumn[], cols: AgColumn[]): void {
+function sortColsLikeCols(colModel: ColumnModel, cols: AgColumn[]): void {
     if (!cols || cols.length <= 1) {
         return;
     }
 
-    const notAllColsPresent = cols.filter((c) => colsList.indexOf(c) < 0).length > 0;
-    if (notAllColsPresent) {
+    // Can only order by colsList position when every col is live in `colsList`.
+    if (cols.some((c) => !c.inColsList)) {
         return;
     }
 
-    cols.sort((a, b) => {
-        const indexA = colsList.indexOf(a);
-        const indexB = colsList.indexOf(b);
-        return indexA - indexB;
-    });
+    // `colsListIndex` is each col's index in `colsList` (O(1)) — no per-element indexOf / index-map.
+    colModel.ensureColsListIndex();
+    cols.sort((a, b) => a.colsListIndex - b.colsListIndex);
 }
 
 /**
@@ -51,6 +49,7 @@ function sortColsLikeCols(colsList: AgColumn[], cols: AgColumn[]): void {
 function getColsToMove(allMovingColumns: AgColumn[]): AgColumn[] {
     // If the columns we're dragging are the only visible columns of their group, move the hidden ones too
     const newCols: AgColumn[] = [...allMovingColumns];
+    const newColsSet = new Set(newCols);
     for (const col of allMovingColumns) {
         let movingGroup: AgColumnGroup | null = null;
 
@@ -67,8 +66,10 @@ function getColsToMove(allMovingColumns: AgColumn[]): AgColumn[] {
                   movingGroup.getProvidedColumnGroup().getLeafColumns()
                 : movingGroup.getLeafColumns();
 
-            for (const newCol of columnsToMove) {
-                if (!newCols.includes(newCol)) {
+            for (let j = 0, n = columnsToMove.length; j < n; ++j) {
+                const newCol = columnsToMove[j];
+                if (!newColsSet.has(newCol)) {
+                    newColsSet.add(newCol);
                     newCols.push(newCol);
                 }
             }
@@ -80,15 +81,12 @@ function getColsToMove(allMovingColumns: AgColumn[]): AgColumn[] {
 function getLowestFragMove(
     validMoves: number[],
     allMovingColumnsOrdered: AgColumn[],
-    colMoves: ColumnMoveService,
-    visibleCols: VisibleColsService
+    colMoves: ColumnMoveService
 ): { move: number; fragCount: number } | null {
     // From when we find a move that passes all the rules
     // Remember what that move would look like in terms of displayed cols
     // keep going with further moves until we find a different result in displayed output
     // In this way potentialMoves contains all potential moves over 'hidden' columns
-    const displayedCols = visibleCols.allCols;
-
     let lowestFragMove: { move: number; fragCount: number } | null = null;
     let targetOrder: AgColumn[] | null = null;
 
@@ -100,7 +98,7 @@ function getLowestFragMove(
             continue;
         }
 
-        const displayedOrder = order.filter((col) => displayedCols.includes(col));
+        const displayedOrder = order.filter((col) => col.displayed);
         if (targetOrder === null) {
             targetOrder = displayedOrder;
         } else if (!_areEqual(displayedOrder, targetOrder)) {
@@ -132,7 +130,7 @@ export function getBestColumnMoveIndexFromXPosition(
     // could themselves be part of 'married children' groups, which means we need to maintain the order within
     // the moving list.
     const allMovingColumnsOrdered = allMovingColumns.slice();
-    sortColsLikeCols(colModel.getCols(), allMovingColumnsOrdered);
+    sortColsLikeCols(colModel, allMovingColumnsOrdered);
 
     const validMoves = calculateValidMoves({
         movingCols: allMovingColumnsOrdered,
@@ -181,7 +179,7 @@ export function getBestColumnMoveIndexFromXPosition(
         }
     }
 
-    const lowestFragMove = getLowestFragMove(validMoves, allMovingColumnsOrdered, colMoves, visibleCols);
+    const lowestFragMove = getLowestFragMove(validMoves, allMovingColumnsOrdered, colMoves);
 
     if (!lowestFragMove) {
         // No valid moves found
@@ -189,7 +187,7 @@ export function getBestColumnMoveIndexFromXPosition(
     }
 
     const toIndex = lowestFragMove.move;
-    if (toIndex > colModel.getCols().length - allMovingColumnsOrdered.length) {
+    if (toIndex > colModel.colsList.length - allMovingColumnsOrdered.length) {
         return;
     }
 
@@ -214,14 +212,25 @@ export function attemptMoveColumns(
 // returns the index of the first column in the list ONLY if the cols are all beside
 // each other. if the cols are not beside each other, then returns null
 function calculateOldIndex(movingCols: AgColumn[], colModel: ColumnModel): number | null {
-    const gridCols: AgColumn[] = colModel.getCols();
-    const indexes = movingCols.map((col) => gridCols.indexOf(col)).sort((a, b) => a - b);
-    const firstIndex = indexes[0];
-    const lastIndex = _last(indexes);
-    const spread = lastIndex - firstIndex;
-    const gapsExist = spread !== indexes.length - 1;
-
-    return gapsExist ? null : firstIndex;
+    const len = movingCols.length;
+    if (len === 0) {
+        return null;
+    }
+    colModel.ensureColsListIndex();
+    const first = movingCols[0];
+    let min = first.inColsList ? first.colsListIndex : -1;
+    let max = min;
+    for (let i = 1; i < len; ++i) {
+        const col = movingCols[i];
+        const idx = col.inColsList ? col.colsListIndex : -1;
+        if (idx < min) {
+            min = idx;
+        } else if (idx > max) {
+            max = idx;
+        }
+    }
+    // Adjacent iff the indexes form a gap-free, dup-free run (span === count - 1); returns the leftmost index.
+    return max - min === len - 1 ? min : null;
 }
 
 // A measure of how fragmented in terms of groups an order of columns is
@@ -261,6 +270,14 @@ function getDisplayedColumns(visibleCols: VisibleColsService, type: ColumnPinned
     }
 }
 
+function notDisplayedInSection(col: AgColumn | undefined, section: ColumnPinnedType): boolean {
+    if (!col?.displayed) {
+        return true; // not displayed in any section
+    }
+    const p = col.pinned;
+    return section === 'left' || section === 'right' ? p !== section : p != null;
+}
+
 function calculateValidMoves(params: {
     movingCols: AgColumn[];
     draggingRight: boolean;
@@ -280,11 +297,12 @@ function calculateValidMoves(params: {
     const allDisplayedCols = getDisplayedColumns(visibleCols, pinned);
     // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
     // so the result we return has to be and index location for this list
-    const allGridCols = colModel.getCols();
+    const allGridCols = colModel.colsList;
+    const movingColsSet = new Set(movingCols);
 
-    const movingDisplayedCols = allDisplayedCols.filter((col) => movingCols.includes(col));
-    const otherDisplayedCols = allDisplayedCols.filter((col) => !movingCols.includes(col));
-    const otherGridCols = allGridCols.filter((col) => !movingCols.includes(col));
+    const movingDisplayedCols = allDisplayedCols.filter((col) => movingColsSet.has(col));
+    const otherDisplayedCols = allDisplayedCols.filter((col) => !movingColsSet.has(col));
+    const otherGridCols = allGridCols.filter((col) => !movingColsSet.has(col));
 
     // work out how many DISPLAYED columns fit before the 'x' position. this gives us the displayIndex.
     // for example, if cols are a,b,c,d and we find a,b fit before 'x', then we want to place the moving
@@ -369,7 +387,7 @@ function calculateValidMoves(params: {
         let displacedCol = allGridCols[pointer];
 
         // takes into account visible=false and group=closed, ie it is not displayed
-        while (pointer <= lastIndex && allDisplayedCols.indexOf(displacedCol) < 0) {
+        while (pointer <= lastIndex && notDisplayedInSection(displacedCol, pinned)) {
             pointer++;
             validMoves.push(pointer);
             displacedCol = allGridCols[pointer];

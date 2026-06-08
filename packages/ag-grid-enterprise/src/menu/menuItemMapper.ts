@@ -7,10 +7,10 @@ import type {
     DefaultMenuItem,
     GetNoteParams,
     IAggFuncService,
-    IColsService,
     IMenuActionParams,
     INoteAccess,
     INotesService,
+    IValueColsService,
     MenuItemDef,
     NamedBean,
     RowNode,
@@ -296,7 +296,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                 rowGroupColsSvc.setColumns(rowGroupColsSvc.columns.slice(0, lockedGroups), source);
                         } else if (typeof showRowGroup === 'string') {
                             // Handle multiple auto group columns
-                            const underlyingColumn = colModel.getColDefCol(showRowGroup);
+                            const underlyingColumn = colModel.getNonPivotCol(showRowGroup);
                             const ungroupByName =
                                 underlyingColumn != null
                                     ? colNames.getDisplayNameForColumn(underlyingColumn, 'header')
@@ -657,7 +657,7 @@ function createNoteMenuItems({
 function createAggregationSubMenu(
     column: AgColumn,
     aggFuncSvc: IAggFuncService,
-    valueColsSvc: IColsService,
+    valueColsSvc: IValueColsService,
     localeTextFunc: LocaleTextFunc
 ): MenuItemDef[] {
     let columnToUse: AgColumn | undefined;

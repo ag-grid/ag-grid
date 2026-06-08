@@ -1436,8 +1436,7 @@ describe('Column Mutations - applyColumnState', () => {
             });
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('grouping activation + auto-col state in one call is a single pass', async () => {
+        test('grouping activation + auto-col state in one call is a single pass', async () => {
             const api = gridsManager.createGrid('evtGroupActivate', {
                 columnDefs: [{ colId: 'a' }, { colId: 'grp' }],
                 rowData: [{ a: 1, grp: 'x' }],
@@ -1457,8 +1456,7 @@ describe('Column Mutations - applyColumnState', () => {
             expect(counts.columnRowGroupChanged).toBe(1);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('pivot apply targeting a pivot-result col runs the leftover pass (single everythingChanged)', async () => {
+        test('pivot apply targeting a pivot-result col runs the leftover pass (single everythingChanged)', async () => {
             const api = gridsManager.createGrid('evtPivotLeftover', {
                 columnDefs: [
                     { colId: 'country', rowGroup: true },
@@ -1481,8 +1479,7 @@ describe('Column Mutations - applyColumnState', () => {
             expect(counts.columnEverythingChanged).toBe(1);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('resetColumnState on a grouped grid emits one columnsReset and one everythingChanged', async () => {
+        test('resetColumnState on a grouped grid emits one columnsReset and one everythingChanged', async () => {
             const api = gridsManager.createGrid('evtReset', {
                 columnDefs: [{ colId: 'country', rowGroup: true }, { colId: 'a' }, { colId: 'b' }],
                 rowData: [{ country: 'USA', a: 1, b: 2 }],
@@ -1503,8 +1500,7 @@ describe('Column Mutations - applyColumnState', () => {
     });
 
     describe('columnStateUtils edge cases', () => {
-        // Solved by AG-17366 when it is completed
-        test.skip('applyColumnState malformed inputs: non-array state, orphan service colIds, null/undefined colIds', async () => {
+        test('applyColumnState malformed inputs: non-array state, orphan service colIds, null/undefined colIds', async () => {
             const api = gridsManager.createGrid('malformedState', {
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
             });
@@ -1582,7 +1578,6 @@ describe('Column Mutations - applyColumnState', () => {
                 ROOT id:ROOT_NODE_ID
             `);
 
-            // No displayed cols → `_getColumnState` takes the "iterate allCols" fast path.
             const state = api.getColumnState();
             expect(state.map((s) => s.colId)).toEqual(['a', 'b']);
             await new GridRows(
@@ -1664,7 +1659,6 @@ describe('Column Mutations - applyColumnState', () => {
         });
 
         test('resetColumnState with no primary cols is a safe no-op', async () => {
-            // Grid with no columnDefs → `_resetColumnState` early-returns on `!primaryCols.length`.
             const api = gridsManager.createGrid('emptyReset', {
                 columnDefs: [],
             });
@@ -2245,10 +2239,288 @@ describe('Column Mutations - applyColumnState', () => {
             `);
         });
     });
+
+    describe('uncovered apply-column-state edge cases', () => {
+        test('duplicate colId flipping rowGroup membership in one apply: reactivated col lands at the tail', async () => {
+            const api = gridsManager.createGrid('dupColIdRowGroup', {
+                columnDefs: [{ colId: 'a', rowGroup: true }, { colId: 'b', rowGroup: true }, { colId: 'c' }],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+            await asyncSetTimeout(0);
+            expect(api.getRowGroupColumns().map((col: Column) => col.getColId())).toEqual(['a', 'b']);
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', rowGroup: false },
+                    { colId: 'b', rowGroup: true },
+                    { colId: 'a', rowGroup: true },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            expect(api.getRowGroupColumns().map((col: Column) => col.getColId())).toEqual(['b', 'a']);
+            await new GridColumns(api, 'duplicate colId rowGroup flip → [b, a]').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── a width:200 rowGroup
+                ├── b width:200 rowGroup
+                └── c width:200
+            `);
+            await new GridRows(api, 'duplicate colId rowGroup flip → grouped rows').check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler collapsed id:row-group-b- ag-Grid-AutoColumn:"(Blanks)"
+                · └─┬ LEAF_GROUP collapsed hidden id:row-group-b--a- ag-Grid-AutoColumn:"(Blanks)"
+                · · └── LEAF hidden id:0
+            `);
+        });
+
+        test('value column aggFunc via state: change, clear via null, defaultState fallback', async () => {
+            const api = gridsManager.createGrid('aggFuncState', {
+                columnDefs: [{ colId: 'gold', aggFunc: 'sum' }, { colId: 'silver' }, { colId: 'bronze' }],
+                rowData: [{ gold: 1, silver: 2, bronze: 3 }],
+            });
+            await asyncSetTimeout(0);
+            expect(api.getValueColumns().map((col: Column) => col.getColId())).toEqual(['gold']);
+
+            // Change an existing value col's aggFunc.
+            api.applyColumnState({ state: [{ colId: 'gold', aggFunc: 'max' }] });
+            await asyncSetTimeout(0);
+            expect(api.getColumn('gold')!.getAggFunc()).toBe('max');
+            expect(api.getValueColumns().map((col: Column) => col.getColId())).toEqual(['gold']);
+
+            // Explicit null deactivates the col but the last aggFunc is remembered (legacy behaviour).
+            api.applyColumnState({ state: [{ colId: 'gold', aggFunc: null }] });
+            await asyncSetTimeout(0);
+            expect(api.getValueColumns()).toHaveLength(0);
+            expect(api.getColumn('gold')!.getAggFunc()).toBe('max');
+
+            // defaultState aggFunc fills cols with no explicit state (undefined → default), explicit wins.
+            api.applyColumnState({ state: [{ colId: 'silver', aggFunc: 'min' }], defaultState: { aggFunc: 'sum' } });
+            await asyncSetTimeout(0);
+            expect(api.getColumn('silver')!.getAggFunc()).toBe('min');
+            expect(api.getColumn('gold')!.getAggFunc()).toBe('sum');
+            expect(api.getColumn('bronze')!.getAggFunc()).toBe('sum');
+            await new GridColumns(api, 'aggFunc via state: silver min, gold/bronze sum').checkColumns(`
+                CENTER
+                ├── gold width:200 aggFunc:sum
+                ├── silver width:200 aggFunc:min
+                └── bronze width:200 aggFunc:sum
+            `);
+        });
+
+        test('invalid non-string aggFunc in state warns (#33) and is ignored', async () => {
+            const api = gridsManager.createGrid('aggFuncInvalid', {
+                columnDefs: [{ colId: 'gold', aggFunc: 'sum' }, { colId: 'a' }],
+                rowData: [{ gold: 1, a: 2 }],
+            });
+            await asyncSetTimeout(0);
+
+            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            api.applyColumnState({ state: [{ colId: 'gold', aggFunc: {} as any }] });
+            await asyncSetTimeout(0);
+
+            expect(consoleWarnSpy).toHaveBeenCalled();
+            expect(consoleWarnSpy.mock.calls[0][0]).toContain('warning #33');
+            consoleWarnSpy.mockRestore();
+            // Unchanged: the invalid value is rejected, the prior aggFunc stands.
+            expect(api.getColumn('gold')!.getAggFunc()).toBe('sum');
+            await new GridColumns(api, 'invalid aggFunc ignored → gold stays aggFunc:sum').checkColumns(`
+                CENTER
+                ├── gold width:200 aggFunc:sum
+                └── a width:200
+            `);
+        });
+
+        test('defaultState applies field state to recreated auto-group and selection cols', async () => {
+            const api = gridsManager.createGrid('defaultStateServiceCols', {
+                columnDefs: [{ colId: 'country', rowGroup: true }, { colId: 'a' }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+                rowData: [{ country: 'USA', a: 1 }],
+            });
+            await asyncSetTimeout(0);
+
+            api.applyColumnState({ defaultState: { width: 321 } });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('ag-Grid-AutoColumn')!.getActualWidth()).toBe(321);
+            expect(api.getColumn('ag-Grid-SelectionColumn')!.getActualWidth()).toBe(321);
+            expect(api.getColumn('a')!.getActualWidth()).toBe(321);
+            await new GridColumns(api, 'defaultState width:321 on auto-group + selection + primary').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:321 !resizable !sortable suppressMovable lockPosition:left
+                ├── ag-Grid-AutoColumn "Group" width:321
+                ├── country width:321 rowGroup
+                └── a width:321
+            `);
+        });
+
+        test('rowGroupIndex without an explicit rowGroup flag still activates the col', async () => {
+            const api = gridsManager.createGrid('indexActivates', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+            await asyncSetTimeout(0);
+
+            api.applyColumnState({ state: [{ colId: 'b', rowGroupIndex: 0 }] });
+            await asyncSetTimeout(0);
+
+            expect(api.getRowGroupColumns().map((col: Column) => col.getColId())).toEqual(['b']);
+            await new GridColumns(api, 'rowGroupIndex without flag activates b').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── a width:200
+                ├── b width:200 rowGroup
+                └── c width:200
+            `);
+            await new GridRows(api, 'rowGroupIndex without flag activates b → grouped rows').check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP collapsed id:row-group-b- ag-Grid-AutoColumn:"(Blanks)"
+                · └── LEAF hidden id:0
+            `);
+        });
+
+        test('one apply orders rowGroup and pivot independently by their own indexes', async () => {
+            const api = gridsManager.createGrid('mixedRowGroupPivot', {
+                columnDefs: [
+                    { colId: 'g1' },
+                    { colId: 'g2' },
+                    { colId: 'p1' },
+                    { colId: 'p2' },
+                    { colId: 'v', aggFunc: 'sum' },
+                ],
+                rowData: [{ g1: 'a', g2: 'b', p1: 'c', p2: 'd', v: 1 }],
+            });
+            await asyncSetTimeout(0);
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'g1', rowGroup: true, rowGroupIndex: 1 },
+                    { colId: 'g2', rowGroup: true, rowGroupIndex: 0 },
+                    { colId: 'p1', pivot: true, pivotIndex: 1 },
+                    { colId: 'p2', pivot: true, pivotIndex: 0 },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            expect(api.getRowGroupColumns().map((col: Column) => col.getColId())).toEqual(['g2', 'g1']);
+            expect(api.getPivotColumns().map((col: Column) => col.getColId())).toEqual(['p2', 'p1']);
+            await new GridColumns(api, 'independent rowGroup [g2,g1] + pivot [p2,p1] ordering').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── g1 width:200 rowGroup
+                ├── g2 width:200 rowGroup
+                ├── p1 width:200 pivot
+                ├── p2 width:200 pivot
+                └── v width:200 aggFunc:sum
+            `);
+        });
+
+        test('one multi-axis apply dispatches each column event exactly once', async () => {
+            const api = gridsManager.createGrid('multiAxisEvents', {
+                columnDefs: [
+                    { colId: 'grp' },
+                    { colId: 'piv' },
+                    { colId: 'val' },
+                    { colId: 'sortMe' },
+                    { colId: 'pinMe' },
+                    { colId: 'hideMe' },
+                    { colId: 'wide' },
+                ],
+                rowData: [{ grp: 'a', piv: 'b', val: 1, sortMe: 2, pinMe: 3, hideMe: 4, wide: 5 }],
+            });
+            await asyncSetTimeout(0);
+
+            const tracked = [
+                'columnEverythingChanged',
+                'columnRowGroupChanged',
+                'columnPivotChanged',
+                'columnValueChanged',
+                'columnMoved',
+                'columnVisible',
+                'columnResized',
+                'columnPinned',
+                'sortChanged',
+            ] as const;
+            const counts: Record<string, number> = {};
+            for (let i = 0; i < tracked.length; ++i) {
+                const name = tracked[i];
+                counts[name] = 0;
+                api.addEventListener(name, () => {
+                    counts[name]++;
+                });
+            }
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'grp', rowGroup: true },
+                    { colId: 'piv', pivot: true },
+                    { colId: 'val', aggFunc: 'sum' },
+                    { colId: 'sortMe', sort: 'asc' },
+                    { colId: 'pinMe', pinned: 'left' },
+                    { colId: 'hideMe', hide: true },
+                    { colId: 'wide', width: 333 },
+                ],
+                applyOrder: true,
+            });
+            await asyncSetTimeout(0);
+
+            expect(counts.columnEverythingChanged).toBe(1);
+            expect(counts.columnRowGroupChanged).toBe(1);
+            expect(counts.columnPivotChanged).toBe(1);
+            expect(counts.columnValueChanged).toBe(1);
+            expect(counts.columnVisible).toBe(1);
+            expect(counts.columnResized).toBe(1);
+            expect(counts.columnPinned).toBe(1);
+            expect(counts.sortChanged).toBe(1);
+            await new GridColumns(api, 'multi-axis apply final column state').checkColumns(`
+                LEFT
+                └── pinMe width:200
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── grp width:200 rowGroup
+                ├── piv width:200 pivot
+                ├── val width:200 aggFunc:sum
+                ├── sortMe width:200 sort:asc
+                └── wide width:333
+            `);
+        });
+
+        test('removing a rowGroup col re-stamps remaining indexes; a later field-only apply preserves them', async () => {
+            // Guards the orderByPendingState skip optimisation: the membership change must still re-stamp
+            // rowGroupActiveIndex (exposed as rowGroupIndex), and a subsequent width-only apply (which changes
+            // nothing about row-group membership/order) must not disturb that order or those indexes.
+            const api = gridsManager.createGrid('reStampOnRemoval', {
+                columnDefs: [
+                    { colId: 'a', rowGroup: true, rowGroupIndex: 0 },
+                    { colId: 'b', rowGroup: true, rowGroupIndex: 1 },
+                    { colId: 'c', rowGroup: true, rowGroupIndex: 2 },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+            await asyncSetTimeout(0);
+            expect(api.getRowGroupColumns().map((col: Column) => col.getColId())).toEqual(['a', 'b', 'c']);
+
+            // Remove the middle group col → remaining cols' indexes must shift to 0,1.
+            api.applyColumnState({ state: [{ colId: 'b', rowGroup: false }] });
+            await asyncSetTimeout(0);
+            expect(api.getRowGroupColumns().map((col: Column) => col.getColId())).toEqual(['a', 'c']);
+            const afterRemoval = api.getColumnState();
+            expect(afterRemoval.find((s) => s.colId === 'a')!.rowGroupIndex).toBe(0);
+            expect(afterRemoval.find((s) => s.colId === 'c')!.rowGroupIndex).toBe(1);
+
+            // Field-only apply (width) touches no row-group membership → order + indexes unchanged.
+            api.applyColumnState({ state: [{ colId: 'a', width: 111 }] });
+            await asyncSetTimeout(0);
+            expect(api.getRowGroupColumns().map((col: Column) => col.getColId())).toEqual(['a', 'c']);
+            const afterWidth = api.getColumnState();
+            expect(afterWidth.find((s) => s.colId === 'a')!.rowGroupIndex).toBe(0);
+            expect(afterWidth.find((s) => s.colId === 'c')!.rowGroupIndex).toBe(1);
+            expect(api.getColumn('a')!.getActualWidth()).toBe(111);
+        });
+    });
 });
 
-// Solved by AG-17366 when it is completed
-describe.skip('single displayedColumnsChanged per operation', () => {
+describe('single displayedColumnsChanged per operation', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
     });

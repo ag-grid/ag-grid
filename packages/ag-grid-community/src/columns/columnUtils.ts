@@ -1,206 +1,129 @@
 import type { AgPropertyChangedSource } from 'ag-stack';
-import { _areEqual, _exists } from 'ag-stack';
 
-import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { _getSortDefFromInput, _isSortDefValid, _isSortDirectionValid, isColumn } from '../entities/agColumn';
+import { _isSortDefValid, getSortDefFromInput, isSortDirectionValid } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
-import type { ColumnInstanceId } from '../interfaces/iColumn';
-import { depthFirstOriginalTreeSearch } from './columnFactoryUtils';
-import type { ColumnCollections } from './columnModel';
-import type { ColumnState, ColumnStateParams } from './columnStateUtils';
+import type { Column } from '../interfaces/iColumn';
+import type { ColumnState } from './columnStateUtils';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
 export const SELECTION_COLUMN_ID = 'ag-Grid-SelectionColumn';
 export const ROW_NUMBERS_COLUMN_ID = 'ag-Grid-RowNumbersColumn';
 export const GROUP_HIERARCHY_COLUMN_ID_PREFIX = 'ag-Grid-HierarchyColumn';
 
-// Possible candidate for reuse (alot of recursive traversal duplication)
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getColumnsFromTree(rootColumns: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
-    const result: AgColumn[] = [];
-
-    const recursiveFindColumns = (childColumns: (AgColumn | AgProvidedColumnGroup)[]): void => {
-        for (let i = 0; i < childColumns.length; i++) {
-            const child = childColumns[i];
-            if (isColumn(child)) {
-                result.push(child);
-            } else if (isProvidedColumnGroup(child)) {
-                recursiveFindColumns(child.getChildren());
-            }
-        }
-    };
-
-    recursiveFindColumns(rootColumns);
-
-    return result;
-}
-
-export function getWidthOfColsInList(columnList: AgColumn[]) {
-    return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _destroyColumnTree(
-    beans: BeanCollection,
-    oldTree: (AgColumn | AgProvidedColumnGroup)[] | null | undefined,
-    newTree?: (AgColumn | AgProvidedColumnGroup)[] | null
-): void {
-    const oldObjectsById: { [id: ColumnInstanceId]: (AgColumn | AgProvidedColumnGroup) | null } = {};
-
-    if (!oldTree) {
-        return;
+export function getWidthOfColsInList(columnList: AgColumn[]): number {
+    let width = 0;
+    for (let i = 0, len = columnList.length; i < len; ++i) {
+        width += columnList[i].actualWidth;
     }
-
-    // add in all old columns to be destroyed
-    depthFirstOriginalTreeSearch(null, oldTree, (child) => {
-        oldObjectsById[child.getInstanceId()] = child;
-    });
-
-    // however we don't destroy anything in the new tree. if destroying the grid, there is no new tree
-    if (newTree) {
-        depthFirstOriginalTreeSearch(null, newTree, (child) => {
-            oldObjectsById[child.getInstanceId()] = null;
-        });
-    }
-
-    // what's left can be destroyed
-    const colsToDestroy = Object.values(oldObjectsById).filter((item) => item != null);
-    beans.context.destroyBeans(colsToDestroy);
+    return width;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function isColumnGroupAutoCol(col: AgColumn): boolean {
-    const colId = col.getId();
-    return colId.startsWith(GROUP_AUTO_COLUMN_ID);
+export function isColumnGroupAutoCol(col: Column): boolean {
+    return (col as AgColumn).colKind === 'auto-group';
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function isColumnSelectionCol(col: ColKey): boolean {
-    const id = typeof col === 'string' ? col : 'getColId' in col ? col.getColId() : col.colId;
-    return id?.startsWith(SELECTION_COLUMN_ID) ?? false;
+export function isColumnSelectionCol(col: Column): boolean {
+    return (col as AgColumn).colKind === 'selection';
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function isRowNumberCol(col: ColKey): boolean {
-    const id = typeof col === 'string' ? col : 'getColId' in col ? col.getColId() : col.colId;
-    return id?.startsWith(ROW_NUMBERS_COLUMN_ID) ?? false;
+export function isRowNumberCol(col: Column): boolean {
+    return (col as AgColumn).colKind === 'row-number';
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function isSpecialCol(col: ColKey): boolean {
-    return isColumnSelectionCol(col) || isRowNumberCol(col);
+export function isSpecialCol(col: Column): boolean {
+    const colKind = (col as AgColumn).colKind;
+    return colKind === 'selection' || colKind === 'row-number';
 }
 
 export function convertColumnTypes(type: string | string[]): string[] {
-    let typeKeys: string[] = [];
-
-    if (type instanceof Array) {
-        typeKeys = type;
-    } else if (typeof type === 'string') {
-        typeKeys = type.split(',');
+    if (Array.isArray(type)) {
+        return type;
     }
-    return typeKeys;
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _areColIdsEqual(colsA: AgColumn[] | null, colsB: AgColumn[] | null): boolean {
-    return _areEqual(colsA, colsB, (a, b) => a.colId === b.colId);
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _updateColsMap(cols: ColumnCollections): void {
-    cols.map = {};
-    for (const col of cols.list) {
-        cols.map[col.getId()] = col;
-    }
+    return typeof type === 'string' ? type.split(',') : [];
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _convertColumnEventSourceType(source: AgPropertyChangedSource): ColumnEventType {
-    // unfortunately they do not match so need to perform conversion
+    // The two enums don't match, so convert.
     return source === 'optionsUpdated' ? 'gridOptionsChanged' : source;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _columnsMatch(column: AgColumn, key: ColKey): boolean {
-    return column === key || column.colId == key || column.colDef === key;
-}
-
-export const getValueFactory =
-    (stateItem: ColumnState | null, defaultState: ColumnStateParams | undefined) =>
-    <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(
-        key1: U,
-        key2?: S
-    ): { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined } => {
-        const obj: { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined } = {
-            value1: undefined,
-            value2: undefined,
-        };
-        let calculated: boolean = false;
-
-        if (stateItem) {
-            if (stateItem[key1] !== undefined) {
-                obj.value1 = stateItem[key1];
-                calculated = true;
-            }
-            if (_exists(key2) && stateItem[key2] !== undefined) {
-                obj.value2 = stateItem[key2];
-                calculated = true;
-            }
-        }
-
-        if (!calculated && defaultState) {
-            if (defaultState[key1] !== undefined) {
-                obj.value1 = defaultState[key1];
-            }
-            if (_exists(key2) && defaultState[key2] !== undefined) {
-                obj.value2 = defaultState[key2];
-            }
-        }
-
-        return obj;
-    };
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getColumnStateFromColDef(colDef: ColDef, colId: string): ColumnState {
-    const state: ColumnState = {
-        ...colDef,
-        sort: undefined,
-        colId,
-    };
-    const sortDef = _getSortDefFromColDef(colDef);
-    if (sortDef) {
-        state.sort = sortDef.direction;
-        state.sortType = sortDef.type;
-    }
-
-    return state;
+    const sortDef = getSortDefFromColDef(colDef);
+    return sortDef
+        ? { ...colDef, colId, sort: sortDef.direction, sortType: sortDef.type }
+        : { ...colDef, colId, sort: undefined };
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getSortDefFromColDef(colDef: ColDef) {
+export function getSortDefFromColDef(colDef: ColDef) {
     const { sort, initialSort } = colDef;
-    const sortIsValid = _isSortDefValid(sort) || _isSortDirectionValid(sort);
-    const initialSortIsValid = _isSortDefValid(initialSort) || _isSortDirectionValid(initialSort);
-
+    const sortIsValid = _isSortDefValid(sort) || isSortDirectionValid(sort);
+    const initialSortIsValid = _isSortDefValid(initialSort) || isSortDirectionValid(initialSort);
     if (sortIsValid) {
-        return _getSortDefFromInput(sort);
+        return getSortDefFromInput(sort);
     }
     if (initialSortIsValid) {
-        return _getSortDefFromInput(initialSort);
+        return getSortDefFromInput(initialSort);
     }
-
     return null;
 }
 
-/**
- * Calls `callback` for each leaf `ColDef` in `columnDefs`, recursing into `ColGroupDef` children as required.
- * The `callback` is not called on column groups, only their leaf children.
- */
+/** Destroys every still-alive node via flat lists (not `.children`, which a reused group may have replaced);
+ *  the `isAlive()` guard de-dups nodes reachable via multiple paths (hierarchy cols sit in colDefList + wrappers).
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _destroyColumnTreeAll = (
+    cols: readonly AgColumn[] | null,
+    allGroups: readonly AgProvidedColumnGroup[] | null
+): void => {
+    if (cols) {
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const col = cols[i];
+            if (col.isAlive()) {
+                col.destroy();
+            }
+        }
+    }
+    if (allGroups) {
+        for (let i = 0, len = allGroups.length; i < len; ++i) {
+            const group = allGroups[i];
+            if (group.isAlive()) {
+                group.destroy();
+            }
+        }
+    }
+};
+
+/** Destroys prev-build nodes absent from the new build. Walks flat prev lists, not `.children`:
+ *  orphans whose parent's array was replaced are otherwise unreachable.
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _destroyColumnTreeUnused = (
+    prevCols: readonly AgColumn[],
+    prevAllGroups: readonly AgProvidedColumnGroup[],
+    buildToken: number
+): void => {
+    for (let i = 0, len = prevCols.length; i < len; ++i) {
+        const col = prevCols[i];
+        if (col.buildToken !== buildToken && col.isAlive()) {
+            col.destroy();
+        }
+    }
+    for (let i = 0, len = prevAllGroups.length; i < len; ++i) {
+        const group = prevAllGroups[i];
+        if (group.buildToken !== buildToken && group.isAlive()) {
+            group.destroy();
+        }
+    }
+};
+
+/** Calls `callback` for each leaf `ColDef`, recursing into `ColGroupDef` children; not called on groups. */
 export function forEachColDef(columnDefs: (ColDef | ColGroupDef)[], callback: (colDef: ColDef) => void): void {
     for (let i = 0, len = columnDefs.length; i < len; ++i) {
         const def = columnDefs[i];

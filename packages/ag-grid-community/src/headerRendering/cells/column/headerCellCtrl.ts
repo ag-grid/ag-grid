@@ -7,7 +7,7 @@ import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
-import { _getSortDefFromInput } from '../../../entities/agColumn';
+import { getSortDefFromInput } from '../../../entities/agColumn';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import { _addGridCommonParams, _getEnableColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
@@ -221,7 +221,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
                 sortSvc?.progressSort(this.column, !!multiSort, 'uiColumnSorted');
             },
             setSort: (sort: SortDirection | SortDef, multiSort?: boolean) => {
-                sortSvc?.setSortForColumn(this.column, _getSortDefFromInput(sort), !!multiSort, 'uiColumnSorted');
+                sortSvc?.setSortForColumn(this.column, getSortDefFromInput(sort), !!multiSort, 'uiColumnSorted');
             },
             eGridHeader: this.eGui,
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
@@ -572,7 +572,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const { beans, column, comp, sortable, gos } = this;
         if (sortable) {
             const translate = this.getLocaleTextFunc();
-            const sortDef = beans.sortSvc?.getDisplaySortForColumn(column) ?? null;
+            const sortDef = beans.sortSvc?.getDisplaySort(column) ?? null;
             comp.setAriaSort(_getAriaSortState(sortDef));
             description = _getEnableColumnSelection(gos)
                 ? translate('ariaSortableColumnWithCellSelection', 'Press ALT ENTER to sort')

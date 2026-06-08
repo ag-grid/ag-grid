@@ -829,7 +829,7 @@
         }
     }
 
-    .ag-rtl .ag-grid-scrolling-cells {
+    .ag-rtl .ag-row .ag-grid-scrolling-cells {
         // when scrollable, offset for the vertical scrollbar on the left in rtl.
         margin-left: var(--ag-internal-pinned-left-sticky-offset, 0px);
     }

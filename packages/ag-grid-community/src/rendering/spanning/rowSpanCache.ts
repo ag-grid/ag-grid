@@ -1,4 +1,4 @@
-import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { SpanRowsParams } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
@@ -84,26 +84,25 @@ export class CellSpan {
  *
  * Only create if spanning is enabled for this column.
  */
-export class RowSpanCache extends BeanStub {
-    private centerValueNodeMap: Map<RowNode, CellSpan>;
+export class RowSpanCache {
+    private centerValueNodeMap: Map<RowNode, CellSpan> | null = null;
 
     // pinned rows
-    private topValueNodeMap: Map<RowNode, CellSpan>;
-    private bottomValueNodeMap: Map<RowNode, CellSpan>;
+    private topValueNodeMap: Map<RowNode, CellSpan> | null = null;
+    private bottomValueNodeMap: Map<RowNode, CellSpan> | null = null;
 
-    constructor(private readonly column: AgColumn) {
-        super();
-    }
+    constructor(
+        private readonly beans: BeanCollection,
+        public readonly column: AgColumn
+    ) {}
 
     public buildCache(pinned: 'top' | 'center' | 'bottom'): void {
-        const {
-            column,
-            beans: { gos, pinnedRowModel, rowModel, valueSvc, pagination },
-        } = this;
-        const { colDef } = column;
+        const { gos, pinnedRowModel, rowModel, valueSvc, pagination } = this.beans;
+        const column = this.column;
+        const colDef = column.colDef;
 
         const oldMap = this.getNodeMap(pinned);
-        const newMap = new Map();
+        const newMap = new Map<RowNode, CellSpan>();
 
         const isFullWidthCellFunc = gos.getCallback('isFullWidthRow');
         const equalsFnc = colDef.equals;
@@ -199,15 +198,11 @@ export class RowSpanCache extends BeanStub {
         }
     }
 
-    public isCellSpanning(node: RowNode): boolean {
-        return !!this.getCellSpan(node);
-    }
-
     public getCellSpan(node: RowNode): CellSpan | undefined {
-        return this.getNodeMap(node.rowPinned).get(node);
+        return this.getNodeMap(node.rowPinned)?.get(node);
     }
 
-    private getNodeMap(container: RowPinnedType | 'center'): Map<RowNode, CellSpan> {
+    private getNodeMap(container: RowPinnedType | 'center'): Map<RowNode, CellSpan> | null {
         switch (container) {
             case 'top':
                 return this.topValueNodeMap;

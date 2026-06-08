@@ -176,7 +176,7 @@ export class SortIndicatorComp extends Component {
     private updateMultiSortIndicator() {
         const { eSortMixed, beans, column } = this;
         if (eSortMixed) {
-            const isMixedSort = beans.sortSvc!.getDisplaySortForColumn(column)?.direction === 'mixed';
+            const isMixedSort = beans.sortSvc!.getDisplaySort(column)?.direction === 'mixed';
             _setDisplayed(eSortMixed, isMixedSort, { skipAriaHidden: true });
         }
     }
@@ -194,13 +194,8 @@ export class SortIndicatorComp extends Component {
             return;
         }
 
-        const allColumnsWithSorting = sortSvc!.getColumnsWithSortingOrdered();
-
-        const indexThisCol = sortSvc!.getDisplaySortIndexForColumn(column) ?? -1;
-        const moreThanOneColSorting = allColumnsWithSorting.some(
-            (col) => sortSvc!.getDisplaySortIndexForColumn(col) ?? -1 >= 1
-        );
-        const showIndex = indexThisCol >= 0 && moreThanOneColSorting;
+        const indexThisCol = sortSvc!.getDisplaySortIndex(column) ?? -1;
+        const showIndex = indexThisCol >= 0 && sortSvc!.isMultiSort();
         _setDisplayed(eSortOrder, showIndex, { skipAriaHidden: true });
 
         if (indexThisCol >= 0) {

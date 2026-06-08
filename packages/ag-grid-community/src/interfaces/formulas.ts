@@ -1,5 +1,4 @@
 import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
-import type { ColumnCollections } from '../columns/columnModel';
 import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
@@ -77,7 +76,7 @@ export interface IFormulaService extends Bean {
     hasCachedRows(): boolean;
     isEvaluationActive(): boolean;
     isFormula(value: unknown): value is `=${string}`;
-    setFormulasActive(cols: ColumnCollections): void;
+    setFormulasActive(columns: AgColumn[]): void;
     resolveValue(col: AgColumn, row: RowNode): unknown;
     getDataSourceFormula(row: RowNode, col: AgColumn): string | undefined;
     getFormulaError(col: AgColumn, row: RowNode): Error | null;

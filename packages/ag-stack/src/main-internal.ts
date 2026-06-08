@@ -140,12 +140,14 @@ export type { AriaSortState } from './utils/aria';
 export {
     _areEqual,
     _flatten,
-    _forAll,
+    _indexMap,
     _last,
     _moveInArray,
+    _pushToMapArray,
     _removeAllFromArray,
     _removeFromArray,
     _reuseArrayIfEqual,
+    _symmetricDiff,
 } from './utils/array';
 export { _parseBigIntOrNull } from './utils/bigInt';
 export {

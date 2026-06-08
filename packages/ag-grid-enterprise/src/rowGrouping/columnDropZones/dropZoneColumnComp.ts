@@ -2,10 +2,10 @@ import { RefPlaceholder } from 'ag-stack';
 
 import type {
     AgColumn,
+    ColAggFunc,
     DragAndDropIcon,
     DragItem,
     DropTarget,
-    IAggFunc,
     SortDef,
     SortDirection,
     SortIndicatorComp,
@@ -56,7 +56,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             ],
         };
         if (sortSvc) {
-            this.agComponents = [sortSvc.getSortIndicatorSelector()];
+            this.agComponents = [sortSvc.SortIndicatorSelector];
         }
 
         this.displayName = colNames.getDisplayNameForColumn(this.column, 'columnDrop');
@@ -352,7 +352,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         virtualList.focusRow(rowToFocus);
     }
 
-    private createAggSelect(hidePopup: () => void, value: string | IAggFunc | null | undefined): Component {
+    private createAggSelect(hidePopup: () => void, value: ColAggFunc): Component {
         const itemSelected = () => {
             hidePopup();
             this.getGui().focus();

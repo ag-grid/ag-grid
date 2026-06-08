@@ -152,11 +152,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     private getWidthForRow(): number {
         const { visibleCols } = this.beans;
-        const contentWidth =
-            visibleCols.getContainerWidth('right') +
-            visibleCols.getContainerWidth('left') +
-            visibleCols.getContainerWidth(null);
-
+        const contentWidth = visibleCols.totalWidth;
         const eGridViewport = this.beans.ctrlsSvc.getGridBodyCtrl()?.eGridViewport;
         const viewportWidth = eGridViewport ? eGridViewport.getBoundingClientRect().width : 0;
 
@@ -218,16 +214,9 @@ export class HeaderRowCtrl extends BeanStub {
             this.recycleAndCreateHeaderCtrls(child, this.ctrlsById, oldCtrls);
         }
 
-        // we want to keep columns that are focused, otherwise keyboard navigation breaks
+        // keep focused (and still-displayed) header ctrls alive, otherwise keyboard navigation breaks.
         const isFocusedAndDisplayed = (ctrl: HeaderCellCtrl) => {
-            const { focusSvc, visibleCols } = this.beans;
-
-            const isFocused = focusSvc.isHeaderWrapperFocused(ctrl);
-            if (!isFocused) {
-                return false;
-            }
-            const isDisplayed = visibleCols.isVisible(ctrl.column);
-            return isDisplayed;
+            return ctrl.column.displayed && this.beans.focusSvc.isHeaderWrapperFocused(ctrl);
         };
 
         if (oldCtrls) {

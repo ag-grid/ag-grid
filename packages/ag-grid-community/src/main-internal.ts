@@ -35,27 +35,18 @@ export type { INoteAccess, INotesFeature, INotesDataService, INotesService } fro
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';
-export { BaseColsService } from './columns/baseColsService';
-export {
-    _addColumnDefaultAndTypes,
-    _createColumnTree,
-    _createColumnTreeWithIds,
-    _updateColumnState,
-} from './columns/columnFactoryUtils';
-export { ColumnKeyCreator } from './columns/columnKeyCreator';
-export type { ColumnCollections as _ColumnCollections } from './columns/columnModel';
+export { _dispatchColumnChangedEvent, dispatchColumnVisibleEvent } from './columns/columnEventUtils';
+export { _buildColumnTree } from './columns/buildColumnTree';
+export { _addColumnDefaultAndTypes, _createUserColumn } from './columns/colDefUtils';
+export { BaseSingleColService as _BaseSingleColService } from './columns/baseSingleColService';
 export type { ColumnModel } from './columns/columnModel';
 export type { ColumnNameService } from './columns/columnNameService';
-export { _applyColumnState, _getColumnState, _resetColumnState } from './columns/columnStateUtils';
+export { _applyColumnState, _resetColumnState, _setColsVisible } from './columns/columnStateUtils';
 export {
-    _areColIdsEqual,
-    _columnsMatch,
     _convertColumnEventSourceType,
-    _destroyColumnTree,
-    _getColumnsFromTree,
+    _destroyColumnTreeAll,
+    _destroyColumnTreeUnused,
     _getColumnStateFromColDef,
-    _getSortDefFromColDef,
-    _updateColsMap,
     isColumnGroupAutoCol,
     isColumnSelectionCol,
     isRowNumberCol,
@@ -63,7 +54,6 @@ export {
 } from './columns/columnUtils';
 export { DATA_TYPE_DERIVED_COL_DEF_PROPERTIES as _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES } from './columns/dataTypeService';
 export type { DataTypeService } from './columns/dataTypeService';
-export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
 export type { VisibleColsService } from './columns/visibleColsService';
 export { EmptyBean as _EmptyBean } from './components/emptyBean';
 export { BaseComponentWrapper } from './components/framework/frameworkComponentWrapper';
@@ -95,16 +85,8 @@ export type { HorizontalResizeService } from './dragAndDrop/horizontalResizeServ
 export type { RowDragComp } from './dragAndDrop/rowDragComp';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { RowsDrop as _RowsDrop } from './dragAndDrop/rowDragTypes';
-export {
-    _areSortDefsEqual,
-    _getDisplaySortForColumn,
-    _getSortDefFromInput,
-    _isSortDirectionValid,
-    _isSortTypeValid,
-    _normalizeSortDirection,
-    _normalizeSortType,
-    AgColumn,
-} from './entities/agColumn';
+export { _getDisplaySortForColumn, _normalizeSortType, AgColumn } from './entities/agColumn';
+export type { ColKind } from './entities/agColumn';
 export { AgColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export {
@@ -262,9 +244,16 @@ export type { IAggColumnNameService } from './interfaces/iAggColumnNameService';
 export type { IAggFuncService } from './interfaces/iAggFuncService';
 export type { IAggregatedChildrenSvc as _IAggregatedChildrenSvc } from './interfaces/iAggregatedChildrenSvc';
 export type { ICellRangeFeature } from './interfaces/iCellRangeFeature';
+export type { IAutoColService } from './interfaces/iAutoColService';
 export type { IClipboardService } from './interfaces/iClipboardService';
-export type { IColsService } from './interfaces/iColsService';
-export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
+export type {
+    ColumnChangedEventType as _ColumnChangedEventType,
+    IColsService,
+    IOrderedColsService,
+    IPivotColsService,
+    IRowGroupColsService,
+    IValueColsService,
+} from './interfaces/iColsService';
 export type { IColumnStateUpdateStrategy } from './interfaces/iColumnStateUpdateStrategy';
 export type { IEventService } from './interfaces/iEventService';
 export type { IExpansionService } from './interfaces/iExpansionService';
@@ -277,6 +266,7 @@ export type { IGroupFilterService } from './interfaces/iGroupFilterService';
 export type { IRowGroupingEditValueSvc as _IRowGroupingEditValueSvc } from './interfaces/iRowGroupingEditValueSvc';
 export type { IRowGroupPanelBuilder as _IRowGroupPanelBuilder } from './interfaces/iRowGroupPanelBuilder';
 export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
+export type { ColumnTreeBuild, ColumnTreeEdit } from './columns/buildColumnTree';
 
 export type { IMenuFactory } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';
@@ -347,6 +337,7 @@ export { BaseSelectionService } from './selection/baseSelectionService';
 export type { RowRangeSelectionContext } from './selection/rowRangeSelectionContext';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
 export type { SortService } from './sort/sortService';
+export { _getSortModel } from './sort/sortService';
 export type { CellStyleService } from './styling/cellStyleService';
 export { coreDefaults as _coreThemeDefaults } from './theming/core/core-css';
 export {
@@ -375,7 +366,7 @@ export {
 } from './utils/gridFocus';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _consoleError, _warnOnce } from './utils/log';
-export { _mergeDeep } from './utils/mergeDeep';
+export { _mergeDeep, _mergedEqual } from './utils/mergeDeep';
 export { _formatNumberCommas } from './utils/number';
 export { _selectAllCells } from './utils/selection';
 export { _errMsg, _error, _logPreInitWarn, _preInitErrMsg, _warn } from './validation/logging';

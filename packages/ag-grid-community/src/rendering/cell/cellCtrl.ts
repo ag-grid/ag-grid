@@ -786,8 +786,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private refreshAriaColIndex(): void {
-        const colIdx = this.beans.visibleCols.getAriaColIndex(this.column);
-        _setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
+        _setAriaColIndex(this.eGui, this.column.ariaColIndex); // for react, we don't use JSX, as it slowed down column moving
     }
 
     public onWidthChanged(): void {

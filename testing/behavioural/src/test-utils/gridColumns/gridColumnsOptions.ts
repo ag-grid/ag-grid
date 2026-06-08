@@ -48,29 +48,7 @@ export interface GridColumnsOptions {
  * Tests can override individual flags via `GridColumnsOptions.bugs` to enable or disable
  * validations on a per-test basis.
  */
-export const gridColumnsBugs = {
-    /**
-     * BUG: an auto-hidden selection / row-number column is left in the column tree after every user
-     * column is hidden, so the section tree has more leaves than the flat column array.
-     * Gates `validateTreeMatchesFlat`.
-     * Solved by AG-17366 when it is completed.
-     */
-    treeLeavesMatchFlatArray: false,
-
-    /**
-     * BUG: `getColumnState()` retains entries for columns that no longer exist (e.g. pivot result
-     * colIds dropped when leaving pivot mode), so a state colId resolves to null via `api.getColumn()`.
-     * Gates the column-state ↔ `getColumn` consistency check.
-     * Solved by AG-17366 when it is completed.
-     */
-    columnStateEntriesExist: false,
-
-    /**
-     * Additional check for column state entries that verifies the colId exists in the grid.
-     * Solved by AG-17366 when it is completed.
-     */
-    columnStateColsMustExist: false,
-} as const;
+export const gridColumnsBugs = {} as const;
 
 /** The type of the known bugs configuration object. */
 export type GridColumnsBugs = { -readonly [K in keyof typeof gridColumnsBugs]: boolean };

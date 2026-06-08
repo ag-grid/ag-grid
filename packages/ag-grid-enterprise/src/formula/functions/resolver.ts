@@ -77,7 +77,7 @@ function resolveRefToAddress(
           ? getFormulaRowByIndex(beans, Number(row.id) - 1)
           : beans.rowModel.getRowNode(row.id);
 
-    const agCol = column.absolute ? beans.formula!.getColByRef(column.id) : beans.colModel.getColById(column.id);
+    const agCol = column.absolute ? beans.formula!.getColByRef(column.id) : beans.colModel.colsById[column.id];
 
     if (!rowNode || (!row.current && !isFormulaRowAvailable(rowNode)) || !agCol) {
         return null;
@@ -281,7 +281,7 @@ function resolveCol(beans: BeanCollection, ref: CellRef): AgColumn {
         }
         return col;
     }
-    const col = beans.colModel.getColById(ref.id);
+    const col = beans.colModel.colsById[ref.id];
     if (!col) {
         throw new FormulaError(31);
     }
@@ -313,7 +313,7 @@ class RangeValuesIterator implements Iterator<unknown> {
             return;
         }
 
-        this.cols = this.beans.colModel.getCols() ?? [];
+        this.cols = this.beans.colModel.colsList;
 
         const range = getColRangeIndices(this.beans, this.colStart, this.colEnd);
         if (!range) {
@@ -390,7 +390,7 @@ function buildRangeArgLazy(
 export type Addr = { row: RowNode; column: AgColumn };
 
 function getColRangeIndices(beans: BeanCollection, c1: AgColumn, c2: AgColumn): [number, number] | null {
-    const allColumns = beans.colModel.getCols() ?? [];
+    const allColumns = beans.colModel.colsList;
 
     let startColIndex: number | null = null;
     let endColIndex: number | null = null;
@@ -426,7 +426,7 @@ function* rangeAddrs(
     startColumn: AgColumn,
     endColumn: AgColumn
 ): Generator<Addr> {
-    const allColumns = beans.colModel.getCols() ?? [];
+    const allColumns = beans.colModel.colsList;
     const colRange = getColRangeIndices(beans, startColumn, endColumn);
     if (colRange == null) {
         return;

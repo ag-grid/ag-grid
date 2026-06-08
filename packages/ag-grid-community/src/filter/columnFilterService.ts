@@ -241,7 +241,7 @@ export class ColumnFilterService
 
             // at this point, processedFields contains data for which we don't have a filter working yet
             modelKeys.forEach((colId) => {
-                const column = colModel.getColDefColOrCol(colId);
+                const column = colModel.colsById[colId];
 
                 if (!column) {
                     _warn(62, { colId });
@@ -308,7 +308,7 @@ export class ColumnFilterService
         if (!excludeInitialState) {
             for (const colId of Object.keys(initialModel)) {
                 const model = initialModel[colId];
-                if (_exists(model) && !allColumnFilters.has(colId) && colModel.getCol(colId)?.isFilterAllowed()) {
+                if (_exists(model) && !allColumnFilters.has(colId) && colModel.colsById[colId]?.colDef.filter) {
                     result[colId] = model;
                 }
             }
@@ -411,7 +411,7 @@ export class ColumnFilterService
 
         const addFilter = (column: AgColumn, filterActive: boolean, doesFilterPassWrapper: DoesFilterPassWrapper) => {
             if (filterActive) {
-                if (isAggFilter(column, colModel.isPivotMode(), colModel.isPivotActive(), groupFilterEnabled)) {
+                if (isAggFilter(column, colModel.pivotMode, colModel.isPivotActive(), groupFilterEnabled)) {
                     activeAggregateFilters.push(doesFilterPassWrapper);
                 } else {
                     activeColumnFilters.push(doesFilterPassWrapper);
@@ -639,7 +639,7 @@ export class ColumnFilterService
     ): IFilterParams['getValue'] {
         const { filterValueSvc, colModel } = this.beans;
         return (rowNode, column) => {
-            const columnToUse = column ? colModel.getColDefColOrCol(column) : filterColumn;
+            const columnToUse = column ? colModel.getCol(column) : filterColumn;
             return columnToUse ? filterValueSvc!.getValue(columnToUse, rowNode, filterValueGetterOverride) : undefined;
         };
     }
@@ -1116,11 +1116,11 @@ export class ColumnFilterService
         const { colModel, filterManager, groupFilter } = this.beans;
 
         this.allColumnFilters.forEach((wrapper, colId) => {
-            let currentColumn: AgColumn | null;
-            if (wrapper.column.isPrimary()) {
-                currentColumn = colModel.getColDefCol(colId);
+            let currentColumn: AgColumn | undefined;
+            if (wrapper.column.primary) {
+                currentColumn = colModel.getNonPivotColById(colId);
             } else {
-                currentColumn = colModel.getCol(colId);
+                currentColumn = colModel.colsById[colId];
             }
             // group columns can be recreated with the same colId
             if (currentColumn && currentColumn === wrapper.column) {
@@ -1516,12 +1516,12 @@ export class ColumnFilterService
     }
 
     public hasFloatingFilters(): boolean {
-        const gridColumns = this.beans.colModel.getCols();
+        const gridColumns = this.beans.colModel.colsList;
         return gridColumns.some((col) => col.getColDef().floatingFilter);
     }
 
     public getFilterInstance<TFilter extends IFilter>(key: string | AgColumn): Promise<TFilter | null | undefined> {
-        const column = this.beans.colModel.getColDefColOrCol(key);
+        const column = this.beans.colModel.getCol(key);
 
         if (!column) {
             return Promise.resolve(undefined);
@@ -1586,7 +1586,7 @@ export class ColumnFilterService
     }
 
     public setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
-        const column = this.beans.colModel.getColDefCol(key);
+        const column = this.beans.colModel.getNonPivotCol(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column, true) : null;
         return filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, model) : AgPromise.resolve();
     }
@@ -1755,7 +1755,7 @@ export class ColumnFilterService
     public updateAllModels(action: FilterAction, additionalEventAttributes?: any): void {
         const promises: AgPromise<void>[] = [];
         this.allColumnFilters.forEach((filter, colId) => {
-            const column = this.beans.colModel.getColDefCol(colId);
+            const column = this.beans.colModel.getNonPivotColById(colId);
             if (column) {
                 _updateFilterModel({
                     action,
@@ -1882,7 +1882,7 @@ export class ColumnFilterService
         const moved: DoesFilterPassWrapper[] = [];
 
         for (const filter of from) {
-            const column = colModel.getColById(filter.colId);
+            const column = colModel.colsById[filter.colId];
             // Can't rely on `colModel.isPivotActive()` because this event hasn't reached to colModel yet
             const isPivotActive = isPivotMode && !!pivotColsSvc?.columns.length;
             // Our condition is isPivotMode === isAggFilter because:

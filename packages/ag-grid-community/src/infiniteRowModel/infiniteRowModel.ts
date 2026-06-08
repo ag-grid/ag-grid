@@ -7,6 +7,7 @@ import { _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
 import type { OverlayType } from '../rendering/overlays/overlayComponent';
+import { _getSortModel } from '../sort/sortService';
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 
@@ -94,7 +95,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
         // for filter model, as the filter manager will fire an event when columns change that result
         // in the filter changing.
         if (this.cacheParams) {
-            resetRequired = !_jsonEquals(this.cacheParams.sortModel, this.beans.sortSvc?.getSortModel() ?? []);
+            resetRequired = !_jsonEquals(this.cacheParams.sortModel, _getSortModel(this.beans.sortSvc));
         } else {
             // if no cacheParams, means first time creating the cache, so always create one
             resetRequired = true;
@@ -186,7 +187,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
 
             // sort and filter model
             filterModel: filterManager?.getFilterModel() ?? {},
-            sortModel: sortSvc?.getSortModel() ?? [],
+            sortModel: _getSortModel(sortSvc),
 
             rowNodeBlockLoader: rowNodeBlockLoader,
 

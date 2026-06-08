@@ -21,7 +21,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
     beanName = 'colFlex' as const;
 
     private flexViewportWidth: number;
-    private columnsHidden = false;
+    public columnsHidden = false;
 
     public refreshFlexedColumns(
         params: {
@@ -186,12 +186,9 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             }
         }
 
-        if (!params.skipSetLeft) {
-            visibleCols.setLeftValues(source);
-        }
-
+        const widths = params.skipSetLeft ? undefined : visibleCols.setLeftValues(source);
         if (params.updateBodyWidths) {
-            visibleCols.updateBodyWidths();
+            visibleCols.updateBodyWidths(widths);
         }
 
         const unconstrainedFlexColumns = items

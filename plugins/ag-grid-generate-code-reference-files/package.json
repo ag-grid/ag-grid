@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-generate-code-reference-files",
-  "version": "35.3.0-beta.20260604.1634",
+  "version": "35.3.0-beta.20260607.214",
   "private": true,
   "dependencies": {
     "ag-shared": "0.0.1",

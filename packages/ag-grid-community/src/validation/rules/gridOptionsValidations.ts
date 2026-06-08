@@ -1,4 +1,4 @@
-import { _getSortDefFromInput } from '../../entities/agColumn';
+import { getSortDefFromInput } from '../../entities/agColumn';
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
@@ -525,7 +525,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const sortingOrder = _options.sortingOrder;
 
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                    const invalidItems = sortingOrder.filter((a) => !_getSortDefFromInput(a));
+                    const invalidItems = sortingOrder.filter((a) => !getSortDefFromInput(a));
                     if (invalidItems.length > 0) {
                         return `sortingOrder must be an array of type (SortDirection | SortDef)[], incorrect items are: ${invalidItems.map(
                             (item) =>
