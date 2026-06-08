@@ -1460,6 +1460,25 @@ describe('Column Groups', () => {
                 ROOT id:ROOT_NODE_ID
             `);
         });
+
+        test('without a partId resolves to the primary (first) display instance of a cross-section group', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        groupId: 'g',
+                        children: [{ colId: 'l', pinned: 'left' }, { colId: 'c' }, { colId: 'r', pinned: 'right' }],
+                    },
+                ],
+            });
+            await asyncSetTimeout(1);
+
+            // No partId resolves to the documented primary instance (partId 0 = the first/left section),
+            // not an arbitrary section, so the lookup is deterministic for multi-instance groups.
+            const primary = api.getColumnGroup('g');
+            expect(primary).not.toBeNull();
+            expect(primary).toBe(api.getColumnGroup('g', 0));
+            expect(primary!.getLeafColumns().map((col) => col.getColId())).toEqual(['l']);
+        });
     });
 
     // Coverage for ColumnGroupService.resetColumnGroupState — resets every group to its

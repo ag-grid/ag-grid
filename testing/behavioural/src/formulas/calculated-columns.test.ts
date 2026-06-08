@@ -504,6 +504,41 @@ describe('ag-grid calculated columns', () => {
         expect(coveredCell).toBeNull();
     });
 
+    test('editing a calculated column expression re-groups its row spans (and dependents)', async () => {
+        const api = createGrid('calculated-span-rows-expression-edit', {
+            enableCellSpan: true,
+            rowData: [
+                { id: 'r1', a: 'X', b: 'P' },
+                { id: 'r2', a: 'X', b: 'Q' },
+                { id: 'r3', a: 'Y', b: 'Q' },
+            ],
+            columnDefs: [
+                { field: 'a' },
+                { field: 'b' },
+                { colId: 'calc', calculatedExpression: '[a]', spanRows: true },
+                { colId: 'dep', calculatedExpression: '[calc]', spanRows: true },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        await new GridRows(api, 'calc spans by [a]', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 a:"X" b:"P" calc:"X"↧2 dep:"X"↧2
+            ├── LEAF id:r2 a:"X" b:"Q" calc:"X"↥ dep:"X"↥
+            └── LEAF id:r3 a:"Y" b:"Q" calc:"Y" dep:"Y"
+        `);
+
+        updateCalculatedColumnDef(api, 'calc', { calculatedExpression: '[b]' });
+        await asyncSetTimeout(1);
+
+        await new GridRows(api, 'calc re-spans by [b] after expression edit', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 a:"X" b:"P" calc:"P" dep:"P"
+            ├── LEAF id:r2 a:"X" b:"Q" calc:"Q"↧2 dep:"Q"↧2
+            └── LEAF id:r3 a:"Y" b:"Q" calc:"Q"↥ dep:"Q"↥
+        `);
+    });
+
     test('sorting, filtering and value formatters use evaluated values', async () => {
         const api = createGrid('calculated-sort-filter', {
             rowData: [
@@ -2479,7 +2514,7 @@ describe('ag-grid calculated columns', () => {
         async (_label, expressionPickers) => {
             const api = createGrid(`calculated-dialog-helper-lists-${_label.replace(' ', '-')}`, {
                 calculatedColumns: {
-                    expressionPickers,
+                    expressionPickers: expressionPickers as any,
                 },
                 rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
                 columnDefs: [{ field: 'revenue' }, { field: 'cost' }],

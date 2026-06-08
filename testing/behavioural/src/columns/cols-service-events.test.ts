@@ -82,7 +82,7 @@ describe('Cols service events', () => {
             expect(api.getRowGroupColumns().length).toBe(0);
         });
 
-        test('moveRowGroupColumn fires columnRowGroupChanged once', async () => {
+        test('moveRowGroupColumn fires columnRowGroupChanged once, reporting the moved column', async () => {
             const api = gridsManager.createGrid('g', baseOptions());
             api.setRowGroupColumns(['a', 'b']);
             await asyncSetTimeout(0);
@@ -92,6 +92,8 @@ describe('Cols service events', () => {
             await asyncSetTimeout(0);
 
             expect(events.length).toBe(1);
+            expect(ids(events[0].columns)).toEqual(['a']);
+            expect(events[0].column?.getColId()).toBe('a');
             expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['b', 'a']);
         });
 

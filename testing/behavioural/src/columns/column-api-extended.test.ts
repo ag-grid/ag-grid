@@ -902,7 +902,7 @@ describe('Column API — extended coverage', () => {
             `);
         });
 
-        test('leftward move reports impacted columns', async () => {
+        test('leftward move reports the moved column', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { field: 'country', rowGroup: true },
@@ -910,30 +910,34 @@ describe('Column API — extended coverage', () => {
                     { field: 'year', rowGroup: true },
                 ],
             });
-            await new GridColumns(api, `leftward move reports impacted columns setup`).checkColumns(`
+            await new GridColumns(api, `leftward move reports the moved column setup`).checkColumns(`
                 CENTER
                 ├── ag-Grid-AutoColumn "Group" width:200
                 ├── country "Country" width:200 rowGroup
                 ├── sport "Sport" width:200 rowGroup
                 └── year "Year" width:200 rowGroup
             `);
-            await new GridRows(api, `leftward move reports impacted columns setup`).check(`
+            await new GridRows(api, `leftward move reports the moved column setup`).check(`
                 ROOT id:ROOT_NODE_ID
             `);
 
-            let receivedImpacted: string[] | null = null;
+            let receivedColumns: string[] | null = null;
+            let receivedColumn: string | null = null;
             api.addEventListener('columnRowGroupChanged', (e) => {
                 if (e.source === 'api') {
-                    receivedImpacted = e.columns?.map((c: any) => c.getColId()) ?? null;
+                    receivedColumns = e.columns?.map((c: any) => c.getColId()) ?? null;
+                    receivedColumn = (e.column as any)?.getColId() ?? null;
                 }
             });
 
-            // Leftward move 2 → 0: every column in [0..2] shifted
+            // Leftward move 2 → 0 reports the moved column (matching `columnMoved`); previously a left move
+            // dispatched an empty payload.
             api.moveRowGroupColumn(2, 0);
             await asyncSetTimeout(0);
 
-            expect(receivedImpacted).toEqual(['country', 'sport', 'year']);
-            await new GridRows(api, `leftward move reports impacted columns final state`).check(`
+            expect(receivedColumns).toEqual(['year']);
+            expect(receivedColumn).toBe('year');
+            await new GridRows(api, `leftward move reports the moved column final state`).check(`
                 ROOT id:ROOT_NODE_ID
             `);
         });
