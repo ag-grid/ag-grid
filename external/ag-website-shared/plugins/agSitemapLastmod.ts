@@ -166,9 +166,7 @@ export default function agSitemapLastmod(): AstroIntegration {
                     await writeFile(sitemapPath, enriched, 'utf8');
                 }
 
-                logger.info(
-                    `Updated ${sitemapFiles.length} sitemap file(s) with per-page lastmod dates`
-                );
+                logger.info(`Updated ${sitemapFiles.length} sitemap file(s) with per-page lastmod dates`);
             },
         },
     };
