@@ -73,7 +73,7 @@ export interface IRowComp {
     getPinnedLeftRowElement(): HTMLElement | undefined;
     getScrollingRowElement(): HTMLElement | undefined;
     getPinnedRightRowElement(): HTMLElement | undefined;
-    refreshPinnedSections(widths: PinnedCellGroupWidths): void;
+    refreshPinnedSections(): void;
     showFullWidth(compDetails: UserCompDetails): void;
     showEmbeddedFullWidth?(compDetails: HorizontalSectionMap<UserCompDetails>): void;
     getFullWidthCellRenderers(): (ICellRenderer | null | undefined)[];
@@ -470,7 +470,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (!rowGui) {
             return;
         }
-        rowGui.rowComp.refreshPinnedSections(this.getMappedPinnedCellGroupWidths());
+        rowGui.rowComp.refreshPinnedSections();
     }
 
     public getMappedPinnedCellGroupWidths(): PinnedCellGroupWidths {

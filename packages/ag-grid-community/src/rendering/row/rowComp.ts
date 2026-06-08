@@ -11,7 +11,7 @@ import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
 import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
 import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import type { IRowComp, PinnedCellGroupWidths, RowCtrl } from './rowCtrl';
+import type { IRowComp, RowCtrl } from './rowCtrl';
 
 const LEAF_RENDERER_TAGS = new Set(['CANVAS', 'IMG', 'SVG', 'VIDEO', 'AUDIO', 'INPUT', 'IFRAME', 'PICTURE']);
 
@@ -83,7 +83,7 @@ export class RowComp extends Component {
             getPinnedLeftRowElement: () => this.ePinnedLeftCells,
             getScrollingRowElement: () => this.eScrollingCells,
             getPinnedRightRowElement: () => this.ePinnedRightCells,
-            refreshPinnedSections: (widths) => this.refreshPinnedSections(widths),
+            refreshPinnedSections: () => this.refreshPinnedSections(),
             showFullWidth: (compDetails) => this.showFullWidth(compDetails),
             showEmbeddedFullWidth: (compDetails) => this.showEmbeddedFullWidth(compDetails),
             getFullWidthCellRenderers: () => this.getAllFullWidthCellRenderers(),
@@ -111,7 +111,8 @@ export class RowComp extends Component {
         });
     }
 
-    private refreshPinnedSections(widths: PinnedCellGroupWidths): void {
+    private refreshPinnedSections(): void {
+        const widths = this.rowCtrl.getMappedPinnedCellGroupWidths();
         const eCenter = this.eScrollingCells;
         if (eCenter) {
             eCenter.style.width = `${widths.centerWidth}px`;
