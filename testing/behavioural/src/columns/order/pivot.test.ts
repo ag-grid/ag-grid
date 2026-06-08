@@ -1785,6 +1785,16 @@ describe('pivotMode=true', () => {
 
             expect(api.getColumn('country')!.getPinned()).toBeNull();
             expect(api.getColumn('country')!.getActualWidth()).toBe(333);
+            await new GridColumns(api, 'primary live state preserved after pivot toggle').checkColumns(`
+                CENTER
+                ├── country "Country" width:333
+                ├── sport "Sport" width:200 pivot
+                └── val "Val" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, 'primary live state preserved after pivot toggle - rows').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 country:"US" sport:"swim" val:1
+            `);
         });
     });
 });

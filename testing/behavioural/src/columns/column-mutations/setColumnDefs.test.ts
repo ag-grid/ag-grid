@@ -1983,6 +1983,7 @@ describe('Column Mutations', () => {
     describe('setColumnDefs: stateful colDef attrs still apply on update (BC)', () => {
         test('a present pinned colDef re-applies, overwriting a runtime unpin', async () => {
             const api = gridsManager.createGrid('myGrid', {
+                rowData: [{ a: 1, b: 2 }],
                 columnDefs: [{ colId: 'a', pinned: 'left' }, { colId: 'b' }],
             });
             await new GridColumns(api, 'pinned via colDef').checkColumns(`
@@ -2005,10 +2006,15 @@ describe('Column Mutations', () => {
                 CENTER
                 └── b width:200
             `);
+            await new GridRows(api, 'pinned re-applied on update - rows').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
         });
 
         test('an absent pinned colDef preserves a runtime pin', async () => {
             const api = gridsManager.createGrid('myGrid', {
+                rowData: [{ a: 1, b: 2 }],
                 columnDefs: [{ colId: 'a' }, { colId: 'b' }],
             });
 
@@ -2019,6 +2025,16 @@ describe('Column Mutations', () => {
             api.setGridOption('columnDefs', [{ colId: 'a', headerName: 'Alpha' }, { colId: 'b' }]);
             await asyncSetTimeout(0);
             expect(api.getColumn('a')!.getPinned()).toBe('left');
+            await new GridColumns(api, 'runtime pin preserved on absent-pinned update').checkColumns(`
+                LEFT
+                └── a "Alpha" width:200
+                CENTER
+                └── b width:200
+            `);
+            await new GridRows(api, 'runtime pin preserved on absent-pinned update - rows').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0
+            `);
         });
     });
 });

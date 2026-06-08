@@ -425,6 +425,10 @@ describe('calculated columns - display ordering', () => {
             ├── age "Age" width:200
             └── calculated_1 "New title" width:200
         `);
+        await new GridRows(api, 'dialog add preserves unpinned state - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 athlete:"Michael Phelps" age:23 calculated_1:46
+        `);
     });
 
     test('dialog add preserves a runtime sort that diverged from the colDef sort', async () => {
@@ -437,10 +441,21 @@ describe('calculated columns - display ordering', () => {
         await asyncSetTimeout(0);
         expect(api.getColumn('a')!.getSort()).toBe('desc');
 
-        await addViaDialog(api, 'b', '[a] + [b]');
+        const calc = await addViaDialog(api, 'b', '[a] + [b]');
 
         // Adding a calc col must not reset 'a' back to its colDef sort ('asc').
         expect(api.getColumn('a')!.getSort()).toBe('desc');
+        expect(order(api)).toEqual(['a', 'b', calc]);
+        await new GridColumns(api, 'preserved runtime sort after calc add').checkColumns(`
+            CENTER
+            ├── a "A" width:200 sort:desc
+            ├── b "B" width:200
+            └── calculated_1 "New title" width:200
+        `);
+        await new GridRows(api, 'preserved runtime sort after calc add - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 a:1 b:2 calculated_1:3
+        `);
     });
 
     test('dialog add preserves a runtime column width that diverged from the colDef width', async () => {
@@ -453,9 +468,20 @@ describe('calculated columns - display ordering', () => {
         await asyncSetTimeout(0);
         expect(api.getColumn('a')!.getActualWidth()).toBe(250);
 
-        await addViaDialog(api, 'b', '[a] + [b]');
+        const calc = await addViaDialog(api, 'b', '[a] + [b]');
 
         expect(api.getColumn('a')!.getActualWidth()).toBe(250);
+        expect(order(api)).toEqual(['a', 'b', calc]);
+        await new GridColumns(api, 'preserved runtime width after calc add').checkColumns(`
+            CENTER
+            ├── a "A" width:250
+            ├── b "B" width:200
+            └── calculated_1 "New title" width:200
+        `);
+        await new GridRows(api, 'preserved runtime width after calc add - rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 a:1 b:2 calculated_1:3
+        `);
     });
 
     test('two calc cols from the same anchor stack newest-first (tree + display agree)', async () => {
