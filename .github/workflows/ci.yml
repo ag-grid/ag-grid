@@ -375,9 +375,7 @@ jobs:
           name: pr-preview-umd
           if-no-files-found: ignore
           retention-days: 14
-          # ag-grid UMD builds with sourcemap:false (packages/*/project.json), so
-          # there are no .map files to publish (unlike ag-charts). The shared
-          # pr-preview-publish action's optional .map copy is simply a no-op here.
+          # ag-grid UMD builds with sourcemap:false, so there are no .map files.
           path: |
             packages/ag-grid-community/dist/ag-grid-community.min.js
             packages/ag-grid-enterprise/dist/ag-grid-enterprise.min.js
@@ -386,10 +384,7 @@ jobs:
     runs-on: ubuntu-latest
     name: PR Preview (UMD)
     needs: [ build ]
-    # Same-repo PRs only — fork PRs get a read-only token from GitHub, so the
-    # deploy-to-gh-pages and sticky-comment steps would fail. Mirrors the
-    # fork-PR gate used in pr-review.yml. The agent's ghabot-ag-* draft PRs
-    # reach here because the build job's draft gate is opened for them.
+    # Same-repo PRs only (fork PRs can't hold the write token) — see pr-review.yml.
     if: |
       github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
@@ -403,11 +398,7 @@ jobs:
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}
     steps:
-      # The job's same-repo gate (head.repo.full_name == github.repository) is the
-      # repo-wide guard for untrusted PRs (see pr-review.yml + the build job):
-      # fork PRs never reach here, so this local action runs only trusted
-      # same-repo code, and only same-repo PRs can hold the contents:write token
-      # gh-pages publishing needs. Plain checkout, consistent with the rest of ci.yml.
+      # Needed for the local shared action below; same-repo gate (job if) is the guard.
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -426,9 +417,7 @@ jobs:
         if: steps.download.outcome == 'success'
         run: |
           set -euo pipefail
-          # actions/upload-artifact@v4 strips the least-common-ancestor of
-          # uploaded paths, so the two bundles land somewhere under _umd/ but
-          # not at a predictable absolute path. Find them by filename instead.
+          # upload-artifact@v4 strips the common path prefix, so find by filename.
           COMMUNITY=$(find _umd -type f -name 'ag-grid-community.min.js' -print -quit)
           ENTERPRISE=$(find _umd -type f -name 'ag-grid-enterprise.min.js' -print -quit)
           if [ -z "$COMMUNITY" ] && [ -z "$ENTERPRISE" ]; then
@@ -441,8 +430,6 @@ jobs:
             ls -laR _umd || true
             exit 1
           fi
-          # The shared pr-preview-publish action copies each file, writes
-          # .nojekyll, and deploys to gh-pages.
           {
             echo "files<<__FILES_EOF__"
             echo "$COMMUNITY"
