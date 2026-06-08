@@ -53,10 +53,6 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         this.colIdSanitised = _escapeString(this.uniqueId)!;
     }
 
-    public override destroy(): void {
-        super.destroy();
-    }
-
     public getParent(): AgColumnGroup | null {
         return this.parent;
     }

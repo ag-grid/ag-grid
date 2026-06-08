@@ -159,8 +159,8 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
                 cols.sort(this.compareByStateIndex);
                 this.resetActiveCols(cols);
             }
-            this.onColumnsChanged();
         }
+        this.onColumnsChanged();
         this.pendingStateOrder = null;
     }
 

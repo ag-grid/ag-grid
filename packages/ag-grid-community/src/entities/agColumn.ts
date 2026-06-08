@@ -797,8 +797,9 @@ export const getSortingOrder = (gos: GridOptionsService, column: AgColumn): Sort
 };
 
 const getAvailableSortTypes = (gos: GridOptionsService, column: AgColumn): Set<SortType> => {
+    const cacheable = gos.get('sortingOrder') == null; // deprecated `sortingOrder` disables the cache
     const cached = column.cachedSortTypes;
-    if (cached) {
+    if (cacheable && cached) {
         return cached;
     }
     const colDefAllowedSortTypes = getColDefAllowedSortTypes(column);
@@ -817,7 +818,9 @@ const getAvailableSortTypes = (gos: GridOptionsService, column: AgColumn): Set<S
             types.add(input.type);
         }
     }
-    column.cachedSortTypes = types;
+    if (cacheable) {
+        column.cachedSortTypes = types;
+    }
     return types;
 };
 
