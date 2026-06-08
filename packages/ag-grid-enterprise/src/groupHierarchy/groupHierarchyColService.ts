@@ -90,13 +90,11 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     /** Same colIds: refresh each def in place. Reusing the live getters keeps an unchanged part a `setColDef`
      *  no-op, so only a real change (config / inline part / `defaultColDef`) re-applies. */
     private reapplyDefs(plan: HierarchyPlanEntry[], source: ColumnEventType): void {
-        const { columns, gos, virtualColInfo } = this;
+        const { columns, gos } = this;
         for (let i = 0, len = plan.length; i < len; ++i) {
             const { sourceCol, part, colId } = plan[i];
             const col = columns[i];
-            // Reuse the getters only while their captured source is still the live one.
-            const reuse = virtualColInfo.get(col)?.source === sourceCol ? col.colDef : undefined;
-            const colDef = this.createColDefForPart(part, sourceCol, colId, reuse);
+            const colDef = this.createColDefForPart(part, sourceCol, colId, col.colDef);
             if (col.setColDef(colDef, null, source)) {
                 gos.validateColDef(colDef, colId, true);
             }

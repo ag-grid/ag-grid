@@ -33,7 +33,7 @@ export const _setColGroupState = (
     const { colAnimation, visibleCols, eventSvc, colModel } = beans;
     const groupsById = colModel.colsGroupsById;
     const stateLen = stateItems.length;
-    if (groupsById.size === 0 || stateLen === 0) {
+    if (!groupsById.size || !stateLen) {
         return;
     }
 
@@ -49,18 +49,14 @@ export const _setColGroupState = (
         }
     }
 
-    if (impactedGroups === null) {
-        colAnimation?.finish();
-        return;
+    if (impactedGroups) {
+        visibleCols.refresh(source, true);
+        eventSvc.dispatchEvent({
+            type: 'columnGroupOpened',
+            columnGroup: impactedGroups.length === 1 ? impactedGroups[0] : undefined,
+            columnGroups: impactedGroups,
+        });
     }
-
-    visibleCols.refresh(source, true);
-
-    eventSvc.dispatchEvent({
-        type: 'columnGroupOpened',
-        columnGroup: impactedGroups.length === 1 ? impactedGroups[0] : undefined,
-        columnGroups: impactedGroups,
-    });
 
     colAnimation?.finish();
 };

@@ -118,9 +118,9 @@ export class AgColumn<TValue = any>
      *  newest-first. `undefined` = not anchored. Column-kind agnostic (currently set by the calc-column contributor). */
     public anchoredToColId: string | undefined = undefined;
 
-    /** 0-based index in `ColumnModel.colsList`, stamped lazily by `ensureColsListIndex` so readers sort in O(1)
-     *  without an `indexOf`/index-map. In pivot, primary cols keep their pre-pivot index (the order `getColumnDefs` reports). */
-    public colsListIndex: number = 0;
+    /** 0-based index in `ColumnModel.colsList` (stamped lazily by `ensureColsListIndex` for O(1) ordered reads);
+     *  `-1` until first stamped / when not in colsList. In pivot, parked primaries keep their pre-pivot index. */
+    public colsListIndex: number = -1;
 
     private lastLeftPinned: boolean = false;
     private firstRightPinned: boolean = false;

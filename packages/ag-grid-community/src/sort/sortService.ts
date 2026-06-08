@@ -242,9 +242,12 @@ export class SortService extends BeanStub implements NamedBean {
 
     public getDisplaySort(column: AgColumn): DisplaySortDef | null {
         const colSortDef = column.getSortDef();
+        // Mixed sort only on a coupled group display col — check the cheap flags before the linked-col lookup.
+        if (!column.colDef.showRowGroup || !_isColumnsSortingCoupledToGroup(this.gos)) {
+            return colSortDef;
+        }
         const linkedColumns = this.beans.showRowGroupCols?.getSourceColumnsForGroupColumn(column);
-        // Mixed sort only on a coupled group display col with linked source cols.
-        if (!column.colDef.showRowGroup || !linkedColumns?.length || !_isColumnsSortingCoupledToGroup(this.gos)) {
+        if (!linkedColumns?.length) {
             return colSortDef;
         }
         // A group col with its own field/valueGetter sorts independently, so it joins the comparison.

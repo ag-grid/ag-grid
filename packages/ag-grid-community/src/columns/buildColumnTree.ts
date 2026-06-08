@@ -25,8 +25,7 @@ export interface ColumnTreeBuild {
     marryChildren: boolean;
     /** Non-padding groups by `groupId`; fed back as next call's `existingGroupsById`. */
     groupsById: Map<string, AgProvidedColumnGroup>;
-    /** Cols keyed by `colId` / `userProvidedColDef` ref / `field`; fed back as next call's
-     *  `existingColsByKey` for O(1) reuse. */
+    /** Cols keyed by `colId` / `userProvidedColDef` ref / `field`; for O(1) reuse. */
     colsByKey: Map<string | ColDef, AgColumn>;
     source: ColumnEventType;
     buildToken: number;
@@ -149,7 +148,13 @@ export function _buildColumnTree(
             const existing = existingColsById[id];
             if (existing !== undefined) {
                 const userDef = existing.userProvidedColDef;
-                if (userDef && userDef.colId == null && userDef.field == null && existing.buildToken !== buildToken) {
+                if (
+                    existing.colKind === 'user' &&
+                    userDef &&
+                    userDef.colId == null &&
+                    userDef.field == null &&
+                    existing.buildToken !== buildToken
+                ) {
                     allocatedKeys.add(id);
                     existing.buildToken = buildToken;
                     existing.reapplyColDef(def, source);
@@ -167,7 +172,7 @@ export function _buildColumnTree(
     const buildKeyedColumn = (def: ColDef, colId: string | undefined, field: string | undefined): AgColumn => {
         const base = colId ?? field!;
         const keyed = existingColsByKey.get(base);
-        if (keyed !== undefined && keyed.buildToken !== buildToken) {
+        if (keyed?.colId === base && keyed.colKind === 'user' && keyed.buildToken !== buildToken) {
             keyed.buildToken = buildToken;
             keyed.reapplyColDef(def, source);
             return keyed;
@@ -183,8 +188,8 @@ export function _buildColumnTree(
             if (existing !== undefined) {
                 const existingDef = existing.userProvidedColDef;
                 const existingBase = existingDef ? (existingDef.colId ?? existingDef.field) : null;
-                if (existingBase !== base || existing.buildToken === buildToken) {
-                    continue; // a different col owns this id, or this duplicate is already reused
+                if (existingBase !== base || existing.buildToken === buildToken || existing.colKind !== 'user') {
+                    continue; // a different col owns this id, it's already reused, or it's not a user col
                 }
             }
             allocatedKeys.add(id);
@@ -200,8 +205,9 @@ export function _buildColumnTree(
         }
     };
 
-    /** Build/reuse a leaf for `def` (or `undefined` if a calc-col override dropped it). Reuse priority:
-     *  colDef ref → colId/field key → positional → create (last three in build{Keyed,Anonymous}Column). */
+    /** Build/reuse a leaf for `def` (or `undefined` if a calc-col override dropped it). Identity is the
+     *  `colId` when present (reuse only the same-colId column — a changed colId is a new column even on a
+     *  retained colDef ref); without a colId it is the colDef ref, then field/positional in buildKeyedColumn. */
     const buildColumn = (def: ColDef): AgColumn | undefined => {
         const override = calculatedColsSvc?.overrideFor(def);
         if (override === null) {
@@ -211,9 +217,14 @@ export function _buildColumnTree(
             def = override;
         }
         const colId = def.colId;
-        let column = colId != null ? existingColsByKey.get(colId) : undefined;
-        if (column === undefined || column.buildToken === buildToken) {
-            column = existingColsByKey.get(def);
+        let column: AgColumn | undefined;
+        if (colId != null) {
+            const byId = existingColsByKey.get(colId);
+            column =
+                byId?.colId === colId && byId.colKind === 'user' && byId.buildToken !== buildToken ? byId : undefined;
+        } else {
+            const byRef = existingColsByKey.get(def);
+            column = byRef?.colKind === 'user' ? byRef : undefined;
         }
         if (column !== undefined && column.buildToken !== buildToken) {
             column.buildToken = buildToken;
@@ -486,7 +497,6 @@ const innermostPaddingHead = (col: AgColumn, maxDepth: number): AgProvidedColumn
     return node != null && node.padding && node.level === maxDepth - 1 ? node : null;
 };
 
-/** Materialise the final `columns` / `columnTree`. */
 export const finalizeColumnTree = (build: ColumnTreeBuild): void => {
     build.edit?.commit(build);
     build.wrapperCache?.evict(build.buildToken);

@@ -31,8 +31,8 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
 
         const showRowGroupCols = this.columns;
         const showRowGroupColsSet = this.colsSet;
+        this.clearStamps(); // empties this.sourceCols before we re-fill it below
         const stamped = this.sourceCols;
-        this.clearStamps();
 
         const oldShowRowGroupColsLLen = showRowGroupCols.length;
         let showRowGroupColsCount = 0;

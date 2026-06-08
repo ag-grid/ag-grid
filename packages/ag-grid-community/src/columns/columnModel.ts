@@ -56,8 +56,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     /** Non-padding displayed groups by `groupId`. Pivot mode = pivot's groups; else = colDefGroupsById. */
     public colsGroupsById: Map<string, AgProvidedColumnGroup> = new Map();
-    /** Every displayed group — padding groups carry `displayInstances`, so `visibleColsService` cannot
-     *  rely on `colsGroupsById.values()`. */
+    /** Every displayed group — padding groups carry `displayInstances` */
     public colsAllGroups: AgProvidedColumnGroup[] = [];
 
     /** Lazy fallback for ColDef-shaped keys not in `colsById`: by-ref (merged + user colDef) plus
@@ -125,7 +124,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public getAllCols(): AgColumn[] {
         let allCols = this.cachedAllCols;
         if (!allCols) {
-            allCols = (this.showingPivotResult && this.beans.pivotResultCols?.buildAllCols()) || this.colsList;
+            // While pivoting, pivot result cols are the full set (primaries are parked); `??` keeps an empty result.
+            const pivotAllCols = this.showingPivotResult ? this.beans.pivotResultCols?.buildAllCols() : undefined;
+            allCols = pivotAllCols ?? this.colsList;
             this.cachedAllCols = allCols;
         }
         return allCols;
@@ -264,8 +265,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    /** Open a column-change batch; mutations until the matching {@link endColBatch} share one flush. Re-entrant;
-     *  callers MUST pair these in a try/finally. */
+    /** Open a column-change batch; mutations until the {@link endColBatch} share one flush. */
     public beginColBatch(): void {
         this.colBatchDepth++;
     }
@@ -381,15 +381,22 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // In pivot mode, sourceList = pivotCols; primaries (colDefList) need colsById entries for lookups
         // but are parked out of colsList (`inColsList = false`). Non-pivot covers them via the next loop.
         if (pivotResultCols) {
-            // Parked cols get no further `colsListIndex` stamp, so freeze a pending pre-pivot move now or
-            // `getColumnDefs` reads it stale. Entry only — parked primaries can't be reordered.
+            // Entering pivot: freeze the current display order so `getColumnDefs` keeps reporting it.
             if (!prevWasPivot) {
                 this.ensureColsListIndex();
             }
+            // A col added while pivoting has no frozen index (-1); seat it after its left colDef neighbour so
+            // `getColumnDefs` reports it in colDef order (stable sort breaks the tie) without disturbing others.
+            let lastIndex = -1;
             for (let i = 0, len = colDefList.length; i < len; ++i) {
                 const col = colDefList[i];
                 colsById[col.colId] = col;
                 col.inColsList = false;
+                if (col.colsListIndex < 0) {
+                    col.colsListIndex = lastIndex;
+                } else {
+                    lastIndex = col.colsListIndex;
+                }
             }
         }
         for (let i = 0; i < sourceListLen; ++i) {
@@ -406,8 +413,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const prevOrder = restoreOrder ? lastOrder : null;
         const ordered = prevOrder == null ? colsList : applyPrevColumnsOrder(colsList, colsById, prevOrder);
         const finalColsList = placeLockedColumns(ordered, gos);
-        // Preserve old refs when contents match — keeps the array in old-gen, the duplicate becomes
-        // young-gen garbage. Same check signals an order change ⇒ only then invalidate `col.colsListIndex`.
         const colsListChanged = !_areEqual(finalColsList, oldColsList);
         if (colsListChanged) {
             this.colsListIndexDirty = true;

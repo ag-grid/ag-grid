@@ -159,13 +159,14 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         // Skip rebuild when merged colDef is unchanged, avoiding a spurious `newColumnsLoaded`.
         const merged = _addColumnDefaultAndTypes(this.beans, nextColDef, targetColId);
         const changed = !_mergedEqual(merged, targetColumn.colDef);
-        const dynamicColumn = this.dynamicColumns.get(targetColId);
-        if (dynamicColumn) {
-            dynamicColumn.colDef = nextColDef;
-        } else {
-            this.staticColOverrides.set(targetColId, nextColDef);
-        }
+        // Skip when unchanged: a redundant override entry would needlessly re-apply on every later rebuild.
         if (changed) {
+            const dynamicColumn = this.dynamicColumns.get(targetColId);
+            if (dynamicColumn) {
+                dynamicColumn.colDef = nextColDef;
+            } else {
+                this.staticColOverrides.set(targetColId, nextColDef);
+            }
             this.refreshDynamicColumns(source);
         }
         const nextColumn = colModel.colsById[targetColId] ?? targetColumn;

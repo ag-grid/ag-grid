@@ -231,6 +231,7 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
         for (let c = 0, cLen = colList.length; c < cLen; ++c) {
             const column = colList[c];
             const colId = column.colId;
+            // Already in `incoming`? Its entries always carry a non-null colId, so this is the presence test.
             if (incoming[colId]?.colId != null) {
                 // Already in incoming — place any new cols that slot before it, then assign next index.
                 processPrecedingNewCols(colId);

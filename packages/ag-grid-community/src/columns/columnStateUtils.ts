@@ -100,7 +100,6 @@ export const updateSomeColumnState = (
     source: ColumnEventType
 ): void => {
     const { sortSvc, pinnedCols, colFlex } = beans;
-
     if (hide !== undefined) {
         column.setVisible(!hide, source);
     }
@@ -163,7 +162,6 @@ export function _applyColumnState(
     source: ColumnEventType
 ): boolean {
     const { colModel, colAnimation, calculatedColsSvc } = beans;
-
     const state = params.state;
     if (state && !Array.isArray(state)) {
         _warn(32); // state is not an array
@@ -216,7 +214,6 @@ function applyStateToCols(
 ): ColumnState[] | null {
     const colModel = beans.colModel;
     const defaultState = params.defaultState;
-
     let autoColStates: ColumnState[] | null = null;
     let selectionColStates: ColumnState[] | null = null;
     let unmatchedStates: ColumnState[] | null = null;
@@ -345,7 +342,6 @@ function applyFieldState(
 ): void {
     // `orDefault` falls back only on `undefined` — an explicit `null` is kept, so state can clear a property.
     const flex = orDefault(stateItem?.flex, defaultState?.flex);
-
     const maybeSortDir = orDefault(stateItem?.sort, defaultState?.sort);
     const maybeSortType = orDefault(stateItem?.sortType, defaultState?.sortType);
     const isSortUpdate = isSortDirectionValid(maybeSortDir) || isSortTypeValid(maybeSortType);
@@ -558,7 +554,6 @@ export function captureColumnStateChanges(beans: BeanCollection): ColumnStateCha
     const { rowGroupColsSvc, pivotColsSvc, colModel } = beans;
     const rowGroupCols = rowGroupColsSvc?.columns;
     const pivotCols = pivotColsSvc?.columns;
-
     const cols = colModel.getColsInStateOrder();
     const before = new Map<string, ColumnStateBefore>();
     for (let i = 0, len = cols.length; i < len; ++i) {
@@ -575,7 +570,6 @@ export function captureColumnStateChanges(beans: BeanCollection): ColumnStateCha
             aggFunc: column.aggregationActive ? column.aggFunc : null,
         });
     }
-
     return {
         rowGroupColumns: rowGroupCols?.length ? rowGroupCols.slice() : undefined,
         pivotColumns: pivotCols?.length ? pivotCols.slice() : undefined,
