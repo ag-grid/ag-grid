@@ -49,6 +49,5 @@ export function setPivotResultColumns(beans: BeanCollection, colDefs: (ColDef | 
 }
 
 export function getPivotResultColumns(beans: BeanCollection): Column[] | null {
-    const pivotResultCols = beans.pivotResultCols?.getPivotResultCols();
-    return pivotResultCols ? pivotResultCols.list : null;
+    return beans.pivotResultCols?.pivotCols ?? null;
 }

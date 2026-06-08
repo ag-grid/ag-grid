@@ -46,10 +46,9 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
             return { displayedNode: node, value: null };
         }
 
-        // when using multiple columns, special handling
         if (typeof rowGroupColId === 'string') {
-            const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
-            if (colRowGroupIndex > node.level) {
+            const col = this.beans.colModel.colsById[rowGroupColId];
+            if (col?.rowGroupActive && col.rowGroupActiveIndex > node.level) {
                 return null;
             }
 
@@ -178,7 +177,7 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
         }
 
         let pointer: RowNode | null = node as RowNode;
-        while (pointer && pointer.rowGroupColumn?.getId() != showRowGroup) {
+        while (pointer && pointer.rowGroupColumn?.colId != showRowGroup) {
             const isFirstChild = pointer === pointer.parent?.getFirstChild();
             if (!isShowOpenedGroupValue && !isFirstChild) {
                 // if not first child and not showOpenedGroup then groupHideOpenParents doesn't

@@ -1,6 +1,7 @@
 import { KeyCode, _getActiveDomElement, _last } from 'ag-stack';
 
 import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
+import { _setColGroupOpen } from '../../../columns/columnGroups/columnGroupState';
 import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { BeanStub } from '../../../context/beanStub';
@@ -229,14 +230,14 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     private setupUserComp(): void {
-        const { colGroupSvc, userCompFactory, gos, enterpriseMenuFactory } = this.beans;
+        const { userCompFactory, gos, enterpriseMenuFactory } = this.beans;
         const columnGroup = this.column;
         const providedColumnGroup = columnGroup.getProvidedColumnGroup();
         const params: IHeaderGroupParams = _addGridCommonParams(gos, {
             displayName: this.displayName!,
             columnGroup,
             setExpanded: (expanded: boolean) => {
-                colGroupSvc!.setColumnGroupOpened(providedColumnGroup, expanded, 'gridInitializing');
+                _setColGroupOpen(this.beans, providedColumnGroup, expanded, 'gridInitializing');
             },
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                 gos.assertModuleRegistered('Tooltip', 3);
@@ -413,12 +414,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             beans.rangeSvc?.handleColumnSelection(column, e);
         } else if (expandable) {
             const newExpandedValue = !column.isExpanded();
-
-            beans.colGroupSvc!.setColumnGroupOpened(
-                column.getProvidedColumnGroup(),
-                newExpandedValue,
-                'uiColumnExpanded'
-            );
+            _setColGroupOpen(beans, column.getProvidedColumnGroup(), newExpandedValue, 'uiColumnExpanded');
         }
     }
 

@@ -128,8 +128,12 @@ export class CellPositionFeature extends BeanStub {
         if (!this.colsSpanning) {
             return this.column.getActualWidth();
         }
-
-        return this.colsSpanning.reduce((width, col) => width + col.getActualWidth(), 0);
+        const cols = this.colsSpanning;
+        let width = 0;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            width += cols[i].actualWidth;
+        }
+        return width;
     }
 
     public getColSpanningList(): AgColumn[] {

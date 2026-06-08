@@ -56,19 +56,18 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     public refreshCols(): void {
         const { autoColSvc, colModel, gos, pivotResultCols } = this.beans;
         const pivotMode = colModel.pivotMode;
-        const groupAutoCols = autoColSvc?.getColumns();
-        const providedCols = colModel.getColDefCols();
+        const groupAutoCols = autoColSvc?.columns;
+        const providedCols = colModel.colDefList;
 
         let columnsForQuickFilter =
-            (pivotMode && !gos.get('applyQuickFilterBeforePivotOrAgg')
-                ? pivotResultCols?.getPivotResultCols()?.list
-                : providedCols) ?? [];
-        if (groupAutoCols) {
+            (pivotMode && !gos.get('applyQuickFilterBeforePivotOrAgg') ? pivotResultCols?.pivotCols : providedCols) ??
+            [];
+        if (groupAutoCols?.length) {
             columnsForQuickFilter = columnsForQuickFilter.concat(groupAutoCols);
         }
         this.colsToUse = gos.get('includeHiddenColumnsInQuickFilter')
             ? columnsForQuickFilter
-            : columnsForQuickFilter.filter((col) => col.isVisible() || col.isRowGroupActive());
+            : columnsForQuickFilter.filter((col) => col.visible || col.rowGroupActive);
     }
 
     public isFilterPresent(): boolean {

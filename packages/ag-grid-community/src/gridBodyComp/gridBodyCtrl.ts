@@ -8,7 +8,7 @@ import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows } from '../gridOptionsUtils';
 import { getAriaHeaderRowCount } from '../headerRendering/headerUtils';
-import type { IColsService } from '../interfaces/iColsService';
+import type { IRowGroupColsService } from '../interfaces/iColsService';
 import type { VerticalSection } from '../interfaces/iGridSection';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { LayoutView } from '../styling/layoutFeature';
@@ -45,7 +45,7 @@ export class GridBodyCtrl extends BeanStub {
     private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;
     private scrollVisibleSvc: ScrollVisibleService;
-    private rowGroupColsSvc?: IColsService;
+    private rowGroupColsSvc?: IRowGroupColsService;
     private pinnedRowModel?: IPinnedRowModel;
     private filterManager?: FilterManager;
 
@@ -160,7 +160,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onGridColumnsChanged(): void {
-        const columns = this.beans.colModel.getCols();
+        const columns = this.beans.colModel.colsList;
         this.comp.setColumnCount(columns.length);
         this.updateScrollableAreaWidth();
     }

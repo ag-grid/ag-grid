@@ -10,55 +10,47 @@ import type {
     HeaderColumnId,
 } from '../interfaces/iColumn';
 import type { AgColumn } from './agColumn';
-import { isColumn } from './agColumn';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type { AbstractColDef, ColGroupDef } from './colDef';
 
-export function createUniqueColumnGroupId(groupId: string, instanceId: number): HeaderColumnId {
-    return (groupId + '_' + instanceId) as HeaderColumnId;
-}
+export const isColumnGroup = (col: Column | ColumnGroup | string): col is AgColumnGroup => col instanceof AgColumnGroup;
 
-export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColumnGroup {
-    return col instanceof AgColumnGroup;
-}
-
+// INTERNAL CALLERS: on hot paths read public fields directly (group.groupId, group.pinned, …)
+// rather than the getters — the getters exist only for the public ColumnGroup interface, and
+// direct reads avoid method-call indirection in tight loops.
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> implements ColumnGroup<TValue> {
     public readonly isColumn = false as const;
+    public readonly uniqueId: HeaderColumnId;
 
     /** Sanitised version of the column id */
     public readonly colIdSanitised: string;
 
-    // all the children of this group, regardless of whether they are opened or closed
-    private children: (AgColumn | AgColumnGroup)[] | null;
-    // depends on the open/closed state of the group, only displaying columns are stored here
-    private displayedChildren: (AgColumn | AgColumnGroup)[] | null = [];
+    // all children, regardless of open/closed state
+    public children: (AgColumn | AgColumnGroup)[] | null = null;
+    // only the currently displaying children (depends on open/closed state)
+    public displayedChildren: (AgColumn | AgColumnGroup)[] | null = null;
 
-    // The measured height of this column's header when autoHeaderHeight is enabled
-    private autoHeaderHeight: number | null = null;
+    // measured header height when autoHeaderHeight is enabled
+    public autoHeaderHeight: number | null = null;
 
-    // private moving = false
-    private left: number | null;
-    private oldLeft: number | null;
+    public left: number | null = null;
+    public oldLeft: number | null = null;
 
     public parent: AgColumnGroup | null = null;
 
+    /** Most recent build token that claimed this instance — sweeps use it to spot orphans. */
+    public buildToken: number = 0;
+
     constructor(
-        private readonly providedColumnGroup: AgProvidedColumnGroup,
-        private readonly groupId: string,
-        private readonly partId: number,
-        private readonly pinned: ColumnPinnedType
+        public readonly providedColumnGroup: AgProvidedColumnGroup,
+        public readonly groupId: string,
+        public readonly partId: number,
+        public pinned: ColumnPinnedType
     ) {
         super();
-        this.colIdSanitised = _escapeString(this.getUniqueId())!;
-    }
-
-    // as the user is adding and removing columns, the groups are recalculated.
-    // this reset clears out all children, ready for children to be added again
-    public reset(): void {
-        this.parent = null;
-        this.children = null;
-        this.displayedChildren = null;
+        this.uniqueId = `${groupId}_${partId}` as HeaderColumnId;
+        this.colIdSanitised = _escapeString(this.uniqueId)!;
     }
 
     public getParent(): AgColumnGroup | null {
@@ -66,49 +58,32 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     }
 
     public getUniqueId(): HeaderColumnId {
-        return createUniqueColumnGroupId(this.groupId, this.partId);
+        return this.uniqueId;
     }
 
     public isEmptyGroup(): boolean {
-        return this.displayedChildren!.length === 0;
+        return !this.displayedChildren?.length;
     }
 
+    /** Returns true only when every leaf column in this group is currently moving. */
     public isMoving(): boolean {
-        const allLeafColumns = this.getProvidedColumnGroup().getLeafColumns();
-        if (!allLeafColumns || allLeafColumns.length === 0) {
-            return false;
-        }
-
-        return allLeafColumns.every((col) => col.isMoving());
+        return getLeafMoving(this.providedColumnGroup) === true;
     }
 
     public checkLeft(): void {
-        // first get all children to setLeft, as it impacts our decision below
-        for (const child of this.displayedChildren!) {
+        const displayedChildren = this.displayedChildren!;
+        let minLeft: number | null = null;
+        for (let i = 0, len = displayedChildren.length; i < len; ++i) {
+            const child = displayedChildren[i];
             if (isColumnGroup(child)) {
                 child.checkLeft();
             }
-        }
-
-        // set our left to the minimum child left so ordering changes in displayedChildren
-        // do not affect group positioning after column moves.
-        if (this.displayedChildren!.length > 0) {
-            let minLeft: number | null = null;
-            for (const child of this.displayedChildren!) {
-                const childLeft = child.getLeft();
-                if (childLeft == null) {
-                    continue;
-                }
-                if (minLeft == null || childLeft < minLeft) {
-                    minLeft = childLeft;
-                }
+            const childLeft = child.left;
+            if (childLeft != null && (minLeft == null || childLeft < minLeft)) {
+                minLeft = childLeft;
             }
-            this.setLeft(minLeft);
-        } else {
-            // this should never happen, as if we have no displayed columns, then
-            // this groups should not even exist.
-            this.setLeft(null);
         }
+        this.setLeft(minLeft);
     }
 
     public getLeft(): number | null {
@@ -141,41 +116,40 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 
     public getActualWidth(): number {
         let groupActualWidth = 0;
-        for (const child of this.displayedChildren ?? []) {
-            groupActualWidth += child.getActualWidth();
+        const displayedChildren = this.displayedChildren;
+        if (displayedChildren) {
+            for (let i = 0, len = displayedChildren.length; i < len; ++i) {
+                groupActualWidth += displayedChildren[i].getActualWidth();
+            }
         }
         return groupActualWidth;
     }
 
     public isResizable(): boolean {
-        if (!this.displayedChildren) {
-            return false;
-        }
-
-        // if at least one child is resizable, then the group is resizable
-        let result = false;
-        for (const child of this.displayedChildren) {
-            if (child.isResizable()) {
-                result = true;
+        const displayedChildren = this.displayedChildren;
+        if (displayedChildren) {
+            // if at least one child is resizable, then the group is resizable
+            for (let i = 0, len = displayedChildren.length; i < len; ++i) {
+                const child = displayedChildren[i];
+                if (child.isResizable()) {
+                    return true;
+                }
             }
         }
-
-        return result;
+        return false;
     }
 
     public getMinWidth(): number {
+        const displayedChildren = this.displayedChildren;
+        if (!displayedChildren) {
+            return 0;
+        }
         let result = 0;
-        for (const groupChild of this.displayedChildren!) {
-            result += groupChild.getMinWidth();
+        for (let i = 0, len = displayedChildren.length; i < len; ++i) {
+            const child = displayedChildren[i];
+            result += child.getMinWidth();
         }
         return result;
-    }
-
-    public addChild(child: AgColumn | AgColumnGroup): void {
-        if (!this.children) {
-            this.children = [];
-        }
-        this.children.push(child);
     }
 
     public getDisplayedChildren(): (AgColumn | AgColumnGroup)[] | null {
@@ -194,32 +168,33 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         return result;
     }
 
+    /** 1-based aria column index for this group's header cell: first leaf column's index */
+    public get ariaColIndex(): number {
+        return edgeLeafColumn(this, false, false)?.ariaColIndex ?? 0;
+    }
+
     public getDefinition(): AbstractColDef | null {
-        return this.providedColumnGroup.getColGroupDef();
+        return this.providedColumnGroup.colGroupDef;
     }
 
     public getColGroupDef(): ColGroupDef | null {
-        return this.providedColumnGroup.getColGroupDef();
+        return this.providedColumnGroup.colGroupDef;
     }
 
     public isPadding(): boolean {
-        return this.providedColumnGroup.isPadding();
+        return this.providedColumnGroup.padding;
     }
 
     public isExpandable(): boolean {
-        return this.providedColumnGroup.isExpandable();
+        return this.providedColumnGroup.expandable;
     }
 
     public isExpanded(): boolean {
-        return this.providedColumnGroup.isExpanded();
-    }
-
-    public setExpanded(expanded: boolean): void {
-        this.providedColumnGroup.setExpanded(expanded);
+        return !!this.providedColumnGroup.expanded;
     }
 
     public isAutoHeaderHeight(): boolean {
-        return !!this.getColGroupDef()?.autoHeaderHeight;
+        return !!this.providedColumnGroup.colGroupDef?.autoHeaderHeight;
     }
 
     public getAutoHeaderHeight(): number | null {
@@ -228,27 +203,37 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 
     /** Returns true if the header height has changed */
     public setAutoHeaderHeight(height: number): boolean {
-        const changed = height !== this.autoHeaderHeight;
+        if (height === this.autoHeaderHeight) {
+            return false;
+        }
         this.autoHeaderHeight = height;
-        return changed;
+        return true;
     }
 
     private addDisplayedLeafColumns(leafColumns: AgColumn[]): void {
-        for (const child of this.displayedChildren ?? []) {
-            if (isColumn(child)) {
-                leafColumns.push(child);
-            } else if (isColumnGroup(child)) {
-                child.addDisplayedLeafColumns(leafColumns);
+        const displayedChildren = this.displayedChildren;
+        if (displayedChildren) {
+            for (let i = 0, len = displayedChildren.length; i < len; ++i) {
+                const child = displayedChildren[i];
+                if (child.isColumn) {
+                    leafColumns.push(child);
+                } else if (isColumnGroup(child)) {
+                    child.addDisplayedLeafColumns(leafColumns);
+                }
             }
         }
     }
 
     private addLeafColumns(leafColumns: AgColumn[]): void {
-        for (const child of this.children ?? []) {
-            if (isColumn(child)) {
-                leafColumns.push(child);
-            } else if (isColumnGroup(child)) {
-                child.addLeafColumns(leafColumns);
+        const children = this.children;
+        if (children) {
+            for (let i = 0, len = children.length; i < len; ++i) {
+                const child = children[i];
+                if (child.isColumn) {
+                    leafColumns.push(child);
+                } else if (isColumnGroup(child)) {
+                    child.addLeafColumns(leafColumns);
+                }
             }
         }
     }
@@ -266,64 +251,71 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     }
 
     public getPaddingLevel(): number {
-        const parent = this.parent;
+        let level = 0;
+        let current: AgColumnGroup | null = this;
 
-        if (!this.isPadding() || !parent?.isPadding()) {
-            return 0;
+        while (current?.providedColumnGroup.padding && current.parent?.providedColumnGroup.padding) {
+            ++level;
+            current = current.parent;
         }
 
-        return 1 + parent.getPaddingLevel();
-    }
-
-    public calculateDisplayedColumns() {
-        // clear out last time we calculated
-        this.displayedChildren = [];
-
-        // find the column group that is controlling expandable. this is relevant when we have padding (empty)
-        // groups, where the expandable is actually the first parent that is not a padding group.
-        let parentWithExpansion: AgColumnGroup | null = this;
-        while (parentWithExpansion?.isPadding()) {
-            parentWithExpansion = parentWithExpansion.parent;
-        }
-
-        const isExpandable = parentWithExpansion ? parentWithExpansion.getProvidedColumnGroup().isExpandable() : false;
-        // it not expandable, everything is visible
-        if (!isExpandable) {
-            this.displayedChildren = this.children;
-            this.dispatchLocalEvent({ type: 'displayedChildrenChanged' });
-            return;
-        }
-
-        // Add cols based on columnGroupShow
-        // Note - the below also adds padding groups, these are always added because they never have
-        // colDef.columnGroupShow set.
-        for (const child of this.children ?? []) {
-            // never add empty groups
-            const emptyGroup = isColumnGroup(child) && !child.displayedChildren?.length;
-            if (emptyGroup) {
-                continue;
-            }
-
-            const headerGroupShow = child.getColumnGroupShow();
-            switch (headerGroupShow) {
-                case 'open':
-                    // when set to open, only show col if group is open
-                    if (parentWithExpansion!.getProvidedColumnGroup().isExpanded()) {
-                        this.displayedChildren.push(child);
-                    }
-                    break;
-                case 'closed':
-                    // when set to open, only show col if group is open
-                    if (!parentWithExpansion!.getProvidedColumnGroup().isExpanded()) {
-                        this.displayedChildren.push(child);
-                    }
-                    break;
-                default:
-                    this.displayedChildren.push(child);
-                    break;
-            }
-        }
-
-        this.dispatchLocalEvent({ type: 'displayedChildrenChanged' });
+        return level;
     }
 }
+
+/** First/last (`last`) leaf under `group`, walking `children` or `displayedChildren` (`displayed`) — the
+ *  `get(Displayed)LeafColumns()` edge without allocating the array; `null` if empty.
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const edgeLeafColumn = (group: AgColumnGroup, displayed: boolean, last: boolean): AgColumn | null => {
+    const children = displayed ? group.displayedChildren : group.children;
+    if (children) {
+        for (let i = 0, len = children.length; i < len; ++i) {
+            const child = children[last ? len - 1 - i : i];
+            if (child.isColumn) {
+                return child;
+            }
+            const leaf = edgeLeafColumn(child, displayed, last);
+            if (leaf) {
+                return leaf;
+            }
+        }
+    }
+    return null;
+};
+
+const getLeafMoving = (group: AgProvidedColumnGroup): boolean | null => {
+    let hasLeafColumn = false;
+    const children = group.children;
+    for (let i = 0, len = children.length; i < len; ++i) {
+        const child = children[i];
+        if (child.isColumn) {
+            hasLeafColumn = true;
+            if (!child.moving) {
+                return false;
+            }
+            continue;
+        }
+        const childState = getLeafMoving(child);
+        if (childState === false) {
+            return false;
+        }
+        if (childState === true) {
+            hasLeafColumn = true;
+        }
+    }
+    return hasLeafColumn || null;
+};
+
+/** Walk up `column`'s parent chain to the group sitting at header-row `level`. */
+export const getColGroupAtLevel = (column: AgColumn, level: number): AgColumnGroup | null => {
+    // Decrement `paddingLevel` inline on each parent step.
+    let groupPointer = column.parent;
+    if (groupPointer) {
+        let paddingLevel = groupPointer.getPaddingLevel();
+        while (groupPointer && groupPointer.providedColumnGroup.level + paddingLevel > level) {
+            groupPointer = groupPointer.parent;
+            paddingLevel = paddingLevel > 0 ? paddingLevel - 1 : 0;
+        }
+    }
+    return groupPointer;
+};

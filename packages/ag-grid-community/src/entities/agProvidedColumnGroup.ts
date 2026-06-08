@@ -1,10 +1,13 @@
 import { BeanStub } from '../context/beanStub';
 import type { Column, ColumnGroupShowType, ColumnInstanceId, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { AgColumn } from './agColumn';
-import { getNextColInstanceId, isColumn } from './agColumn';
+import { getNextColInstanceId } from './agColumn';
+import type { AgColumnGroup } from './agColumnGroup';
 import type { ColGroupDef } from './colDef';
 
-export function isProvidedColumnGroup(col: Column | ProvidedColumnGroup | string | null): col is AgProvidedColumnGroup {
+export function isProvidedColumnGroup(
+    col: Column | ProvidedColumnGroup | string | null | undefined
+): col is AgProvidedColumnGroup {
     return col instanceof AgProvidedColumnGroup;
 }
 
@@ -15,48 +18,31 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
 
     public originalParent: AgProvidedColumnGroup | null;
 
-    private children: (AgColumn | AgProvidedColumnGroup)[];
-    private expandable = false;
+    public children: (AgColumn | AgProvidedColumnGroup)[];
+    public expandable = false;
 
-    private expanded: boolean;
+    public expanded: boolean = false;
 
-    // used by React (and possibly other frameworks) as key for rendering. also used to
-    // identify old vs new columns for destroying cols when no longer used.
+    /** Most recent build token that claimed this group — detects "already used in this refresh". */
+    public buildToken: number = 0;
+
+    /** Packed `AgColumnGroup` display instances by dense per-refresh `partId` (`displayInstances[0]` is primary), lazily allocated and pruned by `columnGroupService`. */
+    public displayInstances: AgColumnGroup[] | null = null;
+
+    /** Cache previous `setExpandable` visibility so `AgColumn.setVisible` ancestor walk can stop when unchanged. */
+    private lastVisible = false;
+
+    // stable key for framework (React) rendering and old-vs-new destroy diffing
     private readonly instanceId = getNextColInstanceId();
 
-    private expandableListenerRemoveCallback: (() => void) | null = null;
-
     constructor(
-        private colGroupDef: ColGroupDef | null,
-        private readonly groupId: string,
-        private readonly padding: boolean,
-        private level: number
+        public colGroupDef: ColGroupDef | null,
+        public readonly groupId: string,
+        public readonly padding: boolean,
+        public level: number
     ) {
         super();
         this.expanded = !!colGroupDef?.openByDefault;
-    }
-
-    public override destroy() {
-        if (this.expandableListenerRemoveCallback) {
-            this.reset(null, undefined);
-        }
-        super.destroy();
-    }
-
-    private reset(colGroupDef: ColGroupDef | null, level: number | undefined): void {
-        this.colGroupDef = colGroupDef;
-        this.level = level!;
-
-        this.originalParent = null;
-
-        if (this.expandableListenerRemoveCallback) {
-            this.expandableListenerRemoveCallback();
-        }
-
-        // we use ! below, as we want to set the object back to the
-        // way it was when it was first created
-        this.children = undefined!;
-        this.expandable = undefined!;
     }
 
     public getInstanceId(): ColumnInstanceId {
@@ -71,12 +57,14 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         return this.level;
     }
 
+    /** Visible iff at least one child is visible. */
     public isVisible(): boolean {
-        // return true if at least one child is visible
-        if (this.children) {
-            return this.children.some((child) => child.isVisible());
+        const children = this.children;
+        for (let i = 0, len = children.length; i < len; ++i) {
+            if (children[i].isVisible()) {
+                return true;
+            }
         }
-
         return false;
     }
 
@@ -84,9 +72,14 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         return this.padding;
     }
 
-    public setExpanded(expanded: boolean | undefined): void {
-        this.expanded = expanded === undefined ? false : expanded;
+    public setExpanded(expanded: boolean | undefined): boolean {
+        expanded = !!expanded;
+        if (this.expanded === expanded) {
+            return false;
+        }
+        this.expanded = expanded;
         this.dispatchLocalEvent({ type: 'expandedChanged' });
+        return true;
     }
 
     public isExpandable(): boolean {
@@ -102,11 +95,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
     }
 
     public getId(): string {
-        return this.getGroupId();
-    }
-
-    public setChildren(children: (AgColumn | AgProvidedColumnGroup)[]): void {
-        this.children = children;
+        return this.groupId;
     }
 
     public getChildren(): (AgColumn | AgProvidedColumnGroup)[] {
@@ -123,129 +112,68 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         return result;
     }
 
-    public forEachLeafColumn(callback: (column: AgColumn) => void): void {
-        if (!this.children) {
-            return;
-        }
-
-        for (const child of this.children) {
-            if (isColumn(child)) {
-                callback(child);
-            } else if (isProvidedColumnGroup(child)) {
-                child.forEachLeafColumn(callback);
-            }
-        }
-    }
-
-    private addLeafColumns(leafColumns: Column[]): void {
-        if (!this.children) {
-            return;
-        }
-
-        for (const child of this.children) {
-            if (isColumn(child)) {
+    private addLeafColumns(leafColumns: AgColumn[]): void {
+        const children = this.children;
+        for (let i = 0, len = children.length; i < len; ++i) {
+            const child = children[i];
+            if (child.isColumn) {
                 leafColumns.push(child);
-            } else if (isProvidedColumnGroup(child)) {
+            } else {
                 child.addLeafColumns(leafColumns);
             }
         }
     }
 
     public getColumnGroupShow(): ColumnGroupShowType | undefined {
-        const colGroupDef = this.colGroupDef;
-
-        if (!colGroupDef) {
-            return;
-        }
-
-        return colGroupDef.columnGroupShow;
+        return this.colGroupDef?.columnGroupShow;
     }
 
-    // need to check that this group has at least one col showing when both expanded and contracted.
-    // if not, then we don't allow expanding and contracting on this group
-
-    public setupExpandable() {
-        this.setExpandable();
-
-        if (this.expandableListenerRemoveCallback) {
-            this.expandableListenerRemoveCallback();
+    /** Recompute child-driven expandability and return whether `AgColumn.setVisible` should continue ancestor walking. */
+    public setExpandable(): boolean {
+        if (this.padding) {
+            return true;
         }
-
-        const listener = this.onColumnVisibilityChanged.bind(this);
-        for (const col of this.getLeafColumns()) {
-            col.__addEventListener('visibleChanged', listener);
-        }
-
-        this.expandableListenerRemoveCallback = () => {
-            for (const col of this.getLeafColumns()) {
-                col.__removeEventListener('visibleChanged', listener);
-            }
-            this.expandableListenerRemoveCallback = null;
-        };
-    }
-
-    public setExpandable() {
-        if (this.isPadding()) {
-            return;
-        }
-        // want to make sure the group doesn't disappear when it's open
-        let atLeastOneShowingWhenOpen = false;
-        // want to make sure the group doesn't disappear when it's closed
-        let atLeastOneShowingWhenClosed = false;
-        // want to make sure the group has something to show / hide
-        let atLeastOneChangeable = false;
-
-        const children = this.findChildrenRemovingPadding();
-
-        for (let i = 0, j = children.length; i < j; i++) {
-            const abstractColumn = children[i];
-            if (!abstractColumn.isVisible()) {
-                continue;
-            }
-            // if the abstractColumn is a grid generated group, there will be no colDef
-            const headerGroupShow = abstractColumn.getColumnGroupShow();
-
-            if (headerGroupShow === 'open') {
-                atLeastOneShowingWhenOpen = true;
-                atLeastOneChangeable = true;
-            } else if (headerGroupShow === 'closed') {
-                atLeastOneShowingWhenClosed = true;
-                atLeastOneChangeable = true;
-            } else {
-                atLeastOneShowingWhenOpen = true;
-                atLeastOneShowingWhenClosed = true;
-            }
-        }
-
-        const expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
-
+        const flags = walkForExpandFlags(this.children, 0);
+        const expandable = flags === EXPANDABLE_ALL;
         if (this.expandable !== expandable) {
             this.expandable = expandable;
             this.dispatchLocalEvent({ type: 'expandableChanged' });
         }
-    }
-
-    private findChildrenRemovingPadding(): (AgColumn | AgProvidedColumnGroup)[] {
-        const res: (AgColumn | AgProvidedColumnGroup)[] = [];
-
-        const process = (items: (AgColumn | AgProvidedColumnGroup)[]) => {
-            for (const item of items) {
-                // if padding, we add this children instead of the padding
-                const skipBecausePadding = isProvidedColumnGroup(item) && item.isPadding();
-                if (skipBecausePadding) {
-                    process(item.children);
-                } else {
-                    res.push(item);
-                }
-            }
-        };
-
-        process(this.children);
-
-        return res;
-    }
-
-    private onColumnVisibilityChanged(): void {
-        this.setExpandable();
+        const visible = flags !== 0;
+        if (this.lastVisible === visible) {
+            return false;
+        }
+        this.lastVisible = visible;
+        return true;
     }
 }
+
+// Bit flags accumulated by `walkForExpandFlags`. A group is `expandable` iff all three are set.
+const FLAG_SHOWING_WHEN_OPEN = 0b001;
+const FLAG_SHOWING_WHEN_CLOSED = 0b010;
+const FLAG_CHANGEABLE = 0b100;
+const EXPANDABLE_ALL = 0b111;
+
+/** Bit-flag walk: short-circuits once all three flags are set. Padding groups transparent. */
+const walkForExpandFlags = (items: (AgColumn | AgProvidedColumnGroup)[], flags: number): number => {
+    for (let i = 0, n = items.length; i < n; ++i) {
+        const item = items[i];
+        if (isProvidedColumnGroup(item) && item.padding) {
+            flags = walkForExpandFlags(item.children, flags);
+        } else if (item.isVisible()) {
+            // `getColumnGroupShow()` returns undefined for grid-generated groups (no colDef).
+            const show = item.getColumnGroupShow();
+            if (show === 'open') {
+                flags |= FLAG_SHOWING_WHEN_OPEN | FLAG_CHANGEABLE;
+            } else if (show === 'closed') {
+                flags |= FLAG_SHOWING_WHEN_CLOSED | FLAG_CHANGEABLE;
+            } else {
+                flags |= FLAG_SHOWING_WHEN_OPEN | FLAG_SHOWING_WHEN_CLOSED;
+            }
+        }
+        if (flags === EXPANDABLE_ALL) {
+            return flags;
+        }
+    }
+    return flags;
+};

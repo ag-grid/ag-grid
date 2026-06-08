@@ -122,7 +122,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             return;
         }
 
-        const primaryColumn = this.beans.colModel.getColDefCol(groupLeafField);
+        const primaryColumn = this.beans.colModel.getNonPivotCol(groupLeafField);
         if (!primaryColumn) {
             return;
         }
@@ -173,8 +173,8 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             return leafChild && this.beans.valueSvc.getValue(column, leafChild, 'data');
         }
 
-        const displayCol = this.beans.showRowGroupCols?.getShowRowGroupCol(column.getId());
-        return displayCol ? node.groupData?.[displayCol.getId()] : undefined;
+        const displayCol = column.showRowGroupCol;
+        return displayCol ? node.groupData?.[displayCol.colId] : undefined;
     }
 }
 

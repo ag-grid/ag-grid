@@ -1406,24 +1406,6 @@
                 "url": "./calculated-columns/"
             }
         },
-        "addCalculatedColumn": {
-            "more": {
-                "name": "Calculated Columns API",
-                "url": "./calculated-columns/#api"
-            }
-        },
-        "updateCalculatedColumn": {
-            "more": {
-                "name": "Calculated Columns API",
-                "url": "./calculated-columns/#api"
-            }
-        },
-        "removeCalculatedColumn": {
-            "more": {
-                "name": "Calculated Columns API",
-                "url": "./calculated-columns/#api"
-            }
-        },
         "openCalculatedColumnDialog": {
             "more": {
                 "name": "Calculated Columns API",

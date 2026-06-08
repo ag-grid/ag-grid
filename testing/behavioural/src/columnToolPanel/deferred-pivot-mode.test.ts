@@ -801,29 +801,46 @@ describe('deferred column tool panel pivot mode', () => {
     });
 
     test('commit should call exactly one state-application path', async () => {
-        const { toolPanel } = await createDeferredPivotModeGrid();
-        const { gos, stateSvc, colModel, colMoves, rowGroupColsSvc, valueColsSvc, pivotColsSvc } = toolPanel.beans;
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
 
-        const updateGridOptionsSpy = vi.spyOn(gos, 'updateGridOptions');
-        const setStateSpy = stateSvc ? vi.spyOn(stateSvc, 'setState') : undefined;
-        const setPivotModeSpy = vi.spyOn(colModel as any, 'setPivotMode');
-        const moveColumnsSpy = colMoves ? vi.spyOn(colMoves, 'moveColumns') : undefined;
-        const setRowGroupColumnsSpy = rowGroupColsSvc ? vi.spyOn(rowGroupColsSvc, 'setColumns') : undefined;
-        const setValueColumnsSpy = valueColsSvc ? vi.spyOn(valueColsSvc, 'setColumns') : undefined;
-        const setColumnAggFuncSpy = valueColsSvc ? vi.spyOn(valueColsSvc, 'setColumnAggFunc') : undefined;
-        const setPivotColumnsSpy = pivotColsSvc ? vi.spyOn(pivotColsSvc, 'setColumns') : undefined;
+        // Observe the public batch signal: a single batched state application fires exactly one
+        // `columnEverythingChanged`. A redundant grid-state round-trip would fire it twice; a piecemeal
+        // path (per-column moveColumns / setColumns / setColumnAggFunc, which emit only granular events)
+        // would fire it zero times. Both regressions are caught by asserting exactly one.
+        let everythingChangedCount = 0;
+        gridApi.addEventListener('columnEverythingChanged', () => {
+            everythingChangedCount++;
+        });
 
         getUpdateStrategy(toolPanel).setPivotMode(true, false, 'toolPanelUi');
         commitChanges(toolPanel);
 
-        expect(setStateSpy?.mock.calls.length ?? 0).toBe(1);
-        expect(updateGridOptionsSpy).toHaveBeenCalledTimes(1);
-        expect(setPivotModeSpy).toHaveBeenCalledTimes(1);
-        expect(moveColumnsSpy).not.toHaveBeenCalled();
-        expect(setRowGroupColumnsSpy).not.toHaveBeenCalled();
-        expect(setValueColumnsSpy).not.toHaveBeenCalled();
-        expect(setColumnAggFuncSpy).not.toHaveBeenCalled();
-        expect(setPivotColumnsSpy).not.toHaveBeenCalled();
+        await asyncSetTimeout(1);
+
+        // Turning pivot off applies state in a single batch — exactly one `columnEverythingChanged`.
+        expect(everythingChangedCount).toBe(1);
+        expect(gridApi.isPivotMode()).toBe(false);
+    });
+
+    test('toggling pivot mode in deferred mode persists pivot state to grid state and restores pivot columns', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotModeGrid();
+
+        expect(gridApi.getState().pivot).toEqual({ pivotMode: true, pivotColIds: ['year'] });
+
+        getUpdateStrategy(toolPanel).setPivotMode(true, false, 'toolPanelUi');
+        commitChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        expect(gridApi.getState().pivot?.pivotMode ?? false).toBe(false);
+
+        getUpdateStrategy(toolPanel).setPivotMode(true, true, 'toolPanelUi');
+        commitChanges(toolPanel);
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(true);
+        expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
+        expect(gridApi.getState().pivot).toEqual({ pivotMode: true, pivotColIds: ['year'] });
     });
 
     test('commit should make exactly one server call', async () => {
@@ -1153,8 +1170,7 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getValueColumnIds(gridApi)).toEqual(['silver', 'gold']);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('reordering column groups and cancelling in non-pivot mode should keep the original order', async () => {
+    test('reordering column groups and cancelling in non-pivot mode should keep the original order', async () => {
         const { gridApi, toolPanel } = await createDeferredGroupedNonPivotGrid();
         const athlete = gridApi.getColumn('athlete')! as AgColumn;
         const age = gridApi.getColumn('age')! as AgColumn;
@@ -1165,8 +1181,7 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'year']);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('reordering column groups and cancelling in pivot mode should keep the original order', async () => {
+    test('reordering column groups and cancelling in pivot mode should keep the original order', async () => {
         const { gridApi, toolPanel } = await createDeferredGroupedPivotGrid();
         const athlete = gridApi.getColumn('athlete')! as AgColumn;
         const age = gridApi.getColumn('age')! as AgColumn;
@@ -1177,8 +1192,7 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'year']);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('reordering column groups in non-pivot mode applies only after commit', async () => {
+    test('reordering column groups in non-pivot mode applies only after commit', async () => {
         const { gridApi, toolPanel } = await createDeferredGroupedNonPivotGrid();
         const athlete = gridApi.getColumn('athlete')! as AgColumn;
         const age = gridApi.getColumn('age')! as AgColumn;
@@ -1194,8 +1208,7 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getPrimaryColumnOrder(toolPanel)).toEqual(['country', 'year', 'athlete', 'age']);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('reordering column groups in pivot mode applies only after commit', async () => {
+    test('reordering column groups in pivot mode applies only after commit', async () => {
         const { gridApi, toolPanel } = await createDeferredGroupedPivotGrid();
         const athlete = gridApi.getColumn('athlete')! as AgColumn;
         const age = gridApi.getColumn('age')! as AgColumn;
@@ -1230,8 +1243,7 @@ describe('deferred column tool panel pivot mode', () => {
         expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['date', 'year']);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('reordering columns and cancelling in non-pivot mode should keep the original order', async () => {
+    test('reordering columns and cancelling in non-pivot mode should keep the original order', async () => {
         const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
         const athlete = gridApi.getColumn('athlete')! as AgColumn;
 
@@ -1241,8 +1253,7 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('reordering columns and cancelling in pivot mode should keep the original order', async () => {
+    test('reordering columns and cancelling in pivot mode should keep the original order', async () => {
         const { toolPanel } = await createDeferredPivotModeGrid();
         const athlete = toolPanel.beans.colModel.getNonPivotCol('athlete') as AgColumn;
 
@@ -1252,8 +1263,7 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['athlete', 'age', 'country']);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('reordering columns in non-pivot mode applies only after commit', async () => {
+    test('reordering columns in non-pivot mode applies only after commit', async () => {
         const { gridApi, toolPanel } = await createDeferredNonPivotGrid();
         const athlete = gridApi.getColumn('athlete')! as AgColumn;
 
@@ -1268,8 +1278,7 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getPrimaryColumnOrder(toolPanel).slice(0, 3)).toEqual(['age', 'athlete', 'country']);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('dragging a column to the end in non-pivot mode should update the deferred tool panel order before commit', async () => {
+    test('dragging a column to the end in non-pivot mode should update the deferred tool panel order before commit', async () => {
         const { toolPanel } = await createDeferredNonPivotGrid();
 
         expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual([
@@ -1328,8 +1337,7 @@ describe('deferred column tool panel pivot mode', () => {
         ]);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('reordering columns in pivot mode applies primary column order only after commit', async () => {
+    test('reordering columns in pivot mode applies primary column order only after commit', async () => {
         const { toolPanel } = await createDeferredPivotModeGrid();
         const athlete = toolPanel.beans.colModel.getNonPivotCol('athlete') as AgColumn;
 
@@ -1543,6 +1551,47 @@ describe('deferred column tool panel pivot mode', () => {
         const dragItem = sportColumnComp['createDragItem']();
 
         expect(dragItem.pivotState.sport?.rowGroup).toBe(false);
+    });
+
+    test('getState().pivot through a deferred pivot-mode toggle off then back on', async () => {
+        const { gridApi, toolPanelGui } = await createDeferredPivotModeGrid();
+        expect(gridApi.getState().pivot).toEqual({ pivotMode: true, pivotColIds: ['year'] });
+
+        getPivotModeToggle(toolPanelGui).click();
+        getApplyButton(toolPanelGui).click();
+        await waitForNoLoadingRows(gridApi);
+        expect(gridApi.isPivotMode()).toBe(false);
+        // Pivot off ⇒ no pivot state persisted; the pivot cols are remembered internally for re-enable.
+        expect(gridApi.getState().pivot).toBeUndefined();
+
+        getPivotModeToggle(toolPanelGui).click();
+        getApplyButton(toolPanelGui).click();
+        await waitForNoLoadingRows(gridApi);
+        expect(gridApi.isPivotMode()).toBe(true);
+        expect(gridApi.getState().pivot).toEqual({ pivotMode: true, pivotColIds: ['year'] });
+        expect(gridApi.getPivotColumns().map((c) => c.getColId())).toEqual(['year']);
+    });
+
+    test('toggling pivot mode off preserves existing row-group, value, sort and visibility state', async () => {
+        const { gridApi, toolPanelGui } = await createDeferredPivotModeGrid();
+        gridApi.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+
+        // The removed setState round-trip used to re-apply all of this from the cache; confirm it survives
+        // the pivot toggle on its own.
+        expect(gridApi.getRowGroupColumns().map((c) => c.getColId())).toEqual(['country', 'sport']);
+        expect(gridApi.getValueColumns().map((c) => c.getColId())).toEqual(['silver', 'bronze']);
+        expect(gridApi.getColumn('athlete')!.getSort()).toBe('asc');
+        expect(gridApi.getColumn('gold')!.isVisible()).toBe(false);
+
+        getPivotModeToggle(toolPanelGui).click();
+        getApplyButton(toolPanelGui).click();
+        await waitForNoLoadingRows(gridApi);
+
+        expect(gridApi.isPivotMode()).toBe(false);
+        expect(gridApi.getRowGroupColumns().map((c) => c.getColId())).toEqual(['country', 'sport']);
+        expect(gridApi.getValueColumns().map((c) => c.getColId())).toEqual(['silver', 'bronze']);
+        expect(gridApi.getColumn('athlete')!.getSort()).toBe('asc');
+        expect(gridApi.getColumn('gold')!.isVisible()).toBe(false);
     });
 
     test('turning pivot mode back on after disabling and applying restores the previous pivot columns', async () => {

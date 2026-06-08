@@ -8,10 +8,25 @@
         flex-direction: column;
         gap: var(--ag-grid-size);
         min-width: 260px;
+        flex: 1 1 auto;
+        min-height: 0;
     }
 
     .ag-calculated-column-expression-wrap {
-        position: relative;
+        display: flex;
+        flex: 1 1 auto;
+        .ag-text-area {
+            flex: 1 1 auto;
+        }
+
+        .ag-text-area-input-wrapper {
+            height: 100%;
+        }
+
+        .ag-text-area-input {
+            height: 100%;
+            resize: none;
+        }
     }
 
     .ag-calculated-column-expression-error {

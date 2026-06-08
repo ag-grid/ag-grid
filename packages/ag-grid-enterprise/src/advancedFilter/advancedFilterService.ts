@@ -62,7 +62,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
         this.expressionProxy = {
             getValue: (colId, node) => {
-                const column = this.colModel.getColDefCol(colId);
+                const column = this.colModel.getNonPivotColById(colId);
                 return column ? this.filterValueSvc.getValue(column, node) : undefined;
             },
         };

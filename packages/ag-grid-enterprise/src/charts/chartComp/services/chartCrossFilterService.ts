@@ -79,7 +79,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
 
     private convertRawValue(colId: string, rawValue: any): any {
         const { colModel, dataTypeSvc } = this.beans;
-        const column = colModel.getColById(colId);
+        const column = colModel.colsById[colId];
         const colDef = column?.colDef;
         if (colDef && dataTypeSvc && colDef.chartDataType === 'time' && colDef.cellDataType === 'dateString') {
             // need to convert from `Date` back to `string`

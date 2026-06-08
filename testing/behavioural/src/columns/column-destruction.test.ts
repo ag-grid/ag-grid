@@ -1,13 +1,3 @@
-/**
- * Tests that column beans are destroyed exactly once when the grid is torn down,
- * and that intermediate rebuilds (pivot toggles, columnDefs replacement) don't leak.
- *
- * Design B ownership: ColumnModel.destroy() is the single owner of all column beans
- * at teardown — it walks colsTree once and destroys everything (leaves, source-tree
- * groups, and balanceTreeForAutoCols wrappers). Leaf services (auto/sel/rn/pivot)
- * still own mid-life destruction in their createColumns paths, but defer teardown
- * destruction to ColumnModel to prevent double-destroy.
- */
 import type { Column, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
@@ -509,6 +499,42 @@ describe('Column destruction', () => {
         }
         expect(seen.filter((g) => g.isAlive()).length).toBe(1);
     });
+
+    test('hierarchy columns are destroyed when rebuilt or removed', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
+            rowData: [{ country: 'USA', date: new Date(2020, 0, 1) }],
+        });
+        await asyncSetTimeout(0);
+
+        const yearBefore = api.getColumn('ag-Grid-HierarchyColumn-date-year')!;
+        const monthBefore = api.getColumn('ag-Grid-HierarchyColumn-date-month')!;
+        expect(yearBefore).not.toBeNull();
+        expect(monthBefore).not.toBeNull();
+        expect((yearBefore as any).isAlive()).toBe(true);
+        expect((monthBefore as any).isAlive()).toBe(true);
+
+        // (1) rebuildColumns: dropping 'month' changes the plan length → all hierarchy cols rebuilt.
+        api.setGridOption('columnDefs', [
+            { field: 'country' },
+            { field: 'date', rowGroup: true, groupHierarchy: ['year'] },
+        ]);
+        await asyncSetTimeout(0);
+
+        const yearAfter = api.getColumn('ag-Grid-HierarchyColumn-date-year')!;
+        expect(api.getColumn('ag-Grid-HierarchyColumn-date-month')).toBeNull();
+        expect(yearAfter).not.toBe(yearBefore);
+        expect((yearBefore as any).isAlive()).toBe(false);
+        expect((monthBefore as any).isAlive()).toBe(false);
+        expect((yearAfter as any).isAlive()).toBe(true);
+
+        // (2) clearColumns: removing groupHierarchy entirely drops the remaining hierarchy col.
+        api.setGridOption('columnDefs', [{ field: 'country' }, { field: 'date', rowGroup: true }]);
+        await asyncSetTimeout(0);
+
+        expect(api.getColumn('ag-Grid-HierarchyColumn-date-year')).toBeNull();
+        expect((yearAfter as any).isAlive()).toBe(false);
+    });
 });
 
 /** Walks `col.originalParent` upwards and returns the wrapper chain (excludes the leaf col).
@@ -523,8 +549,7 @@ const wrapperChainOf = (col: Column): any[] => {
     return chain;
 };
 
-// Solved by AG-17366 when it is completed
-describe.skip('ColWrapperCache lifecycle', () => {
+describe('ColWrapperCache lifecycle', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,

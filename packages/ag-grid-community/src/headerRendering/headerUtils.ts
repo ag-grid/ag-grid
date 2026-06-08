@@ -8,11 +8,11 @@ import type { HeaderRowCtrl } from './row/headerRowCtrl';
 // + gridPanel -> for resizing the body and setting top margin
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function getHeaderRowCount(colModel: ColumnModel): number {
-    if (!colModel.cols) {
+    if (!colModel.ready) {
         return -1;
     }
 
-    return colModel.cols.treeDepth + 1;
+    return colModel.colsTreeDepth + 1;
 }
 
 export function getFocusHeaderRowCount(beans: BeanCollection): number {
@@ -59,7 +59,7 @@ function getColumnGroupHeaderRowHeight(beans: BeanCollection, headerRowCtrl: Hea
     const headerRowCellCtrls = headerRowCtrl.getHeaderCellCtrls();
     for (const headerCellCtrl of headerRowCellCtrls) {
         const { column } = headerCellCtrl;
-        const height = column.getAutoHeaderHeight();
+        const height = column.autoHeaderHeight;
         if (height != null && height > maxDisplayedHeight && column.isAutoHeaderHeight()) {
             maxDisplayedHeight = height;
         }
@@ -70,12 +70,14 @@ function getColumnGroupHeaderRowHeight(beans: BeanCollection, headerRowCtrl: Hea
 export function getColumnHeaderRowHeight(beans: BeanCollection): number {
     const defaultHeight = beans.colModel.pivotMode ? getPivotHeaderHeight(beans) : getHeaderHeight(beans);
     let maxDisplayedHeight = defaultHeight;
-    beans.colModel.forAllCols((col) => {
-        const height = col.getAutoHeaderHeight();
+    const allCols = beans.colModel.getAllCols();
+    for (let i = 0, len = allCols.length; i < len; ++i) {
+        const col = allCols[i];
+        const height = col.autoHeaderHeight;
         if (height != null && height > maxDisplayedHeight && col.isAutoHeaderHeight()) {
             maxDisplayedHeight = height;
         }
-    });
+    }
     return maxDisplayedHeight;
 }
 

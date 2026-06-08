@@ -1,6 +1,6 @@
 import type { ColumnState } from '../columns/columnStateUtils';
 import type { AgColumn } from '../entities/agColumn';
-import type { IAggFunc } from '../entities/colDef';
+import type { ColAggFunc } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { SortDef } from '../interfaces/iSort';
 
@@ -19,13 +19,8 @@ export interface IColumnStateUpdateStrategy {
     hasDeferredColumnOrder(deferMode: boolean): boolean;
     setValueColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
     getValueColumns(deferMode: boolean): AgColumn[];
-    setColumnAggFunc(
-        deferMode: boolean,
-        column: AgColumn,
-        aggFunc: string | IAggFunc | null | undefined,
-        eventType: ColumnEventType
-    ): void;
-    getColumnAggFunc(deferMode: boolean, column: AgColumn): string | IAggFunc | null | undefined;
+    setColumnAggFunc(deferMode: boolean, column: AgColumn, aggFunc: ColAggFunc, eventType: ColumnEventType): void;
+    getColumnAggFunc(deferMode: boolean, column: AgColumn): ColAggFunc;
     setPivotColumns(deferMode: boolean, columns: AgColumn[], eventType: ColumnEventType): void;
     getPivotColumns(deferMode: boolean): AgColumn[];
     setPivotMode(deferMode: boolean, pivotMode: boolean, eventType: ColumnEventType): void;

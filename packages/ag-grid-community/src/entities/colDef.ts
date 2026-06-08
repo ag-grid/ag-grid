@@ -165,6 +165,8 @@ export type IAggFunc<TData = any, TValue = any, TContext = any> = (
 
 export type IAggFuncs<TData = any, TValue = any, TContext = any> = { [key: string]: IAggFunc<TData, TValue, TContext> };
 
+export type ColAggFunc<TData = any, TValue = any> = string | IAggFunc<TData, TValue> | null | undefined;
+
 /**
  * Wrapper returned by the built-in `avg` and `count` aggregation functions, and the recommended
  * shape for custom agg functions that expose a scalar value alongside metadata (e.g. a count, used

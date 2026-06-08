@@ -101,7 +101,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
     public setColsPinned(keys: ColKey[], pinned: ColumnPinnedType, source: ColumnEventType): void {
         const { colModel, visibleCols, gos } = this.beans;
-        if (!colModel.cols) {
+        if (!colModel.ready) {
             return;
         }
         if (!keys?.length) {
@@ -140,7 +140,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         }
 
         if (updatedCols.length) {
-            visibleCols.refresh(source);
+            visibleCols.refresh(source, false);
             dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
         }
     }

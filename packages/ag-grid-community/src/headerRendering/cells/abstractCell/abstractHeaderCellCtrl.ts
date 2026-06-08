@@ -276,7 +276,7 @@ export abstract class AbstractHeaderCellCtrl<
             return;
         }
         refreshFirstAndLastStyles(comp, column, beans.visibleCols);
-        _setAriaColIndex(eGui, beans.visibleCols.getAriaColIndex(column)); // for react, we don't use JSX, as it slowed down column moving
+        _setAriaColIndex(eGui, column.ariaColIndex); // for react, we don't use JSX, as it slowed down column moving
     }
 
     protected addResizeAndMoveKeyboardListeners(compBean: BeanStub): void {

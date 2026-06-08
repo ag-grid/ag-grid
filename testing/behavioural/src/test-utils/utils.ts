@@ -110,19 +110,18 @@ export function unindentText(text: TemplateStringsArray | string | string[] | nu
     return lines.join('\n');
 }
 
-let consoleLicenseKeyErrorInitialized = false;
+/** Tags the patched `console.error` so we re-install (not double-wrap) — `mockRestore` in other tests can wipe it. */
+const LICENSE_FILTER_TAG = '__agIgnoresLicenseKeyError';
 
 export function ignoreConsoleLicenseKeyError() {
-    if (consoleLicenseKeyErrorInitialized) {
-        return;
+    const current = console.error as { [LICENSE_FILTER_TAG]?: boolean };
+    if (current[LICENSE_FILTER_TAG]) {
+        return; // filter already installed on the current console.error
     }
 
-    consoleLicenseKeyErrorInitialized = true;
-
-    const originalConsoleError = console.error;
-
-    // We want to ignore the missing license error message during tests.
-    function consoleErrorImpl(...args: unknown[]) {
+    // Re-wrap whatever console.error is now (a prior `spyOn(...).mockRestore()` may have removed our patch).
+    const wrapped = console.error;
+    const consoleErrorImpl = (...args: unknown[]): void => {
         if (
             args.length === 1 &&
             typeof args[0] === 'string' &&
@@ -130,12 +129,10 @@ export function ignoreConsoleLicenseKeyError() {
             args[0].endsWith('*') &&
             args[0].length === 124
         ) {
-            return; // This is a license error message
+            return; // AG Grid license box line
         }
-        return originalConsoleError.apply(console, args);
-    }
-
-    consoleErrorImpl.original = originalConsoleError;
-
+        wrapped.apply(console, args);
+    };
+    (consoleErrorImpl as { [LICENSE_FILTER_TAG]?: boolean })[LICENSE_FILTER_TAG] = true;
     console.error = consoleErrorImpl;
 }

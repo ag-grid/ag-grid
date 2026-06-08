@@ -24,8 +24,7 @@ describe('Enterprise: prototype-name colIds / groupIds', () => {
     beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
-    // Solved by AG-17366 when it is completed
-    test.skip('advanced filter evaluates against a prototype-name colId (expressionEvaluatorParams map)', () => {
+    test('advanced filter evaluates against a prototype-name colId (expressionEvaluatorParams map)', () => {
         const api = gridsManager.createGrid('g', {
             columnDefs: [
                 { colId: 'toString', field: 'a', filter: true },
@@ -51,8 +50,7 @@ describe('Enterprise: prototype-name colIds / groupIds', () => {
         expect(api.getDisplayedRowAtIndex(0)!.data.a).toBe('keep');
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('row grouping by prototype-name colIds keeps order (orderedColsService colId map)', () => {
+    test('row grouping by prototype-name colIds keeps order (orderedColsService colId map)', () => {
         const api = gridsManager.createGrid('g', {
             columnDefs: [
                 { colId: 'toString', field: 'a' },

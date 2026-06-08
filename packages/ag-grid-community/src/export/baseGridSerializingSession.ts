@@ -10,7 +10,7 @@ import type {
     ProcessHeaderForExportParams,
     ProcessRowGroupForExportParams,
 } from '../interfaces/exportParams';
-import type { IColsService } from '../interfaces/iColsService';
+import type { IRowGroupColsService } from '../interfaces/iColsService';
 import type { CellValueResolveFrom } from '../interfaces/iEditService';
 import type { ValueService } from '../valueService/valueService';
 import type {
@@ -24,7 +24,7 @@ import type {
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public colModel: ColumnModel;
     private readonly colNames: ColumnNameService;
-    public rowGroupColsSvc?: IColsService;
+    public rowGroupColsSvc?: IRowGroupColsService;
     public valueSvc: ValueService;
     public gos: GridOptionsService;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
