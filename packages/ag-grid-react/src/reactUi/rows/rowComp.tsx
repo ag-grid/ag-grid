@@ -440,8 +440,15 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         children: React.ReactNode,
         pinned: boolean = false
     ) => {
-        // Pinned lanes are rendered only when they have content
-        if (pinned && width <= 0) {
+        if (
+            // Detach pinned cell containers when there are no pinned columns to
+            // improve rendering performance
+            pinned &&
+            width <= 0 &&
+            // Unless we're rendering a full width rows, because the row
+            // renderer is passed a reference to these even if they are empty
+            !isFullWidth
+        ) {
             return null;
         }
         if (pinned) {

@@ -117,17 +117,26 @@ export class RowComp extends Component {
             eCenter.style.width = `${widths.centerWidth}px`;
         }
 
+        const isFullWidth = this.rowCtrl.isFullWidth();
+
         const refreshPinnedSection = (eSection: HTMLElement | undefined, width: number, method: 'after' | 'before') => {
             if (!eSection) {
                 return;
             }
-            if (width > 0) {
-                eSection.style.width = `${width}px`;
-                if (!eSection.parentNode && eCenter) {
-                    eCenter[method](eSection);
-                }
-            } else {
+            if (
+                // Skip rendering pinned cell containers when there are no pinned
+                // columns to improve rendering performance
+                width <= 0 &&
+                // Render always for full width rows, because the row renderer
+                // requires a reference to these even if they are empty
+                !isFullWidth
+            ) {
                 eSection.remove();
+                return;
+            }
+            eSection.style.width = `${width}px`;
+            if (!eSection.parentNode && eCenter) {
+                eCenter[method](eSection);
             }
         };
 
