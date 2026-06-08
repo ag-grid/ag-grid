@@ -7,6 +7,7 @@ import type { ColumnEventType, SortChangedEvent } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { DisplaySortDef, SortDef, SortDirection } from '../interfaces/iSort';
+import type { SortModelItem } from '../interfaces/iSortModelItem';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { Component } from '../widgets/component';
 import { SortIndicatorComp, SortIndicatorSelector } from './sortIndicatorComp';
@@ -343,3 +344,18 @@ const areSortDefsEqual = (sortDef1: SortDef | null | undefined, sortDef2: SortDe
     }
     return sortDef1.type === sortDef2.type && sortDef1.direction === sortDef2.direction;
 };
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _getSortModel(sortSvc: SortService | undefined): SortModelItem[] {
+    const opts = sortSvc?.getSortOptions();
+    if (!opts) {
+        return [];
+    }
+    const len = opts.length;
+    const model: SortModelItem[] = new Array(len);
+    for (let i = 0; i < len; ++i) {
+        const o = opts[i];
+        model[i] = { sort: o.sort, type: o.type, colId: (o.column as AgColumn).colId };
+    }
+    return model;
+}

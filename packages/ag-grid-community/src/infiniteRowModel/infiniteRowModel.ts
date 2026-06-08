@@ -7,7 +7,7 @@ import { _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
 import type { OverlayType } from '../rendering/overlays/overlayComponent';
-import { _getSortModel } from '../sort/sortUtils';
+import { _getSortModel } from '../sort/sortService';
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 
