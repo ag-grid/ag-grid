@@ -801,7 +801,7 @@ export const AG_GRID_ERRORS = {
     303: ({ key }: { key: string }) =>
         `Multiple toolbar items share the explicit key '${key}'. Only the first item is rendered.` as const,
     304: () =>
-        `Files were dropped on the grid but no 'fileProcessor' is configured. Provide a 'fileProcessor' to handle file input.` as const,
+        `The file input overlay is shown but no 'fileProcessor' is configured. The overlay will not work without a 'fileProcessor'.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
