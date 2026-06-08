@@ -24,14 +24,20 @@ jobs:
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}
     steps:
-      # Check out the DEFAULT branch (carries the shared action). The action
-      # operates on gh-pages via its own token-authenticated clone.
-      - name: Checkout
+      # Check out the PR's BASE (trusted) ref, not the default pull_request ref:
+      # the latter can be the PR merge ref (PR-controlled code) and may be
+      # unresolvable for closed-unmerged PRs. The action carries on the base
+      # branch and operates on gh-pages via its own token-authenticated clone.
+      - name: Checkout (trusted base ref)
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 1
 
+      # hashFiles() guards against the bootstrap window before the shared action
+      # exists on the base branch (no preview was published then either).
       - name: Remove PR preview from gh-pages
+        if: hashFiles('external/ag-shared/github/actions/pr-preview-cleanup/action.yml') != ''
         uses: ./external/ag-shared/github/actions/pr-preview-cleanup
         with:
           pr_number: ${{ env.PR_NUMBER }}

@@ -375,6 +375,9 @@ jobs:
           name: pr-preview-umd
           if-no-files-found: ignore
           retention-days: 14
+          # ag-grid UMD builds with sourcemap:false (packages/*/project.json), so
+          # there are no .map files to publish (unlike ag-charts). The shared
+          # pr-preview-publish action's optional .map copy is simply a no-op here.
           path: |
             packages/ag-grid-community/dist/ag-grid-community.min.js
             packages/ag-grid-enterprise/dist/ag-grid-enterprise.min.js
@@ -400,11 +403,14 @@ jobs:
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}
     steps:
-      # Needed so the local-path shared action below resolves (the job otherwise
-      # has an empty workspace; download-artifact is a remote action).
-      - name: Checkout
+      # Check out the PR's BASE (trusted) ref, not the PR head: the local shared
+      # action below would otherwise be PR-controlled code executed with a
+      # contents:write token. hashFiles() guards the publish step so it no-ops
+      # until the shared action exists on the base branch (bootstrap onboarding).
+      - name: Checkout (trusted base ref)
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 1
 
       - name: Download UMD artifact
@@ -446,7 +452,7 @@ jobs:
           echo "publish=true" >> "$GITHUB_OUTPUT"
 
       - name: Publish PR preview to gh-pages
-        if: steps.stage.outputs.publish == 'true'
+        if: steps.stage.outputs.publish == 'true' && hashFiles('external/ag-shared/github/actions/pr-preview-publish/action.yml') != ''
         uses: ./external/ag-shared/github/actions/pr-preview-publish
         with:
           pr_number: ${{ env.PR_NUMBER }}
