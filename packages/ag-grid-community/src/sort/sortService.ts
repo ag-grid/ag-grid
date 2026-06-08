@@ -23,17 +23,6 @@ export class SortService extends BeanStub implements NamedBean {
     private opts: SortOption[] | null = null;
     private multi = false;
 
-    public postConstruct(): void {
-        // Pivot's sorted-cols filter reads aggFunc; an in-place aggFunc change doesn't rebuild columns.
-        this.addManagedEventListeners({
-            columnValueChanged: () => {
-                if (this.beans.colModel.pivotMode) {
-                    this.invalidate();
-                }
-            },
-        });
-    }
-
     public override destroy(): void {
         super.destroy();
         this.invalidate();

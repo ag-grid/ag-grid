@@ -1,4 +1,4 @@
-import type { AgColumn, IPivotColsService, NamedBean } from 'ag-grid-community';
+import type { AgColumn, BeanCollection, IPivotColsService, NamedBean } from 'ag-grid-community';
 
 import { OrderedColsService } from '../columns/orderedColsService';
 
@@ -12,6 +12,18 @@ export class PivotColsSvc extends OrderedColsService implements NamedBean, IPivo
 
     /** True if any active pivot col has a `pivotComparator`; cached so {@link isStrictColumnOrder} stays O(1). */
     private hasPivotComparator = false;
+
+    public postConstruct(beans: BeanCollection): void {
+        this.addManagedEventListeners({
+            columnValueChanged: () => {
+                // In pivot mode the sort cache filters by value-col membership (driven by aggFunc);
+                // an in-place aggFunc change doesn't rebuild columns, so invalidate it.
+                if (beans.colModel.pivotMode) {
+                    beans.sortSvc?.invalidate();
+                }
+            },
+        });
+    }
 
     protected override setActiveFlag(col: AgColumn, active: boolean): boolean {
         if (col.pivotActive === active) {
