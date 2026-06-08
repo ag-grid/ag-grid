@@ -385,6 +385,13 @@ jobs:
         with:
           cache_mode: ro
 
+      - name: Restore sitemap lastmod cache
+        uses: actions/cache/restore@v4
+        with:
+          path: documentation/ag-grid-docs/.astro/cache/sitemap-lastmod.json
+          key: sitemap-lastmod-grid-NEVER_EXACT_MATCH
+          restore-keys: sitemap-lastmod-grid-
+
       - name: update base url
         run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
 

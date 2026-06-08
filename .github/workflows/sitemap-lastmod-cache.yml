@@ -1,0 +1,34 @@
+name: Sitemap Lastmod Cache
+
+on:
+    schedule:
+        - cron: '0 2 * * *' 
+    workflow_dispatch:
+
+env:
+    IBM_TELEMETRY_DISABLED: 'true'
+
+jobs:
+    generate:
+        runs-on: ubuntu-24.04
+        name: Generate Sitemap Lastmod Cache
+        steps:
+            - name: Checkout (full history, no blobs)
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  filter: blob:none
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: package.json
+
+            - name: Generate lastmod cache
+              working-directory: documentation/ag-grid-docs
+              run: node ../../external/ag-website-shared/scripts/generateSitemapLastmodCache.mjs
+
+            - name: Save to Actions cache
+              uses: actions/cache/save@v4
+              with:
+                  path: documentation/ag-grid-docs/.astro/cache/sitemap-lastmod.json
+                  key: sitemap-lastmod-grid-${{ github.run_id }}
