@@ -97,6 +97,40 @@ describe('pivot with groupHierarchy (date-time)', () => {
         };
     };
 
+    test('quarter date-part groups each month into the correct quarter', async () => {
+        const api = gridsManager.createGrid('quarterHierarchy', {
+            columnDefs: [
+                { field: 'date', rowGroup: true, hide: true, groupHierarchy: ['quarter'] },
+                { field: 'v', aggFunc: 'sum' },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        });
+        applyTransactionChecked(api, {
+            add: [
+                { id: 'mar', date: new Date(2020, 2, 1), v: 1 }, // month 3 → Q1
+                { id: 'jul', date: new Date(2020, 6, 1), v: 1 }, // month 7 → Q3
+                { id: 'oct', date: new Date(2020, 9, 1), v: 1 }, // month 10 → Q4
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        // Quarter is derived from the 1-based month: Q1=1-3, Q2=4-6, Q3=7-9, Q4=10-12.
+        // March → Q1, July → Q3, October → Q4 (the months that the old `/4` math mis-bucketed).
+        await new GridRows(api, 'quarter groups', { forcedColumns: ['ag-Grid-AutoColumn'] }).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-ag-Grid-HierarchyColumn-date-quarter-1 ag-Grid-AutoColumn:"1"
+            │ └─┬ LEAF_GROUP id:row-group-ag-Grid-HierarchyColumn-date-quarter-1-date-2020-03-01 ag-Grid-AutoColumn:"2020-03-01"
+            │ · └── LEAF id:mar
+            ├─┬ filler id:row-group-ag-Grid-HierarchyColumn-date-quarter-3 ag-Grid-AutoColumn:"3"
+            │ └─┬ LEAF_GROUP id:row-group-ag-Grid-HierarchyColumn-date-quarter-3-date-2020-07-01 ag-Grid-AutoColumn:"2020-07-01"
+            │ · └── LEAF id:jul
+            └─┬ filler id:row-group-ag-Grid-HierarchyColumn-date-quarter-4 ag-Grid-AutoColumn:"4"
+            · └─┬ LEAF_GROUP id:row-group-ag-Grid-HierarchyColumn-date-quarter-4-date-2020-10-01 ag-Grid-AutoColumn:"2020-10-01"
+            · · └── LEAF id:oct
+        `);
+    });
+
     test('pivot by date column creates hierarchy columns (year -> month)', async () => {
         const api = createPivotDateTimeGrid();
 
@@ -503,7 +537,7 @@ describe('pivot with groupHierarchy (date-time)', () => {
         const val = (part: string) =>
             api.getCellValue({ rowNode: node, colKey: `ag-Grid-HierarchyColumn-date-${part}` });
         expect(val('year')).toBe('2021');
-        expect(val('quarter')).toBe('2');
+        expect(val('quarter')).toBe('3'); // July is in Q3 (months 7-9)
         expect(val('month')).toBe('7');
         expect(val('formattedMonth')).toBe('July');
         expect(val('day')).toBe('15');
@@ -519,7 +553,7 @@ describe('pivot with groupHierarchy (date-time)', () => {
         `);
         await new GridRows(api, 'all date-part values', { forcedColumns }).check(`
             ROOT id:ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-quarter:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date-formattedMonth:null ag-Grid-HierarchyColumn-date-day:null ag-Grid-HierarchyColumn-date-hour:null ag-Grid-HierarchyColumn-date-minute:null ag-Grid-HierarchyColumn-date-second:null
-            └── LEAF id:0 ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-quarter:"2" ag-Grid-HierarchyColumn-date-month:"7" ag-Grid-HierarchyColumn-date-formattedMonth:"July" ag-Grid-HierarchyColumn-date-day:"15" ag-Grid-HierarchyColumn-date-hour:"14" ag-Grid-HierarchyColumn-date-minute:":30" ag-Grid-HierarchyColumn-date-second:":45"
+            └── LEAF id:0 ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-quarter:"3" ag-Grid-HierarchyColumn-date-month:"7" ag-Grid-HierarchyColumn-date-formattedMonth:"July" ag-Grid-HierarchyColumn-date-day:"15" ag-Grid-HierarchyColumn-date-hour:"14" ag-Grid-HierarchyColumn-date-minute:":30" ag-Grid-HierarchyColumn-date-second:":45"
         `);
     });
 

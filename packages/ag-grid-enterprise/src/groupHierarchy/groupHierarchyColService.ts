@@ -24,7 +24,8 @@ interface DatePartSpec {
 
 const DATE_PART_SPECS = {
     year: { label: 'Year', index: 0 },
-    quarter: { label: 'Quarter', index: 1, map: (m) => (Math.floor(Number(m) / 4) + 1).toString() },
+    // `index: 1` is the 1-based month (1-12); quarter = ceil(month / 3): Q1=1-3, Q2=4-6, Q3=7-9, Q4=10-12.
+    quarter: { label: 'Quarter', index: 1, map: (m) => Math.ceil(Number(m) / 3).toString() },
     month: { label: 'Month', index: 1 },
     formattedMonth: {
         label: 'Month',
