@@ -16,6 +16,11 @@ jobs:
   gh_pages_cleanup:
     runs-on: ubuntu-latest
     name: Remove PR preview from gh-pages
+    # Same-repo PRs only — the repo-wide untrusted-PR convention (see pr-review.yml
+    # + the ci.yml pr_preview job). Fork PRs never publish a preview (that job is
+    # same-repo gated) so there is nothing to clean, and they could not hold the
+    # contents:write token this needs anyway.
+    if: github.event.pull_request.head.repo.full_name == github.repository
     permissions:
       contents: write
     concurrency:
@@ -24,20 +29,15 @@ jobs:
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}
     steps:
-      # Check out the PR's BASE (trusted) ref, not the default pull_request ref:
-      # the latter can be the PR merge ref (PR-controlled code) and may be
-      # unresolvable for closed-unmerged PRs. The action carries on the base
-      # branch and operates on gh-pages via its own token-authenticated clone.
-      - name: Checkout (trusted base ref)
+      # Plain checkout (consistent with the rest of ci.yml). The same-repo gate
+      # above means this is trusted code; the action only needs to be present to
+      # run — it operates on gh-pages via its own token-authenticated clone.
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 1
 
-      # hashFiles() guards against the bootstrap window before the shared action
-      # exists on the base branch (no preview was published then either).
       - name: Remove PR preview from gh-pages
-        if: hashFiles('external/ag-shared/github/actions/pr-preview-cleanup/action.yml') != ''
         uses: ./external/ag-shared/github/actions/pr-preview-cleanup
         with:
           pr_number: ${{ env.PR_NUMBER }}

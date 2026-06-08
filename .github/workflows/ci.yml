@@ -403,14 +403,14 @@ jobs:
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}
     steps:
-      # Check out the PR's BASE (trusted) ref, not the PR head: the local shared
-      # action below would otherwise be PR-controlled code executed with a
-      # contents:write token. hashFiles() guards the publish step so it no-ops
-      # until the shared action exists on the base branch (bootstrap onboarding).
-      - name: Checkout (trusted base ref)
+      # The job's same-repo gate (head.repo.full_name == github.repository) is the
+      # repo-wide guard for untrusted PRs (see pr-review.yml + the build job):
+      # fork PRs never reach here, so this local action runs only trusted
+      # same-repo code, and only same-repo PRs can hold the contents:write token
+      # gh-pages publishing needs. Plain checkout, consistent with the rest of ci.yml.
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 1
 
       - name: Download UMD artifact
@@ -452,7 +452,7 @@ jobs:
           echo "publish=true" >> "$GITHUB_OUTPUT"
 
       - name: Publish PR preview to gh-pages
-        if: steps.stage.outputs.publish == 'true' && hashFiles('external/ag-shared/github/actions/pr-preview-publish/action.yml') != ''
+        if: steps.stage.outputs.publish == 'true'
         uses: ./external/ag-shared/github/actions/pr-preview-publish
         with:
           pr_number: ${{ env.PR_NUMBER }}
