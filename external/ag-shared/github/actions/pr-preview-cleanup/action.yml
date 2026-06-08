@@ -53,10 +53,24 @@ runs:
               # out (it can't — gh-pages lacks external/ag-shared).
               TMP="$(mktemp -d)"
               REMOTE="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-              if ! git clone --quiet --branch "$PUBLISH_BRANCH" --depth 1 --single-branch "$REMOTE" "$TMP" 2>/dev/null; then
+              # Distinguish a genuinely-missing publish branch (nothing to do)
+              # from real failures (auth / network / bad URL) — the latter must
+              # fail loudly so stale previews are not silently left behind.
+              # `git ls-remote --exit-code` returns 0 when the ref exists, 2 when
+              # it does not, and other codes on actual errors.
+              set +e
+              git ls-remote --exit-code --heads "$REMOTE" "$PUBLISH_BRANCH" >/dev/null 2>&1
+              rc=$?
+              set -e
+              if [ "$rc" -eq 2 ]; then
                   echo "Publish branch '${PUBLISH_BRANCH}' does not exist; nothing to clean up."
                   exit 0
+              elif [ "$rc" -ne 0 ]; then
+                  echo "::error::Could not query '${PUBLISH_BRANCH}' on ${GITHUB_REPOSITORY} (git ls-remote exit ${rc})."
+                  exit 1
               fi
+              # set -e makes a clone failure here fatal (no longer masked as "missing branch").
+              git clone --quiet --branch "$PUBLISH_BRANCH" --depth 1 --single-branch "$REMOTE" "$TMP"
               cd "$TMP"
               DIR="pr-${PR_NUMBER}"
               if [ ! -d "$DIR" ]; then
