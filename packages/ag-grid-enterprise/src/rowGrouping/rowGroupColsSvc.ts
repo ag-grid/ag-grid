@@ -23,12 +23,12 @@ export class RowGroupColsSvc extends OrderedColsService implements NamedBean, IR
         if (fromIndex === toIndex) {
             return;
         }
-        const impactedColumns = columns.slice(Math.min(fromIndex, toIndex), Math.max(fromIndex, toIndex) + 1);
+        const movedColumn = columns[fromIndex];
         const reordered = columns.slice();
         reordered.splice(toIndex, 0, reordered.splice(fromIndex, 1)[0]);
         this.resetActiveCols(reordered);
-        // Reorder only — stage + flush without a refresh; regrouping is event-driven.
-        this.stageColChange(impactedColumns);
+        // Reorder only — stage + flush without a refresh; regrouping is event-driven. Report the moved
+        this.stageColChange([movedColumn]);
         this.colModel.flushColChanges(source, false);
     }
 
