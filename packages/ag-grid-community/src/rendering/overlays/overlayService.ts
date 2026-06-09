@@ -401,7 +401,11 @@ export class OverlayService extends BeanStub implements NamedBean {
             }
         } else if (this.showInitialOverlay) {
             if (!gos.get('columnDefs') || !gos.get('rowData')) {
-                if (gos.get('autoGenerateColumnDefs') && !this.isDisabled(FileInputOverlayDef)) {
+                if (
+                    gos.get('autoGenerateColumnDefs') &&
+                    gos.get('fileProcessor') &&
+                    !this.isDisabled(FileInputOverlayDef)
+                ) {
                     return FileInputOverlayDef;
                 }
                 if (!this.isDisabled(LoadingOverlayDef)) {

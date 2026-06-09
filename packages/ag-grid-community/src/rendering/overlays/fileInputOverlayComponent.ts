@@ -231,7 +231,11 @@ export class FileInputOverlayComponent
         if (!fileProcessor) {
             fail();
         } else {
-            fileProcessor.processFiles(_addGridCommonParams<IFileProcessorParams>(gos, { files, success, fail }));
+            try {
+                fileProcessor.processFiles(_addGridCommonParams<IFileProcessorParams>(gos, { files, success, fail }));
+            } catch {
+                fail();
+            }
         }
     }
 }
