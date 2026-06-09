@@ -768,8 +768,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 }
                 started = true;
 
-                // When the first and last node are the same we're already finished
+                // When the first and last node are the same the range is just that single node
                 if (lastInRange === firstInRange) {
+                    if (groupsSelectChildren && rowNode.group) {
+                        addAllLeafs(result, rowNode);
+                    } else {
+                        result.push(rowNode);
+                    }
                     break;
                 }
             }

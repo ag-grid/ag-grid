@@ -126,14 +126,16 @@ export class GridActions {
     }
 
     async collapseGroupAtIndex(index: number): Promise<void> {
-        const updated = waitForEvent('modelUpdated', this.api, 1);
-        this.api.setRowNodeExpanded(this.api.getDisplayedRowAtIndex(index)!, false);
-        await updated;
+        return this.setGroupExpandedAtIndex(index, false);
     }
 
     async expandGroupAtIndex(index: number): Promise<void> {
+        return this.setGroupExpandedAtIndex(index, true);
+    }
+
+    private async setGroupExpandedAtIndex(index: number, expanded: boolean): Promise<void> {
         const updated = waitForEvent('modelUpdated', this.api, 1);
-        this.api.setRowNodeExpanded(this.api.getDisplayedRowAtIndex(index)!, true);
+        this.api.setRowNodeExpanded(this.api.getDisplayedRowAtIndex(index)!, expanded);
         await updated;
     }
 }

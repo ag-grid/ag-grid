@@ -619,4 +619,80 @@ describe('ag-grid grouping selection', () => {
             · · · └── LEAF hidden id:6 region:"North America" country:"United States" city:"Los Angeles"
         `);
     });
+
+    test('SHIFT-click on the same row as the anchor selects only that row', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: threeLevelColDefs,
+            animateRows: false,
+            rowSelection: { mode: 'multiRow', enableClickSelection: true, checkboxes: false, headerCheckbox: false },
+            groupDefaultExpanded: 1,
+            rowData: threeLevel(),
+            getRowId: (params) => params.data.id,
+        });
+
+        const actions = new GridActions(api);
+        actions.clickRowByIndex(1); // click Canada (anchor)
+        actions.clickRowByIndex(1, { shiftKey: true }); // shift-click same row
+
+        await new GridRows(api, 'after shift-click on anchor row').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:"row-group-region-North America" ag-Grid-AutoColumn:"North America"
+            · ├─┬ filler selected collapsed id:"row-group-region-North America-country-Canada" ag-Grid-AutoColumn:"Canada"
+            · │ ├─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-Canada-city-Montreal" ag-Grid-AutoColumn:"Montreal"
+            · │ │ └── LEAF hidden id:1 region:"North America" country:"Canada" city:"Montreal"
+            · │ ├─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-Canada-city-Toronto" ag-Grid-AutoColumn:"Toronto"
+            · │ │ └── LEAF hidden id:2 region:"North America" country:"Canada" city:"Toronto"
+            · │ └─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-Canada-city-Ottawa" ag-Grid-AutoColumn:"Ottawa"
+            · │ · └── LEAF hidden id:3 region:"North America" country:"Canada" city:"Ottawa"
+            · └─┬ filler collapsed id:"row-group-region-North America-country-United States" ag-Grid-AutoColumn:"United States"
+            · · ├─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-United States-city-New York" ag-Grid-AutoColumn:"New York"
+            · · │ └── LEAF hidden id:4 region:"North America" country:"United States" city:"New York"
+            · · ├─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-United States-city-Chicago" ag-Grid-AutoColumn:"Chicago"
+            · · │ └── LEAF hidden id:5 region:"North America" country:"United States" city:"Chicago"
+            · · └─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-United States-city-Los Angeles" ag-Grid-AutoColumn:"Los Angeles"
+            · · · └── LEAF hidden id:6 region:"North America" country:"United States" city:"Los Angeles"
+        `);
+    });
+
+    test('SHIFT-click when anchor is in a collapsed group selects only the clicked row', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: threeLevelColDefs,
+            animateRows: false,
+            rowSelection: { mode: 'multiRow', enableClickSelection: true, checkboxes: false, headerCheckbox: false },
+            groupDefaultExpanded: 1,
+            rowData: threeLevel(),
+            getRowId: (params) => params.data.id,
+        });
+
+        const actions = new GridActions(api);
+        actions.clickRowByIndex(1); // click Canada (anchor = Canada, visible)
+
+        // Collapse North America — Canada (anchor) becomes hidden
+        await actions.collapseGroupAtIndex(0);
+
+        // Re-expand so rows are visible again but anchor is still hidden inside the group context
+        await actions.expandGroupAtIndex(0);
+
+        // Now shift-click United States — anchor (Canada) is visible again, so this is a normal range
+        actions.clickRowByIndex(2, { shiftKey: true });
+
+        await new GridRows(api, 'after anchor collapsed and re-expanded, then shift-click').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:"row-group-region-North America" ag-Grid-AutoColumn:"North America"
+            · ├─┬ filler selected collapsed id:"row-group-region-North America-country-Canada" ag-Grid-AutoColumn:"Canada"
+            · │ ├─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-Canada-city-Montreal" ag-Grid-AutoColumn:"Montreal"
+            · │ │ └── LEAF hidden id:1 region:"North America" country:"Canada" city:"Montreal"
+            · │ ├─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-Canada-city-Toronto" ag-Grid-AutoColumn:"Toronto"
+            · │ │ └── LEAF hidden id:2 region:"North America" country:"Canada" city:"Toronto"
+            · │ └─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-Canada-city-Ottawa" ag-Grid-AutoColumn:"Ottawa"
+            · │ · └── LEAF hidden id:3 region:"North America" country:"Canada" city:"Ottawa"
+            · └─┬ filler selected collapsed id:"row-group-region-North America-country-United States" ag-Grid-AutoColumn:"United States"
+            · · ├─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-United States-city-New York" ag-Grid-AutoColumn:"New York"
+            · · │ └── LEAF hidden id:4 region:"North America" country:"United States" city:"New York"
+            · · ├─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-United States-city-Chicago" ag-Grid-AutoColumn:"Chicago"
+            · · │ └── LEAF hidden id:5 region:"North America" country:"United States" city:"Chicago"
+            · · └─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-United States-city-Los Angeles" ag-Grid-AutoColumn:"Los Angeles"
+            · · · └── LEAF hidden id:6 region:"North America" country:"United States" city:"Los Angeles"
+        `);
+    });
 });
