@@ -112,18 +112,27 @@ describe('ag-grid file input overlay', () => {
     });
 
     describe('visibility', () => {
-        test('shows file input overlay when processFileInput set with empty rowData', () => {
+        test('shows file input overlay with explicit columnDefs, null rowData, and processFileInput', () => {
+            gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }],
+                rowData: null as any,
+                processFileInput: makeProcessFileInput(),
+            });
+            expect(hasFileInputOverlay()).toBeTruthy();
+            expect(hasLoadingOverlay()).toBeFalsy();
+        });
+
+        test('shows no-rows overlay when processFileInput set with empty rowData', () => {
             gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'a' }],
                 rowData: [],
                 processFileInput: makeProcessFileInput(),
             });
-            expect(hasFileInputOverlay()).toBeTruthy();
-            expect(hasLoadingOverlay()).toBeFalsy();
-            expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasFileInputOverlay()).toBeFalsy();
         });
 
-        test('shows file input overlay when processFileInput set and rowData cleared to empty', () => {
+        test('shows no-rows overlay when processFileInput set and rowData cleared to empty', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'a' }],
                 rowData: [{ a: 1 }],
@@ -132,7 +141,8 @@ describe('ag-grid file input overlay', () => {
             expect(hasFileInputOverlay()).toBeFalsy();
 
             api.setGridOption('rowData', []);
-            expect(hasFileInputOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasFileInputOverlay()).toBeFalsy();
         });
 
         test('shows file input overlay when processFileInput set with undefined rowData and autoGenerateColumnDefs', () => {
@@ -165,8 +175,7 @@ describe('ag-grid file input overlay', () => {
 
         test('hides file input overlay when rowData is set with rows', async () => {
             const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(),
             });
             expect(hasFileInputOverlay()).toBeTruthy();
@@ -180,7 +189,7 @@ describe('ag-grid file input overlay', () => {
             `);
         });
 
-        test('shows file input overlay again when rowData is cleared', () => {
+        test('shows file input overlay on demand via activeOverlay over existing data', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'a' }],
                 rowData: [{ a: 1 }],
@@ -188,7 +197,7 @@ describe('ag-grid file input overlay', () => {
             });
             expect(hasFileInputOverlay()).toBeFalsy();
 
-            api.setGridOption('rowData', []);
+            api.setGridOption('activeOverlay', 'agFileInputOverlay');
             expect(hasFileInputOverlay()).toBeTruthy();
         });
 
@@ -216,10 +225,19 @@ describe('ag-grid file input overlay', () => {
             expect(getErrorBannerText()).toBe('gridOptions.processFileInput is missing');
         });
 
-        test('loading=true takes precedence over processFileInput', () => {
+        test('shows no-rows overlay with explicit columnDefs and empty rowData even with processFileInput', () => {
             gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'a' }],
                 rowData: [],
+                processFileInput: makeProcessFileInput(),
+            });
+            expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasFileInputOverlay()).toBeFalsy();
+        });
+
+        test('loading=true takes precedence over processFileInput', () => {
+            gridsManager.createGrid('myGrid', {
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(),
                 loading: true,
             });
@@ -231,8 +249,7 @@ describe('ag-grid file input overlay', () => {
     describe('drop zone content', () => {
         test('shows default overlay text', () => {
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(),
             });
             expect(getDropZoneText()).toBe('Drag & Drop file to import data');
@@ -240,8 +257,7 @@ describe('ag-grid file input overlay', () => {
 
         test('shows custom overlay text from overlayComponentParams', () => {
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(),
                 overlayComponentParams: {
                     fileInput: { overlayText: 'Drop CSV here' },
@@ -252,8 +268,7 @@ describe('ag-grid file input overlay', () => {
 
         test('shows browse button', () => {
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(),
             });
             expect(hasBrowseButton()).toBeTruthy();
@@ -275,8 +290,7 @@ describe('ag-grid file input overlay', () => {
         test('shows error banner when processFileInput calls fail', () => {
             let capturedParams: ProcessFileInputParams | undefined;
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput((params) => {
                     capturedParams = params;
                 }),
@@ -299,8 +313,7 @@ describe('ag-grid file input overlay', () => {
         test('shows default error message when fail called without argument', () => {
             let capturedParams: ProcessFileInputParams | undefined;
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput((params) => {
                     capturedParams = params;
                 }),
@@ -318,8 +331,7 @@ describe('ag-grid file input overlay', () => {
 
         test('shows error when processFileInput throws synchronously', () => {
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(() => {
                     throw new Error('sync error');
                 }),
@@ -338,8 +350,7 @@ describe('ag-grid file input overlay', () => {
     describe('processing state', () => {
         test('shows processing state when file is dropped', () => {
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(),
             });
 
@@ -355,8 +366,7 @@ describe('ag-grid file input overlay', () => {
         test('ignores additional drops while processing', () => {
             let callCount = 0;
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(() => {
                     callCount++;
                 }),
@@ -375,8 +385,7 @@ describe('ag-grid file input overlay', () => {
         test('updates grid rowData on success', async () => {
             let capturedParams: ProcessFileInputParams | undefined;
             const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput((params) => {
                     capturedParams = params;
                 }),
@@ -399,13 +408,31 @@ describe('ag-grid file input overlay', () => {
                 └── LEAF id:1 a:20
             `);
         });
+
+        test('shows no-rows overlay when success is called with empty array', () => {
+            let capturedParams: ProcessFileInputParams | undefined;
+            gridsManager.createGrid('myGrid', {
+                autoGenerateColumnDefs: true,
+                processFileInput: makeProcessFileInput((params) => {
+                    capturedParams = params;
+                }),
+            });
+
+            const file = new File([''], 'empty.csv', { type: 'text/csv' });
+            const eGui = getOverlayGui();
+            eGui.dispatchEvent(createFileDragEvent('drop', [file]));
+
+            capturedParams!.success([]);
+
+            expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasFileInputOverlay()).toBeFalsy();
+        });
     });
 
     describe('drag and drop interactions', () => {
         test('adds active class on dragenter with file', () => {
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(),
             });
 
@@ -417,8 +444,7 @@ describe('ag-grid file input overlay', () => {
 
         test('removes active class on dragleave', () => {
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(),
             });
 
@@ -432,8 +458,7 @@ describe('ag-grid file input overlay', () => {
 
         test('handles nested dragenter/dragleave via counter', () => {
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(),
             });
 
@@ -455,8 +480,7 @@ describe('ag-grid file input overlay', () => {
 
         test('resets drag state on drop', () => {
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(),
             });
 
@@ -471,8 +495,7 @@ describe('ag-grid file input overlay', () => {
 
         test('ignores non-file drag events', () => {
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(),
             });
 
@@ -485,8 +508,7 @@ describe('ag-grid file input overlay', () => {
         test('does not process drop without files', () => {
             let called = false;
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(() => {
                     called = true;
                 }),
@@ -503,8 +525,7 @@ describe('ag-grid file input overlay', () => {
     describe('file input (browse button)', () => {
         test('browse button and hidden file input are rendered', () => {
             gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
+                autoGenerateColumnDefs: true,
                 processFileInput: makeProcessFileInput(),
             });
 

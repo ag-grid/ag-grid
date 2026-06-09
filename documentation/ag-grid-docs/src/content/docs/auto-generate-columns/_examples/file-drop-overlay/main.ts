@@ -59,11 +59,11 @@ const gridOptions: GridOptions = {
     toolbar: {
         items: [
             {
-                label: 'Clear Data',
-                icon: 'cancel',
+                label: 'Upload File',
+                icon: 'document',
                 alignment: 'right',
                 action: (params: ToolbarItemActionParams) => {
-                    params.api.setGridOption('rowData', null);
+                    params.api.setGridOption('activeOverlay', 'agFileInputOverlay');
                 },
             },
         ],

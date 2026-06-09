@@ -401,11 +401,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             }
         } else if (this.showInitialOverlay) {
             if (!gos.get('columnDefs') || !gos.get('rowData')) {
-                if (
-                    gos.get('autoGenerateColumnDefs') &&
-                    gos.get('processFileInput') &&
-                    !this.isDisabled(FileInputOverlayDef)
-                ) {
+                if (gos.get('processFileInput') && !this.isDisabled(FileInputOverlayDef)) {
                     return FileInputOverlayDef;
                 }
                 if (!this.isDisabled(LoadingOverlayDef)) {
@@ -415,13 +411,6 @@ export class OverlayService extends BeanStub implements NamedBean {
             this.disableInitialOverlay();
         } else {
             this.disableInitialOverlay();
-        }
-
-        if (gos.get('processFileInput') && !this.isDisabled(FileInputOverlayDef)) {
-            const rowData = gos.get('rowData');
-            if (rowData == null || (Array.isArray(rowData) && rowData.length === 0)) {
-                return FileInputOverlayDef;
-            }
         }
 
         // activeOverlay already checked above
