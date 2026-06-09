@@ -299,6 +299,13 @@
     z-index: 0;
 }
 
+:where(.ag-row.ag-embedded-full-width-row) > .ag-grid-scrolling-cells {
+    flex: 1 0 auto;
+
+    /* rtl:ignore */
+    margin-right: var(--ag-internal-pinned-right-sticky-offset, 0);
+}
+
 .ag-grid-pinned-left-cells,
 .ag-grid-pinned-right-cells {
     position: sticky;
