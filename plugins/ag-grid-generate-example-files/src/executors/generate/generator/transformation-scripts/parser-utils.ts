@@ -409,6 +409,8 @@ export function findAllAccessedProperties(node) {
         // Do nothing for Class declarations as this is likely a cell renderer setup
     } else if (ts.isTypeReferenceNode(node)) {
         // Do nothing for Type references
+    } else if (ts.isStringLiteral(node) || ts.isNumericLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
+        // Do nothing for literals — they are values, not property accesses
     } else if (node instanceof Array) {
         node.forEach((element) => {
             properties = [...properties, ...findAllAccessedProperties(element)];

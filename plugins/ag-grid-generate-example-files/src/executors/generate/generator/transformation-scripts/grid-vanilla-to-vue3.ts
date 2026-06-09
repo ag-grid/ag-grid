@@ -117,7 +117,7 @@ function getPropertyBindings(
         propertyNames.push('rowData');
     }
 
-    if (!propertyAssignments.find((item) => item.indexOf('rowData') >= 0)) {
+    if (!propertyAssignments.find((item) => item.replace(/setGridOption\('rowData'/g, '').indexOf('rowData') >= 0)) {
         propertyAssignments.push(`const rowData = ref<${rowDataType}[]>(null);`);
     }
 
