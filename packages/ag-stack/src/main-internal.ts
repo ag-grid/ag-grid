@@ -75,6 +75,7 @@ export { AutoScrollService } from './rendering/autoScrollService';
 export { CssClassManager } from './rendering/cssClassManager';
 export { defaultFontFamily, defaultLightColorSchemeParams, sharedDefaults } from './theming/shared/shared-css';
 export type { SharedThemeParams } from './theming/shared/shared-css';
+export { _createStyledRootElements, _initDetachedStyledRoot, _initStyledRoot } from './theming/styledRoot';
 export { _asThemeImpl, createSharedTheme, ThemeImpl } from './theming/themeImpl';
 export type { ThemeLogger } from './theming/themeLogger';
 export {

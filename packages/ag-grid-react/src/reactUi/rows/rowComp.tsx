@@ -59,10 +59,8 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const eFullWidthAnchor = useRef<HTMLDivElement | null>(null);
-    const ePinnedLeftSection = useRef<HTMLDivElement | null>(null);
     const ePinnedLeftCells = useRef<HTMLDivElement | null>(null);
     const eScrollingCells = useRef<HTMLDivElement | null>(null);
-    const ePinnedRightSection = useRef<HTMLDivElement | null>(null);
     const ePinnedRightCells = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
     const fullWidthEmbeddedLeftCompRef = useRef<ICellRenderer>();
@@ -72,7 +70,8 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     const fullWidthEmbeddedLeftParamsRef = useRef<ICellRendererParams>();
     const fullWidthEmbeddedCenterParamsRef = useRef<ICellRendererParams>();
     const fullWidthEmbeddedRightParamsRef = useRef<ICellRendererParams>();
-    const [embeddedSectionHasContent, setEmbeddedSectionHasContent] = useState(() => rowCtrl.embeddedSectionHasContent);
+    const [, setEmbeddedSectionHasContent] = useState(() => rowCtrl.embeddedSectionHasContent);
+    const [, refreshWidths] = useState(0);
 
     const autoHeightSetup = useRef<boolean>(false);
     const [autoHeightSetupAttempt, setAutoHeightSetupAttempt] = useState<number>(0);
@@ -163,10 +162,9 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 }
             },
             getPinnedLeftRowElement: () => ePinnedLeftCells.current ?? undefined,
-            getPinnedLeftSectionElement: () => ePinnedLeftSection.current ?? undefined,
             getScrollingRowElement: () => eScrollingCells.current ?? undefined,
             getPinnedRightRowElement: () => ePinnedRightCells.current ?? undefined,
-            getPinnedRightSectionElement: () => ePinnedRightSection.current ?? undefined,
+            refreshPinnedSections: () => refreshWidths((v) => v + 1),
             showFullWidth: (compDetails) => {
                 embeddedFullWidthCompDetailsRef.current = undefined;
                 setEmbeddedFullWidthCompDetails(undefined);
@@ -384,10 +382,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         };
     }, [cellCtrlsMerged]);
 
-    const { leftWidth, centerWidth, rightWidth } = useMemo(
-        () => rowCtrl.getMappedPinnedCellGroupWidths(),
-        [rowCtrl, showEmbeddedFullWidth, embeddedSectionHasContent]
-    );
+    const { leftWidth, centerWidth, rightWidth, renderLeft, renderRight } = rowCtrl.getMappedPinnedCellGroupWidths();
 
     const reactFullWidthCellRendererStateless = useMemo(() => {
         const res =
@@ -440,28 +435,30 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     const renderCellSection = (
         sectionClass: string,
-        sectionRef: React.Ref<HTMLDivElement> | undefined,
-        wrapperRef: React.Ref<HTMLDivElement>,
+        ref: React.Ref<HTMLDivElement>,
         width: number,
         children: React.ReactNode,
-        pinned: boolean = false
-    ) => (
-        <div
-            className={sectionClass}
-            role="presentation"
-            ref={sectionRef}
-            style={pinned ? { width: `${width}px`, display: width > 0 ? undefined : 'none' } : undefined}
-        >
-            <div
-                className="ag-grid-container-wrapper"
-                role="presentation"
-                ref={wrapperRef}
-                style={{ width: width || undefined, display: width > 0 ? undefined : 'none' }}
-            >
+        pinned: boolean = false,
+        shouldRender: boolean = true
+    ) => {
+        if (!shouldRender) {
+            return null;
+        }
+        if (pinned) {
+            return (
+                <div className={sectionClass} role="presentation" style={{ width: `${width}px` }}>
+                    <div className="ag-grid-container-wrapper" role="presentation" ref={ref}>
+                        {children}
+                    </div>
+                </div>
+            );
+        }
+        return (
+            <div className={sectionClass} role="presentation" ref={ref} style={{ width: `${width}px` }}>
                 {children}
             </div>
-        </div>
-    );
+        );
+    };
 
     return (
         <div
@@ -472,56 +469,29 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             row-id={rowId}
             row-business-key={rowBusinessKey}
         >
-            {showCells ? (
+            {showCells || showEmbeddedFullWidth ? (
                 <>
                     {renderCellSection(
                         'ag-grid-pinned-left-cells',
-                        ePinnedLeftSection,
                         ePinnedLeftCells,
                         leftWidth,
-                        showCellsJsx(leftCellCtrls),
-                        true
+                        showCells ? showCellsJsx(leftCellCtrls) : showEmbeddedFrameworkSection('left'),
+                        true,
+                        renderLeft
                     )}
                     {renderCellSection(
                         'ag-grid-scrolling-cells',
-                        undefined,
                         eScrollingCells,
                         centerWidth,
-                        showCellsJsx(centerCellCtrls)
+                        showCells ? showCellsJsx(centerCellCtrls) : showEmbeddedFrameworkSection('center')
                     )}
                     {renderCellSection(
                         'ag-grid-pinned-right-cells',
-                        ePinnedRightSection,
                         ePinnedRightCells,
                         rightWidth,
-                        showCellsJsx(rightCellCtrls),
-                        true
-                    )}
-                </>
-            ) : showEmbeddedFullWidth ? (
-                <>
-                    {renderCellSection(
-                        'ag-grid-pinned-left-cells',
-                        ePinnedLeftSection,
-                        ePinnedLeftCells,
-                        leftWidth,
-                        showEmbeddedFrameworkSection('left'),
-                        true
-                    )}
-                    {renderCellSection(
-                        'ag-grid-scrolling-cells',
-                        undefined,
-                        eScrollingCells,
-                        centerWidth,
-                        showEmbeddedFrameworkSection('center')
-                    )}
-                    {renderCellSection(
-                        'ag-grid-pinned-right-cells',
-                        ePinnedRightSection,
-                        ePinnedRightCells,
-                        rightWidth,
-                        showEmbeddedFrameworkSection('right'),
-                        true
+                        showCells ? showCellsJsx(rightCellCtrls) : showEmbeddedFrameworkSection('right'),
+                        true,
+                        renderRight
                     )}
                 </>
             ) : showFullWidthFramework ? (

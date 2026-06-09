@@ -1,7 +1,9 @@
+import type { RowSelectedEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
+import { waitForEvent } from '../test-utils/test-utils-events';
 
 describe('ag-grid grouping selection', () => {
     const gridsManager = new TestGridsManager({
@@ -316,6 +318,55 @@ describe('ag-grid grouping selection', () => {
             · │ └── LEAF id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
             · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
             · · └── LEAF id:5 country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football"
+        `);
+    });
+
+    test('AG-17267 rowSelected event includes browser event for group and descendants', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', athlete: 'Alice' },
+            { id: '2', country: 'Ireland', athlete: 'Bob' },
+            { id: '3', country: 'Italy', athlete: 'Carlo' },
+        ]);
+
+        const events: RowSelectedEvent[] = [];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            rowSelection: {
+                mode: 'multiRow',
+                groupSelects: 'descendants',
+                enableClickSelection: true,
+            },
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+            onRowSelected: (e) => events.push(e),
+        });
+
+        await waitForEvent('firstDataRendered', api);
+
+        const groupNode = api.getRowNode('row-group-country-Ireland')!;
+        const mouseEvent = new MouseEvent('click', { bubbles: true });
+        const { selectionSvc } = (groupNode as any).beans;
+        selectionSvc.handleSelectionEvent(mouseEvent, groupNode, 'rowClicked');
+
+        // gridOptions callbacks are dispatched asynchronously via setTimeout
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        expect(events.length).toBe(3);
+        for (const e of events) {
+            expect(e.event).toBe(mouseEvent);
+        }
+
+        await new GridRows(api, 'after group selection').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP selected id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF selected id:1 country:"Ireland" athlete:"Alice"
+            │ └── LEAF selected id:2 country:"Ireland" athlete:"Bob"
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └── LEAF id:3 country:"Italy" athlete:"Carlo"
         `);
     });
 });

@@ -11,6 +11,7 @@ import type {
     IDragAndDropService,
 } from '../interfaces/iDragAndDrop';
 import type { IPropertiesService } from '../interfaces/iProperties';
+import { _initStyledRoot } from '../theming/styledRoot';
 import { _getPageBody, _getRootNode } from '../utils/document';
 import { _anchorElementToMouseMoveEvent } from '../utils/event';
 import type { AgPromise } from '../utils/promise';
@@ -61,6 +62,7 @@ export abstract class BaseDragAndDropService<
 
     private dragImageCompPromise: AgPromise<IComponent<any> & IDragAndDropImage> | null = null;
     private dragImageComp: (IComponent<any> & IDragAndDropImage) | null = null;
+    private disconnect: (() => void) | null = null;
     private dragImageLastIcon: TDragAndDropIcon | null | undefined = undefined;
     private dragImageLastLabel: string | null | undefined = undefined;
 
@@ -444,7 +446,8 @@ export abstract class BaseDragAndDropService<
             this.dragImageComp = null;
         }
         if (comp) {
-            comp.getGui()?.remove();
+            this.disconnect?.();
+            this.disconnect = null;
             this.destroyBean(comp);
         }
     }
@@ -489,7 +492,6 @@ export abstract class BaseDragAndDropService<
         }
 
         this.gos.setInstanceDomData(eGui);
-        this.beans.environment.applyThemeClasses(eGui);
 
         style.top = '20px';
         style.left = '20px';
@@ -497,9 +499,9 @@ export abstract class BaseDragAndDropService<
         const targetEl = _getPageBody(this.beans);
         if (!targetEl) {
             this.warnNoBody();
-        } else {
-            targetEl.appendChild(eGui);
+            return;
         }
+        this.disconnect = _initStyledRoot(this.beans.environment, targetEl, eGui);
     }
 
     private updateDragImageComp(): void {

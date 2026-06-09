@@ -1,3 +1,4 @@
+import { _hasCalculatedExpression } from '../../columns/calculatedColumnUtils';
 import type { UserComponentName } from '../../context/context';
 import { _isSortDefValid, isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
@@ -128,7 +129,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         },
         calculatedExpression: {
             validate: (colDef) => {
-                if (colDef.calculatedExpression == null) {
+                if (!_hasCalculatedExpression(colDef)) {
                     return null;
                 }
                 if (colDef.field || colDef.valueGetter || colDef.valueSetter) {

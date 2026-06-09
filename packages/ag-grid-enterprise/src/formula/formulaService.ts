@@ -8,9 +8,10 @@ import type {
     IFormulaService,
     NamedBean,
     RowNode,
+    RowNodeDataChangedEvent,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, _convertColumnEventSourceType, _warn } from 'ag-grid-community';
+import { BeanStub, _convertColumnEventSourceType, _hasCalculatedExpression, _warn } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
@@ -115,7 +116,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             if (col.isAllowFormula()) {
                 editableFormulaColumnsPresent = true;
             }
-            if (calculatedColumnsEnabled && col.colDef.calculatedExpression != null) {
+            if (calculatedColumnsEnabled && _hasCalculatedExpression(col.colDef)) {
                 calculatedColumnsPresent = true;
             }
             if (editableFormulaColumnsPresent && (calculatedColumnsPresent || !calculatedColumnsEnabled)) {
@@ -201,22 +202,13 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         this.formulaDataSvc = this.beans.formulaDataSvc;
 
         const onCellValueChanged = (event: CellValueChangedEvent) => {
-            if (!this.active && !this.calculatedColumnsActive) {
-                return;
-            }
-            // valueService fires this once for the edited node and once for its pinnedSibling.
-            // Skip the pinned-side event: refreshCells is sync, so running both repaints twice.
-            const node = event.node as RowNode;
-            if (node.rowPinned != null && node.pinnedSibling) {
-                return;
-            }
-            // Evict this row's (and its pinned sibling's) formulas so same-row calculated columns
-            // re-evaluate, then invalidate every cached value — an editable formula in another row
-            // may reference the changed cell. The refresh neither forces nor suppresses flash, so
-            // dependent cells flash on a genuine value change in step with the edited column.
-            this.dropRow(node);
-            this.bumpValueCacheAndRefresh(false);
+            this.onRowDataChanged(event.node as RowNode);
         };
+
+        const onRowNodeDataChanged = (event: RowNodeDataChangedEvent) => {
+            this.onRowDataChanged(event.node as RowNode);
+        };
+
         const onNewColumnsLoaded = () => {
             if (!this.isEvaluationActive()) {
                 return;
@@ -285,6 +277,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
         this.addManagedListeners(this.beans.eventSvc, {
             cellValueChanged: onCellValueChanged,
+            rowNodeDataChanged: onRowNodeDataChanged,
             newColumnsLoaded: onNewColumnsLoaded,
             columnMoved: onColumnMoved,
             modelUpdated: onModelUpdated,
@@ -292,6 +285,21 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             pinnedRowDataChanged: onPinnedRowsChanged,
             pinnedRowsChanged: onPinnedRowsChanged,
         });
+    }
+
+    private onRowDataChanged(node: RowNode): void {
+        if (!this.active && !this.calculatedColumnsActive) {
+            return;
+        }
+        // Value and row-data changes can fire once for the source node and once for its pinned sibling.
+        // Skip the pinned-side event: refreshCells is sync, so running both repaints twice.
+        if (node.rowPinned != null && node.pinnedSibling) {
+            return;
+        }
+        // Evict this row's formulas so same-row calculated columns re-evaluate, then invalidate every
+        // cached value because an editable formula in another row may reference the changed row.
+        this.dropRow(node);
+        this.bumpValueCacheAndRefresh(false);
     }
 
     public override destroy(): void {
@@ -627,9 +635,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             }
 
             const calculatedExpression = col.colDef.calculatedExpression;
-            return calculatedExpression == null
+            return calculatedExpression === undefined
                 ? this.ensureEditableCellFormula(row, col)
-                : this.ensureCalculatedCellFormula(row, col, calculatedExpression);
+                : this.ensureCalculatedCellFormula(row, col, calculatedExpression ?? '');
         }
 
         if (!calculatedColumnsActive) {
@@ -637,7 +645,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
 
         const calculatedExpression = col.colDef.calculatedExpression;
-        return calculatedExpression == null ? null : this.ensureCalculatedCellFormula(row, col, calculatedExpression);
+        return calculatedExpression === undefined
+            ? null
+            : this.ensureCalculatedCellFormula(row, col, calculatedExpression ?? '');
     }
 
     private ensureEditableCellFormula(row: RowNode, col: AgColumn): CellFormula | null {
@@ -731,7 +741,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Fetch a non-formula value from the grid without triggering nested formula calc. */
     private fetchRawValue(col: AgColumn, row: RowNode): unknown {
         if (col.isCalculatedCol) {
-            return undefined;
+            return col.colDef.calculatedExpression?.trim() ? undefined : '';
         }
 
         return this.beans.valueSvc.getValue(col, row, 'data');

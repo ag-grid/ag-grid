@@ -837,6 +837,15 @@
     .ag-dragging-fill-handle .ag-dialog {
         opacity: 0.7;
         pointer-events: none;
+
+        .ag-charts-canvas-center,
+        .ag-charts-series-area,
+        .ag-charts-proxy-elem,
+        .ag-charts-proxy-legend-toolbar,
+        .ag-charts-toolbar,
+        .ag-charts-canvas-overlay > * {
+            pointer-events: none;
+        }
     }
 
     .ag-dialog {

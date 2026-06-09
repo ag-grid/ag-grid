@@ -1055,9 +1055,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // 1) height of grid body changes, ie number of displayed rows has changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
-    public redraw(params: { afterScroll?: boolean } = {}) {
+    public redraw(params: { afterScroll?: boolean; force?: boolean } = {}) {
         const { focusSvc, animationFrameSvc } = this.beans;
-        const { afterScroll } = params;
+        const { afterScroll, force } = params;
         let cellFocused: CellPosition | undefined;
 
         const stickyRowFeature = this.stickyRowFeature;
@@ -1086,7 +1086,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         const rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;
 
-        if (afterScroll && !hasStickyRowChanges && !rangeChanged) {
+        if (afterScroll && !hasStickyRowChanges && !rangeChanged && !force) {
             return;
         }
 
@@ -1255,7 +1255,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.refreshPinnedRowComps();
         this.removeRowCtrls(rowsToRemove);
-        this.redraw({ afterScroll: true });
+        this.redraw({ afterScroll: true, force: true });
     }
 
     public getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[] {

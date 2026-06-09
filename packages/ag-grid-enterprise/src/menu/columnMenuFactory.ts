@@ -4,6 +4,7 @@ import {
     _addGridCommonParams,
     _getDisplaySortForColumn,
     _getGrandTotalRow,
+    _hasCalculatedExpression,
     _isClientSideRowModel,
     _isLegacyMenuEnabled,
 } from 'ag-grid-community';
@@ -170,7 +171,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
         if (beans.calculatedColsSvc != null && isPrimary) {
             result.push(MENU_ITEM_SEPARATOR);
-            if (column?.colDef.calculatedExpression != null) {
+            if (_hasCalculatedExpression(column?.colDef)) {
                 result.push('editCalculatedColumn');
                 result.push('removeCalculatedColumn');
             }

@@ -4,6 +4,7 @@
     display: flex;
     width: 100%;
     height: 100%;
+    background-color: var(--ag-wrapper-background-color);
 }
 
 .ag-chart-components-wrapper {
@@ -450,4 +451,17 @@
 
 .ag-chart-settings-card-item.ag-not-selected:hover {
     opacity: 0.35;
+}
+
+:where(.ag-dragging-range-handle) .ag-dialog,
+:where(.ag-dragging-fill-handle) .ag-dialog {
+    /* stylelint-disable-next-line ag/no-low-performance-key-selector */
+    .ag-charts-canvas-center,
+    .ag-charts-series-area,
+    .ag-charts-proxy-elem,
+    .ag-charts-proxy-legend-toolbar,
+    .ag-charts-toolbar,
+    .ag-charts-canvas-overlay > * {
+        pointer-events: none;
+    }
 }

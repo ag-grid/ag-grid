@@ -19,7 +19,6 @@ import type {
     ChartModel,
     ChartToolPanelName,
     ChartType,
-    Environment,
     FocusService,
     IAggFunc,
     PartialCellRange,
@@ -84,7 +83,6 @@ export class GridChartComp extends Component {
     private focusSvc: FocusService;
     private popupSvc: PopupService;
     private enterpriseChartProxyFactory?: EnterpriseChartProxyFactory;
-    private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         this.crossFilterService = beans.chartCrossFilterSvc as ChartCrossFilterService;
@@ -93,7 +91,6 @@ export class GridChartComp extends Component {
         this.focusSvc = beans.focusSvc;
         this.popupSvc = beans.popupSvc!;
         this.enterpriseChartProxyFactory = beans.enterpriseChartProxyFactory as EnterpriseChartProxyFactory;
-        this.environment = beans.environment;
     }
 
     private readonly eChart: HTMLElement = RefPlaceholder;
@@ -140,10 +137,6 @@ export class GridChartComp extends Component {
             chartThemeName: this.getThemeName(),
         };
 
-        const isRtl = this.gos.get('enableRtl');
-
-        this.eWrapper.classList.add(isRtl ? 'ag-rtl' : 'ag-ltr');
-
         // only the chart controller interacts with the chart model
         const model = this.createBean(new ChartDataModel(modelParams));
         this.chartController = this.createManagedBean(new ChartController(model));
@@ -156,13 +149,6 @@ export class GridChartComp extends Component {
 
         if (this.params.insideDialog) {
             this.addDialog();
-        } else {
-            // don't add the theme if we're in a dialog, since dialogs already
-            // add a theme, and legacy themes don't like being applied twice
-            this.addManagedEventListeners({
-                stylesChanged: this.updateTheme.bind(this),
-            });
-            this.updateTheme();
         }
 
         this.addMenu();
@@ -177,10 +163,6 @@ export class GridChartComp extends Component {
 
         this.update();
         this.raiseChartCreatedEvent();
-    }
-
-    private updateTheme() {
-        this.environment.applyThemeClasses(this.getGui());
     }
 
     private createChart(): void {

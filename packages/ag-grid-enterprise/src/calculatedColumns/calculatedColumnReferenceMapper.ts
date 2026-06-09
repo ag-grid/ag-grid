@@ -13,6 +13,7 @@ interface CalculatedColumnReferenceError {
 interface CalculatedColumnReferenceMapper {
     suggestions: ColumnSuggestion[];
     toInternalExpression(expression: string): { expression: string } | { error: CalculatedColumnReferenceError };
+    toInternalExpressionBestEffort(expression: string): string;
     toDisplayExpression(expression: string): string;
 }
 
@@ -81,6 +82,17 @@ export function createCalculatedColumnReferenceMapper(
                 return ref;
             });
             return error !== undefined ? { error } : { expression: internalExpression };
+        },
+        toInternalExpressionBestEffort(expression: string) {
+            return replaceBracketReferences(expression, (ref) => {
+                const exactColId = referenceToColId.get(ref);
+                if (exactColId != null) {
+                    return exactColId;
+                }
+
+                const caseInsensitiveColIds = caseInsensitiveReferenceToColIds.get(normaliseReference(ref));
+                return caseInsensitiveColIds?.length === 1 ? caseInsensitiveColIds[0] : ref;
+            });
         },
         toDisplayExpression(expression: string) {
             return replaceBracketReferences(expression, (ref) => colIdToReference.get(ref) ?? ref);

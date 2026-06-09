@@ -20,6 +20,7 @@ import {
     BeanStub,
     _createIconNoSpan,
     _getRowNode,
+    _hasCalculatedExpression,
     _normalizeSortType,
     _resetColumnState,
     _warn,
@@ -488,7 +489,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'editCalculatedColumn':
-                    return calculatedColsSvc && column?.colDef.calculatedExpression != null
+                    return calculatedColsSvc && _hasCalculatedExpression(column?.colDef)
                         ? {
                               name: localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
                               icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
@@ -496,7 +497,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'removeCalculatedColumn':
-                    return calculatedColsSvc && column?.colDef.calculatedExpression != null
+                    return calculatedColsSvc && _hasCalculatedExpression(column?.colDef)
                         ? {
                               name: localeTextFunc('calculatedColumnRemove', 'Remove Calculated Column'),
                               icon: _createIconNoSpan('calculatedColumnRemove', beans, null),

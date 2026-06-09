@@ -792,6 +792,12 @@
         z-index: 0;
     }
 
+    .ag-row.ag-embedded-full-width-row > .ag-grid-scrolling-cells {
+        flex: 1 0 auto;
+
+        margin-right: var(--ag-internal-pinned-right-sticky-offset, 0px);
+    }
+
     .ag-grid-pinned-left-cells,
     .ag-grid-pinned-right-cells {
         position: sticky;

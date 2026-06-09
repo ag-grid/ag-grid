@@ -1,3 +1,4 @@
+import { _hasCalculatedExpression } from '../columns/calculatedColumnUtils';
 import type { AgColumn } from '../entities/agColumn';
 import type { ICalculatedColumnsService } from '../interfaces/iCalculatedColumns';
 
@@ -15,11 +16,11 @@ export function _getCalculatedColumnCssClasses(
     column: AgColumn | null | undefined,
     calculatedColsSvc: ICalculatedColumnsService | undefined
 ): readonly string[] {
-    if (calculatedColsSvc == null || column?.colDef.calculatedExpression == null) {
+    if (calculatedColsSvc == null || !_hasCalculatedExpression(column?.colDef)) {
         return EMPTY_CALCULATED_COLUMN_CSS_CLASSES;
     }
 
-    return calculatedColsSvc.isHighlightedColumn(column)
+    return calculatedColsSvc.isHighlightedColumn(column ?? null)
         ? HIGHLIGHTED_CALCULATED_COLUMN_CSS_CLASSES
         : CALCULATED_COLUMN_CSS_CLASSES;
 }

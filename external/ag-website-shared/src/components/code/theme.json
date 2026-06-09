@@ -475,12 +475,6 @@
             }
         },
         {
-            "scope": ["meta.object-literal.key"],
-            "settings": {
-                "foreground": "var(--color-code-property)"
-            }
-        },
-        {
             "scope": ["support.type.property-name.json"],
             "settings": {
                 "foreground": "var(--color-code-tag)"

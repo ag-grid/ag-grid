@@ -1,0 +1,52 @@
+name: 'PR preview — cleanup gh-pages'
+description: Remove a PR's pr-<N>/ preview from the publish branch on PR close. Operates via a token-auth clone, so the caller checks out its own default branch (not gh-pages).
+
+inputs:
+    pr_number:
+        description: 'PR number — the pr-<pr_number>/ directory is removed.'
+        required: true
+    github_token:
+        description: 'Token with contents:write for the publish branch.'
+        required: false
+        default: ${{ github.token }}
+    publish_branch:
+        description: 'Branch the preview was published to.'
+        required: false
+        default: gh-pages
+
+runs:
+    using: composite
+    steps:
+        - name: Remove PR preview directory
+          shell: bash
+          env:
+              PR_NUMBER: ${{ inputs.pr_number }}
+              GH_TOKEN: ${{ inputs.github_token }}
+              PUBLISH_BRANCH: ${{ inputs.publish_branch }}
+          run: |
+              set -euo pipefail
+              TMP="$(mktemp -d)"
+              REMOTE="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+              # ls-remote --exit-code: 0 = exists, 2 = missing (no-op), other = real
+              # error (fail, so stale previews aren't silently left behind).
+              set +e
+              git ls-remote --exit-code --heads "$REMOTE" "$PUBLISH_BRANCH" >/dev/null 2>&1
+              rc=$?
+              set -e
+              if [ "$rc" -eq 2 ]; then
+                  echo "Publish branch '${PUBLISH_BRANCH}' does not exist; nothing to clean up."
+                  exit 0
+              elif [ "$rc" -ne 0 ]; then
+                  echo "::error::Could not query '${PUBLISH_BRANCH}' on ${GITHUB_REPOSITORY} (git ls-remote exit ${rc})."
+                  exit 1
+              fi
+              git clone --quiet --branch "$PUBLISH_BRANCH" --depth 1 --single-branch "$REMOTE" "$TMP"
+              cd "$TMP"
+              DIR="pr-${PR_NUMBER}"
+              [ -d "$DIR" ] || { echo "No $DIR on ${PUBLISH_BRANCH}; nothing to clean up."; exit 0; }
+              git config user.name 'github-actions[bot]'
+              git config user.email 'github-actions[bot]@users.noreply.github.com'
+              git rm -rf "$DIR"
+              git commit -m "pr-preview: cleanup pr-${PR_NUMBER}"
+              # Retry once on push race (concurrency group should already serialise).
+              git push origin "$PUBLISH_BRANCH" || (git pull --rebase origin "$PUBLISH_BRANCH" && git push origin "$PUBLISH_BRANCH")

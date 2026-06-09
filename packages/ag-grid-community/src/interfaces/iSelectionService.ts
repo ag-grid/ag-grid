@@ -24,7 +24,11 @@ export interface ISelectionService {
     setNodesSelected(params: ISetNodesSelectedParams): number;
     filterFromSelection?(predicate: (node: RowNode) => boolean): void;
     /** Should only be called if groupSelects = 'descendants' or 'filteredDescendants' in CSRM */
-    updateGroupsFromChildrenSelections?(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean;
+    updateGroupsFromChildrenSelections?(
+        source: SelectionEventSourceType,
+        changedPath?: ChangedPath,
+        event?: Event
+    ): boolean;
     syncInRowNode(rowNode: RowNode, oldNode?: RowNode): void;
     reset(source: SelectionEventSourceType): void;
     getBestCostNodeSelection(): RowNode[] | undefined;

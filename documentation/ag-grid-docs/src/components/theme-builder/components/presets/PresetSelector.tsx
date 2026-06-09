@@ -63,7 +63,7 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
                 nonce: undefined,
                 moduleCss: undefined,
             });
-            setThemeClass(theme._getCssClass());
+            setThemeClass(theme._getCssClasses()[1]); // [1] is the theme apply classes eg ag-theme-params-1
 
             style.textContent = theme._getParamsCss();
         }

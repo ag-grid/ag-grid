@@ -100,11 +100,22 @@ The standard way of changing a grid's appearance after initialisation is to upda
 
 Often however, a grid application is embedded within a website, and the website and grid application have different codebases. It may not be easy to update the theme grid option in response to the website's dark mode changing.
 
-For this use case we provide theme modes. When a theme uses the `colorSchemeVariable` colour scheme, which is the default for our [built-in themes](./themes/#built-in-themes), the colour scheme can be controlled by setting the `data-ag-theme-mode="mode"` attribute on any parent element of the grid, commonly the `html` or `body` elements, where `mode` is any of:
+For this use case we provide theme modes. When a theme uses the `colorSchemeVariable` colour scheme, which is the default for our [built-in themes](./themes/#built-in-themes), the colour scheme can be controlled by setting the `data-ag-theme-mode="mode"` attribute on the `<html>` or `<body>` elements, where `mode` is one of:
 
 - `light`
 - `dark`
 - `dark-blue`
+
+{% note %}
+If your grid is inside Shadow DOM or you only want to change the mode of some grids on the page, you may set the attribute on any ancestor element of the grid that has the `ag-theme-mode` class on it:
+
+```html
+<div class="ag-theme-mode" data-ag-theme-mode="dark">
+    ...
+</div>
+```
+
+{% /note %}
 
 You can also define custom colour modes by passing the mode name as the second argument to `withParams`. This example defines custom colour schemes for light and dark mode and switches between them by setting the `data-ag-theme-mode` attribute on the `body` element:
 

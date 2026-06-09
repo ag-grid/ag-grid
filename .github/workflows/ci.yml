@@ -126,7 +126,7 @@ jobs:
   init:
     name: Initialise Workflow
     needs: detect-changes
-    if: github.event.pull_request.draft == false &&
+    if: (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-')) &&
       (needs.detect-changes.outputs.run_code_ci == 'true' ||
       needs.detect-changes.outputs.run_docs_ci == 'true')
     permissions:
@@ -340,7 +340,7 @@ jobs:
     name: Build
     needs: [ detect-changes ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
-      github.event.pull_request.draft == false
+      (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-'))
     outputs:
       build: ${{ steps.build.outcome || '' }}
     steps:
@@ -361,13 +361,115 @@ jobs:
         run: |
           yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
+      # The enterprise UMD loads ag-grid-community at runtime, so publish both even when nx rebuilt only one.
+      - name: Build UMD bundles for PR preview
+        id: build_umd
+        if: github.event_name == 'pull_request' && steps.build.outcome == 'success'
+        run: |
+          yarn nx run-many -t build:umd -p ag-grid-community ag-grid-enterprise
+
+      - name: Upload UMD bundles for PR preview
+        if: github.event_name == 'pull_request' && steps.build_umd.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-preview-umd
+          if-no-files-found: ignore
+          retention-days: 14
+          # ag-grid UMD builds with sourcemap:false, so there are no .map files.
+          path: |
+            packages/ag-grid-community/dist/ag-grid-community.min.js
+            packages/ag-grid-enterprise/dist/ag-grid-enterprise.min.js
+
+  pr_preview:
+    runs-on: ubuntu-latest
+    name: PR Preview (UMD)
+    needs: [ build ]
+    # Same-repo PRs only (fork PRs can't hold the write token) — see pr-review.yml.
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      needs.build.outputs.build == 'success'
+    permissions:
+      contents: write
+      pull-requests: write
+    concurrency:
+      group: pr-preview-gh-pages
+      cancel-in-progress: false
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      # Needed for the local shared action below; same-repo gate (job if) is the guard.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Download UMD artifact
+        id: download
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: pr-preview-umd
+          path: _umd
+
+      - name: Resolve UMD bundle paths
+        id: stage
+        if: steps.download.outcome == 'success'
+        run: |
+          set -euo pipefail
+          # upload-artifact@v4 strips the common path prefix, so find by filename.
+          COMMUNITY=$(find _umd -type f -name 'ag-grid-community.min.js' -print -quit)
+          ENTERPRISE=$(find _umd -type f -name 'ag-grid-enterprise.min.js' -print -quit)
+          if [ -z "$COMMUNITY" ] && [ -z "$ENTERPRISE" ]; then
+            echo "::warning No UMD bundles in artifact — likely tooling-only PR; skipping publish."
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ -z "$COMMUNITY" ] || [ -z "$ENTERPRISE" ]; then
+            echo "::error exactly one UMD bundle present; expected both or neither." >&2
+            ls -laR _umd || true
+            exit 1
+          fi
+          {
+            echo "files<<__FILES_EOF__"
+            echo "$COMMUNITY"
+            echo "$ENTERPRISE"
+            echo "__FILES_EOF__"
+          } >> "$GITHUB_OUTPUT"
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+
+      - name: Publish PR preview to gh-pages
+        if: steps.stage.outputs.publish == 'true'
+        uses: ./external/ag-shared/github/actions/pr-preview-publish
+        with:
+          pr_number: ${{ env.PR_NUMBER }}
+          files: ${{ steps.stage.outputs.files }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Post sticky PR comment
+        if: steps.stage.outputs.publish == 'true'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pr-preview-umd
+          message: |
+            ### Live-test this PR in Plunker
+
+            Paste these two `<script>` tags into a Plunker (or any vanilla-JS host) to load the UMD bundles built from this PR:
+
+            ```html
+            <script src="https://ag-grid.github.io/ag-grid/pr-${{ env.PR_NUMBER }}/ag-grid-community.min.js"></script>
+            <script src="https://ag-grid.github.io/ag-grid/pr-${{ env.PR_NUMBER }}/ag-grid-enterprise.min.js"></script>
+            ```
+
+            Bundles are removed automatically when the PR is closed. Updated on every push.
+
   docs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
     needs: [ detect-changes ]
     if: ${{ (needs.detect-changes.outputs.run_code_ci == 'true' ||
       needs.detect-changes.outputs.run_docs_ci == 'true') &&
-      github.event.pull_request.draft == false && !inputs.skip_docs }}
+      (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-')) && !inputs.skip_docs }}
     strategy:
       fail-fast: false
     outputs:
@@ -480,7 +582,7 @@ jobs:
         docs,
         fw_pkg_test
       ]
-    if: always() && !cancelled() && github.event.pull_request.draft == false
+    if: always() && !cancelled() && (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-'))
     permissions:
       contents: write
       actions: read

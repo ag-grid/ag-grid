@@ -100,7 +100,6 @@ This only controls the expression picker buttons. Use an empty array or `null` t
 Calculated columns are highlighted by default while their edit dialog is open. Use `suppressColumnHighlighting` to disable this highlight:
 
 ```{% frameworkTransform=true %}
-
 const gridOptions = {
     theme: myTheme,
     calculatedColumns: {
@@ -112,6 +111,24 @@ const gridOptions = {
 When highlighting is not suppressed, the header and cells highlight colour can be customised with the `--ag-calculated-column-highlight-color` CSS variable.
 
 {% gridExampleRunner title="Suppress Dialog Column Highlighting" name="calculated-columns-dialog-highlighting" exampleHeight=350 /%}
+
+### livePreview
+
+Use `livePreview` to apply dialog edits immediately instead of using Apply and Cancel buttons:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        livePreview: true,
+    },
+};
+```
+
+With live preview enabled, **Add Calculated Column** creates the column immediately and opens the dialog for editing. Title, type and expression changes update the column live. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**.
+
+An empty expression is valid in live preview and renders blank cells. Invalid or incomplete expressions are also stored while editing and render formula errors until fixed.
+
+{% gridExampleRunner title="Live Preview" name="calculated-columns-live-preview" exampleHeight=350 /%}
 
 ## Advanced Calculated Columns
 
@@ -153,7 +170,7 @@ A column added from the header menu is placed after the column it was created fr
 ```{% frameworkTransform=true %}
 const calculatedColumns = api
     .getColumns()
-    .filter(column => column.getColDef().calculatedExpression != null);
+    .filter(column => column.getColDef().calculatedExpression !== undefined);
 
 api.setGridOption('columnDefs', [
     ...(api.getColumnDefs() ?? []),

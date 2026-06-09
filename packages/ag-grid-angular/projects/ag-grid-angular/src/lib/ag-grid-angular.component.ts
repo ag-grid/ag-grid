@@ -333,7 +333,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
                     frameworkCompWrapper: this._frameworkCompWrapper,
                 },
                 modules: (this.modules || []) as any,
-                setThemeOnGridDiv: true,
             };
 
             const api = createGrid(this._nativeElement, mergedGridOps, gridParams);

@@ -132,6 +132,19 @@ describe('calculated columns - display ordering', () => {
         input.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
+    function getExpressionInput(): HTMLTextAreaElement {
+        const input = getDialog().querySelector<HTMLTextAreaElement>('textarea');
+        expect(input).toBeTruthy();
+        return input!;
+    }
+
+    function setTitle(title: string): void {
+        const input = getDialog().querySelector<HTMLInputElement>('input');
+        expect(input).toBeTruthy();
+        input!.value = title;
+        input!.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
     function clickDialogButton(label: string): void {
         const button = Array.from(getDialog().querySelectorAll<HTMLButtonElement>('button')).find(
             (element) => element.textContent?.trim() === label
@@ -369,6 +382,77 @@ describe('calculated columns - display ordering', () => {
     });
 
     // === Rule 2: dialog add lands immediately after the anchor leaf ==============================
+
+    test('livePreview adds immediately and updates expression and title live', async () => {
+        const events: { type: string; expression?: string; oldExpression?: string; newExpression?: string }[] = [];
+        const api = createGrid('calculated-live-preview-add', {
+            rowData: [{ id: 'r1', age: 23 }],
+            columnDefs: [{ field: 'age' }],
+            calculatedColumns: { livePreview: true },
+            onCalculatedColumnCreated: (event) => events.push({ type: event.type, expression: event.expression }),
+            onCalculatedColumnExpressionChanged: (event) =>
+                events.push({
+                    type: event.type,
+                    oldExpression: event.oldExpression,
+                    newExpression: event.expression,
+                }),
+        });
+        const before = new Set(order(api));
+
+        enableOffsetParentPolyfill();
+        api.showColumnMenu('age');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        const added = order(api).filter((id) => !before.has(id));
+        expect(added).toEqual(['calculated_1']);
+        const visibleButtonLabels = Array.from(getDialog().querySelectorAll('button'))
+            .filter(
+                (button) =>
+                    button.closest<HTMLElement>('.ag-calculated-column-actions')?.classList.contains('ag-hidden') !==
+                    true
+            )
+            .map((button) => button.textContent?.trim());
+        expect(visibleButtonLabels).toEqual(['Columns', 'Functions', 'Operators']);
+        expect(api.getColumn('calculated_1')!.getColDef().calculatedExpression).toBe('');
+        expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'calculated_1' })).toBe('');
+        expect(events).toEqual([{ type: 'calculatedColumnCreated', expression: '' }]);
+
+        setTitle('Double Age');
+        setExpression('[Age] * 2');
+        await waitFor(() => expect(api.getColumn('calculated_1')!.getColDef().calculatedExpression).toBe('[age] * 2'));
+
+        expect(api.getColumn('calculated_1')!.getColDef().headerName).toBe('Double Age');
+        expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'calculated_1' })).toBe(46);
+        await waitFor(() => expect(events).toHaveLength(2));
+        expect(events).toEqual([
+            { type: 'calculatedColumnCreated', expression: '' },
+            { type: 'calculatedColumnExpressionChanged', oldExpression: '', newExpression: '[age] * 2' },
+        ]);
+    });
+
+    test('livePreview commits invalid expressions without marking the editor invalid', async () => {
+        const api = createGrid('calculated-live-preview-invalid-expression', {
+            rowData: [{ id: 'r1', age: 23 }],
+            columnDefs: [{ field: 'age' }],
+            calculatedColumns: { livePreview: true },
+        });
+
+        enableOffsetParentPolyfill();
+        api.showColumnMenu('age');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        setExpression('[Age] +');
+        await waitFor(() => expect(api.getColumn('calculated_1')!.getColDef().calculatedExpression).toBe('[age] +'));
+
+        const input = getExpressionInput();
+        expect(input.classList.contains('invalid')).toBe(false);
+        expect(input.hasAttribute('aria-invalid')).toBe(false);
+        expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'calculated_1' })).toBe('#PARSE!');
+    });
 
     test('dialog add lands immediately after the anchor leaf column', async () => {
         const api = createGrid('dialog-after-anchor', {

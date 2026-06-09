@@ -186,7 +186,11 @@ export const ThemeBuilderHomepage: React.FC<Props> = ({ gridHeight = null }) => 
                     className={`${styles.grid} ${gridHeight ? '' : styles.gridHeight}`}
                 >
                     <ShadowDom>
-                        <div style={{ height: '100%' }} data-ag-theme-mode={isDarkMode ? 'dark-blue' : 'light'}>
+                        <div
+                            className="ag-theme-mode"
+                            style={{ height: '100%' }}
+                            data-ag-theme-mode={isDarkMode ? 'dark-blue' : 'light'}
+                        >
                             <AgGridReact
                                 theme={theme}
                                 columnDefs={columnDefs}

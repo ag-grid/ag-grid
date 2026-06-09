@@ -45,6 +45,7 @@ describe('suppressHeaderFocus tab navigation', () => {
             const headerRow = gridElement.querySelector<HTMLElement>('.ag-header-row')!;
 
             expect(headerRow).toBeTruthy();
+            expect(headerRow.hasAttribute('tabindex')).toBe(false);
 
             headerRow.focus();
             headerRow.dispatchEvent(

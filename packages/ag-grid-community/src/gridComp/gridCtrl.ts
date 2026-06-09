@@ -12,7 +12,6 @@ import type { Component, ComponentSelector } from '../widgets/component';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IGridComp extends LayoutView {
-    setRtlClass(cssClass: string): void;
     destroyGridUi(): void;
     forceFocusOutOfContainer(up: boolean): void;
     getFocusableContainers(): FocusableContainer[];
@@ -65,8 +64,6 @@ export class GridCtrl extends BeanStub {
         dragAndDrop?.registerGridDropTarget(() => this.eGui, this);
 
         this.createManagedBean(new LayoutFeature(this.view));
-
-        this.view.setRtlClass(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
 
         if (this.gos.get('suppressContentVisibilityAuto')) {
             this.eGui.style.setProperty('content-visibility', 'visible');
