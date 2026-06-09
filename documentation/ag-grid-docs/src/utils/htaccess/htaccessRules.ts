@@ -155,9 +155,10 @@ AddType application/x-gzip .gz .tgz
 function getStagingHtaccessContent(): string {
     return `${baseRules}
 
-# Content-Security-Policy — report-only while validating on staging. Unsets the
-# legacy wildcard CSP on the staging vhost so this is the only policy in effect.
-${getCspHtaccessBlock({ env: 'staging' }, 'report-only')}
+# Content-Security-Policy — enforced. Unsets the legacy wildcard CSP on the staging
+# vhost so this tightened policy is the only one in effect. Production stays
+# report-only on latest until the release enforce rollout is verified.
+${getCspHtaccessBlock({ env: 'staging' }, 'enforce')}
 
 Options -Indexes
 `;
