@@ -61,6 +61,10 @@
     mask-image: url('./balham-svg-icons/adesc.svg');
 }
 
+.ag-icon-document::before {
+    mask-image: url('./balham-svg-icons/document.svg');
+}
+
 .ag-icon-down::before {
     mask-image: url('./balham-svg-icons/down.svg');
 }

@@ -81,6 +81,7 @@ const nameToCodepoint = {
     'filter-add': 0xf144,
     edit: 0xf145,
     search: 0xf146,
+    document: 0xf147,
 };
 
 function generateFontFile(fontName) {

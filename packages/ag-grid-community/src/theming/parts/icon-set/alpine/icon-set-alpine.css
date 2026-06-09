@@ -62,6 +62,10 @@
     mask-image: url('./alpine-svg-icons/adesc.svg');
 }
 
+.ag-icon-document::before {
+    mask-image: url('./alpine-svg-icons/document.svg');
+}
+
 .ag-icon-down::before {
     mask-image: url('./alpine-svg-icons/down.svg');
 }
