@@ -32,6 +32,7 @@ export const OverlayModule: _ModuleWithApi<_OverlayGridApi> = {
         // rotating spinner shown by the loading overlay
         overlayLoading: 'loading',
         overlayExporting: 'loading',
+        document: 'document',
     },
     beans: [OverlayService],
 };

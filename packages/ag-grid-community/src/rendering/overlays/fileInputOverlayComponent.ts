@@ -76,13 +76,12 @@ export class FileInputOverlayComponent
         const text =
             params.fileInput?.overlayText ?? localeTextFunc('fileInputOverlay', 'Drag & Drop file to import data');
 
+        const icon = _createIconNoSpan('document', beans, null);
+        const textSpan = { tag: 'span', cls: 'ag-file-input-text', children: text } as const;
         const eTextRow = _createElement({
             tag: 'div',
             cls: 'ag-file-input-text-row',
-            children: [
-                () => _createIconNoSpan('csvExport', beans, null) ?? document.createElement('span'),
-                { tag: 'span', cls: 'ag-file-input-text', children: text },
-            ],
+            children: icon ? [() => icon, textSpan] : [textSpan],
         });
 
         this.eDropZone.appendChild(eTextRow);
