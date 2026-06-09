@@ -360,7 +360,8 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
             await userEvent.dblClick(fillHandle);
             await fillEnd;
 
-            const sourceValue = field === 'text' ? 'Source' : field === 'bool' ? 'true' : '2024-01-15';
+            const sourceValues: Record<string, string> = { text: 'Source', bool: 'true', date: '2024-01-15' };
+            const sourceValue = sourceValues[field];
             expect(editRequests, `fill for ${field} column`).toEqual([
                 `ROW_1:${field}:${sourceValue}`,
                 `ROW_2:${field}:${sourceValue}`,
@@ -412,8 +413,10 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
             await userEvent.dblClick(fillHandle);
             await fillEnd;
 
-            const val0 = field === 'text' ? 'A' : field === 'bool' ? 'true' : '2024-01-15';
-            const val1 = field === 'text' ? 'B' : field === 'bool' ? 'false' : '2024-06-20';
+            const expectedRow0: Record<string, string> = { text: 'A', bool: 'true', date: '2024-01-15' };
+            const expectedRow1: Record<string, string> = { text: 'B', bool: 'false', date: '2024-06-20' };
+            const val0 = expectedRow0[field];
+            const val1 = expectedRow1[field];
             expect(editRequests, `cyclic fill for ${field} column`).toEqual([
                 `ROW_2:${field}:${val0}`,
                 `ROW_3:${field}:${val1}`,
