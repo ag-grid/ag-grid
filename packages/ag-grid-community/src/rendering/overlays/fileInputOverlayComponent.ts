@@ -120,9 +120,7 @@ export class FileInputOverlayComponent
         eFileInput.addEventListener('change', () => this.onFileInputChange(eFileInput));
         parent.appendChild(eFileInput);
 
-        if (!this.eFileInput) {
-            this.eFileInput = eFileInput;
-        }
+        this.eFileInput = eFileInput;
 
         const eButton = _createElement<HTMLButtonElement>({
             tag: 'button',
