@@ -16,6 +16,15 @@ async function buildDateMap(cwd: string): Promise<Map<string, Date>> {
     try {
         const { stdout: rootOut } = await execFileAsync('git', ['rev-parse', '--show-toplevel'], { cwd });
         const repoRoot = rootOut.trim();
+
+        const { stdout: shallowOut } = await execFileAsync('git', ['rev-parse', '--is-shallow-repository'], { cwd });
+        if (shallowOut.trim() === 'true') {
+            console.warn(
+                '[ag-sitemap-lastmod] WARNING: This is a shallow git clone. ' +
+                    'git log will only cover fetched history — sitemap lastmod dates will be incomplete.'
+            );
+        }
+
         const docsBase = path.resolve(cwd, 'src', 'content', 'docs');
 
         const { stdout } = await execFileAsync(
