@@ -24,7 +24,15 @@ export async function getSitemapIgnorePaths() {
 }
 
 export async function getSitemapAllowPaths() {
-    const allowPaths = [urlWithBaseUrl('/campaigns/beyond-the-prompt')];
+    const allowPaths = [
+        urlWithBaseUrl('/campaigns/beyond-the-prompt'),
+        urlWithBaseUrl('/campaigns/bryntum-gantt'),
+        urlWithBaseUrl('/campaigns/bryntum-calendar'),
+        urlWithBaseUrl('/campaigns/bryntum-complete'),
+        urlWithBaseUrl('/campaigns/bryntum-scheduler'),
+        urlWithBaseUrl('/campaigns/bryntum-scheduler-pro'),
+        urlWithBaseUrl('/campaigns/bryntum-task-board'),
+    ];
 
     return allowPaths.map(addTrailingSlash);
 }
