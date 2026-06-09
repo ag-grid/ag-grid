@@ -392,12 +392,27 @@ describe('ag-grid calculated columns', () => {
             └── LEAF id:r2 revenueCol:20 cost:8 first:"Grace" last:"Hopper" profit:12 profitable:"yes" name:"Grace Hopper"
         `);
 
+        api.getRowNode('r1')!.setData({
+            id: 'r1',
+            revenue: 18,
+            cost: 4,
+            first: 'Ada',
+            last: 'Lovelace',
+        });
+        await asyncSetTimeout(1);
+
+        await new GridRows(api, 'after setData', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 revenueCol:18 cost:4 first:"Ada" last:"Lovelace" profit:14 profitable:"yes" name:"Ada Lovelace"
+            └── LEAF id:r2 revenueCol:20 cost:8 first:"Grace" last:"Hopper" profit:12 profitable:"yes" name:"Grace Hopper"
+        `);
+
         applyTransactionChecked(api, { update: [{ ...rowData[1], revenue: 30, cost: 9 }] });
         await asyncSetTimeout(1);
 
         await new GridRows(api, 'after transaction update', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:r1 revenueCol:15 cost:3 first:"Ada" last:"Lovelace" profit:12 profitable:"yes" name:"Ada Lovelace"
+            ├── LEAF id:r1 revenueCol:18 cost:4 first:"Ada" last:"Lovelace" profit:14 profitable:"yes" name:"Ada Lovelace"
             └── LEAF id:r2 revenueCol:30 cost:9 first:"Grace" last:"Hopper" profit:21 profitable:"yes" name:"Grace Hopper"
         `);
 
