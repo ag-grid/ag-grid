@@ -107,12 +107,6 @@ export class GridActions {
             ?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
     }
 
-    clickCollapseGroupRowById(id: string, opts?: MouseEventInit): void {
-        this.getRowById(id)
-            ?.querySelector<HTMLElement>('.ag-group-expanded')
-            ?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
-    }
-
     async expandGroupRowByIndex(index: number, opts?: MouseEventInit & { count?: number }): Promise<void> {
         const updated = waitForEvent('modelUpdated', this.api, opts?.count ?? 2); // attach listener first
         this.clickExpandGroupRowByIndex(index, opts);
@@ -128,12 +122,6 @@ export class GridActions {
     async collapseGroupRowByIndex(index: number, opts?: MouseEventInit & { count?: number }): Promise<void> {
         const updated = waitForEvent('modelUpdated', this.api, opts?.count ?? 2);
         this.clickCollapseGroupRowByIndex(index, opts);
-        await updated;
-    }
-
-    async collapseGroupRowById(id: string, opts?: MouseEventInit & { count?: number }): Promise<void> {
-        const updated = waitForEvent('modelUpdated', this.api, opts?.count ?? 2);
-        this.clickCollapseGroupRowById(id, opts);
         await updated;
     }
 

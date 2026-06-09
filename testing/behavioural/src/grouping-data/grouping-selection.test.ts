@@ -476,20 +476,9 @@ describe('ag-grid grouping selection', () => {
         await actions.expandGroupAtIndex(8); // New York (shifted to idx 8) → inserts LEAF id:4 at idx 9
         await actions.expandGroupAtIndex(10); // Chicago (shifted to idx 10) → inserts LEAF id:5 at idx 11
 
-        // Final display:
-        //   0: North America  1: Canada
-        //   2: Montreal LEAF_GROUP (expanded)  3: LEAF id:1
-        //   4: Toronto LEAF_GROUP (collapsed)
-        //   5: Ottawa LEAF_GROUP (expanded)  6: LEAF id:3
-        //   7: United States
-        //   8: New York LEAF_GROUP (expanded)  9: LEAF id:4
-        //   10: Chicago LEAF_GROUP (expanded)  11: LEAF id:5
-        //   12: Los Angeles LEAF_GROUP (collapsed)
-
         actions.clickRowByIndex(3); // click LEAF id:1
-        actions.clickRowByIndex(12, { shiftKey: true }); // shift-click Los Angeles LEAF_GROUP
+        actions.clickRowByIndex(12, { shiftKey: true }); // shift-click Los Angeles LEAF_GROUP (idx 12)
 
-        // Range: idx 3–12 (all visible rows between the two clicks).
         // id:2 inside collapsed Toronto and id:6 inside collapsed Los Angeles must NOT be selected.
         await new GridRows(api, 'after shift-click with asymmetric multi-level expansion').check(`
             ROOT id:ROOT_NODE_ID
