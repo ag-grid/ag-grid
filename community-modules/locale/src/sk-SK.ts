@@ -813,6 +813,27 @@ export const AG_GRID_LOCALE_SK = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
 
+    // Calculated Columns
+    calculatedColumn: 'Vypočítaný stĺpec',
+    calculatedColumnAdd: 'Pridať vypočítaný stĺpec',
+    calculatedColumnEdit: 'Upraviť vypočítaný stĺpec',
+    calculatedColumnRemove: 'Odstrániť vypočítaný stĺpec',
+    calculatedColumnTitle: 'Názov',
+    calculatedColumnType: 'Typ',
+    calculatedColumnExpression: 'Výraz',
+    calculatedColumnExpressionPlaceholder: 'Píšte sem',
+    calculatedColumnColumns: 'Stĺpce',
+    calculatedColumnFunctions: 'Funkcie',
+    calculatedColumnOperators: 'Operátory',
+    calculatedColumnSuggestions: 'Návrhy vypočítaného stĺpca',
+    calculatedColumnDefaultTitle: 'Bez názvu',
+    calculatedColumnExpressionAmbiguousReference:
+        'Nejednoznačný odkaz na stĺpec "${variable}". Použite zoznam Stĺpce alebo konkrétnejšiu cestu skupiny.',
+    calculatedColumnExpressionUnknownReference: 'Neznámy odkaz na stĺpec "${variable}".',
+    calculatedColumnExpressionEmpty: 'Zadajte výraz.',
+    calculatedColumnApply: 'Použiť',
+    calculatedColumnCancel: 'Zrušiť',
+
     // Notes
     note: 'Poznámka bunky',
     addNote: 'Pridať poznámku',

@@ -817,6 +817,27 @@ export const AG_GRID_LOCALE_BG = {
     timeFormatHHMMSS: 'ЧЧ:ММ:СС',
     timeFormatHHMMSSAmPm: 'ЧЧ:ММ:СС AM/PM',
 
+    // Calculated Columns
+    calculatedColumn: 'Изчислена колона',
+    calculatedColumnAdd: 'Добавяне на изчислена колона',
+    calculatedColumnEdit: 'Редактиране на изчислена колона',
+    calculatedColumnRemove: 'Премахване на изчислена колона',
+    calculatedColumnTitle: 'Заглавие',
+    calculatedColumnType: 'Тип',
+    calculatedColumnExpression: 'Израз',
+    calculatedColumnExpressionPlaceholder: 'Въведете тук',
+    calculatedColumnColumns: 'Колони',
+    calculatedColumnFunctions: 'Функции',
+    calculatedColumnOperators: 'Оператори',
+    calculatedColumnSuggestions: 'Предложения за изчислена колона',
+    calculatedColumnDefaultTitle: 'Без заглавие',
+    calculatedColumnExpressionAmbiguousReference:
+        'Двусмислена препратка към колона "${variable}". Използвайте списъка с колони или по-конкретен път на групата.',
+    calculatedColumnExpressionUnknownReference: 'Неизвестна препратка към колона "${variable}".',
+    calculatedColumnExpressionEmpty: 'Въведете израз.',
+    calculatedColumnApply: 'Приложи',
+    calculatedColumnCancel: 'Отказ',
+
     // Notes
     note: 'Бележка за клетка',
     addNote: 'Добавяне на бележка',

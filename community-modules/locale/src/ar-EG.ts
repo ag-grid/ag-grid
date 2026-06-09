@@ -811,6 +811,27 @@ export const AG_GRID_LOCALE_EG = {
     timeFormatHHMMSS: 'ساعة:دقيقة:ثانية',
     timeFormatHHMMSSAmPm: 'ساعة:دقيقة:ثانية ص/م',
 
+    // Calculated Columns
+    calculatedColumn: 'عمود محسوب',
+    calculatedColumnAdd: 'إضافة عمود محسوب',
+    calculatedColumnEdit: 'تعديل عمود محسوب',
+    calculatedColumnRemove: 'إزالة عمود محسوب',
+    calculatedColumnTitle: 'العنوان',
+    calculatedColumnType: 'النوع',
+    calculatedColumnExpression: 'التعبير',
+    calculatedColumnExpressionPlaceholder: 'اكتب هنا',
+    calculatedColumnColumns: 'أعمدة',
+    calculatedColumnFunctions: 'الدوال',
+    calculatedColumnOperators: 'المعاملات',
+    calculatedColumnSuggestions: 'اقتراحات الأعمدة المحسوبة',
+    calculatedColumnDefaultTitle: 'بدون عنوان',
+    calculatedColumnExpressionAmbiguousReference:
+        'مرجع عمود غامض "${variable}". استخدم قائمة الأعمدة أو مسار مجموعة أكثر تحديدًا.',
+    calculatedColumnExpressionUnknownReference: 'مرجع عمود غير معروف "${variable}".',
+    calculatedColumnExpressionEmpty: 'أدخل تعبيرًا.',
+    calculatedColumnApply: 'تطبيق',
+    calculatedColumnCancel: 'إلغاء',
+
     // Notes
     note: 'ملاحظة الخلية',
     addNote: 'إضافة ملاحظة',

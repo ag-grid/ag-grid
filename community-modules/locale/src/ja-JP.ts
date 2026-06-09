@@ -812,6 +812,27 @@ export const AG_GRID_LOCALE_JP = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 午前/午後',
 
+    // Calculated Columns
+    calculatedColumn: '計算列',
+    calculatedColumnAdd: '計算列を追加',
+    calculatedColumnEdit: '計算列を編集',
+    calculatedColumnRemove: '計算列を削除',
+    calculatedColumnTitle: 'タイトル',
+    calculatedColumnType: '種類',
+    calculatedColumnExpression: '式',
+    calculatedColumnExpressionPlaceholder: 'ここに入力',
+    calculatedColumnColumns: '列',
+    calculatedColumnFunctions: '関数',
+    calculatedColumnOperators: '演算子',
+    calculatedColumnSuggestions: '計算列の候補',
+    calculatedColumnDefaultTitle: '無題',
+    calculatedColumnExpressionAmbiguousReference:
+        '列参照があいまいです "${variable}"。列リストを使用するか、より具体的なグループパスを指定してください。',
+    calculatedColumnExpressionUnknownReference: '不明な列参照です "${variable}"。',
+    calculatedColumnExpressionEmpty: '式を入力してください。',
+    calculatedColumnApply: '適用',
+    calculatedColumnCancel: 'キャンセル',
+
     // Notes
     note: 'セルメモ',
     addNote: 'メモを追加',

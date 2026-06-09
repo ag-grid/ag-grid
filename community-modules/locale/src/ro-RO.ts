@@ -816,6 +816,27 @@ export const AG_GRID_LOCALE_RO = {
     timeFormatHHMMSS: 'OO:MM:SS',
     timeFormatHHMMSSAmPm: 'OO:MM:SS AM/PM',
 
+    // Calculated Columns
+    calculatedColumn: 'Coloană calculată',
+    calculatedColumnAdd: 'Adăugare coloană calculată',
+    calculatedColumnEdit: 'Editare coloană calculată',
+    calculatedColumnRemove: 'Eliminare coloană calculată',
+    calculatedColumnTitle: 'Titlu',
+    calculatedColumnType: 'Tip',
+    calculatedColumnExpression: 'Expresie',
+    calculatedColumnExpressionPlaceholder: 'Introduceți aici',
+    calculatedColumnColumns: 'Coloane',
+    calculatedColumnFunctions: 'Funcții',
+    calculatedColumnOperators: 'Operatori',
+    calculatedColumnSuggestions: 'Sugestii pentru coloana calculată',
+    calculatedColumnDefaultTitle: 'Fără titlu',
+    calculatedColumnExpressionAmbiguousReference:
+        'Referință de coloană ambiguă "${variable}". Utilizați lista Coloane sau o cale de grup mai specifică.',
+    calculatedColumnExpressionUnknownReference: 'Referință de coloană necunoscută "${variable}".',
+    calculatedColumnExpressionEmpty: 'Introduceți o expresie.',
+    calculatedColumnApply: 'Aplică',
+    calculatedColumnCancel: 'Anulează',
+
     // Notes
     note: 'Notă celulă',
     addNote: 'Adaugă notă',

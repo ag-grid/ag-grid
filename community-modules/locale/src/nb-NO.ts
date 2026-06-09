@@ -813,6 +813,27 @@ export const AG_GRID_LOCALE_NO = {
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
 
+    // Calculated Columns
+    calculatedColumn: 'Beregnet kolonne',
+    calculatedColumnAdd: 'Legg til beregnet kolonne',
+    calculatedColumnEdit: 'Rediger beregnet kolonne',
+    calculatedColumnRemove: 'Fjern beregnet kolonne',
+    calculatedColumnTitle: 'Tittel',
+    calculatedColumnType: 'Type',
+    calculatedColumnExpression: 'Uttrykk',
+    calculatedColumnExpressionPlaceholder: 'Skriv her',
+    calculatedColumnColumns: 'Kolonner',
+    calculatedColumnFunctions: 'Funksjoner',
+    calculatedColumnOperators: 'Operatorer',
+    calculatedColumnSuggestions: 'Forslag til beregnet kolonne',
+    calculatedColumnDefaultTitle: 'Uten tittel',
+    calculatedColumnExpressionAmbiguousReference:
+        'Tvetydig kolonnereferanse "${variable}". Bruk Kolonner-listen eller en mer spesifikk gruppebane.',
+    calculatedColumnExpressionUnknownReference: 'Ukjent kolonnereferanse "${variable}".',
+    calculatedColumnExpressionEmpty: 'Skriv inn et uttrykk.',
+    calculatedColumnApply: 'Bruk',
+    calculatedColumnCancel: 'Avbryt',
+
     // Notes
     note: 'Cellenotat',
     addNote: 'Legg til notat',

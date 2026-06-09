@@ -812,6 +812,27 @@ export const AG_GRID_LOCALE_PK = {
     timeFormatHHMMSS: 'گگ:مم:سس',
     timeFormatHHMMSSAmPm: 'گگ:مم:سس ص/ش',
 
+    // Calculated Columns
+    calculatedColumn: 'محسوب کالم',
+    calculatedColumnAdd: 'محسوب کالم شامل کریں',
+    calculatedColumnEdit: 'محسوب کالم میں ترمیم کریں',
+    calculatedColumnRemove: 'محسوب کالم ہٹائیں',
+    calculatedColumnTitle: 'عنوان',
+    calculatedColumnType: 'قسم',
+    calculatedColumnExpression: 'اظہار',
+    calculatedColumnExpressionPlaceholder: 'یہاں لکھیں',
+    calculatedColumnColumns: 'کالمز',
+    calculatedColumnFunctions: 'فنکشنز',
+    calculatedColumnOperators: 'آپریٹرز',
+    calculatedColumnSuggestions: 'محسوب کالم کی تجاویز',
+    calculatedColumnDefaultTitle: 'بلا عنوان',
+    calculatedColumnExpressionAmbiguousReference:
+        'مبہم کالم حوالہ "${variable}"۔ کالمز کی فہرست یا زیادہ مخصوص گروپ راستہ استعمال کریں۔',
+    calculatedColumnExpressionUnknownReference: 'نامعلوم کالم حوالہ "${variable}"۔',
+    calculatedColumnExpressionEmpty: 'ایک اظہار درج کریں۔',
+    calculatedColumnApply: 'لاگو کریں',
+    calculatedColumnCancel: 'منسوخ کریں',
+
     // Notes
     note: 'سیل نوٹ',
     addNote: 'نوٹ شامل کریں',

@@ -814,6 +814,27 @@ export const AG_GRID_LOCALE_UA = {
     timeFormatHHMMSS: 'ГГ:ХХ:СС',
     timeFormatHHMMSSAmPm: 'ГГ:ХХ:СС AM/PM',
 
+    // Calculated Columns
+    calculatedColumn: 'Обчислюваний стовпець',
+    calculatedColumnAdd: 'Додати обчислюваний стовпець',
+    calculatedColumnEdit: 'Редагувати обчислюваний стовпець',
+    calculatedColumnRemove: 'Видалити обчислюваний стовпець',
+    calculatedColumnTitle: 'Назва',
+    calculatedColumnType: 'Тип',
+    calculatedColumnExpression: 'Вираз',
+    calculatedColumnExpressionPlaceholder: 'Введіть тут',
+    calculatedColumnColumns: 'Стовпці',
+    calculatedColumnFunctions: 'Функції',
+    calculatedColumnOperators: 'Оператори',
+    calculatedColumnSuggestions: 'Пропозиції для обчислюваного стовпця',
+    calculatedColumnDefaultTitle: 'Без назви',
+    calculatedColumnExpressionAmbiguousReference:
+        'Неоднозначне посилання на стовпець "${variable}". Скористайтеся списком Стовпці або точнішим шляхом групи.',
+    calculatedColumnExpressionUnknownReference: 'Невідоме посилання на стовпець "${variable}".',
+    calculatedColumnExpressionEmpty: 'Введіть вираз.',
+    calculatedColumnApply: 'Застосувати',
+    calculatedColumnCancel: 'Скасувати',
+
     // Notes
     note: 'Нотатка комірки',
     addNote: 'Додати нотатку',

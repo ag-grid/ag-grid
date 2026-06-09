@@ -814,6 +814,27 @@ export const AG_GRID_LOCALE_IR = {
     timeFormatHHMMSS: 'ساعت:دقیقه:ثانیه',
     timeFormatHHMMSSAmPm: 'ساعت:دقیقه:ثانیه ق.ظ/ب.ظ',
 
+    // Calculated Columns
+    calculatedColumn: 'ستون محاسبه‌شده',
+    calculatedColumnAdd: 'افزودن ستون محاسبه‌شده',
+    calculatedColumnEdit: 'ویرایش ستون محاسبه‌شده',
+    calculatedColumnRemove: 'حذف ستون محاسبه‌شده',
+    calculatedColumnTitle: 'عنوان',
+    calculatedColumnType: 'نوع',
+    calculatedColumnExpression: 'عبارت',
+    calculatedColumnExpressionPlaceholder: 'اینجا بنویسید',
+    calculatedColumnColumns: 'ستون‌ها',
+    calculatedColumnFunctions: 'توابع',
+    calculatedColumnOperators: 'عملگرها',
+    calculatedColumnSuggestions: 'پیشنهادهای ستون محاسبه‌شده',
+    calculatedColumnDefaultTitle: 'بدون عنوان',
+    calculatedColumnExpressionAmbiguousReference:
+        'ارجاع مبهم ستون "${variable}". از فهرست ستون‌ها یا یک مسیر گروه دقیق‌تر استفاده کنید.',
+    calculatedColumnExpressionUnknownReference: 'ارجاع ناشناخته ستون "${variable}".',
+    calculatedColumnExpressionEmpty: 'یک عبارت وارد کنید.',
+    calculatedColumnApply: 'اعمال',
+    calculatedColumnCancel: 'لغو',
+
     // Notes
     note: 'یادداشت سلول',
     addNote: 'افزودن یادداشت',

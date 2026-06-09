@@ -814,6 +814,27 @@ export const AG_GRID_LOCALE_NL = {
     timeFormatHHMMSS: 'UU:MM:SS',
     timeFormatHHMMSSAmPm: 'UU:MM:SS AM/PM',
 
+    // Calculated Columns
+    calculatedColumn: 'Berekende kolom',
+    calculatedColumnAdd: 'Berekende kolom toevoegen',
+    calculatedColumnEdit: 'Berekende kolom bewerken',
+    calculatedColumnRemove: 'Berekende kolom verwijderen',
+    calculatedColumnTitle: 'Titel',
+    calculatedColumnType: 'Type',
+    calculatedColumnExpression: 'Expressie',
+    calculatedColumnExpressionPlaceholder: 'Typ hier',
+    calculatedColumnColumns: 'Kolommen',
+    calculatedColumnFunctions: 'Functies',
+    calculatedColumnOperators: 'Operatoren',
+    calculatedColumnSuggestions: 'Suggesties voor berekende kolom',
+    calculatedColumnDefaultTitle: 'Naamloos',
+    calculatedColumnExpressionAmbiguousReference:
+        'Dubbelzinnige kolomverwijzing "${variable}". Gebruik de lijst Kolommen of een specifieker groepspad.',
+    calculatedColumnExpressionUnknownReference: 'Onbekende kolomverwijzing "${variable}".',
+    calculatedColumnExpressionEmpty: 'Voer een expressie in.',
+    calculatedColumnApply: 'Toepassen',
+    calculatedColumnCancel: 'Annuleren',
+
     // Notes
     note: 'Celnotitie',
     addNote: 'Notitie toevoegen',

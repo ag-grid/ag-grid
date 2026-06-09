@@ -811,6 +811,26 @@ export const AG_GRID_LOCALE_HK = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
 
+    // Calculated Columns
+    calculatedColumn: '計算欄',
+    calculatedColumnAdd: '新增計算欄',
+    calculatedColumnEdit: '編輯計算欄',
+    calculatedColumnRemove: '移除計算欄',
+    calculatedColumnTitle: '標題',
+    calculatedColumnType: '類型',
+    calculatedColumnExpression: '運算式',
+    calculatedColumnExpressionPlaceholder: '在此輸入',
+    calculatedColumnColumns: '欄',
+    calculatedColumnFunctions: '函數',
+    calculatedColumnOperators: '運算子',
+    calculatedColumnSuggestions: '計算欄建議',
+    calculatedColumnDefaultTitle: '未命名',
+    calculatedColumnExpressionAmbiguousReference: '欄參照不明確 "${variable}"。請使用「欄」清單或更具體的群組路徑。',
+    calculatedColumnExpressionUnknownReference: '未知的欄參照 "${variable}"。',
+    calculatedColumnExpressionEmpty: '請輸入運算式。',
+    calculatedColumnApply: '應用',
+    calculatedColumnCancel: '取消',
+
     // Notes
     note: '儲存格備註',
     addNote: '新增備註',

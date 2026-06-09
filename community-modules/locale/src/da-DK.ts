@@ -815,6 +815,27 @@ export const AG_GRID_LOCALE_DK = {
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
 
+    // Calculated Columns
+    calculatedColumn: 'Beregnet kolonne',
+    calculatedColumnAdd: 'Tilføj beregnet kolonne',
+    calculatedColumnEdit: 'Rediger beregnet kolonne',
+    calculatedColumnRemove: 'Fjern beregnet kolonne',
+    calculatedColumnTitle: 'Titel',
+    calculatedColumnType: 'Type',
+    calculatedColumnExpression: 'Udtryk',
+    calculatedColumnExpressionPlaceholder: 'Skriv her',
+    calculatedColumnColumns: 'Kolonner',
+    calculatedColumnFunctions: 'Funktioner',
+    calculatedColumnOperators: 'Operatorer',
+    calculatedColumnSuggestions: 'Forslag til beregnet kolonne',
+    calculatedColumnDefaultTitle: 'Uden titel',
+    calculatedColumnExpressionAmbiguousReference:
+        'Tvetydig kolonnereference "${variable}". Brug listen Kolonner eller en mere specifik gruppesti.',
+    calculatedColumnExpressionUnknownReference: 'Ukendt kolonnereference "${variable}".',
+    calculatedColumnExpressionEmpty: 'Indtast et udtryk.',
+    calculatedColumnApply: 'Anvend',
+    calculatedColumnCancel: 'Annuller',
+
     // Notes
     note: 'Cellenote',
     addNote: 'Tilføj note',

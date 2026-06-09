@@ -819,6 +819,27 @@ export const AG_GRID_LOCALE_HU = {
     timeFormatHHMMSS: 'ÓÓ:PP:MP',
     timeFormatHHMMSSAmPm: 'ÓÓ:PP:MP DE/DU',
 
+    // Calculated Columns
+    calculatedColumn: 'Számított oszlop',
+    calculatedColumnAdd: 'Számított oszlop hozzáadása',
+    calculatedColumnEdit: 'Számított oszlop szerkesztése',
+    calculatedColumnRemove: 'Számított oszlop eltávolítása',
+    calculatedColumnTitle: 'Cím',
+    calculatedColumnType: 'Típus',
+    calculatedColumnExpression: 'Kifejezés',
+    calculatedColumnExpressionPlaceholder: 'Írjon ide',
+    calculatedColumnColumns: 'Oszlopok',
+    calculatedColumnFunctions: 'Függvények',
+    calculatedColumnOperators: 'Operátorok',
+    calculatedColumnSuggestions: 'Számított oszlop javaslatai',
+    calculatedColumnDefaultTitle: 'Névtelen',
+    calculatedColumnExpressionAmbiguousReference:
+        'Nem egyértelmű oszlophivatkozás: "${variable}". Használja az Oszlopok listát vagy egy konkrétabb csoportútvonalat.',
+    calculatedColumnExpressionUnknownReference: 'Ismeretlen oszlophivatkozás: "${variable}".',
+    calculatedColumnExpressionEmpty: 'Adjon meg egy kifejezést.',
+    calculatedColumnApply: 'Alkalmaz',
+    calculatedColumnCancel: 'Mégse',
+
     // Notes
     note: 'Cella megjegyzés',
     addNote: 'Megjegyzés hozzáadása',

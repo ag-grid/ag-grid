@@ -812,6 +812,27 @@ export const AG_GRID_LOCALE_KR = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 오전/오후',
 
+    // Calculated Columns
+    calculatedColumn: '계산된 열',
+    calculatedColumnAdd: '계산된 열 추가',
+    calculatedColumnEdit: '계산된 열 편집',
+    calculatedColumnRemove: '계산된 열 제거',
+    calculatedColumnTitle: '제목',
+    calculatedColumnType: '유형',
+    calculatedColumnExpression: '식',
+    calculatedColumnExpressionPlaceholder: '여기에 입력',
+    calculatedColumnColumns: '열',
+    calculatedColumnFunctions: '함수',
+    calculatedColumnOperators: '연산자',
+    calculatedColumnSuggestions: '계산된 열 제안',
+    calculatedColumnDefaultTitle: '제목 없음',
+    calculatedColumnExpressionAmbiguousReference:
+        '모호한 열 참조 "${variable}". 열 목록을 사용하거나 더 구체적인 그룹 경로를 사용하세요.',
+    calculatedColumnExpressionUnknownReference: '알 수 없는 열 참조 "${variable}".',
+    calculatedColumnExpressionEmpty: '식을 입력하세요.',
+    calculatedColumnApply: '적용',
+    calculatedColumnCancel: '취소',
+
     // Notes
     note: '셀 메모',
     addNote: '메모 추가',

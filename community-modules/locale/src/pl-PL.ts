@@ -817,6 +817,27 @@ export const AG_GRID_LOCALE_PL = {
     timeFormatHHMMSS: 'GG:MM:SS',
     timeFormatHHMMSSAmPm: 'GG:MM:SS AM/PM',
 
+    // Calculated Columns
+    calculatedColumn: 'Kolumna obliczana',
+    calculatedColumnAdd: 'Dodaj kolumnę obliczaną',
+    calculatedColumnEdit: 'Edytuj kolumnę obliczaną',
+    calculatedColumnRemove: 'Usuń kolumnę obliczaną',
+    calculatedColumnTitle: 'Tytuł',
+    calculatedColumnType: 'Typ',
+    calculatedColumnExpression: 'Wyrażenie',
+    calculatedColumnExpressionPlaceholder: 'Wpisz tutaj',
+    calculatedColumnColumns: 'Kolumny',
+    calculatedColumnFunctions: 'Funkcje',
+    calculatedColumnOperators: 'Operatory',
+    calculatedColumnSuggestions: 'Sugestie kolumny obliczanej',
+    calculatedColumnDefaultTitle: 'Bez tytułu',
+    calculatedColumnExpressionAmbiguousReference:
+        'Niejednoznaczne odwołanie do kolumny "${variable}". Użyj listy Kolumny lub bardziej szczegółowej ścieżki grupy.',
+    calculatedColumnExpressionUnknownReference: 'Nieznane odwołanie do kolumny "${variable}".',
+    calculatedColumnExpressionEmpty: 'Wprowadź wyrażenie.',
+    calculatedColumnApply: 'Zastosuj',
+    calculatedColumnCancel: 'Anuluj',
+
     // Notes
     note: 'Notatka komórki',
     addNote: 'Dodaj notatkę',
