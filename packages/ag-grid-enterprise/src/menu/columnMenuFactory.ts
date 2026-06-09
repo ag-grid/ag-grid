@@ -171,11 +171,11 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
         if (beans.calculatedColsSvc != null && isPrimary) {
             result.push(MENU_ITEM_SEPARATOR);
+            result.push('calculatedColumn');
             if (_hasCalculatedExpression(column?.colDef)) {
                 result.push('editCalculatedColumn');
                 result.push('removeCalculatedColumn');
             }
-            result.push('calculatedColumn');
             result.push(MENU_ITEM_SEPARATOR);
         }
 

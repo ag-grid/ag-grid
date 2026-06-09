@@ -815,7 +815,7 @@ describe('ag-grid calculated columns', () => {
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
             ├── profit "Profit" width:200
-            └── calculated_1 "New title" width:200
+            └── calculated_1 "Untitled" width:200
         `);
     });
 
@@ -1563,7 +1563,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├─┬ "2025" GROUP
             │ ├── revenue_2025 "Revenue" width:200
-            │ ├── calculated_1 "New title" width:200
+            │ ├── calculated_1 "Untitled" width:200
             │ └── cost_2025 "Cost" width:200
             └─┬ "2026" GROUP
               ├── revenue_2026 "Revenue" width:200
@@ -1605,7 +1605,7 @@ describe('ag-grid calculated columns', () => {
         ).checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
         `);
@@ -1633,7 +1633,7 @@ describe('ag-grid calculated columns', () => {
         await new GridColumns(api, 'auto-group toggle - after add').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
         `);
@@ -1642,7 +1642,7 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
         await new GridColumns(api, 'auto-group toggle - ungrouped').checkColumns(`
             CENTER
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             ├── productType "Product Type" width:200
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
@@ -1653,7 +1653,7 @@ describe('ag-grid calculated columns', () => {
         await new GridColumns(api, 'auto-group toggle - re-grouped').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
         `);
@@ -1688,7 +1688,7 @@ describe('ag-grid calculated columns', () => {
         await new GridColumns(api, 'two auto-group toggle - after add').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn-productType "Product Type" width:200
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             ├── ag-Grid-AutoColumn-country "Country" width:200
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
@@ -1698,7 +1698,7 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
         await new GridColumns(api, 'two auto-group toggle - ungrouped').checkColumns(`
             CENTER
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             ├── productType "Product Type" width:200
             ├── country "Country" width:200
             ├── revenue "Revenue" width:200
@@ -1711,7 +1711,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├── ag-Grid-AutoColumn-productType "Product Type" width:200
             ├── ag-Grid-AutoColumn-country "Country" width:200
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
         `);
@@ -1759,7 +1759,7 @@ describe('ag-grid calculated columns', () => {
         ).checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn-productType "Product Type" width:200
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             ├── ag-Grid-AutoColumn-country "Country" width:200
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
@@ -1812,7 +1812,7 @@ describe('ag-grid calculated columns', () => {
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
             ├── other "Other" width:200
-            └── calculated_1 "New title" width:200
+            └── calculated_1 "Untitled" width:200
         `);
     });
 
@@ -1857,9 +1857,9 @@ describe('ag-grid calculated columns', () => {
             .checkColumns(`
                 CENTER
                 ├── ag-Grid-AutoColumn-productType "Product Type" width:200
-                ├── calculated_1 "New title" width:200
+                ├── calculated_1 "Untitled" width:200
                 ├── ag-Grid-AutoColumn-country "Country" width:200
-                ├── calculated_2 "New title" width:200
+                ├── calculated_2 "Untitled" width:200
                 ├── revenue "Revenue" width:200
                 └── cost "Cost" width:200
             `);

@@ -1,4 +1,4 @@
-import { _camelCaseToHumanText, _isStringLargerThan, _requestAnimationFrame } from 'ag-stack';
+import { _camelCaseToHumanText, _findFocusableElements, _isStringLargerThan, _requestAnimationFrame } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -254,7 +254,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const livePreview = this.isLivePreview();
         if (mode === 'add') {
             const colId = this.createUniqueColId();
-            const headerName = this.getLocaleTextFunc()('calculatedColumnDefaultTitle', 'New title');
+            const headerName = this.getLocaleTextFunc()('calculatedColumnDefaultTitle', 'Untitled');
             const draft: CalculatedColumnDraft = { colId, headerName, ...this.getDefaultDraft() };
             if (livePreview) {
                 // Live preview adds the column up front, then opens the dialog over it.
@@ -578,10 +578,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             new Dialog({
                 title: this.getLocaleTextFunc()('calculatedColumn', 'Calculated Column'),
                 component: form,
-                width: 300,
-                height: 345,
                 minWidth: 300,
-                minHeight: 345,
+                width: 400,
+                minHeight: 380,
+                height: 380,
                 centered: true,
                 movable: true,
                 resizable: true,
@@ -593,7 +593,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         this.openDialogsByColId.set(draft.colId, { dialog, highlight: columnToHighlight != null });
         this.refreshCalculatedColumnHighlight(columnToHighlight ?? null);
         if (focusDialog) {
-            dialog.getGui().focus({ preventScroll: true });
+            const focusableElements = _findFocusableElements(form.getGui());
+            if (focusableElements.length) {
+                focusableElements[0].focus({ preventScroll: true });
+            }
         }
         const destroyDialogMouseListeners = this.addManagedElementListeners(dialog.getGui(), {
             mousedown: () => form.hideSuggestions(),

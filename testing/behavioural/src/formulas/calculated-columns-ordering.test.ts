@@ -354,7 +354,7 @@ describe('calculated columns - display ordering', () => {
         expect(c2).toBe('calculated_2');
         await new GridColumns(api, 'unanchored calc col stays top-level, not in group').checkColumns(`
             CENTER
-            ├── calculated_2 "New title" width:200
+            ├── calculated_2 "Untitled" width:200
             └─┬ "G" GROUP
               ├── a "A" width:200
               └── b "B" width:200
@@ -467,7 +467,7 @@ describe('calculated columns - display ordering', () => {
         await new GridColumns(api, 'dialog add lands immediately after the anchor leaf column').checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             └── cost "Cost" width:200
         `);
     });
@@ -507,7 +507,7 @@ describe('calculated columns - display ordering', () => {
             CENTER
             ├── athlete "Athlete" width:200
             ├── age "Age" width:200
-            └── calculated_1 "New title" width:200
+            └── calculated_1 "Untitled" width:200
         `);
         await new GridRows(api, 'dialog add preserves unpinned state - rows').check(`
             ROOT id:ROOT_NODE_ID
@@ -534,7 +534,7 @@ describe('calculated columns - display ordering', () => {
             CENTER
             ├── a "A" width:200 sort:desc
             ├── b "B" width:200
-            └── calculated_1 "New title" width:200
+            └── calculated_1 "Untitled" width:200
         `);
         await new GridRows(api, 'preserved runtime sort after calc add - rows').check(`
             ROOT id:ROOT_NODE_ID
@@ -560,7 +560,7 @@ describe('calculated columns - display ordering', () => {
             CENTER
             ├── a "A" width:250
             ├── b "B" width:200
-            └── calculated_1 "New title" width:200
+            └── calculated_1 "Untitled" width:200
         `);
         await new GridRows(api, 'preserved runtime width after calc add - rows').check(`
             ROOT id:ROOT_NODE_ID
@@ -622,7 +622,7 @@ describe('calculated columns - display ordering', () => {
             CENTER
             └─┬ GROUP
               ├── revenue "Revenue" width:200
-              ├── calculated_1 "New title" width:200
+              ├── calculated_1 "Untitled" width:200
               └── cost "Cost" width:200
         `);
     });
@@ -740,7 +740,7 @@ describe('calculated columns - display ordering', () => {
                 CENTER
                 ├── c "C" width:200
                 ├── a "A" width:200
-                ├── calculated_2 "New title" width:200
+                ├── calculated_2 "Untitled" width:200
                 └── b "B" width:200
             `);
     });
@@ -761,8 +761,8 @@ describe('calculated columns - display ordering', () => {
         await new GridColumns(api, 'dialog add anchored on another calculated column chains after it').checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200
-            ├── calculated_1 "New title" width:200
-            ├── calculated_2 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
+            ├── calculated_2 "Untitled" width:200
             └── cost "Cost" width:200
         `);
     });
@@ -787,8 +787,8 @@ describe('calculated columns - display ordering', () => {
         expect(order(api)).toEqual([first, second, 'revenue', 'cost']);
         await new GridColumns(api, 'chain after anchor move').checkColumns(`
             CENTER
-            ├── calculated_1 "New title" width:200
-            ├── calculated_2 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
+            ├── calculated_2 "Untitled" width:200
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
         `);
@@ -814,8 +814,8 @@ describe('calculated columns - display ordering', () => {
         ).checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200
-            ├── calculated_2 "New title" width:200
-            ├── calculated_1 "New title" width:200
+            ├── calculated_2 "Untitled" width:200
+            ├── calculated_1 "Untitled" width:200
             └── cost "Cost" width:200
         `);
     });
@@ -844,7 +844,7 @@ describe('calculated columns - display ordering', () => {
         await new GridColumns(api, 'calc after auto-group anchor').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             ├── revenue "Revenue" width:200 aggFunc:sum
             └── cost "Cost" width:200 aggFunc:sum
         `);
@@ -868,8 +868,8 @@ describe('calculated columns - display ordering', () => {
         await new GridColumns(api, 'repeated calc adds from auto-group anchor').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            ├── calculated_2 "New title" width:200
-            ├── calculated_1 "New title" width:200
+            ├── calculated_2 "Untitled" width:200
+            ├── calculated_1 "Untitled" width:200
             ├── revenue "Revenue" width:200 aggFunc:sum
             └── cost "Cost" width:200 aggFunc:sum
         `);
@@ -898,9 +898,9 @@ describe('calculated columns - display ordering', () => {
         expect(order(api)).toEqual([first, 'ag-Grid-AutoColumn', second, 'region', 'revenue', 'cost']);
         await new GridColumns(api, 'add from moved auto-group anchor').checkColumns(`
             CENTER
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             ├── ag-Grid-AutoColumn "Group" width:200
-            ├── calculated_2 "New title" width:200
+            ├── calculated_2 "Untitled" width:200
             ├── revenue "Revenue" width:200 aggFunc:sum
             └── cost "Cost" width:200 aggFunc:sum
         `);
@@ -937,7 +937,7 @@ describe('calculated columns - display ordering', () => {
             ├── qty "Qty" width:200
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            └── calculated_1 "New title" width:200
+            └── calculated_1 "Untitled" width:200
         `);
     });
 
@@ -966,7 +966,7 @@ describe('calculated columns - display ordering', () => {
             ├── revenue "Revenue" width:200 !resizable
             ├── cost "Cost" width:200 !resizable
             ├── qty "Qty" width:200 !resizable
-            └── calculated_1 "New title" width:200 !resizable
+            └── calculated_1 "Untitled" width:200 !resizable
         `);
     });
 
@@ -998,7 +998,7 @@ describe('calculated columns - display ordering', () => {
             CENTER
             ├── a "A" width:200 sort:asc
             ├── revenue "Revenue" width:200
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             ├── cost "Cost" width:200
             └── b "B" width:200
         `);
@@ -1024,7 +1024,7 @@ describe('calculated columns - display ordering', () => {
         await new GridColumns(api, 'mid-list calc preserved with maintainColumnOrder').checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200 !resizable
-            ├── calculated_1 "New title" width:200 !resizable
+            ├── calculated_1 "Untitled" width:200 !resizable
             ├── cost "Cost" width:200 !resizable
             └── qty "Qty" width:200 !resizable
         `);
@@ -1051,7 +1051,7 @@ describe('calculated columns - display ordering', () => {
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
             ├── revenue "Revenue" width:200
-            ├── calculated_1 "New title" width:200
+            ├── calculated_1 "Untitled" width:200
             └── cost "Cost" width:200
         `);
     });
@@ -1078,7 +1078,7 @@ describe('calculated columns - display ordering', () => {
         await new GridColumns(api, 'removing the anchor calc col keeps its orphaned dependent in place').checkColumns(`
             CENTER
             ├── revenue "Revenue" width:200
-            ├── calculated_2 "New title" width:200
+            ├── calculated_2 "Untitled" width:200
             └── cost "Cost" width:200
         `);
     });
@@ -1105,7 +1105,7 @@ describe('calculated columns - display ordering', () => {
             .checkColumns(`
                 CENTER
                 ├── revenue "Revenue" width:200
-                ├── calculated_2 "New title" width:200
+                ├── calculated_2 "Untitled" width:200
                 ├── cost "Cost" width:200
                 └── tax "Tax" width:200
             `);
