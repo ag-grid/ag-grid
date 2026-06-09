@@ -775,6 +775,15 @@ export const AG_GRID_LOCALE_UA = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Текст',
+    dataTypeNumber: 'Число',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Логічне значення',
+    dataTypeDate: 'Дата',
+    dataTypeDateString: 'Рядок дати',
+    dataTypeDateTime: 'Дата й час',
+    dataTypeDateTimeString: 'Рядок дати й часу',
+    dataTypeObject: 'Об’єкт',
     true: 'Правда',
     false: 'Неправда',
     invalidDate: 'Невірна дата',

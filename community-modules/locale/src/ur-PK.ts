@@ -773,6 +773,15 @@ export const AG_GRID_LOCALE_PK = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'متن',
+    dataTypeNumber: 'نمبر',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'بولین',
+    dataTypeDate: 'تاریخ',
+    dataTypeDateString: 'تاریخ سٹرنگ',
+    dataTypeDateTime: 'تاریخ اور وقت',
+    dataTypeDateTimeString: 'تاریخ اور وقت سٹرنگ',
+    dataTypeObject: 'آبجیکٹ',
     true: 'سچ',
     false: 'جھوٹ',
     invalidDate: 'غلط تاریخ',

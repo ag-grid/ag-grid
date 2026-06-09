@@ -779,6 +779,15 @@ export const AG_GRID_LOCALE_GR = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Κείμενο',
+    dataTypeNumber: 'Αριθμός',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Δυαδική τιμή',
+    dataTypeDate: 'Ημερομηνία',
+    dataTypeDateString: 'Συμβολοσειρά ημερομηνίας',
+    dataTypeDateTime: 'Ημερομηνία και ώρα',
+    dataTypeDateTimeString: 'Συμβολοσειρά ημερομηνίας και ώρας',
+    dataTypeObject: 'Αντικείμενο',
     true: 'Αληθές',
     false: 'Ψευδές',
     invalidDate: 'Μη έγκυρη ημερομηνία',

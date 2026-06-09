@@ -774,6 +774,15 @@ export const AG_GRID_LOCALE_NO = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Tekst',
+    dataTypeNumber: 'Tall',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Boolsk',
+    dataTypeDate: 'Dato',
+    dataTypeDateString: 'Datostreng',
+    dataTypeDateTime: 'Dato og tid',
+    dataTypeDateTimeString: 'Dato- og tidsstreng',
+    dataTypeObject: 'Objekt',
     true: 'Sant',
     false: 'Falsk',
     invalidDate: 'Ugyldig dato',

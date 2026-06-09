@@ -780,6 +780,15 @@ export const AG_GRID_LOCALE_DE = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Text',
+    dataTypeNumber: 'Zahl',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Boolescher Wert',
+    dataTypeDate: 'Datum',
+    dataTypeDateString: 'Datumszeichenfolge',
+    dataTypeDateTime: 'Datum/Uhrzeit',
+    dataTypeDateTimeString: 'Datum/Uhrzeit-Zeichenfolge',
+    dataTypeObject: 'Objekt',
     true: 'Wahr',
     false: 'Falsch',
     invalidDate: 'Ungültiges Datum',

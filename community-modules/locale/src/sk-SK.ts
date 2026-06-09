@@ -774,6 +774,15 @@ export const AG_GRID_LOCALE_SK = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Text',
+    dataTypeNumber: 'Číslo',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Logická hodnota',
+    dataTypeDate: 'Dátum',
+    dataTypeDateString: 'Reťazec dátumu',
+    dataTypeDateTime: 'Dátum a čas',
+    dataTypeDateTimeString: 'Reťazec dátumu a času',
+    dataTypeObject: 'Objekt',
     true: 'Pravda',
     false: 'Nepravda',
     invalidDate: 'Neplatný dátum',

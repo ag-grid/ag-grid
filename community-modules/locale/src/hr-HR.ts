@@ -775,6 +775,15 @@ export const AG_GRID_LOCALE_HR = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Tekst',
+    dataTypeNumber: 'Broj',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Booleova vrijednost',
+    dataTypeDate: 'Datum',
+    dataTypeDateString: 'Niz datuma',
+    dataTypeDateTime: 'Datum i vrijeme',
+    dataTypeDateTimeString: 'Niz datuma i vremena',
+    dataTypeObject: 'Objekt',
     true: 'Istina',
     false: 'Lažno',
     invalidDate: 'Nevažeći datum',

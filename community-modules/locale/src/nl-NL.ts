@@ -775,6 +775,15 @@ export const AG_GRID_LOCALE_NL = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Tekst',
+    dataTypeNumber: 'Getal',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Booleaans',
+    dataTypeDate: 'Datum',
+    dataTypeDateString: 'Datumtekenreeks',
+    dataTypeDateTime: 'Datum en tijd',
+    dataTypeDateTimeString: 'Datum- en tijdtekenreeks',
+    dataTypeObject: 'Object',
     true: 'Waar',
     false: 'Onwaar',
     invalidDate: 'Ongeldige Datum',

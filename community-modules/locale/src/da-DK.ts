@@ -776,6 +776,15 @@ export const AG_GRID_LOCALE_DK = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Tekst',
+    dataTypeNumber: 'Tal',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Boolesk',
+    dataTypeDate: 'Dato',
+    dataTypeDateString: 'Datostreng',
+    dataTypeDateTime: 'Dato og tid',
+    dataTypeDateTimeString: 'Dato- og tidsstreng',
+    dataTypeObject: 'Objekt',
     true: 'True',
     false: 'False',
     invalidDate: 'Ugyldig Dato',

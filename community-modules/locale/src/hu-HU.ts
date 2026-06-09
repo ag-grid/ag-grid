@@ -780,6 +780,15 @@ export const AG_GRID_LOCALE_HU = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Szöveg',
+    dataTypeNumber: 'Szám',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Logikai érték',
+    dataTypeDate: 'Dátum',
+    dataTypeDateString: 'Dátumszöveg',
+    dataTypeDateTime: 'Dátum és idő',
+    dataTypeDateTimeString: 'Dátum és idő szöveg',
+    dataTypeObject: 'Objektum',
     true: 'Igaz',
     false: 'Hamis',
     invalidDate: 'Érvénytelen dátum',

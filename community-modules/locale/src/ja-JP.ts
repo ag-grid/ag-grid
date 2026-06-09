@@ -773,6 +773,15 @@ export const AG_GRID_LOCALE_JP = {
     decimalSeparator: '。',
 
     // Data types
+    dataTypeText: 'テキスト',
+    dataTypeNumber: '数値',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'ブール値',
+    dataTypeDate: '日付',
+    dataTypeDateString: '日付文字列',
+    dataTypeDateTime: '日時',
+    dataTypeDateTimeString: '日時文字列',
+    dataTypeObject: 'オブジェクト',
     true: '真',
     false: '偽',
     invalidDate: '無効な日付',

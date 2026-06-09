@@ -773,6 +773,15 @@ export const AG_GRID_LOCALE_CZ = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Text',
+    dataTypeNumber: 'Číslo',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Logická hodnota',
+    dataTypeDate: 'Datum',
+    dataTypeDateString: 'Řetězec data',
+    dataTypeDateTime: 'Datum a čas',
+    dataTypeDateTimeString: 'Řetězec data a času',
+    dataTypeObject: 'Objekt',
     true: 'Pravda',
     false: 'Nepravda',
     invalidDate: 'Neplatné datum',

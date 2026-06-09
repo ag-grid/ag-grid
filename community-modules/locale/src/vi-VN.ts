@@ -773,6 +773,15 @@ export const AG_GRID_LOCALE_VN = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Văn bản',
+    dataTypeNumber: 'Số',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Boolean',
+    dataTypeDate: 'Ngày',
+    dataTypeDateString: 'Chuỗi ngày',
+    dataTypeDateTime: 'Ngày giờ',
+    dataTypeDateTimeString: 'Chuỗi ngày giờ',
+    dataTypeObject: 'Đối tượng',
     true: 'Đúng',
     false: 'Sai',
     invalidDate: 'Ngày không hợp lệ',

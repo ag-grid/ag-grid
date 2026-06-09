@@ -778,6 +778,15 @@ export const AG_GRID_LOCALE_BG = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Текст',
+    dataTypeNumber: 'Число',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Булева стойност',
+    dataTypeDate: 'Дата',
+    dataTypeDateString: 'Низ с дата',
+    dataTypeDateTime: 'Дата и час',
+    dataTypeDateTimeString: 'Низ с дата и час',
+    dataTypeObject: 'Обект',
     true: 'Вярно',
     false: 'Невярно',
     invalidDate: 'Невалидна дата',

@@ -782,6 +782,15 @@ export const AG_GRID_LOCALE_FR = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Texte',
+    dataTypeNumber: 'Nombre',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Booléen',
+    dataTypeDate: 'Date',
+    dataTypeDateString: 'Chaîne de date',
+    dataTypeDateTime: 'Date et heure',
+    dataTypeDateTimeString: 'Chaîne de date et heure',
+    dataTypeObject: 'Objet',
     true: 'Vrai',
     false: 'Faux',
     invalidDate: 'Date invalide',

@@ -772,6 +772,15 @@ export const AG_GRID_LOCALE_HK = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: '文字',
+    dataTypeNumber: '數字',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: '布林值',
+    dataTypeDate: '日期',
+    dataTypeDateString: '日期字串',
+    dataTypeDateTime: '日期時間',
+    dataTypeDateTimeString: '日期時間字串',
+    dataTypeObject: '物件',
     true: '真',
     false: '假',
     invalidDate: '無效日期',

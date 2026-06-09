@@ -773,6 +773,15 @@ export const AG_GRID_LOCALE_KR = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: '텍스트',
+    dataTypeNumber: '숫자',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: '부울',
+    dataTypeDate: '날짜',
+    dataTypeDateString: '날짜 문자열',
+    dataTypeDateTime: '날짜 시간',
+    dataTypeDateTimeString: '날짜 시간 문자열',
+    dataTypeObject: '객체',
     true: 'True',
     false: 'False',
     invalidDate: '유효하지 않은 날짜',

@@ -778,6 +778,15 @@ export const AG_GRID_LOCALE_TR = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Metin',
+    dataTypeNumber: 'Sayı',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Boole',
+    dataTypeDate: 'Tarih',
+    dataTypeDateString: 'Tarih dizesi',
+    dataTypeDateTime: 'Tarih ve saat',
+    dataTypeDateTimeString: 'Tarih ve saat dizesi',
+    dataTypeObject: 'Nesne',
     true: 'Doğru',
     false: 'Yanlış',
     invalidDate: 'Geçersiz Tarih',

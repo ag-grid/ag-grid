@@ -772,6 +772,15 @@ export const AG_GRID_LOCALE_CN = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: '文本',
+    dataTypeNumber: '数字',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: '布尔值',
+    dataTypeDate: '日期',
+    dataTypeDateString: '日期字符串',
+    dataTypeDateTime: '日期时间',
+    dataTypeDateTimeString: '日期时间字符串',
+    dataTypeObject: '对象',
     true: '真',
     false: '假',
     invalidDate: '无效日期',

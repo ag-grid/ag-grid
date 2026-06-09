@@ -778,6 +778,15 @@ export const AG_GRID_LOCALE_ES = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Texto',
+    dataTypeNumber: 'Número',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Booleano',
+    dataTypeDate: 'Fecha',
+    dataTypeDateString: 'Cadena de fecha',
+    dataTypeDateTime: 'Fecha y hora',
+    dataTypeDateTimeString: 'Cadena de fecha y hora',
+    dataTypeObject: 'Objeto',
     true: 'Verdadero',
     false: 'Falso',
     invalidDate: 'Fecha inválida',

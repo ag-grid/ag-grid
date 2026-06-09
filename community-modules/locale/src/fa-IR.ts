@@ -775,6 +775,15 @@ export const AG_GRID_LOCALE_IR = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'متن',
+    dataTypeNumber: 'عدد',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'مقدار بولی',
+    dataTypeDate: 'تاریخ',
+    dataTypeDateString: 'رشته تاریخ',
+    dataTypeDateTime: 'تاریخ و زمان',
+    dataTypeDateTimeString: 'رشته تاریخ و زمان',
+    dataTypeObject: 'شیء',
     true: 'درست',
     false: 'نادرست',
     invalidDate: 'تاریخ نامعتبر',

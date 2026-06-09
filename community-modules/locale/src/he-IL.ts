@@ -772,6 +772,15 @@ export const AG_GRID_LOCALE_IL = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'טקסט',
+    dataTypeNumber: 'מספר',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'בוליאני',
+    dataTypeDate: 'תאריך',
+    dataTypeDateString: 'מחרוזת תאריך',
+    dataTypeDateTime: 'תאריך ושעה',
+    dataTypeDateTimeString: 'מחרוזת תאריך ושעה',
+    dataTypeObject: 'אובייקט',
     true: 'True',
     false: 'False',
     invalidDate: 'תאריך לא חוקי',

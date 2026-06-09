@@ -772,6 +772,15 @@ export const AG_GRID_LOCALE_EG = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'نص',
+    dataTypeNumber: 'رقم',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'قيمة منطقية',
+    dataTypeDate: 'تاريخ',
+    dataTypeDateString: 'سلسلة تاريخ',
+    dataTypeDateTime: 'تاريخ ووقت',
+    dataTypeDateTimeString: 'سلسلة تاريخ ووقت',
+    dataTypeObject: 'كائن',
     true: 'صح',
     false: 'خطأ',
     invalidDate: 'تاريخ غير صالح',

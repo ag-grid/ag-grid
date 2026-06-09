@@ -776,6 +776,15 @@ export const AG_GRID_LOCALE_FI = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Teksti',
+    dataTypeNumber: 'Numero',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Totuusarvo',
+    dataTypeDate: 'Päivämäärä',
+    dataTypeDateString: 'Päivämäärämerkkijono',
+    dataTypeDateTime: 'Päivämäärä ja aika',
+    dataTypeDateTimeString: 'Päivämäärä- ja aikamerkkijono',
+    dataTypeObject: 'Objekti',
     true: 'Totta',
     false: 'Väärin',
     invalidDate: 'Virheellinen päivämäärä',

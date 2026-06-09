@@ -777,6 +777,15 @@ export const AG_GRID_LOCALE_RO = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Text',
+    dataTypeNumber: 'Număr',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Boolean',
+    dataTypeDate: 'Dată',
+    dataTypeDateString: 'Șir de dată',
+    dataTypeDateTime: 'Dată și oră',
+    dataTypeDateTimeString: 'Șir de dată și oră',
+    dataTypeObject: 'Obiect',
     true: 'Adevărat',
     false: 'Fals',
     invalidDate: 'Dată invalidă',
