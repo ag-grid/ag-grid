@@ -409,6 +409,35 @@ describe('ag-grid file input overlay', () => {
             `);
         });
 
+        test('clears activeOverlay when file input overlay success is called via activeOverlay', async () => {
+            let capturedParams: ProcessFileInputParams | undefined;
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }],
+                rowData: [{ a: 1 }],
+                processFileInput: makeProcessFileInput((params) => {
+                    capturedParams = params;
+                }),
+            });
+            expect(hasFileInputOverlay()).toBeFalsy();
+
+            api.setGridOption('activeOverlay', 'agFileInputOverlay');
+            expect(hasFileInputOverlay()).toBeTruthy();
+
+            const file = new File(['data'], 'test.csv', { type: 'text/csv' });
+            const eGui = getOverlayGui();
+            eGui.dispatchEvent(createFileDragEvent('drop', [file]));
+
+            capturedParams!.success([{ a: 10 }, { a: 20 }]);
+
+            expect(hasFileInputOverlay()).toBeFalsy();
+            expect(api.getGridOption('activeOverlay')).toBeUndefined();
+            await new GridRows(api, 'after success via activeOverlay').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 a:10
+                └── LEAF id:1 a:20
+            `);
+        });
+
         test('shows no-rows overlay when success is called with empty array', () => {
             let capturedParams: ProcessFileInputParams | undefined;
             gridsManager.createGrid('myGrid', {

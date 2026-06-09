@@ -51,9 +51,8 @@ function parseWorkbook(workbook: any): Record<string, unknown>[] {
     return XLSX.utils.sheet_to_json(worksheet);
 }
 
-function clearData() {
-    gridApi.setGridOption('rowData', null);
-    gridApi.setGridOption('columnDefs', []);
+function uploadFile() {
+    gridApi.setGridOption('activeOverlay', 'agFileInputOverlay');
 }
 
 function importExcel() {

@@ -169,6 +169,7 @@ export class OverlayService extends BeanStub implements NamedBean {
                 'loadingOverlayComponentParams',
                 'noRowsOverlayComponentParams',
                 'autoGenerateColumnDefs',
+                'processFileInput',
             ],
             (params) => this.onPropChange(new Set(params.changeSet?.properties))
         );

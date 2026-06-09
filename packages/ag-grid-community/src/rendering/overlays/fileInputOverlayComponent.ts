@@ -1,5 +1,6 @@
 import { RefPlaceholder, _clearElement } from 'ag-stack';
 
+import type { GridOptions } from '../../entities/gridOptions';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { ProcessFileInputParams } from '../../interfaces/iFileProcessor';
 import type { ElementParams } from '../../utils/element';
@@ -227,7 +228,11 @@ export class FileInputOverlayComponent
             if (token !== this.processingToken) {
                 return;
             }
-            gos.updateGridOptions({ options: { rowData }, source: 'api' });
+            const options: GridOptions = { rowData };
+            if (gos.get('activeOverlay') === 'agFileInputOverlay') {
+                options.activeOverlay = undefined;
+            }
+            gos.updateGridOptions({ options, source: 'api' });
         };
 
         const fail = (errorMessage?: string) => {
