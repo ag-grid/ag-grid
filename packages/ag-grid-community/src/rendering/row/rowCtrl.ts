@@ -100,6 +100,11 @@ export interface RowGui {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PinnedCellGroupWidths = PinnedSectionWidths;
 
+interface MappedPinnedCellGroupWidths extends PinnedCellGroupWidths {
+    renderLeft: boolean;
+    renderRight: boolean;
+}
+
 type RowCtrlEvent = RenderedRowEvent;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
@@ -473,21 +478,30 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         rowGui.rowComp.refreshPinnedSections();
     }
 
-    public getMappedPinnedCellGroupWidths(): PinnedCellGroupWidths {
-        const baseWidths = this.getPinnedCellGroupWidths();
+    public getMappedPinnedCellGroupWidths(): MappedPinnedCellGroupWidths {
+        let { leftWidth, centerWidth, rightWidth } = this.getPinnedCellGroupWidths();
 
-        if (!this.isEmbeddedFullWidth) {
-            return baseWidths;
+        if (this.isEmbeddedFullWidth) {
+            const hasLeft = this.embeddedSectionHasContent.left;
+            const hasRight = this.embeddedSectionHasContent.right;
+
+            centerWidth = centerWidth + (hasLeft ? 0 : leftWidth) + (hasRight ? 0 : rightWidth);
+            leftWidth = hasLeft ? leftWidth : 0;
+            rightWidth = hasRight ? rightWidth : 0;
         }
 
-        const hasLeft = this.embeddedSectionHasContent.left;
-        const hasRight = this.embeddedSectionHasContent.right;
+        const isFullWidth = this.isFullWidth();
 
         return {
-            leftWidth: hasLeft ? baseWidths.leftWidth : 0,
-            centerWidth:
-                baseWidths.centerWidth + (hasLeft ? 0 : baseWidths.leftWidth) + (hasRight ? 0 : baseWidths.rightWidth),
-            rightWidth: hasRight ? baseWidths.rightWidth : 0,
+            leftWidth,
+            centerWidth,
+            rightWidth,
+            // Pinned lanes are omitted from the DOM when they have no width to
+            // improve rendering performance. Full width rows always render the
+            // lanes, because the row renderer requires a reference to them even
+            // when they are empty.
+            renderLeft: leftWidth > 0 || isFullWidth,
+            renderRight: rightWidth > 0 || isFullWidth,
         };
     }
 

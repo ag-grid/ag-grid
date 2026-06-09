@@ -382,7 +382,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         };
     }, [cellCtrlsMerged]);
 
-    const { leftWidth, centerWidth, rightWidth } = rowCtrl.getMappedPinnedCellGroupWidths();
+    const { leftWidth, centerWidth, rightWidth, renderLeft, renderRight } = rowCtrl.getMappedPinnedCellGroupWidths();
 
     const reactFullWidthCellRendererStateless = useMemo(() => {
         const res =
@@ -438,17 +438,10 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         ref: React.Ref<HTMLDivElement>,
         width: number,
         children: React.ReactNode,
-        pinned: boolean = false
+        pinned: boolean = false,
+        shouldRender: boolean = true
     ) => {
-        if (
-            // Detach pinned cell containers when there are no pinned columns to
-            // improve rendering performance
-            pinned &&
-            width <= 0 &&
-            // Unless we're rendering a full width rows, because the row
-            // renderer is passed a reference to these even if they are empty
-            !isFullWidth
-        ) {
+        if (!shouldRender) {
             return null;
         }
         if (pinned) {
@@ -476,50 +469,29 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             row-id={rowId}
             row-business-key={rowBusinessKey}
         >
-            {showCells ? (
+            {showCells || showEmbeddedFullWidth ? (
                 <>
                     {renderCellSection(
                         'ag-grid-pinned-left-cells',
                         ePinnedLeftCells,
                         leftWidth,
-                        showCellsJsx(leftCellCtrls),
-                        true
+                        showCells ? showCellsJsx(leftCellCtrls) : showEmbeddedFrameworkSection('left'),
+                        true,
+                        renderLeft
                     )}
                     {renderCellSection(
                         'ag-grid-scrolling-cells',
                         eScrollingCells,
                         centerWidth,
-                        showCellsJsx(centerCellCtrls)
+                        showCells ? showCellsJsx(centerCellCtrls) : showEmbeddedFrameworkSection('center')
                     )}
                     {renderCellSection(
                         'ag-grid-pinned-right-cells',
                         ePinnedRightCells,
                         rightWidth,
-                        showCellsJsx(rightCellCtrls),
-                        true
-                    )}
-                </>
-            ) : showEmbeddedFullWidth ? (
-                <>
-                    {renderCellSection(
-                        'ag-grid-pinned-left-cells',
-                        ePinnedLeftCells,
-                        leftWidth,
-                        showEmbeddedFrameworkSection('left'),
-                        true
-                    )}
-                    {renderCellSection(
-                        'ag-grid-scrolling-cells',
-                        eScrollingCells,
-                        centerWidth,
-                        showEmbeddedFrameworkSection('center')
-                    )}
-                    {renderCellSection(
-                        'ag-grid-pinned-right-cells',
-                        ePinnedRightCells,
-                        rightWidth,
-                        showEmbeddedFrameworkSection('right'),
-                        true
+                        showCells ? showCellsJsx(rightCellCtrls) : showEmbeddedFrameworkSection('right'),
+                        true,
+                        renderRight
                     )}
                 </>
             ) : showFullWidthFramework ? (

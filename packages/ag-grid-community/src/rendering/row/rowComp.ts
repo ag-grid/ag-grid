@@ -118,20 +118,16 @@ export class RowComp extends Component {
             eCenter.style.width = `${widths.centerWidth}px`;
         }
 
-        const isFullWidth = this.rowCtrl.isFullWidth();
-
-        const refreshPinnedSection = (eSection: HTMLElement | undefined, width: number, method: 'after' | 'before') => {
+        const refreshPinnedSection = (
+            eSection: HTMLElement | undefined,
+            width: number,
+            shouldRender: boolean,
+            method: 'after' | 'before'
+        ) => {
             if (!eSection) {
                 return;
             }
-            if (
-                // Skip rendering pinned cell containers when there are no pinned
-                // columns to improve rendering performance
-                width <= 0 &&
-                // Render always for full width rows, because the row renderer
-                // requires a reference to these even if they are empty
-                !isFullWidth
-            ) {
+            if (!shouldRender) {
                 eSection.remove();
                 return;
             }
@@ -141,8 +137,8 @@ export class RowComp extends Component {
             }
         };
 
-        refreshPinnedSection(this.ePinnedLeftSection, widths.leftWidth, 'before');
-        refreshPinnedSection(this.ePinnedRightSection, widths.rightWidth, 'after');
+        refreshPinnedSection(this.ePinnedLeftSection, widths.leftWidth, widths.renderLeft, 'before');
+        refreshPinnedSection(this.ePinnedRightSection, widths.rightWidth, widths.renderRight, 'after');
     }
 
     private setInitialStyle(container: HTMLElement): void {
