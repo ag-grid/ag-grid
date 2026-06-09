@@ -1,4 +1,4 @@
-import type { GridOptions, IFileProcessorParams } from 'ag-grid-community';
+import type { GridOptions, ProcessFileInputParams } from 'ag-grid-community';
 import {
     AutoGenerateColumnsModule,
     ClientSideRowModelModule,
@@ -21,7 +21,7 @@ function parseWorkbook(workbook: any): Record<string, unknown>[] {
     return XLSX.utils.sheet_to_json(worksheet);
 }
 
-function processFiles(params: IFileProcessorParams): void {
+function processFileInput(params: ProcessFileInputParams): void {
     const file = params.files[0];
     if (!file) return;
 
@@ -40,7 +40,7 @@ function processFiles(params: IFileProcessorParams): void {
 
 const gridOptions: GridOptions = {
     autoGenerateColumnDefs: true,
-    fileProcessor: { processFiles },
+    processFileInput,
     defaultColDef: {
         flex: 1,
         minWidth: 100,

@@ -803,7 +803,7 @@ export const AG_GRID_ERRORS = {
     304: ({ dataType }: { dataType: string }) =>
         `Invalid calculatedColumns.dataTypes entry "${dataType}" - it must be a built-in data type or registered via dataTypeDefinitions. It has been ignored.` as const,
     305: () =>
-        `The file input overlay is shown but no 'fileProcessor' is configured. The overlay will not work without a 'fileProcessor'.` as const,
+        `The file input overlay is shown but no 'processFileInput' is configured. The overlay will not work without a 'processFileInput'.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

@@ -462,7 +462,7 @@ export type {
 } from './interfaces/iToolPanel';
 
 // File Processor
-export type { IFileProcessor, IFileProcessorParams } from './interfaces/iFileProcessor';
+export type { ProcessFileInputParams } from './interfaces/iFileProcessor';
 
 // Overlays
 export type { IExportingOverlay, IExportingOverlayComp } from './rendering/overlays/exportingOverlayComponent';

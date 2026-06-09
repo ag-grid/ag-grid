@@ -54,7 +54,7 @@ import type {
     IAdvancedFilterParams,
     IAggFuncs,
     IDatasource,
-    IFileProcessor,
+    ProcessFileInputParams,
     IServerSideDatasource,
     IViewportDatasource,
     Icons,
@@ -932,7 +932,7 @@ export interface Props<TData> {
          * When provided, the file input overlay is shown when there is no row data.
          * Call `params.success(rowData)` to load parsed data into the grid, or `params.fail(message)` to show an error.
          */
-    fileProcessor?: IFileProcessor<TData>,
+    processFileInput?: (params: ProcessFileInputParams<TData>) => void,
     /** Set whether pagination is enabled.
          * @default false
          * @agModule `PaginationModule`
@@ -2255,7 +2255,7 @@ export function getProps() {
         overlayComponentSelector: undefined,
         activeOverlay: undefined,
         activeOverlayParams: undefined,
-        fileProcessor: undefined,
+        processFileInput: undefined,
         pagination: undefined,
         paginationPageSize: undefined,
         paginationPageSizeSelector: undefined,

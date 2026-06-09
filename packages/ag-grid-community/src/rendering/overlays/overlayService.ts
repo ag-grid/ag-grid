@@ -403,7 +403,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             if (!gos.get('columnDefs') || !gos.get('rowData')) {
                 if (
                     gos.get('autoGenerateColumnDefs') &&
-                    gos.get('fileProcessor') &&
+                    gos.get('processFileInput') &&
                     !this.isDisabled(FileInputOverlayDef)
                 ) {
                     return FileInputOverlayDef;
@@ -417,7 +417,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             this.disableInitialOverlay();
         }
 
-        if (gos.get('fileProcessor') && !this.isDisabled(FileInputOverlayDef)) {
+        if (gos.get('processFileInput') && !this.isDisabled(FileInputOverlayDef)) {
             const rowData = gos.get('rowData');
             if (rowData == null || (Array.isArray(rowData) && rowData.length === 0)) {
                 return FileInputOverlayDef;

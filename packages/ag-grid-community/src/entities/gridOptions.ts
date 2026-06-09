@@ -183,7 +183,7 @@ import type {
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
-import type { IFileProcessor } from '../interfaces/iFileProcessor';
+import type { ProcessFileInputParams } from '../interfaces/iFileProcessor';
 import type { AlwaysPassFilter, FilterHandlers, QuickFilterMatcher, QuickFilterParser } from '../interfaces/iFilter';
 import type { FindOptions } from '../interfaces/iFind';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
@@ -1088,11 +1088,11 @@ export interface GridOptions<TData = any> {
 
     // *** File Input *** //
     /**
-     * Provide a file processor to handle files received via the file drop overlay (drag-and-drop or file browser).
+     * Callback to handle files received via the file input overlay (drag-and-drop or file browser).
      * When provided, the file input overlay is shown when there is no row data.
      * Call `params.success(rowData)` to load parsed data into the grid, or `params.fail(message)` to show an error.
      */
-    fileProcessor?: IFileProcessor<TData>;
+    processFileInput?: (params: ProcessFileInputParams<TData>) => void;
 
     // *** Pagination *** //
     /**

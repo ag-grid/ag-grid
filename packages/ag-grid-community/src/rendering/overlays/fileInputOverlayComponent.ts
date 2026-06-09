@@ -1,7 +1,7 @@
 import { RefPlaceholder, _clearElement } from 'ag-stack';
 
 import { _addGridCommonParams } from '../../gridOptionsUtils';
-import type { IFileProcessorParams } from '../../interfaces/iFileProcessor';
+import type { ProcessFileInputParams } from '../../interfaces/iFileProcessor';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import { _createIconNoSpan } from '../../utils/icon';
@@ -56,9 +56,9 @@ export class FileInputOverlayComponent
         this.buildDropZone(params);
         this.showState('ready');
         this.setupDragListeners();
-        if (!this.gos.get('fileProcessor')) {
+        if (!this.gos.get('processFileInput')) {
             _warn(305);
-            this.eErrorBanner.textContent = 'gridOptions.fileProcessor is missing';
+            this.eErrorBanner.textContent = 'gridOptions.processFileInput is missing';
             this.showState('error');
         }
     }
@@ -216,7 +216,7 @@ export class FileInputOverlayComponent
         }
 
         const { gos, beans } = this;
-        const fileProcessor = gos.get('fileProcessor');
+        const processFileInput = gos.get('processFileInput');
 
         const fileName = files[0].name;
         this.updateProcessingState(fileName);
@@ -237,11 +237,11 @@ export class FileInputOverlayComponent
             beans.ariaAnnounce.announceValue(message, 'overlay');
         };
 
-        if (!fileProcessor) {
+        if (!processFileInput) {
             fail();
         } else {
             try {
-                fileProcessor.processFiles(_addGridCommonParams<IFileProcessorParams>(gos, { files, success, fail }));
+                processFileInput(_addGridCommonParams<ProcessFileInputParams>(gos, { files, success, fail }));
             } catch {
                 fail();
             }

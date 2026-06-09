@@ -34,26 +34,24 @@ The exporting overlay is displayed when data is being exported from the grid to 
 
 ## File Input
 
-When a `fileProcessor` is provided and `rowData` is not set, the grid shows a built-in file input overlay. Users can drag a file onto the overlay or click the browse button to select one.
+When `processFileInput` is provided and `rowData` is not set, the grid shows a built-in file input overlay. Users can drag a file onto the overlay or click the browse button to select one.
 
-Provide a `fileProcessor` object with a `processFiles` method. The `params` object contains the selected `files` array along with `success` and `fail` callbacks. Call `success(rowData)` to load the parsed data, or `fail(message)` to display an error in the overlay.
+Provide a `processFileInput` callback. The `params` object contains the selected `files` array along with `success` and `fail` callbacks. Call `success(rowData)` to load the parsed data, or `fail(message)` to display an error in the overlay.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    fileProcessor: {
-        processFiles: ({ files, success, fail }) => {
-            const file = files[0];
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const rowData = parseFile(e)
-                    success(rowData);
-                } catch {
-                    fail('Failed to parse file');
-                }
-            };
+    processFileInput: ({ files, success, fail }) => {
+        const file = files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const rowData = parseFile(e)
+                success(rowData);
+            } catch {
+                fail('Failed to parse file');
+            }
+        };
             reader.readAsArrayBuffer(file);
-        },
     },
 };
 ```

@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, IFileProcessorParams } from 'ag-grid-community';
+import type { GridApi, GridOptions, ProcessFileInputParams } from 'ag-grid-community';
 import {
     AutoGenerateColumnsModule,
     ClientSideRowModelModule,
@@ -29,21 +29,19 @@ const gridOptions: GridOptions = {
         flex: 1,
     },
 
-    fileProcessor: {
-        processFiles: (params: IFileProcessorParams) => {
-            const file = params.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const workbook = XLSX.read(new Uint8Array(e.target?.result as ArrayBuffer));
-                    params.success(parseWorkbook(workbook));
-                } catch {
-                    params.fail('Failed to parse file');
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        },
+    processFileInput: (params: ProcessFileInputParams) => {
+        const file = params.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const workbook = XLSX.read(new Uint8Array(e.target?.result as ArrayBuffer));
+                params.success(parseWorkbook(workbook));
+            } catch {
+                params.fail('Failed to parse file');
+            }
+        };
+        reader.readAsArrayBuffer(file);
     },
 };
 

@@ -116,7 +116,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'findOptions',
     'filterHandlers',
     'groupHierarchyConfig',
-    'fileProcessor',
+    'processFileInput',
 ];
 
 // only used internally

@@ -1019,7 +1019,7 @@
                 "url": "./overlays/"
             }
         },
-        "fileProcessor": {
+        "processFileInput": {
             "more": {
                 "name": "File Input Overlay",
                 "url": "./overlays-overview/#file-input-overlay"
