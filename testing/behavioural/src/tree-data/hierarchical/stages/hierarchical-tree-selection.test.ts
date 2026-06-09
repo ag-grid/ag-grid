@@ -1,6 +1,7 @@
 import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
+import { GridActions } from '../../../selection/utils';
 import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid hierarchical tree selection', () => {
@@ -174,6 +175,62 @@ describe('ag-grid hierarchical tree selection', () => {
             ├── ag-Grid-AutoColumn "Hierarchy" width:200
             ├── k "K" width:200
             └── name "Name" width:200 filter
+        `);
+    });
+
+    test('SHIFT-click does not select hidden descendants of collapsed tree nodes', async () => {
+        const rowData = cachedJSONObjects.array([
+            {
+                id: 'A',
+                name: 'Root',
+                children: [
+                    {
+                        id: 'B',
+                        name: 'Node B',
+                        children: [
+                            { id: 'D', name: 'Leaf D' },
+                            { id: 'E', name: 'Leaf E' },
+                        ],
+                    },
+                    {
+                        id: 'C',
+                        name: 'Node C',
+                        children: [
+                            { id: 'F', name: 'Leaf F' },
+                            { id: 'G', name: 'Leaf G' },
+                        ],
+                    },
+                ],
+            },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'name' }],
+            autoGroupColumnDef: { headerName: 'Hierarchy' },
+            treeData: true,
+            treeDataChildrenField: 'children',
+            animateRows: false,
+            rowSelection: { mode: 'multiRow', enableClickSelection: true, checkboxes: false, headerCheckbox: false },
+            groupDefaultExpanded: 1,
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        // Displayed rows: Root (idx 0), Node B (idx 1, collapsed), Node C (idx 2, collapsed)
+        // Leaf nodes D, E, F, G are hidden inside their collapsed parents
+        const actions = new GridActions(api);
+        actions.clickRowByIndex(1); // click Node B
+        actions.clickRowByIndex(2, { shiftKey: true }); // shift-click Node C
+
+        await new GridRows(api, 'after shift-click').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ A GROUP id:A ag-Grid-AutoColumn:"A" name:"Root"
+            · ├─┬ B GROUP selected collapsed id:B ag-Grid-AutoColumn:"B" name:"Node B"
+            · │ ├── D LEAF hidden id:D ag-Grid-AutoColumn:"D" name:"Leaf D"
+            · │ └── E LEAF hidden id:E ag-Grid-AutoColumn:"E" name:"Leaf E"
+            · └─┬ C GROUP selected collapsed id:C ag-Grid-AutoColumn:"C" name:"Node C"
+            · · ├── F LEAF hidden id:F ag-Grid-AutoColumn:"F" name:"Leaf F"
+            · · └── G LEAF hidden id:G ag-Grid-AutoColumn:"G" name:"Leaf G"
         `);
     });
 });

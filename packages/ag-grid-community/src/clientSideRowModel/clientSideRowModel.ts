@@ -737,42 +737,40 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
         let started = false;
-        let finished = false;
 
         const result: RowNode[] = [];
 
         const groupsSelectChildren = _getGroupSelectsDescendants(this.gos);
 
-        this.forEachNodeAfterFilterAndSort((rowNode) => {
-            // range has been closed, skip till end
-            if (finished) {
-                return;
-            }
+        // Iterate only displayed rows so that hidden descendants of collapsed groups are excluded
+        const { rowsToDisplay } = this;
+        for (let i = 0, len = rowsToDisplay.length; i < len; ++i) {
+            const rowNode = rowsToDisplay[i];
 
             if (started) {
                 if (rowNode === lastInRange || rowNode === firstInRange) {
                     // check if this is the last node we're going to be adding
-                    finished = true;
-
                     // if the final node was a group node, and we're doing groupSelectsChildren
                     // make the exception to select all of it's descendants too
                     if (groupsSelectChildren && rowNode.group) {
                         addAllLeafs(result, rowNode);
-                        return;
+                    } else {
+                        result.push(rowNode);
                     }
+                    break;
                 }
             }
 
             if (!started) {
                 if (rowNode !== lastInRange && rowNode !== firstInRange) {
                     // still haven't hit a boundary node, keep searching
-                    return;
+                    continue;
                 }
                 started = true;
 
                 // When the first and last node are the same we're already finished
                 if (lastInRange === firstInRange) {
-                    finished = true;
+                    break;
                 }
             }
 
@@ -781,7 +779,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             if (includeThisNode) {
                 result.push(rowNode);
             }
-        });
+        }
 
         return result;
     }

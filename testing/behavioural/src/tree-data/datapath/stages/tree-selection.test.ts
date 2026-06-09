@@ -283,4 +283,45 @@ describe('ag-grid tree selection', () => {
         assertSelectedRowElementsById([], api);
         expect(api.getRowNode('2')?.selectable).toBe(false);
     });
+
+    test('SHIFT-click does not select hidden descendants of collapsed tree nodes', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: 'A', name: 'Root', orgHierarchy: ['Root'] },
+            { id: 'B', name: 'Node B', orgHierarchy: ['Root', 'B'] },
+            { id: 'C', name: 'Node C', orgHierarchy: ['Root', 'C'] },
+            { id: 'D', name: 'Leaf D', orgHierarchy: ['Root', 'B', 'D'] },
+            { id: 'E', name: 'Leaf E', orgHierarchy: ['Root', 'B', 'E'] },
+            { id: 'F', name: 'Leaf F', orgHierarchy: ['Root', 'C', 'F'] },
+            { id: 'G', name: 'Leaf G', orgHierarchy: ['Root', 'C', 'G'] },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'name' }],
+            autoGroupColumnDef: { headerName: 'Hierarchy' },
+            treeData: true,
+            animateRows: false,
+            rowSelection: { mode: 'multiRow', enableClickSelection: true, checkboxes: false, headerCheckbox: false },
+            groupDefaultExpanded: 1,
+            rowData,
+            getRowId: (params) => params.data.id,
+            getDataPath: (data: any) => data.orgHierarchy,
+        });
+
+        // Displayed rows: Root (idx 0), Node B (idx 1, collapsed), Node C (idx 2, collapsed)
+        // Leaf nodes D, E, F, G are hidden inside their collapsed parents
+        const actions = new GridActions(api, '#myGrid');
+        actions.clickRowByIndex(1); // click Node B
+        actions.clickRowByIndex(2, { shiftKey: true }); // shift-click Node C
+
+        await new GridRows(api, 'after shift-click').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Root GROUP id:A ag-Grid-AutoColumn:"Root" name:"Root"
+            · ├─┬ B GROUP selected collapsed id:B ag-Grid-AutoColumn:"B" name:"Node B"
+            · │ ├── D LEAF hidden id:D ag-Grid-AutoColumn:"D" name:"Leaf D"
+            · │ └── E LEAF hidden id:E ag-Grid-AutoColumn:"E" name:"Leaf E"
+            · └─┬ C GROUP selected collapsed id:C ag-Grid-AutoColumn:"C" name:"Node C"
+            · · ├── F LEAF hidden id:F ag-Grid-AutoColumn:"F" name:"Leaf F"
+            · · └── G LEAF hidden id:G ag-Grid-AutoColumn:"G" name:"Leaf G"
+        `);
+    });
 });
