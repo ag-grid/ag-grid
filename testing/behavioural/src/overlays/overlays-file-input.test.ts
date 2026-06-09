@@ -154,6 +154,36 @@ describe('ag-grid file input overlay', () => {
             expect(hasLoadingOverlay()).toBeFalsy();
         });
 
+        test('does not show file input overlay when autoGenerateColumnDefs with rowData provided', () => {
+            gridsManager.createGrid('myGrid', {
+                autoGenerateColumnDefs: true,
+                rowData: [{ a: 1 }],
+                processFileInput: makeProcessFileInput(),
+            });
+            expect(hasFileInputOverlay()).toBeFalsy();
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+        });
+
+        test('shows no-rows overlay when autoGenerateColumnDefs with empty rowData and processFileInput', () => {
+            gridsManager.createGrid('myGrid', {
+                autoGenerateColumnDefs: true,
+                rowData: [],
+                processFileInput: makeProcessFileInput(),
+            });
+            expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasFileInputOverlay()).toBeFalsy();
+            expect(hasLoadingOverlay()).toBeFalsy();
+        });
+
+        test('shows loading overlay when autoGenerateColumnDefs without processFileInput', () => {
+            gridsManager.createGrid('myGrid', {
+                autoGenerateColumnDefs: true,
+            });
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasFileInputOverlay()).toBeFalsy();
+        });
+
         test('shows loading overlay without processFileInput when rowData undefined', () => {
             gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'a' }],
