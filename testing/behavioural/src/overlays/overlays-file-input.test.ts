@@ -276,13 +276,6 @@ describe('ag-grid file input overlay', () => {
 
         test('shows error banner when fileProcessor calls fail', () => {
             let capturedParams: IFileProcessorParams | undefined;
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
-                fileProcessor: makeFileProcessor((params) => {
-                    capturedParams = params;
-                }),
-            });
             expect(hasFileInputOverlay()).toBeTruthy();
 
             const file = new File(['data'], 'test.csv', { type: 'text/csv' });
@@ -300,13 +293,6 @@ describe('ag-grid file input overlay', () => {
 
         test('shows default error message when fail called without argument', () => {
             let capturedParams: IFileProcessorParams | undefined;
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
-                fileProcessor: makeFileProcessor((params) => {
-                    capturedParams = params;
-                }),
-            });
 
             const file = new File(['data'], 'report.xlsx', { type: 'application/vnd.ms-excel' });
             const eGui = getOverlayGui();
@@ -319,14 +305,6 @@ describe('ag-grid file input overlay', () => {
         });
 
         test('shows error when fileProcessor throws synchronously', () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
-                fileProcessor: makeFileProcessor(() => {
-                    throw new Error('sync error');
-                }),
-            });
-
             const file = new File(['data'], 'bad.csv', { type: 'text/csv' });
             const eGui = getOverlayGui();
             eGui.dispatchEvent(createFileDragEvent('drop', [file]));
@@ -339,12 +317,6 @@ describe('ag-grid file input overlay', () => {
 
     describe('processing state', () => {
         test('shows processing state when file is dropped', () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
-                fileProcessor: makeFileProcessor(),
-            });
-
             const file = new File(['data'], 'test.csv', { type: 'text/csv' });
             const eGui = getOverlayGui();
             eGui.dispatchEvent(createFileDragEvent('drop', [file]));
@@ -356,13 +328,6 @@ describe('ag-grid file input overlay', () => {
 
         test('ignores additional drops while processing', () => {
             let callCount = 0;
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
-                fileProcessor: makeFileProcessor(() => {
-                    callCount++;
-                }),
-            });
 
             const eGui = getOverlayGui();
             eGui.dispatchEvent(createFileDragEvent('drop', [new File(['a'], 'first.csv')]));
@@ -405,12 +370,6 @@ describe('ag-grid file input overlay', () => {
 
     describe('drag and drop interactions', () => {
         test('adds active class on dragenter with file', () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
-                fileProcessor: makeFileProcessor(),
-            });
-
             const eGui = getOverlayGui();
             eGui.dispatchEvent(createFileDragEvent('dragenter'));
 
@@ -418,12 +377,6 @@ describe('ag-grid file input overlay', () => {
         });
 
         test('removes active class on dragleave', () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
-                fileProcessor: makeFileProcessor(),
-            });
-
             const eGui = getOverlayGui();
             eGui.dispatchEvent(createFileDragEvent('dragenter'));
             expect(hasActiveDropZone()).toBeTruthy();
@@ -433,12 +386,6 @@ describe('ag-grid file input overlay', () => {
         });
 
         test('handles nested dragenter/dragleave via counter', () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
-                fileProcessor: makeFileProcessor(),
-            });
-
             const eGui = getOverlayGui();
 
             // Enter outer, then enter inner child
@@ -456,12 +403,6 @@ describe('ag-grid file input overlay', () => {
         });
 
         test('resets drag state on drop', () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
-                fileProcessor: makeFileProcessor(),
-            });
-
             const eGui = getOverlayGui();
             eGui.dispatchEvent(createFileDragEvent('dragenter'));
             expect(hasActiveDropZone()).toBeTruthy();
@@ -472,12 +413,6 @@ describe('ag-grid file input overlay', () => {
         });
 
         test('ignores non-file drag events', () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
-                fileProcessor: makeFileProcessor(),
-            });
-
             const eGui = getOverlayGui();
             eGui.dispatchEvent(createNonFileDragEvent('dragenter'));
 
@@ -486,13 +421,6 @@ describe('ag-grid file input overlay', () => {
 
         test('does not process drop without files', () => {
             let called = false;
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [],
-                fileProcessor: makeFileProcessor(() => {
-                    called = true;
-                }),
-            });
 
             const eGui = getOverlayGui();
             eGui.dispatchEvent(createFileDragEvent('drop'));
