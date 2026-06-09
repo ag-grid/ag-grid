@@ -32,6 +32,36 @@ The no-matching-rows overlay is displayed when the grid has rows but none of the
 
 The exporting overlay is displayed when data is being exported from the grid to CSV or Excel.
 
+## File Input
+
+When a `fileProcessor` is provided and `rowData` is not set, the grid shows a built-in file input overlay. Users can drag a file onto the overlay or click the browse button to select one.
+
+Provide a `fileProcessor` object with a `processFiles` method. The `params` object contains the selected `files` array along with `success` and `fail` callbacks. Call `success(rowData)` to load the parsed data, or `fail(message)` to display an error in the overlay.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    fileProcessor: {
+        processFiles: ({ files, success, fail }) => {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const rowData = parseFile(e)
+                    success(rowData);
+                } catch {
+                    fail('Failed to parse file');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        },
+    },
+};
+```
+
+The example below shows the file input overlay. Drag a file onto the overlay or use the browse button to load it.
+
+{% gridExampleRunner title="File Input Overlay" name="file-input-overlay" exampleHeight=400 /%}
+
 ## Customisation
 
 The provided overlays can be customised to change their content or completely replaced with custom components. The grid still manages the timing of when the overlays are displayed based on grid state.
@@ -49,6 +79,7 @@ const gridOptions = {
         noRows: { overlayText: 'This grid has no data!' },
         noMatchingRows: { overlayText: 'Current Filter Matches No Rows' },
         exporting: { overlayText: 'Exporting your data...' },
+        fileInput: { overlayText: 'Provide a file...' },
     }
 };
 ```

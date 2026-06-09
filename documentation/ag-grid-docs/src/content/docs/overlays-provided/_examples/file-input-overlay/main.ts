@@ -7,20 +7,18 @@ import {
     createGrid,
 } from 'ag-grid-community';
 
+declare let XLSX: any;
+
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     AutoGenerateColumnsModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-function parseCsv(text: string): Record<string, string>[] {
-    const lines = text.trim().split('\n');
-    if (lines.length < 2) return [];
-    const headers = lines[0].split(',').map((h) => h.trim());
-    return lines.slice(1).map((line) => {
-        const values = line.split(',');
-        return Object.fromEntries(headers.map((h, i) => [h, values[i]?.trim() ?? '']));
-    });
+function parseWorkbook(workbook: any): Record<string, unknown>[] {
+    const firstSheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[firstSheetName];
+    return XLSX.utils.sheet_to_json(worksheet);
 }
 
 function processFiles(params: IFileProcessorParams): void {
@@ -31,13 +29,13 @@ function processFiles(params: IFileProcessorParams): void {
     reader.onerror = () => params.fail('Failed to read file');
     reader.onload = (e) => {
         try {
-            const rowData = parseCsv(e.target?.result as string);
-            params.success(rowData);
+            const workbook = XLSX.read(new Uint8Array(e.target?.result as ArrayBuffer));
+            params.success(parseWorkbook(workbook));
         } catch {
             params.fail('Failed to parse file');
         }
     };
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);
 }
 
 const gridOptions: GridOptions = {
