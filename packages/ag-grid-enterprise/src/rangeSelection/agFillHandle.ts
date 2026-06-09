@@ -348,6 +348,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
         ) => {
             let currentValue: any;
             let skipValue: boolean = false;
+            let pushColumn: AgColumn = col;
+            let pushRowNode: RowNode = rowNode;
 
             if (withinInitialRange) {
                 currentValue = valueSvc.getValue(col, rowNode, 'edit');
@@ -368,6 +370,13 @@ export class AgFillHandle extends AbstractSelectionHandle {
                     rowNode,
                     idx: idx++,
                 });
+
+                if (sourceCol) {
+                    pushColumn = sourceCol;
+                }
+                if (sourceRowNode) {
+                    pushRowNode = sourceRowNode;
+                }
 
                 currentValue = value;
                 if (col.isCellEditable(rowNode)) {
@@ -410,8 +419,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
             if (!skipValue) {
                 currentValues.push({
                     value: currentValue,
-                    column: col,
-                    rowNode,
+                    column: pushColumn,
+                    rowNode: pushRowNode,
                 });
             }
         };
