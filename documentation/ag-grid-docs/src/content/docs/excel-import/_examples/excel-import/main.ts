@@ -33,6 +33,7 @@ const gridOptions: GridOptions = {
         const file = params.files[0];
         if (!file) return;
         const reader = new FileReader();
+        reader.onerror = () => params.fail('Failed to read file');
         reader.onload = (e) => {
             try {
                 const workbook = XLSX.read(new Uint8Array(e.target?.result as ArrayBuffer));

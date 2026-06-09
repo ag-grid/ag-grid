@@ -64,10 +64,6 @@ export class FileInputOverlayComponent
         }
     }
 
-    public override destroy(): void {
-        super.destroy();
-    }
-
     private buildDropZone(params: IFileInputOverlayParams & OverlayComponentUserParams): void {
         const { beans } = this;
         const localeTextFunc = this.getLocaleTextFunc();
@@ -117,7 +113,7 @@ export class FileInputOverlayComponent
             cls: 'ag-file-input-input',
             attrs: { type: 'file', style: 'display:none' },
         });
-        eFileInput.addEventListener('change', () => this.onFileInputChange(eFileInput));
+        this.addManagedElementListeners(eFileInput, { change: () => this.onFileInputChange(eFileInput) });
         parent.appendChild(eFileInput);
 
         const eButton = _createElement<HTMLButtonElement>({
@@ -126,7 +122,7 @@ export class FileInputOverlayComponent
             attrs: { type: 'button' },
             children: localeTextFunc('fileInputOverlayBrowse', 'Browse files'),
         });
-        eButton.addEventListener('click', () => eFileInput.click());
+        this.addManagedElementListeners(eButton, { click: () => eFileInput.click() });
         parent.appendChild(eButton);
     }
 
@@ -151,48 +147,50 @@ export class FileInputOverlayComponent
     private setupDragListeners(): void {
         const eGui = this.getGui();
 
-        eGui.addEventListener('dragenter', (e: DragEvent) => {
-            if (!this.isFileDrag(e)) {
-                return;
-            }
-            e.preventDefault();
-            this.dragCounter++;
-            if (this.dragCounter === 1) {
-                this.eDropZone.classList.add('ag-file-input-drop-zone-active');
-            }
-        });
-
-        eGui.addEventListener('dragover', (e: DragEvent) => {
-            if (!this.isFileDrag(e)) {
-                return;
-            }
-            e.preventDefault();
-            if (e.dataTransfer) {
-                e.dataTransfer.dropEffect = 'copy';
-            }
-        });
-
-        eGui.addEventListener('dragleave', (e: DragEvent) => {
-            if (!this.isFileDrag(e)) {
-                return;
-            }
-            e.preventDefault();
-            this.dragCounter--;
-            if (this.dragCounter <= 0) {
+        this.addManagedElementListeners(eGui, {
+            dragenter: (e: DragEvent) => {
+                if (!this.isFileDrag(e)) {
+                    return;
+                }
+                e.preventDefault();
+                this.dragCounter++;
+                if (this.dragCounter === 1) {
+                    this.eDropZone.classList.add('ag-file-input-drop-zone-active');
+                }
+            },
+            dragover: (e: DragEvent) => {
+                if (!this.isFileDrag(e)) {
+                    return;
+                }
+                e.preventDefault();
+                if (e.dataTransfer) {
+                    e.dataTransfer.dropEffect = 'copy';
+                }
+            },
+            dragleave: (e: DragEvent) => {
+                if (!this.isFileDrag(e)) {
+                    return;
+                }
+                e.preventDefault();
+                this.dragCounter--;
+                if (this.dragCounter <= 0) {
+                    this.dragCounter = 0;
+                    this.eDropZone.classList.remove('ag-file-input-drop-zone-active');
+                }
+            },
+            drop: (e: DragEvent) => {
+                if (!this.isFileDrag(e)) {
+                    return;
+                }
+                e.preventDefault();
                 this.dragCounter = 0;
                 this.eDropZone.classList.remove('ag-file-input-drop-zone-active');
-            }
-        });
 
-        eGui.addEventListener('drop', (e: DragEvent) => {
-            e.preventDefault();
-            this.dragCounter = 0;
-            this.eDropZone.classList.remove('ag-file-input-drop-zone-active');
-
-            const files = e.dataTransfer?.files;
-            if (files && files.length > 0) {
-                this.handleFiles(Array.from(files));
-            }
+                const files = e.dataTransfer?.files;
+                if (files && files.length > 0) {
+                    this.handleFiles(Array.from(files));
+                }
+            },
         });
     }
 
@@ -225,7 +223,7 @@ export class FileInputOverlayComponent
         const token = ++this.processingToken;
 
         const success = (rowData: any[]) => {
-            if (token !== this.processingToken) {
+            if (!this.isAlive() || token !== this.processingToken) {
                 return;
             }
             const options: GridOptions = { rowData };
@@ -236,7 +234,7 @@ export class FileInputOverlayComponent
         };
 
         const fail = (errorMessage?: string) => {
-            if (token !== this.processingToken) {
+            if (!this.isAlive() || token !== this.processingToken) {
                 return;
             }
             const localeTextFunc = this.getLocaleTextFunc();

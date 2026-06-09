@@ -285,7 +285,6 @@ export const AG_GRID_LOCALE_EN = {
     fileInputOverlayBrowse: 'Browse files',
     fileInputProcessing: 'Processing ${variable}',
     fileInputProcessingFailed: 'Error processing ${variable}',
-    fileInputNoHandler: 'No file handler configured',
     enabled: 'Enabled',
 
     // Menu

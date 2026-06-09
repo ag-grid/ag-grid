@@ -22,12 +22,12 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerCell('sport')).toBeVisible();
     });
 
-    test.eachFramework('clear toolbar button resets to file input overlay', async ({ agIdFor, page }) => {
+    test.eachFramework('upload file toolbar button shows file input overlay', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await page.locator('#sampleData').selectOption('small-row-data.json');
         await expect(agIdFor.headerCell('make')).toBeVisible();
 
-        await page.locator('.ag-toolbar-button-wrapper').getByText('Clear Data').click();
+        await page.locator('.ag-toolbar-button-wrapper').getByText('Upload File').click();
 
         await expect(page.locator('.ag-overlay-file-input-center')).toBeVisible();
         await expect(page.locator('.ag-file-input-drop-zone')).toBeVisible();
