@@ -47,9 +47,9 @@ export class FileInputOverlayComponent
     private readonly eDropZone: HTMLElement = RefPlaceholder;
     private readonly eProcessingState: HTMLElement = RefPlaceholder;
 
-    private eFileInput: HTMLInputElement | undefined;
     private state: FileInputState = 'ready';
     private dragCounter: number = 0;
+    private processingToken: number = 0;
 
     public init(params: IFileInputOverlayParams & OverlayComponentUserParams): void {
         this.setTemplate(FileInputOverlayElement);
@@ -64,7 +64,6 @@ export class FileInputOverlayComponent
     }
 
     public override destroy(): void {
-        this.eFileInput = undefined;
         super.destroy();
     }
 
@@ -119,8 +118,6 @@ export class FileInputOverlayComponent
         });
         eFileInput.addEventListener('change', () => this.onFileInputChange(eFileInput));
         parent.appendChild(eFileInput);
-
-        this.eFileInput = eFileInput;
 
         const eButton = _createElement<HTMLButtonElement>({
             tag: 'button',
@@ -224,11 +221,19 @@ export class FileInputOverlayComponent
         const processingText = this.getLocaleTextFunc()('fileInputProcessing', 'Processing ${variable}', [fileName]);
         beans.ariaAnnounce.announceValue(processingText, 'overlay');
 
+        const token = ++this.processingToken;
+
         const success = (rowData: any[]) => {
+            if (token !== this.processingToken) {
+                return;
+            }
             gos.updateGridOptions({ options: { rowData }, source: 'api' });
         };
 
         const fail = (errorMessage?: string) => {
+            if (token !== this.processingToken) {
+                return;
+            }
             const localeTextFunc = this.getLocaleTextFunc();
             const message =
                 errorMessage ?? localeTextFunc('fileInputProcessingFailed', `Error processing ${fileName}`, [fileName]);
@@ -242,8 +247,8 @@ export class FileInputOverlayComponent
         } else {
             try {
                 processFileInput(_addGridCommonParams<ProcessFileInputParams>(gos, { files, success, fail }));
-            } catch {
-                fail();
+            } catch (error) {
+                fail(error instanceof Error ? error.message : undefined);
             }
         }
     }
