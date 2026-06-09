@@ -77,7 +77,7 @@
 
 .ag-file-input-drop-zone-active {
     border-color: var(--ag-accent-color);
-    background: color-mix(in srgb, var(--ag-accent-color) 5%, var(--ag-background-color));
+    background: var(--ag-row-hover-color);
 }
 
 .ag-file-input-processing {

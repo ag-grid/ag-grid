@@ -1091,56 +1091,55 @@
     }
 
     .ag-overlay-file-input-center {
+        border: solid 1px var(--ag-border-color);
         background: var(--ag-background-color);
-        border: solid var(--ag-border-width) var(--ag-border-color);
-        border-radius: var(--ag-border-radius);
-        box-shadow: var(--ag-popup-shadow);
+        border-radius: var(--ag-card-radius);
+        box-shadow: var(--ag-card-shadow);
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: calc(var(--ag-spacing) * 2);
+        gap: calc(var(--ag-grid-size) * 2);
         max-width: 420px;
-        padding: calc(var(--ag-spacing) * 2);
+        padding: calc(var(--ag-grid-size) * 2);
     }
 
     .ag-file-input-error-banner {
         background: color-mix(in srgb, var(--ag-invalid-color) 10%, var(--ag-background-color));
         color: var(--ag-invalid-color);
         border-radius: var(--ag-border-radius);
-        padding: calc(var(--ag-spacing) * 0.75) calc(var(--ag-spacing) * 2);
+        padding: calc(var(--ag-grid-size) * 0.75) calc(var(--ag-grid-size) * 2);
         width: 100%;
         text-align: center;
         font-size: 0.9em;
     }
 
     .ag-file-input-drop-zone {
-        border: dashed calc(var(--ag-border-width) * 2) var(--ag-border-color);
+        border: dashed 2px var(--ag-border-color);
         border-radius: var(--ag-border-radius);
-        padding: calc(var(--ag-spacing) * 4);
+        padding: calc(var(--ag-grid-size) * 4);
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: var(--ag-spacing);
+        gap: var(--ag-grid-size);
         width: 100%;
     }
 
     .ag-file-input-drop-zone-active {
-        border-color: var(--ag-accent-color);
-        background: color-mix(in srgb, var(--ag-accent-color) 5%, var(--ag-background-color));
+        border-color: var(--ag-input-focus-border-color);
+        background: color-mix(in srgb, var(--ag-input-focus-border-color) 10%, var(--ag-background-color));
     }
 
     .ag-file-input-processing {
         display: flex;
-        flex-direction: column;
         align-items: center;
-        gap: var(--ag-spacing);
-        padding: calc(var(--ag-spacing) * 4);
+        gap: calc(var(--ag-grid-size) * 0.75);
+        padding: calc(var(--ag-grid-size) * 4);
     }
 
     .ag-file-input-text-row {
         display: flex;
         align-items: center;
-        gap: calc(var(--ag-spacing) * 0.75);
+        gap: calc(var(--ag-grid-size) * 0.75);
     }
 
     .ag-file-input-text {
@@ -1149,11 +1148,11 @@
 
     .ag-file-input-browse {
         cursor: pointer;
-        border: solid var(--ag-border-width) var(--ag-border-color);
+        border: var(--ag-borders) var(--ag-border-color);
         background: transparent;
         color: var(--ag-text-color);
         border-radius: var(--ag-border-radius);
-        padding: calc(var(--ag-spacing) * 0.5) calc(var(--ag-spacing) * 2);
+        padding: calc(var(--ag-grid-size) * 0.5) calc(var(--ag-grid-size) * 2);
         font: inherit;
     }
 
