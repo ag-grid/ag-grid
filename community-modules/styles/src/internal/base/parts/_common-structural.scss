@@ -1134,6 +1134,14 @@
         align-items: center;
         gap: calc(var(--ag-grid-size) * 0.75);
         padding: calc(var(--ag-grid-size) * 4);
+
+        .ag-loading-icon {
+            @include ag.unthemed-rtl(
+                (
+                    padding-right: 0,
+                )
+            );
+        }
     }
 
     .ag-file-input-text-row {
@@ -1148,7 +1156,7 @@
 
     .ag-file-input-browse {
         cursor: pointer;
-        border: var(--ag-borders) var(--ag-border-color);
+        border: solid 1px var(--ag-border-color);
         background: transparent;
         color: var(--ag-text-color);
         border-radius: var(--ag-border-radius);
