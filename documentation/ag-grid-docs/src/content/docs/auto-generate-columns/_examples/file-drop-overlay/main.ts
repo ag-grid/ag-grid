@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions, IFileProcessorParams } from 'ag-grid-community';
+import type { GridApi, GridOptions, IFileProcessorParams, ToolbarItemActionParams } from 'ag-grid-community';
 import {
     AutoGenerateColumnsModule,
     ClientSideRowModelModule,
@@ -7,7 +7,6 @@ import {
     TextFilterModule,
     ValidationModule,
     createGrid,
-    forEachColDef,
 } from 'ag-grid-community';
 import { ToolbarModule } from 'ag-grid-enterprise';
 
@@ -63,8 +62,8 @@ const gridOptions: GridOptions = {
                 label: 'Clear Data',
                 icon: 'cancel',
                 alignment: 'right',
-                action: () => {
-                    gridApi.setGridOption('rowData', null);
+                action: (params: ToolbarItemActionParams) => {
+                    params.api.setGridOption('rowData', null);
                 },
             },
         ],
@@ -86,8 +85,8 @@ function onLoadSampleData(): void {
     } else {
         fetch(`https://www.ag-grid.com/example-assets/${value}`)
             .then((response) => response.json())
-            .then((rowData) => {
-                gridApi.setGridOption('rowData', rowData);
+            .then((rows) => {
+                gridApi.setGridOption('rowData', rows);
             });
     }
 }
