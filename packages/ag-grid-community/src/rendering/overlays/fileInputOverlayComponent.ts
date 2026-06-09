@@ -1,4 +1,4 @@
-import { RefPlaceholder, _clearElement, _setDisplayed } from 'ag-stack';
+import { RefPlaceholder, _clearElement } from 'ag-stack';
 
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { IFileProcessorParams } from '../../interfaces/iFileProcessor';
@@ -134,9 +134,20 @@ export class FileInputOverlayComponent
 
     private showState(state: FileInputState): void {
         this.state = state;
-        _setDisplayed(this.eErrorBanner, state === 'error');
-        _setDisplayed(this.eDropZone, state !== 'processing');
-        _setDisplayed(this.eProcessingState, state === 'processing');
+        const eGui = this.getGui();
+        _clearElement(eGui);
+        switch (state) {
+            case 'error':
+                eGui.appendChild(this.eErrorBanner);
+                eGui.appendChild(this.eDropZone);
+                break;
+            case 'processing':
+                eGui.appendChild(this.eProcessingState);
+                break;
+            default:
+                eGui.appendChild(this.eDropZone);
+                break;
+        }
     }
 
     private setupDragListeners(): void {
