@@ -78,12 +78,12 @@ const CalculatedColumnFormElement: ElementParams = {
             ref: 'eActions',
             cls: 'ag-calculated-column-actions',
             children: [
-                { tag: 'button', ref: 'eCancel', cls: 'ag-button ag-standard-button ag-calculated-column-action' },
                 {
                     tag: 'button',
                     ref: 'eApply',
                     cls: 'ag-button ag-standard-button ag-calculated-column-action ag-calculated-column-action-apply',
                 },
+                { tag: 'button', ref: 'eCancel', cls: 'ag-button ag-standard-button ag-calculated-column-action' },
             ],
         },
     ],
