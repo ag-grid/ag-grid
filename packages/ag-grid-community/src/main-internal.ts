@@ -362,6 +362,7 @@ export {
     _attemptToRestoreCellFocus,
     _focusGridInnerElement,
     _focusNextGridCoreContainer,
+    _isHeaderFocusSuppressed,
     _skipFocusableContainerListenerForAgGrid,
 } from './utils/gridFocus';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
