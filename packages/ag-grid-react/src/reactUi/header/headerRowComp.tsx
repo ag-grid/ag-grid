@@ -159,7 +159,8 @@ const HeaderRowComp = ({
         [ctrl.type]
     );
 
-    const tabIndex = gos.get('tabIndex');
+    const suppressHeaderFocus = gos.get('suppressHeaderFocus');
+    const tabIndex = suppressHeaderFocus ? undefined : gos.get('tabIndex');
 
     return (
         <div ref={setRef} className={ctrl.headerRowClass} role="row" tabIndex={tabIndex}>
