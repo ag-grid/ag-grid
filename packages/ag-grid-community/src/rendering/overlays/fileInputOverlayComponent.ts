@@ -229,6 +229,10 @@ export class FileInputOverlayComponent
             beans.ariaAnnounce.announceValue(message, 'overlay');
         };
 
-        fileProcessor?.processFiles(_addGridCommonParams<IFileProcessorParams>(gos, { files, success, fail }));
+        if (!fileProcessor) {
+            fail();
+        } else {
+            fileProcessor.processFiles(_addGridCommonParams<IFileProcessorParams>(gos, { files, success, fail }));
+        }
     }
 }
