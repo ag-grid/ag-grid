@@ -62,6 +62,16 @@ const REALEX_HPP_ORIGIN: Record<CspEnv, string> = {
     production: 'https://pay.realexpayments.com',
 };
 
+// Firebase Auth (ecommerce checkout) renders an auth-handshake iframe served from
+// the project's authDomain (<projectId>.firebaseapp.com) — the non-prod project is
+// stripe-testing-19784 (same project backing the non-prod trial-form Cloud
+// Functions), the live project is aggrid-ecommerce. Governs frame-src.
+const FIREBASE_AUTH_ORIGIN: Record<CspEnv, string> = {
+    dev: 'https://stripe-testing-19784.firebaseapp.com',
+    staging: 'https://stripe-testing-19784.firebaseapp.com',
+    production: 'https://aggrid-ecommerce.firebaseapp.com',
+};
+
 // Dev-server-only extras (HMR + cross-port preview). Never emitted for staging
 // or production.
 const DEV_SCRIPT_SRC = ['https://localhost:4610', 'https://localhost:4611'];
@@ -72,6 +82,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
     const trialFormOrigin = options.trialFormOrigin ?? TRIAL_FORM_ORIGIN[env];
     const salesforceFormOrigin = SALESFORCE_FORM_ORIGIN[env];
     const realexHppOrigin = REALEX_HPP_ORIGIN[env];
+    const firebaseAuthOrigin = FIREBASE_AUTH_ORIGIN[env];
 
     const directives: CspDirectives = {
         'default-src': [SELF],
@@ -87,6 +98,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://*.zoominfo.com', // ZoomInfo FormComplete
             'https://www.google.com', // reCAPTCHA
             'https://www.gstatic.com', // reCAPTCHA
+            'https://apis.google.com', // Firebase Auth (ecommerce checkout): GAPI client loads the auth iframe
             'https://www.youtube.com', // YouTube iframe JS API (loads into the page)
             'https://cdn.cookielaw.org', // OneTrust cookie-consent SDK (GTM-injected, prod-only)
             'blob:', // ZoomInfo zi-tag.js bootstraps a blob: URL script
@@ -121,6 +133,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://*.algolianet.com',
             'https://*.google-analytics.com', // GA4 incl. regional collect endpoints (region1/2.google-analytics.com)
             'https://*.analytics.google.com',
+            'https://analytics.google.com', // GA4 apex collect endpoint (not matched by the *. wildcard)
             'https://stats.g.doubleclick.net',
             'https://flagcdn.com',
             'https://www.googletagmanager.com',
@@ -141,6 +154,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.youtube.com',
             'https://www.google.com', // reCAPTCHA challenge iframe
             realexHppOrigin, // ecommerce checkout: Realex Hosted Payment Page iframe
+            firebaseAuthOrigin, // ecommerce checkout: Firebase Auth handshake iframe
         ],
         'media-src': [SELF, 'data:', 'blob:', 'https:'],
         'worker-src': [SELF, 'blob:'],
