@@ -1,5 +1,5 @@
 :where(.ag-calculated-column-panel .ag-panel-content-wrapper) {
-    padding: var(--ag-spacing);
+    padding: var(--ag-spacing) var(--ag-cell-horizontal-padding);
 }
 
 .ag-calculated-column-form {

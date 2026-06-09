@@ -2289,13 +2289,13 @@ describe('ag-grid calculated columns', () => {
             expect(entries).toContain('Edit Calculated Column');
             return entries;
         });
-        const editIndex = headerMenuEntries.indexOf('Edit Calculated Column');
         const addIndex = headerMenuEntries.indexOf('Add Calculated Column');
-        expect(headerMenuEntries[editIndex - 1]).toBe('separator');
+        let removeIndex = headerMenuEntries.indexOf('Remove Calculated Column');
+        expect(headerMenuEntries[addIndex - 1]).toBe('separator');
         expect(headerMenuEntries).toEqual(
-            expect.arrayContaining(['Edit Calculated Column', 'Remove Calculated Column', 'Add Calculated Column'])
+            expect.arrayContaining(['Add Calculated Column', 'Edit Calculated Column', 'Remove Calculated Column'])
         );
-        expect(headerMenuEntries[addIndex + 1]).toBe('separator');
+        expect(headerMenuEntries[removeIndex + 1]).toBe('separator');
 
         api.hidePopupMenu();
         api.showContextMenu({
@@ -2310,7 +2310,9 @@ describe('ag-grid calculated columns', () => {
             expect(entries).toContain('Remove Calculated Column');
             return entries;
         });
-        const removeIndex = contextMenuEntries.indexOf('Remove Calculated Column');
+
+        removeIndex = contextMenuEntries.indexOf('Remove Calculated Column');
+
         expect(contextMenuEntries[removeIndex - 1]).toBe('separator');
         expect(contextMenuEntries[removeIndex + 1]).toBe('separator');
         await new GridRows(api, `calculated column menu items are grouped by separators final state`).check(`

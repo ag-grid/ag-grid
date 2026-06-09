@@ -1,6 +1,6 @@
 @mixin output {
     .ag-calculated-column-panel .ag-panel-content-wrapper {
-        padding: var(--ag-grid-size);
+        padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);
     }
 
     .ag-calculated-column-form {
