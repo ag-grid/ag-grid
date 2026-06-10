@@ -59,8 +59,7 @@ export class FileInputOverlayComponent
         this.setupDragListeners();
         if (!this.gos.get('processFileInput')) {
             _warn(305);
-            this.eErrorBanner.textContent = 'gridOptions.processFileInput is missing';
-            this.showState('error');
+            this.showError('gridOptions.processFileInput is missing');
         }
     }
 
@@ -97,12 +96,21 @@ export class FileInputOverlayComponent
             this.eProcessingState.appendChild(eIcon);
         }
 
+        const text = localeTextFunc('fileInputProcessing', `Processing ${fileName}`, [fileName]);
         const eText = _createElement({
             tag: 'span',
             cls: 'ag-file-input-text',
-            children: localeTextFunc('fileInputProcessing', `Processing ${fileName}`, [fileName]),
+            children: text,
         });
         this.eProcessingState.appendChild(eText);
+
+        beans.ariaAnnounce.announceValue(text, 'overlay');
+    }
+
+    private showError(message: string): void {
+        this.eErrorBanner.textContent = message;
+        this.showState('error');
+        this.beans.ariaAnnounce.announceValue(message, 'overlay');
     }
 
     private appendBrowseButton(parent: HTMLElement): void {
@@ -186,10 +194,7 @@ export class FileInputOverlayComponent
                 this.dragCounter = 0;
                 this.eDropZone.classList.remove('ag-file-input-drop-zone-active');
 
-                const files = e.dataTransfer?.files;
-                if (files && files.length > 0) {
-                    this.handleFiles(Array.from(files));
-                }
+                this.handleFileList(e.dataTransfer?.files);
             },
         });
     }
@@ -199,11 +204,14 @@ export class FileInputOverlayComponent
     }
 
     private onFileInputChange(eFileInput: HTMLInputElement): void {
-        const files = eFileInput.files;
+        this.handleFileList(eFileInput.files);
+        eFileInput.value = '';
+    }
+
+    private handleFileList(files: FileList | null | undefined): void {
         if (files && files.length > 0) {
             this.handleFiles(Array.from(files));
         }
-        eFileInput.value = '';
     }
 
     private handleFiles(files: File[]): void {
@@ -211,14 +219,12 @@ export class FileInputOverlayComponent
             return;
         }
 
-        const { gos, beans } = this;
+        const { gos } = this;
         const processFileInput = gos.get('processFileInput');
 
         const fileName = files[0].name;
         this.updateProcessingState(fileName);
         this.showState('processing');
-        const processingText = this.getLocaleTextFunc()('fileInputProcessing', 'Processing ${variable}', [fileName]);
-        beans.ariaAnnounce.announceValue(processingText, 'overlay');
 
         const token = ++this.processingToken;
 
@@ -240,9 +246,7 @@ export class FileInputOverlayComponent
             const localeTextFunc = this.getLocaleTextFunc();
             const message =
                 errorMessage ?? localeTextFunc('fileInputProcessingFailed', `Error processing ${fileName}`, [fileName]);
-            this.eErrorBanner.textContent = message;
-            this.showState('error');
-            beans.ariaAnnounce.announceValue(message, 'overlay');
+            this.showError(message);
         };
 
         if (!processFileInput) {
