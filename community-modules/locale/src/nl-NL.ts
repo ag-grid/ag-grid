@@ -832,6 +832,7 @@ export const AG_GRID_LOCALE_NL = {
     calculatedColumnType: 'Type',
     calculatedColumnExpression: 'Expressie',
     calculatedColumnExpressionPlaceholder: 'Typ hier',
+    calculatedColumnExpressionToolsLabel: 'Invoegen',
     calculatedColumnColumns: 'Kolommen',
     calculatedColumnFunctions: 'Functies',
     calculatedColumnOperators: 'Operatoren',

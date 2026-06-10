@@ -832,6 +832,7 @@ export const AG_GRID_LOCALE_HR = {
     calculatedColumnType: 'Vrsta',
     calculatedColumnExpression: 'Izraz',
     calculatedColumnExpressionPlaceholder: 'Upišite ovdje',
+    calculatedColumnExpressionToolsLabel: 'Umetni',
     calculatedColumnColumns: 'Stupci',
     calculatedColumnFunctions: 'Funkcije',
     calculatedColumnOperators: 'Operatori',

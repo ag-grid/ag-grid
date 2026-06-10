@@ -830,6 +830,7 @@ export const AG_GRID_LOCALE_KR = {
     calculatedColumnType: '유형',
     calculatedColumnExpression: '식',
     calculatedColumnExpressionPlaceholder: '여기에 입력',
+    calculatedColumnExpressionToolsLabel: '삽입',
     calculatedColumnColumns: '열',
     calculatedColumnFunctions: '함수',
     calculatedColumnOperators: '연산자',

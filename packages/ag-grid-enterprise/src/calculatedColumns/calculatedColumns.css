@@ -13,7 +13,9 @@
 
 .ag-calculated-column-expression-wrap {
     display: flex;
+    flex-direction: column;
     flex: 1 1 auto;
+    gap: var(--ag-spacing);
 }
 
 .ag-calculated-column-expression-wrap :where(.ag-text-area) {
@@ -24,9 +26,11 @@
     height: 100%;
 }
 
-.ag-calculated-column-expression-wrap :where(.ag-text-area-input) {
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-calculated-column-expression-wrap .ag-text-area-input {
     height: 100%;
     resize: none;
+    padding-top: calc(var(--ag-spacing) / 2);
 }
 
 /* stylelint-disable-next-line selector-max-specificity */
@@ -39,23 +43,19 @@
 
 .ag-calculated-column-expression-tools {
     display: flex;
-    gap: calc(var(--ag-spacing) / 2);
+
+    :where(.ag-group-container) {
+        flex: 1 1 auto;
+        justify-content: end;
+        gap: var(--ag-spacing);
+        flex-wrap: nowrap;
+        align-items: center;
+    }
 }
 
-.ag-calculated-column-expression-tool {
-    flex: 1 1 0;
-    min-width: 0;
-    border: var(--ag-border);
-    border-radius: var(--ag-border-radius);
-    padding: calc(var(--ag-spacing) / 2) var(--ag-spacing);
-    background: var(--ag-background-color);
-    color: var(--ag-foreground-color);
-    cursor: pointer;
-    font: inherit;
-}
-
-.ag-calculated-column-expression-tool:hover {
-    background-color: var(--ag-row-hover-color);
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-standard-button.ag-calculated-column-expression-tool {
+    padding: calc(var(--ag-spacing) / 2);
 }
 
 .ag-calculated-column-suggestion-path {

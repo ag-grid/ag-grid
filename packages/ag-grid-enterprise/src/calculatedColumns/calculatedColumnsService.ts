@@ -603,7 +603,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             new Dialog({
                 title: this.getLocaleTextFunc()('calculatedColumn', 'Calculated Column'),
                 component: form,
-                minWidth: 300,
+                minWidth: 320,
                 width: 400,
                 minHeight: 380,
                 height: 380,

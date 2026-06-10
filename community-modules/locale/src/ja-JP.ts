@@ -830,6 +830,7 @@ export const AG_GRID_LOCALE_JP = {
     calculatedColumnType: '種類',
     calculatedColumnExpression: '式',
     calculatedColumnExpressionPlaceholder: 'ここに入力',
+    calculatedColumnExpressionToolsLabel: '挿入',
     calculatedColumnColumns: '列',
     calculatedColumnFunctions: '関数',
     calculatedColumnOperators: '演算子',

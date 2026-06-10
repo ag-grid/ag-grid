@@ -829,6 +829,7 @@ export const AG_GRID_LOCALE_EG = {
     calculatedColumnType: 'النوع',
     calculatedColumnExpression: 'التعبير',
     calculatedColumnExpressionPlaceholder: 'اكتب هنا',
+    calculatedColumnExpressionToolsLabel: 'إدراج',
     calculatedColumnColumns: 'أعمدة',
     calculatedColumnFunctions: 'الدوال',
     calculatedColumnOperators: 'المعاملات',

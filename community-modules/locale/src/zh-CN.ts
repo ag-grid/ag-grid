@@ -829,6 +829,7 @@ export const AG_GRID_LOCALE_CN = {
     calculatedColumnType: '类型',
     calculatedColumnExpression: '表达式',
     calculatedColumnExpressionPlaceholder: '在此输入',
+    calculatedColumnExpressionToolsLabel: '插入',
     calculatedColumnColumns: '列',
     calculatedColumnFunctions: '函数',
     calculatedColumnOperators: '运算符',

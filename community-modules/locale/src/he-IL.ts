@@ -829,6 +829,7 @@ export const AG_GRID_LOCALE_IL = {
     calculatedColumnType: 'סוג',
     calculatedColumnExpression: 'ביטוי',
     calculatedColumnExpressionPlaceholder: 'הקלד כאן',
+    calculatedColumnExpressionToolsLabel: 'הוספה',
     calculatedColumnColumns: 'עמודות',
     calculatedColumnFunctions: 'פונקציות',
     calculatedColumnOperators: 'אופרטורים',

@@ -835,6 +835,7 @@ export const AG_GRID_LOCALE_BG = {
     calculatedColumnType: 'Тип',
     calculatedColumnExpression: 'Израз',
     calculatedColumnExpressionPlaceholder: 'Въведете тук',
+    calculatedColumnExpressionToolsLabel: 'Вмъкване',
     calculatedColumnColumns: 'Колони',
     calculatedColumnFunctions: 'Функции',
     calculatedColumnOperators: 'Оператори',

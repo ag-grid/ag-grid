@@ -834,6 +834,7 @@ export const AG_GRID_LOCALE_PT = {
     calculatedColumnType: 'Tipo',
     calculatedColumnExpression: 'Expressão',
     calculatedColumnExpressionPlaceholder: 'Escreva aqui',
+    calculatedColumnExpressionToolsLabel: 'Inserir',
     calculatedColumnColumns: 'Colunas',
     calculatedColumnFunctions: 'Funções',
     calculatedColumnOperators: 'Operadores',

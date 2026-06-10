@@ -830,6 +830,7 @@ export const AG_GRID_LOCALE_CZ = {
     calculatedColumnType: 'Typ',
     calculatedColumnExpression: 'Výraz',
     calculatedColumnExpressionPlaceholder: 'Pište zde',
+    calculatedColumnExpressionToolsLabel: 'Vložit',
     calculatedColumnColumns: 'Sloupce',
     calculatedColumnFunctions: 'Funkce',
     calculatedColumnOperators: 'Operátory',

@@ -19,6 +19,8 @@ import {
 
 import { AgAutocompleteList } from '../advancedFilter/autocomplete/agAutocompleteList';
 import type { AutocompleteEntry } from '../advancedFilter/autocomplete/autocompleteParams';
+import { AgGroupComponentSelector } from '../agStack/agGroupComponent';
+import type { GroupComponent } from '../widgets/gridEnterpriseWidgetTypes';
 import { CalculatedColumnAutocompleteRow } from './calculatedColumnAutocompleteRow';
 import type {
     CalculatedColumnDataTypeOption,
@@ -61,16 +63,30 @@ const CalculatedColumnFormElement: ElementParams = {
         {
             tag: 'div',
             cls: 'ag-calculated-column-expression-wrap',
-            children: [{ tag: 'ag-input-text-area', ref: 'eExpression' }],
-        },
-        {
-            tag: 'div',
-            cls: 'ag-calculated-column-expression-tools',
-            ref: 'eExpressionTools',
             children: [
-                { tag: 'button', ref: 'eColumns', cls: 'ag-calculated-column-expression-tool' },
-                { tag: 'button', ref: 'eFunctions', cls: 'ag-calculated-column-expression-tool' },
-                { tag: 'button', ref: 'eOperators', cls: 'ag-calculated-column-expression-tool' },
+                { tag: 'ag-input-text-area', ref: 'eExpression' },
+                {
+                    tag: 'ag-group-component',
+                    cls: 'ag-calculated-column-expression-tools',
+                    ref: 'eExpressionTools',
+                    children: [
+                        {
+                            tag: 'button',
+                            ref: 'eColumns',
+                            cls: 'ag-button ag-standard-button ag-calculated-column-expression-tool',
+                        },
+                        {
+                            tag: 'button',
+                            ref: 'eFunctions',
+                            cls: 'ag-button ag-standard-button ag-calculated-column-expression-tool',
+                        },
+                        {
+                            tag: 'button',
+                            ref: 'eOperators',
+                            cls: 'ag-button ag-standard-button ag-calculated-column-expression-tool',
+                        },
+                    ],
+                },
             ],
         },
         {
@@ -99,7 +115,7 @@ export class CalculatedColumnForm extends Component {
     private readonly eApply: HTMLButtonElement = RefPlaceholder;
     private readonly eCancel: HTMLButtonElement = RefPlaceholder;
     private readonly eActions: HTMLElement = RefPlaceholder;
-    private readonly eExpressionTools: HTMLElement = RefPlaceholder;
+    private readonly eExpressionTools: GroupComponent = RefPlaceholder;
 
     private activeReplacement: { start: number; end: number } | null = null;
     private suggestionSource: HTMLElement | null = null;
@@ -125,7 +141,12 @@ export class CalculatedColumnForm extends Component {
         private readonly liveApply: boolean,
         private readonly onDraftChange?: (draft: CalculatedColumnDraft) => void
     ) {
-        super(CalculatedColumnFormElement, [AgInputTextFieldSelector, AgSelectSelector, AgInputTextAreaSelector]);
+        super(CalculatedColumnFormElement, [
+            AgInputTextFieldSelector,
+            AgSelectSelector,
+            AgInputTextAreaSelector,
+            AgGroupComponentSelector,
+        ]);
         this.expressionPickers = new Set(expressionPickers);
     }
 
@@ -167,6 +188,11 @@ export class CalculatedColumnForm extends Component {
             .setInputPlaceholder(translate('calculatedColumnExpressionPlaceholder', 'Type here'))
             .setRows(3)
             .setValue(this.draft.calculatedExpression, true);
+
+        this.eExpressionTools
+            .setDirection('horizontal')
+            .setTitle(translate('calculatedColumnExpressionToolsLabel', 'Insert'))
+            .hideOpenCloseIcons(true);
     }
 
     private setupActionButtons(): void {
@@ -186,7 +212,7 @@ export class CalculatedColumnForm extends Component {
         _setDisplayed(this.eColumns, hasColumns);
         _setDisplayed(this.eFunctions, hasFunctions);
         _setDisplayed(this.eOperators, hasOperators);
-        _setDisplayed(this.eExpressionTools, hasColumns || hasFunctions || hasOperators);
+        this.eExpressionTools.setDisplayed(hasColumns || hasFunctions || hasOperators);
         _setDisplayed(this.eActions, !this.liveApply);
     }
 

@@ -831,6 +831,7 @@ export const AG_GRID_LOCALE_NO = {
     calculatedColumnType: 'Type',
     calculatedColumnExpression: 'Uttrykk',
     calculatedColumnExpressionPlaceholder: 'Skriv her',
+    calculatedColumnExpressionToolsLabel: 'Sett inn',
     calculatedColumnColumns: 'Kolonner',
     calculatedColumnFunctions: 'Funksjoner',
     calculatedColumnOperators: 'Operatorer',

@@ -831,6 +831,7 @@ export const AG_GRID_LOCALE_SK = {
     calculatedColumnType: 'Typ',
     calculatedColumnExpression: 'Výraz',
     calculatedColumnExpressionPlaceholder: 'Píšte sem',
+    calculatedColumnExpressionToolsLabel: 'Vložiť',
     calculatedColumnColumns: 'Stĺpce',
     calculatedColumnFunctions: 'Funkcie',
     calculatedColumnOperators: 'Operátory',

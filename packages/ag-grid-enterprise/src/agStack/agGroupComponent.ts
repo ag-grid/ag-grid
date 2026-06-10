@@ -291,6 +291,12 @@ export class AgGroupComponent<
         this.items = newItems;
     }
 
+    public setDirection(direction: GroupDirection): this {
+        this.eContainer.classList.toggle('ag-group-container-horizontal', direction === 'horizontal');
+        this.eContainer.classList.toggle('ag-group-container-vertical', direction === 'vertical');
+        return this;
+    }
+
     private insertItem(item: GroupItem<TBeanCollection>, prepend?: boolean) {
         const container = this.eContainer;
         const el = _isComponent(item) ? item.getGui() : item;

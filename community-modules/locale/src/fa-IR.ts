@@ -832,6 +832,7 @@ export const AG_GRID_LOCALE_IR = {
     calculatedColumnType: 'نوع',
     calculatedColumnExpression: 'عبارت',
     calculatedColumnExpressionPlaceholder: 'اینجا بنویسید',
+    calculatedColumnExpressionToolsLabel: 'درج',
     calculatedColumnColumns: 'ستون‌ها',
     calculatedColumnFunctions: 'توابع',
     calculatedColumnOperators: 'عملگرها',

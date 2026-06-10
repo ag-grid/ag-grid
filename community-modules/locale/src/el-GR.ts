@@ -836,6 +836,7 @@ export const AG_GRID_LOCALE_GR = {
     calculatedColumnType: 'Τύπος',
     calculatedColumnExpression: 'Έκφραση',
     calculatedColumnExpressionPlaceholder: 'Πληκτρολογήστε εδώ',
+    calculatedColumnExpressionToolsLabel: 'Εισαγωγή',
     calculatedColumnColumns: 'Στήλες',
     calculatedColumnFunctions: 'Συναρτήσεις',
     calculatedColumnOperators: 'Τελεστές',

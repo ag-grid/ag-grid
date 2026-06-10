@@ -833,6 +833,7 @@ export const AG_GRID_LOCALE_SE = {
     calculatedColumnType: 'Typ',
     calculatedColumnExpression: 'Uttryck',
     calculatedColumnExpressionPlaceholder: 'Skriv här',
+    calculatedColumnExpressionToolsLabel: 'Infoga',
     calculatedColumnColumns: 'Kolumner',
     calculatedColumnFunctions: 'Funktioner',
     calculatedColumnOperators: 'Operatorer',

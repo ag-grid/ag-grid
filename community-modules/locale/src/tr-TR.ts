@@ -835,6 +835,7 @@ export const AG_GRID_LOCALE_TR = {
     calculatedColumnType: 'Tür',
     calculatedColumnExpression: 'İfade',
     calculatedColumnExpressionPlaceholder: 'Buraya yazın',
+    calculatedColumnExpressionToolsLabel: 'Ekle',
     calculatedColumnColumns: 'Sütunlar',
     calculatedColumnFunctions: 'Fonksiyonlar',
     calculatedColumnOperators: 'Operatörler',

@@ -832,6 +832,7 @@ export const AG_GRID_LOCALE_UA = {
     calculatedColumnType: 'Тип',
     calculatedColumnExpression: 'Вираз',
     calculatedColumnExpressionPlaceholder: 'Введіть тут',
+    calculatedColumnExpressionToolsLabel: 'Вставити',
     calculatedColumnColumns: 'Стовпці',
     calculatedColumnFunctions: 'Функції',
     calculatedColumnOperators: 'Оператори',

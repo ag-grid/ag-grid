@@ -833,6 +833,7 @@ export const AG_GRID_LOCALE_DK = {
     calculatedColumnType: 'Type',
     calculatedColumnExpression: 'Udtryk',
     calculatedColumnExpressionPlaceholder: 'Skriv her',
+    calculatedColumnExpressionToolsLabel: 'Indsæt',
     calculatedColumnColumns: 'Kolonner',
     calculatedColumnFunctions: 'Funktioner',
     calculatedColumnOperators: 'Operatorer',

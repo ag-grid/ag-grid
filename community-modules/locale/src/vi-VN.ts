@@ -830,6 +830,7 @@ export const AG_GRID_LOCALE_VN = {
     calculatedColumnType: 'Loại',
     calculatedColumnExpression: 'Biểu thức',
     calculatedColumnExpressionPlaceholder: 'Nhập tại đây',
+    calculatedColumnExpressionToolsLabel: 'Chèn',
     calculatedColumnColumns: 'Cột',
     calculatedColumnFunctions: 'Hàm',
     calculatedColumnOperators: 'Toán tử',

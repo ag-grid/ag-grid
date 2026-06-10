@@ -830,6 +830,7 @@ export const AG_GRID_LOCALE_PK = {
     calculatedColumnType: 'قسم',
     calculatedColumnExpression: 'اظہار',
     calculatedColumnExpressionPlaceholder: 'یہاں لکھیں',
+    calculatedColumnExpressionToolsLabel: 'داخل کریں',
     calculatedColumnColumns: 'کالمز',
     calculatedColumnFunctions: 'فنکشنز',
     calculatedColumnOperators: 'آپریٹرز',

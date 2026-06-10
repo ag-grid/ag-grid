@@ -834,6 +834,7 @@ export const AG_GRID_LOCALE_RO = {
     calculatedColumnType: 'Tip',
     calculatedColumnExpression: 'Expresie',
     calculatedColumnExpressionPlaceholder: 'Introduceți aici',
+    calculatedColumnExpressionToolsLabel: 'Inserare',
     calculatedColumnColumns: 'Coloane',
     calculatedColumnFunctions: 'Funcții',
     calculatedColumnOperators: 'Operatori',

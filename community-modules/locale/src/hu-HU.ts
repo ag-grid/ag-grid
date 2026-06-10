@@ -837,6 +837,7 @@ export const AG_GRID_LOCALE_HU = {
     calculatedColumnType: 'Típus',
     calculatedColumnExpression: 'Kifejezés',
     calculatedColumnExpressionPlaceholder: 'Írjon ide',
+    calculatedColumnExpressionToolsLabel: 'Beszúrás',
     calculatedColumnColumns: 'Oszlopok',
     calculatedColumnFunctions: 'Függvények',
     calculatedColumnOperators: 'Operátorok',

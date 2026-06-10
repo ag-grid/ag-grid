@@ -833,6 +833,7 @@ export const AG_GRID_LOCALE_FI = {
     calculatedColumnType: 'Tyyppi',
     calculatedColumnExpression: 'Lauseke',
     calculatedColumnExpressionPlaceholder: 'Kirjoita tähän',
+    calculatedColumnExpressionToolsLabel: 'Lisää',
     calculatedColumnColumns: 'Sarakkeet',
     calculatedColumnFunctions: 'Funktiot',
     calculatedColumnOperators: 'Operaattorit',

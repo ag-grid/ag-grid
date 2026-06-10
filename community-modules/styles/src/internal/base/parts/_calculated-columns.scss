@@ -14,7 +14,10 @@
 
     .ag-calculated-column-expression-wrap {
         display: flex;
+        flex-direction: column;
         flex: 1 1 auto;
+        gap: var(--ag-grid-size);
+
         .ag-text-area {
             flex: 1 1 auto;
         }
@@ -26,6 +29,7 @@
         .ag-text-area-input {
             height: 100%;
             resize: none;
+            padding-top: calc(var(--ag-grid-size) / 2);
         }
     }
 
@@ -36,23 +40,18 @@
 
     .ag-calculated-column-expression-tools {
         display: flex;
-        gap: calc(var(--ag-grid-size) / 2);
+
+        .ag-group-container {
+            flex: 1 1 auto;
+            justify-content: end;
+            gap: var(--ag-grid-size);
+            flex-wrap: nowrap;
+            align-items: center;
+        }
     }
 
-    .ag-calculated-column-expression-tool {
-        flex: 1 1 0;
-        min-width: 0;
-        border: var(--ag-borders) var(--ag-border-color);
-        border-radius: var(--ag-border-radius);
-        padding: calc(var(--ag-grid-size) / 2) var(--ag-grid-size);
-        background: var(--ag-background-color);
-        color: var(--ag-foreground-color);
-        cursor: pointer;
-        font: inherit;
-
-        &:hover {
-            background-color: var(--ag-row-hover-color);
-        }
+    .ag-standard-button.ag-calculated-column-expression-tool {
+        padding: calc(var(--ag-grid-size) / 2);
     }
 
     .ag-calculated-column-suggestion-path {
