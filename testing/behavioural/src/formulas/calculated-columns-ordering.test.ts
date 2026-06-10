@@ -164,7 +164,9 @@ describe('calculated columns - display ordering', () => {
         await asyncSetTimeout(1);
         setExpression(expression);
         clickDialogButton('Apply');
-        await asyncSetTimeout(1);
+        // Wait past the live-apply animation frame so no expression flush is in flight when the
+        // caller starts toggling columns (under the default 'live' mode Apply is a no-op).
+        await asyncSetTimeout(40);
         const added = order(api).filter((id) => !before.has(id));
         expect(added).toHaveLength(1);
         return added[0];
@@ -499,7 +501,7 @@ describe('calculated columns - display ordering', () => {
 
         setExpression('[Age] * 2');
         clickDialogButton('Apply');
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(40);
 
         await new GridColumns(api, 'dialog add preserves unpinned state after calculated column add').checkColumns(`
             CENTER
