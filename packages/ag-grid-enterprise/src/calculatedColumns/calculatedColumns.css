@@ -29,6 +29,14 @@
     resize: none;
 }
 
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-rtl .ag-calculated-column-expression-wrap .ag-text-area-input {
+    /* rtl:ignore */
+    padding-left: var(--ag-input-padding-start);
+    /* rtl:ignore */
+    direction: ltr;
+}
+
 .ag-calculated-column-expression-tools {
     display: flex;
     gap: calc(var(--ag-spacing) / 2);

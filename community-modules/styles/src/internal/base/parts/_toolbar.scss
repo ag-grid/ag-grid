@@ -56,18 +56,15 @@
         color: var(--ag-icon-button-hover-color, var(--ag-foreground-color));
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar-button-wrapper:hover .ag-toolbar-button,
     .ag-toolbar-button-wrapper:hover .ag-toolbar-button .ag-icon {
         color: var(--ag-icon-button-hover-color, var(--ag-foreground-color));
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar > .ag-toolbar-button-wrapper:first-child > .ag-toolbar-button {
         border-start-start-radius: calc(var(--ag-border-radius) + 1px);
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar > .ag-toolbar-button-wrapper:last-child > .ag-toolbar-button {
         border-start-end-radius: calc(var(--ag-border-radius) + 1px);
     }
@@ -103,18 +100,15 @@
         margin: 0 calc(var(--ag-grid-size) * 2);
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar-input + .ag-toolbar-input {
         margin-inline-start: 0;
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar > .ag-toolbar-input:first-child,
     .ag-toolbar-right-start + .ag-toolbar-input {
         margin-inline-start: var(--ag-grid-size);
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar > .ag-toolbar-input:last-child {
         margin-inline-end: var(--ag-grid-size);
     }
@@ -146,7 +140,6 @@
     // High-specificity padding override — beats theme text-input padding-left rules
     // (which reach .ag-theme-X .ag-ltr input[class^='ag-'][type='text'] = 0-4-1)
     .ag-toolbar-input {
-        // stylelint-disable-next-line selector-max-specificity
         input[class^='ag-'][type='text'].ag-toolbar-input-field {
             @include ag.unthemed-rtl(
                 (
@@ -218,8 +211,7 @@
         min-width: 0;
     }
 
-    // High-specificity overrides to prevent theme text-input rules reinstating border/shadow
-    // stylelint-disable-next-line selector-max-specificity
+    // high-specificity overrides to prevent theme text-input rules reinstating border/shadow
     .ag-toolbar .ag-toolbar-find input[class^='ag-'][type='text'].ag-toolbar-input-field {
         border: none;
         box-shadow: none;

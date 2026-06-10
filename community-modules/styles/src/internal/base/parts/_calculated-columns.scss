@@ -29,6 +29,11 @@
         }
     }
 
+    .ag-rtl .ag-calculated-column-expression-wrap .ag-text-area-input {
+        padding-left: var(--ag-input-padding-start);
+        direction: ltr;
+    }
+
     .ag-calculated-column-expression-error {
         color: var(--ag-invalid-color);
         font-size: 11px;
