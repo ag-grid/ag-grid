@@ -118,6 +118,7 @@ export default defineMarkdocConfig({
                 section: { type: String },
                 names: { type: Array },
                 config: { type: Object },
+                clientOnly: { type: Boolean },
 
                 // For `getHeadings` parsing
                 __apiDocumentationHeadings: { type: Boolean },

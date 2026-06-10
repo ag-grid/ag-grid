@@ -7,7 +7,7 @@ import { ApiDocumentation } from './ApiDocumentation';
 import { getJsonFile } from '@utils/pages';
 import { getEntry, type CollectionEntry } from 'astro:content';
 
-const { names, config, source, sources: sourcesProp, section } = Astro.props;
+const { names, config, source, sources: sourcesProp, section, clientOnly } = Astro.props;
 
 const framework = getFrameworkFromPath(Astro.url.pathname);
 
@@ -34,4 +34,7 @@ const model = getApiDocumentationModel({
 });
 ---
 
-<ApiDocumentation client:only="react" framework={framework} model={model} isInline={true} />
+{clientOnly
+    ? <ApiDocumentation client:only="react" framework={framework} model={model} isInline={true} />
+    : <ApiDocumentation client:load framework={framework} model={model} isInline={true} />
+}
