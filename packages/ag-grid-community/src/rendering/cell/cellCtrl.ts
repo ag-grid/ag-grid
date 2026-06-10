@@ -226,8 +226,8 @@ export class CellCtrl extends BeanStub {
         if (this.editorTooltipFeature) {
             this.disableEditorTooltipFeature();
         }
-        const tooltipSvc = this.beans.tooltipSvc;
-        this.editorTooltipFeature = tooltipSvc?.setupCellEditorTooltip(this, editor);
+        this.editorTooltipFeature = this.beans.tooltipSvc?.setupCellEditorTooltip(this, editor);
+
         this.editSvc?.populateModelValidationErrors();
     }
 
