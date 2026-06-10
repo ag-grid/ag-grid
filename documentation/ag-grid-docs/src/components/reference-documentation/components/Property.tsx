@@ -117,12 +117,16 @@ export const Property: FunctionComponent<{
     const codeLookup = useCodeLookup(codeSources, isExpanded && showAdditionalDetails);
 
     const detailsCode = useMemo(() => {
-        if (!isExpanded || !showAdditionalDetails || !interfaceLookup) return null;
+        if (!isExpanded || !showAdditionalDetails || !interfaceLookup) {
+            return null;
+        }
 
         // If codeSources are present, wait for the fetch; otherwise proceed with gridOpProp=undefined
         // (definition.type is already in props and is enough for the type computation).
         const hasCodeSources = codeSources && codeSources.length > 0;
-        if (hasCodeSources && !codeLookup) return null;
+        if (hasCodeSources && !codeLookup) {
+            return null;
+        }
 
         const gridOpProp = codeLookup?.[name];
 
