@@ -13,10 +13,9 @@ import { getTypeUrl, inferType, removeDefaultValue } from '../utils/documentatio
 import { getDefinitionType } from '../utils/getDefinitionType';
 import { getDetailsCode } from '../utils/getDetailsCode';
 import { formatJson, getInterfaceName } from '../utils/interface-helpers';
-import { useCodeLookup } from '../utils/useCodeLookup';
-import { useResolvedInterfaces } from '../utils/useResolvedInterfaces';
 import legacyStyles from './LegacyApiReference.module.scss';
 import { PropertyModules } from './PropertyModules';
+import { useReferenceData } from './ReferenceDataContext';
 
 function getDisplayNameSplit({ name, definition }: { name: string; definition: ChildDocEntry }) {
     let displayName = name;
@@ -67,7 +66,6 @@ export const Property: FunctionComponent<{
     isEvent?: boolean;
     propertyType: string;
     config: Config;
-    codeSources?: string[];
 }> = ({
     id,
     name,
@@ -78,7 +76,6 @@ export const Property: FunctionComponent<{
     isEvent,
     propertyType,
     config,
-    codeSources,
 }) => {
     const idName = `reference-${id}-${name}`;
     const displayNameSplit = getDisplayNameSplit({ name, definition });
@@ -112,21 +109,14 @@ export const Property: FunctionComponent<{
         setExpanded((prev) => !prev);
     }, []);
 
-    // Lazy-fetch the code lookup files and interfaces only when the user expands
-    const interfaceLookup = useResolvedInterfaces();
-    const codeLookup = useCodeLookup(codeSources, isExpanded && showAdditionalDetails);
+    const { interfaceLookup, codeLookup, hasCodeSources } = useReferenceData();
 
     const detailsCode = useMemo(() => {
-        if (!isExpanded || !showAdditionalDetails || !interfaceLookup) {
-            return null;
-        }
+        if (!isExpanded || !showAdditionalDetails || !interfaceLookup) return null;
 
-        // If codeSources are present, wait for the fetch; otherwise proceed with gridOpProp=undefined
-        // (definition.type is already in props and is enough for the type computation).
-        const hasCodeSources = codeSources && codeSources.length > 0;
-        if (hasCodeSources && !codeLookup) {
-            return null;
-        }
+        // If the provider has code sources configured, wait for the fetch to complete.
+        // Otherwise definition.type already carries the type and gridOpProp can be undefined.
+        if (hasCodeSources && !codeLookup) return null;
 
         const gridOpProp = codeLookup?.[name];
 
@@ -148,18 +138,7 @@ export const Property: FunctionComponent<{
             interfaceHierarchyOverrides: definition.interfaceHierarchyOverrides,
             isApi: config.isApi,
         });
-    }, [
-        isExpanded,
-        showAdditionalDetails,
-        interfaceLookup,
-        codeLookup,
-        codeSources,
-        name,
-        definition,
-        isEvent,
-        config,
-        framework,
-    ]);
+    }, [isExpanded, showAdditionalDetails, interfaceLookup, codeLookup, hasCodeSources, name, definition, isEvent, config, framework]);
 
     return (
         <tr ref={propertyRef} className={legacyStyles.tableRow}>

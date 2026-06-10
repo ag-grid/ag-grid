@@ -206,7 +206,6 @@ export type SectionProps = {
     breadcrumbs?: Record<string, string>;
     meta?: MetaTag;
     isInline?: boolean;
-    codeSources?: string[];
 };
 export type PropertyCall = {
     framework: Framework;

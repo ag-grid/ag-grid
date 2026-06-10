@@ -1,5 +1,7 @@
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { atom } from 'nanostores';
+
+export { QueryClientProvider };
 
 export const $queryClient = atom(new QueryClient());
 

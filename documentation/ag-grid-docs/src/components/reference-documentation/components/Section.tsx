@@ -168,7 +168,6 @@ export const Section: FunctionComponent<SectionProps> = ({
     breadcrumbs = {},
     meta,
     isInline,
-    codeSources,
 }) => {
     const showHeader = !config.isSubset;
     const displayName = meta?.displayName || title;
@@ -222,7 +221,6 @@ export const Section: FunctionComponent<SectionProps> = ({
                                     isEvent={meta?.isEvent}
                                     propertyType={propertyType}
                                     config={config}
-                                    codeSources={codeSources}
                                 />
                             );
                         }

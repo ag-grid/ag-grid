@@ -2,6 +2,7 @@ import type { Framework } from '@ag-grid-types';
 import { type FunctionComponent } from 'react';
 
 import type { Config, DocProperties } from '../types';
+import { ReferenceDataProvider } from './ReferenceDataContext';
 import { Section } from './Section';
 
 interface Props {
@@ -11,7 +12,7 @@ interface Props {
     isInline: boolean;
 }
 
-export const InterfaceDocumentation: FunctionComponent<Props> = ({ framework, model, config, isInline }) => {
+function InterfaceDocumentationInner({ framework, model, config, isInline }: Props) {
     return Object.entries(model.properties).map(([key, properties]) => (
         <Section
             key={key}
@@ -21,7 +22,12 @@ export const InterfaceDocumentation: FunctionComponent<Props> = ({ framework, mo
             config={config}
             meta={model.meta}
             isInline={isInline}
-            codeSources={model.codeSources}
         />
     ));
-};
+}
+
+export const InterfaceDocumentation: FunctionComponent<Props> = (props) => (
+    <ReferenceDataProvider codeSources={props.model.codeSources}>
+        <InterfaceDocumentationInner {...props} />
+    </ReferenceDataProvider>
+);

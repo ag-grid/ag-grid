@@ -1,9 +1,8 @@
 import type { Framework } from '@ag-grid-types';
-import { $queryClient } from '@stores/queryClientStore';
-import { QueryClientProvider } from '@tanstack/react-query';
 import type { FunctionComponent } from 'react';
 
 import type { ApiDocumentationModel } from '../types';
+import { ReferenceDataProvider } from './ReferenceDataContext';
 import { Section } from './Section';
 
 interface Props {
@@ -23,7 +22,6 @@ function ApiDocumentationInner({ framework, model, isInline }: Props) {
                 config={model.config}
                 meta={meta}
                 isInline={isInline}
-                codeSources={model.codeSources}
             />
         ));
     }
@@ -36,13 +34,12 @@ function ApiDocumentationInner({ framework, model, isInline }: Props) {
             config={{ ...model.config, isSubset: true }}
             names={model.names}
             isInline={isInline}
-            codeSources={model.codeSources}
         />
     );
 }
 
 export const ApiDocumentation: FunctionComponent<Props> = (props) => (
-    <QueryClientProvider client={$queryClient.get()}>
+    <ReferenceDataProvider codeSources={props.model.codeSources}>
         <ApiDocumentationInner {...props} />
-    </QueryClientProvider>
+    </ReferenceDataProvider>
 );
