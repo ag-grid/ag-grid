@@ -33,6 +33,7 @@ interface Params {
     config: any;
     interfaceLookup: Record<string, any>;
     codeLookup: Record<string, any>;
+    codeSources?: string[];
 }
 
 export function getProperties({
@@ -219,6 +220,7 @@ export function getInterfaceDocumentationModel({
     config = {},
     interfaceLookup,
     codeLookup,
+    codeSources = [],
 }: Params): InterfaceDocumentationModel {
     if (DISALLOWED_INTERFACE_NAMES.includes(interfaceName)) {
         throw new Error(
@@ -247,5 +249,8 @@ export function getInterfaceDocumentationModel({
               config,
           });
 
+    if (model.type === 'properties') {
+        return { ...model, codeSources };
+    }
     return model;
 }

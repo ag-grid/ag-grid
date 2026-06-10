@@ -34,7 +34,10 @@ const model = getApiDocumentationModel({
 });
 ---
 
-{clientOnly
-    ? <ApiDocumentation client:only="react" framework={framework} model={model} isInline={true} />
-    : <ApiDocumentation client:load framework={framework} model={model} isInline={true} />
+{
+    clientOnly ? (
+        <ApiDocumentation client:only="react" framework={framework} model={model} isInline={true} />
+    ) : (
+        <ApiDocumentation client:load framework={framework} model={model} isInline={true} />
+    )
 }

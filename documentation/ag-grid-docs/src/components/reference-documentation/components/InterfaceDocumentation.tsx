@@ -21,6 +21,7 @@ export const InterfaceDocumentation: FunctionComponent<Props> = ({ framework, mo
             config={config}
             meta={model.meta}
             isInline={isInline}
+            codeSources={model.codeSources}
         />
     ));
 };

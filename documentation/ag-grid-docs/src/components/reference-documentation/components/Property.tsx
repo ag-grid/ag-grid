@@ -117,9 +117,14 @@ export const Property: FunctionComponent<{
     const codeLookup = useCodeLookup(codeSources, isExpanded && showAdditionalDetails);
 
     const detailsCode = useMemo(() => {
-        if (!isExpanded || !showAdditionalDetails || !interfaceLookup || !codeLookup) return null;
+        if (!isExpanded || !showAdditionalDetails || !interfaceLookup) return null;
 
-        const gridOpProp = codeLookup[name];
+        // If codeSources are present, wait for the fetch; otherwise proceed with gridOpProp=undefined
+        // (definition.type is already in props and is enough for the type computation).
+        const hasCodeSources = codeSources && codeSources.length > 0;
+        if (hasCodeSources && !codeLookup) return null;
+
+        const gridOpProp = codeLookup?.[name];
 
         const { type } = getDefinitionType({
             name,
@@ -139,7 +144,18 @@ export const Property: FunctionComponent<{
             interfaceHierarchyOverrides: definition.interfaceHierarchyOverrides,
             isApi: config.isApi,
         });
-    }, [isExpanded, showAdditionalDetails, interfaceLookup, codeLookup]);
+    }, [
+        isExpanded,
+        showAdditionalDetails,
+        interfaceLookup,
+        codeLookup,
+        codeSources,
+        name,
+        definition,
+        isEvent,
+        config,
+        framework,
+    ]);
 
     return (
         <tr ref={propertyRef} className={legacyStyles.tableRow}>

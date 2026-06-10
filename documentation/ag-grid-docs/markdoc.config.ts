@@ -118,7 +118,7 @@ export default defineMarkdocConfig({
                 section: { type: String },
                 names: { type: Array },
                 config: { type: Object },
-                clientOnly: { type: Boolean },
+                clientOnly: { type: Boolean }, // If the payload of a page is large, set this to true to move the loading to the client
 
                 // For `getHeadings` parsing
                 __apiDocumentationHeadings: { type: Boolean },

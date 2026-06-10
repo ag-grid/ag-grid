@@ -226,6 +226,7 @@ export interface DocProperties {
     type: 'properties';
     properties: Properties;
     meta: MetaTag;
+    codeSources: string[];
 }
 export interface DocCode {
     type: 'code';
