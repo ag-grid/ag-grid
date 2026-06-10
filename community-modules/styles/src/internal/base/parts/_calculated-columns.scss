@@ -29,13 +29,6 @@
         }
     }
 
-    .ag-calculated-column-expression-error {
-        color: var(--ag-invalid-color);
-        font-size: 11px;
-        line-height: normal;
-        margin-top: calc(var(--ag-grid-size) / 2);
-    }
-
     .ag-calculated-column-expression-tools {
         display: flex;
         gap: calc(var(--ag-grid-size) / 2);
@@ -81,12 +74,6 @@
     .ag-calculated-column-suggestion-leaf {
         overflow: hidden;
         flex: none;
-    }
-
-    .ag-calculated-column-properties {
-        display: flex;
-        flex-direction: column;
-        gap: calc(var(--ag-grid-size) / 2);
     }
 
     .ag-calculated-column-actions {

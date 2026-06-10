@@ -25,7 +25,7 @@ import type {
     CalculatedColumnDraft,
     ColumnSuggestion,
 } from './calculatedColumnFormTypes';
-import { getOperatorReplacementRange } from './calculatedColumnUtils';
+import { getOperatorReplacementRange, isInsideStringLiteral } from './calculatedColumnUtils';
 
 export const DEFAULT_DRAFT: Omit<CalculatedColumnDraft, 'colId' | 'headerName'> = {
     cellDataType: 'text',
@@ -221,23 +221,20 @@ export class CalculatedColumnForm extends Component {
     }
 
     private addActionListeners(): void {
-        if (this.expressionPickers.has('columns')) {
-            this.addManagedElementListeners(this.eColumns, {
-                mousedown: () => this.rememberExpressionSelection(),
-                click: () => this.openPicker('column', this.eColumns),
-            });
-        }
-        if (this.expressionPickers.has('functions')) {
-            this.addManagedElementListeners(this.eFunctions, {
-                mousedown: () => this.rememberExpressionSelection(),
-                click: () => this.openPicker('function', this.eFunctions),
-            });
-        }
-        if (this.expressionPickers.has('operators')) {
-            this.addManagedElementListeners(this.eOperators, {
-                mousedown: () => this.rememberExpressionSelection(),
-                click: () => this.openPicker('operator', this.eOperators),
-            });
+        const expressionPickers = this.expressionPickers;
+        const pickerButtons: [CalculatedColumnExpressionPicker, ColumnSuggestion['type'], HTMLButtonElement][] = [
+            ['columns', 'column', this.eColumns],
+            ['functions', 'function', this.eFunctions],
+            ['operators', 'operator', this.eOperators],
+        ];
+        for (const pickerButton of pickerButtons) {
+            const [pickerKey, suggestionType, button] = pickerButton;
+            if (expressionPickers.has(pickerKey)) {
+                this.addManagedElementListeners(button, {
+                    mousedown: () => this.rememberExpressionSelection(),
+                    click: () => this.openPicker(suggestionType, button),
+                });
+            }
         }
         if (!this.livePreview) {
             this.addManagedElementListeners(this.eApply, {
@@ -557,7 +554,7 @@ export class CalculatedColumnForm extends Component {
     }
 
     private getFunctionToken(value: string, caret: number): { start: number; end: number; prefix: string } | null {
-        if (this.isInsideStringLiteral(value, caret)) {
+        if (isInsideStringLiteral(value, caret)) {
             return null;
         }
 
@@ -590,20 +587,5 @@ export class CalculatedColumnForm extends Component {
             }
         }
         return null;
-    }
-
-    private isInsideStringLiteral(value: string, offset: number): boolean {
-        let inString = false;
-        for (let i = 0; i < offset && i < value.length; i++) {
-            if (value[i] !== '"') {
-                continue;
-            }
-            if (value[i + 1] === '"') {
-                i++;
-                continue;
-            }
-            inString = !inString;
-        }
-        return inString;
     }
 }

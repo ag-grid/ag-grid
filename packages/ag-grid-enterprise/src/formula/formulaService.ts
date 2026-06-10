@@ -11,7 +11,7 @@ import type {
     RowNodeDataChangedEvent,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, _convertColumnEventSourceType, _hasCalculatedExpression, _warn } from 'ag-grid-community';
+import { BeanStub, _convertColumnEventSourceType, _warn } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
@@ -116,7 +116,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             if (col.isAllowFormula()) {
                 editableFormulaColumnsPresent = true;
             }
-            if (calculatedColumnsEnabled && _hasCalculatedExpression(col.colDef)) {
+            if (col.isCalculatedCol) {
                 calculatedColumnsPresent = true;
             }
             if (editableFormulaColumnsPresent && (calculatedColumnsPresent || !calculatedColumnsEnabled)) {

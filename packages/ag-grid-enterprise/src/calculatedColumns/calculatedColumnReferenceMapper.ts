@@ -10,7 +10,7 @@ interface CalculatedColumnReferenceError {
     reference: string;
 }
 
-interface CalculatedColumnReferenceMapper {
+export interface CalculatedColumnReferenceMapper {
     suggestions: ColumnSuggestion[];
     toInternalExpression(expression: string): { expression: string } | { error: CalculatedColumnReferenceError };
     toInternalExpressionBestEffort(expression: string): string;
