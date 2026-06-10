@@ -28,7 +28,6 @@ const GridBodyComp = () => {
     });
     const [stickyBottomHeight, setStickyBottomHeight] = useState<string>('0px');
     const [stickyBottomWidth, setStickyBottomWidth] = useState<string>('100%');
-    const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
     const [cellSelectableCss, setCellSelectableCss] = useState<string | null>(null);
     const [preventRowAnimationClass, setPreventRowAnimationClass] = useState<string | null>(null);
 
@@ -126,7 +125,6 @@ const GridBodyComp = () => {
             setPinnedSection,
             setColumnMovingCss: (cssClass: string, flag: boolean) => cssManager.current!.toggleCss(cssClass, flag),
             updateLayoutClasses: setLayoutClass,
-            setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setCellSelectableCss: (cssClass: string | null, flag: boolean) =>
                 setCellSelectableCss(flag ? cssClass : null),
             setRowAnimationCssOnScrollableArea: (animate: boolean) =>
@@ -172,10 +170,7 @@ const GridBodyComp = () => {
     }, [context, gos, overlays, rangeSvc, rootElement]);
 
     const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
-    const gridViewportClasses = useMemo(
-        () => classesList('ag-grid-viewport', layoutClass, forceVerticalScrollClass),
-        [layoutClass, forceVerticalScrollClass]
-    );
+    const gridViewportClasses = useMemo(() => classesList('ag-grid-viewport', layoutClass), [layoutClass]);
     const bodyClasses = useMemo(
         () => classesList('ag-grid-scrolling-rows', layoutClass, cellSelectableCss),
         [layoutClass, cellSelectableCss]

@@ -461,8 +461,12 @@ export type {
     IToolPanelParams,
 } from './interfaces/iToolPanel';
 
+// File Processor
+export type { ProcessFileInputParams } from './interfaces/iFileProcessor';
+
 // Overlays
 export type { IExportingOverlay, IExportingOverlayComp } from './rendering/overlays/exportingOverlayComponent';
+export type { IFileInputOverlay, IFileInputOverlayComp } from './rendering/overlays/fileInputOverlayComponent';
 export type { ILoadingOverlay, ILoadingOverlayComp } from './rendering/overlays/loadingOverlayComponent';
 export type {
     INoMatchingRowsOverlay,
@@ -471,7 +475,9 @@ export type {
 export type { INoRowsOverlay, INoRowsOverlayComp } from './rendering/overlays/noRowsOverlayComponent';
 export type {
     ExportingOverlayUserParams,
+    FileInputOverlayUserParams,
     IExportingOverlayParams,
+    IFileInputOverlayParams,
     ILoadingOverlayParams,
     INoMatchingRowsOverlayParams,
     INoRowsOverlayParams,
@@ -657,6 +663,7 @@ export type {
     CellStyleFunc,
     CheckboxSelectionCallback,
     CheckboxSelectionCallbackParams,
+    ColAggFunc,
     ColDef,
     ColDefField,
     ColGroupDef,
@@ -991,6 +998,7 @@ export type {
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 export { AllCommunityModule } from './allCommunityModule';
 export { AutoGenerateColumnsModule } from './autoGenerateColumns/autoGenerateColumnsModule';
+export { FileInputOverlayModule } from './rendering/overlays/fileInputOverlayModule';
 export { forEachColDef } from './columns/columnUtils';
 export { RowApiModule, ScrollApiModule } from './api/apiModule';
 export { ClientSideRowModelApiModule, ClientSideRowModelModule } from './clientSideRowModel/clientSideRowModelModule';

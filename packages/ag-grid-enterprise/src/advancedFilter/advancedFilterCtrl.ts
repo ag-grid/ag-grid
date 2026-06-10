@@ -1,4 +1,4 @@
-import { _getAbsoluteHeight, _getAbsoluteWidth, _removeFromParent } from 'ag-stack';
+import { _getAbsoluteHeight, _getAbsoluteWidth, _initStyledRoot } from 'ag-stack';
 
 import type {
     BeanCollection,
@@ -33,6 +33,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
     private eHeaderComp: AdvancedFilterHeaderComp | undefined;
     private headerCompHost: IPinnedSectionCompHost | undefined;
     private eFilterComp: AdvancedFilterComp | undefined;
+    private disconnectFilterComp: (() => void) | undefined;
     private hasAdvancedFilterParent: boolean;
     private eBuilderComp: AdvancedFilterBuilderComp | undefined;
     private eBuilderDialog: Dialog | undefined;
@@ -59,7 +60,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
         });
 
         this.addDestroyFunc(() => {
-            this.destroyAdvancedFilterComp();
+            this.destroyFilterComp();
             if (this.eHeaderComp) {
                 this.headerCompHost?.unmountComp(this.eHeaderComp.getGui());
                 this.destroyBean(this.eHeaderComp);
@@ -195,7 +196,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
     }
 
     private setAdvancedFilterComp(): void {
-        this.destroyAdvancedFilterComp();
+        this.destroyFilterComp();
         if (!this.enabled) {
             return;
         }
@@ -207,11 +208,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
             const eAdvancedFilterComp = this.createBean(new AdvancedFilterComp());
             const eAdvancedFilterCompGui = eAdvancedFilterComp.getGui();
 
-            this.environment.applyThemeClasses(eAdvancedFilterCompGui);
-
-            eAdvancedFilterCompGui.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
-
-            advancedFilterParent.appendChild(eAdvancedFilterCompGui);
+            this.disconnectFilterComp = _initStyledRoot(this.environment, advancedFilterParent, eAdvancedFilterCompGui);
 
             this.eFilterComp = eAdvancedFilterComp;
         }
@@ -242,10 +239,8 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
         this.eHeaderComp.refreshLayout();
     }
 
-    private destroyAdvancedFilterComp(): void {
-        if (this.eFilterComp) {
-            _removeFromParent(this.eFilterComp.getGui());
-            this.destroyBean(this.eFilterComp);
-        }
+    private destroyFilterComp(): void {
+        this.disconnectFilterComp?.();
+        this.destroyBean(this.eFilterComp);
     }
 }

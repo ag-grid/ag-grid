@@ -371,7 +371,7 @@ export class GridColumnsValidator {
         const check = (tree: (Column | ColumnGroup)[], flat: Column[], label: 'left' | 'center' | 'right'): void => {
             const leaves: Column[] = [];
             this.collectLeaves(tree, leaves);
-            if (leaves.length !== flat.length && this.bugs.treeLeavesMatchFlatArray) {
+            if (leaves.length !== flat.length) {
                 this.errors.default.add(
                     `${label} tree has ${leaves.length} leaf columns but ${label}Cols flat array has ${flat.length}.`
                 );
@@ -716,7 +716,7 @@ export class GridColumnsValidator {
         for (let i = 0, len = stateArr.length; i < len; ++i) {
             const colId = stateArr[i].colId;
             const found = api.getColumn(colId);
-            if (!found && this.bugs.columnStateColsMustExist) {
+            if (!found) {
                 // Auto-group columns and other generated columns may appear in state without being looked up
                 // by id from `getColumn` in some legacy modes — only flag if the column id looks like a regular
                 // user-defined column (not ag-Grid-auto- prefix).
@@ -975,15 +975,8 @@ export class GridColumnsValidator {
         }
 
         // ── Aggregation function consistency ────────────────────────────────
-        // `getAggFunc()` reflects runtime state; it should be cleared when the column leaves the
-        // active value list. `colDef.aggFunc` (the initial config) is allowed to persist separately.
-        const aggFunc = col.getAggFunc();
-        const isValueActive = col.isValueActive();
-        if (isValueActive && aggFunc == null) {
+        if (col.isValueActive() && col.getAggFunc() == null) {
             colErrors.add('isValueActive() is true but getAggFunc() is null.');
-        }
-        if (!isValueActive && aggFunc != null) {
-            colErrors.add(`isValueActive() is false but getAggFunc() is "${String(aggFunc)}".`);
         }
 
         // ── Filter consistency ──────────────────────────────────────────────

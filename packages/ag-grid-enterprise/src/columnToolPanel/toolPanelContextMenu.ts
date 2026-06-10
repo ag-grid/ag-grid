@@ -1,7 +1,7 @@
 import { _focusInto } from 'ag-stack';
 
 import type { AgColumn, AgProvidedColumnGroup, IconName, MenuItemDef } from 'ag-grid-community';
-import { Component, _createIconNoSpan, isColumn, isProvidedColumnGroup } from 'ag-grid-community';
+import { Component, _createIconNoSpan, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
@@ -47,7 +47,7 @@ export class ToolPanelContextMenu extends Component {
         this.initializeProperties(column);
 
         let displayName: string | null;
-        if (isColumn(column)) {
+        if (column.isColumn) {
             displayName = colNames.getDisplayNameForColumn(column, 'columnToolPanel');
         } else {
             displayName = colNames.getDisplayNameForProvidedColumnGroup(null, column, 'columnToolPanel');
@@ -203,11 +203,20 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private addColumnsToList(columnList: AgColumn[], predicate: (col: AgColumn) => boolean): AgColumn[] {
-        return [...columnList].concat(this.columns.filter((col) => predicate(col) && !columnList.includes(col)));
+        const existing = new Set(columnList);
+        const additions: AgColumn[] = [];
+        for (let i = 0, len = this.columns.length; i < len; ++i) {
+            const col = this.columns[i];
+            if (predicate(col) && !existing.has(col)) {
+                additions.push(col);
+            }
+        }
+        return columnList.concat(additions);
     }
 
     private removeColumnsFromList(columnList: AgColumn[], predicate: (col: AgColumn) => boolean): AgColumn[] {
-        return columnList.filter((col) => !predicate(col) || !this.columns.includes(col));
+        const toRemove = new Set(this.columns);
+        return columnList.filter((col) => !predicate(col) || !toRemove.has(col));
     }
 
     private displayContextMenu(menuItemsMapped: MenuItemDef[]): void {

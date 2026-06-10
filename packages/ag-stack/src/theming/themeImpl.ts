@@ -96,24 +96,30 @@ export class ThemeImpl {
         }
     }
 
-    private _cssClassCache?: string;
+    private _cssClassCache?: [string, string];
 
-    _getCssClass(this: ThemeImpl): string {
+    _getCssClasses(this: ThemeImpl): [inheritClasses: string, applyClasses: string] {
         if (FORCE_LEGACY_THEMES) {
-            return 'ag-theme-quartz';
+            return ['', 'ag-theme-quartz'];
         }
 
-        return (this._cssClassCache ??= deduplicatePartsByFeature(this.parts)
-            .map((part) => part.use(undefined, undefined, undefined))
-            .filter(Boolean)
-            .concat(this._getParamsClassName())
-            .join(' '));
+        return (this._cssClassCache ??= [
+            this._getParamsClassName(true),
+            deduplicatePartsByFeature(this.parts)
+                .map((part) => part.use(undefined, undefined, undefined))
+                .filter(Boolean)
+                .concat(this._getParamsClassName())
+                .join(' '),
+        ]);
     }
 
-    private _paramsClassName?: string;
+    private _classNamesId?: number;
+    private _getClassNamesId(): number {
+        return (this._classNamesId ??= ++getInjectionState().paramsId);
+    }
 
-    _getParamsClassName(): string {
-        return (this._paramsClassName ??= `ag-theme-params-${++getInjectionState().paramsId}`);
+    _getParamsClassName(inherit = false): string {
+        return `ag-theme-${inherit ? 'inherit' : 'params'}-${this._getClassNamesId()}`;
     }
 
     private _paramsCache?: ModalParamValues;
@@ -192,7 +198,7 @@ export class ThemeImpl {
                 const params = modeParams[mode];
                 if (mode !== defaultModeName) {
                     const escapedMode = typeof CSS === 'object' ? CSS.escape(mode) : mode; // check for CSS global in case we're running in tests
-                    const wrapPrefix = `:where([data-ag-theme-mode="${escapedMode}"]) & {\n`;
+                    const wrapPrefix = `:where(html[data-ag-theme-mode="${escapedMode}"],body[data-ag-theme-mode="${escapedMode}"],.ag-theme-mode[data-ag-theme-mode="${escapedMode}"]) & {\n`;
                     variablesCss += wrapPrefix;
                     inheritanceCss += wrapPrefix;
                 }
@@ -215,12 +221,8 @@ export class ThemeImpl {
                     inheritanceCss += '}\n';
                 }
             }
-            const selectorPlaceholder = `:where(.${this._getParamsClassName()})`;
-            let css = `${selectorPlaceholder} {\n${variablesCss}}\n`;
-            // Create --ag-inherited-foo variable values on the parent element, unless
-            // the parent is itself a root (which can happen if popupParent is
-            // ag-root-wrapper)
-            css += `:has(> ${selectorPlaceholder}):not(${selectorPlaceholder}) {\n${inheritanceCss}}\n`;
+            let css = `:where(.${this._getParamsClassName()}) {\n${variablesCss}}\n`;
+            css += `:where(.${this._getParamsClassName(true)}) {\n${inheritanceCss}}\n`;
             this._paramsCssCache = css;
         }
         return this._paramsCssCache;

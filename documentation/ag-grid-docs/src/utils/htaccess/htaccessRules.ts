@@ -1,6 +1,6 @@
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
 import type { CspEnv } from './cspRules';
-import { getCspHtaccessBlock, getCspHtaccessLine } from './cspRules';
+import { getCspHtaccessBlock } from './cspRules';
 import { SITE_301_REDIRECTS } from './redirects';
 
 export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
@@ -67,8 +67,9 @@ const getModRewriteRules = (): string => `
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Always use https for secure connections
-    # (as it appears on your SSL certificate)
+    # Always use https for secure connections (scoped to www/bare domain only
+    # so that charts.ag-grid.com and studio.ag-grid.com are not affected)
+    RewriteCond %{HTTP_HOST} ^(www\\.)?ag-grid\\.com$ [NC]
     RewriteCond %{SERVER_PORT} 80
     RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
     RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
@@ -79,24 +80,21 @@ const getModRewriteRules = (): string => `
     # Redirect non-www to www
     RewriteCond %{HTTP_HOST} ^ag-grid\\.com$ [NC]
     RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
-    
-    RewriteEngine On
+
+    # Redirect legacy Phase 1 subdomains to www
     RewriteCond %{HTTP_HOST} ^angulargrid\\.ag-grid\\.com$ [NC]
-    RewriteRule ^(.*)$ https://ag-grid.com/$1 [R=301,L]
-    RewriteEngine On
+    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
     RewriteCond %{HTTP_HOST} ^angular-grid\\.ag-grid\\.com$ [NC]
-    RewriteRule ^(.*)$ https://ag-grid.com/$1 [R=301,L]
-    RewriteEngine On
+    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
     RewriteCond %{HTTP_HOST} ^javascript-grid\\.ag-grid\\.com$ [NC]
-    RewriteRule ^(.*)$ https://ag-grid.com/$1 [R=301,L]
-    RewriteEngine On
+    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
     RewriteCond %{HTTP_HOST} ^react-grid\\.ag-grid\\.com$ [NC]
-    RewriteRule ^(.*)$ https://ag-grid.com/$1 [R=301,L]
-    
-    # Redirect angulargrid.com to ag-grid.com
+    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
+
+    # Redirect angulargrid.com to www.ag-grid.com
     RewriteCond %{HTTP_HOST} ^angulargrid\\.com$ [OR]
     RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
-    RewriteRule ^/?$ "http\\:\\/\\/www\\.ag\\-grid\\.com" [R=301,L]
+    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
 
     # Remove "index.php" from URLs
     RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
@@ -155,9 +153,9 @@ AddType application/x-gzip .gz .tgz
 function getStagingHtaccessContent(): string {
     return `${baseRules}
 
-# Content-Security-Policy — report-only while validating on staging. Unsets the
-# legacy wildcard CSP on the staging vhost so this is the only policy in effect.
-${getCspHtaccessBlock({ env: 'staging' }, 'report-only')}
+# Content-Security-Policy — enforced. Unsets the legacy wildcard CSP on the staging
+# vhost so this tightened policy is the only one in effect.
+${getCspHtaccessBlock({ env: 'staging' }, 'enforce')}
 
 Options -Indexes
 `;
@@ -175,11 +173,12 @@ ${getModRewriteRules()}
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
-# Content-Security-Policy — report-only while validating the tightened policy on production.
-# Ships alongside the existing loose enforcing CSP on the vhost: that one still allows
-# everything (nothing breaks), this one reports what the tightened policy would block.
-# Flip to enforce + remove the vhost wildcard once the report-only window is clean.
-${getCspHtaccessLine({ env: 'production' }, 'report-only')}
+# Content-Security-Policy — enforced (the report-only validation window is complete).
+# The block unsets the inherited headers (incl. the legacy wildcard CSP on the vhost)
+# and sets this tightened policy as the enforced CSP. If the vhost wildcard lingers as a
+# separate header, browsers enforce the intersection, so the tightened policy still wins;
+# removing the vhost wildcard line is a follow-up infra cleanup.
+${getCspHtaccessBlock({ env: 'production' }, 'enforce')}
 
 # CORS settings
 Header add Access-Control-Allow-Origin "*"

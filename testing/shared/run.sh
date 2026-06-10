@@ -86,7 +86,6 @@ else
         project=$(mktemp -d -p $(pwd)/.tmp)
     fi
 
-
     cp -R ${project_dir}/../shared/* $project/
     cp -R ${project_dir}/* $project/
     cp dist/artifacts/packages/*.tgz $project/
@@ -144,7 +143,7 @@ if ${production} ; then
     npm i ag-grid-${fw} @playwright/test@${playwright_version} --cache ${cache_location}
 else
     echo ">>> npm i ../ag-grid*.tgz"
-    npm i ../ag-grid-community.tgz ../ag-grid-enterprise.tgz ../ag-grid-${fw}.tgz @playwright/test@${playwright_version} --cache ${cache_location} --registry http://52.50.158.57:4873
+    npm i ../ag-stack.tgz ../ag-grid-community.tgz ../ag-grid-enterprise.tgz ../ag-grid-${fw}.tgz @playwright/test@${playwright_version} --cache ${cache_location} --registry http://52.50.158.57:4873
 fi
 
 patch_dir=../patches

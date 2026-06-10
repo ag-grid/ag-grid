@@ -95,5 +95,5 @@
       "command": "{projectRoot}/run-next-js.sh -n -e 19"
     }
   },
-  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-react"]
+  "implicitDependencies": ["ag-stack", "ag-grid-community", "ag-grid-enterprise", "ag-grid-react"]
 }

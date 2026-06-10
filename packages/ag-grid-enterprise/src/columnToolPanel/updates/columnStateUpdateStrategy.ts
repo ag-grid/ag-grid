@@ -1,8 +1,8 @@
 import type {
     AgColumn,
+    ColAggFunc,
     ColumnEventType,
     ColumnState,
-    IAggFunc,
     IColumnStateUpdateStrategy,
     SortDef,
 } from 'ag-grid-community';
@@ -74,13 +74,13 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
     public setColumnAggFunc(
         deferMode: boolean,
         column: AgColumn,
-        aggFunc: string | IAggFunc | null | undefined,
+        aggFunc: ColAggFunc,
         eventType: ColumnEventType
     ): void {
         this.delegate('setColumnAggFunc', deferMode, column, aggFunc, eventType);
     }
 
-    public getColumnAggFunc(deferMode: boolean, column: AgColumn): string | IAggFunc | null | undefined {
+    public getColumnAggFunc(deferMode: boolean, column: AgColumn): ColAggFunc {
         return this.delegate('getColumnAggFunc', deferMode, column);
     }
 

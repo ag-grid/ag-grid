@@ -142,42 +142,24 @@ describe('Toolbar keyboard navigation', () => {
     });
 
     test('focusing a toolbar item scrolls it into view', async () => {
-        // The toolbar clips overflow, so focusing a clipped item would look like focus was lost.
-        const api = gridMgr.createGrid('kbd-focusin-scroll', {
-            columnDefs: [{ field: 'name' }],
-            rowData: [{ name: 'Alice' }],
-            toolbar: {
-                items: [
-                    { key: 'one', label: 'One', icon: 'maximize', action: () => {} },
-                    { key: 'two', label: 'Two', icon: 'maximize', action: () => {} },
-                ],
-            },
-        });
-        await new GridColumns(api, `focusing a toolbar item scrolls it into view setup`).checkColumns(`
-            CENTER
-            └── name "Name" width:200
-        `);
-        await new GridRows(api, `focusing a toolbar item scrolls it into view setup`).check(`
-            ROOT id:ROOT_NODE_ID
-            └── LEAF id:0 name:"Alice"
-        `);
+        // The toolbar scrolls horizontally (overflow-x: auto) rather than clipping, so focusing
+        // an item that is off-screen to the right must scroll the toolbar to reveal it.
+        const { toolbar, buttons } = await renderThreeButtonToolbar('kbd-focusin-scroll');
 
-        await waitForEvent('firstDataRendered', api);
+        // jsdom computes no layout, so make the toolbar a horizontal scroll container and give
+        // it and the target button rects that place the button beyond the toolbar's right edge.
+        toolbar.style.overflowX = 'auto';
+        const rect = (left: number, right: number) => ({ left, right, width: right - left }) as DOMRect;
+        toolbar.getBoundingClientRect = () => rect(0, 100);
+        const target = buttons[2];
+        target.getBoundingClientRect = () => rect(150, 200);
 
-        const gridDiv = TestGridsManager.getHTMLElement(api)!;
-        const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
-        const button = toolbar.querySelector<HTMLButtonElement>('.ag-toolbar-button')!;
+        expect(toolbar.scrollLeft).toBe(0);
 
-        const scrollIntoViewSpy = vitest.fn();
-        (button as any).scrollIntoView = scrollIntoViewSpy;
+        target.focus();
 
-        button.focus();
-
-        expect(scrollIntoViewSpy).toHaveBeenCalledWith({ block: 'nearest', inline: 'nearest' });
-        await new GridRows(api, `focusing a toolbar item scrolls it into view final state`).check(`
-            ROOT id:ROOT_NODE_ID
-            └── LEAF id:0 name:"Alice"
-        `);
+        // The toolbar scrolls right so the button's right edge (200) aligns with the toolbar's (100).
+        expect(toolbar.scrollLeft).toBe(100);
     });
 
     test('arrow keys inside an input toolbar item do not move toolbar focus', async () => {

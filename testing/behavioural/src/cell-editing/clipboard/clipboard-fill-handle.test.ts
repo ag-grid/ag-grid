@@ -316,4 +316,112 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
 
         expect(editRequests).toEqual(['ROW_1:field:Top Value', 'ROW_2:field:Top Value']);
     });
+
+    test('readOnlyEdit fill handle uses source cell value for all column types', async () => {
+        const editRequests: string[] = [];
+
+        const api = await gridMgr.createGridAndWait('clipboardGridReadOnlyFillTypes', {
+            readOnlyEdit: true,
+            cellSelection: {
+                handle: {
+                    mode: 'fill',
+                },
+            },
+            columnDefs: [
+                { field: 'text', editable: true },
+                { field: 'bool', editable: true },
+                { field: 'date', editable: true, cellDataType: 'dateString' },
+            ],
+            rowData: [
+                { id: 'ROW_0', text: 'Source', bool: true, date: '2024-01-15' },
+                { id: 'ROW_1', text: 'Other1', bool: false, date: '2024-06-20' },
+                { id: 'ROW_2', text: 'Other2', bool: false, date: '2024-12-25' },
+            ],
+            getRowId: (params) => params.data.id,
+            onCellEditRequest: (event) => {
+                editRequests.push(`${event.node?.id ?? 'unknown'}:${event.colDef.field}:${event.newValue}`);
+            },
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        for (const field of ['text', 'bool', 'date']) {
+            editRequests.length = 0;
+
+            await asyncSetTimeout(1);
+            const cell = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', field));
+            const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+            cell.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+            await cellSelectionChanged;
+            await asyncSetTimeout(1);
+
+            const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+            const fillEnd = waitForEvent('fillEnd', api);
+            await userEvent.dblClick(fillHandle);
+            await fillEnd;
+
+            const sourceValues: Record<string, string> = { text: 'Source', bool: 'true', date: '2024-01-15' };
+            const sourceValue = sourceValues[field];
+            expect(editRequests, `fill for ${field} column`).toEqual([
+                `ROW_1:${field}:${sourceValue}`,
+                `ROW_2:${field}:${sourceValue}`,
+            ]);
+        }
+    });
+
+    test('readOnlyEdit fill handle cycles multi-row selection pattern for all column types', async () => {
+        const editRequests: string[] = [];
+
+        const api = await gridMgr.createGridAndWait('clipboardGridReadOnlyFillCyclic', {
+            readOnlyEdit: true,
+            cellSelection: {
+                handle: {
+                    mode: 'fill',
+                },
+            },
+            columnDefs: [
+                { field: 'text', editable: true },
+                { field: 'bool', editable: true },
+                { field: 'date', editable: true, cellDataType: 'dateString' },
+            ],
+            rowData: [
+                { id: 'ROW_0', text: 'A', bool: true, date: '2024-01-15' },
+                { id: 'ROW_1', text: 'B', bool: false, date: '2024-06-20' },
+                { id: 'ROW_2', text: 'X', bool: false, date: '2024-12-25' },
+                { id: 'ROW_3', text: 'Y', bool: false, date: '2024-12-31' },
+                { id: 'ROW_4', text: 'Z', bool: true, date: '2024-03-01' },
+            ],
+            getRowId: (params) => params.data.id,
+            onCellEditRequest: (event) => {
+                editRequests.push(`${event.node?.id ?? 'unknown'}:${event.colDef.field}:${event.newValue}`);
+            },
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        for (const field of ['text', 'bool', 'date']) {
+            editRequests.length = 0;
+            api.clearCellSelection();
+
+            const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: [field] });
+            await cellSelectionChanged;
+            await asyncSetTimeout(1);
+
+            const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+            const fillEnd = waitForEvent('fillEnd', api);
+            await userEvent.dblClick(fillHandle);
+            await fillEnd;
+
+            const expectedRow0: Record<string, string> = { text: 'A', bool: 'true', date: '2024-01-15' };
+            const expectedRow1: Record<string, string> = { text: 'B', bool: 'false', date: '2024-06-20' };
+            const val0 = expectedRow0[field];
+            const val1 = expectedRow1[field];
+            expect(editRequests, `cyclic fill for ${field} column`).toEqual([
+                `ROW_2:${field}:${val0}`,
+                `ROW_3:${field}:${val1}`,
+                `ROW_4:${field}:${val0}`,
+            ]);
+        }
+    });
 });

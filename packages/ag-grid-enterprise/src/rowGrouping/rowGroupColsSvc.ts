@@ -1,125 +1,70 @@
-import { _removeFromArray } from 'ag-stack';
+import type { AgColumn, ColumnEventType, IRowGroupColsService, NamedBean } from 'ag-grid-community';
+import { _shouldUpdateColVisibilityAfterGroup, dispatchColumnVisibleEvent } from 'ag-grid-community';
 
-import type {
-    AgColumn,
-    AllEventsWithoutGridCommon,
-    ColDef,
-    ColumnEventType,
-    ColumnStateParams,
-    IColsService,
-    NamedBean,
-} from 'ag-grid-community';
-import { BaseColsService, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
+import { OrderedColsService } from '../columns/orderedColsService';
 
-export class RowGroupColsSvc extends BaseColsService implements NamedBean, IColsService {
+export class RowGroupColsSvc extends OrderedColsService implements NamedBean, IRowGroupColsService {
     beanName = 'rowGroupColsSvc' as const;
-    eventName = 'columnRowGroupChanged' as const;
+    protected override eventName = 'columnRowGroupChanged' as const;
+    protected override enableProp = 'rowGroup' as const;
+    protected override indexProp = 'rowGroupIndex' as const;
+    protected override initialEnableProp = 'initialRowGroup' as const;
+    protected override initialIndexProp = 'initialRowGroupIndex' as const;
 
-    override columnProcessors = {
-        set: (column: AgColumn, added: boolean, source: ColumnEventType) => this.setActive(added, column, source),
-        add: (column: AgColumn, added: boolean, source: ColumnEventType) => this.setActive(true, column, source),
-        remove: (column: AgColumn, added: boolean, source: ColumnEventType) => this.setActive(false, column, source),
-    } as const;
-
-    override columnOrdering = {
-        enableProp: 'rowGroup',
-        initialEnableProp: 'initialRowGroup',
-        indexProp: 'rowGroupIndex',
-        initialIndexProp: 'initialRowGroupIndex',
-    } as const;
-
-    override columnExtractors = {
-        setFlagFunc: (col: AgColumn, flag: boolean, source: ColumnEventType) =>
-            this.setColRowGroupActive(col, flag, source),
-        getIndexFunc: (colDef: ColDef) => colDef.rowGroupIndex,
-        getInitialIndexFunc: (colDef: ColDef) => colDef.initialRowGroupIndex,
-        getValueFunc: (colDef: ColDef) => colDef.rowGroup,
-        getInitialValueFunc: (colDef: ColDef) => colDef.initialRowGroup,
-    } as const;
-
-    private readonly modifyColumnsNoEventsCallbacks = {
-        addCol: (column: AgColumn) => {
-            if (!this.columns.includes(column)) {
-                this.columns.push(column);
-            }
-        },
-        removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
-    };
+    private readonly pendingVisibilityChanges = new Set<AgColumn>();
 
     public moveColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void {
-        if (this.columns.length === 0) {
+        const columns = this.columns;
+        const len = columns.length;
+        if (len === 0 || fromIndex < 0 || fromIndex >= len) {
             return;
         }
-
-        const column = this.columns[fromIndex];
-
-        const impactedColumns = this.columns.slice(fromIndex, toIndex);
-        this.columns.splice(fromIndex, 1);
-        this.columns.splice(toIndex, 0, column);
-
-        this.updateIndexMap();
-
-        this.eventSvc.dispatchEvent({
-            type: this.eventName,
-            columns: impactedColumns,
-            column: impactedColumns.length === 1 ? impactedColumns[0] : null,
-            source,
-        } as AllEventsWithoutGridCommon);
+        toIndex = Math.max(0, Math.min(toIndex, len - 1));
+        if (fromIndex === toIndex) {
+            return;
+        }
+        const movedColumn = columns[fromIndex];
+        const reordered = columns.slice();
+        reordered.splice(toIndex, 0, reordered.splice(fromIndex, 1)[0]);
+        this.resetActiveCols(reordered);
+        // Reorder only (event-driven regroup): report the moved column.
+        this.stageColChange([movedColumn]);
+        this.colModel.flushColChanges(source, false);
     }
 
-    public syncColumnWithState(
-        column: AgColumn,
-        source: ColumnEventType,
-        getValue: <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(
-            key1: U,
-            key2?: S
-        ) => { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined },
-        rowIndex: { [key: string]: number } | null
-    ): void {
-        const { value1: rowGroup, value2: rowGroupIndex } = getValue('rowGroup', 'rowGroupIndex');
-        if (rowGroup !== undefined || rowGroupIndex !== undefined) {
-            if (typeof rowGroupIndex === 'number' || rowGroup) {
-                if (!column.isRowGroupActive()) {
-                    this.setColRowGroupActive(column, true, source);
-                    this.modifyColumnsNoEventsCallbacks.addCol(column);
-                }
-                if (rowIndex && typeof rowGroupIndex === 'number') {
-                    rowIndex[column.getId()] = rowGroupIndex;
-                }
-            } else if (column.isRowGroupActive()) {
-                this.setColRowGroupActive(column, false, source);
-                this.modifyColumnsNoEventsCallbacks.removeCol(column);
+    protected override onColActiveChanged(column: AgColumn, active: boolean, source: ColumnEventType): void {
+        // Grouping auto-hides a col, ungrouping shows it again (batched `columnVisible` at flush); skip hierarchy virtuals (not user data).
+        if (column.colKind !== 'hierarchy' && _shouldUpdateColVisibilityAfterGroup(this.gos, active)) {
+            const visible = !active;
+            if (column.visible !== visible) {
+                column.setVisible(visible, source);
+                this.pendingVisibilityChanges.add(column);
             }
         }
     }
 
-    private setActive(active: boolean, column: AgColumn, source: ColumnEventType): void {
-        if (active === column.isRowGroupActive()) {
-            return;
-        }
-
-        this.setColRowGroupActive(column, active, source);
-
-        // If this column is a virtual column inserted by the groupHierarchyColSvc, by default we shouldn't make
-        // it visible when being grouped or ungrouped -- these are virtual columns, not user data columns, so they
-        // should only be made visible if the user explicitly wants to see them
-        const isGroupHierarchyCol = this.beans.groupHierarchyColSvc?.getColumn(column);
-        if (_shouldUpdateColVisibilityAfterGroup(this.gos, active) && !isGroupHierarchyCol) {
-            this.colModel.setColsVisible([column], !active, source);
+    protected override onColActiveChangesComplete(source: ColumnEventType): void {
+        const pending = this.pendingVisibilityChanges;
+        if (pending.size) {
+            const cols = Array.from(pending);
+            pending.clear();
+            dispatchColumnVisibleEvent(this.eventSvc, cols, source);
         }
     }
 
-    private setColRowGroupActive(column: AgColumn, rowGroup: boolean, source: ColumnEventType): void {
-        if (column.rowGroupActive !== rowGroup) {
-            column.rowGroupActive = rowGroup;
-
-            if (rowGroup) {
-                const addedCols = this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
-                addedCols?.forEach((c) => this.setColRowGroupActive(c, rowGroup, source));
-            }
-
-            column.dispatchColEvent('columnRowGroupChanged', source);
+    protected override setActiveFlag(col: AgColumn, active: boolean): boolean {
+        if (col.rowGroupActive === active) {
+            return false;
         }
-        column.dispatchStateUpdatedEvent('rowGroup');
+        col.rowGroupActive = active;
+        return true;
+    }
+
+    /** Stamps each active col's position as its row-group level (`rowGroupActiveIndex`, valid only when active). */
+    protected override onColumnsChanged(): void {
+        const cols = this.columns;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            cols[i].rowGroupActiveIndex = i;
+        }
     }
 }

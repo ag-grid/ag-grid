@@ -143,3 +143,32 @@ const gridOptions = {
 The example below uses [Column Types](./column-definitions/#column-types) to apply a `currencyColumn` type to any column whose field contains `"profit"`:
 
 {% gridExampleRunner title="Customising Columns" name="customising-columns" exampleHeight=300 /%}
+
+## File Drop Overlay
+
+When `autoGenerateColumnDefs` is enabled and no `rowData` is present, a file drop overlay is shown automatically when `processFileInput` is provided. Files can be dragged onto the overlay or selected via a browse button. See [Overlays](./overlays-overview/) for more on grid overlays.
+
+Provide a `processFileInput` callback. The `params` object contains the selected `files` array along with `success` and `fail` callbacks. Call `success(rowData)` to load the parsed data into the grid, or `fail(message)` to display an error in the overlay using the `fileInputProcessingFailed` locale.
+
+```js
+const gridOptions = {
+    autoGenerateColumnDefs: true,
+    processFileInput: (params) => {
+        const file = params.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const rowData = parseCsv(e.target.result);
+                params.success(rowData);
+            } catch {
+                params.fail('Failed to parse file');
+            }
+        };
+        reader.readAsText(file);
+    },
+};
+```
+
+The example below auto-generates columns from various data sources. Files can be dragged onto the overlay, selected via the browse button, or loaded from the sample data dropdown. The toolbar **Upload File** button re-shows the overlay by setting `activeOverlay` to `'agFileInputOverlay'`.
+
+{% gridExampleRunner title="Auto-Generate Columns" name="file-drop-overlay" exampleHeight=500 /%}

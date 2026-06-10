@@ -8,18 +8,19 @@ import { fileURLToPath } from 'node:url';
  *
  * Must be placed after sitemap() and before agSitemapLastmod() / agCacheSitemap()
  * in the integrations array so it operates on the freshly-generated file.
+ *
+ * Pass `enabled: true` only for production builds. Staging domains that share
+ * the ag-grid.com TLD must not be treated as production here because all their
+ * pages carry a noindex tag, which would produce an empty sitemap.
  */
-export default function agSitemapFilterNoindex(): AstroIntegration {
+export default function agSitemapFilterNoindex({ enabled = false }: { enabled?: boolean } = {}): AstroIntegration {
     let baseUrl = '/';
-    let enabled = false;
 
     return {
         name: 'ag-sitemap-filter-noindex',
         hooks: {
             'astro:config:done': ({ config }) => {
                 baseUrl = config.base ?? '/';
-                // Only filter on production builds
-                enabled = (config.site ?? '').includes('ag-grid.com');
             },
 
             'astro:build:done': async ({ dir, logger }) => {

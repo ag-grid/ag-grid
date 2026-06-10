@@ -18,11 +18,14 @@ import type {
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
-import type { IFormulaDataService } from '../interfaces/formulas';
-import type { IColsService } from '../interfaces/iColsService';
+import type { IFormulaDataService, IFormulaService } from '../interfaces/formulas';
 import type { CellValueResolveFrom } from '../interfaces/iEditService';
+import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { IRowGroupingEditValueSvc } from '../interfaces/iRowGroupingEditValueSvc';
 import type { IRowNode } from '../interfaces/iRowNode';
+import type { IShowRowGroupColsValueService } from '../interfaces/iShowRowGroupColsValueService';
 import { _warn } from '../validation/logging';
+import type { ChangeDetectionService } from './changeDetectionService';
 import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
 
@@ -52,11 +55,15 @@ export class ValueService extends BeanStub implements NamedBean {
     // exists in the same shape from construction time.
     private editSvc: EditService | undefined = undefined;
     private valueCache: ValueCache | undefined = undefined;
-    private rowGroupColsSvc: IColsService | undefined = undefined;
     private colModel!: ColumnModel;
     private expressionSvc: ExpressionService | undefined = undefined;
     private dataTypeSvc: DataTypeService | undefined = undefined;
+    private formula: IFormulaService | undefined = undefined;
     private formulaDataSvc: IFormulaDataService | undefined = undefined;
+    private changeDetectionSvc: ChangeDetectionService | undefined = undefined;
+    private showRowGroupColValueSvc: IShowRowGroupColsValueService | undefined = undefined;
+    private rowGroupingEditValueSvc: IRowGroupingEditValueSvc | undefined = undefined;
+    private frameworkOverrides: IFrameworkOverrides;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionSvc = beans.expressionSvc;
@@ -65,7 +72,11 @@ export class ValueService extends BeanStub implements NamedBean {
         this.dataTypeSvc = beans.dataTypeSvc;
         this.editSvc = beans.editSvc;
         this.formulaDataSvc = beans.formulaDataSvc;
-        this.rowGroupColsSvc = beans.rowGroupColsSvc;
+        this.formula = beans.formula;
+        this.changeDetectionSvc = beans.changeDetectionSvc;
+        this.showRowGroupColValueSvc = beans.showRowGroupColValueSvc;
+        this.rowGroupingEditValueSvc = beans.rowGroupingEditValueSvc;
+        this.frameworkOverrides = beans.frameworkOverrides;
         this.init();
     }
 
@@ -114,10 +125,9 @@ export class ValueService extends BeanStub implements NamedBean {
         value: any;
         valueFormatted: string | null;
     } {
-        const beans = this.beans;
         const column = params.column;
         const node = params.node;
-        const showRowGroupColValueSvc = beans.showRowGroupColValueSvc;
+        const showRowGroupColValueSvc = this.showRowGroupColValueSvc;
         const isFullWidthGroup = !column && node.group;
 
         // Tree data auto col acts as a traditional column, with the exception of footers, so only process footers with
@@ -153,7 +163,7 @@ export class ValueService extends BeanStub implements NamedBean {
         let value = this.getValue(column, node, params.from, this.displayIgnoresAggData(node));
         let valueToFormat = value;
 
-        const formula = beans.formula;
+        const formula = this.formula;
         const colDef = column.colDef;
         if (colDef.allowFormula && formula?.isFormula(value)) {
             if (params.useRawFormula) {
@@ -196,17 +206,19 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
 
-        const editSvc = this.editSvc;
-        if (editSvc && from !== 'data') {
-            // Check for edit/pending values if not requesting committed data
-            const pending = editSvc.getPendingEditValue(rowNode, column, from);
-            if (pending !== undefined) {
-                return pending;
+        // 'data' (grouping/sort/agg hot path) never has pending edits — skip the editSvc read entirely.
+        if (from !== 'data') {
+            const editSvc = this.editSvc;
+            if (editSvc) {
+                const pending = editSvc.getPendingEditValue(rowNode, column, from);
+                if (pending !== undefined) {
+                    return pending;
+                }
             }
         }
 
         let result = column.isCalculatedCol
-            ? this.beans.formula?.resolveValue(column, rowNode as RowNode)
+            ? this.formula?.resolveValue(column, rowNode as RowNode)
             : this.resolveValueWithoutCalculatedColumns(column, rowNode, ignoreAggData, isGroup);
 
         if (result === undefined) {
@@ -217,8 +229,8 @@ export class ValueService extends BeanStub implements NamedBean {
             if (isGroup) {
                 const rowGroupColId = colDef.showRowGroup;
                 if (typeof rowGroupColId === 'string') {
-                    const colRowGroupIndex = this.rowGroupColsSvc?.getColumnIndex(rowGroupColId);
-                    if (colRowGroupIndex != null && colRowGroupIndex > rowNode.level) {
+                    const col = this.colModel.colsById[rowGroupColId];
+                    if (col && col.rowGroupActive && col.rowGroupActiveIndex > rowNode.level) {
                         return null;
                     }
                 }
@@ -266,11 +278,10 @@ export class ValueService extends BeanStub implements NamedBean {
         isGroup: boolean | undefined
     ): any {
         const colDef = column.colDef;
-        const colId = column.colId;
 
         // Skipped for group rows — formulas + row grouping are not supported together.
         if (!isGroup && colDef.allowFormula) {
-            const formula = this.beans.formula?.getDataSourceFormula(rowNode as RowNode, column);
+            const formula = this.formula?.getDataSourceFormula(rowNode as RowNode, column);
             if (formula !== undefined) {
                 return formula;
             }
@@ -280,12 +291,19 @@ export class ValueService extends BeanStub implements NamedBean {
         const aggData = isGroup && !ignoreAggData ? rowNode.aggData : undefined;
         const data = rowNode.data;
 
+        const colId = column.colId;
         if (this.isTreeData) {
-            if (aggData?.[colId] !== undefined) {
-                return aggData[colId];
+            const aggDataValue = aggData?.[colId];
+            if (aggDataValue !== undefined) {
+                return aggDataValue;
             }
-
-            const treeValue = this.readByValueGetterOrField(column, rowNode, data);
+            const field = colDef.field;
+            let treeValue;
+            if (colDef.valueGetter) {
+                treeValue = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
+            } else if (data && field) {
+                treeValue = column.fieldContainsDots ? _getValueUsingDotField(data, field) : data[field];
+            }
             if (treeValue !== undefined) {
                 return treeValue;
             }
@@ -295,25 +313,12 @@ export class ValueService extends BeanStub implements NamedBean {
         if (groupData && colId in groupData) {
             return groupData[colId];
         }
-        if (aggData?.[colId] !== undefined) {
-            return aggData[colId];
+        const aggDataValue = aggData?.[colId];
+        if (aggDataValue !== undefined) {
+            return aggDataValue;
         }
 
         return this.readUserValueForCell(column, rowNode, data, ignoreAggData, isGroup);
-    }
-
-    private readByValueGetterOrField(column: AgColumn, rowNode: IRowNode, data: any): any {
-        const { valueGetter, field } = column.colDef;
-
-        if (valueGetter) {
-            return this.executeValueGetter(valueGetter, data, column, rowNode);
-        }
-
-        if (field && data) {
-            return column.fieldContainsDots ? _getValueUsingDotField(data, field) : data[field];
-        }
-
-        return undefined;
     }
 
     private readUserValueForCell(
@@ -335,9 +340,12 @@ export class ValueService extends BeanStub implements NamedBean {
             return this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         }
 
-        const ssrmFooterValue = this.readSsrmFooterGroupValue(column, rowNode, data, rowGroupColId);
-        if (ssrmFooterValue !== undefined) {
-            return ssrmFooterValue;
+        // SSRM-only footer values — skip the call entirely on client-side grids.
+        if (this.isSsrm) {
+            const ssrmFooterValue = this.readSsrmFooterGroupValue(column, rowNode, data, rowGroupColId);
+            if (ssrmFooterValue !== undefined) {
+                return ssrmFooterValue;
+            }
         }
 
         const field = colDef.field;
@@ -378,7 +386,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const colDef = column.colDef;
 
         // we do not allow parsing of formulas
-        if (colDef.allowFormula && this.beans.formula?.isFormula(newValue)) {
+        if (colDef.allowFormula && this.formula?.isFormula(newValue)) {
             return newValue as TValue;
         }
 
@@ -528,13 +536,13 @@ export class ValueService extends BeanStub implements NamedBean {
         // - For leaf rows the single cellValueChanged is accumulated and flushed once at endDeferred.
         // - Nested callers (clipboard, fill handle) just increment/decrement the same counter; the
         //   outermost endDeferred() performs the single aggregation + refresh pass.
-        const changeDetectionSvc = this.beans.changeDetectionSvc;
+        const changeDetectionSvc = this.changeDetectionSvc;
         changeDetectionSvc?.beginDeferred();
         try {
             // Delegate groupRowValueSetter handling to the enterprise service.
             // Returns undefined if no groupRowValueSetter is configured.
             if (rowNode.group) {
-                const groupResult = this.beans.rowGroupingEditValueSvc?.setGroupDataValue(
+                const groupResult = this.rowGroupingEditValueSvc?.setGroupDataValue(
                     rowNode as RowNode,
                     column,
                     newValue,
@@ -618,7 +626,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const formulaSvc = this.beans.formula;
+        const formulaSvc = this.formula;
         const isFormulaValue = column.colDef.allowFormula && formulaSvc?.isFormula(newValue);
         const hasExternalFormulaData = !!this.formulaDataSvc?.hasDataSource();
 
@@ -648,7 +656,7 @@ export class ValueService extends BeanStub implements NamedBean {
         eventSource?: string;
     }): boolean | null {
         const { column, rowNode, newValue, eventSource, setterParams } = args;
-        const formulaSvc = this.beans.formula;
+        const formulaSvc = this.formula;
         const formulaDataSvc = this.formulaDataSvc;
         if (!column.colDef.allowFormula || !formulaDataSvc?.hasDataSource()) {
             return null;
@@ -825,7 +833,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private getValueCallback(node: IRowNode, field: string): any {
-        const otherColumn = this.colModel.getColDefColOrCol(field);
+        const otherColumn = this.colModel.getCol(field);
         return otherColumn ? this.getValue(otherColumn, node, 'data') : null;
     }
 

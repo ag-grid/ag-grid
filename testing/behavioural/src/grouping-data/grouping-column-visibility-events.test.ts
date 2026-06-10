@@ -25,8 +25,7 @@ describe('grouping column visibility events', () => {
         return events;
     };
 
-    // Solved by AG-17366 when it is completed
-    test.skip('grouping multiple columns fires a single columnVisible hiding them all', async () => {
+    test('grouping multiple columns fires a single columnVisible hiding them all', async () => {
         const api = gridsManager.createGrid('groupHideMany', {
             columnDefs: [{ field: 'country' }, { field: 'sport' }, { field: 'gold' }],
             rowData: [{ country: 'USA', sport: 'Swim', gold: 5 }],
@@ -51,8 +50,7 @@ describe('grouping column visibility events', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('ungrouping fires a single columnVisible showing the cols', async () => {
+    test('ungrouping fires a single columnVisible showing the cols', async () => {
         const api = gridsManager.createGrid('ungroupShowMany', {
             columnDefs: [{ field: 'country' }, { field: 'sport' }, { field: 'gold' }],
             rowData: [{ country: 'USA', sport: 'Swim', gold: 5 }],
@@ -89,6 +87,27 @@ describe('grouping column visibility events', () => {
         await asyncSetTimeout(0);
 
         expect(events).toEqual([]);
+    });
+
+    test('sequential grouping never re-fires columnVisible for already-hidden cols', async () => {
+        const api = gridsManager.createGrid('groupSequential', {
+            columnDefs: [{ field: 'country' }, { field: 'sport' }, { field: 'gold' }],
+            rowData: [{ country: 'USA', sport: 'Swim', gold: 5 }],
+        });
+        await asyncSetTimeout(0);
+
+        const events = captureVisible(api);
+        api.addRowGroupColumns(['country']);
+        api.addRowGroupColumns(['sport']);
+        api.addRowGroupColumns(['gold']);
+        await asyncSetTimeout(0);
+
+        // Each grouping auto-hides only the newly-grouped col; previously-hidden cols must not re-fire.
+        expect(events).toEqual([
+            { visible: false, cols: ['country'] },
+            { visible: false, cols: ['sport'] },
+            { visible: false, cols: ['gold'] },
+        ]);
     });
 
     test('grouping a hierarchy column hides only the source col', async () => {

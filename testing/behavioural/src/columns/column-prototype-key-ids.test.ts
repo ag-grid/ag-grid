@@ -18,8 +18,7 @@ import { TestGridsManager } from '../test-utils';
 // The grid uses `Object.create(null)` for these lookups so user-supplied prototype-name ids work.
 const PROTO_IDS = ['toString', 'constructor', 'valueOf', 'hasOwnProperty', '__proto__'];
 
-// Solved by AG-17366 when it is completed
-describe.skip('Columns with Object.prototype-name colIds / groupIds', () => {
+describe('Columns with Object.prototype-name colIds / groupIds', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,

@@ -183,6 +183,7 @@ import type {
     ProcessCellForClipboard,
     ProcessCellFromClipboard,
     ProcessDataFromClipboard,
+    ProcessFileInputParams,
     ProcessGroupHeaderForClipboard,
     ProcessHeaderForClipboard,
     ProcessPivotResultColDef,
@@ -332,7 +333,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
                     frameworkCompWrapper: this._frameworkCompWrapper,
                 },
                 modules: (this.modules || []) as any,
-                setThemeOnGridDiv: true,
             };
 
             const api = createGrid(this._nativeElement, mergedGridOps, gridParams);
@@ -1077,7 +1077,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressNoRowsOverlay: boolean | undefined = undefined;
-    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`.
+    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`, `fileInput`.
      */
     @Input() public suppressOverlays: OverlayType[] | undefined = undefined;
     /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows, exporting etc).
@@ -1103,6 +1103,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`. Updating the params will trigger a refresh of the active overlay.
      */
     @Input() public activeOverlayParams: any = undefined;
+    /** Callback to handle files received via the file input overlay (drag-and-drop or file browser).
+     * When provided, the file input overlay is shown when there is no row data.
+     * Call `params.success(rowData)` to load parsed data into the grid, or `params.fail(message)` to show an error.
+     * @agModule `FileInputOverlayModule`
+     */
+    @Input() public processFileInput: ((params: ProcessFileInputParams<TData>) => void) | undefined = undefined;
     /** Set whether pagination is enabled.
      * @default false
      * @agModule `PaginationModule`

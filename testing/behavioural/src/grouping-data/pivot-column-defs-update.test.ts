@@ -474,8 +474,7 @@ describe('pivot column identity across columnDefs updates', () => {
         await checkDefaultCols(api, 'cols after callback recheck');
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('custom properties on a pivot result colDef survive a no-op refresh and are wiped on actual change', async () => {
+    test('custom properties on a pivot result colDef survive a no-op refresh and are wiped on actual change', async () => {
         type ColDefWithCustom = ColDef & { myCustomProp?: string };
 
         const liveDefs: ColDef[] = [
@@ -711,8 +710,7 @@ describe('pivot column identity across columnDefs updates', () => {
         expect(afterIds).not.toContain('year');
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('pivot result cols dropped across a clear/restore window are destroyed (no bean leak)', async () => {
+    test('pivot result cols dropped across a clear/restore window are destroyed (no bean leak)', async () => {
         const api = gridsManager.createGrid('clearRestoreLeak', {
             columnDefs: baseColumnDefs,
             pivotMode: true,
@@ -840,8 +838,7 @@ describe('pivot column identity across columnDefs updates', () => {
         expect((api.getPivotResultColumns() ?? []).length).toBeGreaterThan(0);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('api.getColumn by field in pivot mode resolves primary col via lazy colsByDef map', async () => {
+    test('api.getColumn by field in pivot mode resolves primary col via lazy colsByDef map', async () => {
         const api = gridsManager.createGrid('pivotFieldLookup', {
             columnDefs: [
                 { colId: 'countryCol', field: 'country', rowGroup: true, hide: true },

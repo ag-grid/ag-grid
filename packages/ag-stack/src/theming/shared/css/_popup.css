@@ -1,3 +1,7 @@
+.ag-popup {
+    background-color: var(--ag-wrapper-background-color);
+}
+
 .ag-popup-child {
     /* grid-managed popups must sit above overlays and row content. */
     z-index: 5;

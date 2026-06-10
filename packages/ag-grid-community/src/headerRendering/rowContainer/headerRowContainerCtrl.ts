@@ -1,7 +1,6 @@
 import type { ColumnMoveService } from '../../columnMove/columnMoveService';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
-import { isColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { FocusService } from '../../focusService';
 import type { ScrollPartner } from '../../gridBodyComp/gridBodyScrollFeature';
@@ -154,7 +153,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         const findCtrl = (ctrl: HeaderRowCtrl | undefined) =>
             ctrl?.getHeaderCellCtrls().find((ctrl) => ctrl.column === column);
 
-        if (isColumn(column)) {
+        if (column.isColumn) {
             return findCtrl(this.columnsRowCtrl);
         }
 

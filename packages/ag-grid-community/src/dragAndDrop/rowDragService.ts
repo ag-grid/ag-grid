@@ -125,7 +125,7 @@ export class RowDragService extends BeanStub implements NamedBean {
             return 'disabled';
         }
 
-        if (beans.sortSvc?.isSortActive()) {
+        if (isSortActive(beans.colModel.getAllCols())) {
             return 'disabled';
         }
 
@@ -141,3 +141,12 @@ export class RowDragService extends BeanStub implements NamedBean {
         }
     }
 }
+
+const isSortActive = (allCols: AgColumn[]): boolean => {
+    for (let i = 0, len = allCols.length; i < len; ++i) {
+        if (allCols[i].getSortDef()) {
+            return true;
+        }
+    }
+    return false;
+};

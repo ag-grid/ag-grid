@@ -28,7 +28,6 @@ import {
     _isLegacyMenuEnabled,
     _setColMenuVisible,
     _warn,
-    isColumn,
 } from 'ag-grid-community';
 
 import type { AgCloseMenuEvent } from '../agStack/agMenuItemComponent';
@@ -106,7 +105,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         column: AgColumn | undefined;
         columnGroup: AgProvidedColumnGroup | undefined;
     } {
-        const colIsColumn = columnOrGroup && isColumn(columnOrGroup);
+        const colIsColumn = columnOrGroup?.isColumn;
         const column = colIsColumn ? columnOrGroup : undefined;
         const columnGroup = colIsColumn ? undefined : columnOrGroup;
         return { column, columnGroup };
@@ -281,11 +280,11 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
     ) {
-        const { focusSvc, visibleCols, ctrlsSvc } = this.beans;
+        const { focusSvc, ctrlsSvc } = this.beans;
         const restoreFocusParams = {
             column,
             headerPosition: focusSvc.focusedHeader,
-            columnIndex: visibleCols.allCols.indexOf(column as AgColumn),
+            columnIndex: column?.allColsIndex ?? -1,
             eventSource,
         };
         const menu = this.createMenu(column, columnGroup, restoreFocusParams, restrictToTabs, eventSource);

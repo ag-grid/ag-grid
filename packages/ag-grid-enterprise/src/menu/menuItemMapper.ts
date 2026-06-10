@@ -7,10 +7,10 @@ import type {
     DefaultMenuItem,
     GetNoteParams,
     IAggFuncService,
-    IColsService,
     IMenuActionParams,
     INoteAccess,
     INotesService,
+    IValueColsService,
     MenuItemDef,
     NamedBean,
     RowNode,
@@ -296,7 +296,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                 rowGroupColsSvc.setColumns(rowGroupColsSvc.columns.slice(0, lockedGroups), source);
                         } else if (typeof showRowGroup === 'string') {
                             // Handle multiple auto group columns
-                            const underlyingColumn = colModel.getColDefCol(showRowGroup);
+                            const underlyingColumn = colModel.getNonPivotCol(showRowGroup);
                             const ungroupByName =
                                 underlyingColumn != null
                                     ? colNames.getDisplayNameForColumn(underlyingColumn, 'header')
@@ -488,7 +488,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'editCalculatedColumn':
-                    return calculatedColsSvc && column?.colDef.calculatedExpression != null
+                    return calculatedColsSvc && column?.isCalculatedCol
                         ? {
                               name: localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
                               icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
@@ -496,11 +496,11 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'removeCalculatedColumn':
-                    return calculatedColsSvc && column?.colDef.calculatedExpression != null
+                    return calculatedColsSvc && column?.isCalculatedCol
                         ? {
                               name: localeTextFunc('calculatedColumnRemove', 'Remove Calculated Column'),
                               icon: _createIconNoSpan('calculatedColumnRemove', beans, null),
-                              action: () => calculatedColsSvc.removeCalculatedColumn(column, 'calculatedColumn'),
+                              action: () => calculatedColsSvc.removeCalculatedColumn(column),
                           }
                         : null;
                 case 'sortUnSort':
@@ -657,7 +657,7 @@ function createNoteMenuItems({
 function createAggregationSubMenu(
     column: AgColumn,
     aggFuncSvc: IAggFuncService,
-    valueColsSvc: IColsService,
+    valueColsSvc: IValueColsService,
     localeTextFunc: LocaleTextFunc
 ): MenuItemDef[] {
     let columnToUse: AgColumn | undefined;

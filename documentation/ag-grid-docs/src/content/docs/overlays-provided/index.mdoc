@@ -4,7 +4,7 @@ title: "Provided Overlays"
 
 The grid shows built-in overlays when data is loading or being exported and when there is no data or no rows match the current filter.
 
-The following example demonstrates all the provided overlays.
+The following example demonstrates most of the provided overlays.
 
 - Toggle the loading state to show/hide the loading overlay.
 - Note that the loading overlay takes precedence over the other provided overlays if they are shown at the same time.
@@ -32,6 +32,34 @@ The no-matching-rows overlay is displayed when the grid has rows but none of the
 
 The exporting overlay is displayed when data is being exported from the grid to CSV or Excel.
 
+## File Input
+
+When `processFileInput` is provided and `rowData` is not set, the grid shows a built-in file input overlay. Users can drag a file onto the overlay or click the browse button to select one.
+
+Provide a `processFileInput` callback. The `params` object contains the selected `files` array along with `success` and `fail` callbacks. Call `success(rowData)` to load the parsed data, or `fail(message)` to display an error in the overlay.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    processFileInput: ({ files, success, fail }) => {
+        const file = files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const rowData = parseFile(e)
+                success(rowData);
+            } catch {
+                fail('Failed to parse file');
+            }
+        };
+            reader.readAsArrayBuffer(file);
+    },
+};
+```
+
+The example below shows the file input overlay, using [Auto-Generate Columns](./auto-generate-columns) to create the column definitions from the loaded file. Drag a file onto the overlay or use the browse button to load it.
+
+{% gridExampleRunner title="File Input Overlay" name="file-input-overlay" exampleHeight=400 /%}
+
 ## Customisation
 
 The provided overlays can be customised to change their content or completely replaced with custom components. The grid still manages the timing of when the overlays are displayed based on grid state.
@@ -49,6 +77,7 @@ const gridOptions = {
         noRows: { overlayText: 'This grid has no data!' },
         noMatchingRows: { overlayText: 'Current Filter Matches No Rows' },
         exporting: { overlayText: 'Exporting your data...' },
+        fileInput: { overlayText: 'Provide a file...' },
     }
 };
 ```

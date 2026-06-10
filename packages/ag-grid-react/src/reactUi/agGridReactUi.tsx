@@ -59,7 +59,6 @@ import { LicenseContext, ModulesContext } from './agGridProvider';
 import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
-import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
 
 const deprecatedProps: Pick<InternalAgGridReactProps, 'setGridApi' | 'children' | 'maxComponentCreationTimeMs'> = {
@@ -88,7 +87,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     const usesAgGridProvider = modulesFromContext !== null;
 
     const apiRef = useRef<GridApi<TData>>();
-    const eGui = useRef<HTMLDivElement | null>(null);
+    const innermostRef = useRef<HTMLDivElement | null>(null);
     const portalManager = useRef<PortalManager | null>(null);
     const destroyFuncs = useRef<(() => void)[]>([]);
     const whenReadyFuncs = useRef<(() => void)[]>([]);
@@ -103,36 +102,8 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
 
-    const appliedClassName = useRef<string>();
-    const updateClassName = (classNameFromReact: string | undefined) => {
-        // Fix for AG-16224. The grid sets the className on the div using
-        // el.classList, so we must use classList too - if we did
-        // `className={props.className}` we would overwrite the grid's changes
-        const classList = eGui.current?.classList;
-        const splitClasses = (s = '') => s.trim().split(/\s+/g).filter(Boolean);
-        if (appliedClassName.current !== classNameFromReact) {
-            for (const cls of splitClasses(appliedClassName.current)) {
-                if (classList?.contains(cls)) {
-                    classList.remove(cls);
-                }
-            }
-            for (const cls of splitClasses(classNameFromReact)) {
-                if (!classList?.contains(cls)) {
-                    classList?.add(cls);
-                }
-            }
-            appliedClassName.current = classNameFromReact;
-        }
-    };
-
-    useIsomorphicLayoutEffect(() => {
-        updateClassName(props.className);
-    }, [props.className]);
-
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
-        updateClassName(props.className);
-        if (!eRef) {
+    const setOutermostRef = useCallback((outermost: HTMLDivElement | null) => {
+        if (!outermost) {
             ready.current = false;
             for (const f of destroyFuncs.current) {
                 f();
@@ -188,7 +159,6 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             },
             modules,
             frameworkOverrides,
-            setThemeOnGridDiv: true,
         };
 
         const createUiCallback = (ctx: Context) => {
@@ -243,7 +213,8 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         // We ensure that the gridId is stable even in StrictMode
         mergedGridOps.gridId ??= gridIdRef.current;
         apiRef.current = gridCoreCreator.create(
-            eRef,
+            outermost,
+            innermostRef.current!,
             mergedGridOps,
             createUiCallback,
             acceptChangesCallback,
@@ -259,6 +230,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
 
     const style = useMemo(() => {
         return {
+            width: '100%',
             height: '100%',
             ...(props.containerStyle || {}),
         };
@@ -287,13 +259,20 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             ? 'legacy'
             : 'default';
     return (
-        // IMPORTANT! Don't set className here, we must use classList
-        // imperatively to avoid removing classes set by the grid
-        <div style={style} ref={setRef}>
-            <RenderModeContext.Provider value={renderMode}>
-                {context && !context.isDestroyed() ? <GridComp key={context.instanceId} context={context} /> : null}
-                {portalManager.current?.getPortals() ?? null}
-            </RenderModeContext.Provider>
+        <div className={props.className} style={style} ref={setOutermostRef}>
+            {/* IMPORTANT we need 3 layers of divs with NO className because the class is managed by the styled root */}
+            <div /* do not set className here */>
+                <div /* do not set className here */>
+                    <div /* do not set className here */ ref={innermostRef}>
+                        <RenderModeContext.Provider value={renderMode}>
+                            {context && !context.isDestroyed() ? (
+                                <GridComp key={context.instanceId} context={context} />
+                            ) : null}
+                            {portalManager.current?.getPortals() ?? null}
+                        </RenderModeContext.Provider>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

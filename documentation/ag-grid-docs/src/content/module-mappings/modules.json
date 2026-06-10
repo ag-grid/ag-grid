@@ -29,6 +29,11 @@
                     "path": "auto-generate-columns"
                 },
                 {
+                    "moduleName": "FileInputOverlayModule",
+                    "name": "File Input Overlay",
+                    "path": "auto-generate-columns/#file-drop-overlay"
+                },
+                {
                     "moduleName": "CalculatedColumnsModule",
                     "name": "Calculated Columns",
                     "path": "calculated-columns",

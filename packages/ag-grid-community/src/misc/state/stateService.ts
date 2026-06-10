@@ -1,5 +1,6 @@
 import { _debounce, _jsonEquals } from 'ag-stack';
 
+import { _getColGroupState, _setColGroupState } from '../../columns/columnGroups/columnGroupState';
 import type { ColumnState, ColumnStateParams } from '../../columns/columnStateUtils';
 import { _applyColumnState, _getColumnState } from '../../columns/columnStateUtils';
 import type { NamedBean } from '../../context/bean';
@@ -193,7 +194,7 @@ export class StateService extends BeanStub implements NamedBean {
         partialColumnState: boolean,
         ignoreSet?: Set<GridStateKey>
     ): void {
-        this.setColumnState(state, source, partialColumnState, ignoreSet);
+        this.applyColumnGridState(state, source, partialColumnState, ignoreSet);
         this.setColumnGroupState(state, source, ignoreSet);
 
         this.updateColumnAndGroupState();
@@ -369,7 +370,7 @@ export class StateService extends BeanStub implements NamedBean {
         });
     }
 
-    private getColumnState(): {
+    private getColumnGridState(): {
         sort?: SortState;
         rowGroup?: RowGroupState;
         aggregation?: AggregationState;
@@ -383,7 +384,7 @@ export class StateService extends BeanStub implements NamedBean {
         return convertColumnState(_getColumnState(beans), beans.colModel.pivotMode);
     }
 
-    private setColumnState(
+    private applyColumnGridState(
         state: GridState,
         source: 'gridInitializing' | 'api',
         partialColumnState: boolean,
@@ -406,7 +407,7 @@ export class StateService extends BeanStub implements NamedBean {
             forceSetState ||= shouldSet;
             return shouldSet;
         };
-        const columnStateMap: { [colId: string]: ColumnState } = {};
+        const columnStateMap: { [colId: string]: ColumnState } = Object.create(null);
         const getColumnState = (colId: string) => {
             let columnState = columnStateMap[colId];
             if (columnState) {
@@ -419,13 +420,15 @@ export class StateService extends BeanStub implements NamedBean {
         const defaultState: ColumnStateParams = {};
 
         const shouldSetSortState = shouldSetState('sort', sortState);
-        if (shouldSetSortState) {
-            sortState?.sortModel.forEach(({ colId, sort, type }, sortIndex) => {
+        if (shouldSetSortState && sortState) {
+            const sortModel = sortState.sortModel;
+            for (let sortIndex = 0, len = sortModel.length; sortIndex < len; ++sortIndex) {
+                const { colId, sort, type } = sortModel[sortIndex];
                 const columnState = getColumnState(colId);
                 columnState.sort = sort;
                 columnState.sortIndex = sortIndex;
                 columnState.sortType = type;
-            });
+            }
         }
         if (shouldSetSortState || !partialColumnState) {
             defaultState.sort = null;
@@ -433,12 +436,13 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const shouldSetGroupState = shouldSetState('rowGroup', groupState);
-        if (shouldSetGroupState) {
-            groupState?.groupColIds.forEach((colId, rowGroupIndex) => {
-                const columnState = getColumnState(colId);
+        if (shouldSetGroupState && groupState) {
+            const groupColIds = groupState.groupColIds;
+            for (let rowGroupIndex = 0, len = groupColIds.length; rowGroupIndex < len; ++rowGroupIndex) {
+                const columnState = getColumnState(groupColIds[rowGroupIndex]);
                 columnState.rowGroup = true;
                 columnState.rowGroupIndex = rowGroupIndex;
-            });
+            }
         }
         if (shouldSetGroupState || !partialColumnState) {
             defaultState.rowGroup = null;
@@ -446,24 +450,27 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const shouldSetAggregationState = shouldSetState('aggregation', aggregationState);
-        if (shouldSetAggregationState) {
-            aggregationState?.aggregationModel.forEach(({ colId, aggFunc }) => {
+        if (shouldSetAggregationState && aggregationState) {
+            const aggregationModel = aggregationState.aggregationModel;
+            for (let i = 0, len = aggregationModel.length; i < len; ++i) {
+                const { colId, aggFunc } = aggregationModel[i];
                 getColumnState(colId).aggFunc = aggFunc;
-            });
+            }
         }
         if (shouldSetAggregationState || !partialColumnState) {
             defaultState.aggFunc = null;
         }
 
         const shouldSetPivotState = shouldSetState('pivot', pivotState);
-        if (shouldSetPivotState) {
-            pivotState?.pivotColIds.forEach((colId, pivotIndex) => {
-                const columnState = getColumnState(colId);
+        if (shouldSetPivotState && pivotState) {
+            const pivotColIds = pivotState.pivotColIds;
+            for (let pivotIndex = 0, len = pivotColIds.length; pivotIndex < len; ++pivotIndex) {
+                const columnState = getColumnState(pivotColIds[pivotIndex]);
                 columnState.pivot = true;
                 columnState.pivotIndex = pivotIndex;
-            });
+            }
             this.gos.updateGridOptions({
-                options: { pivotMode: !!pivotState?.pivotMode },
+                options: { pivotMode: !!pivotState.pivotMode },
                 source: source as any,
             });
         }
@@ -532,15 +539,15 @@ export class StateService extends BeanStub implements NamedBean {
         this.columnGroupStates = undefined;
 
         const beans = this.beans;
-        const { pivotResultCols, colGroupSvc } = beans;
-        if (!pivotResultCols?.isPivotResultColsPresent()) {
+        const { pivotResultCols, colModel } = beans;
+        if (!pivotResultCols?.pivotCols) {
             return;
         }
 
         if (columnStates) {
             const secondaryColumnStates: ColumnState[] = [];
             for (const columnState of columnStates) {
-                if (pivotResultCols.getPivotResultCol(columnState.colId)) {
+                if (colModel.colsById[columnState.colId]?.colDef.pivotKeys != null) {
                     secondaryColumnStates.push(columnState);
                 }
             }
@@ -557,16 +564,12 @@ export class StateService extends BeanStub implements NamedBean {
 
         if (columnGroupStates) {
             // no easy/performant way of knowing which column groups are pivot column groups
-            colGroupSvc?.setColumnGroupState(columnGroupStates, source);
+            _setColGroupState(beans, columnGroupStates, source);
         }
     }
 
     private getColumnGroupState(): ColumnGroupState | undefined {
-        const colGroupSvc = this.beans.colGroupSvc;
-        if (!colGroupSvc) {
-            return undefined;
-        }
-        const columnGroupState = colGroupSvc.getColumnGroupState();
+        const columnGroupState = _getColGroupState(this.beans);
         return _convertColumnGroupState(columnGroupState);
     }
 
@@ -575,9 +578,7 @@ export class StateService extends BeanStub implements NamedBean {
         source: 'gridInitializing' | 'api',
         ignoreSet?: Set<GridStateKey>
     ): void {
-        const colGroupSvc = this.beans.colGroupSvc;
         if (
-            !colGroupSvc ||
             ignoreSet?.has('columnGroup') ||
             (source !== 'api' && !Object.prototype.hasOwnProperty.call(state, 'columnGroup'))
         ) {
@@ -585,7 +586,7 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const openColumnGroups = new Set(state.columnGroup?.openColumnGroupIds);
-        const existingColumnGroupState = colGroupSvc.getColumnGroupState();
+        const existingColumnGroupState = _getColGroupState(this.beans);
         const stateItems = existingColumnGroupState.map(({ groupId }) => {
             const open = openColumnGroups.has(groupId);
             if (open) {
@@ -606,7 +607,7 @@ export class StateService extends BeanStub implements NamedBean {
         if (stateItems.length) {
             this.columnGroupStates = stateItems;
         }
-        colGroupSvc.setColumnGroupState(stateItems, source);
+        _setColGroupState(this.beans, stateItems, source);
     }
 
     private getFilterState(): FilterState | undefined {
@@ -667,7 +668,7 @@ export class StateService extends BeanStub implements NamedBean {
         for (const cellRange of cellSelectionState?.cellRanges ?? []) {
             const columns: AgColumn[] = [];
             for (const colId of cellRange.colIds) {
-                const column = colModel.getCol(colId);
+                const column = colModel.colsById[colId];
                 if (column) {
                     columns.push(column);
                 }
@@ -675,7 +676,7 @@ export class StateService extends BeanStub implements NamedBean {
             if (!columns.length) {
                 continue;
             }
-            let startColumn = colModel.getCol(cellRange.startColId);
+            let startColumn = colModel.colsById[cellRange.startColId];
             if (!startColumn) {
                 // find the first remaining column
                 const allColumns = visibleCols.allCols;
@@ -757,7 +758,7 @@ export class StateService extends BeanStub implements NamedBean {
         }
         const { colId, rowIndex, rowPinned } = focusedCellState;
         focusSvc.setFocusedCell({
-            column: colModel.getCol(colId),
+            column: colModel.colsById[colId] ?? null,
             rowIndex,
             rowPinned,
             forceBrowserFocus: true,
@@ -861,7 +862,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private updateColumnState(features: (keyof GridState)[]): void {
-        const newColumnState = this.getColumnState();
+        const newColumnState = this.getColumnGridState();
         let hasChanged = false;
         const cachedState = this.cachedState;
         for (const key of Object.keys(newColumnState) as (keyof GridState)[]) {

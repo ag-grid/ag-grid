@@ -19,13 +19,15 @@ import {
 
 import { AgAutocompleteList } from '../advancedFilter/autocomplete/agAutocompleteList';
 import type { AutocompleteEntry } from '../advancedFilter/autocomplete/autocompleteParams';
+import { AgGroupComponentSelector } from '../agStack/agGroupComponent';
+import type { GroupComponent } from '../widgets/gridEnterpriseWidgetTypes';
 import { CalculatedColumnAutocompleteRow } from './calculatedColumnAutocompleteRow';
 import type {
     CalculatedColumnDataTypeOption,
     CalculatedColumnDraft,
     ColumnSuggestion,
 } from './calculatedColumnFormTypes';
-import { getOperatorReplacementRange } from './calculatedColumnUtils';
+import { getOperatorReplacementRange, isInsideStringLiteral } from './calculatedColumnUtils';
 
 export const DEFAULT_DRAFT: Omit<CalculatedColumnDraft, 'colId' | 'headerName'> = {
     cellDataType: 'text',
@@ -61,27 +63,43 @@ const CalculatedColumnFormElement: ElementParams = {
         {
             tag: 'div',
             cls: 'ag-calculated-column-expression-wrap',
-            children: [{ tag: 'ag-input-text-area', ref: 'eExpression' }],
-        },
-        {
-            tag: 'div',
-            cls: 'ag-calculated-column-expression-tools',
             children: [
-                { tag: 'button', ref: 'eColumns', cls: 'ag-calculated-column-expression-tool' },
-                { tag: 'button', ref: 'eFunctions', cls: 'ag-calculated-column-expression-tool' },
-                { tag: 'button', ref: 'eOperators', cls: 'ag-calculated-column-expression-tool' },
+                { tag: 'ag-input-text-area', ref: 'eExpression' },
+                {
+                    tag: 'ag-group-component',
+                    cls: 'ag-calculated-column-expression-tools',
+                    ref: 'eExpressionTools',
+                    children: [
+                        {
+                            tag: 'button',
+                            ref: 'eColumns',
+                            cls: 'ag-button ag-standard-button ag-calculated-column-expression-tool',
+                        },
+                        {
+                            tag: 'button',
+                            ref: 'eFunctions',
+                            cls: 'ag-button ag-standard-button ag-calculated-column-expression-tool',
+                        },
+                        {
+                            tag: 'button',
+                            ref: 'eOperators',
+                            cls: 'ag-button ag-standard-button ag-calculated-column-expression-tool',
+                        },
+                    ],
+                },
             ],
         },
         {
             tag: 'div',
+            ref: 'eActions',
             cls: 'ag-calculated-column-actions',
             children: [
-                { tag: 'button', ref: 'eCancel', cls: 'ag-button ag-standard-button ag-calculated-column-action' },
                 {
                     tag: 'button',
                     ref: 'eApply',
                     cls: 'ag-button ag-standard-button ag-calculated-column-action ag-calculated-column-action-apply',
                 },
+                { tag: 'button', ref: 'eCancel', cls: 'ag-button ag-standard-button ag-calculated-column-action' },
             ],
         },
     ],
@@ -96,6 +114,8 @@ export class CalculatedColumnForm extends Component {
     private readonly eOperators: HTMLButtonElement = RefPlaceholder;
     private readonly eApply: HTMLButtonElement = RefPlaceholder;
     private readonly eCancel: HTMLButtonElement = RefPlaceholder;
+    private readonly eActions: HTMLElement = RefPlaceholder;
+    private readonly eExpressionTools: GroupComponent = RefPlaceholder;
 
     private activeReplacement: { start: number; end: number } | null = null;
     private suggestionSource: HTMLElement | null = null;
@@ -117,16 +137,27 @@ export class CalculatedColumnForm extends Component {
         private readonly getFunctionSuggestions: () => ColumnSuggestion[],
         private readonly onValidate: (draft: CalculatedColumnDraft) => string | null,
         private readonly onApply: (draft: CalculatedColumnDraft) => string | null,
-        private readonly onCancel: () => void
+        private readonly onCancel: () => void,
+        private readonly liveApply: boolean,
+        private readonly onDraftChange?: (draft: CalculatedColumnDraft) => void
     ) {
-        super(CalculatedColumnFormElement, [AgInputTextFieldSelector, AgSelectSelector, AgInputTextAreaSelector]);
+        super(CalculatedColumnFormElement, [
+            AgInputTextFieldSelector,
+            AgSelectSelector,
+            AgInputTextAreaSelector,
+            AgGroupComponentSelector,
+        ]);
         this.expressionPickers = new Set(expressionPickers);
     }
 
     public postConstruct(): void {
         this.setupFormFields();
         this.setupActionButtons();
-        this.setupValidationTooltip();
+
+        if (!this.liveApply) {
+            this.setupValidationTooltip();
+        }
+
         this.addFormFieldListeners();
         this.setupExpressionEditor();
         this.addActionListeners();
@@ -142,16 +173,26 @@ export class CalculatedColumnForm extends Component {
     private setupFormFields(): void {
         const translate = this.getLocaleTextFunc();
 
-        this.eTitle.setLabel(translate('calculatedColumnTitle', 'Title')).setValue(this.draft.headerName, true);
+        this.eTitle
+            .setLabel(translate('calculatedColumnTitle', 'Title'))
+            .setLabelAlignment('top')
+            .setValue(this.draft.headerName, true);
         this.eType
             .setLabel(translate('calculatedColumnType', 'Type'))
+            .setLabelAlignment('top')
             .addOptions(this.dataTypeOptions)
             .setValue(this.draft.cellDataType, true);
         this.eExpression
             .setLabel(translate('calculatedColumnExpression', 'Expression'))
+            .setLabelAlignment('top')
             .setInputPlaceholder(translate('calculatedColumnExpressionPlaceholder', 'Type here'))
             .setRows(3)
             .setValue(this.draft.calculatedExpression, true);
+
+        this.eExpressionTools
+            .setDirection('horizontal')
+            .setTitle(translate('calculatedColumnExpressionToolsLabel', 'Insert'))
+            .hideOpenCloseIcons(true);
     }
 
     private setupActionButtons(): void {
@@ -164,20 +205,28 @@ export class CalculatedColumnForm extends Component {
             btn.type = 'button';
         }
 
-        _setDisplayed(this.eColumns, this.expressionPickers.has('columns'));
-        _setDisplayed(this.eFunctions, this.expressionPickers.has('functions'));
-        _setDisplayed(this.eOperators, this.expressionPickers.has('operators'));
+        const hasColumns = this.expressionPickers.has('columns');
+        const hasFunctions = this.expressionPickers.has('functions');
+        const hasOperators = this.expressionPickers.has('operators');
+
+        _setDisplayed(this.eColumns, hasColumns);
+        _setDisplayed(this.eFunctions, hasFunctions);
+        _setDisplayed(this.eOperators, hasOperators);
+        this.eExpressionTools.setDisplayed(hasColumns || hasFunctions || hasOperators);
+        _setDisplayed(this.eActions, !this.liveApply);
     }
 
     private addFormFieldListeners(): void {
         const initialHeaderName = this.draft.headerName;
         this.eTitle.onValueChange((value) => this.updateDraft({ headerName: value || initialHeaderName }));
-        this.eType.onValueChange((value) =>
-            this.updateDraft({ cellDataType: value ?? this.dataTypeOptions[0]?.value ?? DEFAULT_DRAFT.cellDataType })
-        );
+        this.eType.onValueChange((value) => {
+            this.updateDraft({ cellDataType: value ?? this.dataTypeOptions[0]?.value ?? DEFAULT_DRAFT.cellDataType });
+        });
         this.eExpression.onValueChange((value) => {
             this.updateDraft({ calculatedExpression: value ?? '' });
-            this.setExpressionError(this.onValidate(this.draft));
+            if (!this.liveApply) {
+                this.setExpressionError(this.onValidate(this.draft));
+            }
             this.refreshContextSuggestions();
         });
     }
@@ -200,30 +249,29 @@ export class CalculatedColumnForm extends Component {
     }
 
     private addActionListeners(): void {
-        if (this.expressionPickers.has('columns')) {
-            this.addManagedElementListeners(this.eColumns, {
-                mousedown: () => this.rememberExpressionSelection(),
-                click: () => this.openPicker('column', this.eColumns),
+        const expressionPickers = this.expressionPickers;
+        const pickerButtons: [CalculatedColumnExpressionPicker, ColumnSuggestion['type'], HTMLButtonElement][] = [
+            ['columns', 'column', this.eColumns],
+            ['functions', 'function', this.eFunctions],
+            ['operators', 'operator', this.eOperators],
+        ];
+        for (const pickerButton of pickerButtons) {
+            const [pickerKey, suggestionType, button] = pickerButton;
+            if (expressionPickers.has(pickerKey)) {
+                this.addManagedElementListeners(button, {
+                    mousedown: () => this.rememberExpressionSelection(),
+                    click: () => this.openPicker(suggestionType, button),
+                });
+            }
+        }
+        if (!this.liveApply) {
+            this.addManagedElementListeners(this.eApply, {
+                click: () => this.setExpressionError(this.onApply(this.draft)),
+            });
+            this.addManagedElementListeners(this.eCancel, {
+                click: () => this.onCancel(),
             });
         }
-        if (this.expressionPickers.has('functions')) {
-            this.addManagedElementListeners(this.eFunctions, {
-                mousedown: () => this.rememberExpressionSelection(),
-                click: () => this.openPicker('function', this.eFunctions),
-            });
-        }
-        if (this.expressionPickers.has('operators')) {
-            this.addManagedElementListeners(this.eOperators, {
-                mousedown: () => this.rememberExpressionSelection(),
-                click: () => this.openPicker('operator', this.eOperators),
-            });
-        }
-        this.addManagedElementListeners(this.eApply, {
-            click: () => this.setExpressionError(this.onApply(this.draft)),
-        });
-        this.addManagedElementListeners(this.eCancel, {
-            click: () => this.onCancel(),
-        });
     }
 
     private addFormListeners(): void {
@@ -269,6 +317,7 @@ export class CalculatedColumnForm extends Component {
 
     private updateDraft(partial: Partial<CalculatedColumnDraft>): void {
         this.draft = { ...this.draft, ...partial };
+        this.onDraftChange?.(this.draft);
     }
 
     private rememberExpressionSelection(): void {
@@ -417,6 +466,11 @@ export class CalculatedColumnForm extends Component {
             return;
         }
 
+        const editorWidth = this.eExpression.getInputElement().offsetWidth;
+        if (editorWidth > 0) {
+            list.getGui().style.width = `${editorWidth}px`;
+        }
+
         popupSvc.positionPopupByComponent({
             ePopup: list.getGui(),
             type: 'calculatedColumnAutocomplete',
@@ -528,7 +582,7 @@ export class CalculatedColumnForm extends Component {
     }
 
     private getFunctionToken(value: string, caret: number): { start: number; end: number; prefix: string } | null {
-        if (this.isInsideStringLiteral(value, caret)) {
+        if (isInsideStringLiteral(value, caret)) {
             return null;
         }
 
@@ -561,20 +615,5 @@ export class CalculatedColumnForm extends Component {
             }
         }
         return null;
-    }
-
-    private isInsideStringLiteral(value: string, offset: number): boolean {
-        let inString = false;
-        for (let i = 0; i < offset && i < value.length; i++) {
-            if (value[i] !== '"') {
-                continue;
-            }
-            if (value[i + 1] === '"') {
-                i++;
-                continue;
-            }
-            inString = !inString;
-        }
-        return inString;
     }
 }

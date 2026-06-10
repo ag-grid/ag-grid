@@ -54,16 +54,16 @@ const parseOperand = (
 
     if (trimmed.startsWith('[') && trimmed.endsWith(']') && trimmed.length > 2) {
         const columnReference = trimmed.slice(1, -1);
-        const column = beans.colModel.getColById(columnReference);
+        const column = beans.colModel.getCol(columnReference) ?? null;
 
         if (!unsafe && !column) {
             throw new FormulaParseError(2, 0, trimmed.length, [trimmed]);
         }
 
         // Unsafe mode (e.g. paste-time parsing without grid context) stores the raw reference
-        // as the AST id — downstream lookups via getColById will not resolve it.
+        // as the AST id — downstream colsById lookups will not resolve it.
         return {
-            column: { id: column?.getColId() ?? columnReference, absolute: false },
+            column: { id: column?.colId ?? columnReference, absolute: false },
             row: { id: '', absolute: false, current: true },
         };
     }

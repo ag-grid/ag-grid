@@ -35,7 +35,7 @@ export class FilterValueService extends BeanStub implements NamedBean {
                 column,
                 colDef,
                 getValue: (field) => {
-                    const col = colModel.getColDefColOrCol(field);
+                    const col = colModel.getCol(field);
                     return col ? valueSvc.getValue(col, rowNode, 'data') : null;
                 },
             };

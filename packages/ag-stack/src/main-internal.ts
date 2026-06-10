@@ -75,6 +75,12 @@ export { AutoScrollService } from './rendering/autoScrollService';
 export { CssClassManager } from './rendering/cssClassManager';
 export { defaultFontFamily, defaultLightColorSchemeParams, sharedDefaults } from './theming/shared/shared-css';
 export type { SharedThemeParams } from './theming/shared/shared-css';
+export {
+    _createStyledRootElements,
+    _initDetachedStyledRoot,
+    _initStyledRoot,
+    _initStyledRootFromInnerOfThreeElements,
+} from './theming/styledRoot';
 export { _asThemeImpl, createSharedTheme, ThemeImpl } from './theming/themeImpl';
 export type { ThemeLogger } from './theming/themeLogger';
 export {
@@ -140,12 +146,14 @@ export type { AriaSortState } from './utils/aria';
 export {
     _areEqual,
     _flatten,
-    _forAll,
+    _indexMap,
     _last,
     _moveInArray,
+    _pushToMapArray,
     _removeAllFromArray,
     _removeFromArray,
     _reuseArrayIfEqual,
+    _symmetricDiff,
 } from './utils/array';
 export { _parseBigIntOrNull } from './utils/bigInt';
 export {
@@ -231,6 +239,7 @@ export {
     _focusInto,
     _isKeyboardMode,
     _registerKeyboardFocusEvents,
+    _scrollHorizontallyToShow,
 } from './utils/focus';
 export { _batchCall, _debounce, _doOnce, _throttle, _waitUntil } from './utils/function';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';

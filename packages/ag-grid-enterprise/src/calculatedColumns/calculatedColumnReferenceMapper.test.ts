@@ -14,8 +14,15 @@ const createColumn = (colId: string, headerName: string, groupNames: string[] = 
     for (let i = groupNames.length - 1; i >= 0; i--) {
         parent = createGroup(groupNames[i], parent);
     }
+    let colKind = 'user';
+    if (colId === SELECTION_COLUMN_ID) {
+        colKind = 'selection';
+    } else if (colId === ROW_NUMBERS_COLUMN_ID) {
+        colKind = 'row-number';
+    }
     return {
         __headerName: headerName,
+        colKind,
         getColId: () => colId,
         getOriginalParent: () => parent,
     } as any;

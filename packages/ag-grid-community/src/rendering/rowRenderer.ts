@@ -403,7 +403,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private refreshListenersToColumnsForCellComps(): void {
         this.removeGridColumnListeners();
 
-        const cols = this.colModel.getCols();
+        const cols = this.colModel.colsList;
 
         for (const col of cols) {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
@@ -971,7 +971,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (_exists(columns)) {
             colIdsMap = {};
             columns.forEach((colKey: string | AgColumn) => {
-                const column: AgColumn | null = this.colModel.getCol(colKey);
+                const column = this.colModel.getCol(colKey);
                 if (_exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }
@@ -1055,9 +1055,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // 1) height of grid body changes, ie number of displayed rows has changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
-    public redraw(params: { afterScroll?: boolean } = {}) {
+    public redraw(params: { afterScroll?: boolean; force?: boolean } = {}) {
         const { focusSvc, animationFrameSvc } = this.beans;
-        const { afterScroll } = params;
+        const { afterScroll, force } = params;
         let cellFocused: CellPosition | undefined;
 
         const stickyRowFeature = this.stickyRowFeature;
@@ -1086,7 +1086,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         const rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;
 
-        if (afterScroll && !hasStickyRowChanges && !rangeChanged) {
+        if (afterScroll && !hasStickyRowChanges && !rangeChanged && !force) {
             return;
         }
 
@@ -1227,8 +1227,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private onDisplayedColumnsChanged(): void {
         const { visibleCols } = this.beans;
-        const pinningLeft = visibleCols.isPinningLeft();
-        const pinningRight = visibleCols.isPinningRight();
+        const pinningLeft = visibleCols.leftCols.length > 0;
+        const pinningRight = visibleCols.rightCols.length > 0;
         const atLeastOneChanged = this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight;
 
         if (atLeastOneChanged) {
@@ -1255,7 +1255,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.refreshPinnedRowComps();
         this.removeRowCtrls(rowsToRemove);
-        this.redraw({ afterScroll: true });
+        this.redraw({ afterScroll: true, force: true });
     }
 
     public getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[] {

@@ -1,6 +1,5 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { AgColumn } from '../entities/agColumn';
 import { _areCellsEqual, _getRowNode, _isSameRow } from '../entities/positionUtils';
 import type { BatchEditingStoppedEvent, BulkEditingStoppedEvent, CellValueChangedEvent } from '../events';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
@@ -260,7 +259,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
         const { colModel, focusSvc, rangeSvc } = this.beans;
 
-        const column: AgColumn | null = colModel.getCol(columnId);
+        const column = colModel.getCol(columnId);
 
         if (!column) {
             return;

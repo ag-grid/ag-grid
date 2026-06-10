@@ -281,6 +281,10 @@ export const AG_GRID_LOCALE_EN = {
     noRowsToShow: 'No Rows To Show',
     noMatchingRows: 'No Matching Rows',
     exportingOoo: 'Exporting...',
+    fileInputOverlay: 'Drag & Drop file to import data',
+    fileInputOverlayBrowse: 'Browse files',
+    fileInputProcessing: 'Processing ${variable}',
+    fileInputProcessingFailed: 'Error processing ${variable}',
     enabled: 'Enabled',
 
     // Menu
@@ -840,14 +844,16 @@ export const AG_GRID_LOCALE_EN = {
     calculatedColumnType: 'Type',
     calculatedColumnExpression: 'Expression',
     calculatedColumnExpressionPlaceholder: 'Type here',
+    calculatedColumnExpressionToolsLabel: 'Insert',
     calculatedColumnColumns: 'Columns',
     calculatedColumnFunctions: 'Functions',
     calculatedColumnOperators: 'Operators',
     calculatedColumnSuggestions: 'Calculated Column Suggestions',
-    calculatedColumnDefaultTitle: 'New title',
+    calculatedColumnDefaultTitle: 'Untitled',
     calculatedColumnExpressionAmbiguousReference:
         'Ambiguous column reference "${variable}". Use the Columns list or a more specific group path.',
     calculatedColumnExpressionUnknownReference: 'Unknown column reference "${variable}".',
+    calculatedColumnExpressionEmpty: 'Enter an expression.',
     calculatedColumnApply: 'Apply',
     calculatedColumnCancel: 'Cancel',
 

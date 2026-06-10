@@ -45,7 +45,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         number: (model) => _toStringOrNull(model.filter) ?? '',
         bigint: (model) => _toStringOrNull(model.filter) ?? '',
         date: (model) => {
-            const column = this.colModel.getColDefCol(model.colId);
+            const column = this.colModel.getNonPivotCol(model.colId);
             if (!column) {
                 return null;
             }
@@ -57,7 +57,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         },
         dateTime: (model) => this.filterOperandGetters.date(model),
         dateString: (model) => {
-            const column = this.colModel.getColDefCol(model.colId);
+            const column = this.colModel.getNonPivotCol(model.colId);
             if (!column) {
                 return null;
             }
@@ -108,11 +108,12 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         this.dataTypeSvc = beans.dataTypeSvc;
     }
 
-    private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string; columnName: string } } = {};
+    private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string; columnName: string } } =
+        Object.create(null);
     private columnAutocompleteEntries: AutocompleteEntry[] | null = null;
     private expressionOperators: FilterExpressionOperators;
     private expressionJoinOperators: { AND: string; OR: string };
-    private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams<any> } = {};
+    private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams<any> } = Object.create(null);
 
     public postConstruct(): void {
         this.expressionJoinOperators = this.generateExpressionJoinOperators();
@@ -210,7 +211,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         if (this.columnAutocompleteEntries) {
             return this.columnAutocompleteEntries;
         }
-        const columns = this.colModel.getColDefCols() ?? [];
+        const columns = this.colModel.colDefList;
         const entries: AutocompleteEntry[] = [];
         const includeHiddenColumns = this.gos.get('includeHiddenColumnsInAdvancedFilter');
         for (const column of columns) {
@@ -294,7 +295,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             return params;
         }
 
-        const column = this.colModel.getColDefCol(colId);
+        const column = this.colModel.getNonPivotColById(colId);
         if (!column) {
             return { valueConverter: (v: any) => v };
         }
@@ -344,7 +345,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     public getColumnDetails(colId: string): { column?: AgColumn; baseCellDataType: BaseCellDataType } {
-        const column = this.colModel.getColDefCol(colId) ?? undefined;
+        const column = this.colModel.getNonPivotColById(colId);
         const baseCellDataType = (column ? this.dataTypeSvc?.getBaseDataType(column) : undefined) ?? 'text';
         return { column, baseCellDataType };
     }
@@ -392,7 +393,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     public resetColumnCaches(): void {
         this.columnAutocompleteEntries = null;
-        this.columnNameToIdMap = {};
-        this.expressionEvaluatorParams = {};
+        this.columnNameToIdMap = Object.create(null);
+        this.expressionEvaluatorParams = Object.create(null);
     }
 }

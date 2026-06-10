@@ -1,6 +1,6 @@
 import { _exists } from 'ag-stack';
 
-import type { AgColumn, IAggColumnNameService, IAggFunc, NamedBean } from 'ag-grid-community';
+import type { AgColumn, ColAggFunc, IAggColumnNameService, NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 export class AggColumnNameService extends BeanStub implements NamedBean, IAggColumnNameService {
@@ -16,7 +16,7 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
         // only columns with aggregation active can have aggregations
         const pivotValueColumn = column.colDef.pivotValueColumn;
         const pivotActiveOnThisColumn = _exists(pivotValueColumn);
-        let aggFunc: string | IAggFunc | null | undefined = null;
+        let aggFunc: ColAggFunc = null;
         let aggFuncFound: boolean;
 
         // otherwise we have a measure that is active, and we are doing aggregation on it

@@ -6,7 +6,15 @@ import type {
     RowDropPositionIndicator,
     SetRowDropPositionIndicatorParams,
 } from '../dragAndDrop/rowDropHighlightService';
-import type { ColDef, ColGroupDef, ColKey, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
+import type {
+    ColAggFunc,
+    ColDef,
+    ColGroupDef,
+    ColKey,
+    ColumnChooserParams,
+    HeaderLocation,
+    IAggFunc,
+} from '../entities/colDef';
 import type { ChartRef, GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
@@ -38,7 +46,6 @@ import type {
 } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
-import type { CalculatedColumnDef, CalculatedColumnUpdate } from '../interfaces/iCalculatedColumns';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type {
     EditingCellPosition,
@@ -1543,10 +1550,7 @@ export interface _AggregationGridApi<TData> {
      * Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function.
      * @agModule `RowGroupingModule / PivotModule / TreeDataModule`
      */
-    setColumnAggFunc<TValue = any>(
-        key: ColKey<TData, TValue>,
-        aggFunc: string | IAggFunc<TData, TValue> | null | undefined
-    ): void;
+    setColumnAggFunc<TValue = any>(key: ColKey<TData, TValue>, aggFunc: ColAggFunc<TData, TValue>): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -1776,41 +1780,6 @@ export interface _FormulaGridApi<TData = any> {
      * @agModule `FormulaModule`
      */
     refreshFormulas(rowNode?: IRowNode<TData> | string): boolean;
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface _CalculatedColumnsGridApi<TData = any> {
-    /**
-     * Add a new calculated column to the end of the column definitions.
-     * The `calculatedExpression` should reference other columns by `colId`, e.g. `[revenue] - [cost]`.
-     * @agModule `CalculatedColumnsModule`
-     */
-    addCalculatedColumn<TValue = any>(colDef: CalculatedColumnDef<TData, TValue>): void;
-
-    /**
-     * Update an existing calculated column.
-     * The `calculatedExpression` should reference other columns by `colId`, e.g. `[revenue] - [cost]`.
-     * No-op if the supplied column key does not resolve to a calculated column.
-     * @agModule `CalculatedColumnsModule`
-     */
-    updateCalculatedColumn<TValue = any>(
-        column: ColKey<TData, TValue>,
-        colDef: CalculatedColumnUpdate<TData, TValue>
-    ): void;
-
-    /**
-     * Remove an existing calculated column.
-     * No-op if the supplied column key does not resolve to a calculated column.
-     * @agModule `CalculatedColumnsModule`
-     */
-    removeCalculatedColumn(column: ColKey<TData>): void;
-
-    /**
-     * Open the Calculated Column dialog for an existing calculated column.
-     * No-op if the supplied column key does not resolve to a calculated column.
-     * @agModule `CalculatedColumnsModule`
-     */
-    openCalculatedColumnDialog(column: ColKey<TData>): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -2071,7 +2040,6 @@ export interface GridApi<TData = any>
         _ColumnChooserGridApi,
         _MasterDetailGridApi,
         _FormulaGridApi<TData>,
-        _CalculatedColumnsGridApi<TData>,
         _ExcelExportGridApi,
         _ClipboardGridApi,
         _GridChartsGridApi,

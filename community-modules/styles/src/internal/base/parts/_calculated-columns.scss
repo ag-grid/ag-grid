@@ -1,45 +1,57 @@
 @mixin output {
     .ag-calculated-column-panel .ag-panel-content-wrapper {
-        padding: var(--ag-grid-size);
+        padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);
     }
 
     .ag-calculated-column-form {
         display: flex;
         flex-direction: column;
-        gap: var(--ag-grid-size);
+        gap: calc(var(--ag-grid-size) * 2);
         min-width: 260px;
+        flex: 1 1 auto;
+        min-height: 0;
     }
 
     .ag-calculated-column-expression-wrap {
-        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        gap: var(--ag-grid-size);
+
+        .ag-text-area {
+            flex: 1 1 auto;
+        }
+
+        .ag-text-area-input-wrapper {
+            height: 100%;
+        }
+
+        .ag-text-area-input {
+            height: 100%;
+            resize: none;
+            padding-top: calc(var(--ag-grid-size) / 2);
+        }
     }
 
-    .ag-calculated-column-expression-error {
-        color: var(--ag-invalid-color);
-        font-size: 11px;
-        line-height: normal;
-        margin-top: calc(var(--ag-grid-size) / 2);
+    .ag-rtl .ag-calculated-column-expression-wrap .ag-text-area-input {
+        padding-left: var(--ag-input-padding-start);
+        direction: ltr;
     }
 
     .ag-calculated-column-expression-tools {
         display: flex;
-        gap: calc(var(--ag-grid-size) / 2);
+
+        .ag-group-container {
+            flex: 1 1 auto;
+            justify-content: end;
+            gap: var(--ag-grid-size);
+            flex-wrap: nowrap;
+            align-items: center;
+        }
     }
 
-    .ag-calculated-column-expression-tool {
-        flex: 1 1 0;
-        min-width: 0;
-        border: var(--ag-borders) var(--ag-border-color);
-        border-radius: var(--ag-border-radius);
-        padding: calc(var(--ag-grid-size) / 2) var(--ag-grid-size);
-        background: var(--ag-background-color);
-        color: var(--ag-foreground-color);
-        cursor: pointer;
-        font: inherit;
-
-        &:hover {
-            background-color: var(--ag-row-hover-color);
-        }
+    .ag-standard-button.ag-calculated-column-expression-tool {
+        padding: calc(var(--ag-grid-size) / 2);
     }
 
     .ag-calculated-column-suggestion-path {
@@ -66,12 +78,6 @@
     .ag-calculated-column-suggestion-leaf {
         overflow: hidden;
         flex: none;
-    }
-
-    .ag-calculated-column-properties {
-        display: flex;
-        flex-direction: column;
-        gap: calc(var(--ag-grid-size) / 2);
     }
 
     .ag-calculated-column-actions {

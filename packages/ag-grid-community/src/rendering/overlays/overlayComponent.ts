@@ -3,7 +3,7 @@ import type { IComponent } from 'ag-stack';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import { Component } from '../../widgets/component';
 
-export type OverlayType = 'loading' | 'noRows' | 'noMatchingRows' | 'exporting';
+export type OverlayType = 'loading' | 'noRows' | 'noMatchingRows' | 'exporting' | 'fileInput';
 
 interface ProvidedOverlayUserParams {
     /**
@@ -16,6 +16,7 @@ export interface LoadingOverlayUserParams extends ProvidedOverlayUserParams {}
 export interface ExportingOverlayUserParams extends ProvidedOverlayUserParams {}
 export interface NoRowsOverlayUserParams extends ProvidedOverlayUserParams {}
 export interface NoMatchingRowsOverlayUserParams extends ProvidedOverlayUserParams {}
+export interface FileInputOverlayUserParams extends ProvidedOverlayUserParams {}
 
 export interface ILoadingOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
@@ -43,6 +44,13 @@ export interface INoMatchingRowsOverlayParams<TData = any, TContext = any> exten
     overlayType: 'noMatchingRows';
 }
 
+export interface IFileInputOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /**
+     * The default overlay the grid would show in the given state.
+     */
+    overlayType: 'fileInput';
+}
+
 /**
  * Parameters available to configure the provided overlays.
  */
@@ -55,13 +63,16 @@ export interface OverlayComponentUserParams {
     noMatchingRows?: NoMatchingRowsOverlayUserParams;
     /** Parameters to customise the provided exporting overlay. */
     exporting?: ExportingOverlayUserParams;
+    /** Parameters to customise the provided file drop overlay. */
+    fileInput?: FileInputOverlayUserParams;
 }
 
 export type IOverlayParams<TData = any, TContext = any> =
     | ILoadingOverlayParams<TData, TContext>
     | IExportingOverlayParams<TData, TContext>
     | INoRowsOverlayParams<TData, TContext>
-    | INoMatchingRowsOverlayParams<TData, TContext>;
+    | INoMatchingRowsOverlayParams<TData, TContext>
+    | IFileInputOverlayParams<TData, TContext>;
 
 export interface IOverlay<
     TData = any,

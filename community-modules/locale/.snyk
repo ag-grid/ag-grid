@@ -4,19 +4,19 @@ ignore:
   SNYK-JS-PICOMATCH-15765511:
     - '@typescript-eslint/parser@8.59.0 > @typescript-eslint/typescript-estree@8.59.0 > tinyglobby@0.2.15 > picomatch@4.0.3':
         reason: Testing dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
     - '@typescript-eslint/eslint-plugin@8.59.0 > @typescript-eslint/type-utils@8.59.0 > @typescript-eslint/typescript-estree@8.59.0 > tinyglobby@0.2.15 > picomatch@4.0.3':
         reason: Testing dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-BRACEEXPANSION-16755174:
     - '@typescript-eslint/parser@8.59.0 > @typescript-eslint/typescript-estree@8.59.0 > minimatch@10.2.5 > brace-expansion@5.0.5':
         reason: Linting dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
     - '@typescript-eslint/eslint-plugin@8.59.0 > @typescript-eslint/type-utils@8.59.0 > @typescript-eslint/typescript-estree@8.59.0 > minimatch@10.2.5 > brace-expansion@5.0.5':
         reason: Linting dependency - not included in final production build
-        expires: 2026-08-28T00:00:00.000Z
+        expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
 patch: {}

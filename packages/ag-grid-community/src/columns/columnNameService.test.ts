@@ -12,7 +12,7 @@ describe('_camelCaseToHumanText', () => {
         ['person.address.town', 'Person Address Town'],
         ['person_address.town', 'Person_address Town'],
     ])('Value: %s', (field, expected) => {
-        const column = new AgColumn({ field }, null, field, false);
+        const column = new AgColumn({ field }, null, field, false, 'user');
 
         const columnNameService = new ColumnNameService();
         (columnNameService as any).beans = {} as any; // Mock beans

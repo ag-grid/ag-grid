@@ -350,6 +350,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'doesExternalFilterPass',
     'processPivotResultColDef',
     'processPivotResultColGroupDef',
+    'processFileInput',
     'getBusinessKeyForNode',
     'isRowSelectable',
     'rowDragText',

@@ -62,6 +62,10 @@
     mask-image: url('./material-svg-icons/adesc.svg');
 }
 
+.ag-icon-document::before {
+    mask-image: url('./material-svg-icons/document.svg');
+}
+
 .ag-icon-down::before {
     mask-image: url('./material-svg-icons/down.svg');
 }

@@ -152,3 +152,34 @@ export function _findTabbableParent(node: HTMLElement | null, limit: number = 5)
 
     return node;
 }
+
+/**
+ * Like Element.scrollIntoView, but only scrolls within the grid, not the page.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _scrollHorizontallyToShow(target: HTMLElement): void {
+    let container: HTMLElement | null = target;
+    while (container && !_canScrollHorizontally(container)) {
+        const parentEl: HTMLElement | null = container.parentElement;
+        container = parentEl?.className.startsWith('ag-') ? parentEl : null;
+    }
+    if (!container) {
+        return;
+    }
+    if (target === _findFocusableElements(container, null, true)[0]) {
+        container.scrollLeft = 0;
+    }
+    const c = container.getBoundingClientRect();
+    const t = target.getBoundingClientRect();
+    if (t.left < c.left) {
+        container.scrollLeft -= c.left - t.left;
+    } else if (t.right > c.right) {
+        container.scrollLeft += t.right - c.right;
+    }
+}
+
+function _canScrollHorizontally(el: HTMLElement): boolean {
+    const overflowX = getComputedStyle(el).overflowX;
+    return overflowX === 'auto' || overflowX === 'scroll';
+}

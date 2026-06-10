@@ -104,7 +104,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     private buildTreeFromProvidedColumnDefs(): void {
-        const columnTree = this.colModel.getColDefColTree();
+        const columnTree = this.colModel.colDefTree;
         this.recreateFilters(columnTree);
     }
 

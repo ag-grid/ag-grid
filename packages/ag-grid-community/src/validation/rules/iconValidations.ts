@@ -44,6 +44,7 @@ export const ICON_VALUES: Record<IconValue, 1> = {
     save: 1,
     csv: 1,
     excel: 1,
+    document: 1,
     'small-down': 1,
     'small-left': 1,
     'small-right': 1,
@@ -192,6 +193,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     rowPinBottom: 'PinnedRow',
     rowPinTop: 'PinnedRow',
     search: 'Find',
+    document: 'FileInputOverlay',
 };
 
 export const DEPRECATED_ICONS_V33: Set<IconName> = new Set([

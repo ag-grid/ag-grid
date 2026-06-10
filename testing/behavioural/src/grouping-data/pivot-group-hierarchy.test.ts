@@ -97,6 +97,40 @@ describe('pivot with groupHierarchy (date-time)', () => {
         };
     };
 
+    test('quarter date-part groups each month into the correct quarter', async () => {
+        const api = gridsManager.createGrid('quarterHierarchy', {
+            columnDefs: [
+                { field: 'date', rowGroup: true, hide: true, groupHierarchy: ['quarter'] },
+                { field: 'v', aggFunc: 'sum' },
+            ],
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        });
+        applyTransactionChecked(api, {
+            add: [
+                { id: 'mar', date: new Date(2020, 2, 1), v: 1 }, // month 3 → Q1
+                { id: 'jul', date: new Date(2020, 6, 1), v: 1 }, // month 7 → Q3
+                { id: 'oct', date: new Date(2020, 9, 1), v: 1 }, // month 10 → Q4
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        // Quarter is derived from the 1-based month: Q1=1-3, Q2=4-6, Q3=7-9, Q4=10-12.
+        // March → Q1, July → Q3, October → Q4 (the months that the old `/4` math mis-bucketed).
+        await new GridRows(api, 'quarter groups', { forcedColumns: ['ag-Grid-AutoColumn'] }).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-ag-Grid-HierarchyColumn-date-quarter-1 ag-Grid-AutoColumn:"1"
+            │ └─┬ LEAF_GROUP id:row-group-ag-Grid-HierarchyColumn-date-quarter-1-date-2020-03-01 ag-Grid-AutoColumn:"2020-03-01"
+            │ · └── LEAF id:mar
+            ├─┬ filler id:row-group-ag-Grid-HierarchyColumn-date-quarter-3 ag-Grid-AutoColumn:"3"
+            │ └─┬ LEAF_GROUP id:row-group-ag-Grid-HierarchyColumn-date-quarter-3-date-2020-07-01 ag-Grid-AutoColumn:"2020-07-01"
+            │ · └── LEAF id:jul
+            └─┬ filler id:row-group-ag-Grid-HierarchyColumn-date-quarter-4 ag-Grid-AutoColumn:"4"
+            · └─┬ LEAF_GROUP id:row-group-ag-Grid-HierarchyColumn-date-quarter-4-date-2020-10-01 ag-Grid-AutoColumn:"2020-10-01"
+            · · └── LEAF id:oct
+        `);
+    });
+
     test('pivot by date column creates hierarchy columns (year -> month)', async () => {
         const api = createPivotDateTimeGrid();
 
@@ -151,6 +185,43 @@ describe('pivot with groupHierarchy (date-time)', () => {
               │ │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2001-6-2001-06-15_total "Total" width:200 columnGroupShow:open hidden
               │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2001-6_total "Total" width:200 columnGroupShow:closed hidden
               └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2001_total "Total" width:200 columnGroupShow:closed
+        `);
+    });
+
+    test('removing the pivot source col leaves year/month as pivot dimensions (result regroups to year -> month)', async () => {
+        const api = createPivotDateTimeGrid();
+        api.setPivotColumns(['date']);
+        await asyncSetTimeout(0);
+
+        // [year, month, date] are the pivot dimensions.
+        expect(api.getPivotColumns().map((c) => c.getColId())).toEqual([
+            'ag-Grid-HierarchyColumn-date-year',
+            'ag-Grid-HierarchyColumn-date-month',
+            'date',
+        ]);
+
+        api.removePivotColumns(['date']);
+        await asyncSetTimeout(0);
+        expect(api.getPivotColumns().map((c) => c.getColId())).toEqual([
+            'ag-Grid-HierarchyColumn-date-year',
+            'ag-Grid-HierarchyColumn-date-month',
+        ]);
+
+        await new GridColumns(api, 'pivot result after removing the date source dimension').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "2000" GROUP closed
+            │ ├─┬ "10" GROUP hidden
+            │ │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month_2000-10_total "Total" width:200 columnGroupShow:open hidden
+            │ ├─┬ "11" GROUP hidden
+            │ │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month_2000-11_total "Total" width:200 columnGroupShow:open hidden
+            │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month_2000_total "Total" width:200 columnGroupShow:closed
+            └─┬ "2001" GROUP closed
+              ├─┬ "1" GROUP hidden
+              │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month_2001-1_total "Total" width:200 columnGroupShow:open hidden
+              ├─┬ "6" GROUP hidden
+              │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month_2001-6_total "Total" width:200 columnGroupShow:open hidden
+              └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month_2001_total "Total" width:200 columnGroupShow:closed
         `);
     });
 
@@ -298,8 +369,7 @@ describe('pivot with groupHierarchy (date-time)', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('re-setting identical columnDefs does not leave destroyed hierarchy columns', async () => {
+    test('re-setting identical columnDefs does not leave destroyed hierarchy columns', async () => {
         const api = createPivotDateTimeGrid();
         api.setPivotColumns(['date']);
         await asyncSetTimeout(0);
@@ -345,17 +415,7 @@ describe('pivot with groupHierarchy (date-time)', () => {
         `);
     });
 
-    /**
-     * Locks in the sort behaviour of `GroupHierarchyColService.compareVirtualColumns` when both
-     * a source col and one of its virtual cols are simultaneously row-grouped. The virtual cols
-     * must sort BEFORE the source col, and virtual cols from the same source must keep their
-     * insertion-order within that source's bucket.
-     */
     test('virtual cols sort before their source col when both are row-grouped', async () => {
-        // A date col with `groupHierarchy: ['year', 'month']` AND `rowGroup: true` makes the
-        // source col plus both virtual cols (year, month) eligible to be row-group cols. The
-        // sort comparator in BaseColsService.sortColumns delegates to
-        // GroupHierarchyColService.compareVirtualColumns for these pairs.
         const api = gridsManager.createGrid('hierarchyRowGroup', {
             columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
             rowData: [
@@ -366,11 +426,6 @@ describe('pivot with groupHierarchy (date-time)', () => {
         });
         await asyncSetTimeout(0);
 
-        // Expected order in row-group cols list: [year-virtual, month-virtual, date-source].
-        // The compareVirtualColumns:
-        //   - returns -1 for (year, date) since year is virtual-of date  →  year before date
-        //   - returns -1 for (month, date) since month is virtual-of date  →  month before date
-        //   - returns insertion-order for (year, month) within date's bucket  →  year before month
         const rowGroupCols = api.getRowGroupColumns().map((c) => c.getColId());
         const yearIdx = rowGroupCols.findIndex((id) => id.includes('-date-year'));
         const monthIdx = rowGroupCols.findIndex((id) => id.includes('-date-month'));
@@ -381,7 +436,6 @@ describe('pivot with groupHierarchy (date-time)', () => {
         expect(yearIdx).toBeLessThan(monthIdx);
         expect(monthIdx).toBeLessThan(dateIdx);
 
-        // Sanity: GridColumns snapshot of the displayed structure.
         await new GridColumns(api, 'date hierarchy as row groups').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year "Date (Year)" width:200
@@ -392,8 +446,155 @@ describe('pivot with groupHierarchy (date-time)', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('two independent hierarchy sources keep each virtual run ordered before its own source', async () => {
+    test('removing a hierarchy source col leaves its virtual cols grouped (virtuals are independent columns)', async () => {
+        const api = gridsManager.createGrid('hierarchyDeactivate', {
+            columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1) },
+                { country: 'UK', date: new Date(2021, 5, 15) },
+            ],
+            groupDisplayType: 'multipleColumns',
+        });
+        await asyncSetTimeout(0);
+
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([
+            'ag-Grid-HierarchyColumn-date-year',
+            'ag-Grid-HierarchyColumn-date-month',
+            'date',
+        ]);
+
+        api.removeRowGroupColumns(['date']);
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([
+            'ag-Grid-HierarchyColumn-date-year',
+            'ag-Grid-HierarchyColumn-date-month',
+        ]);
+
+        api.addRowGroupColumns(['date']);
+        await asyncSetTimeout(0);
+        api.applyColumnState({ state: [{ colId: 'date', rowGroup: false }] });
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([
+            'ag-Grid-HierarchyColumn-date-year',
+            'ag-Grid-HierarchyColumn-date-month',
+        ]);
+    });
+
+    test('clearing all row-group columns also clears the hierarchy virtuals (setRowGroupColumns([]))', async () => {
+        const api = gridsManager.createGrid('hierarchyClearAll', {
+            columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1) },
+                { country: 'UK', date: new Date(2021, 5, 15) },
+            ],
+            groupDisplayType: 'multipleColumns',
+        });
+        await asyncSetTimeout(0);
+
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([
+            'ag-Grid-HierarchyColumn-date-year',
+            'ag-Grid-HierarchyColumn-date-month',
+            'date',
+        ]);
+
+        api.setRowGroupColumns([]);
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([]);
+    });
+
+    test('changing an inline hierarchy part def refreshes the hierarchy column in place (same colId)', async () => {
+        const api = gridsManager.createGrid('hierarchyInlineRefresh', {
+            columnDefs: [{ field: 'date', rowGroup: true, groupHierarchy: [{ colId: 'y', headerName: 'Year A' }] }],
+            rowData: [{ date: new Date(2020, 0, 1) }],
+        });
+        await asyncSetTimeout(0);
+        const before = api.getColumn('y')!;
+        expect(before.getColDef().headerName).toBe('Year A');
+
+        // Same colId 'y', changed header: the existing hierarchy col's def must be reapplied (not left stale,
+        // and not rebuilt — same instance).
+        api.setGridOption('columnDefs', [
+            { field: 'date', rowGroup: true, groupHierarchy: [{ colId: 'y', headerName: 'Year B' }] },
+        ]);
+        await asyncSetTimeout(0);
+        expect(api.getColumn('y')).toBe(before);
+        expect(api.getColumn('y')!.getColDef().headerName).toBe('Year B');
+    });
+
+    test('every canonical date part extracts the expected value', async () => {
+        const api = gridsManager.createGrid('hierarchyAllParts', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    enableRowGroup: true,
+                    groupHierarchy: ['year', 'quarter', 'month', 'formattedMonth', 'day', 'hour', 'minute', 'second'],
+                },
+            ],
+            rowData: [{ date: new Date(2021, 6, 15, 14, 30, 45) }], // 15 July 2021, 14:30:45
+        });
+        await asyncSetTimeout(0);
+        const node = api.getDisplayedRowAtIndex(0)!;
+        const val = (part: string) =>
+            api.getCellValue({ rowNode: node, colKey: `ag-Grid-HierarchyColumn-date-${part}` });
+        expect(val('year')).toBe('2021');
+        expect(val('quarter')).toBe('3'); // July is in Q3 (months 7-9)
+        expect(val('month')).toBe('7');
+        expect(val('formattedMonth')).toBe('July');
+        expect(val('day')).toBe('15');
+        expect(val('hour')).toBe('14');
+        expect(val('minute')).toBe(':30'); // `_getDateParts` formats minute/second with a leading colon
+        expect(val('second')).toBe(':45');
+
+        const parts = ['year', 'quarter', 'month', 'formattedMonth', 'day', 'hour', 'minute', 'second'];
+        const forcedColumns = parts.map((p) => `ag-Grid-HierarchyColumn-date-${p}`);
+        await new GridColumns(api, 'all date-part hierarchy columns').checkColumns(`
+            CENTER
+            └── date "Date" width:200
+        `);
+        await new GridRows(api, 'all date-part values', { forcedColumns }).check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-quarter:null ag-Grid-HierarchyColumn-date-month:null ag-Grid-HierarchyColumn-date-formattedMonth:null ag-Grid-HierarchyColumn-date-day:null ag-Grid-HierarchyColumn-date-hour:null ag-Grid-HierarchyColumn-date-minute:null ag-Grid-HierarchyColumn-date-second:null
+            └── LEAF id:0 ag-Grid-HierarchyColumn-date-year:"2021" ag-Grid-HierarchyColumn-date-quarter:"3" ag-Grid-HierarchyColumn-date-month:"7" ag-Grid-HierarchyColumn-date-formattedMonth:"July" ag-Grid-HierarchyColumn-date-day:"15" ag-Grid-HierarchyColumn-date-hour:"14" ag-Grid-HierarchyColumn-date-minute:":30" ag-Grid-HierarchyColumn-date-second:":45"
+        `);
+    });
+
+    test('changing defaultColDef refreshes the hierarchy column defs in place', async () => {
+        const api = gridsManager.createGrid('hierarchyDefaultColDef', {
+            columnDefs: [{ field: 'date', rowGroup: true, groupHierarchy: ['year'] }],
+            defaultColDef: { width: 150 },
+            rowData: [{ date: new Date(2020, 0, 1) }],
+        });
+        await asyncSetTimeout(0);
+        const col = api.getColumn('ag-Grid-HierarchyColumn-date-year')!;
+        expect(col.getColDef().width).toBe(150);
+
+        api.setGridOption('defaultColDef', { width: 250 });
+        await asyncSetTimeout(0);
+        expect(api.getColumn('ag-Grid-HierarchyColumn-date-year')).toBe(col); // reused, not rebuilt
+        expect(api.getColumn('ag-Grid-HierarchyColumn-date-year')!.getColDef().width).toBe(250);
+    });
+
+    test('adding a hierarchy part at runtime creates the new column (plan grows)', async () => {
+        const api = gridsManager.createGrid('hierarchyPlanGrow', {
+            columnDefs: [{ field: 'date', rowGroup: true, groupHierarchy: ['year'] }],
+            rowData: [{ date: new Date(2020, 0, 1) }],
+            groupDisplayType: 'multipleColumns',
+        });
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([
+            'ag-Grid-HierarchyColumn-date-year',
+            'date',
+        ]);
+
+        api.setGridOption('columnDefs', [{ field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }]);
+        await asyncSetTimeout(0);
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([
+            'ag-Grid-HierarchyColumn-date-year',
+            'ag-Grid-HierarchyColumn-date-month',
+            'date',
+        ]);
+    });
+
+    test('two independent hierarchy sources keep each virtual run ordered before its own source', async () => {
         const api = gridsManager.createGrid('twoHierarchies', {
             columnDefs: [
                 { field: 'country' },
@@ -476,8 +677,7 @@ describe('pivot with groupHierarchy (date-time)', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('applyColumnState row-group ordering sorts mixed hierarchy + plain cols correctly', async () => {
+    test('applyColumnState row-group ordering sorts mixed hierarchy + plain cols correctly', async () => {
         const api = gridsManager.createGrid('stateOrder', {
             columnDefs: [
                 { field: 'country' },
@@ -930,8 +1130,7 @@ describe('pivot with groupHierarchy (date-time)', () => {
         `);
     });
 
-    // Solved by AG-17366 when it is completed
-    test.skip('inline ColDef hierarchy part materialises only when it has an explicit colId', async () => {
+    test('inline ColDef hierarchy part materialises only when it has an explicit colId', async () => {
         const api = gridsManager.createGrid('hierarchyInlineColDef', {
             columnDefs: [
                 {
@@ -1168,6 +1367,49 @@ describe('pivot with groupHierarchy (date-time)', () => {
             CENTER
             ├── country "Country" width:200
             └── date "Date" width:200
+        `);
+    });
+
+    test('hierarchy columns coexist with grouped column headers (depth > 0)', async () => {
+        const api = gridsManager.createGrid('hierarchyWithColGroups', {
+            columnDefs: [
+                {
+                    headerName: 'Group A',
+                    children: [{ field: 'country' }, { field: 'sport' }],
+                },
+                {
+                    headerName: 'Group B',
+                    children: [
+                        { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] },
+                        { field: 'total' },
+                    ],
+                },
+            ],
+            rowData: [
+                { country: 'USA', sport: 'Swimming', date: new Date(2020, 0, 1), total: 1 },
+                { country: 'UK', sport: 'Running', date: new Date(2021, 5, 15), total: 2 },
+            ],
+            groupDisplayType: 'multipleColumns',
+        });
+        await asyncSetTimeout(0);
+
+        const hierarchyIds = api
+            .getAllGridColumns()
+            .map((c) => c.getColId())
+            .filter((id) => id.startsWith('ag-Grid-HierarchyColumn-date'));
+        expect(hierarchyIds).toEqual(['ag-Grid-HierarchyColumn-date-year', 'ag-Grid-HierarchyColumn-date-month']);
+
+        await new GridColumns(api, 'hierarchy cols with grouped column headers').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-year "Date (Year)" width:200
+            ├── ag-Grid-AutoColumn-ag-Grid-HierarchyColumn-date-month "Date (Month)" width:200
+            ├── ag-Grid-AutoColumn-date "Date" width:200
+            ├─┬ "Group A" GROUP
+            │ ├── country "Country" width:200
+            │ └── sport "Sport" width:200
+            └─┬ "Group B" GROUP
+              ├── date "Date" width:200 rowGroup
+              └── total "Total" width:200
         `);
     });
 });

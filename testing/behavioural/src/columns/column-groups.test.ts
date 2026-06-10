@@ -12,6 +12,112 @@ describe('Column Groups', () => {
         gridsManager.reset();
     });
 
+    describe('empty groups stay findable (matches released behaviour)', () => {
+        test('a group declared with no children remains discoverable via the group APIs', async () => {
+            const api = gridsManager.createGrid('empty-declared', {
+                columnDefs: [{ field: 'a' }, { headerName: 'Empty', groupId: 'emptyDeclared', children: [] }] as (
+                    | ColDef
+                    | ColGroupDef
+                )[],
+                rowData: [{ a: 1 }],
+            });
+            await asyncSetTimeout(1);
+
+            // An explicitly declared (even empty) group is not silently dropped: it stays findable.
+            const group = api.getProvidedColumnGroup('emptyDeclared') as unknown as {
+                isAlive(): boolean;
+                children: unknown[];
+            } | null;
+            expect(group === null).toBe(false);
+            expect(group!.isAlive()).toBe(true);
+            expect(group!.children.length).toBe(0);
+            expect(api.getColumnGroupState().some((s) => s.groupId === 'emptyDeclared')).toBe(true);
+            await new GridColumns(api, 'declared empty group kept').checkColumns(`
+                CENTER
+                └── a "A" width:200
+            `);
+        });
+
+        test('a group emptied via setColumnDefs stays findable (now empty)', async () => {
+            const api = gridsManager.createGrid('empty-runtime', {
+                columnDefs: [{ field: 'a' }, { headerName: 'G', groupId: 'g2', children: [{ field: 'b' }] }] as (
+                    | ColDef
+                    | ColGroupDef
+                )[],
+                rowData: [{ a: 1, b: 2 }],
+            });
+            await asyncSetTimeout(1);
+            expect(api.getProvidedColumnGroup('g2') === null).toBe(false);
+
+            api.setGridOption('columnDefs', [{ field: 'a' }, { headerName: 'G', groupId: 'g2', children: [] }] as (
+                | ColDef
+                | ColGroupDef
+            )[]);
+            await asyncSetTimeout(1);
+
+            const group = api.getProvidedColumnGroup('g2') as unknown as { children: unknown[] } | null;
+            expect(group === null).toBe(false);
+            expect(group!.children.length).toBe(0);
+            expect(api.getColumnGroupState().some((s) => s.groupId === 'g2')).toBe(true);
+            await new GridColumns(api, 'group emptied via setColumnDefs kept').checkColumns(`
+                CENTER
+                └── a "A" width:200
+            `);
+        });
+
+        test('getColumnGroupState surfaces synthetic padding groups (matches latest)', async () => {
+            const api = gridsManager.createGrid('group-state-padding', {
+                columnDefs: [
+                    { groupId: 'G', headerName: 'G', children: [{ field: 'a' }, { field: 'b' }] },
+                    { field: 'c' },
+                ] as (ColDef | ColGroupDef)[],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+            await asyncSetTimeout(1);
+
+            const state = api.getColumnGroupState();
+            expect(state.some((s) => s.groupId === 'G')).toBe(true);
+            expect(state.some((s) => s.groupId !== 'G')).toBe(true); // the synthetic padding group for `c`
+            expect(state.length).toBe(2);
+        });
+    });
+
+    describe('group expand state survives a rebuild', () => {
+        // Generated-id groups are recreated on rebuild (can't be reused), so the build must carry their expand state over.
+        test('a generated-id group stays expanded across a columnDefs rebuild (no calc cols)', async () => {
+            const makeDefs = (): (ColDef | ColGroupDef)[] => [
+                { headerName: 'G', children: [{ field: 'a' }, { field: 'b', columnGroupShow: 'open' }] },
+                { field: 'c' },
+            ];
+            const api = gridsManager.createGrid('gen-id-expand', {
+                columnDefs: makeDefs(),
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+            await asyncSetTimeout(1);
+
+            // Expand the (generated-id) expandable group.
+            const initial = api.getColumnGroupState();
+            api.setColumnGroupState(initial.map((s) => ({ groupId: s.groupId, open: true })));
+            const openedIds = api
+                .getColumnGroupState()
+                .filter((s) => s.open)
+                .map((s) => s.groupId);
+            expect(openedIds.length).toBeGreaterThan(0);
+
+            // Rebuild from fresh (structurally identical) colDefs — recreates the generated-id group.
+            api.setGridOption('columnDefs', makeDefs());
+            await asyncSetTimeout(1);
+
+            // Its expand state must survive: the rebuild must not collapse it.
+            expect(
+                api
+                    .getColumnGroupState()
+                    .filter((s) => s.open)
+                    .map((s) => s.groupId)
+            ).toEqual(openedIds);
+        });
+    });
+
     describe('single-level column groups', () => {
         test('group with two children', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
@@ -1079,8 +1185,7 @@ describe('Column Groups', () => {
             `);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('descendant-only change dispatches displayedChildrenChanged on ancestor (cascade)', async () => {
+        test('descendant-only change dispatches displayedChildrenChanged on ancestor (cascade)', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 {
                     headerName: 'Outer',
@@ -1175,9 +1280,7 @@ describe('Column Groups', () => {
             expect(api.getColumn('a') === colA).toBe(true);
         });
 
-        // Solved by AG-17366 when it is completed: on `latest` the displayed column-group instance
-        // is recreated on every refresh; the rewrite's wrapper cache reuses it across a no-op refresh.
-        test.skip('re-setting identical columnDefs keeps the column group instance stable', async () => {
+        test('re-setting identical columnDefs keeps the column group instance stable', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { headerName: 'G1', groupId: 'g1', children: [{ colId: 'a' }, { colId: 'b' }] },
@@ -1357,6 +1460,25 @@ describe('Column Groups', () => {
                 ROOT id:ROOT_NODE_ID
             `);
         });
+
+        test('without a partId resolves to the primary (first) display instance of a cross-section group', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        groupId: 'g',
+                        children: [{ colId: 'l', pinned: 'left' }, { colId: 'c' }, { colId: 'r', pinned: 'right' }],
+                    },
+                ],
+            });
+            await asyncSetTimeout(1);
+
+            // No partId resolves to the documented primary instance (partId 0 = the first/left section),
+            // not an arbitrary section, so the lookup is deterministic for multi-instance groups.
+            const primary = api.getColumnGroup('g');
+            expect(primary).not.toBeNull();
+            expect(primary).toBe(api.getColumnGroup('g', 0));
+            expect(primary!.getLeafColumns().map((col) => col.getColId())).toEqual(['l']);
+        });
     });
 
     // Coverage for ColumnGroupService.resetColumnGroupState — resets every group to its
@@ -1460,7 +1582,7 @@ describe('Column Groups', () => {
     });
 
     describe('AgProvidedColumnGroup getters + leaf walk', () => {
-        test('getId / getInstanceId / getChildren return live values; getLeafColumns handles empty + null children', async () => {
+        test('getId / getInstanceId / getChildren return live values; getLeafColumns returns leaf columns', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     {
@@ -1491,19 +1613,8 @@ describe('Column Groups', () => {
             expect(typeof provided.getInstanceId()).toBe('number');
             expect(provided.getChildren().map((c: any) => c.getColId?.() ?? c.getGroupId?.())).toEqual(['a', 'b']);
 
-            // Empty children — leaf walk yields nothing
-            (provided as any).setChildren([]);
-            expect(provided.getLeafColumns()).toEqual([]);
-
-            // Null children — exercises the `!this.children` early return in `addLeafColumns`
-            (provided as any).children = null;
-            expect(provided.getLeafColumns()).toEqual([]);
-            await new GridRows(
-                api,
-                `getId / getInstanceId / getChildren return live values; getLeafColumns handles e final state`
-            ).check(`
-                ROOT id:ROOT_NODE_ID
-            `);
+            // getLeafColumns walks the tree to its leaf columns (public API; no internal field access)
+            expect(provided.getLeafColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
         });
     });
 
@@ -1757,8 +1868,7 @@ describe('Column Groups', () => {
             `);
         });
 
-        // Solved by AG-17366 when it is completed
-        test.skip('group split across pinned sections has dense partId-indexed instances', async () => {
+        test('group split across pinned sections has dense partId-indexed instances', async () => {
             const api = gridsManager.createGrid('splitGroup', {
                 columnDefs: [
                     {

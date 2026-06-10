@@ -1,4 +1,4 @@
-import type { BeanCollection, ColKey, IAggFunc } from 'ag-grid-community';
+import type { BeanCollection, ColAggFunc, ColKey, IAggFunc } from 'ag-grid-community';
 
 import type { ValueColsSvc } from './valueColsSvc';
 
@@ -14,10 +14,6 @@ export function clearAggFuncs(beans: BeanCollection): void {
     }
 }
 
-export function setColumnAggFunc(
-    beans: BeanCollection,
-    key: ColKey,
-    aggFunc: string | IAggFunc | null | undefined
-): void {
+export function setColumnAggFunc(beans: BeanCollection, key: ColKey, aggFunc: ColAggFunc): void {
     (beans.valueColsSvc as ValueColsSvc)?.setColumnAggFunc?.(key, aggFunc, 'api');
 }

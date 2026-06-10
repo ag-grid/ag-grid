@@ -16,7 +16,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { EditService } from '../../edit/editService';
-import { _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
@@ -229,7 +228,7 @@ export class CellCtrl extends BeanStub {
         }
         this.editorTooltipFeature = this.beans.tooltipSvc?.setupCellEditorTooltip(this, editor);
 
-        _populateModelValidationErrors(this.beans);
+        this.editSvc?.populateModelValidationErrors();
     }
 
     public disableEditorTooltipFeature(): void {
@@ -639,7 +638,10 @@ export class CellCtrl extends BeanStub {
         // non of {field, valueGetter, showRowGroup} is bad in the users application, however for this edge case, it's
         // best always refresh and take the performance hit rather than never refresh and users complaining in support
         // that cells are not updating.
-        const noValueProvided = field == null && valueGetter == null && showRowGroup == null;
+        // a calculated column has no field/valueGetter/showRowGroup but DOES have a value (its
+        // expression), so it must not count as value-less here — otherwise it force-refreshes every
+        // pass and flashes on changes to unrelated columns instead of only when its value changes.
+        const noValueProvided = field == null && valueGetter == null && showRowGroup == null && !column.isCalculatedCol;
 
         const newData = params?.newData ?? false;
         const forceRefresh = noValueProvided || (params && (params.force || newData));
@@ -786,8 +788,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private refreshAriaColIndex(): void {
-        const colIdx = this.beans.visibleCols.getAriaColIndex(this.column);
-        _setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
+        _setAriaColIndex(this.eGui, this.column.ariaColIndex); // for react, we don't use JSX, as it slowed down column moving
     }
 
     public onWidthChanged(): void {

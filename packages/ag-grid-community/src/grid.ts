@@ -1,5 +1,5 @@
 import type { AgContextParams } from 'ag-stack';
-import { AgContext, _missing } from 'ag-stack';
+import { AgContext, _createStyledRootElements, _missing } from 'ag-stack';
 
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
@@ -32,7 +32,6 @@ import {
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
-import { _createElement } from './utils/element';
 import { NoModulesRegisteredError, missingRowModelTypeError } from './validation/errorMessages/errorText';
 import { _error, _logPreInitErr } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
@@ -47,8 +46,6 @@ export interface GridParams {
     frameworkOverrides?: IFrameworkOverrides;
     // INTERNAL - bean instances to add to the context
     providedBeanInstances?: { [key: string]: any };
-    // INTERNAL - set by frameworks if the provided grid div is safe to set a theme class on
-    setThemeOnGridDiv?: boolean;
     // INTERNAL - set by studio
     withinStudio?: boolean;
 
@@ -86,29 +83,19 @@ export function createGrid<TData>(
         _error(11);
         return {} as GridApi;
     }
-    const gridParams: GridParams | undefined = params;
-    let destroyCallback: (() => void) | undefined;
-    if (!gridParams?.setThemeOnGridDiv) {
-        // frameworks already create an element owned by our code, so we can set
-        // the theme class on it. JS users calling createGrid directly are
-        // passing an element owned by their application, so we can't set a
-        // class name on it and must create a wrapper.
-        const newGridDiv = _createElement({ tag: 'div' });
-        newGridDiv.style.height = '100%';
-        eGridDiv.appendChild(newGridDiv);
-        eGridDiv = newGridDiv;
-        destroyCallback = () => eGridDiv.remove();
-    }
+    const [outer, inner] = _createStyledRootElements();
+    eGridDiv.appendChild(outer);
     const api = new GridCoreCreator().create(
-        eGridDiv,
+        outer,
+        inner,
         gridOptions,
         (context) => {
-            const gridComp = new GridComp(eGridDiv);
+            const gridComp = new GridComp(inner);
             context.createBean(gridComp);
         },
         undefined,
         params,
-        destroyCallback
+        () => outer.remove()
     );
 
     return api;
@@ -120,7 +107,12 @@ let nextGridId = 1;
 // their own UI
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridCoreCreator {
+    /**
+     * @param eOutermostGridOwned the outermost element owned by grid code, the parent of which is application-owned
+     * @param eGridDiv the element into which the grid UI should be appended - the inner element of the styled root
+     */
     public create(
+        eOutermostGridOwned: HTMLElement,
         eGridDiv: HTMLElement,
         providedOptions: GridOptions,
         createUi: (context: Context) => void,
@@ -151,7 +143,7 @@ export class GridCoreCreator {
 
         const destroyCallback = () => {
             _gridElementCache.delete(api);
-            _gridApiCache.delete(eGridDiv);
+            _gridApiCache.delete(eOutermostGridOwned);
             _unRegisterGridModules(gridId);
             _destroyCallback?.();
         };
@@ -189,8 +181,8 @@ export class GridCoreCreator {
 
         const api = context.getBean('gridApi');
 
-        _gridApiCache.set(eGridDiv, api);
-        _gridElementCache.set(api, eGridDiv);
+        _gridApiCache.set(eOutermostGridOwned, api);
+        _gridElementCache.set(api, eOutermostGridOwned);
 
         return api;
     }
@@ -339,30 +331,33 @@ function getDefaultRowModelType(passedRowModelType?: RowModelType): RowModelType
 }
 
 /**
- * Returns a `GridApi` instance that is associated with the grid rendered in `gridElement`.
+ * Returns the `GridApi` associated with a grid
  *
- * The `gridElement` argument can be one of the following:
- * - a DOM node
- * - the grid ID as determined by the `gridId` grid option.
- * - CSS selector string
- *
- * When using a CSS selector, it must refer to the element passed to `createGrid`.
- *
- * If passing a DOM node as an argument, this DOM node must be an immediate child of the element passed
- * to `createGrid`. This is to support the case where multiple grids are instantiated in a single element.
+ * The `gridElement` argument can be:
+ * - the grid ID as determined by the `gridId` grid option
+ * - a DOM node or a CSS selector string identifying a DOM node. This can point
+ *   to any element within a grid, or to the parent element of the grid if the
+ *   grid is the first child.
  */
 export function getGridApi(gridElement: Element | string | null | undefined): GridApi | undefined {
     if (typeof gridElement === 'string') {
         try {
             gridElement =
-                document.querySelector(`[grid-id="${gridElement}"]`)?.parentElement ??
-                document.querySelector(gridElement)?.firstElementChild ??
-                document.getElementById(gridElement)?.firstElementChild;
+                document.querySelector(`[grid-id="${gridElement}"]`) ??
+                document.querySelector(gridElement) ??
+                document.getElementById(gridElement);
         } catch {
             gridElement = null;
         }
     }
-    return gridElement ? _gridApiCache.get(gridElement) : undefined;
+    gridElement = gridElement?.firstElementChild ?? gridElement;
+    while (gridElement) {
+        const api = _gridApiCache.get(gridElement);
+        if (api) {
+            return api;
+        }
+        gridElement = gridElement.parentElement;
+    }
 }
 
 /**

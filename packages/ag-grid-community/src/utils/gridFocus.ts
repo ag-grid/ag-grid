@@ -36,6 +36,7 @@ export function _focusGridInnerElement(beans: BeanCollection, fromBottom?: boole
     return beans.ctrlsSvc.get('gridCtrl').focusInnerElement(fromBottom);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isHeaderFocusSuppressed(beans: BeanCollection): boolean {
     return beans.gos.get('suppressHeaderFocus') || !!beans.overlays?.exclusive;
 }

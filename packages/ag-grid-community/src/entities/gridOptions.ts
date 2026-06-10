@@ -183,6 +183,7 @@ import type {
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
+import type { ProcessFileInputParams } from '../interfaces/iFileProcessor';
 import type { AlwaysPassFilter, FilterHandlers, QuickFilterMatcher, QuickFilterParser } from '../interfaces/iFilter';
 import type { FindOptions } from '../interfaces/iFind';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
@@ -1048,7 +1049,7 @@ export interface GridOptions<TData = any> {
     suppressNoRowsOverlay?: boolean;
 
     /**
-     * List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`.
+     * List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`, `fileInput`.
      */
     suppressOverlays?: OverlayType[];
 
@@ -1084,6 +1085,15 @@ export interface GridOptions<TData = any> {
      * Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`. Updating the params will trigger a refresh of the active overlay.
      */
     activeOverlayParams?: any;
+
+    // *** File Input *** //
+    /**
+     * Callback to handle files received via the file input overlay (drag-and-drop or file browser).
+     * When provided, the file input overlay is shown when there is no row data.
+     * Call `params.success(rowData)` to load parsed data into the grid, or `params.fail(message)` to show an error.
+     * @agModule `FileInputOverlayModule`
+     */
+    processFileInput?: (params: ProcessFileInputParams<TData>) => void;
 
     // *** Pagination *** //
     /**

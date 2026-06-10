@@ -2,11 +2,8 @@
 export function _last<T>(arr: readonly T[]): T;
 export function _last<T extends Node>(arr: NodeListOf<T>): T;
 export function _last(arr: any): any {
-    if (!arr?.length) {
-        return;
-    }
-
-    return arr[arr.length - 1];
+    const len = arr?.length;
+    return len ? arr[len - 1] : undefined;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -16,42 +13,42 @@ export function _areEqual<T>(
     comparator?: (a: T, b: T) => boolean
 ): boolean {
     if (a === b) {
-        return true; // Same instance, no need to compare
+        return true;
     }
     if (!a || !b) {
-        return a == null && b == null; // True if both are null or undefined, false otherwise
+        return a == null && b == null; // equal only if both nullish
     }
     const len = a.length;
     if (len !== b.length) {
-        return false; // Different lengths, cannot be equal
+        return false;
     }
     if (comparator) {
         for (let i = 0; i < len; ++i) {
-            if (a[i] !== b[i] && !comparator(a[i], b[i])) {
-                return false; // Elements are not strictly equal and comparator returns false
+            const valueA = a[i];
+            const valueB = b[i];
+            if (valueA !== valueB && !comparator(valueA, valueB)) {
+                return false;
             }
         }
-        return true; // All elements are equal
+        return true;
     }
     for (let i = 0; i < len; ++i) {
         if (a[i] !== b[i]) {
-            return false; // Elements are not strictly equal
+            return false;
         }
     }
-    return true; // All elements are equal
+    return true;
 }
 
 /**
- * Returns `prev` when its contents equal `current`; otherwise `current.slice()` (or `[]` if
- * nullish). The same-reference case (`prev === current`) returns a fresh slice so callers never
- * receive the readonly `current` aliased back. Mutating a returned `prev` persists into the next
- * call's `prev`.
+ * Returns `prev` when its contents equal `current`; otherwise `current.slice()` (or `[]` if nullish).
+ * `prev === current` returns a fresh slice so callers never get the readonly `current` aliased back.
  *
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: readonly T[] | null | undefined): T[] {
-    // Equality scan inlined (not `_areEqual`) — hot path; called per group node per sort refresh.
-    // Keep the loop semantics in sync with `_areEqual`'s no-comparator branch above if either changes.
+    // Equality scan inlined (not `_areEqual`) — hot path, per group node per sort refresh.
+    // Keep loop semantics in sync with `_areEqual`'s no-comparator branch.
     if (!current) {
         return [];
     }
@@ -65,23 +62,6 @@ export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: rea
         return prev;
     }
     return current.slice();
-}
-
-/**
- * Utility that uses the fastest looping approach to apply a callback to each element of the array
- * https://jsperf.app/for-for-of-for-in-foreach-comparison
- * If callback returns true, exit early.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boolean | void) {
-    if (!array) {
-        return;
-    }
-    for (const value of array) {
-        if (callback(value)) {
-            return true;
-        }
-    }
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -100,34 +80,37 @@ export function _removeFromArray<T>(array: T[], object: T): void {
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _removeAllFromArray<T>(array: T[], elementsToRemove: readonly T[]): void {
-    let i = 0;
+    const len = array.length;
+    const removeLen = elementsToRemove.length;
+    if (!len || !removeLen) {
+        return;
+    }
     let j = 0;
-
-    for (; i < array.length; i++) {
-        if (!elementsToRemove.includes(array[i])) {
-            // elements that we want to keep are moved to the beginning of the array, maintaining original order
-            array[j] = array[i];
-            j++;
+    const removeSet = new Set(elementsToRemove);
+    for (let i = 0; i < len; ++i) {
+        const value = array[i];
+        if (!removeSet.has(value)) {
+            if (i !== j) {
+                array[j] = value;
+            }
+            ++j;
         }
     }
-
-    // j marks the elements we want to keep, so pop off the remaining elements (each pop is O(1))
-    while (j < array.length) {
-        array.pop();
+    if (j < len) {
+        array.length = j;
     }
 }
 
 // should consider refactoring the callers to create a new array rather than mutating the original, which is expensive
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number) {
-    // first take out items from the array
-    for (let i = 0; i < objectsToMove.length; i++) {
+    const objectsToMoveLen = objectsToMove.length;
+    for (let i = 0; i < objectsToMoveLen; ++i) {
         _removeFromArray(array, objectsToMove[i]);
     }
 
-    // now add the objects, in same order as provided to us, that means we start at the end
-    // as the objects will be pushed to the right as they are inserted
-    for (let i = objectsToMove.length - 1; i >= 0; i--) {
+    // insert from the end so each splice pushes earlier items right, preserving provided order
+    for (let i = objectsToMoveLen - 1; i >= 0; i--) {
         array.splice(toIndex, 0, objectsToMove[i]);
     }
 }
@@ -136,4 +119,52 @@ export function _moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number)
 export function _flatten<T>(arrays: Array<T[]>): T[] {
     // Currently the fastest way to flatten an array according to https://jsbench.me/adlib26t2y/2
     return ([] as T[]).concat.apply([], arrays);
+}
+
+/** Elements present in exactly one of the two arrays (added or removed); nullish/empty counts as
+ *  none. Fast paths: equal refs → empty; one side empty → copy of the other (no Set built).
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _symmetricDiff<T>(a: readonly T[] | null | undefined, b: readonly T[] | null | undefined): T[] {
+    if (a === b) {
+        return [];
+    }
+    const leftLen = a?.length;
+    const rightLen = b?.length;
+    if (!leftLen) {
+        return b ? b.slice() : [];
+    }
+    if (!rightLen) {
+        return a ? a.slice() : [];
+    }
+    const diff = new Set(a);
+    for (let i = 0; i < rightLen; ++i) {
+        const item = b![i];
+        if (!diff.delete(item)) {
+            diff.add(item);
+        }
+    }
+    return Array.from(diff);
+}
+
+/** Push `value` onto the array bucket at `key` in a `Map<K, V[]>`, creating the bucket on first use.
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _pushToMapArray<K, V>(map: Map<K, V[]>, key: K, value: V): void {
+    const bucket = map.get(key);
+    if (bucket === undefined) {
+        map.set(key, [value]);
+        return;
+    }
+    bucket.push(value);
+}
+
+/** Build a `Map<item, index>` for O(1) position lookups, beating repeated `indexOf` (O(N²) over a sort/loop).
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _indexMap<K>(arr: readonly K[] | null | undefined): Map<K, number> {
+    const map = new Map<K, number>();
+    if (arr) {
+        for (let i = 0, len = arr.length; i < len; ++i) {
+            map.set(arr[i], i);
+        }
+    }
+    return map;
 }

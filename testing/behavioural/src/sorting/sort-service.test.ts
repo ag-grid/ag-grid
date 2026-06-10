@@ -180,6 +180,34 @@ describe('SortService', () => {
             `);
         });
 
+        test('multi-sort with sort but no sortIndex falls back to colDef order', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    { colId: 'a', field: 'a', sort: 'asc' },
+                    { colId: 'b', field: 'b', sort: 'asc' },
+                ],
+                rowData: [
+                    { id: '1', a: 'x', b: 'b' },
+                    { id: '2', a: 'x', b: 'a' },
+                    { id: '3', a: 'a', b: 'z' },
+                ],
+                getRowId: (p) => p.data.id,
+            });
+            await asyncSetTimeout(0);
+
+            expect(getSortModel(api)).toEqual([
+                { colId: 'a', sort: 'asc' },
+                { colId: 'b', sort: 'asc' },
+            ]);
+
+            await new GridRows(api, 'multi-sort asc/asc no sortIndex').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:3 a:"a" b:"z"
+                ├── LEAF id:2 a:"x" b:"a"
+                └── LEAF id:1 a:"x" b:"b"
+            `);
+        });
+
         test('changing sort direction on secondary column reorders rows', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [
@@ -226,6 +254,46 @@ describe('SortService', () => {
                 CENTER
                 ├── a "A" width:200 sort:asc sortIndex:0
                 └── b "B" width:200 sort:desc sortIndex:1
+            `);
+        });
+
+        test('swapping only sortIndex reorders rows', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                    { colId: 'c', field: 'c' },
+                ],
+                rowData,
+                getRowId: (p) => p.data.id,
+            });
+
+            // a primary: a-asc orders 2 -> 3 -> 1.
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', sort: 'asc', sortIndex: 0 },
+                    { colId: 'b', sort: 'asc', sortIndex: 1 },
+                ],
+            });
+            await new GridRows(api, 'a primary (asc)').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:2 a:"a" b:"x" c:1
+                ├── LEAF id:3 a:"m" b:"a" c:9
+                └── LEAF id:1 a:"z" b:"m" c:5
+            `);
+
+            // Swap indices only — b primary now: b-asc orders 3 -> 1 -> 2.
+            api.applyColumnState({
+                state: [
+                    { colId: 'a', sort: 'asc', sortIndex: 1 },
+                    { colId: 'b', sort: 'asc', sortIndex: 0 },
+                ],
+            });
+            await new GridRows(api, 'b primary (asc) after sortIndex swap').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:3 a:"m" b:"a" c:9
+                ├── LEAF id:1 a:"z" b:"m" c:5
+                └── LEAF id:2 a:"a" b:"x" c:1
             `);
         });
     });

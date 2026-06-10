@@ -8557,61 +8557,61 @@ adm-zip@^0.5.10:
   resolved "https://registry.ag-grid.com/adm-zip/-/adm-zip-0.5.16.tgz#0b5e4c779f07dedea5805cdccb1147071d94a909"
   integrity sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==
 
-ag-charts-angular@13.3.0-beta.20260529:
-  version "13.3.0-beta.20260529"
-  resolved "https://registry.ag-grid.com/ag-charts-angular/-/ag-charts-angular-13.3.0-beta.20260529.tgz#dbb2635e7facaf5789f50f7e4d686b088013b6ae"
-  integrity sha512-C2gzXHmiIduCmdnoVbSoqVttic/RzviFuYCDbmY0CQYG2drmQZc535T5JiH+SEJXrBSoSz8uxgL4Nkuv0s3W4g==
+ag-charts-angular@13.3.0-beta.20260610:
+  version "13.3.0-beta.20260610"
+  resolved "https://registry.ag-grid.com/ag-charts-angular/-/ag-charts-angular-13.3.0-beta.20260610.tgz#25e9e7e5f2bc0745442bb7eab660f22cb38146cd"
+  integrity sha512-pPtCsQzyqUepUn1mNZFolfLeFF3JmpXP1BNjYEjit/N1Qu+A8Jt2aTq8odD809O5lfWJUKwkD46DhUVBDAqU1g==
   dependencies:
-    ag-charts-community "13.3.0-beta.20260529"
+    ag-charts-community "13.3.0-beta.20260610"
     tslib "^2.8.1"
 
-ag-charts-community@13.3.0-beta.20260529:
-  version "13.3.0-beta.20260529"
-  resolved "https://registry.ag-grid.com/ag-charts-community/-/ag-charts-community-13.3.0-beta.20260529.tgz#14279310043bca657795a8179da1774d32634b78"
-  integrity sha512-dM1pvxGlxxr12bJNboflhMo9lmoOXzkaOgs/DuFBukyFyVZ+GCTHTZEX26/L+Bokl2xBPu+t7VAh64otIkr8BQ==
+ag-charts-community@13.3.0-beta.20260610:
+  version "13.3.0-beta.20260610"
+  resolved "https://registry.ag-grid.com/ag-charts-community/-/ag-charts-community-13.3.0-beta.20260610.tgz#56cca7d8990b1a4d8a14d76c6d8d30bb54007f04"
+  integrity sha512-x2PVBhZvlIMi+56M9WfT/VPse4hdd6xcMnJ0sFXUq6YBvjSnj2EI+wUuBCod/YCe2wAyKNtu38ERUMBGWHHYiw==
   dependencies:
-    ag-charts-core "13.3.0-beta.20260529"
-    ag-charts-locale "13.3.0-beta.20260529"
-    ag-charts-types "13.3.0-beta.20260529"
+    ag-charts-core "13.3.0-beta.20260610"
+    ag-charts-locale "13.3.0-beta.20260610"
+    ag-charts-types "13.3.0-beta.20260610"
 
-ag-charts-core@13.3.0-beta.20260529:
-  version "13.3.0-beta.20260529"
-  resolved "https://registry.ag-grid.com/ag-charts-core/-/ag-charts-core-13.3.0-beta.20260529.tgz#7ab8fd5d58720f04abf9fcc9f7c0dff5476a2ca9"
-  integrity sha512-wxpbiKEsbYgmR/CYVtXxDeq8ifVDwdfcIK8WrQxcoCX/mgX0saailAsfZotRrA/4ufJkdHJpRL1gCPUYpd+GcA==
+ag-charts-core@13.3.0-beta.20260610:
+  version "13.3.0-beta.20260610"
+  resolved "https://registry.ag-grid.com/ag-charts-core/-/ag-charts-core-13.3.0-beta.20260610.tgz#9978c5016652617be6f77d1f5db9e8c5ea626ef6"
+  integrity sha512-CH9kdgoDQRXioObXS3iKyOdnxezPUxDdTgAF1FMtAcYHG1W+uQD4Rn0Jfh3g4hGfSlYJFsjZ28OzTYdDxkOorw==
   dependencies:
-    ag-charts-types "13.3.0-beta.20260529"
+    ag-charts-types "13.3.0-beta.20260610"
 
-ag-charts-enterprise@13.3.0-beta.20260529:
-  version "13.3.0-beta.20260529"
-  resolved "https://registry.ag-grid.com/ag-charts-enterprise/-/ag-charts-enterprise-13.3.0-beta.20260529.tgz#2cb9b947cb4d2691e0f47b6bdce9e658b61ec8cc"
-  integrity sha512-nqdY8zBBGFPLc/RjT5Utxd+Oq/ncR2ZFI23PQyJ80LAumGvrMhySWqT4Q2GslLMXD4ULEqC33F+E26Lb8kUv3g==
+ag-charts-enterprise@13.3.0-beta.20260610:
+  version "13.3.0-beta.20260610"
+  resolved "https://registry.ag-grid.com/ag-charts-enterprise/-/ag-charts-enterprise-13.3.0-beta.20260610.tgz#4dacd5cdfdef9aea7300a80bc0fe415b57613df8"
+  integrity sha512-9yBPaZpGfmuLA24yuOGhCc0l14awbTYhJ5Qz4f7EeVsbs1R+ZkLThnCgwqbdpifnwF7gvFusf/HJsVmE+0f8yA==
   dependencies:
-    ag-charts-community "13.3.0-beta.20260529"
-    ag-charts-core "13.3.0-beta.20260529"
+    ag-charts-community "13.3.0-beta.20260610"
+    ag-charts-core "13.3.0-beta.20260610"
 
-ag-charts-locale@13.3.0-beta.20260529:
-  version "13.3.0-beta.20260529"
-  resolved "https://registry.ag-grid.com/ag-charts-locale/-/ag-charts-locale-13.3.0-beta.20260529.tgz#6e8786a9b1159fa31ddbb5d50d8298c36db935bd"
-  integrity sha512-Rq3//Ud4joOh3SnaNxFxH8FwpzooTDNfUsFI6AvTgUWiMO0TtyuYl5/2tXVsVR9GNAbk07tG71Jpq01dyTRzhw==
+ag-charts-locale@13.3.0-beta.20260610:
+  version "13.3.0-beta.20260610"
+  resolved "https://registry.ag-grid.com/ag-charts-locale/-/ag-charts-locale-13.3.0-beta.20260610.tgz#00674618ce88343f38456954dedaf335bf111f2b"
+  integrity sha512-DGobzPDUPmSjryK+iMSJQTiGkL6ptSUShsUzLJWzi9/6ddMEfwJ2sYh2ifUtwpSuORvvWmB9fncWIbbCijmGxA==
 
-ag-charts-react@13.3.0-beta.20260529:
-  version "13.3.0-beta.20260529"
-  resolved "https://registry.ag-grid.com/ag-charts-react/-/ag-charts-react-13.3.0-beta.20260529.tgz#08e0812b3c87066133db9a5caf42d206d8d9c78c"
-  integrity sha512-eAn4nSAFhy6UW2pWUsiMIA34t+XM3GhLA+v4jCPTaXFuoqOGmoRfpJkbcfCmGO3ZyNJzV/ovk6ygv2jOKRfanQ==
+ag-charts-react@13.3.0-beta.20260610:
+  version "13.3.0-beta.20260610"
+  resolved "https://registry.ag-grid.com/ag-charts-react/-/ag-charts-react-13.3.0-beta.20260610.tgz#ad13c9fb89e2d2d27c0e0a37dd980e6e08db5568"
+  integrity sha512-WrmRGgQVHhITXG5uRi78rRlxgV/fLcxk/0/8ZMbiQqvLInmHEhHsLPbKU5rvNVVjU4W7FTqL+VjAqZ4tRODh+w==
   dependencies:
-    ag-charts-community "13.3.0-beta.20260529"
+    ag-charts-community "13.3.0-beta.20260610"
 
-ag-charts-types@13.3.0-beta.20260529:
-  version "13.3.0-beta.20260529"
-  resolved "https://registry.ag-grid.com/ag-charts-types/-/ag-charts-types-13.3.0-beta.20260529.tgz#111a55a083c6f8c41cf0b93b670932679be0e5c6"
-  integrity sha512-TSuZcjWwY73LN9Zb47bKZfgvUvCpPZ1s0MoZXP5J5O9D8Qg5w7+nW18sdfgqNdvGP3IiZY+7nrsH6286arHJdw==
+ag-charts-types@13.3.0-beta.20260610:
+  version "13.3.0-beta.20260610"
+  resolved "https://registry.ag-grid.com/ag-charts-types/-/ag-charts-types-13.3.0-beta.20260610.tgz#0404c8ad2b4fe1e88cf2a756e1dc51d85ce390e5"
+  integrity sha512-EVaKGlnTpfl64ATrdl/Ji/V33MPFAmPr1tAEHzwK5UNKICvX7gznnB+80V8NVtq54y5/pqn5PEJuY4WRSecXnQ==
 
-ag-charts-vue3@13.3.0-beta.20260529:
-  version "13.3.0-beta.20260529"
-  resolved "https://registry.ag-grid.com/ag-charts-vue3/-/ag-charts-vue3-13.3.0-beta.20260529.tgz#157f0ff9bdb456bd1c4bf3d3069e63fafbfc60b5"
-  integrity sha512-SesNVXhXhTu7BV6Ry/6ZqUMEBIazEuE7U2A63ymgZiuhDFkW1MRkKbEwvLo+kfGbqxeqoO5xusUlVWvotIbWhg==
+ag-charts-vue3@13.3.0-beta.20260610:
+  version "13.3.0-beta.20260610"
+  resolved "https://registry.ag-grid.com/ag-charts-vue3/-/ag-charts-vue3-13.3.0-beta.20260610.tgz#646ce087fee017b43cd9f2cca6abd9275cab7709"
+  integrity sha512-tF67BIHZXwf92tMqvW/kxmkeWl/W7rzM3Ixs8Fgc2CyeSBU2NqILas3Z2FBBc10DBNOor7JVvBIW7yqSxqU0OA==
   dependencies:
-    ag-charts-community "13.3.0-beta.20260529"
+    ag-charts-community "13.3.0-beta.20260610"
 
 agent-base@6, agent-base@^6.0.2:
   version "6.0.2"
@@ -21567,16 +21567,7 @@ string-length@^4.0.2:
     char-regex "^1.0.2"
     strip-ansi "^6.0.0"
 
-"string-width-cjs@npm:string-width@^4.2.0":
-  version "4.2.3"
-  resolved "https://registry.ag-grid.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
-  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
-  dependencies:
-    emoji-regex "^8.0.0"
-    is-fullwidth-code-point "^3.0.0"
-    strip-ansi "^6.0.1"
-
-"string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
+"string-width-cjs@npm:string-width@^4.2.0", "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
   version "4.2.3"
   resolved "https://registry.ag-grid.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -21689,7 +21680,7 @@ stringify-entities@^4.0.0:
     character-entities-html4 "^2.0.0"
     character-entities-legacy "^3.0.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"
   resolved "https://registry.ag-grid.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -21702,13 +21693,6 @@ strip-ansi@^5.0.0, strip-ansi@^5.1.0, strip-ansi@^5.2.0:
   integrity sha512-DuRs1gKbBqsMKIZlrffwlug8MHkcnpjs5VPmL1PAh+mA30U0DTotfDZ0d2UUsXpPmPmMMJ6W773MaA3J+lbiWA==
   dependencies:
     ansi-regex "^4.1.0"
-
-strip-ansi@^6.0.0, strip-ansi@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.ag-grid.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
-  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
-  dependencies:
-    ansi-regex "^5.0.1"
 
 strip-ansi@^7.0.1, strip-ansi@^7.1.0:
   version "7.1.2"
@@ -23979,7 +23963,7 @@ wordwrap@^1.0.0:
   resolved "https://registry.ag-grid.com/wordwrap/-/wordwrap-1.0.0.tgz#27584810891456a4171c8d0226441ade90cbcaeb"
   integrity sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
   version "7.0.0"
   resolved "https://registry.ag-grid.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
@@ -24001,15 +23985,6 @@ wrap-ansi@^6.2.0:
   version "6.2.0"
   resolved "https://registry.ag-grid.com/wrap-ansi/-/wrap-ansi-6.2.0.tgz#e9393ba07102e6c91a3b221478f0257cd2856e53"
   integrity sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==
-  dependencies:
-    ansi-styles "^4.0.0"
-    string-width "^4.1.0"
-    strip-ansi "^6.0.0"
-
-wrap-ansi@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.ag-grid.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
-  integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
   dependencies:
     ansi-styles "^4.0.0"
     string-width "^4.1.0"

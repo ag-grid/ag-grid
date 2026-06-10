@@ -76,7 +76,7 @@ export function isCellEditable(beans: BeanCollection, editPosition: Required<Edi
     const rowNode = editPosition.rowNode;
     const colDef = column.getColDef();
 
-    if (colDef.calculatedExpression != null && beans.calculatedColsSvc != null) {
+    if (column.isCalculatedCol) {
         return false;
     }
 
@@ -112,7 +112,7 @@ export function isFullRowCellEditable(
 
     // check if other cells in row are editable, so starting edit on uneditable cell will still work
     const { rowNode, column } = position;
-    for (const col of beans.colModel.getCols()) {
+    for (const col of beans.colModel.colsList) {
         if (col !== column && isCellEditable(beans, { rowNode, column: col })) {
             return true;
         }

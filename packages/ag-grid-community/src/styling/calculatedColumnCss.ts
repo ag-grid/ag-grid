@@ -15,7 +15,7 @@ export function _getCalculatedColumnCssClasses(
     column: AgColumn | null | undefined,
     calculatedColsSvc: ICalculatedColumnsService | undefined
 ): readonly string[] {
-    if (calculatedColsSvc == null || column?.colDef.calculatedExpression == null) {
+    if (calculatedColsSvc == null || !column?.isCalculatedCol) {
         return EMPTY_CALCULATED_COLUMN_CSS_CLASSES;
     }
 

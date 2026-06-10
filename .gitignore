@@ -37,6 +37,7 @@ testing/accessibility/all-examples.json
 testing/accessibility/e2e
 
 .env.local
+.env.*.local
 
 # latest only
 dist

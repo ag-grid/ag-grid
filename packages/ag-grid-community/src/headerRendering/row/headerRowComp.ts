@@ -1,6 +1,7 @@
 import { _setAriaRowIndex, _setDomChildOrder } from 'ag-stack';
 
 import { _createElement } from '../../utils/element';
+import { _isHeaderFocusSuppressed } from '../../utils/gridFocus';
 import { Component } from '../../widgets/component';
 import type { AbstractHeaderCellComp } from '../cells/abstractCell/abstractHeaderCellComp';
 import type { AbstractHeaderCellCtrl, HeaderCellCtrlInstanceId } from '../cells/abstractCell/abstractHeaderCellCtrl';
@@ -50,7 +51,15 @@ export class HeaderRowComp extends Component {
 
     public postConstruct(): void {
         const eGui = this.getGui();
-        eGui.setAttribute('tabindex', String(this.gos.get('tabIndex')));
+        const updateTabIndex = () => {
+            if (_isHeaderFocusSuppressed(this.beans)) {
+                eGui.removeAttribute('tabindex');
+            } else {
+                eGui.setAttribute('tabindex', String(this.gos.get('tabIndex')));
+            }
+        };
+        updateTabIndex();
+        this.addManagedPropertyListeners(['suppressHeaderFocus'], updateTabIndex);
         this.setRowIndex(this.ctrl.getAriaRowIndex());
 
         const compProxy: IHeaderRowComp = {

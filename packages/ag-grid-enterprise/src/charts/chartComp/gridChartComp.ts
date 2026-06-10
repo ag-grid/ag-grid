@@ -19,7 +19,6 @@ import type {
     ChartModel,
     ChartToolPanelName,
     ChartType,
-    Environment,
     FocusService,
     IAggFunc,
     PartialCellRange,
@@ -84,7 +83,6 @@ export class GridChartComp extends Component {
     private focusSvc: FocusService;
     private popupSvc: PopupService;
     private enterpriseChartProxyFactory?: EnterpriseChartProxyFactory;
-    private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         this.crossFilterService = beans.chartCrossFilterSvc as ChartCrossFilterService;
@@ -93,7 +91,6 @@ export class GridChartComp extends Component {
         this.focusSvc = beans.focusSvc;
         this.popupSvc = beans.popupSvc!;
         this.enterpriseChartProxyFactory = beans.enterpriseChartProxyFactory as EnterpriseChartProxyFactory;
-        this.environment = beans.environment;
     }
 
     private readonly eChart: HTMLElement = RefPlaceholder;
@@ -140,10 +137,6 @@ export class GridChartComp extends Component {
             chartThemeName: this.getThemeName(),
         };
 
-        const isRtl = this.gos.get('enableRtl');
-
-        this.eWrapper.classList.add(isRtl ? 'ag-rtl' : 'ag-ltr');
-
         // only the chart controller interacts with the chart model
         const model = this.createBean(new ChartDataModel(modelParams));
         this.chartController = this.createManagedBean(new ChartController(model));
@@ -156,13 +149,6 @@ export class GridChartComp extends Component {
 
         if (this.params.insideDialog) {
             this.addDialog();
-        } else {
-            // don't add the theme if we're in a dialog, since dialogs already
-            // add a theme, and legacy themes don't like being applied twice
-            this.addManagedEventListeners({
-                stylesChanged: this.updateTheme.bind(this),
-            });
-            this.updateTheme();
         }
 
         this.addMenu();
@@ -177,10 +163,6 @@ export class GridChartComp extends Component {
 
         this.update();
         this.raiseChartCreatedEvent();
-    }
-
-    private updateTheme() {
-        this.environment.applyThemeClasses(this.getGui());
     }
 
     private createChart(): void {
@@ -199,32 +181,34 @@ export class GridChartComp extends Component {
             this.crossFilterService.filter(event, reset);
         };
 
-        const chartType = this.chartController.getChartType();
+        const { gos, chartController, beans, params, eChart } = this;
+        const chartType = chartController.getChartType();
         const chartProxyParams: ChartProxyParams = {
-            agChartsExports: this.beans.agChartsExports as AgChartsExports,
+            agChartsExports: beans.agChartsExports as AgChartsExports,
             chartType,
             chartInstance,
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
-            customChartThemes: this.gos.get('customChartThemes'),
-            styleNonce: this.gos.get('styleNonce'),
+            customChartThemes: gos.get('customChartThemes'),
+            styleNonce: gos.get('styleNonce'),
             getGridOptionsChartThemeOverrides: () => this.getGridOptionsChartThemeOverrides(),
             getExtraPaddingDirections: () => this.chartMenu?.getExtraPaddingDirections() ?? [],
-            apiChartThemeOverrides: this.params.chartThemeOverrides,
-            crossFiltering: this.params.crossFiltering ?? false,
+            apiChartThemeOverrides: params.chartThemeOverrides,
+            crossFiltering: params.crossFiltering ?? false,
             crossFilterCallback,
-            parentElement: this.eChart,
-            grouping: this.chartController.isGrouping(),
-            chartThemeToRestore: this.params.chartThemeName,
-            chartOptionsToRestore: this.params.chartOptionsToRestore,
-            chartPaletteToRestore: this.params.chartPaletteToRestore,
-            seriesChartTypes: this.chartController.getSeriesChartTypes(),
+            parentElement: eChart,
+            grouping: chartController.isGrouping(),
+            chartThemeToRestore: params.chartThemeName,
+            chartOptionsToRestore: params.chartOptionsToRestore,
+            chartPaletteToRestore: params.chartPaletteToRestore,
+            seriesChartTypes: chartController.getSeriesChartTypes(),
             translate: (toTranslate: ChartTranslationKey) => this.chartTranslation.translate(toTranslate),
-            context: _addGridCommonParams(this.gos, {}),
+            context: _addGridCommonParams(gos, {}),
+            enableRtl: gos.get('enableRtl'),
         };
 
         // ensure 'restoring' options are not reused when switching chart types
-        this.params.chartOptionsToRestore = undefined;
+        params.chartOptionsToRestore = undefined;
 
         // set local state used to detect when chart changes
         this.chartType = chartType;
@@ -235,7 +219,7 @@ export class GridChartComp extends Component {
             return;
         }
 
-        this.chartController.setChartProxy(this.chartProxy);
+        chartController.setChartProxy(this.chartProxy);
         this.createMenuContext();
     }
 

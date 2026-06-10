@@ -14,6 +14,7 @@ import {
     _focusInto,
     _getPageBody,
     _getRootNode,
+    _initStyledRoot,
     _isPromise,
     _isVisible,
 } from 'ag-stack';
@@ -154,12 +155,11 @@ export class AgContextMenuService<
             return;
         }
 
-        targetEl.appendChild(wrapperEl);
+        const styledRootDisconnect = _initStyledRoot(beans.environment, targetEl, wrapperEl);
         beans.ariaAnnounce?.announceValue(
             translate('ariaLabelLoadingContextMenu', 'Loading Context Menu'),
             'contextmenu'
         );
-        beans.environment.applyThemeClasses(wrapperEl);
         _anchorElementToMouseMoveEvent(wrapperEl, mouseEvent, beans);
 
         const mouseMoveCallback = (e: MouseEvent) => {
@@ -170,7 +170,7 @@ export class AgContextMenuService<
 
         this.destroyLoadingSpinner = () => {
             rootNode.removeEventListener('mousemove', mouseMoveCallback);
-            wrapperEl.remove();
+            styledRootDisconnect();
             this.destroyLoadingSpinner = null;
         };
     }

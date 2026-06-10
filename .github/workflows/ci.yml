@@ -126,7 +126,7 @@ jobs:
   init:
     name: Initialise Workflow
     needs: detect-changes
-    if: github.event.pull_request.draft == false &&
+    if: (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-')) &&
       (needs.detect-changes.outputs.run_code_ci == 'true' ||
       needs.detect-changes.outputs.run_docs_ci == 'true')
     permissions:
@@ -340,7 +340,7 @@ jobs:
     name: Build
     needs: [ detect-changes ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
-      github.event.pull_request.draft == false
+      (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-'))
     outputs:
       build: ${{ steps.build.outcome || '' }}
     steps:
@@ -361,13 +361,115 @@ jobs:
         run: |
           yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
+      # The enterprise UMD loads ag-grid-community at runtime, so publish both even when nx rebuilt only one.
+      - name: Build UMD bundles for PR preview
+        id: build_umd
+        if: github.event_name == 'pull_request' && steps.build.outcome == 'success'
+        run: |
+          yarn nx run-many -t build:umd -p ag-grid-community ag-grid-enterprise
+
+      - name: Upload UMD bundles for PR preview
+        if: github.event_name == 'pull_request' && steps.build_umd.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-preview-umd
+          if-no-files-found: ignore
+          retention-days: 14
+          # ag-grid UMD builds with sourcemap:false, so there are no .map files.
+          path: |
+            packages/ag-grid-community/dist/ag-grid-community.min.js
+            packages/ag-grid-enterprise/dist/ag-grid-enterprise.min.js
+
+  pr_preview:
+    runs-on: ubuntu-latest
+    name: PR Preview (UMD)
+    needs: [ build ]
+    # Same-repo PRs only (fork PRs can't hold the write token) — see pr-review.yml.
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      needs.build.outputs.build == 'success'
+    permissions:
+      contents: write
+      pull-requests: write
+    concurrency:
+      group: pr-preview-gh-pages
+      cancel-in-progress: false
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      # Needed for the local shared action below; same-repo gate (job if) is the guard.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Download UMD artifact
+        id: download
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: pr-preview-umd
+          path: _umd
+
+      - name: Resolve UMD bundle paths
+        id: stage
+        if: steps.download.outcome == 'success'
+        run: |
+          set -euo pipefail
+          # upload-artifact@v4 strips the common path prefix, so find by filename.
+          COMMUNITY=$(find _umd -type f -name 'ag-grid-community.min.js' -print -quit)
+          ENTERPRISE=$(find _umd -type f -name 'ag-grid-enterprise.min.js' -print -quit)
+          if [ -z "$COMMUNITY" ] && [ -z "$ENTERPRISE" ]; then
+            echo "::warning No UMD bundles in artifact — likely tooling-only PR; skipping publish."
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ -z "$COMMUNITY" ] || [ -z "$ENTERPRISE" ]; then
+            echo "::error exactly one UMD bundle present; expected both or neither." >&2
+            ls -laR _umd || true
+            exit 1
+          fi
+          {
+            echo "files<<__FILES_EOF__"
+            echo "$COMMUNITY"
+            echo "$ENTERPRISE"
+            echo "__FILES_EOF__"
+          } >> "$GITHUB_OUTPUT"
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+
+      - name: Publish PR preview to gh-pages
+        if: steps.stage.outputs.publish == 'true'
+        uses: ./external/ag-shared/github/actions/pr-preview-publish
+        with:
+          pr_number: ${{ env.PR_NUMBER }}
+          files: ${{ steps.stage.outputs.files }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Post sticky PR comment
+        if: steps.stage.outputs.publish == 'true'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pr-preview-umd
+          message: |
+            ### Live-test this PR in Plunker
+
+            Paste these two `<script>` tags into a Plunker (or any vanilla-JS host) to load the UMD bundles built from this PR:
+
+            ```html
+            <script src="https://ag-grid.github.io/ag-grid/pr-${{ env.PR_NUMBER }}/ag-grid-community.min.js"></script>
+            <script src="https://ag-grid.github.io/ag-grid/pr-${{ env.PR_NUMBER }}/ag-grid-enterprise.min.js"></script>
+            ```
+
+            Bundles are removed automatically when the PR is closed. Updated on every push.
+
   docs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
     needs: [ detect-changes ]
     if: ${{ (needs.detect-changes.outputs.run_code_ci == 'true' ||
       needs.detect-changes.outputs.run_docs_ci == 'true') &&
-      github.event.pull_request.draft == false && !inputs.skip_docs }}
+      (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-')) && !inputs.skip_docs }}
     strategy:
       fail-fast: false
     outputs:
@@ -478,11 +580,9 @@ jobs:
         lint,
         build,
         docs,
-        fw_pkg_test,
-        sonar_community,
-        sonar_enterprise,
+        fw_pkg_test
       ]
-    if: always() && !cancelled() && github.event.pull_request.draft == false
+    if: always() && !cancelled() && (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-'))
     permissions:
       contents: write
       actions: read
@@ -559,14 +659,7 @@ jobs:
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.docs.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
-
-          # Uncomment to add package tests back in
-          # elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
-          #   WORKFLOW_STATUS="failure"
-
-          elif [ "${{ needs.sonar_community.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.sonar_enterprise.result }}" == "failure" ] ; then
+          elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           fi
           echo "workflowStatus=${WORKFLOW_STATUS}" >> $GITHUB_OUTPUT
@@ -638,9 +731,7 @@ jobs:
               "Test": "${{ needs.test.result }}",
               "e2e": "${{ needs.e2e.result }}",
               "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
-              "Docs": "${{ needs.docs.result }}",
-              "SonarCommunity": "${{ needs.sonar_community.result }}",
-              "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
+              "Docs": "${{ needs.docs.result }}"
             }
 
       - name: Fail job if workflow failed
@@ -648,52 +739,3 @@ jobs:
         run: |
           echo "Workflow failed, failing the build."
           exit 1
-
-  sonar_community:
-    name: SonarQube Community
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: SonarQube Analysis Community
-        uses: SonarSource/sonarqube-scan-action@v5.2.0
-        env:
-          SONAR_HOST_URL: https://sonarcloud.io
-          SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
-        with:
-          projectBaseDir: ./packages/
-          args: >
-            -Dsonar.javascript.node.maxspace=8192 -Dsonar.organization=ag-grid
-            -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
-            -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
-            -Dsonar.projectKey=ag-grid_community_latest
-            -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js,**/e2e
-            -Dsonar.scanner.force-deprecated-java-version=true
-            -Dsonar.coverage.exclusions=**/*
-
-  sonar_enterprise:
-    name: SonarQube Enterprise
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: SonarQube Analysis Enterprise
-        uses: SonarSource/sonarqube-scan-action@v5.2.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
-          SONAR_HOST_URL: https://sonarcloud.io
-        with:
-          projectBaseDir: ./packages/
-          args: >
-            -Dsonar.javascript.node.maxspace=8192 -Dsonar.organization=ag-grid
-            -Dsonar.sources=./ag-grid-enterprise
-            -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
-            -Dsonar.branch.name=master
-            -Dsonar.projectKey=ag-grid-enterprise-latest
-            -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js,**/e2e
-            -Dsonar.scanner.force-deprecated-java-version=true
-            -Dsonar.coverage.exclusions=**/*

@@ -925,6 +925,11 @@ export class EditService extends BeanStub implements NamedBean {
         return 'continue';
     }
 
+    /** Calls through to standalone method for treeshaking via the editService */
+    public populateModelValidationErrors() {
+        _populateModelValidationErrors(this.beans);
+    }
+
     public revertSingleCellEdit(cellPosition: Required<EditPosition>, focus = false): void {
         const cellCtrl = _getCellCtrl(this.beans, cellPosition);
         if (!cellCtrl?.comp?.getCellEditor()) {
@@ -1508,7 +1513,7 @@ export class EditService extends BeanStub implements NamedBean {
         const edits: EditMap = new Map();
 
         for (let { colId, column, colKey, rowIndex, rowPinned, newValue: pendingValue, state } of cells) {
-            const col = colId ? colModel.getCol(colId) : colKey ? colModel.getCol(colKey) : column;
+            const col = colId ? colModel.colsById[colId] : colKey ? colModel.getCol(colKey) : column;
 
             if (!col) {
                 continue;

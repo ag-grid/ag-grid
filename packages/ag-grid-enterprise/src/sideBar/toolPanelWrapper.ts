@@ -1,4 +1,4 @@
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _createAgElement, _initDetachedStyledRoot } from 'ag-stack';
 
 import type {
     ComponentType,
@@ -47,6 +47,7 @@ export class ToolPanelWrapper extends Component {
     private params: IToolPanelParams;
     private animationId: number = 0;
     private defParent: HTMLElement | null = null;
+    private hasStyledRoot = false;
 
     constructor() {
         super(ToolPanelElement);
@@ -60,6 +61,19 @@ export class ToolPanelWrapper extends Component {
 
         resizeBar.elementToResize = eGui;
         this.appendChild(resizeBar);
+    }
+
+    public ensureStyledRoot(): void {
+        if (this.hasStyledRoot) {
+            return;
+        }
+        this.hasStyledRoot = true;
+        const innerGui = this.getGui();
+        const externalDiv = _createAgElement({ tag: 'div', cls: 'ag-tool-panel-external' });
+        externalDiv.appendChild(innerGui);
+        const [styledRootOuter, styledRootDestroy] = _initDetachedStyledRoot(this.beans.environment, externalDiv);
+        this.addDestroyFunc(styledRootDestroy);
+        this.setGui(styledRootOuter);
     }
 
     public getToolPanelId(): string {

@@ -27,6 +27,7 @@ const ICONS = [
     'cross',
     'csv',
     'desc',
+    'document',
     'down',
     'edit',
     'excel',

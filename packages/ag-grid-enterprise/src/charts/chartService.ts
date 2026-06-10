@@ -1,5 +1,5 @@
 import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types';
-import { _focusInto } from 'ag-stack';
+import { _focusInto, _initDetachedStyledRoot } from 'ag-stack';
 
 import type {
     BaseCreateChartParams,
@@ -270,12 +270,13 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const { chartType, chartContainer } = params;
 
         const createChartContainerFunc = this.gos.getCallback('createChartContainer');
+        const insideDialog = !(chartContainer || createChartContainerFunc);
 
         const gridChartParams: GridChartParams = {
             ...params,
             chartId: this.generateId(),
             chartType: getCanonicalChartType(chartType),
-            insideDialog: !(chartContainer || createChartContainerFunc),
+            insideDialog,
             crossFilteringContext: this.crossFilteringContext,
             crossFilteringResetCallback: () => {
                 for (const c of this.activeChartComps) {
@@ -287,31 +288,25 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const chartComp = new GridChartComp(gridChartParams);
         this.createBean(chartComp);
 
-        const chartRef = this.createChartRef(chartComp);
-
-        if (chartContainer) {
-            // if container exists, means developer initiated chart create via API, so place in provided container
-            chartContainer.appendChild(chartRef.chartElement);
-        } else if (createChartContainerFunc) {
-            // otherwise, user created chart via grid UI, check if developer provides containers (e.g. if the application
-            // is using its own dialogs rather than the grid provided dialogs)
-            createChartContainerFunc(chartRef);
-        } else {
-            // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog
-            chartComp.addEventListener('destroyed', () => {
-                this.activeChartComps.delete(chartComp);
-                this.activeCharts.delete(chartRef);
-            });
+        let chartElement = chartComp.getGui();
+        let styledRootDestroy: (() => void) | undefined;
+        if (!insideDialog) {
+            // The chart is being created outside the grid so we need to create a styled root
+            [chartElement, styledRootDestroy] = _initDetachedStyledRoot(this.beans.environment, chartElement);
+            // If a container was supplied, append the chart (otherwise the chart will be passed to createChartContainerFunc)
+            chartContainer?.appendChild(chartElement);
         }
 
-        return chartRef;
-    }
-
-    private createChartRef(chartComp: GridChartComp): ChartRef {
         const chartRef: ChartRef = {
             destroyChart: () => {
                 if (this.activeCharts.has(chartRef)) {
                     this.destroyBean(chartComp);
+                    styledRootDestroy?.();
+                    if (chartContainer) {
+                        // Only remove the chart if we added it (in the createChartContainerFunc case,
+                        // the application inserted it and is responsible for removing it)
+                        chartElement.remove();
+                    }
                     this.activeChartComps.delete(chartComp);
                     this.activeCharts.delete(chartRef);
                 }
@@ -319,7 +314,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             focusChart: () => {
                 _focusInto(chartComp.getGui());
             },
-            chartElement: chartComp.getGui(),
+            chartElement,
             chart: chartComp.getUnderlyingChart(),
             chartId: chartComp.getChartModel().chartId,
             setMaximized: chartComp.setMaximized.bind(chartComp),
@@ -327,6 +322,16 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
         this.activeCharts.add(chartRef);
         this.activeChartComps.add(chartComp);
+
+        if (!chartContainer && createChartContainerFunc) {
+            createChartContainerFunc(chartRef);
+        } else if (!chartContainer) {
+            // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog
+            chartComp.addEventListener('destroyed', () => {
+                this.activeChartComps.delete(chartComp);
+                this.activeCharts.delete(chartRef);
+            });
+        }
 
         return chartRef;
     }
