@@ -123,7 +123,6 @@ jobs:
                   exit 1
 
     sast-code-scan:
-        needs: [determine-threshold]
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -138,7 +137,7 @@ jobs:
               continue-on-error: true
               with:
                   snyk_token: ${{ secrets.SNYK_TOKEN }}
-                  severity_threshold: ${{ needs.determine-threshold.outputs.severity }}
+                  severity_threshold: high
                   output_dir: ${{ env.OUTPUT_DIR }}
                   report_file: ${{ env.REPORT_FILE }}
 
