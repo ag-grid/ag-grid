@@ -199,22 +199,25 @@ export const ContactForm: FunctionComponent<Props> = ({
                     {errors.email && <p className="error">{errors.email.message}</p>}
                 </div>
             </div>
-            <div className={classnames('input-field', { 'input-error': errors[enquiryTypeId] })}>
-                <label htmlFor={enquiryTypeId}>Enquiry Type</label>
-                <select id={enquiryTypeId} {...register(enquiryTypeId, { required: 'Enquiry type is required' })}>
-                    <option value="">--None--</option>
-                    {ENQUIRY_TYPE_OPTIONS.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </select>
-                <div className={styles.errorContainer}>
-                    {errors[enquiryTypeId] && (
-                        <p className="error">{(errors as any)[enquiryTypeId]?.message as string}</p>
-                    )}
+            {enquiryTypeId && (
+                <div className={classnames('input-field', { 'input-error': errors[enquiryTypeId] })}>
+                    <label htmlFor={enquiryTypeId}>Enquiry Type</label>
+                    <select id={enquiryTypeId} {...register(enquiryTypeId, { required: 'Enquiry type is required' })}>
+                        <option value="">--None--</option>
+                        {ENQUIRY_TYPE_OPTIONS.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+                    <div className={styles.errorContainer}>
+                        {errors[enquiryTypeId] && (
+                            <p className="error">{(errors as any)[enquiryTypeId]?.message as string}</p>
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
+
             {!hideMessage && (
                 <div className={classnames('input-field', { 'input-error': errors[textAreaId] })}>
                     <label htmlFor={textAreaId}>Message</label>

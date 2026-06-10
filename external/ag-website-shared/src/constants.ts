@@ -38,7 +38,7 @@ export const STUDIO_FORM_DATA = {
         leadSource: 'Studio Lead',
         messagePlaceholder: 'Tell us about your interest in AG Studio',
         formLocationId: '00NS900000BCx1C',
-        enquiryTypeId: '00NQz00000NHthJ',
+        enquiryTypeId: null,
         captchaSettingsKeyName: 'agGridStagingV2',
     },
     production: {
@@ -48,7 +48,7 @@ export const STUDIO_FORM_DATA = {
         leadSource: 'Studio Lead',
         messagePlaceholder: 'Tell us about your interest in AG Studio',
         formLocationId: '00NQ500000CVgqT',
-        enquiryTypeId: '00NQz00000NHthJ',
+        enquiryTypeId: null,
         captchaSettingsKeyName: 'agGridComV2',
     },
 };
