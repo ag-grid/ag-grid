@@ -6,6 +6,7 @@ import { RGBAColor } from '../components/editors/RGBAColor';
 import { type Preset, darkModePreset, lightModePreset } from '../components/presets/presets';
 import { allParamModels } from './ParamModel';
 import { allFeatureModels } from './PartModel';
+import { unescapeStringLiteral } from './utils';
 
 export type ParseThemeSuccess = {
     success: true;
@@ -244,8 +245,7 @@ function tokenizeThemeCode(code: string): Token[] {
         if ((match[0] === '"' || match[0] === "'") && match.length > 1) {
             type = 'string';
             try {
-                // eslint-disable-next-line no-eval -- input is validated by TOKEN_PATTERN to always be a string literal
-                value = (0, eval)(match);
+                value = unescapeStringLiteral(match);
             } catch {
                 type = 'punctuation';
                 value = match;
