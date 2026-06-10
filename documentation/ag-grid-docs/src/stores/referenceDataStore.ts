@@ -17,7 +17,9 @@ let interfaceFetching = false;
 const fetchedSources = new Set<string>();
 
 export function loadInterfaceLookup() {
-    if (interfaceFetching) return;
+    if (interfaceFetching) {
+        return;
+    }
     interfaceFetching = true;
     fetchExtraFile('/reference/interfaces.AUTO.json').then($interfaceLookup.set);
 }
@@ -29,7 +31,9 @@ export function loadCodeLookup(sources: string[] | undefined) {
     }
 
     const missing = (sources ?? []).filter((s) => !fetchedSources.has(s));
-    if (!missing.length) return;
+    if (!missing.length) {
+        return;
+    }
 
     missing.forEach((s) => fetchedSources.add(s));
 
