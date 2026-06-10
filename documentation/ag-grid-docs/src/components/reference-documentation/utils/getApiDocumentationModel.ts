@@ -10,9 +10,11 @@ import type {
     ICallSignature,
     InterfaceEntry,
     MetaTag,
+    PropertyDisplayData,
+    PropertyType,
 } from '../types';
+import { convertMarkdown, extractJSDocTags, formatJsDocString, inferType } from './documentation-helpers';
 import { getDefinitionType } from './getDefinitionType';
-import { getDetailsCode } from './getDetailsCode';
 import { getShowAdditionalDetails } from './getShowAdditionalDetails';
 import { getAllSectionPropertyEntries, mergeObjects } from './interface-helpers';
 
@@ -90,6 +92,78 @@ function getCodeLookup({ propertyConfigs, codeConfigs }: { propertyConfigs: any[
     return codeLookup;
 }
 
+export function buildDisplayData({
+    definition,
+    gridOpProp,
+    framework,
+    config,
+}: {
+    definition: ChildDocEntry;
+    gridOpProp: ICallSignature;
+    framework: Framework;
+    config: Config;
+}): PropertyDisplayData {
+    // --- description ---
+    let description = '';
+    let isObject = false;
+    let propDescription: string | undefined =
+        definition.description || (gridOpProp?.meta as ICallSignature['meta'])?.comment || undefined;
+
+    if (propDescription) {
+        propDescription = formatJsDocString(propDescription);
+        if (!definition.description && (gridOpProp?.meta as ICallSignature['meta'])?.all) {
+            const { params, returns } = extractJSDocTags((gridOpProp.meta as ICallSignature['meta']).all);
+            const paramsStr = params?.map((p) => `<span class="param">\`${p.name}\`: ${p.value}</span>`).join('');
+            const returnsStr = returns ? `<strong>Returns:</strong> ${returns}` : '';
+            propDescription = [propDescription, paramsStr, returnsStr].filter(Boolean).join('\n');
+        }
+        description = convertMarkdown(propDescription, framework) ?? '';
+    } else {
+        if ((definition as any).meta?.description) {
+            description = convertMarkdown((definition as any).meta.description, framework) ?? '';
+        }
+        isObject = true;
+    }
+
+    // --- fallbackTypeStr (only needed when definition.type is absent) ---
+    let fallbackTypeStr: string | undefined;
+    if (!definition.type && gridOpProp?.type) {
+        const resolved =
+            typeof gridOpProp.type === 'string'
+                ? gridOpProp.type
+                : ((gridOpProp.type as PropertyType)?.returnType ?? inferType(definition.default));
+        fallbackTypeStr = resolved ?? undefined;
+    }
+
+    // --- tags: default, isInitial, modules ---
+    const tags = (gridOpProp?.meta as ICallSignature['meta'])?.tags ?? (definition as any)?.tags ?? [];
+    const jsdocDefault = tags.find((t: any) => t.name === 'default');
+    const defaultValue = definition?.default ?? jsdocDefault?.comment;
+    const formattedDefaultValue: string | undefined = Array.isArray(defaultValue)
+        ? '[' + defaultValue.map((v: any, i: number) => (i === 0 ? `"${v}"` : ` "${v}"`)) + ']'
+        : (defaultValue ?? undefined);
+
+    const isInitial = tags.some((t: any) => t.name === 'initial') ?? false;
+
+    let modules: GridModule[] = (tags.find((t: any) => t.name === AG_MODULE_TAG_NAME) as any)?.modules ?? [];
+    const restrictedModule: string | undefined = (definition as any)?.restrictModule ?? config.restrictModule;
+    if (modules.length > 1 && restrictedModule) {
+        const restrictedModuleTag = modules.find((mod) => restrictedModule === mod.name);
+        if (restrictedModuleTag) {
+            modules = [restrictedModuleTag];
+        }
+    }
+
+    return {
+        description,
+        isObject,
+        fallbackTypeStr,
+        formattedDefaultValue,
+        isInitial,
+        modules,
+    };
+}
+
 function getResolvedProperties({
     framework,
     names,
@@ -120,13 +194,12 @@ function getResolvedProperties({
             return config.sortAlphabetically ? (a[0] < b[0] ? -1 : 1) : 0;
         })
         .map(([name, definition]) => {
-            const codeLookUpGridOpProp = codeLookup[name];
             const gridOpProp = addEnterprisePropertyToTags({
-                callSignature: codeLookUpGridOpProp,
+                callSignature: codeLookup[name],
                 allModules,
             });
             const showAdditionalDetails = getShowAdditionalDetails({ name, definition, gridOpProp, interfaceLookup });
-            const { type, propertyType } = getDefinitionType({
+            const { propertyType } = getDefinitionType({
                 name,
                 definition,
                 gridOpProp,
@@ -134,25 +207,19 @@ function getResolvedProperties({
                 isEvent: meta?.isEvent,
                 config,
             });
-            const { interfaceHierarchyOverrides } = definition;
-            const detailsCode = showAdditionalDetails
-                ? getDetailsCode({
-                      framework,
-                      name,
-                      type,
-                      gridOpProp,
-                      interfaceLookup,
-                      interfaceHierarchyOverrides,
-                      isApi: config.isApi,
-                  })
-                : undefined;
+            const displayData = buildDisplayData({
+                definition,
+                gridOpProp,
+                framework,
+                config,
+            });
 
             return [
                 name,
                 {
                     definition,
-                    gridOpProp,
-                    detailsCode,
+                    displayData,
+                    showAdditionalDetails,
                     propertyType,
                 },
             ];
@@ -178,14 +245,13 @@ function getSectionProperties({
     propertiesFromFiles: unknown;
     codeLookup: Record<string, any>;
     interfaceLookup: Record<string, InterfaceEntry>;
-    gridOpProp?: InterfaceEntry;
     config: Config;
     allModules: GridModule[];
 }) {
     const keys = section.split('.');
     const title = keys[keys.length - 1];
     const processed = keys.reduce<any>((current, key) => {
-        return current.map((x) => {
+        return current.map((x: any) => {
             const property = x[key];
             if (!property) {
                 throwDevWarning({
@@ -232,11 +298,11 @@ export function getApiDocumentationModel({
     }
 
     if (names && names.length) {
-        // Hide more links when properties included by name or use the value from config if its set
         config = { hideMore: true, overrideBottomMargin: '1rem', ...config };
     }
 
     const codeLookup = getCodeLookup({ propertyConfigs, codeConfigs });
+    const codeSources: string[] = propertyConfigs.map((c) => c.codeSrc).filter(Boolean);
 
     if (section) {
         const { title, properties, meta } = getSectionProperties({
@@ -256,6 +322,7 @@ export function getApiDocumentationModel({
             properties,
             config: { ...config, isSubset: true },
             meta,
+            codeSources,
         };
     }
 
@@ -271,7 +338,10 @@ export function getApiDocumentationModel({
                 allModules,
             });
 
-            return [name, { meta: meta as MetaTag, properties: resolvedProperties as ChildDocEntry }];
+            return [name, { meta: meta as MetaTag, properties: resolvedProperties as ChildDocEntry }] as [
+                string,
+                { properties: ChildDocEntry; meta: MetaTag },
+            ];
         }
     );
 
@@ -279,5 +349,6 @@ export function getApiDocumentationModel({
         type: 'multiple',
         entries,
         config,
+        codeSources,
     };
 }

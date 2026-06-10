@@ -168,6 +168,7 @@ export const Section: FunctionComponent<SectionProps> = ({
     breadcrumbs = {},
     meta,
     isInline,
+    codeSources,
 }) => {
     const showHeader = !config.isSubset;
     const displayName = meta?.displayName || title;
@@ -207,21 +208,25 @@ export const Section: FunctionComponent<SectionProps> = ({
                     <col></col>
                 </colgroup>
                 <tbody>
-                    {Object.entries(properties).map(([name, { definition, gridOpProp, detailsCode, propertyType }]) => {
-                        return (
-                            <Property
-                                key={name}
-                                id={id}
-                                name={name}
-                                framework={framework}
-                                definition={definition}
-                                gridOpProp={gridOpProp}
-                                detailsCode={detailsCode}
-                                propertyType={propertyType}
-                                config={config}
-                            />
-                        );
-                    })}
+                    {Object.entries(properties).map(
+                        ([name, { definition, displayData, showAdditionalDetails, propertyType }]) => {
+                            return (
+                                <Property
+                                    key={name}
+                                    id={id}
+                                    name={name}
+                                    framework={framework}
+                                    definition={definition}
+                                    displayData={displayData}
+                                    showAdditionalDetails={showAdditionalDetails}
+                                    isEvent={meta?.isEvent}
+                                    propertyType={propertyType}
+                                    config={config}
+                                    codeSources={codeSources}
+                                />
+                            );
+                        }
+                    )}
                 </tbody>
             </table>
         </div>

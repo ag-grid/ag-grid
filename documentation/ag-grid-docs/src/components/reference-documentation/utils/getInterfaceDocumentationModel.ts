@@ -19,8 +19,8 @@ import {
     sortAndFilterProperties,
     writeAllInterfaces,
 } from './documentation-helpers';
+import { buildDisplayData } from './getApiDocumentationModel';
 import { getDefinitionType } from './getDefinitionType';
-import { getDetailsCode } from './getDetailsCode';
 import { getShowAdditionalDetails } from './getShowAdditionalDetails';
 import { getInterfacesToWrite } from './interface-helpers';
 
@@ -133,7 +133,7 @@ export function getProperties({
         const gridOpProp = codeData[name];
         const showAdditionalDetails = getShowAdditionalDetails({ name, definition, gridOpProp, interfaceLookup });
 
-        const { type, propertyType } = getDefinitionType({
+        const { propertyType } = getDefinitionType({
             name,
             definition,
             gridOpProp,
@@ -141,23 +141,18 @@ export function getProperties({
             isEvent: meta.isEvent,
             config,
         });
-        const { interfaceHierarchyOverrides } = definition;
-        const detailsCode = showAdditionalDetails
-            ? getDetailsCode({
-                  framework,
-                  name,
-                  type,
-                  gridOpProp,
-                  interfaceLookup,
-                  interfaceHierarchyOverrides,
-                  isApi: config.isApi,
-              })
-            : undefined;
+
+        const displayData = buildDisplayData({
+            definition,
+            gridOpProp,
+            framework,
+            config,
+        });
 
         orderedProps[name] = {
             definition,
-            detailsCode,
-            gridOpProp,
+            displayData,
+            showAdditionalDetails,
             propertyType,
         };
     });

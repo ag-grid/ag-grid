@@ -185,6 +185,18 @@ export interface Config {
 }
 
 export type Properties = DocEntryMap | DocEntry | ChildDocEntry;
+
+/** Pre-computed display values derived from gridOpProp server-side, eliminating the need to serialise the full gridOpProp into island props. */
+export interface PropertyDisplayData {
+    description: string;
+    isObject: boolean;
+    /** Slim type string for typeUrl computation — only the returnType string, or a plain type string. Null for Function types (typeUrl is always null for those). */
+    fallbackTypeStr: string | undefined;
+    formattedDefaultValue: string | undefined;
+    isInitial: boolean;
+    modules: GridModule[];
+}
+
 export type SectionProps = {
     title: string;
     framework: Framework;
@@ -194,6 +206,7 @@ export type SectionProps = {
     breadcrumbs?: Record<string, string>;
     meta?: MetaTag;
     isInline?: boolean;
+    codeSources?: string[];
 };
 export type PropertyCall = {
     framework: Framework;
@@ -227,6 +240,7 @@ export interface SingleApiModel {
     properties: Properties;
     config: Config;
     meta: MetaTag;
+    codeSources: string[];
 }
 
 export interface MultipleApiModel {
@@ -239,6 +253,7 @@ export interface MultipleApiModel {
         },
     ][];
     config: Config;
+    codeSources: string[];
 }
 
 export type ApiDocumentationModel = SingleApiModel | MultipleApiModel;

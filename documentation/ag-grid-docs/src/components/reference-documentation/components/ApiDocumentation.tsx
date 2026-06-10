@@ -1,4 +1,6 @@
 import type { Framework } from '@ag-grid-types';
+import { $queryClient } from '@stores/queryClientStore';
+import { QueryClientProvider } from '@tanstack/react-query';
 import type { FunctionComponent } from 'react';
 
 import type { ApiDocumentationModel } from '../types';
@@ -10,7 +12,7 @@ interface Props {
     isInline: boolean;
 }
 
-export const ApiDocumentation: FunctionComponent<Props> = ({ framework, model, isInline }) => {
+function ApiDocumentationInner({ framework, model, isInline }: Props) {
     if (model.type === 'multiple') {
         return model.entries.map(([name, { properties, meta }]) => (
             <Section
@@ -21,6 +23,7 @@ export const ApiDocumentation: FunctionComponent<Props> = ({ framework, model, i
                 config={model.config}
                 meta={meta}
                 isInline={isInline}
+                codeSources={model.codeSources}
             />
         ));
     }
@@ -33,6 +36,13 @@ export const ApiDocumentation: FunctionComponent<Props> = ({ framework, model, i
             config={{ ...model.config, isSubset: true }}
             names={model.names}
             isInline={isInline}
+            codeSources={model.codeSources}
         />
     );
-};
+}
+
+export const ApiDocumentation: FunctionComponent<Props> = (props) => (
+    <QueryClientProvider client={$queryClient.get()}>
+        <ApiDocumentationInner {...props} />
+    </QueryClientProvider>
+);

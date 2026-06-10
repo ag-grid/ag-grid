@@ -6,19 +6,15 @@ import styles from '@ag-website-shared/components/reference-documentation/ApiRef
 import { useScrollToAnchor } from '@ag-website-shared/utils/navigation';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
-import { Fragment, type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, type FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { AG_MODULE_TAG_NAME } from '../constants';
-import type { ChildDocEntry, Config, ICallSignature, InterfaceEntry } from '../types';
-import {
-    convertMarkdown,
-    extractJSDocTags,
-    formatJsDocString,
-    getTypeUrl,
-    inferType,
-    removeDefaultValue,
-} from '../utils/documentation-helpers';
+import type { ChildDocEntry, Config, PropertyDisplayData } from '../types';
+import { getTypeUrl, inferType, removeDefaultValue } from '../utils/documentation-helpers';
+import { getDefinitionType } from '../utils/getDefinitionType';
+import { getDetailsCode } from '../utils/getDetailsCode';
 import { formatJson, getInterfaceName } from '../utils/interface-helpers';
+import { useCodeLookup } from '../utils/useCodeLookup';
+import { useResolvedInterfaces } from '../utils/useResolvedInterfaces';
 import legacyStyles from './LegacyApiReference.module.scss';
 import { PropertyModules } from './PropertyModules';
 
@@ -32,161 +28,15 @@ function getDisplayNameSplit({ name, definition }: { name: string; definition: C
         displayName = `<span style='text-decoration: line-through'>${displayName}</span>`;
     }
 
-    // Split display name on capital letter, add <wbr> to improve text splitting across lines
-    let displayNameSplit: string;
-
     const { isRequired, strikeThrough } = definition;
-    // displayName is hardCoded for isRequired and strikeThrough
     if (isRequired || strikeThrough) {
-        displayNameSplit = displayName;
-    } else {
-        displayNameSplit = displayName
-            .split(/(?=[A-Z])/)
-            .reverse()
-            .reduce((acc, cv) => {
-                return `${cv}<wbr />` + acc;
-            });
+        return displayName;
     }
 
-    return displayNameSplit;
-}
-
-function getDescription({
-    definition,
-    gridOpProp,
-    framework,
-}: {
-    definition: ChildDocEntry;
-    gridOpProp: InterfaceEntry;
-    framework: Framework;
-}) {
-    let description: string | undefined = '';
-    let isObject: boolean = false;
-    let propDescription: string | undefined =
-        definition.description || (gridOpProp && (gridOpProp.meta as ICallSignature['meta'])?.comment) || undefined;
-
-    if (propDescription) {
-        propDescription = formatJsDocString(propDescription);
-        if (!definition.description && gridOpProp && (gridOpProp.meta as ICallSignature['meta'])?.all) {
-            const { params, returns } = extractJSDocTags(
-                definition.description || (gridOpProp && (gridOpProp.meta as ICallSignature['meta'])?.all)
-            );
-            const paramsStr = params?.map((p) => `<span class="param">\`${p.name}\`: ${p.value}</span>`).join('');
-            const returnsStr = returns ? `<strong>Returns:</strong> ${returns}` : '';
-
-            propDescription = [propDescription, paramsStr, returnsStr].filter(Boolean).join('\n');
-        }
-
-        // process property object
-        description = convertMarkdown(propDescription, framework);
-    } else {
-        // this must be the parent of a child object
-        if (definition.meta != null && definition.meta.description != null) {
-            description = convertMarkdown(definition.meta.description, framework);
-        }
-
-        isObject = true;
-    }
-
-    return {
-        isObject,
-        description,
-    };
-}
-
-// Use the type definition if manually specified in config
-function getDefinitionTypeUrl({
-    id,
-    name,
-    framework,
-    definition,
-    propertyType,
-    gridOpProp,
-    isObject,
-    config,
-}: {
-    id: string;
-    name: string;
-    framework: Framework;
-    definition: ChildDocEntry;
-    propertyType: string;
-    gridOpProp: InterfaceEntry;
-    isObject: boolean;
-    config: Config;
-}) {
-    let type: any = definition.type;
-    if (!type) {
-        // No type specified in the doc config file so check the GridOptions property
-        if (gridOpProp && gridOpProp.type) {
-            type = gridOpProp.type;
-
-            const isDeprecated = gridOpProp.meta?.tags?.some((t) => t.name === 'deprecated');
-            if (isDeprecated) {
-                // eslint-disable-next-line no-console
-                console.warn(
-                    `<api-documentation>: Docs include a property: ${name} that has been marked as deprecated.`
-                );
-                // eslint-disable-next-line no-console
-                console.warn('<api-documentation>: ' + gridOpProp.meta?.all);
-            }
-        } else {
-            if (type == null && config.codeSrcProvided?.length > 0) {
-                throw new Error(
-                    `We could not find a type for "${name}" from the code sources ${config.codeSrcProvided.join()}. Has this property been removed from the source code / or is there a typo?`
-                );
-            }
-
-            // If a codeSrc is not provided as a last resort try and infer the type
-            type = inferType(definition.default);
-        }
-    }
-
-    const typeUrl = isObject
-        ? `#reference-${id}.${name}`
-        : propertyType !== 'Function'
-          ? getTypeUrl(type, framework)
-          : null;
-
-    return typeUrl;
-}
-
-function getTagsData({
-    definition,
-    gridOpProp,
-    config,
-}: {
-    definition: ChildDocEntry;
-    gridOpProp: InterfaceEntry;
-    config: Config;
-}) {
-    // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
-    const tags = gridOpProp?.meta?.tags ?? definition?.tags ?? [];
-    const jsdocDefault = tags.find((t) => t.name === 'default');
-    const defaultValue = definition?.default ?? jsdocDefault?.comment;
-    const formattedDefaultValue = Array.isArray(defaultValue)
-        ? '[' +
-          defaultValue.map((v, i) => {
-              return i === 0 ? `"${v}"` : ` "${v}"`;
-          }) +
-          ']'
-        : defaultValue;
-    const isInitial = tags.some((t) => t.name === 'initial') ?? false;
-    let modules = tags.find((t) => t.name === AG_MODULE_TAG_NAME)?.modules ?? [];
-
-    const restrictedModule: string | undefined = definition?.restrictModule ?? config.restrictModule;
-    if (modules.length > 1 && restrictedModule) {
-        // If the property contains the restricted module and others then only show the restricted module
-        const restrictedModuleTag = modules.find((mod) => restrictedModule == mod.name);
-        if (restrictedModuleTag) {
-            modules = [restrictedModuleTag];
-        }
-    }
-
-    return {
-        formattedDefaultValue,
-        isInitial,
-        modules,
-    };
+    return displayName
+        .split(/(?=[A-Z])/)
+        .reverse()
+        .reduce((acc, cv) => `${cv}<wbr />` + acc);
 }
 
 function getDetailsId(id: string) {
@@ -212,29 +62,36 @@ export const Property: FunctionComponent<{
     name: string;
     framework: Framework;
     definition: ChildDocEntry;
-    gridOpProp: InterfaceEntry;
-    detailsCode: string;
+    displayData: PropertyDisplayData;
+    showAdditionalDetails: boolean;
+    isEvent?: boolean;
     propertyType: string;
     config: Config;
-}> = ({ id, name, framework, definition, gridOpProp, detailsCode, propertyType, config }) => {
+    codeSources?: string[];
+}> = ({
+    id,
+    name,
+    framework,
+    definition,
+    displayData,
+    showAdditionalDetails,
+    isEvent,
+    propertyType,
+    config,
+    codeSources,
+}) => {
     const idName = `reference-${id}-${name}`;
     const displayNameSplit = getDisplayNameSplit({ name, definition });
-    const { isObject, description } = getDescription({ definition, gridOpProp, framework });
-    const typeUrl = getDefinitionTypeUrl({
-        id,
-        name,
-        framework,
-        definition,
-        propertyType,
-        gridOpProp,
-        isObject,
-        config,
-    });
-    const { formattedDefaultValue, isInitial, modules } = getTagsData({
-        definition,
-        gridOpProp,
-        config,
-    });
+
+    const { description, isObject, fallbackTypeStr, formattedDefaultValue, isInitial, modules } = displayData;
+
+    // Compute typeUrl from pre-computed display data; id and framework are available here
+    const rawType = definition.type ?? fallbackTypeStr ?? inferType(definition.default);
+    const typeUrl = isObject
+        ? `#reference-${id}.${name}`
+        : propertyType !== 'Function'
+          ? getTypeUrl(rawType, framework)
+          : null;
 
     const { more } = definition;
 
@@ -243,8 +100,7 @@ export const Property: FunctionComponent<{
     const scrollToAnchor = useScrollToAnchor();
 
     useEffect(() => {
-        const hashId = location.hash.slice(1); // Remove the '#' symbol
-
+        const hashId = location.hash.slice(1);
         if (idName === hashId) {
             // eslint-disable-next-line react-hooks/set-state-in-effect -- expand property when URL hash matches
             setExpanded(true);
@@ -253,10 +109,37 @@ export const Property: FunctionComponent<{
     }, [idName]);
 
     const onCollapseClick = useCallback(() => {
-        setExpanded((prevIsExpanded) => {
-            return !prevIsExpanded;
-        });
+        setExpanded((prev) => !prev);
     }, []);
+
+    // Lazy-fetch the code lookup files and interfaces only when the user expands
+    const interfaceLookup = useResolvedInterfaces();
+    const codeLookup = useCodeLookup(codeSources, isExpanded && showAdditionalDetails);
+
+    const detailsCode = useMemo(() => {
+        if (!isExpanded || !showAdditionalDetails || !interfaceLookup || !codeLookup) return null;
+
+        const gridOpProp = codeLookup[name];
+
+        const { type } = getDefinitionType({
+            name,
+            definition,
+            gridOpProp,
+            interfaceLookup,
+            isEvent: isEvent ?? false,
+            config,
+        });
+
+        return getDetailsCode({
+            framework,
+            name,
+            type,
+            gridOpProp,
+            interfaceLookup,
+            interfaceHierarchyOverrides: definition.interfaceHierarchyOverrides,
+            isApi: config.isApi,
+        });
+    }, [isExpanded, showAdditionalDetails, interfaceLookup, codeLookup]);
 
     return (
         <tr ref={propertyRef} className={legacyStyles.tableRow}>
@@ -279,7 +162,7 @@ export const Property: FunctionComponent<{
 
                         <div className={styles.metaItem}>
                             <div className={styles.metaRow}>
-                                {detailsCode && (
+                                {showAdditionalDetails && (
                                     <CollapsibleButton
                                         name={more?.name ?? name}
                                         isExpanded={isExpanded}
@@ -299,7 +182,7 @@ export const Property: FunctionComponent<{
                                     <span
                                         onClick={onCollapseClick}
                                         className={classnames(styles.metaValue, {
-                                            [styles.isExpandable]: detailsCode,
+                                            [styles.isExpandable]: showAdditionalDetails,
                                         })}
                                     >
                                         {propertyType}
@@ -376,7 +259,7 @@ export const Property: FunctionComponent<{
                         </div>
                     </div>
 
-                    {detailsCode && isExpanded && (
+                    {showAdditionalDetails && isExpanded && (
                         <div id={getDetailsId(idName)} className={styles.expandedContent}>
                             {detailsCode && <CodeShiki code={detailsCode} keepMarkup={true} />}
                         </div>
