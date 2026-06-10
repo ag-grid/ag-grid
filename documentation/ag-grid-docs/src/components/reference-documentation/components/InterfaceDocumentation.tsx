@@ -1,8 +1,8 @@
 import type { Framework } from '@ag-grid-types';
-import { type FunctionComponent } from 'react';
+import { loadCodeLookup, loadInterfaceLookup } from '@stores/referenceDataStore';
+import { type FunctionComponent, useEffect } from 'react';
 
 import type { Config, DocProperties } from '../types';
-import { ReferenceDataProvider } from './ReferenceDataContext';
 import { Section } from './Section';
 
 interface Props {
@@ -12,7 +12,12 @@ interface Props {
     isInline: boolean;
 }
 
-function InterfaceDocumentationInner({ framework, model, config, isInline }: Props) {
+export const InterfaceDocumentation: FunctionComponent<Props> = ({ framework, model, config, isInline }) => {
+    useEffect(() => {
+        loadInterfaceLookup();
+        loadCodeLookup(model.codeSources);
+    }, []);
+
     return Object.entries(model.properties).map(([key, properties]) => (
         <Section
             key={key}
@@ -24,10 +29,4 @@ function InterfaceDocumentationInner({ framework, model, config, isInline }: Pro
             isInline={isInline}
         />
     ));
-}
-
-export const InterfaceDocumentation: FunctionComponent<Props> = (props) => (
-    <ReferenceDataProvider codeSources={props.model.codeSources}>
-        <InterfaceDocumentationInner {...props} />
-    </ReferenceDataProvider>
-);
+};

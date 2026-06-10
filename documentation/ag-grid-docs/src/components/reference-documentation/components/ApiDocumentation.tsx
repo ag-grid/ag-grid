@@ -1,8 +1,8 @@
 import type { Framework } from '@ag-grid-types';
-import type { FunctionComponent } from 'react';
+import { loadCodeLookup, loadInterfaceLookup } from '@stores/referenceDataStore';
+import { type FunctionComponent, useEffect } from 'react';
 
 import type { ApiDocumentationModel } from '../types';
-import { ReferenceDataProvider } from './ReferenceDataContext';
 import { Section } from './Section';
 
 interface Props {
@@ -11,7 +11,12 @@ interface Props {
     isInline: boolean;
 }
 
-function ApiDocumentationInner({ framework, model, isInline }: Props) {
+export const ApiDocumentation: FunctionComponent<Props> = ({ framework, model, isInline }) => {
+    useEffect(() => {
+        loadInterfaceLookup();
+        loadCodeLookup(model.codeSources);
+    }, []);
+
     if (model.type === 'multiple') {
         return model.entries.map(([name, { properties, meta }]) => (
             <Section
@@ -32,14 +37,7 @@ function ApiDocumentationInner({ framework, model, isInline }: Props) {
             title={model.title}
             properties={model.properties}
             config={{ ...model.config, isSubset: true }}
-            names={model.names}
             isInline={isInline}
         />
     );
-}
-
-export const ApiDocumentation: FunctionComponent<Props> = (props) => (
-    <ReferenceDataProvider codeSources={props.model.codeSources}>
-        <ApiDocumentationInner {...props} />
-    </ReferenceDataProvider>
-);
+};

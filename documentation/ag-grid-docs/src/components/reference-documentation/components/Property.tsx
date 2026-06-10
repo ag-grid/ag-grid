@@ -8,6 +8,9 @@ import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { Fragment, type FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { $codeData, $interfaceLookup } from '@stores/referenceDataStore';
+import { useStore } from '@nanostores/react';
+
 import type { ChildDocEntry, Config, PropertyDisplayData } from '../types';
 import { getTypeUrl, inferType, removeDefaultValue } from '../utils/documentation-helpers';
 import { getDefinitionType } from '../utils/getDefinitionType';
@@ -15,7 +18,6 @@ import { getDetailsCode } from '../utils/getDetailsCode';
 import { formatJson, getInterfaceName } from '../utils/interface-helpers';
 import legacyStyles from './LegacyApiReference.module.scss';
 import { PropertyModules } from './PropertyModules';
-import { useReferenceData } from './ReferenceDataContext';
 
 function getDisplayNameSplit({ name, definition }: { name: string; definition: ChildDocEntry }) {
     let displayName = name;
@@ -109,16 +111,24 @@ export const Property: FunctionComponent<{
         setExpanded((prev) => !prev);
     }, []);
 
-    const { interfaceLookup, codeLookup, hasCodeSources } = useReferenceData();
+    const interfaceLookup = useStore($interfaceLookup);
+    const codeData = useStore($codeData);
 
     const detailsCode = useMemo(() => {
         if (!isExpanded || !showAdditionalDetails || !interfaceLookup) return null;
 
-        // If the provider has code sources configured, wait for the fetch to complete.
-        // Otherwise definition.type already carries the type and gridOpProp can be undefined.
-        if (hasCodeSources && !codeLookup) return null;
+        // codeData is undefined until the island calls loadCodeLookup (even with no sources).
+        // Once set (to {} or populated), we can proceed.
+        if (codeData === undefined) return null;
 
-        const gridOpProp = codeLookup?.[name];
+        // Resolve gridOpProp from any loaded code file.
+        // api-docs files are flat: fileData[name]
+        // interface-docs files are two-level: fileData[id][name] (id = interface name)
+        let gridOpProp: any;
+        for (const fileData of Object.values(codeData)) {
+            const entry = fileData?.[id]?.[name] ?? fileData?.[name];
+            if (entry) { gridOpProp = entry; break; }
+        }
 
         const { type } = getDefinitionType({
             name,
@@ -138,7 +148,7 @@ export const Property: FunctionComponent<{
             interfaceHierarchyOverrides: definition.interfaceHierarchyOverrides,
             isApi: config.isApi,
         });
-    }, [isExpanded, showAdditionalDetails, interfaceLookup, codeLookup, hasCodeSources, name, definition, isEvent, config, framework]);
+    }, [isExpanded, showAdditionalDetails, interfaceLookup, codeData, id, name, definition, isEvent, config, framework]);
 
     return (
         <tr ref={propertyRef} className={legacyStyles.tableRow}>
