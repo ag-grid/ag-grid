@@ -104,11 +104,15 @@ export const Property: FunctionComponent<{
     const codeData = useStore($codeData);
 
     const detailsCode = useMemo(() => {
-        if (!isExpanded || !showAdditionalDetails || !interfaceLookup) return null;
+        if (!isExpanded || !showAdditionalDetails || !interfaceLookup) {
+            return null;
+        }
 
         // codeData is undefined until the island calls loadCodeLookup (even with no sources).
         // Once set (to {} or populated), we can proceed.
-        if (codeData === undefined) return null;
+        if (codeData === undefined) {
+            return null;
+        }
 
         // Resolve gridOpProp from any loaded code file.
         // api-docs files are flat: fileData[name]
