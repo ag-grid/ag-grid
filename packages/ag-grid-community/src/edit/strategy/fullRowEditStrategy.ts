@@ -6,12 +6,7 @@ import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from 
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
-import {
-    _destroyEditor,
-    _populateModelValidationErrors,
-    _setupEditor,
-    _sourceAndPendingDiffer,
-} from '../utils/editors';
+import { _destroyEditor, _setupEditor, _sourceAndPendingDiffer } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -140,7 +135,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     public override stopCommitted(event: Event | null, commit: boolean): boolean {
-        const { rowNode, beans, model, editSvc } = this;
+        const { rowNode, model, editSvc } = this;
         if (rowNode && !model.hasEdits()) {
             return false;
         }
@@ -159,7 +154,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             }
         });
 
-        _populateModelValidationErrors(beans);
+        editSvc.populateModelValidationErrors();
         if (editSvc.checkNavWithValidation({ rowNode }) === 'block-stop') {
             return false;
         }

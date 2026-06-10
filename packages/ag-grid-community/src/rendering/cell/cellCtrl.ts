@@ -16,7 +16,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { EditService } from '../../edit/editService';
-import { _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
@@ -227,9 +226,9 @@ export class CellCtrl extends BeanStub {
         if (this.editorTooltipFeature) {
             this.disableEditorTooltipFeature();
         }
-        this.editorTooltipFeature = this.beans.tooltipSvc?.setupCellEditorTooltip(this, editor);
-
-        _populateModelValidationErrors(this.beans);
+        const tooltipSvc = this.beans.tooltipSvc;
+        this.editorTooltipFeature = tooltipSvc?.setupCellEditorTooltip(this, editor);
+        this.editSvc?.populateModelValidationErrors();
     }
 
     public disableEditorTooltipFeature(): void {
