@@ -30,7 +30,11 @@ export function _createStyledRootElements(): [outer: HTMLElement, inner: HTMLEle
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _initStyledRootFromInnerOfThreeElements(env: IEnvironment, inner: HTMLElement): () => void {
+export function _initStyledRootFromInnerOfThreeElements(
+    env: IEnvironment,
+    inner: HTMLElement,
+    postApplyClasses?: () => void
+): () => void {
     const middle = inner.parentElement!;
     const outer = middle.parentElement!;
     const applyClasses = () => {
@@ -38,6 +42,7 @@ export function _initStyledRootFromInnerOfThreeElements(env: IEnvironment, inner
         outer.className = ['ag-styled-root', inheritClass].join(' ');
         middle.className = ['ag-styled-root', applyClass].join(' ');
         inner.className = ['ag-styled-root', directionClass].join(' ');
+        postApplyClasses?.();
     };
     applyClasses();
     return env.onThemeChanged(applyClasses);
