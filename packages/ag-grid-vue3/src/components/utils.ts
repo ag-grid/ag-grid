@@ -931,6 +931,7 @@ export interface Props<TData> {
     /** Callback to handle files received via the file input overlay (drag-and-drop or file browser).
          * When provided, the file input overlay is shown when there is no row data.
          * Call `params.success(rowData)` to load parsed data into the grid, or `params.fail(message)` to show an error.
+         * @agModule `FileInputOverlayModule`
          */
     processFileInput?: (params: ProcessFileInputParams<TData>) => void,
     /** Set whether pagination is enabled.

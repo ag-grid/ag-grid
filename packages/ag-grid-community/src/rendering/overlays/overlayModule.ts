@@ -2,7 +2,6 @@ import type { _OverlayGridApi } from '../../api/gridApi';
 import type { _ModuleWithApi } from '../../interfaces/iModule';
 import { VERSION } from '../../version';
 import { ExportingOverlayComponent } from './exportingOverlayComponent';
-import { FileInputOverlayComponent } from './fileInputOverlayComponent';
 import { LoadingOverlayComponent } from './loadingOverlayComponent';
 import { NoMatchingRowsOverlayComponent } from './noMatchingRowsOverlayComponent';
 import { NoRowsOverlayComponent } from './noRowsOverlayComponent';
@@ -21,7 +20,6 @@ export const OverlayModule: _ModuleWithApi<_OverlayGridApi> = {
         agNoRowsOverlay: NoRowsOverlayComponent,
         agNoMatchingRowsOverlay: NoMatchingRowsOverlayComponent,
         agExportingOverlay: ExportingOverlayComponent,
-        agFileInputOverlay: FileInputOverlayComponent,
     },
     apiFunctions: {
         showLoadingOverlay,
@@ -32,7 +30,6 @@ export const OverlayModule: _ModuleWithApi<_OverlayGridApi> = {
         // rotating spinner shown by the loading overlay
         overlayLoading: 'loading',
         overlayExporting: 'loading',
-        document: 'document',
     },
     beans: [OverlayService],
 };

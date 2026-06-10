@@ -193,7 +193,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     rowPinBottom: 'PinnedRow',
     rowPinTop: 'PinnedRow',
     search: 'Find',
-    document: 'Overlay',
+    document: 'FileInputOverlay',
 };
 
 export const DEPRECATED_ICONS_V33: Set<IconName> = new Set([
