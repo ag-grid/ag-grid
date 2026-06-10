@@ -777,6 +777,15 @@ export const AG_GRID_LOCALE_PT = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Texto',
+    dataTypeNumber: 'Número',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Booleano',
+    dataTypeDate: 'Data',
+    dataTypeDateString: 'Cadeia de data',
+    dataTypeDateTime: 'Data e hora',
+    dataTypeDateTimeString: 'Cadeia de data e hora',
+    dataTypeObject: 'Objeto',
     true: 'Verdadeiro',
     false: 'Falso',
     invalidDate: 'Data Inválida',
@@ -815,6 +824,27 @@ export const AG_GRID_LOCALE_PT = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM AAAA',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Calculated Columns
+    calculatedColumn: 'Coluna calculada',
+    calculatedColumnAdd: 'Adicionar coluna calculada',
+    calculatedColumnEdit: 'Editar coluna calculada',
+    calculatedColumnRemove: 'Remover coluna calculada',
+    calculatedColumnTitle: 'Título',
+    calculatedColumnType: 'Tipo',
+    calculatedColumnExpression: 'Expressão',
+    calculatedColumnExpressionPlaceholder: 'Escreva aqui',
+    calculatedColumnColumns: 'Colunas',
+    calculatedColumnFunctions: 'Funções',
+    calculatedColumnOperators: 'Operadores',
+    calculatedColumnSuggestions: 'Sugestões de coluna calculada',
+    calculatedColumnDefaultTitle: 'Sem título',
+    calculatedColumnExpressionAmbiguousReference:
+        'Referência de coluna ambígua "${variable}". Utilize a lista Colunas ou um caminho de grupo mais específico.',
+    calculatedColumnExpressionUnknownReference: 'Referência de coluna desconhecida "${variable}".',
+    calculatedColumnExpressionEmpty: 'Introduza uma expressão.',
+    calculatedColumnApply: 'Aplicar',
+    calculatedColumnCancel: 'Cancelar',
 
     // Notes
     note: 'Nota da célula',

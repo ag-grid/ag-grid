@@ -772,6 +772,15 @@ export const AG_GRID_LOCALE_TW = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: '文字',
+    dataTypeNumber: '數字',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: '布林值',
+    dataTypeDate: '日期',
+    dataTypeDateString: '日期字串',
+    dataTypeDateTime: '日期時間',
+    dataTypeDateTimeString: '日期時間字串',
+    dataTypeObject: '物件',
     true: '真',
     false: '假',
     invalidDate: '無效日期',
@@ -810,6 +819,27 @@ export const AG_GRID_LOCALE_TW = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
+
+    // Calculated Columns
+    calculatedColumn: '計算欄位',
+    calculatedColumnAdd: '新增計算欄位',
+    calculatedColumnEdit: '編輯計算欄位',
+    calculatedColumnRemove: '移除計算欄位',
+    calculatedColumnTitle: '標題',
+    calculatedColumnType: '類型',
+    calculatedColumnExpression: '運算式',
+    calculatedColumnExpressionPlaceholder: '在此輸入',
+    calculatedColumnColumns: '欄位',
+    calculatedColumnFunctions: '函式',
+    calculatedColumnOperators: '運算子',
+    calculatedColumnSuggestions: '計算欄位建議',
+    calculatedColumnDefaultTitle: '未命名',
+    calculatedColumnExpressionAmbiguousReference:
+        '欄位參照不明確 "${variable}"。請使用「欄位」清單或更具體的群組路徑。',
+    calculatedColumnExpressionUnknownReference: '未知的欄位參照 "${variable}"。',
+    calculatedColumnExpressionEmpty: '請輸入運算式。',
+    calculatedColumnApply: '應用',
+    calculatedColumnCancel: '取消',
 
     // Notes
     note: '儲存格備註',

@@ -778,6 +778,15 @@ export const AG_GRID_LOCALE_ES = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Texto',
+    dataTypeNumber: 'Número',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Booleano',
+    dataTypeDate: 'Fecha',
+    dataTypeDateString: 'Cadena de fecha',
+    dataTypeDateTime: 'Fecha y hora',
+    dataTypeDateTimeString: 'Cadena de fecha y hora',
+    dataTypeObject: 'Objeto',
     true: 'Verdadero',
     false: 'Falso',
     invalidDate: 'Fecha inválida',
@@ -816,6 +825,27 @@ export const AG_GRID_LOCALE_ES = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM AAAA',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS a. m./p. m.',
+
+    // Calculated Columns
+    calculatedColumn: 'Columna calculada',
+    calculatedColumnAdd: 'Añadir columna calculada',
+    calculatedColumnEdit: 'Editar columna calculada',
+    calculatedColumnRemove: 'Eliminar columna calculada',
+    calculatedColumnTitle: 'Título',
+    calculatedColumnType: 'Tipo',
+    calculatedColumnExpression: 'Expresión',
+    calculatedColumnExpressionPlaceholder: 'Escriba aquí',
+    calculatedColumnColumns: 'Columnas',
+    calculatedColumnFunctions: 'Funciones',
+    calculatedColumnOperators: 'Operadores',
+    calculatedColumnSuggestions: 'Sugerencias de columna calculada',
+    calculatedColumnDefaultTitle: 'Sin título',
+    calculatedColumnExpressionAmbiguousReference:
+        'Referencia de columna ambigua "${variable}". Use la lista de Columnas o una ruta de grupo más específica.',
+    calculatedColumnExpressionUnknownReference: 'Referencia de columna desconocida "${variable}".',
+    calculatedColumnExpressionEmpty: 'Introduzca una expresión.',
+    calculatedColumnApply: 'Aplicar',
+    calculatedColumnCancel: 'Cancelar',
 
     // Notes
     note: 'Nota de celda',

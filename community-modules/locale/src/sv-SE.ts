@@ -776,6 +776,15 @@ export const AG_GRID_LOCALE_SE = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Text',
+    dataTypeNumber: 'Tal',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Booleskt värde',
+    dataTypeDate: 'Datum',
+    dataTypeDateString: 'Datumsträng',
+    dataTypeDateTime: 'Datum och tid',
+    dataTypeDateTimeString: 'Datum- och tidssträng',
+    dataTypeObject: 'Objekt',
     true: 'Sann',
     false: 'Falsk',
     invalidDate: 'Ogiltigt datum',
@@ -814,6 +823,27 @@ export const AG_GRID_LOCALE_SE = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM ÅÅÅÅ',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS FM/EM',
+
+    // Calculated Columns
+    calculatedColumn: 'Beräknad kolumn',
+    calculatedColumnAdd: 'Lägg till beräknad kolumn',
+    calculatedColumnEdit: 'Redigera beräknad kolumn',
+    calculatedColumnRemove: 'Ta bort beräknad kolumn',
+    calculatedColumnTitle: 'Titel',
+    calculatedColumnType: 'Typ',
+    calculatedColumnExpression: 'Uttryck',
+    calculatedColumnExpressionPlaceholder: 'Skriv här',
+    calculatedColumnColumns: 'Kolumner',
+    calculatedColumnFunctions: 'Funktioner',
+    calculatedColumnOperators: 'Operatorer',
+    calculatedColumnSuggestions: 'Förslag på beräknad kolumn',
+    calculatedColumnDefaultTitle: 'Namnlös',
+    calculatedColumnExpressionAmbiguousReference:
+        'Tvetydig kolumnreferens "${variable}". Använd listan Kolumner eller en mer specifik gruppsökväg.',
+    calculatedColumnExpressionUnknownReference: 'Okänd kolumnreferens "${variable}".',
+    calculatedColumnExpressionEmpty: 'Ange ett uttryck.',
+    calculatedColumnApply: 'Verkställ',
+    calculatedColumnCancel: 'Avbryt',
 
     // Notes
     note: 'Cellanteckning',

@@ -773,6 +773,15 @@ export const AG_GRID_LOCALE_PK = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'متن',
+    dataTypeNumber: 'نمبر',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'بولین',
+    dataTypeDate: 'تاریخ',
+    dataTypeDateString: 'تاریخ سٹرنگ',
+    dataTypeDateTime: 'تاریخ اور وقت',
+    dataTypeDateTimeString: 'تاریخ اور وقت سٹرنگ',
+    dataTypeObject: 'آبجیکٹ',
     true: 'سچ',
     false: 'جھوٹ',
     invalidDate: 'غلط تاریخ',
@@ -811,6 +820,27 @@ export const AG_GRID_LOCALE_PK = {
     timeFormatSpacesDDMMMMYYYY: 'دد مممم سسسس',
     timeFormatHHMMSS: 'گگ:مم:سس',
     timeFormatHHMMSSAmPm: 'گگ:مم:سس ص/ش',
+
+    // Calculated Columns
+    calculatedColumn: 'محسوب کالم',
+    calculatedColumnAdd: 'محسوب کالم شامل کریں',
+    calculatedColumnEdit: 'محسوب کالم میں ترمیم کریں',
+    calculatedColumnRemove: 'محسوب کالم ہٹائیں',
+    calculatedColumnTitle: 'عنوان',
+    calculatedColumnType: 'قسم',
+    calculatedColumnExpression: 'اظہار',
+    calculatedColumnExpressionPlaceholder: 'یہاں لکھیں',
+    calculatedColumnColumns: 'کالمز',
+    calculatedColumnFunctions: 'فنکشنز',
+    calculatedColumnOperators: 'آپریٹرز',
+    calculatedColumnSuggestions: 'محسوب کالم کی تجاویز',
+    calculatedColumnDefaultTitle: 'بلا عنوان',
+    calculatedColumnExpressionAmbiguousReference:
+        'مبہم کالم حوالہ "${variable}"۔ کالمز کی فہرست یا زیادہ مخصوص گروپ راستہ استعمال کریں۔',
+    calculatedColumnExpressionUnknownReference: 'نامعلوم کالم حوالہ "${variable}"۔',
+    calculatedColumnExpressionEmpty: 'ایک اظہار درج کریں۔',
+    calculatedColumnApply: 'لاگو کریں',
+    calculatedColumnCancel: 'منسوخ کریں',
 
     // Notes
     note: 'سیل نوٹ',

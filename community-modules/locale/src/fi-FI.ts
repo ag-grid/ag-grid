@@ -776,6 +776,15 @@ export const AG_GRID_LOCALE_FI = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Teksti',
+    dataTypeNumber: 'Numero',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Totuusarvo',
+    dataTypeDate: 'Päivämäärä',
+    dataTypeDateString: 'Päivämäärämerkkijono',
+    dataTypeDateTime: 'Päivämäärä ja aika',
+    dataTypeDateTimeString: 'Päivämäärä- ja aikamerkkijono',
+    dataTypeObject: 'Objekti',
     true: 'Totta',
     false: 'Väärin',
     invalidDate: 'Virheellinen päivämäärä',
@@ -814,6 +823,27 @@ export const AG_GRID_LOCALE_FI = {
     timeFormatSpacesDDMMMMYYYY: 'PP KKKK VVVV',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
+
+    // Calculated Columns
+    calculatedColumn: 'Laskettu sarake',
+    calculatedColumnAdd: 'Lisää laskettu sarake',
+    calculatedColumnEdit: 'Muokkaa laskettua saraketta',
+    calculatedColumnRemove: 'Poista laskettu sarake',
+    calculatedColumnTitle: 'Otsikko',
+    calculatedColumnType: 'Tyyppi',
+    calculatedColumnExpression: 'Lauseke',
+    calculatedColumnExpressionPlaceholder: 'Kirjoita tähän',
+    calculatedColumnColumns: 'Sarakkeet',
+    calculatedColumnFunctions: 'Funktiot',
+    calculatedColumnOperators: 'Operaattorit',
+    calculatedColumnSuggestions: 'Lasketun sarakkeen ehdotukset',
+    calculatedColumnDefaultTitle: 'Nimetön',
+    calculatedColumnExpressionAmbiguousReference:
+        'Moniselitteinen sarakeviittaus "${variable}". Käytä Sarakkeet-luetteloa tai tarkempaa ryhmäpolkua.',
+    calculatedColumnExpressionUnknownReference: 'Tuntematon sarakeviittaus "${variable}".',
+    calculatedColumnExpressionEmpty: 'Anna lauseke.',
+    calculatedColumnApply: 'Käytä',
+    calculatedColumnCancel: 'Peruuta',
 
     // Notes
     note: 'Solumuistio',

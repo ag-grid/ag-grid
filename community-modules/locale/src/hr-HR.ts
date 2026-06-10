@@ -775,6 +775,15 @@ export const AG_GRID_LOCALE_HR = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Tekst',
+    dataTypeNumber: 'Broj',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Booleova vrijednost',
+    dataTypeDate: 'Datum',
+    dataTypeDateString: 'Niz datuma',
+    dataTypeDateTime: 'Datum i vrijeme',
+    dataTypeDateTimeString: 'Niz datuma i vremena',
+    dataTypeObject: 'Objekt',
     true: 'Istina',
     false: 'Lažno',
     invalidDate: 'Nevažeći datum',
@@ -813,6 +822,27 @@ export const AG_GRID_LOCALE_HR = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM GGGG',
     timeFormatHHMMSS: 'SS:MM:VV',
     timeFormatHHMMSSAmPm: 'SS:MM:VV AM/PM',
+
+    // Calculated Columns
+    calculatedColumn: 'Izračunati stupac',
+    calculatedColumnAdd: 'Dodaj izračunati stupac',
+    calculatedColumnEdit: 'Uredi izračunati stupac',
+    calculatedColumnRemove: 'Ukloni izračunati stupac',
+    calculatedColumnTitle: 'Naslov',
+    calculatedColumnType: 'Vrsta',
+    calculatedColumnExpression: 'Izraz',
+    calculatedColumnExpressionPlaceholder: 'Upišite ovdje',
+    calculatedColumnColumns: 'Stupci',
+    calculatedColumnFunctions: 'Funkcije',
+    calculatedColumnOperators: 'Operatori',
+    calculatedColumnSuggestions: 'Prijedlozi izračunatog stupca',
+    calculatedColumnDefaultTitle: 'Bez naslova',
+    calculatedColumnExpressionAmbiguousReference:
+        'Dvosmislena referenca stupca "${variable}". Upotrijebite popis Stupci ili određeniju putanju grupe.',
+    calculatedColumnExpressionUnknownReference: 'Nepoznata referenca stupca "${variable}".',
+    calculatedColumnExpressionEmpty: 'Unesite izraz.',
+    calculatedColumnApply: 'Primijeni',
+    calculatedColumnCancel: 'Odustani',
 
     // Notes
     note: 'Napomena ćelije',

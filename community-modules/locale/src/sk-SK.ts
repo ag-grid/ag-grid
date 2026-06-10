@@ -774,6 +774,15 @@ export const AG_GRID_LOCALE_SK = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Text',
+    dataTypeNumber: 'Číslo',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Logická hodnota',
+    dataTypeDate: 'Dátum',
+    dataTypeDateString: 'Reťazec dátumu',
+    dataTypeDateTime: 'Dátum a čas',
+    dataTypeDateTimeString: 'Reťazec dátumu a času',
+    dataTypeObject: 'Objekt',
     true: 'Pravda',
     false: 'Nepravda',
     invalidDate: 'Neplatný dátum',
@@ -812,6 +821,27 @@ export const AG_GRID_LOCALE_SK = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM RRRR',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Calculated Columns
+    calculatedColumn: 'Vypočítaný stĺpec',
+    calculatedColumnAdd: 'Pridať vypočítaný stĺpec',
+    calculatedColumnEdit: 'Upraviť vypočítaný stĺpec',
+    calculatedColumnRemove: 'Odstrániť vypočítaný stĺpec',
+    calculatedColumnTitle: 'Názov',
+    calculatedColumnType: 'Typ',
+    calculatedColumnExpression: 'Výraz',
+    calculatedColumnExpressionPlaceholder: 'Píšte sem',
+    calculatedColumnColumns: 'Stĺpce',
+    calculatedColumnFunctions: 'Funkcie',
+    calculatedColumnOperators: 'Operátory',
+    calculatedColumnSuggestions: 'Návrhy vypočítaného stĺpca',
+    calculatedColumnDefaultTitle: 'Bez názvu',
+    calculatedColumnExpressionAmbiguousReference:
+        'Nejednoznačný odkaz na stĺpec "${variable}". Použite zoznam Stĺpce alebo konkrétnejšiu cestu skupiny.',
+    calculatedColumnExpressionUnknownReference: 'Neznámy odkaz na stĺpec "${variable}".',
+    calculatedColumnExpressionEmpty: 'Zadajte výraz.',
+    calculatedColumnApply: 'Použiť',
+    calculatedColumnCancel: 'Zrušiť',
 
     // Notes
     note: 'Poznámka bunky',

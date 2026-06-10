@@ -780,6 +780,15 @@ export const AG_GRID_LOCALE_DE = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Text',
+    dataTypeNumber: 'Zahl',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Boolescher Wert',
+    dataTypeDate: 'Datum',
+    dataTypeDateString: 'Datumszeichenfolge',
+    dataTypeDateTime: 'Datum/Uhrzeit',
+    dataTypeDateTimeString: 'Datum/Uhrzeit-Zeichenfolge',
+    dataTypeObject: 'Objekt',
     true: 'Wahr',
     false: 'Falsch',
     invalidDate: 'Ungültiges Datum',
@@ -818,6 +827,27 @@ export const AG_GRID_LOCALE_DE = {
     timeFormatSpacesDDMMMMYYYY: 'TT MMMM JJJJ',
     timeFormatHHMMSS: 'SS:MM:SS',
     timeFormatHHMMSSAmPm: 'SS:MM:SS AM/PM',
+
+    // Calculated Columns
+    calculatedColumn: 'Berechnete Spalte',
+    calculatedColumnAdd: 'Berechnete Spalte hinzufügen',
+    calculatedColumnEdit: 'Berechnete Spalte bearbeiten',
+    calculatedColumnRemove: 'Berechnete Spalte entfernen',
+    calculatedColumnTitle: 'Titel',
+    calculatedColumnType: 'Typ',
+    calculatedColumnExpression: 'Ausdruck',
+    calculatedColumnExpressionPlaceholder: 'Hier eingeben',
+    calculatedColumnColumns: 'Spalten',
+    calculatedColumnFunctions: 'Funktionen',
+    calculatedColumnOperators: 'Operatoren',
+    calculatedColumnSuggestions: 'Vorschläge für berechnete Spalten',
+    calculatedColumnDefaultTitle: 'Ohne Titel',
+    calculatedColumnExpressionAmbiguousReference:
+        'Mehrdeutiger Spaltenverweis "${variable}". Verwenden Sie die Spaltenliste oder einen spezifischeren Gruppenpfad.',
+    calculatedColumnExpressionUnknownReference: 'Unbekannter Spaltenverweis "${variable}".',
+    calculatedColumnExpressionEmpty: 'Geben Sie einen Ausdruck ein.',
+    calculatedColumnApply: 'Anwenden',
+    calculatedColumnCancel: 'Abbrechen',
 
     // Notes
     note: 'Zellnotiz',

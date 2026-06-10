@@ -772,6 +772,15 @@ export const AG_GRID_LOCALE_CN = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: '文本',
+    dataTypeNumber: '数字',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: '布尔值',
+    dataTypeDate: '日期',
+    dataTypeDateString: '日期字符串',
+    dataTypeDateTime: '日期时间',
+    dataTypeDateTimeString: '日期时间字符串',
+    dataTypeObject: '对象',
     true: '真',
     false: '假',
     invalidDate: '无效日期',
@@ -810,6 +819,26 @@ export const AG_GRID_LOCALE_CN = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
+
+    // Calculated Columns
+    calculatedColumn: '计算列',
+    calculatedColumnAdd: '添加计算列',
+    calculatedColumnEdit: '编辑计算列',
+    calculatedColumnRemove: '删除计算列',
+    calculatedColumnTitle: '标题',
+    calculatedColumnType: '类型',
+    calculatedColumnExpression: '表达式',
+    calculatedColumnExpressionPlaceholder: '在此输入',
+    calculatedColumnColumns: '列',
+    calculatedColumnFunctions: '函数',
+    calculatedColumnOperators: '运算符',
+    calculatedColumnSuggestions: '计算列建议',
+    calculatedColumnDefaultTitle: '未命名',
+    calculatedColumnExpressionAmbiguousReference: '列引用不明确 "${variable}"。请使用“列”列表或更具体的分组路径。',
+    calculatedColumnExpressionUnknownReference: '未知的列引用 "${variable}"。',
+    calculatedColumnExpressionEmpty: '请输入表达式。',
+    calculatedColumnApply: '应用',
+    calculatedColumnCancel: '取消',
 
     // Notes
     note: '单元格备注',

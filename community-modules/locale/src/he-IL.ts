@@ -772,6 +772,15 @@ export const AG_GRID_LOCALE_IL = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'טקסט',
+    dataTypeNumber: 'מספר',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'בוליאני',
+    dataTypeDate: 'תאריך',
+    dataTypeDateString: 'מחרוזת תאריך',
+    dataTypeDateTime: 'תאריך ושעה',
+    dataTypeDateTimeString: 'מחרוזת תאריך ושעה',
+    dataTypeObject: 'אובייקט',
     true: 'True',
     false: 'False',
     invalidDate: 'תאריך לא חוקי',
@@ -810,6 +819,27 @@ export const AG_GRID_LOCALE_IL = {
     timeFormatSpacesDDMMMMYYYY: 'יי חחחח שששש',
     timeFormatHHMMSS: 'שש:דד:שש',
     timeFormatHHMMSSAmPm: 'שש:דד:שש לפנה״צ/אחה״צ',
+
+    // Calculated Columns
+    calculatedColumn: 'עמודה מחושבת',
+    calculatedColumnAdd: 'הוספת עמודה מחושבת',
+    calculatedColumnEdit: 'עריכת עמודה מחושבת',
+    calculatedColumnRemove: 'הסרת עמודה מחושבת',
+    calculatedColumnTitle: 'כותרת',
+    calculatedColumnType: 'סוג',
+    calculatedColumnExpression: 'ביטוי',
+    calculatedColumnExpressionPlaceholder: 'הקלד כאן',
+    calculatedColumnColumns: 'עמודות',
+    calculatedColumnFunctions: 'פונקציות',
+    calculatedColumnOperators: 'אופרטורים',
+    calculatedColumnSuggestions: 'הצעות לעמודה מחושבת',
+    calculatedColumnDefaultTitle: 'ללא כותרת',
+    calculatedColumnExpressionAmbiguousReference:
+        'הפניית עמודה דו-משמעית "${variable}". השתמש ברשימת העמודות או בנתיב קבוצה ספציפי יותר.',
+    calculatedColumnExpressionUnknownReference: 'הפניית עמודה לא ידועה "${variable}".',
+    calculatedColumnExpressionEmpty: 'הזן ביטוי.',
+    calculatedColumnApply: 'החל',
+    calculatedColumnCancel: 'בטל',
 
     // Notes
     note: 'הערת תא',

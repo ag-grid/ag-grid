@@ -66,6 +66,7 @@ const CalculatedColumnFormElement: ElementParams = {
         {
             tag: 'div',
             cls: 'ag-calculated-column-expression-tools',
+            ref: 'eExpressionTools',
             children: [
                 { tag: 'button', ref: 'eColumns', cls: 'ag-calculated-column-expression-tool' },
                 { tag: 'button', ref: 'eFunctions', cls: 'ag-calculated-column-expression-tool' },
@@ -77,12 +78,12 @@ const CalculatedColumnFormElement: ElementParams = {
             ref: 'eActions',
             cls: 'ag-calculated-column-actions',
             children: [
-                { tag: 'button', ref: 'eCancel', cls: 'ag-button ag-standard-button ag-calculated-column-action' },
                 {
                     tag: 'button',
                     ref: 'eApply',
                     cls: 'ag-button ag-standard-button ag-calculated-column-action ag-calculated-column-action-apply',
                 },
+                { tag: 'button', ref: 'eCancel', cls: 'ag-button ag-standard-button ag-calculated-column-action' },
             ],
         },
     ],
@@ -98,6 +99,7 @@ export class CalculatedColumnForm extends Component {
     private readonly eApply: HTMLButtonElement = RefPlaceholder;
     private readonly eCancel: HTMLButtonElement = RefPlaceholder;
     private readonly eActions: HTMLElement = RefPlaceholder;
+    private readonly eExpressionTools: HTMLElement = RefPlaceholder;
 
     private activeReplacement: { start: number; end: number } | null = null;
     private suggestionSource: HTMLElement | null = null;
@@ -175,9 +177,14 @@ export class CalculatedColumnForm extends Component {
             btn.type = 'button';
         }
 
-        _setDisplayed(this.eColumns, this.expressionPickers.has('columns'));
-        _setDisplayed(this.eFunctions, this.expressionPickers.has('functions'));
-        _setDisplayed(this.eOperators, this.expressionPickers.has('operators'));
+        const hasColumns = this.expressionPickers.has('columns');
+        const hasFunctions = this.expressionPickers.has('functions');
+        const hasOperators = this.expressionPickers.has('operators');
+
+        _setDisplayed(this.eColumns, hasColumns);
+        _setDisplayed(this.eFunctions, hasFunctions);
+        _setDisplayed(this.eOperators, hasOperators);
+        _setDisplayed(this.eExpressionTools, hasColumns || hasFunctions || hasOperators);
         _setDisplayed(this.eActions, !this.livePreview);
     }
 

@@ -772,6 +772,15 @@ export const AG_GRID_LOCALE_EG = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'نص',
+    dataTypeNumber: 'رقم',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'قيمة منطقية',
+    dataTypeDate: 'تاريخ',
+    dataTypeDateString: 'سلسلة تاريخ',
+    dataTypeDateTime: 'تاريخ ووقت',
+    dataTypeDateTimeString: 'سلسلة تاريخ ووقت',
+    dataTypeObject: 'كائن',
     true: 'صح',
     false: 'خطأ',
     invalidDate: 'تاريخ غير صالح',
@@ -810,6 +819,27 @@ export const AG_GRID_LOCALE_EG = {
     timeFormatSpacesDDMMMMYYYY: 'يوم شهر سنة',
     timeFormatHHMMSS: 'ساعة:دقيقة:ثانية',
     timeFormatHHMMSSAmPm: 'ساعة:دقيقة:ثانية ص/م',
+
+    // Calculated Columns
+    calculatedColumn: 'عمود محسوب',
+    calculatedColumnAdd: 'إضافة عمود محسوب',
+    calculatedColumnEdit: 'تعديل عمود محسوب',
+    calculatedColumnRemove: 'إزالة عمود محسوب',
+    calculatedColumnTitle: 'العنوان',
+    calculatedColumnType: 'النوع',
+    calculatedColumnExpression: 'التعبير',
+    calculatedColumnExpressionPlaceholder: 'اكتب هنا',
+    calculatedColumnColumns: 'أعمدة',
+    calculatedColumnFunctions: 'الدوال',
+    calculatedColumnOperators: 'المعاملات',
+    calculatedColumnSuggestions: 'اقتراحات الأعمدة المحسوبة',
+    calculatedColumnDefaultTitle: 'بدون عنوان',
+    calculatedColumnExpressionAmbiguousReference:
+        'مرجع عمود غامض "${variable}". استخدم قائمة الأعمدة أو مسار مجموعة أكثر تحديدًا.',
+    calculatedColumnExpressionUnknownReference: 'مرجع عمود غير معروف "${variable}".',
+    calculatedColumnExpressionEmpty: 'أدخل تعبيرًا.',
+    calculatedColumnApply: 'تطبيق',
+    calculatedColumnCancel: 'إلغاء',
 
     // Notes
     note: 'ملاحظة الخلية',

@@ -775,6 +775,15 @@ export const AG_GRID_LOCALE_UA = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Текст',
+    dataTypeNumber: 'Число',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Логічне значення',
+    dataTypeDate: 'Дата',
+    dataTypeDateString: 'Рядок дати',
+    dataTypeDateTime: 'Дата й час',
+    dataTypeDateTimeString: 'Рядок дати й часу',
+    dataTypeObject: 'Об’єкт',
     true: 'Правда',
     false: 'Неправда',
     invalidDate: 'Невірна дата',
@@ -813,6 +822,27 @@ export const AG_GRID_LOCALE_UA = {
     timeFormatSpacesDDMMMMYYYY: 'ДД ММММ РРРР',
     timeFormatHHMMSS: 'ГГ:ХХ:СС',
     timeFormatHHMMSSAmPm: 'ГГ:ХХ:СС AM/PM',
+
+    // Calculated Columns
+    calculatedColumn: 'Обчислюваний стовпець',
+    calculatedColumnAdd: 'Додати обчислюваний стовпець',
+    calculatedColumnEdit: 'Редагувати обчислюваний стовпець',
+    calculatedColumnRemove: 'Видалити обчислюваний стовпець',
+    calculatedColumnTitle: 'Назва',
+    calculatedColumnType: 'Тип',
+    calculatedColumnExpression: 'Вираз',
+    calculatedColumnExpressionPlaceholder: 'Введіть тут',
+    calculatedColumnColumns: 'Стовпці',
+    calculatedColumnFunctions: 'Функції',
+    calculatedColumnOperators: 'Оператори',
+    calculatedColumnSuggestions: 'Пропозиції для обчислюваного стовпця',
+    calculatedColumnDefaultTitle: 'Без назви',
+    calculatedColumnExpressionAmbiguousReference:
+        'Неоднозначне посилання на стовпець "${variable}". Скористайтеся списком Стовпці або точнішим шляхом групи.',
+    calculatedColumnExpressionUnknownReference: 'Невідоме посилання на стовпець "${variable}".',
+    calculatedColumnExpressionEmpty: 'Введіть вираз.',
+    calculatedColumnApply: 'Застосувати',
+    calculatedColumnCancel: 'Скасувати',
 
     // Notes
     note: 'Нотатка комірки',

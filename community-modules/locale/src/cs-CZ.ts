@@ -773,6 +773,15 @@ export const AG_GRID_LOCALE_CZ = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Text',
+    dataTypeNumber: 'Číslo',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Logická hodnota',
+    dataTypeDate: 'Datum',
+    dataTypeDateString: 'Řetězec data',
+    dataTypeDateTime: 'Datum a čas',
+    dataTypeDateTimeString: 'Řetězec data a času',
+    dataTypeObject: 'Objekt',
     true: 'Pravda',
     false: 'Nepravda',
     invalidDate: 'Neplatné datum',
@@ -811,6 +820,27 @@ export const AG_GRID_LOCALE_CZ = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM RRRR',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Calculated Columns
+    calculatedColumn: 'Vypočítaný sloupec',
+    calculatedColumnAdd: 'Přidat vypočítaný sloupec',
+    calculatedColumnEdit: 'Upravit vypočítaný sloupec',
+    calculatedColumnRemove: 'Odebrat vypočítaný sloupec',
+    calculatedColumnTitle: 'Název',
+    calculatedColumnType: 'Typ',
+    calculatedColumnExpression: 'Výraz',
+    calculatedColumnExpressionPlaceholder: 'Pište zde',
+    calculatedColumnColumns: 'Sloupce',
+    calculatedColumnFunctions: 'Funkce',
+    calculatedColumnOperators: 'Operátory',
+    calculatedColumnSuggestions: 'Návrhy vypočítaného sloupce',
+    calculatedColumnDefaultTitle: 'Bez názvu',
+    calculatedColumnExpressionAmbiguousReference:
+        'Nejednoznačný odkaz na sloupec "${variable}". Použijte seznam Sloupce nebo konkrétnější cestu skupiny.',
+    calculatedColumnExpressionUnknownReference: 'Neznámý odkaz na sloupec "${variable}".',
+    calculatedColumnExpressionEmpty: 'Zadejte výraz.',
+    calculatedColumnApply: 'Použít',
+    calculatedColumnCancel: 'Zrušit',
 
     // Notes
     note: 'Poznámka buňky',

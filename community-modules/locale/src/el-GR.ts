@@ -779,6 +779,15 @@ export const AG_GRID_LOCALE_GR = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Κείμενο',
+    dataTypeNumber: 'Αριθμός',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Δυαδική τιμή',
+    dataTypeDate: 'Ημερομηνία',
+    dataTypeDateString: 'Συμβολοσειρά ημερομηνίας',
+    dataTypeDateTime: 'Ημερομηνία και ώρα',
+    dataTypeDateTimeString: 'Συμβολοσειρά ημερομηνίας και ώρας',
+    dataTypeObject: 'Αντικείμενο',
     true: 'Αληθές',
     false: 'Ψευδές',
     invalidDate: 'Μη έγκυρη ημερομηνία',
@@ -817,6 +826,27 @@ export const AG_GRID_LOCALE_GR = {
     timeFormatSpacesDDMMMMYYYY: 'ΗΗ ΜΜΜΜ ΕΕΕΕ',
     timeFormatHHMMSS: 'ΩΩ:ΛΛ:ΔΔ',
     timeFormatHHMMSSAmPm: 'ΩΩ:ΛΛ:ΔΔ ΠΜ/ΜΜ',
+
+    // Calculated Columns
+    calculatedColumn: 'Υπολογιζόμενη στήλη',
+    calculatedColumnAdd: 'Προσθήκη υπολογιζόμενης στήλης',
+    calculatedColumnEdit: 'Επεξεργασία υπολογιζόμενης στήλης',
+    calculatedColumnRemove: 'Αφαίρεση υπολογιζόμενης στήλης',
+    calculatedColumnTitle: 'Τίτλος',
+    calculatedColumnType: 'Τύπος',
+    calculatedColumnExpression: 'Έκφραση',
+    calculatedColumnExpressionPlaceholder: 'Πληκτρολογήστε εδώ',
+    calculatedColumnColumns: 'Στήλες',
+    calculatedColumnFunctions: 'Συναρτήσεις',
+    calculatedColumnOperators: 'Τελεστές',
+    calculatedColumnSuggestions: 'Προτάσεις υπολογιζόμενης στήλης',
+    calculatedColumnDefaultTitle: 'Χωρίς τίτλο',
+    calculatedColumnExpressionAmbiguousReference:
+        'Ασαφής αναφορά στήλης "${variable}". Χρησιμοποιήστε τη λίστα Στήλες ή μια πιο συγκεκριμένη διαδρομή ομάδας.',
+    calculatedColumnExpressionUnknownReference: 'Άγνωστη αναφορά στήλης "${variable}".',
+    calculatedColumnExpressionEmpty: 'Εισαγάγετε μια έκφραση.',
+    calculatedColumnApply: 'Εφαρμογή',
+    calculatedColumnCancel: 'Ακύρωση',
 
     // Notes
     note: 'Σημείωση κελιού',

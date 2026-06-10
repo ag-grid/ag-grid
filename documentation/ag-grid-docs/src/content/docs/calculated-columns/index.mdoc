@@ -25,7 +25,7 @@ const gridOptions = {
 };
 ```
 
-{% gridExampleRunner title="Calculated Columns" name="calculated-columns" exampleHeight=350 /%}
+{% gridExampleRunner title="Calculated Columns" name="calculated-columns" /%}
 
 Calculated expressions do not need a leading equals sign (`=`). The value inside brackets must match a column `colId`, which defaults to the `field` when no explicit `colId` is provided.
 
@@ -43,7 +43,7 @@ Calculated values appear on leaf rows only. Row group rows, Tree Data parents (i
 
 This avoids a misleading result. Evaluating the expression against aggregated inputs does not match the aggregate of the per-row results for non-linear expressions: `[revenue] / [cost]` on a group would be `sum(revenue) / sum(cost)`, not the average of each leaf row's ratio.
 
-{% gridExampleRunner title="Row Groups with Calculated Columns" name="calculated-columns-row-groups" exampleHeight=420 /%}
+{% gridExampleRunner title="Row Groups with Calculated Columns" name="calculated-columns-row-groups" /%}
 
 ## References with Column Groups
 
@@ -55,7 +55,7 @@ If two columns share the same header _and_ the same group hierarchy, the referen
 
 The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `2025` and `2026` column groups. The year groups start collapsed and show a calculated `Total` column; expanding a group reveals the quarter columns. The dialog shows grouped references such as `[2025 Q4]` and `[2026 Q4]`, while the source code stores stable `colId` references such as `[q4_2025]` and `[q4_2026]`.
 
-{% gridExampleRunner title="Column Groups with Duplicate Headers" name="calculated-columns-column-groups" exampleHeight=420 /%}
+{% gridExampleRunner title="Column Groups with Duplicate Headers" name="calculated-columns-column-groups" /%}
 
 The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`.
 
@@ -77,7 +77,7 @@ const gridOptions = {
 
 Built-in types use the grid's locale text, while custom type names are capitalised in the dialog. If a selected value does not match a registered cell data type, the grid's normal `cellDataType` validation applies when the calculated column is created.
 
-{% gridExampleRunner title="Dialog Data Types" name="calculated-columns-dialog-data-types" exampleHeight=350 /%}
+{% gridExampleRunner title="Dialog Data Types" name="calculated-columns-dialog-data-types" /%}
 
 ### expressionPickers
 
@@ -93,7 +93,7 @@ const gridOptions = {
 
 This only controls the expression picker buttons. Use an empty array or `null` to hide all picker buttons. Inline autocomplete while typing in the expression editor remains available.
 
-{% gridExampleRunner title="Dialog Expression Pickers" name="calculated-columns-dialog-helper-lists" exampleHeight=350 /%}
+{% gridExampleRunner title="Dialog Expression Pickers" name="calculated-columns-dialog-helper-lists" /%}
 
 ### suppressColumnHighlighting
 
@@ -110,7 +110,7 @@ const gridOptions = {
 
 When highlighting is not suppressed, the header and cells highlight colour can be customised with the `--ag-calculated-column-highlight-color` CSS variable.
 
-{% gridExampleRunner title="Suppress Dialog Column Highlighting" name="calculated-columns-dialog-highlighting" exampleHeight=350 /%}
+{% gridExampleRunner title="Suppress Dialog Column Highlighting" name="calculated-columns-dialog-highlighting" /%}
 
 ### livePreview
 
@@ -128,7 +128,7 @@ With live preview enabled, **Add Calculated Column** creates the column immediat
 
 An empty expression is valid in live preview and renders blank cells. Invalid or incomplete expressions are also stored while editing and render formula errors until fixed.
 
-{% gridExampleRunner title="Live Preview" name="calculated-columns-live-preview" exampleHeight=350 /%}
+{% gridExampleRunner title="Live Preview" name="calculated-columns-live-preview" /%}
 
 ## Advanced Calculated Columns
 
@@ -159,7 +159,7 @@ const gridOptions = {
 };
 ```
 
-{% gridExampleRunner title="Advanced Calculated Columns" name="calculated-columns-advanced" exampleHeight=390 /%}
+{% gridExampleRunner title="Advanced Calculated Columns" name="calculated-columns-advanced" /%}
 
 Header cells and grid cells for calculated columns include the `ag-calculated-column` CSS class, which can be used for custom styling.
 

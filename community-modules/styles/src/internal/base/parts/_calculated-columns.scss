@@ -1,12 +1,12 @@
 @mixin output {
     .ag-calculated-column-panel .ag-panel-content-wrapper {
-        padding: var(--ag-grid-size);
+        padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);
     }
 
     .ag-calculated-column-form {
         display: flex;
         flex-direction: column;
-        gap: var(--ag-grid-size);
+        gap: calc(var(--ag-grid-size) * 2);
         min-width: 260px;
         flex: 1 1 auto;
         min-height: 0;

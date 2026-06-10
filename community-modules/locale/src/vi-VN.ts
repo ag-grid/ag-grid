@@ -773,6 +773,15 @@ export const AG_GRID_LOCALE_VN = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Văn bản',
+    dataTypeNumber: 'Số',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Boolean',
+    dataTypeDate: 'Ngày',
+    dataTypeDateString: 'Chuỗi ngày',
+    dataTypeDateTime: 'Ngày giờ',
+    dataTypeDateTimeString: 'Chuỗi ngày giờ',
+    dataTypeObject: 'Đối tượng',
     true: 'Đúng',
     false: 'Sai',
     invalidDate: 'Ngày không hợp lệ',
@@ -811,6 +820,27 @@ export const AG_GRID_LOCALE_VN = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS SA/CH',
+
+    // Calculated Columns
+    calculatedColumn: 'Cột tính toán',
+    calculatedColumnAdd: 'Thêm cột tính toán',
+    calculatedColumnEdit: 'Chỉnh sửa cột tính toán',
+    calculatedColumnRemove: 'Xóa cột tính toán',
+    calculatedColumnTitle: 'Tiêu đề',
+    calculatedColumnType: 'Loại',
+    calculatedColumnExpression: 'Biểu thức',
+    calculatedColumnExpressionPlaceholder: 'Nhập tại đây',
+    calculatedColumnColumns: 'Cột',
+    calculatedColumnFunctions: 'Hàm',
+    calculatedColumnOperators: 'Toán tử',
+    calculatedColumnSuggestions: 'Gợi ý cột tính toán',
+    calculatedColumnDefaultTitle: 'Không có tiêu đề',
+    calculatedColumnExpressionAmbiguousReference:
+        'Tham chiếu cột không rõ ràng "${variable}". Hãy dùng danh sách Cột hoặc đường dẫn nhóm cụ thể hơn.',
+    calculatedColumnExpressionUnknownReference: 'Tham chiếu cột không xác định "${variable}".',
+    calculatedColumnExpressionEmpty: 'Nhập một biểu thức.',
+    calculatedColumnApply: 'Áp dụng',
+    calculatedColumnCancel: 'Hủy',
 
     // Notes
     note: 'Ghi chú ô',

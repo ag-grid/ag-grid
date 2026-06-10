@@ -777,6 +777,15 @@ export const AG_GRID_LOCALE_RO = {
     decimalSeparator: '.',
 
     // Data types
+    dataTypeText: 'Text',
+    dataTypeNumber: 'Număr',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Boolean',
+    dataTypeDate: 'Dată',
+    dataTypeDateString: 'Șir de dată',
+    dataTypeDateTime: 'Dată și oră',
+    dataTypeDateTimeString: 'Șir de dată și oră',
+    dataTypeObject: 'Obiect',
     true: 'Adevărat',
     false: 'Fals',
     invalidDate: 'Dată invalidă',
@@ -815,6 +824,27 @@ export const AG_GRID_LOCALE_RO = {
     timeFormatSpacesDDMMMMYYYY: 'ZZ LLLL AAAA',
     timeFormatHHMMSS: 'OO:MM:SS',
     timeFormatHHMMSSAmPm: 'OO:MM:SS AM/PM',
+
+    // Calculated Columns
+    calculatedColumn: 'Coloană calculată',
+    calculatedColumnAdd: 'Adăugare coloană calculată',
+    calculatedColumnEdit: 'Editare coloană calculată',
+    calculatedColumnRemove: 'Eliminare coloană calculată',
+    calculatedColumnTitle: 'Titlu',
+    calculatedColumnType: 'Tip',
+    calculatedColumnExpression: 'Expresie',
+    calculatedColumnExpressionPlaceholder: 'Introduceți aici',
+    calculatedColumnColumns: 'Coloane',
+    calculatedColumnFunctions: 'Funcții',
+    calculatedColumnOperators: 'Operatori',
+    calculatedColumnSuggestions: 'Sugestii pentru coloana calculată',
+    calculatedColumnDefaultTitle: 'Fără titlu',
+    calculatedColumnExpressionAmbiguousReference:
+        'Referință de coloană ambiguă "${variable}". Utilizați lista Coloane sau o cale de grup mai specifică.',
+    calculatedColumnExpressionUnknownReference: 'Referință de coloană necunoscută "${variable}".',
+    calculatedColumnExpressionEmpty: 'Introduceți o expresie.',
+    calculatedColumnApply: 'Aplică',
+    calculatedColumnCancel: 'Anulează',
 
     // Notes
     note: 'Notă celulă',

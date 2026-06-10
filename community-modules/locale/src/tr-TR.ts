@@ -778,6 +778,15 @@ export const AG_GRID_LOCALE_TR = {
     decimalSeparator: ',',
 
     // Data types
+    dataTypeText: 'Metin',
+    dataTypeNumber: 'Sayı',
+    dataTypeBigInt: 'BigInt',
+    dataTypeBoolean: 'Boole',
+    dataTypeDate: 'Tarih',
+    dataTypeDateString: 'Tarih dizesi',
+    dataTypeDateTime: 'Tarih ve saat',
+    dataTypeDateTimeString: 'Tarih ve saat dizesi',
+    dataTypeObject: 'Nesne',
     true: 'Doğru',
     false: 'Yanlış',
     invalidDate: 'Geçersiz Tarih',
@@ -816,6 +825,27 @@ export const AG_GRID_LOCALE_TR = {
     timeFormatSpacesDDMMMMYYYY: 'GG AAAA YYYY',
     timeFormatHHMMSS: 'SS:DD:SN',
     timeFormatHHMMSSAmPm: 'SS:DD:SN ÖÖ/ÖS',
+
+    // Calculated Columns
+    calculatedColumn: 'Hesaplanan sütun',
+    calculatedColumnAdd: 'Hesaplanan sütun ekle',
+    calculatedColumnEdit: 'Hesaplanan sütunu düzenle',
+    calculatedColumnRemove: 'Hesaplanan sütunu kaldır',
+    calculatedColumnTitle: 'Başlık',
+    calculatedColumnType: 'Tür',
+    calculatedColumnExpression: 'İfade',
+    calculatedColumnExpressionPlaceholder: 'Buraya yazın',
+    calculatedColumnColumns: 'Sütunlar',
+    calculatedColumnFunctions: 'Fonksiyonlar',
+    calculatedColumnOperators: 'Operatörler',
+    calculatedColumnSuggestions: 'Hesaplanan sütun önerileri',
+    calculatedColumnDefaultTitle: 'Başlıksız',
+    calculatedColumnExpressionAmbiguousReference:
+        'Belirsiz sütun başvurusu "${variable}". Sütunlar listesini veya daha belirli bir grup yolunu kullanın.',
+    calculatedColumnExpressionUnknownReference: 'Bilinmeyen sütun başvurusu "${variable}".',
+    calculatedColumnExpressionEmpty: 'Bir ifade girin.',
+    calculatedColumnApply: 'Uygula',
+    calculatedColumnCancel: 'İptal',
 
     // Notes
     note: 'Hücre notu',

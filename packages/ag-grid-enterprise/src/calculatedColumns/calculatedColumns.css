@@ -1,11 +1,11 @@
 :where(.ag-calculated-column-panel .ag-panel-content-wrapper) {
-    padding: var(--ag-spacing);
+    padding: var(--ag-spacing) var(--ag-cell-horizontal-padding);
 }
 
 .ag-calculated-column-form {
     display: flex;
     flex-direction: column;
-    gap: var(--ag-spacing);
+    gap: calc(var(--ag-spacing) * 2);
     min-width: 260px;
     flex: 1 1 auto;
     min-height: 0;

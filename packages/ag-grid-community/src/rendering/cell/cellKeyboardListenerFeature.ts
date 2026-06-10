@@ -3,7 +3,6 @@ import { KeyCode, _isMacOsUserAgent } from 'ag-stack';
 import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import { _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import { _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
@@ -173,7 +172,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
             }
 
             // re-run ALL validations, Enter key is used to commit the edit, so we want to ensure it's valid
-            _populateModelValidationErrors(beans);
+            editSvc?.populateModelValidationErrors();
 
             if (editSvc?.checkNavWithValidation(undefined, event) === 'block-stop') {
                 return;
@@ -232,7 +231,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (editing) {
             // re-run ALL validations, F2 is used to initiate a new edit. If we have one already in progress,
             // we want to ensure it's valid before initiating a new edit cycle
-            _populateModelValidationErrors(this.beans);
+            editSvc?.populateModelValidationErrors();
 
             if (editSvc?.checkNavWithValidation(undefined, event) === 'block-stop') {
                 return;
