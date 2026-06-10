@@ -187,7 +187,7 @@ function isInsideBracketReference(expression: string, offset: number): boolean {
     return bracketStart > bracketEnd;
 }
 
-function isInsideStringLiteral(expression: string, offset: number): boolean {
+export function isInsideStringLiteral(expression: string, offset: number): boolean {
     let inString = false;
     for (let i = 0; i < offset && i < expression.length; ++i) {
         if (expression[i] !== '"') {

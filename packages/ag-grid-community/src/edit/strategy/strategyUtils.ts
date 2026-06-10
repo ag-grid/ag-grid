@@ -1,6 +1,5 @@
 import { KeyCode } from 'ag-stack';
 
-import { _hasCalculatedExpression } from '../../columns/calculatedColumnUtils';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
@@ -77,7 +76,7 @@ export function isCellEditable(beans: BeanCollection, editPosition: Required<Edi
     const rowNode = editPosition.rowNode;
     const colDef = column.getColDef();
 
-    if (_hasCalculatedExpression(colDef) && beans.calculatedColsSvc != null) {
+    if (column.isCalculatedCol) {
         return false;
     }
 

@@ -89,7 +89,7 @@ export abstract class BaseEnvironment<
         });
         this.addDestroyFunc(() => this.mutationObserver.disconnect());
 
-        this.addDestroyFunc(_initStyledRootFromInnerOfThreeElements(this, eRootDiv));
+        this.initStyledRoot();
         this.getSizeEl(LIST_ITEM_HEIGHT);
         this.initVariables();
 
@@ -306,6 +306,11 @@ export abstract class BaseEnvironment<
             type: 'stylesChanged',
             [`${change}Changed`]: true,
         });
+    }
+
+    // overridden by studio
+    protected initStyledRoot(): void {
+        this.addDestroyFunc(_initStyledRootFromInnerOfThreeElements(this, this.eRootDiv));
     }
 }
 
