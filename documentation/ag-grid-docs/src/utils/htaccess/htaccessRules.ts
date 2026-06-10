@@ -1,6 +1,6 @@
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
 import type { CspEnv } from './cspRules';
-import { getCspHtaccessBlock, getCspHtaccessLine } from './cspRules';
+import { getCspHtaccessBlock } from './cspRules';
 import { SITE_301_REDIRECTS } from './redirects';
 
 export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
@@ -154,8 +154,7 @@ function getStagingHtaccessContent(): string {
     return `${baseRules}
 
 # Content-Security-Policy — enforced. Unsets the legacy wildcard CSP on the staging
-# vhost so this tightened policy is the only one in effect. Production stays
-# report-only on latest until the release enforce rollout is verified.
+# vhost so this tightened policy is the only one in effect.
 ${getCspHtaccessBlock({ env: 'staging' }, 'enforce')}
 
 Options -Indexes
@@ -174,11 +173,12 @@ ${getModRewriteRules()}
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
-# Content-Security-Policy — report-only while validating the tightened policy on production.
-# Ships alongside the existing loose enforcing CSP on the vhost: that one still allows
-# everything (nothing breaks), this one reports what the tightened policy would block.
-# Flip to enforce + remove the vhost wildcard once the report-only window is clean.
-${getCspHtaccessLine({ env: 'production' }, 'report-only')}
+# Content-Security-Policy — enforced (the report-only validation window is complete).
+# The block unsets the inherited headers (incl. the legacy wildcard CSP on the vhost)
+# and sets this tightened policy as the enforced CSP. If the vhost wildcard lingers as a
+# separate header, browsers enforce the intersection, so the tightened policy still wins;
+# removing the vhost wildcard line is a follow-up infra cleanup.
+${getCspHtaccessBlock({ env: 'production' }, 'enforce')}
 
 # CORS settings
 Header add Access-Control-Allow-Origin "*"
