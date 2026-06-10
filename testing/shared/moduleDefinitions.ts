@@ -5,7 +5,7 @@ import type {
 } from '../../packages/ag-grid-community/src/interfaces/iModule';
 
 // Use satisfies for type safety (catches typos) while allowing extra modules not in release types
-export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'BigIntFilterModule', number> = {
+export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'FileInputOverlayModule', number> = {
     AlignedGridsModule: 6.88,
     AllCommunityModule: 511.54,
     AutoGenerateColumnsModule: 5,
