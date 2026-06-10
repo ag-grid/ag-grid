@@ -122,7 +122,7 @@ export class CalculatedColumnForm extends Component {
         private readonly onValidate: (draft: CalculatedColumnDraft) => string | null,
         private readonly onApply: (draft: CalculatedColumnDraft) => string | null,
         private readonly onCancel: () => void,
-        private readonly livePreview = false,
+        private readonly liveApply: boolean,
         private readonly onDraftChange?: (draft: CalculatedColumnDraft) => void
     ) {
         super(CalculatedColumnFormElement, [AgInputTextFieldSelector, AgSelectSelector, AgInputTextAreaSelector]);
@@ -132,9 +132,11 @@ export class CalculatedColumnForm extends Component {
     public postConstruct(): void {
         this.setupFormFields();
         this.setupActionButtons();
-        if (!this.livePreview) {
+
+        if (!this.liveApply) {
             this.setupValidationTooltip();
         }
+
         this.addFormFieldListeners();
         this.setupExpressionEditor();
         this.addActionListeners();
@@ -185,7 +187,7 @@ export class CalculatedColumnForm extends Component {
         _setDisplayed(this.eFunctions, hasFunctions);
         _setDisplayed(this.eOperators, hasOperators);
         _setDisplayed(this.eExpressionTools, hasColumns || hasFunctions || hasOperators);
-        _setDisplayed(this.eActions, !this.livePreview);
+        _setDisplayed(this.eActions, !this.liveApply);
     }
 
     private addFormFieldListeners(): void {
@@ -196,7 +198,7 @@ export class CalculatedColumnForm extends Component {
         });
         this.eExpression.onValueChange((value) => {
             this.updateDraft({ calculatedExpression: value ?? '' });
-            if (!this.livePreview) {
+            if (!this.liveApply) {
                 this.setExpressionError(this.onValidate(this.draft));
             }
             this.refreshContextSuggestions();
@@ -236,7 +238,7 @@ export class CalculatedColumnForm extends Component {
                 });
             }
         }
-        if (!this.livePreview) {
+        if (!this.liveApply) {
             this.addManagedElementListeners(this.eApply, {
                 click: () => this.setExpressionError(this.onApply(this.draft)),
             });

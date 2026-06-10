@@ -63,6 +63,8 @@ The dialog manages calculated columns inside the grid without mutating the `colu
 
 The Calculated Column dialog can be configured with the `calculatedColumns` grid option.
 
+While a column's dialog is open, the column's header and cells are highlighted. The highlight colour can be customised with the `--ag-calculated-column-highlight-color` CSS variable.
+
 ### dataTypes
 
 Use `dataTypes` to control which cell data types appear in the dialog type dropdown:
@@ -97,7 +99,7 @@ This only controls the expression picker buttons. Use an empty array or `null` t
 
 ### suppressColumnHighlighting
 
-Calculated columns are highlighted by default while their edit dialog is open. Use `suppressColumnHighlighting` to disable this highlight:
+Use `suppressColumnHighlighting` to disable the highlight while the dialog is open:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -108,27 +110,23 @@ const gridOptions = {
 };
 ```
 
-When highlighting is not suppressed, the header and cells highlight colour can be customised with the `--ag-calculated-column-highlight-color` CSS variable.
-
 {% gridExampleRunner title="Suppress Dialog Column Highlighting" name="calculated-columns-dialog-highlighting" /%}
 
-### livePreview
+### applyMode
 
-Use `livePreview` to apply dialog edits immediately instead of using Apply and Cancel buttons:
+By default, dialog edits apply to the column immediately: **Add Calculated Column** creates the column and opens the dialog over it, and title, type and expression changes update the column as you type. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**. An empty expression renders blank cells, and invalid or incomplete expressions render formula errors until fixed.
+
+Set `applyMode: 'deferred'` to hold changes until the **Apply** button is clicked instead. In deferred mode the dialog shows Apply and Cancel buttons and validates the expression, so invalid expressions cannot be applied:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     calculatedColumns: {
-        livePreview: true,
+        applyMode: 'deferred',
     },
 };
 ```
 
-With live preview enabled, **Add Calculated Column** creates the column immediately and opens the dialog for editing. Title, type and expression changes update the column live. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**.
-
-An empty expression is valid in live preview and renders blank cells. Invalid or incomplete expressions are also stored while editing and render formula errors until fixed.
-
-{% gridExampleRunner title="Live Preview" name="calculated-columns-live-preview" /%}
+{% gridExampleRunner title="Deferred Apply Mode" name="calculated-columns-apply-mode" /%}
 
 ## Advanced Calculated Columns
 

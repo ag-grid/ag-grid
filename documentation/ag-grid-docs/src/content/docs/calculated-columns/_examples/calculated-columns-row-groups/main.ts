@@ -66,6 +66,21 @@ const rowData: SalesRow[] = [
     { productType: 'Charging', product: 'Battery pack', revenue: 126000, cost: 101000 },
     { productType: 'Charging', product: 'EV charger', revenue: 92000, cost: 61000 },
     { productType: 'Heating', product: 'Heat pump', revenue: 168000, cost: 119000 },
+    { productType: 'Heating', product: 'Hybrid boiler', revenue: 156000, cost: 117000 },
+    { productType: 'Heating', product: 'Heat recovery unit', revenue: 124000, cost: 88000 },
+    { productType: 'Storage', product: 'Storage cabinet', revenue: 71000, cost: 52000 },
+    { productType: 'Storage', product: 'Lithium rack', revenue: 143000, cost: 112000 },
+    { productType: 'Storage', product: 'Flow battery', revenue: 187000, cost: 149000 },
+    { productType: 'Storage', product: 'Backup generator', revenue: 173000, cost: 131000 },
+    { productType: 'Wind', product: 'Wind turbine kit', revenue: 232000, cost: 171000 },
+    { productType: 'Wind', product: 'Micro turbine', revenue: 76000, cost: 49000 },
+    { productType: 'Wind', product: 'Tower mount', revenue: 41000, cost: 26000 },
+    { productType: 'Monitoring', product: 'Energy monitor', revenue: 47000, cost: 29000 },
+    { productType: 'Monitoring', product: 'Smart meter', revenue: 39000, cost: 24000 },
+    { productType: 'Monitoring', product: 'Grid analyser', revenue: 58000, cost: 36000 },
+    { productType: 'Efficiency', product: 'Insulation pack', revenue: 44000, cost: 27000 },
+    { productType: 'Efficiency', product: 'LED retrofit', revenue: 36000, cost: 21000 },
+    { productType: 'Efficiency', product: 'Window film', revenue: 28000, cost: 16000 },
 ];
 
 const gridOptions: GridOptions<SalesRow> = {

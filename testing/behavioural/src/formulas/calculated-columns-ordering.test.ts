@@ -383,12 +383,11 @@ describe('calculated columns - display ordering', () => {
 
     // === Rule 2: dialog add lands immediately after the anchor leaf ==============================
 
-    test('livePreview adds immediately and updates expression and title live', async () => {
+    test('live apply mode (default) adds immediately and updates expression and title live', async () => {
         const events: { type: string; expression?: string; oldExpression?: string; newExpression?: string }[] = [];
         const api = createGrid('calculated-live-preview-add', {
             rowData: [{ id: 'r1', age: 23 }],
             columnDefs: [{ field: 'age' }],
-            calculatedColumns: { livePreview: true },
             onCalculatedColumnCreated: (event) => events.push({ type: event.type, expression: event.expression }),
             onCalculatedColumnExpressionChanged: (event) =>
                 events.push({
@@ -432,11 +431,10 @@ describe('calculated columns - display ordering', () => {
         ]);
     });
 
-    test('livePreview commits invalid expressions without marking the editor invalid', async () => {
+    test('live apply mode commits invalid expressions without marking the editor invalid', async () => {
         const api = createGrid('calculated-live-preview-invalid-expression', {
             rowData: [{ id: 'r1', age: 23 }],
             columnDefs: [{ field: 'age' }],
-            calculatedColumns: { livePreview: true },
         });
 
         enableOffsetParentPolyfill();

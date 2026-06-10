@@ -7,6 +7,8 @@ import type { ColumnEventType } from '../events';
 
 export type CalculatedColumnExpressionPicker = 'columns' | 'functions' | 'operators';
 
+export type CalculatedColumnApplyMode = 'live' | 'deferred';
+
 export interface CalculatedColumnsOptions {
     /**
      * Cell data types shown in the Calculated Column dialog type selector.
@@ -25,10 +27,11 @@ export interface CalculatedColumnsOptions {
      */
     suppressColumnHighlighting?: boolean;
     /**
-     * Apply Calculated Column dialog changes immediately, without Apply or Cancel buttons.
-     * @default false
+     * When Calculated Column dialog edits are applied: `'live'` applies every change immediately;
+     * `'deferred'` validates the expression and applies changes via Apply and Cancel buttons.
+     * @default 'live'
      */
-    livePreview?: boolean;
+    applyMode?: CalculatedColumnApplyMode;
 }
 
 export type CalculatedColumnDef<TData = any, TValue = any> = ColDef<TData, TValue> & {

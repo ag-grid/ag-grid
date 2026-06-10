@@ -740,6 +740,7 @@ describe('ag-grid calculated columns', () => {
     test('reset column state removes dynamic calculated columns and restores provided calculated columns', async () => {
         const removed = vi.fn();
         const api = createGrid('calculated-reset-column-state', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
                 { field: 'revenue' },
@@ -821,6 +822,7 @@ describe('ag-grid calculated columns', () => {
 
     test('edit dialog updates calculated column cellDataType without keeping stale boolean renderer', async () => {
         const api = createGrid('calculated-grid-api-cell-data-type', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
                 { field: 'revenue' },
@@ -1292,6 +1294,7 @@ describe('ag-grid calculated columns', () => {
         const costColId = 'server-cost-81f3431b-e4aa-4ef8-bef0';
         const created = vi.fn();
         const api = createGrid('calculated-dialog-references', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
                 { field: 'revenue', colId: revenueColId, headerName: 'Revenue' },
@@ -1357,6 +1360,7 @@ describe('ag-grid calculated columns', () => {
 
     test('clearing the expression shows an empty-expression message, not the formula error', async () => {
         const api = createGrid('calculated-empty-expression', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
@@ -1420,6 +1424,7 @@ describe('ag-grid calculated columns', () => {
 
     test('dialog accepts column references in any case', async () => {
         const api = createGrid('calculated-dialog-case-insensitive-references', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
@@ -1526,6 +1531,7 @@ describe('ag-grid calculated columns', () => {
         };
         const columnDefs: ColGroupDef[] = [year2025, year2026];
         const api = createGrid('calculated-dialog-group-no-mutation', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', revenue2025: 10, cost2025: 3, revenue2026: 20, cost2026: 8 }],
             columnDefs,
         });
@@ -1573,6 +1579,7 @@ describe('ag-grid calculated columns', () => {
 
     test('dialog inserts calculated columns after generated auto group columns in visible order', async () => {
         const api = createGrid('calculated-dialog-auto-group-order', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', productType: 'A', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'productType', rowGroup: true, hide: true }, { field: 'revenue' }, { field: 'cost' }],
         });
@@ -1719,6 +1726,7 @@ describe('ag-grid calculated columns', () => {
 
     test('dialog inserts calculated columns after the clicked generated auto group column in multiple-columns mode', async () => {
         const api = createGrid('calculated-dialog-multiple-auto-group-order', {
+            calculatedColumns: { applyMode: 'deferred' },
             groupDisplayType: 'multipleColumns',
             rowData: [{ id: 'r1', productType: 'A', country: 'UK', revenue: 10, cost: 3 }],
             columnDefs: [
@@ -2123,6 +2131,7 @@ describe('ag-grid calculated columns', () => {
         const changed = vi.fn();
         const removed = vi.fn();
         const api = createGrid('calculated-ui-events', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
                 { field: 'revenue', headerName: 'Revenue' },
@@ -2323,6 +2332,7 @@ describe('ag-grid calculated columns', () => {
 
     test('dialog type list contains the default data types only', async () => {
         const api = createGrid('calculated-dialog-types', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
@@ -2448,6 +2458,7 @@ describe('ag-grid calculated columns', () => {
 
     test('dialog validates formula syntax and function names before apply', async () => {
         const api = createGrid('calculated-dialog-validation', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
@@ -2575,6 +2586,7 @@ describe('ag-grid calculated columns', () => {
 
     test('calculated columns add calculated column classes and edit highlighting by default', async () => {
         const api = createGrid('calculated-column-classes', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
                 { field: 'revenue' },
@@ -2692,6 +2704,7 @@ describe('ag-grid calculated columns', () => {
 
     test('adding a calculated column does not highlight the new column', async () => {
         const api = createGrid('calculated-column-add-no-highlight', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
@@ -2717,6 +2730,7 @@ describe('ag-grid calculated columns', () => {
 
     test('multiple open calculated column dialogs highlight each edited column', async () => {
         const api = createGrid('calculated-column-multi-highlight', {
+            calculatedColumns: { applyMode: 'deferred' },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
                 { field: 'revenue' },

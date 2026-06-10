@@ -83,7 +83,7 @@ type OpenCalculatedColumnDialog = {
     highlight: boolean;
 };
 
-type PendingLivePreviewUpdate = {
+type PendingLiveApplyUpdate = {
     draft: CalculatedColumnDraft;
     mapper: CalculatedColumnReferenceMapper;
 };
@@ -112,8 +112,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     // dispatch is skipped — the imperative caller emits its own events; declarative loads run with it at 0.
     private suppressValidationChecks = 0;
     private readonly openDialogsByColId = new Map<string, OpenCalculatedColumnDialog>();
-    private readonly scheduledLivePreviewColIds = new Set<string>();
-    private readonly pendingLivePreviewUpdatesByColId = new Map<string, PendingLivePreviewUpdate>();
+    private readonly scheduledLiveApplyColIds = new Set<string>();
+    private readonly pendingLiveApplyUpdatesByColId = new Map<string, PendingLiveApplyUpdate>();
     // Memoised parse results keyed by expression; see getFormulaError.
     private readonly formulaErrorsByExpression = new Map<string, FormulaError | null>();
 
@@ -269,16 +269,16 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     public openCalculatedColumnDialog(column: AgColumn | null | undefined, mode: 'add' | 'edit', focus = true): void {
-        const livePreview = this.isLivePreview();
+        const liveApply = this.isLiveApplyMode();
         if (mode === 'add') {
             const colId = this.createUniqueColId();
             const headerName = this.getLocaleTextFunc()('calculatedColumnDefaultTitle', 'Untitled');
             const draft: CalculatedColumnDraft = { colId, headerName, ...this.getDefaultDraft() };
-            if (livePreview) {
-                // Live preview adds the column up front, then opens the dialog over it.
+            if (liveApply) {
+                // Live apply adds the column up front, then opens the dialog over it.
                 const newColumn = this.addDynamicCalculatedColumn(draft, column);
                 if (newColumn) {
-                    this.showDialog(draft, () => null, newColumn, focus, true);
+                    this.showDialog(draft, () => null, true, newColumn, focus);
                 }
                 return;
             }
@@ -290,6 +290,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                         this.focusCalculatedColumn(nextDraft.colId);
                     }
                 },
+                false,
                 undefined,
                 focus
             );
@@ -308,9 +309,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 const { colId: _, ...update } = this.toColDef(nextDraft);
                 this.updateCalculatedColumn(column.colId, update);
             },
+            liveApply,
             column,
             focus,
-            livePreview,
             mapper
         );
     }
@@ -368,8 +369,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         this.checkValidationStates(source, true);
     }
 
-    private isLivePreview(): boolean {
-        return this.gos.get('calculatedColumns')?.livePreview === true;
+    private isLiveApplyMode(): boolean {
+        return this.gos.get('calculatedColumns')?.applyMode !== 'deferred';
     }
 
     public overrideFor(colDef: ColDef): ColDef | null | undefined {
@@ -515,9 +516,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private showDialog(
         draft: CalculatedColumnDraft,
         onApply: (draft: CalculatedColumnDraft) => void,
+        // Always passed explicitly: the 'live'-by-default resolution lives in isLiveApplyMode().
+        liveApply: boolean,
         columnToHighlight?: AgColumn | null,
         focusDialog = true,
-        livePreview = false,
         existingMapper?: CalculatedColumnReferenceMapper
     ): void {
         const openDialogState = this.openDialogsByColId.get(draft.colId);
@@ -578,8 +580,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             state.resolved = true;
             state.close?.();
         };
-        const handleDraftChange = livePreview
-            ? (nextDraft: CalculatedColumnDraft) => this.scheduleLivePreviewUpdate(nextDraft, mapper)
+        const handleDraftChange = liveApply
+            ? (nextDraft: CalculatedColumnDraft) => this.scheduleLiveApplyUpdate(nextDraft, mapper)
             : undefined;
         const dataTypeOptions = this.getDataTypeOptions(draft.cellDataType);
 
@@ -593,7 +595,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 handleValidate,
                 handleApply,
                 handleCancel,
-                livePreview,
+                liveApply,
                 handleDraftChange
             )
         );
@@ -630,10 +632,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             }
         });
         dialog.addDestroyFunc(() => {
-            if (livePreview && this.isAlive()) {
-                this.flushLivePreviewUpdate(draft.colId);
+            if (liveApply && this.isAlive()) {
+                this.flushLiveApplyUpdate(draft.colId);
             } else {
-                this.cancelLivePreviewUpdate(draft.colId);
+                this.cancelLiveApplyUpdate(draft.colId);
             }
             if (this.openDialogsByColId.get(draft.colId)?.dialog === dialog) {
                 this.openDialogsByColId.delete(draft.colId);
@@ -643,29 +645,29 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         dialog.addEventListener('destroyed', () => this.destroyBean(form));
     }
 
-    private scheduleLivePreviewUpdate(draft: CalculatedColumnDraft, mapper: CalculatedColumnReferenceMapper): void {
+    private scheduleLiveApplyUpdate(draft: CalculatedColumnDraft, mapper: CalculatedColumnReferenceMapper): void {
         const colId = draft.colId;
-        this.pendingLivePreviewUpdatesByColId.set(colId, { draft, mapper });
-        if (this.scheduledLivePreviewColIds.has(colId)) {
+        this.pendingLiveApplyUpdatesByColId.set(colId, { draft, mapper });
+        if (this.scheduledLiveApplyColIds.has(colId)) {
             return;
         }
 
         // Coalesce keystrokes into one column rebuild per frame; a cancelled update leaves the frame
         // scheduled but with no pending entry, so it harmlessly no-ops.
-        this.scheduledLivePreviewColIds.add(colId);
+        this.scheduledLiveApplyColIds.add(colId);
         _requestAnimationFrame(this.beans, () => {
-            this.scheduledLivePreviewColIds.delete(colId);
-            this.flushLivePreviewUpdate(colId);
+            this.scheduledLiveApplyColIds.delete(colId);
+            this.flushLiveApplyUpdate(colId);
         });
     }
 
-    private flushLivePreviewUpdate(colId: string): void {
-        const pending = this.pendingLivePreviewUpdatesByColId.get(colId);
+    private flushLiveApplyUpdate(colId: string): void {
+        const pending = this.pendingLiveApplyUpdatesByColId.get(colId);
         if (pending === undefined) {
             return;
         }
 
-        this.pendingLivePreviewUpdatesByColId.delete(colId);
+        this.pendingLiveApplyUpdatesByColId.delete(colId);
         const { draft, mapper } = pending;
         const { colId: _, ...update } = this.toColDef({
             ...draft,
@@ -674,8 +676,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         this.updateCalculatedColumn(colId, update, false);
     }
 
-    private cancelLivePreviewUpdate(colId: string): void {
-        this.pendingLivePreviewUpdatesByColId.delete(colId);
+    private cancelLiveApplyUpdate(colId: string): void {
+        this.pendingLiveApplyUpdatesByColId.delete(colId);
     }
 
     private getDefaultDraft(): Omit<CalculatedColumnDraft, 'colId' | 'headerName'> {
