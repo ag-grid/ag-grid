@@ -736,53 +736,29 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
-        let started = false;
-
         const result: RowNode[] = [];
 
         const groupsSelectChildren = _getGroupSelectsDescendants(this.gos);
 
         // Iterate only displayed rows so that hidden descendants of collapsed groups are excluded
         const { rowsToDisplay } = this;
-        for (let i = 0, len = rowsToDisplay.length; i < len; ++i) {
+        const firstIdx = getDisplayedBoundaryIndex(rowsToDisplay, firstInRange);
+        const lastIdx = getDisplayedBoundaryIndex(rowsToDisplay, lastInRange);
+        if (firstIdx === -1 || lastIdx === -1) {
+            return result;
+        }
+
+        const start = Math.min(firstIdx, lastIdx);
+        const end = Math.max(firstIdx, lastIdx);
+
+        for (let i = start; i <= end; ++i) {
             const rowNode = rowsToDisplay[i];
-
-            if (started) {
-                if (rowNode === lastInRange || rowNode === firstInRange) {
-                    // check if this is the last node we're going to be adding
-                    // if the final node was a group node, and we're doing groupSelectsChildren
-                    // make the exception to select all of it's descendants too
-                    if (groupsSelectChildren && rowNode.group) {
-                        addAllLeafs(result, rowNode);
-                    } else {
-                        result.push(rowNode);
-                    }
-                    break;
-                }
-            }
-
-            if (!started) {
-                if (rowNode !== lastInRange && rowNode !== firstInRange) {
-                    // still haven't hit a boundary node, keep searching
-                    continue;
-                }
-                started = true;
-
-                // When the first and last node are the same the range is just that single node
-                if (lastInRange === firstInRange) {
-                    if (groupsSelectChildren && rowNode.group) {
-                        addAllLeafs(result, rowNode);
-                    } else {
-                        result.push(rowNode);
-                    }
-                    break;
-                }
-            }
-
-            // only select leaf nodes if groupsSelectChildren
-            const includeThisNode = !rowNode.group || !groupsSelectChildren;
-            if (includeThisNode) {
+            if (!groupsSelectChildren || !rowNode.group) {
                 result.push(rowNode);
+            } else if (i === end) {
+                // if the final node is a group node, and we're doing groupSelectsChildren,
+                // make the exception to select all of its descendants too
+                addAllLeafs(result, rowNode);
             }
         }
 
@@ -1254,6 +1230,20 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.onRowHeightChanged_debounced();
     }
 }
+
+/**
+ * Returns the index of the node in the displayed rows. A range boundary node may itself be
+ * hidden (e.g. the selection anchor was inside a group that has since been collapsed); in that
+ * case the nearest displayed ancestor is used as the boundary instead.
+ * @returns -1 if neither the node nor any of its ancestors are displayed.
+ */
+const getDisplayedBoundaryIndex = (rowsToDisplay: RowNode[], node: RowNode): number => {
+    let current: RowNode | null = node;
+    while (current && !current.displayed) {
+        current = current.parent;
+    }
+    return current ? rowsToDisplay.indexOf(current) : -1;
+};
 
 const addAllLeafs = (result: RowNode[], node: RowNode): void => {
     const childrenAfterGroup = node.childrenAfterGroup;

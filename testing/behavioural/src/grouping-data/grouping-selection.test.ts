@@ -654,7 +654,7 @@ describe('ag-grid grouping selection', () => {
         `);
     });
 
-    test('SHIFT-click when anchor is in a collapsed group selects only the clicked row', async () => {
+    test('SHIFT-click after anchor group is collapsed and re-expanded selects a normal range', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: threeLevelColDefs,
             animateRows: false,
@@ -670,10 +670,10 @@ describe('ag-grid grouping selection', () => {
         // Collapse North America — Canada (anchor) becomes hidden
         await actions.collapseGroupAtIndex(0);
 
-        // Re-expand so rows are visible again but anchor is still hidden inside the group context
+        // Re-expand so the anchor (Canada) is visible again
         await actions.expandGroupAtIndex(0);
 
-        // Now shift-click United States — anchor (Canada) is visible again, so this is a normal range
+        // Shift-click United States — the anchor is visible, so this is a normal range
         actions.clickRowByIndex(2, { shiftKey: true });
 
         await new GridRows(api, 'after anchor collapsed and re-expanded, then shift-click').check(`
@@ -693,6 +693,44 @@ describe('ag-grid grouping selection', () => {
             · · │ └── LEAF hidden id:5 region:"North America" country:"United States" city:"Chicago"
             · · └─┬ LEAF_GROUP collapsed hidden id:"row-group-region-North America-country-United States-city-Los Angeles" ag-Grid-AutoColumn:"Los Angeles"
             · · · └── LEAF hidden id:6 region:"North America" country:"United States" city:"Los Angeles"
+        `);
+    });
+
+    test('SHIFT-click while anchor is hidden in a collapsed group uses the collapsed group as the range boundary', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'region', rowGroup: true, hide: true }, { field: 'city' }],
+            animateRows: false,
+            rowSelection: { mode: 'multiRow', enableClickSelection: true, checkboxes: false, headerCheckbox: false },
+            groupDefaultExpanded: 1,
+            rowData: cachedJSONObjects.array([
+                { id: '1', region: 'North America', city: 'Toronto' },
+                { id: '2', region: 'North America', city: 'New York' },
+                { id: '3', region: 'Europe', city: 'Paris' },
+                { id: '4', region: 'Europe', city: 'Berlin' },
+            ]),
+            getRowId: (params) => params.data.id,
+        });
+
+        const actions = new GridActions(api);
+        // Displayed rows: North America (0), Toronto (1), New York (2), Europe (3), Paris (4), Berlin (5)
+        actions.clickRowByIndex(1); // click Toronto (anchor)
+
+        // Collapse North America — the anchor is now hidden
+        await actions.collapseGroupAtIndex(0);
+
+        // Displayed rows: North America (0), Europe (1), Paris (2), Berlin (3)
+        // Shift-click North America — the hidden anchor resolves to its collapsed group,
+        // so the range is just North America; the rows below must not be selected
+        actions.clickRowByIndex(0, { shiftKey: true });
+
+        await new GridRows(api, 'after shift-click with hidden anchor').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP selected collapsed id:"row-group-region-North America" ag-Grid-AutoColumn:"North America"
+            │ ├── LEAF selected hidden id:1 region:"North America" city:"Toronto"
+            │ └── LEAF hidden id:2 region:"North America" city:"New York"
+            └─┬ LEAF_GROUP id:row-group-region-Europe ag-Grid-AutoColumn:"Europe"
+            · ├── LEAF id:3 region:"Europe" city:"Paris"
+            · └── LEAF id:4 region:"Europe" city:"Berlin"
         `);
     });
 });
