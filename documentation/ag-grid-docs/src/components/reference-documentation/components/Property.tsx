@@ -4,12 +4,11 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
 import styles from '@ag-website-shared/components/reference-documentation/ApiReference.module.scss';
 import { useScrollToAnchor } from '@ag-website-shared/utils/navigation';
+import { useStore } from '@nanostores/react';
+import { $codeData, $interfaceLookup } from '@stores/referenceDataStore';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { Fragment, type FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-import { $codeData, $interfaceLookup } from '@stores/referenceDataStore';
-import { useStore } from '@nanostores/react';
 
 import type { ChildDocEntry, Config, PropertyDisplayData } from '../types';
 import { getTypeUrl, inferType, removeDefaultValue } from '../utils/documentation-helpers';
@@ -68,17 +67,7 @@ export const Property: FunctionComponent<{
     isEvent?: boolean;
     propertyType: string;
     config: Config;
-}> = ({
-    id,
-    name,
-    framework,
-    definition,
-    displayData,
-    showAdditionalDetails,
-    isEvent,
-    propertyType,
-    config,
-}) => {
+}> = ({ id, name, framework, definition, displayData, showAdditionalDetails, isEvent, propertyType, config }) => {
     const idName = `reference-${id}-${name}`;
     const displayNameSplit = getDisplayNameSplit({ name, definition });
 
@@ -127,7 +116,10 @@ export const Property: FunctionComponent<{
         let gridOpProp: any;
         for (const fileData of Object.values(codeData)) {
             const entry = fileData?.[id]?.[name] ?? fileData?.[name];
-            if (entry) { gridOpProp = entry; break; }
+            if (entry) {
+                gridOpProp = entry;
+                break;
+            }
         }
 
         const { type } = getDefinitionType({
@@ -148,7 +140,18 @@ export const Property: FunctionComponent<{
             interfaceHierarchyOverrides: definition.interfaceHierarchyOverrides,
             isApi: config.isApi,
         });
-    }, [isExpanded, showAdditionalDetails, interfaceLookup, codeData, id, name, definition, isEvent, config, framework]);
+    }, [
+        isExpanded,
+        showAdditionalDetails,
+        interfaceLookup,
+        codeData,
+        id,
+        name,
+        definition,
+        isEvent,
+        config,
+        framework,
+    ]);
 
     return (
         <tr ref={propertyRef} className={legacyStyles.tableRow}>
