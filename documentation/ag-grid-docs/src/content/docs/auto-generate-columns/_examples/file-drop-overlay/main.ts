@@ -51,7 +51,7 @@ function processFileInput(params: ProcessFileInputParams): void {
 
 const gridOptions: GridOptions = {
     autoGenerateColumnDefs: true,
-    processFileInput,
+    processFileInput: processFileInput,
     defaultColDef: {
         minWidth: 80,
         flex: 1,
@@ -63,7 +63,11 @@ const gridOptions: GridOptions = {
                 icon: 'document',
                 alignment: 'right',
                 action: (params: ToolbarItemActionParams) => {
-                    params.api.setGridOption('activeOverlay', 'agFileInputOverlay');
+                    const curr = params.api.getGridOption('activeOverlay');
+                    params.api.setGridOption(
+                        'activeOverlay',
+                        curr === 'agFileInputOverlay' ? undefined : 'agFileInputOverlay'
+                    );
                 },
             },
         ],
@@ -80,13 +84,13 @@ function onLoadSampleData(): void {
             .then((response) => response.arrayBuffer())
             .then((data: ArrayBuffer) => {
                 const workbook = XLSX.read(new Uint8Array(data));
-                gridApi.setGridOption('rowData', parseWorkbook(workbook));
+                gridApi.updateGridOptions({ activeOverlay: undefined, rowData: parseWorkbook(workbook) });
             });
     } else {
         fetch(`https://www.ag-grid.com/example-assets/${value}`)
             .then((response) => response.json())
             .then((rows) => {
-                gridApi.setGridOption('rowData', rows);
+                gridApi.updateGridOptions({ activeOverlay: undefined, rowData: rows });
             });
     }
 }

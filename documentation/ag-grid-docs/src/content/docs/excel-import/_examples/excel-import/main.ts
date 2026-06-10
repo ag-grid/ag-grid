@@ -53,7 +53,8 @@ function parseWorkbook(workbook: any): Record<string, unknown>[] {
 }
 
 function uploadFile() {
-    gridApi.setGridOption('activeOverlay', 'agFileInputOverlay');
+    const curr = gridApi.getGridOption('activeOverlay');
+    gridApi.setGridOption('activeOverlay', curr === 'agFileInputOverlay' ? undefined : 'agFileInputOverlay');
 }
 
 function importExcel() {
@@ -61,7 +62,7 @@ function importExcel() {
         .then((response) => response.arrayBuffer())
         .then((data: ArrayBuffer) => {
             const workbook = XLSX.read(new Uint8Array(data));
-            gridApi.setGridOption('rowData', parseWorkbook(workbook));
+            gridApi.updateGridOptions({ rowData: parseWorkbook(workbook), activeOverlay: undefined });
         });
 }
 
