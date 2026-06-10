@@ -51,6 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'B
     UndoRedoEditModule: 74.12,
     ValidationModule: 74.37,
     ValueCacheModule: 0.65,
+    FileInputOverlayModule: 5,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 223.75,
