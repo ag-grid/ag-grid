@@ -1022,7 +1022,7 @@
         "processFileInput": {
             "more": {
                 "name": "File Input Overlay",
-                "url": "./overlays-overview/#file-input-overlay"
+                "url": "./overlays-provided/#file-input"
             }
         }
     },
