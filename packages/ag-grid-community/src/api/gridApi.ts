@@ -1783,16 +1783,6 @@ export interface _FormulaGridApi<TData = any> {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface _CalculatedColumnsGridApi<TData = any> {
-    /**
-     * Open the Calculated Column dialog for an existing calculated column.
-     * No-op if the supplied column key does not resolve to a calculated column.
-     * @agModule `CalculatedColumnsModule`
-     */
-    openCalculatedColumnDialog(column: ColKey<TData>): void;
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _MasterDetailGridApi {
     /**
      * Register a detail grid with the master grid when it is created.
@@ -2050,7 +2040,6 @@ export interface GridApi<TData = any>
         _ColumnChooserGridApi,
         _MasterDetailGridApi,
         _FormulaGridApi<TData>,
-        _CalculatedColumnsGridApi<TData>,
         _ExcelExportGridApi,
         _ClipboardGridApi,
         _GridChartsGridApi,

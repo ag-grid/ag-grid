@@ -1397,20 +1397,5 @@
                 "url": "./notes/#api-reference"
             }
         }
-    },
-    "calculatedColumns": {
-        "meta": {
-            "displayName": "Calculated Columns",
-            "page": {
-                "name": "Calculated Columns",
-                "url": "./calculated-columns/"
-            }
-        },
-        "openCalculatedColumnDialog": {
-            "more": {
-                "name": "Calculated Columns API",
-                "url": "./calculated-columns/#api"
-            }
-        }
     }
 }

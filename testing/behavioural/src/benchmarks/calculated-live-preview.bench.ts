@@ -1,7 +1,7 @@
 import { bench, suite } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowApiModule, ValidationModule } from 'ag-grid-community';
+import { CellApiModule, ClientSideRowModelModule, RowApiModule, ValidationModule } from 'ag-grid-community';
 import { CalculatedColumnsModule, ColumnMenuModule, FormulaModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
@@ -11,6 +11,7 @@ import { TestGridsManager } from '../test-utils';
 // bench captures the flush body rather than the ~16ms frame wait.
 
 const modules = [
+    CellApiModule,
     ClientSideRowModelModule,
     RowApiModule,
     CalculatedColumnsModule,
@@ -115,7 +116,15 @@ suite('calculated columns — live preview keystroke flush (synchronous rAF)', (
                     gridsManager.reset();
                     iter = 0;
                     api = gridsManager.createGrid(id, baseOptions(rows, sortOnMargin, extraCols, grouped));
-                    api.openCalculatedColumnDialog('profit');
+                    api.showColumnMenu('profit');
+                    await new Promise<void>((resolve) => setTimeout(resolve, 10));
+                    const menuItem = Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option-text'))
+                        .find((element) => element.textContent?.trim() === 'Edit Calculated Column')
+                        ?.closest<HTMLElement>('.ag-menu-option');
+                    if (!menuItem) {
+                        throw new Error('Edit Calculated Column menu item not found');
+                    }
+                    menuItem.click();
                     await new Promise<void>((resolve) => setTimeout(resolve, 1));
                 },
             }

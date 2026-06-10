@@ -189,8 +189,6 @@ api.setGridOption(
     )
 );
 
-api.openCalculatedColumnDialog('profitMargin');
-
 api.setGridOption(
     'columnDefs',
     (api.getColumnDefs() ?? []).filter(colDef => colDef.colId !== 'profitMargin')
@@ -204,10 +202,6 @@ Calculated Column events also use stored `colId` references in their expression 
 ### Column Properties
 
 {% apiDocumentation source="column-properties/properties.json" section="calculatedColumns" names=["calculatedExpression"] /%}
-
-### Grid API
-
-{% apiDocumentation source="grid-api/api.json" section="calculatedColumns" names=["openCalculatedColumnDialog"] /%}
 
 ### Grid Options
 

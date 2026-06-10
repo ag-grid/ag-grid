@@ -9,7 +9,6 @@ export type {
     _AggregationGridApi,
     _AiToolkitGridApi,
     _BatchEditApi,
-    _CalculatedColumnsGridApi,
     _CellSelectionGridApi,
     _ClientSideRowModelGridApi,
     _ClipboardGridApi,
