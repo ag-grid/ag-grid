@@ -222,23 +222,13 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                     </p>
 
                     {dependenciesSnippet && (
-                        <Snippet
-                            framework="javascript"
-                            language="json"
-                            content={dependenciesSnippet}
-                            copyToClipboard
-                        />
+                        <Snippet framework="javascript" language="json" content={dependenciesSnippet} copyToClipboard />
                     )}
 
                     <p>Or install using npm:</p>
 
                     {npmInstallSnippet && (
-                        <Snippet
-                            framework={framework}
-                            content={npmInstallSnippet}
-                            language="bash"
-                            copyToClipboard
-                        />
+                        <Snippet framework={framework} content={npmInstallSnippet} language="bash" copyToClipboard />
                     )}
 
                     <br />

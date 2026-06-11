@@ -208,13 +208,7 @@ export const ThemeBuilderHomepage: React.FC<Props> = ({ gridHeight = null }) => 
                         <div className={styles.dot}></div>
                     </div>
 
-                    <Snippet
-                        framework="javascript"
-                        language="js"
-                        content={codeBlock}
-                        transform={false}
-                        lineNumbers
-                    />
+                    <Snippet framework="javascript" language="js" content={codeBlock} transform={false} lineNumbers />
                 </div>
             </div>
         </div>
