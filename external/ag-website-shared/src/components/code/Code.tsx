@@ -4,7 +4,7 @@ import { memo, useEffect, useState } from 'react';
 import { getSingletonHighlighter } from 'shiki';
 
 import styles from './Code.module.scss';
-import shikiStyles from './CodeShiki.module.scss';
+import codeStyles from './CodeHighlight.module.scss';
 import { extractDecorations } from './keepMarkup';
 import agDocsTheme from './theme.json';
 
@@ -101,7 +101,7 @@ function CopyToClipboardButton({ code }: { code: string }) {
     );
 }
 
-function CodeShiki({
+function Code({
     code,
     language = 'ts',
     className,
@@ -140,8 +140,8 @@ function CodeShiki({
                 'code',
                 `language-${language}`,
                 className,
-                shikiStyles.shikiPre,
-                lineNumbers ? shikiStyles.lineNumbers : null,
+                codeStyles.shikiPre,
+                lineNumbers ? codeStyles.lineNumbers : null,
                 copyToClipboard ? 'copy-to-clipboard' : ''
             )}
             {...props}
@@ -156,7 +156,7 @@ function ShikiCode({ html }: { html: string }) {
     const codeMatch = html.match(/<code[^>]*>([\s\S]*)<\/code>/);
     const innerHtml = codeMatch ? codeMatch[1] : html;
 
-    return <code className={shikiStyles.shikiCode} data-shiki="" dangerouslySetInnerHTML={{ __html: innerHtml }} />;
+    return <code className={codeStyles.shikiCode} data-shiki="" dangerouslySetInnerHTML={{ __html: innerHtml }} />;
 }
 
-export default memo(CodeShiki);
+export default memo(Code);

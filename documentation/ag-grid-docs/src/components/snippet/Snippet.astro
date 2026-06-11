@@ -1,5 +1,5 @@
 ---
-import CodeShiki, { LanguageMap } from '@ag-website-shared/components/code/CodeShiki';
+import Code, { LanguageMap } from '@ag-website-shared/components/code/Code';
 import agDocsTheme from '@ag-website-shared/components/code/theme.json';
 import { getFrameworkFromPath } from '@components/docs/utils/urlPaths';
 import he from 'he';
@@ -48,7 +48,7 @@ const preHighlightedHtml = await codeToHtml(snippet.trimEnd(), {
 } as any);
 ---
 
-<CodeShiki
+<Code
     code={snippet}
     language={langKey}
     lineNumbers={lineNumbers}

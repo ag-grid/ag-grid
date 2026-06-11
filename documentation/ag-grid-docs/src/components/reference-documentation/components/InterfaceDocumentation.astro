@@ -4,7 +4,7 @@ import { getFrameworkFromPath } from '@components/docs/utils/urlPaths';
 import { getInterfaceDocumentationModel } from '../utils/getInterfaceDocumentationModel';
 import { getOverrides } from '../utils/getOverrides';
 import { getJsonFile } from '@utils/pages';
-import CodeShiki from '@ag-website-shared/components/code/CodeShiki';
+import Code from '@ag-website-shared/components/code/Code';
 import { codeToHtml } from 'shiki';
 import agDocsTheme from '@ag-website-shared/components/code/theme.json';
 import { extractDecorations } from '@ag-website-shared/components/code/keepMarkup';
@@ -40,7 +40,7 @@ if (model.type === 'code') {
 
 {
     model.type === 'code' ? (
-        <CodeShiki code={model.code} preHighlightedHtml={preHighlightedHtml} />
+        <Code code={model.code} preHighlightedHtml={preHighlightedHtml} />
     ) : (
         <InterfaceDocumentation
             client:load
