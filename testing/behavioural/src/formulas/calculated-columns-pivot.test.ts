@@ -178,4 +178,29 @@ describe('calculated columns - pivot mode', () => {
         expect(api.getColumn('profit')).toBeTruthy();
         expect(order(api).some((c) => c.startsWith('pivot_year_2020'))).toBe(true);
     });
+
+    test('calc col referencing a pivot result column id does not read it on a leaf', async () => {
+        // warning 295 is expected — the calc col is blocked by the active pivot.
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const api = createGrid('pivot-calc-refs-pivot-col', {
+            rowData,
+            columnDefs: [
+                ...pivotColumnDefs,
+                {
+                    colId: 'doubled',
+                    calculatedExpression: '[pivot_year_2020_revenue] * 2',
+                    cellDataType: 'number',
+                },
+            ],
+            pivotMode: true,
+        });
+        await asyncSetTimeout(10);
+
+        const doubledOf = (id: string) =>
+            api.getCellValue({ rowNode: api.getRowNode(id)!, colKey: 'doubled', useFormatter: false });
+
+        expect(doubledOf('r1')).toBeUndefined();
+        expect(warn).toHaveBeenCalled();
+        warn.mockRestore();
+    });
 });

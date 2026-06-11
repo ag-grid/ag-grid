@@ -198,7 +198,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         let { anchorToElement, value, source, noteParams } = params;
 
         if (rowNode && column && value == null) {
-            value = this.beans.valueSvc.getValueForDisplay({ column, node: rowNode, from: 'edit' }).value;
+            value = this.beans.valueSvc.getDisplayValue(column, rowNode, 'edit');
         }
 
         if (anchorToElement == null) {

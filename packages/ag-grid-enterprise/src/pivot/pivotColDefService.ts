@@ -223,7 +223,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
                     totalColDef.columnGroupShow = !isSuppressExpand ? 'closed' : 'open';
 
-                    totalColDef.aggFunc = valueColumn.getAggFunc();
+                    totalColDef.aggFunc = valueColumn.aggFunc;
 
                     if (!leafGroup || hasCollapsedLeafGroup) {
                         // add total colDef to group and pivot colDefs array
@@ -239,12 +239,12 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             }
 
             // check that value column exists, i.e. aggFunc is supplied
-            if (!def.pivotValueColumn) {
+            const pivotValueColumn = def.pivotValueColumn as AgColumn | null | undefined;
+            if (!pivotValueColumn) {
                 return;
             }
 
-            const pivotValueColId = def.pivotValueColumn.getColId();
-
+            const pivotValueColId = pivotValueColumn.colId;
             const exists = acc.has(pivotValueColId);
             if (exists) {
                 const arr = acc.get(pivotValueColId)!;
@@ -267,7 +267,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         const insertAfter = this.gos.get('pivotColumnGroupTotals') === 'after';
 
         const valueCols = this.valueColsSvc?.columns;
-        const aggFuncs = valueCols?.map((valueCol) => valueCol.getAggFunc());
+        const aggFuncs = valueCols?.map((valueCol) => valueCol.aggFunc);
 
         // don't add pivot totals if there is less than 1 aggFunc or they are not all the same
         if (!aggFuncs || aggFuncs.length < 1 || !this.sameAggFuncs(aggFuncs)) {
@@ -315,7 +315,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             //create total colDef using an arbitrary value column as a template
             const totalColDef = this.createColDef(valueColumn, headerName, groupDef.pivotKeys, true);
             totalColDef.pivotTotalColumnIds = colIds;
-            totalColDef.aggFunc = valueColumn.getAggFunc();
+            totalColDef.aggFunc = valueColumn.aggFunc;
             totalColDef.columnGroupShow = this.gos.get('suppressExpandablePivotGroups') ? 'open' : undefined;
 
             // add total colDef to group and pivot colDefs array
@@ -528,7 +528,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                     const headerName = this.colNames.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
                     const colDef = this.createColDef(potentialAggCol, headerName, undefined, false);
                     colDef.colId = id;
-                    colDef.aggFunc = potentialAggCol.getAggFunc();
+                    colDef.aggFunc = potentialAggCol.aggFunc;
                     colDef.valueGetter = (params) => params.data?.[id];
                     return colDef;
                 }

@@ -110,7 +110,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         const aggregationColumnsHash = aggregationColumns
             .map((column) => `${column.getId()}-${column.colDef.headerName}`)
             .join('#');
-        const aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc()!.toString()).join('#');
+        const aggregationFuncsHash = aggregationColumns.map((column) => column.aggFunc?.toString()).join('#');
 
         const aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
         const aggregationFuncsChanged = this.aggregationFuncsHashLastTime !== aggregationFuncsHash;

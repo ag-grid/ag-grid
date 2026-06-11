@@ -16,6 +16,7 @@ import type {
     AgPropertyValueChangedListener,
     IPropertiesService,
 } from '../interfaces/iProperties';
+import { _removeFromArray } from '../utils/array';
 import { _addSafePassiveEventListener } from '../utils/event';
 import { _getLocaleTextFunc } from '../utils/locale';
 
@@ -24,6 +25,8 @@ export type AgBeanStubEvent = 'destroyed';
 type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanStubEvent;
 
 type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
+
+const DESTROYED_EVENT = { type: 'destroyed' as AgBeanStubEvent };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class AgBeanStub<
@@ -38,25 +41,34 @@ export abstract class AgBeanStub<
         AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType>,
         IEventEmitter<AgEventOrDestroyed<TLocalEventType>>
 {
-    protected localEventService?: LocalEventService<AgEventOrDestroyed<TLocalEventType>>;
+    // Vue 3 reactivity-skip flag — prevents Vue from proxying beans (and avoids identity issues). Lives on the
+    // prototype (see below), not per instance: Vue reads it via a normal property access that walks the chain.
+    declare public __v_skip: boolean;
 
-    private stubContext: IContext<TBeanCollection>; // not named context to allow children to use 'context' as a variable name
-    private destroyFunctions: (() => void)[] = [];
-    private destroyed = false;
+    protected beans: TBeanCollection = null!;
+    protected gos: TPropertiesService = null!;
+    protected eventSvc: AgEventService<TGlobalEvents, TCommon> = null!;
 
-    // for vue 3 - prevents Vue from trying to make this (and obviously any sub classes) from being reactive
-    // prevents vue from creating proxies for created objects and prevents identity related issues
-    public __v_skip = true;
+    /** Indicates whether the bean has been destroyed */
+    public destroyed = false;
+    protected localEventService: LocalEventService<AgEventOrDestroyed<TLocalEventType>> | null = null;
 
-    protected beans: TBeanCollection;
-    protected eventSvc: AgEventService<TGlobalEvents, TCommon>;
-    protected gos: TPropertiesService;
+    // Cold — touched only on bean creation / destruction.
+    private stubContext: IContext<TBeanCollection> = null!; // not named context to allow children to use 'context' as a variable name
+    private destroyFunctions: (() => void)[] | null = null;
+
+    private propertyListenerId = 0;
+
+    // Enable multiple grid properties to be updated together by the user but only trigger shared logic once.
+    // Closely related to logic in GridOptionsUtils.ts _processOnChange
+    // Lazy — most beans never register grouped property listeners, so the lookup object is allocated on first use.
+    private lastChangeSetIdLookup: Record<string, number> | null = null;
 
     public preWireBeans(beans: TBeanCollection): void {
         this.beans = beans;
-        this.stubContext = beans.context;
-        this.eventSvc = beans.eventSvc;
         this.gos = beans.gos;
+        this.eventSvc = beans.eventSvc;
+        this.stubContext = beans.context;
     }
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
@@ -75,16 +87,18 @@ export abstract class AgBeanStub<
     // }
 
     public destroy(): void {
-        const { destroyFunctions } = this;
-        for (let i = 0; i < destroyFunctions.length; i++) {
-            destroyFunctions[i]();
+        const destroyFunctions = this.destroyFunctions;
+        if (destroyFunctions) {
+            for (let i = 0; i < destroyFunctions.length; i++) {
+                destroyFunctions[i]();
+            }
+            destroyFunctions.length = 0;
         }
-        destroyFunctions.length = 0;
         this.destroyed = true;
 
         // cast destroy type as we do not want to expose destroy event type to the dispatchLocalEvent method
         // as no one else should be firing destroyed at the bean stub.
-        this.dispatchLocalEvent({ type: 'destroyed' } as { type: AgBeanStubEvent } as any);
+        this.dispatchLocalEvent(DESTROYED_EVENT as any);
     }
 
     /** Add a local event listener against this BeanStub */
@@ -93,10 +107,12 @@ export abstract class AgBeanStub<
         listener: IEventListener<T>,
         async?: boolean
     ): void {
-        if (!this.localEventService) {
-            this.localEventService = new LocalEventService();
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
         }
-        this.localEventService.addEventListener(eventType, listener, async);
+        localEventService.addEventListener(eventType, listener, async);
     }
 
     /** Remove a local event listener from this BeanStub */
@@ -120,12 +136,8 @@ export abstract class AgBeanStub<
     }
     public addManagedEventListeners(
         handlers:
-            | {
-                  [K in keyof TGlobalEvents]?: (event: TGlobalEvents[K]) => void;
-              }
-            | {
-                  [K in keyof BaseEvents]?: (event: BaseEvents[K]) => void;
-              }
+            | { [K in keyof TGlobalEvents]?: (event: TGlobalEvents[K]) => void }
+            | { [K in keyof BaseEvents]?: (event: BaseEvents[K]) => void }
     ) {
         return this._setupListeners<keyof TGlobalEvents & string>(this.eventSvc, handlers);
     }
@@ -141,7 +153,9 @@ export abstract class AgBeanStub<
         handlers: EventHandlers<TEvent>
     ) {
         const destroyFuncs: (() => null)[] = [];
-        for (const k of Object.keys(handlers)) {
+        const keys = Object.keys(handlers);
+        for (let i = 0, len = keys.length; i < len; ++i) {
+            const k = keys[i];
             const handler = handlers[k as TEvent];
             if (handler) {
                 destroyFuncs.push(this._setupListener(object, k, handler));
@@ -188,14 +202,7 @@ export abstract class AgBeanStub<
                   };
         }
 
-        this.destroyFunctions.push(destroyFunc);
-
-        return () => {
-            destroyFunc();
-            // Only remove if manually called before bean is destroyed
-            this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
-            return null;
-        };
+        return this.registerDestroyFunc(destroyFunc);
     }
 
     /**
@@ -214,14 +221,7 @@ export abstract class AgBeanStub<
             gos.removePropertyEventListener(event, listener);
             return null;
         };
-        this.destroyFunctions.push(destroyFunc);
-
-        return () => {
-            destroyFunc();
-            // Only remove if manually called before bean is destroyed
-            this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== destroyFunc);
-            return null;
-        };
+        return this.registerDestroyFunc(destroyFunc);
     }
 
     /**
@@ -240,10 +240,6 @@ export abstract class AgBeanStub<
         return this.setupPropertyListener(event, listener);
     }
 
-    private propertyListenerId = 0;
-    // Enable multiple grid properties to be updated together by the user but only trigger shared logic once.
-    // Closely related to logic in GridOptionsUtils.ts _processOnChange
-    private lastChangeSetIdLookup: Record<string, number> = {};
     /**
      * Setup managed property listeners for the given set of GridOption properties.
      * The listener will be run if any of the property changes but will only run once if
@@ -264,41 +260,74 @@ export abstract class AgBeanStub<
         const eventsKey = events.join('-') + this.propertyListenerId++;
 
         const wrappedListener = (event: AgPropertyValueChangedEvent<TProperties, any>) => {
-            if (event.changeSet) {
+            const changeSet = event.changeSet;
+            if (changeSet) {
                 // ChangeSet is only set when the property change is part of a group of changes from ComponentUtils
                 // Direct api calls should always be run as
-                if (event.changeSet?.id === this.lastChangeSetIdLookup[eventsKey]) {
+                let lookup = this.lastChangeSetIdLookup;
+                if (!lookup) {
+                    lookup = {};
+                    this.lastChangeSetIdLookup = lookup;
+                }
+                if (changeSet.id === lookup[eventsKey]) {
                     // Already run the listener for this set of prop changes so don't run again
                     return;
                 }
-                this.lastChangeSetIdLookup[eventsKey] = event.changeSet.id;
+                lookup[eventsKey] = changeSet.id;
             }
             // Don't expose the underlying event value changes to the group listener.
             const propertiesChangeEvent: AgPropertyChangedEvent<TProperties> = {
                 type: 'propertyChanged',
-                changeSet: event.changeSet,
+                changeSet,
                 source: event.source,
             };
             listener(propertiesChangeEvent);
         };
 
-        for (const event of events) {
-            this.setupPropertyListener(event, wrappedListener);
+        for (let i = 0, len = events.length; i < len; ++i) {
+            this.setupPropertyListener(events[i], wrappedListener);
         }
     }
 
-    public isAlive = (): boolean => !this.destroyed;
+    // Prototype method, not a per-instance arrow — never invoked detached, so binding per bean only wastes memory.
+    public isAlive(): boolean {
+        return !this.destroyed;
+    }
 
     public getLocaleTextFunc(): LocaleTextFunc {
         return _getLocaleTextFunc(this.beans.localeSvc);
     }
 
+    // Lazy — most beans never register a destroy func, so the array is allocated on first push.
+    private pushDestroyFunc(destroyFunc: () => void): void {
+        const destroyFunctions = this.destroyFunctions;
+        if (destroyFunctions) {
+            destroyFunctions.push(destroyFunc);
+        } else {
+            this.destroyFunctions = [destroyFunc];
+        }
+    }
+
+    /** Register a destroy func and return an unregister callback that removes it if called before destroy. */
+    private registerDestroyFunc(destroyFunc: () => null): () => null {
+        this.pushDestroyFunc(destroyFunc);
+        return () => {
+            destroyFunc();
+            // Only remove if manually called before bean is destroyed
+            const destroyFunctions = this.destroyFunctions;
+            if (destroyFunctions) {
+                _removeFromArray(destroyFunctions, destroyFunc);
+            }
+            return null;
+        };
+    }
+
     public addDestroyFunc(func: () => void): void {
         // if we are already destroyed, we execute the func now
-        if (this.isAlive()) {
-            this.destroyFunctions.push(func);
-        } else {
+        if (this.destroyed) {
             func();
+        } else {
+            this.pushDestroyFunc(func);
         }
     }
 
@@ -346,6 +375,9 @@ export abstract class AgBeanStub<
         return (context || this.stubContext).destroyBeans(beans);
     }
 }
+
+// Single shared value on the prototype — Vue's reactive() reads `__v_skip` through the prototype chain.
+AgBeanStub.prototype.__v_skip = true;
 
 // type guard for IAgEventEmitter
 function isAgEventEmitter<TEvent extends string>(

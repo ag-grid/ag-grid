@@ -707,6 +707,42 @@ describe('RowNode.getDataValue', () => {
                     └── LEAF id:1 price:20 quantity:5 total:100
                 `); // 20 * 5
         });
+
+        test('getDataValue and setDataValue round-trip through a dotted field', async () => {
+            const api = await gridsManager.createGridAndWait('dotted-field', {
+                columnDefs: [{ colId: 'nested', field: 'a.b.c' }],
+                rowData: [{ id: '1', a: { b: { c: 'first' } } }],
+                getRowId: (params) => params.data.id,
+            });
+            await new GridColumns(api, `dotted field setup`).checkColumns(`
+                CENTER
+                └── nested "A B C" width:200
+            `);
+            await new GridRows(api, `dotted field setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 nested:"first"
+            `);
+
+            const rowNode = api.getRowNode('1')!;
+            expect(rowNode.getDataValue('nested')).toBe('first');
+
+            // a real change writes the nested value and reports changed=true
+            expect(rowNode.setDataValue('nested', 'second')).toBe(true);
+            expect(rowNode.data.a.b.c).toBe('second');
+            expect(rowNode.getDataValue('nested')).toBe('second');
+
+            // writing the same value reports changed=false and leaves data untouched
+            expect(rowNode.setDataValue('nested', 'second')).toBe(false);
+            expect(rowNode.data.a.b.c).toBe('second');
+
+            // a second distinct write still works — the column's cached fieldPath must not be consumed/mutated
+            expect(rowNode.setDataValue('nested', 'third')).toBe(true);
+            expect(rowNode.getDataValue('nested')).toBe('third');
+            await new GridRows(api, `dotted field final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 nested:"third"
+            `);
+        });
     });
 
     describe('column lookup', () => {

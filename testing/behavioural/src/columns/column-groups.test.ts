@@ -1898,4 +1898,43 @@ describe('Column Groups', () => {
             `);
         });
     });
+
+    describe('collapsed group part with no displayed children', () => {
+        test('a pin-split expandable group whose part has only columnGroupShow:open children does not crash', async () => {
+            const api = gridsManager.createGrid('collapsed-empty-part', {
+                columnDefs: [
+                    {
+                        headerName: 'G',
+                        groupId: 'g',
+                        children: [
+                            { field: 'a', pinned: 'left' },
+                            { field: 'b', columnGroupShow: 'open' },
+                        ],
+                    },
+                ] as (ColDef | ColGroupDef)[],
+                rowData: [{ a: 1, b: 2 }],
+            });
+            await asyncSetTimeout(1);
+
+            await new GridRows(api, 'collapsed group: empty center part').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:1 b:2
+            `);
+
+            api.setColumnGroupOpened('g', true);
+            await asyncSetTimeout(1);
+            await new GridColumns(api, 'expanded group: center part with b').checkColumns(`
+                LEFT
+                └─┬ "G" GROUP open
+                  └── a "A" width:200
+                CENTER
+                └─┬ "G" GROUP open
+                  └── b "B" width:200 columnGroupShow:open
+            `);
+            await new GridRows(api, 'expanded group: center part with b').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:1 b:2
+            `);
+        });
+    });
 });

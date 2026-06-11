@@ -80,7 +80,7 @@ export class SortIndicatorComp extends Component {
 
         this.setupMultiSortIndicator();
 
-        if (!column.isSortable() && !column.colDef.showRowGroup) {
+        if (!column.isSortable() && !column.showRowGroup) {
             return;
         }
 
@@ -160,7 +160,7 @@ export class SortIndicatorComp extends Component {
         const { eSortMixed, column, gos } = this;
         this.addInIcon('sortUnSort', eSortMixed, column);
 
-        const isColumnShowingRowGroup = column.colDef.showRowGroup;
+        const isColumnShowingRowGroup = column.showRowGroup;
         const areGroupsCoupled = _isColumnsSortingCoupledToGroup(gos);
         if (areGroupsCoupled && isColumnShowingRowGroup) {
             this.addManagedEventListeners({

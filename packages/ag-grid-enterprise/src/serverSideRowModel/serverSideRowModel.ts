@@ -375,9 +375,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             (col) =>
                 ({
                     id: col.getId(),
-                    aggFunc: col.getAggFunc(),
+                    aggFunc: col.aggFunc,
                     displayName: this.colNames.getDisplayNameForColumn(col, 'model'),
-                    field: col.colDef.field,
+                    field: col.field,
                 }) as ColumnVO
         );
     }

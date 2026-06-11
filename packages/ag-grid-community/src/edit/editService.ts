@@ -1019,6 +1019,7 @@ export class EditService extends BeanStub implements NamedBean {
      * Returns undefined to fallback to committed data/valueGetter.
      */
     public getPendingEditValue(rowNode: IRowNode, column: Column, from: Exclude<CellValueResolveFrom, 'data'>): any {
+        // Caller (ValueService.getValue) has already resolved any pivot result column.
         if (from === 'batch' && !this.batch) {
             return undefined; // 'batch' mode: only return edit values when batch editing is active
         }
@@ -1062,7 +1063,7 @@ export class EditService extends BeanStub implements NamedBean {
         }
 
         // fallback to getting value from ValueService
-        return this.valueSvc.getValue(position.column as AgColumn, position.rowNode, 'data');
+        return this.valueSvc.getValueFromData(position.column as AgColumn, position.rowNode);
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
@@ -1271,7 +1272,7 @@ export class EditService extends BeanStub implements NamedBean {
                 const existingEdit = editModelSvc?.getEdit(position);
                 if (existingEdit?.sourceValue === undefined) {
                     editModelSvc?.setEdit(position, {
-                        sourceValue: valueSvc.getValue(column as AgColumn, rowNode, 'data'),
+                        sourceValue: valueSvc.getValueFromData(column as AgColumn, rowNode),
                     });
                 }
                 editModelSvc?.setEdit(position, { pendingValue: newValue });
@@ -1415,7 +1416,8 @@ export class EditService extends BeanStub implements NamedBean {
         const isFormula = formula?.isFormula(editValue) ?? false;
 
         ranges.forEach((range: CellRange) => {
-            const hasFormulaColumnsInRange = range.columns.some((col) => col?.isAllowFormula());
+            const rangeColumns = range.columns as AgColumn[];
+            const hasFormulaColumnsInRange = rangeColumns.some((col) => col?.allowFormula);
             rangeSvc?.forEachRowInRange(range, (position) => {
                 const rowNode = _getRowNode(beans, position);
                 if (rowNode === undefined) {
@@ -1424,15 +1426,15 @@ export class EditService extends BeanStub implements NamedBean {
 
                 const editRow: EditRow = edits.get(rowNode) ?? new Map();
                 let valueForColumn = editValue;
-                for (const column of range.columns) {
+                for (const column of rangeColumns) {
                     if (!column) {
                         continue;
                     }
 
-                    const isFormulaForColumn = !!isFormula && column.isAllowFormula();
+                    const isFormulaForColumn = !!isFormula && column.allowFormula;
 
                     if (this.isCellEditable({ rowNode, column }, 'api')) {
-                        const sourceValue = valueSvc.getValue(column as AgColumn, rowNode, 'data', true);
+                        const sourceValue = valueSvc.getValueFromData(column as AgColumn, rowNode, true);
                         let pendingValue = valueSvc.parseValue(
                             column as AgColumn,
                             rowNode ?? null,
@@ -1524,7 +1526,7 @@ export class EditService extends BeanStub implements NamedBean {
             if (!rowNode) {
                 continue;
             }
-            const sourceValue = valueSvc.getValue(col as AgColumn, rowNode, 'data', true);
+            const sourceValue = valueSvc.getValueFromData(col as AgColumn, rowNode, true);
 
             if (
                 !params?.forceRefreshOfEditCellsOnly &&

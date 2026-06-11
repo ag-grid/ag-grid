@@ -11,6 +11,7 @@ import type { SortModelItem } from '../interfaces/iSortModelItem';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { Component } from '../widgets/component';
 import { SortIndicatorComp, SortIndicatorSelector } from './sortIndicatorComp';
+import { _resolveSortOptions } from './sortOptionUtils';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class SortService extends BeanStub implements NamedBean {
@@ -49,7 +50,7 @@ export class SortService extends BeanStub implements NamedBean {
         const { gos, showRowGroupCols } = this.beans;
 
         const columnsToUpdate: AgColumn[] = [column];
-        if (_isColumnsSortingCoupledToGroup(gos) && column.colDef.showRowGroup) {
+        if (column.showRowGroup && _isColumnsSortingCoupledToGroup(gos)) {
             const rowGroupColumns = showRowGroupCols?.getSourceColumnsForGroupColumn?.(column);
             for (let i = 0, len = rowGroupColumns?.length ?? 0; i < len; ++i) {
                 const col = rowGroupColumns![i];
@@ -86,7 +87,7 @@ export class SortService extends BeanStub implements NamedBean {
         let nextIndex = 0;
         for (let i = 0, len = sorted.length; i < len; ++i) {
             const col = sorted[i];
-            if ((isCoupled && col.colDef.showRowGroup) || col === lastSortIndexCol) {
+            if ((isCoupled && col.showRowGroup) || col === lastSortIndexCol) {
                 continue;
             }
             targetIndex.set(col, nextIndex++);
@@ -174,7 +175,7 @@ export class SortService extends BeanStub implements NamedBean {
                 continue;
             }
             if (pivotMode) {
-                const isGroup = coupled ? col.showRowGroupCol : col.colDef.showRowGroup;
+                const isGroup = coupled ? col.showRowGroupCol : col.showRowGroup;
                 if (!col.aggFunc && col.primary && !isGroup) {
                     continue;
                 }
@@ -222,9 +223,18 @@ export class SortService extends BeanStub implements NamedBean {
                 const sortDef = column.getSortDef();
                 const sort = sortDef?.direction;
                 if (sort) {
-                    opts.push({ sort, type: _normalizeSortType(sortDef.type), column });
+                    opts.push({
+                        sort,
+                        type: _normalizeSortType(sortDef.type),
+                        column,
+                        colComparator: undefined,
+                        leafComparator: undefined,
+                        descending: false,
+                        absolute: false,
+                    });
                 }
             }
+            _resolveSortOptions(opts, this.beans.colModel);
             this.opts = opts;
         }
         return opts;
@@ -233,7 +243,7 @@ export class SortService extends BeanStub implements NamedBean {
     public getDisplaySort(column: AgColumn): DisplaySortDef | null {
         const colSortDef = column.getSortDef();
         // Mixed sort only on a coupled group display col — check the cheap flags before the linked-col lookup.
-        if (!column.colDef.showRowGroup || !_isColumnsSortingCoupledToGroup(this.gos)) {
+        if (!column.showRowGroup || !_isColumnsSortingCoupledToGroup(this.gos)) {
             return colSortDef;
         }
         const linkedColumns = this.beans.showRowGroupCols?.getSourceColumnsForGroupColumn(column);
@@ -241,8 +251,7 @@ export class SortService extends BeanStub implements NamedBean {
             return colSortDef;
         }
         // A group col with its own field/valueGetter sorts independently, so it joins the comparison.
-        const colDef = column.colDef;
-        const ownData = colDef.field != null || !!colDef.valueGetter;
+        const ownData = column.field != null || !!column.valueGetter;
         const firstSort = ownData ? colSortDef : linkedColumns[0].getSortDef();
         let allMatch = true;
         for (let i = 0, len = linkedColumns.length; allMatch && i < len; ++i) {
@@ -269,7 +278,7 @@ export class SortService extends BeanStub implements NamedBean {
             comp.toggleCss('ag-header-cell-sorted-abs-asc', type === 'absolute' && direction === 'asc');
             comp.toggleCss('ag-header-cell-sorted-abs-desc', type === 'absolute' && direction === 'desc');
             comp.toggleCss('ag-header-cell-sorted-none', !direction);
-            if (column.colDef.showRowGroup) {
+            if (column.showRowGroup) {
                 const isMixed = this.beans.showRowGroupCols?.isGroupSortMixed(column, direction) ?? true;
                 comp.toggleCss('ag-header-cell-sorted-mixed', isMixed);
             }

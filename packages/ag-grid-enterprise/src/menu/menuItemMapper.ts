@@ -233,7 +233,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'valueAggSubMenu':
-                    if (aggFuncSvc && valueColsSvc && (column?.primary || column?.colDef.pivotValueColumn)) {
+                    if (aggFuncSvc && valueColsSvc && (column?.primary || column?.pivotValueColumn)) {
                         return {
                             name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                             icon: _createIconNoSpan('menuValue', beans, null),
@@ -280,7 +280,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         : null;
                 case 'rowUnGroup': {
                     if (rowGroupColsSvc && gos.isModuleRegistered('SharedRowGrouping')) {
-                        const showRowGroup = column?.colDef.showRowGroup;
+                        const showRowGroup = column?.showRowGroup;
                         const lockedGroups = gos.get('groupLockGroupColumns');
                         let name: string;
                         let disabled: boolean;
@@ -664,7 +664,7 @@ function createAggregationSubMenu(
     if (column.primary) {
         columnToUse = column;
     } else {
-        const pivotValueColumn = column.colDef.pivotValueColumn as AgColumn;
+        const pivotValueColumn = column.pivotValueColumn as AgColumn;
         columnToUse = _exists(pivotValueColumn) ? pivotValueColumn : undefined;
     }
 
@@ -689,7 +689,7 @@ function createAggregationSubMenu(
                     valueColsSvc.setColumnAggFunc!(columnToUse, funcName, 'contextMenu');
                     valueColsSvc.addColumns([columnToUse!], 'contextMenu');
                 },
-                checked: columnIsAlreadyAggValue && columnToUse.getAggFunc() === funcName,
+                checked: columnIsAlreadyAggValue && columnToUse.aggFunc === funcName,
             });
         }
     }

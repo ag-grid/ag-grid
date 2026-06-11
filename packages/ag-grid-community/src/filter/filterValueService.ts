@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import { _resolvePivotColumnForRow } from '../entities/agColumn';
 import type { ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -36,15 +37,19 @@ export class FilterValueService extends BeanStub implements NamedBean {
                 colDef,
                 getValue: (field) => {
                     const col = colModel.getCol(field);
-                    return col ? valueSvc.getValue(col, rowNode, 'data') : null;
+                    // arbitrary user-requested field: may be a pivot result column, so resolve it
+                    return col ? valueSvc.getValueFromData(_resolvePivotColumnForRow(col, rowNode), rowNode) : null;
                 },
             };
 
             return isFunction ? filterValueGetter(params) : expressionSvc!.evaluate(filterValueGetter, params);
         }
 
-        const value = valueSvc.getValue(column, rowNode, 'data');
-        if (column.colDef.allowFormula) {
+        // Filtering never reads a pivot-result column on a leaf row: leaf rows are filtered with primary
+        // columns; pivot-result columns are only evaluated against group rows (aggregate path), where the
+        // pivot block is skipped anyway. So pivot resolution can never fire here.
+        const value = valueSvc.getValueFromData(column, rowNode);
+        if (column.allowFormula) {
             const formula = beans.formula;
             if (formula?.isFormula(value)) {
                 return formula.resolveValue(column, rowNode as RowNode);

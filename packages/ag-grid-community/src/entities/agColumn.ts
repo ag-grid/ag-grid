@@ -1,7 +1,6 @@
 import type { AgEvent, IAgEventEmitter } from 'ag-stack';
 import { LocalEventService, _escapeString } from 'ag-stack';
 
-import { _hasCalculatedExpression } from '../columns/calculatedColumnUtils';
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
 import { updateSomeColumnState } from '../columns/columnStateUtils';
 import type { ColumnState } from '../columns/columnStateUtils';
@@ -32,9 +31,15 @@ import type {
     AbstractColDef,
     ColAggFunc,
     ColDef,
+    ColDefField,
+    ColSpanFunc,
     ColSpanParams,
     ColumnFunctionCallbackParams,
+    RefData,
+    RowSpanFunc,
     RowSpanParams,
+    ValueFormatterFunc,
+    ValueGetterFunc,
 } from './colDef';
 
 let instanceIdSequence = 0;
@@ -43,6 +48,23 @@ export function getNextColInstanceId(): ColumnInstanceId {
 }
 
 export const isColumn = (col: Column | ColumnGroup | ProvidedColumnGroup): col is AgColumn => col instanceof AgColumn;
+
+/**
+ * Redirects a pivot result column to its underlying value column for non-group, non-pinned (leaf) rows,
+ * so value get/set reads the real source value. Pinned rows are excluded — their data is keyed by pivot
+ * column ID. Only the deliberate consumers (pivot edit, API reads, pivot aggregation) need this; the hot
+ * read path (`getValueFromData`) does not.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export const _resolvePivotColumnForRow = (column: AgColumn, rowNode: IRowNode): AgColumn => {
+    if (!rowNode.group && !rowNode.rowPinned) {
+        const pivotValueColumn = column.pivotValueColumn;
+        if (pivotValueColumn) {
+            return pivotValueColumn;
+        }
+    }
+    return column;
+};
 
 const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 const DEFAULT_ABSOLUTE_SORTING_ORDER: (SortDef | SortDirection)[] = [
@@ -67,75 +89,87 @@ export class AgColumn<TValue = any>
 {
     public readonly isColumn = true as const;
 
-    private frameworkEventListenerService?: IFrameworkEventListenerService<any, any>;
-
     // framework (React) render key; also identifies old-vs-new cols when destroying unused ones
     private readonly instanceId = getNextColInstanceId();
 
     /** Sanitised version of the column id */
     public readonly colIdSanitised: string;
 
+    // ── Per-cell hot path ── read by getValue / formatValue / cellCtrl for every cell; clustered first and
+    // contiguous for cache locality. The colDef mirrors are (re)set on colDef change ({@link initColDefHotFields}
+    // / {@link initDotNotation}); internal code reads these fields DIRECTLY (never the getters / colDef) to avoid
+    // a megamorphic load on the user-supplied colDef. The getters exist only for the public interface.
+    public aggFunc: ColAggFunc = undefined;
+    public isCalculatedCol = false;
+    public field: ColDefField<any, TValue> | undefined = undefined;
+    /** Cached split of a dotted `field` (`field.split('.')`); `null` when not dotted / dot-notation suppressed.
+     *  Non-null doubles as the "field contains dots" indicator. Read per cell via `_getValueUsingDotPath`. */
+    public fieldPath: string[] | null = null;
+    public valueGetter: string | ValueGetterFunc<any, TValue> | undefined = undefined;
+    public allowFormula: boolean = false;
+    public showRowGroup: string | boolean | undefined = undefined;
+    public pivotValueColumn: AgColumn | null | undefined = undefined;
+    public valueFormatter: string | ValueFormatterFunc<any, TValue> | undefined = undefined;
+    public refData: RefData | undefined = undefined;
+    public enableCellChangeFlash: boolean | undefined = undefined;
+    /** Read per cell when the colSpan/rowSpan feature is used (`getColSpan`/`getRowSpan`). */
+    public colSpan: ColSpanFunc<any, TValue> | undefined = undefined;
+    public rowSpan: RowSpanFunc<any, TValue> | undefined = undefined;
+    /** Read per cell on calculated columns (`formulaService.ensureCellFormula`/`fetchRawValue`). */
+    public calculatedExpression: string | undefined = undefined;
+
+    // ── Layout / display ── read during rendering and header layout (per column, per refresh).
     /** Current rendered width in px. Writes must go through `setActualWidth` for min/max clamping and the `widthChanged` event. */
     public actualWidth: number = 0;
-
-    // measured header height when autoHeaderHeight is enabled
-    public autoHeaderHeight: number | null = null;
-
-    /** User intent: should this column be shown if display rules allow it. */
-    public visible: boolean = false;
-
-    /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
-    public buildToken: number = 0;
-
-    /** 0-based index in `VisibleColsService.allCols` (displayed, visual order — RTL reversed), stamped each refresh. `-1` = not displayed. */
-    public allColsIndex: number = -1;
-
-    /** Whether this column is in the displayed (rendered) columns — kept in lockstep with `allColsIndex >= 0` */
-    public displayed: boolean = false;
-
-    /** `true` while in `ColumnModel.colsList` (live cols, hidden included); `false` when only in
-     *  `colsById` — a pivot **primary** parked while a pivot result shows. Set by `refreshCols`. */
-    public inColsList: boolean = false;
-
-    /** 1-based `aria-colindex`: position in `colsList` reordered `[left, center, right]` (hidden included). `0` = not in `colsList`. */
-    public ariaColIndex: number = 0;
-
+    public minWidth: number = 0;
+    private maxWidth: number = 0;
+    public flex: number | null = null;
     public pinned: ColumnPinnedType = null;
     public left: number | null = null;
     public oldLeft: number | null = null;
-    public aggFunc: ColAggFunc = undefined;
+    /** User intent: should this column be shown if display rules allow it. */
+    public visible: boolean = false;
+    /** Whether this column is in the displayed (rendered) columns — kept in lockstep with `allColsIndex >= 0` */
+    public displayed: boolean = false;
+    public filterActive = false;
     public sortDef: SortDef = getSortDefFromInput();
     public sortIndex: number | null | undefined = undefined;
+    // measured header height when autoHeaderHeight is enabled
+    public autoHeaderHeight: number | null = null;
+    public tooltipEnabled = false;
+    public tooltipFieldContainsDots: boolean = false;
+
+    // ── Cold ── structure, transient interaction state, indices, events.
+    private frameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined = undefined;
+    // Lazy — most columns never get a listener; allocated on first __addEventListener/addEventListener.
+    private colEventSvc: LocalEventService<ColumnEventName> | null = null;
+
+    /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
+    public buildToken: number = 0;
+    /** 0-based index in `VisibleColsService.allCols` (displayed, visual order — RTL reversed), stamped each refresh. `-1` = not displayed. */
+    public allColsIndex: number = -1;
+    /** `true` while in `ColumnModel.colsList` (live cols, hidden included); `false` when only in
+     *  `colsById` — a pivot **primary** parked while a pivot result shows. Set by `refreshCols`. */
+    public inColsList: boolean = false;
+    /** 1-based `aria-colindex`: position in `colsList` reordered `[left, center, right]` (hidden included). `0` = not in `colsList`. */
+    public ariaColIndex: number = 0;
+    /** 0-based index in `ColumnModel.colsList` (stamped lazily by `ensureColsListIndex` for O(1) ordered reads);
+     *  `-1` until first stamped / when not in colsList. In pivot, parked primaries keep their pre-pivot index. */
+    public colsListIndex: number = -1;
+
     public moving = false;
     public resizing = false;
     public menuVisible = false;
     public highlighted: ColumnHighlightPosition | null = null;
     public formulaRef: string | null = null;
 
-    public isCalculatedCol = false;
-
     /** colId this column sits immediately after in display order. Order restoration seats new cols after
      *  this anchor — handles anchors absent from the tree (e.g. auto-group col) and stacks same-anchor adds
      *  newest-first. `undefined` = not anchored. Column-kind agnostic (currently set by the calc-column contributor). */
     public anchoredToColId: string | undefined = undefined;
 
-    /** 0-based index in `ColumnModel.colsList` (stamped lazily by `ensureColsListIndex` for O(1) ordered reads);
-     *  `-1` until first stamped / when not in colsList. In pivot, parked primaries keep their pre-pivot index. */
-    public colsListIndex: number = -1;
-
     private lastLeftPinned: boolean = false;
     private firstRightPinned: boolean = false;
-
-    public minWidth: number = 0;
-    private maxWidth: number = 0;
-
-    public filterActive = false;
-
-    private readonly colEventSvc: LocalEventService<ColumnEventName> = new LocalEventService();
-
-    public fieldContainsDots: boolean = false;
-    private tooltipFieldContainsDots: boolean = false;
-    public tooltipEnabled = false;
 
     public rowGroupActive = false;
     /** Position in `rowGroupColsSvc.columns` when {@link rowGroupActive}; else stale — always pair the read with a `rowGroupActive` check. */
@@ -146,7 +180,6 @@ export class AgColumn<TValue = any>
     public aggregationActive = false;
     /** The display group col that shows this (source) column; set by `showRowGroupCols` on refresh */
     public showRowGroupCol: AgColumn | null = null;
-    public flex: number | null = null;
 
     public parent: AgColumnGroup | null = null;
     public originalParent: AgProvidedColumnGroup | null = null;
@@ -209,7 +242,7 @@ export class AgColumn<TValue = any>
             return false;
         }
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
-        this.initCalculatedCol();
+        this.initColDefHotFields();
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
@@ -259,7 +292,7 @@ export class AgColumn<TValue = any>
 
     // this is done after constructor as it uses gridOptionsService
     public postConstruct(): void {
-        this.initCalculatedCol();
+        this.initColDefHotFields();
         this.initState();
         this.initMinAndMaxWidths();
         this.resetActualWidth('gridInitializing');
@@ -268,13 +301,14 @@ export class AgColumn<TValue = any>
     }
 
     private initDotNotation(): void {
+        const { field, tooltipField } = this.colDef;
+        this.field = field;
         const suppress = this.gos.get('suppressFieldDotNotation');
         if (suppress) {
-            this.fieldContainsDots = false;
+            this.fieldPath = null;
             this.tooltipFieldContainsDots = false;
         } else {
-            const { field, tooltipField } = this.colDef;
-            this.fieldContainsDots = typeof field === 'string' && field.includes('.');
+            this.fieldPath = typeof field === 'string' && field.includes('.') ? field.split('.') : null;
             this.tooltipFieldContainsDots = typeof tooltipField === 'string' && tooltipField.includes('.');
         }
     }
@@ -317,7 +351,7 @@ export class AgColumn<TValue = any>
     }
 
     public isFieldContainsDots(): boolean {
-        return this.fieldContainsDots;
+        return this.fieldPath !== null;
     }
 
     public isTooltipEnabled(): boolean {
@@ -332,17 +366,26 @@ export class AgColumn<TValue = any>
         return this.highlighted;
     }
 
+    private getColEventSvc(): LocalEventService<ColumnEventName> {
+        let svc = this.colEventSvc;
+        if (!svc) {
+            svc = new LocalEventService();
+            this.colEventSvc = svc;
+        }
+        return svc;
+    }
+
     public __addEventListener<T extends ColumnEventName>(
         eventType: T,
         listener: (params: ColumnEvent<T>) => void
     ): void {
-        this.colEventSvc.addEventListener(eventType, listener);
+        this.getColEventSvc().addEventListener(eventType, listener);
     }
     public __removeEventListener<T extends ColumnEventName>(
         eventType: T,
         listener: (params: ColumnEvent<T>) => void
     ): void {
-        this.colEventSvc.removeEventListener(eventType, listener);
+        this.colEventSvc?.removeEventListener(eventType, listener);
     }
 
     /**
@@ -352,13 +395,14 @@ export class AgColumn<TValue = any>
         eventType: T,
         userListener: (params: ColumnEvent<T>) => void
     ): void {
+        const colEventSvc = this.getColEventSvc();
         this.frameworkEventListenerService = this.beans.frameworkOverrides.createLocalEventListenerWrapper?.(
             this.frameworkEventListenerService,
-            this.colEventSvc
+            colEventSvc
         );
         const listener = this.frameworkEventListenerService?.wrap(eventType, userListener) ?? userListener;
 
-        this.colEventSvc.addEventListener(eventType, listener);
+        colEventSvc.addEventListener(eventType, listener);
     }
 
     /**
@@ -369,7 +413,7 @@ export class AgColumn<TValue = any>
         userListener: (params: ColumnEvent<T>) => void
     ): void {
         const listener = this.frameworkEventListenerService?.unwrap(eventType, userListener) ?? userListener;
-        this.colEventSvc.removeEventListener(eventType, listener);
+        this.colEventSvc?.removeEventListener(eventType, listener);
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
@@ -412,8 +456,21 @@ export class AgColumn<TValue = any>
         return this.isCalculatedCol || this.isColumnFunc(rowNode, this.colDef.suppressPaste ?? null);
     }
 
-    private initCalculatedCol(): void {
-        this.isCalculatedCol = _hasCalculatedExpression(this.colDef) && this.beans.calculatedColsSvc != null;
+    /** Mirror the hot-path colDef fields onto the column so per-cell reads avoid a megamorphic colDef load.
+     *  `field`/`fieldPath` are set by {@link initDotNotation} (they depend on `suppressFieldDotNotation`). */
+    private initColDefHotFields(): void {
+        const colDef = this.colDef;
+        this.valueGetter = colDef.valueGetter;
+        this.allowFormula = colDef.allowFormula === true;
+        this.showRowGroup = colDef.showRowGroup;
+        this.pivotValueColumn = colDef.pivotValueColumn as AgColumn | null | undefined;
+        this.valueFormatter = colDef.valueFormatter;
+        this.refData = colDef.refData;
+        this.enableCellChangeFlash = colDef.enableCellChangeFlash;
+        this.colSpan = colDef.colSpan;
+        this.rowSpan = colDef.rowSpan;
+        this.calculatedExpression = colDef.calculatedExpression;
+        this.isCalculatedCol = this.calculatedExpression !== undefined && this.beans.calculatedColsSvc != null;
     }
 
     public isResizable(): boolean {
@@ -648,18 +705,17 @@ export class AgColumn<TValue = any>
     }
 
     public getColSpan(rowNode: IRowNode): number {
-        const colDef = this.colDef;
-        if (colDef.colSpan == null) {
+        const colSpanFn = this.colSpan;
+        if (colSpanFn == null) {
             return 1;
         }
         const params: ColSpanParams = this.createColumnFunctionCallbackParams(rowNode);
-        const colSpan = colDef.colSpan(params);
+        const colSpan = colSpanFn(params);
         return colSpan < 1 ? 1 : colSpan; // colSpan must be number equal to or greater than 1
     }
 
     public getRowSpan(rowNode: IRowNode): number {
-        const colDef = this.colDef;
-        const rowSpan = colDef.rowSpan;
+        const rowSpan = this.rowSpan;
         if (rowSpan == null) {
             return 1;
         }
@@ -739,11 +795,11 @@ export class AgColumn<TValue = any>
     }
 
     public isAllowFormula(): boolean {
-        return this.colDef.allowFormula === true;
+        return this.allowFormula;
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {
-        this.colEventSvc.dispatchEvent(
+        this.colEventSvc?.dispatchEvent(
             _addGridCommonParams<ColumnEvent>(this.gos, {
                 type,
                 column: this,
@@ -755,7 +811,7 @@ export class AgColumn<TValue = any>
     }
 
     public dispatchStateUpdatedEvent(key: keyof ColumnState): void {
-        this.colEventSvc.dispatchEvent({ type: 'columnStateUpdated', key } as AgEvent<'columnStateUpdated'>);
+        this.colEventSvc?.dispatchEvent({ type: 'columnStateUpdated', key } as AgEvent<'columnStateUpdated'>);
     }
 }
 

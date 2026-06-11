@@ -134,7 +134,7 @@ const resolveCellTooltip = ({
 
     // 1) formula error tooltip has highest priority.
     const isCalculatedColumn = column.isCalculatedCol;
-    if ((colDef.allowFormula && formula?.active) || (isCalculatedColumn && formula)) {
+    if ((column.allowFormula && formula?.active) || (isCalculatedColumn && formula)) {
         const error = formula.getFormulaError(column, rowNode);
         if (error) {
             return {
@@ -171,9 +171,7 @@ const resolveCellTooltip = ({
     if (colDef.tooltipField && _exists(data)) {
         const tooltipField = colDef.tooltipField;
         return {
-            value: column.isTooltipFieldContainsDots()
-                ? _getValueUsingDotField(data, tooltipField)
-                : data[tooltipField],
+            value: column.tooltipFieldContainsDots ? _getValueUsingDotField(data, tooltipField) : data[tooltipField],
             location: 'cell',
             shouldDisplay: shouldDisplayColumnTooltip,
         };

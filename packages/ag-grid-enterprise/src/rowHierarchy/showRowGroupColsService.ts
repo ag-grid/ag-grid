@@ -80,7 +80,7 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
     }
 
     public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
-        const sourceColumnId = groupCol.colDef.showRowGroup;
+        const sourceColumnId = groupCol.showRowGroup;
         if (!sourceColumnId) {
             return null;
         }
@@ -95,7 +95,7 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
     }
 
     public isRowGroupDisplayed(column: AgColumn, colId: string | null): boolean {
-        const showRowGroup = column.colDef.showRowGroup;
+        const showRowGroup = column.showRowGroup;
         return showRowGroup === true || (showRowGroup != null && showRowGroup === colId);
     }
 

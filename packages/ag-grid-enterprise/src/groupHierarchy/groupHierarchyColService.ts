@@ -200,7 +200,8 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
             return _addColumnDefaultAndTypes(beans, part, colId, true);
         }
 
-        const defaults: Partial<ColDef> = { hide: true, editable: false };
+        // hierarchy cols inherit the source col's pivot affordance so they stay draggable to the pivot area
+        const defaults: Partial<ColDef> = { enablePivot: sourceCol.colDef.enablePivot, hide: true, editable: false };
 
         const config = gos.get('groupHierarchyConfig') ?? {};
         if (part in config) {

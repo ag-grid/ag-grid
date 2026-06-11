@@ -488,7 +488,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
 
         // skip type checking for formulas
-        if (column.colDef.allowFormula && this.beans.formula?.isFormula(value)) {
+        if (column.allowFormula && this.beans.formula?.isFormula(value)) {
             return true;
         }
         return dataTypeMatcher(value);
@@ -817,10 +817,11 @@ function createGroupSafeValueFormatter(
     }
 
     return (params: ValueFormatterParams) => {
-        const { node, colDef, column, value } = params;
+        const { node, column, value } = params;
 
         if (node?.group) {
-            const aggFunc = (colDef.pivotValueColumn ?? column).getAggFunc();
+            const agColumn = column as AgColumn;
+            const aggFunc = (agColumn.pivotValueColumn ?? agColumn).aggFunc;
             if (aggFunc) {
                 // the resulting type of these will be the same, so we call valueFormatter anyway
                 if (aggFunc === 'first' || aggFunc === 'last') {
@@ -837,11 +838,11 @@ function createGroupSafeValueFormatter(
                         return undefined;
                     }
 
+                    // unwrap an aggregation wrapper (avg/count) to its scalar before formatting
                     if (typeof value === 'object') {
                         if (typeof value.toNumber === 'function') {
                             return dataTypeDefinition.valueFormatter!({ ...params, value: value.toNumber() });
                         }
-
                         if ('value' in value) {
                             return dataTypeDefinition.valueFormatter!({ ...params, value: value.value });
                         }

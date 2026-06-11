@@ -36,7 +36,7 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
         }
 
         const valueSvc = this.beans.valueSvc;
-        const rowGroupColId = column.colDef.showRowGroup;
+        const rowGroupColId = column.showRowGroup;
         if (!rowGroupColId) {
             return null;
         }
@@ -57,20 +57,20 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
             if (hideOpenParentsNode) {
                 return {
                     displayedNode: hideOpenParentsNode,
-                    value: valueSvc.getValue(column, hideOpenParentsNode, 'data', ignoreAggData),
+                    value: valueSvc.getValueFromData(column, hideOpenParentsNode, ignoreAggData),
                 };
             }
         }
 
         // cell value > showOpenedGroup
-        const value = valueSvc.getValue(column, node, 'data', ignoreAggData);
+        const value = valueSvc.getValueFromData(column, node, ignoreAggData);
         if (value == null) {
             // showOpenedGroup
             const displayedNode = this.getDisplayedNode(node, column);
             if (displayedNode) {
                 return {
                     displayedNode,
-                    value: valueSvc.getValue(column, displayedNode, 'data', ignoreAggData),
+                    value: valueSvc.getValueFromData(column, displayedNode, ignoreAggData),
                 };
             }
         }
@@ -167,7 +167,7 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
             return undefined;
         }
 
-        const showRowGroup = column.colDef.showRowGroup;
+        const showRowGroup = column.showRowGroup;
         // single auto col can only showOpenedGroup for leaf rows
         if (showRowGroup === true) {
             if (node.group) {

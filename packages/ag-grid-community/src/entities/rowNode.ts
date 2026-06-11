@@ -19,6 +19,7 @@ import type {
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
+import { _resolvePivotColumnForRow } from './agColumn';
 import type { ColKey, IAggFuncResult } from './colDef';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -585,12 +586,9 @@ export class RowNode<TData = any>
         }
 
         // Resolve pivot result columns to their underlying value column for non-group, non-pinned rows.
-        const pivotValueColumn = column.colDef.pivotValueColumn;
-        if (!this.group && !this.rowPinned && pivotValueColumn) {
-            column = pivotValueColumn as AgColumn;
-        }
+        column = _resolvePivotColumnForRow(column, this);
 
-        const oldValue = valueSvc.getValueForDisplay({ column, node: this, from: 'data' }).value;
+        const oldValue = valueSvc.getDisplayValue(column, this, 'data');
 
         if (gos.get('readOnlyEdit')) {
             const {
@@ -660,7 +658,7 @@ export class RowNode<TData = any>
 
         let value: any;
         if (from === 'data' || !from) {
-            value = beans.valueSvc.getValue(column, this, 'data', false);
+            value = beans.valueSvc.getValueFromData(_resolvePivotColumnForRow(column, this), this, false);
             if (value == null) {
                 return value;
             }
@@ -669,14 +667,13 @@ export class RowNode<TData = any>
             // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
             const dataRaw = from === 'data-raw';
             const resolvedFrom = dataRaw || from === 'value' ? 'data' : from;
-            value = beans.valueSvc.getValue(column, this, resolvedFrom, dataRaw);
+            value = beans.valueSvc.getValue(_resolvePivotColumnForRow(column, this), this, resolvedFrom, dataRaw);
             if (dataRaw || value == null) {
                 return value;
             }
 
             // For 'value', 'edit', and 'batch' modes, resolve aggregation wrapper objects to their scalar
-            // value on agg columns. Matches the resolution pattern in dataTypeService: first try toNumber(),
-            // then fall back to .value property. `typeof` check precedes `aggFunc` to cheaply skip primitives.
+            // on agg columns. `typeof` precedes `aggFunc` to cheaply skip primitives (value is non-null here).
             if (typeof value === 'object' && column.aggFunc) {
                 if (typeof value.toNumber === 'function') {
                     return value.toNumber();
@@ -696,9 +693,9 @@ export class RowNode<TData = any>
             }
         }
 
-        if (column.colDef.allowFormula) {
+        if (column.allowFormula) {
             const formula = beans.formula;
-            if (formula?.isFormula(value) && column.isAllowFormula()) {
+            if (formula?.isFormula(value)) {
                 value = formula.resolveValue(column, this);
             }
         }

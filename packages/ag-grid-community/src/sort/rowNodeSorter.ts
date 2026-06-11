@@ -1,14 +1,16 @@
 import { _defaultComparator } from 'ag-stack';
 
 import { _csrmFirstLeaf } from '../clientSideRowModel/clientSideRowModelUtils';
+import type { ColumnModel } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { _normalizeSortType } from '../entities/agColumn';
-import type { ColDef, SortComparatorFn } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _isClientSideRowModel, _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
+import type { IFormulaService } from '../interfaces/formulas';
 import type { SortOption } from '../interfaces/iSortOption';
+import type { ValueService } from '../valueService/valueService';
 
 // this logic is used by both SSRM and CSRM
 
@@ -21,31 +23,38 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     private pivotActive: boolean = false;
     private firstLeaf: (row: RowNode) => RowNode | undefined;
 
+    private colModel: ColumnModel;
+    private formula: IFormulaService | undefined;
+    private valueSvc: ValueService;
+
     public postConstruct(): void {
         this.firstLeaf = _isClientSideRowModel(this.gos) ? _csrmFirstLeaf : defaultGetLeaf;
 
-        this.addManagedPropertyListeners(
-            ['accentedSort', 'autoGroupColumnDef', 'treeData'],
-            this.updateOptions.bind(this)
-        );
+        const updatePivotModeState = () => {
+            this.pivotActive = this.colModel.isPivotActive();
+        };
 
-        const updatePivotModeState = this.updatePivotModeState.bind(this);
+        const updateOptions = () => {
+            const gos = this.gos;
+            this.accentedSort = !!gos.get('accentedSort');
+            this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(gos);
+        };
+
+        this.addManagedPropertyListeners(['accentedSort', 'autoGroupColumnDef', 'treeData'], updateOptions);
+
         this.addManagedEventListeners({
             columnPivotModeChanged: updatePivotModeState,
             columnPivotChanged: updatePivotModeState,
         });
 
-        this.updateOptions();
+        updateOptions();
         updatePivotModeState();
     }
 
-    private updateOptions(): void {
-        this.accentedSort = !!this.gos.get('accentedSort');
-        this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(this.gos);
-    }
-
-    private updatePivotModeState(): void {
-        this.pivotActive = this.beans.colModel.isPivotActive();
+    public wireBeans(beans: BeanCollection): void {
+        this.colModel = beans.colModel;
+        this.formula = beans.formula;
+        this.valueSvc = beans.valueSvc;
     }
 
     public doFullSortInPlace(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
@@ -54,109 +63,55 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     public compareRowNodes(sortOptions: SortOption[], nodeA: RowNode, nodeB: RowNode): number {
-        if (nodeA === nodeB) {
-            return 0;
-        }
-
         const accentedCompare = this.accentedSort;
 
-        // Iterate columns, return the first that doesn't match
+        // Iterate columns, return the first that doesn't match. Comparators are resolved up front
+        // (see _resolveSortOptions): a col comparator applies to every row; a row-group display col falls back
+        // to its primary column's comparator for leaf rows only; otherwise the grid's default comparator is used.
         for (let i = 0, len = sortOptions.length; i < len; ++i) {
             const sortOption = sortOptions[i];
-            const isDescending = sortOption.sort === 'desc';
-
             const column = sortOption.column as AgColumn;
-            let valueA = this.getValue(nodeA, column);
-            let valueB = this.getValue(nodeB, column);
+            const descending = sortOption.descending;
+            const valueA = this.getValue(nodeA, column);
+            const valueB = this.getValue(nodeB, column);
 
-            let comparatorResult: number;
-            const providedComparator = this.getComparator(sortOption, nodeA);
-            if (providedComparator) {
-                //if comparator provided, use it
-                comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isDescending);
+            const comparator = sortOption.colComparator ?? (nodeA.group ? undefined : sortOption.leafComparator);
+            let result: number;
+            if (comparator) {
+                result = comparator(valueA, valueB, nodeA, nodeB, descending);
+            } else if (sortOption.absolute) {
+                result = _defaultComparator(
+                    absoluteValueTransformer(valueA),
+                    absoluteValueTransformer(valueB),
+                    accentedCompare
+                );
             } else {
-                //otherwise do our own comparison
-
-                if (sortOption.type === 'absolute') {
-                    valueA = absoluteValueTransformer(valueA);
-                    valueB = absoluteValueTransformer(valueB);
-                }
-
-                comparatorResult = _defaultComparator(valueA, valueB, accentedCompare);
+                result = _defaultComparator(valueA, valueB, accentedCompare);
             }
 
-            // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this
-            // typically occurs when the comparator is used on a group row
-            if (comparatorResult) {
-                return sortOption.sort === 'asc' ? comparatorResult : -comparatorResult;
+            // user comparators can return NaN for unhandled undefined values; NaN is falsy → treated as equal.
+            if (result) {
+                return descending ? -result : result;
             }
         }
 
         return 0;
     }
 
-    /**
-     * if user defines a comparator as a function then use that.
-     * if user defines a dictionary of comparators, then use the one matching the sort type.
-     * if no comparator provided, or no matching comparator found in dictionary, then return undefined.
-     *
-     * grid checks later if undefined is returned here and falls back to a default comparator corresponding to sort type on the coldef.
-     * @private
-     */
-    private getComparator(sortOption: SortOption, rowNode: RowNode): SortComparatorFn | undefined {
-        const colDef = (sortOption.column as AgColumn).colDef;
-
-        // comparator on col get preference over everything else
-        const comparatorOnCol = this.getComparatorFromColDef(colDef, sortOption);
-        if (comparatorOnCol) {
-            return comparatorOnCol;
-        }
-
-        if (!colDef.showRowGroup) {
-            return;
-        }
-
-        // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
-        const groupLeafField = !rowNode.group && colDef.field;
-        if (!groupLeafField) {
-            return;
-        }
-
-        const primaryColumn = this.beans.colModel.getNonPivotCol(groupLeafField);
-        if (!primaryColumn) {
-            return;
-        }
-        // comparator on col get preference over everything else
-        return this.getComparatorFromColDef(primaryColumn.colDef, sortOption);
-    }
-
-    private getComparatorFromColDef(colDef: ColDef, sortOption: SortOption): SortComparatorFn | undefined {
-        const comparator = colDef.comparator;
-        if (comparator == null) {
-            return;
-        }
-        if (typeof comparator === 'object') {
-            return comparator[_normalizeSortType(sortOption.type)];
-        }
-        return comparator;
-    }
-
     private getValue(node: RowNode, column: AgColumn): any {
-        const beans = this.beans;
-
         if (this.primaryColumnsSortGroups) {
             if (node.rowGroupColumn === column) {
                 return this.getGroupDataValue(node, column);
             }
 
-            if (node.group && column.colDef.showRowGroup) {
+            if (node.group && column.showRowGroup) {
                 return undefined;
             }
         }
 
-        const value = beans.valueSvc.getValue(column, node, 'data');
-        if (column.colDef.allowFormula) {
-            const formula = beans.formula;
+        const value = this.valueSvc.getValueFromData(column, node);
+        if (column.allowFormula) {
+            const formula = this.formula;
             if (formula?.isFormula(value)) {
                 return formula.resolveValue(column, node);
             }
@@ -170,7 +125,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         // Formulas are currently not supported on row-group columns, so no formula resolution is needed here.
         if (_isGroupUseEntireRow(this.gos, this.pivotActive)) {
             const leafChild = this.firstLeaf(node);
-            return leafChild && this.beans.valueSvc.getValue(column, leafChild, 'data');
+            return leafChild && this.valueSvc.getValueFromData(column, leafChild);
         }
 
         const displayCol = column.showRowGroupCol;

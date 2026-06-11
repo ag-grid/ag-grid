@@ -526,6 +526,27 @@ describe('ag-grid calculated columns', () => {
         expect(coveredCell).toBeNull();
     });
 
+    test('empty or null calculatedExpression is still a calculated column (renders empty, not a plain blank cell)', async () => {
+        const api = createGrid('calculated-empty-expression', {
+            columnDefs: [
+                { colId: 'calcEmpty', calculatedExpression: '' },
+                { colId: 'calcNull', calculatedExpression: null as unknown as string },
+                { colId: 'plain' },
+            ],
+            rowData: [{ id: '0' }],
+        });
+        const node = api.getRowNode('0')!;
+
+        await new GridRows(api, 'empty/null calculatedExpression', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID calcEmpty:"" calcNull:""
+            └── LEAF id:0 calcEmpty:"" calcNull:""
+        `);
+
+        expect(api.getCellValue({ rowNode: node, colKey: 'calcEmpty', useFormatter: false })).toBe('');
+        expect(api.getCellValue({ rowNode: node, colKey: 'calcNull', useFormatter: false })).toBe('');
+        expect(api.getCellValue({ rowNode: node, colKey: 'plain', useFormatter: false })).toBeUndefined();
+    });
+
     test('editing a calculated column expression re-groups its row spans (and dependents)', async () => {
         const api = createGrid('calculated-span-rows-expression-edit', {
             enableCellSpan: true,

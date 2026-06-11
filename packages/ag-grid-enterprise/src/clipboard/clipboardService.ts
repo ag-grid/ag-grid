@@ -560,7 +560,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                             return;
                         }
 
-                        const isFormula = column.colDef.allowFormula && formula?.isFormula(firstRowValues[index]);
+                        const isFormula = column.allowFormula && formula?.isFormula(firstRowValues[index]);
 
                         if (isFormula) {
                             firstRowValues[index] = formula?.updateFormulaByOffset({

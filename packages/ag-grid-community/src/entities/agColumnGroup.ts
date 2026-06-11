@@ -71,16 +71,18 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     }
 
     public checkLeft(): void {
-        const displayedChildren = this.displayedChildren!;
+        const displayedChildren = this.displayedChildren;
         let minLeft: number | null = null;
-        for (let i = 0, len = displayedChildren.length; i < len; ++i) {
-            const child = displayedChildren[i];
-            if (isColumnGroup(child)) {
-                child.checkLeft();
-            }
-            const childLeft = child.left;
-            if (childLeft != null && (minLeft == null || childLeft < minLeft)) {
-                minLeft = childLeft;
+        if (displayedChildren) {
+            for (let i = 0, len = displayedChildren.length; i < len; ++i) {
+                const child = displayedChildren[i];
+                if (isColumnGroup(child)) {
+                    child.checkLeft();
+                }
+                const childLeft = child.left;
+                if (childLeft != null && (minLeft == null || childLeft < minLeft)) {
+                    minLeft = childLeft;
+                }
             }
         }
         this.setLeft(minLeft);

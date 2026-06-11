@@ -62,8 +62,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         const valueColumnToFind = this.colModel.getNonPivotCol(valueColKey);
         for (let i = 0, len = pivotCols.length; i < len; ++i) {
             const column = pivotCols[i];
-            const colDef = column.colDef;
-            if (colDef.pivotValueColumn === valueColumnToFind && _areEqual(colDef.pivotKeys, pivotKeys)) {
+            if (column.pivotValueColumn === valueColumnToFind && _areEqual(column.colDef.pivotKeys, pivotKeys)) {
                 return column;
             }
         }
@@ -237,7 +236,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
             map = new Map<AgColumn, AgColumn[]>();
             for (let i = 0, len = cols.length; i < len; ++i) {
                 const pivotCol = cols[i];
-                const src = pivotCol.colDef.pivotValueColumn as AgColumn | null | undefined;
+                const src = pivotCol.pivotValueColumn as AgColumn | null | undefined;
                 if (src == null) {
                     continue;
                 }

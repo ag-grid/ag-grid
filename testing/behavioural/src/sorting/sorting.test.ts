@@ -437,4 +437,40 @@ describe('Sorting', () => {
             └── LEAF id:abs-d amount:1
         `);
     });
+
+    test('comparator dictionary selects the entry matching the sort type', async () => {
+        const api = gridMgr.createGrid('comparatorDict', {
+            columnDefs: [
+                {
+                    field: 'amount',
+                    comparator: {
+                        default: (a: number, b: number) => b - a, // reverse signed
+                        absolute: (a: number, b: number) => Math.abs(b) - Math.abs(a), // reverse magnitude
+                    },
+                },
+            ],
+            rowData: [
+                { id: 'c-a', amount: -20 },
+                { id: 'c-b', amount: 5 },
+                { id: 'c-c', amount: -3 },
+            ],
+            getRowId: (params) => params.data?.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'amount', sort: 'asc' }] });
+        await new GridRows(api, 'comparator dict: default entry').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:c-b amount:5
+            ├── LEAF id:c-c amount:-3
+            └── LEAF id:c-a amount:-20
+        `);
+
+        api.applyColumnState({ state: [{ colId: 'amount', sort: 'asc', sortType: 'absolute' }] });
+        await new GridRows(api, 'comparator dict: absolute entry').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:c-a amount:-20
+            ├── LEAF id:c-b amount:5
+            └── LEAF id:c-c amount:-3
+        `);
+    });
 });

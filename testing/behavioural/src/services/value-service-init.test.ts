@@ -365,3 +365,69 @@ describe('ValueService init in wireBeans', () => {
         `);
     });
 });
+
+describe('ValueService value cache', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ValueCacheModule],
+    });
+
+    afterEach(() => gridsManager.reset());
+
+    test('valueCache + enableCellExpressions returns the evaluated value, stable across reads', async () => {
+        const api = gridsManager.createGrid('grid-expr-cache', {
+            columnDefs: [{ colId: 'doubled', field: 'doubled' }],
+            rowData: [{ id: '0', doubled: '=ctx.n * 2' }],
+            getRowId: (params) => params.data.id,
+            context: { n: 21 },
+            enableCellExpressions: true,
+            valueCache: true,
+        });
+
+        // Rendered cell shows the evaluated expression, not the raw `=ctx.n * 2` string.
+        await new GridRows(api, 'valueCache + cell expression: rendered value').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 doubled:42
+        `);
+
+        const node = api.getRowNode('0')!;
+        // First read evaluates and populates the cache; the second must return the evaluated value,
+        // not the cached raw expression string.
+        expect(api.getCellValue({ rowNode: node, colKey: 'doubled' })).toBe(42);
+        expect(api.getCellValue({ rowNode: node, colKey: 'doubled' })).toBe(42);
+    });
+
+    test('valueCache invalidates on expireValueCache and on a data change, so the getter re-runs', async () => {
+        let calls = 0;
+        const api = gridsManager.createGrid('grid-cache-invalidation', {
+            columnDefs: [
+                { colId: 'base', field: 'base' },
+                {
+                    colId: 'computed',
+                    valueGetter: (p: ValueGetterParams) => {
+                        calls++;
+                        return (p.data?.base ?? 0) * 2;
+                    },
+                },
+            ],
+            rowData: [{ id: '0', base: 21 }],
+            getRowId: (params) => params.data.id,
+            valueCache: true,
+        });
+        const node = api.getRowNode('0')!;
+
+        // Repeat reads are served from the cache — the getter is not re-invoked.
+        expect(api.getCellValue({ rowNode: node, colKey: 'computed' })).toBe(42);
+        const callsAfterRead = calls;
+        expect(api.getCellValue({ rowNode: node, colKey: 'computed' })).toBe(42);
+        expect(calls).toBe(callsAfterRead);
+
+        // expireValueCache forces re-evaluation (value unchanged, but the getter runs again).
+        api.expireValueCache();
+        expect(api.getCellValue({ rowNode: node, colKey: 'computed' })).toBe(42);
+        expect(calls).toBeGreaterThan(callsAfterRead);
+
+        // A committed data change invalidates the cache, so the new value is computed.
+        node.setDataValue('base', 50);
+        expect(api.getCellValue({ rowNode: node, colKey: 'computed' })).toBe(100);
+    });
+});

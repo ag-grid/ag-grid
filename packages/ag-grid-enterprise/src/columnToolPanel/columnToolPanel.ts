@@ -283,7 +283,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 .getCols()
                 .filter((c) => c.getSort())
                 .map((c) => `${c.colId}:${c.getSort()}:${c.getSortIndex()}`),
-            aggFuncState: (beans.valueColsSvc?.columns ?? []).map((c) => c.getAggFunc()),
+            aggFuncState: (beans.valueColsSvc?.columns ?? []).map((c) => c.aggFunc),
             widthState: beans.colModel.getCols().map((c) => `${c.colId}:${c.getActualWidth()}`),
         };
     }

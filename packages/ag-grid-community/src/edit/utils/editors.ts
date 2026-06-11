@@ -64,18 +64,14 @@ export function _setupEditors(
 
         if (!curCellCtrl) {
             if (cellRowNode && cellColumn) {
-                const oldValue = valueSvc.getValue(cellColumn as AgColumn, cellRowNode, 'data');
+                const oldValue = valueSvc.getValueFromData(cellColumn as AgColumn, cellRowNode);
                 const isNewValueCell = position?.rowNode === cellRowNode && position?.column === cellColumn;
                 const cellStartValue = (isNewValueCell && key) || undefined;
 
                 const newValue =
                     cellStartValue ??
                     editSvc?.getCellDataValue(cellPosition) ??
-                    valueSvc.getValueForDisplay({
-                        column: cellColumn as AgColumn,
-                        node: cellRowNode,
-                        from: 'edit',
-                    })?.value ??
+                    valueSvc.getDisplayValue(cellColumn as AgColumn, cellRowNode, 'edit') ??
                     oldValue ??
                     UNEDITED;
 
@@ -277,14 +273,11 @@ function _createEditorParams(
                 : undefined
             : cellDataValue;
 
-    const value =
-        initialNewValue === UNEDITED
-            ? valueSvc.getValueForDisplay({ column: agColumn, node: rowNode, from: 'edit' })?.value
-            : initialNewValue;
+    const value = initialNewValue === UNEDITED ? valueSvc.getDisplayValue(agColumn, rowNode, 'edit') : initialNewValue;
 
     // if formula, normalise the value to shorthand for users.
     let paramsValue = enableGroupEditing ? initialNewValue : value;
-    if (column.isAllowFormula() && beans.formula?.isFormula(paramsValue)) {
+    if (agColumn.allowFormula && beans.formula?.isFormula(paramsValue)) {
         // normalise to shorthand for editing
         paramsValue = beans.formula?.normaliseFormula(paramsValue, true) ?? paramsValue;
     }
@@ -412,7 +405,7 @@ export function _syncFromEditor(
         // sourceValue not set means sync called without corresponding startEdit - from API call
         const pendingValue = edit ? getNormalisedFormula(beans, edit.editorValue, false, column) : UNEDITED;
         const editValue: Partial<EditValue> = {
-            sourceValue: valueSvc.getValue(column as AgColumn, rowNode, 'data'),
+            sourceValue: valueSvc.getValueFromData(column as AgColumn, rowNode),
             pendingValue,
         };
 
@@ -439,7 +432,7 @@ export function _syncFromEditor(
  */
 function getNormalisedFormula(beans: BeanCollection, value: any, forEditing: boolean, column: Column): any {
     const { formula } = beans;
-    if (column.isAllowFormula() && formula?.isFormula(value)) {
+    if ((column as AgColumn).allowFormula && formula?.isFormula(value)) {
         return formula?.normaliseFormula(value, forEditing) ?? value;
     }
     return value;

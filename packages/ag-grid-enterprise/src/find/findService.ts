@@ -438,7 +438,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 let valueToFind: string | null;
                 const getFindText = (groupRowRendererParams as FindGroupRowRendererParams)?.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay({ node, from: 'batch' }).value;
+                    const value = valueSvc.getDisplayValue(undefined, node, 'batch');
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -487,7 +487,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
                 // if node will be hidden by open parent, don't match on showRowGroup cols
                 // as the cell does not have that value yet
-                if (column.colDef.showRowGroup && nodeWillBeHiddenByOpenParent) {
+                if (column.showRowGroup && nodeWillBeHiddenByOpenParent) {
                     continue;
                 }
 
@@ -496,7 +496,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 const colDef = column.colDef;
                 const getFindText = colDef.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay({ column, node, from: 'batch' }).value;
+                    const value = valueSvc.getDisplayValue(column, node, 'batch');
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,

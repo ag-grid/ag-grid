@@ -1,6 +1,7 @@
 import { _toString } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
+import { _resolvePivotColumnForRow } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
 import type { CellValueResolveFrom } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -32,8 +33,10 @@ export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCel
     if (!column) {
         return null;
     }
+    // API accepts an arbitrary node, so a pivot result column may be read on a leaf — redirect to the
+    // underlying value column (display/selection paths never hit this, see ValueService.getValue).
     const result = beans.valueSvc.getValueForDisplay({
-        column,
+        column: _resolvePivotColumnForRow(column, rowNode),
         node: rowNode,
         includeValueFormatted: useFormatter,
         from,

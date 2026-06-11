@@ -138,12 +138,12 @@ export class RowSpanCache {
                 node.footer ||
                 (spanData && node.rowIndex - 1 !== spanData?.getLastNode().rowIndex) // no span if rows not contiguous (SSRM)
             ) {
-                setNewHead(node, valueSvc.getValue(column, node, 'data'));
+                setNewHead(node, valueSvc.getValueFromData(column, node));
                 return;
             }
 
             // check value is equal, if not, no span
-            const value = valueSvc.getValue(column, node, 'data');
+            const value = valueSvc.getValueFromData(column, node);
             if (isCustomCompare) {
                 const params: SpanRowsParams = _addGridCommonParams(gos, {
                     valueA: lastValue,

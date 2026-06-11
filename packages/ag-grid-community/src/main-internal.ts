@@ -85,7 +85,7 @@ export type { HorizontalResizeService } from './dragAndDrop/horizontalResizeServ
 export type { RowDragComp } from './dragAndDrop/rowDragComp';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { RowsDrop as _RowsDrop } from './dragAndDrop/rowDragTypes';
-export { _getDisplaySortForColumn, _normalizeSortType, AgColumn } from './entities/agColumn';
+export { _getDisplaySortForColumn, _normalizeSortType, _resolvePivotColumnForRow, AgColumn } from './entities/agColumn';
 export type { ColKind } from './entities/agColumn';
 export { AgColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup } from './entities/agProvidedColumnGroup';
@@ -298,6 +298,7 @@ export type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsSer
 export type { GroupValueResult, IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
 export type { ISideBar, ISideBarService } from './interfaces/iSideBar';
 export type { SortOption } from './interfaces/iSortOption';
+export { _resolveSortOptions } from './sort/sortOptionUtils';
 export type { IToolbarComp, IToolbarService } from './interfaces/iToolbar';
 export type { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
 export type { ComponentType, UserCompDetails } from './interfaces/iUserCompDetails';
@@ -370,6 +371,7 @@ export { _consoleError, _warnOnce } from './utils/log';
 export { _mergeDeep, _mergedEqual } from './utils/mergeDeep';
 export { _formatNumberCommas } from './utils/number';
 export { _selectAllCells } from './utils/selection';
+export { _getValueUsingDotPath } from './utils/value';
 export { _errMsg, _error, _logPreInitWarn, _preInitErrMsg, _warn } from './validation/logging';
 export type { ExpressionService } from './valueService/expressionService';
 export type { ValueCache } from './valueService/valueCache';

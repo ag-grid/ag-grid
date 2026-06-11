@@ -1412,4 +1412,36 @@ describe('pivot with groupHierarchy (date-time)', () => {
               └── total "Total" width:200
         `);
     });
+
+    test('hierarchy cols inherit enablePivot from their source col so they stay draggable to pivot', async () => {
+        const api = gridsManager.createGrid('hierarchyEnablePivot', {
+            columnDefs: [
+                { field: 'date', enablePivot: true, groupHierarchy: ['year', 'month'] },
+                { field: 'total', aggFunc: 'sum' },
+            ],
+            rowData: [{ date: new Date(2020, 0, 1), total: 1 }],
+        });
+        await asyncSetTimeout(0);
+
+        const yearCol = api.getColumn('ag-Grid-HierarchyColumn-date-year')!;
+        const monthCol = api.getColumn('ag-Grid-HierarchyColumn-date-month')!;
+        expect(yearCol).toBeTruthy();
+        expect(monthCol).toBeTruthy();
+        // enablePivot on the source col propagates to its generated hierarchy cols.
+        expect(yearCol.isAllowPivot()).toBe(true);
+        expect(monthCol.isAllowPivot()).toBe(true);
+    });
+
+    test('hierarchy cols are not pivotable when the source col is not enablePivot', async () => {
+        const api = gridsManager.createGrid('hierarchyNoPivot', {
+            columnDefs: [
+                { field: 'date', enableRowGroup: true, groupHierarchy: ['year'] },
+                { field: 'total', aggFunc: 'sum' },
+            ],
+            rowData: [{ date: new Date(2020, 0, 1), total: 1 }],
+        });
+        await asyncSetTimeout(0);
+
+        expect(api.getColumn('ag-Grid-HierarchyColumn-date-year')!.isAllowPivot()).toBe(false);
+    });
 });

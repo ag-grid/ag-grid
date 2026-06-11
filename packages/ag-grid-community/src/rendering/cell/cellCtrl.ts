@@ -553,7 +553,7 @@ export class CellCtrl extends BeanStub {
         const res: ICellRendererParams = _addGridCommonParams(gos, {
             value: value,
             valueFormatted: valueFormatted,
-            getValue: () => valueSvc.getValueForDisplay({ column, node: rowNode, from: 'edit' }).value,
+            getValue: () => valueSvc.getDisplayValue(column, rowNode, 'edit'),
             setValue: (value: any) =>
                 editSvc?.setDataValue({ rowNode, column }, value) || rowNode.setDataValue(column, value),
             formatValue: this.formatValue.bind(this),
@@ -631,7 +631,7 @@ export class CellCtrl extends BeanStub {
             return;
         }
 
-        const { field, valueGetter, showRowGroup, enableCellChangeFlash } = column.colDef;
+        const enableCellChangeFlash = column.enableCellChangeFlash;
         // we always refresh if cell has no value - this can happen when user provides Cell Renderer and the
         // cell renderer doesn't rely on a value, instead it could be looking directly at the data, or maybe
         // printing the current time (which would be silly)???. Generally speaking
@@ -641,7 +641,11 @@ export class CellCtrl extends BeanStub {
         // a calculated column has no field/valueGetter/showRowGroup but DOES have a value (its
         // expression), so it must not count as value-less here — otherwise it force-refreshes every
         // pass and flashes on changes to unrelated columns instead of only when its value changes.
-        const noValueProvided = field == null && valueGetter == null && showRowGroup == null && !column.isCalculatedCol;
+        const noValueProvided =
+            column.field == null &&
+            column.valueGetter == null &&
+            column.showRowGroup == null &&
+            !column.isCalculatedCol;
 
         const newData = params?.newData ?? false;
         const forceRefresh = noValueProvided || (params && (params.force || newData));

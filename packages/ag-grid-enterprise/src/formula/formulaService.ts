@@ -113,7 +113,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         let calculatedColumnsPresent = false;
         for (let i = 0, len = columns.length; i < len; ++i) {
             const col = columns[i];
-            if (col.isAllowFormula()) {
+            if (col.allowFormula) {
                 editableFormulaColumnsPresent = true;
             }
             if (col.isCalculatedCol) {
@@ -189,7 +189,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 _warn(295, { blockedService: 'Row Groups' });
                 return false;
             }
-            if (col.isAllowValue() || col.isValueActive() || col.getAggFunc()) {
+            if (col.isAllowValue() || col.isValueActive() || col.aggFunc) {
                 _warn(295, { blockedService: 'Value Aggregation' });
                 return false;
             }
@@ -629,12 +629,12 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     public ensureCellFormula(row: RowNode, col: AgColumn): CellFormula | null {
         const active = this.active;
         const calculatedColumnsActive = this.calculatedColumnsActive;
-        if (active && col.isAllowFormula()) {
+        if (active && col.allowFormula) {
             if (!calculatedColumnsActive) {
                 return this.ensureEditableCellFormula(row, col);
             }
 
-            const calculatedExpression = col.colDef.calculatedExpression;
+            const calculatedExpression = col.calculatedExpression;
             return calculatedExpression === undefined
                 ? this.ensureEditableCellFormula(row, col)
                 : this.ensureCalculatedCellFormula(row, col, calculatedExpression ?? '');
@@ -644,7 +644,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return null;
         }
 
-        const calculatedExpression = col.colDef.calculatedExpression;
+        const calculatedExpression = col.calculatedExpression;
         return calculatedExpression === undefined
             ? null
             : this.ensureCalculatedCellFormula(row, col, calculatedExpression ?? '');
@@ -741,10 +741,12 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Fetch a non-formula value from the grid without triggering nested formula calc. */
     private fetchRawValue(col: AgColumn, row: RowNode): unknown {
         if (col.isCalculatedCol) {
-            return col.colDef.calculatedExpression?.trim() ? undefined : '';
+            return col.calculatedExpression?.trim() ? undefined : '';
         }
 
-        return this.beans.valueSvc.getValue(col, row, 'data');
+        // Calculated columns are incompatible with pivot (see checkForCalculatedColumnIncompatibleServices),
+        // so `col` is never a pivot result column here — no redirect needed.
+        return this.beans.valueSvc.getValueFromData(col, row);
     }
 
     /**

@@ -8,7 +8,7 @@ import type { AgGridCommon } from '../interfaces/iCommon';
 import type { BeanCollection } from './context';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export abstract class BeanStub<TEventType extends string = AgBeanStubEvent> extends AgBeanStub<
+export interface BeanStub<TEventType extends string = AgBeanStubEvent> extends AgBeanStub<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
@@ -16,3 +16,8 @@ export abstract class BeanStub<TEventType extends string = AgBeanStubEvent> exte
     GridOptionsService,
     TEventType
 > {}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const BeanStub = AgBeanStub as unknown as abstract new <
+    TEventType extends string = AgBeanStubEvent,
+>() => BeanStub<TEventType>;

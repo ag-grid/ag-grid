@@ -101,7 +101,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                             accumulatedRowIndex,
                             column,
                             node,
-                            value: this.valueSvc.getValueForDisplay({ column, node, from: this.valueFrom }).value,
+                            value: this.valueSvc.getDisplayValue(column, node, this.valueFrom),
                             type,
                             parseValue: (valueToParse: string) =>
                                 this.valueSvc.parseValue(
@@ -121,7 +121,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         const valueService = this.valueSvc;
 
         const isGrandTotalRow = node.level === -1 && node.footer;
-        const isMultiAutoCol = column.colDef.showRowGroup === true && (node.group || isTreeData);
+        const isMultiAutoCol = column.showRowGroup === true && (node.group || isTreeData);
         // when using single auto group column or group row, create arrow separated string of group vals
         if (!isGrandTotalRow && (isFullWidthGroup || isMultiAutoCol)) {
             let concatenatedGroupValue: string = '';

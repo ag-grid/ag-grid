@@ -1,9 +1,16 @@
 import type {
     AgColumn,
+    BeanCollection,
     ChangedPath,
+    ColumnModel,
+    IClientSideRowModel,
+    IRowGroupColsService,
     IRowNode,
+    ISelectionService,
+    IShowRowGroupColsService,
     InitialGroupOrderComparator,
     RefreshModelParams,
+    ValueService,
     _ChangedRowNodes,
 } from 'ag-grid-community';
 import { BeanStub, RowNode, _csrmFirstLeaf, _forEachChangedGroupDepthFirst, _warn } from 'ag-grid-community';
@@ -23,9 +30,26 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private readonly groupCols: GroupColumn[] = [];
     public readonly nonLeafsById = new Map<string, RowNode>();
-    private checkGroupCols: boolean = true;
+
     private pivotMode: boolean = false;
     private groupEmpty: boolean = false;
+
+    private colModel: ColumnModel;
+    private rowModel: IClientSideRowModel;
+    private checkGroupCols: boolean = true;
+    private valueSvc: ValueService;
+    private selectionSvc: ISelectionService | undefined;
+    private showRowGroupCols: IShowRowGroupColsService | undefined;
+    private rowGroupColsSvc: IRowGroupColsService | undefined;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.colModel = beans.colModel;
+        this.rowModel = beans.rowModel as IClientSideRowModel;
+        this.valueSvc = beans.valueSvc;
+        this.selectionSvc = beans.selectionSvc;
+        this.showRowGroupCols = beans.showRowGroupCols;
+        this.rowGroupColsSvc = beans.rowGroupColsSvc;
+    }
 
     public invalidateGroupCols(): void {
         this.checkGroupCols = true;
@@ -52,7 +76,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
 
         const rowGroupCol = node.rowGroupColumn;
-        const { valueSvc, showRowGroupCols } = this.beans;
+        const { valueSvc, showRowGroupCols } = this;
 
         const groupData: Record<string, any> = {};
         node._groupData = groupData;
@@ -73,7 +97,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
             if (col.isRowGroupDisplayed(rowGroupColId)) {
                 // if maintain group value type, get the value from any leaf node.
-                groupData[col.colId] = valueSvc.getValue(rowGroupCol, leafNode, 'data');
+                groupData[col.colId] = leafNode && valueSvc.getValueFromData(rowGroupCol, leafNode);
             }
         }
 
@@ -95,7 +119,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         this.positionLeafsAndGroups(rootNode, changedPath);
         this.orderGroups(rootNode);
 
-        this.beans.selectionSvc?.updateSelectableAfterGrouping(changedPath);
+        this.selectionSvc?.updateSelectableAfterGrouping(changedPath);
     }
 
     private positionLeafsAndGroups(rootNode: RowNode, changedPath: ChangedPath | undefined) {
@@ -138,7 +162,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private initRefresh(params: RefreshModelParams): 'skip' | 'refresh' | 'groupColsChanged' {
-        const { rowGroupColsSvc, colModel, gos } = this.beans;
+        const { rowGroupColsSvc, colModel, gos } = this;
 
         this.pivotMode = colModel.pivotMode;
         this.groupEmpty = this.pivotMode || !gos.get('groupAllowUnbalanced');
@@ -318,7 +342,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
-        const selectionSvc = this.beans.selectionSvc;
+        const selectionSvc = this.selectionSvc;
         let nodesToUnselect: RowNode[] | undefined;
         const possibleEmptyGroups = Array.from(parents);
         const groupsById = this.nonLeafsById;
@@ -447,7 +471,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     /** Remove and destroy group nodes that were not reused (still have childrenAfterGroup === null) */
     private destroyStaleGroups(groupsById: Map<string, RowNode>): void {
-        const selectionSvc = this.beans.selectionSvc;
+        const selectionSvc = this.selectionSvc;
         let nodesToDeselect: RowNode[] | undefined;
         for (const [id, node] of groupsById) {
             if (node.childrenAfterGroup !== null) {
@@ -470,8 +494,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private insertOneNode(rootNode: RowNode, childNode: RowNode): void {
         let parentGroup = rootNode;
-        const { beans, groupCols, groupEmpty } = this;
-        const valueSvc = beans.valueSvc;
+        const { valueSvc, groupCols, groupEmpty } = this;
         if (!groupCols) {
             return;
         }
@@ -558,7 +581,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         applyValuesToNode(node);
         node.field = groupCol.field ?? null;
         node.rowGroupColumn = col;
-        node.groupValue = this.beans.valueSvc.getValue(col, leafNode, 'data');
+        node.groupValue = this.valueSvc.getValueFromData(col, leafNode);
         // null triggers lazy default resolution in the expanded getter.
         node._expanded ??= null;
 
@@ -584,12 +607,12 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     public onShowRowGroupColsSetChanged(): void {
-        const { rowModel, valueSvc } = this.beans;
+        const { rowModel, valueSvc } = this;
         for (const groupNode of this.nonLeafsById.values()) {
             groupNode._groupData = undefined;
             const rowGroupColumn = groupNode.rowGroupColumn;
             const leafNode = rowGroupColumn && _csrmFirstLeaf(groupNode);
-            groupNode.groupValue = leafNode && valueSvc.getValue(rowGroupColumn, leafNode, 'data');
+            groupNode.groupValue = leafNode && valueSvc.getValueFromData(rowGroupColumn, leafNode);
         }
 
         const allLeafs = rowModel.rootNode?._leafs;

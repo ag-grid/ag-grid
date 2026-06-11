@@ -331,7 +331,8 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             cellEditingStarted: () => {
                 const editPositions = editModelSvc?.getEditPositions();
                 const shouldDisplay =
-                    !!this.currentRef && !!editPositions?.some((position) => position.column.isAllowFormula());
+                    !!this.currentRef &&
+                    !!editPositions?.some((position) => (position.column as AgColumn).allowFormula);
                 _setDisplayed(eColRef, shouldDisplay);
             },
             cellEditingStopped: () => {

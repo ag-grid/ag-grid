@@ -821,7 +821,7 @@ export class ColumnFilterService
         const { filterManager, rowModel } = this.beans;
         return _addGridCommonParams(this.gos, {
             column,
-            colDef: column.getColDef(),
+            colDef: column.colDef,
             getValue: this.createGetValue(column),
             doesRowPassOtherFilter: forFloatingFilter
                 ? () => true

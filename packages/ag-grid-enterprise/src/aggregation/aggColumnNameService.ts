@@ -14,7 +14,7 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
         const { valueColsSvc, colModel, rowGroupColsSvc } = this.beans;
 
         // only columns with aggregation active can have aggregations
-        const pivotValueColumn = column.colDef.pivotValueColumn;
+        const pivotValueColumn = column.pivotValueColumn;
         const pivotActiveOnThisColumn = _exists(pivotValueColumn);
         let aggFunc: ColAggFunc = null;
         let aggFuncFound: boolean;
@@ -36,7 +36,7 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
             const aggregationPresent = colModel.pivotMode || isGrouping || this.gos.get('treeData');
 
             if (measureActive && aggregationPresent) {
-                aggFunc = column.getAggFunc();
+                aggFunc = column.aggFunc;
                 aggFuncFound = true;
             } else {
                 aggFuncFound = false;

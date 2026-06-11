@@ -20,6 +20,10 @@ describe('formatValue', () => {
         colDef = {};
         column = mock<AgColumn>();
         column.colDef = colDef;
+        // The value service reads these off the column (mirrored from colDef by initColDefHotFields),
+        // so mirror them here for the mock to behave like a real column.
+        Object.defineProperty(column, 'valueFormatter', { get: () => colDef.valueFormatter, configurable: true });
+        Object.defineProperty(column, 'refData', { get: () => colDef.refData, configurable: true });
 
         gos = mock<GridOptionsService>('get', 'addCommon');
         gos.addCommon.mockImplementation((params) => params as any);
@@ -27,6 +31,9 @@ describe('formatValue', () => {
         valueSvc = new ValueService();
         (valueSvc as any).gos = gos;
         (valueSvc as any).expressionSvc = expressionSvc;
+        // ValueService builds params from these cached refs (set in wireBeans on a real grid).
+        (valueSvc as any).gridApi = {};
+        (valueSvc as any).gridOptions = {};
         (valueSvc as any).beans = {
             editSvc: mock<EditService>('isEditing'),
             expressionSvc,

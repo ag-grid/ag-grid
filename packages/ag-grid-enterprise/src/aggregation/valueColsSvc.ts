@@ -54,7 +54,7 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
     protected override onColActiveChanged(column: AgColumn, active: boolean): void {
         // A newly-active col with no agg-func picks up the default for its cell-data type.
         const aggFuncSvc = this.aggFuncSvc;
-        if (active && !column.getAggFunc() && aggFuncSvc) {
+        if (active && aggFuncSvc && !column.aggFunc) {
             this.writeAggFunc(column, aggFuncSvc.getDefaultAggFunc(column));
         }
     }

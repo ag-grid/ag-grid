@@ -123,6 +123,6 @@ function getLeafPathTrees(columns: AgColumn[]): AbstractColDef[] {
 
 function getGridPrimaryColumns(colModel: ColumnModel): AgColumn[] {
     return colModel.colsList.filter((column) => {
-        return column.primary && !column.colDef.showRowGroup;
+        return column.primary && !column.showRowGroup;
     });
 }

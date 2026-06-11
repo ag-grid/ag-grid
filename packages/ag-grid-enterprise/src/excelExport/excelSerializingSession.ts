@@ -433,7 +433,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                     )
                 );
             } else {
-                const isFormula = column.colDef.allowFormula && this.formulaSvc?.isFormula(valueForCellString);
+                const isFormula = column.allowFormula && this.formulaSvc?.isFormula(valueForCellString);
                 const cell = this.createCell(
                     excelStyleId,
                     isFormula ? 'f' : this.getDataTypeForValue(rawValueForCell),
@@ -678,7 +678,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         excelNote: ExcelNote | undefined
     ): ProcessNoteForExportParams {
         const { column, node, accumulatedRowIndex } = params;
-        const value = this.valueSvc.getValueForDisplay({ column, node, from: this.valueFrom }).value;
+        const value = this.valueSvc.getDisplayValue(column, node, this.valueFrom);
 
         return _addGridCommonParams(this.gos, {
             accumulatedRowIndex,
