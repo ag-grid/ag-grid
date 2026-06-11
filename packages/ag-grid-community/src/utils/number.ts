@@ -5,7 +5,10 @@ export function _isFiniteNumber(v: unknown): v is number {
     return typeof v === 'number' && Number.isFinite(v);
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+/**
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ * Note: `Number('')` and `Number(' ')` are `0`, so callers must pre-filter blank strings if needed.
+ */
 export function _toFiniteNumber(v: unknown): number | null {
     const n = Number(v);
     return Number.isFinite(n) ? n : null;
