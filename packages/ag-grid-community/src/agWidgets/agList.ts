@@ -1,7 +1,6 @@
 import type { AgCoreBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
 import { AgComponentStub, KeyCode, _clearElement, _isVisible, _last, _setAriaRole } from 'ag-stack';
 
-import { _clamp } from '../utils/number';
 import agListCSS from './agList.css';
 import { AgListItem } from './agListItem';
 
@@ -261,7 +260,7 @@ export class AgList<
         } else {
             const currentIdx = listItems.indexOf(highlightedItem);
             let nextPos = currentIdx + (isDown ? 1 : -1);
-            nextPos = _clamp(nextPos, 0, listItems.length - 1);
+            nextPos = Math.max(0, Math.min(nextPos, listItems.length - 1));
             itemToHighlight = listItems[nextPos];
         }
         this.highlightItem(itemToHighlight);
