@@ -1452,7 +1452,7 @@ describe('ag-grid calculated columns', () => {
         titleInput.dispatchEvent(new Event('input', { bubbles: true }));
 
         expect(titleInput).toHaveClass('invalid');
-        expect(titleInput.validationMessage).toBe('Enter a title.');
+        expect(titleInput.validationMessage).toBe('Enter a title');
         expect(getDialogButton('Apply')).toBeDisabled();
 
         // The column keeps its title while the dialog is invalid.
