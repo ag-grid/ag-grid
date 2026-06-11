@@ -524,6 +524,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     ): void {
         const openDialogState = this.openDialogsByColId.get(draft.colId);
         if (openDialogState) {
+            this.beans.menuSvc?.hidePopupMenu();
             if (focusDialog) {
                 openDialogState.dialog.getGui().focus({ preventScroll: true });
             }

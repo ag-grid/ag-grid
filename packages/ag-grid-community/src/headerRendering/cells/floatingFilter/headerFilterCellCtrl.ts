@@ -16,10 +16,12 @@ import { _getFilterModel } from '../../../filter/columnFilterUtils';
 import { _addGridCommonParams, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
+import { _getCalculatedColumnCssClasses } from '../../../styling/calculatedColumnCss';
 import { _stopPropagationForAgGrid } from '../../../utils/gridEvent';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
+import { _refreshCssClasses } from '../cssClassApplier';
 import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -34,6 +36,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private userCompDetails?: UserCompDetails | null;
     private destroySyncListener: () => null;
     private destroyFilterChangedListener: () => null;
+    private userHeaderClasses: Set<string> | undefined;
 
     public override wireComp(
         comp: IHeaderFilterCellComp,
@@ -51,6 +54,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setupActive();
 
         this.refreshHeaderStyles();
+        this.setupCalculatedColumnCssClasses();
         this.setupWidth(compBean);
         this.setupLeft(compBean);
         this.setupHover(compBean);
@@ -77,6 +81,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             (this.eButtonShowMainFilter as any) = null;
             (this.eFloatingFilterBody as any) = null;
             (this.userCompDetails as any) = null;
+            this.userHeaderClasses?.clear();
             this.clearComponent();
         });
     }
@@ -279,6 +284,16 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         }
     }
 
+    private setupCalculatedColumnCssClasses(): void {
+        this.refreshCalculatedColumnCssClasses();
+    }
+
+    private refreshCalculatedColumnCssClasses(): void {
+        const classes = _getCalculatedColumnCssClasses(this.column, this.beans.calculatedColsSvc);
+
+        this.userHeaderClasses = _refreshCssClasses(this.comp, this.userHeaderClasses, classes);
+    }
+
     private setCompDetails(compDetails?: UserCompDetails | null): void {
         this.userCompDetails = compDetails;
         this.comp.setCompDetails(compDetails);
@@ -382,6 +397,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private onColDefChanged(compBean: BeanStub): void {
         const wasActive = this.active;
         this.setupActive();
+        this.refreshCalculatedColumnCssClasses();
         const becomeActive = !wasActive && this.active;
         if (wasActive && !this.active) {
             this.destroySyncListener();

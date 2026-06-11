@@ -1560,6 +1560,39 @@ describe('ag-grid calculated columns', () => {
         expect(input.selectionStart).toBe('[Age] * '.length);
     });
 
+    test('dialog keeps expression and type pickers mutually exclusive', async () => {
+        const api = createGrid('calculated-dialog-single-picker', {
+            calculatedColumns: { applyMode: 'deferred' },
+            rowData: [{ id: 'r1', age: 23, medals: 8 }],
+            columnDefs: [{ field: 'age' }, { field: 'medals' }],
+        });
+
+        showColumnMenu(api, 'age');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        clickDialogButton('Operators');
+        await asyncSetTimeout(1);
+
+        expect(document.querySelector('.ag-autocomplete-list-popup')).toBeTruthy();
+        expect(document.querySelector('.ag-select-list')).toBeFalsy();
+
+        getCalculatedColumnDialog()
+            .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
+            .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        await asyncSetTimeout(1);
+
+        expect(document.querySelector('.ag-autocomplete-list-popup')).toBeFalsy();
+        expect(document.querySelector('.ag-select-list')).toBeTruthy();
+
+        clickDialogButton('Operators');
+        await asyncSetTimeout(1);
+
+        expect(document.querySelector('.ag-autocomplete-list-popup')).toBeTruthy();
+        expect(document.querySelector('.ag-select-list')).toBeFalsy();
+    });
+
     test('dialog adds calculated columns inside groups without mutating provided column definitions', async () => {
         const year2025: ColGroupDef = {
             groupId: 'year_2025',
@@ -2639,6 +2672,10 @@ describe('ag-grid calculated columns', () => {
     test('calculated columns add calculated column classes and edit highlighting by default', async () => {
         const api = createGrid('calculated-column-classes', {
             calculatedColumns: { applyMode: 'deferred' },
+            defaultColDef: {
+                filter: 'agNumberColumnFilter',
+                floatingFilter: true,
+            },
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
                 { field: 'revenue' },
@@ -2654,9 +2691,13 @@ describe('ag-grid calculated columns', () => {
         const gridDiv = document.querySelector('#calculated-column-classes')!;
         expect(gridDiv.querySelector('[col-id="revenue"].ag-header-cell')).not.toHaveClass('ag-calculated-column');
         expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).toHaveClass('ag-calculated-column');
+        expect(gridDiv.querySelector('[col-id="profit"].ag-floating-filter')).toHaveClass('ag-calculated-column');
         expect(gridDiv.querySelector('[row-index="0"] [col-id="revenue"]')).not.toHaveClass('ag-calculated-column');
         expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).toHaveClass('ag-calculated-column');
         expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[col-id="profit"].ag-floating-filter')).not.toHaveClass(
             'ag-calculated-column-highlighted'
         );
         expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).not.toHaveClass(
@@ -2672,6 +2713,9 @@ describe('ag-grid calculated columns', () => {
         expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).toHaveClass(
             'ag-calculated-column-highlighted'
         );
+        expect(gridDiv.querySelector('[col-id="profit"].ag-floating-filter')).toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
         expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).toHaveClass(
             'ag-calculated-column-highlighted'
         );
@@ -2680,6 +2724,9 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).not.toHaveClass(
+            'ag-calculated-column-highlighted'
+        );
+        expect(gridDiv.querySelector('[col-id="profit"].ag-floating-filter')).not.toHaveClass(
             'ag-calculated-column-highlighted'
         );
         expect(gridDiv.querySelector('[row-index="0"] [col-id="profit"]')).not.toHaveClass(
@@ -2852,6 +2899,7 @@ describe('ag-grid calculated columns', () => {
         await openEditDialogViaMenu(api, 'profit');
 
         expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
+        expect(document.querySelector('.ag-menu')).toBeFalsy();
 
         clickDialogButton('Cancel');
     });

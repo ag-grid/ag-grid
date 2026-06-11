@@ -172,6 +172,12 @@ export class CalculatedColumnForm extends Component {
 
     private setupFormFields(): void {
         const translate = this.getLocaleTextFunc();
+        const showTypePicker = this.eType.showPicker.bind(this.eType);
+
+        this.eType.showPicker = () => {
+            this.hideSuggestions();
+            showTypePicker();
+        };
 
         this.eTitle
             .setLabel(translate('calculatedColumnTitle', 'Title'))
@@ -381,6 +387,8 @@ export class CalculatedColumnForm extends Component {
         replacement: { start: number; end: number } | null = null,
         source: HTMLElement = this.eExpression.getInputElement()
     ): void {
+        this.eType.hidePicker();
+
         const suggestions = this.getSuggestionsForType(type);
         const searchLower = search.toLocaleLowerCase();
         const hasMatch =
