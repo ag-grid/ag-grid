@@ -78,7 +78,7 @@ export class PageSummaryComp extends Component {
     }
 
     private initPageInput(): void {
-        const { lbCurrentInput } = this;
+        const { lbCurrentInput, pagination } = this;
         const eInput = lbCurrentInput.getInputElement();
         _setAriaRole(eInput, 'spinbutton');
         this.addManagedListeners(eInput, {
@@ -88,30 +88,31 @@ export class PageSummaryComp extends Component {
                     return;
                 }
                 e.preventDefault();
+                let targetPage: number | null = null;
+                const current = pagination.getCurrentPage();
+                const maxPage = pagination.getTotalPages();
                 switch (key) {
                     case KeyCode.ENTER:
                         this.commitPageInput();
                         break;
                     case KeyCode.ESCAPE:
-                        lbCurrentInput.setValue(String(this.pagination.getCurrentPage() + 1), true);
+                        lbCurrentInput.setValue(String(current + 1), true); // needs to happen before blur below
                         eInput.blur();
                         break;
-                    case KeyCode.UP: {
-                        const next = this.pagination.getCurrentPage() + 2;
-                        if (next <= this.pagination.getTotalPages()) {
-                            lbCurrentInput.setValue(String(next), true);
-                            this.commitPageInput();
+                    case KeyCode.UP:
+                        if (current + 2 <= maxPage) {
+                            targetPage = current + 2;
                         }
                         break;
-                    }
-                    case KeyCode.DOWN: {
-                        const prev = this.pagination.getCurrentPage();
-                        if (prev > 0) {
-                            lbCurrentInput.setValue(String(prev), true);
-                            this.commitPageInput();
+                    case KeyCode.DOWN:
+                        if (current !== 0) {
+                            targetPage = current;
                         }
                         break;
-                    }
+                }
+                if (targetPage !== null) {
+                    lbCurrentInput.setValue(String(targetPage), true);
+                    this.commitPageInput();
                 }
             },
             blur: () => this.commitPageInput(),
