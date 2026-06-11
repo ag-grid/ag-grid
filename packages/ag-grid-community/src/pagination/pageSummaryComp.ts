@@ -145,27 +145,33 @@ export class PageSummaryComp extends Component {
             _setAriaRole(eInput, 'spinbutton');
             this.addManagedListeners(eInput, {
                 keydown: (e: KeyboardEvent) => {
-                    if (e.key === KeyCode.ENTER) {
-                        e.preventDefault();
-                        this.commitPageInput();
-                    } else if (e.key === KeyCode.ESCAPE) {
-                        e.preventDefault();
-                        lbCurrentInput.setValue(String(this.pagination.getCurrentPage() + 1), true);
-                        eInput.blur();
-                    } else if (e.key === KeyCode.UP) {
-                        e.preventDefault();
-                        const next = this.pagination.getCurrentPage() + 2;
-                        if (next <= this.pagination.getTotalPages()) {
-                            lbCurrentInput.setValue(String(next), true);
+                    const { key } = e;
+                    if (key !== KeyCode.ENTER && key !== KeyCode.ESCAPE && key !== KeyCode.UP && key !== KeyCode.DOWN) {
+                        return;
+                    }
+                    e.preventDefault();
+                    switch (key) {
+                        case KeyCode.ENTER:
                             this.commitPageInput();
-                        }
-                    } else if (e.key === KeyCode.DOWN) {
-                        e.preventDefault();
-                        const prev = this.pagination.getCurrentPage();
-                        if (prev > 0) {
-                            lbCurrentInput.setValue(String(prev), true);
-                            this.commitPageInput();
-                        }
+                            break;
+                        case KeyCode.ESCAPE:
+                            lbCurrentInput.setValue(String(this.pagination.getCurrentPage() + 1), true);
+                            eInput.blur();
+                            break;
+                        case KeyCode.UP:
+                            const next = this.pagination.getCurrentPage() + 2;
+                            if (next <= this.pagination.getTotalPages()) {
+                                lbCurrentInput.setValue(String(next), true);
+                                this.commitPageInput();
+                            }
+                            break;
+                        case KeyCode.DOWN:
+                            const prev = this.pagination.getCurrentPage();
+                            if (prev > 0) {
+                                lbCurrentInput.setValue(String(prev), true);
+                                this.commitPageInput();
+                            }
+                            break;
                     }
                 },
                 blur: () => this.commitPageInput(),
