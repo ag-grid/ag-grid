@@ -5,7 +5,7 @@ import { AgInputNumberFieldSelector } from '../agWidgets/agInputNumberField';
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _createIconNoSpan } from '../utils/icon';
-import { Component } from '../widgets/component';
+import { AgComponentSelectorType, Component } from '../widgets/component';
 import type { GridInputNumberField } from '../widgets/gridWidgetTypes';
 import type { PaginationService } from './paginationService';
 import { _formatPaginationNumber } from './paginationUtils';
