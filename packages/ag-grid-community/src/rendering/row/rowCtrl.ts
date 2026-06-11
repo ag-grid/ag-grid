@@ -52,6 +52,7 @@ import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { GetNoteParams } from '../../interfaces/notes';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
+import { _clamp } from '../../utils/number';
 import type { Component } from '../../widgets/component';
 import { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
@@ -1141,7 +1142,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const minPixel = this.applyPaginationOffset(range.top, true) - 100;
         const maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
 
-        return Math.min(Math.max(minPixel, rowTop), maxPixel);
+        return _clamp(rowTop, minPixel, maxPixel);
     }
 
     public isRowRendered() {

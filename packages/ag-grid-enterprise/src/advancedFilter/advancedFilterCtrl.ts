@@ -8,7 +8,7 @@ import type {
     IPinnedSectionCompHost,
     PopupService,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _clamp } from 'ag-grid-community';
 
 import { Dialog } from '../widgets/dialog';
 import { AdvancedFilterComp } from './advancedFilterComp';
@@ -176,7 +176,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
         const maxWidth = Math.round(_getAbsoluteWidth(popupParent)) - 2; // assume 1 pixel border
         const maxHeight = Math.round(_getAbsoluteHeight(popupParent) * 0.75) - 2;
 
-        const width = Math.min(Math.max(700, minWidth), maxWidth);
+        const width = _clamp(700, minWidth, maxWidth);
         const height = Math.min(600, maxHeight);
 
         return { width, height, minWidth };

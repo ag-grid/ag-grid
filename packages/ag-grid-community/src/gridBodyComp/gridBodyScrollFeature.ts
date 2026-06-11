@@ -17,6 +17,7 @@ import { _isDomLayout } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
+import { _clamp } from '../utils/number';
 import { _warn } from '../validation/logging';
 
 const VIEWPORT = 'Viewport';
@@ -449,7 +450,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private clampHorizontalScrollPosition(scrollLeft: number): number {
         const maxScrollLeft = this.getMaxHorizontalScrollLeft();
-        return Math.max(0, Math.min(maxScrollLeft, scrollLeft));
+        return _clamp(scrollLeft, 0, maxScrollLeft);
     }
 
     public setVerticalScrollPosition(vScrollPosition: number): void {

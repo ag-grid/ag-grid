@@ -1,5 +1,5 @@
 import type { AgColumn, ColumnEventType, IRowGroupColsService, NamedBean } from 'ag-grid-community';
-import { _shouldUpdateColVisibilityAfterGroup, dispatchColumnVisibleEvent } from 'ag-grid-community';
+import { _clamp, _shouldUpdateColVisibilityAfterGroup, dispatchColumnVisibleEvent } from 'ag-grid-community';
 
 import { OrderedColsService } from '../columns/orderedColsService';
 
@@ -19,7 +19,7 @@ export class RowGroupColsSvc extends OrderedColsService implements NamedBean, IR
         if (len === 0 || fromIndex < 0 || fromIndex >= len) {
             return;
         }
-        toIndex = Math.max(0, Math.min(toIndex, len - 1));
+        toIndex = _clamp(toIndex, 0, len - 1);
         if (fromIndex === toIndex) {
             return;
         }

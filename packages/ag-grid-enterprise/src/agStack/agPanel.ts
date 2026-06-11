@@ -19,6 +19,8 @@ import {
     _setDisplayed,
 } from 'ag-stack';
 
+import { _clamp } from 'ag-grid-community';
+
 import agPanelCSS from './agPanel.css';
 
 export interface AgPanelPostProcessPopupParams {
@@ -273,7 +275,7 @@ export class AgPanel<
             position = len;
         }
 
-        position = Math.max(0, Math.min(position, len));
+        position = _clamp(position, 0, len);
 
         button.addCss('ag-panel-title-bar-button');
 
