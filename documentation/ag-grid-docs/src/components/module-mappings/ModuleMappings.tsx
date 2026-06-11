@@ -207,7 +207,7 @@ export const ModuleMappings: FunctionComponent<Props> = ({ framework, modules })
             </div>
             {selectedDependenciesSnippet && (
                 <div className={styles.moduleSnippet}>
-                    <Snippet shiki framework={framework} content={selectedDependenciesSnippet} copyToClipboard />
+                    <Snippet framework={framework} content={selectedDependenciesSnippet} copyToClipboard />
                 </div>
             )}
         </>

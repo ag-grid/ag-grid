@@ -1,5 +1,5 @@
-import Code from '@ag-website-shared/components/code/Code';
-import type { Language } from '@ag-website-shared/components/code/Code';
+import type { Language } from '@ag-website-shared/components/code/CodeShiki';
+import CodeShiki from '@ag-website-shared/components/code/CodeShiki';
 import type { FunctionComponent } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 
@@ -19,7 +19,7 @@ const queryOptions = {
 
 export const SnippetFromRemoteUrlInner: FunctionComponent<Props> = ({ url, language, lineNumbers }) => {
     const { data: snippet } = useQuery(['snippet', url], () => fetch(url).then((res) => res.text()), queryOptions);
-    return snippet ? <Code code={snippet} language={language} lineNumbers={lineNumbers} /> : undefined;
+    return snippet ? <CodeShiki code={snippet} language={language} lineNumbers={lineNumbers} /> : undefined;
 };
 
 export const SnippetFromRemoteUrl = (props: Props) => {

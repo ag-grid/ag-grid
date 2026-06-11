@@ -223,7 +223,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
 
                     {dependenciesSnippet && (
                         <Snippet
-                            shiki
                             framework="javascript"
                             language="json"
                             content={dependenciesSnippet}
@@ -235,7 +234,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
 
                     {npmInstallSnippet && (
                         <Snippet
-                            shiki
                             framework={framework}
                             content={npmInstallSnippet}
                             language="bash"
@@ -267,7 +265,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
 
                     <Snippet
                         framework={framework}
-                        shiki
                         content={bootstrapSnippet[library as keyof typeof bootstrapSnippet]}
                         copyToClipboard
                     />

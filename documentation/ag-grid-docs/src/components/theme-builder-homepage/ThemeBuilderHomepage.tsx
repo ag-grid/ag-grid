@@ -209,7 +209,6 @@ export const ThemeBuilderHomepage: React.FC<Props> = ({ gridHeight = null }) => 
                     </div>
 
                     <Snippet
-                        shiki
                         framework="javascript"
                         language="js"
                         content={codeBlock}

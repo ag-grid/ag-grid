@@ -1,6 +1,6 @@
 ---
 import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
-import Code, { type Language } from '@ag-website-shared/components/code/Code';
+import CodeShiki, { type Language } from '@ag-website-shared/components/code/CodeShiki';
 import { getExamplesPath } from '@components/docs/utils/filesData';
 import path from 'path';
 import { readFileSync } from 'node:fs';
@@ -25,7 +25,7 @@ if (src) {
 }
 ---
 
-{snippet && <Code code={snippet} language={language} lineNumbers={lineNumbers} />}
+{snippet && <CodeShiki code={snippet} language={language} lineNumbers={lineNumbers} />}
 {
     url && (
         <SnippetFromRemoteUrl
