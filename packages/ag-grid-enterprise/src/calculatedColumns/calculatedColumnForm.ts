@@ -120,7 +120,9 @@ export class CalculatedColumnForm extends Component {
     private activeReplacement: { start: number; end: number } | null = null;
     private suggestionSource: HTMLElement | null = null;
     private hideSuggestionPopup: (() => void) | undefined;
-    private validationTooltipFeature?: TooltipFeature;
+    private titleTooltipFeature?: TooltipFeature;
+    private expressionTooltipFeature?: TooltipFeature;
+    private titleValidationMessage: string | null = null;
     private expressionValidationMessage: string | null = null;
     private readonly expressionPickers: ReadonlySet<CalculatedColumnExpressionPicker>;
     /** The open suggestion list, recreated whenever the picker type (column/function/operator) changes. */
@@ -155,7 +157,7 @@ export class CalculatedColumnForm extends Component {
         this.setupActionButtons();
 
         if (!this.liveApply) {
-            this.setupValidationTooltip();
+            this.setupValidationTooltips();
         }
 
         this.addFormFieldListeners();
@@ -224,7 +226,16 @@ export class CalculatedColumnForm extends Component {
 
     private addFormFieldListeners(): void {
         const initialHeaderName = this.draft.headerName;
-        this.eTitle.onValueChange((value) => this.updateDraft({ headerName: value || initialHeaderName }));
+        this.eTitle.onValueChange((value) => {
+            // Live mode applies every change to the column, so an empty title falls back to the
+            // initial one; deferred mode keeps the raw value and requires a title before Apply.
+            if (this.liveApply) {
+                this.updateDraft({ headerName: value || initialHeaderName });
+                return;
+            }
+            this.updateDraft({ headerName: value ?? '' });
+            this.setTitleError(this.validateTitle());
+        });
         this.eType.onValueChange((value) => {
             this.updateDraft({ cellDataType: value ?? this.dataTypeOptions[0]?.value ?? DEFAULT_DRAFT.cellDataType });
         });
@@ -272,7 +283,13 @@ export class CalculatedColumnForm extends Component {
         }
         if (!this.liveApply) {
             this.addManagedElementListeners(this.eApply, {
-                click: () => this.setExpressionError(this.onApply(this.draft)),
+                click: () => {
+                    const titleError = this.validateTitle();
+                    this.setTitleError(titleError);
+                    if (titleError == null) {
+                        this.setExpressionError(this.onApply(this.draft));
+                    }
+                },
             });
             this.addManagedElementListeners(this.eCancel, {
                 click: () => this.onCancel(),
@@ -296,27 +313,57 @@ export class CalculatedColumnForm extends Component {
         });
     }
 
+    private validateTitle(): string | null {
+        if (this.draft.headerName.trim().length > 0) {
+            return null;
+        }
+        return this.getLocaleTextFunc()('calculatedColumnTitleEmpty', 'Enter a title');
+    }
+
+    private setTitleError(message: string | null): void {
+        this.titleValidationMessage = message;
+        this.applyFieldError(this.eTitle.getInputElement(), message);
+        this.titleTooltipFeature?.setTooltipAndRefresh(message);
+    }
+
     private setExpressionError(message: string | null): void {
-        const input = this.eExpression.getInputElement();
+        this.expressionValidationMessage = message;
+        this.applyFieldError(this.eExpression.getInputElement(), message);
+        this.expressionTooltipFeature?.setTooltipAndRefresh(message);
+    }
+
+    private applyFieldError(input: HTMLInputElement | HTMLTextAreaElement, message: string | null): void {
         const isInvalid = !!message;
 
         input.setCustomValidity(message ?? '');
         input.classList.toggle('invalid', isInvalid);
         input.toggleAttribute('aria-invalid', isInvalid);
-        this.expressionValidationMessage = message;
-        this.eApply.disabled = isInvalid;
-        this.validationTooltipFeature?.setTooltipAndRefresh(message);
+        this.eApply.disabled = !!this.titleValidationMessage || !!this.expressionValidationMessage;
         // set title to empty string to prevent default browser tooltip from showing when validation tooltip is active
         input.setAttribute('title', '');
     }
 
-    private setupValidationTooltip(): void {
-        this.validationTooltipFeature = this.createOptionalManagedBean(
+    private setupValidationTooltips(): void {
+        this.titleTooltipFeature = this.createValidationTooltip(
+            () => this.eTitle.getInputElement(),
+            () => this.titleValidationMessage
+        );
+        this.expressionTooltipFeature = this.createValidationTooltip(
+            () => this.eExpression.getInputElement(),
+            () => this.expressionValidationMessage
+        );
+    }
+
+    private createValidationTooltip(
+        getGui: () => HTMLElement,
+        getMessage: () => string | null
+    ): TooltipFeature | undefined {
+        return this.createOptionalManagedBean(
             this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                getGui: () => this.eExpression.getInputElement(),
-                getTooltipValue: () => this.expressionValidationMessage,
+                getGui,
+                getTooltipValue: getMessage,
                 getLocation: () => 'calculatedColumnExpression',
-                shouldDisplayTooltip: () => !!this.expressionValidationMessage,
+                shouldDisplayTooltip: () => !!getMessage(),
             } as ITooltipCtrl)
         );
     }

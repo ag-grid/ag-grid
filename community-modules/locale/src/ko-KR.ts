@@ -839,7 +839,8 @@ export const AG_GRID_LOCALE_KR = {
     calculatedColumnExpressionAmbiguousReference:
         '모호한 열 참조 "${variable}". 열 목록을 사용하거나 더 구체적인 그룹 경로를 사용하세요.',
     calculatedColumnExpressionUnknownReference: '알 수 없는 열 참조 "${variable}".',
-    calculatedColumnExpressionEmpty: '식을 입력하세요.',
+    calculatedColumnExpressionEmpty: '식을 입력하세요',
+    calculatedColumnTitleEmpty: '제목을 입력하세요',
     calculatedColumnApply: '적용',
     calculatedColumnCancel: '취소',
 

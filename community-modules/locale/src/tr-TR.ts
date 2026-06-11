@@ -844,7 +844,8 @@ export const AG_GRID_LOCALE_TR = {
     calculatedColumnExpressionAmbiguousReference:
         'Belirsiz sütun başvurusu "${variable}". Sütunlar listesini veya daha belirli bir grup yolunu kullanın.',
     calculatedColumnExpressionUnknownReference: 'Bilinmeyen sütun başvurusu "${variable}".',
-    calculatedColumnExpressionEmpty: 'Bir ifade girin.',
+    calculatedColumnExpressionEmpty: 'Bir ifade girin',
+    calculatedColumnTitleEmpty: 'Bir başlık girin',
     calculatedColumnApply: 'Uygula',
     calculatedColumnCancel: 'İptal',
 

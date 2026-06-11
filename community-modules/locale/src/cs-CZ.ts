@@ -839,7 +839,8 @@ export const AG_GRID_LOCALE_CZ = {
     calculatedColumnExpressionAmbiguousReference:
         'Nejednoznačný odkaz na sloupec "${variable}". Použijte seznam Sloupce nebo konkrétnější cestu skupiny.',
     calculatedColumnExpressionUnknownReference: 'Neznámý odkaz na sloupec "${variable}".',
-    calculatedColumnExpressionEmpty: 'Zadejte výraz.',
+    calculatedColumnExpressionEmpty: 'Zadejte výraz',
+    calculatedColumnTitleEmpty: 'Zadejte název',
     calculatedColumnApply: 'Použít',
     calculatedColumnCancel: 'Zrušit',
 

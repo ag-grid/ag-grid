@@ -840,7 +840,8 @@ export const AG_GRID_LOCALE_SK = {
     calculatedColumnExpressionAmbiguousReference:
         'Nejednoznačný odkaz na stĺpec "${variable}". Použite zoznam Stĺpce alebo konkrétnejšiu cestu skupiny.',
     calculatedColumnExpressionUnknownReference: 'Neznámy odkaz na stĺpec "${variable}".',
-    calculatedColumnExpressionEmpty: 'Zadajte výraz.',
+    calculatedColumnExpressionEmpty: 'Zadajte výraz',
+    calculatedColumnTitleEmpty: 'Zadajte názov',
     calculatedColumnApply: 'Použiť',
     calculatedColumnCancel: 'Zrušiť',
 

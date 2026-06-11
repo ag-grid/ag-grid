@@ -841,7 +841,8 @@ export const AG_GRID_LOCALE_NL = {
     calculatedColumnExpressionAmbiguousReference:
         'Dubbelzinnige kolomverwijzing "${variable}". Gebruik de lijst Kolommen of een specifieker groepspad.',
     calculatedColumnExpressionUnknownReference: 'Onbekende kolomverwijzing "${variable}".',
-    calculatedColumnExpressionEmpty: 'Voer een expressie in.',
+    calculatedColumnExpressionEmpty: 'Voer een expressie in',
+    calculatedColumnTitleEmpty: 'Voer een titel in',
     calculatedColumnApply: 'Toepassen',
     calculatedColumnCancel: 'Annuleren',
 

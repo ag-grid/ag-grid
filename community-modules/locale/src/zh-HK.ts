@@ -837,7 +837,8 @@ export const AG_GRID_LOCALE_HK = {
     calculatedColumnDefaultTitle: '未命名',
     calculatedColumnExpressionAmbiguousReference: '欄參照不明確 "${variable}"。請使用「欄」清單或更具體的群組路徑。',
     calculatedColumnExpressionUnknownReference: '未知的欄參照 "${variable}"。',
-    calculatedColumnExpressionEmpty: '請輸入運算式。',
+    calculatedColumnExpressionEmpty: '請輸入運算式',
+    calculatedColumnTitleEmpty: '請輸入標題',
     calculatedColumnApply: '應用',
     calculatedColumnCancel: '取消',
 

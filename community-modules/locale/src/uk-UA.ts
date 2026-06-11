@@ -841,7 +841,8 @@ export const AG_GRID_LOCALE_UA = {
     calculatedColumnExpressionAmbiguousReference:
         'Неоднозначне посилання на стовпець "${variable}". Скористайтеся списком Стовпці або точнішим шляхом групи.',
     calculatedColumnExpressionUnknownReference: 'Невідоме посилання на стовпець "${variable}".',
-    calculatedColumnExpressionEmpty: 'Введіть вираз.',
+    calculatedColumnExpressionEmpty: 'Введіть вираз',
+    calculatedColumnTitleEmpty: 'Введіть назву',
     calculatedColumnApply: 'Застосувати',
     calculatedColumnCancel: 'Скасувати',
 

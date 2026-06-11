@@ -544,7 +544,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             if (!_isStringLargerThan(nextDraft.calculatedExpression, 0, true)) {
                 return {
                     valid: false,
-                    error: this.getLocaleTextFunc()('calculatedColumnExpressionEmpty', 'Enter an expression.'),
+                    error: this.getLocaleTextFunc()('calculatedColumnExpressionEmpty', 'Enter an expression'),
                 };
             }
             const result = mapper.toInternalExpression(nextDraft.calculatedExpression);

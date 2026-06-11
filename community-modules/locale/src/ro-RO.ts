@@ -843,7 +843,8 @@ export const AG_GRID_LOCALE_RO = {
     calculatedColumnExpressionAmbiguousReference:
         'Referință de coloană ambiguă "${variable}". Utilizați lista Coloane sau o cale de grup mai specifică.',
     calculatedColumnExpressionUnknownReference: 'Referință de coloană necunoscută "${variable}".',
-    calculatedColumnExpressionEmpty: 'Introduceți o expresie.',
+    calculatedColumnExpressionEmpty: 'Introduceți o expresie',
+    calculatedColumnTitleEmpty: 'Introduceți un titlu',
     calculatedColumnApply: 'Aplică',
     calculatedColumnCancel: 'Anulează',
 

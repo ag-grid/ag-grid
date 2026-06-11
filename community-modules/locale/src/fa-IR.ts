@@ -841,7 +841,8 @@ export const AG_GRID_LOCALE_IR = {
     calculatedColumnExpressionAmbiguousReference:
         'ارجاع مبهم ستون "${variable}". از فهرست ستون‌ها یا یک مسیر گروه دقیق‌تر استفاده کنید.',
     calculatedColumnExpressionUnknownReference: 'ارجاع ناشناخته ستون "${variable}".',
-    calculatedColumnExpressionEmpty: 'یک عبارت وارد کنید.',
+    calculatedColumnExpressionEmpty: 'یک عبارت وارد کنید',
+    calculatedColumnTitleEmpty: 'یک عنوان وارد کنید',
     calculatedColumnApply: 'اعمال',
     calculatedColumnCancel: 'لغو',
 

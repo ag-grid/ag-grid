@@ -842,7 +842,8 @@ export const AG_GRID_LOCALE_FI = {
     calculatedColumnExpressionAmbiguousReference:
         'Moniselitteinen sarakeviittaus "${variable}". Käytä Sarakkeet-luetteloa tai tarkempaa ryhmäpolkua.',
     calculatedColumnExpressionUnknownReference: 'Tuntematon sarakeviittaus "${variable}".',
-    calculatedColumnExpressionEmpty: 'Anna lauseke.',
+    calculatedColumnExpressionEmpty: 'Anna lauseke',
+    calculatedColumnTitleEmpty: 'Anna otsikko',
     calculatedColumnApply: 'Käytä',
     calculatedColumnCancel: 'Peruuta',
 

@@ -839,7 +839,8 @@ export const AG_GRID_LOCALE_JP = {
     calculatedColumnExpressionAmbiguousReference:
         '列参照があいまいです "${variable}"。列リストを使用するか、より具体的なグループパスを指定してください。',
     calculatedColumnExpressionUnknownReference: '不明な列参照です "${variable}"。',
-    calculatedColumnExpressionEmpty: '式を入力してください。',
+    calculatedColumnExpressionEmpty: '式を入力してください',
+    calculatedColumnTitleEmpty: 'タイトルを入力してください',
     calculatedColumnApply: '適用',
     calculatedColumnCancel: 'キャンセル',
 

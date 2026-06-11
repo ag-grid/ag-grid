@@ -835,6 +835,7 @@ describe('ag-grid calculated columns', () => {
                 { field: 'cost' },
                 {
                     colId: 'profitable',
+                    headerName: 'Profitable',
                     calculatedExpression: 'IF([revenue] > [cost], "yes", "no")',
                     cellDataType: 'text',
                 },
@@ -868,7 +869,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            └── profitable width:200
+            └── profitable "Profitable" width:200
         `);
     });
 
@@ -1430,6 +1431,41 @@ describe('ag-grid calculated columns', () => {
         clickDialogButton('Apply');
         await asyncSetTimeout(1);
         expect(api.getColumn('calculated_1')).toBeNull();
+    });
+
+    test('deferred dialog requires a title before apply', async () => {
+        const api = createGrid('calculated-deferred-title-required', {
+            calculatedColumns: { applyMode: 'deferred' },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        await openEditDialogViaMenu(api, 'profit');
+
+        const titleInput = getCalculatedColumnDialog().querySelector('input')!;
+        titleInput.value = '';
+        titleInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+        expect(titleInput).toHaveClass('invalid');
+        expect(titleInput.validationMessage).toBe('Enter a title.');
+        expect(getDialogButton('Apply')).toBeDisabled();
+
+        // The column keeps its title while the dialog is invalid.
+        expect(api.getColumn('profit')!.getColDef().headerName).toBe('Profit');
+
+        titleInput.value = 'Net Profit';
+        titleInput.dispatchEvent(new Event('input', { bubbles: true }));
+        expect(titleInput).not.toHaveClass('invalid');
+        expect(getDialogButton('Apply')).not.toBeDisabled();
+
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+        expect(api.getColumn('profit')!.getColDef().headerName).toBe('Net Profit');
     });
 
     test('dialog column picker renders group path and leaf as fixed-height clickable rows', async () => {

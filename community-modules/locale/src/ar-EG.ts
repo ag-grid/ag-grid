@@ -838,7 +838,8 @@ export const AG_GRID_LOCALE_EG = {
     calculatedColumnExpressionAmbiguousReference:
         'مرجع عمود غامض "${variable}". استخدم قائمة الأعمدة أو مسار مجموعة أكثر تحديدًا.',
     calculatedColumnExpressionUnknownReference: 'مرجع عمود غير معروف "${variable}".',
-    calculatedColumnExpressionEmpty: 'أدخل تعبيرًا.',
+    calculatedColumnExpressionEmpty: 'أدخل تعبيرًا',
+    calculatedColumnTitleEmpty: 'أدخل عنوانًا',
     calculatedColumnApply: 'تطبيق',
     calculatedColumnCancel: 'إلغاء',
 

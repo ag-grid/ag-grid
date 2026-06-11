@@ -842,7 +842,8 @@ export const AG_GRID_LOCALE_SE = {
     calculatedColumnExpressionAmbiguousReference:
         'Tvetydig kolumnreferens "${variable}". Använd listan Kolumner eller en mer specifik gruppsökväg.',
     calculatedColumnExpressionUnknownReference: 'Okänd kolumnreferens "${variable}".',
-    calculatedColumnExpressionEmpty: 'Ange ett uttryck.',
+    calculatedColumnExpressionEmpty: 'Ange ett uttryck',
+    calculatedColumnTitleEmpty: 'Ange en titel',
     calculatedColumnApply: 'Verkställ',
     calculatedColumnCancel: 'Avbryt',
 

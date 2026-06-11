@@ -848,7 +848,8 @@ export const AG_GRID_LOCALE_FR = {
     calculatedColumnExpressionAmbiguousReference:
         'Référence de colonne ambiguë "${variable}". Utilisez la liste Colonnes ou un chemin de groupe plus spécifique.',
     calculatedColumnExpressionUnknownReference: 'Référence de colonne inconnue "${variable}".',
-    calculatedColumnExpressionEmpty: 'Saisissez une expression.',
+    calculatedColumnExpressionEmpty: 'Saisissez une expression',
+    calculatedColumnTitleEmpty: 'Saisissez un titre',
     calculatedColumnApply: 'Appliquer',
     calculatedColumnCancel: 'Annuler',
 

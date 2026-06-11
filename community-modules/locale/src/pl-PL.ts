@@ -844,7 +844,8 @@ export const AG_GRID_LOCALE_PL = {
     calculatedColumnExpressionAmbiguousReference:
         'Niejednoznaczne odwołanie do kolumny "${variable}". Użyj listy Kolumny lub bardziej szczegółowej ścieżki grupy.',
     calculatedColumnExpressionUnknownReference: 'Nieznane odwołanie do kolumny "${variable}".',
-    calculatedColumnExpressionEmpty: 'Wprowadź wyrażenie.',
+    calculatedColumnExpressionEmpty: 'Wprowadź wyrażenie',
+    calculatedColumnTitleEmpty: 'Wprowadź tytuł',
     calculatedColumnApply: 'Zastosuj',
     calculatedColumnCancel: 'Anuluj',
 

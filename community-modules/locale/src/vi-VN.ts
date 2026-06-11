@@ -839,7 +839,8 @@ export const AG_GRID_LOCALE_VN = {
     calculatedColumnExpressionAmbiguousReference:
         'Tham chiếu cột không rõ ràng "${variable}". Hãy dùng danh sách Cột hoặc đường dẫn nhóm cụ thể hơn.',
     calculatedColumnExpressionUnknownReference: 'Tham chiếu cột không xác định "${variable}".',
-    calculatedColumnExpressionEmpty: 'Nhập một biểu thức.',
+    calculatedColumnExpressionEmpty: 'Nhập một biểu thức',
+    calculatedColumnTitleEmpty: 'Nhập tiêu đề',
     calculatedColumnApply: 'Áp dụng',
     calculatedColumnCancel: 'Hủy',
 

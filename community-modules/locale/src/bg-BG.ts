@@ -844,7 +844,8 @@ export const AG_GRID_LOCALE_BG = {
     calculatedColumnExpressionAmbiguousReference:
         'Двусмислена препратка към колона "${variable}". Използвайте списъка с колони или по-конкретен път на групата.',
     calculatedColumnExpressionUnknownReference: 'Неизвестна препратка към колона "${variable}".',
-    calculatedColumnExpressionEmpty: 'Въведете израз.',
+    calculatedColumnExpressionEmpty: 'Въведете израз',
+    calculatedColumnTitleEmpty: 'Въведете заглавие',
     calculatedColumnApply: 'Приложи',
     calculatedColumnCancel: 'Отказ',
 

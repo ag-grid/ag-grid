@@ -84,7 +84,6 @@
         display: flex;
         justify-content: flex-end;
         gap: calc(var(--ag-grid-size) / 2);
-        margin-top: var(--ag-grid-size);
     }
 
     .ag-calculated-column-action {

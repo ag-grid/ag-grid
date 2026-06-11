@@ -842,7 +842,8 @@ export const AG_GRID_LOCALE_DK = {
     calculatedColumnExpressionAmbiguousReference:
         'Tvetydig kolonnereference "${variable}". Brug listen Kolonner eller en mere specifik gruppesti.',
     calculatedColumnExpressionUnknownReference: 'Ukendt kolonnereference "${variable}".',
-    calculatedColumnExpressionEmpty: 'Indtast et udtryk.',
+    calculatedColumnExpressionEmpty: 'Indtast et udtryk',
+    calculatedColumnTitleEmpty: 'Indtast en titel',
     calculatedColumnApply: 'Anvend',
     calculatedColumnCancel: 'Annuller',
 

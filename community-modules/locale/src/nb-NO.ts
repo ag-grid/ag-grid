@@ -840,7 +840,8 @@ export const AG_GRID_LOCALE_NO = {
     calculatedColumnExpressionAmbiguousReference:
         'Tvetydig kolonnereferanse "${variable}". Bruk Kolonner-listen eller en mer spesifikk gruppebane.',
     calculatedColumnExpressionUnknownReference: 'Ukjent kolonnereferanse "${variable}".',
-    calculatedColumnExpressionEmpty: 'Skriv inn et uttrykk.',
+    calculatedColumnExpressionEmpty: 'Skriv inn et uttrykk',
+    calculatedColumnTitleEmpty: 'Skriv inn en tittel',
     calculatedColumnApply: 'Bruk',
     calculatedColumnCancel: 'Avbryt',
 

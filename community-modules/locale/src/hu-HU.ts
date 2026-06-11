@@ -846,7 +846,8 @@ export const AG_GRID_LOCALE_HU = {
     calculatedColumnExpressionAmbiguousReference:
         'Nem egyértelmű oszlophivatkozás: "${variable}". Használja az Oszlopok listát vagy egy konkrétabb csoportútvonalat.',
     calculatedColumnExpressionUnknownReference: 'Ismeretlen oszlophivatkozás: "${variable}".',
-    calculatedColumnExpressionEmpty: 'Adjon meg egy kifejezést.',
+    calculatedColumnExpressionEmpty: 'Adjon meg egy kifejezést',
+    calculatedColumnTitleEmpty: 'Adjon meg egy címet',
     calculatedColumnApply: 'Alkalmaz',
     calculatedColumnCancel: 'Mégse',
 
