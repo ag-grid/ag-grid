@@ -1,4 +1,4 @@
-import { _exists, _isIOSUserAgent } from 'ag-stack';
+import { _exists } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -143,8 +143,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
             const suppressExcel = gos.get('suppressExcelExport') || !excelCreator;
             const suppressCsv = gos.get('suppressCsvExport') || !csvCreator;
-            const onIPad = _isIOSUserAgent();
-            const anyExport = !onIPad && (!suppressExcel || !suppressCsv);
+            const anyExport = !suppressExcel || !suppressCsv;
             if (anyExport) {
                 defaultMenuOptions.push('export');
             }
