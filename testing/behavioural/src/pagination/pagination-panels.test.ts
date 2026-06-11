@@ -146,7 +146,7 @@ describe('paginationPanels', () => {
             expect(pageNumbers[1].textContent).toBe('5'); // total pages
         });
 
-        test('page input navigates on value change', () => {
+        test('typing alone does not navigate', () => {
             const api = createPaginationGrid(gridsManager);
             const panel = getPagingPanel(api)!;
             const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
@@ -154,20 +154,98 @@ describe('paginationPanels', () => {
             input.value = '3';
             input.dispatchEvent(new Event('input'));
 
+            expect(api.paginationGetCurrentPage()).toBe(0);
+        });
+
+        test('Enter key navigates to typed page', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            input.value = '3';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
             expect(api.paginationGetCurrentPage()).toBe(2);
         });
 
-        test('clearing the input does not navigate', () => {
+        test('blur navigates to typed page', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            input.value = '3';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new Event('blur'));
+
+            expect(api.paginationGetCurrentPage()).toBe(2);
+        });
+
+        test('Escape cancels edit and restores current page without navigating', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            api.paginationGoToPage(1);
+
+            input.value = '5';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+            expect(api.paginationGetCurrentPage()).toBe(1);
+            expect(input.value).toBe('2');
+        });
+
+        test('ArrowUp navigates to next page', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
+
+            expect(api.paginationGetCurrentPage()).toBe(1);
+        });
+
+        test('ArrowDown navigates to previous page', () => {
             const api = createPaginationGrid(gridsManager);
             const panel = getPagingPanel(api)!;
             const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
 
             api.paginationGoToPage(2);
 
-            input.value = '';
-            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
 
-            expect(api.paginationGetCurrentPage()).toBe(2);
+            expect(api.paginationGetCurrentPage()).toBe(1);
+        });
+
+        test('invalid input resets to current page without navigating', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            api.paginationGoToPage(1);
+
+            input.value = '0';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+            expect(api.paginationGetCurrentPage()).toBe(1);
+            expect(input.value).toBe('2');
+        });
+
+        test('out-of-range input resets to current page without navigating', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            api.paginationGoToPage(1);
+
+            input.value = '99';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+            expect(api.paginationGetCurrentPage()).toBe(1);
+            expect(input.value).toBe('2');
         });
 
         test('blurring with empty input resets to current page', () => {
@@ -183,6 +261,28 @@ describe('paginationPanels', () => {
 
             expect(api.paginationGetCurrentPage()).toBe(2);
             expect(input.value).toBe('3');
+        });
+
+        test('page input has spinbutton role and correct ARIA attributes', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            expect(input.getAttribute('role')).toBe('spinbutton');
+            expect(input.getAttribute('aria-valuenow')).toBe('1');
+            expect(input.getAttribute('aria-valuemin')).toBe('1');
+            expect(input.getAttribute('aria-valuemax')).toBe('5');
+            expect(input.getAttribute('aria-label')).toContain('1');
+        });
+
+        test('ARIA attributes update when page changes', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            api.paginationGoToPage(3);
+
+            expect(input.getAttribute('aria-valuenow')).toBe('4');
         });
     });
 

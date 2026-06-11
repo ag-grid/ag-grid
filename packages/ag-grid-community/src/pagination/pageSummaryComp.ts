@@ -1,4 +1,4 @@
-import { KeyCode, RefPlaceholder, _setAriaDisabled } from 'ag-stack';
+import { KeyCode, RefPlaceholder, _setAriaDisabled, _setAriaLabel, _setAriaRole } from 'ag-stack';
 
 import { AgInputNumberFieldSelector } from '../agWidgets/agInputNumberField';
 import type { BeanCollection } from '../context/context';
@@ -141,13 +141,34 @@ export class PageSummaryComp extends Component {
 
         if (!this.suppressPageInput) {
             const { lbCurrentInput } = this;
-            lbCurrentInput.onValueChange(this.onInputPage.bind(this));
-            this.addManagedListeners(lbCurrentInput.getInputElement(), {
-                blur: () => {
-                    if (!lbCurrentInput.getInputElement().value.trim()) {
+            const eInput = lbCurrentInput.getInputElement();
+            _setAriaRole(eInput, 'spinbutton');
+            this.addManagedListeners(eInput, {
+                keydown: (e: KeyboardEvent) => {
+                    if (e.key === KeyCode.ENTER) {
+                        e.preventDefault();
+                        this.commitPageInput();
+                    } else if (e.key === KeyCode.ESCAPE) {
+                        e.preventDefault();
                         lbCurrentInput.setValue(String(this.pagination.getCurrentPage() + 1), true);
+                        eInput.blur();
+                    } else if (e.key === KeyCode.UP) {
+                        e.preventDefault();
+                        const next = this.pagination.getCurrentPage() + 2;
+                        if (next <= this.pagination.getTotalPages()) {
+                            lbCurrentInput.setValue(String(next), true);
+                            this.commitPageInput();
+                        }
+                    } else if (e.key === KeyCode.DOWN) {
+                        e.preventDefault();
+                        const prev = this.pagination.getCurrentPage();
+                        if (prev > 0) {
+                            lbCurrentInput.setValue(String(prev), true);
+                            this.commitPageInput();
+                        }
                     }
                 },
+                blur: () => this.commitPageInput(),
             });
         }
         this.refresh();
@@ -177,20 +198,23 @@ export class PageSummaryComp extends Component {
         }
     }
 
-    private onInputPage(): void {
+    private commitPageInput(): void {
         const { pagination, lbCurrentInput } = this;
+        const currentPage = pagination.getCurrentPage() + 1;
         const rawValue = lbCurrentInput.getValue(true);
         if (!rawValue?.trim()) {
+            lbCurrentInput.setValue(String(currentPage), true);
             return;
         }
         const rawValueNum = Number(rawValue);
-        let value = Number.isFinite(rawValueNum) ? rawValueNum : pagination.getCurrentPage() + 1;
         const total = pagination.getTotalPages();
-        value = Math.max(1, Math.min(value, total));
-        if (rawValueNum !== value) {
-            lbCurrentInput.setValue(String(value), true);
+        const isValid =
+            Number.isFinite(rawValueNum) && Number.isInteger(rawValueNum) && rawValueNum >= 1 && rawValueNum <= total;
+        if (!isValid) {
+            lbCurrentInput.setValue(String(currentPage), true);
+            return;
         }
-        pagination.goToPage(value - 1);
+        pagination.goToPage(rawValueNum - 1);
     }
 
     public refresh(): void {
@@ -249,6 +273,14 @@ export class PageSummaryComp extends Component {
             lbCurrentInput.setMax(pageCount);
             lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(pageCount) + 3)}ch`; // log10 returns number of digits (as an integer part + fraction) - 1
             lbCurrentInput.setValue(lbCurrentValue.toString());
+            const eInput = lbCurrentInput.getInputElement();
+            _setAriaLabel(
+                eInput,
+                `${localeTextFunc('page', 'Page')} ${localeTextFunc('number', 'number')}, ${lbCurrentValue} ${localeTextFunc('of', 'of')} ${lbTotalStr}`
+            );
+            eInput.setAttribute('aria-valuenow', String(lbCurrentValue));
+            eInput.setAttribute('aria-valuemin', '1');
+            eInput.setAttribute('aria-valuemax', String(pageCount));
         }
 
         const strPage = localeTextFunc('page', 'Page');
