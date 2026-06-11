@@ -11,92 +11,6 @@ import type { GridInputNumberField } from '../widgets/gridWidgetTypes';
 import type { PaginationService } from './paginationService';
 import { _formatPaginationNumber } from './paginationUtils';
 
-function buildPageSummaryTemplate(
-    idPrefix: string,
-    noInput: boolean,
-    localeTextFunc: LocaleTextFunc
-): AgElementParams<AgComponentSelectorType> {
-    const pageNumberChild = {
-        cls: 'ag-paging-number',
-        attrs: { id: `${idPrefix}-start-page-number` },
-        tag: noInput ? 'span' : 'ag-input-number-field',
-        ref: noInput ? 'lbCurrentStatic' : 'lbCurrentInput',
-    } as const;
-
-    return {
-        tag: 'span',
-        cls: 'ag-paging-page-summary-panel',
-        role: 'presentation',
-        children: [
-            {
-                tag: 'div',
-                ref: 'btFirst',
-                cls: 'ag-button ag-paging-button',
-                role: 'button',
-                attrs: { 'aria-label': localeTextFunc('firstPage', 'First Page') },
-            },
-            {
-                tag: 'div',
-                ref: 'btPrevious',
-                cls: 'ag-button ag-paging-button',
-                role: 'button',
-                attrs: { 'aria-label': localeTextFunc('previousPage', 'Previous Page') },
-            },
-            {
-                tag: 'span',
-                cls: 'ag-paging-description',
-                children: [
-                    {
-                        tag: 'span',
-                        attrs: { id: `${idPrefix}-start-page` },
-                        children: localeTextFunc('page', 'Page'),
-                    },
-                    pageNumberChild,
-                    {
-                        tag: 'span',
-                        attrs: { id: `${idPrefix}-of-page` },
-                        children: localeTextFunc('of', 'of'),
-                    },
-                    {
-                        tag: 'span',
-                        ref: 'lbTotal',
-                        cls: 'ag-paging-number',
-                        attrs: { id: `${idPrefix}-of-page-number` },
-                    },
-                ],
-            },
-            {
-                tag: 'div',
-                ref: 'btNext',
-                cls: 'ag-button ag-paging-button',
-                role: 'button',
-                attrs: { 'aria-label': localeTextFunc('nextPage', 'Next Page') },
-            },
-            {
-                tag: 'div',
-                ref: 'btLast',
-                cls: 'ag-button ag-paging-button',
-                role: 'button',
-                attrs: { 'aria-label': localeTextFunc('lastPage', 'Last Page') },
-            },
-        ],
-    };
-}
-
-function insertNavIcons(
-    isRtl: boolean,
-    beans: BeanCollection,
-    btFirst: HTMLElement,
-    btPrevious: HTMLElement,
-    btNext: HTMLElement,
-    btLast: HTMLElement
-): void {
-    btFirst.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'last' : 'first', beans)!);
-    btPrevious.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'next' : 'previous', beans)!);
-    btNext.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'previous' : 'next', beans)!);
-    btLast.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'first' : 'last', beans)!);
-}
-
 export class PageSummaryComp extends Component {
     private rowModel: IRowModel;
     private pagination: PaginationService;
@@ -321,4 +235,90 @@ export class PageSummaryComp extends Component {
     private formatNumber(value: number): string {
         return _formatPaginationNumber(value, this.gos, this.getLocaleTextFunc.bind(this));
     }
+}
+
+function buildPageSummaryTemplate(
+    idPrefix: string,
+    noInput: boolean,
+    localeTextFunc: LocaleTextFunc
+): AgElementParams<AgComponentSelectorType> {
+    const pageNumberChild = {
+        cls: 'ag-paging-number',
+        attrs: { id: `${idPrefix}-start-page-number` },
+        tag: noInput ? 'span' : 'ag-input-number-field',
+        ref: noInput ? 'lbCurrentStatic' : 'lbCurrentInput',
+    } as const;
+
+    return {
+        tag: 'span',
+        cls: 'ag-paging-page-summary-panel',
+        role: 'presentation',
+        children: [
+            {
+                tag: 'div',
+                ref: 'btFirst',
+                cls: 'ag-button ag-paging-button',
+                role: 'button',
+                attrs: { 'aria-label': localeTextFunc('firstPage', 'First Page') },
+            },
+            {
+                tag: 'div',
+                ref: 'btPrevious',
+                cls: 'ag-button ag-paging-button',
+                role: 'button',
+                attrs: { 'aria-label': localeTextFunc('previousPage', 'Previous Page') },
+            },
+            {
+                tag: 'span',
+                cls: 'ag-paging-description',
+                children: [
+                    {
+                        tag: 'span',
+                        attrs: { id: `${idPrefix}-start-page` },
+                        children: localeTextFunc('page', 'Page'),
+                    },
+                    pageNumberChild,
+                    {
+                        tag: 'span',
+                        attrs: { id: `${idPrefix}-of-page` },
+                        children: localeTextFunc('of', 'of'),
+                    },
+                    {
+                        tag: 'span',
+                        ref: 'lbTotal',
+                        cls: 'ag-paging-number',
+                        attrs: { id: `${idPrefix}-of-page-number` },
+                    },
+                ],
+            },
+            {
+                tag: 'div',
+                ref: 'btNext',
+                cls: 'ag-button ag-paging-button',
+                role: 'button',
+                attrs: { 'aria-label': localeTextFunc('nextPage', 'Next Page') },
+            },
+            {
+                tag: 'div',
+                ref: 'btLast',
+                cls: 'ag-button ag-paging-button',
+                role: 'button',
+                attrs: { 'aria-label': localeTextFunc('lastPage', 'Last Page') },
+            },
+        ],
+    };
+}
+
+function insertNavIcons(
+    isRtl: boolean,
+    beans: BeanCollection,
+    btFirst: HTMLElement,
+    btPrevious: HTMLElement,
+    btNext: HTMLElement,
+    btLast: HTMLElement
+): void {
+    btFirst.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'last' : 'first', beans)!);
+    btPrevious.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'next' : 'previous', beans)!);
+    btNext.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'previous' : 'next', beans)!);
+    btLast.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'first' : 'last', beans)!);
 }
