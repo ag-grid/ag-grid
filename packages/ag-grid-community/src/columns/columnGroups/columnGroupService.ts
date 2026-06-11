@@ -94,7 +94,8 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                         reuse.pinned = pinned;
                         reuse.parent = null;
                         reuse.children = null;
-                        reuse.displayedChildren = null;
+                        // reset to [] (not null) — an empty part keeps [] after recompute, matching released behaviour
+                        reuse.displayedChildren = [];
                         newGroup = reuse;
                     } else {
                         newGroup = new AgColumnGroup(runParent, groupId, instanceId, pinned);

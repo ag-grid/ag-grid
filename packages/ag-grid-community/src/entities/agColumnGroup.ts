@@ -28,8 +28,9 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 
     // all children, regardless of open/closed state
     public children: (AgColumn | AgColumnGroup)[] | null = null;
-    // only the currently displaying children (depends on open/closed state)
-    public displayedChildren: (AgColumn | AgColumnGroup)[] | null = null;
+    // only the currently displaying children (depends on open/closed state). Kept as an array (never null at
+    // runtime) so reads — `getDisplayedChildren()`, `checkLeft`, tool-panel membership — match released behaviour.
+    public displayedChildren: (AgColumn | AgColumnGroup)[] | null = [];
 
     // measured header height when autoHeaderHeight is enabled
     public autoHeaderHeight: number | null = null;

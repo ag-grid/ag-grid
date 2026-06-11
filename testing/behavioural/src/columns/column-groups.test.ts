@@ -1,4 +1,4 @@
-import type { ColDef, ColGroupDef } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, ColumnGroup } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -1920,6 +1920,15 @@ describe('Column Groups', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 a:1 b:2
             `);
+
+            // The collapsed center part of 'g' has no displayed children — getDisplayedChildren() must be
+            // [] (never null), matching released behaviour so reads like the tool panel stay consistent.
+            const centerGroups = api.getCenterDisplayedColumnGroups();
+            const emptyCenterPart = centerGroups.find(
+                (g): g is ColumnGroup => 'getGroupId' in g && (g as ColumnGroup).getGroupId() === 'g'
+            );
+            expect(emptyCenterPart).toBeTruthy();
+            expect(emptyCenterPart!.getDisplayedChildren()).toEqual([]);
 
             api.setColumnGroupOpened('g', true);
             await asyncSetTimeout(1);
