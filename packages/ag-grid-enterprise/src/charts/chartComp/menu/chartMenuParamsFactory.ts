@@ -8,7 +8,7 @@ import type {
     BeanCollection,
     ListOption,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _toFiniteNumber } from 'ag-grid-community';
 
 import type { AgSliderParams } from '../../../agStack/agSlider';
 import type { ColorPickerParams } from '../../widgets/colorPicker';
@@ -71,10 +71,7 @@ export class ChartMenuParamsFactory extends BeanStub {
                 max: options?.max,
             },
             {
-                parseInputValue: (value) => {
-                    const numberValue = Number(value);
-                    return isNaN(numberValue) ? undefined : numberValue;
-                },
+                parseInputValue: (value) => _toFiniteNumber(value) ?? undefined,
                 formatInputValue: (value) => {
                     return value == null ? '' : `${value}`;
                 },

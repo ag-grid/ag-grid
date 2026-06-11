@@ -4,6 +4,7 @@ import { AgInputNumberFieldSelector } from '../agWidgets/agInputNumberField';
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _createIconNoSpan } from '../utils/icon';
+import { _toFiniteNumber } from '../utils/number';
 import { Component } from '../widgets/component';
 import type { GridInputNumberField } from '../widgets/gridWidgetTypes';
 import type { PaginationService } from './paginationService';
@@ -183,8 +184,8 @@ export class PageSummaryComp extends Component {
         if (!rawValue?.trim()) {
             return;
         }
-        const rawValueNum = Number(rawValue);
-        let value = Number.isFinite(rawValueNum) ? rawValueNum : pagination.getCurrentPage() + 1;
+        const rawValueNum = _toFiniteNumber(rawValue);
+        let value = rawValueNum ?? pagination.getCurrentPage() + 1;
         const total = pagination.getTotalPages();
         value = Math.max(1, Math.min(value, total));
         if (rawValueNum !== value) {

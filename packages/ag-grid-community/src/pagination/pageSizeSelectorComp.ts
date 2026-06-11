@@ -6,6 +6,7 @@ import type { BeanCollection } from '../context/context';
 import type { PaginationChangedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ElementParams } from '../utils/element';
+import { _toFiniteNumber } from '../utils/number';
 import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
 import type { GridSelect } from '../widgets/gridWidgetTypes';
@@ -47,10 +48,10 @@ export class PageSizeSelectorComp extends Component {
             return;
         }
 
-        const paginationPageSize = Number(newValue);
+        const paginationPageSize = _toFiniteNumber(newValue);
 
         if (
-            isNaN(paginationPageSize) ||
+            paginationPageSize == null ||
             paginationPageSize < 1 ||
             paginationPageSize === this.pagination.getPageSize()
         ) {

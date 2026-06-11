@@ -1,6 +1,8 @@
 import type { AgSparklineOptions } from 'ag-charts-types';
 import type { LocaleTextFunc } from 'ag-stack';
 
+import { _isFiniteNumber } from 'ag-grid-community';
+
 type SparklineTranslate = (key: string, defaultValue: string, variableValues?: string[]) => string;
 type SparklineNumberFormatter = (value: number) => string;
 
@@ -114,7 +116,7 @@ const getYValue = (datum: any, yKey: string): number | null => {
 
     if (datum && typeof datum === 'object') {
         const yValue = Array.isArray(datum) ? datum[1] : datum[yKey];
-        return typeof yValue === 'number' && Number.isFinite(yValue) ? yValue : null;
+        return _isFiniteNumber(yValue) ? yValue : null;
     }
 
     return null;

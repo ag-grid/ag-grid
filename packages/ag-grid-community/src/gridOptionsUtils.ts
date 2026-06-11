@@ -37,6 +37,7 @@ import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
+import { _isFiniteNumber } from './utils/number';
 import { _warn } from './validation/logging';
 
 function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
@@ -115,7 +116,7 @@ export function _getRowHeightForNode(
 
         const height = gos.getCallback('getRowHeight')!(params);
 
-        if (isNumeric(height)) {
+        if (_isFiniteNumber(height)) {
             if (height === 0) {
                 _warn(23);
             }
@@ -129,7 +130,8 @@ export function _getRowHeightForNode(
 
     const gridOptionsRowHeight = gos.get('rowHeight');
 
-    const rowHeight = gridOptionsRowHeight && isNumeric(gridOptionsRowHeight) ? gridOptionsRowHeight : defaultRowHeight;
+    const rowHeight =
+        gridOptionsRowHeight && _isFiniteNumber(gridOptionsRowHeight) ? gridOptionsRowHeight : defaultRowHeight;
 
     return { height: rowHeight, estimated: false };
 }
@@ -144,7 +146,7 @@ function getMasterDetailRowHeight(gos: GridOptionsService): { height: number; es
 
     const defaultRowHeight = gos.get('detailRowHeight');
 
-    if (isNumeric(defaultRowHeight)) {
+    if (_isFiniteNumber(defaultRowHeight)) {
         return { height: defaultRowHeight, estimated: false };
     }
 
@@ -168,10 +170,6 @@ export function _getRowHeightAsNumber(beans: BeanCollection): number {
 
     _warn(24);
     return environment.getDefaultRowHeight();
-}
-
-function isNumeric(value: any): value is number {
-    return !isNaN(value) && typeof value === 'number' && isFinite(value);
 }
 
 // returns the dom data, or undefined if not found

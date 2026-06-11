@@ -1,3 +1,4 @@
+import { _isFiniteNumber } from 'ag-grid-community';
 import type { BeanCollection, FormulaParam, RangeParam, ValueParam } from 'ag-grid-community';
 
 import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId } from '../ast/serializer';
@@ -77,7 +78,7 @@ function findOperatorSymbol(s: string): OperatorSymbol | null {
 }
 
 function toNumberLike(x: unknown): number | null {
-    if (typeof x === 'number' && Number.isFinite(x)) {
+    if (_isFiniteNumber(x)) {
         return x;
     }
     if (x instanceof Date) {

@@ -19,6 +19,7 @@ import {
     _getRowAbove,
     _getRowBelow,
     _getRowNode,
+    _isFiniteNumber,
     _isRowBefore,
     _isSameRow,
     _stopPropagationForAgGrid,
@@ -496,8 +497,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         const isNumeric = (v: any) =>
-            (typeof v === 'number' && Number.isFinite(v)) ||
-            (typeof v === 'string' && /^[+-]?\d+(?:\.\d+)?$/.test(v.trim()));
+            _isFiniteNumber(v) || (typeof v === 'string' && /^[+-]?\d+(?:\.\d+)?$/.test(v.trim()));
         const allNumbers = values.every(({ value }) => isNumeric(value));
 
         // values should be copied in order if the alt key is pressed
