@@ -121,18 +121,21 @@ function CodeShiki({
 }) {
     const [highlightedHtml, setHighlightedHtml] = useState<string | null>(preHighlightedHtml ?? null);
 
+    // A `string[]` is a multi-part snippet (e.g. each member of a union type) — join into one block.
+    const codeText = Array.isArray(code) ? code.join('\n') : code;
+
     useEffect(() => {
         // keepMarkup content is dynamic (runtime links) so cannot use pre-highlighted HTML.
         // For all other cases, pre-highlighted HTML from build time is used as-is.
         if (preHighlightedHtml && !keepMarkup) return;
         let cancelled = false;
-        highlight(code as string, language, keepMarkup).then((html) => {
+        highlight(codeText, language, keepMarkup).then((html) => {
             if (!cancelled) setHighlightedHtml(html);
         });
         return () => {
             cancelled = true;
         };
-    }, [code, language, keepMarkup, preHighlightedHtml]);
+    }, [codeText, language, keepMarkup, preHighlightedHtml]);
 
     return (
         <pre
@@ -146,8 +149,8 @@ function CodeShiki({
             )}
             {...props}
         >
-            {copyToClipboard && <CopyToClipboardButton code={code as string} />}
-            {highlightedHtml ? <ShikiCode html={highlightedHtml} /> : <code>{code}</code>}
+            {copyToClipboard && <CopyToClipboardButton code={codeText} />}
+            {highlightedHtml ? <ShikiCode html={highlightedHtml} /> : <code>{codeText}</code>}
         </pre>
     );
 }
