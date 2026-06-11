@@ -7,6 +7,7 @@ import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import { _clamp } from '../utils/number';
 import { _error } from '../validation/logging';
 import { GroupResizeFeature } from './groupResizeFeature';
 import { ResizeFeature } from './resizeFeature';
@@ -239,7 +240,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         const minWidth = column.getMinWidth();
         const maxWidth = column.getMaxWidth();
 
-        const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
+        const newWidth = _clamp(actualWidth + delta, minWidth, maxWidth);
 
         this.setColumnWidths([{ key: column, newWidth }], shiftKey, true, 'uiColumnResized');
     }

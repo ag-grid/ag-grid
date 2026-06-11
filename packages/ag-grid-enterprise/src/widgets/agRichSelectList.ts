@@ -9,7 +9,7 @@ import {
 } from 'ag-stack';
 
 import type { Component, RichSelectParams } from 'ag-grid-community';
-import { KeyCode, _createElement, _createIconNoSpan } from 'ag-grid-community';
+import { KeyCode, _clamp, _createElement, _createIconNoSpan } from 'ag-grid-community';
 
 import { resolveRichSelectValueFormatter } from './agRichSelect';
 import { RichSelectRow } from './agRichSelectRow';
@@ -215,7 +215,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             const oldIndex = this.lastRowHovered;
 
             const diff = key === KeyCode.DOWN ? 1 : -1;
-            const newIndex = Math.min(Math.max(oldIndex === -1 ? 0 : oldIndex + diff, 0), len - 1);
+            const newIndex = _clamp(oldIndex === -1 ? 0 : oldIndex + diff, 0, len - 1);
             this.highlightIndex(newIndex);
             announceItem();
         });
@@ -458,7 +458,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const scrollTop = this.getScrollTop();
         const mouseY = e.clientY - rect.top + scrollTop;
 
-        return Math.min(Math.max(Math.floor(mouseY / this.getRowHeight()), 0), this.model.getRowCount() - 1);
+        return _clamp(Math.floor(mouseY / this.getRowHeight()), 0, this.model.getRowCount() - 1);
     }
 
     private onMouseMove(e: MouseEvent): void {

@@ -14,6 +14,11 @@ export function _toFiniteNumber(v: unknown): number | null {
     return Number.isFinite(n) ? n : null;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _clamp(value: number, min: number, max: number): number {
+    return Math.max(min, Math.min(value, max));
+}
+
 /**
  * the native method number.toLocaleString(undefined, {minimumFractionDigits: 0})
  * puts in decimal places in IE, so we use this method instead

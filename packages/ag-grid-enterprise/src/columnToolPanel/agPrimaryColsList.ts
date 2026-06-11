@@ -13,7 +13,7 @@ import type {
     ColumnToolPanelState,
     ComponentSelector,
 } from 'ag-grid-community';
-import { Component, DragSourceType, _warn, isProvidedColumnGroup } from 'ag-grid-community';
+import { Component, DragSourceType, _clamp, _warn, isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../agStack/iVirtualList';
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
@@ -205,7 +205,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             movePadding = expanded ? modelItem.children.length : 0;
         }
 
-        const nextItem = Math.min(Math.max(currentIndex + movePadding + diff, 0), this.displayedColsList.length - 1);
+        const nextItem = _clamp(currentIndex + movePadding + diff, 0, this.displayedColsList.length - 1);
 
         this.skipRefocus = true;
         moveItem(

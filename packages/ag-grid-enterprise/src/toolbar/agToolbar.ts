@@ -28,6 +28,7 @@ import {
     ManagedFocusFeature,
     _addFocusableContainerListener,
     _addGridCommonParams,
+    _clamp,
     _createElement,
     _error,
     _unwrapUserComp,
@@ -192,7 +193,7 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
                 break;
         }
 
-        nextIndex = Math.max(0, Math.min(nextIndex, items.length - 1));
+        nextIndex = _clamp(nextIndex, 0, items.length - 1);
         if (nextIndex !== currentIndex) {
             items[nextIndex].focus();
             e.preventDefault();

@@ -18,6 +18,7 @@ import type {
     SizeColumnsToContentStrategy,
 } from '../interfaces/autoSize';
 import { MIN_CENTER_VIEWPORT_WIDTH } from '../pinnedColumns/pinnedColumnService';
+import { _clamp } from '../utils/number';
 import { _warn } from '../validation/logging';
 import { TouchListener } from '../widgets/touchListener';
 
@@ -446,7 +447,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth ?? Infinity;
 
             const colWidth = column.getActualWidth();
-            const targetWidth = Math.max(Math.min(colWidth, maxOverride), minOverride);
+            const targetWidth = _clamp(colWidth, minOverride, maxOverride);
 
             // NOTE: we assign values to `this.actualWidth` of each column without firing events
             // for this reason we need to manually dispatch resize events after the resize has been done for each column.

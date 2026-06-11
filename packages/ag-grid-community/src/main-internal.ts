@@ -369,7 +369,7 @@ export {
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _consoleError, _warnOnce } from './utils/log';
 export { _mergeDeep, _mergedEqual } from './utils/mergeDeep';
-export { _formatNumberCommas, _isFiniteNumber, _toFiniteNumber } from './utils/number';
+export { _clamp, _formatNumberCommas, _isFiniteNumber, _toFiniteNumber } from './utils/number';
 export { _selectAllCells } from './utils/selection';
 export { _getValueUsingDotPath } from './utils/value';
 export { _errMsg, _error, _logPreInitWarn, _preInitErrMsg, _warn } from './validation/logging';

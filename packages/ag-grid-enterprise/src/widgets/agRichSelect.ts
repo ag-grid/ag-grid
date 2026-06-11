@@ -41,6 +41,7 @@ import {
     AgPickerField,
     KeyCode,
     _addGridCommonParams,
+    _clamp,
     _createIconNoSpan,
     _getEditorRendererDetails,
     _stopPropagationForAgGrid,
@@ -976,7 +977,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         const widthSource = inputValue || placeholder || '';
         // keep the input compact beside pills but still large enough for the current text.
-        const nextSize = Math.max(1, Math.min(widthSource.length + 1, 32));
+        const nextSize = _clamp(widthSource.length + 1, 1, 32);
 
         if (inputEl.size !== nextSize) {
             inputEl.size = nextSize;

@@ -24,6 +24,7 @@ import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEve
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import { _mergedEqual } from '../utils/mergeDeep';
+import { _clamp } from '../utils/number';
 import { _warn } from '../validation/logging';
 import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
@@ -330,7 +331,7 @@ export class AgColumn<TValue = any>
 
     private calculateColInitialWidth(colDef: ColDef): number {
         const width = colDef.width ?? colDef.initialWidth ?? 200;
-        return Math.max(Math.min(width, this.maxWidth), this.minWidth);
+        return _clamp(width, this.minWidth, this.maxWidth);
     }
 
     public isEmptyGroup(): false {

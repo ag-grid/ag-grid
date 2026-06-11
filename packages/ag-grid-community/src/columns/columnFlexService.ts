@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColumnEventType } from '../events';
 import type { ColumnDelayRenderService } from '../rendering/columnDelayRenderService';
+import { _clamp } from '../utils/number';
 import { dispatchColumnResizedEvent } from './columnEventUtils';
 
 type FlexItem = {
@@ -158,7 +159,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
                 }
 
                 const unclampedSize = item.targetSize;
-                const clampedSize = Math.min(Math.max(unclampedSize, item.min), item.max);
+                const clampedSize = _clamp(unclampedSize, item.min, item.max);
 
                 totalViolation += clampedSize - unclampedSize;
                 item.violationType =
