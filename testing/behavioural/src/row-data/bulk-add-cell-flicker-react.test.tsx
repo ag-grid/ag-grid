@@ -188,10 +188,10 @@ describe('Eager row content seed (bulk-add flicker regression)', () => {
         );
     }
 
-    async function streamRowDataCycles(cycles = 3): Promise<void> {
+    async function streamRowDataCycles(root: HTMLElement, cycles = 3): Promise<void> {
         for (let cycle = 0; cycle < cycles; cycle++) {
             act(() => driveRowData!(cycleData(cycle)));
-            await asyncSetTimeout(20); // flush React commits + rAF before next cycle
+            await waitFor(() => expect(root.textContent).toContain(`c${cycle}-0`));
         }
     }
 
@@ -201,7 +201,9 @@ describe('Eager row content seed (bulk-add flicker regression)', () => {
             const rendered = render(<StreamingWrapper renderingMode={renderingMode} />);
             await waitFor(() => expect(rendered.container.querySelectorAll(ROW_SELECTOR).length).toBeGreaterThan(0));
 
-            const records = await recordContentAppendedIntoExistingRows(rendered.container, streamRowDataCycles);
+            const records = await recordContentAppendedIntoExistingRows(rendered.container, () =>
+                streamRowDataCycles(rendered.container)
+            );
 
             expectNoFlicker(records);
         }
@@ -233,7 +235,7 @@ describe('Eager row content seed (bulk-add flicker regression)', () => {
             });
             observer.observe(rendered.container, { subtree: true, attributes: true, attributeFilter: ['class'] });
 
-            await streamRowDataCycles();
+            await streamRowDataCycles(rendered.container);
             observer.disconnect();
 
             if (opacityToggles.length > 0) {

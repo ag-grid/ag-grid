@@ -63,6 +63,7 @@ const createAggregationSnapshot = (
 
     const valueSvc = {
         getValue: (_col: any, rowNode: any) => rowNode.data.value,
+        getValueFromData: (_col: any, rowNode: any) => rowNode.data.value,
     };
 
     (comp as any).beans = {

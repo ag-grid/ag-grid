@@ -90,7 +90,7 @@ export class AgColumn<TValue = any>
     public readonly isColumn = true as const;
 
     // framework (React) render key; also identifies old-vs-new cols when destroying unused ones
-    private readonly instanceId = getNextColInstanceId();
+    public readonly instanceId: ColumnInstanceId = getNextColInstanceId();
 
     /** Sanitised version of the column id */
     public readonly colIdSanitised: string;

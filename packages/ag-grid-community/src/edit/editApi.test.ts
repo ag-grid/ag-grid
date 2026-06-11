@@ -58,6 +58,19 @@ describe('Edit API', () => {
 
     beforeEach(() => {
         editMap = new Map();
+        const resolveMockValue = (col: Column, rowNode: IRowNode): string | undefined => {
+            if (rowNode.rowIndex !== 0 && rowNode.rowIndex !== 1) {
+                return undefined;
+            }
+            const colId = col.getColId();
+            if (colId === 'col1') {
+                return 'old1';
+            }
+            if (colId === 'col2') {
+                return 'old2';
+            }
+            return undefined;
+        };
         beans = {
             editModelSvc: {
                 getEditMap: vi.fn(() => editMap),
@@ -100,18 +113,8 @@ describe('Edit API', () => {
                 getRowCtrls: vi.fn(() => [rowCtrl1, rowCtrl2]),
             } as unknown as RowRenderer,
             valueSvc: {
-                getValue: vi.fn((col: Column, rowNode: IRowNode, _ignoreAggData: boolean, _source: string) => {
-                    if (col.getColId() === 'col1' && rowNode.rowIndex === 0) {
-                        return 'old1';
-                    } else if (col.getColId() === 'col2' && rowNode.rowIndex === 0) {
-                        return 'old2';
-                    } else if (col.getColId() === 'col1' && rowNode.rowIndex === 1) {
-                        return 'old1';
-                    } else if (col.getColId() === 'col2' && rowNode.rowIndex === 1) {
-                        return 'old2';
-                    }
-                    return undefined;
-                }),
+                getValue: vi.fn(resolveMockValue),
+                getValueFromData: vi.fn(resolveMockValue),
             } as unknown as ValueService,
             registry: {
                 createDynamicBean: vi.fn(),

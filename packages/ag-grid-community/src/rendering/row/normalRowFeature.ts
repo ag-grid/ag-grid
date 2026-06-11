@@ -193,7 +193,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
             // we use instanceId's rather than colId as it's possible there is a Column with same Id,
             // but it's referring to a different column instance. Happens a lot with pivot, as pivot col id's are
             // reused eg pivot_0, pivot_1 etc
-            const colInstanceId = col.getInstanceId();
+            const colInstanceId = col.instanceId;
             let cellCtrl: CellCtrl | undefined = prev.map[colInstanceId];
 
             // for spanned cells, if the span ref has changed, need to hard refresh cell
@@ -212,7 +212,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         }
 
         for (const prevCellCtrl of prev.list) {
-            const colInstanceId = prevCellCtrl.column.getInstanceId();
+            const colInstanceId = prevCellCtrl.column.instanceId;
             const cellInResult = res.map[colInstanceId] != null;
 
             if (cellInResult) {
@@ -242,7 +242,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         const focusedCol = focusedCell?.column as AgColumn | undefined;
         // if a cell is focused, might need to be force rendered if it belongs to this pinned section
         if (focusedCol && focusedCol.pinned == pinned) {
-            const focusedColInstanceId = focusedCol.getInstanceId();
+            const focusedColInstanceId = focusedCol.instanceId;
             const focusedCellCtrl = res.map[focusedColInstanceId];
 
             // if focused col is visible, and there's no cell here for it, try to create one
@@ -320,7 +320,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
                 continue;
             }
             res.list.push(cellCtrl);
-            res.map[cellCtrl.column.getInstanceId()] = cellCtrl;
+            res.map[cellCtrl.column.instanceId] = cellCtrl;
         }
         return res;
     }

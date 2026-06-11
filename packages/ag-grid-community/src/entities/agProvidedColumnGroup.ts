@@ -33,7 +33,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
     private lastVisible = false;
 
     // stable key for framework (React) rendering and old-vs-new destroy diffing
-    private readonly instanceId = getNextColInstanceId();
+    public readonly instanceId: ColumnInstanceId = getNextColInstanceId();
 
     constructor(
         public colGroupDef: ColGroupDef | null,
