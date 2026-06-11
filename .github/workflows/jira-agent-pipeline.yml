@@ -227,11 +227,17 @@ jobs:
     # resume route → a forced workflow_dispatch stage. `!cancelled()` lets the
     # gate evaluate even when preflight is skipped (the forced-dispatch path).
     agent-run:
-        needs: preflight
+        # Both gates feed this one job: `preflight` for the resume routes +
+        # ci-failure-iterate, and `ci-success-handler` for the codex-review
+        # hold (green PR, open P0/P1 findings → pr-iterate). On any given
+        # event only one of the two needed jobs runs and the other is skipped
+        # (empty outputs); `!cancelled()` lets the `if` evaluate regardless.
+        needs: [preflight, ci-success-handler]
         if: |
             !cancelled() &&
             (needs.preflight.outputs.stage != '' ||
              needs.preflight.outputs.ci_failure_eligible == 'true' ||
+             needs.ci-success-handler.outputs.dispatch_pr_iterate == 'true' ||
              (github.event_name == 'workflow_dispatch' && inputs.stage != 'resume'))
         runs-on: ubuntu-latest
         timeout-minutes: 60
@@ -267,10 +273,11 @@ jobs:
 
             - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-pipeline
               with:
-                  # ci-failure-iterate wins when the failure preflight is eligible;
-                  # otherwise the resume route, or a forced workflow_dispatch stage.
-                  stage: ${{ needs.preflight.outputs.ci_failure_eligible == 'true' && 'ci-failure-iterate' || needs.preflight.outputs.stage || inputs.stage }}
-                  issue_key: ${{ needs.preflight.outputs.issue_key || env.ISSUE_KEY }}
+                  # Stage precedence: ci-failure-iterate (failure preflight eligible)
+                  # → pr-iterate (green CI held on open P0/P1 Codex findings)
+                  # → the resume route → a forced workflow_dispatch stage.
+                  stage: ${{ needs.preflight.outputs.ci_failure_eligible == 'true' && 'ci-failure-iterate' || needs.ci-success-handler.outputs.dispatch_pr_iterate == 'true' && 'pr-iterate' || needs.preflight.outputs.stage || inputs.stage }}
+                  issue_key: ${{ needs.preflight.outputs.issue_key || needs.ci-success-handler.outputs.issue_key || env.ISSUE_KEY }}
                   ci_failure_run_url: ${{ needs.preflight.outputs.ci_failure_run_url }}
                   recycle_from: ${{ needs.preflight.outputs.prior_pr_outcome }}
                   jira_agent_app_id: ${{ vars.JIRA_AGENT_APP_ID }}
@@ -305,6 +312,11 @@ jobs:
             handled: ${{ steps.handler.outputs.handled }}
             issue_key: ${{ steps.handler.outputs.issue_key }}
             pr_number: ${{ steps.handler.outputs.pr_number }}
+            # 'true' when a green PR still has open P0/P1 Codex findings: the
+            # handler HELD the Needs-Review promotion and asks for a pr-iterate
+            # to address them. Routed into agent-run below (the success-side
+            # analog of ci-failure-iterate) — no self-dispatch needed.
+            dispatch_pr_iterate: ${{ steps.handler.outputs.dispatch_pr_iterate }}
         steps:
             - uses: actions/checkout@v4
               with:
