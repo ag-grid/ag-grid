@@ -1,10 +1,10 @@
-import { KeyCode, RefPlaceholder, _setAriaDisabled } from 'ag-stack';
+import type { AgElementParams, LocaleTextFunc } from 'ag-stack';
+import { KeyCode, RefPlaceholder, _setAriaDisabled, _setAriaLabel, _setAriaRole } from 'ag-stack';
 
 import { AgInputNumberFieldSelector } from '../agWidgets/agInputNumberField';
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _createIconNoSpan } from '../utils/icon';
-import { _toFiniteNumber } from '../utils/number';
 import { Component } from '../widgets/component';
 import type { GridInputNumberField } from '../widgets/gridWidgetTypes';
 import type { PaginationService } from './paginationService';
@@ -42,86 +42,21 @@ export class PageSummaryComp extends Component {
     }
 
     public postConstruct(): void {
-        const noInput = this.suppressPageInput;
-        const idPrefix = this.idPrefix;
         const localeTextFunc = this.getLocaleTextFunc();
-        const pageNumberChild = {
-            cls: 'ag-paging-number',
-            attrs: { id: `${idPrefix}-start-page-number` },
-            tag: noInput ? 'span' : 'ag-input-number-field',
-            ref: noInput ? 'lbCurrentStatic' : 'lbCurrentInput',
-        } as const;
-
         this.setTemplate(
-            {
-                tag: 'span',
-                cls: 'ag-paging-page-summary-panel',
-                role: 'presentation',
-                children: [
-                    {
-                        tag: 'div',
-                        ref: 'btFirst',
-                        cls: 'ag-button ag-paging-button',
-                        role: 'button',
-                        attrs: { 'aria-label': localeTextFunc('firstPage', 'First Page') },
-                    },
-                    {
-                        tag: 'div',
-                        ref: 'btPrevious',
-                        cls: 'ag-button ag-paging-button',
-                        role: 'button',
-                        attrs: { 'aria-label': localeTextFunc('previousPage', 'Previous Page') },
-                    },
-                    {
-                        tag: 'span',
-                        cls: 'ag-paging-description',
-                        children: [
-                            {
-                                tag: 'span',
-                                attrs: { id: `${idPrefix}-start-page` },
-                                children: localeTextFunc('page', 'Page'),
-                            },
-                            pageNumberChild,
-                            {
-                                tag: 'span',
-                                attrs: { id: `${idPrefix}-of-page` },
-                                children: localeTextFunc('of', 'of'),
-                            },
-                            {
-                                tag: 'span',
-                                ref: 'lbTotal',
-                                cls: 'ag-paging-number',
-                                attrs: { id: `${idPrefix}-of-page-number` },
-                            },
-                        ],
-                    },
-                    {
-                        tag: 'div',
-                        ref: 'btNext',
-                        cls: 'ag-button ag-paging-button',
-                        role: 'button',
-                        attrs: { 'aria-label': localeTextFunc('nextPage', 'Next Page') },
-                    },
-                    {
-                        tag: 'div',
-                        ref: 'btLast',
-                        cls: 'ag-button ag-paging-button',
-                        role: 'button',
-                        attrs: { 'aria-label': localeTextFunc('lastPage', 'Last Page') },
-                    },
-                ],
-            },
+            buildPageSummaryTemplate(this.idPrefix, this.suppressPageInput, localeTextFunc),
             this.suppressPageInput ? [] : [AgInputNumberFieldSelector]
         );
+        insertNavIcons(this.gos.get('enableRtl'), this.beans, this.btFirst, this.btPrevious, this.btNext, this.btLast);
+        this.initNavButtons();
+        if (!this.suppressPageInput) {
+            this.initPageInput();
+        }
+        this.refresh();
+    }
 
-        const { gos, btFirst, btPrevious, btNext, btLast, beans } = this;
-        const isRtl = gos.get('enableRtl');
-
-        btFirst.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'last' : 'first', beans)!);
-        btPrevious.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'next' : 'previous', beans)!);
-        btNext.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'previous' : 'next', beans)!);
-        btLast.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'first' : 'last', beans)!);
-
+    private initNavButtons(): void {
+        const { btFirst, btPrevious, btNext, btLast } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
         for (const { el, fn } of [
             { el: btFirst, fn: this.onBtFirst.bind(this) },
@@ -139,19 +74,48 @@ export class PageSummaryComp extends Component {
                 },
             });
         }
+    }
 
-        if (!this.suppressPageInput) {
-            const { lbCurrentInput } = this;
-            lbCurrentInput.onValueChange(this.onInputPage.bind(this));
-            this.addManagedListeners(lbCurrentInput.getInputElement(), {
-                blur: () => {
-                    if (!lbCurrentInput.getInputElement().value.trim()) {
-                        lbCurrentInput.setValue(String(this.pagination.getCurrentPage() + 1), true);
-                    }
-                },
-            });
-        }
-        this.refresh();
+    private initPageInput(): void {
+        const { lbCurrentInput, pagination } = this;
+        const eInput = lbCurrentInput.getInputElement();
+        _setAriaRole(eInput, 'spinbutton');
+        this.addManagedListeners(eInput, {
+            keydown: (e: KeyboardEvent) => {
+                const { key } = e;
+                if (key !== KeyCode.ENTER && key !== KeyCode.ESCAPE && key !== KeyCode.UP && key !== KeyCode.DOWN) {
+                    return;
+                }
+                e.preventDefault();
+                let targetPage: number | null = null;
+                const current = pagination.getCurrentPage();
+                const maxPage = pagination.getTotalPages();
+                switch (key) {
+                    case KeyCode.ENTER:
+                        this.commitPageInput();
+                        break;
+                    case KeyCode.ESCAPE:
+                        lbCurrentInput.setValue(String(current + 1), true); // needs to happen before blur below
+                        eInput.blur();
+                        break;
+                    case KeyCode.UP:
+                        if (current + 2 <= maxPage) {
+                            targetPage = current + 2;
+                        }
+                        break;
+                    case KeyCode.DOWN:
+                        if (current !== 0) {
+                            targetPage = current;
+                        }
+                        break;
+                }
+                if (targetPage !== null) {
+                    lbCurrentInput.setValue(String(targetPage), true);
+                    this.commitPageInput();
+                }
+            },
+            blur: () => this.commitPageInput(),
+        });
     }
 
     private onBtFirst(): void {
@@ -178,20 +142,23 @@ export class PageSummaryComp extends Component {
         }
     }
 
-    private onInputPage(): void {
+    private commitPageInput(): void {
         const { pagination, lbCurrentInput } = this;
+        const currentPage = pagination.getCurrentPage() + 1;
         const rawValue = lbCurrentInput.getValue(true);
         if (!rawValue?.trim()) {
+            lbCurrentInput.setValue(String(currentPage), true);
             return;
         }
-        const rawValueNum = _toFiniteNumber(rawValue);
-        let value = rawValueNum ?? pagination.getCurrentPage() + 1;
+        const rawValueNum = Number(rawValue);
         const total = pagination.getTotalPages();
-        value = Math.max(1, Math.min(value, total));
-        if (rawValueNum !== value) {
-            lbCurrentInput.setValue(String(value), true);
+        const isValid =
+            Number.isFinite(rawValueNum) && Number.isInteger(rawValueNum) && rawValueNum >= 1 && rawValueNum <= total;
+        if (!isValid) {
+            lbCurrentInput.setValue(String(currentPage), true);
+            return;
         }
-        pagination.goToPage(value - 1);
+        pagination.goToPage(rawValueNum - 1);
     }
 
     public refresh(): void {
@@ -250,6 +217,14 @@ export class PageSummaryComp extends Component {
             lbCurrentInput.setMax(pageCount);
             lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(pageCount) + 3)}ch`; // log10 returns number of digits (as an integer part + fraction) - 1
             lbCurrentInput.setValue(lbCurrentValue.toString());
+            const eInput = lbCurrentInput.getInputElement();
+            _setAriaLabel(
+                eInput,
+                `${localeTextFunc('page', 'Page')} ${localeTextFunc('number', 'number')}, ${lbCurrentValue} ${localeTextFunc('of', 'of')} ${lbTotalStr}`
+            );
+            eInput.setAttribute('aria-valuenow', String(lbCurrentValue));
+            eInput.setAttribute('aria-valuemin', '1');
+            eInput.setAttribute('aria-valuemax', String(pageCount));
         }
 
         const strPage = localeTextFunc('page', 'Page');
@@ -260,4 +235,90 @@ export class PageSummaryComp extends Component {
     private formatNumber(value: number): string {
         return _formatPaginationNumber(value, this.gos, this.getLocaleTextFunc.bind(this));
     }
+}
+
+function buildPageSummaryTemplate(
+    idPrefix: string,
+    noInput: boolean,
+    localeTextFunc: LocaleTextFunc
+): AgElementParams<AgComponentSelectorType> {
+    const pageNumberChild = {
+        cls: 'ag-paging-number',
+        attrs: { id: `${idPrefix}-start-page-number` },
+        tag: noInput ? 'span' : 'ag-input-number-field',
+        ref: noInput ? 'lbCurrentStatic' : 'lbCurrentInput',
+    } as const;
+
+    return {
+        tag: 'span',
+        cls: 'ag-paging-page-summary-panel',
+        role: 'presentation',
+        children: [
+            {
+                tag: 'div',
+                ref: 'btFirst',
+                cls: 'ag-button ag-paging-button',
+                role: 'button',
+                attrs: { 'aria-label': localeTextFunc('firstPage', 'First Page') },
+            },
+            {
+                tag: 'div',
+                ref: 'btPrevious',
+                cls: 'ag-button ag-paging-button',
+                role: 'button',
+                attrs: { 'aria-label': localeTextFunc('previousPage', 'Previous Page') },
+            },
+            {
+                tag: 'span',
+                cls: 'ag-paging-description',
+                children: [
+                    {
+                        tag: 'span',
+                        attrs: { id: `${idPrefix}-start-page` },
+                        children: localeTextFunc('page', 'Page'),
+                    },
+                    pageNumberChild,
+                    {
+                        tag: 'span',
+                        attrs: { id: `${idPrefix}-of-page` },
+                        children: localeTextFunc('of', 'of'),
+                    },
+                    {
+                        tag: 'span',
+                        ref: 'lbTotal',
+                        cls: 'ag-paging-number',
+                        attrs: { id: `${idPrefix}-of-page-number` },
+                    },
+                ],
+            },
+            {
+                tag: 'div',
+                ref: 'btNext',
+                cls: 'ag-button ag-paging-button',
+                role: 'button',
+                attrs: { 'aria-label': localeTextFunc('nextPage', 'Next Page') },
+            },
+            {
+                tag: 'div',
+                ref: 'btLast',
+                cls: 'ag-button ag-paging-button',
+                role: 'button',
+                attrs: { 'aria-label': localeTextFunc('lastPage', 'Last Page') },
+            },
+        ],
+    };
+}
+
+function insertNavIcons(
+    isRtl: boolean,
+    beans: BeanCollection,
+    btFirst: HTMLElement,
+    btPrevious: HTMLElement,
+    btNext: HTMLElement,
+    btLast: HTMLElement
+): void {
+    btFirst.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'last' : 'first', beans)!);
+    btPrevious.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'next' : 'previous', beans)!);
+    btNext.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'previous' : 'next', beans)!);
+    btLast.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'first' : 'last', beans)!);
 }

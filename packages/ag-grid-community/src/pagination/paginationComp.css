@@ -44,6 +44,10 @@
     display: inline-block;
 }
 
+:where(.ag-number-field.ag-paging-number) .ag-input-field-input {
+    text-align: right;
+}
+
 .ag-paging-number,
 .ag-paging-row-summary-panel-number {
     font-weight: 500;
