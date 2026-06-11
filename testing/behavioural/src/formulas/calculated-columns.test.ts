@@ -1422,7 +1422,7 @@ describe('ag-grid calculated columns', () => {
         setExpression('');
 
         const input = getExpressionInput();
-        expect(input.validationMessage).toBe('Enter an expression.');
+        expect(input.validationMessage).toBe('Enter an expression');
         expect(input.validationMessage).not.toContain('begin with');
         expect(input).toHaveClass('invalid');
         expect(getDialogButton('Apply')).toBeDisabled();
