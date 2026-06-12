@@ -234,6 +234,28 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             res.initialSort = undefined;
         }
 
+        // For singleColumn mode each group row's underlying column differs per row, so tooltip
+        // properties must be resolved dynamically. Group rows always use the underlying grouped
+        // column's colDef; leaf rows use any tooltip settings from autoGroupColumnDef.
+        if (!underlyingColumn) {
+            const leafTooltipValueGetter = autoGroupColumnDef?.tooltipValueGetter;
+            const leafTooltipField = autoGroupColumnDef?.tooltipField;
+            res.tooltipField = undefined;
+            res.tooltipValueGetter = (params) => {
+                if (params.node?.group) {
+                    const groupedCol = params.node.rowGroupColumn;
+                    if (!groupedCol) return undefined;
+                    const colDef = groupedCol.colDef;
+                    if (colDef.tooltipValueGetter) return colDef.tooltipValueGetter(params);
+                    if (colDef.tooltipField) return params.value;
+                    return undefined;
+                }
+                if (leafTooltipValueGetter) return leafTooltipValueGetter(params);
+                if (leafTooltipField && params.data) return params.data[leafTooltipField];
+                return undefined;
+            };
+        }
+
         return res;
     }
 
@@ -252,6 +274,11 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         if (rowGroupCol) {
             res.headerName = this.beans.colNames.getDisplayNameForColumn(rowGroupCol, 'header') ?? undefined;
             res.headerValueGetter = rowGroupCol.colDef.headerValueGetter;
+            res.headerTooltip = rowGroupCol.colDef.headerTooltip;
+            res.tooltipField = rowGroupCol.colDef.tooltipField;
+            res.tooltipValueGetter = rowGroupCol.colDef.tooltipValueGetter;
+            res.tooltipComponent = rowGroupCol.colDef.tooltipComponent;
+            res.tooltipComponentParams = rowGroupCol.colDef.tooltipComponentParams;
         }
         return res;
     }
