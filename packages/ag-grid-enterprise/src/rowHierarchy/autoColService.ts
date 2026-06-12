@@ -7,7 +7,6 @@ import type {
     NamedBean,
     PropertyValueChangedEvent,
     RowNode,
-    TooltipComponentSelectorFunc,
 } from 'ag-grid-community';
 import {
     AgColumn,
@@ -298,9 +297,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             return;
         }
 
-        const selector: TooltipComponentSelectorFunc = (
-            params: ITooltipParams
-        ): CellRendererSelectorResult | undefined => {
+        const selector = (params: ITooltipParams): CellRendererSelectorResult | undefined => {
             if (params.node?.group) {
                 const groupedCol = params.node.rowGroupColumn as AgColumn | undefined;
                 const colDef = groupedCol?.colDef;
@@ -314,7 +311,8 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             }
             return { component: leafTooltipComponent, params: leafTooltipComponentParams };
         };
-        res.tooltipComponentSelector = selector;
+        // tooltipComponentSelector is typed for cell params but called with ITooltipParams at runtime
+        res.tooltipComponentSelector = selector as unknown as ColDef['tooltipComponentSelector'];
     }
 
     private createBaseColDef(rowGroupCol?: AgColumn): ColDef {
