@@ -5,7 +5,7 @@ import { GROUP_AUTO_COLUMN_ID, TooltipModule, agTestIdFor, getGridElement, setup
 import type { GridOptions, Module } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Tooltip inheritance in group columns', () => {
     const gridMgr = new TestGridsManager({

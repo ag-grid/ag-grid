@@ -1,7 +1,9 @@
 import type {
+    CellRendererSelectorResult,
     ColDef,
     ColumnEventType,
     IAutoColService,
+    ITooltipParams,
     NamedBean,
     PropertyValueChangedEvent,
     RowNode,
@@ -240,20 +242,69 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         if (!underlyingColumn) {
             const leafTooltipValueGetter = autoGroupColumnDef?.tooltipValueGetter;
             const leafTooltipField = autoGroupColumnDef?.tooltipField;
-            res.tooltipField = undefined;
-            res.tooltipValueGetter = (params) => {
-                if (params.node?.group) {
-                    const groupedCol = params.node.rowGroupColumn;
-                    if (!groupedCol) return undefined;
-                    const colDef = groupedCol.colDef;
-                    if (colDef.tooltipValueGetter) return colDef.tooltipValueGetter(params);
-                    if (colDef.tooltipField) return params.value;
+            const leafTooltipComponent = autoGroupColumnDef?.tooltipComponent;
+            const leafTooltipComponentParams = autoGroupColumnDef?.tooltipComponentParams;
+
+            const rowGroupCols = this.beans.rowGroupColsSvc?.columns ?? [];
+            const anyGroupColHasTooltip = rowGroupCols.some(
+                (col) => col.colDef.tooltipValueGetter || col.colDef.tooltipField || col.colDef.tooltipComponent
+            );
+
+            const hasTooltipConfig =
+                anyGroupColHasTooltip ||
+                leafTooltipValueGetter != null ||
+                leafTooltipField != null ||
+                leafTooltipComponent != null;
+
+            if (hasTooltipConfig) {
+                res.tooltipField = undefined;
+                res.tooltipComponent = undefined;
+                res.tooltipComponentParams = undefined;
+
+                res.tooltipValueGetter = (params) => {
+                    if (params.node?.group) {
+                        const groupedCol = params.node.rowGroupColumn as AgColumn | undefined;
+                        if (!groupedCol) {
+                            return undefined;
+                        }
+                        const colDef = groupedCol.colDef;
+                        if (colDef.tooltipValueGetter) {
+                            return colDef.tooltipValueGetter(params);
+                        }
+                        if (colDef.tooltipField) {
+                            return params.value;
+                        }
+                        return undefined;
+                    }
+                    if (leafTooltipValueGetter) {
+                        return leafTooltipValueGetter(params);
+                    }
+                    if (leafTooltipField && params.data) {
+                        return (params.data as Record<string, unknown>)[leafTooltipField];
+                    }
                     return undefined;
+                };
+
+                if (anyGroupColHasTooltip || leafTooltipComponent != null) {
+                    // tooltipComponentSelector is typed as cell selector funcs but called with ITooltipParams at runtime
+                    res.tooltipComponentSelector = ((
+                        params: ITooltipParams
+                    ): CellRendererSelectorResult | undefined => {
+                        if (params.node?.group) {
+                            const groupedCol = params.node.rowGroupColumn as AgColumn | undefined;
+                            const component = groupedCol?.colDef.tooltipComponent;
+                            if (!component) {
+                                return undefined;
+                            }
+                            return { component, params: groupedCol!.colDef.tooltipComponentParams };
+                        }
+                        if (leafTooltipComponent == null) {
+                            return undefined;
+                        }
+                        return { component: leafTooltipComponent, params: leafTooltipComponentParams };
+                    }) as unknown as ColDef['tooltipComponentSelector'];
                 }
-                if (leafTooltipValueGetter) return leafTooltipValueGetter(params);
-                if (leafTooltipField && params.data) return params.data[leafTooltipField];
-                return undefined;
-            };
+            }
         }
 
         return res;
