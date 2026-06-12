@@ -44,8 +44,11 @@
 .ag-calculated-column-expression-tools {
     display: flex;
 
-    :where(.ag-group-container) {
-        flex: 1 1 auto;
+    :where(.ag-label) {
+        text-align: right;
+    }
+
+    :where(.ag-field-set-wrapper) {
         justify-content: end;
         gap: var(--ag-spacing);
         flex-wrap: nowrap;

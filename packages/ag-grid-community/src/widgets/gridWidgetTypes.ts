@@ -1,5 +1,6 @@
 import type { AgCheckbox } from '../agWidgets/agCheckbox';
 import type { AgCheckboxParams } from '../agWidgets/agFieldParams';
+import type { AgFieldSet } from '../agWidgets/agFieldSet';
 import type { AgInputDateField } from '../agWidgets/agInputDateField';
 import type { AgInputNumberField } from '../agWidgets/agInputNumberField';
 import type { AgInputTextArea } from '../agWidgets/agInputTextArea';
@@ -101,4 +102,14 @@ export type GridSelect<TValue = string | null> = AgSelect<
     GridOptionsService,
     AgComponentSelectorType,
     TValue
+>;
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type GridFieldSet = AgFieldSet<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AgGridCommon<any, any>,
+    GridOptionsService,
+    AgComponentSelectorType
 >;

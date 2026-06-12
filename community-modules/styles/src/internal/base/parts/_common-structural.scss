@@ -1962,6 +1962,23 @@
         align-items: flex-end;
     }
 
+    .ag-field-set {
+        display: flex;
+        align-items: center;
+    }
+
+    .ag-field-set-wrapper {
+        display: flex;
+    }
+
+    .ag-field-set-wrapper-horizontal {
+        flex-direction: row;
+    }
+
+    .ag-field-set-wrapper-vertical {
+        flex-direction: column;
+    }
+
     .ag-toggle-button-icon {
         transition: right 0.3s;
         position: absolute;

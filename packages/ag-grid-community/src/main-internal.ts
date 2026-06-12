@@ -394,6 +394,7 @@ export { AgAbstractInputField } from './agWidgets/agAbstractInputField';
 export { AgAbstractLabel } from './agWidgets/agAbstractLabel';
 export { AgCheckbox, AgCheckboxSelector } from './agWidgets/agCheckbox';
 export { AgContentEditableField, AgContentEditableFieldSelector } from './agWidgets/agContentEditableField';
+export { AgFieldSet, AgFieldSetSelector } from './agWidgets/agFieldSet';
 export type {
     AgCheckboxParams,
     AgFieldParams,

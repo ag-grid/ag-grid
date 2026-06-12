@@ -3,6 +3,7 @@ import { RefPlaceholder, _getDocument, _setDisplayed } from 'ag-stack';
 import type {
     CalculatedColumnExpressionPicker,
     ElementParams,
+    GridFieldSet,
     GridInputTextArea,
     GridInputTextField,
     GridSelect,
@@ -10,6 +11,7 @@ import type {
     TooltipFeature,
 } from 'ag-grid-community';
 import {
+    AgFieldSetSelector,
     AgInputTextAreaSelector,
     AgInputTextFieldSelector,
     AgSelectSelector,
@@ -19,8 +21,6 @@ import {
 
 import { AgAutocompleteList } from '../advancedFilter/autocomplete/agAutocompleteList';
 import type { AutocompleteEntry } from '../advancedFilter/autocomplete/autocompleteParams';
-import { AgGroupComponentSelector } from '../agStack/agGroupComponent';
-import type { GroupComponent } from '../widgets/gridEnterpriseWidgetTypes';
 import { CalculatedColumnAutocompleteRow } from './calculatedColumnAutocompleteRow';
 import type {
     CalculatedColumnDataTypeOption,
@@ -66,7 +66,7 @@ const CalculatedColumnFormElement: ElementParams = {
             children: [
                 { tag: 'ag-input-text-area', ref: 'eExpression' },
                 {
-                    tag: 'ag-group-component',
+                    tag: 'ag-field-set',
                     cls: 'ag-calculated-column-expression-tools',
                     ref: 'eExpressionTools',
                     children: [
@@ -115,7 +115,7 @@ export class CalculatedColumnForm extends Component {
     private readonly eApply: HTMLButtonElement = RefPlaceholder;
     private readonly eCancel: HTMLButtonElement = RefPlaceholder;
     private readonly eActions: HTMLElement = RefPlaceholder;
-    private readonly eExpressionTools: GroupComponent = RefPlaceholder;
+    private readonly eExpressionTools: GridFieldSet = RefPlaceholder;
 
     private activeReplacement: { start: number; end: number } | null = null;
     private suggestionSource: HTMLElement | null = null;
@@ -147,7 +147,7 @@ export class CalculatedColumnForm extends Component {
             AgInputTextFieldSelector,
             AgSelectSelector,
             AgInputTextAreaSelector,
-            AgGroupComponentSelector,
+            AgFieldSetSelector,
         ]);
         this.expressionPickers = new Set(expressionPickers);
     }
@@ -199,8 +199,9 @@ export class CalculatedColumnForm extends Component {
 
         this.eExpressionTools
             .setDirection('horizontal')
-            .setTitle(translate('calculatedColumnExpressionToolsLabel', 'Insert'))
-            .hideOpenCloseIcons(true);
+            .setLabelWidth('flex')
+            .setLabel(translate('calculatedColumnExpressionToolsLabel', 'Insert'))
+            .setLabelSeparator(':');
     }
 
     private setupActionButtons(): void {
