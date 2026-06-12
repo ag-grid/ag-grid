@@ -344,6 +344,13 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
             }
 
             if (row) {
+                const previousIndex = row.rowIndex;
+                if (previousIndex != null && previousIndex !== i && this.rowNodesByIndex[previousIndex] === row) {
+                    // the node moved to a new index - remove the stale reference at its previous index,
+                    // otherwise the same node exists at two indexes and the row renderer later finds
+                    // two ctrls for one row id, orphaning (and leaking) one of them
+                    delete this.rowNodesByIndex[previousIndex];
+                }
                 row.updateData(data);
                 row.setRowIndex(i);
                 row.setRowTop(this.rowHeight * i);

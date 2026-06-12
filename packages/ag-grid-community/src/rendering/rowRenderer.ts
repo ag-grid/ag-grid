@@ -1027,8 +1027,24 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
         const ctrlsByIdMap: RowCtrlByRowNodeIdMap = {};
-        for (const rowCtrl of Object.values(this.rowCtrlsByRowIndex)) {
+        for (const index of Object.keys(this.rowCtrlsByRowIndex)) {
+            const rowCtrl = this.rowCtrlsByRowIndex[index as any];
             const rowNode = rowCtrl.rowNode;
+            const existingCtrl = ctrlsByIdMap[rowNode.id!];
+            if (existingCtrl && existingCtrl !== rowCtrl) {
+                // two ctrls can reference the same row id when the row model moved a node to a new
+                // index while a stale reference remained at the old one (e.g. viewport row model with
+                // partial setRowData coverage). overwriting the map entry would orphan one ctrl without
+                // destroying it, leaking the ctrl together with its event listeners and framework
+                // components. keep the ctrl matching the node's current row index and destroy the other.
+                const keepCurrentCtrl = rowNode.rowIndex === Number(index);
+                const ctrlToDestroy = keepCurrentCtrl ? existingCtrl : rowCtrl;
+                ctrlToDestroy.destroyFirstPass(true);
+                ctrlToDestroy.destroySecondPass();
+                if (!keepCurrentCtrl) {
+                    continue;
+                }
+            }
             ctrlsByIdMap[rowNode.id!] = rowCtrl;
         }
         this.rowCtrlsByRowIndex = {};
