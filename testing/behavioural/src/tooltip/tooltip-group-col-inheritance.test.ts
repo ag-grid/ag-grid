@@ -5,7 +5,7 @@ import { GROUP_AUTO_COLUMN_ID, TooltipModule, agTestIdFor, getGridElement, setup
 import type { GridOptions, Module } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Tooltip inheritance in group columns', () => {
     const gridMgr = new TestGridsManager({
@@ -39,6 +39,16 @@ describe('Tooltip inheritance in group columns', () => {
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-single', gridOptions);
+        await new GridColumns(api, 'group cell inherits tooltipValueGetter (singleColumn) setup').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── athlete "Athlete" width:200
+        `);
+        await new GridRows(api, 'group cell inherits tooltipValueGetter (singleColumn) setup').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+            · └── LEAF hidden id:0 country:"Australia" athlete:"Alice"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const groupCell = await waitFor(() =>
@@ -49,6 +59,11 @@ describe('Tooltip inheritance in group columns', () => {
         await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Tooltip: Australia');
+        await new GridRows(api, 'group cell inherits tooltipValueGetter (singleColumn) final state').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+            · └── LEAF hidden id:0 country:"Australia" athlete:"Alice"
+        `);
     });
 
     // TC2 – multiple column grouping: group cell inherits tooltipValueGetter from underlying colDef
@@ -69,6 +84,16 @@ describe('Tooltip inheritance in group columns', () => {
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-multiple', gridOptions);
+        await new GridColumns(api, 'group cell inherits tooltipValueGetter (multipleColumns) setup').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            └── athlete "Athlete" width:200
+        `);
+        await new GridRows(api, 'group cell inherits tooltipValueGetter (multipleColumns) setup').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-country:null
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Australia ag-Grid-AutoColumn-country:"Australia"
+            · └── LEAF hidden id:0 country:"Australia" athlete:"Alice"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const autoColId = `${GROUP_AUTO_COLUMN_ID}-country`;
@@ -80,6 +105,11 @@ describe('Tooltip inheritance in group columns', () => {
         await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Country: Australia');
+        await new GridRows(api, 'group cell inherits tooltipValueGetter (multipleColumns) final state').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-country:null
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Australia ag-Grid-AutoColumn-country:"Australia"
+            · └── LEAF hidden id:0 country:"Australia" athlete:"Alice"
+        `);
     });
 
     // TC2 – tooltipField is inherited (singleColumn)
@@ -94,6 +124,16 @@ describe('Tooltip inheritance in group columns', () => {
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-field', gridOptions);
+        await new GridColumns(api, 'group cell inherits tooltipField setup').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── athlete "Athlete" width:200
+        `);
+        await new GridRows(api, 'group cell inherits tooltipField setup').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+            · └── LEAF hidden id:0 country:"Australia" athlete:"Alice"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const groupCell = await waitFor(() =>
@@ -104,6 +144,11 @@ describe('Tooltip inheritance in group columns', () => {
         await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Australia');
+        await new GridRows(api, 'group cell inherits tooltipField final state').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+            · └── LEAF hidden id:0 country:"Australia" athlete:"Alice"
+        `);
     });
 
     // TC4 – grouped header inherits headerTooltip from underlying colDef (multipleColumns)
@@ -119,6 +164,16 @@ describe('Tooltip inheritance in group columns', () => {
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-header', gridOptions);
+        await new GridColumns(api, 'grouped header inherits headerTooltip (multipleColumns) setup').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            └── athlete "Athlete" width:200
+        `);
+        await new GridRows(api, 'grouped header inherits headerTooltip (multipleColumns) setup').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-country:null
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Australia ag-Grid-AutoColumn-country:"Australia"
+            · └── LEAF hidden id:0 country:"Australia" athlete:"Alice"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const autoColId = `${GROUP_AUTO_COLUMN_ID}-country`;
@@ -128,6 +183,11 @@ describe('Tooltip inheritance in group columns', () => {
         await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Country header tooltip');
+        await new GridRows(api, 'grouped header inherits headerTooltip (multipleColumns) final state').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-country:null
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Australia ag-Grid-AutoColumn-country:"Australia"
+            · └── LEAF hidden id:0 country:"Australia" athlete:"Alice"
+        `);
     });
 
     // TC5 – leaf rows in the group column use autoGroupColumnDef tooltip settings
@@ -143,6 +203,16 @@ describe('Tooltip inheritance in group columns', () => {
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-leaf', gridOptions);
+        await new GridColumns(api, 'leaf rows use autoGroupColumnDef tooltipValueGetter setup').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── athlete "Athlete" width:200
+        `);
+        await new GridRows(api, 'leaf rows use autoGroupColumnDef tooltipValueGetter setup').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+            · └── LEAF hidden id:0 ag-Grid-AutoColumn:"Alice" country:"Australia" athlete:"Alice"
+        `);
 
         api.setRowNodeExpanded(api.getRowNode('row-group-country-Australia')!, true);
 
@@ -153,6 +223,11 @@ describe('Tooltip inheritance in group columns', () => {
         await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Leaf: Alice');
+        await new GridRows(api, 'leaf rows use autoGroupColumnDef tooltipValueGetter final state').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+            · └── LEAF id:0 ag-Grid-AutoColumn:"Alice" country:"Australia" athlete:"Alice"
+        `);
     });
 
     // group rows always use underlying colDef tooltip even when autoGroupColumnDef also sets one
@@ -175,6 +250,16 @@ describe('Tooltip inheritance in group columns', () => {
         };
 
         const api = await gridMgr.createGridAndWait('tooltip-group-override', gridOptions);
+        await new GridColumns(api, 'group rows use underlying colDef tooltip setup').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── athlete "Athlete" width:200
+        `);
+        await new GridRows(api, 'group rows use underlying colDef tooltip setup').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+            · └── LEAF hidden id:0 country:"Australia" athlete:"Alice"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         const groupCell = await waitFor(() =>
@@ -185,5 +270,10 @@ describe('Tooltip inheritance in group columns', () => {
         await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
         await waitForTooltips(1);
         expect(getTooltips()[0]).toHaveTextContent('Inherited tooltip');
+        await new GridRows(api, 'group rows use underlying colDef tooltip final state').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP collapsed id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+            · └── LEAF hidden id:0 country:"Australia" athlete:"Alice"
+        `);
     });
 });
