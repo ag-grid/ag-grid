@@ -44,8 +44,16 @@
     display: inline-block;
 }
 
-:where(.ag-number-field.ag-paging-number) .ag-input-field-input {
+:where(.ag-ltr) .ag-number-field.ag-paging-number .ag-input-field-input {
     text-align: right;
+    padding-right: var(--ag-input-padding-start);
+    padding-left: 0;
+}
+
+:where(.ag-rtl) .ag-number-field.ag-paging-number .ag-input-field-input {
+    text-align: left;
+    padding-left: var(--ag-input-padding-start);
+    padding-right: 0;
 }
 
 .ag-paging-number,
