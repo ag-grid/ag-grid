@@ -1,4 +1,10 @@
-import { _findNextFocusableElement, _getActiveDomElement, _isBrowserSafari, _isFocusableFormField } from 'ag-stack';
+import {
+    _findNextFocusableElement,
+    _getActiveDomElement,
+    _getValueUsingDotField,
+    _isBrowserSafari,
+    _isFocusableFormField,
+} from 'ag-stack';
 
 import {
     _getFullWidthCellRendererDetails,
@@ -16,7 +22,7 @@ import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { INotesFeature } from '../../interfaces/notes';
-import type { TooltipFeature } from '../../tooltip/tooltipFeature';
+import type { ITooltipCtrlParams, TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import type { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
@@ -142,7 +148,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                 this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, rowDragEntireRow),
             setTooltip: (value, shouldDisplayTooltip) => {
                 gos.assertModuleRegistered('Tooltip', 3);
-                this.setupFullWidthRowTooltip(value, shouldDisplayTooltip);
+                this.setupFullWidthRowTooltip(() => value, shouldDisplayTooltip);
             },
         } as WithoutGridCommon<ICellRendererParams>);
 
@@ -158,6 +164,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                 });
                 params.value = value;
                 params.valueFormatted = valueFormatted;
+                this.setupGroupRowsTooltip(rowNode);
                 return _getFullWidthGroupCellRendererDetails(compFactory, params)!;
             }
             case 'FullWidthLoading':
@@ -174,7 +181,11 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         this.beans.masterDetailSvc?.setupDetailRowAutoHeight(this.rowCtrl, eDetailGui);
     }
 
-    private setupFullWidthRowTooltip(value: string, shouldDisplayTooltip?: () => boolean) {
+    private setupFullWidthRowTooltip(
+        getTooltipValue: () => any,
+        shouldDisplayTooltip?: () => boolean,
+        getAdditionalParams?: () => ITooltipCtrlParams
+    ) {
         if (!this.rowCtrl.getCurrentRowElement()) {
             return;
         }
@@ -182,8 +193,62 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         this.tooltipFeature = this.beans.tooltipSvc?.setupFullWidthRowTooltip(
             this.tooltipFeature,
             this.rowCtrl,
-            value,
-            shouldDisplayTooltip
+            getTooltipValue,
+            shouldDisplayTooltip,
+            getAdditionalParams
+        );
+    }
+
+    private setupGroupRowsTooltip(rowNode: RowCtrl['rowNode']): void {
+        const groupCol = rowNode.rowGroupColumn as AgColumn | undefined;
+        const { gos } = this;
+
+        // Regular row grouping: read tooltip config from the row-group column's colDef.
+        // Tree data (no rowGroupColumn): fall back to the auto-group column def.
+        const colDef = groupCol?.colDef ?? gos.get('autoGroupColumnDef');
+        if (!colDef) {
+            return;
+        }
+
+        const { tooltipValueGetter, tooltipField, tooltipComponent } = colDef;
+        if (!tooltipValueGetter && !tooltipField && !tooltipComponent) {
+            return;
+        }
+
+        const { valueSvc } = this.beans;
+        gos.assertModuleRegistered('Tooltip', 3);
+
+        this.setupFullWidthRowTooltip(
+            () => {
+                if (tooltipValueGetter) {
+                    const { value } = valueSvc.getValueForDisplay({ node: rowNode, from: 'edit' });
+                    return tooltipValueGetter(
+                        _addGridCommonParams(gos, {
+                            location: 'fullWidthRow',
+                            colDef,
+                            column: groupCol,
+                            rowIndex: rowNode.rowIndex ?? 0,
+                            node: rowNode,
+                            data: rowNode.data,
+                            value,
+                            valueFormatted: undefined,
+                        })
+                    );
+                }
+                if (tooltipField) {
+                    const data = rowNode.data;
+                    if (!data) {
+                        return undefined;
+                    }
+                    const containsDots = groupCol ? groupCol.tooltipFieldContainsDots : tooltipField.includes('.');
+                    return containsDots
+                        ? _getValueUsingDotField(data, tooltipField)
+                        : (data as Record<string, unknown>)[tooltipField];
+                }
+                return undefined;
+            },
+            undefined,
+            () => ({ colDef })
         );
     }
 

@@ -360,14 +360,16 @@ export class TooltipService extends BeanStub implements NamedBean {
     public setupFullWidthRowTooltip(
         existingTooltipFeature: TooltipFeature | undefined,
         ctrl: RowCtrl,
-        value: string,
-        shouldDisplayTooltip?: () => boolean
+        getTooltipValue: () => any,
+        shouldDisplayTooltip?: () => boolean,
+        getAdditionalParams?: () => ITooltipCtrlParams
     ): TooltipFeature | undefined {
         const tooltipParams: ITooltipCtrl = {
             getGui: () => ctrl.getRowContentElement()!,
-            getTooltipValue: () => value,
+            getTooltipValue,
             getLocation: () => 'fullWidthRow',
             shouldDisplayTooltip,
+            ...(getAdditionalParams ? { getAdditionalParams } : {}),
         };
 
         const beans = this.beans;
