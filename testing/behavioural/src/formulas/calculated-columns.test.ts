@@ -35,6 +35,7 @@ import {
     TestGridsManager,
     applyTransactionChecked,
     asyncSetTimeout,
+    nextAnimationFrame,
     waitForEvent,
 } from '../test-utils';
 
@@ -572,7 +573,8 @@ describe('ag-grid calculated columns', () => {
         `);
 
         updateCalculatedColumnDef(api, 'calc', { calculatedExpression: '[b]' });
-        await asyncSetTimeout(1);
+        await nextAnimationFrame();
+        await nextAnimationFrame();
 
         await new GridRows(api, 'calc re-spans by [b] after expression edit', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID

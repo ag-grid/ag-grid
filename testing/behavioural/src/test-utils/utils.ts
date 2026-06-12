@@ -9,6 +9,11 @@ export { log, info };
 
 export const asyncSetTimeout = __asyncSetTimeout;
 
+/** Resolves after the next animation frame — use to wait for an animation-frame-driven re-render to settle. */
+export function nextAnimationFrame(): Promise<void> {
+    return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+}
+
 export async function flushFakeTimers() {
     vitest.advanceTimersByTime(10000);
     vitest.useRealTimers();

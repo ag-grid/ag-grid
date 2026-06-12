@@ -1,7 +1,15 @@
 import { getByTestId } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { TextEditorModule, UndoRedoEditModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    CheckboxEditorModule,
+    DateEditorModule,
+    TextEditorModule,
+    UndoRedoEditModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
 import {
@@ -16,7 +24,15 @@ import {
 
 describe('Clipboard Paste Behaviour: fill handle', () => {
     const gridMgr = new TestGridsManager({
-        modules: [ClipboardModule, CellSelectionModule, BatchEditModule, UndoRedoEditModule, TextEditorModule],
+        modules: [
+            ClipboardModule,
+            CellSelectionModule,
+            BatchEditModule,
+            UndoRedoEditModule,
+            TextEditorModule,
+            CheckboxEditorModule,
+            DateEditorModule,
+        ],
     });
 
     beforeAll(() => {
@@ -362,10 +378,7 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
 
             const sourceValues: Record<string, string> = { text: 'Source', bool: 'true', date: '2024-01-15' };
             const sourceValue = sourceValues[field];
-            expect(editRequests, `fill for ${field} column`).toEqual([
-                `ROW_1:${field}:${sourceValue}`,
-                `ROW_2:${field}:${sourceValue}`,
-            ]);
+            expect(editRequests).toEqual([`ROW_1:${field}:${sourceValue}`, `ROW_2:${field}:${sourceValue}`]);
         }
     });
 
@@ -417,7 +430,7 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
             const expectedRow1: Record<string, string> = { text: 'B', bool: 'false', date: '2024-06-20' };
             const val0 = expectedRow0[field];
             const val1 = expectedRow1[field];
-            expect(editRequests, `cyclic fill for ${field} column`).toEqual([
+            expect(editRequests).toEqual([
                 `ROW_2:${field}:${val0}`,
                 `ROW_3:${field}:${val1}`,
                 `ROW_4:${field}:${val0}`,

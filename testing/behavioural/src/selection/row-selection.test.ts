@@ -19,6 +19,7 @@ import {
     assertSelectedRowElementsById,
     assertSelectedRowsByIndex,
     asyncSetTimeout,
+    nextAnimationFrame,
     waitForEvent,
 } from '../test-utils';
 import { GROUP_ROW_DATA } from './group-data';
@@ -7876,6 +7877,8 @@ describe('Row Selection Grid Options', () => {
             const btn = document.querySelector<HTMLButtonElement>('.btn-rugby');
 
             api.setGridOption('isRowPinned', (node) => (node.data?.sport === 'rugby' ? 'top' : null));
+            await nextAnimationFrame();
+            await nextAnimationFrame();
             await new GridColumns(
                 api,
                 `pinned rows mirror selectable status of their siblings reactively after setGridOption isRowPinned`
