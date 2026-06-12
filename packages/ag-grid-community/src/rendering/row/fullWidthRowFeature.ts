@@ -220,8 +220,8 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
 
         this.setupFullWidthRowTooltip(
             () => {
+                const displayValue = valueSvc.getDisplayValue(undefined, rowNode, 'edit');
                 if (tooltipValueGetter) {
-                    const { value } = valueSvc.getValueForDisplay({ node: rowNode, from: 'edit' });
                     return tooltipValueGetter(
                         _addGridCommonParams(gos, {
                             location: 'fullWidthRow',
@@ -230,7 +230,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                             rowIndex: rowNode.rowIndex ?? 0,
                             node: rowNode,
                             data: rowNode.data,
-                            value,
+                            value: displayValue,
                             valueFormatted: undefined,
                         })
                     );
@@ -245,7 +245,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                         ? _getValueUsingDotField(data, tooltipField)
                         : (data as Record<string, unknown>)[tooltipField];
                 }
-                return undefined;
+                return displayValue;
             },
             undefined,
             () => ({ colDef })

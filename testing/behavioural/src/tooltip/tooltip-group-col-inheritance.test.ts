@@ -487,4 +487,94 @@ describe('Tooltip inheritance in group columns', () => {
             · └── au-syd LEAF hidden id:au-syd
         `);
     });
+
+    // P1 fix: tooltipValueGetter receives params.value from the owning group column, not the outer group
+    test('full-width group row tooltipValueGetter receives value from the owning column (groupRows + multiple groups)', async () => {
+        const countryTooltips: string[] = [];
+        const yearTooltips: string[] = [];
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    field: 'country',
+                    rowGroup: true,
+                    hide: true,
+                    tooltipValueGetter: (params) => {
+                        countryTooltips.push(String(params.value));
+                        return `country:${params.value}`;
+                    },
+                },
+                {
+                    field: 'year',
+                    rowGroup: true,
+                    hide: true,
+                    tooltipValueGetter: (params) => {
+                        yearTooltips.push(String(params.value));
+                        return `year:${params.value}`;
+                    },
+                },
+                { field: 'athlete' },
+            ],
+            rowData: [{ country: 'Australia', year: 2020, athlete: 'Alice' }],
+            groupDisplayType: 'groupRows',
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+        };
+
+        const api = await gridMgr.createGridAndWait('tooltip-group-rows-multi-group', gridOptions);
+        api.setRowNodeExpanded(api.getRowNode('row-group-country-Australia')!, true);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const yearRow = await waitFor(() =>
+            getByTestId(gridDiv, agTestIdFor.rowNode('row-group-country-Australia-year-2020'))
+        );
+
+        await userEvent.hover(yearRow);
+        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
+        await waitForTooltips(1);
+        // The year group row must show the year value (2020), not the country value (Australia)
+        expect(getTooltips()[0]).toHaveTextContent('year:2020');
+    });
+
+    // P2 fix: tooltipComponent alone receives the group display value, not undefined
+    test('full-width group row passes group display value to tooltipComponent when no getter or field (groupRows)', async () => {
+        let capturedValue: unknown = 'not-set';
+
+        class CaptureTooltip implements ITooltipComp {
+            private eGui!: HTMLElement;
+            init(params: ITooltipParams) {
+                capturedValue = params.value;
+                this.eGui = document.createElement('div');
+                this.eGui.className = 'ag-tooltip-custom capture-tooltip';
+                this.eGui.textContent = `captured:${params.value}`;
+            }
+            getGui() {
+                return this.eGui;
+            }
+        }
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    field: 'country',
+                    rowGroup: true,
+                    hide: true,
+                    tooltipComponent: CaptureTooltip,
+                },
+                { field: 'athlete' },
+            ],
+            rowData: [{ country: 'Australia', athlete: 'Alice' }],
+            groupDisplayType: 'groupRows',
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+        };
+
+        const api = await gridMgr.createGridAndWait('tooltip-group-rows-component-only', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const groupRow = await waitFor(() => getByTestId(gridDiv, agTestIdFor.rowNode('row-group-country-Australia')));
+
+        await userEvent.hover(groupRow);
+        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
+        await waitForTooltips(1);
+        expect(document.querySelector('.capture-tooltip')).not.toBeNull();
+        // params.value must be the group display value, not undefined
+        expect(capturedValue).toBe('Australia');
+    });
 });
