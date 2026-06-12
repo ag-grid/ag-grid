@@ -249,17 +249,23 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         const leafTooltipField = autoGroupColumnDef?.tooltipField;
         const leafTooltipComponent = autoGroupColumnDef?.tooltipComponent;
         const leafTooltipComponentParams = autoGroupColumnDef?.tooltipComponentParams;
+        const leafTooltipComponentSelector = autoGroupColumnDef?.tooltipComponentSelector;
 
         const rowGroupCols = this.beans.rowGroupColsSvc?.columns ?? [];
         const anyGroupColHasTooltip = rowGroupCols.some(
-            (col) => col.colDef.tooltipValueGetter || col.colDef.tooltipField || col.colDef.tooltipComponent
+            (col) =>
+                col.colDef.tooltipValueGetter ||
+                col.colDef.tooltipField ||
+                col.colDef.tooltipComponent ||
+                col.colDef.tooltipComponentSelector
         );
 
         const hasTooltipConfig =
             anyGroupColHasTooltip ||
             leafTooltipValueGetter != null ||
             leafTooltipField != null ||
-            leafTooltipComponent != null;
+            leafTooltipComponent != null ||
+            leafTooltipComponentSelector != null;
 
         if (!hasTooltipConfig) {
             return;
@@ -293,25 +299,42 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             return undefined;
         };
 
-        if (!anyGroupColHasTooltip && leafTooltipComponent == null) {
+        const needsSelector =
+            anyGroupColHasTooltip || leafTooltipComponent != null || leafTooltipComponentSelector != null;
+        if (!needsSelector) {
             return;
         }
+
+        // tooltipComponentSelector is typed for cell params but called with ITooltipParams at runtime
+        const callSelector = (
+            sel: ColDef['tooltipComponentSelector'],
+            params: ITooltipParams
+        ): CellRendererSelectorResult | undefined =>
+            (sel as unknown as (p: ITooltipParams) => CellRendererSelectorResult | undefined)(params);
 
         const selector = (params: ITooltipParams): CellRendererSelectorResult | undefined => {
             if (params.node?.group) {
                 const groupedCol = params.node.rowGroupColumn as AgColumn | undefined;
                 const colDef = groupedCol?.colDef;
-                if (!colDef?.tooltipComponent) {
+                if (!colDef) {
+                    return undefined;
+                }
+                if (colDef.tooltipComponentSelector) {
+                    return callSelector(colDef.tooltipComponentSelector, params);
+                }
+                if (!colDef.tooltipComponent) {
                     return undefined;
                 }
                 return { component: colDef.tooltipComponent, params: colDef.tooltipComponentParams };
+            }
+            if (leafTooltipComponentSelector) {
+                return callSelector(leafTooltipComponentSelector, params);
             }
             if (leafTooltipComponent == null) {
                 return undefined;
             }
             return { component: leafTooltipComponent, params: leafTooltipComponentParams };
         };
-        // tooltipComponentSelector is typed for cell params but called with ITooltipParams at runtime
         res.tooltipComponentSelector = selector as unknown as ColDef['tooltipComponentSelector'];
     }
 
@@ -335,6 +358,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             res.tooltipValueGetter = rowGroupCol.colDef.tooltipValueGetter;
             res.tooltipComponent = rowGroupCol.colDef.tooltipComponent;
             res.tooltipComponentParams = rowGroupCol.colDef.tooltipComponentParams;
+            res.tooltipComponentSelector = rowGroupCol.colDef.tooltipComponentSelector;
         }
         return res;
     }
