@@ -1525,6 +1525,65 @@ describe('ag-grid calculated columns', () => {
         expect(getExpressionInput().value).toBe('[Revenue]');
     });
 
+    test('dialog sizes inline autocomplete to the expression editor width', async () => {
+        const api = createGrid('calculated-dialog-inline-picker-width', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        const input = getExpressionInput();
+        Object.defineProperty(input, 'offsetWidth', { configurable: true, get: () => 320 });
+        input.value = '[Rev';
+        input.setSelectionRange(input.value.length, input.value.length);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        await asyncSetTimeout(1);
+
+        const popup = document.querySelector<HTMLElement>('.ag-autocomplete-list-popup')!;
+        expect(popup.style.width).toBe('320px');
+        expect(popup.style.maxWidth).toBe('');
+        expect(popup).not.toHaveClass('ag-calculated-column-picker-list');
+    });
+
+    test('dialog sizes helper pickers from the calculated column suggestion width variable', async () => {
+        const api = createGrid('calculated-dialog-helper-picker-width', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        const dialog = getCalculatedColumnDialog();
+        Object.defineProperty(dialog, 'offsetWidth', { configurable: true, get: () => 140 });
+        clickDialogButton('Columns');
+        await asyncSetTimeout(1);
+
+        // The picker class carries the `--ag-calculated-column-suggestion-list-width` width rule.
+        const popup = document.querySelector<HTMLElement>('.ag-autocomplete-list-popup')!;
+        expect(popup).toHaveClass('ag-calculated-column-picker-list');
+        expect(popup.style.width).toBe('');
+        expect(popup.style.maxWidth).toBe('140px');
+
+        // Typing reuses the same list (same suggestion type); it must switch back to inline sizing.
+        const input = getExpressionInput();
+        Object.defineProperty(input, 'offsetWidth', { configurable: true, get: () => 320 });
+        input.value = '[Rev';
+        input.setSelectionRange(input.value.length, input.value.length);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        await asyncSetTimeout(1);
+
+        expect(popup).not.toHaveClass('ag-calculated-column-picker-list');
+        expect(popup.style.width).toBe('320px');
+        expect(popup.style.maxWidth).toBe('');
+    });
+
     test('dialog accepts column references in any case', async () => {
         const api = createGrid('calculated-dialog-case-insensitive-references', {
             calculatedColumns: { applyMode: 'deferred' },

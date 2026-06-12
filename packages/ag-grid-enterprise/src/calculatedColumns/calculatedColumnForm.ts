@@ -45,8 +45,10 @@ const OPERATOR_SUGGESTIONS: ColumnSuggestion[] = OPERATOR_VALUES.map((operator) 
     value: operator,
 }));
 const MAX_VISIBLE_SUGGESTIONS = 6;
+const CSS_PICKER_SUGGESTION_LIST = 'ag-calculated-column-picker-list';
 
 type CalculatedColumnAutocompleteEntry = AutocompleteEntry & { suggestion: ColumnSuggestion };
+type SuggestionSourceType = 'inline' | 'picker';
 
 /** Search string for an entry: grouped columns render segments, so the matched text and displayed text can differ. */
 function getSuggestionSearchValue(suggestion: ColumnSuggestion): string {
@@ -128,6 +130,7 @@ export class CalculatedColumnForm extends Component {
     /** The open suggestion list, recreated whenever the picker type (column/function/operator) changes. */
     private autocompleteList: AgAutocompleteList | null = null;
     private suggestionType: ColumnSuggestion['type'] | null = null;
+    private suggestionSourceType: SuggestionSourceType | null = null;
     private openSuggestions: ColumnSuggestion[] = [];
     private expressionSelection: { start: number; end: number } | null = null;
 
@@ -390,7 +393,7 @@ export class CalculatedColumnForm extends Component {
 
         if (bracketStart > bracketEnd) {
             const prefix = value.slice(bracketStart + 1, caret);
-            this.showSuggestions('column', prefix, { start: bracketStart, end: caret }, input);
+            this.showSuggestions('column', prefix, { start: bracketStart, end: caret }, input, 'inline');
             return;
         }
 
@@ -403,7 +406,8 @@ export class CalculatedColumnForm extends Component {
                     start: functionToken.start,
                     end: functionToken.end,
                 },
-                input
+                input,
+                'inline'
             );
             return;
         }
@@ -415,7 +419,7 @@ export class CalculatedColumnForm extends Component {
 
     private openPicker(type: ColumnSuggestion['type'], button: HTMLButtonElement): void {
         this.rememberExpressionSelection();
-        this.showSuggestions(type, '', this.expressionSelection, button);
+        this.showSuggestions(type, '', this.expressionSelection, button, 'picker');
     }
 
     private getSuggestionsForType(type: ColumnSuggestion['type']): ColumnSuggestion[] {
@@ -430,9 +434,10 @@ export class CalculatedColumnForm extends Component {
 
     private showSuggestions(
         type: ColumnSuggestion['type'],
-        search: string = '',
-        replacement: { start: number; end: number } | null = null,
-        source: HTMLElement = this.eExpression.getInputElement()
+        search: string,
+        replacement: { start: number; end: number } | null,
+        source: HTMLElement,
+        sourceType: SuggestionSourceType
     ): void {
         this.eType.hidePicker();
 
@@ -450,6 +455,7 @@ export class CalculatedColumnForm extends Component {
 
         this.activeReplacement = replacement;
         this.suggestionSource = source;
+        this.suggestionSourceType = sourceType;
         this.openSuggestionPopup(type, suggestions);
         this.autocompleteList?.setSearch(search);
         this.positionSuggestionPopup();
@@ -521,13 +527,26 @@ export class CalculatedColumnForm extends Component {
             return;
         }
 
-        const editorWidth = this.eExpression.getInputElement().offsetWidth;
-        if (editorWidth > 0) {
-            list.getGui().style.width = `${editorWidth}px`;
+        const listGui = list.getGui();
+        const isPicker = this.suggestionSourceType === 'picker';
+        listGui.classList.toggle(CSS_PICKER_SUGGESTION_LIST, isPicker);
+
+        if (isPicker) {
+            listGui.style.width = '';
+            const formWidth = this.getGui().offsetWidth;
+            if (formWidth > 0) {
+                listGui.style.maxWidth = `${formWidth}px`;
+            }
+        } else {
+            const editorWidth = this.eExpression.getInputElement().offsetWidth;
+            if (editorWidth > 0) {
+                listGui.style.width = `${editorWidth}px`;
+            }
+            listGui.style.maxWidth = '';
         }
 
         popupSvc.positionPopupByComponent({
-            ePopup: list.getGui(),
+            ePopup: listGui,
             type: 'calculatedColumnAutocomplete',
             eventSource: source,
             position: 'under',
@@ -535,7 +554,7 @@ export class CalculatedColumnForm extends Component {
             keepWithinBounds: true,
         });
         // Keep the list above the (non-modal) dialog it was opened from.
-        popupSvc.bringPopupToFront(list.getGui());
+        popupSvc.bringPopupToFront(listGui);
     }
 
     private confirmSelectedSuggestion(): void {
@@ -551,6 +570,7 @@ export class CalculatedColumnForm extends Component {
     private closeSuggestionPopup(): void {
         this.suggestionSource = null;
         this.suggestionType = null;
+        this.suggestionSourceType = null;
         this.openSuggestions = [];
         this.hideSuggestionPopup?.();
         this.hideSuggestionPopup = undefined;

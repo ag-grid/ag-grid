@@ -429,6 +429,11 @@ export interface CoreParams extends SharedThemeParams {
     calculatedColumnParentSuggestionColor: ColorValue;
 
     /**
+     * Width of the calculated column suggestion list opened from helper buttons.
+     */
+    calculatedColumnSuggestionListWidth: LengthValue;
+
+    /**
      * Color of the indicator line used to show where a row will be inserted when dragging to reorder rows
      */
     rowDragIndicatorColor: ColorValue;
@@ -891,6 +896,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     rangeHeaderHighlightColor: foregroundHeaderBackgroundMix(0.08),
     calculatedColumnHighlightColor: accentMix(0.2),
     calculatedColumnParentSuggestionColor: foregroundMix(0.75),
+    calculatedColumnSuggestionListWidth: 200,
     rowNumbersSelectedColor: accentMix(0.5),
     rowHoverColor: accentMix(0.08),
     columnHoverColor: accentMix(0.05),

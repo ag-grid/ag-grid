@@ -84,6 +84,10 @@
     flex: none;
 }
 
+.ag-calculated-column-picker-list {
+    width: var(--ag-calculated-column-suggestion-list-width);
+}
+
 .ag-calculated-column-actions {
     display: flex;
     justify-content: flex-end;

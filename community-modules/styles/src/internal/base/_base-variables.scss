@@ -289,5 +289,6 @@
 
         --ag-calculated-column-highlight-color: #bbb;
         --ag-calculated-column-parent-suggestion-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 80%);
+        --ag-calculated-column-suggestion-list-width: 200px;
     }
 }

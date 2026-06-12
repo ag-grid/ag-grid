@@ -427,6 +427,7 @@
         "rangeHeaderHighlightColor": {},
         "calculatedColumnHighlightColor": {},
         "calculatedColumnParentSuggestionColor": {},
+        "calculatedColumnSuggestionListWidth": {},
         "rangeSelectionChartBackgroundColor": {},
         "rangeSelectionChartCategoryBackgroundColor": {}
     },
