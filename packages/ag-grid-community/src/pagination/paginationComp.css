@@ -1,5 +1,6 @@
 .ag-paging-panel {
     display: flex;
+    align-items: center;
     height: var(--ag-pagination-panel-height);
     border-top: var(--ag-footer-row-border);
     overflow: auto hidden;
