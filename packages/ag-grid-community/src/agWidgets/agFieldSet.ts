@@ -9,8 +9,8 @@ import type {
 } from 'ag-stack';
 import { RefPlaceholder, _isComponent } from 'ag-stack';
 
-import type { AgLabelParams } from './agFieldParams';
 import { AgAbstractLabel } from './agAbstractLabel';
+import type { AgLabelParams } from './agFieldParams';
 import agFieldSetCSS from './agFieldSet.css';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
