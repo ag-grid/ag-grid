@@ -8,9 +8,15 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
+import {
+    CalculatedColumnsModule,
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    ContextMenuModule,
+} from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
+    CalculatedColumnsModule,
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,

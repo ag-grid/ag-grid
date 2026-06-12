@@ -1,8 +1,14 @@
 import type { ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColDef, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import {
+    CalculatedColumnsModule,
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    ContextMenuModule,
+} from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
+    CalculatedColumnsModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     ColumnMenuModule,
