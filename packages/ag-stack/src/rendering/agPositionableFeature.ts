@@ -370,7 +370,9 @@ export class AgPositionableFeature<
             }
         }
 
-        if (this.getHeight() === height) {
+        // only skip when a height style is already in place: on the first sizing pass the measured
+        // height can match the target before any style is set, which would leave the panel unsized.
+        if (eGui.style.height !== '' && this.getHeight() === height) {
             return;
         }
 
