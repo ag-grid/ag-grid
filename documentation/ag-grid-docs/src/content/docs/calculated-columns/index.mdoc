@@ -77,7 +77,7 @@ const gridOptions = {
 };
 ```
 
-Built-in types use the grid's locale text, while custom type names are capitalised in the dialog. If a selected value does not match a registered cell data type, the grid's normal `cellDataType` validation applies when the calculated column is created.
+Built-in types use the grid's locale text, while custom type names are capitalised in the dialog. If a selected value does not match a registered [Cell Data Type](./cell-data-types/), the grid's normal `cellDataType` validation applies when the calculated column is created.
 
 {% gridExampleRunner title="Dialog Data Types" name="calculated-columns-dialog-data-types" /%}
 
@@ -92,6 +92,8 @@ const gridOptions = {
     },
 };
 ```
+
+{% interfaceDocumentation interfaceName="CalculatedColumnExpressionPicker" config={"asCode":true} /%}
 
 This only controls the expression picker buttons. Use an empty array or `null` to hide all picker buttons. Inline autocomplete while typing in the expression editor remains available.
 
@@ -125,6 +127,8 @@ const gridOptions = {
     },
 };
 ```
+
+{% interfaceDocumentation interfaceName="CalculatedColumnApplyMode" config={"asCode":true} /%}
 
 {% gridExampleRunner title="Deferred Apply Mode" name="calculated-columns-apply-mode" /%}
 
@@ -165,11 +169,17 @@ Calculated columns are managed through column definitions, like other columns. T
 
 A column added from the header menu is placed after the column it was created from. The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`.
 
+### Get Calculated Columns
+
 ```{% frameworkTransform=true %}
 const calculatedColumns = api
     .getColumns()
     .filter(column => column.getColDef().calculatedExpression !== undefined);
+```
 
+### Set Calculated Columns
+
+```{% frameworkTransform=true %}
 api.setGridOption('columnDefs', [
     ...(api.getColumnDefs() ?? []),
     {
@@ -179,7 +189,11 @@ api.setGridOption('columnDefs', [
         valueFormatter: params => `${(params.value * 100).toFixed(1)}%`,
     },
 ]);
+```
 
+### Edit Calculated Columns
+
+```{% frameworkTransform=true %}
 api.setGridOption(
     'columnDefs',
     (api.getColumnDefs() ?? []).map(colDef =>
@@ -188,7 +202,11 @@ api.setGridOption(
             : colDef
     )
 );
+```
 
+### Remove Calculated Columns
+
+```{% frameworkTransform=true %}
 api.setGridOption(
     'columnDefs',
     (api.getColumnDefs() ?? []).filter(colDef => colDef.colId !== 'profitMargin')
