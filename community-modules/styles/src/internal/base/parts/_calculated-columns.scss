@@ -1,3 +1,5 @@
+@use 'ag';
+
 @mixin output {
     .ag-calculated-column-panel .ag-panel-content-wrapper {
         padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);
