@@ -10,7 +10,7 @@ import {
 } from 'ag-grid-community';
 import { CalculatedColumnsModule, FormulaModule, MasterDetailModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from '../test-utils';
 
 /**
  * Coverage suite for row spanning (`enableCellSpan` + `colDef.spanRows`).
@@ -22,8 +22,13 @@ import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../tes
  *   - COLUMN: spanRows toggled, value-producer / equals / callback changed, calc cols, group show.
  */
 
-/** Wait for the debounced span rebuild + spanned-row renderer to settle before snapshotting. */
-const settle = (): Promise<void> => asyncSetTimeout(10);
+/** Wait for the debounced span rebuild + spanned-row renderer to settle before snapshotting:
+ *  the debounce timer, then the animation frame the spanned-row renderer paints on. */
+const settle = async (): Promise<void> => {
+    await asyncSetTimeout(10);
+    await nextAnimationFrame();
+    await nextAnimationFrame();
+};
 
 describe('row spanning', () => {
     const gridsManager = new TestGridsManager({
