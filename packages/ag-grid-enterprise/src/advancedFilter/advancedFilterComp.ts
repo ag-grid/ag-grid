@@ -179,6 +179,7 @@ export class AdvancedFilterComp extends Component {
         });
 
         this.eButtons.updateButtons(buttons);
+        this.eButtons.updateValidity(!this.isApplyDisabled);
     }
 
     private updateModel(action: FilterAction): void {
