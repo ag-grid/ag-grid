@@ -365,6 +365,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         const correctParent = externalParent ?? wrapper.getDefParent() ?? this.getGui();
         if (correctParent !== this.getGui()) {
             wrapper.ensureStyledRoot();
+            correctParent.classList.add('ag-tool-panel-external');
         }
         const wrapperGui = wrapper.getGui();
         if (wrapperGui.parentElement !== correctParent) {
