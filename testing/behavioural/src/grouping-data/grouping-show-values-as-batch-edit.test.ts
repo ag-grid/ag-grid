@@ -25,8 +25,7 @@ describe('showValueAs with batch editing', () => {
             rowData: [{ id: '1', amount: 150 }],
         });
         const rowNode = api.getRowNode('1')!;
-        const cell = () =>
-            document.querySelector<HTMLElement>('#sva-batch-edit [row-index="0"] [col-id="amount"]')!;
+        const cell = () => document.querySelector<HTMLElement>('#sva-batch-edit [row-index="0"] [col-id="amount"]')!;
 
         expect(api.getCellValue({ rowNode, colKey: 'amount', from: 'transformed' })).toBe(50);
         expect(cell()).not.toHaveClass('ag-cell-batch-edit');
