@@ -6,8 +6,6 @@ import {
     _isFocusableFormField,
 } from 'ag-stack';
 
-import type { RowNode } from 'ag-grid-community';
-
 import {
     _getFullWidthCellRendererDetails,
     _getFullWidthDetailCellRendererDetails,
@@ -16,6 +14,7 @@ import {
 } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
+import type { RowNode } from '../../entities/rowNode';
 import type { CellFocusedEvent } from '../../events';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
