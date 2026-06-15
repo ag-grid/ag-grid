@@ -539,7 +539,9 @@ export class ShowValueAsService extends BeanStub implements NamedBean, IShowValu
         }
         column.dispatchStateUpdatedEvent('showValueAs');
         // Promote a not-yet-aggregated column so a state-applied total mode has its denominator.
-        this.promoteToValueColumn(column, source);
+        if (!this.promoteToValueColumn(column, source)) {
+            this.rowRenderer.refreshCells({ columns: [column.colId], force: true });
+        }
     }
 
     public getActiveModeLabel(column: AgColumn): string | null {

@@ -314,6 +314,8 @@ describe('showValueAs transform', () => {
                 { id: '2', country: 'B', amount: 75 },
             ] satisfies SaleRow[],
         });
+        const amountCell = () =>
+            document.querySelector<HTMLElement>('#state-round-trip [row-index="0"] [col-id="amount"]')!;
 
         await new GridColumns(api, 'round-trip initial').checkColumns(`
             CENTER
@@ -325,6 +327,7 @@ describe('showValueAs transform', () => {
             ├── LEAF id:1 country:"A" amount:"25.00%"
             └── LEAF id:2 country:"B" amount:"75.00%"
         `);
+        expect(amountCell()).toHaveTextContent('25.00%');
 
         // The mode serialises on the column that has it; columns without a mode serialise `null` (never undefined).
         const state = api.getColumnState();
@@ -341,6 +344,7 @@ describe('showValueAs transform', () => {
             └── amount "Amount" width:200 aggFunc:sum
         `);
         expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', from: 'transformed' })).toBe(25);
+        expect(amountCell()).toHaveTextContent('25');
 
         // Restoring the captured state re-applies the transform.
         api.applyColumnState({ state });
@@ -355,6 +359,7 @@ describe('showValueAs transform', () => {
             └── LEAF id:2 country:"B" amount:"75.00%"
         `);
         expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', from: 'transformed' })).toBeCloseTo(0.25);
+        expect(amountCell()).toHaveTextContent('25.00%');
     });
 
     test('custom mode registered grid-wide via defaultColDef.showValueAsConfig', async () => {
