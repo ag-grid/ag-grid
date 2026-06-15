@@ -93,6 +93,7 @@
 .ag-icon-first::before {
     mask-image: url('./material-svg-icons/first.svg');
 }
+
 .ag-icon-fx::before {
     mask-image: url('./material-svg-icons/fx.svg');
 }
