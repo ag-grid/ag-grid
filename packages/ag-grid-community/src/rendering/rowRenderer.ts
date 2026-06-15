@@ -28,6 +28,7 @@ import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
+import type { IShowValueAsService } from '../interfaces/iShowValueAsService';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import { _errMsg } from '../validation/logging';
@@ -58,6 +59,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private rowContainerHeight: RowContainerHeightService;
     private ctrlsSvc: CtrlsService;
     private editSvc?: EditService;
+    private showValueAsSvc: IShowValueAsService | undefined;
 
     public wireBeans(beans: BeanCollection): void {
         this.pageBounds = beans.pageBounds;
@@ -68,6 +70,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.rowContainerHeight = beans.rowContainerHeight;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.editSvc = beans.editSvc;
+        this.showValueAsSvc = beans.showValueAsSvc;
     }
 
     private gridBodyCtrl: GridBodyCtrl;
@@ -694,6 +697,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
 
         this.releaseLockOnRefresh();
+
+        // Recycled rows keep their old DOM, and changed rows may have rendered before aggregation settled, so
+        // aggregate-dependent cells (e.g. Show Values As) can be stale after a model update; refresh them.
+        this.showValueAsSvc?.refreshRenderedCells();
     }
 
     private scrollToTopIfNewData(params: RefreshViewParams): void {

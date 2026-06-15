@@ -45,7 +45,7 @@ describe('formatValue', () => {
         const formatter = () => returnValue;
         const value = 'bar';
 
-        const formattedValue = valueSvc.formatValue(column, null, value, formatter);
+        const formattedValue = valueSvc.formatValue(column, null, value, formatter, true);
 
         expect(formattedValue).toBe(returnValue);
         expect(expressionSvc.evaluate).toHaveBeenCalledTimes(0);
@@ -57,7 +57,7 @@ describe('formatValue', () => {
         colDef.valueFormatter = formatter;
         const value = 'bar';
 
-        const formattedValue = valueSvc.formatValue(column, null, value);
+        const formattedValue = valueSvc.formatValue(column, null, value, undefined, true);
 
         expect(formattedValue).toBe(returnValue);
         expect(expressionSvc.evaluate).toHaveBeenCalledTimes(0);
@@ -81,7 +81,7 @@ describe('formatValue', () => {
         node.rowPinned = 'top';
         expect(node.isRowPinned()).toBe(true);
 
-        const formattedValue = valueSvc.formatValue(column, node, value);
+        const formattedValue = valueSvc.formatValue(column, node, value, undefined, true);
 
         expect(formattedValue).toBe(returnValue);
         expect(expressionSvc.evaluate).toHaveBeenCalledTimes(0);
@@ -91,14 +91,14 @@ describe('formatValue', () => {
         const value = 'foo';
         const refDataValue = 'bar';
         colDef.refData = { [value]: refDataValue };
-        const formattedValue = valueSvc.formatValue(column, null, value);
+        const formattedValue = valueSvc.formatValue(column, null, value, undefined, true);
 
         expect(formattedValue).toBe(refDataValue);
     });
 
     it('returns empty string if refData exists but key cannot be found', () => {
         colDef.refData = {};
-        const formattedValue = valueSvc.formatValue(column, null, 'foo');
+        const formattedValue = valueSvc.formatValue(column, null, 'foo', undefined, true);
 
         expect(formattedValue).toBe('');
     });
@@ -109,14 +109,14 @@ describe('formatValue', () => {
         const formatter = (params: ValueFormatterParams) => params.value.toString();
         colDef.refData = { [value]: 'bob' };
 
-        const formattedValue = valueSvc.formatValue(column, null, value, formatter);
+        const formattedValue = valueSvc.formatValue(column, null, value, formatter, true);
 
         expect(formattedValue).toBe(returnValue);
     });
 
     it('formats array values with spaces by default if not otherwise formatted', () => {
         const value = [1, 2, 3];
-        const formattedValue = valueSvc.formatValue(column, null, value);
+        const formattedValue = valueSvc.formatValue(column, null, value, undefined, true);
 
         expect(formattedValue).toBe('1, 2, 3');
     });

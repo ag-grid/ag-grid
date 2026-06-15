@@ -13,7 +13,11 @@ import { _mergeDeep } from '../../../utils/mergeDeep';
 import { Component } from '../../../widgets/component';
 import { HeaderCellMouseListenerFeature } from './headerCellMouseListenerFeature';
 
-function getHeaderCompElementParams(includeColumnRefIndicator: boolean, includeSortIndicator: boolean): ElementParams {
+function getHeaderCompElementParams(
+    includeColumnRefIndicator: boolean,
+    includeSortIndicator: boolean,
+    includeShowValueAsIndicator: boolean
+): ElementParams {
     const hiddenAttrs = { 'aria-hidden': 'true' };
     return {
         tag: 'div',
@@ -46,6 +50,14 @@ function getHeaderCompElementParams(includeColumnRefIndicator: boolean, includeS
                         cls: 'ag-header-icon ag-header-label-icon ag-filter-icon',
                         attrs: hiddenAttrs,
                     },
+                    includeShowValueAsIndicator
+                        ? {
+                              tag: 'span',
+                              ref: 'eShowValueAs',
+                              cls: 'ag-header-icon ag-header-label-icon ag-show-value-as-icon',
+                              attrs: hiddenAttrs,
+                          }
+                        : null,
                     includeSortIndicator ? { tag: 'ag-sort-indicator', ref: 'eSortIndicator' } : null,
                 ],
             },
@@ -57,6 +69,7 @@ function getHeaderCompElementParams(includeColumnRefIndicator: boolean, includeS
 export class AgColumnHeader extends Component implements IHeaderComp {
     // All the elements are optional, as they are not guaranteed to be present if the user provides a custom template
     private readonly eFilter?: HTMLElement = RefPlaceholder;
+    private readonly eShowValueAs?: HTMLElement = RefPlaceholder;
     public eFilterButton?: HTMLElement = RefPlaceholder;
     private eSortIndicator?: SortIndicatorComp = RefPlaceholder;
     public eMenu?: HTMLElement = RefPlaceholder;
@@ -120,13 +133,13 @@ export class AgColumnHeader extends Component implements IHeaderComp {
     }
 
     private workOutTemplate(params: IHeaderParams, isSorting: boolean): string | ElementParams {
-        const { formula } = this.beans;
+        const { formula, showValueAsSvc } = this.beans;
         const paramsTemplate = params.template;
         if (paramsTemplate) {
             // take account of any newlines & whitespace before/after the actual template
             return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
         }
-        return getHeaderCompElementParams(!!formula?.active, isSorting);
+        return getHeaderCompElementParams(!!formula?.active, isSorting, !!showValueAsSvc);
     }
 
     public init(params: IHeaderParams): void {
@@ -151,6 +164,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         rowNumbersSvc?.setupForHeader(this);
         this.setupFilterIcon();
         this.setupFilterButton();
+        this.setupShowValueAsIcon();
         this.workOutInnerHeaderComponent(userCompFactory, params);
         this.setDisplayName(params);
     }
@@ -351,6 +365,35 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             _setDisplayed(eFilter, filterPresent, { skipAriaHidden: true });
         };
         this.configureFilter(params.enableFilterIcon, eFilter, onFilterChangedIcon, 'filterActive');
+    }
+
+    private setupShowValueAsIcon(): void {
+        const { eShowValueAs, params } = this;
+        const { showValueAsSvc } = this.beans;
+        if (!eShowValueAs || !showValueAsSvc) {
+            return;
+        }
+        const column = params.column as AgColumn;
+        this.addInIcon('showValueAs', eShowValueAs, column);
+        // Three states: hidden (no active mode), active (applying), dormant (active but not meaningful in the
+        // current view — see ShowValueAsService.isApplying). Dormancy flips on grouping/pivot change without a
+        // column-state event, so listen for those too.
+        const refresh = () => {
+            const resolved = column.showValueAs;
+            const show = resolved != null && !column.showValueAsConfig?.suppressHeaderIndicator;
+            _setDisplayed(eShowValueAs, show, { skipAriaHidden: true });
+            if (show) {
+                eShowValueAs.classList.toggle('ag-show-value-as-dormant', !showValueAsSvc.isApplying(column));
+                eShowValueAs.title = showValueAsSvc.getActiveModeTooltip(column) ?? '';
+            }
+        };
+        this.addManagedListeners(column, { columnStateUpdated: refresh });
+        this.addManagedEventListeners({
+            columnRowGroupChanged: refresh,
+            columnPivotChanged: refresh,
+            columnPivotModeChanged: refresh,
+        });
+        refresh();
     }
 
     private setupFilterButton(): void {

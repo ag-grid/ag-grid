@@ -26,6 +26,7 @@ import { GroupFilterModule, RowGroupingModule, RowGroupingPanelModule } from './
 import { RowNumbersModule } from './rowNumbers/rowNumbersModule';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from './serverSideRowModel/serverSideRowModelModule';
 import { SetFilterModule } from './setFilter/setFilterModule';
+import { ShowValueAsModule } from './showValueAs/showValueAsModule';
 import { SideBarModule } from './sideBar/sideBarModule';
 import { SparklinesModule } from './sparkline/sparklinesModule';
 import { StatusBarModule } from './statusBar/statusBarModule';
@@ -64,6 +65,7 @@ const dependsOn = [
     ToolbarModule,
     ViewportRowModelModule,
     PivotModule,
+    ShowValueAsModule,
     TreeDataModule,
     FindModule,
     BatchEditModule,

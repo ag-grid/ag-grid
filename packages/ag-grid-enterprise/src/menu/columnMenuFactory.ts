@@ -168,6 +168,11 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             result.push('valueAggSubMenu');
         }
 
+        // Shown on value/numeric columns (numeric ones promote on demand) and any column opted in via config.
+        if (beans.showValueAsSvc?.isMenuEligible(column)) {
+            result.push('showValueAsSubMenu');
+        }
+
         if (beans.calculatedColsSvc != null && isPrimary) {
             result.push(MENU_ITEM_SEPARATOR);
             if (!colModel.pivotMode) {

@@ -52,7 +52,9 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             return this.valueSvc.formatValue(
                 column,
                 null,
-                _parseDateTimeFromString(_toStringOrNull(model.filter) ?? '')
+                _parseDateTimeFromString(_toStringOrNull(model.filter) ?? ''),
+                undefined,
+                true
             );
         },
         dateTime: (model) => this.filterOperandGetters.date(model),

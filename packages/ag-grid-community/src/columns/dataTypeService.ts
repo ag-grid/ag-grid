@@ -410,7 +410,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             }
             const newColDef = column.colDef;
             if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
-                const updatedColumnState = getUpdatedColumnState(column, columnStateUpdates);
+                const updatedColumnState = getUpdatedColumnState(this.beans, column, columnStateUpdates);
                 if (updatedColumnState.rowGroup && updatedColumnState.rowGroupIndex == null) {
                     rowGroupColumnStateWithoutIndex[colId] = updatedColumnState;
                 }
@@ -939,8 +939,12 @@ function doColDefPropsPreventInference(
     );
 }
 
-function getUpdatedColumnState(column: AgColumn, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
-    const columnState = getColumnStateFromColDef(column);
+function getUpdatedColumnState(
+    beans: BeanCollection,
+    column: AgColumn,
+    columnStateUpdates: Set<keyof ColumnStateParams>
+): ColumnState {
+    const columnState = getColumnStateFromColDef(beans, column);
     for (const key of columnStateUpdates) {
         // if the column state has been updated, don't update again
         delete columnState[key];

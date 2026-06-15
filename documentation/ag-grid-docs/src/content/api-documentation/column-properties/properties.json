@@ -549,6 +549,19 @@
                 "name": "Default Function",
                 "url": "./aggregation-columns/#default-function"
             }
+        },
+        "showValueAs": {
+            "more": {
+                "name": "Show Values As",
+                "url": "./aggregation-show-values-as/"
+            }
+        },
+        "showValueAsInitial": {},
+        "showValueAsConfig": {
+            "more": {
+                "name": "Custom Modes",
+                "url": "./aggregation-show-values-as/#custom-modes"
+            }
         }
     },
     "pivoting": {

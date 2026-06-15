@@ -40,6 +40,15 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
             include = col.aggregationActive;
         }
         if (!include) {
+            // Promote a column whose active "Show Values As" mode needs an aggregated total (e.g. % of grand
+            // total) to a value column, using the mode's `defaultAggFunc`.
+            const modeAggFunc = col.showValueAs?.def.defaultAggFunc;
+            if (modeAggFunc) {
+                this.extractAddColWithValue(col);
+                if (!col.aggFunc) {
+                    this.writeAggFunc(col, modeAggFunc);
+                }
+            }
             return;
         }
         this.extractAddColWithValue(col);

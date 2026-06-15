@@ -4,7 +4,7 @@ import type { ColKey, IAggFuncResult } from '../entities/colDef';
 import type { BuildEventTypeMap } from '../eventTypes';
 import type { SelectionEventSourceType } from '../events';
 import type { Column } from '../interfaces/iColumn';
-import type { CellValueResolveFrom } from '../interfaces/iEditService';
+import type { CellValueResolveFrom } from '../valueService/valueService';
 
 /**
  * Specifies how to resolve the value returned by `rowNode.getDataValue()`.
@@ -15,6 +15,9 @@ import type { CellValueResolveFrom } from '../interfaces/iEditService';
  * - `'value'` — Same as `'data'`, but aggregation wrappers are resolved to their scalar value.
  * - `'edit'` — Live editor value if a cell is being edited, then pending batch value, then committed data.
  * - `'batch'` — Pending batch value (excludes live editor typing), then committed data.
+ * - `'transformed'` — The `showValueAs` transformed value (e.g. a percentage of a total). This is the only
+ *   mode that reflects `showValueAs`: every other mode returns the raw value and type unchanged, whether or
+ *   not the column has a `showValueAs` mode. Falls back to the raw value when the column has no such mode.
  */
 export type DataValueFrom = 'data' | 'data-raw' | 'value' | CellValueResolveFrom;
 

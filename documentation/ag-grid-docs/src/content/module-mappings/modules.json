@@ -347,6 +347,12 @@
             "ssrmBundled": true
         },
         {
+            "moduleName": "ShowValueAsModule",
+            "name": "Show Values As",
+            "path": "aggregation-show-values-as",
+            "isEnterprise": true
+        },
+        {
             "moduleName": "MasterDetailModule",
             "name": "Master Detail",
             "path": "master-detail",

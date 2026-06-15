@@ -120,6 +120,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             pinnedRowModel,
             rangeSvc,
             rowGroupColsSvc,
+            showValueAsSvc,
             sortSvc,
             valueColsSvc,
         } = beans;
@@ -239,6 +240,16 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                             icon: _createIconNoSpan('menuValue', beans, null),
                             subMenu: createAggregationSubMenu(column, aggFuncSvc, valueColsSvc, localeTextFunc),
                             disabled: gos.get('functionsReadOnly'),
+                        };
+                    } else {
+                        return null;
+                    }
+                case 'showValueAsSubMenu':
+                    if (showValueAsSvc && column && showValueAsSvc.isMenuEligible(column)) {
+                        return {
+                            name: localeTextFunc('showValueAs', 'Show Values As'),
+                            icon: _createIconNoSpan('showValueAs', beans, null),
+                            subMenu: showValueAsSvc.getMenuItems(column, localeTextFunc),
                         };
                     } else {
                         return null;

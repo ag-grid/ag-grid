@@ -22,7 +22,7 @@ import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { Column } from '../interfaces/iColumn';
 import type { EditMap, EditPositionValue, EditRow, EditValue } from '../interfaces/iEditModelService';
 import type {
-    CellValueResolveFrom,
+    CellBaseValueResolveFrom,
     EditNavOnValidationResult,
     EditPosition,
     EditSource,
@@ -1018,7 +1018,11 @@ export class EditService extends BeanStub implements NamedBean {
      * Gets the pending edit value for a cell (used by ValueService).
      * Returns undefined to fallback to committed data/valueGetter.
      */
-    public getPendingEditValue(rowNode: IRowNode, column: Column, from: Exclude<CellValueResolveFrom, 'data'>): any {
+    public getPendingEditValue(
+        rowNode: IRowNode,
+        column: Column,
+        from: Exclude<CellBaseValueResolveFrom, 'data'>
+    ): any {
         // Caller (ValueService.getValue) has already resolved any pivot result column.
         if (from === 'batch' && !this.batch) {
             return undefined; // 'batch' mode: only return edit values when batch editing is active

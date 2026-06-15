@@ -11,7 +11,7 @@ import type {
 } from '../interfaces/iColumn';
 import type { AgColumn } from './agColumn';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
-import type { AbstractColDef, ColGroupDef } from './colDef';
+import type { AbstractColDef, ColGroupDef, HeaderLocation } from './colDef';
 
 export const isColumnGroup = (col: Column | ColumnGroup | string): col is AgColumnGroup => col instanceof AgColumnGroup;
 
@@ -111,6 +111,14 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 
     public getGroupId(): string {
         return this.groupId;
+    }
+
+    public getDisplayName(location: HeaderLocation = 'columnDrop'): string {
+        return (
+            this.beans.colNames.getDisplayNameForColumnGroup(this, location) ||
+            this.getColGroupDef()?.headerName ||
+            this.getGroupId()
+        );
     }
 
     public getPartId(): number {

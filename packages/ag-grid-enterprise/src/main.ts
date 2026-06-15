@@ -79,6 +79,7 @@ export { NotesModule } from './notes/notesModule';
 export { SparklinesModule } from './sparkline/sparklinesModule';
 export { TreeDataModule } from './treeData/treeDataModule';
 export { AggregationModule } from './aggregation/aggregationModule';
+export { ShowValueAsModule } from './showValueAs/showValueAsModule';
 export { PivotModule } from './pivot/pivotModule';
 export { FindModule } from './find/findModule';
 export { BatchEditModule } from './batch-edit/batchEditModule';

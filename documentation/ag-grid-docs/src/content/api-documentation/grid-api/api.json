@@ -1185,7 +1185,7 @@
             "displayName": "Miscellaneous"
         },
         "getCellValue": {
-            "description": "Gets the cell value for the given column and `rowNode` (row). Will return the cell value or the formatted value depending on the value of `params.useFormatter`."
+            "description": "Gets the cell value for the given column and `rowNode` (row). Will return the cell value or the formatted value depending on the value of `params.useFormatter`. The `params.from` option controls which value is resolved, including `'transformed'` to read the displayed [Show Values As](./aggregation-show-values-as/) value."
         },
         "expireValueCache": {
             "more": {

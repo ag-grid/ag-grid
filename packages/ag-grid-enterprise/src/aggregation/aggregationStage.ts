@@ -91,7 +91,12 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
 
         const colModel = beans.colModel;
         const aggFuncSvc = beans.aggFuncSvc;
-        const aggregateRoot = gos.get('alwaysAggregateAtRootLevel') || !!_getGrandTotalRow(gos) || colModel.pivotMode;
+        // showValueAs total modes (e.g. % of grand total) need a root aggregate even with no grand-total row.
+        const aggregateRoot =
+            gos.get('alwaysAggregateAtRootLevel') ||
+            !!_getGrandTotalRow(gos) ||
+            colModel.pivotMode ||
+            (beans.showValueAsSvc?.anyValueColHasActiveMode(valueColumns) ?? false);
         const filteredOnly = !_getGroupAggFiltering(gos) && !gos.get('suppressAggFilteredOnly');
 
         // Hoist service lookups once — they are accessed per-group inside the traversal callback.

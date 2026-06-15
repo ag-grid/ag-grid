@@ -52,7 +52,8 @@ export abstract class BaseSingleColService extends BeanStub {
         if (col) {
             const colDef = this.createColDef();
             col.setColDef(colDef, null, source);
-            _applyColumnState(this.beans, { state: [_getColumnStateFromColDef(colDef, col.colId)] }, source);
+            const beans = this.beans;
+            _applyColumnState(beans, { state: [_getColumnStateFromColDef(beans, colDef, col.colId)] }, source);
         }
     }
 

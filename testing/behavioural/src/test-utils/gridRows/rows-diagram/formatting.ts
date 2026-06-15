@@ -1,4 +1,4 @@
-import type { Column, RowNode } from 'ag-grid-community';
+import type { AgColumn, Column, RowNode } from 'ag-grid-community';
 import { isRowNumberCol } from 'ag-grid-community';
 
 import { rowIdToString } from '../../grid-test-utils';
@@ -48,9 +48,11 @@ function getCellDisplayValue(
     column: Column,
     from?: 'data' | 'batch' | 'edit'
 ): unknown {
+    // For showValueAs columns, mirror the cell: request the transformed displayed value.
+    const resolveFrom = (column as AgColumn).showValueAs ? 'transformed' : from;
     let value: unknown;
     try {
-        value = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false, from });
+        value = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false, from: resolveFrom });
     } catch {
         return '<ERROR>';
     }
@@ -63,7 +65,7 @@ function getCellDisplayValue(
             rowNode: row,
             colKey: column,
             useFormatter: true,
-            from,
+            from: resolveFrom,
         });
     } catch {
         return value;

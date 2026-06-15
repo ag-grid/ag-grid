@@ -159,6 +159,7 @@ export type DefaultMenuItem =
     | 'unpinRow'
     | 'clearPinned'
     | 'valueAggSubMenu'
+    | 'showValueAsSubMenu'
     | 'autoSizeThis'
     | 'autoSizeAll'
     | 'rowGroup'

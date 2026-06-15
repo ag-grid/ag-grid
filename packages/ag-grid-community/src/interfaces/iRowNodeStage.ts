@@ -48,6 +48,10 @@ export type NestedDataGetter<TData = any> = (data: TData) => TData[] | null | un
 export interface IRowNodeGroupStage<TData = any> extends IRowNodeStage<TData> {
     readonly treeData: boolean;
     readonly grouping: boolean;
+    /** Whether the TreeData / RowGrouping module is registered — lets callers distinguish "not available"
+     *  (undefined) from "available but inactive" (false). */
+    readonly hasTreeData: boolean;
+    readonly hasRowGrouping: boolean;
 
     execute(params: RefreshModelParams<TData>): boolean | undefined;
 

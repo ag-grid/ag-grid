@@ -34,7 +34,14 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     removeSelectAllGui(): void;
 }
 
-type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton' | 'cellSelection';
+type HeaderAriaDescriptionKey =
+    | 'filter'
+    | 'menu'
+    | 'sort'
+    | 'selectAll'
+    | 'filterButton'
+    | 'cellSelection'
+    | 'showValueAs';
 type RefreshFunction =
     | 'updateSortable'
     | 'tooltip'
@@ -138,6 +145,17 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             columnPivotChanged: listener,
             headerHeightChanged: this.onHeaderHeightChanged.bind(this),
         });
+
+        if (beans.showValueAsSvc) {
+            // The active mode (and its dormancy, which flips on grouping/pivot change) feed the header aria description.
+            const refreshShowValueAsAria = () => this.refreshAriaShowValueAs();
+            compBean.addManagedListeners(column, { columnStateUpdated: refreshShowValueAsAria });
+            compBean.addManagedEventListeners({
+                columnRowGroupChanged: refreshShowValueAsAria,
+                columnPivotChanged: refreshShowValueAsAria,
+                columnPivotModeChanged: refreshShowValueAsAria,
+            });
+        }
 
         compBean.addDestroyFunc(() => {
             this.refreshFunctions = {};
@@ -611,6 +629,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.setAriaDescriptionProperty('filter', description);
     }
 
+    private refreshAriaShowValueAs(): void {
+        const translate = this.getLocaleTextFunc();
+        const label = this.beans.showValueAsSvc?.getActiveModeLabel(this.column);
+        this.setAriaDescriptionProperty(
+            'showValueAs',
+            label ? `${translate('ariaColumnShowValueAs', 'Showing Values As')} ${label}` : null
+        );
+    }
+
     private refreshAriaCellSelection(): void {
         let description: string | null = null;
         const { gos, column } = this;
@@ -655,6 +682,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.refreshAriaMenu();
         this.refreshAriaFilterButton();
         this.refreshAriaFiltered();
+        this.refreshAriaShowValueAs();
         this.refreshAriaCellSelection();
     }
 

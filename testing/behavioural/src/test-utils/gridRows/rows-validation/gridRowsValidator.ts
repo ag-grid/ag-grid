@@ -1,5 +1,5 @@
 import { RowNode } from 'ag-grid-community';
-import type { IRowNode } from 'ag-grid-community';
+import type { AgColumn, IRowNode } from 'ag-grid-community';
 
 import { rowIdAndIndexToString } from '../../grid-test-utils';
 import type { GridRows } from '../gridRows';
@@ -791,12 +791,13 @@ export class GridRowsValidator {
         ) {
             return;
         }
-        // No grouping/treeData/pivot — no node should have aggData
+        // No grouping/treeData/pivot — no leaf node should have aggData (true even with showValueAs).
         for (const row of state.gridRows.rowNodes) {
             this.errors.add(row, row.aggData != null && 'Row has aggData but grouping/treeData/pivot are not active');
         }
+        const hasShowValueAs = api.getColumns()?.some((col) => (col as AgColumn).showValueAs != null);
         const root = state.gridRows.rootRowNode;
-        if (root) {
+        if (root && !hasShowValueAs) {
             this.errors.add(
                 root,
                 root.aggData != null && 'Root node has aggData but grouping/treeData/pivot are not active'

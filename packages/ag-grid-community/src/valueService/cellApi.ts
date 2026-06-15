@@ -3,8 +3,8 @@ import { _toString } from 'ag-stack';
 import type { BeanCollection } from '../context/context';
 import { _resolvePivotColumnForRow } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
-import type { CellValueResolveFrom } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
+import type { CellValueResolveFrom } from './valueService';
 
 export interface GetCellValueParams<TValue = any> {
     /** The row to read from */
@@ -14,10 +14,12 @@ export interface GetCellValueParams<TValue = any> {
     /** If `true`, returns the formatted string (via the column's `valueFormatter`) instead of the raw value. */
     useFormatter?: boolean;
     /**
-     * Controls how pending edits affect the returned value.
-     * - `'edit'` (default): Returns the live editor value if the cell is being edited, then any pending batch value, then committed data.
-     * - `'batch'`: Returns pending batch values but excludes live editor typing. Useful for dependent calculations in `valueGetter`.
-     * - `'data'`: Returns committed data only, ignoring all edit state.
+     * Controls which value is returned.
+     * - `'edit'` (default): Live editor value if the cell is being edited, then any pending batch value, then committed data.
+     * - `'batch'`: Pending batch values but excluding live editor typing.
+     * - `'data'`: Committed data only, ignoring all edit state.
+     * - `'transformed'`: For `showValueAs` columns, the transformed value (e.g. a percentage of a total). All
+     *   other values return the raw value, unaffected by `showValueAs`.
      */
     from?: CellValueResolveFrom;
 }

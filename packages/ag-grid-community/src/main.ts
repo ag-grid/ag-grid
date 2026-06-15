@@ -393,7 +393,7 @@ export type {
     IGroupCellRendererParams,
     TotalValueGetterFunc,
 } from './interfaces/groupCellRenderer';
-export type { CellValueResolveFrom } from './interfaces/iEditService';
+export type { CellValueResolveFrom } from './valueService/valueService';
 export type {
     EventCellRendererParams,
     GetCellRendererInstancesParams,
@@ -749,6 +749,31 @@ export type {
     ValueSetterFunc,
     ValueSetterParams,
 } from './entities/colDef';
+export type {
+    ShowValueAs,
+    ShowValueAsApplicableParams,
+    ShowValueAsApplicable,
+    ShowValueAsBaseParams,
+    ShowValueAsBuiltInType,
+    ShowValueAsColumnLists,
+    ShowValueAsConfig,
+    ShowValueAsConfigResolved,
+    ShowValueAsDef,
+    ShowValueAsFormatterParams,
+    ShowValueAsMenuParams,
+    ShowValueAsModeResolved,
+    ShowValueAsModes,
+    ShowValueAsNumber,
+    ShowValueAsParamsMap,
+    ShowValueAsParentTotalParams,
+    ShowValueAsResolved,
+    ShowValueAsResult,
+    ShowValueAsStateValue,
+    ShowValueAsTransform,
+    ShowValueAsTransformParams,
+    ShowValueAsType,
+    ShowValueAsValueEditorOptions,
+} from './entities/colDef-showValueAs';
 export type {
     BaseCellDataType,
     BooleanDataTypeDefinition,

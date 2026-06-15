@@ -86,7 +86,7 @@ export class CsvCreator
             suppressQuotes: suppressQuotes || false,
             columnSeparator: columnSeparator || ',',
             rowGroupColsSvc,
-            valueFrom,
+            valueFrom: valueFrom ?? 'transformed',
         });
     }
 

@@ -1,4 +1,4 @@
-import type { Column, ColumnGroup, GridApi } from 'ag-grid-community';
+import type { AgColumn, Column, ColumnGroup, GridApi } from 'ag-grid-community';
 
 /**
  * Formats a leaf column for the diagram.
@@ -65,6 +65,12 @@ export function columnDiagram(col: Column, api: GridApi, isHidden: boolean): str
     const aggFunc = col.isValueActive() ? col.getAggFunc() : null;
     if (aggFunc != null) {
         parts.push('aggFunc:' + (typeof aggFunc === 'string' ? aggFunc : 'custom'));
+    }
+
+    // Show Values As mode (the active selector)
+    const showValueAs = (col as AgColumn).showValueAs;
+    if (showValueAs != null) {
+        parts.push('showValueAs:' + showValueAs.type);
     }
 
     // Filter active

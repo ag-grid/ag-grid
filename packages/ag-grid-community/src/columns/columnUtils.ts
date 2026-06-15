@@ -1,5 +1,6 @@
 import type { AgPropertyChangedSource } from 'ag-stack';
 
+import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _isSortDefValid, getSortDefFromInput, isSortDirectionValid } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
@@ -56,11 +57,12 @@ export function _convertColumnEventSourceType(source: AgPropertyChangedSource): 
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getColumnStateFromColDef(colDef: ColDef, colId: string): ColumnState {
+export function _getColumnStateFromColDef(beans: BeanCollection, colDef: ColDef, colId: string): ColumnState {
     const sortDef = getSortDefFromColDef(colDef);
+    const showValueAs = beans.showValueAsSvc?.colDefSelection(colDef) ?? undefined;
     return sortDef
-        ? { ...colDef, colId, sort: sortDef.direction, sortType: sortDef.type }
-        : { ...colDef, colId, sort: undefined };
+        ? { ...colDef, colId, sort: sortDef.direction, sortType: sortDef.type, showValueAs }
+        : { ...colDef, colId, sort: undefined, showValueAs };
 }
 
 export function getSortDefFromColDef(colDef: ColDef) {

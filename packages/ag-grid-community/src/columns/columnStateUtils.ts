@@ -12,6 +12,7 @@ import {
 } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColAggFunc, IAggFunc } from '../entities/colDef';
+import type { ShowValueAsStateValue } from '../entities/colDef-showValueAs';
 import type { ColumnEventType, ColumnsResetEvent } from '../events';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
@@ -50,6 +51,9 @@ export interface ColumnStateParams {
     rowGroup?: boolean | null;
     /** The order of the row group, if grouping by many columns */
     rowGroupIndex?: number | null;
+    /** The active "Show Values As" selection: the mode name, or the object form (with `base` / `params`)
+     *  for modes that take input. `null` clears it. */
+    showValueAs?: ShowValueAsStateValue;
 }
 
 export interface ColumnState extends ColumnStateParams {
@@ -381,6 +385,7 @@ function applyFieldState(
     beans.valueColsSvc?.syncColState(column, stateItem, defaultState, source);
     beans.rowGroupColsSvc?.syncColState(column, stateItem, defaultState, source);
     beans.pivotColsSvc?.syncColState(column, stateItem, defaultState, source);
+    beans.showValueAsSvc?.syncColState(column, stateItem, defaultState, source);
 }
 
 /** Reset all columns to the state declared in their colDefs (`initial*`/explicit), re-apply the colDef
@@ -409,7 +414,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
     let maxRowGroupIndex = -1;
     let maxPivotIndex = -1;
     const addColState = (col: AgColumn) => {
-        const stateItem = getColumnStateFromColDef(col);
+        const stateItem = getColumnStateFromColDef(beans, col);
         const { rowGroupIndex, pivotIndex } = stateItem;
         if (rowGroupIndex != null && rowGroupIndex > maxRowGroupIndex) {
             maxRowGroupIndex = rowGroupIndex;
@@ -742,12 +747,13 @@ export const _getColumnState = (beans: BeanCollection): ColumnState[] => {
             pivot: pivotActive,
             pivotIndex: pivotActive ? column.pivotActiveIndex : null,
             flex: column.flex ?? null,
+            showValueAs: beans.showValueAsSvc?.toColState(column) ?? null,
         };
     }
     return res;
 };
 
-export function getColumnStateFromColDef(column: AgColumn): ColumnState {
+export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn): ColumnState {
     const colDef = column.colDef;
     const sortDef = getSortDefFromInput(colDef.sort ?? colDef.initialSort ?? null);
     const rowGroupIndex: number | null = colDef.rowGroupIndex ?? colDef.initialRowGroupIndex ?? null;
@@ -774,6 +780,7 @@ export function getColumnStateFromColDef(column: AgColumn): ColumnState {
         pivot,
         pivotIndex,
         aggFunc: colDef.aggFunc ?? colDef.initialAggFunc ?? null,
+        showValueAs: beans.showValueAsSvc?.colDefSelection(colDef) ?? null,
     };
 }
 

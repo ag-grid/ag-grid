@@ -553,7 +553,12 @@ export class CellCtrl extends BeanStub {
         const res: ICellRendererParams = _addGridCommonParams(gos, {
             value: value,
             valueFormatted: valueFormatted,
-            getValue: () => valueSvc.getDisplayValue(column, rowNode, 'edit'),
+            getValue: () =>
+                valueSvc.getDisplayValue(
+                    column,
+                    rowNode,
+                    column.showValueAs != null && !editSvc?.isEditing(this) ? 'transformed' : 'edit'
+                ),
             setValue: (value: any) =>
                 editSvc?.setDataValue({ rowNode, column }, value) || rowNode.setDataValue(column, value),
             formatValue: this.formatValue.bind(this),
@@ -710,11 +715,18 @@ export class CellCtrl extends BeanStub {
     }
 
     public formatValue(value: any): any {
-        return this.callValueFormatter(value) ?? value;
-    }
-
-    private callValueFormatter(value: any): string | null {
-        return this.beans.valueSvc.formatValue(this.column, this.rowNode, value);
+        const valueSvc = this.beans.valueSvc;
+        const column = this.column;
+        const node = this.rowNode;
+        // While a mode is active and we're not editing, format with the mode's formatter; else the column's.
+        // `showValueAs` is null for every ordinary column, so it short-circuits before touching the edit service.
+        if (column.showValueAs != null && !this.editSvc?.isEditing(this)) {
+            const transformed = valueSvc.formatTransformedValue(column, node, value);
+            if (transformed !== undefined) {
+                return transformed ?? value;
+            }
+        }
+        return valueSvc.formatValue(column, node, value) ?? value;
     }
 
     public updateAndFormatValue(compareValues: boolean): boolean {
@@ -725,7 +737,7 @@ export class CellCtrl extends BeanStub {
             column: this.column,
             node: this.rowNode,
             includeValueFormatted: true,
-            from: 'edit',
+            from: this.column.showValueAs != null && !this.editSvc?.isEditing(this) ? 'transformed' : 'edit',
         });
         this.value = value;
         this.valueFormatted = valueFormatted;

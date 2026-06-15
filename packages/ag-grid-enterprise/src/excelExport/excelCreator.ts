@@ -472,6 +472,8 @@ export class ExcelCreator
 
         const config: ExcelGridSerializingParams = {
             ...params,
+            // default to the displayed (Show Values As transformed) value, matching Excel
+            valueFrom: params.valueFrom ?? 'transformed',
             colModel,
             colNames,
             rowGroupColsSvc,

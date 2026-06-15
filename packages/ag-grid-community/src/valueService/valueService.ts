@@ -22,16 +22,21 @@ import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IFormulaDataService, IFormulaService } from '../interfaces/formulas';
-import type { CellValueResolveFrom } from '../interfaces/iEditService';
+import type { CellBaseValueResolveFrom } from '../interfaces/iEditService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IRowGroupingEditValueSvc } from '../interfaces/iRowGroupingEditValueSvc';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { IShowRowGroupColsValueService } from '../interfaces/iShowRowGroupColsValueService';
+import type { IShowValueAsService } from '../interfaces/iShowValueAsService';
 import { _getValueUsingDotPath } from '../utils/value';
 import { _warn } from '../validation/logging';
 import type { ChangeDetectionService } from './changeDetectionService';
 import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
+
+/** Display-path resolution source: the edit/raw sources plus `'transformed'` (Show Values As). Only the
+ *  display path understands `'transformed'`; the raw `getValue` takes {@link CellBaseValueResolveFrom}. */
+export type CellValueResolveFrom = CellBaseValueResolveFrom | 'transformed';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ValueService extends BeanStub implements NamedBean {
@@ -51,6 +56,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private expressionSvc: ExpressionService | undefined = undefined;
     private dataTypeSvc: DataTypeService | undefined = undefined;
     private formula: IFormulaService | undefined = undefined;
+    private showValueAsSvc: IShowValueAsService | undefined = undefined;
     private formulaDataSvc: IFormulaDataService | undefined = undefined;
     private changeDetectionSvc: ChangeDetectionService | undefined = undefined;
     private showRowGroupColValueSvc: IShowRowGroupColsValueService | undefined = undefined;
@@ -67,6 +73,7 @@ export class ValueService extends BeanStub implements NamedBean {
         this.editSvc = beans.editSvc;
         this.formulaDataSvc = beans.formulaDataSvc;
         this.formula = beans.formula;
+        this.showValueAsSvc = beans.showValueAsSvc;
         this.changeDetectionSvc = beans.changeDetectionSvc;
         this.showRowGroupColValueSvc = beans.showRowGroupColValueSvc;
         this.rowGroupingEditValueSvc = beans.rowGroupingEditValueSvc;
@@ -155,7 +162,9 @@ export class ValueService extends BeanStub implements NamedBean {
             return { value: node.key, valueFormatted: null };
         }
 
-        let value = this.getValue(column, node, params.from, isGroup ? this.displayIgnoresAggData(node) : false);
+        const from = params.from;
+        const ignoreAggData = isGroup ? this.displayIgnoresAggData(node) : false;
+        let value = this.getValue(column, node, from === 'transformed' ? 'data' : from, ignoreAggData);
         let valueToFormat = value;
 
         // Read this.formula only for formula-enabled columns — skipped for the common case.
@@ -174,10 +183,49 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const format =
             params.includeValueFormatted && !(params.exporting && column.colDef.useValueFormatterForExport === false);
+
+        // Show Values As: transform only when opted in and a mode is applying; raw value otherwise.
+        if (from === 'transformed') {
+            const showValueAsSvc = this.transformingSvc(column, ignoreAggData);
+            if (showValueAsSvc) {
+                const transformed = showValueAsSvc.transform(column, node, valueToFormat);
+                return {
+                    value: transformed,
+                    valueFormatted: format
+                        ? showValueAsSvc.formatValue(column, node, transformed, valueToFormat)
+                        : null,
+                };
+            }
+        }
+
         return {
             value,
             valueFormatted: format ? this.formatValue(column, node, valueToFormat) : null,
         };
+    }
+
+    /**
+     * The cell's displayed value with the Show Values As transform applied, or the raw value when no mode is
+     * active or applying. Resolves formulas / calculated columns first (they compute before the transform).
+     * Leaner than {@link getValueForDisplay} — no group-cell, full-width, or formatting work.
+     */
+    public getTransformedValue(column: AgColumn, node: IRowNode): any {
+        const ignoreAggData = node.group ? this.displayIgnoresAggData(node) : false;
+        const value = this.getValue(column, node, 'data', ignoreAggData);
+        return this.resolveTransformed(column, node, value, ignoreAggData);
+    }
+
+    /** Resolves a formula/calculated value then applies the Show Values As transform when a mode is applying;
+     *  otherwise returns the (formula-resolved) value. Shared by the display + transformed read paths. */
+    private resolveTransformed(column: AgColumn, node: IRowNode, value: any, ignoreAggData: boolean): any {
+        if (column.allowFormula) {
+            const formula = this.formula;
+            if (formula?.isFormula(value)) {
+                value = formula.resolveValue(column, node as RowNode);
+            }
+        }
+        const showValueAsSvc = this.transformingSvc(column, ignoreAggData);
+        return showValueAsSvc ? showValueAsSvc.transform(column, node, value) : value;
     }
 
     /**
@@ -206,11 +254,18 @@ export class ValueService extends BeanStub implements NamedBean {
             return node.key;
         }
 
-        const value = this.getValue(column, node, from, isGroup ? this.displayIgnoresAggData(node) : false);
+        const ignoreAggData = isGroup ? this.displayIgnoresAggData(node) : false;
+        // Show Values As: read committed data, resolve any formula, then transform — only when opted in and a
+        // mode is applying; raw value otherwise.
+        if (from === 'transformed') {
+            const value = this.getValue(column, node, 'data', ignoreAggData);
+            return this.resolveTransformed(column, node, value, ignoreAggData);
+        }
+        let value = this.getValue(column, node, from, ignoreAggData);
         if (column.allowFormula) {
             const formula = this.formula;
             if (formula?.isFormula(value)) {
-                return formula.resolveValue(column, node as RowNode);
+                value = formula.resolveValue(column, node as RowNode);
             }
         }
         return value;
@@ -245,7 +300,7 @@ export class ValueService extends BeanStub implements NamedBean {
     public getValue(
         column: AgColumn,
         rowNode: IRowNode | null | undefined,
-        from: CellValueResolveFrom,
+        from: CellBaseValueResolveFrom,
         ignoreAggData: boolean = false
     ): any {
         if (!rowNode) {
@@ -283,6 +338,13 @@ export class ValueService extends BeanStub implements NamedBean {
         }
         // node.expanded (getter with side effects) evaluated last
         return !!node.expanded;
+    }
+
+    /** The Show Values As service iff `column`'s active mode is currently transforming (not dormant) for display.
+     *  `column.showValueAs` is null for every ordinary column, so this is a no-op outside the feature. */
+    private transformingSvc(column: AgColumn, ignoreAggData: boolean): IShowValueAsService | undefined {
+        const svc = this.showValueAsSvc;
+        return svc && !ignoreAggData && column.showValueAs && svc.isApplying(column) ? svc : undefined;
     }
 
     // PERFORMANCE CRITICAL — the inner resolver for every non-calculated-column read on the hot path
@@ -454,6 +516,24 @@ export class ValueService extends BeanStub implements NamedBean {
             result = value.join(', ');
         }
         return result;
+    }
+
+    /**
+     * Formats an already-transformed (Show Values As) value with the active mode's formatter. Returns
+     * `undefined` when no mode is applying — the caller then falls back to {@link formatValue}. Kept off
+     * {@link formatValue} so the hot per-cell format path is not burdened with the feature check.
+     */
+    public formatTransformedValue(column: AgColumn, node: IRowNode | null, value: any): string | null | undefined {
+        if (!node) {
+            return undefined;
+        }
+        const ignoreAggData = node.group ? this.displayIgnoresAggData(node) : false;
+        const showValueAsSvc = this.transformingSvc(column, ignoreAggData);
+        if (!showValueAsSvc) {
+            return undefined;
+        }
+        const rawValue = this.getValue(column, node, 'data', ignoreAggData);
+        return showValueAsSvc.formatValue(column, node, value, rawValue);
     }
 
     /**

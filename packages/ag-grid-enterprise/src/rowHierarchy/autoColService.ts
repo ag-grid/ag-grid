@@ -188,7 +188,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         const colId = colToUpdate.colId;
         const colDef = this.createAutoColDef(colId, underlyingColumn ?? undefined, index);
         colToUpdate.setColDef(colDef, null, source);
-        _applyColumnState(beans, { state: [_getColumnStateFromColDef(colDef, colId)] }, source);
+        _applyColumnState(beans, { state: [_getColumnStateFromColDef(beans, colDef, colId)] }, source);
     }
 
     private createAutoColDef(colId: string, underlyingColumn?: AgColumn, index?: number): ColDef {

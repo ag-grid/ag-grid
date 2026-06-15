@@ -69,6 +69,7 @@ export type IconName =
     | 'minimize'
     | 'menuPin'
     | 'menuValue'
+    | 'showValueAs'
     | 'menuAddRowGroup'
     | 'menuRemoveRowGroup'
     | 'clipboardCopy'

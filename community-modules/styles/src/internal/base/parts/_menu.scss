@@ -49,6 +49,12 @@
         opacity: 0.5;
     }
 
+    // A "Show Values As" mode not meaningful in the current view: greyed like a disabled item, but still
+    // selectable (the menu option carries no disabled state).
+    .ag-show-value-as-inapplicable {
+        opacity: 0.5;
+    }
+
     .ag-menu-option-icon,
     .ag-compact-menu-option-icon {
         @include ag.unthemed-rtl(

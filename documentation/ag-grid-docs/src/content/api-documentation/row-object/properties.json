@@ -93,7 +93,7 @@
             }
         },
         "getDataValue": {
-            "description": "Returns the data value from the rowNode for the specified column. By default, returns committed data ignoring any pending edits. For group rows, returns aggregated values or the group key. For formula cells, returns the computed result. To get the displayed value (with formatting and value formatter applied), use `api.getCellValue()` instead. In Pivot Mode, pivot columns on leaf rows resolve to their underlying value column. The `from` parameter controls value resolution.",
+            "description": "Returns the data value from the rowNode for the specified column. By default, returns committed data ignoring any pending edits. For group rows, returns aggregated values or the group key. For formula cells, returns the computed result. To get the displayed value (with formatting and value formatter applied), use `api.getCellValue()` instead. In Pivot Mode, pivot columns on leaf rows resolve to their underlying value column. The `from` parameter controls value resolution, including `'transformed'` to read the displayed [Show Values As](./aggregation-show-values-as/) value.",
             "more": {
                 "name": "RowNode.getDataValue()",
                 "url": "./cell-editing-batch/#rownodegetdatavalue/"

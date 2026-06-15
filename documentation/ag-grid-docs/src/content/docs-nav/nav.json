@@ -1305,6 +1305,12 @@
                             "title": "Filtering ",
                             "path": "aggregation-filtering",
                             "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Show Values As",
+                            "path": "aggregation-show-values-as",
+                            "isEnterprise": true
                         }
                     ]
                 },

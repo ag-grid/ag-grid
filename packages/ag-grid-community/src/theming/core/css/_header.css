@@ -239,6 +239,12 @@
     }
 }
 
+/* "Show Values As" header indicator: heavily muted when the active mode is not applicable in the current
+ * view (dormant — the raw value is shown), to flag that the chosen mode has no effect here. */
+.ag-show-value-as-dormant {
+    opacity: 0.35;
+}
+
 /* COLUMN SEPARATOR */
 
 .ag-header-cell::after,

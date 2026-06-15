@@ -32,8 +32,11 @@ describe('Eager row content seed (bulk-add flicker regression)', () => {
         ignoreConsoleLicenseKeyError();
     });
 
-    afterEach(() => {
-        cleanup();
+    afterEach(async () => {
+        await act(async () => {
+            await asyncSetTimeout(0);
+            cleanup();
+        });
     });
 
     type FlickerRecord = { rowId: string | null; addedElements: number };
@@ -64,7 +67,9 @@ describe('Eager row content seed (bulk-add flicker regression)', () => {
         observer.observe(root, { childList: true, subtree: true });
         try {
             await mutate();
-            await asyncSetTimeout(0); // drain MutationObserver microtask queue
+            await act(async () => {
+                await asyncSetTimeout(0);
+            });
         } finally {
             observer.disconnect();
         }

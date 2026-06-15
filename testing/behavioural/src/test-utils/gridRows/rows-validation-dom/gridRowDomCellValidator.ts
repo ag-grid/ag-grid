@@ -1,4 +1,4 @@
-import type { Column, GridApi, RowNode } from 'ag-grid-community';
+import type { AgColumn, Column, GridApi, RowNode } from 'ag-grid-community';
 
 import { valuesEqual } from '../grid-rows-helpers';
 import { getGridHTMLElement, parseSpannedCell } from '../gridHtmlRows';
@@ -265,7 +265,12 @@ export class GridRowDomCellValidator {
             return;
         }
 
-        const cellValue = this.api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        const cellValue = this.api.getCellValue({
+            rowNode: row,
+            colKey: column,
+            useFormatter: true,
+            from: (column as AgColumn).showValueAs ? 'transformed' : undefined,
+        });
         const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
         const colDef = column.getColDef();
         const cellRenderer = colDef?.cellRenderer;
@@ -388,7 +393,12 @@ export class GridRowDomCellValidator {
     }
 
     private getExpectedGroupTextFromColumn(row: RowNode<any>, column: Column<any>): string {
-        const cellValue = this.api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        const cellValue = this.api.getCellValue({
+            rowNode: row,
+            colKey: column,
+            useFormatter: true,
+            from: (column as AgColumn).showValueAs ? 'transformed' : undefined,
+        });
         const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
         return this.getExpectedGroupCellText(row, column, stringCellValue) ?? '';
     }

@@ -102,6 +102,7 @@ import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { IShowRowGroupColsValueService } from '../interfaces/iShowRowGroupColsValueService';
+import type { IShowValueAsService } from '../interfaces/iShowValueAsService';
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { ITestIdService } from '../interfaces/iTestIdService';
@@ -324,6 +325,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     colAutosize?: ColumnAutosizeService;
     rowGroupColsSvc?: IRowGroupColsService;
     valueColsSvc?: IValueColsService;
+    showValueAsSvc?: IShowValueAsService;
     pivotColsSvc?: IPivotColsService;
     quickFilter?: QuickFilterService;
     showRowGroupCols?: IShowRowGroupColsService;
@@ -461,4 +463,5 @@ type UntypedBeanNames =
     | 'statusBarSvc'
     | 'testIdSvc'
     | 'toolbarMenuBuilder'
-    | 'formula';
+    | 'formula'
+    | 'showValueAsSvc';

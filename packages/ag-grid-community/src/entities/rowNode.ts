@@ -637,7 +637,7 @@ export class RowNode<TData = any>
 
     public getDataValue<TValue = any>(
         colKey: ColKey<TValue>,
-        from: 'value' | 'data-raw' | 'edit' | 'batch'
+        from: 'value' | 'data-raw' | 'edit' | 'batch' | 'transformed'
     ): TValue | null | undefined;
     public getDataValue<TValue = any>(
         colKey: ColKey<TValue>,
@@ -663,6 +663,10 @@ export class RowNode<TData = any>
                 return value;
             }
         } else {
+            if (from === 'transformed') {
+                return beans.valueSvc.getTransformedValue(_resolvePivotColumnForRow(column, this), this);
+            }
+
             // 'data-raw' skips aggData (aggregation results) and formula resolution, but still calls valueGetters
             // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
             const dataRaw = from === 'data-raw';

@@ -11,8 +11,7 @@ import type {
 } from '../interfaces/exportParams';
 import type { IRowGroupColsService } from '../interfaces/iColsService';
 import type { ColumnGroup } from '../interfaces/iColumn';
-import type { CellValueResolveFrom } from '../interfaces/iEditService';
-import type { ValueService } from '../valueService/valueService';
+import type { CellValueResolveFrom, ValueService } from '../valueService/valueService';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface RowAccumulator {

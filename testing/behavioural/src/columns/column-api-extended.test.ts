@@ -101,6 +101,40 @@ describe('Column API — extended coverage', () => {
         });
     });
 
+    describe('getDisplayName', () => {
+        test('Column.getDisplayName returns the resolved header name, falling back to the colId', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'gold', headerName: 'Gold Medals' },
+                    { colId: 'raw', headerName: '' }, // no header text → falls back to the colId
+                ],
+            });
+
+            const gold = api.getColumn('gold')!;
+            expect(gold.getDisplayName()).toBe('Gold Medals');
+            // The entity shorthand matches the api helper at the same location.
+            expect(gold.getDisplayName()).toBe(api.getDisplayNameForColumn(gold, 'columnDrop'));
+
+            expect(api.getColumn('raw')!.getDisplayName()).toBe('raw');
+        });
+
+        test('ColumnGroup.getDisplayName returns the resolved group header name', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        groupId: 'g1',
+                        headerName: 'My Group',
+                        children: [{ colId: 'a' }, { colId: 'b' }],
+                    },
+                ],
+            });
+
+            const group = api.getColumnGroup('g1')!;
+            expect(group.getDisplayName()).toBe('My Group');
+            expect(group.getDisplayName()).toBe(api.getDisplayNameForColumnGroup(group, 'columnDrop'));
+        });
+    });
+
     describe('getLeftDisplayedColumnGroups / getRightDisplayedColumnGroups', () => {
         test('returns only left-pinned tree; right is empty when nothing pinned right', async () => {
             const api = gridsManager.createGrid('myGrid', {

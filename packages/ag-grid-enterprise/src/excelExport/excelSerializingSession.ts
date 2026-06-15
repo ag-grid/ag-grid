@@ -678,7 +678,9 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         excelNote: ExcelNote | undefined
     ): ProcessNoteForExportParams {
         const { column, node, accumulatedRowIndex } = params;
-        const value = this.valueSvc.getDisplayValue(column, node, this.valueFrom);
+        const valueSvc = this.valueSvc;
+        const valueFrom = this.valueFrom;
+        const value = valueSvc.getDisplayValue(column, node, valueFrom);
 
         return _addGridCommonParams(this.gos, {
             accumulatedRowIndex,
@@ -687,14 +689,13 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             value,
             type: 'excel',
             parseValue: (valueToParse: string) =>
-                this.valueSvc.parseValue(
-                    column,
-                    node,
-                    valueToParse,
-                    this.valueSvc.getValue(column, node, this.valueFrom)
-                ),
+                valueSvc.parseValue(column, node, valueToParse, valueSvc.getValue(column, node, this.baseValueFrom)),
             formatValue: (valueToFormat: any) =>
-                this.valueSvc.formatValue(column, node, valueToFormat) ?? valueToFormat,
+                (valueFrom === 'transformed'
+                    ? valueSvc.formatTransformedValue(column, node, valueToFormat)
+                    : undefined) ??
+                valueSvc.formatValue(column, node, valueToFormat) ??
+                valueToFormat,
             gridNote,
             excelNote,
         });
