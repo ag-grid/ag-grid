@@ -37,6 +37,7 @@ const ICONS = [
     'filter',
     'filter-add',
     'first',
+    'fx',
     'grip',
     'group',
     'last',

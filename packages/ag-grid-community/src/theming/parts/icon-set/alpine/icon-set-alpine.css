@@ -93,6 +93,9 @@
 .ag-icon-first::before {
     mask-image: url('./alpine-svg-icons/first.svg');
 }
+.ag-icon-fx::before {
+    mask-image: url('./alpine-svg-icons/fx.svg');
+}
 
 .ag-icon-group::before {
     mask-image: url('./alpine-svg-icons/group.svg');

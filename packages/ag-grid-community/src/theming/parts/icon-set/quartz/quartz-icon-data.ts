@@ -22,6 +22,7 @@ const iconNameToSvgFragment: Record<string, string | undefined> = {
         '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>',
     filter: '<path d="M3 6h18"/><path d="M7 12h10"/><path d="M10 18h4"/>',
     first: '<path d="m17 18-6-6 6-6"/><path d="M7 6v12"/>',
+    fx: '<rect x="1.33337" y="1.33337" width="13.3333" height="13.3333" rx="1.33333" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M4.76949 11.3334V7.31071H4.03216V6.48004H4.76949V5.67737C4.76949 5.28537 4.87216 4.98048 5.07749 4.76271C5.28905 4.53871 5.59705 4.42671 6.00149 4.42671H6.80416V5.25737H5.78683V6.48004H6.80416V7.31071H5.78683V11.3334H4.76949ZM7.44803 11.3334L9.15604 8.87871L7.4947 6.48004H8.6707L9.7627 8.16937H9.7907L10.9014 6.48004H11.9934L10.332 8.86937L12.0214 11.3334H10.8454L9.72537 9.56937H9.69737L8.5307 11.3334H7.44803Z" fill="currentColor"/>',
     grip:
         '<circle cx="5" cy="8" r="0.5"/><circle cx="12" cy="8" r="0.5"/><circle cx="19" cy="8" r="0.5"/><circle cx="5" cy="16" r="0.5"/><circle cx="12" cy="16" r="0.5"/><circle cx="19" cy="16" r="0.5"/>' +
         '<g stroke="none" fill="currentColor"><circle cx="5" cy="8" r="1"/><circle cx="12" cy="8" r="1"/><circle cx="19" cy="8" r="1"/><circle cx="5" cy="16" r="1"/><circle cx="12" cy="16" r="1"/><circle cx="19" cy="16" r="1"/></g>',
