@@ -119,6 +119,8 @@ function Code({
     keepMarkup?: boolean;
     preHighlightedHtml?: string;
 }) {
+    const codeStr = Array.isArray(code) ? code.join('\n') : code;
+
     const [highlightedHtml, setHighlightedHtml] = useState<string | null>(preHighlightedHtml ?? null);
 
     useEffect(() => {
@@ -126,13 +128,13 @@ function Code({
         // For all other cases, pre-highlighted HTML from build time is used as-is.
         if (preHighlightedHtml && !keepMarkup) return;
         let cancelled = false;
-        highlight(code as string, language, keepMarkup).then((html) => {
+        highlight(codeStr, language, keepMarkup).then((html) => {
             if (!cancelled) setHighlightedHtml(html);
         });
         return () => {
             cancelled = true;
         };
-    }, [code, language, keepMarkup, preHighlightedHtml]);
+    }, [codeStr, language, keepMarkup, preHighlightedHtml]);
 
     return (
         <pre
@@ -146,8 +148,8 @@ function Code({
             )}
             {...props}
         >
-            {copyToClipboard && <CopyToClipboardButton code={code as string} />}
-            {highlightedHtml ? <ShikiCode html={highlightedHtml} /> : <code>{code}</code>}
+            {copyToClipboard && <CopyToClipboardButton code={codeStr} />}
+            {highlightedHtml ? <ShikiCode html={highlightedHtml} /> : <code>{codeStr}</code>}
         </pre>
     );
 }
