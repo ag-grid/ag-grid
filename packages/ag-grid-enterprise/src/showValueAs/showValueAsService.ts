@@ -648,8 +648,10 @@ export class ShowValueAsService extends BeanStub implements NamedBean, IShowValu
                     ? only.action
                     : () => this.setColumnShowValueAs(column, type);
         }
-        // Not applicable ⇒ greyed: 'disable' always, or the active selection kept visible after the view changed
-        // (e.g. "% of Parent Total" still selected after ungrouping).
+        // Not applicable ⇒ greyed AND intentionally non-interactive: a `'disable'` mode, or the active selection
+        // kept visible after the view changed (e.g. "% of Parent Total" still selected after ungrouping). It is
+        // informational only — there is nothing meaningful to (re)configure without its view context; the user
+        // changes the selection via the always-enabled "None" / other applicable modes.
         if (applicable !== true) {
             item.disabled = true;
         }
