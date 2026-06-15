@@ -13,16 +13,15 @@
     text-transform: inherit;
     text-indent: inherit;
     text-shadow: inherit;
-    cursor: pointer;
-
-    &:disabled {
-        cursor: default;
-    }
 
     &:focus-visible {
         outline: none;
         box-shadow: var(--ag-focus-shadow);
     }
+}
+
+:where(.ag-button:not(:disabled)) {
+    cursor: pointer;
 }
 
 .ag-standard-button {
@@ -33,7 +32,6 @@
     background-color: var(--ag-button-background-color);
     border: var(--ag-button-border);
     padding: var(--ag-button-vertical-padding) var(--ag-button-horizontal-padding);
-    cursor: pointer;
 
     &:active {
         color: var(--ag-button-active-text-color);
@@ -48,7 +46,7 @@
     }
 }
 
-.ag-standard-button:hover {
+.ag-standard-button:hover:where(:not(:disabled)) {
     color: var(--ag-button-hover-text-color);
     background-color: var(--ag-button-hover-background-color);
     border: var(--ag-button-hover-border);
