@@ -6,6 +6,8 @@ import {
     _isFocusableFormField,
 } from 'ag-stack';
 
+import type { RowNode } from 'ag-grid-community';
+
 import {
     _getFullWidthCellRendererDetails,
     _getFullWidthDetailCellRendererDetails,
@@ -199,7 +201,20 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         );
     }
 
-    private setupGroupRowsTooltip(rowNode: RowCtrl['rowNode']): void {
+    /**
+     * Wires up the tooltip for a full-width group row (`groupDisplayType: 'groupRows'`), inheriting the
+     * tooltip configuration from the owning group column rather than from an individual cell.
+     *
+     * The tooltip source colDef is the row-group column's colDef for regular grouping, or the
+     * `autoGroupColumnDef` for tree data (where there is no `rowGroupColumn`). If that colDef declares no
+     * `tooltipValueGetter`, `tooltipField`, or `tooltipComponent`, no tooltip is set up.
+     *
+     * Resolution order, mirroring the standard cell tooltip path, with values lazily computed on hover:
+     * - `tooltipValueGetter` — invoked with the group's display value/formatted value and full row context.
+     * - `tooltipField` — read directly from `node.data`, honouring `suppressFieldDotNotation` for dotted fields.
+     * - otherwise — falls back to the group display value, also passed to any inherited `tooltipComponent`.
+     */
+    private setupGroupRowsTooltip(rowNode: RowNode): void {
         const groupCol = rowNode.rowGroupColumn as AgColumn | undefined;
         const { gos } = this;
 
