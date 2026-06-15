@@ -164,7 +164,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const from = params.from;
         const ignoreAggData = isGroup ? this.displayIgnoresAggData(node) : false;
-        let value = this.getValue(column, node, from === 'transformed' ? 'data' : from, ignoreAggData);
+        let value = this.getValue(column, node, from === 'transformed' ? 'edit' : from, ignoreAggData);
         let valueToFormat = value;
 
         // Read this.formula only for formula-enabled columns — skipped for the common case.
@@ -206,12 +206,12 @@ export class ValueService extends BeanStub implements NamedBean {
 
     /**
      * The cell's displayed value with the Show Values As transform applied, or the raw value when no mode is
-     * active or applying. Resolves formulas / calculated columns first (they compute before the transform).
+     * active or applying. Reads pending edits like the display path, then resolves formulas / calculated columns.
      * Leaner than {@link getValueForDisplay} — no group-cell, full-width, or formatting work.
      */
     public getTransformedValue(column: AgColumn, node: IRowNode): any {
         const ignoreAggData = node.group ? this.displayIgnoresAggData(node) : false;
-        const value = this.getValue(column, node, 'data', ignoreAggData);
+        const value = this.getValue(column, node, 'edit', ignoreAggData);
         return this.resolveTransformed(column, node, value, ignoreAggData);
     }
 
@@ -255,10 +255,10 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         const ignoreAggData = isGroup ? this.displayIgnoresAggData(node) : false;
-        // Show Values As: read committed data, resolve any formula, then transform — only when opted in and a
-        // mode is applying; raw value otherwise.
+        // Show Values As: read the edit-aware display value, resolve any formula, then transform — only when opted
+        // in and a mode is applying; raw value otherwise.
         if (from === 'transformed') {
-            const value = this.getValue(column, node, 'data', ignoreAggData);
+            const value = this.getValue(column, node, 'edit', ignoreAggData);
             return this.resolveTransformed(column, node, value, ignoreAggData);
         }
         let value = this.getValue(column, node, from, ignoreAggData);
@@ -532,7 +532,7 @@ export class ValueService extends BeanStub implements NamedBean {
         if (!showValueAsSvc) {
             return undefined;
         }
-        const rawValue = this.getValue(column, node, 'data', ignoreAggData);
+        const rawValue = this.getValue(column, node, 'edit', ignoreAggData);
         return showValueAsSvc.formatValue(column, node, value, rawValue);
     }
 
