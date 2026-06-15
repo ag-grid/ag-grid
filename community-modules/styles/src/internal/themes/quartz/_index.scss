@@ -374,10 +374,13 @@
         border: solid 1px var(--ag-input-border-color);
         background-color: var(--ag-background-color);
         padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
-        cursor: pointer;
 
-        &:hover {
-            background-color: var(--ag-row-hover-color);
+        &:not(:disabled) {
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--ag-row-hover-color);
+            }
         }
 
         &:active {

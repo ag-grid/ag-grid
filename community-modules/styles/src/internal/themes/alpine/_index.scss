@@ -143,7 +143,7 @@
         font-weight: 600;
         padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
 
-        &:hover {
+        &:not(:disabled):hover {
             border-color: var(--ag-alpine-active-color);
             background-color: var(--ag-row-hover-color);
         }

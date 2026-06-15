@@ -47,6 +47,10 @@
     }
 }
 
+:where(.ag-advanced-filter-builder-button:disabled) .ag-advanced-filter-builder-button-label {
+    color: var(--ag-button-disabled-text-color);
+}
+
 .ag-advanced-filter-builder-button-label {
     margin-left: var(--ag-spacing);
 }
