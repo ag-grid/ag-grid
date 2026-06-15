@@ -18,15 +18,10 @@
     textarea
 ) {
     border: var(--ag-input-border);
-    padding: 0;
-    margin: 0;
-    font-size: inherit;
-    font-family: inherit;
-    line-height: inherit;
     background-color: var(--ag-input-background-color);
     border-radius: var(--ag-input-border-radius);
     color: var(--ag-input-text-color);
-    padding-left: var(--ag-input-padding-start);
+    padding-inline: var(--ag-input-padding-start);
     min-height: var(--ag-input-height);
 
     &:where(:disabled) {
