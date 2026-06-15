@@ -1,6 +1,7 @@
 import { ApiFunctionService } from './api/apiFunctionService';
 import {
     destroy,
+    getGridElement,
     getGridId,
     getGridOption,
     isDestroyed,
@@ -104,6 +105,7 @@ export const CommunityCoreModule: _ModuleWithApi<_CoreGridApi> = {
     },
     apiFunctions: {
         getGridId,
+        getGridElement,
         destroy,
         isDestroyed,
         getGridOption,

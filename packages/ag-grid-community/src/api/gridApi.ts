@@ -113,6 +113,9 @@ export interface _CoreGridApi<TData = any> {
      * Check if a Module is registered with the current grid instance via its equivalent string name.
      */
     isModuleRegistered(moduleName: AgModuleName): boolean;
+
+    /** Returns the outermost DOM element created by the grid. This is a direct child of the host element provided by the application. */
+    getGridElement(): Element | undefined;
 }
 
 export interface _RowSelectionGridApi<TData = any> {

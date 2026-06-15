@@ -76,6 +76,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         setGridOption: 0,
         updateGridOptions: 0,
         isModuleRegistered: 0,
+        getGridElement: 0,
     }),
     ...mod<_StateGridApi>('GridState', {
         getState: 0,
