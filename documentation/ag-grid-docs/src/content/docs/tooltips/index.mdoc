@@ -69,6 +69,12 @@ In the example below:
 **Breaking change:** `autoGroupColumnDef` cell tooltip properties now apply to leaf rows only. Group rows inherit their cell tooltips from the underlying column `colDef`. If you previously used `autoGroupColumnDef.tooltipValueGetter` to control tooltips for group rows, move that logic to the relevant `colDef`s.
 {% /note %}
 
+### Full Width Group Rows
+
+With `groupDisplayType: 'groupRows'`, full-width group rows inherit their tooltips from the underlying column `colDef`. Hover a group row in the example below to see the tooltip defined on the grouped column.
+
+{% gridExampleRunner title="Full Width Group Row Tooltip" name="rowgroups-fullwidth-tooltip" /%}
+
 ## Mouse Tracking
 
 The example below enables mouse tracking to demonstrate a scenario where tooltips need to follow the cursor. To enable this feature, set the `tooltipMouseTrack` to true in the gridOptions.
