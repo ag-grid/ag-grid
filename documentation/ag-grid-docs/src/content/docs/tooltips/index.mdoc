@@ -54,7 +54,7 @@ In the example below:
 
 ## Row Groups
 
-When a column is grouped, the generated group column inherits the tooltip properties from the underlying column's [Column Definition](./column-definitions/): `tooltipField`, `tooltipValueGetter`, `tooltipComponent`, and `tooltipComponentParams`. This is consistent with how `valueFormatter` is inherited. With `groupDisplayType: 'multipleColumns'`, the group column header also inherits `headerTooltip` and `headerTooltipValueGetter`.
+When a column is grouped, the generated group column inherits the tooltip properties from the underlying column's [Column Definition](./column-definitions/): `tooltipField`, `tooltipValueGetter`, `tooltipComponent`, and `tooltipComponentParams`. This is consistent with how `valueFormatter` is inherited. With `groupDisplayType: 'multipleColumns'`, the group column header also inherits `headerTooltip`.
 
 Cell tooltip properties set on `autoGroupColumnDef` (`tooltipField`, `tooltipValueGetter`, `tooltipComponent`) apply to leaf rows only. `headerTooltip` still applies to the group column header.
 
@@ -68,6 +68,12 @@ In the example below:
 {% note %}
 **Breaking change:** `autoGroupColumnDef` cell tooltip properties now apply to leaf rows only. Group rows inherit their cell tooltips from the underlying column `colDef`. If you previously used `autoGroupColumnDef.tooltipValueGetter` to control tooltips for group rows, move that logic to the relevant `colDef`s.
 {% /note %}
+
+### Grouped Column Headers
+
+With `groupDisplayType: 'multipleColumns'`, each generated group column header inherits the `headerTooltip` from its underlying column `colDef`. Hover a group column header in the example below to see the inherited tooltip.
+
+{% gridExampleRunner title="Grouped Column Header Tooltip" name="rowgroups-header-tooltip" /%}
 
 ### Full Width Group Rows
 
