@@ -15,6 +15,7 @@ import { HeaderCellMouseListenerFeature } from './headerCellMouseListenerFeature
 
 function getHeaderCompElementParams(
     includeColumnRefIndicator: boolean,
+    includeCalculatedColumnIndicator: boolean,
     includeSortIndicator: boolean,
     includeShowValueAsIndicator: boolean
 ): ElementParams {
@@ -43,6 +44,14 @@ function getHeaderCompElementParams(
                 role: 'presentation',
                 children: [
                     includeColumnRefIndicator ? { tag: 'span', ref: 'eColRef', cls: 'ag-header-col-ref' } : null,
+                    includeCalculatedColumnIndicator
+                        ? {
+                              tag: 'span',
+                              ref: 'eCalculatedColumn',
+                              cls: 'ag-header-icon ag-header-col-ref ag-calculated-column-icon',
+                              attrs: hiddenAttrs,
+                          }
+                        : null,
                     { tag: 'span', ref: 'eText', cls: 'ag-header-cell-text' },
                     {
                         tag: 'span',
@@ -76,6 +85,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
     private readonly eLabel?: HTMLElement = RefPlaceholder;
     private readonly eText?: HTMLElement = RefPlaceholder;
     private readonly eColRef?: HTMLElement = RefPlaceholder;
+    private readonly eCalculatedColumn?: HTMLElement = RefPlaceholder;
 
     /**
      * Selectors for custom headers templates, i.e when the ag-sort-indicator is not present.
@@ -139,7 +149,12 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             // take account of any newlines & whitespace before/after the actual template
             return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
         }
-        return getHeaderCompElementParams(!!formula?.active, isSorting, !!showValueAsSvc);
+        return getHeaderCompElementParams(
+            !!formula?.active,
+            (params.column as AgColumn).isCalculatedCol,
+            isSorting,
+            !!showValueAsSvc
+        );
     }
 
     public init(params: IHeaderParams): void {
@@ -161,6 +176,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         this.setMenu();
         this.setupSort();
         this.setupColumnRefIndicator();
+        this.setupCalculatedColumnIcon();
         rowNumbersSvc?.setupForHeader(this);
         this.setupFilterIcon();
         this.setupFilterButton();
@@ -353,6 +369,16 @@ export class AgColumnHeader extends Component implements IHeaderComp {
                 _setDisplayed(eColRef, false);
             },
         });
+    }
+
+    private setupCalculatedColumnIcon(): void {
+        const { eCalculatedColumn, params } = this;
+
+        if (!eCalculatedColumn) {
+            return;
+        }
+
+        this.addInIcon('calculatedColumnsHeader', eCalculatedColumn, params.column as AgColumn);
     }
 
     private setupFilterIcon(): void {

@@ -15,6 +15,7 @@ export const CalculatedColumnsModule: _ModuleWithoutApi = {
     beans: [CalculatedColumnsService],
     dependsOn: [FormulaModule, _PopupModule, ColumnApiModule, TooltipModule],
     icons: {
+        calculatedColumnsHeader: 'fx',
         calculatedColumnAdd: 'plus',
         calculatedColumnEdit: 'edit',
         calculatedColumnRemove: 'minus',
