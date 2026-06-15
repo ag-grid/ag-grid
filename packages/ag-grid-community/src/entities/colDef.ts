@@ -34,6 +34,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
     headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
     /**
      * Tooltip for the column header, `headerTooltipValueGetter` takes precedence if set.
+     * When the column is grouped with `groupDisplayType: 'multipleColumns'`, the generated group column header inherits this value.
      * @agModule `TooltipModule`
      */
     headerTooltip?: string;
@@ -75,6 +76,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
     /**
      * Provide your own tooltip component for the column.
      * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/tooltips/) for framework specific implementation details.
+     * When the column is grouped, group rows in the generated group column inherit this component.
      * @agModule `TooltipModule`
      */
     tooltipComponent?: any;
@@ -346,12 +348,14 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     equals?: EqualsFunc<TValue>;
     /**
      * The field of the tooltip to apply to the cell.
+     * When the column is grouped, group rows in the generated group column inherit this value.
      * @agModule `TooltipModule`
      */
     tooltipField?: ColDefField<TData>;
     /**
      * Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.
+     * When the column is grouped, group rows in the generated group column inherit this callback.
      * @agModule `TooltipModule`
      */
     tooltipValueGetter?: TooltipValueGetterFunc<TData, TValue>;

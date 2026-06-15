@@ -54,9 +54,20 @@ In the example below:
 
 ## Row Groups
 
-The example below shows how to use the default tooltip component with group columns. Because the group column has no real field assigned to it, the `tooltipValueGetter` function must be used.
+When a column is grouped, the generated group column inherits the tooltip properties from the underlying column's [Column Definition](./column-definitions/): `tooltipField`, `tooltipValueGetter`, `tooltipComponent`, and `tooltipComponentParams`. This is consistent with how `valueFormatter` is inherited. With `groupDisplayType: 'multipleColumns'`, the group column header also inherits `headerTooltip` and `headerTooltipValueGetter`.
+
+Tooltip properties set on `autoGroupColumnDef` apply to leaf rows only.
+
+In the example below:
+
+- The Country and Year columns each define a `tooltipValueGetter`. Hover a group key to see the tooltip inherited from the underlying column.
+- `autoGroupColumnDef` defines a `tooltipValueGetter`. Hover a leaf row in the group column to see it.
 
 {% gridExampleRunner title="Row Group Tooltip" name="rowgroups-tooltip" /%}
+
+{% note %}
+**Breaking change:** `autoGroupColumnDef` tooltip properties now apply to leaf rows only. Group rows inherit their tooltips from the underlying column `colDef`. If you previously used `autoGroupColumnDef.tooltipValueGetter` to control tooltips for group rows, move that logic to the relevant `colDef`s.
+{% /note %}
 
 ## Mouse Tracking
 

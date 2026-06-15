@@ -26,8 +26,22 @@ ModuleRegistry.registerModules([
 ]);
 
 const columnDefs: ColDef[] = [
-    { field: 'country', width: 120, rowGroup: true, hide: true },
-    { field: 'year', width: 90, rowGroup: true, hide: true },
+    {
+        field: 'country',
+        width: 120,
+        rowGroup: true,
+        hide: true,
+        // inherited by group rows in the group column
+        tooltipValueGetter: (params) => `Country: ${params.value}`,
+    },
+    {
+        field: 'year',
+        width: 90,
+        rowGroup: true,
+        hide: true,
+        // inherited by group rows in the group column
+        tooltipValueGetter: (params) => `Year: ${params.value}`,
+    },
     { field: 'athlete', width: 200 },
     { field: 'age', width: 90 },
     { field: 'sport', width: 110 },
@@ -39,15 +53,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     autoGroupColumnDef: {
         headerTooltip: 'Group',
         minWidth: 190,
-        tooltipValueGetter: (params) => {
-            const count = params.node && params.node.allChildrenCount;
-
-            if (count != null) {
-                return 'Tooltip text - ' + params.value + ' (' + count + ')';
-            }
-
-            return params.value;
-        },
+        // applies to leaf rows only; group rows inherit from their colDef
+        tooltipValueGetter: (params) => `Athlete: ${params.value}`,
     },
     defaultColDef: {
         flex: 1,
