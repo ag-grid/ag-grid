@@ -82,11 +82,12 @@ jobs:
                 const owner = context.repo.owner;
                 const repo = context.repo.repo;
                 const getReviewers = async (pr) => {
+                    const author = pr.user?.login || '';
                     const reviewers = [...new Set((await github.rest.pulls.listReviews({
                         owner,
                         repo,
                         pull_number
-                    })).data?.map(r => r.user.login) || [])];
+                    })).data?.map(r => r.user.login) || [])].filter((r) => r !== author);
                     const mergedBy = pr.merged_by?.login || '';
                     return {reviewers, mergedBy}
                 };
