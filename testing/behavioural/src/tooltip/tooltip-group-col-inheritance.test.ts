@@ -577,4 +577,49 @@ describe('Tooltip inheritance in group columns', () => {
         // params.value must be the group display value, not undefined
         expect(capturedValue).toBe('Australia');
     });
+
+    // getAdditionalParams must expose the group column's formatted value to a custom tooltipComponent,
+    // matching the formatter output (not the raw display value) as the standard cell tooltip path does.
+    test('full-width group row passes formatted value to tooltipComponent params.valueFormatted (groupRows)', async () => {
+        let capturedValueFormatted: unknown = 'not-set';
+
+        class CaptureTooltip implements ITooltipComp {
+            private eGui!: HTMLElement;
+            init(params: ITooltipParams) {
+                capturedValueFormatted = params.valueFormatted;
+                this.eGui = document.createElement('div');
+                this.eGui.className = 'ag-tooltip-custom capture-tooltip';
+                this.eGui.textContent = `captured:${params.valueFormatted}`;
+            }
+            getGui() {
+                return this.eGui;
+            }
+        }
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    field: 'country',
+                    rowGroup: true,
+                    hide: true,
+                    valueFormatter: (params) => `formatted:${params.value}`,
+                    tooltipComponent: CaptureTooltip,
+                },
+                { field: 'athlete' },
+            ],
+            rowData: [{ country: 'Australia', athlete: 'Alice' }],
+            groupDisplayType: 'groupRows',
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+        };
+
+        const api = await gridMgr.createGridAndWait('tooltip-group-rows-value-formatted', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const groupRow = await waitFor(() => getByTestId(gridDiv, agTestIdFor.rowNode('row-group-country-Australia')));
+
+        await userEvent.hover(groupRow);
+        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
+        await waitForTooltips(1);
+        expect(document.querySelector('.capture-tooltip')).not.toBeNull();
+        expect(capturedValueFormatted).toBe('formatted:Australia');
+    });
 });
