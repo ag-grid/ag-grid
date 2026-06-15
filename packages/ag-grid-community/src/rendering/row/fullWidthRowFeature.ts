@@ -218,9 +218,12 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         const { valueSvc } = this.beans;
         gos.assertModuleRegistered('Tooltip', 3);
 
+        const getDisplay = () =>
+            valueSvc.getValueForDisplay({ node: rowNode, includeValueFormatted: true, from: 'edit' });
+
         this.setupFullWidthRowTooltip(
             () => {
-                const displayValue = valueSvc.getDisplayValue(undefined, rowNode, 'edit');
+                const { value, valueFormatted } = getDisplay();
                 if (tooltipValueGetter) {
                     return tooltipValueGetter(
                         _addGridCommonParams(gos, {
@@ -230,8 +233,8 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                             rowIndex: rowNode.rowIndex ?? 0,
                             node: rowNode,
                             data: rowNode.data,
-                            value: displayValue,
-                            valueFormatted: undefined,
+                            value,
+                            valueFormatted: valueFormatted ?? undefined,
                         })
                     );
                 }
@@ -240,15 +243,24 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                     if (!data) {
                         return undefined;
                     }
-                    const containsDots = groupCol ? groupCol.tooltipFieldContainsDots : tooltipField.includes('.');
+                    const containsDots = groupCol
+                        ? groupCol.tooltipFieldContainsDots
+                        : !gos.get('suppressFieldDotNotation') && tooltipField.includes('.');
                     return containsDots
                         ? _getValueUsingDotField(data, tooltipField)
                         : (data as Record<string, unknown>)[tooltipField];
                 }
-                return displayValue;
+                return value;
             },
             undefined,
-            () => ({ colDef })
+            () => ({
+                colDef,
+                column: groupCol,
+                rowIndex: rowNode.rowIndex ?? 0,
+                node: rowNode,
+                data: rowNode.data,
+                valueFormatted: getDisplay().valueFormatted ?? undefined,
+            })
         );
     }
 
