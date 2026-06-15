@@ -928,7 +928,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     },
     rowVerticalPaddingScale: 1,
     paginationPanelHeight: {
-        calc: 'pickerFieldHeight + spacing * 2',
+        calc: 'pickerFieldHeight + spacing * 1.25',
     },
     dragHandleColor: foregroundMix(0.7),
     headerColumnResizeHandleHeight: '30%',
