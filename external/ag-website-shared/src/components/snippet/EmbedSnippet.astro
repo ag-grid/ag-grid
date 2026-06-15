@@ -5,7 +5,7 @@ import path from 'path';
 import { readFileSync } from 'node:fs';
 import { SnippetFromRemoteUrl } from '@ag-website-shared/components/snippet/SnippetFromRemoteUrl';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import CodeShiki, { type Language } from '../code/CodeShiki';
+import Code, { type Language } from '../code/Code';
 
 interface Props {
     src: string;
@@ -25,7 +25,7 @@ if (src) {
 }
 ---
 
-{snippet && <CodeShiki code={snippet} language={language} lineNumbers={lineNumbers} />}
+{snippet && <Code code={snippet} language={language} lineNumbers={lineNumbers} />}
 {
     url && (
         <SnippetFromRemoteUrl
