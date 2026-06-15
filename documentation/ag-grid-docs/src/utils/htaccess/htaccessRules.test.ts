@@ -1,4 +1,5 @@
-import { getHtaccessContent } from './htaccessRules';
+import { EXAMPLES_PATH_CONDITION } from './cspRules';
+import { PRODUCTION_CSP_PHASE, getHtaccessContent } from './htaccessRules';
 import { SITE_301_REDIRECTS } from './redirects';
 
 describe('htaccessRules', () => {
@@ -190,6 +191,94 @@ describe('htaccessRules', () => {
             expect(productionContent).toContain('Content-Security-Policy');
             expect(stagingContent).toContain('Content-Security-Policy');
         });
+    });
+
+    describe("AG-17134: 'unsafe-eval' removed from the main-site policy", () => {
+        const ifOpen = `<If "${EXAMPLES_PATH_CONDITION}">`;
+
+        // The <If> contents are indented, so unconditional directives are the
+        // lines starting at column 0.
+        const unconditionalLines = (content: string) => content.split('\n').filter((l) => !l.startsWith(' '));
+
+        const extractIfBlock = (content: string) => {
+            const start = content.indexOf(ifOpen);
+            const end = content.indexOf('</If>', start);
+            expect(start).toBeGreaterThan(-1);
+            expect(end).toBeGreaterThan(start);
+            return content.slice(start, end);
+        };
+
+        it('staging: unconditional enforced policy has no unsafe-eval but keeps unsafe-inline', () => {
+            const setLine = unconditionalLines(stagingContent).find((l) =>
+                l.startsWith('Header always set Content-Security-Policy "')
+            );
+            expect(setLine).toBeDefined();
+            expect(setLine).not.toContain("'unsafe-eval'");
+            expect(setLine).toContain("'unsafe-inline'");
+        });
+
+        it('staging: <If> override re-sets the enforced policy with unsafe-eval for example/archive paths', () => {
+            const ifBlock = extractIfBlock(stagingContent);
+            expect(ifBlock).toContain('Header always unset Content-Security-Policy\n');
+            expect(ifBlock).toContain("'unsafe-eval'");
+        });
+
+        it('staging: site-wide set precedes the <If> override', () => {
+            const setIndex = stagingContent.indexOf('Header always set Content-Security-Policy "');
+            const ifIndex = stagingContent.indexOf(ifOpen);
+            expect(setIndex).toBeGreaterThan(-1);
+            expect(setIndex).toBeLessThan(ifIndex);
+        });
+
+        if (PRODUCTION_CSP_PHASE === 'report-only') {
+            it('production (report-only window): keeps enforcing the previous policy with unsafe-eval', () => {
+                const enforcedLine = unconditionalLines(productionContent).find((l) =>
+                    l.startsWith('Header always set Content-Security-Policy "')
+                );
+                expect(enforcedLine).toBeDefined();
+                expect(enforcedLine).toContain("'unsafe-eval'");
+            });
+
+            it('production (report-only window): reports on the tightened site policy', () => {
+                const reportOnlyLine = unconditionalLines(productionContent).find((l) =>
+                    l.startsWith('Header always set Content-Security-Policy-Report-Only "')
+                );
+                expect(reportOnlyLine).toBeDefined();
+                expect(reportOnlyLine).not.toContain("'unsafe-eval'");
+            });
+
+            it('production (report-only window): <If> override only swaps the report-only header', () => {
+                const ifBlock = extractIfBlock(productionContent);
+                expect(ifBlock).toContain('Header always unset Content-Security-Policy-Report-Only\n');
+                expect(ifBlock).toContain('Header always set Content-Security-Policy-Report-Only "');
+                expect(ifBlock).not.toContain('Header always set Content-Security-Policy "');
+            });
+
+            it('production (report-only window): the report-only block does not unset the enforced header', () => {
+                const lines = unconditionalLines(productionContent);
+                const enforcedSetIndex = lines.findIndex((l) =>
+                    l.startsWith('Header always set Content-Security-Policy "')
+                );
+                const laterUnset = lines
+                    .slice(enforcedSetIndex + 1)
+                    .find((l) => l.trim() === 'Header always unset Content-Security-Policy');
+                expect(laterUnset).toBeUndefined();
+            });
+        } else {
+            it('production (enforced): unconditional enforced policy has no unsafe-eval', () => {
+                const enforcedLine = unconditionalLines(productionContent).find((l) =>
+                    l.startsWith('Header always set Content-Security-Policy "')
+                );
+                expect(enforcedLine).toBeDefined();
+                expect(enforcedLine).not.toContain("'unsafe-eval'");
+            });
+
+            it('production (enforced): <If> override re-sets the enforced policy with unsafe-eval', () => {
+                const ifBlock = extractIfBlock(productionContent);
+                expect(ifBlock).toContain('Header always unset Content-Security-Policy\n');
+                expect(ifBlock).toContain("'unsafe-eval'");
+            });
+        }
     });
 
     describe('basic structure', () => {

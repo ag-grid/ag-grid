@@ -13,6 +13,7 @@ export default [
     {
         ignores: [
             '.astro/',
+            'packages/', // gitignored copy of built grid packages, served to local examples
             '**/_examples/',
             'scripts/showcase-github/tmp/',
             '**/.angular',
