@@ -56,9 +56,7 @@ function getRecordsForSource(source: CampaignSource, rankOffset: number): Algoli
         return [];
     }
 
-    const files = fs
-        .readdirSync(source.contentDir)
-        .filter((f) => f.endsWith('.json') && !f.endsWith(ORIGINAL_SUFFIX));
+    const files = fs.readdirSync(source.contentDir).filter((f) => f.endsWith('.json') && !f.endsWith(ORIGINAL_SUFFIX));
 
     const records: AlgoliaRecord[] = [];
 
