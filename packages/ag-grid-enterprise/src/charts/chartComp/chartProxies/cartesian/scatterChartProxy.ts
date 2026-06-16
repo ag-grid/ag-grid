@@ -91,15 +91,15 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
         };
 
         const updatePrimarySeries = <T extends AgScatterSeriesOptions | AgBubbleSeriesOptions>(series: T): T => {
-            let markerDomain: [number, number] | undefined = undefined;
+            let sizeDomain: AgBubbleSeriesOptions['sizeDomain'];
             if (series.type === 'bubble') {
                 const { sizeKey } = series;
-                markerDomain = calcMarkerDomain(data, sizeKey);
+                sizeDomain = calcMarkerDomain(data, sizeKey);
             }
 
             return {
                 ...series,
-                domain: markerDomain,
+                ...(sizeDomain != null ? { sizeDomain } : {}),
                 highlight: { highlightedItem: { fill: 'yellow' } },
                 listeners: {
                     ...series.listeners,
