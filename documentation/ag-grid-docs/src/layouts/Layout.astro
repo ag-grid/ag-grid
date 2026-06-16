@@ -8,7 +8,6 @@ import { getFavIconsData, getAppleTouchIconsData } from '@utils/favicons';
 import { getIsProduction, getIsArchive, getIsStaging, getIsDev } from '@utils/env';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import Plausible from '@components/Plausible.astro';
-import { DARK_MODE_INIT_SCRIPT } from '@utils/csp/inlineScripts';
 import { Footer } from '@ag-website-shared/components/footer/Footer';
 import styles from '@layouts/Layout.module.scss';
 import { getApiPaths } from '@utils/apiMenuPath';
@@ -225,11 +224,51 @@ const announcementBannerProps = {
         </style>
     </head>
     <body data-is-homepage={isHomepage}>
-        {
-            /* Authorised in script-src by SHA-256 hash (not 'unsafe-inline'); body lives in
-            @utils/csp/inlineScripts so the rendered bytes match the hashed source. */
-        }
-        <script is:inline set:html={DARK_MODE_INIT_SCRIPT} />
+        <script is:inline>
+            const htmlEl = document.querySelector('html');
+            const localDarkmode = localStorage['documentation:darkmode'];
+            const isOSDarkmode = (
+                window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+            ).toString();
+
+            if (localDarkmode === undefined) {
+                localStorage.setItem('documentation:darkmode', isOSDarkmode);
+            }
+
+            htmlEl.classList.add('no-transitions');
+            htmlEl.dataset.darkMode = localDarkmode !== undefined ? localDarkmode : isOSDarkmode;
+
+            const getDarkmode = () => htmlEl.dataset.darkMode === 'true';
+            htmlEl.dataset.agThemeMode = getDarkmode() ? 'dark-blue' : 'light';
+            htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
+            htmlEl.classList.remove('no-transitions');
+
+            // Set up dark mode on change listeners
+            const darkModeListeners = [];
+            globalThis.addDarkmodeOnChange = (onChange) => {
+                darkModeListeners.push(onChange);
+
+                // Run once on initialisation
+                onChange(getDarkmode());
+            };
+
+            // Listen to changes to html[data-dark-mode] attribute and notify listeners
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'data-dark-mode') {
+                        const newDarkmode = getDarkmode();
+                        darkModeListeners.forEach((listener) => {
+                            listener(newDarkmode);
+                        });
+                    }
+                });
+            });
+            observer.observe(htmlEl, { attributes: true });
+
+            if (localStorage.getItem('documentation:announcement-banner-dismissed') !== 'true') {
+                document.documentElement.dataset.showAnnouncement = 'true';
+            }
+        </script>
 
         {
             !isArchive && showAnnouncementBanner && (
