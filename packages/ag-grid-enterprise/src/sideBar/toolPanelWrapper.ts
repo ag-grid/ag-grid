@@ -1,4 +1,4 @@
-import { RefPlaceholder, _createAgElement, _initDetachedStyledRoot, _setDisplayed } from 'ag-stack';
+import { RefPlaceholder, _initDetachedStyledRoot, _setDisplayed } from 'ag-stack';
 
 import type {
     ComponentType,
