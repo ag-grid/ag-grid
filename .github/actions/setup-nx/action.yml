@@ -177,7 +177,11 @@ runs:
           shell: bash
           env:
               # 'true' only on an exact key hit; an inexact restore-keys fallback can carry a stale hoisting layout.
-              EXACT_CACHE_HIT: ${{ steps.cache_rw.outputs.cache-hit || steps.cache_ro.outputs.cache-hit }}
+              # Compare each step's output explicitly against 'true' rather than relying on string truthiness:
+              # `actions/cache` sets cache-hit to the string 'false' on a restore-key fallback (which is truthy in
+              # GHA expressions), and a skipped cache step yields ''. The active step (rw xor ro) is the only one
+              # with a non-empty value, so an explicit `== 'true'` on each is unambiguous regardless of which ran.
+              EXACT_CACHE_HIT: ${{ steps.cache_rw.outputs.cache-hit == 'true' || steps.cache_ro.outputs.cache-hit == 'true' }}
           run: |
               if [[ "${EXACT_CACHE_HIT}" != "true" ]] ; then
                 # Fallback restore: wipe node_modules so install rebuilds hoisting from this lockfile, avoiding stale-layout cache poisoning.
