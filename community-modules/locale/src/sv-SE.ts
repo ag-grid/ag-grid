@@ -671,6 +671,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaColumnGroup: 'Kolumngrupp',
     ariaFilterActive: 'Filter aktiv',
     ariaColumnFiltered: 'Kolumn filtrerad',
+    ariaCalculatedColumn: 'Beräknad kolumn',
     ariaColumnSelectAll: 'Växla alla kolumners synlighet',
     ariaDateFilterInput: 'Datumfilterinmatning',
     ariaDefaultListName: 'Lista',

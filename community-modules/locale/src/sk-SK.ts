@@ -669,6 +669,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaColumnGroup: 'Skupina Stĺpcov',
     ariaFilterActive: 'Filtre sú aktívne',
     ariaColumnFiltered: 'Stĺpec Filtrovaný',
+    ariaCalculatedColumn: 'Vypočítaný stĺpec',
     ariaColumnSelectAll: 'Prepínať viditeľnosť všetkých stĺpcov',
     ariaDateFilterInput: 'Vstup Dátumového Filtra',
     ariaDefaultListName: 'Zoznam',

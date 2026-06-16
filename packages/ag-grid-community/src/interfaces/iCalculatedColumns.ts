@@ -4,6 +4,7 @@ import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
+import type { HeaderPosition } from './iHeaderPosition';
 
 export type CalculatedColumnExpressionPicker = 'columns' | 'functions' | 'operators';
 
@@ -45,7 +46,15 @@ export type CalculatedColumnUpdate<TData = any, TValue = any> = Partial<ColDef<T
 
 export interface ICalculatedColumnsService extends Bean {
     removeCalculatedColumn(column: AgColumn | null | undefined): void;
-    openCalculatedColumnDialog(column: AgColumn | null | undefined, mode: 'add' | 'edit', focusDialog?: boolean): void;
+    openCalculatedColumnDialog(
+        column: AgColumn | null | undefined,
+        mode: 'add' | 'edit',
+        focusDialog?: boolean,
+        restoreFocusParams?: {
+            eventSource?: HTMLElement;
+            headerPosition: HeaderPosition | null;
+        }
+    ): void;
     /** Build hook for static (user-declared) calc cols: `null` if removed (never build), the replacement
      *  `ColDef` if updated, `undefined` if unchanged. Applied during the build, so removed cols are never materialised. */
     overrideFor(colDef: ColDef): ColDef | null | undefined;
