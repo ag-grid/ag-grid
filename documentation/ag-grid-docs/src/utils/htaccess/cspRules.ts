@@ -15,11 +15,14 @@ export type CspEnv = 'dev' | 'staging' | 'production';
 export type CspMode = 'report-only' | 'enforce';
 
 /**
- * 'site' is the default policy for ordinary pages. 'examples' additionally
- * allows 'unsafe-eval' and applies only to the standalone example-runner
- * documents (and archived doc versions) — see EXAMPLES_PATH_CONDITION.
+ * - 'site': the default policy for ordinary pages.
+ * - 'examples': additionally allows 'unsafe-eval'; applies only to the standalone
+ *   example-runner documents (and archived doc versions) — see EXAMPLES_PATH_CONDITION.
+ * - 'campaigns': additionally allows the bryntum.com origin (script/style/font/
+ *   connect) for the partnership campaign pages' embedded Gantt demo — without
+ *   'unsafe-eval'. See CAMPAIGNS_PATH_CONDITION.
  */
-export type CspScope = 'site' | 'examples';
+export type CspScope = 'site' | 'examples' | 'campaigns';
 
 export interface CspOptions {
     env: CspEnv;
@@ -49,10 +52,22 @@ const WASM_UNSAFE_EVAL = "'wasm-unsafe-eval'";
 // but now unescapes string literals without eval (see unescapeStringLiteral).
 const UNSAFE_EVAL = "'unsafe-eval'";
 
+// The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
+// demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from
+// bryntum.com. Allowed only in the 'campaigns' scope so the rest of the site does
+// not trust this third-party origin. The pages are deliberately NOT granted
+// 'unsafe-eval': if the Bryntum bundle's runtime new Function() path turns out to
+// be exercised, re-allowing it is a separate, conscious decision.
+const BRYNTUM_HOST = 'https://bryntum.com';
+
 // Apache <If> expression matching the URL paths that get the 'examples' scope:
 // the standalone example-runner documents and archived doc versions (uploaded
 // separately but served from this vhost, so they inherit the root .htaccess).
 export const EXAMPLES_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(examples|archive)/#';
+
+// Apache <If> expression matching the partnership campaign pages that get the
+// 'campaigns' scope (e.g. /campaigns/bryntum-gantt/).
+export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/campaigns/#';
 
 // 'self' resolves to grid-staging.ag-grid.com on staging / localhost in dev, so
 // cross-subdomain references to the production host need an explicit allowance.
@@ -202,6 +217,11 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
 
     if (scope === 'examples') {
         directives['script-src'].push(UNSAFE_EVAL);
+    } else if (scope === 'campaigns') {
+        directives['script-src'].push(BRYNTUM_HOST);
+        directives['style-src'].push(BRYNTUM_HOST);
+        directives['font-src'].push(BRYNTUM_HOST);
+        directives['connect-src'].push(BRYNTUM_HOST);
     }
 
     if (env === 'dev') {
@@ -257,25 +277,70 @@ export function getCspHtaccessBlock(options: CspOptions, mode: CspMode): string 
 }
 
 /**
- * Build the full `.htaccess` CSP block with the path-scoped policy split: the
- * 'site' policy (no 'unsafe-eval') for ordinary pages, replaced by the
- * 'examples' policy for the paths matched by EXAMPLES_PATH_CONDITION.
+ * Build an Apache `<If>` block that replaces the CSP header for the requests
+ * matching `condition` with the given scope's policy.
  *
- * A second CSP policy can only tighten (browsers enforce the intersection), so
- * the relaxation must unset and re-set the header rather than add another one.
+ * A second CSP policy can only tighten (browsers enforce the intersection), so a
+ * relaxation must unset and re-set the header rather than add another one. <If>
+ * sections merge after all other configuration, so this unset+set deterministically
+ * replaces whatever header was set site-wide for matching requests.
+ */
+function getCspIfOverride(condition: string, comment: string[], options: CspOptions, mode: CspMode): string {
+    const headerName = getCspHeaderName(mode);
+    return [
+        ...comment,
+        `<If "${condition}">`,
+        `    Header always unset ${headerName}`,
+        `    ${getCspHtaccessLine(options, mode)}`,
+        '</If>',
+    ].join('\n');
+}
+
+/**
+ * The `<If>` override re-allowing 'unsafe-eval' for the example-runner documents
+ * and archived doc versions matched by EXAMPLES_PATH_CONDITION.
+ */
+export function getExamplesCspIfOverride(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
+    return getCspIfOverride(
+        EXAMPLES_PATH_CONDITION,
+        [
+            "# Example-runner documents and archived doc versions additionally need 'unsafe-eval'",
+            '# (SystemJS eval-loads modules; the Angular JIT and Vue runtime template compilers',
+            '# also compile in the browser).',
+        ],
+        { ...options, scope: 'examples' },
+        mode
+    );
+}
+
+/**
+ * The `<If>` override allowing the bryntum.com origin for the partnership campaign
+ * pages matched by CAMPAIGNS_PATH_CONDITION (no extra 'unsafe-eval').
+ */
+export function getCampaignsCspIfOverride(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
+    return getCspIfOverride(
+        CAMPAIGNS_PATH_CONDITION,
+        [
+            '# Partnership campaign pages embed a live Bryntum Gantt demo that loads its bundle,',
+            '# stylesheet, Font Awesome webfonts and dataset from bryntum.com.',
+        ],
+        { ...options, scope: 'campaigns' },
+        mode
+    );
+}
+
+/**
+ * Build the full `.htaccess` CSP block with the path-scoped policy split: the
+ * 'site' policy (no 'unsafe-eval', no third-party embeds) for ordinary pages,
+ * replaced by the 'examples' policy for EXAMPLES_PATH_CONDITION paths and the
+ * 'campaigns' policy for CAMPAIGNS_PATH_CONDITION paths.
  */
 export function getScopedCspHtaccessBlock(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
-    const headerName = getCspHeaderName(mode);
     return [
         getCspHtaccessBlock({ ...options, scope: 'site' }, mode),
         '',
-        "# Example-runner documents and archived doc versions additionally need 'unsafe-eval'",
-        '# (SystemJS eval-loads modules; the Angular JIT and Vue runtime template compilers',
-        '# also compile in the browser). <If> sections merge after all other configuration,',
-        '# so this unset+set replaces the header set above for matching requests.',
-        `<If "${EXAMPLES_PATH_CONDITION}">`,
-        `    Header always unset ${headerName}`,
-        `    ${getCspHtaccessLine({ ...options, scope: 'examples' }, mode)}`,
-        '</If>',
+        getExamplesCspIfOverride(options, mode),
+        '',
+        getCampaignsCspIfOverride(options, mode),
     ].join('\n');
 }

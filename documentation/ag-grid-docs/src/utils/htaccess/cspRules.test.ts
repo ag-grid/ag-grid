@@ -1,4 +1,4 @@
-import { getCspDirectives, getScopedCspHtaccessBlock } from './cspRules';
+import { CAMPAIGNS_PATH_CONDITION, getCspDirectives, getScopedCspHtaccessBlock } from './cspRules';
 
 describe('cspRules', () => {
     describe('scope', () => {
@@ -54,6 +54,38 @@ describe('cspRules', () => {
         });
     });
 
+    describe('campaigns scope (AG-17134: Bryntum partnership pages)', () => {
+        it('adds the bryntum.com origin to script/style/font/connect-src', () => {
+            const campaigns = getCspDirectives({ env: 'production', scope: 'campaigns' });
+            expect(campaigns['script-src']).toContain('https://bryntum.com');
+            expect(campaigns['style-src']).toContain('https://bryntum.com');
+            expect(campaigns['font-src']).toContain('https://bryntum.com');
+            expect(campaigns['connect-src']).toContain('https://bryntum.com');
+        });
+
+        it("does not add 'unsafe-eval' (Bryntum hosts only, no eval)", () => {
+            const campaigns = getCspDirectives({ env: 'production', scope: 'campaigns' });
+            expect(campaigns['script-src']).not.toContain("'unsafe-eval'");
+        });
+
+        it('differs from the site scope only by the bryntum.com origin', () => {
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            const campaigns = getCspDirectives({ env: 'production', scope: 'campaigns' });
+
+            expect(Object.keys(campaigns)).toEqual(Object.keys(site));
+            const names = Object.keys(site);
+            const broadened = ['script-src', 'style-src', 'font-src', 'connect-src'];
+            for (let i = 0, len = names.length; i < len; ++i) {
+                const name = names[i];
+                if (broadened.includes(name)) {
+                    expect(campaigns[name]).toEqual([...site[name], 'https://bryntum.com']);
+                } else {
+                    expect(campaigns[name]).toEqual(site[name]);
+                }
+            }
+        });
+    });
+
     describe('getScopedCspHtaccessBlock', () => {
         it('enforce mode unsets and re-sets the enforced header inside the <If> override', () => {
             const block = getScopedCspHtaccessBlock({ env: 'production' }, 'enforce');
@@ -71,6 +103,16 @@ describe('cspRules', () => {
             expect(enforcedUnset).toBeUndefined();
             expect(block).not.toContain('Header always set Content-Security-Policy "');
             expect(block).toContain('Header always set Content-Security-Policy-Report-Only "');
+        });
+
+        it('emits a /campaigns/ <If> override allowing bryntum.com without unsafe-eval', () => {
+            const block = getScopedCspHtaccessBlock({ env: 'production' }, 'enforce');
+            const campaignsIfOpen = `<If "${CAMPAIGNS_PATH_CONDITION}">`;
+            const start = block.indexOf(campaignsIfOpen);
+            expect(start).toBeGreaterThan(-1);
+            const ifBlock = block.slice(start, block.indexOf('</If>', start));
+            expect(ifBlock).toContain('https://bryntum.com');
+            expect(ifBlock).not.toContain("'unsafe-eval'");
         });
     });
 });
