@@ -33,6 +33,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('32.0.0', model, migrateV32);
     model = migrateIfBefore('33.0.0', model, migrateV33);
     model = migrateIfBefore('34.0.0', model, migrateV34);
+    model = migrateIfBefore('36.0.0', model, migrateV36);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -369,6 +370,12 @@ function migrateV34(model: ChartModel) {
     };
 
     jsonMutateProperty('chartOptions.series[].highlightStyle', true, model, highlightUpdate);
+
+    return model;
+}
+
+function migrateV36(model: ChartModel) {
+    model = jsonRename('chartOptions.bubble.series.size', 'minSize', model);
 
     return model;
 }
