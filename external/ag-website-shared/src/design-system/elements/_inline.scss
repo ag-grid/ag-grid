@@ -68,3 +68,30 @@ svg#{$selector-exclude-grid} {
 svg#{$selector-exclude-grid} {
     overflow: hidden;
 }
+
+a.meta-link {
+    font-size: var(--text-fs-sm);
+    font-family: var(--text-monospace-font-family);
+    color: var(--color-link);
+    text-decoration: underline;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    background-color: color-mix(in srgb, var(--color-link), var(--color-bg-primary) 90%);
+
+    &:hover {
+        color: var(--color-link-hover);
+    }
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-link), var(--color-bg-primary) 90%);
+    }
+
+    code {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: inherit;
+        color: inherit;
+        font-family: inherit;
+    }
+}
