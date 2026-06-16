@@ -559,8 +559,8 @@
         "showValueAsInitial": {},
         "showValueAsConfig": {
             "more": {
-                "name": "Custom Modes",
-                "url": "./aggregation-show-values-as/#custom-modes"
+                "name": "Configuration",
+                "url": "./aggregation-show-values-as/#configuration"
             }
         }
     },
