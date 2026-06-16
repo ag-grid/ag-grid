@@ -713,6 +713,93 @@ describe('paginationPanels', () => {
         });
     });
 
+    describe('object-based pageSize and rowSummary config', () => {
+        function getPageSizeDisplayValue(panel: HTMLElement): string | undefined {
+            return (
+                panel.querySelector<HTMLElement>('.ag-paging-page-size .ag-picker-field-display')?.textContent ??
+                undefined
+            );
+        }
+
+        test('{ type: "pageSize" } renders the page size selector', () => {
+            const api = createPaginationGrid(gridsManager, { paginationPanels: [{ type: 'pageSize' }] });
+            const panel = getPagingPanel(api)!;
+            const pageSizeEl = panel.querySelector<HTMLElement>('.ag-paging-page-size');
+            expect(pageSizeEl).toBeTruthy();
+            expect(pageSizeEl).not.toHaveClass('ag-hidden');
+        });
+
+        test('{ type: "rowSummary" } renders the row summary', () => {
+            const api = createPaginationGrid(gridsManager, { paginationPanels: [{ type: 'rowSummary' }] });
+            const panel = getPagingPanel(api)!;
+            expect(panel.querySelector('.ag-paging-row-summary-panel')).toBeTruthy();
+            const numbers = panel.querySelectorAll('.ag-paging-row-summary-panel-number');
+            expect(numbers[0].textContent).toBe('1');
+            expect(numbers[2].textContent).toBe('50');
+        });
+
+        test('panel-level paginationPageSize overrides grid-level option', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSize: 20,
+                paginationPanels: [{ type: 'pageSize', paginationPageSize: 50 }],
+            });
+            expect(api.paginationGetPageSize()).toBe(50);
+            const panel = getPagingPanel(api)!;
+            expect(getPageSizeDisplayValue(panel)).toBe('50');
+        });
+
+        test('grid-level paginationPageSize still applies when panel omits it', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSize: 20,
+                paginationPanels: [{ type: 'pageSize' }],
+            });
+            expect(api.paginationGetPageSize()).toBe(20);
+        });
+
+        test('panel-level paginationPageSizeSelector: false hides selector despite grid-level array', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSizeSelector: [10, 20, 50],
+                paginationPanels: [{ type: 'pageSize', paginationPageSizeSelector: false }, 'pageSummary'],
+            });
+            const panel = getPagingPanel(api)!;
+            expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
+        });
+
+        test('panel-level paginationPageSizeSelector array shows selector despite grid-level false', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSizeSelector: false,
+                paginationPanels: [{ type: 'pageSize', paginationPageSizeSelector: [10, 20, 50] }],
+            });
+            const panel = getPagingPanel(api)!;
+            expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
+        });
+
+        test('panel-level config takes precedence over both grid-level options (ticket example)', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSize: 20,
+                paginationPageSizeSelector: [10, 20, 50],
+                paginationPanels: [
+                    { type: 'pageSize', paginationPageSize: 100, paginationPageSizeSelector: [25, 50, 100] },
+                ],
+            });
+            expect(api.paginationGetPageSize()).toBe(100);
+            const panel = getPagingPanel(api)!;
+            expect(getPageSizeDisplayValue(panel)).toBe('100');
+        });
+
+        test('panel-level paginationPageSize updates active page size when paginationPanels changes at runtime', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSize: 20,
+                paginationPanels: ['pageSize'],
+            });
+            expect(api.paginationGetPageSize()).toBe(20);
+
+            api.setGridOption('paginationPanels', [{ type: 'pageSize', paginationPageSize: 50 }]);
+
+            expect(api.paginationGetPageSize()).toBe(50);
+        });
+    });
+
     describe('validation and edge cases', () => {
         const gridsManagerWithValidation = new TestGridsManager({
             modules: [ClientSideRowModelModule, PaginationModule, ValidationModule],

@@ -3,6 +3,7 @@ import { _areEqual, _clearElement } from 'ag-stack';
 import type { ListOption } from '../agWidgets/agList';
 import { AgSelect } from '../agWidgets/agSelect';
 import type { BeanCollection } from '../context/context';
+import type { PageSizePanelParams } from '../entities/gridOptions';
 import type { PaginationChangedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ElementParams } from '../utils/element';
@@ -25,8 +26,12 @@ export class PageSizeSelectorComp extends Component {
     private hasEmptyOption = false;
     private pageSizeOptions?: (string | number)[];
 
-    constructor() {
+    constructor(private readonly panelParams?: PageSizePanelParams) {
         super(PageSizeSelectorCompElement);
+    }
+
+    private getPageSizeSelectorOption(): number[] | boolean | undefined {
+        return this.panelParams?.paginationPageSizeSelector ?? this.gos.get(paginationPageSizeSelector);
     }
 
     public postConstruct() {
@@ -121,7 +126,7 @@ export class PageSizeSelectorComp extends Component {
     }
 
     public shouldShowPageSizeSelector(): boolean {
-        return !this.gos.get('paginationAutoPageSize') && this.gos.get(paginationPageSizeSelector) !== false;
+        return !this.gos.get('paginationAutoPageSize') && this.getPageSizeSelectorOption() !== false;
     }
 
     public updateVisibility(): void {
@@ -136,8 +141,8 @@ export class PageSizeSelectorComp extends Component {
         const shouldAddAndSelectEmptyOption =
             !paginationPageSizeOption || !pageSizeOptions.includes(paginationPageSizeOption);
         if (shouldAddAndSelectEmptyOption) {
-            const pageSizeSet = this.gos.exists('paginationPageSize');
-            const pageSizesSet = this.gos.get(paginationPageSizeSelector) !== true;
+            const pageSizeSet = this.panelParams?.paginationPageSize != null || this.gos.exists('paginationPageSize');
+            const pageSizesSet = this.getPageSizeSelectorOption() !== true;
 
             _warn(94, { pageSizeSet, pageSizesSet, pageSizeOptions, paginationPageSizeOption });
             if (!pageSizesSet) {
@@ -187,7 +192,7 @@ export class PageSizeSelectorComp extends Component {
 
     private getPageSizeSelectorValues(): number[] {
         const defaultValues = [20, 50, 100];
-        const paginationPageSizeSelectorValues = this.gos.get(paginationPageSizeSelector);
+        const paginationPageSizeSelectorValues = this.getPageSizeSelectorOption();
 
         if (!Array.isArray(paginationPageSizeSelectorValues) || !paginationPageSizeSelectorValues?.length) {
             return defaultValues;

@@ -54,6 +54,39 @@ paginationPanels: [
 ]
 ```
 
+### Configuring the Page Size Panel
+
+The `pageSize` panel accepts an object form that scopes `paginationPageSize` and `paginationPageSizeSelector` to the panel:
+
+```js
+paginationPanels: [
+    'rowSummary',
+    {
+        type: 'pageSize',
+        paginationPageSize: 50,
+        paginationPageSizeSelector: [10, 20, 50, 100],
+    },
+]
+```
+
+When the same option is set at both the grid level and the panel level, the panel-level value wins:
+
+```js
+const gridOptions = {
+    paginationPageSize: 20,
+    paginationPageSizeSelector: [10, 20, 50],
+    paginationPanels: [
+        {
+            type: 'pageSize',
+            paginationPageSize: 100,
+            paginationPageSizeSelector: [25, 50, 100],
+        },
+    ],
+};
+```
+
+This grid starts on a page size of `100` and offers `[25, 50, 100]` in the selector. Grid-level options still apply when the panel omits them.
+
 ## Number Formats
 
 The numbers within the Paging Toolbar can be formatted in two ways:
