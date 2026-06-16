@@ -894,7 +894,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     rangeSelectionChartCategoryBackgroundColor: '#00FF841A',
     rangeSelectionHighlightColor: accentMix(0.5),
     rangeHeaderHighlightColor: foregroundHeaderBackgroundMix(0.08),
-    calculatedColumnHighlightColor: accentMix(0.2),
+    calculatedColumnHighlightColor: accentMix(0.12),
     calculatedColumnParentSuggestionColor: foregroundMix(0.75),
     calculatedColumnSuggestionListWidth: 200,
     rowNumbersSelectedColor: accentMix(0.5),
