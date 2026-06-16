@@ -43,6 +43,7 @@ export function convertColumnState(
             rowGroup,
             rowGroupIndex,
             aggFunc,
+            valueIndex,
             pivot,
             pivotIndex,
             pinned,
@@ -58,7 +59,7 @@ export function convertColumnState(
             groupColIds[rowGroupIndex ?? 0] = colId;
         }
         if (typeof aggFunc === 'string') {
-            aggregationColumns.push({ colId, aggFunc });
+            aggregationColumns[valueIndex ?? aggregationColumns.length] = { colId, aggFunc };
         }
         if (pivot) {
             pivotColIds[pivotIndex ?? 0] = colId;
@@ -77,7 +78,9 @@ export function convertColumnState(
     return {
         sort: sortColumns.length ? { sortModel: _removeEmptyValues(sortColumns) } : undefined,
         rowGroup: groupColIds.length ? { groupColIds: _removeEmptyValues(groupColIds) } : undefined,
-        aggregation: aggregationColumns.length ? { aggregationModel: aggregationColumns } : undefined,
+        aggregation: aggregationColumns.length
+            ? { aggregationModel: _removeEmptyValues(aggregationColumns) }
+            : undefined,
         pivot:
             pivotColIds.length || enablePivotMode
                 ? { pivotMode: enablePivotMode, pivotColIds: _removeEmptyValues(pivotColIds) }

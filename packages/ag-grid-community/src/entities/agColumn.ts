@@ -193,6 +193,8 @@ export class AgColumn<TValue = any>
     /** Position in `pivotColsSvc.columns` when {@link pivotActive}; else stale — always pair the read with a `pivotActive` check. */
     public pivotActiveIndex = -1;
     public aggregationActive = false;
+    /** Position in `valueColsSvc.columns` when {@link aggregationActive}; else stale — always pair the read with an `aggregationActive` check. */
+    public aggregationActiveIndex = -1;
     /** The display group col that shows this (source) column; set by `showRowGroupCols` on refresh */
     public showRowGroupCol: AgColumn | null = null;
 

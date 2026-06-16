@@ -532,6 +532,8 @@
             }
         },
         "initialAggFunc": {},
+        "valueIndex": {},
+        "initialValueIndex": {},
         "enableValue": {
             "more": {
                 "name": "Configuring via the UI",
