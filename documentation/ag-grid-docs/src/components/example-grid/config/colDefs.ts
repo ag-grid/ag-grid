@@ -1,4 +1,6 @@
 import type {
+    CellClassParams,
+    CellClassRules,
     CellStyleFunc,
     ColDef,
     ColGroupDef,
@@ -10,27 +12,35 @@ import type {
 import { COUNTRY_NAMES, LANGUAGES, type RowItem, games, months } from '../data';
 import { CountryCellRenderer, RatingRenderer } from './renderers';
 
-//put in the month cols
-const monthCols = months.map((month) => {
-    const child: ColDef = {
-        field: month,
-        width: 120,
-        enableValue: true,
-        aggFunc: 'sum',
-        cellClassRules: {
-            'good-score': 'typeof x === "number" && x > 50000',
-            'bad-score': 'typeof x === "number" && x < 10000',
-            'currency-cell': 'typeof x === "number" && x >= 10000 && x <= 50000',
-        },
-        cellDataType: 'currency',
-        filter: 'agNumberColumnFilter',
-        filterParams: {
-            buttons: ['reset'],
-            inRangeInclusive: true,
-        },
-    };
-    return child;
-});
+// Function-based cell class rules rather than string expressions: string
+// expressions are evaluated with `new Function`, which requires the CSP
+// `script-src 'unsafe-eval'` that this site no longer allows.
+const isCurrency = (params: CellClassParams): boolean => typeof params.value === 'number';
+
+const currencyCellClassRules: CellClassRules = {
+    'currency-cell': isCurrency,
+};
+
+const scoreCellClassRules: CellClassRules = {
+    'good-score': (params) => typeof params.value === 'number' && params.value > 50000,
+    'bad-score': (params) => typeof params.value === 'number' && params.value < 10000,
+    'currency-cell': (params) => typeof params.value === 'number' && params.value >= 10000 && params.value <= 50000,
+};
+
+const monthColBase: ColDef = {
+    width: 120,
+    minWidth: 120,
+    enableValue: true,
+    cellClassRules: scoreCellClassRules,
+    cellDataType: 'currency',
+    filter: 'agNumberColumnFilter',
+    filterParams: {
+        buttons: ['reset'],
+        inRangeInclusive: true,
+    },
+};
+
+const monthCols = months.map((month): ColDef => ({ ...monthColBase, field: month, aggFunc: 'sum' }));
 
 const currencyCssFunc: CellStyleFunc = (params) => {
     if (params.value != null && params.value < 0) {
@@ -134,9 +144,7 @@ const mobileDefaultCols: ColDef<RowItem>[] = [
     {
         field: 'bankBalance',
         width: 180,
-        cellClassRules: {
-            'currency-cell': 'typeof x == "number"',
-        },
+        cellClassRules: currencyCellClassRules,
         enableValue: true,
         cellDataType: 'currency',
         filter: 'agNumberColumnFilter',
@@ -146,9 +154,7 @@ const mobileDefaultCols: ColDef<RowItem>[] = [
         filter: 'agNumberColumnFilter',
         width: 170,
         enableValue: true,
-        cellClassRules: {
-            'currency-cell': 'typeof x == "number"',
-        },
+        cellClassRules: currencyCellClassRules,
         cellStyle: currencyCssFunc,
         cellDataType: 'currency',
     },
@@ -268,9 +274,7 @@ const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
             {
                 field: 'bankBalance',
                 width: 150,
-                cellClassRules: {
-                    'currency-cell': 'typeof x == "number"',
-                },
+                cellClassRules: currencyCellClassRules,
                 enableValue: true,
                 aggFunc: 'avg',
                 cellDataType: 'currency',
@@ -301,9 +305,7 @@ const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
         width: 200,
         enableValue: true,
         aggFunc: 'sum',
-        cellClassRules: {
-            'currency-cell': 'typeof x == "number"',
-        },
+        cellClassRules: currencyCellClassRules,
         cellDataType: 'currency',
         cellStyle: currencyCssFunc,
     },

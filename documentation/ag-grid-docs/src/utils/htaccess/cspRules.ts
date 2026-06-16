@@ -2,10 +2,10 @@
  * Single source of truth for the site's Content-Security-Policy
  *
  * Consumed by:
- *  - `scripts/csp/generate-csp.ts` to emit the policy string for hand-placing
- *    on staging and (in future) for generating the deploy-time config.
- *  - `htaccessRules.ts` (planned) to emit the `Content-Security-Policy` header
- *    into the generated `.htaccess`.
+ *  - `scripts/csp/generate-csp.ts` to emit the policy string for inspection or
+ *    hand-placing on a vhost.
+ *  - `htaccessRules.ts` to emit the `Content-Security-Policy` header into the
+ *    generated `.htaccess`.
  *
  * Keep this module dependency-free so it can be imported by a standalone `tsx`
  * script without pulling in the Astro/Vite build graph.
@@ -14,8 +14,17 @@
 export type CspEnv = 'dev' | 'staging' | 'production';
 export type CspMode = 'report-only' | 'enforce';
 
+/**
+ * 'site' is the default policy for ordinary pages. 'examples' additionally
+ * allows 'unsafe-eval' and applies only to the standalone example-runner
+ * documents (and archived doc versions) — see EXAMPLES_PATH_CONDITION.
+ */
+export type CspScope = 'site' | 'examples';
+
 export interface CspOptions {
     env: CspEnv;
+    /** Which policy variant to build. Defaults to 'site'. */
+    scope?: CspScope;
     /** Override the trial-licence form origin. Defaults to the per-env value. */
     trialFormOrigin?: string;
 }
@@ -26,9 +35,24 @@ export type CspDirectives = Record<string, string[]>;
 const SELF = "'self'";
 const NONE = "'none'";
 const UNSAFE_INLINE = "'unsafe-inline'";
-// Required by the theme-builder CSS parser and the Angular example-runner (JIT
-// compilation). Removing it is tracked separately and is larger than a one-liner.
+// Permits WebAssembly compilation without permitting JS eval() — narrower than
+// 'unsafe-eval'. Needed on every page: docs snippets are highlighted in the
+// browser by Shiki, whose oniguruma engine instantiates a WASM module
+// (see CodeShiki.tsx). Browsers that predate this token fall back to requiring
+// 'unsafe-eval' for WASM.
+const WASM_UNSAFE_EVAL = "'wasm-unsafe-eval'";
+// Allowed only in the 'examples' scope: the standalone example-runner documents
+// load modules with legacy SystemJS (fetches source over XHR and evals it), and
+// the Angular (JIT compiler) and Vue (runtime template compiler) examples also
+// compile code in the browser. Archived doc versions ship the same runner.
+// Ordinary site pages do not need it — the theme builder's CSS parser used to,
+// but now unescapes string literals without eval (see unescapeStringLiteral).
 const UNSAFE_EVAL = "'unsafe-eval'";
+
+// Apache <If> expression matching the URL paths that get the 'examples' scope:
+// the standalone example-runner documents and archived doc versions (uploaded
+// separately but served from this vhost, so they inherit the root .htaccess).
+export const EXAMPLES_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(examples|archive)/#';
 
 // 'self' resolves to grid-staging.ag-grid.com on staging / localhost in dev, so
 // cross-subdomain references to the production host need an explicit allowance.
@@ -79,6 +103,7 @@ const DEV_CONNECT_SRC = ['https://localhost:4610', 'https://localhost:4611', 'ws
 
 export function getCspDirectives(options: CspOptions): CspDirectives {
     const { env } = options;
+    const scope = options.scope ?? 'site';
     const trialFormOrigin = options.trialFormOrigin ?? TRIAL_FORM_ORIGIN[env];
     const salesforceFormOrigin = SALESFORCE_FORM_ORIGIN[env];
     const realexHppOrigin = REALEX_HPP_ORIGIN[env];
@@ -103,8 +128,12 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://cdn.cookielaw.org', // OneTrust cookie-consent SDK (GTM-injected, prod-only)
             'blob:', // ZoomInfo zi-tag.js bootstraps a blob: URL script
             UNSAFE_INLINE,
-            UNSAFE_EVAL,
+            WASM_UNSAFE_EVAL,
         ],
+        // 'unsafe-inline' stays: the Theming API injects <style> elements at
+        // runtime (live grids run directly on the homepage/demo pages), inline
+        // style attributes are pervasive, and static Apache hosting rules out
+        // per-request nonces.
         'style-src': [
             SELF,
             'https://fonts.googleapis.com',
@@ -171,6 +200,10 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
         'frame-ancestors': [SELF, AG_GRID_HOSTS], // allow *.ag-grid.com (e.g. blog) to embed examples
     };
 
+    if (scope === 'examples') {
+        directives['script-src'].push(UNSAFE_EVAL);
+    }
+
     if (env === 'dev') {
         directives['script-src'].push(...DEV_SCRIPT_SRC);
         directives['connect-src'].push(...DEV_CONNECT_SRC);
@@ -221,4 +254,28 @@ export function getCspHtaccessBlock(options: CspOptions, mode: CspMode): string 
     lines.push('Header always unset Content-Security-Policy-Report-Only');
     lines.push(getCspHtaccessLine(options, mode));
     return lines.join('\n');
+}
+
+/**
+ * Build the full `.htaccess` CSP block with the path-scoped policy split: the
+ * 'site' policy (no 'unsafe-eval') for ordinary pages, replaced by the
+ * 'examples' policy for the paths matched by EXAMPLES_PATH_CONDITION.
+ *
+ * A second CSP policy can only tighten (browsers enforce the intersection), so
+ * the relaxation must unset and re-set the header rather than add another one.
+ */
+export function getScopedCspHtaccessBlock(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
+    const headerName = getCspHeaderName(mode);
+    return [
+        getCspHtaccessBlock({ ...options, scope: 'site' }, mode),
+        '',
+        "# Example-runner documents and archived doc versions additionally need 'unsafe-eval'",
+        '# (SystemJS eval-loads modules; the Angular JIT and Vue runtime template compilers',
+        '# also compile in the browser). <If> sections merge after all other configuration,',
+        '# so this unset+set replaces the header set above for matching requests.',
+        `<If "${EXAMPLES_PATH_CONDITION}">`,
+        `    Header always unset ${headerName}`,
+        `    ${getCspHtaccessLine({ ...options, scope: 'examples' }, mode)}`,
+        '</If>',
+    ].join('\n');
 }

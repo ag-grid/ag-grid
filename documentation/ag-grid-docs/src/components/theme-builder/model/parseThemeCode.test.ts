@@ -123,6 +123,12 @@ test('parses various param value types and formats', () => {
         chromeBackgroundColor: { ref: 'foo' },
     });
 
+    // Escape sequences in string values are unescaped
+    expect(parseThemeCode(String.raw`{ fontFamily: "Foo \"Bar\" é\n", accentColor: '#4EF222' }`).params).toEqual({
+        fontFamily: 'Foo "Bar" é\n',
+        accentColor: '#4EF222',
+    });
+
     // Array as property of object within value
     expect(parseThemeCode(`{ chromeBackgroundColor: { items: [1, 2, 3] } }`).params).toEqual({
         chromeBackgroundColor: { items: [1, 2, 3] },

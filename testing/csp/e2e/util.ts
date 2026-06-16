@@ -31,19 +31,35 @@ export function setupIntrinsicAssertions() {
 
         page.on('console', (msg) => {
             // We only care about warnings/errors.
-            if (msg.type() !== 'warning' && msg.type() !== 'error') return;
+            if (msg.type() !== 'warning' && msg.type() !== 'error') {
+                return;
+            }
 
             // We don't care about the AG license error message.
-            if (msg.text().startsWith('*')) return;
+            if (msg.text().startsWith('*')) {
+                return;
+            }
 
             // Ignore Firefox Quirks Mode warning.
-            if (msg.text().includes('This page is in Quirks Mode')) return;
+            if (msg.text().includes('This page is in Quirks Mode')) {
+                return;
+            }
+
+            // Ignore Report-Only CSP violation reports — they are expected while a
+            // tightened policy is being validated; only enforced violations fail.
+            if (msg.text().includes('[Report Only]')) {
+                return;
+            }
 
             // Ignore 404s when expected
             const notFoundMatcher = /the server responded with a status of 404 \(Not Found\)/;
-            if (msg.location().url.includes('/favicon.ico')) return;
+            if (msg.location().url.includes('/favicon.ico')) {
+                return;
+            }
             if (notFoundMatcher.test(msg.text())) {
-                if (config.ignore404s) return;
+                if (config.ignore404s) {
+                    return;
+                }
                 expect(`${msg.location().url} - ${msg.text()}`).not.toMatch(notFoundMatcher);
             }
 

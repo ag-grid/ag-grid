@@ -1,9 +1,17 @@
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
 import type { CspEnv } from './cspRules';
-import { getCspHtaccessBlock } from './cspRules';
+import { getCspHtaccessBlock, getScopedCspHtaccessBlock } from './cspRules';
 import { SITE_301_REDIRECTS } from './redirects';
 
 export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
+
+// Rollout state for removing 'unsafe-eval' from the production main-site CSP.
+// While 'report-only', production keeps enforcing the previous policy (which
+// allows 'unsafe-eval' everywhere) and reports violations of the tightened
+// path-scoped split. Flip to 'enforce' once the report-only window is clean.
+// Staging always enforces the split. Exported for the tests, which assert
+// different output per phase.
+export const PRODUCTION_CSP_PHASE: 'report-only' | 'enforce' = 'report-only';
 
 const modExpiresRules = `
 <IfModule mod_expires.c>
@@ -153,9 +161,9 @@ AddType application/x-gzip .gz .tgz
 function getStagingHtaccessContent(): string {
     return `${baseRules}
 
-# Content-Security-Policy — enforced. Unsets the legacy wildcard CSP on the staging
-# vhost so this tightened policy is the only one in effect.
-${getCspHtaccessBlock({ env: 'staging' }, 'enforce')}
+# Content-Security-Policy — enforced, path-scoped. Unsets the legacy wildcard CSP on
+# the staging vhost so this tightened policy is the only one in effect.
+${getScopedCspHtaccessBlock({ env: 'staging' }, 'enforce')}
 
 Options -Indexes
 `;
@@ -173,12 +181,7 @@ ${getModRewriteRules()}
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
-# Content-Security-Policy — enforced (the report-only validation window is complete).
-# The block unsets the inherited headers (incl. the legacy wildcard CSP on the vhost)
-# and sets this tightened policy as the enforced CSP. If the vhost wildcard lingers as a
-# separate header, browsers enforce the intersection, so the tightened policy still wins;
-# removing the vhost wildcard line is a follow-up infra cleanup.
-${getCspHtaccessBlock({ env: 'production' }, 'enforce')}
+${getProductionCspContent()}
 
 # CORS settings
 Header add Access-Control-Allow-Origin "*"
@@ -186,6 +189,26 @@ Header add Access-Control-Allow-Methods: "GET,POST,OPTIONS,DELETE,PUT"
 
 Options -Indexes
 `;
+}
+
+function getProductionCspContent(): string {
+    if (PRODUCTION_CSP_PHASE === 'enforce') {
+        return `# Content-Security-Policy — enforced, path-scoped (the report-only validation window
+# for removing 'unsafe-eval' from the main-site policy is complete). The block unsets
+# the inherited headers (incl. the legacy wildcard CSP on the vhost) and sets this
+# tightened policy as the enforced CSP. If the vhost wildcard lingers as a separate
+# header, browsers enforce the intersection, so the tightened policy still wins;
+# removing the vhost wildcard line is a follow-up infra cleanup.
+${getScopedCspHtaccessBlock({ env: 'production' }, 'enforce')}`;
+    }
+    return `# Content-Security-Policy — dual policy while removing 'unsafe-eval' from the
+# main-site policy is validated: keep enforcing the previous tightened policy (which
+# allows 'unsafe-eval' on every page) and report violations of the path-scoped split
+# via Report-Only. The Report-Only <If> override matters: without it, every
+# example-runner page would report eval violations and drown the signal.
+${getCspHtaccessBlock({ env: 'production', scope: 'examples' }, 'enforce')}
+
+${getScopedCspHtaccessBlock({ env: 'production' }, 'report-only')}`;
 }
 
 export function getHtaccessContent(options: { env: HtaccessEnv }): string {
