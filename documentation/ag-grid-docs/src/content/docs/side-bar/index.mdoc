@@ -211,24 +211,31 @@ To ensure correct panel sizing, AG Grid adds a CSS class to the parent element. 
 <div ref={toolPanelParent}
      className="your-app-class ag-tool-panel-external"></div>
 ```
+
 {% /if %}
 
 {% if isFramework("javascript") %}
+
 ```html
 <div id="toolPanelParent" class="your-app-class ag-tool-panel-external"></div>
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```html
 <div #toolPanelParent class="your-app-class ag-tool-panel-external"></div>
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```html
 <div ref="toolPanelParent" class="your-app-class ag-tool-panel-external"></div>
 ```
+
 {% /if %}
 
 {% /note %}
