@@ -869,11 +869,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * parent total. A presentation-layer transform: it changes the displayed value only — the raw value
      * (`getDataValue`, charts, clipboard-of-data) is unchanged. Can be changed at runtime (menu / column state).
      *
-     * A built-in or registered mode name, or the object form `{ type, params, precision }` for modes that take
-     * input (e.g. `{ type: 'percentOf', params: { base: 'colId' } }`). `false`/`null` selects no active mode —
+     * A built-in mode name, or the object form `{ type, params, precision }`. `false`/`null` selects no active mode —
      * the column menu and column state can still select one.
      * To disable the feature entirely (and its menu), use `showValueAsConfig: false`.
-     * Per-column config (custom `modes`, `formatter`, `precision`) lives on `showValueAsConfig`.
+     * Per-column config (`precision`, `suppressHeaderIndicator`) lives on `showValueAsConfig`.
      * @agModule `ShowValueAsModule`
      */
     showValueAs?: ShowValueAsType | ShowValueAs | false | null;
@@ -884,12 +883,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     showValueAsInitial?: ShowValueAsType | ShowValueAs;
     /**
-     * Per-column "Show Values As" configuration: custom `modes`, `formatter`, and `precision`.
+     * Per-column "Show Values As" configuration: `precision` and `suppressHeaderIndicator`.
      * Deep-merges from `defaultColDef`. The active mode is the `showValueAs` selector.
      * `false`/`null` disables the feature for the column (useful to opt a column out via `defaultColDef`).
      * @agModule `ShowValueAsModule`
      */
-    showValueAsConfig?: ShowValueAsConfig<TData, TValue> | false | null;
+    showValueAsConfig?: ShowValueAsConfig | false | null;
     /**
      * Specify a grouping hierarchy for this column. This generates one or more virtual columns to group or pivot by when this column is grouped or pivoted.
      *

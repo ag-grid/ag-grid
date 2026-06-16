@@ -24,6 +24,7 @@ import type {
     ShowValueAs,
     ShowValueAsApplicable,
     ShowValueAsApplicableParams,
+    ShowValueAsConfigInternal,
     ShowValueAsConfigResolved,
     ShowValueAsDef,
     ShowValueAsModeResolved,
@@ -31,16 +32,13 @@ import type {
     ShowValueAsResult,
     ShowValueAsStateValue,
     ShowValueAsType,
-    ShowValueAsValueEditorOptions,
     _IRowNodeGroupStage,
 } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _mergeDeep } from 'ag-grid-community';
 
-import { Dialog } from '../widgets/dialog';
 import { DEFAULT_PRECISION, makeBuiltinShowValueAsModes } from './showValueAsBuiltInModes';
 import { ShowValueAsColumnListsImpl, ShowValueAsMenuParamsImpl } from './showValueAsMenuParams';
 import { ShowValueAsTransformParamsImpl } from './showValueAsTransformParams';
-import { ShowValueAsValuePopup } from './showValueAsValuePopup';
 import { unwrapAggValue } from './showValueAsValueReaders';
 
 /** Resolves a column's "Show Values As" mode and transforms its raw value into the value to display. */
@@ -55,9 +53,6 @@ export class ShowValueAsService extends BeanStub implements NamedBean, IShowValu
     private pivotResultCols?: IPivotResultColsService;
     private valueColsSvc?: IValueColsService;
     private dataTypeSvc?: DataTypeService;
-    /** The currently-open value-input dialog, if any — so a second {@link openValueEditor} replaces it rather than
-     *  stacking a second dialog on top. */
-    private valueEditorDialog: Dialog | null = null;
     /** The built-in mode definitions, built once on first use (a grid that never resolves a column never pays).
      *  Read via {@link builtinModes}. Indexing yields `undefined` for an unknown (user-defined) mode name. */
     private cachedBuiltinModes: Record<string, ShowValueAsDef | undefined> | undefined;
@@ -86,15 +81,14 @@ export class ShowValueAsService extends BeanStub implements NamedBean, IShowValu
     }
 
     public postConstruct(): void {
-        // Adjacent-sibling modes ((previous)/(next)) and filtered denominators depend on the visible row order /
-        // membership, which sort and filter change without otherwise repainting these cells. Refresh after each —
-        // change-detected, so only the cells whose value actually moved repaint (a no-op with no active modes).
+        // Filtered denominators depend on the visible row membership, which sort and filter change without
+        // otherwise repainting these cells. Refresh after each — change-detected, so only the cells whose value
+        // actually moved repaint (a no-op with no active modes).
         const refresh = (): void => this.refreshRenderedCells();
         this.addManagedEventListeners({ sortChanged: refresh, filterChanged: refresh });
     }
 
     public override destroy(): void {
-        this.valueEditorDialog?.close();
         super.destroy();
         this.cachedBuiltinModes = undefined;
         this.cachedResolvedBuiltinModes = undefined;
@@ -199,7 +193,8 @@ export class ShowValueAsService extends BeanStub implements NamedBean, IShowValu
      *  `showValueAsConfig.modes`, a deep-merge of its overrides (a builtin gains/changes fields, `false`/`null`
      *  removes it, or a new mode is added). The built-ins are resolved once (see {@link resolvedBuiltinModes}). */
     private resolveConfig(column: AgColumn): ShowValueAsConfigResolved | null {
-        const config = column.colDef.showValueAsConfig;
+        // `modes` is an internal-only registry (not on the public `ShowValueAsConfig`); resolve built-ins through it.
+        const config = column.colDef.showValueAsConfig as ShowValueAsConfigInternal | false | null | undefined;
         if (config === false || config === null) {
             return null; // feature disabled for this column
         }
@@ -448,8 +443,7 @@ export class ShowValueAsService extends BeanStub implements NamedBean, IShowValu
         if (!transform) {
             return unwrapAggValue(rawValue) ?? null;
         }
-        // The selector's params, falling back to the def's defaults — base modes read `base`/`baseItem`, ordered
-        // modes `over`, custom modes their own shape.
+        // The selector's params, falling back to the def's defaults (e.g. `percentOfParentTotal`'s `baseField`).
         const params = resolved.params ?? resolved.def.params;
         // Callers gate on isApplying() — don't re-evaluate it per cell here. Normalise a custom transform's
         // `undefined` to `null` (a blank cell), matching the pass-through branch above.
@@ -589,7 +583,7 @@ export class ShowValueAsService extends BeanStub implements NamedBean, IShowValu
         };
         const modes = column.showValueAsConfig?.modes;
         for (const type of modes ? Object.keys(modes) : []) {
-            const item = this.buildModeMenuItem(column, type, modes![type], active, localeTextFunc, getColumnLists);
+            const item = this.buildModeMenuItem(column, type, modes![type], active, getColumnLists);
             if (item) {
                 result.push(item);
             }
@@ -604,7 +598,6 @@ export class ShowValueAsService extends BeanStub implements NamedBean, IShowValu
         type: ShowValueAsType,
         mode: ShowValueAsModeResolved,
         active: ShowValueAsType | null,
-        localeTextFunc: LocaleTextFunc,
         getColumnLists: () => ShowValueAsColumnListsImpl
     ): MenuItemDef | null {
         const isActive = active === type;
@@ -634,7 +627,6 @@ export class ShowValueAsService extends BeanStub implements NamedBean, IShowValu
                       column,
                       type,
                       isActive,
-                      localeTextFunc,
                       getColumnLists()
                   )
               )
@@ -658,73 +650,6 @@ export class ShowValueAsService extends BeanStub implements NamedBean, IShowValu
             item.disabled = true;
         }
         return item;
-    }
-
-    /** Opens the built-in number-input popup ({@link ShowValueAsValuePopup}) anchored under the column header,
-     *  calling `onApply` with the committed value. Backs the `editValue` menu-param helper. */
-    public openValueEditor(
-        column: AgColumn,
-        type: ShowValueAsType,
-        onApply: (value: number) => void,
-        options: ShowValueAsValueEditorOptions | undefined,
-        localeTextFunc: LocaleTextFunc
-    ): void {
-        if (!this.beans.popupSvc) {
-            return;
-        }
-        // A second call while one is open replaces it (closing tears the old one down via its `destroyed`
-        // listener), so the dialogs never stack.
-        this.valueEditorDialog?.close();
-        const mode = column.showValueAsConfig?.modes[type];
-        const title = options?.title ?? (mode ? modeLabel(mode.def, type) : type);
-        const columnName = this.beans.colNames.getDisplayNameForColumn(column, 'header') || column.colId;
-        const message =
-            options?.message ??
-            localeTextFunc('showValueAsValuePrompt', `Compare each '${columnName}' value against the number below.`, [
-                columnName,
-            ]);
-
-        let done = false;
-        const finish = (committed: number | null): void => {
-            if (done) {
-                return;
-            }
-            done = true;
-            dialog.close();
-            if (committed != null) {
-                onApply(committed);
-            }
-        };
-
-        const body = this.createBean(
-            new ShowValueAsValuePopup({
-                description: message,
-                applyLabel: localeTextFunc('showValueAsApply', 'Apply'),
-                cancelLabel: localeTextFunc('showValueAsCancel', 'Cancel'),
-                value: options?.value,
-                onApply: (v) => finish(v),
-                onCancel: () => finish(null),
-            })
-        );
-        const dialog = this.createBean(
-            new Dialog({
-                title,
-                component: body,
-                width: 320,
-                centered: true,
-                movable: true,
-                modal: false,
-                cssIdentifier: 'show-value-as-value',
-            })
-        );
-        this.valueEditorDialog = dialog;
-        dialog.addEventListener('destroyed', () => {
-            this.destroyBean(body);
-            if (this.valueEditorDialog === dialog) {
-                this.valueEditorDialog = null;
-            }
-        });
-        body.focusInput();
     }
 
     /** Tooltip for a mode: its label and the calculation it performs — shared by the menu and header indicator.

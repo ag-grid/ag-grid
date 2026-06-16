@@ -393,7 +393,6 @@ export type {
     IGroupCellRendererParams,
     TotalValueGetterFunc,
 } from './interfaces/groupCellRenderer';
-export type { CellValueResolveFrom } from './valueService/valueService';
 export type {
     EventCellRendererParams,
     GetCellRendererInstancesParams,
@@ -753,7 +752,6 @@ export type {
     ShowValueAs,
     ShowValueAsApplicableParams,
     ShowValueAsApplicable,
-    ShowValueAsBaseParams,
     ShowValueAsBuiltInType,
     ShowValueAsColumnLists,
     ShowValueAsConfig,
@@ -762,8 +760,6 @@ export type {
     ShowValueAsFormatterParams,
     ShowValueAsMenuParams,
     ShowValueAsModeResolved,
-    ShowValueAsModes,
-    ShowValueAsNumber,
     ShowValueAsParamsMap,
     ShowValueAsParentTotalParams,
     ShowValueAsResolved,
@@ -772,7 +768,6 @@ export type {
     ShowValueAsTransform,
     ShowValueAsTransformParams,
     ShowValueAsType,
-    ShowValueAsValueEditorOptions,
 } from './entities/colDef-showValueAs';
 export type {
     BaseCellDataType,

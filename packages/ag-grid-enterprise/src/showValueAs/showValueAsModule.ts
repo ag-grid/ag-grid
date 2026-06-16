@@ -2,7 +2,6 @@ import type { _ModuleWithoutApi } from 'ag-grid-community';
 
 import { SharedAggregationModule } from '../aggregation/aggregationModule';
 import { VERSION } from '../version';
-import showValueAsCSS from './showValueAs.css';
 import { ShowValueAsService } from './showValueAsService';
 
 /**
@@ -15,6 +14,5 @@ export const ShowValueAsModule: _ModuleWithoutApi = {
     rowModels: ['clientSide'],
     beans: [ShowValueAsService],
     icons: { showValueAs: 'aggregation' },
-    css: [showValueAsCSS],
     dependsOn: [SharedAggregationModule],
 };

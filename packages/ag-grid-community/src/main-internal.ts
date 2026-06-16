@@ -87,7 +87,7 @@ export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { RowsDrop as _RowsDrop } from './dragAndDrop/rowDragTypes';
 export { _getDisplaySortForColumn, _normalizeSortType, _resolvePivotColumnForRow, AgColumn } from './entities/agColumn';
 export type { ColKind } from './entities/agColumn';
-export type { AgShowValueAsResolved } from './entities/colDef-showValueAs';
+export type { AgShowValueAsResolved, ShowValueAsConfigInternal, ShowValueAsModes } from './entities/colDef-showValueAs';
 export { AgColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export {

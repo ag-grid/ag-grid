@@ -1,5 +1,3 @@
-import type { LocaleTextFunc } from 'ag-stack';
-
 import type {
     AgColumn,
     BeanCollection,
@@ -9,17 +7,16 @@ import type {
     ShowValueAsColumnLists,
     ShowValueAsMenuParams,
     ShowValueAsType,
-    ShowValueAsValueEditorOptions,
 } from 'ag-grid-community';
 
-/** Max base-item entries listed in a field's submenu, and max nodes expanded per level while collecting them —
- *  bounds the work and keeps the menu usable on large data. */
+/** Max dimension-item entries listed in a field's submenu, and max nodes expanded per level while collecting
+ *  them — bounds the work and keeps the menu usable on large data. */
 const DIMENSION_ITEMS_CAP = 100;
 const DIMENSION_WALK_CAP = 10000;
 
 /** The candidate columns a mode's menu can offer, plus the column-naming and dimension-item helpers — computed
  *  lazily from the active row-group / pivot / value columns and shared across a column's modes (a mode reading
- *  only `rowGroups` never computes `valueColumns`; the base modes don't recompute the same lists). */
+ *  only `rowGroups` never computes `valueColumns`, and the shared instance is not recomputed per mode). */
 export class ShowValueAsColumnListsImpl implements ShowValueAsColumnLists {
     private _rowGroups?: AgColumn[];
     private _dimensions?: AgColumn[];
@@ -69,8 +66,8 @@ export class ShowValueAsColumnListsImpl implements ShowValueAsColumnLists {
         return this._valueColumns;
     }
 
-    /** Distinct items (display order) of dimension field `field` for a base-item submenu — its pivot keys while
-     *  pivoting, else its row-group keys. Capped to keep the menu usable on large data. */
+    /** Distinct items (display order) of dimension field `field` — its pivot keys while pivoting, else its
+     *  row-group keys. Capped to keep the menu usable on large data. */
     public dimensionItems(field: string | Column): string[] {
         const fieldId = typeof field === 'string' ? field : field.getColId();
         const beans = this._beans;
@@ -116,8 +113,7 @@ const rowDimensionItems = (beans: BeanCollection, fieldId: string): string[] => 
     if (!root || level < 0) {
         return [];
     }
-    // Walk childrenAfterSort so the listed items follow display order — matching the adjacent-item
-    // ((previous)/(next)) navigation, which reads childrenAfterSort (see rowBaseValue).
+    // Walk childrenAfterSort so the listed items follow display order.
     let frontier: IRowNode[] = root.childrenAfterSort ?? [];
     for (let depth = 0; depth < level && frontier.length; ++depth) {
         const next: IRowNode[] = [];
@@ -144,8 +140,7 @@ const rowDimensionItems = (beans: BeanCollection, fieldId: string): string[] => 
 };
 
 /** Per-mode {@link ShowValueAsMenuParams}: a class with prototype methods. The column lists are created lazily
- *  on first access; the action helpers (`apply`/`editValue`) delegate to the service bean, which owns the
- *  selection state and the value-popup lifecycle. */
+ *  on first access; `apply` delegates to the service bean, which owns the selection state. */
 export class ShowValueAsMenuParamsImpl implements ShowValueAsMenuParams {
     constructor(
         public readonly api: GridApi,
@@ -154,7 +149,6 @@ export class ShowValueAsMenuParamsImpl implements ShowValueAsMenuParams {
         public readonly column: AgColumn,
         public readonly type: ShowValueAsType,
         public readonly active: boolean,
-        private readonly _localeTextFunc: LocaleTextFunc,
         public readonly columnLists: ShowValueAsColumnListsImpl
     ) {}
 
@@ -167,10 +161,6 @@ export class ShowValueAsMenuParamsImpl implements ShowValueAsMenuParams {
             this.column,
             params != null ? { type: this.type, params } : this.type
         );
-    }
-
-    public editValue(onApply: (value: number) => void, options?: ShowValueAsValueEditorOptions): void {
-        this._beans.showValueAsSvc?.openValueEditor(this.column, this.type, onApply, options, this._localeTextFunc);
     }
 }
 
