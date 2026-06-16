@@ -1,12 +1,6 @@
-import { logErrorMessageOnce, paramToVariableName } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
-import { _asThemeImpl } from 'ag-stack';
-import { useEffect } from 'react';
-
-import { styleMaterial, themeMaterial } from 'ag-grid-community';
 
 import { useRenderedTheme } from '../../model/rendered-theme';
-import { getThemeDefaultParams } from '../component-utils';
 import { EditorPanel } from '../editors/EditorPanel';
 import { PresetSelector } from '../presets/PresetSelector';
 import { GetThemeButton } from './GetTheme';
@@ -14,8 +8,6 @@ import { GridPreview } from './GridPreview';
 
 export const RootContainer = () => {
     const renderedTheme = useRenderedTheme();
-
-    useWarnOfUnknownCssVariables();
 
     return (
         <Container>
@@ -106,40 +98,3 @@ const Main = styled('div')`
     position: relative;
     gap: 20px;
 `;
-
-function useWarnOfUnknownCssVariables() {
-    useEffect(() => {
-        warnOfUnknownCssVariables();
-    }, []);
-}
-
-async function warnOfUnknownCssVariables() {
-    const theme = _asThemeImpl(themeMaterial.withPart(styleMaterial));
-    const allowedVariables = new Set(Object.keys(getThemeDefaultParams(theme)).map(paramToVariableName));
-    allowedVariables.add('--ag-line-height');
-    allowedVariables.add('--ag-indentation-level');
-    allowedVariables.add('--ag-row-highlight-level');
-
-    // This uses vite's glob import feature to import all CSS files in the source tree
-    const cssModules = import.meta.glob('../../../../../../../packages/ag-grid-community/src/**/*.css', {
-        import: 'default',
-        query: { inline: true },
-    });
-
-    const cssFiles = await Promise.all(
-        Object.entries(cssModules).map(async ([filePath, moduleFunc]) => ({
-            source: filePath,
-            css: (await moduleFunc()) as string,
-        }))
-    );
-
-    for (const { source, css } of cssFiles) {
-        if (typeof css === 'string') {
-            for (const [, variable] of css.matchAll(/var\((--ag-[\w-]+)[^)]*\)/g)) {
-                if (!allowedVariables.has(variable) && !/^--ag-(internal|inherited)-/.test(variable)) {
-                    logErrorMessageOnce(`${source} CSS contains var(${variable}) which does not match a theme param`);
-                }
-            }
-        }
-    }
-}

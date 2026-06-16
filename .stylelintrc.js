@@ -56,6 +56,30 @@ module.exports = {
             files: ['packages/**/*.css'],
             rules: {
                 'ag/no-low-performance-key-selector': true,
+                'ag/no-unknown-theme-variable': [
+                    true,
+                    {
+                        paramSourceFiles: [
+                            'packages/ag-stack/src/theming/shared/shared-css.ts',
+                            'packages/ag-grid-community/src/theming/core/core-css.ts',
+                            'packages/ag-grid-community/src/theming/parts/button-style/button-styles.ts',
+                            'packages/ag-grid-community/src/theming/parts/checkbox-style/checkbox-styles.ts',
+                            'packages/ag-grid-community/src/theming/parts/input-style/input-styles.ts',
+                            'packages/ag-grid-community/src/theming/parts/tab-style/tab-styles.ts',
+                            'packages/ag-grid-community/src/theming/parts/theme/themes.ts',
+                        ],
+                        // Variables that are valid but not derived from a theme param.
+                        // Only add a variable here if it is intended to be used by
+                        // customers; any other non-param variable must instead be
+                        // prefixed --ag-internal-.
+                        publicOutputVariables: [
+                            '--ag-line-height',
+                            '--ag-indentation-level',
+                            '--ag-row-highlight-level',
+                            '--ag-horizontal-size',
+                        ],
+                    },
+                ],
             },
         },
     ],
