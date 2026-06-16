@@ -19,10 +19,20 @@ import { RETURN_URLS } from './constants';
 
 const contactFormData = LIBRARY === 'studio' ? STUDIO_FORM_DATA : CONTACT_FORM_DATA;
 
-const { actionUrl, orgId, textAreaId, leadSource, messagePlaceholder, formLocationId, captchaSettingsKeyName } =
-    getIsProduction() ? contactFormData.production : contactFormData.default;
+const {
+    actionUrl,
+    orgId,
+    textAreaId,
+    leadSource,
+    messagePlaceholder,
+    formLocationId,
+    enquiryTypeId,
+    captchaSettingsKeyName,
+} = getIsProduction() ? contactFormData.production : contactFormData.default;
 
 const isDev = getIsDev();
+
+const ENQUIRY_TYPE_OPTIONS = ['Sales', 'Technical Support', 'Press/Media', 'Partnerships', 'General'] as const;
 
 type FormValues = {
     first_name: string;
@@ -189,6 +199,25 @@ export const ContactForm: FunctionComponent<Props> = ({
                     {errors.email && <p className="error">{errors.email.message}</p>}
                 </div>
             </div>
+            {enquiryTypeId && (
+                <div className={classnames('input-field', { 'input-error': errors[enquiryTypeId] })}>
+                    <label htmlFor={enquiryTypeId}>Enquiry Type</label>
+                    <select id={enquiryTypeId} {...register(enquiryTypeId, { required: 'Enquiry type is required' })}>
+                        <option value="">--None--</option>
+                        {ENQUIRY_TYPE_OPTIONS.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+                    <div className={styles.errorContainer}>
+                        {errors[enquiryTypeId] && (
+                            <p className="error">{(errors as any)[enquiryTypeId]?.message as string}</p>
+                        )}
+                    </div>
+                </div>
+            )}
+
             {!hideMessage && (
                 <div className={classnames('input-field', { 'input-error': errors[textAreaId] })}>
                     <label htmlFor={textAreaId}>Message</label>

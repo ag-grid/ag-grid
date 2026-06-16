@@ -37,6 +37,10 @@
     }
 }
 
+.contactForm :global(select) {
+    width: 100%;
+}
+
 /* Textarea tweaks */
 .contactForm :global(textarea) {
     min-height: 6rem; /* slightly higher than default */
