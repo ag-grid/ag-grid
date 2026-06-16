@@ -25,7 +25,7 @@ export function convertColumnState(
 > {
     const sortColumns: SortModelItem[] = [];
     const groupColIds: string[] = [];
-    const aggregationColumns: AggregationColumnState[] = [];
+    const aggregationColumns: (AggregationColumnState & { valueIndex: number | null | undefined })[] = [];
     const pivotColIds: string[] = [];
     const leftColIds: string[] = [];
     const rightColIds: string[] = [];
@@ -59,7 +59,7 @@ export function convertColumnState(
             groupColIds[rowGroupIndex ?? 0] = colId;
         }
         if (typeof aggFunc === 'string') {
-            aggregationColumns[valueIndex ?? aggregationColumns.length] = { colId, aggFunc };
+            aggregationColumns.push({ colId, aggFunc, valueIndex });
         }
         if (pivot) {
             pivotColIds[pivotIndex ?? 0] = colId;
@@ -79,7 +79,7 @@ export function convertColumnState(
         sort: sortColumns.length ? { sortModel: _removeEmptyValues(sortColumns) } : undefined,
         rowGroup: groupColIds.length ? { groupColIds: _removeEmptyValues(groupColIds) } : undefined,
         aggregation: aggregationColumns.length
-            ? { aggregationModel: _removeEmptyValues(aggregationColumns) }
+            ? { aggregationModel: orderAggregationModel(aggregationColumns) }
             : undefined,
         pivot:
             pivotColIds.length || enablePivotMode
@@ -97,6 +97,21 @@ export function convertColumnState(
 // e.g. [ 'colId1', undefined, 'colId3' ] => [ 'colId1', 'colId3' ]
 function _removeEmptyValues<T>(array: T[]): T[] {
     return array.filter((a) => a != undefined);
+}
+
+// Order the aggregation model by `valueIndex` without dropping columns: a stable sort keeps the relative
+// order of entries that share (or lack) an index, so duplicate/invalid indexes can't overwrite each other.
+function orderAggregationModel(
+    columns: (AggregationColumnState & { valueIndex: number | null | undefined })[]
+): AggregationColumnState[] {
+    return columns
+        .map((column, index) => ({ column, index }))
+        .sort((a, b) => {
+            const aIdx = a.column.valueIndex ?? Infinity;
+            const bIdx = b.column.valueIndex ?? Infinity;
+            return aIdx !== bIdx ? aIdx - bIdx : a.index - b.index;
+        })
+        .map(({ column }) => ({ colId: column.colId, aggFunc: column.aggFunc }));
 }
 
 export function _convertColumnGroupState(

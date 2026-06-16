@@ -1,4 +1,5 @@
 import type { ColumnState } from 'ag-grid-community';
+import { convertColumnState } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -81,5 +82,53 @@ describe('Value Column Order (valueIndex)', () => {
         api.applyColumnState({ state: savedState, applyOrder: true });
         await asyncSetTimeout(1);
         expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']);
+    });
+
+    test('a state item with valueIndex but no aggFunc activates and orders the value column', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true },
+                { field: 'year', pivot: true },
+                { field: 'gold' },
+                { field: 'silver' },
+            ],
+            pivotMode: true,
+            rowData,
+        });
+        await asyncSetTimeout(1);
+
+        // No value columns to start with.
+        expect(valueColIdsInOrder(api)).toEqual([]);
+
+        // Index alone (no aggFunc) must activate the columns, ordered by valueIndex.
+        api.applyColumnState({
+            state: [
+                { colId: 'gold', valueIndex: 1 },
+                { colId: 'silver', valueIndex: 0 },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']);
+        // Activation assigned a default aggFunc to each column.
+        const aggFuncs = api.getColumnState().filter((s) => s.aggFunc != null);
+        expect(aggFuncs.map((s) => s.colId).sort()).toEqual(['gold', 'silver']);
+    });
+
+    test('duplicate valueIndex values do not drop aggregation columns from converted state', () => {
+        const columnState: ColumnState[] = [
+            { colId: 'gold', aggFunc: 'sum', valueIndex: 0 },
+            { colId: 'silver', aggFunc: 'sum', valueIndex: 0 },
+            { colId: 'bronze', aggFunc: 'sum', valueIndex: 1 },
+        ];
+
+        const { aggregation } = convertColumnState(columnState);
+
+        // All three columns survive; the colliding index keeps encounter order (gold before silver).
+        expect(aggregation?.aggregationModel).toEqual([
+            { colId: 'gold', aggFunc: 'sum' },
+            { colId: 'silver', aggFunc: 'sum' },
+            { colId: 'bronze', aggFunc: 'sum' },
+        ]);
     });
 });

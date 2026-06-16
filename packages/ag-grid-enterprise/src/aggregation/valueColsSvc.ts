@@ -124,6 +124,10 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
                 return;
             }
             this.applyAggFunc(column, aggFunc, source);
+        } else if (typeof valueIndex === 'number' && !column.aggregationActive) {
+            // An index without an aggFunc still activates the column (a default aggFunc is assigned on
+            // activation), matching the `rowGroupIndex`/`pivotIndex` semantics where the index alone is enough.
+            this.setColActive(column, true, source, true);
         }
         if (typeof valueIndex === 'number' && column.aggregationActive) {
             let idxMap = this.pendingStateOrder;
