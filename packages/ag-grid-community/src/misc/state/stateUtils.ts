@@ -25,7 +25,7 @@ export function convertColumnState(
 > {
     const sortColumns: SortModelItem[] = [];
     const groupColIds: string[] = [];
-    const aggregationColumns: (AggregationColumnState & { valueIndex: number | null | undefined })[] = [];
+    const aggregationColumns: IndexedAggregationColumnState[] = [];
     const pivotColIds: string[] = [];
     const leftColIds: string[] = [];
     const rightColIds: string[] = [];
@@ -99,19 +99,14 @@ function _removeEmptyValues<T>(array: T[]): T[] {
     return array.filter((a) => a != undefined);
 }
 
+type IndexedAggregationColumnState = AggregationColumnState & { valueIndex: number | null | undefined };
+
 // Order the aggregation model by `valueIndex` without dropping columns: a stable sort keeps the relative
 // order of entries that share (or lack) an index, so duplicate/invalid indexes can't overwrite each other.
-function orderAggregationModel(
-    columns: (AggregationColumnState & { valueIndex: number | null | undefined })[]
-): AggregationColumnState[] {
+function orderAggregationModel(columns: IndexedAggregationColumnState[]): AggregationColumnState[] {
     return columns
-        .map((column, index) => ({ column, index }))
-        .sort((a, b) => {
-            const aIdx = a.column.valueIndex ?? Infinity;
-            const bIdx = b.column.valueIndex ?? Infinity;
-            return aIdx !== bIdx ? aIdx - bIdx : a.index - b.index;
-        })
-        .map(({ column }) => ({ colId: column.colId, aggFunc: column.aggFunc }));
+        .sort((a, b) => (a.valueIndex ?? Infinity) - (b.valueIndex ?? Infinity))
+        .map((column) => ({ colId: column.colId, aggFunc: column.aggFunc }));
 }
 
 export function _convertColumnGroupState(
