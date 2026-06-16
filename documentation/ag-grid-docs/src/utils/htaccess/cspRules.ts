@@ -37,6 +37,10 @@ export type CspDirectives = Record<string, string[]>;
 
 const SELF = "'self'";
 const NONE = "'none'";
+// In script-src, 'unsafe-inline' is now scope-specific: the 'site' policy
+// authorises its few known inline scripts by SHA-256 hash instead (see
+// SITE_SCRIPT_HASHES), while 'examples' and 'campaigns' still carry it. In
+// style-src it stays everywhere (Theming API runtime <style> injection).
 const UNSAFE_INLINE = "'unsafe-inline'";
 // Permits WebAssembly compilation without permitting JS eval() — narrower than
 // 'unsafe-eval'. Needed on every page: docs snippets are highlighted in the
@@ -51,6 +55,17 @@ const WASM_UNSAFE_EVAL = "'wasm-unsafe-eval'";
 // Ordinary site pages do not need it — the theme builder's CSS parser used to,
 // but now unescapes string literals without eval (see unescapeStringLiteral).
 const UNSAFE_EVAL = "'unsafe-eval'";
+
+// SHA-256 hashes authorising the main-page inline <script>s in the 'site' scope
+// instead of 'unsafe-inline' (sources in src/utils/csp/inlineScripts.ts; a unit
+// test recomputes these from the source strings to catch drift). Added ONLY to
+// the 'site' scope: per CSP2+, the presence of a hash makes the browser ignore
+// 'unsafe-inline', so the 'examples'/'campaigns' scopes — which still rely on
+// 'unsafe-inline' — must NOT carry them. Dev keeps 'unsafe-inline' (no hashes)
+// because the Vite/Astro dev server injects its own inline scripts.
+const DARK_MODE_SCRIPT_HASH = "'sha256-SWf+6gKXy9XEif5ewVdl93cg2NZaf7BwgIw95JlcJJQ='";
+const PLAUSIBLE_SCRIPT_HASH = "'sha256-yyPoC+PtF+Rve9JwzJ4PTIiap268jewQfmi4/JViA6I='";
+const SITE_SCRIPT_HASHES = [DARK_MODE_SCRIPT_HASH, PLAUSIBLE_SCRIPT_HASH];
 
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
 // demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from
@@ -142,8 +157,8 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.youtube.com', // YouTube iframe JS API (loads into the page)
             'https://cdn.cookielaw.org', // OneTrust cookie-consent SDK (GTM-injected, prod-only)
             'blob:', // ZoomInfo zi-tag.js bootstraps a blob: URL script
-            UNSAFE_INLINE,
             WASM_UNSAFE_EVAL,
+            // 'unsafe-inline' (examples/campaigns/dev) or SHA-256 hashes (site) added per scope below.
         ],
         // 'unsafe-inline' stays: the Theming API injects <style> elements at
         // runtime (live grids run directly on the homepage/demo pages), inline
@@ -215,13 +230,22 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
         'frame-ancestors': [SELF, AG_GRID_HOSTS], // allow *.ag-grid.com (e.g. blog) to embed examples
     };
 
+    // script-src inline handling, by scope (and environment for 'site').
     if (scope === 'examples') {
-        directives['script-src'].push(UNSAFE_EVAL);
+        directives['script-src'].push(UNSAFE_EVAL, UNSAFE_INLINE);
     } else if (scope === 'campaigns') {
-        directives['script-src'].push(BRYNTUM_HOST);
+        directives['script-src'].push(BRYNTUM_HOST, UNSAFE_INLINE);
         directives['style-src'].push(BRYNTUM_HOST);
         directives['font-src'].push(BRYNTUM_HOST);
         directives['connect-src'].push(BRYNTUM_HOST);
+    } else if (env === 'dev') {
+        // Dev server (Vite/Astro) injects its own inline scripts for HMR/hydration
+        // that the static build does not; keep 'unsafe-inline' locally rather than
+        // block them. The hash-based site policy is validated on staging/production.
+        directives['script-src'].push(UNSAFE_INLINE);
+    } else {
+        // 'site' on staging/production: authorise the known inline scripts by hash.
+        directives['script-src'].push(...SITE_SCRIPT_HASHES);
     }
 
     if (env === 'dev') {
