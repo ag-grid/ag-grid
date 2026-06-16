@@ -103,7 +103,7 @@ const ruleFunction = (primary, secondaryOptions) => {
 
         root.walkDecls((decl) => {
             const value = decl.value;
-            if (!value.includes('var(--ag-')) {
+            if (!value.includes('var(')) {
                 return;
             }
 

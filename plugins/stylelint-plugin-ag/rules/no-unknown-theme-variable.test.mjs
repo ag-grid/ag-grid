@@ -51,6 +51,12 @@ describe('no-unknown-theme-variable', () => {
             const warnings = await lint('.x { border: var(--ag-foo) var(--ag-bar); }');
             expect(warnings).toHaveLength(2);
         });
+
+        it('flags an unknown variable with whitespace after var(', async () => {
+            const warnings = await lint('.x { color: var( --ag-illegal ); }');
+            expect(warnings).toHaveLength(1);
+            expect(warnings[0].text).toContain('var(--ag-illegal)');
+        });
     });
 
     describe('should not flag', () => {
