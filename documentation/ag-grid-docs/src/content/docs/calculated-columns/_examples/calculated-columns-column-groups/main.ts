@@ -30,11 +30,24 @@ type QuarterlyRevenueRow = {
 
 type QuarterField = Exclude<keyof QuarterlyRevenueRow, 'product'>;
 
+const formatter = (params: ValueFormatterParams<QuarterlyRevenueRow, number>, formattedString: string): string => {
+    const { value } = params;
+    if (value == null) {
+        return '';
+    }
+
+    if (String(value).startsWith('#')) {
+        return String(value);
+    }
+
+    return formattedString;
+};
+
 const currencyFormatter = (params: ValueFormatterParams<QuarterlyRevenueRow, number>) =>
-    params.value == null ? '' : `$${params.value.toLocaleString()}`;
+    formatter(params, `$${(params.value || '').toLocaleString()}`);
 
 const percentageFormatter = (params: ValueFormatterParams<QuarterlyRevenueRow, number>) =>
-    params.value == null ? '' : `${params.value.toLocaleString(undefined, { maximumFractionDigits: 1 })}%`;
+    formatter(params, `${(params.value || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`);
 
 const quarterColumn = (field: QuarterField): ColDef<QuarterlyRevenueRow, number> => ({
     field,
