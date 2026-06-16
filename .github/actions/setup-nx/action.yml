@@ -165,22 +165,15 @@ runs:
           with:
               node-version-file: package.json
 
-        # NOTE: `if:` is intentionally NOT gated on cache_mode — the input is
-        # documented as "Always ensure yarn postinstall is run." Gating it on
-        # `cache_mode == 'rw'` (the previous behaviour) silently skipped
-        # postinstall under `cache_mode: ro`, so repo-local postinstall steps
-        # (e.g. setup-prompts.sh, which renders .claude/settings.json for the
-        # JIRA agent pipeline) never ran on a read-only cache hit.
+        # Not gated on cache_mode: yarn_postinstall is documented as "always", and gating
+        # on rw skipped postinstall (e.g. setup-prompts.sh) on read-only cache hits.
         - name: yarn install
           if: inputs.yarn_postinstall == 'true'
           id: yarn_install_slow
           shell: bash
           env:
-              # 'true' only on an exact key hit; an inexact restore-keys fallback can carry a stale hoisting layout.
-              # Compare each step's output explicitly against 'true' rather than relying on string truthiness:
-              # `actions/cache` sets cache-hit to the string 'false' on a restore-key fallback (which is truthy in
-              # GHA expressions), and a skipped cache step yields ''. The active step (rw xor ro) is the only one
-              # with a non-empty value, so an explicit `== 'true'` on each is unambiguous regardless of which ran.
+              # Exact key hit only — a restore-key fallback reports the string 'false' and the inactive
+              # step (rw xor ro) yields '', so compare each explicitly against 'true' rather than truthiness.
               EXACT_CACHE_HIT: ${{ steps.cache_rw.outputs.cache-hit == 'true' || steps.cache_ro.outputs.cache-hit == 'true' }}
           run: |
               if [[ "${EXACT_CACHE_HIT}" != "true" ]] ; then
