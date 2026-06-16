@@ -38,10 +38,10 @@ const formatter = (params: ValueFormatterParams<SalesRow, number>, formattedStri
 };
 
 const currencyFormatter = (params: ValueFormatterParams<SalesRow, number>) =>
-    formatter(params, `$${(params.value || '').toLocaleString()}`);
+    formatter(params, `$${(params.value ?? '').toLocaleString()}`);
 
 const percentageFormatter = (params: ValueFormatterParams<SalesRow, number>) =>
-    formatter(params, `${Math.round((params.value || 0) * 100)}%`);
+    formatter(params, `${Math.round((params.value ?? 0) * 100)}%`);
 
 const columnDefs: ColDef<SalesRow>[] = [
     { field: 'account', flex: 1.4 },

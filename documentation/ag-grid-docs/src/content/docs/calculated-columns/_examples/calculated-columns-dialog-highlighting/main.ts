@@ -36,7 +36,7 @@ const formatter = (params: ValueFormatterParams<SalesRow, number>, formattedStri
 };
 
 const currencyFormatter = (params: ValueFormatterParams<SalesRow, number>) =>
-    formatter(params, `$${(params.value || '').toLocaleString()}`);
+    formatter(params, `$${(params.value ?? '').toLocaleString()}`);
 
 const columnDefs: ColDef<SalesRow>[] = [
     { field: 'product', flex: 1.3 },

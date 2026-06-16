@@ -44,10 +44,10 @@ const formatter = (params: ValueFormatterParams<QuarterlyRevenueRow, number>, fo
 };
 
 const currencyFormatter = (params: ValueFormatterParams<QuarterlyRevenueRow, number>) =>
-    formatter(params, `$${(params.value || '').toLocaleString()}`);
+    formatter(params, `$${(params.value ?? '').toLocaleString()}`);
 
 const percentageFormatter = (params: ValueFormatterParams<QuarterlyRevenueRow, number>) =>
-    formatter(params, `${(params.value || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`);
+    formatter(params, `${(params.value ?? 0).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`);
 
 const quarterColumn = (field: QuarterField): ColDef<QuarterlyRevenueRow, number> => ({
     field,

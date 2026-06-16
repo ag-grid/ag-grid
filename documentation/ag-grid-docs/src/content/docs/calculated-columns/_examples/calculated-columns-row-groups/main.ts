@@ -24,11 +24,24 @@ type SalesRow = {
     cost: number;
 };
 
+const formatter = (params: ValueFormatterParams<SalesRow, number>, formattedString: string): string => {
+    const { value } = params;
+    if (value == null) {
+        return '';
+    }
+
+    if (String(value).startsWith('#')) {
+        return String(value);
+    }
+
+    return formattedString;
+};
+
 const currencyFormatter = (params: ValueFormatterParams<SalesRow, number>) =>
-    params.value == null ? '' : `$${params.value.toLocaleString()}`;
+    formatter(params, `$${(params.value ?? '').toLocaleString()}`);
 
 const percentageFormatter = (params: ValueFormatterParams<SalesRow, number>) =>
-    params.value == null ? '' : `${Math.round(params.value * 100)}%`;
+    formatter(params, `${Math.round((params.value ?? 0) * 100)}%`);
 
 const columnDefs: ColDef<SalesRow>[] = [
     { field: 'productType', rowGroup: true, hide: true },
