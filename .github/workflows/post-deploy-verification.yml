@@ -41,11 +41,15 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           fetch-depth: 1
 
-      - name: Setup
-        uses: ./.github/actions/setup-nx
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          cache_mode: ro
-          fetch_base: skip
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        working-directory: documentation/ag-grid-docs
+        run: yarn install --frozen-lockfile --ignore-scripts
 
       - name: Resolve staging URL
         id: staging_url
