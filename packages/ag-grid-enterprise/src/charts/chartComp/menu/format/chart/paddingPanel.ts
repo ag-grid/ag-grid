@@ -1,4 +1,4 @@
-import type { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-types';
+import type { AgChartThemeOverrides, PaddingOptions } from 'ag-charts-types';
 import { RefPlaceholder } from 'ag-stack';
 
 import type { BeanCollection } from 'ag-grid-community';
@@ -35,7 +35,7 @@ export class PaddingPanel extends Component {
             title: this.chartTranslation.translate('padding'),
             suppressEnabledCheckbox: true,
         };
-        const getSliderParams = (property: keyof AgChartPaddingOptions) =>
+        const getSliderParams = (property: keyof PaddingOptions) =>
             this.chartMenuUtils.getDefaultSliderParams('padding.' + property, property, 200);
 
         this.setTemplate(
@@ -67,7 +67,10 @@ export class PaddingPanel extends Component {
     private updateTopPadding(chartOptions: AgChartThemeOverrides) {
         // keep 'top' padding in sync with chart as toggling chart title on / off change the 'top' padding
         const topPadding = [...this.chartController.getChartSeriesTypes(), 'common']
-            .map((seriesType: ChartThemeOverridesSeriesType) => chartOptions?.[seriesType]?.padding?.top)
+            .map((seriesType: ChartThemeOverridesSeriesType) => {
+                const padding = chartOptions?.[seriesType]?.padding;
+                return typeof padding === 'number' ? padding : padding?.top;
+            })
             .find((value) => value != null);
         if (topPadding != null) {
             this.paddingTopSlider.setValue(`${topPadding}`);
