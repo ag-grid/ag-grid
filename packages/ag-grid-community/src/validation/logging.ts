@@ -25,6 +25,40 @@ export function setValidationDocLink(docLink: string) {
     baseDocLink = docLink;
 }
 
+/** An error captured for display in the developer error overlay (pre-init config errors and runtime errors). */
+export interface OverlayError {
+    id: ErrorId;
+    params: any;
+    /** Pre-init fallback message used when the ValidationModule is not registered. Runtime errors derive it on demand. */
+    defaultMessage?: string;
+}
+
+type ErrorListener = (id: ErrorId, params: any) => void;
+
+const errorListeners = new Set<ErrorListener>();
+
+/**
+ * Registers a listener notified of every runtime `_error` call, used by the error overlay to surface
+ * errors logged after grid creation. Returns a cleanup function that removes the listener.
+ */
+export function _addErrorListener(listener: ErrorListener): () => void {
+    errorListeners.add(listener);
+    return () => {
+        errorListeners.delete(listener);
+    };
+}
+
+/**
+ * Builds the developer-facing message for a captured error, for display in the error overlay.
+ * The trailing `See <link>` / `Visit <link>` reference is removed because the overlay renders the
+ * documentation link separately; the registration snippet (when the ValidationModule is registered)
+ * is retained.
+ */
+export function _getErrorMessage(id: ErrorId, params: any, defaultMessage?: string): string {
+    const message = getErrorParts(id, params, defaultMessage).map(stringifyValue).join(' ');
+    return message.replace(/\s*(See|Visit) https?:\/\/\S+/g, '').trim();
+}
+
 type LogFn = (message: string, ...args: any[]) => void;
 
 function getErrorParts<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>, defaultMessage?: string): any[] {
@@ -149,6 +183,11 @@ export function _error<
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
     getMsgOrDefault(_errorOnce, args[0], args[1] as any, false);
+    if (errorListeners.size) {
+        for (const listener of errorListeners) {
+            listener(args[0], args[1]);
+        }
+    }
 }
 
 /** Used for messages before the ValidationService has been created */

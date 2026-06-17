@@ -1049,7 +1049,7 @@ export interface GridOptions<TData = any> {
     suppressNoRowsOverlay?: boolean;
 
     /**
-     * List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`, `fileInput`.
+     * List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`, `fileInput`, `error`.
      */
     suppressOverlays?: OverlayType[];
 

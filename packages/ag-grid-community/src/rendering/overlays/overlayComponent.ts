@@ -3,7 +3,7 @@ import type { IComponent } from 'ag-stack';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import { Component } from '../../widgets/component';
 
-export type OverlayType = 'loading' | 'noRows' | 'noMatchingRows' | 'exporting' | 'fileInput';
+export type OverlayType = 'loading' | 'noRows' | 'noMatchingRows' | 'exporting' | 'fileInput' | 'error';
 
 interface ProvidedOverlayUserParams {
     /**

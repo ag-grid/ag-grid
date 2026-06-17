@@ -1077,7 +1077,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressNoRowsOverlay: boolean | undefined = undefined;
-    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`, `fileInput`.
+    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`, `fileInput`, `error`.
      */
     @Input() public suppressOverlays: OverlayType[] | undefined = undefined;
     /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows, exporting etc).

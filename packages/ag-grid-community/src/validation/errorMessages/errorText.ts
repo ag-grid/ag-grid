@@ -102,11 +102,13 @@ function umdMissingModule(
 export function missingRowModelTypeError({
     moduleName,
     rowModelType,
+    gridOption,
 }: {
     moduleName: CommunityModuleName | EnterpriseModuleName;
     rowModelType: RowModelType;
+    gridOption: string;
 }) {
-    return `To use the ${moduleName}Module you must set the gridOption "rowModelType='${rowModelType}'"`;
+    return `To use the ${gridOption} grid option you must register the ${moduleName}Module and set the grid option "rowModelType='${rowModelType}'".`;
 }
 
 const missingModule = ({

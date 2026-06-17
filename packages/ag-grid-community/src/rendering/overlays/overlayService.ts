@@ -8,7 +8,9 @@ import { _addGridCommonParams, _isClientSideRowModel } from '../../gridOptionsUt
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _attemptToRestoreCellFocus } from '../../utils/gridFocus';
-import { _warn } from '../../validation/logging';
+import type { ErrorId } from '../../validation/errorMessages/errorText';
+import type { OverlayError } from '../../validation/logging';
+import { _addErrorListener, _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
 import type { IOverlayComp, OverlayType } from './overlayComponent';
 import { OverlayWrapperComponent, OverlayWrapperSelector } from './overlayWrapperComponent';
@@ -22,6 +24,7 @@ type OverlayCompType =
     | 'agNoMatchingRowsOverlay'
     | 'agExportingOverlay'
     | 'agFileInputOverlay'
+    | 'agErrorOverlay'
     | 'activeOverlay';
 
 type OverlayDef = Readonly<{
@@ -34,6 +37,8 @@ type OverlayDef = Readonly<{
     paramsKey?: keyof GridOptions;
     isSuppressed?: (gos: GridOptionsService) => boolean;
     overriddenComp?: UserCompDetails<any>;
+    /** Provided overlay that should not be replaced by a user-supplied `overlayComponent`. */
+    noUserOverride?: boolean;
 }>;
 
 const LoadingOverlayDef: OverlayDef = {
@@ -83,6 +88,16 @@ const FileInputOverlayDef: OverlayDef = {
     exclusive: true,
 };
 
+const ErrorOverlayDef: OverlayDef = {
+    id: 'agErrorOverlay',
+    overlayType: 'error',
+    comp: overlayCompType('errorOverlayComponent'),
+    wrapperCls: 'ag-overlay-error-wrapper',
+    exclusive: true,
+    noUserOverride: true,
+    isSuppressed: (gos: GridOptionsService) => gos.get('suppressOverlays')?.includes('error') === true,
+};
+
 const CustomOverlayDef: Readonly<OverlayDef> = {
     id: 'activeOverlay',
     comp: overlayCompType('activeOverlay'),
@@ -121,6 +136,20 @@ const getOverlayDefForType = (overlayType: OverlayType | null): OverlayDef | nul
     )[overlayType];
 };
 
+/** Builds a stable dedup key for an error, tolerating non-serialisable params (functions, circular refs). */
+const getErrorKey = (error: OverlayError): string => {
+    let paramsKey = '';
+    if (error.params) {
+        try {
+            paramsKey = JSON.stringify(error.params);
+        } catch {
+            // Fall back to the param names when the values cannot be serialised.
+            paramsKey = Object.keys(error.params).join(',');
+        }
+    }
+    return `${error.id}:${paramsKey}`;
+};
+
 export class OverlayService extends BeanStub implements NamedBean {
     beanName = 'overlays' as const;
 
@@ -134,10 +163,27 @@ export class OverlayService extends BeanStub implements NamedBean {
     private exportsInProgress: number = 0;
     private focusedCell: CellPosition | null;
 
+    /** Developer-time errors to surface in the error overlay. Seeded from pre-init errors, then runtime errors. */
+    private readonly errors: OverlayError[] = [];
+    /** Keys of errors already captured, to avoid showing the same error twice. */
+    private readonly errorKeys: Set<string> = new Set();
+    private errorOverlayDismissed: boolean = false;
+
     private newColumnsLoadedCleanup: (() => void) | null = null;
     public postConstruct(): void {
         const gos = this.gos;
         this.showInitialOverlay = _isClientSideRowModel(gos);
+
+        const preInitErrors = this.beans.preInitErrors;
+        if (preInitErrors?.length) {
+            for (let i = 0, len = preInitErrors.length; i < len; ++i) {
+                this.captureError(preInitErrors[i]);
+            }
+        }
+
+        // Surface errors logged after grid creation (e.g. a missing feature module for a colDef).
+        const removeErrorListener = _addErrorListener((id, params) => this.onRuntimeError(id, params));
+        this.addDestroyFunc(removeErrorListener);
 
         const updateOverlayVisibility = () => {
             if (this.userForcedNoRows) {
@@ -196,6 +242,52 @@ export class OverlayService extends BeanStub implements NamedBean {
     /** Returns true if the overlay is visible. */
     public isVisible(): boolean {
         return !!this.currentDef;
+    }
+
+    private hasErrors(): boolean {
+        return this.errors.length > 0 && !this.errorOverlayDismissed;
+    }
+
+    /** Errors to display in the error overlay. */
+    public getErrors(): readonly OverlayError[] {
+        return this.errors;
+    }
+
+    private onRuntimeError(id: ErrorId, params: any): void {
+        // Errors that carry a gridId belong to a specific grid; ignore those for other grids. Errors
+        // without a gridId have no grid context, so every live overlay surfaces them (correct on the
+        // single-grid pages this targets; on multi-grid pages they appear on each grid's overlay).
+        const gridId = params?.gridId;
+        if (gridId != null && gridId !== this.beans.context.getId()) {
+            return;
+        }
+        this.addError({ id, params });
+    }
+
+    /** Add a developer-time error and surface it in the error overlay. */
+    public addError(error: OverlayError): void {
+        if (!this.captureError(error)) {
+            return;
+        }
+        this.errorOverlayDismissed = false;
+        this.updateOverlay(false);
+    }
+
+    /** Records an error if not already seen. Returns true if it was newly captured. */
+    private captureError(error: OverlayError): boolean {
+        const key = getErrorKey(error);
+        if (this.errorKeys.has(key)) {
+            return false;
+        }
+        this.errorKeys.add(key);
+        this.errors.push(error);
+        return true;
+    }
+
+    /** Dismiss the error overlay until a new error arrives. */
+    public dismissErrorOverlay(): void {
+        this.errorOverlayDismissed = true;
+        this.updateOverlay(false);
     }
 
     public showLoadingOverlay(): void {
@@ -391,6 +483,12 @@ export class OverlayService extends BeanStub implements NamedBean {
         const { gos, beans } = this;
         const { rowModel } = beans;
 
+        // Developer-time errors take priority over the data-driven overlays (loading / no-rows).
+        // Suppression (suppressOverlays: ['error']) is applied by getDesiredDefWithOverride.
+        if (this.hasErrors()) {
+            return ErrorOverlayDef;
+        }
+
         const loading = gos.get('loading');
 
         const loadingDefined = loading !== undefined;
@@ -454,7 +552,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
 
         let compDetails = undefined;
-        if (isProvidedOverlay) {
+        if (isProvidedOverlay && !componentDef.noUserOverride) {
             // For provided overlays check if the user is providing overrides for them
             if (gos.get('overlayComponent') || gos.get('overlayComponentSelector')) {
                 compDetails = userCompFactory.getCompDetailsFromGridOptions(

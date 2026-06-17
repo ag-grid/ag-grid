@@ -32,7 +32,9 @@ import {
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
+import type { ErrorId } from './validation/errorMessages/errorText';
 import { NoModulesRegisteredError, missingRowModelTypeError } from './validation/errorMessages/errorText';
+import type { OverlayError } from './validation/logging';
 import { _error, _logPreInitErr } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
@@ -125,21 +127,24 @@ export class GridCoreCreator {
 
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 
-        const registeredModules = this.getRegisteredModules(params, gridId, gridOptions.rowModelType);
+        this.registerModules(params, gridId);
 
-        const beanClasses = this.createBeansList(
-            gridOptions.rowModelType,
-            registeredModules,
+        // The client-side row model and overlays are bundled in core, so the grid can always be
+        // instantiated. Recoverable configuration errors are captured here and surfaced in the
+        // error overlay (and console) rather than aborting grid creation. Resolving the effective
+        // row model type may coerce gridOptions.rowModelType, so it must happen before we compute
+        // the registered modules for that row model.
+        const preInitErrors: OverlayError[] = [];
+        const rowModelType = this.resolveRowModelType(
+            gridOptions,
             gridId,
+            preInitErrors,
             params?.frameworkOverrides?.usesAgGridProvider
         );
-        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
 
-        if (!beanClasses) {
-            // Detailed error message will have been printed by createBeansList
-            // Break typing so that the normal return type does not have to handle undefined.
-            return undefined as any;
-        }
+        const registeredModules = _getRegisteredModules(gridId, rowModelType);
+        const beanClasses = this.createBeansList(registeredModules);
+        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, preInitErrors, params);
 
         const destroyCallback = () => {
             _gridElementCache.delete(api);
@@ -187,16 +192,10 @@ export class GridCoreCreator {
         return api;
     }
 
-    private getRegisteredModules(
-        params: GridParams | undefined,
-        gridId: string,
-        rowModelType: RowModelType | undefined
-    ): Module[] {
+    private registerModules(params: GridParams | undefined, gridId: string): void {
         _registerModule(CommunityCoreModule, undefined, true);
 
         params?.modules?.forEach((m) => _registerModule(m, gridId));
-
-        return _getRegisteredModules(gridId, getDefaultRowModelType(rowModelType));
     }
 
     private registerModuleFeatures(
@@ -219,7 +218,12 @@ export class GridCoreCreator {
         }
     }
 
-    private createProvidedBeans(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
+    private createProvidedBeans(
+        eGridDiv: HTMLElement,
+        gridOptions: GridOptions,
+        preInitErrors: OverlayError[],
+        params?: GridParams
+    ): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
         if (_missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
@@ -233,6 +237,7 @@ export class GridCoreCreator {
             globalSyncListener: params ? params.globalSyncListener : null,
             frameworkOverrides: frameworkOverrides,
             withinStudio: params?.withinStudio,
+            preInitErrors: preInitErrors.length ? preInitErrors : undefined,
         };
         if (params?.providedBeanInstances) {
             Object.assign(seed, params.providedBeanInstances);
@@ -241,53 +246,68 @@ export class GridCoreCreator {
         return seed;
     }
 
-    private createBeansList(
-        userProvidedRowModelType: RowModelType | undefined,
-        registeredModules: Module[],
+    /**
+     * Resolves the effective row model type, capturing any recoverable configuration error so it
+     * can be logged and shown in the error overlay. When the requested row model cannot be used
+     * (unknown type, or its module is not registered) the grid falls back to the client-side row
+     * model, which is bundled in core, and `gridOptions.rowModelType` is coerced to match.
+     */
+    private resolveRowModelType(
+        gridOptions: GridOptions,
         gridId: string,
+        preInitErrors: OverlayError[],
         usesAgGridProvider?: boolean
-    ): SingletonBean[] | undefined {
-        // assert that the relevant module has been loaded
+    ): RowModelType {
         const rowModelModuleNames: Record<RowModelType, CommunityModuleName | EnterpriseModuleName> = {
             clientSide: 'ClientSideRowModel',
             infinite: 'InfiniteRowModel',
             serverSide: 'ServerSideRowModel',
             viewport: 'ViewportRowModel',
         };
+
+        const capture = (id: ErrorId, params: any, defaultMessage: string) => {
+            // can't use validation service here as it hasn't been created yet
+            _logPreInitErr(id as any, params, defaultMessage);
+            preInitErrors.push({ id, params, defaultMessage });
+        };
+
+        const fallbackToClientSide = (id: ErrorId, params: any, defaultMessage: string): RowModelType => {
+            capture(id, params, defaultMessage);
+            gridOptions.rowModelType = 'clientSide';
+            return 'clientSide';
+        };
+
+        const userProvidedRowModelType = gridOptions.rowModelType;
         const rowModelType = getDefaultRowModelType(userProvidedRowModelType);
         const rowModuleModelName = rowModelModuleNames[rowModelType];
 
         if (!rowModuleModelName) {
-            // can't use validation service here as hasn't been created yet
-            _logPreInitErr(201, { rowModelType }, `Unknown rowModelType ${rowModelType}.`);
-            return;
+            return fallbackToClientSide(201, { rowModelType }, `Unknown rowModelType ${rowModelType}.`);
         }
 
         if (!_hasUserRegistered()) {
-            _logPreInitErr(272, undefined, NoModulesRegisteredError(usesAgGridProvider));
-            return;
-        }
-
-        if (!userProvidedRowModelType) {
-            // If the user has not specified a rowModelType, but have registered one of the RowModel modules, we need to check
-            // that the user has registered the correct module for the rowModelType.
-            // eslint-disable-next-line no-restricted-properties
-            const registeredRowModelModules = Object.entries(rowModelModuleNames).filter(([rowModelType, module]) =>
-                _isModuleRegistered(module, gridId, rowModelType as RowModelType)
-            );
-
-            if (registeredRowModelModules.length == 1) {
-                const [userRowModelType, moduleName] = registeredRowModelModules[0] as [
-                    RowModelType,
-                    CommunityModuleName | EnterpriseModuleName,
-                ];
-                if (userRowModelType !== rowModelType) {
+            // The client-side row model is bundled in core, so continue with it and surface the
+            // setup instructions to the developer rather than aborting.
+            capture(272, undefined, NoModulesRegisteredError(usesAgGridProvider));
+        } else if (!userProvidedRowModelType) {
+            // The user hasn't set rowModelType (so the grid defaults to the client-side row model),
+            // but providing a datasource for another row model is a clear signal they intended to
+            // use it. Module presence is not a reliable signal - e.g. AllEnterpriseModule registers
+            // every row model - so we key off the datasource the user has supplied instead.
+            const datasourceRowModels: { option: keyof GridOptions; rowModelType: RowModelType }[] = [
+                { option: 'serverSideDatasource', rowModelType: 'serverSide' },
+                { option: 'viewportDatasource', rowModelType: 'viewport' },
+                { option: 'datasource', rowModelType: 'infinite' },
+            ];
+            for (const { option, rowModelType: intendedRowModelType } of datasourceRowModels) {
+                if (gridOptions[option]) {
                     const params = {
-                        moduleName,
-                        rowModelType: userRowModelType,
+                        moduleName: rowModelModuleNames[intendedRowModelType],
+                        rowModelType: intendedRowModelType,
+                        gridOption: option,
                     };
-                    _logPreInitErr(275, params, missingRowModelTypeError(params));
-                    return;
+                    capture(275, params, missingRowModelTypeError(params));
+                    break;
                 }
             }
         }
@@ -299,7 +319,7 @@ export class GridCoreCreator {
             const message = isUmd
                 ? `Unable to use ${reasonOrId} as that requires the ag-grid-enterprise script to be included.\n`
                 : `Missing module ${rowModuleModelName}Module for rowModelType ${rowModelType}.`;
-            _logPreInitErr(
+            return fallbackToClientSide(
                 200,
                 {
                     reasonOrId,
@@ -311,9 +331,12 @@ export class GridCoreCreator {
                 },
                 message
             );
-            return;
         }
 
+        return rowModelType;
+    }
+
+    private createBeansList(registeredModules: Module[]): SingletonBean[] {
         const beans: Set<SingletonBean> = new Set();
 
         for (const module of registeredModules) {

@@ -902,7 +902,7 @@ export interface Props<TData> {
          * @initial
          */
     suppressNoRowsOverlay?: boolean,
-    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`, `fileInput`.
+    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`, `fileInput`, `error`.
          */
     suppressOverlays?: OverlayType[],
     /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows, exporting etc).

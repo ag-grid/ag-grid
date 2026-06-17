@@ -4,7 +4,7 @@ import type { MockInstance } from 'vitest';
 import { beforeEach } from 'vitest';
 
 import type { GridOptions, Params } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowDragModule, createGrid } from 'ag-grid-community';
+import { ClientSideRowModelModule, InfiniteRowModelModule, RowDragModule, createGrid } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -31,38 +31,46 @@ describe('Mismatched rowModelType error', () => {
         consoleErrorSpy?.mockRestore();
     });
 
-    test('No options provided', () => {
-        createMyGrid({}, { modules: [ServerSideRowModelModule] });
-
-        expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-        expect(consoleErrorSpy!.mock.calls[0][1]).toContain(
-            `To use the ServerSideRowModelModule you must set the gridOption "rowModelType='serverSide'"`
+    // The grid now always instantiates (falling back to the client-side row model), so additional
+    // runtime errors may be logged afterwards. Scan all calls for the expected configuration error.
+    function errorLogged(substr: string): boolean {
+        return consoleErrorSpy!.mock.calls.some((call) =>
+            call.some((arg) => typeof arg === 'string' && arg.includes(substr))
         );
+    }
+
+    test('Datasource provided without matching rowModelType warns', () => {
+        // Providing a serverSideDatasource signals the user intended the server-side row model.
+        createMyGrid({ serverSideDatasource: { getRows: () => {} } }, { modules: [ServerSideRowModelModule] });
+
+        expect(
+            errorLogged(
+                `To use the serverSideDatasource grid option you must register the ServerSideRowModelModule and set the grid option "rowModelType='serverSide'".`
+            )
+        ).toBe(true);
     });
 
-    test('No options and no model modules provided should skip the check', () => {
-        createMyGrid({}, { modules: [RowDragModule] });
+    test('No options and no model modules provided uses the bundled client-side row model', () => {
+        // The client-side row model is bundled in core, so the default rowModelType always
+        // resolves without an error even when the user registers no row model module.
+        const api = createMyGrid({}, { modules: [RowDragModule] });
 
-        expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-        expect(consoleErrorSpy!.mock.calls[0][1]).toContain(
-            'Missing module ClientSideRowModelModule for rowModelType clientSide.'
-        );
+        expect(api).toBeDefined();
+        expect(api.isDestroyed()).toBe(false);
+        expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
 
     test('If rowModelType is specified, treat that as higher priority', () => {
         createMyGrid({ rowModelType: 'infinite' }, { modules: [ServerSideRowModelModule] });
 
-        expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-        expect(consoleErrorSpy!.mock.calls[0][1]).toContain(
-            'Missing module InfiniteRowModelModule for rowModelType infinite.'
-        );
+        expect(errorLogged('Missing module InfiniteRowModelModule for rowModelType infinite.')).toBe(true);
     });
 
-    test("shouldn't issue the error message if more than 1 model module is registered", () => {
-        createMyGrid({}, { modules: [ServerSideRowModelModule, ClientSideRowModelModule] });
-        expect(consoleErrorSpy).not.toHaveBeenCalledWith(
-            expect.stringContaining('Module ServerSideRowModel expects rowModelType')
-        );
+    test('row model modules registered without a datasource do not warn', () => {
+        // Module presence is not a reliable intent signal (e.g. AllEnterpriseModule registers every
+        // row model). Without a datasource the grid must not guess a rowModelType or warn.
+        createMyGrid({}, { modules: [ServerSideRowModelModule, InfiniteRowModelModule] });
+        expect(errorLogged('you must register the')).toBe(false);
     });
 
     describe('react module registration strategies', () => {
@@ -71,11 +79,12 @@ describe('Mismatched rowModelType error', () => {
         });
 
         test('pass as props', async () => {
-            render(<AgGridReact modules={[ServerSideRowModelModule]} />);
-            expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-            expect(consoleErrorSpy!.mock.calls[0][1]).toContain(
-                `To use the ServerSideRowModelModule you must set the gridOption "rowModelType='serverSide'"`
-            );
+            render(<AgGridReact modules={[ServerSideRowModelModule]} serverSideDatasource={{ getRows: () => {} }} />);
+            expect(
+                errorLogged(
+                    `To use the serverSideDatasource grid option you must register the ServerSideRowModelModule and set the grid option "rowModelType='serverSide'".`
+                )
+            ).toBe(true);
         });
     });
 });

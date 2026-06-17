@@ -1091,9 +1091,85 @@
     .ag-overlay-loading-wrapper,
     .ag-overlay-exporting-wrapper,
     .ag-overlay-modal-wrapper,
-    .ag-overlay-file-input-wrapper {
+    .ag-overlay-file-input-wrapper,
+    .ag-overlay-error-wrapper {
         // prevent interaction with grid while it's loading
         pointer-events: all;
+    }
+
+    .ag-overlay-error-wrapper {
+        padding: calc(var(--ag-grid-size) * 2);
+    }
+
+    .ag-overlay-error-panel {
+        display: flex;
+        flex-direction: column;
+        text-align: start;
+        max-width: 640px;
+        max-height: 100%;
+        overflow: auto;
+        background: var(--ag-background-color);
+        border: solid 2px color-mix(in srgb, var(--ag-invalid-color) 60%, var(--ag-border-color));
+        border-radius: var(--ag-card-radius);
+        box-shadow: var(--ag-card-shadow);
+    }
+
+    .ag-overlay-error-header {
+        display: flex;
+        align-items: center;
+        gap: calc(var(--ag-grid-size) * 0.5);
+        padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 1.5);
+        background: color-mix(in srgb, var(--ag-invalid-color) 12%, var(--ag-background-color));
+        color: var(--ag-invalid-color);
+        border-bottom: solid 1px var(--ag-border-color);
+    }
+
+    .ag-overlay-error-title {
+        flex: 1;
+        font-weight: 700;
+    }
+
+    .ag-overlay-error-button {
+        cursor: pointer;
+        border: solid 1px var(--ag-border-color);
+        background: var(--ag-background-color);
+        color: var(--ag-text-color);
+        border-radius: var(--ag-border-radius);
+        padding: calc(var(--ag-grid-size) * 0.25) calc(var(--ag-grid-size) * 0.75);
+        font: inherit;
+        display: flex;
+        align-items: center;
+    }
+
+    .ag-overlay-error-body {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--ag-grid-size) * 1.5);
+        padding: calc(var(--ag-grid-size) * 1.5);
+        overflow: auto;
+    }
+
+    .ag-overlay-error-item {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--ag-grid-size) * 0.5);
+    }
+
+    .ag-overlay-error-message {
+        margin: 0;
+        font-family: var(--ag-font-family);
+        font-size: var(--ag-font-size);
+        line-height: var(--ag-line-height, 1.5);
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        user-select: text;
+        background: var(--ag-header-background-color);
+        border-radius: var(--ag-border-radius);
+        padding: var(--ag-grid-size);
+    }
+
+    .ag-overlay-error-link {
+        color: var(--ag-input-focus-border-color);
     }
 
     .ag-overlay-file-input-center {

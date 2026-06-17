@@ -31,11 +31,19 @@ describe('Mismatched rowModelType error global register', () => {
 
         test('global register', async () => {
             ModuleRegistry.registerModules([ServerSideRowModelModule]);
-            render(<AgGridReact />);
-            expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-            expect(consoleErrorSpy!.mock.calls[0][1]).toContain(
-                `To use the ServerSideRowModelModule you must set the gridOption "rowModelType='serverSide'"`
+            render(<AgGridReact serverSideDatasource={{ getRows: () => {} }} />);
+            // The grid now falls back to the bundled client-side row model and instantiates, so
+            // further runtime errors may be logged. Scan all calls for the mismatch error.
+            const errorLogged = consoleErrorSpy!.mock.calls.some((call) =>
+                call.some(
+                    (arg) =>
+                        typeof arg === 'string' &&
+                        arg.includes(
+                            `To use the serverSideDatasource grid option you must register the ServerSideRowModelModule and set the grid option "rowModelType='serverSide'".`
+                        )
+                )
             );
+            expect(errorLogged).toBe(true);
         });
     });
 });
