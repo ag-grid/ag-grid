@@ -244,19 +244,11 @@ export class PaginationService extends BeanStub implements NamedBean {
                 break;
             case 'panel':
                 this.pageSizeFromPanel = size;
-                this.pageSizeFromInitialState = undefined;
-                this.pageSizeFromPageSizeSelector = undefined;
-                if (this.currentPage !== 0) {
-                    this.goToFirstPage();
-                }
+                this.applyExplicitPageSize(size);
                 break;
             case 'gridOptions':
                 this.pageSizeFromGridOptions = size;
-                this.pageSizeFromInitialState = undefined;
-                this.pageSizeFromPageSizeSelector = undefined;
-                if (this.currentPage !== 0) {
-                    this.goToFirstPage();
-                }
+                this.applyExplicitPageSize(size);
                 break;
         }
 
@@ -264,6 +256,19 @@ export class PaginationService extends BeanStub implements NamedBean {
             this.calculatePages();
 
             this.dispatchPaginationChangedEvent({ newPageSize: true, keepRenderedRows: true });
+        }
+    }
+
+    // Only a concrete page size overrides the user's selector/initial-state choice. When the override
+    // is removed (size undefined), keep those values so the previously selected page size is preserved.
+    private applyExplicitPageSize(size: number | undefined): void {
+        if (size === undefined) {
+            return;
+        }
+        this.pageSizeFromInitialState = undefined;
+        this.pageSizeFromPageSizeSelector = undefined;
+        if (this.currentPage !== 0) {
+            this.goToFirstPage();
         }
     }
 

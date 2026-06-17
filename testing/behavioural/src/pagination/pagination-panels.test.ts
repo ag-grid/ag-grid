@@ -1,9 +1,10 @@
+import { userEvent } from '@testing-library/user-event';
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, PaginationModule, ValidationModule, getGridElement } from 'ag-grid-community';
 
-import { TestGridsManager } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 const COLUMN_DEFS = [{ field: 'name' }];
 const ROW_DATA = Array.from({ length: 50 }, (_, i) => ({ name: `Row ${i + 1}` }));
@@ -796,6 +797,32 @@ describe('paginationPanels', () => {
             expect(getPageSizeDisplayValue(getPagingPanel(api)!)).toBe('20');
 
             api.setGridOption('paginationPanels', [{ type: 'pageSize', paginationPageSize: 50 }]);
+
+            expect(api.paginationGetPageSize()).toBe(50);
+            expect(getPageSizeDisplayValue(getPagingPanel(api)!)).toBe('50');
+        });
+
+        test('removing a panel page-size override preserves the user-selected page size', async () => {
+            const userSession = userEvent.setup();
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSizeSelector: [10, 20, 50, 100],
+                paginationPanels: [{ type: 'pageSize', paginationPageSize: 100 }],
+            });
+            expect(api.paginationGetPageSize()).toBe(100);
+
+            const display = getPagingPanel(api)!.querySelector<HTMLElement>(
+                '.ag-paging-page-size .ag-picker-field-display'
+            )!;
+            await userSession.click(display);
+            await asyncSetTimeout(0);
+            const option = Array.from(document.querySelectorAll('.ag-list-item')).find(
+                (item) => item.textContent?.trim() === '50'
+            );
+            await userSession.click(option!);
+            await asyncSetTimeout(0);
+            expect(api.paginationGetPageSize()).toBe(50);
+
+            api.setGridOption('paginationPanels', ['pageSize']);
 
             expect(api.paginationGetPageSize()).toBe(50);
             expect(getPageSizeDisplayValue(getPagingPanel(api)!)).toBe('50');
