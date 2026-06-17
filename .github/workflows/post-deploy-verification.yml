@@ -45,11 +45,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
-          cache: 'yarn'
 
-      - name: Install dependencies
+      - name: Install test dependencies
         working-directory: documentation/ag-grid-docs
-        run: yarn install --frozen-lockfile --ignore-scripts
+        run: npm install --no-save @playwright/test@^1.59.1 playwright-ctrf-json-reporter@0.0.29
 
       - name: Resolve staging URL
         id: staging_url
