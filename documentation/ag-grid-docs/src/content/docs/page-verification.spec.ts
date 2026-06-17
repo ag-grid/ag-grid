@@ -1,35 +1,45 @@
 import { expect, test } from '@playwright/test';
-import { setupConsoleExpectations } from '@utils/grid/test-utils';
-
-type PlaywrightPage = Parameters<typeof setupConsoleExpectations>[0];
+import type { Page } from '@playwright/test';
 
 const isCspIssue = (msg: string) => /Content-Security-Policy|Refused to (load|execute|connect)/i.test(msg);
 
+// Console messages that are known browser/environment noise unrelated to the
+// site under test. Matched by substring so new message formats stay filtered.
+const KNOWN_NOISE = [
+    'ResizeObserver loop',
+    'Failed to load resource: the server responded with a status of 404',
+    'InstallTrigger is deprecated',
+    'has a Report-Only policy without a report-uri',
+    "was delivered in report-only mode, but does not specify a 'report-uri'",
+    "was delivered in report-only mode, but does not specify a 'report-to'",
+    "directive 'frame-ancestors' is ignored when delivered in a report-only policy",
+];
+
 // Sets up console error/warning collection, uncaught exception capture,
 // and blocks the cookie-consent banner. Returns the hard-error array.
-// CSP violations are silently routed to test.info() annotations so they show
-// up as warnings in the report without failing the test.
-async function setupPage(page: PlaywrightPage): Promise<string[]> {
-    const errors = setupConsoleExpectations(page);
+// CSP violations are routed to test.info() annotations (warnings) rather than
+// hard failures.
+async function setupPage(page: Page): Promise<string[]> {
+    const errors: string[] = [];
 
-    // Override push on the array returned by setupConsoleExpectations so that
-    // any future push() call (from the already-registered console listener, or
-    // our pageerror listener below) routes CSP messages to annotations instead.
-    const originalPush = errors.push.bind(errors);
-    errors.push = (...items: string[]) => {
-        for (const item of items) {
-            if (isCspIssue(item)) {
-                test.info().annotations.push({ type: 'warning', description: `[CSP] ${item}` });
-            } else {
-                originalPush(item);
-            }
+    page.on('console', (msg) => {
+        if (msg.type() !== 'error' && msg.type() !== 'warning') return;
+        const text = msg.text();
+        if (isCspIssue(text)) {
+            test.info().annotations.push({ type: 'warning', description: `[CSP] ${text}` });
+        } else if (!KNOWN_NOISE.some((n) => text.includes(n))) {
+            errors.push(text);
         }
-        return errors.length;
-    };
+    });
 
     await page.route('**://cdn.cookielaw.org/**', (route) => route.abort());
     page.on('pageerror', (error) => {
-        errors.push(`Uncaught exception: ${error.message}`);
+        const msg = `Uncaught exception: ${error.message}`;
+        if (isCspIssue(msg)) {
+            test.info().annotations.push({ type: 'warning', description: `[CSP] ${msg}` });
+        } else {
+            errors.push(msg);
+        }
     });
 
     return errors;
