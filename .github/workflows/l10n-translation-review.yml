@@ -37,10 +37,19 @@ jobs:
 
             - name: Resolve diff range
               id: range
+              env:
+                  GH_TOKEN: ${{ github.token }}
               run: |
                   if [ "${{ github.event_name }}" = "pull_request" ]; then
                       echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
                       echo "head=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+                  elif [ -n "${{ github.event.inputs.pr_number }}" ]; then
+                      # Manual dispatch with a PR number: review that PR's head, not the checked-out ref.
+                      pr="${{ github.event.inputs.pr_number }}"
+                      base_ref=$(gh pr view "$pr" --json baseRefName -q .baseRefName)
+                      git fetch --no-tags origin "$base_ref:refs/l10n/base" "refs/pull/$pr/head:refs/l10n/head"
+                      echo "base=$(git rev-parse refs/l10n/base)" >> "$GITHUB_OUTPUT"
+                      echo "head=$(git rev-parse refs/l10n/head)" >> "$GITHUB_OUTPUT"
                   else
                       git fetch --no-tags origin latest
                       echo "base=$(git rev-parse origin/latest)" >> "$GITHUB_OUTPUT"
@@ -54,7 +63,17 @@ jobs:
                   BASE_SHA: ${{ steps.range.outputs.base }}
                   HEAD_SHA: ${{ steps.range.outputs.head }}
                   REPORT_PATH: l10n-review.md
-              run: node external/ag-shared/scripts/l10n/review-translations.mjs
+              run: |
+                  # Defense-in-depth: execute the review script as it exists at the base ref,
+                  # never the PR head, so PR-controlled code can't run with the API key in scope.
+                  script=external/ag-shared/scripts/l10n/review-translations.mjs
+                  if git cat-file -e "$BASE_SHA:$script" 2>/dev/null; then
+                      git show "$BASE_SHA:$script" > "$RUNNER_TEMP/review-translations.mjs"
+                  else
+                      echo "Script absent at base ref; using checked-out copy (the PR introducing it)."
+                      cp "$script" "$RUNNER_TEMP/review-translations.mjs"
+                  fi
+                  node "$RUNNER_TEMP/review-translations.mjs"
 
             - name: Post review comment
               if: hashFiles('l10n-review.md') != ''
