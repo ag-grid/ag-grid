@@ -52,7 +52,7 @@ jobs:
 
       - name: Install test dependencies
         working-directory: documentation/ag-grid-docs
-        run: npm install --no-save @playwright/test@1.59.1 playwright-ctrf-json-reporter@0.0.29
+        run: npm install --no-save --legacy-peer-deps @playwright/test@1.59.1 playwright-ctrf-json-reporter@0.0.29
 
       - name: Resolve staging URL
         id: staging_url
