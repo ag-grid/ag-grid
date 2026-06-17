@@ -114,7 +114,7 @@ async function main() {
         'Review ONLY the changed lines shown in the diffs, using en-US.ts for context.',
         'Flag: mistranslations or wrong meaning; altered, missing, or mistranslated placeholders/formatters; inappropriate tone or register for product UI / screen-reader text; obviously unnatural phrasing.',
         'Do NOT flag stylistic preferences where the translation is correct, or anything outside the changed lines.',
-        'Output concise GitHub-flavoured Markdown grouped by locale, each finding as a bullet citing the key. If a locale has no issues, say so in one line. If nothing is concerning across all locales, respond with a single line stating translations look correct.',
+        'Output concise GitHub-flavoured Markdown. If nothing is concerning across all locales, respond with a single line stating translations look correct. Otherwise, add a `### <locale>` section ONLY for locales that have issues, each finding as a bullet citing the key; then end with one line listing all the locales with no issues together, e.g. "No issues found in: de-DE, fr-FR, ja-JP." Never give a clean locale its own heading.',
     ].join('\n');
 
     const userText = `## en-US.ts (source of truth, for context)\n\n\`\`\`typescript\n${enUs}\n\`\`\`\n\n## Changed translations to review\n\n${diffs}`;
