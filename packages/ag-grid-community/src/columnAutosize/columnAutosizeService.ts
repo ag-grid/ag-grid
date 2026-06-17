@@ -573,9 +573,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     public processResizeOperations(): void {
         this.shouldQueueResizeOperations = false;
-        // Snapshot and reset before draining: an operation may re-arm shouldQueueResizeOperations
-        // and re-queue itself, so draining the live array would never exhaust. Re-queued operations
-        // land in the fresh array and are drained by the next call.
         const operations = this.resizeOperationQueue;
         this.resizeOperationQueue = [];
         for (let i = 0, len = operations.length; i < len; ++i) {
