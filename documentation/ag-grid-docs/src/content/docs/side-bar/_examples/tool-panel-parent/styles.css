@@ -77,7 +77,7 @@
     -webkit-font-smoothing: antialiased;
     background-color: var(--example-background-color, white);
     color: var(--example-text-color, black);
-    color-scheme: var(--example-browser-color-scheme);
+    color-scheme: var(--example-color-scheme);
     font-family: var(--example-font-family, Arial), sans-serif;
     flex-direction: column;
 }
