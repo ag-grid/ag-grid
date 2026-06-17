@@ -670,6 +670,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaColumnGroup: 'گروه ستون',
     ariaFilterActive: 'فیلتر فعال',
     ariaColumnFiltered: 'ستون فیلتر شده',
+    ariaCalculatedColumn: 'ستون محاسبه‌شده',
     ariaColumnSelectAll: 'تغییر وضعیت نمایش تمام ستون‌ها',
     ariaDateFilterInput: 'ورودی فیلتر تاریخ',
     ariaDefaultListName: 'لیست',

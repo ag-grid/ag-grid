@@ -1,4 +1,11 @@
-import { _camelCaseToHumanText, _findFocusableElements, _isStringLargerThan, _requestAnimationFrame } from 'ag-stack';
+import {
+    _camelCaseToHumanText,
+    _findFocusableElements,
+    _getActiveDomElement,
+    _getDocument,
+    _isStringLargerThan,
+    _requestAnimationFrame,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -12,6 +19,7 @@ import type {
     ColumnEventType,
     ColumnState,
     ColumnTreeBuild,
+    HeaderPosition,
     ICalculatedColumnsService,
     NamedBean,
 } from 'ag-grid-community';
@@ -28,6 +36,7 @@ import {
 
 import { appendColumnToTree } from '../columns/columnTreeEdit';
 import type { FormulaError } from '../formula/ast/utils';
+import type { MenuRestoreFocusParams, MenuUtils } from '../menu/menuUtils';
 import { Dialog } from '../widgets/dialog';
 import {
     CalculatedColumnForm,
@@ -69,6 +78,11 @@ type CalcColEventCommonParams = {
     columns: AgColumn[];
     expression: string;
     source: ColumnEventType;
+};
+
+type CalculatedColumnDialogRestoreFocusParams = {
+    eventSource?: HTMLElement;
+    headerPosition: HeaderPosition | null;
 };
 
 type DynamicCalculatedColumn = {
@@ -284,7 +298,12 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return true;
     }
 
-    public openCalculatedColumnDialog(column: AgColumn | null | undefined, mode: 'add' | 'edit', focus = true): void {
+    public openCalculatedColumnDialog(
+        column: AgColumn | null | undefined,
+        mode: 'add' | 'edit',
+        focus = true,
+        restoreFocusParams?: CalculatedColumnDialogRestoreFocusParams
+    ): void {
         if (!this.isEnabled()) {
             return;
         }
@@ -297,7 +316,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 // Live apply adds the column up front, then opens the dialog over it.
                 const newColumn = this.addDynamicCalculatedColumn(draft, column);
                 if (newColumn) {
-                    this.showDialog(draft, () => null, true, newColumn, focus);
+                    this.showDialog(draft, () => null, true, newColumn, focus, undefined, restoreFocusParams, column);
                 }
                 return;
             }
@@ -311,7 +330,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 },
                 false,
                 undefined,
-                focus
+                focus,
+                undefined,
+                restoreFocusParams,
+                column
             );
             return;
         }
@@ -331,7 +353,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             liveApply,
             column,
             focus,
-            mapper
+            mapper,
+            restoreFocusParams,
+            column
         );
     }
 
@@ -562,7 +586,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         liveApply: boolean,
         columnToHighlight?: AgColumn | null,
         focusDialog = true,
-        existingMapper?: CalculatedColumnReferenceMapper
+        existingMapper?: CalculatedColumnReferenceMapper,
+        restoreFocusParams?: CalculatedColumnDialogRestoreFocusParams,
+        restoreFocusColumn?: AgColumn | null
     ): void {
         const openDialogState = this.openDialogsByColId.get(draft.colId);
         if (openDialogState) {
@@ -655,6 +681,11 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 resizable: true,
                 modal: false,
                 cssIdentifier: 'calculated-column',
+                closedCallback: (event) => {
+                    if (restoreFocusColumn) {
+                        this.restoreFocusOnDialogClose(restoreFocusColumn, form.getGui(), event, restoreFocusParams);
+                    }
+                },
             })
         );
         state.close = () => dialog.close();
@@ -686,6 +717,29 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             }
         });
         dialog.addEventListener('destroyed', () => this.destroyBean(form));
+    }
+
+    private restoreFocusOnDialogClose(
+        column: AgColumn,
+        eComp: HTMLElement,
+        event: MouseEvent | TouchEvent | KeyboardEvent | undefined,
+        params: CalculatedColumnDialogRestoreFocusParams | undefined
+    ): void {
+        if (!params?.eventSource) {
+            return;
+        }
+
+        const restoreFocusParams: MenuRestoreFocusParams = {
+            column,
+            columnIndex: column.allColsIndex,
+            headerPosition: params.headerPosition,
+            eventSource: params.eventSource,
+        };
+
+        (this.beans.menuUtils as MenuUtils | undefined)?.restoreFocusOnClose(restoreFocusParams, eComp, event, true);
+        if (_getActiveDomElement(this.beans) === _getDocument(this.beans).body && params.headerPosition) {
+            this.beans.focusSvc.focusHeaderPosition({ headerPosition: params.headerPosition });
+        }
     }
 
     private scheduleLiveApplyUpdate(draft: CalculatedColumnDraft, mapper: CalculatedColumnReferenceMapper): void {
