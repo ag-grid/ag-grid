@@ -1,4 +1,4 @@
-import { _hasCalculatedExpression } from '../../columns/calculatedColumnUtils';
+import { _hasCalculatedExpression, _isCalculatedColumnsEnabled } from '../../columns/calculatedColumnUtils';
 import type { UserComponentName } from '../../context/context';
 import { _isSortDefValid, isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
@@ -144,9 +144,12 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             supportedRowModels: ['clientSide'],
         },
         calculatedExpression: {
-            validate: (colDef) => {
+            validate: (colDef, gridOptions) => {
                 if (!_hasCalculatedExpression(colDef)) {
                     return null;
+                }
+                if (!_isCalculatedColumnsEnabled(gridOptions.calculatedColumns)) {
+                    return 'colDef.calculatedExpression requires gridOptions.calculatedColumns to be set to true or an options object.';
                 }
                 if (colDef.field || colDef.valueGetter || colDef.valueSetter) {
                     return 'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.';

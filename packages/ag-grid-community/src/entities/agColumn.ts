@@ -254,6 +254,7 @@ export class AgColumn<TValue = any>
         this.userProvidedColDef = userProvidedColDef;
         this.colDef = colDef;
         if (_mergedEqual(colDef, oldColDef)) {
+            this.initCalculatedColumnState(colDef);
             return false;
         }
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
@@ -486,8 +487,13 @@ export class AgColumn<TValue = any>
         this.enableCellChangeFlash = colDef.enableCellChangeFlash;
         this.colSpan = colDef.colSpan;
         this.rowSpan = colDef.rowSpan;
+        this.initCalculatedColumnState(colDef);
+    }
+
+    private initCalculatedColumnState(colDef: ColDef<any, TValue>): void {
         this.calculatedExpression = colDef.calculatedExpression;
-        this.isCalculatedCol = this.calculatedExpression !== undefined && this.beans.calculatedColsSvc != null;
+        this.isCalculatedCol =
+            this.calculatedExpression !== undefined && this.beans.calculatedColsSvc?.isEnabled() === true;
     }
 
     public isResizable(): boolean {

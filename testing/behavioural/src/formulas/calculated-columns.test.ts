@@ -83,6 +83,7 @@ describe('ag-grid calculated columns', () => {
     function createGrid(id: string, opts: Partial<GridOptions>) {
         const options: GridOptions = {
             getRowId: (params) => params.data?.id,
+            calculatedColumns: true,
             ...opts,
         };
         return gridsManager.createGrid(id, options);
@@ -546,6 +547,80 @@ describe('ag-grid calculated columns', () => {
         expect(api.getCellValue({ rowNode: node, colKey: 'calcEmpty', useFormatter: false })).toBe('');
         expect(api.getCellValue({ rowNode: node, colKey: 'calcNull', useFormatter: false })).toBe('');
         expect(api.getCellValue({ rowNode: node, colKey: 'plain', useFormatter: false })).toBeUndefined();
+    });
+
+    test('does not enable calculated columns when calculatedColumns is omitted or false', async () => {
+        const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const cases: { id: string; calculatedColumns: false | undefined }[] = [
+            { id: 'calculated-option-omitted', calculatedColumns: undefined },
+            { id: 'calculated-option-false', calculatedColumns: false },
+        ];
+
+        try {
+            for (let i = 0, len = cases.length; i < len; ++i) {
+                const { id, calculatedColumns } = cases[i];
+                const api = createGrid(id, {
+                    calculatedColumns,
+                    rowData: [{ id: 'r1', revenue: 10, cost: 3, profit: 999 }],
+                    columnDefs: [
+                        { field: 'revenue' },
+                        { field: 'cost' },
+                        {
+                            field: 'profit',
+                            calculatedExpression: '[revenue] - [cost]',
+                            editable: true,
+                        },
+                    ],
+                });
+                const rowNode = api.getDisplayedRowAtIndex(0)!;
+                const profitColumn = api.getColumn('profit')!;
+
+                expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBe(999);
+                expect(profitColumn.isCalculatedCol).toBe(false);
+                expect(profitColumn.isCellEditable(rowNode)).toBe(true);
+                expect(profitColumn.isSuppressPaste(rowNode)).toBe(false);
+                expect(consoleWarnSpy).toHaveBeenCalledWith(
+                    expect.stringContaining(
+                        'colDef.calculatedExpression requires gridOptions.calculatedColumns to be set to true or an options object.'
+                    )
+                );
+            }
+        } finally {
+            consoleWarnSpy.mockRestore();
+        }
+    });
+
+    test('runtime calculatedColumns toggle enables and disables static calculated columns', async () => {
+        const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        try {
+            const api = createGrid('calculated-option-runtime-toggle', {
+                calculatedColumns: false,
+                rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+                columnDefs: [
+                    { field: 'revenue' },
+                    { field: 'cost' },
+                    { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+                ],
+            });
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+            expect(api.getColumn('profit')!.isCalculatedCol).toBe(false);
+            expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBeUndefined();
+
+            api.setGridOption('calculatedColumns', true);
+            await asyncSetTimeout(1);
+
+            expect(api.getColumn('profit')!.isCalculatedCol).toBe(true);
+            expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBe(7);
+
+            api.setGridOption('calculatedColumns', false);
+            await asyncSetTimeout(1);
+
+            expect(api.getColumn('profit')!.isCalculatedCol).toBe(false);
+            expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBeUndefined();
+        } finally {
+            consoleWarnSpy.mockRestore();
+        }
     });
 
     test('editing a calculated column expression re-groups its row spans (and dependents)', async () => {
@@ -3045,9 +3120,11 @@ describe('ag-grid calculated columns', () => {
         const validationGridsManager = new TestGridsManager({
             modules: [ClientSideRowModelModule, ValidationModule],
         });
+        let consoleWarnSpy: MockInstance | undefined;
         let consoleErrorSpy: MockInstance | undefined;
 
         try {
+            consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
             validationGridsManager.createGrid('calculated-validation', {
                 rowData: [{ revenue: 10, cost: 3 }],
@@ -3077,8 +3154,17 @@ describe('ag-grid calculated columns', () => {
                 expect.stringContaining('CalculatedColumnsModule'),
                 expect.any(String)
             );
+
+            const callsBeforeDisabledOption = consoleErrorSpy.mock.calls.length;
+            validationGridsManager.createGrid('calculated-option-false-validation', {
+                calculatedColumns: false,
+                rowData: [{ revenue: 10 }],
+                columnDefs: [{ field: 'revenue' }],
+            });
+            expect(consoleErrorSpy.mock.calls).toHaveLength(callsBeforeDisabledOption);
         } finally {
             validationGridsManager.reset();
+            consoleWarnSpy?.mockRestore();
             consoleErrorSpy?.mockRestore();
         }
     });
@@ -3182,7 +3268,7 @@ describe('ag-grid calculated columns', () => {
             );
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining(
-                    'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.'
+                    'colDef.calculatedExpression requires gridOptions.calculatedColumns to be set to true or an options object.'
                 )
             );
         } finally {

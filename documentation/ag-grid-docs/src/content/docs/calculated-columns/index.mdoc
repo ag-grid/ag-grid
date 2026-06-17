@@ -7,10 +7,11 @@ Calculated Columns let your end users add read-only values to the grid without s
 
 ## Enabling Calculated Columns
 
-Calculated columns are enabled by registering `CalculatedColumnsModule` and setting `calculatedExpression` on a column definition. In source code, bracket references such as `[revenue]` resolve to the same-row value from the column with that `colId`.
+Calculated columns are enabled by setting `calculatedColumns: true`, and setting `calculatedExpression` on a column definition. In source code, bracket references such as `[revenue]` resolve to the same-row value from the column with that `colId`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
+    calculatedColumns: true,
     columnDefs: [
         { field: 'revenue' },
         { field: 'cost' },
@@ -61,7 +62,7 @@ The dialog manages calculated columns inside the grid without mutating the `colu
 
 ## Dialog Options
 
-The Calculated Column dialog can be configured with the `calculatedColumns` grid option.
+The Calculated Column dialog can be configured with the `calculatedColumns` grid option. Set `calculatedColumns: true` to enable the feature with default dialog options, or provide an options object to enable the feature and customise the dialog.
 
 While a column's dialog is open, the column's header and cells are highlighted. The highlight colour can be customised with the `--ag-calculated-column-highlight-color` CSS variable.
 
@@ -138,6 +139,7 @@ Calculated columns can use the same operators and functions as [formulas](./form
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
+    calculatedColumns: true,
     columnDefs: [
         { field: 'revenue' },
         { field: 'cost' },

@@ -89,6 +89,7 @@ const rowData: SalesRow[] = [
 const gridOptions: GridOptions<SalesRow> = {
     columnDefs,
     rowData,
+    calculatedColumns: true,
     defaultColDef: {
         flex: 1,
         minWidth: 130,

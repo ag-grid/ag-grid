@@ -348,6 +348,7 @@ const rowData: QuarterlyRevenueRow[] = [
 const gridOptions: GridOptions<QuarterlyRevenueRow> = {
     columnDefs,
     rowData,
+    calculatedColumns: true,
     defaultColDef: {
         minWidth: 120,
         flex: 1,

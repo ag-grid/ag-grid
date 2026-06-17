@@ -690,6 +690,7 @@ describe('row spanning', () => {
                     { a: 'X', b: 'Q' },
                     { a: 'Y', b: 'Q' },
                 ],
+                calculatedColumns: true,
             });
             addCalculatedColumnDef(api, { colId: 'calc', calculatedExpression: '[a]', spanRows: true } as any);
             await settle();
