@@ -54,7 +54,7 @@ jobs:
                   BASE_SHA: ${{ steps.range.outputs.base }}
                   HEAD_SHA: ${{ steps.range.outputs.head }}
                   REPORT_PATH: l10n-review.md
-              run: node tools/l10n/review-translations.mjs
+              run: node external/ag-shared/scripts/l10n/review-translations.mjs
 
             - name: Post review comment
               if: hashFiles('l10n-review.md') != ''
