@@ -2,6 +2,7 @@
 import type { InternalFramework } from '@ag-grid-types';
 import ExampleRunner from '../example-runner/ExampleRunner.astro';
 import { FeaturesWithExamplesContent, type FeatureConfig } from './FeaturesWithExamplesContent';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import styles from './FeaturesWithExamples.module.scss';
 
 interface Props {
@@ -90,22 +91,4 @@ const { features, framework } = Astro.props;
     }
 </style>
 
-<script>
-    // Listen for tab changes from the React component
-    document.addEventListener('landing-page-feature-tab-change', ((
-        event: CustomEvent<{ index: number; featureId: string }>
-    ) => {
-        const { index } = event.detail;
-
-        // Hide all panels
-        document.querySelectorAll('.landing-page-example-panel').forEach((panel) => {
-            panel.classList.remove('active');
-        });
-
-        // Show the selected panel
-        const activePanel = document.querySelector(`.landing-page-example-panel[data-index="${index}"]`);
-        if (activePanel) {
-            activePanel.classList.add('active');
-        }
-    }) as EventListener);
-</script>
+<script is:inline src={urlWithBaseUrl('/scripts/features-with-examples-tabs.js')}></script>

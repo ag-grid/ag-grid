@@ -74,7 +74,29 @@ const UNSAFE_EVAL = "'unsafe-eval'";
 // production report-only window is the backstop before enforcing).
 const hashInlineScript = (source: string): string =>
     `'sha256-${createHash('sha256').update(source, 'utf8').digest('base64')}'`;
-const SITE_SCRIPT_HASHES = [hashInlineScript(DARK_MODE_INIT_SCRIPT), hashInlineScript(PLAUSIBLE_INIT_SCRIPT)];
+
+// Astro injects a small, fixed set of inline hydration-runtime scripts that we
+// cannot externalise — they are emitted by the framework, not authored here (every
+// other site inline script is externalised to a 'self' bundle: see ImageCaption,
+// ExpandingSection, FrameworkRedirectPage, etc.). Unlike the scripts above there is
+// no source string to derive these from — the rendered bytes are Astro's build-time
+// minified output — so we pin the hashes. They are stable per Astro version and
+// change only on upgrade; the CSP preview server (scripts/csp/preview-csp.ts) and
+// the CSP e2e suite surface any drift as violations. Regenerate from a production
+// build (or `nx run ag-grid-docs:preview:csp`) when bumping Astro.
+const ASTRO_HYDRATION_SCRIPT_HASHES = [
+    "'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c='", // client:load bootstrap
+    "'sha256-eIXWvAmxkr251LJZkjniEK5LcPF3NkapbJepohwYRIc='", // client:only bootstrap
+    "'sha256-Q2BPg90ZMplYY+FSdApNErhpWafg2hcRRbndmvxuL/Q='", // client:visible bootstrap
+    "'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw='", // client:idle bootstrap
+    "'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='", // <astro-island> hydration runtime
+];
+
+const SITE_SCRIPT_HASHES = [
+    hashInlineScript(DARK_MODE_INIT_SCRIPT),
+    hashInlineScript(PLAUSIBLE_INIT_SCRIPT),
+    ...ASTRO_HYDRATION_SCRIPT_HASHES,
+];
 
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
 // demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from

@@ -91,6 +91,16 @@ describe('cspRules', () => {
             expect(scriptSrc).toContain(sha256Source(PLAUSIBLE_INIT_SCRIPT));
         });
 
+        it('site scope authorises the (non-externalisable) Astro hydration scripts by hash', () => {
+            // Every site inline script we author is externalised to a 'self' bundle;
+            // only Astro's framework-injected hydration scripts remain, pinned by hash
+            // (see ASTRO_HYDRATION_SCRIPT_HASHES). Regenerate these when bumping Astro.
+            const scriptSrc = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(scriptSrc).toContain("'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='"); // <astro-island> runtime
+            expect(scriptSrc).toContain("'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c='"); // client:load
+            expect(scriptSrc).toContain("'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw='"); // client:idle
+        });
+
         it('examples and campaigns keep unsafe-inline and carry no hashes', () => {
             const scopes = ['examples', 'campaigns'] as const;
             for (let i = 0, len = scopes.length; i < len; ++i) {
