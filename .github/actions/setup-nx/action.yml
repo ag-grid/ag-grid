@@ -62,7 +62,7 @@ runs:
           shell: bash
           run: |
             set -x
-            
+
             branch=$(git branch --show-current)
             if [[ ${branch} == 'latest' ]] ; then
               # Latest
@@ -165,12 +165,31 @@ runs:
           with:
               node-version-file: package.json
 
+        # Not gated on cache_mode: yarn_postinstall is documented as "always", and gating
+        # on rw skipped postinstall (e.g. setup-prompts.sh) on read-only cache hits.
         - name: yarn install
-          if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall == 'true'
+          if: inputs.yarn_postinstall == 'true'
           id: yarn_install_slow
           shell: bash
+          env:
+              # Exact key hit only — a restore-key fallback reports the string 'false' and the inactive
+              # step (rw xor ro) yields '', so compare each explicitly against 'true' rather than truthiness.
+              EXACT_CACHE_HIT: ${{ steps.cache_rw.outputs.cache-hit == 'true' || steps.cache_ro.outputs.cache-hit == 'true' }}
           run: |
-              (yarn check --integrity && yarn postinstall) || yarn install --ci
+              if [[ "${EXACT_CACHE_HIT}" != "true" ]] ; then
+                # Fallback restore: wipe node_modules so install rebuilds hoisting from this lockfile, avoiding stale-layout cache poisoning.
+                rm -rf node_modules packages/*/node_modules plugins/*/node_modules community-modules/*/node_modules testing/*/node_modules documentation/*/node_modules external/*/node_modules
+                yarn install --ci
+                yarn check --integrity
+              elif (yarn check --integrity) ; then
+                yarn postinstall
+              else
+                yarn install --ci
+
+                # Ensure that the integrity check passes after install to avoid
+                # cache polution with entries that will fail future integrity checks.
+                yarn check --integrity
+              fi
 
         - name: yarn install (skipping postinstall)
           if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall != 'true'

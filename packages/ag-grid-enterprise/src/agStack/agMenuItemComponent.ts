@@ -12,8 +12,8 @@ import type {
 } from 'ag-stack';
 import { AgBeanStub, _setAriaDisabled, _setAriaExpanded, _setAriaHasPopup, _setAriaRole } from 'ag-stack';
 
-import type { AgEvent, AgPromise, IComponent, IMenuConfigParams, IMenuItem } from 'ag-grid-community';
-import { KeyCode, _createElement } from 'ag-grid-community';
+import type { AgEvent, AgPromise, IComponent, IMenuConfigParams, IMenuItem, TapEvent } from 'ag-grid-community';
+import { KeyCode, TouchListener, _createElement } from 'ag-grid-community';
 
 import { AgMenuList } from './agMenuList';
 import { AgMenuPanel } from './agMenuPanel';
@@ -224,6 +224,9 @@ export class AgMenuItemComponent<
     private addListeners(eGui: HTMLElement, params?: IMenuConfigParams): void {
         if (!params?.suppressClick) {
             this.addManagedElementListeners(eGui, { click: (e) => this.onItemSelected(e!) });
+            const touchListener = new TouchListener(eGui, true);
+            this.addManagedListeners(touchListener, { tap: (e: TapEvent) => this.onItemSelected(e.touchStart) });
+            this.addDestroyFunc(() => touchListener.destroy());
         }
         if (!params?.suppressKeyboardSelect) {
             this.addManagedElementListeners(eGui, {
@@ -257,7 +260,7 @@ export class AgMenuItemComponent<
         return !!this.params.disabled;
     }
 
-    public openSubMenu(activateFirstItem = false, event?: MouseEvent | KeyboardEvent): void {
+    public openSubMenu(activateFirstItem = false, event?: MouseEvent | KeyboardEvent | Touch): void {
         this.closeSubMenu();
 
         if (!this.params.subMenu) {
@@ -342,7 +345,7 @@ export class AgMenuItemComponent<
             popupSvc?.positionPopupForMenu({
                 eventSource,
                 ePopup,
-                event: event instanceof MouseEvent ? event : undefined,
+                event: event instanceof KeyboardEvent ? undefined : event,
                 additionalParams: this.callbacks.getPostProcessPopupParams(this.contextParams),
             });
         };
@@ -455,7 +458,7 @@ export class AgMenuItemComponent<
         return this.eSubMenuGui;
     }
 
-    private onItemSelected(event: MouseEvent | KeyboardEvent): void {
+    private onItemSelected(event?: MouseEvent | KeyboardEvent | Touch): void {
         this.menuItemComp.select?.();
         if (this.params.action) {
             this.beans.frameworkOverrides.wrapOutgoing(() =>
@@ -466,14 +469,14 @@ export class AgMenuItemComponent<
                 )
             );
         } else {
-            this.openSubMenu(event?.type === 'keydown', event);
+            this.openSubMenu(event instanceof KeyboardEvent && event.type === 'keydown', event);
         }
 
         if ((this.params.subMenu && !this.params.action) || this.params.suppressCloseOnSelect) {
             return;
         }
 
-        this.closeMenu(event);
+        this.closeMenu(event instanceof MouseEvent || event instanceof KeyboardEvent ? event : undefined);
     }
 
     private closeMenu(event?: MouseEvent | KeyboardEvent): void {

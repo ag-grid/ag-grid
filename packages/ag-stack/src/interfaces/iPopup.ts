@@ -83,5 +83,5 @@ export interface AgMousePopupPositionParams<TParams> extends AgPopupPositionPara
 
 export interface AgMenuPopupPositionParams<TParams> extends BasePopupPositionParams<TParams> {
     eventSource: HTMLElement;
-    event?: MouseEvent | KeyboardEvent;
+    event?: MouseEvent | KeyboardEvent | Touch;
 }
