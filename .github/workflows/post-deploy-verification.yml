@@ -1,0 +1,112 @@
+name: Post-Deploy Page Verification
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: ['latest', 'AG-17487-playwright-tests']
+  workflow_dispatch:
+    inputs:
+      staging_url:
+        description: 'URL to test against (leave blank to use the staging URL from baseUrlUtils.js)'
+        required: false
+        default: ''
+
+env:
+  CI: true
+  YARN_REGISTRY: 'https://registry.ag-grid.com'
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  page-verification:
+    runs-on: ubuntu-latest
+    name: Page Verification (Staging)
+    # For workflow_run: only proceed if the CI workflow that triggered us succeeded.
+    # For manual dispatch: always run.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Pin to the commit that was actually deployed, not HEAD.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 1
+
+      - name: Setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+          fetch_base: skip
+
+      - name: Resolve staging URL
+        id: staging_url
+        run: |
+          URL=$(node -e "
+            const { getBaseUrl } = require('./scripts/deployments/prep_and_archive/baseUrlUtils');
+            console.log(getBaseUrl({ env: 'staging' }));
+          ")
+          echo "url=${URL}" >> $GITHUB_OUTPUT
+          echo "Resolved staging URL: ${URL}"
+
+      - name: Install Playwright Chromium
+        working-directory: documentation/ag-grid-docs
+        run: npx playwright install chromium --with-deps
+
+      - name: Run page verification tests
+        id: run_tests
+        working-directory: documentation/ag-grid-docs
+        env:
+          BASE_URL: ${{ inputs.staging_url || steps.staging_url.outputs.url }}
+        run: npx playwright test src/content/docs/page-verification.spec.ts --project=chromium
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: page-verification-results
+          path: |
+            reports/
+            documentation/ag-grid-docs/test-results/
+          retention-days: 14
+
+      - name: Check previous run status
+        id: prev_run
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # The current run is still in_progress, so --status completed gives us
+          # the last finished run — i.e. the one before this one.
+          PREV=$(gh run list \
+            --workflow post-deploy-verification.yml \
+            --branch latest \
+            --status completed \
+            --limit 1 \
+            --json headSha,conclusion \
+            --jq '.[0] // {}')
+
+          PREV_SHA=$(echo "$PREV" | jq -r '.headSha // ""')
+          PREV_CONCLUSION=$(echo "$PREV" | jq -r '.conclusion // ""')
+          CURRENT="${{ steps.run_tests.outcome }}"
+
+          echo "sha=${PREV_SHA}" >> $GITHUB_OUTPUT
+
+          if [ "$PREV_CONCLUSION" != "$CURRENT" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Notify Slack
+        if: always() && steps.prev_run.outputs.changed == 'true'
+        uses: ./external/ag-shared/github/actions/slack-integration
+        with:
+          AG_LIBRARY: grid
+          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+          SLACK_CHANNEL: '#teamcity_status'
+          CURRENT_COMMIT_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+          PREV_COMMIT_SHA: ${{ steps.prev_run.outputs.sha }}
+          IS_SUCCESS: ${{ steps.run_tests.outcome == 'success' }}

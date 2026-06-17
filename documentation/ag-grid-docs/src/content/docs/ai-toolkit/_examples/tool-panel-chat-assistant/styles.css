@@ -252,8 +252,8 @@ body > #highlighter {
 
 /* Additional Styles */
 #myGrid {
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
 }
 
 /* Chat Tool Panel Styles */
