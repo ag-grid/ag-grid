@@ -35,6 +35,12 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           fetch-depth: 1
 
+      - name: Setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+          fetch_base: skip
+
       - name: Resolve staging URL
         id: staging_url
         run: |
@@ -44,12 +50,6 @@ jobs:
           ")
           echo "url=${URL}" >> $GITHUB_OUTPUT
           echo "Resolved staging URL: ${URL}"
-
-      - name: Setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-          fetch_base: skip
 
       - name: Install Playwright Chromium
         working-directory: documentation/ag-grid-docs
@@ -66,7 +66,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: page-verification-results
-          path: reports/
+          path: |
+            reports/
+            documentation/ag-grid-docs/test-results/
           retention-days: 14
 
       - name: Notify Slack
@@ -76,6 +78,5 @@ jobs:
           AG_LIBRARY: grid
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_CHANNEL: '#teamcity_status'
-          CTRF_REPORT_FILE: reports/ag-grid-examples-interactive-default.json
           CURRENT_COMMIT_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
           IS_SUCCESS: ${{ job.status == 'success' }}
