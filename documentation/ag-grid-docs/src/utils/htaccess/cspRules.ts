@@ -93,6 +93,12 @@ export const EXAMPLES_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(examples|archive)
 // 'campaigns' scope (e.g. /campaigns/bryntum-gantt/).
 export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/campaigns/#';
 
+// JS equivalents of the *_PATH_CONDITION Apache rules above, for the dev-server
+// (agDevCsp) and preview-server (preview-csp) middleware that scope the served
+// CSP by URL path. Keep these in sync with the Apache conditions.
+export const EXAMPLES_PATH_REGEXP = /^\/(examples|archive)\//;
+export const CAMPAIGNS_PATH_REGEXP = /^\/campaigns\//;
+
 // 'self' resolves to grid-staging.ag-grid.com on staging / localhost in dev, so
 // cross-subdomain references to the production host need an explicit allowance.
 // Harmless on production where 'self' already covers www.ag-grid.com.

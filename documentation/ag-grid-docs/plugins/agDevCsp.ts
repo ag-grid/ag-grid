@@ -1,21 +1,16 @@
 import type { Plugin, ViteDevServer } from 'vite';
 
-import { getCspValue } from '../src/utils/htaccess/cspRules';
+import { CAMPAIGNS_PATH_REGEXP, EXAMPLES_PATH_REGEXP, getCspValue } from '../src/utils/htaccess/cspRules';
 
 const SITE_CSP = getCspValue({ env: 'dev', scope: 'site' });
 const EXAMPLES_CSP = getCspValue({ env: 'dev', scope: 'examples' });
 const CAMPAIGNS_CSP = getCspValue({ env: 'dev', scope: 'campaigns' });
 
-// Mirror EXAMPLES_PATH_CONDITION / CAMPAIGNS_PATH_CONDITION in cspRules.ts, which
-// scope the served .htaccess policy by URL path on staging/production.
-const EXAMPLES_PATH = /^\/(examples|archive)\//;
-const CAMPAIGNS_PATH = /^\/campaigns\//;
-
 function getDevCsp(url: string): string {
-    if (EXAMPLES_PATH.test(url)) {
+    if (EXAMPLES_PATH_REGEXP.test(url)) {
         return EXAMPLES_CSP;
     }
-    if (CAMPAIGNS_PATH.test(url)) {
+    if (CAMPAIGNS_PATH_REGEXP.test(url)) {
         return CAMPAIGNS_CSP;
     }
     return SITE_CSP;
