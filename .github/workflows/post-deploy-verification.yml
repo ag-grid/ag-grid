@@ -48,7 +48,7 @@ jobs:
 
       - name: Install test dependencies
         working-directory: documentation/ag-grid-docs
-        run: npm install --no-save @playwright/test@^1.59.1 playwright-ctrf-json-reporter@0.0.29
+        run: npm install --no-save @playwright/test@1.59.1 playwright-ctrf-json-reporter@0.0.29
 
       - name: Resolve staging URL
         id: staging_url
@@ -62,14 +62,14 @@ jobs:
 
       - name: Install Playwright Chromium
         working-directory: documentation/ag-grid-docs
-        run: npx playwright install chromium --with-deps
+        run: ./node_modules/.bin/playwright install chromium --with-deps
 
       - name: Run page verification tests
         id: run_tests
         working-directory: documentation/ag-grid-docs
         env:
           BASE_URL: ${{ inputs.staging_url || steps.staging_url.outputs.url }}
-        run: npx playwright test src/content/docs/page-verification.spec.ts --project=chromium
+        run: ./node_modules/.bin/playwright test src/content/docs/page-verification.spec.ts --project=chromium
 
       - name: Upload test results
         if: always()
