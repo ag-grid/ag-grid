@@ -37,8 +37,10 @@ import {
  *   nx run ag-grid-docs:preview:csp
  *   tsx documentation/ag-grid-docs/scripts/csp/preview-csp.ts [--env=...] [--mode=...] [--port=...] [--no-https]
  *
- * Caveat: Vite's static file serving lacks Astro's trailing-slash redirect, so
- * navigate to routes with their trailing slash (e.g. /react-data-grid/getting-started/).
+ * Port: defaults to 4611 to match PUBLIC_SITE_URL baked into a local build
+ * (.env.build → https://localhost:4611). The example runner fetches its modules
+ * from that absolute origin, so serving on a different port makes those requests
+ * cross-origin and the examples-scope connect-src 'self' blocks them. Keep it 4611.
  */
 
 // Match vite-plugin-mkcert's data dir and default filenames (see agMkcertPreview.ts).
@@ -127,11 +129,17 @@ async function main(): Promise<void> {
     const resolveCsp = makeCspResolver(env);
     const headerName = getCspHeaderName(mode);
     const httpsOption = getHttpsOption(https);
+    const outDir = path.join(process.cwd(), 'dist');
 
     const server = await preview({
         configFile: false,
         root: process.cwd(),
         build: { outDir: 'dist' },
+        // 'mpa' serves the static build as a multi-page app: each route maps to its
+        // own .html file with no SPA fallback. The default 'spa' would serve the
+        // homepage for any unmatched URL, which silently breaks example-runner
+        // resource fetches and standalone example pages (they 'load' the homepage).
+        appType: 'mpa',
         preview: {
             port,
             strictPort: true,
@@ -143,8 +151,26 @@ async function main(): Promise<void> {
                 name: 'ag-preview-csp',
                 configurePreviewServer(previewServer) {
                     previewServer.middlewares.use((req, res, next) => {
-                        const url = (req.url ?? '').split('?')[0];
-                        res.setHeader(headerName, resolveCsp(url));
+                        const rawUrl = req.url ?? '';
+                        const queryIndex = rawUrl.indexOf('?');
+                        const pathname = queryIndex === -1 ? rawUrl : rawUrl.slice(0, queryIndex);
+                        const search = queryIndex === -1 ? '' : rawUrl.slice(queryIndex);
+
+                        // Mimic the production host (Apache RewriteRule): redirect an
+                        // extensionless directory path to a trailing slash so the
+                        // browser lands on the canonical URL and relative asset paths
+                        // resolve. Without this the example pages load with broken assets.
+                        if (pathname !== '/' && !pathname.endsWith('/') && !path.extname(pathname)) {
+                            const indexFile = path.join(outDir, decodeURIComponent(pathname), 'index.html');
+                            if (fs.existsSync(indexFile)) {
+                                res.statusCode = 308;
+                                res.setHeader('Location', `${pathname}/${search}`);
+                                res.end();
+                                return;
+                            }
+                        }
+
+                        res.setHeader(headerName, resolveCsp(pathname));
                         res.setHeader('X-Content-Type-Options', 'nosniff');
                         next();
                     });
