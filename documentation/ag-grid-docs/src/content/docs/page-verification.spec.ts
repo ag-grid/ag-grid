@@ -23,7 +23,9 @@ async function setupPage(page: Page): Promise<string[]> {
     const errors: string[] = [];
 
     page.on('console', (msg) => {
-        if (msg.type() !== 'error' && msg.type() !== 'warning') return;
+        if (msg.type() !== 'error' && msg.type() !== 'warning') {
+            return;
+        }
         const text = msg.text();
         if (isCspIssue(text)) {
             test.info().annotations.push({ type: 'warning', description: `[CSP] ${text}` });
