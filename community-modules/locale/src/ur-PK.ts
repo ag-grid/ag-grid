@@ -669,6 +669,7 @@ export const AG_GRID_LOCALE_PK = {
     ariaColumnGroup: 'کالم گروپ',
     ariaFilterActive: 'فلٹر فعال',
     ariaColumnFiltered: 'کالم فلٹرڈ',
+    ariaCalculatedColumn: 'حساب شدہ کالم',
     ariaColumnSelectAll: 'تمام کالمز کی مرئیت کو ٹوگل کریں',
     ariaDateFilterInput: 'تاریخ فلٹر انپٹ',
     ariaDefaultListName: 'فہرست',

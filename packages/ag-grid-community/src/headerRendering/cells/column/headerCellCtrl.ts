@@ -41,7 +41,8 @@ type HeaderAriaDescriptionKey =
     | 'selectAll'
     | 'filterButton'
     | 'cellSelection'
-    | 'showValueAs';
+    | 'showValueAs'
+    | 'calculatedColumn';
 type RefreshFunction =
     | 'updateSortable'
     | 'tooltip'
@@ -654,6 +655,16 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.setAriaDescriptionProperty('cellSelection', description);
     }
 
+    private refreshAriaCalculatedColumn(): void {
+        let description: string | null = null;
+        if (this.column.isCalculatedCol) {
+            const translate = this.getLocaleTextFunc();
+            description = translate('ariaCalculatedColumn', 'Calculated column');
+        }
+
+        this.setAriaDescriptionProperty('calculatedColumn', description);
+    }
+
     public setAriaDescriptionProperty(property: HeaderAriaDescriptionKey, value: string | null): void {
         const props = this.ariaDescriptionProperties;
         if (value != null) {
@@ -684,6 +695,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.refreshAriaFiltered();
         this.refreshAriaShowValueAs();
         this.refreshAriaCellSelection();
+        this.refreshAriaCalculatedColumn();
     }
 
     private addColumnHoverListener(compBean: BeanStub): void {

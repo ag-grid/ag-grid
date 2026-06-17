@@ -490,22 +490,38 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 }
-                case 'calculatedColumn':
-                    return calculatedColsSvc
-                        ? {
-                              name: localeTextFunc('calculatedColumnAdd', 'Add Calculated Column'),
-                              icon: _createIconNoSpan('calculatedColumnAdd', beans, null),
-                              action: () => calculatedColsSvc.openCalculatedColumnDialog(column, 'add'),
-                          }
-                        : null;
-                case 'editCalculatedColumn':
-                    return calculatedColsSvc && column?.isCalculatedCol
-                        ? {
-                              name: localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
-                              icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
-                              action: () => calculatedColsSvc.openCalculatedColumnDialog(column, 'edit'),
-                          }
-                        : null;
+                case 'calculatedColumn': {
+                    if (!calculatedColsSvc) {
+                        return null;
+                    }
+                    const headerPosition = focusSvc.focusedHeader ?? (column ? { headerRowIndex: 0, column } : null);
+
+                    return {
+                        name: localeTextFunc('calculatedColumnAdd', 'Add Calculated Column'),
+                        icon: _createIconNoSpan('calculatedColumnAdd', beans, null),
+                        action: () =>
+                            calculatedColsSvc.openCalculatedColumnDialog(column, 'add', true, {
+                                eventSource: sourceElement(),
+                                headerPosition,
+                            }),
+                    };
+                }
+                case 'editCalculatedColumn': {
+                    if (!calculatedColsSvc || !column?.isCalculatedCol) {
+                        return null;
+                    }
+                    const headerPosition = focusSvc.focusedHeader ?? { headerRowIndex: 0, column };
+
+                    return {
+                        name: localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
+                        icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
+                        action: () =>
+                            calculatedColsSvc.openCalculatedColumnDialog(column, 'edit', true, {
+                                eventSource: sourceElement(),
+                                headerPosition,
+                            }),
+                    };
+                }
                 case 'removeCalculatedColumn':
                     return calculatedColsSvc && column?.isCalculatedCol
                         ? {

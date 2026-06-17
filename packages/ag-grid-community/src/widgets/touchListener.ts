@@ -50,6 +50,8 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
     private lastTapTime: number | null = null;
     private longPressTimer: number = 0;
     private moved: boolean = false;
+    private longTapFired: boolean = false;
+    private longTapListeners = 0;
 
     constructor(
         private eElement: Element,
@@ -68,10 +70,16 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             this.eElement.addEventListener('touchstart', startListener, { passive: true });
         }
         eventSvc.addEventListener(eventType, listener);
+        if (eventType === 'longTap') {
+            this.longTapListeners++;
+        }
     }
 
     public removeEventListener<T extends TouchListenerEvent>(eventType: T, listener: IEventListener<T>): void {
         this.eventSvc?.removeEventListener(eventType, listener);
+        if (eventType === 'longTap') {
+            this.longTapListeners--;
+        }
     }
 
     private onTouchStart(touchEvent: TouchEvent): void {
@@ -106,6 +114,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             this.longPressTimer = 0;
             if (this.touchStart === touchStart && !this.moved) {
                 this.moved = true;
+                this.longTapFired = this.longTapListeners > 0;
                 this.eventSvc?.dispatchEvent<LongTapEvent>({ type: 'longTap', touchStart, touchEvent });
             }
         }, LONG_PRESS_MILLISECONDS);
@@ -134,8 +143,10 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             this.checkDoubleTap(touchStart);
         }
 
-        if (this.preventClick) {
-            preventEventDefault(touchEvent); // stops the tap from also been processed as a mouse click
+        // a fired long tap (e.g. opening a context menu) must not also emit the emulated mouse
+        // click iOS dispatches on release, which would otherwise activate the element under the finger
+        if (this.preventClick || this.longTapFired) {
+            preventEventDefault(touchEvent);
         }
 
         this.cancel();
@@ -177,6 +188,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             this.longPressTimer = 0;
         }
         this.moved = false;
+        this.longTapFired = false;
     }
 
     public destroy(): void {

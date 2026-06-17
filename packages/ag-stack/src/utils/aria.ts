@@ -105,6 +105,11 @@ export function _setAriaActiveDescendant(element: Element, descendantId: string 
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _setAriaAutoComplete(element: Element, autoComplete: 'none' | 'inline' | 'list' | 'both'): void {
+    _setAriaAttribute(element, 'autocomplete', autoComplete);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setAriaExpanded(element: Element, expanded: boolean): void {
     _setAriaAttribute(element, 'expanded', expanded);
 }

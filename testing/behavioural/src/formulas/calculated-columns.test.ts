@@ -1551,6 +1551,67 @@ describe('ag-grid calculated columns', () => {
         expect(popup).not.toHaveClass('ag-calculated-column-picker-list');
     });
 
+    test('dialog expression suggestions control the virtual list aria state', async () => {
+        const api = createGrid('calculated-dialog-inline-aria', {
+            rowData: [{ id: 'r1', revenue: 10, revenueTax: 2, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'revenueTax' }, { field: 'cost' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        const input = getExpressionInput();
+        expect(input).toHaveAttribute('aria-autocomplete', 'list');
+        expect(input).toHaveAttribute('aria-haspopup', 'listbox');
+        expect(input).toHaveAttribute('aria-expanded', 'false');
+
+        input.value = '[Revenue';
+        input.setSelectionRange(input.value.length, input.value.length);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+
+        const controlledList = await waitFor(() => {
+            const controls = input.getAttribute('aria-controls');
+            expect(controls).toBeTruthy();
+            const list = document.getElementById(controls!);
+            expect(list).toBeTruthy();
+            return list!;
+        });
+        const popup = document.querySelector<HTMLElement>('.ag-autocomplete-list-popup')!;
+
+        expect(input).toHaveAttribute('aria-expanded', 'true');
+        expect(controlledList).toHaveAttribute('role', 'listbox');
+        expect(controlledList).not.toBe(popup);
+
+        const firstActiveId = await waitFor(() => {
+            const activeId = input.getAttribute('aria-activedescendant');
+            expect(activeId).toBeTruthy();
+            const activeOption = document.getElementById(activeId!);
+            expect(activeOption).toBeTruthy();
+            expect(activeOption).toHaveAttribute('role', 'option');
+            expect(activeOption).toHaveAttribute('aria-selected', 'true');
+            expect(activeOption).toHaveAttribute('aria-posinset', '1');
+            expect(activeOption).toHaveAttribute('aria-setsize', '2');
+            return activeId!;
+        });
+
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+
+        await waitFor(() => {
+            const activeId = input.getAttribute('aria-activedescendant');
+            expect(activeId).toBeTruthy();
+            expect(activeId).not.toBe(firstActiveId);
+            expect(document.getElementById(activeId!)!).toHaveAttribute('aria-posinset', '2');
+        });
+
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+        expect(input).toHaveAttribute('aria-expanded', 'false');
+        expect(input).not.toHaveAttribute('aria-controls');
+        expect(input).not.toHaveAttribute('aria-activedescendant');
+    });
+
     test('dialog sizes helper pickers from the calculated column suggestion width variable', async () => {
         const api = createGrid('calculated-dialog-helper-picker-width', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
@@ -2841,6 +2902,9 @@ describe('ag-grid calculated columns', () => {
         clickDialogButton('Cancel');
         await asyncSetTimeout(1);
 
+        await waitFor(() => {
+            expect(document.activeElement?.closest('[col-id="profit"].ag-header-cell')).toBeTruthy();
+        });
         expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).not.toHaveClass(
             'ag-calculated-column-highlighted'
         );

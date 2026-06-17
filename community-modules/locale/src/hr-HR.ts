@@ -671,6 +671,7 @@ export const AG_GRID_LOCALE_HR = {
     ariaColumnGroup: 'Grupa stupaca',
     ariaFilterActive: 'Aktivan filtar',
     ariaColumnFiltered: 'Stupac filtriran',
+    ariaCalculatedColumn: 'Izračunati stupac',
     ariaColumnSelectAll: 'Uključi/isključi vidljivost svih stupaca',
     ariaDateFilterInput: 'Unos filtera datuma',
     ariaDefaultListName: 'Popis',
