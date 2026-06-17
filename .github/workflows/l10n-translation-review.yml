@@ -26,6 +26,13 @@ concurrency:
 jobs:
     review:
         runs-on: ubuntu-latest
+        # Same-repo PRs only — never run repository code with the API key in scope for a
+        # fork PR. Fork PRs can be reviewed via manual workflow_dispatch by a maintainer
+        # (actions:write required). Mirrors the fork-PR gate used in ci.yml/pr-review.yml.
+        if: |
+            (github.event_name == 'pull_request' &&
+                github.event.pull_request.head.repo.full_name == github.repository) ||
+            github.event_name == 'workflow_dispatch'
         steps:
             - uses: actions/checkout@v4
               with:
