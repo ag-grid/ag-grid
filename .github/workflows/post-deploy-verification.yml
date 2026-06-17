@@ -37,8 +37,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # Pin to the commit that was actually deployed, not HEAD.
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          # Check out the default-branch HEAD (github.sha). In a workflow_run
+          # context this is the branch the run was triggered on; combined with the
+          # job-level `if:` (same-repo push only), the deployed commit is at HEAD.
+          # Avoid referencing workflow_run.head_sha here: it is an untrusted-input
+          # pattern flagged by OSSF/Scorecard for privileged workflow_run checkouts.
+          ref: ${{ github.sha }}
           fetch-depth: 1
 
       - name: Setup
