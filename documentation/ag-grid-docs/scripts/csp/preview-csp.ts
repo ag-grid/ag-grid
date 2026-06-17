@@ -172,6 +172,13 @@ async function main(): Promise<void> {
 
                         res.setHeader(headerName, resolveCsp(pathname));
                         res.setHeader('X-Content-Type-Options', 'nosniff');
+
+                        // Mirror the production .htaccess CORS headers so example
+                        // embedders (Plunkr, CodeSandbox, Codespaces) can fetch the
+                        // example bundles from /files/ cross-origin, as they do in prod.
+                        res.setHeader('Access-Control-Allow-Origin', '*');
+                        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE,PUT');
+
                         next();
                     });
                 },
