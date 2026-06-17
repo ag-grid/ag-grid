@@ -76,14 +76,28 @@ const hashInlineScript = (source: string): string =>
     `'sha256-${createHash('sha256').update(source, 'utf8').digest('base64')}'`;
 
 // Astro injects a small, fixed set of inline hydration-runtime scripts that we
-// cannot externalise — they are emitted by the framework, not authored here (every
-// other site inline script is externalised to a 'self' bundle: see ImageCaption,
-// ExpandingSection, FrameworkRedirectPage, etc.). Unlike the scripts above there is
-// no source string to derive these from — the rendered bytes are Astro's build-time
-// minified output — so we pin the hashes. They are stable per Astro version and
-// change only on upgrade; the CSP preview server (scripts/csp/preview-csp.ts) and
-// the CSP e2e suite surface any drift as violations. Regenerate from a production
-// build (or `nx run ag-grid-docs:preview:csp`) when bumping Astro.
+// cannot externalise — they are emitted (and minified) by the framework, not
+// authored here. Every OTHER site inline script is externalised to a 'self' bundle
+// (see ImageCaption, ExpandingSection, FrameworkRedirectPage, etc.), so these are
+// the only inline scripts the 'site' scope authorises by hash.
+//
+// Because the rendered bytes are Astro's build-time output, there is no source
+// string to derive these from — they are pinned, and they change when Astro's
+// hydration runtime changes, i.e. on an Astro upgrade. ASTRO_HYDRATION_HASHES_VERIFIED_FOR
+// records the Astro version they were captured against; cspRules.test.ts fails when
+// the installed version no longer matches, so an upgrade cannot silently leave the
+// policy stale (which would block hydration site-wide once the CSP is enforced).
+//
+// === HOW TO REGENERATE AFTER AN ASTRO UPGRADE ===
+//   1. yarn nx build ag-grid-docs
+//   2. yarn nx run ag-grid-docs:preview:csp           (serves the build with the enforced policy)
+//   3. Open https://localhost:4611/ plus a page using each client: directive
+//      (load/idle/only/visible) and read the browser console: every blocked inline
+//      script logs the missing 'sha256-...' value in its CSP violation. (Equivalently,
+//      hash the inline <script> contents in dist and diff against the list below.)
+//   4. Replace the hashes below with the new values, and bump
+//      ASTRO_HYDRATION_HASHES_VERIFIED_FOR to the new Astro version.
+export const ASTRO_HYDRATION_HASHES_VERIFIED_FOR = '6.1.9';
 const ASTRO_HYDRATION_SCRIPT_HASHES = [
     "'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c='", // client:load bootstrap
     "'sha256-eIXWvAmxkr251LJZkjniEK5LcPF3NkapbJepohwYRIc='", // client:only bootstrap

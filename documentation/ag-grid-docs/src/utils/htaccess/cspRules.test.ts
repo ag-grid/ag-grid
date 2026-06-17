@@ -1,7 +1,13 @@
+import astroPackageJson from 'astro/package.json';
 import { createHash } from 'node:crypto';
 
 import { DARK_MODE_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
-import { CAMPAIGNS_PATH_CONDITION, getCspDirectives, getScopedCspHtaccessBlock } from './cspRules';
+import {
+    ASTRO_HYDRATION_HASHES_VERIFIED_FOR,
+    CAMPAIGNS_PATH_CONDITION,
+    getCspDirectives,
+    getScopedCspHtaccessBlock,
+} from './cspRules';
 
 const sha256Source = (source: string) => `'sha256-${createHash('sha256').update(source, 'utf8').digest('base64')}'`;
 const hasHash = (sources: string[]) => sources.some((s) => s.startsWith("'sha256-"));
@@ -114,6 +120,24 @@ describe('cspRules', () => {
             const scriptSrc = getCspDirectives({ env: 'dev', scope: 'site' })['script-src'];
             expect(scriptSrc).toContain("'unsafe-inline'");
             expect(hasHash(scriptSrc)).toBe(false);
+        });
+
+        it('Astro hydration-script hashes are still verified for the installed Astro version', () => {
+            // The 'site' policy pins Astro's framework-injected hydration-runtime
+            // script hashes (ASTRO_HYDRATION_SCRIPT_HASHES). Astro emits and minifies
+            // these, so an upgrade can change them — leaving the pinned hashes stale
+            // and (once the CSP is enforced) blocking hydration across the whole site.
+            //
+            // This test fails when Astro is upgraded so the staleness is caught here
+            // rather than in production. To fix it, regenerate the hashes and bump the
+            // version — see the "HOW TO REGENERATE AFTER AN ASTRO UPGRADE" steps above
+            // ASTRO_HYDRATION_SCRIPT_HASHES in cspRules.ts:
+            //   1. yarn nx build ag-grid-docs
+            //   2. yarn nx run ag-grid-docs:preview:csp
+            //   3. load the homepage + a page per client: directive; blocked inline
+            //      scripts log their missing 'sha256-...' hashes in the console.
+            //   4. update ASTRO_HYDRATION_SCRIPT_HASHES and ASTRO_HYDRATION_HASHES_VERIFIED_FOR.
+            expect(astroPackageJson.version).toBe(ASTRO_HYDRATION_HASHES_VERIFIED_FOR);
         });
     });
 
