@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="-2 -2 24 24">
+    <!-- Icon from Jam Icons by Michael Amprimo - https://github.com/cyberalien/jam-backup/blob/main/LICENSE -->
+    <defs>
+        <linearGradient id="bryntum-task-board-grad" x1="10" y1="0" x2="10" y2="20" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#044B93" stop-opacity="0.69"/>
+            <stop offset="1" stop-color="#044B93" stop-opacity="0.24"/>
+        </linearGradient>
+    </defs>
+    <path fill="url(#bryntum-task-board-grad)" d="M6 0h8a6 6 0 0 1 6 6v8a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6V6a6 6 0 0 1 6-6m6 9a1 1 0 0 0 0 2h3a1 1 0 1 0 0-2zm-2 4a1 1 0 0 0 0 2h5a1 1 0 1 0 0-2zm0-8a1 1 0 1 0 0 2h5a1 1 0 0 0 0-2zm-4.172 5.243l-.707-.707a1 1 0 1 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.415 0l2.828-2.828A1 1 0 0 0 7.95 8.12l-2.122 2.122z"/>
+</svg>

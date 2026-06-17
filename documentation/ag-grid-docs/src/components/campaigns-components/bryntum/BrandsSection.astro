@@ -1,0 +1,43 @@
+---
+import { resolveBryntumHref } from '@utils/bryntumCampaignAssets';
+
+import { getBryntumSvg } from './bryntumSvg';
+import type { BryntumBrandsSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumBrandsSection;
+}
+
+const { section } = Astro.props;
+const itemsWithSvg = section.items.map((item) => ({
+    item,
+    svgMarkup: item.media?.kind === 'svg-file' ? getBryntumSvg(item.media.src) : undefined,
+}));
+---
+
+<section class={styles.section}>
+    <div class={styles.sectionInnerWide}>
+        {
+            section.eyebrow && (
+                <span class:list={[styles.sectionEyebrow, styles.sectionEyebrowCentered]}>{section.eyebrow}</span>
+            )
+        }
+        {section.heading && <h3 class={styles.brandsHeading}>{section.heading}</h3>}
+
+        <div class={styles.brandsRow}>
+            {
+                itemsWithSvg.map(({ item, svgMarkup }) => (
+                    <a
+                        href={resolveBryntumHref(item.href)}
+                        target="_blank"
+                        rel="noopener"
+                        aria-label={item.label ?? 'Customer logo'}
+                    >
+                        {svgMarkup && <Fragment set:html={svgMarkup} />}
+                    </a>
+                ))
+            }
+        </div>
+    </div>
+</section>

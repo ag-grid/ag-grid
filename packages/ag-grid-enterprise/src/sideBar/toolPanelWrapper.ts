@@ -1,4 +1,4 @@
-import { RefPlaceholder, _createAgElement, _initDetachedStyledRoot } from 'ag-stack';
+import { RefPlaceholder, _initDetachedStyledRoot, _setDisplayed } from 'ag-stack';
 
 import type {
     ComponentType,
@@ -69,11 +69,13 @@ export class ToolPanelWrapper extends Component {
         }
         this.hasStyledRoot = true;
         const innerGui = this.getGui();
-        const externalDiv = _createAgElement({ tag: 'div', cls: 'ag-tool-panel-external' });
-        externalDiv.appendChild(innerGui);
-        const [styledRootOuter, styledRootDestroy] = _initDetachedStyledRoot(this.beans.environment, externalDiv);
+        const [styledRootOuter, styledRootDestroy] = _initDetachedStyledRoot(this.beans.environment, innerGui);
         this.addDestroyFunc(styledRootDestroy);
+        // transfer displayed state the new root
+        const displayed = this.isDisplayed();
+        _setDisplayed(innerGui, true);
         this.setGui(styledRootOuter);
+        this.setDisplayed(displayed);
     }
 
     public getToolPanelId(): string {

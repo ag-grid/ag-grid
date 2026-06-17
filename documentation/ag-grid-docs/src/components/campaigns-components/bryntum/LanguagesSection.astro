@@ -1,0 +1,18 @@
+---
+import type { BryntumLanguagesSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumLanguagesSection;
+}
+
+const { section } = Astro.props;
+---
+
+<section class:list={[styles.section, styles.sectionBgSecondary]}>
+    <div class={styles.sectionInner}>
+        {section.eyebrow && <span class={styles.sectionEyebrow}>{section.eyebrow}</span>}
+        {section.heading && <h2 class={styles.languagesHeading}>{section.heading}</h2>}
+        {section.body_text && <p class={styles.languagesBody}>{section.body_text}</p>}
+    </div>
+</section>

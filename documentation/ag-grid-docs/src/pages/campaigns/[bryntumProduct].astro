@@ -1,0 +1,49 @@
+---
+import BryntumCampaign from '@components/campaigns-components/BryntumCampaign.astro';
+import type { BryntumCampaignContent } from '@components/campaigns-components/bryntum/types';
+import Layout from '@layouts/Layout.astro';
+
+export async function getStaticPaths() {
+    // Match the rewritten `{slug}.json` content files; the original
+    // `{slug}-original.json` files are kept for reference but no longer rendered.
+    const contentModules = import.meta.glob<BryntumCampaignContent>(
+        [
+            '../../content/campaigns/bryntum-products/*.json',
+            '!../../content/campaigns/bryntum-products/*-original.json',
+        ],
+        { eager: true, import: 'default' }
+    );
+
+    const slugAliases: Record<string, string> = {
+        schedulerpro: 'scheduler-pro',
+        taskboard: 'task-board',
+    };
+
+    return Object.values(contentModules).map((content) => {
+        const urlSlug = `bryntum-${slugAliases[content.slug] ?? content.slug}`;
+
+        return {
+            params: { bryntumProduct: urlSlug },
+            props: { content },
+        };
+    });
+}
+
+interface Props {
+    content: BryntumCampaignContent;
+}
+
+const { content } = Astro.props;
+const pageTitle = content.meta?.og_title ?? content.title;
+const pageDescription = content.meta?.description ?? '';
+---
+
+<Layout
+    title={pageTitle}
+    description={pageDescription}
+    showDocsNav={false}
+    showSearchBar={true}
+    showAnnouncementBanner={false}
+>
+    <BryntumCampaign content={content} />
+</Layout>

@@ -1,0 +1,40 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+
+import { resolveBryntumHref } from '@utils/bryntumCampaignAssets';
+import type { BryntumCta } from './types';
+
+interface Props {
+    ctas: BryntumCta[];
+    /**
+     * Class applied to each CTA anchor. Pass a single string to apply the same
+     * class to every CTA, or an array to apply per-index classes (e.g. primary
+     * for the first CTA, tertiary for the second). When the array runs out the
+     * last entry is reused for any further CTAs.
+     */
+    buttonClass: string | string[];
+    wrapperClass?: string;
+}
+
+const { ctas, buttonClass, wrapperClass } = Astro.props;
+
+const classForIndex = (idx: number): string => {
+    if (Array.isArray(buttonClass)) {
+        return buttonClass[idx] ?? buttonClass[buttonClass.length - 1] ?? '';
+    }
+    return buttonClass;
+};
+---
+
+{
+    ctas.length > 0 && (
+        <div class={wrapperClass}>
+            {ctas.map((cta, idx) => (
+                <a href={resolveBryntumHref(cta.href)} class={classForIndex(idx)} target="_blank" rel="noopener">
+                    {cta.text}
+                    <Icon name="chevronRight" />
+                </a>
+            ))}
+        </div>
+    )
+}

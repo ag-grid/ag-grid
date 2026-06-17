@@ -1,0 +1,48 @@
+---
+import { decorateBryntumHtml, resolveBryntumAsset } from '@utils/bryntumCampaignAssets';
+
+import BryntumCtaList from './BryntumCtaList.astro';
+import { getBryntumSvg } from './bryntumSvg';
+import type { BryntumHeroSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumHeroSection;
+    productSlug: string;
+}
+
+const { section, productSlug } = Astro.props;
+const media = section.media?.[0];
+const svgMarkup = media?.kind === 'svg-file' ? getBryntumSvg(media.src) : undefined;
+---
+
+<section class={styles.hero}>
+    <div class:list={[styles.sectionInner, styles.heroInner]}>
+        <div class={styles.heroCopy}>
+            {section.eyebrow && <span class={styles.heroEyebrow}>{section.eyebrow}</span>}
+            {section.heading && <h1 class={styles.heroHeading}>{section.heading}</h1>}
+            {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
+            {section.body_html && <div class={styles.heroBody} set:html={decorateBryntumHtml(section.body_html)} />}
+
+            {
+                section.ctas && (
+                    <BryntumCtaList ctas={section.ctas} buttonClass="button-secondary" wrapperClass={styles.heroCtas} />
+                )
+            }
+        </div>
+
+        <div class={styles.heroMedia}>
+            {svgMarkup && <Fragment set:html={svgMarkup} />}
+            {
+                media?.kind === 'image' && (
+                    <img
+                        src={resolveBryntumAsset(media.src, productSlug)}
+                        alt={media.alt ?? ''}
+                        width={media.width}
+                        height={media.height}
+                    />
+                )
+            }
+        </div>
+    </div>
+</section>

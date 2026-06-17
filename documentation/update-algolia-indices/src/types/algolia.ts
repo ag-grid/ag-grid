@@ -1,5 +1,5 @@
 export interface AlgoliaRecord {
-    source: 'api' | 'docs';
+    source: 'api' | 'docs' | 'campaigns';
 
     objectID: string;
     title: string;

@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import assert from 'node:assert/strict';
 
 import { getApiPageData, parseApiPageData } from './generators/api-refs';
+import { getCampaignRecords } from './generators/campaign-pages';
 import { getAllDocPages, parseDocPage } from './generators/docs-pages';
 import type { FlattenedMenuItem } from './generators/docs-pages';
 import { SUPPORTED_FRAMEWORKS } from './utils/constants';
@@ -62,6 +63,12 @@ apiPages.forEach((page) => {
 });
 
 /**
+ * Generate Algolia records for campaign pages
+ */
+const campaignRecords = getCampaignRecords();
+writeResults('campaigns/bryntum.json', campaignRecords);
+
+/**
  * Then scrape the docs for the content pages and generate Algolia records
  */
 const docPages = getAllDocPages();
@@ -88,6 +95,8 @@ for (let i = 0; i < SUPPORTED_FRAMEWORKS.length; i++) {
             indices[framework].push(...result);
         }
     });
+
+    indices[framework].push(...campaignRecords);
 
     const indexName = `${indexNamePrefix}_${framework}`;
     await updateAlgolia(indexName, indices[framework]);

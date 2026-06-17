@@ -6,7 +6,7 @@ import type {
     AutoGenerateColumnDefsOptions,
     AutoGroupColumnDef,
     AutoSizeStrategy,
-    CalculatedColumnsOptions,
+    CalculatedColumnsGridOption,
     CellSelectionOptions,
     ChartToolPanelsDef,
     ColDef,
@@ -413,10 +413,10 @@ export interface Props<TData> {
          * or can be custom data types.
          */
     dataTypeDefinitions?: DataTypeDefinitions<TData>,
-    /** Configures the Calculated Columns dialog.
+    /** Enables and configures Calculated Columns.
          * @agModule `CalculatedColumnsModule`
          */
-    calculatedColumns?: CalculatedColumnsOptions,
+    calculatedColumns?: CalculatedColumnsGridOption,
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
          *
          * @default false
@@ -1229,6 +1229,7 @@ export interface Props<TData> {
          */
     groupDefaultExpanded?: number,
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
+         * Cell tooltip properties set here (`tooltipField`, `tooltipValueGetter`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     autoGroupColumnDef?: AutoGroupColumnDef<TData>,
@@ -2663,4 +2664,3 @@ export function deepToRaw<T extends Record<string, any>>(sourceObj: T): T {
 
      return objectIterator(sourceObj);
 }
-

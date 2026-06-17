@@ -193,6 +193,8 @@ export class AgColumn<TValue = any>
     /** Position in `pivotColsSvc.columns` when {@link pivotActive}; else stale — always pair the read with a `pivotActive` check. */
     public pivotActiveIndex = -1;
     public aggregationActive = false;
+    /** Position in `valueColsSvc.columns` when {@link aggregationActive}; else stale — always pair the read with an `aggregationActive` check. */
+    public aggregationActiveIndex = -1;
     /** The display group col that shows this (source) column; set by `showRowGroupCols` on refresh */
     public showRowGroupCol: AgColumn | null = null;
 
@@ -254,6 +256,7 @@ export class AgColumn<TValue = any>
         this.userProvidedColDef = userProvidedColDef;
         this.colDef = colDef;
         if (_mergedEqual(colDef, oldColDef)) {
+            this.initCalculatedColumnState(colDef);
             return false;
         }
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
@@ -486,8 +489,13 @@ export class AgColumn<TValue = any>
         this.enableCellChangeFlash = colDef.enableCellChangeFlash;
         this.colSpan = colDef.colSpan;
         this.rowSpan = colDef.rowSpan;
+        this.initCalculatedColumnState(colDef);
+    }
+
+    private initCalculatedColumnState(colDef: ColDef<any, TValue>): void {
         this.calculatedExpression = colDef.calculatedExpression;
-        this.isCalculatedCol = this.calculatedExpression !== undefined && this.beans.calculatedColsSvc != null;
+        this.isCalculatedCol =
+            this.calculatedExpression !== undefined && this.beans.calculatedColsSvc?.isEnabled() === true;
     }
 
     public isResizable(): boolean {

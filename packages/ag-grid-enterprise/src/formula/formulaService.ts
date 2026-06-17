@@ -108,7 +108,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * if the active state changed. Called by `columnModel` whenever the column set changes.
      */
     public setFormulasActive(columns: AgColumn[]): void {
-        const calculatedColumnsEnabled = this.beans.calculatedColsSvc != null;
+        const calculatedColumnsEnabled = this.beans.calculatedColsSvc?.isEnabled() === true;
         let editableFormulaColumnsPresent = false;
         let calculatedColumnsPresent = false;
         for (let i = 0, len = columns.length; i < len; ++i) {

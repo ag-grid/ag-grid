@@ -249,19 +249,16 @@ describe('showValueAs breaking-change guardrails', () => {
 
     test('a zero denominator blanks the cell instead of producing Infinity or NaN', async () => {
         const api = gridsManager.createGrid('sva-zero-denominator', {
-            columnDefs: [
-                { field: 'country' },
-                // Compare against a constant base of 0 — the ratio guards against the division.
-                { field: 'amount', aggFunc: 'sum', showValueAs: { type: 'percentOf', params: { base: { value: 0 } } } },
-            ],
+            columnDefs: [{ field: 'country' }, { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' }],
             getRowId: ({ data }) => data.id,
             rowData: [
-                { id: '1', country: 'A', amount: 25 },
-                { id: '2', country: 'B', amount: 75 },
+                // A grand total of 0 makes the denominator zero — the ratio guards against the division.
+                { id: '1', country: 'A', amount: 0 },
+                { id: '2', country: 'B', amount: 0 },
             ],
         });
 
-        // A zero base yields no value (not Infinity/NaN) → the transform returns null and the formatter renders ''.
+        // A zero denominator yields no value (not Infinity/NaN) → the transform returns null and the formatter renders ''.
         expect(transformed(api, '1', 'amount')).toBeNull();
         expect(
             api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', useFormatter: true, from: 'transformed' })

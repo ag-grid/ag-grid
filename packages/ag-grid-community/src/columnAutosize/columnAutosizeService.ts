@@ -573,10 +573,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     public processResizeOperations(): void {
         this.shouldQueueResizeOperations = false;
-        for (const resizeOperation of this.resizeOperationQueue) {
-            resizeOperation();
-        }
+        const operations = this.resizeOperationQueue;
         this.resizeOperationQueue = [];
+        for (let i = 0, len = operations.length; i < len; ++i) {
+            operations[i]();
+        }
     }
 
     public pushResizeOperation(func: () => void): void {

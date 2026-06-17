@@ -1,0 +1,33 @@
+---
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import { LIVE_DEMO_PRODUCT_CONFIG } from './liveDemoProducts';
+import type { BryntumLiveDemoSection } from './types';
+
+interface Props {
+    section: BryntumLiveDemoSection;
+    productSlug: string;
+}
+
+const { section, productSlug } = Astro.props;
+const config = LIVE_DEMO_PRODUCT_CONFIG[productSlug];
+---
+
+{
+    config && (
+        <>
+            <section class="bryntum-demo-section">
+                <div class="bryntum-demo-inner">
+                    {section.eyebrow && <span class="bryntum-demo-eyebrow">{section.eyebrow}</span>}
+                    {section.heading && <h2 class="bryntum-demo-heading">{section.heading}</h2>}
+                    {section.body_text && <p class="bryntum-demo-subheading">{section.body_text}</p>}
+                    <div class:list={['bryntum-demo-frame', `bryntum-demo-frame--${productSlug}`]}>
+                        <div id={config.mountId} class="bryntum-demo-mount" />
+                    </div>
+                </div>
+            </section>
+
+            <script is:inline src={urlWithBaseUrl(`/scripts/bryntum-${productSlug}-demo.js`)} defer />
+        </>
+    )
+}

@@ -202,6 +202,44 @@ If you are using the long form (providing a `SideBarDef` object) then it is poss
 
 By default, Tool Panels are rendered inside the Side Bar. If you want to render Tool Panels in a different location, you can set the [parent](./side-bar#reference-ToolPanelDef-parent) property in the `ToolPanelDef`. This is useful if you want to render Tool Panel in a different part of your application, such as a popup window or a separate section of your page.
 
+{% note %}
+To ensure correct panel sizing, AG Grid adds a CSS class to the parent element. If your component also sets the parent class it may overwrite this, so include the `ag-tool-panel-external` class when setting the parent class:
+
+{% if isFramework("react") %}
+
+```jsx
+<div ref={toolPanelParent}
+     className="your-app-class ag-tool-panel-external"></div>
+```
+
+{% /if %}
+
+{% if isFramework("javascript") %}
+
+```html
+<div id="toolPanelParent" class="your-app-class ag-tool-panel-external"></div>
+```
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+```html
+<div #toolPanelParent class="your-app-class ag-tool-panel-external"></div>
+```
+
+{% /if %}
+
+{% if isFramework("vue") %}
+
+```html
+<div ref="toolPanelParent" class="your-app-class ag-tool-panel-external"></div>
+```
+
+{% /if %}
+
+{% /note %}
+
 The [Popup Parent](./context-menu/#popup-parent) must also be set to an element that contains both the Tool Panel parent and the grid.
 
 You can also provide a parent for the tool panel in the call to openToolPanel method:

@@ -227,46 +227,6 @@ describe('showValueAs transform', () => {
         expect(leaf(api, '1').getDataValue('amount', 'value')).toBe(25);
     });
 
-    test('a non-numeric column can opt into showValueAs with a custom transform (no promotion)', async () => {
-        const api = gridsManager.createGrid('sva-non-numeric', {
-            columnDefs: [
-                { field: 'country' },
-                {
-                    field: 'label',
-                    showValueAs: 'shout',
-                    showValueAsConfig: {
-                        modes: {
-                            shout: {
-                                transform: (p) => String(p.rawValue ?? '').toUpperCase(),
-                                transformedDataType: 'text',
-                            },
-                        },
-                    },
-                },
-            ],
-            getRowId: ({ data }) => data.id,
-            rowData: [
-                { id: '1', country: 'A', label: 'hi' },
-                { id: '2', country: 'B', label: 'bye' },
-            ],
-        });
-
-        await new GridColumns(api, 'non-numeric custom transform').checkColumns(`
-            CENTER
-            ├── country "Country" width:200
-            └── label "Label" width:200 showValueAs:shout
-        `);
-        await new GridRows(api, 'non-numeric custom transform').check(`
-            ROOT id:ROOT_NODE_ID label:""
-            ├── LEAF id:1 country:"A" label:"HI"
-            └── LEAF id:2 country:"B" label:"BYE"
-        `);
-
-        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'label', from: 'transformed' })).toBe('HI');
-        // The custom mode does not require aggregation, so a text column is never promoted.
-        expect(api.getColumn('label')!.isValueActive()).toBe(false);
-    });
-
     test('applyColumnState promotes a non-aggregated column when it sets a total mode', async () => {
         const api = gridsManager.createGrid('sva-state-promote', {
             columnDefs: [{ field: 'country' }, { field: 'amount' }], // amount: numeric, no aggFunc
@@ -362,21 +322,9 @@ describe('showValueAs transform', () => {
         expect(amountCell()).toHaveTextContent('25.00%');
     });
 
-    test('custom mode registered grid-wide via defaultColDef.showValueAsConfig', async () => {
-        const api = gridsManager.createGrid('custom-mode', {
-            // Grid-wide modes are registered through defaultColDef (deep-merged into every column).
-            defaultColDef: {
-                showValueAsConfig: {
-                    modes: {
-                        // Custom mode using its own `params` (TParams).
-                        share: {
-                            transform: (p) => (p.params.target ? (p.rawValue as number) / p.params.target : null),
-                            params: { target: 100 },
-                        },
-                    },
-                },
-            },
-            columnDefs: [{ field: 'country' }, { field: 'amount', aggFunc: 'sum', showValueAs: 'share' }],
+    test('getShowValueAsConfig exposes the resolved built-in modes; getShowValueAs the active one', async () => {
+        const api = gridsManager.createGrid('resolved-config', {
+            columnDefs: [{ field: 'country' }, { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' }],
             getRowId: ({ data }) => data.id,
             rowData: [
                 { id: '1', country: 'A', amount: 25 },
@@ -384,58 +332,14 @@ describe('showValueAs transform', () => {
             ] satisfies SaleRow[],
         });
 
-        await new GridColumns(api, 'grid-wide custom mode').checkColumns(`
-            CENTER
-            ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValueAs:share
-        `);
-        await new GridRows(api, 'grid-wide custom mode').check(`
-            ROOT id:ROOT_NODE_ID amount:1
-            ├── LEAF id:1 country:"A" amount:0.25
-            └── LEAF id:2 country:"B" amount:0.75
-        `);
-
-        // Custom mode resolves via the registry and reads its own params (25 / target 100).
-        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', from: 'transformed' })).toBeCloseTo(0.25);
         // getShowValueAs() returns the active resolved mode (its `type` is the active mode name).
-        expect(api.getColumn('amount')?.getShowValueAs()?.type).toBe('share');
-        // getShowValueAsConfig() exposes the full resolved config — every available mode, keyed by type.
+        expect(api.getColumn('amount')?.getShowValueAs()?.type).toBe('percentOfGrandTotal');
+        // getShowValueAsConfig() exposes the full resolved config — every available built-in mode, keyed by type.
         const resolvedConfig = api.getColumn('amount')?.getShowValueAsConfig();
-        expect(resolvedConfig?.modes['share']?.type).toBe('share');
         expect(resolvedConfig?.modes['percentOfGrandTotal']?.type).toBe('percentOfGrandTotal');
-        // A named custom mode round-trips through state.
-        expect(api.getColumnState().find((s) => s.colId === 'amount')?.showValueAs).toBe('share');
-    });
-
-    test('per-column custom mode via showValueAsConfig.modes', async () => {
-        const api = gridsManager.createGrid('per-column-mode', {
-            columnDefs: [
-                { field: 'country' },
-                {
-                    field: 'amount',
-                    aggFunc: 'sum',
-                    showValueAs: 'half',
-                    showValueAsConfig: { modes: { half: { transform: (p) => (p.rawValue as number) / 2 } } },
-                },
-            ],
-            getRowId: ({ data }) => data.id,
-            rowData: [{ id: '1', country: 'A', amount: 25 }],
-        });
-
-        await new GridColumns(api, 'per-column custom mode').checkColumns(`
-            CENTER
-            ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValueAs:half
-        `);
-        await new GridRows(api, 'per-column custom mode').check(`
-            ROOT id:ROOT_NODE_ID amount:12.5
-            └── LEAF id:1 country:"A" amount:12.5
-        `);
-
-        // A mode defined in the column's own config resolves and applies.
-        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', from: 'transformed' })).toBeCloseTo(12.5);
-        // The selected mode name round-trips through state (the modes map stays colDef config).
-        expect(api.getColumnState().find((s) => s.colId === 'amount')?.showValueAs).toBe('half');
+        expect(resolvedConfig?.modes['percentOfColumnTotal']?.type).toBe('percentOfColumnTotal');
+        // The active mode name round-trips through state.
+        expect(api.getColumnState().find((s) => s.colId === 'amount')?.showValueAs).toBe('percentOfGrandTotal');
     });
 
     test('percentOfRowTotal — a share of the value field across the pivot columns', async () => {
@@ -585,9 +489,8 @@ describe('showValueAs transform', () => {
         expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', from: 'transformed' })).toBeCloseTo(0.25);
     });
 
-    test('transformed value goes to showValueAsFormatter, never the column valueFormatter', async () => {
+    test('transformed value goes to the mode formatter, never the column valueFormatter', async () => {
         const valueFormatterValues: unknown[] = [];
-        const showValueAsFormatterCalls: { value: unknown; rawValue: unknown; type: string }[] = [];
         const api = gridsManager.createGrid('formatter-isolation', {
             columnDefs: [
                 { field: 'country' },
@@ -598,20 +501,6 @@ describe('showValueAs transform', () => {
                     valueFormatter: (p) => {
                         valueFormatterValues.push(p.value);
                         return `$${p.value}`;
-                    },
-                    showValueAsConfig: {
-                        modes: {
-                            percentOfGrandTotal: {
-                                formatter: (p) => {
-                                    showValueAsFormatterCalls.push({
-                                        value: p.value,
-                                        rawValue: p.rawValue,
-                                        type: p.showValueAsType,
-                                    });
-                                    return `${(p.value as number) * 100}pct`;
-                                },
-                            },
-                        },
                     },
                 },
             ],
@@ -628,23 +517,19 @@ describe('showValueAs transform', () => {
             └── amount "Amount" width:200 aggFunc:sum showValueAs:percentOfGrandTotal
         `);
         await new GridRows(api, 'formatter isolation').check(`
-            ROOT id:ROOT_NODE_ID amount:"100pct"
-            ├── LEAF id:1 country:"A" amount:"25pct"
-            └── LEAF id:2 country:"B" amount:"75pct"
+            ROOT id:ROOT_NODE_ID amount:"100.00%"
+            ├── LEAF id:1 country:"A" amount:"25.00%"
+            └── LEAF id:2 country:"B" amount:"75.00%"
         `);
 
+        // The built-in mode's own formatter renders the percentage, not the column's valueFormatter.
         const formatted = api.getCellValue({
             rowNode: leaf(api, '1'),
             colKey: 'amount',
             useFormatter: true,
             from: 'transformed',
         });
-        expect(formatted).toBe('25pct');
-        expect(showValueAsFormatterCalls).toContainEqual({
-            value: expect.closeTo(0.25),
-            rawValue: 25,
-            type: 'percentOfGrandTotal',
-        });
+        expect(formatted).toBe('25.00%');
         // The column's own valueFormatter never receives the transformed (fractional) value.
         expect(valueFormatterValues).not.toContain(0.25);
     });
@@ -671,31 +556,6 @@ describe('showValueAs transform', () => {
         `);
 
         expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', from: 'transformed' })).toBeCloseTo(0.25);
-    });
-
-    test('a disabled mode renders the raw value', async () => {
-        const api = gridsManager.createGrid('disabled-mode', {
-            defaultColDef: { showValueAsConfig: { modes: { percentOfGrandTotal: null } } },
-            columnDefs: [{ field: 'country' }, { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' }],
-            getRowId: ({ data }) => data.id,
-            rowData: [
-                { id: '1', country: 'A', amount: 25 },
-                { id: '2', country: 'B', amount: 75 },
-            ] satisfies SaleRow[],
-        });
-
-        await new GridColumns(api, 'disabled mode').checkColumns(`
-            CENTER
-            ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum
-        `);
-        await new GridRows(api, 'disabled mode').check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:1 country:"A" amount:25
-            └── LEAF id:2 country:"B" amount:75
-        `);
-
-        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', from: 'transformed' })).toBe(25);
     });
 
     test('pivot — percentOfParentColumnTotal (relative to the parent pivot column group)', async () => {

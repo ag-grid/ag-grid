@@ -654,6 +654,7 @@ describe('row spanning', () => {
                 columnDefs: [{ field: 'athlete', colId: 'athlete' }],
                 rowData: [{ athlete: 'A' }, { athlete: 'A' }, { athlete: 'B' }],
                 defaultColDef: { spanRows: true },
+                calculatedColumns: true,
             });
             await settle();
             await new GridRows(api, 'calc-add rows before').check(`
@@ -690,6 +691,7 @@ describe('row spanning', () => {
                     { a: 'X', b: 'Q' },
                     { a: 'Y', b: 'Q' },
                 ],
+                calculatedColumns: true,
             });
             addCalculatedColumnDef(api, { colId: 'calc', calculatedExpression: '[a]', spanRows: true } as any);
             await settle();

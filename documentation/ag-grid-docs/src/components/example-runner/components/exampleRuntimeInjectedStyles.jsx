@@ -59,6 +59,19 @@ html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-'])
     background-color: rgba(0,0,0, 0.1);
 }
 
+html {
+    --example-background-color: white;
+    --example-text-color: black;
+    --example-color-scheme: light;
+    --example-font-family: 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', 'sans-serif';
+}
+
+html[data-color-scheme='dark'] {
+    --example-background-color: #1f2836;
+    --example-text-color: white;
+    --example-color-scheme: dark;
+}
+
 html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']):disabled {
     opacity: 0.66;
     pointer-events: none;

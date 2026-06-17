@@ -13,7 +13,7 @@ import { getCspHeaderName, getCspValue, getScopedCspHtaccessBlock } from '../../
  *       [--env=staging|production|dev]
  *       [--mode=report-only|enforce]
  *       [--format=htaccess|header|value]
- *       [--scope=site|examples]    (header/value formats only; htaccess emits both)
+ *       [--scope=site|examples|campaigns]  (header/value formats only; htaccess emits all)
  *       [--out=<file>]
  *
  * Run via Nx:
@@ -33,7 +33,7 @@ type Format = 'htaccess' | 'header' | 'value';
 const ENVS: CspEnv[] = ['dev', 'staging', 'production'];
 const MODES: CspMode[] = ['report-only', 'enforce'];
 const FORMATS: Format[] = ['htaccess', 'header', 'value'];
-const SCOPES: CspScope[] = ['site', 'examples'];
+const SCOPES: CspScope[] = ['site', 'examples', 'campaigns'];
 
 function assertOneOf<T extends string>(value: string | undefined, allowed: T[], flag: string): T {
     if (value === undefined || !allowed.includes(value as T)) {

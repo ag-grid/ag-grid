@@ -7,19 +7,26 @@
  *  - `htaccessRules.ts` to emit the `Content-Security-Policy` header into the
  *    generated `.htaccess`.
  *
- * Keep this module dependency-free so it can be imported by a standalone `tsx`
- * script without pulling in the Astro/Vite build graph.
+ * Keep this module free of Astro/Vite imports so it can be imported by a standalone
+ * `tsx` script without pulling in the build graph (Node built-ins and plain-string
+ * constants are fine — it is only ever imported build-side, never client-side).
  */
+import { createHash } from 'node:crypto';
+
+import { DARK_MODE_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
 
 export type CspEnv = 'dev' | 'staging' | 'production';
 export type CspMode = 'report-only' | 'enforce';
 
 /**
- * 'site' is the default policy for ordinary pages. 'examples' additionally
- * allows 'unsafe-eval' and applies only to the standalone example-runner
- * documents (and archived doc versions) — see EXAMPLES_PATH_CONDITION.
+ * - 'site': the default policy for ordinary pages.
+ * - 'examples': additionally allows 'unsafe-eval'; applies only to the standalone
+ *   example-runner documents (and archived doc versions) — see EXAMPLES_PATH_CONDITION.
+ * - 'campaigns': additionally allows the bryntum.com origin (script/style/font/
+ *   connect) for the partnership campaign pages' embedded Gantt demo — without
+ *   'unsafe-eval'. See CAMPAIGNS_PATH_CONDITION.
  */
-export type CspScope = 'site' | 'examples';
+export type CspScope = 'site' | 'examples' | 'campaigns';
 
 export interface CspOptions {
     env: CspEnv;
@@ -34,6 +41,10 @@ export type CspDirectives = Record<string, string[]>;
 
 const SELF = "'self'";
 const NONE = "'none'";
+// In script-src, 'unsafe-inline' is now scope-specific: the 'site' policy
+// authorises its few known inline scripts by SHA-256 hash instead (see
+// SITE_SCRIPT_HASHES), while 'examples' and 'campaigns' still carry it. In
+// style-src it stays everywhere (Theming API runtime <style> injection).
 const UNSAFE_INLINE = "'unsafe-inline'";
 // Permits WebAssembly compilation without permitting JS eval() — narrower than
 // 'unsafe-eval'. Needed on every page: docs snippets are highlighted in the
@@ -49,10 +60,80 @@ const WASM_UNSAFE_EVAL = "'wasm-unsafe-eval'";
 // but now unescapes string literals without eval (see unescapeStringLiteral).
 const UNSAFE_EVAL = "'unsafe-eval'";
 
+// SHA-256 hashes authorising the main-page inline <script>s in the 'site' scope
+// instead of 'unsafe-inline'. Derived from the SAME constants the pages render
+// (src/utils/csp/inlineScripts.ts) so the policy can never drift from what is
+// served — edit the script and the hash follows automatically. Added ONLY to the
+// 'site' scope: per CSP2+, the presence of a hash makes the browser ignore
+// 'unsafe-inline', so the 'examples'/'campaigns' scopes — which still rely on
+// 'unsafe-inline' — must NOT carry them. Dev keeps 'unsafe-inline' (no hashes)
+// because the Vite/Astro dev server injects its own inline scripts.
+//
+// NB: this hashes the source string; the browser hashes the rendered bytes. They
+// match as long as Astro emits the inline script verbatim (verified in dev; the
+// production report-only window is the backstop before enforcing).
+const hashInlineScript = (source: string): string =>
+    `'sha256-${createHash('sha256').update(source, 'utf8').digest('base64')}'`;
+
+// Astro injects a small, fixed set of inline hydration-runtime scripts that we
+// cannot externalise — they are emitted (and minified) by the framework, not
+// authored here. Every OTHER site inline script is externalised to a 'self' bundle
+// (see ImageCaption, ExpandingSection, FrameworkRedirectPage, etc.), so these are
+// the only inline scripts the 'site' scope authorises by hash.
+//
+// Because the rendered bytes are Astro's build-time output, there is no source
+// string to derive these from — they are pinned, and they change when Astro's
+// hydration runtime changes, i.e. on an Astro upgrade. ASTRO_HYDRATION_HASHES_VERIFIED_FOR
+// records the Astro version they were captured against; cspRules.test.ts fails when
+// the installed version no longer matches, so an upgrade cannot silently leave the
+// policy stale (which would block hydration site-wide once the CSP is enforced).
+//
+// === HOW TO REGENERATE AFTER AN ASTRO UPGRADE ===
+//   1. yarn nx build ag-grid-docs
+//   2. yarn nx run ag-grid-docs:preview:csp           (serves the build with the enforced policy)
+//   3. Open https://localhost:4611/ plus a page using each client: directive
+//      (load/idle/only/visible) and read the browser console: every blocked inline
+//      script logs the missing 'sha256-...' value in its CSP violation. (Equivalently,
+//      hash the inline <script> contents in dist and diff against the list below.)
+//   4. Replace the hashes below with the new values, and bump
+//      ASTRO_HYDRATION_HASHES_VERIFIED_FOR to the new Astro version.
+export const ASTRO_HYDRATION_HASHES_VERIFIED_FOR = '6.1.9';
+const ASTRO_HYDRATION_SCRIPT_HASHES = [
+    "'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c='", // client:load bootstrap
+    "'sha256-eIXWvAmxkr251LJZkjniEK5LcPF3NkapbJepohwYRIc='", // client:only bootstrap
+    "'sha256-Q2BPg90ZMplYY+FSdApNErhpWafg2hcRRbndmvxuL/Q='", // client:visible bootstrap
+    "'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw='", // client:idle bootstrap
+    "'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='", // <astro-island> hydration runtime
+];
+
+const SITE_SCRIPT_HASHES = [
+    hashInlineScript(DARK_MODE_INIT_SCRIPT),
+    hashInlineScript(PLAUSIBLE_INIT_SCRIPT),
+    ...ASTRO_HYDRATION_SCRIPT_HASHES,
+];
+
+// The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
+// demo that loads its bundle, stylesheet, Font Awesome webfonts and dataset from
+// bryntum.com. Allowed only in the 'campaigns' scope so the rest of the site does
+// not trust this third-party origin. The pages are deliberately NOT granted
+// 'unsafe-eval': if the Bryntum bundle's runtime new Function() path turns out to
+// be exercised, re-allowing it is a separate, conscious decision.
+const BRYNTUM_HOST = 'https://bryntum.com';
+
 // Apache <If> expression matching the URL paths that get the 'examples' scope:
 // the standalone example-runner documents and archived doc versions (uploaded
 // separately but served from this vhost, so they inherit the root .htaccess).
 export const EXAMPLES_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(examples|archive)/#';
+
+// Apache <If> expression matching the partnership campaign pages that get the
+// 'campaigns' scope (e.g. /campaigns/bryntum-gantt/).
+export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/campaigns/#';
+
+// JS equivalents of the *_PATH_CONDITION Apache rules above, for the dev-server
+// (agDevCsp) and preview-server (preview-csp) middleware that scope the served
+// CSP by URL path. Keep these in sync with the Apache conditions.
+export const EXAMPLES_PATH_REGEXP = /^\/(examples|archive)\//;
+export const CAMPAIGNS_PATH_REGEXP = /^\/campaigns\//;
 
 // 'self' resolves to grid-staging.ag-grid.com on staging / localhost in dev, so
 // cross-subdomain references to the production host need an explicit allowance.
@@ -127,8 +208,8 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             'https://www.youtube.com', // YouTube iframe JS API (loads into the page)
             'https://cdn.cookielaw.org', // OneTrust cookie-consent SDK (GTM-injected, prod-only)
             'blob:', // ZoomInfo zi-tag.js bootstraps a blob: URL script
-            UNSAFE_INLINE,
             WASM_UNSAFE_EVAL,
+            // 'unsafe-inline' (examples/campaigns/dev) or SHA-256 hashes (site) added per scope below.
         ],
         // 'unsafe-inline' stays: the Theming API injects <style> elements at
         // runtime (live grids run directly on the homepage/demo pages), inline
@@ -200,8 +281,22 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
         'frame-ancestors': [SELF, AG_GRID_HOSTS], // allow *.ag-grid.com (e.g. blog) to embed examples
     };
 
+    // script-src inline handling, by scope (and environment for 'site').
     if (scope === 'examples') {
-        directives['script-src'].push(UNSAFE_EVAL);
+        directives['script-src'].push(UNSAFE_EVAL, UNSAFE_INLINE);
+    } else if (scope === 'campaigns') {
+        directives['script-src'].push(BRYNTUM_HOST, UNSAFE_INLINE);
+        directives['style-src'].push(BRYNTUM_HOST);
+        directives['font-src'].push(BRYNTUM_HOST);
+        directives['connect-src'].push(BRYNTUM_HOST);
+    } else if (env === 'dev') {
+        // Dev server (Vite/Astro) injects its own inline scripts for HMR/hydration
+        // that the static build does not; keep 'unsafe-inline' locally rather than
+        // block them. The hash-based site policy is validated on staging/production.
+        directives['script-src'].push(UNSAFE_INLINE);
+    } else {
+        // 'site' on staging/production: authorise the known inline scripts by hash.
+        directives['script-src'].push(...SITE_SCRIPT_HASHES);
     }
 
     if (env === 'dev') {
@@ -257,25 +352,70 @@ export function getCspHtaccessBlock(options: CspOptions, mode: CspMode): string 
 }
 
 /**
- * Build the full `.htaccess` CSP block with the path-scoped policy split: the
- * 'site' policy (no 'unsafe-eval') for ordinary pages, replaced by the
- * 'examples' policy for the paths matched by EXAMPLES_PATH_CONDITION.
+ * Build an Apache `<If>` block that replaces the CSP header for the requests
+ * matching `condition` with the given scope's policy.
  *
- * A second CSP policy can only tighten (browsers enforce the intersection), so
- * the relaxation must unset and re-set the header rather than add another one.
+ * A second CSP policy can only tighten (browsers enforce the intersection), so a
+ * relaxation must unset and re-set the header rather than add another one. <If>
+ * sections merge after all other configuration, so this unset+set deterministically
+ * replaces whatever header was set site-wide for matching requests.
+ */
+function getCspIfOverride(condition: string, comment: string[], options: CspOptions, mode: CspMode): string {
+    const headerName = getCspHeaderName(mode);
+    return [
+        ...comment,
+        `<If "${condition}">`,
+        `    Header always unset ${headerName}`,
+        `    ${getCspHtaccessLine(options, mode)}`,
+        '</If>',
+    ].join('\n');
+}
+
+/**
+ * The `<If>` override re-allowing 'unsafe-eval' for the example-runner documents
+ * and archived doc versions matched by EXAMPLES_PATH_CONDITION.
+ */
+export function getExamplesCspIfOverride(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
+    return getCspIfOverride(
+        EXAMPLES_PATH_CONDITION,
+        [
+            "# Example-runner documents and archived doc versions additionally need 'unsafe-eval'",
+            '# (SystemJS eval-loads modules; the Angular JIT and Vue runtime template compilers',
+            '# also compile in the browser).',
+        ],
+        { ...options, scope: 'examples' },
+        mode
+    );
+}
+
+/**
+ * The `<If>` override allowing the bryntum.com origin for the partnership campaign
+ * pages matched by CAMPAIGNS_PATH_CONDITION (no extra 'unsafe-eval').
+ */
+export function getCampaignsCspIfOverride(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
+    return getCspIfOverride(
+        CAMPAIGNS_PATH_CONDITION,
+        [
+            '# Partnership campaign pages embed a live Bryntum Gantt demo that loads its bundle,',
+            '# stylesheet, Font Awesome webfonts and dataset from bryntum.com.',
+        ],
+        { ...options, scope: 'campaigns' },
+        mode
+    );
+}
+
+/**
+ * Build the full `.htaccess` CSP block with the path-scoped policy split: the
+ * 'site' policy (no 'unsafe-eval', no third-party embeds) for ordinary pages,
+ * replaced by the 'examples' policy for EXAMPLES_PATH_CONDITION paths and the
+ * 'campaigns' policy for CAMPAIGNS_PATH_CONDITION paths.
  */
 export function getScopedCspHtaccessBlock(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
-    const headerName = getCspHeaderName(mode);
     return [
         getCspHtaccessBlock({ ...options, scope: 'site' }, mode),
         '',
-        "# Example-runner documents and archived doc versions additionally need 'unsafe-eval'",
-        '# (SystemJS eval-loads modules; the Angular JIT and Vue runtime template compilers',
-        '# also compile in the browser). <If> sections merge after all other configuration,',
-        '# so this unset+set replaces the header set above for matching requests.',
-        `<If "${EXAMPLES_PATH_CONDITION}">`,
-        `    Header always unset ${headerName}`,
-        `    ${getCspHtaccessLine({ ...options, scope: 'examples' }, mode)}`,
-        '</If>',
+        getExamplesCspIfOverride(options, mode),
+        '',
+        getCampaignsCspIfOverride(options, mode),
     ].join('\n');
 }

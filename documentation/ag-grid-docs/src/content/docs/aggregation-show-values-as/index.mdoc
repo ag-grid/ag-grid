@@ -3,9 +3,9 @@ title: "Aggregation - Show Values As"
 enterprise: true
 ---
 
-Show each value relative to another, such as a percentage of the grand total or the difference from the previous row.
+Show each value as a relative figure, such as a percentage of the grand total or of its parent group.
 
-"Show Values As" displays a column's value as a relative figure: a share of a grand, column or group total, or a comparison against another row, column or a fixed value. The underlying data is unchanged — the value is transformed only for display.
+"Show Values As" displays a column's value as a share of a grand, column or group total. The underlying data is unchanged — the value is transformed only for display.
 
 A mode can be chosen by the user from the column menu, set on the column definition, or applied through [Column State](./column-state/).
 
@@ -38,25 +38,8 @@ A numeric column that is not yet aggregated is promoted to a value column when a
 | `percentOfParentRowTotal`    | a share of its parent group (requires row grouping or tree data)                |
 | `percentOfParentColumnTotal` | a share of its parent pivot column (pivoting only)                              |
 | `percentOfParentTotal`       | a share of an ancestor at a chosen grouping field (requires grouping/tree data) |
-| `percentOf`                  | a share of a chosen base value — see [Comparison Modes](#comparison-modes)      |
-| `differenceFrom`             | the difference from a chosen base value                                         |
-| `percentDifferenceFrom`      | the percentage difference from a chosen base value                              |
 
 A mode that is not meaningful in the current view — for example `percentOfParentTotal` on a grid with no grouping — shows the raw value rather than a blank column, and the column menu hides it (keeping only the active selection, greyed, until it is changed).
-
-### Comparison Modes
-
-`percentOf`, `differenceFrom` and `percentDifferenceFrom` show each value relative to a base. From the column menu the base can be a dimension field and one of its items, the previous or next row, another column, or a fixed value. To set one on the column definition, use the object form with `params`:
-
-```{% frameworkTransform=true %}
-const colDef = {
-    field: 'gold',
-    aggFunc: 'sum',
-    showValueAs: { type: 'percentOf', params: { baseField: 'year', baseItem: '2020' } },
-};
-```
-
-The comparison value is resolved in precedence order: `baseField` + `baseItem` (a dimension item), then `baseItem` alone (the adjacent sibling, via `'(previous)'` / `'(next)'`), then `base` (another column's `colId`, or `{ value }` for a constant).
 
 ## Setting the Mode in Code
 
@@ -72,7 +55,7 @@ const gridOptions = {
 };
 ```
 
-The object form takes `params` for the comparison modes and an optional `precision` to override the configured decimal places for that selection:
+The object form takes `params` for modes that need input (such as `percentOfParentTotal`) and an optional `precision` to override the configured decimal places for that selection:
 
 ```{% frameworkTransform=true %}
 const colDef = {
@@ -114,8 +97,6 @@ const gridOptions = {
 };
 ```
 
-Its `modes` property registers [Custom Modes](#custom-modes).
-
 To turn Show Values As off, set `showValueAsConfig` to `false` — on a single column, or on `defaultColDef` to disable it for every column. This removes the **Show Values As** menu and ignores any `showValueAs` selection:
 
 ```{% frameworkTransform=true %}
@@ -139,7 +120,7 @@ With [Row Grouping](./grouping/), parent and grand totals are available, so a va
 
 ## Flat Data
 
-Show Values As does not require grouping. On a flat grid each row can be shown as a share of the column's grand total, or relative to another row such as the one above it.
+Show Values As does not require grouping. On a flat grid each row can be shown as a share of the column's grand total. The example below enables a [Grand Total Row](./aggregation-total-rows/) so the 100% total is visible at the bottom.
 
 {% gridExampleRunner title="Show Values As on a Flat Grid" name="flat" /%}
 
@@ -158,16 +139,6 @@ In [Pivot](./pivoting/) mode each pivot column carries its own total, so a value
 ## Filtering
 
 Show Values As reads the column's existing aggregate, so its denominators follow the grid's [aggregation filtering](./aggregation-filtering/) rules. By default totals reflect only the rows that pass the filter, so the shown rows sum to 100%. Set `suppressAggFilteredOnly` to keep the unfiltered total in the denominator.
-
-## Custom Modes
-
-Register your own mode in `showValueAsConfig.modes`. A mode supplies a `transform` for the value to display and, optionally, a `menu` callback that builds its column-menu submenu — returning `(MenuItemDef | string)[]`, the same shape as `getMainMenuItems`. The menu params provide the candidate columns, an `editValue` popup, and an `apply` helper to commit a selection from a menu click or your own dialog.
-
-An entry of the same name as a built-in deep-merges over it (so a partial override keeps the rest of the built-in def); `true` re-enables a disabled mode, and `false` or `null` removes one.
-
-The example below adds a "Relative Value" mode: each value as a ratio of another medal column — the menu lists only the medal columns — scaled by a multiplier entered in a popup.
-
-{% gridExampleRunner title="Custom Show Values As Mode" name="custom-mode" /%}
 
 ## API Reference
 

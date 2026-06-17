@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+    <!-- Icon from Material Design Icons by Pictogrammers - https://github.com/Templarian/MaterialDesign/blob/master/LICENSE -->
+    <defs>
+        <linearGradient id="bryntum-gantt-dark-grad-feature" x1="6" y1="2" x2="6" y2="22" gradientUnits="userSpaceOnUse">
+            <stop stop-color="white" stop-opacity="0.05"/>
+            <stop offset="1" stop-color="white"/>
+        </linearGradient>
+        <linearGradient id="bryntum-gantt-dark-grad" x1="18" y1="5" x2="18" y2="18" gradientUnits="userSpaceOnUse">
+            <stop stop-color="white" stop-opacity="0.9"/>
+            <stop offset="1" stop-color="white" stop-opacity="0.5"/>
+        </linearGradient>
+    </defs>
+    <path fill="url(#bryntum-gantt-dark-grad-feature)" d="M2 5h8V2h2v20h-2v-4H6v-3h4v-2H4v-3h6V8H2z"/>
+    <path fill="url(#bryntum-gantt-dark-grad)" d="M14 5h3v3h-3zm0 5h5v3h-5zm0 5h8v3h-8z"/>
+</svg>

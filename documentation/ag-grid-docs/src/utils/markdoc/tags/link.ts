@@ -19,6 +19,7 @@ export const link: Schema = {
         const { framework } = config.variables ?? {};
         const children = node.transformChildren(config);
         const nodeAttributes = node.transformAttributes(config);
+        const hasCodeChild = node.children.some((child: { type: string }) => child.type === 'code');
 
         const hrefWithFramework = urlWithPrefix({ url: nodeAttributes.href, framework });
         // Replace markdoc variables, as markdoc does not parse attributes
@@ -28,6 +29,7 @@ export const link: Schema = {
             ...nodeAttributes,
             ...(nodeAttributes.isExternal ? { target: '_blank' } : undefined),
             href,
+            ...(hasCodeChild ? { class: 'meta-link' } : undefined),
         };
 
         return new Markdoc.Tag('a', attributes, children);

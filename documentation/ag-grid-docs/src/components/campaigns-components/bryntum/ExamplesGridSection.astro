@@ -1,0 +1,53 @@
+---
+import { resolveBryntumHref, resolveBryntumAsset } from '@utils/bryntumCampaignAssets';
+
+import type { BryntumColumnsLibSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumColumnsLibSection;
+    productSlug: string;
+}
+
+const { section, productSlug } = Astro.props;
+---
+
+<section class:list={[styles.section, styles.sectionBgSecondary]}>
+    <div class={styles.sectionInner}>
+        {
+            section.eyebrow && (
+                <span class:list={[styles.sectionEyebrow, styles.sectionEyebrowCentered]}>{section.eyebrow}</span>
+            )
+        }
+        {section.heading && <h2 class={styles.sectionHeading}>{section.heading}</h2>}
+
+        <div class={styles.examplesGrid}>
+            {
+                section.items.map((item) => {
+                    const img = item.media?.kind === 'image' ? item.media : undefined;
+                    return (
+                        <a
+                            class={styles.exampleCard}
+                            href={resolveBryntumHref(item.href)}
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            {img && (
+                                <img
+                                    class={styles.exampleCardImage}
+                                    src={resolveBryntumAsset(img.src, productSlug)}
+                                    alt={img.alt ?? item.body_text ?? ''}
+                                    loading="lazy"
+                                />
+                            )}
+                            <div class={styles.exampleCardBody}>
+                                <p class={styles.exampleCardLabel}>{item.body_text ?? item.heading}</p>
+                                {item.description && <p class={styles.exampleCardDescription}>{item.description}</p>}
+                            </div>
+                        </a>
+                    );
+                })
+            }
+        </div>
+    </div>
+</section>
