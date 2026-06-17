@@ -123,6 +123,7 @@ export {
     _setAriaControlsAndLabel,
     _setAriaDescribedBy,
     _setAriaDisabled,
+    _setAriaAutoComplete,
     _setAriaExpanded,
     _setAriaHasPopup,
     _setAriaHidden,

@@ -764,7 +764,7 @@ describe('Auto-Generate Column Defs', () => {
         test('Date values produce leaf columns and render correctly', async () => {
             const api = createGrid({
                 autoGenerateColumnDefs: true,
-                rowData: [{ name: 'Alice', dob: new Date('1990-01-01') }],
+                rowData: [{ name: 'Alice', dob: new Date(1990, 0, 1) }],
             });
 
             await new GridColumns(api, 'dates as leaves').checkColumns(`

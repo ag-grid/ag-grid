@@ -173,7 +173,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             result.push('showValueAsSubMenu');
         }
 
-        if (beans.calculatedColsSvc != null && isPrimary) {
+        if (beans.calculatedColsSvc?.isEnabled() === true && isPrimary) {
             result.push(MENU_ITEM_SEPARATOR);
             if (!colModel.pivotMode) {
                 result.push('calculatedColumn');

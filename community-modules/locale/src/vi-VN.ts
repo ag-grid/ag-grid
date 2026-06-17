@@ -669,6 +669,7 @@ export const AG_GRID_LOCALE_VN = {
     ariaColumnGroup: 'Nhóm cột',
     ariaFilterActive: 'Bộ lọc đang hoạt động',
     ariaColumnFiltered: 'Cột đã lọc',
+    ariaCalculatedColumn: 'Cột được tính toán',
     ariaColumnSelectAll: 'Chuyển đổi hiển thị tất cả các cột',
     ariaDateFilterInput: 'Đầu vào Bộ lọc Ngày',
     ariaDefaultListName: 'Danh sách',
