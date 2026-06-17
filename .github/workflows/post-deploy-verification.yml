@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: ['CI']
     types: [completed]
-    branches: ['latest']
+    branches: ['latest', 'AG-17487-playwright-tests']
   workflow_dispatch:
     inputs:
       staging_url:
