@@ -100,9 +100,9 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         }
     }
 
-    /** `valueIndex` per active col from the current state-apply pass; consumed by {@link sortByPendingState}. */
+    /** `valueIndex` per active col from the current state-apply pass; consumed by {@link sortByPendingState}.
+     *  Non-null signals a pending re-sort. */
     private pendingStateOrder: Map<AgColumn, number> | null = null;
-    private pendingStateChanged = false;
 
     public override syncColState(
         column: AgColumn,
@@ -136,23 +136,19 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
                 this.pendingStateOrder = idxMap;
             }
             idxMap.set(column, valueIndex);
-            this.pendingStateChanged = true;
         }
     }
 
     /** Re-order active value cols by the `valueIndex` recorded during the last `syncColState` pass; else keep
      *  insertion order. Runs before `refreshCols` so pivot result columns pick up the new value-col order. */
     public sortByPendingState(): void {
-        if (!this.pendingStateChanged) {
+        if (!this.pendingStateOrder) {
             return;
         }
-        this.pendingStateChanged = false;
-        if (this.pendingStateOrder) {
-            const cols = this.columns;
-            if (cols.length > 0) {
-                cols.sort(this.compareByStateIndex);
-                this.resetActiveCols(cols);
-            }
+        const cols = this.columns;
+        if (cols.length > 0) {
+            cols.sort(this.compareByStateIndex);
+            this.resetActiveCols(cols);
         }
         this.onColumnsChanged();
         this.pendingStateOrder = null;
