@@ -7,15 +7,9 @@ import type {
     MenuItemDef,
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import {
-    CalculatedColumnsModule,
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    ContextMenuModule,
-} from 'ag-grid-enterprise';
+import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
-    CalculatedColumnsModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     ColumnMenuModule,

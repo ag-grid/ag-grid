@@ -52,4 +52,6 @@ export interface IPivotColsService extends IOrderedColsService {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.  */
 export interface IValueColsService extends IColsService {
     setColumnAggFunc(key: ColKey | undefined, aggFunc: ColAggFunc, source: ColumnEventType): void;
+    /** Re-order active value cols by the `valueIndex` recorded during the last `syncColState` pass. */
+    sortByPendingState(): void;
 }

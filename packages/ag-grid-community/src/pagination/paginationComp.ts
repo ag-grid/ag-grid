@@ -99,14 +99,16 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
             }
             seen.add(panelName);
             if (panelName === 'pageSize') {
-                this.pageSizeComp = this.createManagedBean(new PageSizeSelectorComp());
+                const panelParams = typeof panel === 'object' && panel.type === 'pageSize' ? panel : undefined;
+                this.pageSizeComp = this.createManagedBean(new PageSizeSelectorComp(panelParams));
                 this.pageSizeComp.updateVisibility();
                 this.eContent.appendChild(this.pageSizeComp.getGui());
             } else if (panelName === 'rowSummary') {
                 this.rowSummaryComp = this.createManagedBean(new RowSummaryComp(idPrefix));
                 this.eContent.appendChild(this.rowSummaryComp.getGui());
             } else if (panelName === 'pageSummary') {
-                const suppressPageInput = typeof panel === 'object' ? panel.suppressPageInput : undefined;
+                const suppressPageInput =
+                    typeof panel === 'object' && panel.type === 'pageSummary' ? panel.suppressPageInput : undefined;
                 this.pageSummaryComp = this.createManagedBean(new PageSummaryComp(idPrefix, suppressPageInput));
                 this.eContent.appendChild(this.pageSummaryComp.getGui());
             }

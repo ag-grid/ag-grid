@@ -693,6 +693,7 @@ export const AG_GRID_LOCALE_NL = {
     ariaColumnGroup: 'Kolom Groep',
     ariaFilterActive: 'Filter actief',
     ariaColumnFiltered: 'Kolom Gefilterd',
+    ariaCalculatedColumn: 'Berekende kolom',
     ariaColumnShowValueAs: 'Waarden worden weergegeven als',
     ariaColumnSelectAll: 'Schakel zichtbaarheid van alle kolommen in/uit',
     ariaDateFilterInput: 'Datum Filter Invoer',

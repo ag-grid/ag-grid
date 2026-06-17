@@ -1,4 +1,16 @@
-import { CAMPAIGNS_PATH_CONDITION, getCspDirectives, getScopedCspHtaccessBlock } from './cspRules';
+import astroPackageJson from 'astro/package.json';
+import { createHash } from 'node:crypto';
+
+import { DARK_MODE_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
+import {
+    ASTRO_HYDRATION_HASHES_VERIFIED_FOR,
+    CAMPAIGNS_PATH_CONDITION,
+    getCspDirectives,
+    getScopedCspHtaccessBlock,
+} from './cspRules';
+
+const sha256Source = (source: string) => `'sha256-${createHash('sha256').update(source, 'utf8').digest('base64')}'`;
+const hasHash = (sources: string[]) => sources.some((s) => s.startsWith("'sha256-"));
 
 describe('cspRules', () => {
     describe('scope', () => {
@@ -28,29 +40,24 @@ describe('cspRules', () => {
             );
         });
 
-        it("scopes differ only by script-src 'unsafe-eval'", () => {
+        it('site and examples scopes differ only in script-src', () => {
             const site = getCspDirectives({ env: 'production', scope: 'site' });
             const examples = getCspDirectives({ env: 'production', scope: 'examples' });
 
             expect(Object.keys(examples)).toEqual(Object.keys(site));
-            const names = Object.keys(site);
-            for (let i = 0, len = names.length; i < len; ++i) {
-                const name = names[i];
-                if (name === 'script-src') {
-                    expect(examples[name]).toEqual([...site[name], "'unsafe-eval'"]);
-                } else {
-                    expect(examples[name]).toEqual(site[name]);
-                }
+            const otherNames = Object.keys(site).filter((name) => name !== 'script-src');
+            for (let i = 0, len = otherNames.length; i < len; ++i) {
+                expect(examples[otherNames[i]]).toEqual(site[otherNames[i]]);
             }
         });
 
-        it("both scopes keep 'unsafe-inline' in script-src and style-src", () => {
-            const site = getCspDirectives({ env: 'production', scope: 'site' });
-            const examples = getCspDirectives({ env: 'production', scope: 'examples' });
-            expect(site['script-src']).toContain("'unsafe-inline'");
-            expect(site['style-src']).toContain("'unsafe-inline'");
-            expect(examples['script-src']).toContain("'unsafe-inline'");
-            expect(examples['style-src']).toContain("'unsafe-inline'");
+        it("style-src keeps 'unsafe-inline' in every scope", () => {
+            const scopes = ['site', 'examples', 'campaigns'] as const;
+            for (let i = 0, len = scopes.length; i < len; ++i) {
+                expect(getCspDirectives({ env: 'production', scope: scopes[i] })['style-src']).toContain(
+                    "'unsafe-inline'"
+                );
+            }
         });
     });
 
@@ -68,21 +75,69 @@ describe('cspRules', () => {
             expect(campaigns['script-src']).not.toContain("'unsafe-eval'");
         });
 
-        it('differs from the site scope only by the bryntum.com origin', () => {
+        it('adds bryntum.com to style/font/connect-src on top of the site scope', () => {
             const site = getCspDirectives({ env: 'production', scope: 'site' });
             const campaigns = getCspDirectives({ env: 'production', scope: 'campaigns' });
 
-            expect(Object.keys(campaigns)).toEqual(Object.keys(site));
-            const names = Object.keys(site);
-            const broadened = ['script-src', 'style-src', 'font-src', 'connect-src'];
-            for (let i = 0, len = names.length; i < len; ++i) {
-                const name = names[i];
-                if (broadened.includes(name)) {
-                    expect(campaigns[name]).toEqual([...site[name], 'https://bryntum.com']);
-                } else {
-                    expect(campaigns[name]).toEqual(site[name]);
-                }
+            const broadened = ['style-src', 'font-src', 'connect-src'];
+            for (let i = 0, len = broadened.length; i < len; ++i) {
+                expect(campaigns[broadened[i]]).toEqual([...site[broadened[i]], 'https://bryntum.com']);
             }
+            // directives neither scope touches stay identical
+            expect(campaigns['frame-src']).toEqual(site['frame-src']);
+            expect(campaigns['form-action']).toEqual(site['form-action']);
+        });
+    });
+
+    describe("AG-17134 Phase B: script-src 'unsafe-inline' removed from the site scope", () => {
+        it('site scope authorises the inline scripts by hash, not unsafe-inline', () => {
+            const scriptSrc = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(scriptSrc).not.toContain("'unsafe-inline'");
+            expect(scriptSrc).toContain(sha256Source(DARK_MODE_INIT_SCRIPT));
+            expect(scriptSrc).toContain(sha256Source(PLAUSIBLE_INIT_SCRIPT));
+        });
+
+        it('site scope authorises the (non-externalisable) Astro hydration scripts by hash', () => {
+            // Every site inline script we author is externalised to a 'self' bundle;
+            // only Astro's framework-injected hydration scripts remain, pinned by hash
+            // (see ASTRO_HYDRATION_SCRIPT_HASHES). Regenerate these when bumping Astro.
+            const scriptSrc = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(scriptSrc).toContain("'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='"); // <astro-island> runtime
+            expect(scriptSrc).toContain("'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c='"); // client:load
+            expect(scriptSrc).toContain("'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw='"); // client:idle
+        });
+
+        it('examples and campaigns keep unsafe-inline and carry no hashes', () => {
+            const scopes = ['examples', 'campaigns'] as const;
+            for (let i = 0, len = scopes.length; i < len; ++i) {
+                const scriptSrc = getCspDirectives({ env: 'production', scope: scopes[i] })['script-src'];
+                expect(scriptSrc).toContain("'unsafe-inline'");
+                expect(hasHash(scriptSrc)).toBe(false);
+            }
+        });
+
+        it('dev site keeps unsafe-inline (no hashes) for Vite/Astro HMR', () => {
+            const scriptSrc = getCspDirectives({ env: 'dev', scope: 'site' })['script-src'];
+            expect(scriptSrc).toContain("'unsafe-inline'");
+            expect(hasHash(scriptSrc)).toBe(false);
+        });
+
+        it('Astro hydration-script hashes are still verified for the installed Astro version', () => {
+            // The 'site' policy pins Astro's framework-injected hydration-runtime
+            // script hashes (ASTRO_HYDRATION_SCRIPT_HASHES). Astro emits and minifies
+            // these, so an upgrade can change them — leaving the pinned hashes stale
+            // and (once the CSP is enforced) blocking hydration across the whole site.
+            //
+            // This test fails when Astro is upgraded so the staleness is caught here
+            // rather than in production. To fix it, regenerate the hashes and bump the
+            // version — see the "HOW TO REGENERATE AFTER AN ASTRO UPGRADE" steps above
+            // ASTRO_HYDRATION_SCRIPT_HASHES in cspRules.ts:
+            //   1. yarn nx build ag-grid-docs
+            //   2. yarn nx run ag-grid-docs:preview:csp
+            //   3. load the homepage + a page per client: directive; blocked inline
+            //      scripts log their missing 'sha256-...' hashes in the console.
+            //   4. update ASTRO_HYDRATION_SCRIPT_HASHES and ASTRO_HYDRATION_HASHES_VERIFIED_FOR.
+            expect(astroPackageJson.version).toBe(ASTRO_HYDRATION_HASHES_VERIFIED_FOR);
         });
     });
 

@@ -691,6 +691,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaColumnGroup: 'Kolonnegruppe',
     ariaFilterActive: 'Filter aktiv',
     ariaColumnFiltered: 'Kolonne filtrert',
+    ariaCalculatedColumn: 'Beregnet kolonne',
     ariaColumnShowValueAs: 'Viser verdier som',
     ariaColumnSelectAll: 'Bytt synlighet for alle kolonner',
     ariaDateFilterInput: 'Inndata for datofilter',

@@ -693,6 +693,7 @@ export const AG_GRID_LOCALE_DK = {
     ariaColumnGroup: 'Kolonnegruppe',
     ariaFilterActive: 'Filter Aktiv',
     ariaColumnFiltered: 'Kolonne Filtreret',
+    ariaCalculatedColumn: 'Beregnet kolonne',
     ariaColumnShowValueAs: 'Viser værdier som',
     ariaColumnSelectAll: 'Skift synlighed for alle kolonner',
     ariaDateFilterInput: 'Dato Filter Input',

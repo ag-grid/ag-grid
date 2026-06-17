@@ -850,6 +850,19 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     initialAggFunc?: string | IAggFunc<TData, TValue>;
     /**
+     * The position of this column in the order of value columns when aggregating in pivot mode.
+     * When aggregating by a single column, any number can be used. When aggregating by multiple
+     * columns, this determines the order (e.g. `0` for first, `1` for second).
+     * @agModule `RowGroupingModule` / `PivotModule`
+     */
+    valueIndex?: number;
+    /**
+     * Same as `valueIndex`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     * @agModule `RowGroupingModule` / `PivotModule`
+     */
+    initialValueIndex?: number;
+    /**
      * The name of the aggregation function to use for this column when it is enabled via the GUI.
      * Note that this does not immediately apply the aggregation function like `aggFunc`
      * @default 'sum'

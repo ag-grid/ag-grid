@@ -695,6 +695,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaColumnGroup: 'Група колони',
     ariaFilterActive: 'Активен филтър',
     ariaColumnFiltered: 'Колоната е филтрирана',
+    ariaCalculatedColumn: 'Изчислена колона',
     ariaColumnShowValueAs: 'Показване на стойностите като',
     ariaColumnSelectAll: 'Превключване на видимостта на всички колони',
     ariaDateFilterInput: 'Вход за филтър по дата',

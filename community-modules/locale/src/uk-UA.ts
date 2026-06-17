@@ -693,6 +693,7 @@ export const AG_GRID_LOCALE_UA = {
     ariaColumnGroup: 'Група колонок',
     ariaFilterActive: 'Фільтр активний',
     ariaColumnFiltered: 'Колонка відфільтрована',
+    ariaCalculatedColumn: 'Обчислювана колонка',
     ariaColumnShowValueAs: 'Показ значень як',
     ariaColumnSelectAll: 'Перемкнути видимість усіх стовпців',
     ariaDateFilterInput: 'Ввід фільтру за датою',

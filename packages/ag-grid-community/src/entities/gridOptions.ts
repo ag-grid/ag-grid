@@ -135,7 +135,7 @@ import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
 import type { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
-import type { CalculatedColumnsOptions } from '../interfaces/iCalculatedColumns';
+import type { CalculatedColumnsGridOption } from '../interfaces/iCalculatedColumns';
 import type {
     DoesExternalFilterPass,
     FillOperation,
@@ -412,10 +412,10 @@ export interface GridOptions<TData = any> {
      */
     dataTypeDefinitions?: DataTypeDefinitions<TData>;
     /**
-     * Configures the Calculated Columns dialog.
+     * Enables and configures Calculated Columns.
      * @agModule `CalculatedColumnsModule`
      */
-    calculatedColumns?: CalculatedColumnsOptions;
+    calculatedColumns?: CalculatedColumnsGridOption;
     /**
      * Keeps the order of Columns maintained after new Column Definitions are updated.
      *
@@ -3440,7 +3440,19 @@ export interface PageSummaryPanelParams {
     suppressPageInput?: boolean;
 }
 
-export type PaginationPanelParams = PageSummaryPanelParams;
+export interface PageSizePanelParams {
+    type: 'pageSize';
+    /** Panel-level page size. Takes precedence over the grid-level `paginationPageSize` option. */
+    paginationPageSize?: number;
+    /** Panel-level page size selector. Takes precedence over the grid-level `paginationPageSizeSelector` option. */
+    paginationPageSizeSelector?: number[] | boolean;
+}
+
+export interface RowSummaryPanelParams {
+    type: 'rowSummary';
+}
+
+export type PaginationPanelParams = PageSummaryPanelParams | PageSizePanelParams | RowSummaryPanelParams;
 
 export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary' | PaginationPanelParams;
 

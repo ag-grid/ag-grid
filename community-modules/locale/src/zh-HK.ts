@@ -689,6 +689,7 @@ export const AG_GRID_LOCALE_HK = {
     ariaColumnGroup: '列組',
     ariaFilterActive: '篩選已啟用',
     ariaColumnFiltered: '列被篩選',
+    ariaCalculatedColumn: '計算列',
     ariaColumnShowValueAs: '正在以此方式顯示值',
     ariaColumnSelectAll: '切換所有欄的可見性',
     ariaDateFilterInput: '日期篩選器輸入',

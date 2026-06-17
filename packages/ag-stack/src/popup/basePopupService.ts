@@ -216,7 +216,7 @@ export abstract class BasePopupService<
                     'subMenu',
                     ePopup,
                     eventSource,
-                    event instanceof MouseEvent ? event : undefined
+                    event instanceof KeyboardEvent ? undefined : event
                 ),
         });
     }

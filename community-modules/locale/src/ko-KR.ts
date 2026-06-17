@@ -690,6 +690,7 @@ export const AG_GRID_LOCALE_KR = {
     ariaColumnGroup: '열 그룹',
     ariaFilterActive: '필터 활성화',
     ariaColumnFiltered: '열 필터링됨',
+    ariaCalculatedColumn: '계산된 열',
     ariaColumnShowValueAs: '값 표시 형식',
     ariaColumnSelectAll: '모든 열 가시성 전환',
     ariaDateFilterInput: '날짜 필터 입력',

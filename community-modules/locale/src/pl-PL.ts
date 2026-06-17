@@ -694,6 +694,7 @@ export const AG_GRID_LOCALE_PL = {
     ariaColumnGroup: 'Grupa Kolumn',
     ariaFilterActive: 'Filtr aktywny',
     ariaColumnFiltered: 'Kolumna Filtrowana',
+    ariaCalculatedColumn: 'Kolumna obliczana',
     ariaColumnShowValueAs: 'Pokazywanie wartości jako',
     ariaColumnSelectAll: 'Przełącz widoczność wszystkich kolumn',
     ariaDateFilterInput: 'Wejście Filtra Daty',

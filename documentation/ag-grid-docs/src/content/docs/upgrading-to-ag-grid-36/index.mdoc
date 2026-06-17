@@ -1,0 +1,113 @@
+---
+title: "Upgrading to AG Grid 36.0"
+description: "See what's new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version v36.0"
+migrationVersion: "36.0"
+---
+
+## What's New
+
+TODO list major changes
+
+<!--
+Documentation to the highest patch release of the major/minor
+NOTE: This will not show if the current library version is the same as the migration version
+-->
+
+{% documentationArchiveSection version=migrationVersionPatch() /%}
+
+## Breaking Changes
+
+**Native horizontal scrolling:** the grid now uses a single container to permit both vertical and horizontal scrolling natively in the browser (previously the header, body and pinned columns were placed in separate containers with scrolling synchronised using JavaScript, which lead to visible lag on more complex grids or slower computers). As a result, some of the grid's class names relating to high-level layout and scrolling containers have changed. Most applications will be unaffected. If your application contains CSS rules targeting these class names, they will need to be updated.
+
+## Behaviour Changes
+
+There are no behaviour changes in AG Grid version {% migrationVersion() %}.
+
+## Removal of Deprecated APIs
+
+There are no deprecated API removals in AG Grid version {% migrationVersion() %}.
+
+## Deprecations
+
+There are no deprecations in AG Grid version {% migrationVersion() %}.
+
+{% changelogSection version=$migrationVersion /%}
+
+## Breaking change record: native horizontal scrolling
+
+Impact summary: there has been significant change in the containers that hold rows and cells and handle scrolling and column pinning. If your application only styles visible grid components like cells, buttons, filters and so forth, there is likely no change. If your application styles containers, or uses containers to select specific cells to style, it is likely to need an update.
+
+Detection: search the codebase for the following class names, either in CSS code or in JS APIs like `document.querySelector('...')`:
+
+- ag-body
+- ag-body-viewport
+- ag-center-cols-container
+- ag-center-cols-viewport
+- ag-viewport
+- ag-horizontal-left-spacer
+- ag-horizontal-right-spacer
+- ag-scroller-corner
+- ag-pinned-left-cols-container
+- ag-pinned-right-cols-container
+- ag-pinned-left-header
+- ag-pinned-right-header
+- ag-header-container
+- ag-header-viewport
+- ag-header-root
+- ag-floating-top
+- ag-floating-bottom
+- ag-pinned-left-floating-top
+- ag-pinned-right-floating-top
+- ag-pinned-left-floating-bottom
+- ag-pinned-right-floating-bottom
+- ag-sticky-top
+- ag-sticky-bottom
+- ag-full-width-container
+- ag-center-cols-spanned-cells-container
+- ag-floating-top-spanned-cells-container
+- ag-floating-bottom-spanned-cells-container
+
+Mitigation:
+
+1. Classes with available replacements
+
+If you are styling one of the classes on the left below in CSS, update it to the class on the right and test that the visual effect is the same.
+
+- ag-floating-top-container / ag-floating-top-viewport -> `.ag-grid-pinned-top-rows-container`
+- ag-floating-bottom-container / ag-floating-bottom-viewport -> `.ag-grid-pinned-bottom-rows-container`
+- ag-sticky-top -> `.ag-grid-sticky-top-rows-container`
+- ag-sticky-bottom -> `.ag-grid-sticky-bottom-rows-container`
+- ag-center-cols-spanned-cells-container -> `.ag-grid-scrolling-spanned-cells-container`
+- ag-floating-top-spanned-cells-container -> `.ag-grid-pinned-top-rows-spanned-cells-container`
+- ag-floating-bottom-spanned-cells-container -> `.ag-grid-pinned-bottom-rows-spanned-cells-container`
+- ag-floating-top -> `.ag-grid-pinned-top-rows`
+- ag-floating-bottom -> `.ag-grid-pinned-bottom-rows`
+
+2. Classes with alternate selectors
+
+These elements have no direct replacement, but if using them to select components you can replace them with a descendent selector combining two class names. For example `.ag-pinned-left-sticky-top .ag-icon { ... }` could be replaced with `.ag-grid-sticky-top-rows-container .ag-grid-pinned-left-cells .ag-icon { ... }`
+
+- ag-pinned-left-header -> `.ag-header .ag-grid-pinned-left-cells`
+- ag-pinned-right-header -> `.ag-header .ag-grid-pinned-right-cells`
+- ag-pinned-left-sticky-top -> `.ag-grid-sticky-top-rows-container .ag-grid-pinned-left-cells`
+- ag-pinned-right-sticky-top -> `.ag-grid-sticky-top-rows-container .ag-grid-pinned-right-cells`
+- ag-pinned-left-sticky-bottom -> `.ag-grid-sticky-bottom-rows-container .ag-grid-pinned-left-cells`
+- ag-pinned-right-sticky-bottom -> `.ag-grid-sticky-bottom-rows-container .ag-grid-pinned-right-cells`
+- ag-full-width-container -> `.ag-full-width-row`
+- ag-header-container, ag-header-viewport -> `.ag-header`
+- ag-pinned-left-cols-container -> `.ag-grid-scrolling-rows .ag-grid-pinned-left-cells`
+- ag-pinned-right-cols-container -> `.ag-grid-scrolling-rows .ag-grid-pinned-right-cells`
+- ag-center-cols-container, ag-center-cols-viewport -> `.ag-grid-scrolling-cells`
+- ag-body-viewport, ag-body -> `.ag-grid-scrolling-container`
+- ag-pinned-left-floating-top -> `.ag-grid-pinned-top-rows-container .ag-grid-pinned-left-cells`
+- ag-pinned-right-floating-top -> `.ag-grid-pinned-top-rows-container .ag-grid-pinned-right-cells`
+- ag-pinned-left-floating-bottom -> `.ag-grid-pinned-bottom-rows-container .ag-grid-pinned-left-cells`
+- ag-pinned-right-floating-bottom -> `.ag-grid-pinned-bottom-rows-container .ag-grid-pinned-right-cells`
+
+3. Elements removed
+
+In the old DOM layout, non-scrollable containers had spacing elements below to align better with scrollable regions. These are no longer required as there is one large scrollable region. If you are using these it is likely that they are no longer required under the new layout:
+
+- ag-scroller-corner
+- ag-horizontal-left-spacer
+- ag-horizontal-right-spacer

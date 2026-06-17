@@ -41,6 +41,12 @@ export interface ColumnStateParams {
     sortIndex?: number | null;
     /** The aggregation function applied */
     aggFunc?: string | IAggFunc | null;
+    /**
+     * The position of this column in the order of value columns when aggregating in pivot mode.
+     * When aggregating by a single column, any number can be used. When aggregating by multiple
+     * columns, this determines the order (e.g. `0` for first, `1` for second).
+     */
+    valueIndex?: number | null;
     /** True if pivot active */
     pivot?: boolean | null;
     /** The order of the pivot, if pivoting by many columns */
@@ -287,11 +293,13 @@ function applyStructuralStateChanges(
     defaultState: ColumnStateParams | undefined,
     source: ColumnEventType
 ): void {
-    const { autoColSvc, selectionColSvc, rowGroupColsSvc, pivotColsSvc } = beans;
+    const { autoColSvc, selectionColSvc, rowGroupColsSvc, pivotColsSvc, valueColsSvc } = beans;
 
-    // Must run before refreshCols, which reads `service.columns` as-is to build auto cols + colsList.
+    // Must run before refreshCols, which reads `service.columns` as-is to build auto cols + colsList
+    // (value-col order drives pivot result column order).
     rowGroupColsSvc?.sortByPendingState();
     pivotColsSvc?.sortByPendingState();
+    valueColsSvc?.sortByPendingState();
 
     beans.colModel.refreshCols(false, source);
 
@@ -742,6 +750,7 @@ export const _getColumnState = (beans: BeanCollection): ColumnState[] => {
             sortType: direction ? (sortDef.type ?? null) : null,
             sortIndex: column.sortIndex ?? null,
             aggFunc: column.aggregationActive ? column.aggFunc : null,
+            valueIndex: column.aggregationActive ? column.aggregationActiveIndex : null,
             rowGroup: rowGroupActive,
             rowGroupIndex: rowGroupActive ? column.rowGroupActiveIndex : null,
             pivot: pivotActive,

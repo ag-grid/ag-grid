@@ -40,6 +40,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         minWidth: 100,
     },
+    calculatedColumns: true,
 };
 
 // setup the grid after the page has finished loading

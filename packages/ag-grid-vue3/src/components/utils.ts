@@ -6,7 +6,7 @@ import type {
     AutoGenerateColumnDefsOptions,
     AutoGroupColumnDef,
     AutoSizeStrategy,
-    CalculatedColumnsOptions,
+    CalculatedColumnsGridOption,
     CellSelectionOptions,
     ChartToolPanelsDef,
     ColDef,
@@ -413,10 +413,10 @@ export interface Props<TData> {
          * or can be custom data types.
          */
     dataTypeDefinitions?: DataTypeDefinitions<TData>,
-    /** Configures the Calculated Columns dialog.
+    /** Enables and configures Calculated Columns.
          * @agModule `CalculatedColumnsModule`
          */
-    calculatedColumns?: CalculatedColumnsOptions,
+    calculatedColumns?: CalculatedColumnsGridOption,
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
          *
          * @default false
@@ -2664,4 +2664,3 @@ export function deepToRaw<T extends Record<string, any>>(sourceObj: T): T {
 
      return objectIterator(sourceObj);
 }
-

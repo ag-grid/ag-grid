@@ -690,6 +690,7 @@ export const AG_GRID_LOCALE_JP = {
     ariaColumnGroup: '列グループ',
     ariaFilterActive: 'フィルターがアクティブ',
     ariaColumnFiltered: 'フィルターが適用された列',
+    ariaCalculatedColumn: '計算列',
     ariaColumnShowValueAs: '値の表示形式',
     ariaColumnSelectAll: 'すべての列の表示を切り替え',
     ariaDateFilterInput: '日付フィルター入力',

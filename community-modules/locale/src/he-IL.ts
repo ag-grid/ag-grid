@@ -689,6 +689,7 @@ export const AG_GRID_LOCALE_IL = {
     ariaColumnGroup: 'קבוצת עמודות',
     ariaFilterActive: 'מסנן פעיל',
     ariaColumnFiltered: 'עמודה מסוננת',
+    ariaCalculatedColumn: 'עמודה מחושבת',
     ariaColumnShowValueAs: 'מציג ערכים בתור',
     ariaColumnSelectAll: 'החלפת נראות כל העמודות',
     ariaDateFilterInput: 'קלט סינון תאריך',
