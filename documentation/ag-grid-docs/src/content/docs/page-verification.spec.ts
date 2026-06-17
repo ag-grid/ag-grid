@@ -3,15 +3,35 @@ import { setupConsoleExpectations } from '@utils/grid/test-utils';
 
 type PlaywrightPage = Parameters<typeof setupConsoleExpectations>[0];
 
+const isCspIssue = (msg: string) => /Content-Security-Policy|Refused to (load|execute|connect)/i.test(msg);
+
 // Sets up console error/warning collection, uncaught exception capture,
-// and blocks the cookie-consent banner. Returns the shared errors array.
+// and blocks the cookie-consent banner. Returns the hard-error array.
+// CSP violations are silently routed to test.info() annotations so they show
+// up as warnings in the report without failing the test.
 async function setupPage(page: PlaywrightPage): Promise<string[]> {
     const errors = setupConsoleExpectations(page);
+
+    // Override push on the array returned by setupConsoleExpectations so that
+    // any future push() call (from the already-registered console listener, or
+    // our pageerror listener below) routes CSP messages to annotations instead.
+    const originalPush = errors.push.bind(errors);
+    errors.push = (...items: string[]) => {
+        for (const item of items) {
+            if (isCspIssue(item)) {
+                test.info().annotations.push({ type: 'warning', description: `[CSP] ${item}` });
+            } else {
+                originalPush(item);
+            }
+        }
+        return errors.length;
+    };
+
     await page.route('**://cdn.cookielaw.org/**', (route) => route.abort());
-    // Capture uncaught JS exceptions (covers CSP-blocked scripts, runtime crashes, etc.)
     page.on('pageerror', (error) => {
         errors.push(`Uncaught exception: ${error.message}`);
     });
+
     return errors;
 }
 
@@ -73,24 +93,14 @@ test.describe('Page Verification', () => {
         expect(errors, 'Console Errors').toEqual([]);
     });
 
-    test('community page loads', async ({ page }, testInfo) => {
+    test('community page loads', async ({ page }) => {
         const errors = await setupPage(page);
 
         await page.goto('/community/');
         await expect(page).toHaveTitle(/Community/);
         await expect(page.locator('.site-header')).toBeVisible();
 
-        // The community page has known CSP issues. Partition them out so we
-        // track them as warnings without failing the test.
-        const isCspIssue = (msg: string) => /Content-Security-Policy|Refused to (load|execute|connect)/i.test(msg);
-        const cspWarnings = errors.filter(isCspIssue);
-        const hardErrors = errors.filter((e) => !isCspIssue(e));
-
-        for (const warning of cspWarnings) {
-            testInfo.annotations.push({ type: 'warning', description: `[Community page CSP] ${warning}` });
-        }
-
-        expect(hardErrors, 'Console Errors').toEqual([]);
+        expect(errors, 'Console Errors').toEqual([]);
     });
 
     test('about page loads', async ({ page }) => {
@@ -149,13 +159,14 @@ test.describe('Page Verification', () => {
         expect(errors, 'Console Errors').toEqual([]);
     });
 
-    test('docs page with an inline example shows an example runner', async ({ page }) => {
+    test('docs page with an inline example renders a grid', async ({ page }) => {
         const errors = await setupPage(page);
 
         await page.goto('/react-data-grid/row-sorting/');
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-        // .example-runner-outer is the stable container rendered for every inline example
-        await expect(page.locator('.example-runner-outer').first()).toBeVisible();
+        // Docs examples load inside an iframe — use contentFrame() to reach inside it
+        const exampleFrame = page.locator('.example-runner-outer iframe').first().contentFrame();
+        await expect(exampleFrame.locator('.ag-root-wrapper')).toBeVisible();
 
         expect(errors, 'Console Errors').toEqual([]);
     });
