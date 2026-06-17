@@ -11,7 +11,7 @@ import type { RowPinningState } from '../interfaces/gridState';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
-import { PinnedRows, _shouldHidePinnedRows } from './manualPinnedRowUtils';
+import { PinnedRows, _isPinnedNodeGrandTotal, _shouldHidePinnedRows } from './manualPinnedRowUtils';
 
 export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private top: PinnedRows;
@@ -98,10 +98,22 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     public reset(dispatch = true): void {
         this.forContainers((container) => {
             const nodesToUnpin: RowNode[] = [];
-            container.forEach((n) => nodesToUnpin.push(n));
+            // The grand total row is owned by the `grandTotalRow` option, not manual row-pinning
+            // state, so preserve it across a manual-pin reset; on destroy (dispatch false) clear it too.
+            let grandTotalNode: RowNode | undefined;
+            container.forEach((n) => {
+                if (dispatch && _isPinnedNodeGrandTotal(n)) {
+                    grandTotalNode = n;
+                } else {
+                    nodesToUnpin.push(n);
+                }
+            });
             // Have to collect up the nodes to unpin because unpinning mutates the container
             nodesToUnpin.forEach((n) => this.pinRow(n, null));
             container.clear();
+            if (grandTotalNode) {
+                container.add(grandTotalNode);
+            }
         });
         if (dispatch) {
             this.dispatchRowPinnedEvents();
@@ -273,6 +285,11 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         const buildState = (floating: NonNullable<RowPinnedType>) => {
             const list: string[] = [];
             this.forEachPinnedRow(floating, (node) => {
+                // The grand total row is driven by the `grandTotalRow` option, not manual
+                // row-pinning state, so it must not be serialised as a pinned row id.
+                if (_isPinnedNodeGrandTotal(node)) {
+                    return;
+                }
                 const id = node.pinnedSibling?.id;
                 if (id != null) {
                     list.push(id);

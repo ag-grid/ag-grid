@@ -165,7 +165,7 @@ function _isNodeGrandTotal(node: RowNode): boolean {
     return !!node.footer && node.level === -1;
 }
 
-function _isPinnedNodeGrandTotal(node: RowNode): boolean {
+export function _isPinnedNodeGrandTotal(node: RowNode): boolean {
     return !!node.pinnedSibling && _isNodeGrandTotal(node.pinnedSibling);
 }
 
