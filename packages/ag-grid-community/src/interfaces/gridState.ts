@@ -6,6 +6,13 @@ import type { RowPosition } from './iRowPosition';
 import type { SortModelItem } from './iSortModelItem';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './selectionState';
 
+/**
+ * Currently selected filters when using the new filter tool panel with `agSelectableColumnFilter`, keyed by column id.
+ */
+export interface SelectableFilterState {
+    [colId: string]: number;
+}
+
 export interface FilterState {
     /**
      * Filter model for Column Filters
@@ -22,7 +29,7 @@ export interface FilterState {
     /**
      * Currently selected filter when using new filter tool panel with `agSelectableColumnFilter`
      */
-    selectableFilters?: { [colId: string]: number };
+    selectableFilters?: SelectableFilterState;
 }
 
 export interface CellSelectionCellState {

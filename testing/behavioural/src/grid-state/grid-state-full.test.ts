@@ -81,12 +81,7 @@ describe('Grid State Full Snapshot', () => {
                 ],
             },
             columnVisibility: undefined,
-            filter: {
-                advancedFilterModel: undefined,
-                columnFilterState: undefined,
-                filterModel: undefined,
-                selectableFilters: {},
-            },
+            filter: undefined,
             focusedCell: undefined,
             pagination: {
                 page: 0,
@@ -240,12 +235,7 @@ describe('Grid State Full Snapshot', () => {
             columnVisibility: {
                 hiddenColIds: ['age'],
             },
-            filter: {
-                advancedFilterModel: undefined,
-                columnFilterState: undefined,
-                filterModel: undefined,
-                selectableFilters: {},
-            },
+            filter: undefined,
             pagination: {
                 page: 0,
                 pageSize: 2,

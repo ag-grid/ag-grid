@@ -5,6 +5,7 @@ import type {
     NamedBean,
     SelectableFilterDef,
     SelectableFilterParams,
+    SelectableFilterState,
     ValueGetterFunc,
 } from 'ag-grid-community';
 import {
@@ -172,19 +173,21 @@ export class SelectableFilterService
         this.onChange();
     }
 
-    public getState(): { [colId: string]: number } {
-        return Object.fromEntries(this.selectedFilters);
+    public getState(): SelectableFilterState | undefined {
+        return this.selectedFilters.size > 0 ? Object.fromEntries(this.selectedFilters) : undefined;
     }
 
-    public setState(state: { [colId: string]: number }): void {
+    public setState(state: SelectableFilterState | undefined): void {
         this.clearAll();
-        const colModel = this.beans.colModel;
-        for (const colId of Object.keys(state)) {
-            const column = colModel.getNonPivotColById(colId);
-            if (column) {
-                const defs = this.getDefs(column, column.colDef, state[colId]);
-                if (defs) {
-                    this.setActive(colId, defs.filterDefs, defs.activeFilterDef, true);
+        if (state) {
+            const colModel = this.beans.colModel;
+            for (const colId of Object.keys(state)) {
+                const column = colModel.getNonPivotColById(colId);
+                if (column) {
+                    const defs = this.getDefs(column, column.colDef, state[colId]);
+                    if (defs) {
+                        this.setActive(colId, defs.filterDefs, defs.activeFilterDef, true);
+                    }
                 }
             }
         }
