@@ -244,10 +244,8 @@ export class PaginationService extends BeanStub implements NamedBean {
                 break;
             case 'panel':
                 this.pageSizeFromPanel = size;
-                if (size !== undefined) {
-                    this.pageSizeFromInitialState = undefined;
-                    this.pageSizeFromPageSizeSelector = undefined;
-                }
+                this.pageSizeFromInitialState = undefined;
+                this.pageSizeFromPageSizeSelector = undefined;
                 if (this.currentPage !== 0) {
                     this.goToFirstPage();
                 }

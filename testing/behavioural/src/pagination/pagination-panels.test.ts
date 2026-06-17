@@ -787,16 +787,35 @@ describe('paginationPanels', () => {
             expect(getPageSizeDisplayValue(panel)).toBe('100');
         });
 
-        test('panel-level paginationPageSize updates active page size when paginationPanels changes at runtime', () => {
+        test('panel-level paginationPageSize updates active page size and panel display when paginationPanels changes at runtime', () => {
             const api = createPaginationGrid(gridsManager, {
                 paginationPageSize: 20,
                 paginationPanels: ['pageSize'],
             });
             expect(api.paginationGetPageSize()).toBe(20);
+            expect(getPageSizeDisplayValue(getPagingPanel(api)!)).toBe('20');
 
             api.setGridOption('paginationPanels', [{ type: 'pageSize', paginationPageSize: 50 }]);
 
             expect(api.paginationGetPageSize()).toBe(50);
+            expect(getPageSizeDisplayValue(getPagingPanel(api)!)).toBe('50');
+        });
+
+        test('panel-level paginationPageSizeSelector: false hides the selector when paginationPanels changes at runtime', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSizeSelector: [10, 20, 50],
+                paginationPanels: ['pageSize', 'pageSummary'],
+            });
+            expect(getPagingPanel(api)!.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass(
+                'ag-hidden'
+            );
+
+            api.setGridOption('paginationPanels', [
+                { type: 'pageSize', paginationPageSizeSelector: false },
+                'pageSummary',
+            ]);
+
+            expect(getPagingPanel(api)!.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
         });
     });
 
