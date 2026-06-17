@@ -10,7 +10,7 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { KeyCode } from 'ag-grid-community';
+import { KeyCode, _clamp } from 'ag-grid-community';
 
 import { VirtualList } from '../../widgets/virtualList';
 import agAutocompleteCSS from './agAutocomplete.css';
@@ -119,7 +119,8 @@ export class AgAutocompleteList extends AgPopupComponent<
             nextIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
         }
         const lastIndex = this.autocompleteEntries.length - 1;
-        this.setSelectedValue(Math.max(0, Math.min(nextIndex, lastIndex)));
+
+        this.setSelectedValue(_clamp(nextIndex, 0, lastIndex));
     }
 
     public setSearch(searchString: string): void {

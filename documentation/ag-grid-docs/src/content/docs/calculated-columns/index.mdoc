@@ -67,17 +67,25 @@ While a column's dialog is open, the column's header and cells are highlighted. 
 
 ### dataTypes
 
-Use `dataTypes` to control which cell data types appear in the dialog type dropdown:
+Use `dataTypes` to control which cell data types appear in the dialog type dropdown. The list can include built-in cell data types and custom types registered with `dataTypeDefinitions`:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
+    dataTypeDefinitions: {
+        currency: {
+            extendsDataType: 'number',
+            baseDataType: 'number',
+            valueFormatter: params =>
+                params.value == null ? '' : `$${params.value.toLocaleString()}`,
+        },
+    },
     calculatedColumns: {
-        dataTypes: ['number', 'boolean'],
+        dataTypes: ['currency', 'number', 'boolean'],
     },
 };
 ```
 
-Built-in types use the grid's locale text, while custom type names are capitalised in the dialog. If a selected value does not match a registered [Cell Data Type](./cell-data-types/), the grid's normal `cellDataType` validation applies when the calculated column is created.
+Built-in types use the grid's locale text, while custom type names are converted to readable labels in the dialog. If a selected value does not match a registered [Cell Data Type](./cell-data-types/), the grid's normal `cellDataType` validation applies when the calculated column is created.
 
 {% gridExampleRunner title="Dialog Data Types" name="calculated-columns-dialog-data-types" /%}
 
