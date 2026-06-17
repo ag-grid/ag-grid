@@ -51,7 +51,7 @@ jobs:
           node-version-file: '.nvmrc'
 
       - name: Install Playwright Chromium
-        run: npx --yes playwright@1.59.1 install chromium --with-deps
+        run: npx --yes @playwright/test@1.59.1 install chromium --with-deps
 
       - name: Resolve staging URL
         id: staging_url
@@ -68,7 +68,7 @@ jobs:
         working-directory: documentation/ag-grid-docs
         env:
           BASE_URL: ${{ inputs.staging_url || steps.staging_url.outputs.url }}
-        run: npx --yes playwright@1.59.1 test src/content/docs/page-verification.spec.ts --project=chromium --reporter=line,html
+        run: npx --yes @playwright/test@1.59.1 test src/content/docs/page-verification.spec.ts --project=chromium --reporter=line,html
 
       - name: Upload test results
         if: always()
