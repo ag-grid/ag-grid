@@ -93,7 +93,28 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path' | ( read file_path; yarn nx format --files \"$file_path\" )"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/claude-hooks/track-edit.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/claude-hooks/precommit-check.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/claude-hooks/format-tracked.sh"
           }
         ]
       }
