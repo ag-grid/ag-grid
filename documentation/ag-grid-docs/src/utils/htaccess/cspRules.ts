@@ -106,10 +106,25 @@ const ASTRO_HYDRATION_SCRIPT_HASHES = [
     "'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='", // <astro-island> hydration runtime
 ];
 
+// SHA-256 of the inline ZoomInfo (WebSights) bootstrap that the shared Google Tag
+// Manager container injects as a Custom HTML tag once the visitor accepts functional
+// cookie consent. Unlike the scripts above, this one is authored in GTM, not this
+// repo — so the value is taken from the browser's CSP violation report, NOT by
+// hashing the GTM source (GTM normalises the injected bytes, so the source does not
+// reproduce this digest).
+//
+// FRAGILE — this pins ZoomInfo's exact bytes. If the ZoomInfo tag in GTM is edited,
+// or ZoomInfo regenerates its loader snippet, the hash stops matching and ZoomInfo
+// silently fails to load for consenting users. The GTM tag carries a note pointing
+// back here; if it changes, replace this with the new console-reported hash (here and
+// in the ag-studio / ag-charts CSPs — the GTM container is shared). AG-17134.
+const GTM_ZOOMINFO_HASH = "'sha256-41l+jvtOjBgKy9345IStB4j1gGPGFMVXADMHn1Acs6E='";
+
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
     hashInlineScript(PLAUSIBLE_INIT_SCRIPT),
     ...ASTRO_HYDRATION_SCRIPT_HASHES,
+    GTM_ZOOMINFO_HASH,
 ];
 
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt

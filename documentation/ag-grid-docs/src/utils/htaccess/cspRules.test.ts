@@ -107,6 +107,15 @@ describe('cspRules', () => {
             expect(scriptSrc).toContain("'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw='"); // client:idle
         });
 
+        it('site scope authorises the GTM-injected ZoomInfo bootstrap by hash', () => {
+            // Authored in the shared GTM container (not this repo); hash captured from
+            // the browser CSP violation. Site only — examples keeps unsafe-inline.
+            const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(site).toContain("'sha256-41l+jvtOjBgKy9345IStB4j1gGPGFMVXADMHn1Acs6E='");
+            const examples = getCspDirectives({ env: 'production', scope: 'examples' })['script-src'];
+            expect(examples).not.toContain("'sha256-41l+jvtOjBgKy9345IStB4j1gGPGFMVXADMHn1Acs6E='");
+        });
+
         it('examples and campaigns keep unsafe-inline and carry no hashes', () => {
             const scopes = ['examples', 'campaigns'] as const;
             for (let i = 0, len = scopes.length; i < len; ++i) {
