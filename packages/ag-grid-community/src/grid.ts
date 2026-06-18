@@ -327,7 +327,7 @@ export class GridCoreCreator {
             const reasonOrId = `rowModelType = '${rowModelType}'`;
 
             const message = isUmd
-                ? `Unable to use ${reasonOrId} as that requires the ag-grid-enterprise script to be included.\n`
+                ? `Unable to use "${reasonOrId}" as that requires the "ag-grid-enterprise" script to be included.\n`
                 : `Missing module ${rowModuleModelName}Module for rowModelType ${rowModelType}.`;
             return fallbackToClientSide(
                 200,

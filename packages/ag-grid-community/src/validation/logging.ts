@@ -61,15 +61,78 @@ export function _addErrorListener(listener: ErrorListener): () => void {
     };
 }
 
+const DOC_LINK_REGEX = /\s*(See|Visit) https?:\/\/\S+/g;
+const MODULES_LINK_REGEX = /\s*For more info see:\s*(https?:\/\/\S+)/;
+const IMPORT_LINE_REGEX = /^\s*import\s/;
+const CODE_LINE_PREFIX_REGEX = /^(import |const |let |function |class |ModuleRegistry|<|>|\}|\))/;
+
+/** Message and documentation links for a captured error, split out for separate rendering in the overlay. */
+interface OverlayErrorContent {
+    /** Human-readable explanation, rendered as prose above the code snippet. */
+    message: string;
+    /** Module-registration snippet, rendered in its own code block. Absent when the error has no snippet. */
+    code?: string;
+    /** Trailing prose shown below the code snippet (e.g. "The item will not be rendered."). */
+    note?: string;
+    /** Present for module-registration errors: link to the modules docs, rendered outside the snippet. */
+    modulesDocLink?: string;
+}
+
 /**
- * Builds the developer-facing message for a captured error, for display in the error overlay.
- * The trailing `See <link>` / `Visit <link>` reference is removed because the overlay renders the
- * documentation link separately; the registration snippet (when the ValidationModule is registered)
- * is retained.
+ * Builds the developer-facing content for a captured error, for display in the error overlay.
+ * Inline documentation references (`See`/`Visit <link>` and the module guidance's `For more info see: <link>`)
+ * are removed because the overlay renders them as separate links; the registration snippet, when present, is
+ * split out from the surrounding explanation so the overlay can render it as a distinct code block.
  */
-export function _getErrorMessage(id: ErrorId, params: any, defaultMessage?: string): string {
-    const message = getErrorParts(id, params, defaultMessage).map(stringifyValue).join(' ');
-    return message.replace(/\s*(See|Visit) https?:\/\/\S+/g, '').trim();
+export function _getOverlayErrorContent(id: ErrorId, params: any, defaultMessage?: string): OverlayErrorContent {
+    const raw = getErrorParts(id, params, defaultMessage).map(stringifyValue).join(' ');
+    const modulesDocLink = raw.match(MODULES_LINK_REGEX)?.[1];
+    const text = raw.replace(DOC_LINK_REGEX, '').replace(MODULES_LINK_REGEX, '').trim();
+    return { ...splitCodeSnippet(text), modulesDocLink };
+}
+
+function isCodeLine(line: string): boolean {
+    const trimmed = line.trim();
+    if (trimmed === '') {
+        return false;
+    }
+    return CODE_LINE_PREFIX_REGEX.test(trimmed) || /[;{(]$/.test(trimmed) || trimmed.includes('=>');
+}
+
+/**
+ * Separates a registration snippet (a contiguous run of code lines starting at the first `import`) from the
+ * explanation before it and any note after it. Returns the whole message untouched when there is no snippet.
+ */
+function splitCodeSnippet(text: string): { message: string; code?: string; note?: string } {
+    const lines = text.split('\n');
+    let start = -1;
+    for (let i = 0, len = lines.length; i < len; ++i) {
+        if (IMPORT_LINE_REGEX.test(lines[i])) {
+            start = i;
+            break;
+        }
+    }
+    if (start === -1) {
+        return { message: text };
+    }
+    let end = start;
+    for (let i = start, len = lines.length; i < len; ++i) {
+        if (lines[i].trim() === '' || isCodeLine(lines[i])) {
+            end = i;
+        } else {
+            break;
+        }
+    }
+    const message = lines.slice(0, start).join('\n').trim();
+    const code = lines
+        .slice(start, end + 1)
+        .join('\n')
+        .trim();
+    const note = lines
+        .slice(end + 1)
+        .join('\n')
+        .trim();
+    return { message, code, note: note || undefined };
 }
 
 type LogFn = (message: string, ...args: any[]) => void;

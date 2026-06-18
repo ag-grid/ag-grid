@@ -169,7 +169,7 @@ const getProvides = () => {
 
 onMounted(() => {
     // Row API module is required for getRowData to work
-    _registerModule(RowApiModule,undefined, true);
+    _registerModule(RowApiModule,undefined);
     const frameworkComponentWrapper = new VueFrameworkComponentWrapper(getCurrentInstance(), getProvides());
 
     const gridParams = {

@@ -91,10 +91,11 @@ function umdMissingModule(
     const agChartsDynamic = (globalThis as any)?.agCharts;
 
     if (!agChartsDynamic && chartModules.length > 0) {
-        message = `Unable to use ${reasonOrId} as either the ag-charts-community or ag-charts-enterprise script needs to be included alongside ag-grid-enterprise.\n`;
+        message = `Unable to use "${reasonOrId}" as either the "ag-charts-community" or "ag-charts-enterprise" script needs to be included alongside ag-grid-enterprise.\n`;
     } else if (moduleNames.some((m) => ENTERPRISE_MODULE_NAMES[m as EnterpriseModuleName])) {
         message =
-            message + `Unable to use ${reasonOrId} as that requires the ag-grid-enterprise script to be included.\n`;
+            message +
+            `Unable to use "${reasonOrId}" as that requires the "ag-grid-enterprise" script to be included.\n`;
     }
     return message;
 }

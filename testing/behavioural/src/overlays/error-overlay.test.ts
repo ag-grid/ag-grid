@@ -203,6 +203,19 @@ describe('error overlay without the ValidationModule', () => {
         expect(message).toContain('ServerSideRowModelModule');
         expect(message).toContain('is not registered');
         expect(message).not.toContain('register the ValidationModule');
+        // The modules-docs reference is rendered as its own link, not left inline in the snippet.
+        expect(message).not.toContain('For more info see');
+        // The registration snippet is split into its own code block, not mixed into the explanation prose.
+        expect(message).not.toContain('import {');
+        const code = document.querySelector('.ag-overlay-error-code')?.textContent ?? '';
+        expect(code).toContain("import { ModuleRegistry } from 'ag-grid-community';");
+        expect(code).toContain('ModuleRegistry.registerModules([ ServerSideRowModelModule ]);');
+        expect(code).not.toContain('Check if you have registered the module');
+
+        const links = document.querySelectorAll<HTMLAnchorElement>('.ag-overlay-error-link');
+        expect(links[0]?.href).toContain('/errors/');
+        expect(links[1]?.textContent).toBe('Modules documentation');
+        expect(links[1]?.href).toContain('/modules/');
 
         const loggedFullText = consoleErrorSpy.mock.calls.some((call) =>
             call.some((arg) => typeof arg === 'string' && arg.includes('ServerSideRowModelModule'))

@@ -1173,6 +1173,14 @@
 
     .ag-overlay-error-message {
         margin: 0;
+        line-height: var(--ag-line-height, 1.5);
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        user-select: text;
+    }
+
+    .ag-overlay-error-code {
+        margin: 0;
         font-family: var(--ag-font-family);
         font-size: var(--ag-font-size);
         line-height: var(--ag-line-height, 1.5);
@@ -1186,6 +1194,12 @@
         // cap the snippet height so it scrolls internally and the link below stays visible on small windows.
         max-height: 50vh;
         overflow: auto;
+    }
+
+    .ag-overlay-error-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: calc(var(--ag-grid-size) * 1.5);
     }
 
     .ag-overlay-error-link {
