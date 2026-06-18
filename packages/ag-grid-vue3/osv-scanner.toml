@@ -1,3 +1,34 @@
 [[IgnoredVulns]]
 id = "GHSA-67mh-4wv8-2f99"
 reason = "We do not use the esbuild development server"
+
+# Additions from OpenSSF Scorecard review (2026-06-17) - advisories surfaced in this project
+# Reasons verified against yarn.lock dependency chains (2026-06-17).
+
+[[IgnoredVulns]]
+id = "GHSA-4x5r-pxfx-6jf8"
+reason = "@babel/core is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-g7r4-m6w7-qqqr"
+reason = "We do not use the esbuild development server"
+
+[[IgnoredVulns]]
+id = "GHSA-hmw2-7cc7-3qxx"
+reason = "We do not use form-data directly and where it is used is only for testing or examples"
+
+[[IgnoredVulns]]
+id = "GHSA-72xf-g2v4-qvf3"
+reason = "tough-cookie is a transitive test dependency (via jsdom) and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-qjx8-664m-686j"
+reason = "js-cookie is a transitive test dependency (via @vue/test-utils > js-beautify) and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-58qx-3vcg-4xpx"
+reason = "ws is a transitive test dependency (via jsdom) and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-96hv-2xvq-fx4p"
+reason = "ws is a transitive test dependency (via jsdom) and is not included in the libraries distributables"

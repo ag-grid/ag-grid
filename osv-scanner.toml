@@ -494,3 +494,239 @@ reason = "@xmldom/xmldom is used only at build time by @vusion/webfonts-generato
 id = "GHSA-w5hq-g745-h8pq"
 reason = "uuid is only used by dev/test tooling (jest-junit, jest-text-transformer, sockjs, request) - not included in the libraries distributables"
 
+[[IgnoredVulns]]
+id = "GHSA-445q-vr5w-6q77"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-5c9x-8gcm-mpgx"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-777c-7fjr-54vf"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-898c-q2cr-xwhg"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-hfxv-24rg-xrqf"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-m7pr-hjqh-92cm"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-p92q-9vqr-4j8v"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-pmwg-cvhr-8vh7"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-vf2m-468p-8v99"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-w9j2-pvgh-6h63"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-xhjh-pmcv-23jw"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-xx6v-rp6x-q39c"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-654m-c8p4-x5fp"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-2gcr-mfcq-wcc3"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-3hrh-pfw6-9m5x"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-69xw-7hcm-h432"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-88fw-hqm2-52qc"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-f577-qrjj-4474"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-hm8q-7f3q-5f36"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-j6c9-x7qj-28xf"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-p77w-8qqv-26rm"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-qp7p-654g-cw7p"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-rv63-4mwf-qqc2"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-wgpf-jwqj-8h8p"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-wwfh-h76j-fc44"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-xrhx-7g5j-rcj5"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-39pv-4j6c-2g6v"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-48r7-hpm6-gfxm"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-p3vc-36g9-x9gr"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-q6f4-qqrg-jv6x"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-58w9-8g37-x9v5"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-f3m7-gqxr-g87x"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-692r-grfm-v8x7"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-rgjc-h3x7-9mwg"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-76mc-f452-cxcm"
+reason = "dompurify is only used in developer tools, and is not exposed to customers"
+
+[[IgnoredVulns]]
+id = "GHSA-gvmj-g25r-r7wr"
+reason = "dompurify is only used in developer tools, and is not exposed to customers"
+
+[[IgnoredVulns]]
+id = "GHSA-hpcv-96wg-7vj8"
+reason = "dompurify is only used in developer tools, and is not exposed to customers"
+
+[[IgnoredVulns]]
+id = "GHSA-r47g-fvhr-h676"
+reason = "dompurify is only used in developer tools, and is not exposed to customers"
+
+[[IgnoredVulns]]
+id = "GHSA-rp9w-3fw7-7cwq"
+reason = "dompurify is only used in developer tools, and is not exposed to customers"
+
+[[IgnoredVulns]]
+id = "GHSA-vxr8-fq34-vvx9"
+reason = "dompurify is only used in developer tools, and is not exposed to customers"
+
+[[IgnoredVulns]]
+id = "GHSA-x4vx-rjvf-j5p4"
+reason = "dompurify is only used in developer tools, and is not exposed to customers"
+
+[[IgnoredVulns]]
+id = "GHSA-2pvr-wf23-7pc7"
+reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-8hv8-536x-4wqp"
+reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-jrpj-wcv7-9fh9"
+reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-xr5h-phrj-8vxv"
+reason = "astro is used for the documentation site during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-4x5r-pxfx-6jf8"
+reason = "@babel/core is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-g7r4-m6w7-qqqr"
+reason = "We do not use the esbuild development server"
+
+[[IgnoredVulns]]
+id = "GHSA-hmw2-7cc7-3qxx"
+reason = "We do not use form-data directly and where it is used is only for testing or examples"
+
+[[IgnoredVulns]]
+id = "GHSA-h67p-54hq-rp68"
+reason = "js-yaml is only used in development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-q8mj-m7cp-5q26"
+reason = "qs is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-vmf3-w455-68vh"
+reason = "tar not used directly and not accessible to end users/external users"
+
+[[IgnoredVulns]]
+id = "GHSA-866g-f22w-33x8"
+reason = "@ai-sdk/provider-utils is a documentation site dependency (via react-instantsearch) and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-w7q9-p3jq-fmhm"
+reason = "jpeg-js is a documentation site dependency (via gif-frames image processing) and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-p8p7-x288-28g6"
+reason = "request is a transitive documentation site dependency (via gif-frames) and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-72xf-g2v4-qvf3"
+reason = "tough-cookie is a transitive dev/test and documentation site dependency (via jsdom / gif-frames) and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-v2v4-37r5-5v8g"
+reason = "ip-address is a transitive dev dependency (via @angular/cli) and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-qjx8-664m-686j"
+reason = "js-cookie is a transitive test dependency (via @vue/test-utils > js-beautify) and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-58qx-3vcg-4xpx"
+reason = "ws is a transitive dev/test dependency (via karma / jsdom) and is not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-96hv-2xvq-fx4p"
+reason = "ws is a transitive dev/test dependency (via karma / jsdom) and is not included in the libraries distributables"
+

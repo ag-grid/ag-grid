@@ -1,3 +1,13 @@
 [[IgnoredVulns]]
 id = "GHSA-67mh-4wv8-2f99"
 reason = "We do not use the esbuild development server"
+
+# Additions from OpenSSF Scorecard review (2026-06-17) - advisories surfaced in this project
+
+[[IgnoredVulns]]
+id = "GHSA-4x5r-pxfx-6jf8"
+reason = "@babel/core is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-g7r4-m6w7-qqqr"
+reason = "We do not use the esbuild development server"

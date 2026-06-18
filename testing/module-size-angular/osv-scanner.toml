@@ -1,3 +1,110 @@
 [[IgnoredVulns]]
 id = "GHSA-67mh-4wv8-2f99"
 reason = "We do not use the esbuild development server"
+
+# Additions from OpenSSF Scorecard review (2026-06-17) - advisories surfaced in this project
+# Reasons verified against yarn.lock dependency chains (2026-06-17).
+
+[[IgnoredVulns]]
+id = "GHSA-2gcr-mfcq-wcc3"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-3hrh-pfw6-9m5x"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-69xw-7hcm-h432"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-88fw-hqm2-52qc"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-f577-qrjj-4474"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-hm8q-7f3q-5f36"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-j6c9-x7qj-28xf"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-p77w-8qqv-26rm"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-qp7p-654g-cw7p"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-rv63-4mwf-qqc2"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-wgpf-jwqj-8h8p"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-wwfh-h76j-fc44"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-xrhx-7g5j-rcj5"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-39pv-4j6c-2g6v"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-48r7-hpm6-gfxm"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-p3vc-36g9-x9gr"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-q6f4-qqrg-jv6x"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-58w9-8g37-x9v5"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-f3m7-gqxr-g87x"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-692r-grfm-v8x7"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-rgjc-h3x7-9mwg"
+reason = "Angular version used determined by end user"
+
+[[IgnoredVulns]]
+id = "GHSA-4x5r-pxfx-6jf8"
+reason = "@babel/core is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-g7r4-m6w7-qqqr"
+reason = "We do not use the esbuild development server"
+
+[[IgnoredVulns]]
+id = "GHSA-q8mj-m7cp-5q26"
+reason = "qs is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-vmf3-w455-68vh"
+reason = "tar not used directly and not accessible to end users/external users"
+
+[[IgnoredVulns]]
+id = "GHSA-v2v4-37r5-5v8g"
+reason = "ip-address is a transitive dev dependency (via @angular/cli) and is not included in the libraries distributables"
