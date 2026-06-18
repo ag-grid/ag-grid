@@ -70,6 +70,11 @@ test.describe(`Demo Examples`, async () => {
         await page.waitForSelector('.ag-root-wrapper', { state: 'visible' });
         await page.waitForTimeout(1000);
 
+        // Hold Selling triggers an in-cell row update; afterEach guards that it completes without console errors.
+        const firstRow = page.getByRole('row').filter({ hasText: 'Dreams of You' });
+        await firstRow.getByRole('button', { name: 'Hold Selling' }).click();
+        await expect(firstRow.getByText('On Hold')).toBeVisible();
+
         await page.getByRole('textbox', { name: 'Search product...' }).fill('Lon');
         await page.getByRole('button', { name: 'Active' }).click();
         await page.getByRole('button', { name: 'On Hold' }).click();

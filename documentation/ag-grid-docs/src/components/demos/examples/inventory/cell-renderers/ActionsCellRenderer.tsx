@@ -23,9 +23,9 @@ export const ActionsCellRenderer: FunctionComponent<CustomCellRendererProps> = (
             status: !isPaused ? 'paused' : !isOutOfStock ? 'active' : 'outOfStock',
         };
 
-        // Refresh the row to reflect the changes
-        api.applyTransaction({ update: [updatedRowData] });
-    }, [node, api]);
+        // Update the row node directly so the grid can locate the row without a getRowId
+        node.updateData(updatedRowData);
+    }, [node]);
 
     return (
         <div className={styles.buttonCell}>
