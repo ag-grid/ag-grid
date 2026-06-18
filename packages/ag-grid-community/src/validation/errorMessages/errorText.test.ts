@@ -27,7 +27,7 @@ describe('error 200 (missing module)', () => {
                 })
             )
         )
-            .toEqual(`Unable to use Test feature as RowSelectionModule is not registered.  Check if you have registered the module:
+            .toEqual(`Unable to use \`Test feature\` as \`RowSelectionModule\` is not registered.  Check if you have registered the module:
 
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import { RowSelectionModule } from 'ag-grid-community';
@@ -58,7 +58,7 @@ For more info see: ${BASE_URL}/javascript-data-grid/modules/`);
                 })
             )
         )
-            .toEqual(`Unable to use Test feature as RowSelectionModule is not registered.  Check if you have registered the module:
+            .toEqual(`Unable to use \`Test feature\` as \`RowSelectionModule\` is not registered.  Check if you have registered the module:
 
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import { RowSelectionModule } from 'ag-grid-community';
@@ -89,7 +89,7 @@ For more info see: ${BASE_URL}/javascript-data-grid/modules/`);
                 })
             )
         )
-            .toEqual(`Unable to use Test feature as RowSelectionModule is not registered.  Check if you have registered the module:
+            .toEqual(`Unable to use \`Test feature\` as \`RowSelectionModule\` is not registered.  Check if you have registered the module:
 
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowSelectionModule } from 'ag-grid-community';
@@ -113,7 +113,7 @@ For more info see: ${BASE_URL}/javascript-data-grid/modules/`);
                 })
             )
         )
-            .toEqual(`Unable to use Test feature as RowSelectionModule is not registered.  Check if you have registered the module:
+            .toEqual(`Unable to use \`Test feature\` as \`RowSelectionModule\` is not registered.  Check if you have registered the module:
 
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowSelectionModule } from 'ag-grid-community';
@@ -138,7 +138,7 @@ describe('error 260 (missing user component)', () => {
                 })
             )
         )
-            .toEqual(`Unable to use AG Grid 'cellEditor' component: agRichSelectCellEditor as RichSelectModule is not registered.  Check if you have registered the module:
+            .toEqual(`Unable to use \`AG Grid 'cellEditor' component: agRichSelectCellEditor\` as \`RichSelectModule\` is not registered.  Check if you have registered the module:
 
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import { RichSelectModule } from 'ag-grid-enterprise';
@@ -169,7 +169,7 @@ For more info see: ${BASE_URL}/javascript-data-grid/modules/`);
                 })
             )
         )
-            .toEqual(`Unable to use AG Grid 'cellEditor' component: agRichSelectCellEditor as RichSelectModule is not registered.  Check if you have registered the module:
+            .toEqual(`Unable to use \`AG Grid 'cellEditor' component: agRichSelectCellEditor\` as \`RichSelectModule\` is not registered.  Check if you have registered the module:
 
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import { RichSelectModule } from 'ag-grid-enterprise';
@@ -200,7 +200,7 @@ For more info see: ${BASE_URL}/javascript-data-grid/modules/`);
                 })
             )
         )
-            .toEqual(`Unable to use AG Grid 'cellEditor' component: agRichSelectCellEditor as RichSelectModule is not registered.  Check if you have registered the module:
+            .toEqual(`Unable to use \`AG Grid 'cellEditor' component: agRichSelectCellEditor\` as \`RichSelectModule\` is not registered.  Check if you have registered the module:
 
 import { ModuleRegistry } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
