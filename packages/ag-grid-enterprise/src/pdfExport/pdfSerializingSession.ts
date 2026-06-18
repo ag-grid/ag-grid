@@ -324,7 +324,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
 
     private isRowGroupCell(column: AgColumn, node: RowNode, currentColumnIndex: number): boolean {
         const isFullWidthGroup =
-            currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.isPivotMode());
+            currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.pivotMode);
         if (!(this.gos.get('treeData') || node.group)) {
             return false;
         }

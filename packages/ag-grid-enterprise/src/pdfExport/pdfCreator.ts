@@ -1,5 +1,7 @@
+import { _downloadFile } from 'ag-stack';
+
 import type { IPdfCreator, NamedBean, PdfCustomContent, PdfExportParams } from 'ag-grid-community';
-import { BaseCreator, _addGridCommonParams, _downloadFile, _warn } from 'ag-grid-community';
+import { BaseCreator, _addGridCommonParams, _warn } from 'ag-grid-community';
 
 import { PdfSerializingSession } from './pdfSerializingSession';
 import {

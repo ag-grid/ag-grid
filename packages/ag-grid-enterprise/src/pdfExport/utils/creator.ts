@@ -1,5 +1,6 @@
+import { paramToVariableName } from 'ag-stack';
+
 import type { PdfExportParams, PdfExportStyles } from 'ag-grid-community';
-import { _paramToVariableName } from 'ag-grid-community';
 
 import { isTransparentColorValue, resolveCssColorValue } from './colors';
 
@@ -136,7 +137,7 @@ export function getThemePdfStyles(eRootDiv: HTMLElement | undefined): PdfExportS
     const styles = getComputedStyle(eRootDiv);
     const themeStyles: PdfExportStyles = {};
     PDF_STYLE_COLOR_KEYS.forEach((param) => {
-        const cssVar = _paramToVariableName(param);
+        const cssVar = paramToVariableName(param);
         const value = styles.getPropertyValue(cssVar).trim();
         if (!value) {
             return;
