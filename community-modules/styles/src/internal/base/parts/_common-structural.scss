@@ -1107,7 +1107,8 @@
         text-align: start;
         max-width: 640px;
         max-height: 100%;
-        overflow: auto;
+        // panel clips; the header stays pinned and the body scrolls (see .ag-overlay-error-body).
+        overflow: hidden;
         background: var(--ag-background-color);
         border: solid 2px color-mix(in srgb, var(--ag-invalid-color) 60%, var(--ag-border-color));
         border-radius: var(--ag-card-radius);
@@ -1116,10 +1117,11 @@
 
     .ag-overlay-error-header {
         display: flex;
+        // stay pinned at the top while the body scrolls.
+        flex: none;
         align-items: center;
         gap: calc(var(--ag-grid-size) * 0.5);
         padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 1.5);
-        background: color-mix(in srgb, var(--ag-invalid-color) 12%, var(--ag-background-color));
         color: var(--ag-invalid-color);
         border-bottom: solid 1px var(--ag-border-color);
     }
@@ -1162,6 +1164,9 @@
         flex-direction: column;
         gap: calc(var(--ag-grid-size) * 1.5);
         padding: calc(var(--ag-grid-size) * 1.5);
+        // take the remaining height and scroll internally when there are many errors.
+        flex: 1 1 auto;
+        min-height: 0;
         overflow: auto;
     }
 
@@ -1169,6 +1174,7 @@
         display: flex;
         flex-direction: column;
         gap: calc(var(--ag-grid-size) * 0.5);
+        min-height: 0;
     }
 
     .ag-overlay-error-message {
@@ -1177,6 +1183,10 @@
         white-space: pre-wrap;
         overflow-wrap: anywhere;
         user-select: text;
+    }
+
+    .ag-overlay-error-module {
+        font-weight: 600;
     }
 
     .ag-overlay-error-code {
@@ -1200,10 +1210,6 @@
         display: flex;
         flex-wrap: wrap;
         gap: calc(var(--ag-grid-size) * 1.5);
-    }
-
-    .ag-overlay-error-link {
-        color: var(--ag-input-focus-border-color);
     }
 
     .ag-overlay-file-input-center {

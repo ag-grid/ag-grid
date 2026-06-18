@@ -270,7 +270,13 @@ export class OverlayService extends BeanStub implements NamedBean {
             return;
         }
         this.errorOverlayDismissed = false;
-        this.updateOverlay(false);
+        // When the error overlay is already showing, updateOverlay is a no-op (the desired def is
+        // unchanged), so the component would keep its stale snapshot. Rebuild it to surface the new error.
+        if (this.currentDef === ErrorOverlayDef) {
+            this.doShowOverlay(ErrorOverlayDef);
+        } else {
+            this.updateOverlay(false);
+        }
     }
 
     /** Records an error if not already seen. Returns true if it was newly captured. */

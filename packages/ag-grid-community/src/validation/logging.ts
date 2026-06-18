@@ -51,13 +51,30 @@ type ErrorListener = (id: ErrorId, params: any) => void;
 const errorListeners = new Set<ErrorListener>();
 
 /**
- * Registers a listener notified of every runtime `_error` call, used by the error overlay to surface
- * errors logged after grid creation. Returns a cleanup function that removes the listener.
+ * Errors fired before any listener attached are buffered and replayed to each new listener, so the
+ * error overlay surfaces them too. A grid's OverlayService listener registers during bean init, after
+ * earlier beans (e.g. GridOptionsService) may already have validated options and logged errors. The
+ * buffer is capped to bound memory on long-lived pages; per-grid filtering happens in the listener.
+ */
+const bufferedErrors: { id: ErrorId; params: any }[] = [];
+const MAX_BUFFERED_ERRORS = 100;
+
+/**
+ * Registers a listener notified of every `_error` call, used by the error overlay to surface errors.
+ * Any errors already buffered (logged before this listener attached) are replayed to it immediately.
+ * Returns a cleanup function that removes the listener.
  */
 export function _addErrorListener(listener: ErrorListener): () => void {
     errorListeners.add(listener);
+    for (let i = 0, len = bufferedErrors.length; i < len; ++i) {
+        listener(bufferedErrors[i].id, bufferedErrors[i].params);
+    }
     return () => {
         errorListeners.delete(listener);
+        // Once every grid has gone, drop the buffer so a later grid does not inherit stale errors.
+        if (errorListeners.size === 0) {
+            bufferedErrors.length = 0;
+        }
     };
 }
 
@@ -261,6 +278,9 @@ export function _error<
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
     getMsgOrDefault(_errorOnce, args[0], args[1] as any, false);
+    if (bufferedErrors.length < MAX_BUFFERED_ERRORS) {
+        bufferedErrors.push({ id: args[0], params: args[1] });
+    }
     if (errorListeners.size) {
         for (const listener of errorListeners) {
             listener(args[0], args[1]);

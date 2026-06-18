@@ -53,6 +53,11 @@ describe('error overlay', () => {
         const message = document.querySelector('.ag-overlay-error-message')?.textContent ?? '';
         expect(message).toContain('ServerSideRowModel');
         expect(document.querySelector<HTMLAnchorElement>('.ag-overlay-error-link')?.href).toContain('/errors/200');
+
+        // Module names within the prose are wrapped in code blocks to stand out.
+        const moduleCodes = Array.from(document.querySelectorAll('.ag-overlay-error-message .ag-overlay-error-module'));
+        expect(moduleCodes.some((el) => el.textContent === 'ServerSideRowModelModule')).toBe(true);
+        expect(moduleCodes.every((el) => el.tagName === 'CODE')).toBe(true);
     });
 
     test('unknown rowModelType falls back to client-side and shows the error overlay', async () => {
@@ -160,6 +165,30 @@ describe('error overlay', () => {
         expect(hasErrorOverlay()).toBe(false);
     });
 
+    test('multiple missing-module errors all surface in the error overlay', async () => {
+        // sideBar (a grid option) and rowGroup (a colDef) are validated at different points, so the
+        // two missing-module errors are added to the overlay separately. Both must be shown, and the
+        // header count must reflect the total - not just the first error captured.
+        gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'athlete', rowGroup: true }, { field: 'age' }],
+            rowData,
+            sideBar: true,
+        });
+
+        await waitFor(() => expect(hasErrorOverlay()).toBe(true));
+
+        await waitFor(() => expect(document.querySelectorAll('.ag-overlay-error-item').length).toBe(2));
+
+        const title = document.querySelector('.ag-overlay-error-title')?.textContent ?? '';
+        expect(title).toBe('AG Grid found 2 configuration errors');
+
+        const messages = Array.from(document.querySelectorAll('.ag-overlay-error-message')).map(
+            (el) => el.textContent ?? ''
+        );
+        expect(messages.some((message) => message.includes('RowGroupingModule'))).toBe(true);
+        expect(messages.some((message) => message.includes('SideBarModule'))).toBe(true);
+    });
+
     test('valid configuration shows no error overlay', async () => {
         const api = gridsManager.createGrid('myGrid', { columnDefs, rowData });
 
@@ -214,7 +243,7 @@ describe('error overlay without the ValidationModule', () => {
 
         const links = document.querySelectorAll<HTMLAnchorElement>('.ag-overlay-error-link');
         expect(links[0]?.href).toContain('/errors/');
-        expect(links[1]?.textContent).toBe('Modules documentation');
+        expect(links[1]?.textContent).toBe('Modules Documentation');
         expect(links[1]?.href).toContain('/modules/');
 
         const loggedFullText = consoleErrorSpy.mock.calls.some((call) =>

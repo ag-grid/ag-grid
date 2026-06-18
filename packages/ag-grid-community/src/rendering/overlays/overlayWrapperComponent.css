@@ -42,7 +42,9 @@
     text-align: start;
     max-width: 640px;
     max-height: 100%;
-    overflow: auto;
+
+    /* panel clips; the header stays pinned and the body scrolls (see .ag-overlay-error-body). */
+    overflow: hidden;
     background: var(--ag-background-color);
     border: solid calc(var(--ag-border-width) * 2)
         color-mix(in srgb, var(--ag-invalid-color) 60%, var(--ag-border-color));
@@ -52,10 +54,12 @@
 
 .ag-overlay-error-header {
     display: flex;
+
+    /* stay pinned at the top while the body scrolls. */
+    flex: none;
     align-items: center;
     gap: var(--ag-spacing);
     padding: var(--ag-spacing) calc(var(--ag-spacing) * 1.5);
-    background: color-mix(in srgb, var(--ag-invalid-color) 12%, var(--ag-background-color));
     color: var(--ag-invalid-color);
     border-bottom: solid var(--ag-border-width) var(--ag-border-color);
 }
@@ -100,6 +104,10 @@
     flex-direction: column;
     gap: calc(var(--ag-spacing) * 1.5);
     padding: calc(var(--ag-spacing) * 1.5);
+
+    /* take the remaining height and scroll internally when there are many errors. */
+    flex: 1 1 auto;
+    min-height: 0;
     overflow: auto;
 }
 
@@ -116,6 +124,10 @@
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     user-select: text;
+}
+
+.ag-overlay-error-module {
+    font-weight: 600;
 }
 
 .ag-overlay-error-code {
@@ -140,16 +152,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: calc(var(--ag-spacing) * 1.5);
-}
-
-.ag-overlay-error-link {
-    color: var(--ag-accent-color);
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.ag-overlay-error-link:hover {
-    text-decoration: underline;
 }
 
 .ag-overlay-loading-center,
