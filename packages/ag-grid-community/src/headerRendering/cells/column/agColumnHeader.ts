@@ -48,7 +48,7 @@ function getHeaderCompElementParams(
                         ? {
                               tag: 'span',
                               ref: 'eCalculatedColumn',
-                              cls: 'ag-header-icon ag-header-col-ref ag-calculated-column-icon',
+                              cls: 'ag-header-icon ag-calculated-column-icon',
                               attrs: hiddenAttrs,
                           }
                         : null,
