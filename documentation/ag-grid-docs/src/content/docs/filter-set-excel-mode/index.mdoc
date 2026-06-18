@@ -50,3 +50,9 @@ The table below shows the differences in behaviour alongside the default behavio
         "windowsExcel": "tickCross",
         "macExcel": "tickCross"
     } /%}
+
+{% note %}
+The "Discard the selected state of values that are not visible when the filter is applied" row describes how each mode treats values hidden in the filter UI. The default grid behaviour keeps those selections, so it is marked with a cross.
+
+This is separate from how a model is reconciled when set programmatically. When values are taken from the grid (the default), setting a model via [`setColumnFilterModel`](./filter-set-api/#set-filter-model) drops any selected values that are not currently in the data. See [Refreshing Values](./filter-set-filter-list/#refreshing-values) for details.
+{% /note %}

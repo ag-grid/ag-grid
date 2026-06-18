@@ -29,8 +29,12 @@
     }
 
     .ag-header-cell:not(.ag-right-aligned-header) {
+        .ag-calculated-column-icon,
         .ag-header-col-ref {
             margin-right: var(--ag-grid-size);
+        }
+
+        .ag-header-col-ref {
             color: var(--ag-subtle-text-color);
         }
 

@@ -154,6 +154,10 @@
     mask-image: url('./material-svg-icons/paste.svg');
 }
 
+.ag-icon-values-as::before {
+    mask-image: url('./material-svg-icons/values-as.svg');
+}
+
 .ag-icon-pin::before {
     mask-image: url('./material-svg-icons/pin.svg');
 }

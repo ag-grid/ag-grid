@@ -633,9 +633,10 @@ export class StateService extends BeanStub implements NamedBean {
             filterModel: null,
             columnFilterState: null,
             advancedFilterModel: null,
+            selectableFilters: null,
         };
         if (selectableFilters !== undefined) {
-            selectableFilter?.setState(selectableFilters ?? {});
+            selectableFilter?.setState(selectableFilters ?? undefined);
         }
         if (filterModel !== undefined || columnFilterState !== undefined) {
             filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, 'columnFilter');

@@ -17,6 +17,7 @@ import agSourcemapCors from '../../external/ag-website-shared/plugins/agSourcema
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
 import agDevCsp from './plugins/agDevCsp';
+import agDevExampleAssetCors from './plugins/agDevExampleAssetCors';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
@@ -155,7 +156,7 @@ console.log(
     )
 );
 
-const plugins = [agSourcemapCors(), svgr(), agHotModuleReload(), agDevCsp()];
+const plugins = [agSourcemapCors(), svgr(), agHotModuleReload(), agDevCsp(), agDevExampleAssetCors()];
 if (NODE_ENV !== 'test') {
     plugins.push(mkcert()); // mkcert is not necessary for tests
 }

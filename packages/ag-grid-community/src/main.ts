@@ -636,6 +636,7 @@ export type {
     RowGroupState,
     RowPinningState,
     ScrollState,
+    SelectableFilterState,
     SideBarState,
     SortState,
 } from './interfaces/gridState';
