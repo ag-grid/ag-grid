@@ -80,7 +80,7 @@ describe('grand total row survives setState', () => {
         const options: GridOptions<RowData> = {
             ...baseOptions(),
             onFirstDataRendered: (event) => {
-                Promise.resolve().then(() => {
+                void Promise.resolve().then(() => {
                     event.api.setState(savedState);
                 });
             },
