@@ -7,15 +7,7 @@ import type {
     ShowValueAsTransformParams,
 } from 'ag-grid-community';
 
-import { pivotBaseValue, pivotDimIndex, rowBaseValue } from './showValueAsBaseLookups';
-import {
-    adjacentStep,
-    pivotResultCol,
-    readAggScalar,
-    readNodeExact,
-    readNodeValue,
-    unwrapAggValue,
-} from './showValueAsValueReaders';
+import { pivotResultCol, readAggScalar, readNodeValue, unwrapAggValue } from './showValueAsValueReaders';
 
 export class ShowValueAsTransformParamsImpl implements ShowValueAsTransformParams {
     private _rawValue: any = this;
@@ -99,25 +91,6 @@ export class ShowValueAsTransformParamsImpl implements ShowValueAsTransformParam
         return readNodeValue(node, column);
     }
 
-    public valueOfColumn(colId: string): number | bigint | null {
-        const col = this._beans.colModel.getCol(colId);
-        return col ? readNodeExact(this.node, col as AgColumn) : null;
-    }
-
-    /** Comparison value for a column base: while pivoting, the same pivot cell (this column's keys) of value
-     *  field `colId`; otherwise that column's value at the node. `null` when not resolvable. */
-    public baseColumnValue(colId: string): number | bigint | null {
-        const beans = this._beans;
-        if (beans.colModel.isPivotActive()) {
-            const pivotKeys = this.column.colDef.pivotKeys;
-            if (pivotKeys) {
-                const baseCol = pivotResultCol(beans.pivotResultCols, pivotKeys, colId);
-                return baseCol ? readNodeExact(this.node, baseCol) : null;
-            }
-        }
-        return this.valueOfColumn(colId);
-    }
-
     /** This column's aggregate at the ancestor grouped by row-group field `field` (the node itself when it is
      *  that group); with no `field`, the outermost (top-level) ancestor — which also covers tree data, where
      *  nodes have no `rowGroupColumn`. `null` when no such ancestor exists. Backs `% of Parent Total`. */
@@ -137,40 +110,5 @@ export class ShowValueAsTransformParamsImpl implements ShowValueAsTransformParam
         }
         // Read the displayed value (not `aggData`) so a top-level leaf — its own ancestor — resolves too.
         return outermost ? readNodeValue(outermost, column) : null;
-    }
-
-    /** `childIndex` gives the node's O(1) position in its parent's sorted children (kept in lockstep with
-     *  `childrenAfterSort` by the sort stage); falls back to `indexOf` when stale or unset — e.g. a node outside
-     *  the current sorted set queried via the API. */
-    public siblingValue(offset: number): number | bigint | null {
-        const node = this.node;
-        const siblings = node.parent?.childrenAfterSort;
-        if (!siblings) {
-            return null;
-        }
-        let index = node.childIndex;
-        if (siblings[index] !== node) {
-            index = siblings.indexOf(node);
-            if (index < 0) {
-                return null;
-            }
-        }
-        const target = index + offset;
-        return target >= 0 && target < siblings.length ? readNodeExact(siblings[target], this.column) : null;
-    }
-
-    /** The base field/item: the comparison cell is this one with dimension `baseField` set to `baseItem`, the
-     *  other dimensions held fixed — a sibling pivot column (column dimension) or a cousin group row (row
-     *  dimension). With no `baseField`, `(previous)`/`(next)` falls back to the adjacent sibling. */
-    public baseItemValue(baseItem: string | number, baseField?: string): number | bigint | null {
-        if (!baseField) {
-            const offset = adjacentStep(baseItem);
-            return offset == null ? null : this.siblingValue(offset);
-        }
-        const beans = this._beans;
-        const index = pivotDimIndex(beans.colModel, this.column, baseField);
-        return index != null
-            ? pivotBaseValue(beans.pivotResultCols, this.node, this.column, index, baseItem)
-            : rowBaseValue(beans.colModel, this.node, this.column, baseField, baseItem);
     }
 }

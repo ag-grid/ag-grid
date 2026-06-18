@@ -19,6 +19,7 @@ export class PaginationService extends BeanStub implements NamedBean {
     private pageSizeAutoCalculated?: number; // When paginationAutoPageSize = true or when the pages panel is disabled
     private pageSizeFromPageSizeSelector?: number; // When user selects page size from page size selector.
     private pageSizeFromInitialState?: number; // When the initial grid state is loaded, and a page size rehydrated
+    private pageSizeFromPanel?: number; // When the pageSize pagination panel config sets paginationPageSize.
     private pageSizeFromGridOptions?: number; // When user sets gridOptions.paginationPageSize.
 
     private totalPages: number;
@@ -33,10 +34,12 @@ export class PaginationService extends BeanStub implements NamedBean {
         const gos = this.gos;
         this.active = gos.get('pagination');
         this.pageSizeFromGridOptions = gos.get('paginationPageSize');
+        this.pageSizeFromPanel = this.getPanelPageSize();
         this.paginateChildRows = this.isPaginateChildRows();
 
         this.addManagedPropertyListener('pagination', this.onPaginationGridOptionChanged.bind(this));
         this.addManagedPropertyListener('paginationPageSize', this.onPageSizeGridOptionChanged.bind(this));
+        this.addManagedPropertyListener('paginationPanels', this.onPanelsChanged.bind(this));
     }
 
     public getPaginationSelector(): ComponentSelector<Component> {
@@ -67,6 +70,27 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     private onPageSizeGridOptionChanged(): void {
         this.setPageSize(this.gos.get('paginationPageSize'), 'gridOptions');
+    }
+
+    private getPanelPageSize(): number | undefined {
+        const panels = this.gos.get('paginationPanels');
+        if (!panels) {
+            return undefined;
+        }
+        for (let i = 0, len = panels.length; i < len; ++i) {
+            const panel = panels[i];
+            if (typeof panel === 'object' && panel.type === 'pageSize') {
+                return panel.paginationPageSize;
+            }
+        }
+        return undefined;
+    }
+
+    private onPanelsChanged(): void {
+        const newPageSize = this.getPanelPageSize();
+        if (newPageSize !== this.pageSizeFromPanel) {
+            this.setPageSize(newPageSize, 'panel');
+        }
     }
 
     public goToPage(page: number): void {
@@ -150,6 +174,7 @@ export class PaginationService extends BeanStub implements NamedBean {
         const {
             pageSizeAutoCalculated,
             pageSizeFromInitialState,
+            pageSizeFromPanel,
             pageSizeFromGridOptions,
             pageSizeFromPageSizeSelector,
             gos,
@@ -162,6 +187,7 @@ export class PaginationService extends BeanStub implements NamedBean {
             autoValue ??
             pageSizeFromPageSizeSelector ??
             pageSizeFromInitialState ??
+            pageSizeFromPanel ??
             pageSizeFromGridOptions ??
             DEFAULT_PAGE_SIZE
         );
@@ -200,7 +226,7 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     public setPageSize(
         size: number | undefined,
-        source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'gridOptions'
+        source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'panel' | 'gridOptions'
     ): void {
         const currentSize = this.pageSize;
         switch (source) {
@@ -216,13 +242,13 @@ export class PaginationService extends BeanStub implements NamedBean {
             case 'initialState':
                 this.pageSizeFromInitialState = size;
                 break;
+            case 'panel':
+                this.pageSizeFromPanel = size;
+                this.applyExplicitPageSize(size);
+                break;
             case 'gridOptions':
                 this.pageSizeFromGridOptions = size;
-                this.pageSizeFromInitialState = undefined;
-                this.pageSizeFromPageSizeSelector = undefined;
-                if (this.currentPage !== 0) {
-                    this.goToFirstPage();
-                }
+                this.applyExplicitPageSize(size);
                 break;
         }
 
@@ -230,6 +256,19 @@ export class PaginationService extends BeanStub implements NamedBean {
             this.calculatePages();
 
             this.dispatchPaginationChangedEvent({ newPageSize: true, keepRenderedRows: true });
+        }
+    }
+
+    // Only a concrete page size overrides the user's selector/initial-state choice. When the override
+    // is removed (size undefined), keep those values so the previously selected page size is preserved.
+    private applyExplicitPageSize(size: number | undefined): void {
+        if (size === undefined) {
+            return;
+        }
+        this.pageSizeFromInitialState = undefined;
+        this.pageSizeFromPageSizeSelector = undefined;
+        if (this.currentPage !== 0) {
+            this.goToFirstPage();
         }
     }
 

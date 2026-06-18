@@ -1,4 +1,4 @@
-import { EXAMPLES_PATH_CONDITION } from './cspRules';
+import { CAMPAIGNS_PATH_CONDITION, EXAMPLES_PATH_CONDITION } from './cspRules';
 import { PRODUCTION_CSP_PHASE, getHtaccessContent } from './htaccessRules';
 import { SITE_301_REDIRECTS } from './redirects';
 
@@ -277,6 +277,38 @@ describe('htaccessRules', () => {
                 const ifBlock = extractIfBlock(productionContent);
                 expect(ifBlock).toContain('Header always unset Content-Security-Policy\n');
                 expect(ifBlock).toContain("'unsafe-eval'");
+            });
+        }
+    });
+
+    describe('AG-17134: Bryntum campaign pages CSP override', () => {
+        const campaignsIfOpen = `<If "${CAMPAIGNS_PATH_CONDITION}">`;
+
+        // In every phase the first /campaigns/ <If> is the enforced override, so it
+        // governs what the campaign pages actually load.
+        const firstCampaignsIfBlock = (content: string) => {
+            const start = content.indexOf(campaignsIfOpen);
+            expect(start).toBeGreaterThan(-1);
+            return content.slice(start, content.indexOf('</If>', start));
+        };
+
+        it('staging: <If> override allows bryntum.com for /campaigns/ without unsafe-eval', () => {
+            const ifBlock = firstCampaignsIfBlock(stagingContent);
+            expect(ifBlock).toContain('https://bryntum.com');
+            expect(ifBlock).not.toContain("'unsafe-eval'");
+        });
+
+        it('production: allows bryntum.com for /campaigns/ without unsafe-eval (either phase)', () => {
+            const ifBlock = firstCampaignsIfBlock(productionContent);
+            expect(ifBlock).toContain('https://bryntum.com');
+            expect(ifBlock).not.toContain("'unsafe-eval'");
+        });
+
+        if (PRODUCTION_CSP_PHASE === 'report-only') {
+            it('production (report-only window): re-sets the ENFORCED header for /campaigns/ so bryntum.com loads during the window', () => {
+                const ifBlock = firstCampaignsIfBlock(productionContent);
+                expect(ifBlock).toContain('Header always unset Content-Security-Policy\n');
+                expect(ifBlock).toContain('Header always set Content-Security-Policy "');
             });
         }
     });

@@ -37,7 +37,7 @@ export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clien
 export { _dispatchColumnChangedEvent, dispatchColumnVisibleEvent } from './columns/columnEventUtils';
 export { _buildColumnTree } from './columns/buildColumnTree';
 export { _addColumnDefaultAndTypes, _createUserColumn } from './columns/colDefUtils';
-export { _normaliseCalculatedExpression } from './columns/calculatedColumnUtils';
+export { _isCalculatedColumnsEnabled, _normaliseCalculatedExpression } from './columns/calculatedColumnUtils';
 export { BaseSingleColService as _BaseSingleColService } from './columns/baseSingleColService';
 export type { ColumnModel } from './columns/columnModel';
 export type { ColumnNameService } from './columns/columnNameService';
@@ -87,7 +87,7 @@ export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { RowsDrop as _RowsDrop } from './dragAndDrop/rowDragTypes';
 export { _getDisplaySortForColumn, _normalizeSortType, _resolvePivotColumnForRow, AgColumn } from './entities/agColumn';
 export type { ColKind } from './entities/agColumn';
-export type { AgShowValueAsResolved } from './entities/colDef-showValueAs';
+export type { AgShowValueAsResolved, ShowValueAsConfigInternal, ShowValueAsModes } from './entities/colDef-showValueAs';
 export { AgColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export {

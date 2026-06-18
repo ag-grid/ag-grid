@@ -454,11 +454,14 @@ export class StateService extends BeanStub implements NamedBean {
             const aggregationModel = aggregationState.aggregationModel;
             for (let i = 0, len = aggregationModel.length; i < len; ++i) {
                 const { colId, aggFunc } = aggregationModel[i];
-                getColumnState(colId).aggFunc = aggFunc;
+                const columnState = getColumnState(colId);
+                columnState.aggFunc = aggFunc;
+                columnState.valueIndex = i;
             }
         }
         if (shouldSetAggregationState || !partialColumnState) {
             defaultState.aggFunc = null;
+            defaultState.valueIndex = null;
         }
 
         const shouldSetPivotState = shouldSetState('pivot', pivotState);
@@ -630,9 +633,10 @@ export class StateService extends BeanStub implements NamedBean {
             filterModel: null,
             columnFilterState: null,
             advancedFilterModel: null,
+            selectableFilters: null,
         };
         if (selectableFilters !== undefined) {
-            selectableFilter?.setState(selectableFilters ?? {});
+            selectableFilter?.setState(selectableFilters ?? undefined);
         }
         if (filterModel !== undefined || columnFilterState !== undefined) {
             filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, 'columnFilter');

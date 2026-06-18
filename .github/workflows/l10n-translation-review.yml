@@ -1,0 +1,113 @@
+name: L10n Translation Review
+
+# Advisory semantic review of translation changes. Runs only when locale source
+# files change (or on manual dispatch). Posts findings as a PR comment and never
+# fails the build — deterministic structural checks live in the package tests.
+
+on:
+    pull_request:
+        paths:
+            - 'community-modules/locale/src/**'
+    workflow_dispatch:
+        inputs:
+            pr_number:
+                description: 'PR number to review and comment on (optional)'
+                type: string
+                required: false
+
+permissions:
+    contents: read
+    pull-requests: write
+
+concurrency:
+    group: l10n-review-${{ github.event.pull_request.number || github.event.inputs.pr_number || github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    review:
+        runs-on: ubuntu-latest
+        # Same-repo PRs only — never run repository code with the API key in scope for a
+        # fork PR. Fork PRs can be reviewed via manual workflow_dispatch by a maintainer
+        # (actions:write required). Mirrors the fork-PR gate used in ci.yml/pr-review.yml.
+        if: |
+            (github.event_name == 'pull_request' &&
+                github.event.pull_request.head.repo.full_name == github.repository) ||
+            github.event_name == 'workflow_dispatch'
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+
+            - name: Resolve diff range
+              id: range
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  if [ "${{ github.event_name }}" = "pull_request" ]; then
+                      echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+                      echo "head=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+                  elif [ -n "${{ github.event.inputs.pr_number }}" ]; then
+                      # Manual dispatch with a PR number: review that PR's head, not the checked-out ref.
+                      pr="${{ github.event.inputs.pr_number }}"
+                      base_ref=$(gh pr view "$pr" --json baseRefName -q .baseRefName)
+                      git fetch --no-tags origin "$base_ref:refs/l10n/base" "refs/pull/$pr/head:refs/l10n/head"
+                      echo "base=$(git rev-parse refs/l10n/base)" >> "$GITHUB_OUTPUT"
+                      echo "head=$(git rev-parse refs/l10n/head)" >> "$GITHUB_OUTPUT"
+                  else
+                      git fetch --no-tags origin latest
+                      echo "base=$(git rev-parse origin/latest)" >> "$GITHUB_OUTPUT"
+                      echo "head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+                  fi
+
+            - name: Review translations
+              env:
+                  LOCALE_SRC_DIR: community-modules/locale/src
+                  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+                  BASE_SHA: ${{ steps.range.outputs.base }}
+                  HEAD_SHA: ${{ steps.range.outputs.head }}
+                  REPORT_PATH: l10n-review.md
+              run: |
+                  # Defense-in-depth: execute the review script as it exists at the base ref,
+                  # never the PR head, so PR-controlled code can't run with the API key in scope.
+                  script=external/ag-shared/scripts/l10n/review-translations.mjs
+                  if git cat-file -e "$BASE_SHA:$script" 2>/dev/null; then
+                      git show "$BASE_SHA:$script" > "$RUNNER_TEMP/review-translations.mjs"
+                  else
+                      echo "Script absent at base ref; using checked-out copy (the PR introducing it)."
+                      cp "$script" "$RUNNER_TEMP/review-translations.mjs"
+                  fi
+                  node "$RUNNER_TEMP/review-translations.mjs"
+
+            - name: Post review comment
+              if: hashFiles('l10n-review.md') != ''
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const fs = require('fs');
+                      const body = fs.readFileSync('l10n-review.md', 'utf8');
+                      const marker = '<!-- l10n-translation-review -->';
+                      const issue_number =
+                          context.payload.pull_request?.number ||
+                          Number(context.payload.inputs?.pr_number) ||
+                          undefined;
+                      if (!issue_number) {
+                          core.info('No PR to comment on; printing report to the job log.');
+                          core.info(body);
+                          return;
+                      }
+                      const { owner, repo } = context.repo;
+                      const existing = await github.paginate(github.rest.issues.listComments, {
+                          owner,
+                          repo,
+                          issue_number,
+                      });
+                      const prior = existing.find((c) => c.body && c.body.includes(marker));
+                      if (prior) {
+                          await github.rest.issues.updateComment({ owner, repo, comment_id: prior.id, body });
+                      } else {
+                          await github.rest.issues.createComment({ owner, repo, issue_number, body });
+                      }

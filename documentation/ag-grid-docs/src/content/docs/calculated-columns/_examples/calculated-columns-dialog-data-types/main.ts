@@ -22,20 +22,29 @@ type SalesRow = {
     cost: number;
 };
 
-const currencyFormatter = (params: ValueFormatterParams<SalesRow, number>) =>
-    params.value == null ? '' : `$${params.value.toLocaleString()}`;
+const currencyFormatter = (params: ValueFormatterParams<SalesRow, number>): string => {
+    const { value } = params;
+    if (value == null) {
+        return '';
+    }
+
+    if (String(value).startsWith('#')) {
+        return String(value);
+    }
+
+    return `$${value.toLocaleString()}`;
+};
 
 const columnDefs: ColDef<SalesRow>[] = [
     { field: 'product', flex: 1.3 },
-    { field: 'revenue', valueFormatter: currencyFormatter },
-    { field: 'cost', valueFormatter: currencyFormatter },
+    { field: 'revenue', cellDataType: 'currency' },
+    { field: 'cost', cellDataType: 'currency' },
     {
         colId: 'profit',
         headerName: 'Profit',
         calculatedExpression: '[revenue] - [cost]',
-        cellDataType: 'number',
+        cellDataType: 'currency',
         filter: 'agNumberColumnFilter',
-        valueFormatter: currencyFormatter,
     },
 ];
 
@@ -65,8 +74,15 @@ const rowData: SalesRow[] = [
 const gridOptions: GridOptions<SalesRow> = {
     columnDefs,
     rowData,
+    dataTypeDefinitions: {
+        currency: {
+            baseDataType: 'number',
+            extendsDataType: 'number',
+            valueFormatter: currencyFormatter,
+        },
+    },
     calculatedColumns: {
-        dataTypes: ['number', 'boolean'],
+        dataTypes: ['currency', 'number', 'boolean'],
     },
     defaultColDef: {
         flex: 1,

@@ -58,7 +58,11 @@ describe('calculated columns - display ordering', () => {
     });
 
     function createGrid(id: string, opts: Partial<GridOptions>): GridApi {
-        return gridsManager.createGrid(id, { getRowId: (params) => params.data?.id, ...opts });
+        return gridsManager.createGrid(id, {
+            getRowId: (params) => params.data?.id,
+            calculatedColumns: true,
+            ...opts,
+        });
     }
 
     function addCalculatedColumnDef(api: GridApi, colDef: ColDef): void {

@@ -1,5 +1,6 @@
 ---
 import { getIsStaging } from '@utils/env';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 interface Props {
     googleTagManagerId: string;
@@ -11,20 +12,13 @@ const { googleTagManagerId, googleTagManagerAuth, googleTagManagerPreview } = As
 const extraParams = getIsStaging() ? `&gtm_auth=${googleTagManagerAuth}&gtm_preview=${googleTagManagerPreview}` : '';
 ---
 
+{
+    /* Externalised (was an inline define:vars bootstrap) so the site CSP can drop
+    script-src 'unsafe-inline'; config passes via data- attributes. Must stay a
+    classic, non-deferred script so document.currentScript resolves in the loader. */
+}
 <script
-    define:vars={{
-        googleTagManagerId,
-        extraParams,
-    }}
->
-    (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-        var f = d.getElementsByTagName(s)[0],
-            j = d.createElement(s),
-            dl = l != 'dataLayer' ? '&l=' + l : '';
-        j.async = true;
-        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl + extraParams + '&gtm_cookies_win=x';
-        f.parentNode.insertBefore(j, f);
-    })(window, document, 'script', 'dataLayer', googleTagManagerId);
-</script>
+    is:inline
+    src={urlWithBaseUrl('/scripts/gtm-init.js')}
+    data-gtm-id={googleTagManagerId}
+    data-gtm-extra={extraParams}></script>

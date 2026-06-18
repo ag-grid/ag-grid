@@ -55,8 +55,12 @@ ignore:
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
   SNYK-JS-TMP-16881240:
-    - '@nx/devkit@20.8.4 > tmp@0.2.5':
+    - '@nx/devkit@20.8.4 > tmp@0.2.1':
         reason: Build dependency - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Used in build & dev - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
 patch: {}

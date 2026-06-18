@@ -532,6 +532,8 @@
             }
         },
         "initialAggFunc": {},
+        "valueIndex": {},
+        "initialValueIndex": {},
         "enableValue": {
             "more": {
                 "name": "Configuring via the UI",
@@ -559,8 +561,8 @@
         "showValueAsInitial": {},
         "showValueAsConfig": {
             "more": {
-                "name": "Custom Modes",
-                "url": "./aggregation-show-values-as/#custom-modes"
+                "name": "Configuration",
+                "url": "./aggregation-show-values-as/#configuration"
             }
         }
     },

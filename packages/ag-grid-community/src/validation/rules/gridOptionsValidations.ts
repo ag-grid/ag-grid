@@ -183,8 +183,11 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 if (calculatedColumns == null) {
                     return null;
                 }
+                if (typeof calculatedColumns === 'boolean') {
+                    return null;
+                }
                 if (typeof calculatedColumns !== 'object' || Array.isArray(calculatedColumns)) {
-                    return 'calculatedColumns should be an object.';
+                    return 'calculatedColumns should be a boolean or an object.';
                 }
 
                 const { dataTypes, expressionPickers, applyMode } = calculatedColumns;

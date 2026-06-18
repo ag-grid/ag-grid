@@ -13,13 +13,9 @@ export type ShowValueAsBuiltInType =
     | 'percentOfRowTotal'
     | 'percentOfParentRowTotal'
     | 'percentOfParentColumnTotal'
-    | 'percentOfParentTotal'
-    // Compared against a base value/column - see `ShowValueAsBaseParams`.
-    | 'percentOf'
-    | 'differenceFrom'
-    | 'percentDifferenceFrom';
+    | 'percentOfParentTotal';
 
-/** A built-in mode name, or any name registered in `showValueAsConfig.modes`. */
+/** A built-in mode name. The open string form is retained so a serialised column-state value round-trips. */
 export type ShowValueAsType = ShowValueAsBuiltInType | (string & {});
 
 /**
@@ -37,24 +33,6 @@ export type ShowValueAsApplicable = boolean | 'disable';
 /** Output of a transform; `null` renders a blank cell. */
 export type ShowValueAsResult = number | bigint | string | boolean | Date | object;
 
-/** A numeric value preserving `bigint`, or `null` - returned by the transform's value accessors. */
-export type ShowValueAsNumber = number | bigint | null;
-
-/** `params` for the base modes (`percentOf` / `differenceFrom` / `percentDifferenceFrom`). The comparison
- *  value is resolved in this precedence: `baseField`+`baseItem` (a base field and item), else `baseItem`
- *  alone (the adjacent sibling), else `base` (another column or a constant). */
-export interface ShowValueAsBaseParams {
-    /** A dimension field (a row-group or pivot field) whose `baseItem` is the comparison cell - the "% Of"
-     *  base field. The compared cell is this one with that dimension set to `baseItem`, the others held fixed. */
-    baseField?: string;
-    /** The item within `baseField` to compare against: a specific value, or `(previous)`/`(next)` for the
-     *  adjacent item. With no `baseField`, `(previous)`/`(next)` compares to the adjacent sibling in order. */
-    baseItem?: '(previous)' | '(next)' | (string & {}) | number;
-    /** A colId (another column at this row) or `{ value }` (a constant) to compare against - used when no
-     *  `baseField`/`baseItem` is set. */
-    base?: string | { value: number | bigint };
-}
-
 /** `params` for `percentOfParentTotal`. */
 export interface ShowValueAsParentTotalParams {
     /** colId of the row-group field whose ancestor is the 100% denominator (rows at this field show 100%,
@@ -62,17 +40,8 @@ export interface ShowValueAsParentTotalParams {
     baseField?: string;
 }
 
-/**
- * Maps each mode to the type of its `params`. Augment it to type a custom mode's params:
- * `declare module 'ag-grid-community' { interface ShowValueAsParamsMap { myMode: { … } } }`.
- */
+/** Maps each built-in mode to the type of its `params`. */
 export interface ShowValueAsParamsMap {
-    /** `% Of` - the comparison base (field/item, column, or constant). */
-    percentOf: ShowValueAsBaseParams;
-    /** `Difference From` - the comparison base. */
-    differenceFrom: ShowValueAsBaseParams;
-    /** `% Difference From` - the comparison base. */
-    percentDifferenceFrom: ShowValueAsBaseParams;
     /** `% of Parent Total` - the ancestor grouping field that is the 100% denominator. */
     percentOfParentTotal: ShowValueAsParentTotalParams;
 }
@@ -90,7 +59,7 @@ export type ShowValueAs<T extends ShowValueAsType = ShowValueAsType> = T extends
     ? {
           /** The mode name. */
           type: T;
-          /** Mode input - `base`/`baseItem` for base modes, else the mode's own shape. */
+          /** Mode input - e.g. `percentOfParentTotal`'s `baseField`. */
           params?: ShowValueAsParamsFor<T>;
           /** Decimal places for the built-in formatters; overrides `showValueAsConfig.precision`. */
           precision?: number;
@@ -131,19 +100,6 @@ export interface ShowValueAsTransformParams<TData = any, TValue = any, TParams =
     parentColumnTotal(): number | null;
     /** Sum of value columns on this row. */
     rowTotal(): number | null;
-    /** This column's value at the sibling `offset` positions away in display order, e.g. `-1` for the previous
-     *  sibling. `null` past either end. Preserves `bigint`. */
-    siblingValue(offset: number): ShowValueAsNumber;
-    /** The comparison value for the base field/item: this cell with dimension `baseField` set to `baseItem`
-     *  (a specific value, or `(previous)`/`(next)` for the adjacent item), the other row/pivot dimensions held
-     *  fixed. With no `baseField`, `(previous)`/`(next)` compares to the adjacent sibling. Preserves `bigint`;
-     *  `null` when no such cell exists. */
-    baseItemValue(baseItem: string | number, baseField?: string): ShowValueAsNumber;
-    /** Another column's value at this node, preserving `bigint`. */
-    valueOfColumn(colId: string): ShowValueAsNumber;
-    /** The comparison value for a column base: another column's value at this node - while pivoting, the same
-     *  pivot cell (same keys) of that value field. Preserves `bigint`; `null` when not resolvable. */
-    baseColumnValue(colId: string): ShowValueAsNumber;
     /** This column's aggregated total at the ancestor grouped by row-group field `field` (the node's ancestor
      *  at that level, or the node itself when it is that group). With no `field`, the outermost (top-level)
      *  group ancestor. `null` when no such ancestor exists. */
@@ -202,16 +158,6 @@ export interface ShowValueAsColumnLists {
     getColumn(colId: string): Column | null;
 }
 
-/** Options for the built-in value-input popup ({@link ShowValueAsMenuParams.editValue}). */
-export interface ShowValueAsValueEditorOptions {
-    /** The value to pre-fill the input with (a `bigint` base constant is stringified for display). */
-    value?: number | bigint;
-    /** Popup title; defaults to the mode's display name. */
-    title?: string;
-    /** Prompt shown above the input; defaults to a generic message. */
-    message?: string;
-}
-
 /**
  * Params for {@link ShowValueAsDef.menu} - build a mode's column-menu submenu imperatively, returning
  * `(MenuItemDef | string)[]` like `getMainMenuItems`. Call {@link apply} from a menu item's `action` (or from
@@ -235,10 +181,6 @@ export interface ShowValueAsMenuParams<TData = any, TValue = any, TParams = any,
     /** Select this mode and commit its params (omit to clear them); updates the selection and re-renders. Call
      *  it from a menu item's `action` or after your own dialog commits. */
     apply(params?: TParams): void;
-    /** Open the built-in number-input popup, calling `onApply` with the entered value (e.g. a constant base).
-     *  `options` can seed the current `value` and override the popup `title` / `message` (defaults to the mode's
-     *  name and a generic prompt). */
-    editValue(onApply: (value: number) => void, options?: ShowValueAsValueEditorOptions): void;
 }
 
 /** A "Show Values As" mode. `TValue` is the input type, `TOut` the output. */
@@ -288,7 +230,8 @@ export interface ShowValueAsDef<
 /** Mode registry. A partial entry deep-merges over the built-in of the same name (a new mode without a
  *  `transform` shows the raw value); `true` re-enables a disabled mode; `false`/`null` disables one. A function
  *  receives the built-in def (or `undefined` for a new mode) and returns the override - use it to wrap a default,
- *  e.g. call the original `transform`. */
+ *  e.g. call the original `transform`.
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ShowValueAsModes<TData = any, TValue = any> = {
     [name: string]:
         | Partial<ShowValueAsDef<TData, TValue>>
@@ -299,13 +242,19 @@ export type ShowValueAsModes<TData = any, TValue = any> = {
 
 /** Per-column config (`colDef.showValueAsConfig`); deep-merges from `defaultColDef`. The active mode is the
  *  separate `colDef.showValueAs` selector. */
-export interface ShowValueAsConfig<TData = any, TValue = any> {
-    /** Mode definitions/overrides; deep-merges from `defaultColDef.showValueAsConfig` for grid-wide modes. */
-    modes?: ShowValueAsModes<TData, TValue>;
+export interface ShowValueAsConfig {
     /** Default decimal places for the built-in formatters (default `2`); overridable per selection. */
     precision?: number;
     /** Suppress the column-header indicator shown while a mode is active. */
     suppressHeaderIndicator?: boolean;
+}
+
+/** Internal view of {@link ShowValueAsConfig} carrying the mode registry the engine resolves. Not exposed on the
+ *  public config surface (built-in modes only).
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface ShowValueAsConfigInternal<TData = any, TValue = any> extends ShowValueAsConfig {
+    /** Mode definitions/overrides; deep-merges from `defaultColDef.showValueAsConfig` for grid-wide modes. */
+    modes?: ShowValueAsModes<TData, TValue>;
 }
 
 /** One mode resolved for a column: the merged def with its formatter and transformed data type. */

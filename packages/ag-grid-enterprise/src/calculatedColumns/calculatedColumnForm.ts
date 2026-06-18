@@ -1,4 +1,14 @@
-import { RefPlaceholder, _getDocument, _setDisplayed } from 'ag-stack';
+import {
+    RefPlaceholder,
+    _getDocument,
+    _setAriaActiveDescendant,
+    _setAriaAutoComplete,
+    _setAriaControls,
+    _setAriaExpanded,
+    _setAriaHasPopup,
+    _setAriaInvalid,
+    _setDisplayed,
+} from 'ag-stack';
 
 import type {
     CalculatedColumnExpressionPicker,
@@ -157,6 +167,7 @@ export class CalculatedColumnForm extends Component {
 
     public postConstruct(): void {
         this.setupFormFields();
+        this.setupAria();
         this.setupActionButtons();
 
         if (!this.liveApply) {
@@ -187,6 +198,7 @@ export class CalculatedColumnForm extends Component {
         this.eTitle
             .setLabel(translate('calculatedColumnTitle', 'Title'))
             .setLabelAlignment('top')
+            .setAutoComplete(false)
             .setValue(this.draft.headerName, true);
         this.eType
             .setLabel(translate('calculatedColumnType', 'Type'))
@@ -196,6 +208,7 @@ export class CalculatedColumnForm extends Component {
         this.eExpression
             .setLabel(translate('calculatedColumnExpression', 'Expression'))
             .setLabelAlignment('top')
+            .setAutoComplete(false)
             .setInputPlaceholder(translate('calculatedColumnExpressionPlaceholder', 'Type here'))
             .setRows(3)
             .setValue(this.draft.calculatedExpression, true);
@@ -205,6 +218,21 @@ export class CalculatedColumnForm extends Component {
             .setLabelWidth('flex')
             .setLabel(translate('calculatedColumnExpressionToolsLabel', 'Insert'))
             .setLabelSeparator(':');
+    }
+
+    private setupAria(): void {
+        const tabIndex = String(this.gos.get('tabIndex'));
+        const input = this.eExpression.getInputElement();
+        _setAriaAutoComplete(input, 'list');
+        _setAriaHasPopup(input, 'listbox');
+        _setAriaExpanded(input, false);
+
+        const pickerButtons = [this.eColumns, this.eFunctions, this.eOperators];
+        for (const button of pickerButtons) {
+            button.setAttribute('tabindex', tabIndex);
+            _setAriaHasPopup(button, 'listbox');
+            _setAriaExpanded(button, false);
+        }
     }
 
     private setupActionButtons(): void {
@@ -326,14 +354,20 @@ export class CalculatedColumnForm extends Component {
 
     private setTitleError(message: string | null): void {
         this.titleValidationMessage = message;
-        this.applyFieldError(this.eTitle.getInputElement(), message);
+        const inputEl = this.eTitle.getInputElement();
+        this.applyFieldError(inputEl, message);
         this.titleTooltipFeature?.setTooltipAndRefresh(message);
+        // set title to empty string to prevent default browser tooltip from showing when validation tooltip is active
+        inputEl.setAttribute('title', '');
     }
 
     private setExpressionError(message: string | null): void {
         this.expressionValidationMessage = message;
-        this.applyFieldError(this.eExpression.getInputElement(), message);
+        const inputEl = this.eExpression.getInputElement();
+        this.applyFieldError(inputEl, message);
         this.expressionTooltipFeature?.setTooltipAndRefresh(message);
+        // set title to empty string to prevent default browser tooltip from showing when validation tooltip is active
+        inputEl.setAttribute('title', '');
     }
 
     private applyFieldError(input: HTMLInputElement | HTMLTextAreaElement, message: string | null): void {
@@ -341,10 +375,8 @@ export class CalculatedColumnForm extends Component {
 
         input.setCustomValidity(message ?? '');
         input.classList.toggle('invalid', isInvalid);
-        input.toggleAttribute('aria-invalid', isInvalid);
+        _setAriaInvalid(input, isInvalid);
         this.eApply.disabled = !!this.titleValidationMessage || !!this.expressionValidationMessage;
-        // set title to empty string to prevent default browser tooltip from showing when validation tooltip is active
-        input.setAttribute('title', '');
     }
 
     private setupValidationTooltips(): void {
@@ -459,7 +491,44 @@ export class CalculatedColumnForm extends Component {
         this.suggestionSourceType = sourceType;
         this.openSuggestionPopup(type, suggestions);
         this.autocompleteList?.setSearch(search);
+        this.refreshAriaForSuggestions();
         this.positionSuggestionPopup();
+    }
+
+    private refreshAriaForSuggestions(): void {
+        if (!this.autocompleteList || !this.suggestionSource) {
+            this.clearAriaForSuggestions();
+            return;
+        }
+
+        const listId = this.autocompleteList.getListId();
+        const expressionInputEl = this.eExpression.getInputElement();
+        const isInline = this.suggestionSourceType === 'inline';
+        const activeOptionId = isInline ? this.autocompleteList.getActiveOptionId() : null;
+        const renderedActiveOptionId =
+            activeOptionId && _getDocument(this.beans).getElementById(activeOptionId) ? activeOptionId : null;
+
+        _setAriaExpanded(expressionInputEl, isInline);
+        _setAriaControls(expressionInputEl, isInline ? listId : null);
+        _setAriaActiveDescendant(expressionInputEl, renderedActiveOptionId);
+
+        for (const buttons of [this.eColumns, this.eFunctions, this.eOperators]) {
+            const isButtonSource = this.suggestionSourceType === 'picker' && this.suggestionSource === buttons;
+            _setAriaExpanded(buttons, isButtonSource);
+            _setAriaControls(buttons, isButtonSource ? listId : null);
+        }
+    }
+
+    private clearAriaForSuggestions(): void {
+        const expressionInputEl = this.eExpression.getInputElement();
+        _setAriaExpanded(expressionInputEl, false);
+        _setAriaControls(expressionInputEl, null);
+        _setAriaActiveDescendant(expressionInputEl, null);
+
+        for (const buttons of [this.eColumns, this.eFunctions, this.eOperators]) {
+            _setAriaExpanded(buttons, false);
+            _setAriaControls(buttons, null);
+        }
     }
 
     private openSuggestionPopup(type: ColumnSuggestion['type'], suggestions: ColumnSuggestion[]): void {
@@ -484,6 +553,7 @@ export class CalculatedColumnForm extends Component {
                 autoSizeList: true,
                 maxVisibleItems: MAX_VISIBLE_SUGGESTIONS,
                 onListHeightChanged: () => this.positionSuggestionPopup(),
+                onActiveOptionChanged: () => this.refreshAriaForSuggestions(),
                 rowComponentCreator:
                     type === 'column'
                         ? (entry, selected) => this.createColumnSuggestionRow(entry, selected)
@@ -498,6 +568,7 @@ export class CalculatedColumnForm extends Component {
             ariaLabel: this.getLocaleTextFunc()('calculatedColumnSuggestions', 'Calculated Column Suggestions'),
         }).hideFunc;
         list.afterGuiAttached();
+        this.refreshAriaForSuggestions();
     }
 
     private createAutocompleteEntries(suggestions: ColumnSuggestion[]): AutocompleteEntry[] {
@@ -569,6 +640,7 @@ export class CalculatedColumnForm extends Component {
     }
 
     private closeSuggestionPopup(): void {
+        this.clearAriaForSuggestions();
         this.suggestionSource = null;
         this.suggestionType = null;
         this.suggestionSourceType = null;

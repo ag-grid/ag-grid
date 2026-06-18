@@ -24,6 +24,12 @@ The filter model contains an array of string values where each item in the array
 
 {% interfaceDocumentation interfaceName="SetFilterModel" /%}
 
+When values are taken from the grid (the default, with no `filterParams.values` supplied), the model is reconciled against the values currently in the data when it is set. Any selected values that are not present are dropped and not retained: if those values later appear in the data they are not re-selected. Supply `filterParams.values` to keep selections for values that are not currently in the data. See [Refreshing Values](./filter-set-filter-list/#refreshing-values) and the [Excel Mode](./filter-set-excel-mode/) comparison.
+
+{% note %}
+This value-level reconciliation is distinct from `setFilterModel` being applied asynchronously when inferring cell data types. With initially empty row data, the cell data types cannot be resolved, so the whole `setFilterModel` call is deferred until row data is added (set `cellDataType` to `false` or to an explicit value on every column to apply it synchronously). That defers the entire call once; it does not retain individual values that are absent from the data.
+{% /note %}
+
 ## Set Filter API
 
 The Set Filter consists of two parts - the Set Filter UI (the UI component) and the Set Filter Handler (maintains the values and performs the filter logic).

@@ -399,33 +399,6 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
             </section>
         </div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const track = document.getElementById('carousel-track');
-                if (!track) return;
-                let animationFrame: number;
-                let start: number | null = null;
-                let scrollLeft = 0;
-                const speed = 1.5; // px per ms (increased speed)
-
-                const animate = (timestamp: number) => {
-                    if (start === null) start = timestamp;
-                    scrollLeft += speed;
-                    if (scrollLeft >= track.scrollWidth / 2) {
-                        scrollLeft = 0;
-                    }
-                    track.scrollLeft = scrollLeft;
-                    animationFrame = requestAnimationFrame(animate);
-                };
-                animationFrame = requestAnimationFrame(animate);
-
-                // Cleanup when the user navigates away
-                window.addEventListener('beforeunload', () => {
-                    if (animationFrame) {
-                        cancelAnimationFrame(animationFrame);
-                    }
-                });
-            });
-        </script>
+        <script is:inline src={urlWithBaseUrl('/scripts/about-carousel.js')}></script>
     </div>
 </Layout>

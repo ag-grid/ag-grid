@@ -24,8 +24,8 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         this.aggFuncSvc = beans.aggFuncSvc;
     }
 
-    /** Value cols are included from a truthy aggFunc (never indexed); `undefined` falls back to `initialAggFunc`
-     *  (new cols) or the current flag (existing). */
+    /** Value cols are included from a truthy aggFunc; `undefined` falls back to `initialAggFunc`
+     *  (new cols) or the current flag (existing). Ordering is driven by `valueIndex`/`initialValueIndex`. */
     public override extractCol(col: AgColumn, colIsNew: boolean): void {
         const colDef = col.colDef;
         const aggFunc = colDef.aggFunc;
@@ -44,18 +44,30 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
             // total) to a value column, using the mode's `defaultAggFunc`.
             const modeAggFunc = col.showValueAs?.def.defaultAggFunc;
             if (modeAggFunc) {
-                this.extractAddColWithValue(col);
+                this.bucketCol(col, colIsNew);
                 if (!col.aggFunc) {
                     this.writeAggFunc(col, modeAggFunc);
                 }
             }
             return;
         }
-        this.extractAddColWithValue(col);
+        this.bucketCol(col, colIsNew);
         if (aggFunc != null && aggFunc !== '') {
             this.writeAggFunc(col, aggFunc);
         } else if (!col.aggFunc) {
             this.writeAggFunc(col, colDef.initialAggFunc);
+        }
+    }
+
+    /** Seat an included value col: indexed (`valueIndex`, or `initialValueIndex` for new cols) cols are
+     *  sorted by `commitExtract`; the rest keep their prior/col-def order. */
+    private bucketCol(col: AgColumn, colIsNew: boolean): void {
+        const colDef = col.colDef;
+        const key = colDef.valueIndex ?? (colIsNew ? colDef.initialValueIndex : null);
+        if (key != null) {
+            this.extractAddColWithIndex(col, key);
+        } else {
+            this.extractAddColWithValue(col);
         }
     }
 
@@ -88,6 +100,10 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         }
     }
 
+    /** `valueIndex` per active col from the current state-apply pass; consumed by {@link sortByPendingState}.
+     *  Non-null signals a pending re-sort. */
+    private pendingStateOrder: Map<AgColumn, number> | null = null;
+
     public override syncColState(
         column: AgColumn,
         stateItem: ColumnState | null,
@@ -97,14 +113,66 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         // Fall back to the default only when the state value is `undefined` (not `null`).
         const stateAggFunc = stateItem?.aggFunc;
         const aggFunc = stateAggFunc !== undefined ? stateAggFunc : defaultState?.aggFunc;
-        if (aggFunc === undefined) {
+        const stateValueIndex = stateItem?.valueIndex;
+        const valueIndex = stateValueIndex !== undefined ? stateValueIndex : defaultState?.valueIndex;
+        if (aggFunc === undefined && valueIndex === undefined) {
             return;
         }
-        if (typeof aggFunc !== 'string' && aggFunc != null) {
-            _warn(33); // stateItem.aggFunc must be a string — invalid (object / function) values.
+        if (aggFunc !== undefined) {
+            if (typeof aggFunc !== 'string' && aggFunc != null) {
+                _warn(33); // stateItem.aggFunc must be a string — invalid (object / function) values.
+                return;
+            }
+            this.applyAggFunc(column, aggFunc, source);
+        } else if (typeof valueIndex === 'number' && !column.aggregationActive) {
+            // An index without an aggFunc still activates the column (a default aggFunc is assigned on
+            // activation), matching the `rowGroupIndex`/`pivotIndex` semantics where the index alone is enough.
+            this.setColActive(column, true, source, true);
+        }
+        if (typeof valueIndex === 'number' && column.aggregationActive) {
+            let idxMap = this.pendingStateOrder;
+            if (idxMap === null) {
+                idxMap = new Map();
+                this.pendingStateOrder = idxMap;
+            }
+            idxMap.set(column, valueIndex);
+        }
+    }
+
+    /** Re-order active value cols by the `valueIndex` recorded during the last `syncColState` pass; else keep
+     *  insertion order. Runs before `refreshCols` so pivot result columns pick up the new value-col order. */
+    public sortByPendingState(): void {
+        if (!this.pendingStateOrder) {
             return;
         }
-        this.applyAggFunc(column, aggFunc, source);
+        const cols = this.columns;
+        if (cols.length > 0) {
+            cols.sort(this.compareByStateIndex);
+            this.resetActiveCols(cols);
+        }
+        this.onColumnsChanged();
+        this.pendingStateOrder = null;
+    }
+
+    private readonly compareByStateIndex = (a: AgColumn, b: AgColumn): number => {
+        const indexes = this.pendingStateOrder;
+        if (!indexes) {
+            return 0;
+        }
+        const aIdx = indexes.get(a);
+        const bIdx = indexes.get(b);
+        if (aIdx != null) {
+            return bIdx != null ? aIdx - bIdx : -1;
+        }
+        return bIdx != null ? 1 : 0;
+    };
+
+    /** Stamps each active col's position as its value-column order (`aggregationActiveIndex`, valid only when active). */
+    protected override onColumnsChanged(): void {
+        const cols = this.columns;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            cols[i].aggregationActiveIndex = i;
+        }
     }
 
     private applyAggFunc(column: AgColumn, aggFunc: ColAggFunc, source: ColumnEventType): boolean {

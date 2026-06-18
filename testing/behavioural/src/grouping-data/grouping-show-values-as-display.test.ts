@@ -154,38 +154,6 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
         `);
     });
 
-    test('pivot — percentOf another column (a measure as % of another measure, same pivot cell)', async () => {
-        const api = gridsManager.createGrid('pivot-base-column', {
-            columnDefs: [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'year', pivot: true, hide: true },
-                { field: 'gold', aggFunc: 'sum' },
-                {
-                    field: 'silver',
-                    aggFunc: 'sum',
-                    showValueAs: { type: 'percentOf', params: { base: 'gold' } },
-                },
-            ],
-            pivotMode: true,
-            groupDefaultExpanded: -1,
-            getRowId: ({ data }) => data.id,
-            rowData: [
-                { id: '1', country: 'A', year: 2020, gold: 10, silver: 40 },
-                { id: '2', country: 'B', year: 2020, gold: 30, silver: 60 },
-            ],
-        });
-
-        // silver as a % of gold within the same pivot cell: A = 40/10, B = 60/30.
-        await new GridRows(api, 'pivot percentOf another column', {
-            forcedColumns: ['ag-Grid-AutoColumn', 'pivot_year_2020_gold', 'pivot_year_2020_silver'],
-            printHiddenRows: false,
-        }).check(`
-            ROOT id:ROOT_NODE_ID pivot_year_2020_gold:40 pivot_year_2020_silver:"250.00%"
-            ├── LEAF_GROUP collapsed id:row-group-country-A ag-Grid-AutoColumn:"A" pivot_year_2020_gold:10 pivot_year_2020_silver:"400.00%"
-            └── LEAF_GROUP collapsed id:row-group-country-B ag-Grid-AutoColumn:"B" pivot_year_2020_gold:30 pivot_year_2020_silver:"200.00%"
-        `);
-    });
-
     test('parent mode on a flat grid is dormant — raw values shown', async () => {
         const api = gridsManager.createGrid('flat-dormant', {
             columnDefs: [
@@ -246,39 +214,6 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
             ROOT id:ROOT_NODE_ID pivot_year_2020_amount:"100.00%" pivot_year_2021_amount:"100.00%"
             ├── LEAF_GROUP collapsed id:row-group-country-A ag-Grid-AutoColumn:"A" pivot_year_2020_amount:"25.00%" pivot_year_2021_amount:"50.00%"
             └── LEAF_GROUP collapsed id:row-group-country-B ag-Grid-AutoColumn:"B" pivot_year_2020_amount:"75.00%" pivot_year_2021_amount:"50.00%"
-        `);
-    });
-
-    test('pivot — percentOf base field/item (each pivot column as % of a chosen year column, per row)', async () => {
-        const api = gridsManager.createGrid('pivot-base-field-item', {
-            columnDefs: [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'year', pivot: true, hide: true },
-                {
-                    field: 'amount',
-                    aggFunc: 'sum',
-                    showValueAs: { type: 'percentOf', params: { baseField: 'year', baseItem: '2020' } },
-                },
-            ],
-            pivotMode: true,
-            groupDefaultExpanded: -1,
-            getRowId: ({ data }) => data.id,
-            rowData: [
-                { id: '1', country: 'A', year: 2020, amount: 1000 },
-                { id: '2', country: 'A', year: 2021, amount: 1500 },
-                { id: '3', country: 'B', year: 2020, amount: 2000 },
-                { id: '4', country: 'B', year: 2021, amount: 1000 },
-            ],
-        });
-
-        // Each year column as a % of the 2020 column on the same row: A → 100%/150%, B → 100%/50%.
-        await new GridRows(api, 'pivot percentOf base field/item', {
-            forcedColumns: ['ag-Grid-AutoColumn', 'pivot_year_2020_amount', 'pivot_year_2021_amount'],
-            printHiddenRows: false,
-        }).check(`
-            ROOT id:ROOT_NODE_ID pivot_year_2020_amount:"100.00%" pivot_year_2021_amount:"83.33%"
-            ├── LEAF_GROUP collapsed id:row-group-country-A ag-Grid-AutoColumn:"A" pivot_year_2020_amount:"100.00%" pivot_year_2021_amount:"150.00%"
-            └── LEAF_GROUP collapsed id:row-group-country-B ag-Grid-AutoColumn:"B" pivot_year_2020_amount:"100.00%" pivot_year_2021_amount:"50.00%"
         `);
     });
 });

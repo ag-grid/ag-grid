@@ -83,6 +83,7 @@ describe('ag-grid calculated columns', () => {
     function createGrid(id: string, opts: Partial<GridOptions>) {
         const options: GridOptions = {
             getRowId: (params) => params.data?.id,
+            calculatedColumns: true,
             ...opts,
         };
         return gridsManager.createGrid(id, options);
@@ -546,6 +547,80 @@ describe('ag-grid calculated columns', () => {
         expect(api.getCellValue({ rowNode: node, colKey: 'calcEmpty', useFormatter: false })).toBe('');
         expect(api.getCellValue({ rowNode: node, colKey: 'calcNull', useFormatter: false })).toBe('');
         expect(api.getCellValue({ rowNode: node, colKey: 'plain', useFormatter: false })).toBeUndefined();
+    });
+
+    test('does not enable calculated columns when calculatedColumns is omitted or false', async () => {
+        const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const cases: { id: string; calculatedColumns: false | undefined }[] = [
+            { id: 'calculated-option-omitted', calculatedColumns: undefined },
+            { id: 'calculated-option-false', calculatedColumns: false },
+        ];
+
+        try {
+            for (let i = 0, len = cases.length; i < len; ++i) {
+                const { id, calculatedColumns } = cases[i];
+                const api = createGrid(id, {
+                    calculatedColumns,
+                    rowData: [{ id: 'r1', revenue: 10, cost: 3, profit: 999 }],
+                    columnDefs: [
+                        { field: 'revenue' },
+                        { field: 'cost' },
+                        {
+                            field: 'profit',
+                            calculatedExpression: '[revenue] - [cost]',
+                            editable: true,
+                        },
+                    ],
+                });
+                const rowNode = api.getDisplayedRowAtIndex(0)!;
+                const profitColumn = api.getColumn('profit')!;
+
+                expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBe(999);
+                expect(profitColumn.isCalculatedCol).toBe(false);
+                expect(profitColumn.isCellEditable(rowNode)).toBe(true);
+                expect(profitColumn.isSuppressPaste(rowNode)).toBe(false);
+                expect(consoleWarnSpy).toHaveBeenCalledWith(
+                    expect.stringContaining(
+                        'colDef.calculatedExpression requires gridOptions.calculatedColumns to be set to true or an options object.'
+                    )
+                );
+            }
+        } finally {
+            consoleWarnSpy.mockRestore();
+        }
+    });
+
+    test('runtime calculatedColumns toggle enables and disables static calculated columns', async () => {
+        const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        try {
+            const api = createGrid('calculated-option-runtime-toggle', {
+                calculatedColumns: false,
+                rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+                columnDefs: [
+                    { field: 'revenue' },
+                    { field: 'cost' },
+                    { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+                ],
+            });
+            const rowNode = api.getDisplayedRowAtIndex(0)!;
+
+            expect(api.getColumn('profit')!.isCalculatedCol).toBe(false);
+            expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBeUndefined();
+
+            api.setGridOption('calculatedColumns', true);
+            await asyncSetTimeout(1);
+
+            expect(api.getColumn('profit')!.isCalculatedCol).toBe(true);
+            expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBe(7);
+
+            api.setGridOption('calculatedColumns', false);
+            await asyncSetTimeout(1);
+
+            expect(api.getColumn('profit')!.isCalculatedCol).toBe(false);
+            expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBeUndefined();
+        } finally {
+            consoleWarnSpy.mockRestore();
+        }
     });
 
     test('editing a calculated column expression re-groups its row spans (and dependents)', async () => {
@@ -1549,6 +1624,69 @@ describe('ag-grid calculated columns', () => {
         expect(popup.style.width).toBe('320px');
         expect(popup.style.maxWidth).toBe('');
         expect(popup).not.toHaveClass('ag-calculated-column-picker-list');
+    });
+
+    test('dialog expression suggestions control the virtual list aria state', async () => {
+        const api = createGrid('calculated-dialog-inline-aria', {
+            rowData: [{ id: 'r1', revenue: 10, revenueTax: 2, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'revenueTax' }, { field: 'cost' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        const input = getExpressionInput();
+        expect(input).toHaveAttribute('aria-autocomplete', 'list');
+        expect(input).toHaveAttribute('aria-haspopup', 'listbox');
+        expect(input).toHaveAttribute('aria-expanded', 'false');
+
+        input.value = '[Revenue';
+        input.setSelectionRange(input.value.length, input.value.length);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+
+        const controlledList = await waitFor(() => {
+            const controls = input.getAttribute('aria-controls');
+            expect(controls).toBeTruthy();
+            const list = document.getElementById(controls!);
+            expect(list).toBeTruthy();
+            return list!;
+        });
+        const popup = document.querySelector<HTMLElement>('.ag-autocomplete-list-popup')!;
+
+        expect(input).toHaveAttribute('aria-expanded', 'true');
+        expect(controlledList).toHaveAttribute('role', 'listbox');
+        expect(controlledList).not.toBe(popup);
+
+        const firstActiveId = await waitFor(() => {
+            const activeId = input.getAttribute('aria-activedescendant');
+            expect(activeId).toBeTruthy();
+            const activeOption = document.getElementById(activeId!);
+            expect(activeOption).toBeTruthy();
+            expect(activeOption).toHaveAttribute('role', 'option');
+            expect(activeOption).toHaveAttribute('aria-selected', 'true');
+            expect(activeOption).toHaveAttribute('aria-posinset', '1');
+            expect(activeOption).toHaveAttribute('aria-setsize', '2');
+            expect(controlledList).toHaveAttribute('aria-activedescendant', activeId);
+            return activeId!;
+        });
+
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+
+        await waitFor(() => {
+            const activeId = input.getAttribute('aria-activedescendant');
+            expect(activeId).toBeTruthy();
+            expect(activeId).not.toBe(firstActiveId);
+            expect(document.getElementById(activeId!)!).toHaveAttribute('aria-posinset', '2');
+            expect(controlledList).toHaveAttribute('aria-activedescendant', activeId);
+        });
+
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+        expect(input).toHaveAttribute('aria-expanded', 'false');
+        expect(input).not.toHaveAttribute('aria-controls');
+        expect(input).not.toHaveAttribute('aria-activedescendant');
     });
 
     test('dialog sizes helper pickers from the calculated column suggestion width variable', async () => {
@@ -2841,6 +2979,9 @@ describe('ag-grid calculated columns', () => {
         clickDialogButton('Cancel');
         await asyncSetTimeout(1);
 
+        await waitFor(() => {
+            expect(document.activeElement?.closest('[col-id="profit"].ag-header-cell')).toBeTruthy();
+        });
         expect(gridDiv.querySelector('[col-id="profit"].ag-header-cell')).not.toHaveClass(
             'ag-calculated-column-highlighted'
         );
@@ -3045,9 +3186,11 @@ describe('ag-grid calculated columns', () => {
         const validationGridsManager = new TestGridsManager({
             modules: [ClientSideRowModelModule, ValidationModule],
         });
+        let consoleWarnSpy: MockInstance | undefined;
         let consoleErrorSpy: MockInstance | undefined;
 
         try {
+            consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
             validationGridsManager.createGrid('calculated-validation', {
                 rowData: [{ revenue: 10, cost: 3 }],
@@ -3077,8 +3220,17 @@ describe('ag-grid calculated columns', () => {
                 expect.stringContaining('CalculatedColumnsModule'),
                 expect.any(String)
             );
+
+            const callsBeforeDisabledOption = consoleErrorSpy.mock.calls.length;
+            validationGridsManager.createGrid('calculated-option-false-validation', {
+                calculatedColumns: false,
+                rowData: [{ revenue: 10 }],
+                columnDefs: [{ field: 'revenue' }],
+            });
+            expect(consoleErrorSpy.mock.calls).toHaveLength(callsBeforeDisabledOption);
         } finally {
             validationGridsManager.reset();
+            consoleWarnSpy?.mockRestore();
             consoleErrorSpy?.mockRestore();
         }
     });
@@ -3182,7 +3334,7 @@ describe('ag-grid calculated columns', () => {
             );
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining(
-                    'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.'
+                    'colDef.calculatedExpression requires gridOptions.calculatedColumns to be set to true or an options object.'
                 )
             );
         } finally {

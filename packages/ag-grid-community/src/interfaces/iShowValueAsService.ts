@@ -8,7 +8,6 @@ import type {
     ShowValueAsResult,
     ShowValueAsStateValue,
     ShowValueAsType,
-    ShowValueAsValueEditorOptions,
 } from '../entities/colDef-showValueAs';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType } from '../events';
@@ -58,12 +57,4 @@ export interface IShowValueAsService {
     /** Sets the active mode at runtime (column menu). A redraw only, unless the mode needs an aggregated total
      *  on a not-yet-aggregated column, in which case the column is promoted to a value column (re-aggregates once). */
     setColumnShowValueAs(column: AgColumn, selection: ShowValueAsType | ShowValueAs | null): void;
-    /** Opens the built-in number-input popup for a base mode, committing the entered value via `onApply`. */
-    openValueEditor(
-        column: AgColumn,
-        type: ShowValueAsType,
-        onApply: (value: number) => void,
-        options: ShowValueAsValueEditorOptions | undefined,
-        localeTextFunc: LocaleTextFunc
-    ): void;
 }

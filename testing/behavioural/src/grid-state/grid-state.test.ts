@@ -1122,12 +1122,7 @@ describe('StateService - Grid State Management', () => {
                 └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
             `);
 
-            expect(api.getState().filter).toEqual({
-                advancedFilterModel: undefined,
-                columnFilterState: undefined,
-                filterModel: undefined,
-                selectableFilters: {},
-            });
+            expect(api.getState().filter).toBeUndefined();
 
             // Apply filter - using the filter manager API
             api.setFilterModel({
@@ -1150,8 +1145,68 @@ describe('StateService - Grid State Management', () => {
                         type: 'startsWith',
                     },
                 },
-                selectableFilters: {},
+                selectableFilters: undefined,
             });
+        });
+
+        test('setState with an empty filter state clears active filters', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+                defaultColDef: { filter: 'agTextColumnFilter' },
+            });
+
+            // Apply a filter and capture the state with filters active
+            api.setFilterModel({ name: { filterType: 'text', type: 'startsWith', filter: 'A' } });
+            await asyncSetTimeout(50);
+            const stateWithFilter = api.getState();
+
+            // Clear filters and capture the state with no filters
+            api.setFilterModel(null);
+            await asyncSetTimeout(50);
+            const stateWithoutFilter = api.getState();
+            expect(stateWithoutFilter.filter).toBeUndefined();
+
+            // Restore the filtered state
+            api.setState(stateWithFilter);
+            await asyncSetTimeout(50);
+            await new GridRows(api, `setState restores filter`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+            `);
+
+            // Restoring the empty state must clear the active filters
+            api.setState(stateWithoutFilter);
+            await asyncSetTimeout(50);
+            await new GridRows(api, `setState clears filter`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 id:"1" name:"Alice" age:30 sport:"Football"
+                ├── LEAF id:1 id:"2" name:"Bob" age:25 sport:"Tennis"
+                ├── LEAF id:2 id:"3" name:"Charlie" age:35 sport:"Golf"
+                ├── LEAF id:3 id:"4" name:"David" age:28 sport:"Basketball"
+                └── LEAF id:4 id:"5" name:"Eve" age:32 sport:"Swimming"
+            `);
+        });
+
+        test('setState with an empty state clears active selectable filters', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+                defaultColDef: { filter: 'agSelectableColumnFilter' },
+                sideBar: 'filters-new',
+                enableFilterHandlers: true,
+            });
+            await asyncSetTimeout(50);
+
+            // Activate a selectable filter via state restore
+            api.setState({ filter: { selectableFilters: { name: 0 } } });
+            await asyncSetTimeout(50);
+            expect(api.getState().filter?.selectableFilters).toEqual({ name: 0 });
+
+            // Restoring a state without a filter section must clear the active selectable filter
+            api.setState({});
+            await asyncSetTimeout(50);
+            expect(api.getState().filter).toBeUndefined();
         });
 
         test('should serialise bigint filter state and rehydrate on setState', async () => {

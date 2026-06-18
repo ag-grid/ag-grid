@@ -612,7 +612,6 @@
             "type": "string",
             "description": "Column ID that supports row grouping",
             "enum": [
-              "ag-Grid-HierarchyColumn-transactionDate-formattedMonth",
               "transactionDate",
               "country",
               "status",

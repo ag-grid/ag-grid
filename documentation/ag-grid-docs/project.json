@@ -100,6 +100,17 @@
         "production": {}
       }
     },
+    "preview:csp": {
+      "dependsOn": [
+        {
+          "target": "build"
+        }
+      ],
+      "command": "tsx scripts/csp/preview-csp.ts --port=${PORT}",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "lint": {
       "command": "eslint",
       "options": {

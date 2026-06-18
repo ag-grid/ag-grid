@@ -24,8 +24,21 @@ type SalesRow = {
     cost: number;
 };
 
+const formatter = (params: ValueFormatterParams<SalesRow, number>, formattedString: string): string => {
+    const { value } = params;
+    if (value == null) {
+        return '';
+    }
+
+    if (String(value).startsWith('#')) {
+        return String(value);
+    }
+
+    return formattedString;
+};
+
 const currencyFormatter = (params: ValueFormatterParams<SalesRow, number>) =>
-    params.value == null ? '' : `$${params.value.toLocaleString()}`;
+    formatter(params, `$${(params.value ?? '').toLocaleString()}`);
 
 const columnDefs: ColDef<SalesRow>[] = [
     { field: 'product', flex: 1 },
@@ -76,6 +89,7 @@ const rowData: SalesRow[] = [
 const gridOptions: GridOptions<SalesRow> = {
     columnDefs,
     rowData,
+    calculatedColumns: true,
     defaultColDef: {
         flex: 1,
         minWidth: 130,

@@ -1,6 +1,6 @@
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
 import type { CspEnv } from './cspRules';
-import { getCspHtaccessBlock, getScopedCspHtaccessBlock } from './cspRules';
+import { getCampaignsCspIfOverride, getCspHtaccessBlock, getScopedCspHtaccessBlock } from './cspRules';
 import { SITE_301_REDIRECTS } from './redirects';
 
 export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
@@ -207,6 +207,11 @@ ${getScopedCspHtaccessBlock({ env: 'production' }, 'enforce')}`;
 # via Report-Only. The Report-Only <If> override matters: without it, every
 # example-runner page would report eval violations and drown the signal.
 ${getCspHtaccessBlock({ env: 'production', scope: 'examples' }, 'enforce')}
+
+# The campaign pages' embedded Bryntum demo needs the bryntum.com origin allowed even
+# during the report-only window: the enforced policy above does not include it, so
+# re-set the enforced header for /campaigns/ here (still without 'unsafe-eval').
+${getCampaignsCspIfOverride({ env: 'production' }, 'enforce')}
 
 ${getScopedCspHtaccessBlock({ env: 'production' }, 'report-only')}`;
 }
