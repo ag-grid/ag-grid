@@ -24,8 +24,9 @@ export function provideValidationServiceLogger(
 /**
  * Resolver for module-registration errors, wired unconditionally by core. Returns the full message
  * for the module-family errors (and null for everything else) so that "register XModule" guidance is
- * always actionable - in the console and the error overlay - even when the ValidationModule, which
- * provides the full text for all other errors, has not been registered.
+ * always actionable in the console - even when the ValidationModule, which provides the full text for
+ * all other errors, has not been registered. The error overlay shows this guidance only when no modules
+ * have been registered at all (the bootstrap case); otherwise overlay rendering is tied to the ValidationModule.
  */
 export function provideModuleErrorLogger(
     logger: <TId extends ErrorId>(id: TId, args: GetErrorParams<TId>) => any[] | null
@@ -47,6 +48,34 @@ export interface OverlayError {
 }
 
 type ErrorListener = (id: ErrorId, params: any) => void;
+
+/**
+ * Builds the DOM for a single captured error in the error overlay. Provided by the ValidationModule so
+ * the rich rendering (code blocks, inline code, links, copy) is only bundled when that module is registered.
+ */
+type OverlayErrorRenderer = (error: OverlayError) => HTMLElement;
+
+let overlayErrorRenderer: OverlayErrorRenderer | null = null;
+
+/** Registered by the ValidationModule to supply the rich per-error overlay rendering. */
+export function provideOverlayErrorRenderer(renderer: OverlayErrorRenderer): void {
+    overlayErrorRenderer = renderer;
+}
+
+/** The rich per-error overlay renderer, or null when the ValidationModule is not registered. */
+export function _getOverlayErrorRenderer(): OverlayErrorRenderer | null {
+    return overlayErrorRenderer;
+}
+
+/** True for module-registration errors, whose full guidance is wired unconditionally by core. */
+export function _isModuleError(id: ErrorId, params: any): boolean {
+    return getModuleErrorMessage?.(id, params) != null;
+}
+
+/** The resolved error message as a single string, used by the overlay renderer to build its DOM. */
+export function _getRawErrorMessage(id: ErrorId, params: any, defaultMessage?: string): string {
+    return getErrorParts(id, params, defaultMessage).map(stringifyValue).join(' ');
+}
 
 const errorListeners = new Set<ErrorListener>();
 
@@ -76,80 +105,6 @@ export function _addErrorListener(listener: ErrorListener): () => void {
             bufferedErrors.length = 0;
         }
     };
-}
-
-const DOC_LINK_REGEX = /\s*(See|Visit) https?:\/\/\S+/g;
-const MODULES_LINK_REGEX = /\s*For more info see:\s*(https?:\/\/\S+)/;
-const IMPORT_LINE_REGEX = /^\s*import\s/;
-const CODE_LINE_PREFIX_REGEX = /^(import |const |let |function |class |ModuleRegistry|<|>|\}|\))/;
-
-/** Message and documentation links for a captured error, split out for separate rendering in the overlay. */
-interface OverlayErrorContent {
-    /** Human-readable explanation, rendered as prose above the code snippet. */
-    message: string;
-    /** Module-registration snippet, rendered in its own code block. Absent when the error has no snippet. */
-    code?: string;
-    /** Trailing prose shown below the code snippet (e.g. "The item will not be rendered."). */
-    note?: string;
-    /** Present for module-registration errors: link to the modules docs, rendered outside the snippet. */
-    modulesDocLink?: string;
-}
-
-/**
- * Builds the developer-facing content for a captured error, for display in the error overlay.
- * Inline documentation references (`See`/`Visit <link>` and the module guidance's `For more info see: <link>`)
- * are removed because the overlay renders them as separate links; the registration snippet, when present, is
- * split out from the surrounding explanation so the overlay can render it as a distinct code block.
- */
-export function _getOverlayErrorContent(id: ErrorId, params: any, defaultMessage?: string): OverlayErrorContent {
-    const raw = getErrorParts(id, params, defaultMessage).map(stringifyValue).join(' ');
-    const modulesDocLink = raw.match(MODULES_LINK_REGEX)?.[1];
-    const text = raw.replace(DOC_LINK_REGEX, '').replace(MODULES_LINK_REGEX, '').trim();
-    return { ...splitCodeSnippet(text), modulesDocLink };
-}
-
-function isCodeLine(line: string): boolean {
-    const trimmed = line.trim();
-    if (trimmed === '') {
-        return false;
-    }
-    return CODE_LINE_PREFIX_REGEX.test(trimmed) || /[;{(]$/.test(trimmed) || trimmed.includes('=>');
-}
-
-/**
- * Separates a registration snippet (a contiguous run of code lines starting at the first `import`) from the
- * explanation before it and any note after it. Returns the whole message untouched when there is no snippet.
- */
-function splitCodeSnippet(text: string): { message: string; code?: string; note?: string } {
-    const lines = text.split('\n');
-    let start = -1;
-    for (let i = 0, len = lines.length; i < len; ++i) {
-        if (IMPORT_LINE_REGEX.test(lines[i])) {
-            start = i;
-            break;
-        }
-    }
-    if (start === -1) {
-        return { message: text };
-    }
-    let end = start;
-    for (let i = start, len = lines.length; i < len; ++i) {
-        if (lines[i].trim() === '' || isCodeLine(lines[i])) {
-            end = i;
-        } else {
-            break;
-        }
-    }
-    const message = lines.slice(0, start).join('\n').trim();
-    const code = lines
-        .slice(start, end + 1)
-        .join('\n')
-        .trim();
-    const note = lines
-        .slice(end + 1)
-        .join('\n')
-        .trim();
-    return { message, code, note: note || undefined };
 }
 
 type LogFn = (message: string, ...args: any[]) => void;

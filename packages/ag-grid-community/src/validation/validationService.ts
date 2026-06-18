@@ -14,7 +14,8 @@ import type { IconName } from '../utils/icon';
 import { _warnOnce } from '../utils/log';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
-import { _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';
+import { renderOverlayError } from './errorOverlayRenderer';
+import { _errMsg, _error, _warn, provideOverlayErrorRenderer, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
@@ -37,6 +38,7 @@ export class ValidationService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
         provideValidationServiceLogger(getError);
+        provideOverlayErrorRenderer(renderOverlayError);
     }
 
     public warnOnInitialPropertyUpdate(source: AgPropertyChangedSource, key: string): void {

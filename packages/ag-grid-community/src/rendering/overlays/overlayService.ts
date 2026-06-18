@@ -7,6 +7,7 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import { _addGridCommonParams, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
+import { _getGridRegisteredModules, _usedModuleRegistry } from '../../modules/moduleRegistry';
 import { _attemptToRestoreCellFocus } from '../../utils/gridFocus';
 import type { ErrorId } from '../../validation/errorMessages/errorText';
 import type { OverlayError } from '../../validation/logging';
@@ -245,7 +246,23 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     private hasErrors(): boolean {
-        return this.errors.length > 0 && !this.errorOverlayDismissed;
+        if (this.errors.length === 0 || this.errorOverlayDismissed) {
+            return false;
+        }
+        // Show the error overlay in two cases only:
+        //  - the ValidationModule is registered for this grid: surface every error, richly rendered;
+        //  - no modules have been registered at all: a developer just starting out, who needs the
+        //    bootstrap overlay telling them to register modules. Once any feature module is registered
+        //    (without the ValidationModule) we stay silent and leave error reporting to the console.
+        return !!this.beans.validation || this.noModulesRegistered();
+    }
+
+    /** True when the developer has not registered any modules (globally or for this grid). */
+    private noModulesRegistered(): boolean {
+        const { beans } = this;
+        const gridId = beans.context.getId();
+        const rowModel = beans.rowModel.getType();
+        return !_usedModuleRegistry() && _getGridRegisteredModules(gridId, rowModel).length === 0;
     }
 
     /** Errors to display in the error overlay. */

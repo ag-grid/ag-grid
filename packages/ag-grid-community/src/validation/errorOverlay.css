@@ -1,0 +1,35 @@
+.ag-overlay-error-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ag-spacing);
+
+    /* keep each error a sensible size when several are stacked. */
+    min-height: calc(var(--ag-spacing) * 28);
+}
+
+.ag-overlay-error-divider {
+    /* separates stacked errors; the body gap provides the spacing on either side. */
+    border-top: solid var(--ag-border-width) var(--ag-border-color);
+}
+
+.ag-overlay-error-inline-code {
+    font-weight: 600;
+}
+
+.ag-overlay-error-code {
+    margin: 0;
+    font-family: var(--ag-font-family);
+    font-size: var(--ag-font-size);
+    line-height: var(--ag-line-height, 1.5);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    user-select: text;
+    background: var(--ag-header-background-color);
+    border: solid var(--ag-border-width) var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
+    padding: var(--ag-spacing);
+
+    /* cap the snippet height so it scrolls internally and the link below stays visible on small windows. */
+    max-height: 50vh;
+    overflow: auto;
+}

@@ -203,9 +203,12 @@ describe('error overlay', () => {
 });
 
 describe('error overlay without the ValidationModule', () => {
-    // The ValidationModule provides the full text for most errors. Module-registration errors must
-    // remain fully actionable without it, so a developer (or their agent) can fix them directly.
+    // A developer who has registered a feature module but not the ValidationModule is past the initial
+    // module setup. The rich error overlay is tied to the ValidationModule, so it stays silent here and
+    // errors are reported to the console only. The console guidance for module-registration errors
+    // remains fully actionable (wired unconditionally by core), so it can still be fixed directly.
     const gridsManager = new TestGridsManager({
+        includeDefaultModules: false,
         modules: [ClientSideRowModelModule],
     });
 
@@ -213,44 +216,85 @@ describe('error overlay without the ValidationModule', () => {
     const rowData = [{ athlete: 'Michael Phelps', age: 23 }];
 
     let consoleErrorSpy: MockInstance;
+    let consoleWarnSpy: MockInstance;
 
     beforeEach(() => {
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         gridsManager.reset();
     });
 
     afterEach(() => {
         gridsManager.reset();
         consoleErrorSpy.mockRestore();
+        consoleWarnSpy.mockRestore();
     });
 
-    test('missing module error shows the full registration guidance in console and overlay', async () => {
-        gridsManager.createGrid('myGrid', { columnDefs, rowData, rowModelType: 'serverSide' });
+    test('missing module error is logged to the console but no overlay is shown', async () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs, rowData, rowModelType: 'serverSide' });
+        expect(api.isDestroyed()).toBe(false);
 
-        await waitFor(() => expect(isAgHtmlElementVisible('.ag-overlay-error-wrapper')).toBe(true));
-
-        const message = document.querySelector('.ag-overlay-error-message')?.textContent ?? '';
-        // Full, actionable text rather than the minified "register the ValidationModule" stub.
-        expect(message).toContain('ServerSideRowModelModule');
-        expect(message).toContain('is not registered');
-        expect(message).not.toContain('register the ValidationModule');
-        // The modules-docs reference is rendered as its own link, not left inline in the snippet.
-        expect(message).not.toContain('For more info see');
-        // The registration snippet is split into its own code block, not mixed into the explanation prose.
-        expect(message).not.toContain('import {');
-        const code = document.querySelector('.ag-overlay-error-code')?.textContent ?? '';
-        expect(code).toContain("import { ModuleRegistry } from 'ag-grid-community';");
-        expect(code).toContain('ModuleRegistry.registerModules([ ServerSideRowModelModule ]);');
-        expect(code).not.toContain('Check if you have registered the module');
-
-        const links = document.querySelectorAll<HTMLAnchorElement>('.ag-overlay-error-link');
-        expect(links[0]?.href).toContain('/errors/');
-        expect(links[1]?.textContent).toBe('Modules Documentation');
-        expect(links[1]?.href).toContain('/modules/');
-
+        // The full, actionable module guidance is still logged to the console.
         const loggedFullText = consoleErrorSpy.mock.calls.some((call) =>
             call.some((arg) => typeof arg === 'string' && arg.includes('ServerSideRowModelModule'))
         );
         expect(loggedFullText).toBe(true);
+
+        // But the overlay stays silent: rich rendering is tied to the ValidationModule.
+        await Promise.resolve();
+        expect(isAgHtmlElementVisible('.ag-overlay-error-wrapper')).toBe(false);
+    });
+});
+
+describe('error overlay with no modules registered (bootstrap)', () => {
+    // A developer who has registered no modules at all gets the bootstrap overlay: it tells them to
+    // register the modules they need and to add the ValidationModule while developing. The client-side
+    // row model is bundled in core, so the grid still instantiates.
+    const gridsManager = new TestGridsManager({
+        includeDefaultModules: false,
+        modules: [],
+    });
+
+    const columnDefs = [{ field: 'athlete' }, { field: 'age' }];
+    const rowData = [{ athlete: 'Michael Phelps', age: 23 }];
+
+    let consoleErrorSpy: MockInstance;
+    let consoleWarnSpy: MockInstance;
+
+    beforeEach(() => {
+        consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+        gridsManager.reset();
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+        consoleErrorSpy.mockRestore();
+        consoleWarnSpy.mockRestore();
+    });
+
+    test('shows the bootstrap overlay guiding the developer to register modules', async () => {
+        gridsManager.createGrid('myGrid', { columnDefs, rowData, rowModelType: 'serverSide' });
+
+        await waitFor(() => expect(isAgHtmlElementVisible('.ag-overlay-error-wrapper')).toBe(true));
+
+        const title = document.querySelector('.ag-overlay-error-title')?.textContent ?? '';
+        expect(title).toBe('AG Grid requires modules to be registered');
+
+        const messages = Array.from(document.querySelectorAll('.ag-overlay-error-message')).map(
+            (el) => el.textContent ?? ''
+        );
+        // The specific missing module is listed in plain text...
+        expect(messages.some((message) => message.includes('ServerSideRowModelModule'))).toBe(true);
+        // ...along with the nudge to register the ValidationModule during development.
+        expect(messages.some((message) => message.includes('ValidationModule'))).toBe(true);
+
+        // The bootstrap overlay does not render the rich code block (that is tied to the ValidationModule).
+        expect(document.querySelector('.ag-overlay-error-code')).toBeNull();
+
+        // It links to the modules documentation.
+        const link = document.querySelector<HTMLAnchorElement>('.ag-overlay-error-link');
+        expect(link?.textContent).toBe('Modules Documentation');
+        expect(link?.href).toContain('/modules');
     });
 });
