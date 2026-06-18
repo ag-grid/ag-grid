@@ -116,3 +116,30 @@ reason = "ws is a transitive test dependency (via karma) and is not included in 
 [[IgnoredVulns]]
 id = "GHSA-96hv-2xvq-fx4p"
 reason = "ws is a transitive test dependency (via karma) and is not included in the libraries distributables"
+
+# Additions from OpenSSF Scorecard vulnerability review (2026-06-18)
+# Reasons verified against yarn.lock dependency chains (2026-06-18).
+
+[[IgnoredVulns]]
+id = "GHSA-jxxr-4gwj-5jf2"
+reason = "brace-expansion is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-q3j6-qgpj-74h6"
+reason = "fast-uri is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-v39h-62p7-jpjc"
+reason = "fast-uri is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-9vqf-7f2p-gf9v"
+reason = "hono is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-qx2v-qp2m-jg93"
+reason = "postcss is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-ph9p-34f9-6g65"
+reason = "tmp is only used in testing/build, not in the final production build"

@@ -730,3 +730,86 @@ reason = "ws is a transitive dev/test dependency (via karma / jsdom) and is not 
 id = "GHSA-96hv-2xvq-fx4p"
 reason = "ws is a transitive dev/test dependency (via karma / jsdom) and is not included in the libraries distributables"
 
+
+# Additions from OpenSSF Scorecard vulnerability review (2026-06-18)
+# Reasons verified against yarn.lock dependency chains (2026-06-18).
+
+[[IgnoredVulns]]
+id = "GHSA-fv7c-fp4j-7gwp"
+reason = "@babel/plugin-transform-modules-systemjs is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-35jp-ww65-95wh"
+reason = "axios is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-3g43-6gmg-66jw"
+reason = "axios is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-3w6x-2g7m-8v23"
+reason = "axios is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-62hf-57xw-28j9"
+reason = "axios is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-6chq-wfr3-2hj9"
+reason = "axios is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-j5f8-grm9-p9fc"
+reason = "axios is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-pf86-5x62-jrwf"
+reason = "axios is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-pjwm-pj3p-43mv"
+reason = "axios is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-q8qp-cvcw-x6jj"
+reason = "axios is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-rpmf-866q-6p89"
+reason = "basic-ftp is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-jxxr-4gwj-5jf2"
+reason = "brace-expansion is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-77vg-94rm-hx3p"
+reason = "devalue is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-q3j6-qgpj-74h6"
+reason = "fast-uri is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-v39h-62p7-jpjc"
+reason = "fast-uri is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-9vqf-7f2p-gf9v"
+reason = "hono is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-qx2v-qp2m-jg93"
+reason = "postcss is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-w7jw-789q-3m8p"
+reason = "shell-quote is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-ph9p-34f9-6g65"
+reason = "tmp is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-5xrq-8626-4rwp"
+reason = "vitest is only used in testing/build, not in the final production build"

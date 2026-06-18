@@ -7,3 +7,18 @@ reason = "We do not use the esbuild development server"
 [[IgnoredVulns]]
 id = "GHSA-g7r4-m6w7-qqqr"
 reason = "We do not use the esbuild development server"
+
+# Additions from OpenSSF Scorecard vulnerability review (2026-06-18)
+# Reasons verified against yarn.lock dependency chains (2026-06-18).
+
+[[IgnoredVulns]]
+id = "GHSA-jxxr-4gwj-5jf2"
+reason = "brace-expansion is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-qx2v-qp2m-jg93"
+reason = "postcss is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-5xrq-8626-4rwp"
+reason = "vitest is only used in testing/build, not in the final production build"
