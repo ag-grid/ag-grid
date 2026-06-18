@@ -1188,6 +1188,27 @@ describe('StateService - Grid State Management', () => {
             `);
         });
 
+        test('setState with an empty state clears active selectable filters', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+                defaultColDef: { filter: 'agSelectableColumnFilter' },
+                sideBar: 'filters-new',
+                enableFilterHandlers: true,
+            });
+            await asyncSetTimeout(50);
+
+            // Activate a selectable filter via state restore
+            api.setState({ filter: { selectableFilters: { name: 0 } } });
+            await asyncSetTimeout(50);
+            expect(api.getState().filter?.selectableFilters).toEqual({ name: 0 });
+
+            // Restoring a state without a filter section must clear the active selectable filter
+            api.setState({});
+            await asyncSetTimeout(50);
+            expect(api.getState().filter).toBeUndefined();
+        });
+
         test('should serialise bigint filter state and rehydrate on setState', async () => {
             const columnDefs = [{ field: 'id', cellDataType: 'bigint', filter: 'agBigIntColumnFilter' }];
             const rowData = [{ id: 1n }, { id: 2n }, { id: 3n }];
