@@ -57,6 +57,11 @@ export class ErrorOverlayComponent
         this.addManagedElementListeners(this.eDismiss, { click: () => beans.overlays?.dismissErrorOverlay() });
 
         for (let i = 0, len = errors.length; i < len; ++i) {
+            if (i > 0) {
+                const eDivider = document.createElement('div');
+                eDivider.className = 'ag-overlay-error-divider';
+                this.eBody.appendChild(eDivider);
+            }
             this.eBody.appendChild(this.createErrorElement(errors[i]));
         }
 
@@ -112,34 +117,36 @@ export class ErrorOverlayComponent
     }
 }
 
-/** Matches module names (e.g. `RowGroupingModule`) so they can be wrapped in a code block within the prose. */
-const MODULE_NAME_REGEX = /\b[A-Z]\w*Module\b/g;
+/** Delimiter the error messages use to mark inline code (reasons, module names). See `asCode` in errorText.ts. */
+const CODE_DELIMITER = '`';
 
 function createTextEl(text: string): HTMLElement {
     const eText = document.createElement('div');
     eText.className = 'ag-overlay-error-message';
-    appendTextWithModules(eText, text);
+    appendTextWithCode(eText, text);
     return eText;
 }
 
-/** Appends `text` to `el`, wrapping each module name in a `<code>` element so it stands out from the surrounding prose. */
-function appendTextWithModules(el: HTMLElement, text: string): void {
-    MODULE_NAME_REGEX.lastIndex = 0;
-    let lastIndex = 0;
-    let match = MODULE_NAME_REGEX.exec(text);
-    while (match) {
-        if (match.index > lastIndex) {
-            el.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+/**
+ * Appends `text` to `el`, rendering backtick-delimited spans (marked at the message source) as `<code>`
+ * elements so reasons and module names stand out from the surrounding prose.
+ */
+function appendTextWithCode(el: HTMLElement, text: string): void {
+    const parts = text.split(CODE_DELIMITER);
+    for (let i = 0, len = parts.length; i < len; ++i) {
+        const part = parts[i];
+        if (part === '') {
+            continue;
         }
-        const eCode = document.createElement('code');
-        eCode.className = 'ag-overlay-error-module';
-        eCode.textContent = match[0];
-        el.appendChild(eCode);
-        lastIndex = match.index + match[0].length;
-        match = MODULE_NAME_REGEX.exec(text);
-    }
-    if (lastIndex < text.length) {
-        el.appendChild(document.createTextNode(text.slice(lastIndex)));
+        // Odd segments sit between a pair of delimiters, so they are the code spans.
+        if (i % 2 === 1) {
+            const eCode = document.createElement('code');
+            eCode.className = 'ag-overlay-error-inline-code';
+            eCode.textContent = part;
+            el.appendChild(eCode);
+        } else {
+            el.appendChild(document.createTextNode(part));
+        }
     }
 }
 

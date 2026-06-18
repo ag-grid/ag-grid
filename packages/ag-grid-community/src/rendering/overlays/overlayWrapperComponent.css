@@ -105,7 +105,7 @@
     gap: calc(var(--ag-spacing) * 1.5);
     padding: calc(var(--ag-spacing) * 1.5);
 
-    /* take the remaining height and scroll internally when there are many errors. */
+    /* take the remaining height and scroll internally when an error is long. */
     flex: 1 1 auto;
     min-height: 0;
     overflow: auto;
@@ -115,7 +115,14 @@
     display: flex;
     flex-direction: column;
     gap: var(--ag-spacing);
-    min-height: 0;
+
+    /* keep each error a sensible size when several are stacked. */
+    min-height: calc(var(--ag-spacing) * 28);
+}
+
+.ag-overlay-error-divider {
+    /* separates stacked errors; the body gap provides the spacing on either side. */
+    border-top: solid var(--ag-border-width) var(--ag-border-color);
 }
 
 .ag-overlay-error-message {
@@ -126,7 +133,7 @@
     user-select: text;
 }
 
-.ag-overlay-error-module {
+.ag-overlay-error-inline-code {
     font-weight: 600;
 }
 

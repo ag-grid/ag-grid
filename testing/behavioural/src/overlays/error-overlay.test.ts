@@ -54,10 +54,12 @@ describe('error overlay', () => {
         expect(message).toContain('ServerSideRowModel');
         expect(document.querySelector<HTMLAnchorElement>('.ag-overlay-error-link')?.href).toContain('/errors/200');
 
-        // Module names within the prose are wrapped in code blocks to stand out.
-        const moduleCodes = Array.from(document.querySelectorAll('.ag-overlay-error-message .ag-overlay-error-module'));
-        expect(moduleCodes.some((el) => el.textContent === 'ServerSideRowModelModule')).toBe(true);
-        expect(moduleCodes.every((el) => el.tagName === 'CODE')).toBe(true);
+        // The reason and module names within the prose are wrapped in inline code blocks to stand out.
+        const inlineCode = Array.from(
+            document.querySelectorAll('.ag-overlay-error-message .ag-overlay-error-inline-code')
+        );
+        expect(inlineCode.some((el) => el.textContent === 'ServerSideRowModelModule')).toBe(true);
+        expect(inlineCode.every((el) => el.tagName === 'CODE')).toBe(true);
     });
 
     test('unknown rowModelType falls back to client-side and shows the error overlay', async () => {

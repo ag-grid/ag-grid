@@ -1174,7 +1174,13 @@
         display: flex;
         flex-direction: column;
         gap: calc(var(--ag-grid-size) * 0.5);
-        min-height: 0;
+        // keep each error a sensible size when several are stacked.
+        min-height: calc(var(--ag-grid-size) * 28);
+    }
+
+    .ag-overlay-error-divider {
+        // separates stacked errors; the body gap provides the spacing on either side.
+        border-top: solid 1px var(--ag-border-color);
     }
 
     .ag-overlay-error-message {
@@ -1185,7 +1191,7 @@
         user-select: text;
     }
 
-    .ag-overlay-error-module {
+    .ag-overlay-error-inline-code {
         font-weight: 600;
     }
 

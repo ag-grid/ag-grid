@@ -74,6 +74,13 @@ const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean
 For more info see: ${baseDocLink}/modules/`;
 };
 
+/**
+ * Wraps a value in backticks to mark it as inline code. The error overlay renders these spans in a
+ * code block; in the console they read as Markdown-style code. Apply at the point a reason or module
+ * name is composed so both the console and overlay get consistent emphasis.
+ */
+const asCode = (value: string): string => `\`${value}\``;
+
 function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = false) {
     if (inModuleRegistration && (moduleName === 'IntegratedCharts' || moduleName === 'Sparklines')) {
         return `${moduleName}Module.with(AgChartsEnterpriseModule)`;
@@ -111,7 +118,8 @@ export function missingRowModelTypeError({
     rowModelType: RowModelType;
     gridOption: string;
 }) {
-    return `To use the ${gridOption} grid option you must register the ${moduleName}Module and set the grid option "rowModelType='${rowModelType}'".`;
+    const moduleCode = asCode(`${moduleName}Module`);
+    return `To use the ${asCode(gridOption)} grid option you must register the ${moduleCode} and set the grid option "rowModelType='${rowModelType}'".`;
 }
 
 const unknownRowModelError = ({ rowModelType }: { rowModelType: string }) =>
@@ -151,7 +159,11 @@ const missingModule = ({
             ? `${chartModules.map((m) => convertToUserModuleName(m)).join()} must be initialised with an AG Charts module. One of 'AgChartsCommunityModule' / 'AgChartsEnterpriseModule'.`
             : '';
 
-    const explanation = `Unable to use ${reason} as ${resolvedModuleNames.length > 1 ? 'one of ' + resolvedModuleNames.map((m) => convertToUserModuleName(m)).join(', ') : convertToUserModuleName(resolvedModuleNames[0])} is not registered${gridScoped ? ' for gridId: ' + gridId : ''}. ${chartImportRequired} Check if you have registered the module:\n`;
+    const moduleList =
+        resolvedModuleNames.length > 1
+            ? 'one of ' + resolvedModuleNames.map((m) => asCode(convertToUserModuleName(m))).join(', ')
+            : asCode(convertToUserModuleName(resolvedModuleNames[0]));
+    const explanation = `Unable to use ${asCode(reason)} as ${moduleList} is not registered${gridScoped ? ' for gridId: ' + gridId : ''}. ${chartImportRequired} Check if you have registered the module:\n`;
 
     return (
         `${explanation}
