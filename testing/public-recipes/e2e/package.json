@@ -1,12 +1,12 @@
 {
   "name": "ag-grid-public-e2e-testing-recipes",
-  "version": "35.3.0-beta.20260618.1043",
+  "version": "35.3.0-beta.20260618.121",
   "description": "Public E2E testing recipes for AG Grid",
   "main": "index.js",
   "scripts": {},
   "license": "MIT",
   "devDependencies": {
-    "ag-grid-community": "35.3.0-beta.20260618.1043",
+    "ag-grid-community": "35.3.0-beta.20260618.121",
     "playwright": "^1.59.1",
     "@playwright/test": "^1.59.1",
     "@types/node": "^22.15.3"
