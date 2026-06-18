@@ -103,6 +103,30 @@ describe('grand total row survives setState', () => {
         expect(api.getState().rowPinning).toEqual({ top: [], bottom: [] });
     });
 
+    test('explicit empty rowPinning state keeps the pinned grand total row', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', baseOptions());
+        expectGrandTotalPinnedTop(api);
+
+        // A full state object serialises the grand total as empty `rowPinning` arrays. Restoring
+        // that state takes the explicit `setPinnedState` path (not `reset`), which must not clear
+        // the grand total row driven by the `grandTotalRow` option.
+        api.setState({ ...savedState, rowPinning: { top: [], bottom: [] } });
+        await asyncSetTimeout(5);
+
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['region']);
+        expectGrandTotalPinnedTop(api);
+    });
+
+    test('round-tripping getState through setState keeps the pinned grand total row', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', baseOptions());
+        expectGrandTotalPinnedTop(api);
+
+        api.setState(api.getState());
+        await asyncSetTimeout(5);
+
+        expectGrandTotalPinnedTop(api);
+    });
+
     test('pinnedBottom grand total survives setState and is not serialised into rowPinning state', async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             ...baseOptions(),
