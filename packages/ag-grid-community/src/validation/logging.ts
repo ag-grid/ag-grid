@@ -9,6 +9,7 @@ const MIN_PARAM_LENGTH = 100;
 const VERSION_PARAM_NAME = '_version_';
 
 let getConsoleMessage: (<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>) => any[]) | null = null;
+let getModuleErrorMessage: (<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>) => any[] | null) | null = null;
 export let baseDocLink = `${BASE_URL}/javascript-data-grid`;
 /**
  * The ValidationService passes itself in if it has been included.
@@ -18,6 +19,18 @@ export function provideValidationServiceLogger(
     logger: <TId extends ErrorId>(id: TId, args: GetErrorParams<TId>) => any[]
 ) {
     getConsoleMessage = logger;
+}
+
+/**
+ * Resolver for module-registration errors, wired unconditionally by core. Returns the full message
+ * for the module-family errors (and null for everything else) so that "register XModule" guidance is
+ * always actionable - in the console and the error overlay - even when the ValidationModule, which
+ * provides the full text for all other errors, has not been registered.
+ */
+export function provideModuleErrorLogger(
+    logger: <TId extends ErrorId>(id: TId, args: GetErrorParams<TId>) => any[] | null
+) {
+    getModuleErrorMessage = logger;
 }
 
 /** Set by the Framework override to give us accurate links for the framework  */
@@ -62,7 +75,9 @@ export function _getErrorMessage(id: ErrorId, params: any, defaultMessage?: stri
 type LogFn = (message: string, ...args: any[]) => void;
 
 function getErrorParts<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>, defaultMessage?: string): any[] {
-    return getConsoleMessage?.(id, args) ?? [minifiedLog(id, args, defaultMessage)];
+    return (
+        getConsoleMessage?.(id, args) ?? getModuleErrorMessage?.(id, args) ?? [minifiedLog(id, args, defaultMessage)]
+    );
 }
 
 function getMsgOrDefault<TId extends ErrorId>(

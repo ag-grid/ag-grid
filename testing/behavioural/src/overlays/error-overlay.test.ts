@@ -122,6 +122,27 @@ describe('error overlay', () => {
         expect(document.querySelector<HTMLAnchorElement>('.ag-overlay-error-link')?.href).toContain('/errors/200');
     });
 
+    test('explicit rowModelType is used for datasource validation, not the fallback value', async () => {
+        // The user correctly set rowModelType + datasource but is missing the module. The grid falls
+        // back to client-side, but the misleading "serverSideDatasource is not supported with the
+        // 'clientSide' row model" warning must NOT fire - they configured a valid pairing.
+        gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData,
+            rowModelType: 'serverSide',
+            serverSideDatasource: { getRows: () => {} } as any,
+        });
+
+        await waitFor(() => expect(hasErrorOverlay()).toBe(true));
+
+        const incompatibilityWarning = consoleWarnSpy.mock.calls.some((call) =>
+            call.some(
+                (arg) => typeof arg === 'string' && arg.includes("is not supported with the 'clientSide' row model")
+            )
+        );
+        expect(incompatibilityWarning).toBe(false);
+    });
+
     test('error overlay is suppressed via suppressOverlays', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
@@ -147,5 +168,45 @@ describe('error overlay', () => {
 
         await Promise.resolve();
         expect(hasErrorOverlay()).toBe(false);
+    });
+});
+
+describe('error overlay without the ValidationModule', () => {
+    // The ValidationModule provides the full text for most errors. Module-registration errors must
+    // remain fully actionable without it, so a developer (or their agent) can fix them directly.
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule],
+    });
+
+    const columnDefs = [{ field: 'athlete' }, { field: 'age' }];
+    const rowData = [{ athlete: 'Michael Phelps', age: 23 }];
+
+    let consoleErrorSpy: MockInstance;
+
+    beforeEach(() => {
+        consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        gridsManager.reset();
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+        consoleErrorSpy.mockRestore();
+    });
+
+    test('missing module error shows the full registration guidance in console and overlay', async () => {
+        gridsManager.createGrid('myGrid', { columnDefs, rowData, rowModelType: 'serverSide' });
+
+        await waitFor(() => expect(isAgHtmlElementVisible('.ag-overlay-error-wrapper')).toBe(true));
+
+        const message = document.querySelector('.ag-overlay-error-message')?.textContent ?? '';
+        // Full, actionable text rather than the minified "register the ValidationModule" stub.
+        expect(message).toContain('ServerSideRowModelModule');
+        expect(message).toContain('is not registered');
+        expect(message).not.toContain('register the ValidationModule');
+
+        const loggedFullText = consoleErrorSpy.mock.calls.some((call) =>
+            call.some((arg) => typeof arg === 'string' && arg.includes('ServerSideRowModelModule'))
+        );
+        expect(loggedFullText).toBe(true);
     });
 });

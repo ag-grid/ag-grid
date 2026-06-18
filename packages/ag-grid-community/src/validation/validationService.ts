@@ -153,7 +153,10 @@ export class ValidationService extends BeanStub implements NamedBean {
             }
 
             const rules = validations[name as keyof T];
-            const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
+            // Use the rowModelType the user explicitly set so we don't warn against a fallback-coerced
+            // value (e.g. a serverSideDatasource is valid for the serverSide they asked for, even when
+            // a missing module forced the grid back to the client-side row model).
+            const rowModel = this.beans.userRowModelType ?? this.gridOptions.rowModelType ?? 'clientSide';
             if (rules?.supportedRowModels && !rules.supportedRowModels.includes(rowModel)) {
                 const value = options[name as keyof T];
                 if (value == null || value === false) {

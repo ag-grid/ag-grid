@@ -53,7 +53,7 @@
 .ag-overlay-error-header {
     display: flex;
     align-items: center;
-    gap: calc(var(--ag-spacing) * 0.5);
+    gap: var(--ag-spacing);
     padding: var(--ag-spacing) calc(var(--ag-spacing) * 1.5);
     background: color-mix(in srgb, var(--ag-invalid-color) 12%, var(--ag-background-color));
     color: var(--ag-invalid-color);
@@ -63,6 +63,7 @@
 .ag-overlay-error-title {
     flex: 1;
     font-weight: 700;
+    font-size: calc(var(--ag-font-size) + 1px);
 }
 
 .ag-overlay-error-button {
@@ -71,10 +72,26 @@
     background: var(--ag-background-color);
     color: var(--ag-text-color);
     border-radius: var(--ag-border-radius);
-    padding: calc(var(--ag-spacing) * 0.25) calc(var(--ag-spacing) * 0.75);
+    padding: 0 calc(var(--ag-spacing) * 0.75);
     font: inherit;
     display: flex;
     align-items: center;
+    justify-content: center;
+    /* keep the header controls on a single shared height so Copy and dismiss line up. */
+    height: calc(var(--ag-spacing) * 3.5);
+}
+
+.ag-overlay-error-button:hover {
+    background: var(--ag-row-hover-color);
+}
+
+.ag-overlay-error-dismiss {
+    /* icon-only affordance: drop the border/background so the themed cancel icon
+       doesn't read as a box-within-a-box (notably Alpine/Material). */
+    border: none;
+    background: transparent;
+    padding: 0;
+    width: calc(var(--ag-spacing) * 3.5);
 }
 
 .ag-overlay-error-body {
@@ -88,7 +105,8 @@
 .ag-overlay-error-item {
     display: flex;
     flex-direction: column;
-    gap: calc(var(--ag-spacing) * 0.5);
+    gap: var(--ag-spacing);
+    min-height: 0;
 }
 
 .ag-overlay-error-message {
@@ -100,12 +118,23 @@
     overflow-wrap: anywhere;
     user-select: text;
     background: var(--ag-header-background-color);
+    border: solid var(--ag-border-width) var(--ag-border-color);
     border-radius: var(--ag-border-radius);
     padding: var(--ag-spacing);
+    /* cap the snippet height so it scrolls internally and the link below stays visible on small windows. */
+    max-height: 50vh;
+    overflow: auto;
 }
 
 .ag-overlay-error-link {
     color: var(--ag-accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    align-self: start;
+}
+
+.ag-overlay-error-link:hover {
+    text-decoration: underline;
 }
 
 .ag-overlay-loading-center,

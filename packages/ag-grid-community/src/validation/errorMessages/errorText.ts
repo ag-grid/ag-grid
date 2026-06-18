@@ -15,9 +15,21 @@ import { baseDocLink, getErrorLink } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
 import { USER_COMP_MODULES } from '../rules/userCompValidations';
 
-/** Formats a code snippet showing how to register modules — via AgGridProvider for React, or ModuleRegistry otherwise. */
-const moduleRegistrationSnippet = (imports: string[], moduleList: string, usesAgGridProvider?: boolean): string => {
-    if (usesAgGridProvider) {
+/**
+ * Formats a code snippet showing how to register modules. React (`usesAgGridProvider` is a defined
+ * boolean, whether or not an AgGridProvider currently wraps the grid) is guided towards the
+ * recommended AgGridProvider approach - unless the developer has already opted into the static
+ * ModuleRegistry API (`usedModuleRegistry`), in which case that choice is respected. Non-React
+ * (`undefined`) always uses ModuleRegistry.
+ */
+const moduleRegistrationSnippet = (
+    imports: string[],
+    moduleList: string,
+    usesAgGridProvider?: boolean,
+    usedModuleRegistry?: boolean
+): string => {
+    const recommendAgGridProvider = usesAgGridProvider !== undefined && !usedModuleRegistry;
+    if (recommendAgGridProvider) {
         const allImports = ["import { AgGridProvider, AgGridReact } from 'ag-grid-react';", ...imports];
         return `${allImports.join(' \n')}
 
@@ -37,20 +49,7 @@ function App() {
 ModuleRegistry.registerModules([ ${moduleList} ]);`;
 };
 
-export const NoModulesRegisteredError = (usesAgGridProvider?: boolean) => {
-    // For React users without AgGridProvider (false), guide them toward AgGridProvider
-    const showAgGridProvider = usesAgGridProvider !== undefined;
-    const imports = [
-        `import { ${showAgGridProvider ? '' : 'ModuleRegistry, '}AllCommunityModule } from 'ag-grid-community';`,
-    ];
-
-    return `No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:
-
-${moduleRegistrationSnippet(imports, 'AllCommunityModule', showAgGridProvider)}
-`;
-};
-
-const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean) => {
+const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean, usedModuleRegistry?: boolean) => {
     const imports = moduleNames.map(
         (moduleName) =>
             `import { ${convertToUserModuleName(moduleName)} } from '${ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] ? 'ag-grid-enterprise' : 'ag-grid-community'}';`
@@ -64,10 +63,11 @@ const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean
 
     const moduleList = moduleNames.map((m) => convertToUserModuleName(m, true)).join(', ');
 
-    if (!usesAgGridProvider) {
+    const recommendAgGridProvider = usesAgGridProvider !== undefined && !usedModuleRegistry;
+    if (!recommendAgGridProvider) {
         imports.unshift("import { ModuleRegistry } from 'ag-grid-community';");
     }
-    return `${moduleRegistrationSnippet(imports, moduleList, usesAgGridProvider)}
+    return `${moduleRegistrationSnippet(imports, moduleList, usesAgGridProvider, usedModuleRegistry)}
 
 For more info see: ${baseDocLink}/modules/`;
 };
@@ -111,6 +111,9 @@ export function missingRowModelTypeError({
     return `To use the ${gridOption} grid option you must register the ${moduleName}Module and set the grid option "rowModelType='${rowModelType}'".`;
 }
 
+const unknownRowModelError = ({ rowModelType }: { rowModelType: string }) =>
+    `Could not find row model for rowModelType = ${rowModelType}`;
+
 const missingModule = ({
     reasonOrId,
     moduleName,
@@ -120,6 +123,7 @@ const missingModule = ({
     additionalText,
     isUmd,
     usesAgGridProvider,
+    usedModuleRegistry,
 }: {
     reasonOrId: string | keyof MissingModuleErrors;
     moduleName: ValidationModuleName | ValidationModuleName[];
@@ -129,6 +133,7 @@ const missingModule = ({
     additionalText?: string;
     isUmd?: boolean;
     usesAgGridProvider?: boolean;
+    usedModuleRegistry?: boolean;
 }) => {
     const resolvedModuleNames = resolveModuleNames(moduleName, rowModelType);
     const reason = typeof reasonOrId === 'string' ? reasonOrId : MISSING_MODULE_REASONS[reasonOrId];
@@ -147,7 +152,8 @@ const missingModule = ({
 
     return (
         `${explanation}
-${moduleImportMsg(resolvedModuleNames, usesAgGridProvider)}` + (additionalText ? ` \n\n${additionalText}` : '')
+${moduleImportMsg(resolvedModuleNames, usesAgGridProvider, usedModuleRegistry)}` +
+        (additionalText ? ` \n\n${additionalText}` : '')
     );
 };
 
@@ -591,7 +597,7 @@ export const AG_GRID_ERRORS = {
     199: () =>
         `getSelectedNodes and getSelectedRows functions cannot be used with select all functionality with the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
     200: missingModule,
-    201: ({ rowModelType }: { rowModelType: string }) => `Could not find row model for rowModelType = ${rowModelType}`,
+    201: unknownRowModelError,
 
     202: () =>
         `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`groupSelectsChildren\` and the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
@@ -686,6 +692,7 @@ export const AG_GRID_ERRORS = {
         gridId,
         rowModelType,
         usesAgGridProvider,
+        usedModuleRegistry,
     }: {
         propName: string;
         compName: string;
@@ -693,6 +700,7 @@ export const AG_GRID_ERRORS = {
         gridId: string;
         rowModelType: RowModelType;
         usesAgGridProvider?: boolean;
+        usedModuleRegistry?: boolean;
     }) =>
         missingModule({
             reasonOrId: `AG Grid '${propName}' component: ${compName}`,
@@ -701,6 +709,7 @@ export const AG_GRID_ERRORS = {
             gridScoped,
             rowModelType,
             usesAgGridProvider,
+            usedModuleRegistry,
         }),
     261: () => 'As of v33, `column.isHovered()` is deprecated. Use `api.isColumnHovered(column)` instead.' as const,
     262: () =>
@@ -721,7 +730,6 @@ export const AG_GRID_ERRORS = {
         `Cycle detected for row with id='${id}' and parent id='${parentId}'. Resetting the parent for row with id='${id}' and showing it as a root-level node.` as const,
     271: ({ id, parentId }: { id: string; parentId: string }) =>
         `Parent row not found for row with id='${id}' and parent id='${parentId}'. Showing row with id='${id}' as a root-level node.` as const,
-    272: () => NoModulesRegisteredError(),
     273: ({ providedId, usedId }: { providedId: string; usedId: string }) =>
         `Provided column id '${providedId}' was already in use, ensure all column and group ids are unique. Using '${usedId}' instead.` as const,
     274: ({ prop }: { prop: string }) => {
@@ -785,12 +793,16 @@ export const AG_GRID_ERRORS = {
         gridScoped,
         gridId,
         rowModelType,
+        usesAgGridProvider,
+        usedModuleRegistry,
     }: {
         itemName: string;
         moduleName: ValidationModuleName | ValidationModuleName[];
         gridScoped: boolean;
         gridId: string;
         rowModelType: RowModelType;
+        usesAgGridProvider?: boolean;
+        usedModuleRegistry?: boolean;
     }) =>
         missingModule({
             reasonOrId: `Toolbar item '${itemName}'`,
@@ -798,6 +810,8 @@ export const AG_GRID_ERRORS = {
             gridId,
             gridScoped,
             rowModelType,
+            usesAgGridProvider,
+            usedModuleRegistry,
             additionalText: 'The item will not be rendered.',
         }),
     303: ({ key }: { key: string }) =>
@@ -815,6 +829,12 @@ type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId
 export type GetErrorParams<TId extends ErrorId> =
     ErrorValue<TId> extends (params: infer P) => any ? (P extends Record<string, any> ? P : undefined) : never;
 
+function withErrorLink<TId extends ErrorId>(errorId: TId, args: GetErrorParams<TId>, errorBody: any): any[] {
+    const errorLink = getErrorLink(errorId, args);
+    const errorSuffix = `\nSee ${errorLink}`;
+    return Array.isArray(errorBody) ? errorBody.concat(errorSuffix) : [errorBody, errorSuffix];
+}
+
 export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId>>(errorId: TId, args: TParams): any[] {
     const msgOrFunc: ErrorMap[TId] = AG_GRID_ERRORS[errorId];
 
@@ -822,10 +842,23 @@ export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId
         return [`Missing error text for error id ${errorId}!`];
     }
 
-    const errorBody = msgOrFunc(args as any);
-    const errorLink = getErrorLink(errorId, args);
-    const errorSuffix = `\nSee ${errorLink}`;
-    return Array.isArray(errorBody) ? errorBody.concat(errorSuffix) : [errorBody, errorSuffix];
+    return withErrorLink(errorId, args as any, msgOrFunc(args as any));
+}
+
+/**
+ * The module-registration error generators, referenced directly (not via AG_GRID_ERRORS) so that
+ * core can always produce their full text without tree-shaking in the entire error-message map.
+ */
+const MODULE_ERROR_GENERATORS: Partial<Record<ErrorId, (args: any) => any>> = {
+    200: missingModule,
+    201: unknownRowModelError,
+    275: missingRowModelTypeError,
+};
+
+/** Resolves the full text for module-registration errors only; returns null for any other error id. */
+export function getModuleError<TId extends ErrorId>(errorId: TId, args: GetErrorParams<TId>): any[] | null {
+    const generator = MODULE_ERROR_GENERATORS[errorId];
+    return generator ? withErrorLink(errorId, args, generator(args)) : null;
 }
 
 const MISSING_MODULE_REASONS = {

@@ -63,7 +63,9 @@ describe('Mismatched rowModelType error', () => {
     test('If rowModelType is specified, treat that as higher priority', () => {
         createMyGrid({ rowModelType: 'infinite' }, { modules: [ServerSideRowModelModule] });
 
-        expect(errorLogged('Missing module InfiniteRowModelModule for rowModelType infinite.')).toBe(true);
+        expect(errorLogged(`Unable to use rowModelType = 'infinite' as InfiniteRowModelModule is not registered`)).toBe(
+            true
+        );
     });
 
     test('row model modules registered without a datasource do not warn', () => {

@@ -26,17 +26,21 @@ import type { RowModelType } from './interfaces/iRowModel';
 import {
     _areModulesGridScoped,
     _getRegisteredModules,
-    _hasUserRegistered,
     _isModuleRegistered,
     _isUmd,
     _registerModule,
     _unRegisterGridModules,
+    _usedModuleRegistry,
 } from './modules/moduleRegistry';
 import type { ErrorId } from './validation/errorMessages/errorText';
-import { NoModulesRegisteredError, missingRowModelTypeError } from './validation/errorMessages/errorText';
+import { getModuleError, missingRowModelTypeError } from './validation/errorMessages/errorText';
 import type { OverlayError } from './validation/logging';
-import { _error, _logPreInitErr } from './validation/logging';
+import { _error, _logPreInitErr, provideModuleErrorLogger } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
+
+// Module-registration errors must always carry their full "register XModule" guidance, even when
+// the ValidationModule (which provides the full text for all other errors) is not registered.
+provideModuleErrorLogger(getModuleError);
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface GridParams {
@@ -135,6 +139,8 @@ export class GridCoreCreator {
         // row model type may coerce gridOptions.rowModelType, so it must happen before we compute
         // the registered modules for that row model.
         const preInitErrors: OverlayError[] = [];
+        // The rowModelType the user explicitly set, captured before resolveRowModelType may coerce it.
+        const userRowModelType = gridOptions.rowModelType;
         const rowModelType = this.resolveRowModelType(
             gridOptions,
             gridId,
@@ -144,7 +150,13 @@ export class GridCoreCreator {
 
         const registeredModules = _getRegisteredModules(gridId, rowModelType);
         const beanClasses = this.createBeansList(registeredModules);
-        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, preInitErrors, params);
+        const providedBeanInstances = this.createProvidedBeans(
+            eGridDiv,
+            gridOptions,
+            preInitErrors,
+            userRowModelType,
+            params
+        );
 
         const destroyCallback = () => {
             _gridElementCache.delete(api);
@@ -193,7 +205,7 @@ export class GridCoreCreator {
     }
 
     private registerModules(params: GridParams | undefined, gridId: string): void {
-        _registerModule(CommunityCoreModule, undefined, true);
+        _registerModule(CommunityCoreModule, undefined);
 
         params?.modules?.forEach((m) => _registerModule(m, gridId));
     }
@@ -222,6 +234,7 @@ export class GridCoreCreator {
         eGridDiv: HTMLElement,
         gridOptions: GridOptions,
         preInitErrors: OverlayError[],
+        userRowModelType: RowModelType | undefined,
         params?: GridParams
     ): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
@@ -238,6 +251,7 @@ export class GridCoreCreator {
             frameworkOverrides: frameworkOverrides,
             withinStudio: params?.withinStudio,
             preInitErrors: preInitErrors.length ? preInitErrors : undefined,
+            userRowModelType,
         };
         if (params?.providedBeanInstances) {
             Object.assign(seed, params.providedBeanInstances);
@@ -285,11 +299,7 @@ export class GridCoreCreator {
             return fallbackToClientSide(201, { rowModelType }, `Unknown rowModelType ${rowModelType}.`);
         }
 
-        if (!_hasUserRegistered()) {
-            // The client-side row model is bundled in core, so continue with it and surface the
-            // setup instructions to the developer rather than aborting.
-            capture(272, undefined, NoModulesRegisteredError(usesAgGridProvider));
-        } else if (!userProvidedRowModelType) {
+        if (!userProvidedRowModelType) {
             // The user hasn't set rowModelType (so the grid defaults to the client-side row model),
             // but providing a datasource for another row model is a clear signal they intended to
             // use it. Module presence is not a reliable signal - e.g. AllEnterpriseModule registers
@@ -328,6 +338,8 @@ export class GridCoreCreator {
                     gridId,
                     rowModelType,
                     isUmd,
+                    usesAgGridProvider,
+                    usedModuleRegistry: _usedModuleRegistry(),
                 },
                 message
             );

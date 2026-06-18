@@ -88,7 +88,7 @@ import type { IPivotResultColsService } from '../interfaces/iPivotResultColsServ
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
 import type { IRowGroupPanelBuilder } from '../interfaces/iRowGroupPanelBuilder';
 import type { IRowGroupingEditValueSvc } from '../interfaces/iRowGroupingEditValueSvc';
-import type { IRowModel } from '../interfaces/iRowModel';
+import type { IRowModel, RowModelType } from '../interfaces/iRowModel';
 import type {
     IRowNodeAggregationStage,
     IRowNodeFilterAggregateStage,
@@ -320,6 +320,8 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     eRootDiv: HTMLElement;
     withinStudio?: boolean;
     preInitErrors?: OverlayError[];
+    /** The rowModelType the user explicitly set, before any fallback coercion. Undefined if not set. */
+    userRowModelType?: RowModelType;
     pivotResultCols?: IPivotResultColsService;
     autoColSvc?: IAutoColService;
     selectionColSvc?: SelectionColService;

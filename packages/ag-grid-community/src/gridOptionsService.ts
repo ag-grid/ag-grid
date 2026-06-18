@@ -22,7 +22,7 @@ import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { ModuleName, ValidationModuleName } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
-import { _areModulesGridScoped, _isModuleRegistered, _isUmd } from './modules/moduleRegistry';
+import { _areModulesGridScoped, _isModuleRegistered, _isUmd, _usedModuleRegistry } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 import { _logIfDebug } from './utils/log';
@@ -347,14 +347,18 @@ export class GridOptionsService
         gridId: string;
         rowModelType: RowModelType;
         isUmd: boolean;
-        usesAgGridProvider: boolean;
+        usesAgGridProvider: boolean | undefined;
+        usedModuleRegistry: boolean;
     } {
         return {
             gridId: this.gridId,
             gridScoped: _areModulesGridScoped(),
             rowModelType: this.get('rowModelType'),
             isUmd: _isUmd(),
-            usesAgGridProvider: this.beans.frameworkOverrides.usesAgGridProvider ?? false,
+            // Preserve undefined (non-React) vs false (React without an AgGridProvider) so the error
+            // message can recommend the right registration approach for the framework.
+            usesAgGridProvider: this.beans.frameworkOverrides.usesAgGridProvider,
+            usedModuleRegistry: _usedModuleRegistry(),
         };
     }
 

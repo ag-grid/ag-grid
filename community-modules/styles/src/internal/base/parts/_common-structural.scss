@@ -1135,10 +1135,26 @@
         background: var(--ag-background-color);
         color: var(--ag-text-color);
         border-radius: var(--ag-border-radius);
-        padding: calc(var(--ag-grid-size) * 0.25) calc(var(--ag-grid-size) * 0.75);
+        padding: 0 calc(var(--ag-grid-size) * 0.75);
         font: inherit;
         display: flex;
         align-items: center;
+        justify-content: center;
+        // keep the header controls on a single shared height so Copy and dismiss line up.
+        height: calc(var(--ag-grid-size) * 3.5);
+    }
+
+    .ag-overlay-error-button:hover {
+        background: var(--ag-row-hover-color);
+    }
+
+    .ag-overlay-error-dismiss {
+        // icon-only affordance: drop the border/background so the themed cancel icon
+        // doesn't read as a box-within-a-box (notably Balham).
+        border: none;
+        background: transparent;
+        padding: 0;
+        width: calc(var(--ag-grid-size) * 3.5);
     }
 
     .ag-overlay-error-body {
@@ -1164,8 +1180,12 @@
         overflow-wrap: anywhere;
         user-select: text;
         background: var(--ag-header-background-color);
+        border: solid 1px var(--ag-border-color);
         border-radius: var(--ag-border-radius);
         padding: var(--ag-grid-size);
+        // cap the snippet height so it scrolls internally and the link below stays visible on small windows.
+        max-height: 50vh;
+        overflow: auto;
     }
 
     .ag-overlay-error-link {
