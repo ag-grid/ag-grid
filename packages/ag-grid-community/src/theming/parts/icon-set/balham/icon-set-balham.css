@@ -153,6 +153,10 @@
     mask-image: url('./balham-svg-icons/paste.svg');
 }
 
+.ag-icon-values-as::before {
+    mask-image: url('./balham-svg-icons/values-as.svg');
+}
+
 .ag-icon-pin::before {
     mask-image: url('./balham-svg-icons/pin.svg');
 }

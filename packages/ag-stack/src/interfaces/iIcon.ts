@@ -71,4 +71,5 @@ export type IconValue =
     | 'chevron-right'
     | 'edit'
     | 'search'
-    | 'fx';
+    | 'fx'
+    | 'values-as';
