@@ -1,7 +1,6 @@
-import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
-import { _isElementOverflowingCallback } from '../agStack/utils/dom';
-import { _exists } from '../agStack/utils/generic';
-import { _getValueUsingDotField } from '../agStack/utils/value';
+import type { LocaleTextFunc } from 'ag-stack';
+import { _exists, _getValueUsingDotField, _isElementOverflowingCallback } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -134,8 +133,8 @@ const resolveCellTooltip = ({
     const colDef = column.colDef;
 
     // 1) formula error tooltip has highest priority.
-    const isCalculatedColumn = colDef.calculatedExpression != null && beans.calculatedColsSvc != null;
-    if ((colDef.allowFormula && formula?.active) || (isCalculatedColumn && formula)) {
+    const isCalculatedColumn = column.isCalculatedCol;
+    if ((column.allowFormula && formula?.active) || (isCalculatedColumn && formula)) {
         const error = formula.getFormulaError(column, rowNode);
         if (error) {
             return {
@@ -172,9 +171,7 @@ const resolveCellTooltip = ({
     if (colDef.tooltipField && _exists(data)) {
         const tooltipField = colDef.tooltipField;
         return {
-            value: column.isTooltipFieldContainsDots()
-                ? _getValueUsingDotField(data, tooltipField)
-                : data[tooltipField],
+            value: column.tooltipFieldContainsDots ? _getValueUsingDotField(data, tooltipField) : data[tooltipField],
             location: 'cell',
             shouldDisplay: shouldDisplayColumnTooltip,
         };
@@ -363,14 +360,16 @@ export class TooltipService extends BeanStub implements NamedBean {
     public setupFullWidthRowTooltip(
         existingTooltipFeature: TooltipFeature | undefined,
         ctrl: RowCtrl,
-        value: string,
-        shouldDisplayTooltip?: () => boolean
+        getTooltipValue: () => any,
+        shouldDisplayTooltip?: () => boolean,
+        getAdditionalParams?: () => ITooltipCtrlParams
     ): TooltipFeature | undefined {
         const tooltipParams: ITooltipCtrl = {
             getGui: () => ctrl.getRowContentElement()!,
-            getTooltipValue: () => value,
+            getTooltipValue,
             getLocation: () => 'fullWidthRow',
             shouldDisplayTooltip,
+            ...(getAdditionalParams ? { getAdditionalParams } : {}),
         };
 
         const beans = this.beans;

@@ -4,7 +4,8 @@
     .ag-toolbar {
         display: flex;
         align-items: center;
-        overflow: hidden;
+        overflow: auto hidden;
+        scrollbar-width: thin;
         border-bottom: var(--ag-borders) var(--ag-border-color);
         min-height: var(--ag-header-height);
         background-color: var(--ag-toolbar-background-color);
@@ -55,18 +56,15 @@
         color: var(--ag-icon-button-hover-color, var(--ag-foreground-color));
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar-button-wrapper:hover .ag-toolbar-button,
     .ag-toolbar-button-wrapper:hover .ag-toolbar-button .ag-icon {
         color: var(--ag-icon-button-hover-color, var(--ag-foreground-color));
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar > .ag-toolbar-button-wrapper:first-child > .ag-toolbar-button {
         border-start-start-radius: calc(var(--ag-border-radius) + 1px);
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar > .ag-toolbar-button-wrapper:last-child > .ag-toolbar-button {
         border-start-end-radius: calc(var(--ag-border-radius) + 1px);
     }
@@ -87,8 +85,10 @@
 
     .ag-toolbar-panel {
         display: inline-flex;
-        flex: 1;
-        min-width: 260px;
+        // Grow to fill spare width, but never shrink below content — the toolbar
+        // scrolls instead of clipping embedded panels
+        flex: 1 0 auto;
+        min-width: 0;
     }
 
     .ag-toolbar-input {
@@ -100,18 +100,15 @@
         margin: 0 calc(var(--ag-grid-size) * 2);
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar-input + .ag-toolbar-input {
         margin-inline-start: 0;
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar > .ag-toolbar-input:first-child,
     .ag-toolbar-right-start + .ag-toolbar-input {
         margin-inline-start: var(--ag-grid-size);
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar > .ag-toolbar-input:last-child {
         margin-inline-end: var(--ag-grid-size);
     }
@@ -143,7 +140,6 @@
     // High-specificity padding override — beats theme text-input padding-left rules
     // (which reach .ag-theme-X .ag-ltr input[class^='ag-'][type='text'] = 0-4-1)
     .ag-toolbar-input {
-        // stylelint-disable-next-line selector-max-specificity
         input[class^='ag-'][type='text'].ag-toolbar-input-field {
             @include ag.unthemed-rtl(
                 (
@@ -171,10 +167,14 @@
         font-family: var(--ag-font-family);
     }
 
-    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar .ag-column-drop-horizontal {
         border-bottom: none;
         background-color: transparent;
+
+        // Prevent scrolling - necessary because tabbing to select a drop zone pill
+        // scrolls the container to show the pill, and we want the containing scroll
+        // container to be the toolbar, not the drop zone panel within it
+        overflow: visible;
     }
 
     .ag-toolbar-button-chevron {
@@ -211,8 +211,7 @@
         min-width: 0;
     }
 
-    // High-specificity overrides to prevent theme text-input rules reinstating border/shadow
-    // stylelint-disable-next-line selector-max-specificity
+    // high-specificity overrides to prevent theme text-input rules reinstating border/shadow
     .ag-toolbar .ag-toolbar-find input[class^='ag-'][type='text'].ag-toolbar-input-field {
         border: none;
         box-shadow: none;

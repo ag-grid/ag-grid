@@ -1,23 +1,21 @@
+import type { LocaleTextFunc } from 'ag-stack';
+import { RefPlaceholder, _exists, _missing, _parseBigIntOrNull } from 'ag-stack';
+
 import type {
     AgColumn,
     AggregationStatusPanelAggFunc,
     AggregationStatusPanelParams,
     ElementParams,
     IStatusPanelComp,
-    LocaleTextFunc,
     RowPosition,
 } from 'ag-grid-community';
 import {
     Component,
-    RefPlaceholder,
     _createCellId,
-    _exists,
     _formatNumberCommas,
     _getRowBelow,
     _getRowNode,
     _isRowBefore,
-    _missing,
-    _parseBigIntOrNull,
 } from 'ag-grid-community';
 
 import type { AgNameValue } from './agNameValue';
@@ -259,8 +257,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         // Direct `valueSvc.getValue` + inline formula resolution — `rowNode.getDataValue`
                         // would pay an extra `colModel.getColOrColDefCol` lookup per cell on this hot
                         // path (called for every cell across the selected ranges on each selection change).
-                        let value: any = valueSvc.getValue(col, rowNode, 'data');
-                        if (col.colDef.allowFormula && formulaSvc?.isFormula(value)) {
+                        let value: any = valueSvc.getValueFromData(col, rowNode);
+                        if (col.allowFormula && formulaSvc?.isFormula(value)) {
                             value = formulaSvc.resolveValue(col, rowNode);
                         }
 

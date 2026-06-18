@@ -18,15 +18,10 @@
     textarea
 ) {
     border: var(--ag-input-border);
-    padding: 0;
-    margin: 0;
-    font-size: inherit;
-    font-family: inherit;
-    line-height: inherit;
     background-color: var(--ag-input-background-color);
     border-radius: var(--ag-input-border-radius);
     color: var(--ag-input-text-color);
-    padding-left: var(--ag-input-padding-start);
+    padding-inline: var(--ag-input-padding-start);
     min-height: var(--ag-input-height);
 
     &:where(:disabled) {
@@ -58,21 +53,6 @@
     &::placeholder {
         color: var(--ag-input-placeholder-text-color);
     }
-}
-
-/* stylelint-disable-next-line nesting-selector-no-missing-scoping-root -- RTI-3243 auto rtl doesn't
-   work for elements outside the grid, tactical fix until AG-16725 */
-&:where(.ag-ltr, .ag-rtl)
-    .ag-input-field-input:where(
-        input:not([type]),
-        input[type='text'],
-        input[type='number'],
-        input[type='tel'],
-        input[type='date'],
-        input[type='datetime-local'],
-        textarea
-    ) {
-    padding: 0 var(--ag-input-padding-start);
 }
 
 /* icon for search inputs */

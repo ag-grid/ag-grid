@@ -4,7 +4,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { CellSpanModule, ClientSideRowModelModule, RenderApiModule } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
 
 describe('Cell Selection RAF Deduplication', () => {
     let consoleWarnSpy: MockInstance;
@@ -48,6 +48,24 @@ describe('Cell Selection RAF Deduplication', () => {
             rowData,
             cellSelection: true,
         });
+        await new GridColumns(
+            api,
+            `repeated refreshCells does not accumulate RAF callbacks when cell selection is a setup`
+        ).checkColumns(`
+            CENTER
+            ├── name "Name" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(
+            api,
+            `repeated refreshCells does not accumulate RAF callbacks when cell selection is a setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 name:"a" value:1
+            ├── LEAF id:1 name:"b" value:2
+            ├── LEAF id:2 name:"c" value:3
+            └── LEAF id:3 name:"d" value:4
+        `);
 
         // Add a cell range so the range feature is active on cells
         api.addCellRange({
@@ -76,6 +94,16 @@ describe('Cell Selection RAF Deduplication', () => {
         // one per CellRangeFeature instance (8 cells in the range).
         // Without the fix, we'd see 20 * 8 = 160 RAF calls.
         expect(rafScheduled).toBeLessThanOrEqual(8);
+        await new GridRows(
+            api,
+            `repeated refreshCells does not accumulate RAF callbacks when cell selection is a final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 name:"a" value:1
+            ├── LEAF id:1 name:"b" value:2
+            ├── LEAF id:2 name:"c" value:3
+            └── LEAF id:3 name:"d" value:4
+        `);
     });
 
     test('scheduled range refresh resets after RAF fires allowing new scheduling', async () => {
@@ -84,6 +112,21 @@ describe('Cell Selection RAF Deduplication', () => {
             rowData,
             cellSelection: true,
         });
+        await new GridColumns(api, `scheduled range refresh resets after RAF fires allowing new scheduling setup`)
+            .checkColumns(`
+                CENTER
+                ├── name "Name" width:200
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `scheduled range refresh resets after RAF fires allowing new scheduling setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"a" value:1
+                ├── LEAF id:1 name:"b" value:2
+                ├── LEAF id:2 name:"c" value:3
+                └── LEAF id:3 name:"d" value:4
+            `
+        );
 
         api.addCellRange({
             columns: ['name', 'value'],
@@ -116,6 +159,14 @@ describe('Cell Selection RAF Deduplication', () => {
 
         expect(rafCallbacks.length).toBeGreaterThan(0);
         expect(rafCallbacks.length).toBe(firstBatchCount);
+        await new GridRows(api, `scheduled range refresh resets after RAF fires allowing new scheduling final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"a" value:1
+                ├── LEAF id:1 name:"b" value:2
+                ├── LEAF id:2 name:"c" value:3
+                └── LEAF id:3 name:"d" value:4
+            `);
     });
 });
 
@@ -152,6 +203,23 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             cellSelection: true,
             getRowId: (params) => params.data.name,
         });
+        await new GridColumns(
+            api,
+            `data updates with cell selection do not accumulate RAF callbacks without enableC setup`
+        ).checkColumns(`
+            CENTER
+            ├── name "Name" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(
+            api,
+            `data updates with cell selection do not accumulate RAF callbacks without enableC setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:a name:"a" value:1
+            ├── LEAF id:b name:"b" value:2
+            └── LEAF id:c name:"c" value:3
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await asyncSetTimeout(0);
@@ -190,6 +258,15 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
         // no columns are spanning. This causes ~10+ orphaned RAFs.
         // With the fix, RowSpanService doesn't register listeners, so no extra RAFs accumulate.
         expect(rafCount).toBeLessThanOrEqual(5);
+        await new GridRows(
+            api,
+            `data updates with cell selection do not accumulate RAF callbacks without enableC final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:a name:"a" value:9
+            ├── LEAF id:b name:"b" value:2
+            └── LEAF id:c name:"c" value:3
+        `);
     });
 
     test('data updates with enableCellSpan respond to span changes', async () => {
@@ -207,6 +284,17 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
             cellSelection: true,
             getRowId: (params) => params.data.name,
         });
+        await new GridColumns(api, `data updates with enableCellSpan respond to span changes setup`).checkColumns(`
+            CENTER
+            ├── name "Name" width:200
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `data updates with enableCellSpan respond to span changes setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:a name:"a" value:1
+            ├── LEAF id:b name:"b" value:2
+            └── LEAF id:c name:"c" value:3
+        `);
 
         await waitForEvent('firstDataRendered', api);
         await asyncSetTimeout(0);
@@ -216,6 +304,13 @@ describe('RowSpanService does not register listeners when enableCellSpan is not 
         api.applyTransaction({
             update: [{ name: 'a', value: 999 }],
         });
+        await new GridRows(api, `data updates with enableCellSpan respond to span changes after applyTransaction`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:a name:"a" value:999
+                ├── LEAF id:b name:"b" value:2
+                └── LEAF id:c name:"c" value:3
+            `);
 
         // Allow RowSpanService timeouts and events to process
         await asyncSetTimeout(50);

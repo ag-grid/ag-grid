@@ -362,7 +362,7 @@
         border: var(--ag-borders-secondary) var(--ag-secondary-border-color);
     }
 
-    &.ag-dnd-ghost {
+    .ag-dnd-ghost {
         font-weight: 500;
     }
 
@@ -374,10 +374,13 @@
         border: solid 1px var(--ag-input-border-color);
         background-color: var(--ag-background-color);
         padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
-        cursor: pointer;
 
-        &:hover {
-            background-color: var(--ag-row-hover-color);
+        &:not(:disabled) {
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--ag-row-hover-color);
+            }
         }
 
         &:active {
@@ -599,13 +602,6 @@
 
     .ag-filter-toolpanel-group-item {
         margin: 0;
-    }
-
-    .ag-layout-auto-height,
-    .ag-layout-print {
-        .ag-grid-scrolling-container {
-            min-height: 150px;
-        }
     }
 
     .ag-date-time-list-page-entry-is-current {

@@ -1,12 +1,12 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
-import { _addStylesToElement, _setDisplayed } from '../../../agStack/utils/dom';
+import { RefPlaceholder, _addStylesToElement, _setDisplayed } from 'ag-stack';
+
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import type { ElementParams } from '../../../utils/element';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { IHeaderGroupComp } from './agColumnGroupHeader';
-import { applyHeaderWrapperHidden, applyHeaderWrapperMaxHeight } from './headerGroupCellCtrl';
 import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
+import { applyHeaderWrapperHidden, applyHeaderWrapperMaxHeight } from './headerGroupCellCtrl';
 
 const HeaderGroupCellCompElement: ElementParams = {
     tag: 'div',

@@ -1,0 +1,493 @@
+{
+    "url": "https://bryntum.com/products/calendar/",
+    "slug": "calendar",
+    "title": "Bryntum JavaScript Calendar – The Complete Calendar Toolkit",
+    "meta": {
+        "description": "A contemporary, high-throughput Calendar UI component. Engineered ground-up in pure JavaScript and ready for the framework you’re already shipping (incl. React, Angular and Vue).",
+        "og_title": "Bryntum JavaScript Calendar – The Complete Calendar Toolkit",
+        "og_description": "A contemporary, high-throughput Calendar UI component. Engineered ground-up in pure JavaScript and ready for the framework you’re already shipping (incl. React, Angular and Vue)."
+    },
+    "sections": [
+        {
+            "id": "block_50bba12076720a48ac737bca5c196075",
+            "type": "heroTBM",
+            "modifiers": ["animated-hero"],
+            "heading": "A Contemporary JavaScript Calendar Toolkit",
+            "body_html": "<p>The Bryntum Calendar is a contemporary calendar component offering multiple views. Written in pure JavaScript, it slots cleanly into <a href=\"https://bryntum.com/products/react-calendar/\"><span class=\"s1\">React</span></a>, <a href=\"https://bryntum.com/products/angular-calendar\"><span class=\"s1\">Angular</span></a> and <a href=\"https://bryntum.com/products/vue-calendar/\"><span class=\"s1\">Vue</span></a> apps.</p>",
+            "body_text": "The Bryntum Calendar is a contemporary calendar component offering multiple views. Written in pure JavaScript, it slots cleanly into React , Angular and Vue apps.",
+            "ctas": [
+                {
+                    "text": "Browse Examples",
+                    "href": "/products/calendar/examples/",
+                    "title": "Browse Examples"
+                },
+                {
+                    "text": "Get the Trial",
+                    "href": "/download/?product=calendar",
+                    "title": "Get the Trial"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "svg-file",
+                    "src": "heroes/calendar.svg"
+                }
+            ]
+        },
+        {
+            "id": "block_agbryntum_partnership",
+            "type": "partnership",
+            "heading": "Your JavaScript stack just expanded",
+            "body_html": "<p>Since our 2025 <a href=\"https://blog.ag-grid.com/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, Bryntum Calendar sits alongside AG Grid for event-driven calendar UIs, crafted by a similar team and held to the same bar.</p>",
+            "body_text": "Since our 2025 partnership with Bryntum, Bryntum Calendar sits alongside AG Grid for event-driven calendar UIs, crafted by a similar team and held to the same bar.",
+            "logo_light_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-light.svg",
+            "logo_dark_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-dark.svg",
+            "logo_alt": "AG Grid x Bryntum partnership"
+        },
+        {
+            "id": "block_agbryntum_intro_video_calendar",
+            "type": "intro-video",
+            "video_src": "https://www.youtube.com/embed/FjaXo0VtLUM?feature=oembed",
+            "title": "Bryntum Calendar"
+        },
+        {
+            "id": "block_dec4a474ba08484c3bd147cc587e5ce5",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Why Calendar?",
+            "heading": "Why pick a JavaScript event Calendar?",
+            "body_html": "<p>Built on JavaScript, a foundational web technology, the calendar component drops into existing applications with a ready-to-wire-up set of interactive features.</p> <p>Picking the Bryntum JavaScript Calendar gives your users a thoughtfully designed and high-performing calendar that has been thoroughly tested and battle-proven in production apps.</p>",
+            "body_text": "Built on JavaScript, a foundational web technology, the calendar component drops into existing applications with a ready-to-wire-up set of interactive features. Picking the Bryntum JavaScript Calendar gives your users a thoughtfully designed and high-performing calendar that has been thoroughly tested and battle-proven in production apps.",
+            "links": [],
+            "ctas": [],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/calendar/calendar-visible-hours-svalbard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "700",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/calendar-visible-hours-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_20bf74698f4e9c691fa32da9577b475a",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Feature Set",
+            "heading": "Capable and Flexible",
+            "body_html": "<p class=\"p1\">Written in modern JavaScript (ES6+), the Bryntum Calendar runs lean and embeds without fuss. You get:</p> <ul> <li>Snappy performance, even on <a href=\"/products/calendar/examples/megadataset/\">huge datasets</a>.</li> <li>One-click exports to <a href=\"/products/calendar/examples/exporttoexcel/\">Excel</a>, <a href=\"/products/calendar/examples/exporttoics/\">ICS</a> and <a href=\"/products/calendar/examples/print/\">print</a> formats.</li> <li>Tunable date and time settings: <a href=\"/products/calendar/examples/shifted/\">begin days at 6 PM</a> or slice time into six-minute <a href=\"/products/calendar/examples/day-time-ticks/\">intervals</a>.</li> </ul>",
+            "body_text": "Written in modern JavaScript (ES6+), the Bryntum Calendar runs lean and embeds without fuss. You get: Snappy performance, even on huge datasets . One-click exports to Excel , ICS and print formats. Tunable date and time settings: begin days at 6 PM or slice time into six-minute intervals .",
+            "links": [
+                {
+                    "text": "huge datasets",
+                    "href": "/products/calendar/examples/megadataset/"
+                },
+                {
+                    "text": "Excel",
+                    "href": "/products/calendar/examples/exporttoexcel/"
+                },
+                {
+                    "text": "ICS",
+                    "href": "/products/calendar/examples/exporttoics/"
+                },
+                {
+                    "text": "print",
+                    "href": "/products/calendar/examples/print/"
+                },
+                {
+                    "text": "begin days at 6 PM",
+                    "href": "/products/calendar/examples/shifted/"
+                },
+                {
+                    "text": "intervals",
+                    "href": "/products/calendar/examples/day-time-ticks/"
+                }
+            ],
+            "ctas": [],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/calendar/calendar-basic-svalbard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "791",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/calendar-basic-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_0b3a2b388d8b3c162ad4de5e0fe504b2",
+            "type": "text-media",
+            "modifiers": ["video-file", "added-shadow"],
+            "eyebrow": "Multiple Views",
+            "heading": "Several Layouts",
+            "body_html": "<p class=\"p1\">Flip between layouts to see tasks from a few angles. The Bryntum Calendar offers several views, including:</p> <ul class=\"ul1\"> <li class=\"li1\"><a href=\"/products/calendar/examples/basic/\">Day, Week, Month, Year and Agenda layouts</a></li> <li class=\"li1\"><a href=\"/products/calendar/examples/day-agenda/\">Day Agenda,</a> <a href=\"/products/calendar/examples/listview/\">Grid</a> layouts</li> <li class=\"li1\"><a href=\"/products/calendar/examples/dual-dayview/\">Dual-Day</a> layout</li> </ul>",
+            "body_text": "Flip between layouts to see tasks from a few angles. The Bryntum Calendar offers several views, including: Day, Week, Month, Year and Agenda layouts Day Agenda, Grid layouts Dual-Day layout",
+            "links": [
+                {
+                    "text": "Day, Week, Month, Year and Agenda layouts",
+                    "href": "/products/calendar/examples/basic/"
+                },
+                {
+                    "text": "Day Agenda,",
+                    "href": "/products/calendar/examples/day-agenda/"
+                },
+                {
+                    "text": "Grid",
+                    "href": "/products/calendar/examples/listview/"
+                },
+                {
+                    "text": "Dual-Day",
+                    "href": "/products/calendar/examples/dual-dayview/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/calendar/examples/day-agenda/",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/calendar/calendar-views-svalbard.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/calendar-views-svalbard.mp4"
+                }
+            ]
+        },
+        {
+            "id": "block_43c64c3290d21de094d2e1bf6c8bb680",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Resource Views",
+            "heading": "Resource-First Layout",
+            "body_html": "<p class=\"p1\">Keep an eye on every teammate’s events at a glance:</p> <ul> <li>Spot whose events you’re looking at right away, <span style=\"font-weight: 400;\">thanks to</span> friendly avatars in the header.</li> <li>Drag and drop events to reassign them in a beat.</li> <li>Enjoy a tidy, welcoming layout.</li> </ul>",
+            "body_text": "Keep an eye on every teammate’s events at a glance: Spot whose events you’re looking at right away, thanks to friendly avatars in the header. Drag and drop events to reassign them in a beat. Enjoy a tidy, welcoming layout.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/calendar/examples/date-resource/",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/calendar/calendar-date-resource-svalbard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "805",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/calendar-date-resource-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_7f8a8ef5340328b7601457cdd648ee6d",
+            "type": "text-mini-demo",
+            "eyebrow": "Try It Yourself",
+            "heading": "Try It Live",
+            "body_html": "<p class=\"pre-title\">Have a play yourself</p>  <p>The calendar handles recurring tasks out of the box. Repeat tasks on any cadence you need – daily, weekly, monthly or yearly.</p>",
+            "body_text": "Have a play yourself  The calendar handles recurring tasks out of the box. Repeat tasks on any cadence you need – daily, weekly, monthly or yearly.",
+            "ctas": [],
+            "demo_kind": "calendar",
+            "demo_position": "right"
+        },
+        {
+            "id": "block_8f1c153294c4e8675efe148425adf91f",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Customisation",
+            "heading": "Fully Tailorable",
+            "body_html": "<p>The Bryntum Calendar is themed with CSS variables, so you can tweak its appearance to taste.</p> <ul class=\"ul1\"> <li>Pick one of our themes or <a href=\"/products/calendar/examples/custom-theme/\">roll your own</a>.</li> <li class=\"li1\">Adjust the rendering of <a href=\"/products/calendar/examples/custom-rendering/\">events, headings and more</a>.</li> <li class=\"li1\">Reflow the UI for <a href=\"/products/calendar/examples/month-agenda/\">mobile devices</a> with layouts that respond to any <a href=\"/products/calendar/examples/responsive/\">screen size</a>.</li> <li class=\"li1\">Drop links and buttons into <a href=\"/products/calendar/examples/tooltips/\">tailored tooltips</a>.</li> <li class=\"li1\">Customise the <a href=\"/products/calendar/examples/eventedit/\">event editor</a>, <a href=\"/products/calendar/examples/custom-menus/\">context menu</a> and <a href=\"/products/calendar/examples/sidebar-customization/\">sidebar</a>.</li> </ul>",
+            "body_text": "The Bryntum Calendar is themed with CSS variables, so you can tweak its appearance to taste. Pick one of our themes or roll your own . Adjust the rendering of events, headings and more . Reflow the UI for mobile devices with layouts that respond to any screen size . Drop links and buttons into tailored tooltips . Customise the event editor , context menu and sidebar .",
+            "links": [
+                {
+                    "text": "roll your own",
+                    "href": "/products/calendar/examples/custom-theme/"
+                },
+                {
+                    "text": "events, headings and more",
+                    "href": "/products/calendar/examples/custom-rendering/"
+                },
+                {
+                    "text": "mobile devices",
+                    "href": "/products/calendar/examples/month-agenda/"
+                },
+                {
+                    "text": "screen size",
+                    "href": "/products/calendar/examples/responsive/"
+                },
+                {
+                    "text": "tailored tooltips",
+                    "href": "/products/calendar/examples/tooltips/"
+                },
+                {
+                    "text": "event editor",
+                    "href": "/products/calendar/examples/eventedit/"
+                },
+                {
+                    "text": "context menu",
+                    "href": "/products/calendar/examples/custom-menus/"
+                },
+                {
+                    "text": "sidebar",
+                    "href": "/products/calendar/examples/sidebar-customization/"
+                }
+            ],
+            "ctas": [],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/calendar/calendar-non-consecutive-svalbard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "781",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/calendar-non-consecutive-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_aa0b0e20cb1c4626408c493f793c1527",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Beyond a Date Picker",
+            "heading": "Beyond a Date Picker",
+            "body_html": "<p class=\"p1\">The Bryntum Calendar packs distinctive features that boost your team’s productivity:</p> <ul class=\"ul1\"> <li class=\"li1\"><a href=\"/products/calendar/examples/travel-time/\">Show travel time</a> for grounded, real-world planning.</li> <li class=\"li1\">Monitor workload via the <a href=\"/products/calendar/examples/resource-time-capacity/\">capacity tick renderer</a>.</li> <li>Jump between <a href=\"/products/calendar/examples/resource-modes/\">linked resource calendars</a>.</li> </ul>",
+            "body_text": "The Bryntum Calendar packs distinctive features that boost your team’s productivity: Show travel time for grounded, real-world planning. Monitor workload via the capacity tick renderer . Jump between linked resource calendars .",
+            "links": [
+                {
+                    "text": "Show travel time",
+                    "href": "/products/calendar/examples/travel-time/"
+                },
+                {
+                    "text": "capacity tick renderer",
+                    "href": "/products/calendar/examples/resource-time-capacity/"
+                },
+                {
+                    "text": "linked resource calendars",
+                    "href": "/products/calendar/examples/resource-modes/"
+                }
+            ],
+            "ctas": [],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/calendar/calendar-travel-time-svalbard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "761",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/calendar-travel-time-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_a19229e400d243cafae6308f92930552",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Component Library",
+            "heading": "50+ Additional Widgets",
+            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/calendar/examples/kitchen-sink/\">broad set of UI components</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in ready-made <strong>menus, toggles, sliders, charts and more</strong> alongside the Bryntum Calendar.</li> <li class=\"li1\">Cut clicks and searching to meet user needs faster.</li> <li class=\"li1\">Wire up and style widgets straightforwardly via our clear docs.</li> </ul>",
+            "body_text": "Pick from a broad set of UI components that quickly give your app a polished, professional feel: Drop in ready-made menus, toggles, sliders, charts and more alongside the Bryntum Calendar. Cut clicks and searching to meet user needs faster. Wire up and style widgets straightforwardly via our clear docs.",
+            "links": [
+                {
+                    "text": "broad set of UI components",
+                    "href": "/products/calendar/examples/kitchen-sink/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Browse widgets",
+                    "href": "/products/calendar/examples/kitchen-sink/",
+                    "title": "Browse widgets"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/calendar/more-widgets-calendar-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "732",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/more-widgets-calendar-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_617eaaab91d4a755174cd10eb7eb8c4c",
+            "type": "text-media",
+            "modifiers": ["video-file", "added-shadow"],
+            "eyebrow": "Quick Start",
+            "heading": "Install via npm",
+            "body_html": "<p>Pull Bryntum Calendar straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial, configure it, and you’re ready to build.</p>",
+            "body_text": "Pull Bryntum Calendar straight from npm. No sign-in or auth needed . Install the trial, configure it, and you’re ready to build.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Read docs",
+                    "href": "/products/calendar/docs/guide/Calendar/quick-start/javascript-npm",
+                    "title": "Read docs"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/calendar/npm-calendar-edit-2.webm",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/npm-calendar-edit-2.webm"
+                }
+            ]
+        },
+        {
+            "id": "block_c5f73c9b161db3a6c4f8fcdda63ddf04",
+            "type": "columns-lib",
+            "modifiers": [],
+            "eyebrow": "Examples Gallery",
+            "heading": "More Demos to Try",
+            "items": [
+                {
+                    "heading": "calendar-taskboard-svalbard",
+                    "href": "/products/calendar/examples/calendar-taskboard/",
+                    "body_text": "Calendar + Task Board",
+                    "description": "Drag tasks straight from a Kanban board onto the calendar.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/calendar/calendar-taskboard-svalbard-768x465.png",
+                        "alt": "calendar-taskboard-svalbard",
+                        "width": "768",
+                        "height": "465",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/calendar-taskboard-svalbard-768x465.png"
+                    }
+                },
+                {
+                    "heading": "calendar-tooltips-svalbard-dark",
+                    "href": "/products/calendar/examples/tooltips/?theme=svalbard-dark",
+                    "body_text": "Tailored event tooltip",
+                    "description": "Render rich, fully styled previews on hover or focus.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/calendar/calendar-tooltips-svalbard-dark-768x463.png",
+                        "alt": "calendar-tooltips-svalbard-dark",
+                        "width": "768",
+                        "height": "463",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/calendar-tooltips-svalbard-dark-768x463.png"
+                    }
+                },
+                {
+                    "heading": "calendar-chart-svalbard",
+                    "href": "/products/calendar/examples/calendar-chart/",
+                    "body_text": "Calendar + chart",
+                    "description": "Visualise event totals and trends alongside the calendar grid.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/calendar/calendar-chart-svalbard-768x463.png",
+                        "alt": "calendar-chart-svalbard",
+                        "width": "768",
+                        "height": "463",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/calendar-chart-svalbard-768x463.png"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "block_2c8ad7424c2441660046aa4a610b3082",
+            "type": "brands",
+            "modifiers": [],
+            "eyebrow": "Trusted Worldwide",
+            "heading": "Used by the world’s most respected companies",
+            "items": [
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-1.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-2.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-3.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-4.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-5.svg"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "block_c7a78f49c8affeafe308dd371d3fff82",
+            "type": "text-button",
+            "modifiers": ["variant-2"],
+            "eyebrow": "Get Started",
+            "heading": "Ready to dive in?",
+            "body_html": "",
+            "body_text": "",
+            "ctas": [
+                {
+                    "text": "Try for Free",
+                    "href": "/download/?product=calendar",
+                    "title": "Try for Free"
+                },
+                {
+                    "text": "Purchase Now",
+                    "href": "/store/calendar/",
+                    "title": "Purchase Now"
+                }
+            ]
+        },
+        {
+            "id": "block_9dfc2908f493f3420ded1fb5e614252f",
+            "type": "columnsWithMedia",
+            "modifiers": [],
+            "heading": "Reference",
+            "items": [
+                {
+                    "heading": "Reference",
+                    "href": "/products/calendar/docs",
+                    "body_text": "",
+                    "media": null
+                },
+                {
+                    "heading": "Recent Releases",
+                    "href": "changelog/#release-7.3.0",
+                    "body_text": "Complete changelog",
+                    "media": null
+                },
+                {
+                    "heading": "Documentation Site",
+                    "href": "/products/calendar/docs",
+                    "body_text": "",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/calendar/docs-bryntum-calendar-scaled.png",
+                        "alt": "docs-bryntum-calendar",
+                        "width": "2560",
+                        "height": "1609",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/docs-bryntum-calendar-scaled.png"
+                    }
+                }
+            ]
+        }
+    ]
+}

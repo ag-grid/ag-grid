@@ -1,4 +1,4 @@
-import type { AgColumn, ColumnEventType, ColumnState, IAggFunc, SortDef } from 'ag-grid-community';
+import type { AgColumn, ColAggFunc, ColumnEventType, ColumnState, SortDef } from 'ag-grid-community';
 
 export type ColumnStateUpdateParams = { buttons?: Array<'apply' | 'cancel'> };
 
@@ -16,8 +16,8 @@ export interface ColumnStateConcreteUpdateStrategy {
     hasDeferredColumnOrder(): boolean;
     setValueColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getValueColumns(): AgColumn[];
-    setColumnAggFunc(column: AgColumn, aggFunc: string | IAggFunc | null | undefined, eventType: ColumnEventType): void;
-    getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined;
+    setColumnAggFunc(column: AgColumn, aggFunc: ColAggFunc, eventType: ColumnEventType): void;
+    getColumnAggFunc(column: AgColumn): ColAggFunc;
     setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void;
     getPivotColumns(): AgColumn[];
     setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void;
@@ -32,7 +32,7 @@ type ColIdsDraft = { colIds: string[] } & Seq;
 type ColumnStateDraft = { patches: Map<string, ColumnState> } & Seq;
 type PivotModeDraft = { pivotMode: boolean } & Seq;
 type SortDraft = { sortDefsByColId: Map<string, SortDef | null>; baselineCleared: boolean } & Seq;
-type AggFuncsDraft = { values: Map<string, string | IAggFunc | null | undefined> } & Seq;
+type AggFuncsDraft = { values: Map<string, ColAggFunc> } & Seq;
 
 export type DeferredState = {
     columnState?: ColumnStateDraft;

@@ -235,7 +235,8 @@ function findEntryLineRanges(lines) {
             }
             const path = (pathMatch[2] ?? pathMatch[3] ?? pathMatch[4]).trim();
             currentEntry = { vulnId: currentVulnId, vulnIdLine: currentVulnIdLine, path, startLine: i, endLine: -1 };
-            pathPropertyIndent = pathMatch[1].length + 6; // indent of properties like reason/expires
+            // Properties (reason/expires/created) are indented deeper than the "- " list marker.
+            pathPropertyIndent = pathMatch[1].length + 1;
             continue;
         }
 

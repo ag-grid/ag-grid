@@ -1,0 +1,19 @@
+---
+import type { BryntumLiveDemoSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumLiveDemoSection;
+}
+
+const { section } = Astro.props;
+---
+
+<section class={styles.section}>
+    <div class:list={[styles.sectionInner, styles.liveDemo]}>
+        {section.eyebrow && <span class={styles.sectionEyebrow}>{section.eyebrow}</span>}
+        {section.heading && <h2>{section.heading}</h2>}
+        {section.body_text && <p class={styles.liveDemoSubheading}>{section.body_text}</p>}
+        <div class={styles.liveDemoPlaceholder}>Live demo coming soon</div>
+    </div>
+</section>

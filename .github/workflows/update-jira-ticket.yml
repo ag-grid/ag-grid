@@ -82,11 +82,12 @@ jobs:
                 const owner = context.repo.owner;
                 const repo = context.repo.repo;
                 const getReviewers = async (pr) => {
+                    const author = pr.user?.login || '';
                     const reviewers = [...new Set((await github.rest.pulls.listReviews({
                         owner,
                         repo,
                         pull_number
-                    })).data?.map(r => r.user.login) || [])];
+                    })).data?.map(r => r.user.login) || [])].filter((r) => r !== author);
                     const mergedBy = pr.merged_by?.login || '';
                     return {reviewers, mergedBy}
                 };
@@ -131,7 +132,12 @@ jobs:
                         console.warn(`JIRA ticket ${issue_key} not found.`);
                         return;
                     }
-                    const isTransitioning = moveOrMention === 'move' && !readOnlyTransitions.has(issue.fields.status.name.toUpperCase());
+                    const components = issue.fields.components || [];
+                    const isChartsOnly = components.length > 0 && components.every(c => c.name === 'Charts');
+                    if (isChartsOnly) {
+                        console.log(`::warning:: JIRA ticket ${issue_key} only has the 'Charts' component, skipping transition.`);
+                    }
+                    const isTransitioning = moveOrMention === 'move' && !isChartsOnly && !readOnlyTransitions.has(issue.fields.status.name.toUpperCase());
                     
                     // blocks section
                     const content = [];

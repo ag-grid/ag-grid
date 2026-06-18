@@ -609,7 +609,7 @@ describe('ag-grid tree data reset', () => {
 
         await new GridRows(api, 'update 1').check(`
             ROOT id:ROOT_NODE_ID
-            ├── N LEAF selected id:7 ag-Grid-AutoColumn:"N" label:"7-v2" 
+            ├── N LEAF selected id:7 ag-Grid-AutoColumn:"N" label:"7-v2"
             ├─┬ R filler selected collapsed id:row-group-0-R ag-Grid-AutoColumn:"R"
             │ └── S LEAF selected hidden id:5 ag-Grid-AutoColumn:"S" label:"5-v2"
             ├─┬ X filler id:row-group-0-X ag-Grid-AutoColumn:"X"

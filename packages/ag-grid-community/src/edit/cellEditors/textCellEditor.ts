@@ -1,8 +1,7 @@
-import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
-import { _isBrowserSafari } from '../../agStack/utils/browser';
-import { _exists } from '../../agStack/utils/generic';
-import { _isStringLargerThan } from '../../agStack/utils/string';
-import { AgInputTextFieldSelector } from '../../agStack/widgets/agInputTextField';
+import type { LocaleTextFunc } from 'ag-stack';
+import { _exists, _isBrowserSafari, _isStringLargerThan } from 'ag-stack';
+
+import { AgInputTextFieldSelector } from '../../agWidgets/agInputTextField';
 import type { ElementParams } from '../../utils/element';
 import type { GridInputTextField } from '../../widgets/gridWidgetTypes';
 import type { CellEditorInput } from './iCellEditorInput';

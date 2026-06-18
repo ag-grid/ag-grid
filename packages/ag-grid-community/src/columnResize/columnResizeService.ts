@@ -7,6 +7,7 @@ import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import { _clamp } from '../utils/number';
 import { _error } from '../validation/logging';
 import { GroupResizeFeature } from './groupResizeFeature';
 import { ResizeFeature } from './resizeFeature';
@@ -34,7 +35,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         const { colModel, gos, visibleCols } = this.beans;
 
         for (const columnWidth of columnWidths) {
-            const col = colModel.getColDefColOrCol(columnWidth.key);
+            const col = colModel.getCol(columnWidth.key);
 
             if (!col) {
                 continue;
@@ -112,8 +113,8 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
             // keep track of pixels used, and last column gets the remaining,
             // to cater for rounding errors, and min width adjustments
-            const newWidths: { [colId: string]: number } = {};
-            const finishedCols: { [colId: string]: boolean } = {};
+            const newWidths: { [colId: string]: number } = Object.create(null);
+            const finishedCols: { [colId: string]: boolean } = Object.create(null);
 
             for (const col of columns) {
                 allResizedCols.push(col);
@@ -214,8 +215,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                     resizingCols: allResizedCols,
                     skipSetLeft: true,
                 }) ?? [];
-            visibleCols.setLeftValues(source);
-            visibleCols.updateBodyWidths();
+            visibleCols.updateBodyWidths(visibleCols.setLeftValues(source));
             colViewport.checkViewportColumns();
         }
 
@@ -240,7 +240,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         const minWidth = column.getMinWidth();
         const maxWidth = column.getMaxWidth();
 
-        const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
+        const newWidth = _clamp(actualWidth + delta, minWidth, maxWidth);
 
         this.setColumnWidths([{ key: column, newWidth }], shiftKey, true, 'uiColumnResized');
     }

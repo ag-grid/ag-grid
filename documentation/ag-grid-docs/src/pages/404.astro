@@ -24,12 +24,4 @@ const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEn
     </div>
 </Layout>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        if (!window.plausible) {
-            return;
-        }
-
-        window.plausible('404', { props: { path: document.location.pathname } });
-    });
-</script>
+<script is:inline src={urlWithBaseUrl('/scripts/plausible-404.js')}></script>

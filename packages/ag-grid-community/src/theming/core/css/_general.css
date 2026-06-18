@@ -125,8 +125,10 @@
 .ag-full-width-anchor {
     position: sticky;
     left: 0;
-    width: var(--ag-fw-anchor-width, 100%);
+    width: var(--ag-internal-fw-anchor-width, 100%);
     height: 100%;
+    display: flex;
+    align-items: center;
 }
 
 /**
@@ -207,10 +209,6 @@
         opacity: 1;
         background-color: var(--ag-header-background-color);
     }
-}
-
-.ag-force-vertical-scroll {
-    overflow-y: scroll !important;
 }
 
 /**
@@ -301,6 +299,13 @@
     z-index: 0;
 }
 
+:where(.ag-row.ag-embedded-full-width-row) > .ag-grid-scrolling-cells {
+    flex: 1 0 auto;
+
+    /* rtl:ignore */
+    margin-right: var(--ag-internal-pinned-right-sticky-offset, 0);
+}
+
 .ag-grid-pinned-left-cells,
 .ag-grid-pinned-right-cells {
     position: sticky;
@@ -314,13 +319,13 @@
 .ag-grid-pinned-left-cells {
     /* offset pinned-left cells when the vertical scrollbar is rendered on the left (RTL). */
     /* rtl:ignore */
-    left: var(--ag-pinned-left-sticky-offset, 0);
+    left: var(--ag-internal-pinned-left-sticky-offset, 0);
 }
 
 .ag-grid-pinned-right-cells {
     /* offset pinned-right cells when the vertical scrollbar is rendered on the right (LTR). */
     /* rtl:ignore */
-    right: var(--ag-pinned-right-sticky-offset, 0);
+    right: var(--ag-internal-pinned-right-sticky-offset, 0);
 }
 
 /* place pinned-right after the ::after spacer so the spacer fills the gap between
@@ -345,9 +350,9 @@
         }
     }
 
-    :where(.ag-body-horizontal-scroll .ag-grid-scrolling-cells) {
+    :where(.ag-row .ag-grid-scrolling-cells) {
         /* when scrollable, offset for the vertical scrollbar on the left in rtl. */
-        margin-left: var(--ag-pinned-left-sticky-offset, 0);
+        margin-left: var(--ag-internal-pinned-left-sticky-offset, 0);
     }
 }
 
@@ -560,4 +565,10 @@
         display: block;
         transform: rotate(180deg);
     }
+}
+
+/* A "Show Values As" mode that is not meaningful in the current view: greyed like a disabled item, but
+ * still selectable (the menu option carries no disabled state). */
+.ag-show-value-as-inapplicable {
+    opacity: 0.5;
 }

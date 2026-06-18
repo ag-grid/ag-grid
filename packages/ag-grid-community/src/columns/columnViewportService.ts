@@ -1,4 +1,5 @@
-import { _exists } from '../agStack/utils/generic';
+import { _exists } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -133,6 +134,9 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         this.rowsOfHeadersToRenderLeft = {};
         this.rowsOfHeadersToRenderRight = {};
         this.rowsOfHeadersToRenderCenter = {};
+        this.columnsToRenderLeft = [];
+        this.columnsToRenderRight = [];
+        this.columnsToRenderCenter = [];
         this.colsWithinViewportHash = '';
     }
 

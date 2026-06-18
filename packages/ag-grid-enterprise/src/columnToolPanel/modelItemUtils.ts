@@ -113,8 +113,7 @@ function setAllPivotActive(
         }
 
         if (col.isAllowValue()) {
-            const aggFunc =
-                typeof col.getAggFunc() === 'string' ? col.getAggFunc() : beans.aggFuncSvc?.getDefaultAggFunc(col);
+            const aggFunc = typeof col.aggFunc === 'string' ? col.aggFunc : beans.aggFuncSvc?.getDefaultAggFunc(col);
             colStateItems.push({
                 colId: col.getId(),
                 aggFunc: aggFunc,
@@ -199,7 +198,7 @@ function createPivotState(column: AgColumn): {
     return {
         pivot: column.isPivotActive(),
         rowGroup: column.isRowGroupActive(),
-        aggFunc: column.isValueActive() ? column.getAggFunc() : undefined,
+        aggFunc: column.isValueActive() ? column.aggFunc : undefined,
     };
 }
 

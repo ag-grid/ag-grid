@@ -224,6 +224,33 @@ describe('non-distributable aggFunc with invalid top-level strategy', () => {
             aggFunc: 'max',
             groupRowValueSetter: { distribution: 'uniform' },
         });
+        await new GridColumns(api, `max with top-level uniform: cell not editable and distribution suppressed setup`)
+            .checkColumns(`
+                CENTER
+                ├── group "Group" width:200
+                └── amount "Amount" width:200 aggFunc:max editable
+            `);
+        await new GridRows(api, `max with top-level uniform: cell not editable and distribution suppressed setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-region-Europe amount:30
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:30
+                │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:30
+                │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:30
+                │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
+                │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
+                │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:30
+                │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
+                │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
+                └─┬ filler id:row-group-region-Americas amount:70
+                · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:70
+                · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
+                · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
+                · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:35
+                · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
+                · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
+            `);
 
         const usaNode = api.getRowNode('row-group-region-Americas-country-USA')!;
         // Use setDataValue directly — the cell isn't editable in UI because isGroupCellEditable returns false
@@ -233,6 +260,27 @@ describe('non-distributable aggFunc with invalid top-level strategy', () => {
         // max is non-distributable — top-level 'uniform' doesn't enable it
         expect(api.getRowNode('us-nyc')?.data?.amount).toBe(70);
         expect(api.getRowNode('us-la')?.data?.amount).toBe(30);
+        await new GridRows(api, `max with top-level uniform: cell not editable and distribution suppressed final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-region-Europe amount:30
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:30
+                │ │ ├── LEAF id:fr-paris region:"Europe" country:"France" amount:30
+                │ │ └── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
+                │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:30
+                │ │ ├── LEAF id:de-berlin region:"Europe" country:"Germany" amount:30
+                │ │ └── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
+                │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-Italy amount:30
+                │ · ├── LEAF id:it-rome region:"Europe" country:"Italy" amount:30
+                │ · └── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
+                └─┬ filler id:row-group-region-Americas amount:70
+                · ├─┬ LEAF_GROUP id:row-group-region-Americas-country-USA amount:70
+                · │ ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:70
+                · │ └── LEAF id:us-la region:"Americas" country:"USA" amount:30
+                · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:35
+                · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
+                · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
+            `);
     });
 });
 
@@ -402,6 +450,24 @@ describe('avg percentage distribution on non-leaf groups', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(
+            api,
+            `editing avg on non-leaf group with percentage distribution produces correct avg setup`
+        ).checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── total "Total" width:200 aggFunc:avg editable
+        `);
+        await new GridRows(api, `editing avg on non-leaf group with percentage distribution produces correct avg setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-country-Norway total:{"count":3,"value":20.333333333333332}
+                · ├─┬ LEAF_GROUP id:row-group-country-Norway-year-2010 total:{"count":2,"value":21}
+                · │ ├── LEAF id:n1 country:"Norway" year:"2010" total:23
+                · │ └── LEAF id:n2 country:"Norway" year:"2010" total:19
+                · └─┬ LEAF_GROUP id:row-group-country-Norway-year-2002 total:{"count":1,"value":19}
+                · · └── LEAF id:n3 country:"Norway" year:"2002" total:19
+            `);
 
         const norwayNode = api.getRowNode('row-group-country-Norway')!;
         expect(norwayNode.aggData?.total).toMatchObject({ value: expect.closeTo(20.333, 2), count: 3 });
@@ -419,6 +485,18 @@ describe('avg percentage distribution on non-leaf groups', () => {
         expect(api.getRowNode('n2')?.data?.total).toBe(19);
         expect(api.getRowNode('n3')?.data?.total).toBe(19);
         expect(norwayNode.aggData?.total).toMatchObject({ value: 20, count: 3 });
+        await new GridRows(
+            api,
+            `editing avg on non-leaf group with percentage distribution produces correct avg final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-country-Norway total:{"count":3,"value":20}
+            · ├─┬ LEAF_GROUP id:row-group-country-Norway-year-2010 total:{"count":2,"value":20.5}
+            · │ ├── LEAF id:n1 country:"Norway" year:"2010" total:22
+            · │ └── LEAF id:n2 country:"Norway" year:"2010" total:19
+            · └─┬ LEAF_GROUP id:row-group-country-Norway-year-2002 total:{"count":1,"value":19}
+            · · └── LEAF id:n3 country:"Norway" year:"2002" total:19
+        `);
     });
 
     test('editing avg on 3-level group hierarchy distributes correctly through all levels', async () => {
@@ -452,6 +530,29 @@ describe('avg percentage distribution on non-leaf groups', () => {
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(
+            api,
+            `editing avg on 3-level group hierarchy distributes correctly through all levels setup`
+        ).checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:avg editable
+        `);
+        await new GridRows(api, `editing avg on 3-level group hierarchy distributes correctly through all levels setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-Europe amount:{"count":5,"value":30}
+                · ├─┬ filler id:row-group-region-Europe-country-France amount:{"count":3,"value":20}
+                · │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France-year-2010 amount:{"count":2,"value":15}
+                · │ │ ├── LEAF id:f1 region:"Europe" country:"France" year:"2010" amount:10
+                · │ │ └── LEAF id:f2 region:"Europe" country:"France" year:"2010" amount:20
+                · │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-France-year-2011 amount:{"count":1,"value":30}
+                · │ · └── LEAF id:f3 region:"Europe" country:"France" year:"2011" amount:30
+                · └─┬ filler id:row-group-region-Europe-country-Germany amount:{"count":2,"value":45}
+                · · └─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany-year-2010 amount:{"count":2,"value":45}
+                · · · ├── LEAF id:g1 region:"Europe" country:"Germany" year:"2010" amount:40
+                · · · └── LEAF id:g2 region:"Europe" country:"Germany" year:"2010" amount:50
+            `);
 
         const europeNode = api.getRowNode('row-group-region-Europe')!;
         expect(europeNode.aggData?.amount).toMatchObject({ value: 30, count: 5 });
@@ -472,5 +573,22 @@ describe('avg percentage distribution on non-leaf groups', () => {
         expect(api.getRowNode('g1')?.data?.amount).toBe(27);
         expect(api.getRowNode('g2')?.data?.amount).toBe(33);
         expect(europeNode.aggData?.amount).toMatchObject({ value: 20, count: 5 });
+        await new GridRows(
+            api,
+            `editing avg on 3-level group hierarchy distributes correctly through all levels final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-region-Europe amount:{"count":5,"value":20}
+            · ├─┬ filler id:row-group-region-Europe-country-France amount:{"count":3,"value":13.333333333333334}
+            · │ ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France-year-2010 amount:{"count":2,"value":10}
+            · │ │ ├── LEAF id:f1 region:"Europe" country:"France" year:"2010" amount:7
+            · │ │ └── LEAF id:f2 region:"Europe" country:"France" year:"2010" amount:13
+            · │ └─┬ LEAF_GROUP id:row-group-region-Europe-country-France-year-2011 amount:{"count":1,"value":20}
+            · │ · └── LEAF id:f3 region:"Europe" country:"France" year:"2011" amount:20
+            · └─┬ filler id:row-group-region-Europe-country-Germany amount:{"count":2,"value":30}
+            · · └─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany-year-2010 amount:{"count":2,"value":30}
+            · · · ├── LEAF id:g1 region:"Europe" country:"Germany" year:"2010" amount:27
+            · · · └── LEAF id:g2 region:"Europe" country:"Germany" year:"2010" amount:33
+        `);
     });
 });

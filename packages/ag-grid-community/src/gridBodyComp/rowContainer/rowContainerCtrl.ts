@@ -1,4 +1,5 @@
-import { _getInnerWidth, _isInDOM, _observeResize } from '../../agStack/utils/dom';
+import { _getInnerWidth, _isInDOM, _observeResize } from 'ag-stack';
+
 import { BeanStub } from '../../context/beanStub';
 import type { StickyTopOffsetChangedEvent } from '../../events';
 import { _isDomLayout } from '../../gridOptionsUtils';

@@ -1,0 +1,63 @@
+<svg class="gantt" viewbox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<style>
+      [data-id="gantt-text"] {
+      font-family: Helvetica, sans-serif;
+      font-weight: 600;
+      text-anchor: middle;
+      font-size: 13px;
+      fill: #fff;
+      }
+      [data-id="gantt-text-small"] {
+      font-family: Helvetica, sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      fill: #fff;
+      }
+    </style>
+<clippath id="ports-clip">
+<path d="M183.29,108.18H294.16a6,6,0,0,1,6,6v30a6,6,0,0,1-6,6H183.29a6,6,0,0,1-6-6v-30A6,6,0,0,1,183.29,108.18Z"></path>
+</clippath>
+<clippath id="ports-firewall">
+<path d="M183.29,170.18H334.11a6,6,0,0,1,6,6v30a6,6,0,0,1-6,6H183.29a6,6,0,0,1-6-6v-30A6,6,0,0,1,183.29,170.18Z"></path>
+</clippath>
+<clippath id="group1-clip">
+<path d="M16.49,14.18a1,1,0,0,1,1-1H339.1a1,1,0,0,1,1,1v16l-8-7H24.48l-8,7Z"></path>
+</clippath>
+</defs>
+<path class="gantt-stroke-ports-confirm" d="M367.6,253.45h-29c-12.24,0-12.14-13.59-12-21.91V145.11c.17-9.7-5.95-15.86-13.47-16.37h-13" fill="none" stroke="#9e9e9e"></path>
+<g class="gantt-apache">
+<path class="gantt-apache-block" d="M22.49,46.18H139.34a6,6,0,0,1,6,6v30a6,6,0,0,1-6,6H22.49a6,6,0,0,1-6-6v-30A6,6,0,0,1,22.49,46.18Z" fill="#15c8ff"></path>
+<text class="gantt-apache-text" data-id="gantt-text" x="80.914" y="72.0">Install Apache</text>
+</g>
+<g class="gantt-ports">
+<path class="gantt-ports-block" d="M183.29,108.18H294.16a6,6,0,0,1,6,6v30a6,6,0,0,1-6,6H183.29a6,6,0,0,1-6-6v-30A6,6,0,0,1,183.29,108.18Z" fill="#0076f8"></path>
+<g clip-path="url(#ports-clip)">
+<rect class="gantt-ports-progress" fill="#6794eb" height="42" width="37" x="177.28" y="108.17"></rect>
+</g>
+<text class="gantt-ports-text" data-id="gantt-text" x="238" y="133.2">Configure Ports</text>
+</g>
+<path class="gantt-stroke-ports-confirm-light" d="M367.6,253.45h-29c-12.24,0-12.14-13.59-12-21.91V145.11c.17-9.7-5.95-15.86-13.47-16.37h-13" fill="none" stroke="#c5c5c5"></path>
+<g class="gantt-firewall">
+<path class="gantt-firewall-block" d="M183.29,170.18H334.11a6,6,0,0,1,6,6v30a6,6,0,0,1-6,6H183.29a6,6,0,0,1-6-6v-30A6,6,0,0,1,183.29,170.18Z" fill="#7c55e8"></path>
+<g clip-path="url(#ports-firewall)">
+<rect class="gantt-firewall-progress" fill="#9881e6" height="42" width="66.93" x="177.28" y="170.17"></rect>
+</g>
+<text class="gantt-firewall-text" data-id="gantt-text" x="258" y="195.2">Configure Firewall</text>
+</g>
+<g class="gantt-confirm">
+<text class="gantt-confirm-text" data-id="gantt-text-small" x="408.7" y="257.1">Configure Ports Availability</text>
+<path class="gantt-confirm-diamond" d="M370.19,251l9.89-9.9a3,3,0,0,1,4.23,0l9.89,9.9a3,3,0,0,1,0,4.24l-9.89,9.9a3,3,0,0,1-4.23,0l-9.89-9.9A3,3,0,0,1,370.19,251Z" fill="#f6d14b"></path>
+</g>
+<path class="gantt-stroke-apache-ports" d="M176.3,128.68h-5.49c-12.25,0-12.15-13.59-12-21.91V83.05c.18-9.7-5.94-15.86-13.46-16.37" fill="none" stroke="#9e9e9e"></path>
+<path class="gantt-arrow-apache-ports" d="M176.76,129a.5.5,0,0,0,0-.71l-3.17-3.18a.5.5,0,0,0-.71,0,.48.48,0,0,0,0,.7l2.83,2.83-2.83,2.83a.5.5,0,0,0,0,.71.51.51,0,0,0,.71,0Z" fill="#9e9e9e"></path>
+<path class="gantt-stroke-apache-firewall" d="M176.3,191.39h-5.49c-12.25,0-12.15-13.59-12-21.91V83.05c.18-9.7-5.94-15.86-13.46-16.37" fill="none" stroke="#9e9e9e"></path>
+<g clip-path="url(#group1-clip)">
+<rect class="gantt-group-one" fill="#c4c4c4" fill-opacity="0.6" height="17" width="323.619" x="16.479" y="13.180"></rect>
+</g>
+<path class="gantt-stroke-apache-ports-light" d="M176.3,128.68h-5.49c-12.25,0-12.15-13.59-12-21.91V83.05c.18-9.7-5.94-15.86-13.46-16.37" fill="none" stroke="#c5c5c5"></path>
+<path class="gantt-stroke-apache-ports-fake" d="M175.70 128.68L195.70 128.68" fill="none" stroke="#9e9e9e"></path>
+<path class="gantt-stroke-apache-firewall-light" d="M176.3,191.39h-5.49c-12.25,0-12.15-13.59-12-21.91V83.05c.18-9.7-5.94-15.86-13.46-16.37" fill="none" stroke="#c5c5c5"></path>
+<path class="gantt-arrow-apache-firewall" d="M176.76,191.74a.5.5,0,0,0,0-.71l-3.17-3.18a.51.51,0,0,0-.71,0,.5.5,0,0,0,0,.71l2.83,2.83-2.83,2.82a.5.5,0,0,0,.71.71Z" fill="#9e9e9e"></path>
+<path class="gantt-arrow-ports-confirm" d="M368.35,253.8a.5.5,0,0,0,0-.71l-3.17-3.18a.51.51,0,0,0-.71,0,.5.5,0,0,0,0,.71l2.82,2.83-2.82,2.82a.5.5,0,0,0,.71.71Z" fill="#9e9e9e"></path>
+</svg>

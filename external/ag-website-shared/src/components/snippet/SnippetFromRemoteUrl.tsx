@@ -1,5 +1,5 @@
-import Code from '@ag-website-shared/components/code/Code';
 import type { Language } from '@ag-website-shared/components/code/Code';
+import Code from '@ag-website-shared/components/code/Code';
 import type { FunctionComponent } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 

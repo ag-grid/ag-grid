@@ -1,3 +1,5 @@
+import { _escapeString, _getActiveDomElement, _removeFromParent } from 'ag-stack';
+
 import type {
     DragAndDropIcon,
     DragItem,
@@ -6,14 +8,7 @@ import type {
     GridSelect,
     ListOption,
 } from 'ag-grid-community';
-import {
-    AgSelect,
-    Component,
-    DragSourceType,
-    _escapeString,
-    _getActiveDomElement,
-    _removeFromParent,
-} from 'ag-grid-community';
+import { AgSelect, Component, DragSourceType } from 'ag-grid-community';
 
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';

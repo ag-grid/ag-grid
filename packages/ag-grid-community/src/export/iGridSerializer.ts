@@ -9,10 +9,9 @@ import type {
     ProcessHeaderForExportParams,
     ProcessRowGroupForExportParams,
 } from '../interfaces/exportParams';
-import type { IColsService } from '../interfaces/iColsService';
+import type { IRowGroupColsService } from '../interfaces/iColsService';
 import type { ColumnGroup } from '../interfaces/iColumn';
-import type { CellValueResolveFrom } from '../interfaces/iEditService';
-import type { ValueService } from '../valueService/valueService';
+import type { CellValueResolveFrom, ValueService } from '../valueService/valueService';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface RowAccumulator {
@@ -33,7 +32,7 @@ export interface RowSpanningAccumulator {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface GridSerializingParams {
     colModel: ColumnModel;
-    rowGroupColsSvc?: IColsService;
+    rowGroupColsSvc?: IRowGroupColsService;
     colNames: ColumnNameService;
     valueSvc: ValueService;
     gos: GridOptionsService;

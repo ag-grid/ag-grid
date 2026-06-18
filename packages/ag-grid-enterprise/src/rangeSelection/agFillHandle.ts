@@ -1,3 +1,5 @@
+import { _last, _toStringOrNull } from 'ag-stack';
+
 import type {
     AgColumn,
     CellCtrl,
@@ -17,11 +19,10 @@ import {
     _getRowAbove,
     _getRowBelow,
     _getRowNode,
+    _isFiniteNumber,
     _isRowBefore,
     _isSameRow,
-    _last,
     _stopPropagationForAgGrid,
-    _toStringOrNull,
     _warn,
     isRowNumberCol,
 } from 'ag-grid-community';
@@ -348,6 +349,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
         ) => {
             let currentValue: any;
             let skipValue: boolean = false;
+            // ValueContext entries feed the cyclic source lookup in processValues, so a filled
+            // cell must record the cell its value originated from, not the cell being written.
+            let valueSourceCol: AgColumn = col;
+            let valueSourceRowNode: RowNode = rowNode;
 
             if (withinInitialRange) {
                 currentValue = valueSvc.getValue(col, rowNode, 'edit');
@@ -368,6 +373,9 @@ export class AgFillHandle extends AbstractSelectionHandle {
                     rowNode,
                     idx: idx++,
                 });
+
+                valueSourceCol = sourceCol ?? col;
+                valueSourceRowNode = sourceRowNode ?? rowNode;
 
                 currentValue = value;
                 if (col.isCellEditable(rowNode)) {
@@ -410,8 +418,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
             if (!skipValue) {
                 currentValues.push({
                     value: currentValue,
-                    column: col,
-                    rowNode,
+                    column: valueSourceCol,
+                    rowNode: valueSourceRowNode,
                 });
             }
         };
@@ -489,8 +497,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         const isNumeric = (v: any) =>
-            (typeof v === 'number' && Number.isFinite(v)) ||
-            (typeof v === 'string' && /^[+-]?\d+(?:\.\d+)?$/.test(v.trim()));
+            _isFiniteNumber(v) || (typeof v === 'string' && /^[+-]?\d+(?:\.\d+)?$/.test(v.trim()));
         const allNumbers = values.every(({ value }) => isNumeric(value));
 
         // values should be copied in order if the alt key is pressed
@@ -515,7 +522,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             const { value: cyclicValue, column: sourceCol, rowNode: sourceRowNode } = values[idx % values.length];
 
             let processedValue: any;
-            const fromFormula = sourceCol.isAllowFormula() && formula?.isFormula(valueForFunctions);
+            const fromFormula = sourceCol.allowFormula && formula?.isFormula(valueForFunctions);
 
             if (fromFormula) {
                 // Compute the row and column delta based on drag direction
@@ -605,14 +612,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
             if (initialColumn === currentColumn) {
                 return;
             }
-            const displayedColumns = this.beans.visibleCols.allCols;
-            const initialIndex = displayedColumns.indexOf(initialColumn);
-            const currentIndex = displayedColumns.indexOf(currentColumn);
+            const initialIndex = initialColumn.allColsIndex;
+            const currentIndex = currentColumn.allColsIndex;
 
-            if (
-                currentIndex <= initialIndex &&
-                currentIndex >= displayedColumns.indexOf(this.cellRange.columns[0] as AgColumn)
-            ) {
+            if (currentIndex <= initialIndex && currentIndex >= (this.cellRange.columns[0] as AgColumn).allColsIndex) {
                 this.reduceHorizontal(initialPosition, currentPosition);
                 this.isReduce = true;
             } else {
@@ -704,8 +707,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
         const beans = this.beans;
         const { visibleCols } = beans;
         const allCols = visibleCols.allCols;
-        const startCol = allCols.indexOf((isMovingLeft ? endPosition.column : initialPosition.column) as AgColumn);
-        const endCol = allCols.indexOf((isMovingLeft ? this.cellRange.columns[0] : endPosition.column) as AgColumn);
+        const startCol = ((isMovingLeft ? endPosition.column : initialPosition.column) as AgColumn).allColsIndex;
+        const endCol = ((isMovingLeft ? this.cellRange.columns[0] : endPosition.column) as AgColumn).allColsIndex;
         const offset = isMovingLeft ? 0 : 1;
 
         const colsToMark = allCols.slice(startCol + offset, endCol + offset);
@@ -746,8 +749,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
         const beans = this.beans;
         const { visibleCols } = beans;
         const allCols = visibleCols.allCols;
-        const startCol = allCols.indexOf(endPosition.column as AgColumn);
-        const endCol = allCols.indexOf(initialPosition.column as AgColumn);
+        const startCol = (endPosition.column as AgColumn).allColsIndex;
+        const endCol = (initialPosition.column as AgColumn).allColsIndex;
 
         const colsToMark = allCols.slice(startCol, endCol);
         const { rangeStartRow, rangeEndRow } = this;

@@ -1,5 +1,6 @@
-import { LocalEventService } from '../agStack/events/localEventService';
-import type { IAgEventEmitter, IEventEmitter } from '../agStack/interfaces/iEventEmitter';
+import type { IAgEventEmitter, IEventEmitter } from 'ag-stack';
+import { LocalEventService } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import type { SelectionEventSourceType } from '../events';
 import { _getRowIdCallback } from '../gridOptionsUtils';
@@ -18,6 +19,7 @@ import type {
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
+import { _resolvePivotColumnForRow } from './agColumn';
 import type { ColKey, IAggFuncResult } from './colDef';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -578,18 +580,15 @@ export class RowNode<TData = any>
             return false; // no column
         }
 
-        let column = colModel.getColOrColDefCol(colKey);
+        let column = colModel.getCol(colKey);
         if (!column) {
             return false; // column not found
         }
 
         // Resolve pivot result columns to their underlying value column for non-group, non-pinned rows.
-        const pivotValueColumn = column.colDef.pivotValueColumn;
-        if (!this.group && !this.rowPinned && pivotValueColumn) {
-            column = pivotValueColumn as AgColumn;
-        }
+        column = _resolvePivotColumnForRow(column, this);
 
-        const oldValue = valueSvc.getValueForDisplay({ column, node: this, from: 'data' }).value;
+        const oldValue = valueSvc.getDisplayValue(column, this, 'data');
 
         if (gos.get('readOnlyEdit')) {
             const {
@@ -638,7 +637,7 @@ export class RowNode<TData = any>
 
     public getDataValue<TValue = any>(
         colKey: ColKey<TValue>,
-        from: 'value' | 'data-raw' | 'edit' | 'batch'
+        from: 'value' | 'data-raw' | 'edit' | 'batch' | 'transformed'
     ): TValue | null | undefined;
     public getDataValue<TValue = any>(
         colKey: ColKey<TValue>,
@@ -652,30 +651,33 @@ export class RowNode<TData = any>
 
         const beans = this.beans;
 
-        const column = beans.colModel.getColOrColDefCol(colKey);
+        const column = beans.colModel.getCol(colKey);
         if (!column) {
             return undefined;
         }
 
         let value: any;
         if (from === 'data' || !from) {
-            value = beans.valueSvc.getValue(column, this, 'data', false);
+            value = beans.valueSvc.getValueFromData(_resolvePivotColumnForRow(column, this), this, false);
             if (value == null) {
                 return value;
             }
         } else {
+            if (from === 'transformed') {
+                return beans.valueSvc.getTransformedValue(_resolvePivotColumnForRow(column, this), this);
+            }
+
             // 'data-raw' skips aggData (aggregation results) and formula resolution, but still calls valueGetters
             // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
             const dataRaw = from === 'data-raw';
             const resolvedFrom = dataRaw || from === 'value' ? 'data' : from;
-            value = beans.valueSvc.getValue(column, this, resolvedFrom, dataRaw);
+            value = beans.valueSvc.getValue(_resolvePivotColumnForRow(column, this), this, resolvedFrom, dataRaw);
             if (dataRaw || value == null) {
                 return value;
             }
 
             // For 'value', 'edit', and 'batch' modes, resolve aggregation wrapper objects to their scalar
-            // value on agg columns. Matches the resolution pattern in dataTypeService: first try toNumber(),
-            // then fall back to .value property. `typeof` check precedes `aggFunc` to cheaply skip primitives.
+            // on agg columns. `typeof` precedes `aggFunc` to cheaply skip primitives (value is non-null here).
             if (typeof value === 'object' && column.aggFunc) {
                 if (typeof value.toNumber === 'function') {
                     return value.toNumber();
@@ -695,9 +697,9 @@ export class RowNode<TData = any>
             }
         }
 
-        if (column.colDef.allowFormula) {
+        if (column.allowFormula) {
             const formula = beans.formula;
-            if (formula?.isFormula(value) && column.isAllowFormula()) {
+            if (formula?.isFormula(value)) {
                 value = formula.resolveValue(column, this);
             }
         }

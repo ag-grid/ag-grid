@@ -10,6 +10,7 @@ const MENU_ITEM_MODULES: Record<DefaultMenuItem, _ValidationModuleName | _Valida
     pinTop: 'PinnedRow',
     unpinRow: 'PinnedRow',
     valueAggSubMenu: 'SharedAggregation',
+    showValueAsSubMenu: 'ShowValueAs',
     autoSizeThis: 'ColumnAutoSize',
     autoSizeAll: 'ColumnAutoSize',
     rowGroup: 'SharedRowGrouping',

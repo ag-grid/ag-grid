@@ -1,3 +1,13 @@
+import {
+    RefPlaceholder,
+    _findNextFocusableElement,
+    _focusInto,
+    _getActiveDomElement,
+    _isVisible,
+    _removeFromParent,
+    _setAriaControlsAndLabel,
+} from 'ag-stack';
+
 import type {
     ComponentSelector,
     ElementParams,
@@ -13,16 +23,9 @@ import {
     Component,
     KeyCode,
     ManagedFocusFeature,
-    RefPlaceholder,
     _addFocusableContainerListener,
     _addGridCommonParams,
-    _findNextFocusableElement,
-    _focusInto,
     _focusNextGridCoreContainer,
-    _getActiveDomElement,
-    _isVisible,
-    _removeFromParent,
-    _setAriaControlsAndLabel,
     _skipFocusableContainerListenerForAgGrid,
     _warn,
 } from 'ag-grid-community';
@@ -359,12 +362,12 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         wrapper: ToolPanelWrapper,
         externalParent: HTMLElement | null | undefined
     ): void {
-        const wrapperGui = wrapper.getGui();
-        if (externalParent) {
-            this.beans.environment.applyThemeClasses(externalParent, ['ag-external', 'ag-tool-panel-external']);
-            wrapperGui.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
-        }
         const correctParent = externalParent ?? wrapper.getDefParent() ?? this.getGui();
+        if (correctParent !== this.getGui()) {
+            wrapper.ensureStyledRoot();
+            correctParent.classList.add('ag-tool-panel-external');
+        }
+        const wrapperGui = wrapper.getGui();
         if (wrapperGui.parentElement !== correctParent) {
             correctParent.appendChild(wrapperGui);
         }

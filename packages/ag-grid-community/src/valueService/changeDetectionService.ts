@@ -1,6 +1,7 @@
 import { _getClientSideRowModel } from '../api/rowModelApiUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
@@ -89,6 +90,12 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
             }
         }
 
+        // Aggregate-dependent columns (e.g. Show Values As) read totals that just changed, so their cells in the
+        // rendered rows NOT refreshed above are now stale — the edit flow re-aggregates without a full model
+        // refresh, so nothing else does this. The refreshed rows are skipped via the `nodes`/`path` O(1) lookups
+        // (they already flashed their own moved cells); the rest refresh on change per `enableCellChangeFlash`.
+        this.beans.showValueAsSvc?.refreshRenderedCellsExcept(nodes, path);
+
         // If re-entrant events accumulated during the flush, process them now.
         if (this.batchedPath || this.batchedNodes) {
             this.deferredDepth = 1;
@@ -123,7 +130,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
                 nodes.add(node);
                 pathNode = node.parent;
             }
-            batchedPath?.addCell(pathNode, event.column.getColId());
+            batchedPath?.addCell(pathNode, (event.column as AgColumn).colId);
         } else {
             // Non-CSRM: no path, queue for direct refresh.
             const nodes = (this.batchedNodes ??= new Set());

@@ -15,7 +15,14 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { EditEventTracker, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from '../../test-utils';
 
 /**
  * Tests for event dispatching during setDataValue in batch mode.
@@ -151,6 +158,17 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
             },
             onBatchEditingStopped: (event) => batchStoppedEvents.push(event),
         });
+        await new GridColumns(api, `setDataValue with multiple cells fires cellValueChanged for each on commit setup`)
+            .checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `);
+        await new GridRows(api, `setDataValue with multiple cells fires cellValueChanged for each on commit setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"a-init" b:"b-init"
+            `);
         const eventTracker = new EditEventTracker(api);
 
         api.startBatchEdit();
@@ -199,6 +217,13 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         );
 
         eventTracker.destroy();
+        await new GridRows(
+            api,
+            `setDataValue with multiple cells fires cellValueChanged for each on commit final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"a-new" b:"b-new"
+        `);
     });
 
     test("'data' source during batch fires cellValueChanged immediately, not deferred", async () => {
@@ -215,6 +240,16 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
                 cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
         });
+        await new GridColumns(api, `'data' source during batch fires cellValueChanged immediately, not deferred setup`)
+            .checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+        await new GridRows(api, `'data' source during batch fires cellValueChanged immediately, not deferred setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
         const eventTracker = new EditEventTracker(api);
 
         api.startBatchEdit();
@@ -250,6 +285,13 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
 
         api.cancelBatchEdit();
         eventTracker.destroy();
+        await new GridRows(
+            api,
+            `'data' source during batch fires cellValueChanged immediately, not deferred final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"direct"
+        `);
     });
 
     test("'edit' source with open editor fires no events until commit", async () => {
@@ -266,6 +308,16 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
                 cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
         });
+        await new GridColumns(api, `'edit' source with open editor fires no events until commit setup`).checkColumns(
+            `
+                CENTER
+                └── a "A" width:200 editable
+            `
+        );
+        await new GridRows(api, `'edit' source with open editor fires no events until commit setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial"
+        `);
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
 
@@ -321,6 +373,10 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         });
 
         eventTracker.destroy();
+        await new GridRows(api, `'edit' source with open editor fires no events until commit final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"pushed"
+        `);
     });
 
     test("'edit' source with no editor and no batch fires cellValueChanged immediately", async () => {
@@ -337,6 +393,16 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
                 cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
         });
+        await new GridColumns(api, `'edit' source with no editor and no batch fires cellValueChanged immediately setup`)
+            .checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+        await new GridRows(api, `'edit' source with no editor and no batch fires cellValueChanged immediately setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
         const eventTracker = new EditEventTracker(api);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
@@ -367,6 +433,13 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         });
 
         eventTracker.destroy();
+        await new GridRows(
+            api,
+            `'edit' source with no editor and no batch fires cellValueChanged immediately final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"direct"
+        `);
     });
 
     test('default source outside batch fires cellValueChanged immediately with correct source', async () => {
@@ -383,6 +456,20 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
                 cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
         });
+        await new GridColumns(
+            api,
+            `default source outside batch fires cellValueChanged immediately with correct sou setup`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `default source outside batch fires cellValueChanged immediately with correct sou setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial"
+        `);
         const eventTracker = new EditEventTracker(api);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
@@ -412,6 +499,13 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         });
 
         eventTracker.destroy();
+        await new GridRows(
+            api,
+            `default source outside batch fires cellValueChanged immediately with correct sou final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"changed"
+        `);
     });
 
     test("'batch' source outside batch fires cellValueChanged immediately", async () => {
@@ -428,6 +522,15 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
                 cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
         });
+        await new GridColumns(api, `'batch' source outside batch fires cellValueChanged immediately setup`)
+            .checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+        await new GridRows(api, `'batch' source outside batch fires cellValueChanged immediately setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial"
+        `);
         const eventTracker = new EditEventTracker(api);
 
         const rowNode = api.getDisplayedRowAtIndex(0)!;
@@ -457,6 +560,12 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         });
 
         eventTracker.destroy();
+        await new GridRows(api, `'batch' source outside batch fires cellValueChanged immediately final state`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"changed"
+            `
+        );
     });
 
     test('overwriting a pending value fires only one cellValueChanged on commit (latest value)', async () => {
@@ -473,6 +582,20 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
                 cellValueChangedEvents.push({ oldValue, newValue, newRawValue, source });
             },
         });
+        await new GridColumns(
+            api,
+            `overwriting a pending value fires only one cellValueChanged on commit (latest va setup`
+        ).checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
+        `);
+        await new GridRows(
+            api,
+            `overwriting a pending value fires only one cellValueChanged on commit (latest va setup`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial"
+        `);
         const eventTracker = new EditEventTracker(api);
 
         api.startBatchEdit();
@@ -512,6 +635,13 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         });
 
         eventTracker.destroy();
+        await new GridRows(
+            api,
+            `overwriting a pending value fires only one cellValueChanged on commit (latest va final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"third"
+        `);
     });
 
     test('batchEditingStarted fires lazily on first edit, not on startBatchEdit', async () => {
@@ -523,6 +653,17 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
             getRowId: (params) => params.data.id,
             onBatchEditingStarted: (event) => batchStartedEvents.push(event),
         });
+        await new GridColumns(api, `batchEditingStarted fires lazily on first edit, not on startBatchEdit setup`)
+            .checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
+        await new GridRows(api, `batchEditingStarted fires lazily on first edit, not on startBatchEdit setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `
+        );
         const eventTracker = new EditEventTracker(api);
 
         api.startBatchEdit();
@@ -550,6 +691,11 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
 
         api.cancelBatchEdit();
         eventTracker.destroy();
+        await new GridRows(api, `batchEditingStarted fires lazily on first edit, not on startBatchEdit final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
     });
 
     test('multiple rows: cellValueChanged fires for each changed cell on commit', async () => {
@@ -574,6 +720,19 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
             },
             onBatchEditingStopped: (event) => batchStoppedEvents.push(event),
         });
+        await new GridColumns(api, `multiple rows: cellValueChanged fires for each changed cell on commit setup`)
+            .checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `);
+        await new GridRows(api, `multiple rows: cellValueChanged fires for each changed cell on commit setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 a:"a0" b:"b0"
+                └── LEAF id:1 a:"a1" b:"b1"
+            `
+        );
         const eventTracker = new EditEventTracker(api);
 
         api.startBatchEdit();
@@ -622,5 +781,11 @@ describe('Cell Editing: setDataValue in Batch Mode — events', () => {
         );
 
         eventTracker.destroy();
+        await new GridRows(api, `multiple rows: cellValueChanged fires for each changed cell on commit final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 a:"a0-new" b:"b0"
+                └── LEAF id:1 a:"a1" b:"b1-new"
+            `);
     });
 });

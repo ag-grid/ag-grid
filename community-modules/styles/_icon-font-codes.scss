@@ -21,7 +21,6 @@ $icon-font-codes: (
     cut: string.unquote("\"\\") + string.unquote("f10f\""),
     desc: string.unquote("\"\\") + string.unquote("f110\""),
     excel: string.unquote("\"\\") + string.unquote("f111\""),
-    pdf: string.unquote("\"\\") + string.unquote("f146\""),
     expanded: string.unquote("\"\\") + string.unquote("f112\""),
     eye-slash: string.unquote("\"\\") + string.unquote("f113\""),
     eye: string.unquote("\"\\") + string.unquote("f114\""),
@@ -73,4 +72,8 @@ $icon-font-codes: (
     filter-add: string.unquote("\"\\") + string.unquote("f144\""),
     edit: string.unquote("\"\\") + string.unquote("f145\""),
     search: string.unquote("\"\\") + string.unquote("f146\""),
+    document: string.unquote("\"\\") + string.unquote("f147\""),
+    fx: string.unquote("\"\\") + string.unquote("f148\""),
+    values-as: string.unquote("\"\\") + string.unquote("f149\""),
+    pdf: string.unquote("\"\\") + string.unquote("f14a\""),
 )

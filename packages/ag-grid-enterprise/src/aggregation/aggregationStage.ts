@@ -3,6 +3,7 @@ import type {
     ChangedCellsPath,
     ChangedPath,
     ClientSideRowModelStage,
+    ColAggFunc,
     ColDef,
     ColumnModel,
     GridOptions,
@@ -38,6 +39,7 @@ interface ResolvedValueColumn {
 interface ResolvedPivotColumn {
     column: AgColumn;
     colId: string;
+    colDef: ColDef;
     aggFunc: IAggFunc | null;
     /** The secondary (pivot result) column produced by this aggregation. */
     pivotResultCol: AgColumn;
@@ -89,7 +91,12 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
 
         const colModel = beans.colModel;
         const aggFuncSvc = beans.aggFuncSvc;
-        const aggregateRoot = gos.get('alwaysAggregateAtRootLevel') || !!_getGrandTotalRow(gos) || colModel.pivotMode;
+        // showValueAs total modes (e.g. % of grand total) need a root aggregate even with no grand-total row.
+        const aggregateRoot =
+            gos.get('alwaysAggregateAtRootLevel') ||
+            !!_getGrandTotalRow(gos) ||
+            colModel.pivotMode ||
+            (beans.showValueAsSvc?.anyValueColHasActiveMode(valueColumns) ?? false);
         const filteredOnly = !_getGroupAggFiltering(gos) && !gos.get('suppressAggFilteredOnly');
 
         // Hoist service lookups once — they are accessed per-group inside the traversal callback.
@@ -116,7 +123,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 column: col,
                 colId: col.colId,
                 colDef: col.colDef,
-                aggFunc: resolveAggFunc(col.getAggFunc(), aggFuncSvc!, col),
+                aggFunc: resolveAggFunc(col.aggFunc, aggFuncSvc!, col),
                 colSlot,
             };
         }
@@ -216,14 +223,14 @@ const aggregateValuesOnly = (
                 if (colValues !== null) {
                     const vc = valueCols[j];
                     const v = childAggData[vc.colId];
-                    colValues[c] = v !== undefined ? v : valueSvc.getValue(vc.column, child, 'data');
+                    colValues[c] = v !== undefined ? v : valueSvc.getValueFromData(vc.column, child);
                 }
             }
         } else {
             for (let j = 0; j < colCount; ++j) {
                 const colValues = values2d[j];
                 if (colValues !== null) {
-                    colValues[c] = valueSvc.getValue(valueCols[j].column, child, 'data');
+                    colValues[c] = valueSvc.getValueFromData(valueCols[j].column, child);
                 }
             }
         }
@@ -302,7 +309,7 @@ const aggregateValuesAndPivot = (
             const nodeCount = aggregatedChildren.length;
             values = new Array<any>(nodeCount);
             for (let n = 0; n < nodeCount; ++n) {
-                values[n] = valueSvc.getValue(column, aggregatedChildren[n], 'data');
+                values[n] = valueSvc.getValueFromData(column, aggregatedChildren[n]);
             }
         } else {
             // Regular column on non-leaf group — read aggData from children directly.
@@ -315,7 +322,7 @@ const aggregateValuesAndPivot = (
                 const childNode = aggregatedChildren[n];
                 const childAggData = childNode.aggData;
                 const v = childAggData ? childAggData[colId] : undefined;
-                values[n] = v !== undefined ? v : valueSvc.getValue(column, childNode, 'data');
+                values[n] = v !== undefined ? v : valueSvc.getValueFromData(column, childNode);
             }
         }
 
@@ -324,7 +331,7 @@ const aggregateValuesAndPivot = (
             ? aggFunc({
                   values,
                   column,
-                  colDef: column.colDef,
+                  colDef: rc.colDef,
                   pivotResultColumn: rc.pivotResultCol,
                   rowNode,
                   data,
@@ -339,20 +346,16 @@ const aggregateValuesAndPivot = (
 };
 
 /** Resolves aggFunc from a string name or returns the function directly. Returns null with a warning for invalid names. */
-const resolveAggFunc = (
-    aggFuncOrString: string | IAggFunc | null | undefined,
-    aggFuncSvc: IAggFuncService,
-    column: AgColumn
-): IAggFunc | null => {
-    if (typeof aggFuncOrString === 'function') {
-        return aggFuncOrString;
+const resolveAggFunc = (colAggFunc: ColAggFunc, aggFuncSvc: IAggFuncService, column: AgColumn): IAggFunc | null => {
+    if (typeof colAggFunc === 'function') {
+        return colAggFunc;
     }
-    if (aggFuncOrString == null) {
+    if (colAggFunc == null) {
         return null;
     }
-    const aggFunc = aggFuncSvc.getAggFunc(aggFuncOrString);
+    const aggFunc = aggFuncSvc.getAggFunc(colAggFunc);
     if (typeof aggFunc !== 'function') {
-        _warn(109, { inputValue: aggFuncOrString.toString(), allSuggestions: aggFuncSvc.getFuncNames(column) });
+        _warn(109, { inputValue: colAggFunc.toString(), allSuggestions: aggFuncSvc.getFuncNames(column) });
         return null;
     }
     return aggFunc;
@@ -380,15 +383,16 @@ const resolvePivotColumns = (
     let count = 0;
     for (let i = 0; i < len; ++i) {
         const pivotResultCol = orderedList[i];
-        const resultColDef = pivotResultCol.colDef;
-        const valueCol = resultColDef.pivotValueColumn as AgColumn | null | undefined;
+        const valueCol = pivotResultCol.pivotValueColumn as AgColumn | null | undefined;
         if (!valueCol) {
             continue;
         }
+        const resultColDef = pivotResultCol.colDef;
         resolved[count++] = {
             column: valueCol,
-            colId: resultColDef.colId!,
-            aggFunc: resolveAggFunc(valueCol.getAggFunc(), aggFuncSvc, valueCol),
+            colId: pivotResultCol.colId,
+            colDef: valueCol.colDef,
+            aggFunc: resolveAggFunc(valueCol.aggFunc, aggFuncSvc, valueCol),
             pivotResultCol: pivotResultCol,
             pivotKeys: resultColDef.pivotKeys,
             totalColIds: resultColDef.pivotTotalColumnIds,

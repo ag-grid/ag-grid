@@ -1,3 +1,5 @@
+import { _areEqual, _jsonEquals, _missing } from 'ag-stack';
+
 import type {
     AgColumn,
     BeanCollection,
@@ -9,7 +11,7 @@ import type {
     RowNode,
     _IRowNodePivotStage,
 } from 'ag-grid-community';
-import { BeanStub, _areEqual, _forEachChangedGroupDepthFirst, _jsonEquals, _missing } from 'ag-grid-community';
+import { BeanStub, _forEachChangedGroupDepthFirst } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 
@@ -66,7 +68,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         this.aggregationColumnsHashLastTime = null;
         this.pivotOrderLastTime = [];
         this.uniqueValues = new Map();
-        if (this.pivotResultCols.isPivotResultColsPresent()) {
+        if (this.pivotResultCols.pivotCols) {
             this.pivotResultCols.setPivotResultCols(null, 'rowModelUpdated');
             return true; // columns changed, deactivate changedPath
         }
@@ -108,7 +110,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         const aggregationColumnsHash = aggregationColumns
             .map((column) => `${column.getId()}-${column.colDef.headerName}`)
             .join('#');
-        const aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc()!.toString()).join('#');
+        const aggregationFuncsHash = aggregationColumns.map((column) => column.aggFunc?.toString()).join('#');
 
         const aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
         const aggregationFuncsChanged = this.aggregationFuncsHashLastTime !== aggregationFuncsHash;
@@ -120,8 +122,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         this.groupColumnsHashLastTime = groupColumnsHash;
 
         const pivotColumns = pivotColsSvc?.columns ?? [];
-        const shouldTrackPivotOrder =
-            gos.get('enableStrictPivotColumnOrder') && pivotColumns.some((col) => col.colDef.pivotComparator);
+        const shouldTrackPivotOrder = pivotColsSvc?.isStrictColumnOrder() ?? false;
         const pivotOrder = shouldTrackPivotOrder ? computePivotOrder(this.uniqueValues, pivotColumns, 0) : [];
         const pivotOrderChanged = !_areEqual(pivotOrder, this.pivotOrderLastTime);
         this.pivotOrderLastTime = pivotOrder;

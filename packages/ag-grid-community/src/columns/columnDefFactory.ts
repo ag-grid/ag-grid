@@ -2,132 +2,95 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { IColsService } from '../interfaces/iColsService';
-import { SKIP_JS_BUILTINS } from '../utils/mergeDeep';
+import { _isPlainObject, _isProtoPollutionKey } from '../utils/mergeDeep';
+import type { ColumnModel } from './columnModel';
 
-// returns copy of an object, doing a deep clone of any objects with that object.
-// this is used for eg creating copies of Column Definitions, where we want to
-// deep copy all objects, but do not want to deep copy functions (eg when user provides
-// a function or class for colDef.cellRenderer)
+// Deep-clones a ColDef; functions/classes (eg cellRenderer) are copied by reference.
 /** @knipIgnore Used in tests */
-export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined {
+export function _deepCloneDefinition<T>(object: T, rootKeyToSkip?: string): T | undefined {
     if (!object) {
         return;
     }
-
     const obj = object as any;
     const res: any = {};
-
     for (const key of Object.keys(obj)) {
-        if ((keysToSkip && keysToSkip.indexOf(key) >= 0) || SKIP_JS_BUILTINS.has(key)) {
+        if (key === rootKeyToSkip || _isProtoPollutionKey(key)) {
             continue;
         }
-
         const value = obj[key];
-
-        // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}. it does
-        // NOT include the following:
-        // 1) arrays
-        // 2) functions or classes (eg api instance)
-        const sourceIsSimpleObject = typeof value === 'object' && value !== null && value.constructor === Object;
-
-        if (sourceIsSimpleObject) {
+        if (_isPlainObject(value)) {
             res[key] = _deepCloneDefinition(value);
         } else {
             res[key] = value;
         }
     }
-
     return res;
 }
 
 export class ColumnDefFactory extends BeanStub implements NamedBean {
     beanName = 'colDefFactory' as const;
 
-    private rowGroupColsSvc?: IColsService;
-    private pivotColsSvc?: IColsService;
+    private colModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection): void {
-        this.rowGroupColsSvc = beans.rowGroupColsSvc;
-        this.pivotColsSvc = beans.pivotColsSvc;
+        this.colModel = beans.colModel;
     }
 
-    public getColumnDefs(
-        colDefColsList: AgColumn[],
-        showingPivotResult: boolean,
-        lastOrder: AgColumn[] | null,
-        colsList: AgColumn[],
-        sorted: boolean = false
-    ): (ColDef | ColGroupDef)[] | undefined {
-        const cols = colDefColsList.slice();
-
-        if (showingPivotResult) {
-            cols.sort((a, b) => lastOrder!.indexOf(a) - lastOrder!.indexOf(b));
-        } else if (lastOrder || sorted) {
-            cols.sort((a, b) => colsList.indexOf(a) - colsList.indexOf(b));
+    /** Snapshot of the column tree as `ColDef[] | ColGroupDef[]`, display-ordered. Backs `getColumnDefs`. */
+    public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
+        const colModel = this.colModel;
+        if (!colModel.ready) {
+            return undefined;
         }
+        const colDefColsList = colModel.colDefList;
+        // Pivot primaries keep their pre-pivot `colsListIndex` (absent from the pivot `colsList`) — the order to report.
+        colModel.ensureColsListIndex();
+        const cols = colDefColsList.slice().sort(byColsListIndex);
 
-        const rowGroupColumns = this.rowGroupColsSvc?.columns;
-        const pivotColumns = this.pivotColsSvc?.columns;
-
-        return this.buildColumnDefs(cols, rowGroupColumns, pivotColumns);
-    }
-
-    private buildColumnDefs(
-        cols: AgColumn[],
-        rowGroupColumns: AgColumn[] = [],
-        pivotColumns: AgColumn[] = []
-    ): (ColDef | ColGroupDef)[] {
         const res: (ColDef | ColGroupDef)[] = [];
+        const colGroupDefs: { [id: string]: ColGroupDef } = Object.create(null);
+        const maxAncestors = colModel.colDefTreeDepth + 1;
 
-        const colGroupDefs: { [id: string]: ColGroupDef } = {};
-
-        for (const col of cols) {
-            const colDef = this.createDefFromColumn(col, rowGroupColumns, pivotColumns);
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const col = cols[i];
+            // Skip hierarchy virtuals — round-tripping them through updateGridOptions causes `_1`-suffixed dupes.
+            if (col.colKind === 'hierarchy') {
+                continue;
+            }
+            const colDef = createDefFromColumn(col);
 
             let addToResult = true;
-
             let childDef: ColDef | ColGroupDef = colDef;
 
-            let pointer = col.getOriginalParent();
-            let lastPointer: AgProvidedColumnGroup | null = null;
+            let pointer = col.originalParent;
+            let ancestors = 0;
             while (pointer) {
-                // we don't include padding groups, as the column groups provided
-                // by application didn't have these. the whole point of padding groups
-                // is to balance the column tree that the user provided.
-                if (pointer.isPadding()) {
-                    pointer = pointer.getOriginalParent();
+                if (++ancestors > maxAncestors) {
+                    break; // safety net for malformed (cyclic) chain — bail rather than hang
+                }
+                // Padding groups balance tree depth; not user-defined, so skip.
+                if (pointer.padding) {
+                    pointer = pointer.originalParent;
                     continue;
                 }
-
-                // if colDef for this group already exists, use it
-                const existingParentDef = colGroupDefs[pointer.getGroupId()];
+                // Sibling already built this group — nest under it and stop (also breaks any malformed parent cycle).
+                const existingParentDef = colGroupDefs[pointer.groupId];
                 if (existingParentDef) {
                     existingParentDef.children.push(childDef);
-                    // if we added to result, it would be the second time we did it
-                    addToResult = false;
-                    // we don't want to continue up the tree, as it has already been
-                    // done for this group
-                    break;
-                }
-
-                const parentDef = this.createDefFromGroup(pointer);
-
-                if (parentDef) {
-                    parentDef.children = [childDef];
-                    colGroupDefs[parentDef.groupId!] = parentDef;
-                    childDef = parentDef;
-                    pointer = pointer.getOriginalParent();
-                }
-
-                if (pointer != null && lastPointer === pointer) {
                     addToResult = false;
                     break;
                 }
-                // Ensure we don't get stuck in an infinite loop
-                lastPointer = pointer;
+                const parentDef = _deepCloneDefinition(pointer.colGroupDef, 'children');
+                if (!parentDef) {
+                    addToResult = false;
+                    break;
+                }
+                parentDef.groupId = pointer.groupId;
+                parentDef.children = [childDef];
+                colGroupDefs[parentDef.groupId] = parentDef;
+                childDef = parentDef;
+                pointer = pointer.originalParent;
             }
 
             if (addToResult) {
@@ -137,34 +100,26 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
 
         return res;
     }
-
-    private createDefFromGroup(group: AgProvidedColumnGroup): ColGroupDef | null | undefined {
-        const defCloned = _deepCloneDefinition(group.getColGroupDef(), ['children']);
-
-        if (defCloned) {
-            defCloned.groupId = group.getGroupId();
-        }
-
-        return defCloned;
-    }
-
-    private createDefFromColumn(col: AgColumn, rowGroupColumns: AgColumn[], pivotColumns: AgColumn[]): ColDef {
-        const colDefCloned = _deepCloneDefinition(col.colDef)!;
-
-        colDefCloned.colId = col.colId;
-
-        colDefCloned.width = col.getActualWidth();
-        colDefCloned.rowGroup = col.isRowGroupActive();
-        colDefCloned.rowGroupIndex = col.isRowGroupActive() ? rowGroupColumns.indexOf(col) : null;
-        colDefCloned.pivot = col.isPivotActive();
-        colDefCloned.pivotIndex = col.isPivotActive() ? pivotColumns.indexOf(col) : null;
-        colDefCloned.aggFunc = col.isValueActive() ? col.getAggFunc() : null;
-        colDefCloned.hide = col.isVisible() ? undefined : true;
-        colDefCloned.pinned = col.isPinned() ? col.getPinned() : null;
-
-        colDefCloned.sort = col.getSortDef();
-        colDefCloned.sortIndex = col.getSortIndex() != null ? col.getSortIndex() : null;
-
-        return colDefCloned;
-    }
 }
+
+/** User-facing `ColDef` from a live column's runtime state (width, sort, pin, agg, …). */
+const createDefFromColumn = (col: AgColumn): ColDef => {
+    const { colId, colDef, actualWidth, aggregationActive, rowGroupActive, visible, pivotActive, pinned } = col;
+    const colDefCloned = _deepCloneDefinition(colDef)!;
+    colDefCloned.colId = colId;
+    colDefCloned.width = actualWidth;
+    colDefCloned.rowGroup = rowGroupActive;
+    // `rowGroupActiveIndex`/`pivotActiveIndex` are stamped on each active col by its cols service (valid when active).
+    colDefCloned.rowGroupIndex = rowGroupActive ? col.rowGroupActiveIndex : null;
+    colDefCloned.pivot = pivotActive;
+    colDefCloned.pivotIndex = pivotActive ? col.pivotActiveIndex : null;
+    colDefCloned.aggFunc = aggregationActive ? col.aggFunc : null;
+    colDefCloned.hide = visible ? undefined : true;
+    colDefCloned.pinned = pinned === 'left' || pinned === 'right' ? pinned : null;
+    colDefCloned.sort = col.getSortDef();
+    colDefCloned.sortIndex = col.sortIndex ?? null;
+    return colDefCloned;
+};
+
+/** Sort comparator by `colsListIndex` (display order). */
+const byColsListIndex = (a: AgColumn, b: AgColumn): number => a.colsListIndex - b.colsListIndex;

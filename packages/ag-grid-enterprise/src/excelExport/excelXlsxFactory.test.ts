@@ -20,6 +20,7 @@ const stubParams = (
     colNames: { getDisplayNameForColumn: () => 'A' } as any,
     valueSvc: {
         getValueForDisplay: () => ({ value: '' }),
+        getDisplayValue: () => '',
         getValue: () => '',
         parseValue: () => '',
         formatValue: () => '',
@@ -69,6 +70,7 @@ const rowValueServiceStub = () =>
 
             return { value };
         },
+        getDisplayValue: (column: any, node: any) => node?.data?.[column.getColId()],
         getValue: (column: any, node: any) => node?.data?.[column.getColId()],
         parseValue: (_column: any, _node: any, valueToParse: any) => valueToParse,
         formatValue: (_column: any, _node: any, valueToFormat: any) => valueToFormat,
@@ -269,7 +271,7 @@ describe('excelXlsxFactory Workbook', () => {
 
         session.addCustomContent([
             {
-                cells: [{ data: { value: '' }, styleId: 'numeric' }],
+                cells: [{ data: { value: '' } as any, styleId: 'numeric' }],
             },
         ]);
 
@@ -655,7 +657,7 @@ describe('excelXlsxFactory Workbook', () => {
                                         imageType: 'png',
                                         width: 20,
                                         height: 20,
-                                    },
+                                    } as any,
                                 },
                             ],
                         },

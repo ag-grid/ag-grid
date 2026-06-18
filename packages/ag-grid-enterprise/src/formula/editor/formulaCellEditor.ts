@@ -1,5 +1,7 @@
-import { AgAbstractCellEditor, KeyCode, RefPlaceholder, _isBrowserSafari, _placeCaretAtEnd } from 'ag-grid-community';
+import { RefPlaceholder, _isBrowserSafari, _placeCaretAtEnd } from 'ag-stack';
+
 import type { IFormulaCellEditorParams } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode } from 'ag-grid-community';
 
 import { AgFormulaInputField } from '../../widgets/agFormulaInputField';
 import type { FormulaError } from '../ast/utils';

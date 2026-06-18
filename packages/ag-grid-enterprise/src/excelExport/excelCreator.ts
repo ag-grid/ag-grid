@@ -1,3 +1,5 @@
+import { _downloadFile } from 'ag-stack';
+
 import type {
     AgColumn,
     AgColumnGroup,
@@ -13,7 +15,7 @@ import type {
 import {
     BaseCreator,
     _addGridCommonParams,
-    _downloadFile,
+    _clamp,
     _getHeaderClassesFromColDef,
     _getHeaderRowCount,
     _warn,
@@ -270,7 +272,7 @@ const createExcelFileForExcel = (
     const { fontSize = 11, author = 'AG Grid', activeTab = 0, customMetadata, suppressPrependAuthorToNotes } = options;
 
     const len = data.length;
-    const activeTabWithinBounds = Math.max(Math.min(activeTab, len - 1), 0);
+    const activeTabWithinBounds = _clamp(activeTab, 0, len - 1);
 
     createExcelXMLCoreFolderStructure(zipContainer);
     createExcelXmlTables(zipContainer);
@@ -470,6 +472,8 @@ export class ExcelCreator
 
         const config: ExcelGridSerializingParams = {
             ...params,
+            // default to the displayed (Show Values As transformed) value, matching Excel
+            valueFrom: params.valueFrom ?? 'transformed',
             colModel,
             colNames,
             rowGroupColsSvc,

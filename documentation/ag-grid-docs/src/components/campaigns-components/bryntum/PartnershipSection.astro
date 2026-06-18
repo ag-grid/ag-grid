@@ -1,0 +1,43 @@
+---
+import { decorateBryntumHtml } from '@utils/bryntumCampaignAssets';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import type { BryntumPartnershipSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumPartnershipSection;
+}
+
+const { section } = Astro.props;
+const lightSrc = section.logo_light_src ? urlWithBaseUrl(section.logo_light_src) : null;
+const darkSrc = section.logo_dark_src ? urlWithBaseUrl(section.logo_dark_src) : null;
+const logoAlt = section.logo_alt ?? 'AG Grid and Bryntum partnership';
+---
+
+<section class:list={[styles.section, styles.sectionBgSecondary]}>
+    <div class={styles.sectionInner}>
+        <div class={styles.partnership}>
+            {
+                (lightSrc || darkSrc) && (
+                    <div class={styles.partnershipLogos}>
+                        {lightSrc && (
+                            <img class={styles.partnershipLogoLight} src={lightSrc} alt={logoAlt} loading="lazy" />
+                        )}
+                        {darkSrc && (
+                            <img class={styles.partnershipLogoDark} src={darkSrc} alt={logoAlt} loading="lazy" />
+                        )}
+                    </div>
+                )
+            }
+            {section.eyebrow && <span class={styles.sectionEyebrow}>{section.eyebrow}</span>}
+            {section.heading && <h2 class={styles.partnershipHeading}>{section.heading}</h2>}
+            {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
+            {
+                section.body_html && (
+                    <div class={styles.partnershipBody} set:html={decorateBryntumHtml(section.body_html)} />
+                )
+            }
+        </div>
+    </div>
+</section>

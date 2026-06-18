@@ -1,14 +1,7 @@
+import { _addOrRemoveAttribute, _clearElement, _setAriaLabel, _setDisabled, _setDisplayed } from 'ag-stack';
+
 import type { BeanCollection, IconName } from 'ag-grid-community';
-import {
-    _addOrRemoveAttribute,
-    _clearElement,
-    _createElement,
-    _createIconNoSpan,
-    _error,
-    _setAriaLabel,
-    _setDisabled,
-    _setDisplayed,
-} from 'ag-grid-community';
+import { _createElement, _createIconNoSpan, _error } from 'ag-grid-community';
 
 interface CreateToolbarInputParams {
     label: string;

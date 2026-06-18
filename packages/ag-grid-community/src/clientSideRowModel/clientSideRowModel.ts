@@ -1,4 +1,5 @@
-import { _debounce } from '../agStack/utils/function';
+import { _debounce } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
@@ -1151,8 +1152,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     /** 'map' stage */
     private doRowsToDisplay(): void {
         const { rootNode, beans } = this;
+        const { formula, flattenStage } = beans;
 
-        if (beans.formula?.isEvaluationActive()) {
+        if (formula?.active) {
             const unfilteredRows = rootNode?.childrenAfterSort ?? [];
             this.formulaRows = unfilteredRows;
             this.rowsToDisplay = unfilteredRows.filter((row) => !row.softFiltered);
@@ -1163,16 +1165,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return;
         }
 
-        const flattenStage = beans.flattenStage;
         if (flattenStage) {
             this.rowsToDisplay = flattenStage.execute();
-            return;
+        } else {
+            const rowsToDisplay = this.rootNode!.childrenAfterSort ?? [];
+            for (const row of rowsToDisplay) {
+                row.setUiLevel(0);
+            }
+            this.rowsToDisplay = rowsToDisplay;
         }
-        const rowsToDisplay = this.rootNode!.childrenAfterSort ?? [];
-        for (const row of rowsToDisplay) {
-            row.setUiLevel(0);
-        }
-        this.rowsToDisplay = rowsToDisplay;
+
+        this.formulaRows = formula?.isEvaluationActive() ? this.rowsToDisplay : [];
     }
 
     public onRowHeightChanged(): void {

@@ -60,6 +60,34 @@ describe('Sorting', () => {
         gridMgr.reset();
     });
 
+    test('the sort-order index badge shows only in a multi-column sort', async () => {
+        const api = await gridMgr.createGridAndWait('sort-order-badge', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [{ a: 1, b: 2 }],
+        });
+        await asyncSetTimeout(0);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const sortOrderEl = (colId: string) =>
+            getByTestId(gridDiv, agTestIdFor.headerCell(colId)).querySelector('.ag-sort-order');
+
+        // Single-column sort: no ordinal badge (the lone sorted column needs no priority number).
+        api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }], defaultState: { sort: null } });
+        await asyncSetTimeout(1);
+        expect(sortOrderEl('a')?.classList.contains('ag-hidden')).toBe(true);
+
+        // Multi-column sort: every sorted column shows its 1-based priority.
+        api.applyColumnState({
+            state: [
+                { colId: 'a', sort: 'asc', sortIndex: 0 },
+                { colId: 'b', sort: 'asc', sortIndex: 1 },
+            ],
+        });
+        await asyncSetTimeout(1);
+        expect(sortOrderEl('a')?.classList.contains('ag-hidden')).toBe(false);
+        expect(sortOrderEl('a')?.textContent).toBe('1');
+        expect(sortOrderEl('b')?.textContent).toBe('2');
+    });
+
     const columnDefs = [{ field: 'sport', sortable: false }, { field: 'year' }, { field: 'amount' }, { field: 'day' }];
     const rowData = [
         { sport: 'football', year: 2021, amount: 43, day: 'monday' },
@@ -407,6 +435,42 @@ describe('Sorting', () => {
             ├── LEAF id:abs-b amount:5
             ├── LEAF id:abs-c amount:-3
             └── LEAF id:abs-d amount:1
+        `);
+    });
+
+    test('comparator dictionary selects the entry matching the sort type', async () => {
+        const api = gridMgr.createGrid('comparatorDict', {
+            columnDefs: [
+                {
+                    field: 'amount',
+                    comparator: {
+                        default: (a: number, b: number) => b - a, // reverse signed
+                        absolute: (a: number, b: number) => Math.abs(b) - Math.abs(a), // reverse magnitude
+                    },
+                },
+            ],
+            rowData: [
+                { id: 'c-a', amount: -20 },
+                { id: 'c-b', amount: 5 },
+                { id: 'c-c', amount: -3 },
+            ],
+            getRowId: (params) => params.data?.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'amount', sort: 'asc' }] });
+        await new GridRows(api, 'comparator dict: default entry').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:c-b amount:5
+            ├── LEAF id:c-c amount:-3
+            └── LEAF id:c-a amount:-20
+        `);
+
+        api.applyColumnState({ state: [{ colId: 'amount', sort: 'asc', sortType: 'absolute' }] });
+        await new GridRows(api, 'comparator dict: absolute entry').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:c-a amount:-20
+            ├── LEAF id:c-b amount:5
+            └── LEAF id:c-c amount:-3
         `);
     });
 });

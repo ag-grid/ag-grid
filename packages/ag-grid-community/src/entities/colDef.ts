@@ -1,4 +1,3 @@
-import type { SortDef, SortDirection, SortType } from '../agStack/utils/aria';
 import type { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from '../events';
 import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column, ColumnGroup, ColumnGroupShowType, ProvidedColumnGroup } from '../interfaces/iColumn';
@@ -7,6 +6,7 @@ import type { IFilterDef } from '../interfaces/iFilter';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { RowDragTextFunc } from '../interfaces/iRowDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
+import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
@@ -22,11 +22,10 @@ import type {
     GroupRowValueSetterFunc,
     GroupRowValueSetterOptions,
 } from './colDef-groupRowValueSetter';
+import type { ShowValueAs, ShowValueAsConfig, ShowValueAsType } from './colDef-showValueAs';
 import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
 
 export type { BaseColDefParams, ColumnFunctionCallbackParams } from './colDef-base';
-
-export type { SortDirection, SortType, SortDef, DisplaySortDef } from '../agStack/utils/aria';
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef<TData = any, TValue = any> {
@@ -36,6 +35,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
     headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
     /**
      * Tooltip for the column header, `headerTooltipValueGetter` takes precedence if set.
+     * When the column is grouped with `groupDisplayType: 'multipleColumns'`, the generated group column header inherits this value.
      * @agModule `TooltipModule`
      */
     headerTooltip?: string;
@@ -77,6 +77,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
     /**
      * Provide your own tooltip component for the column.
      * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/tooltips/) for framework specific implementation details.
+     * When the column is grouped, group rows in the generated group column inherit this component.
      * @agModule `TooltipModule`
      */
     tooltipComponent?: any;
@@ -140,7 +141,7 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
 
     /**
      * The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
-     * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components) for framework specific implementation details.
+     * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/column-headers/#header-group-components) for framework specific implementation details.
      */
     headerGroupComponent?: any;
     /** The params used to configure the `headerGroupComponent`. */
@@ -166,6 +167,8 @@ export type IAggFunc<TData = any, TValue = any, TContext = any> = (
 ) => any;
 
 export type IAggFuncs<TData = any, TValue = any, TContext = any> = { [key: string]: IAggFunc<TData, TValue, TContext> };
+
+export type ColAggFunc<TData = any, TValue = any> = string | IAggFunc<TData, TValue> | null | undefined;
 
 /**
  * Wrapper returned by the built-in `avg` and `count` aggregation functions, and the recommended
@@ -346,12 +349,14 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     equals?: EqualsFunc<TValue>;
     /**
      * The field of the tooltip to apply to the cell.
+     * When the column is grouped, group rows in the generated group column inherit this value.
      * @agModule `TooltipModule`
      */
     tooltipField?: ColDefField<TData>;
     /**
      * Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.
+     * When the column is grouped, group rows in the generated group column inherit this callback.
      * @agModule `TooltipModule`
      */
     tooltipValueGetter?: TooltipValueGetterFunc<TData, TValue>;
@@ -584,7 +589,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     // *** Column Headers *** //
     /**
      * The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
-     * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.
+     * See [Header Component](https://www.ag-grid.com/javascript-data-grid/column-headers/) for framework specific implementation detail.
      */
     headerComponent?: any;
     /** The parameters to be passed to the `headerComponent`. */
@@ -845,6 +850,19 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     initialAggFunc?: string | IAggFunc<TData, TValue>;
     /**
+     * The position of this column in the order of value columns when aggregating in pivot mode.
+     * When aggregating by a single column, any number can be used. When aggregating by multiple
+     * columns, this determines the order (e.g. `0` for first, `1` for second).
+     * @agModule `RowGroupingModule` / `PivotModule`
+     */
+    valueIndex?: number;
+    /**
+     * Same as `valueIndex`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     * @agModule `RowGroupingModule` / `PivotModule`
+     */
+    initialValueIndex?: number;
+    /**
      * The name of the aggregation function to use for this column when it is enabled via the GUI.
      * Note that this does not immediately apply the aggregation function like `aggFunc`
      * @default 'sum'
@@ -858,6 +876,32 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     allowedAggFuncs?: string[];
+    /**
+     * The active "Show Values As" mode — display this column's aggregated value relative to another
+     * aggregated value, e.g. as a percentage of the grand / column / row /
+     * parent total. A presentation-layer transform: it changes the displayed value only — the raw value
+     * (`getDataValue`, charts, clipboard-of-data) is unchanged. Can be changed at runtime (menu / column state).
+     *
+     * A built-in mode name, or the object form `{ type, params, precision }`. `false`/`null` selects no active mode —
+     * the column menu and column state can still select one.
+     * To disable the feature entirely (and its menu), use `showValueAsConfig: false`.
+     * Per-column config (`precision`, `suppressHeaderIndicator`) lives on `showValueAsConfig`.
+     * @agModule `ShowValueAsModule`
+     */
+    showValueAs?: ShowValueAsType | ShowValueAs | false | null;
+    /**
+     * Same as `showValueAs`, except only applied when creating a new column.
+     * @initial
+     * @agModule `ShowValueAsModule`
+     */
+    showValueAsInitial?: ShowValueAsType | ShowValueAs;
+    /**
+     * Per-column "Show Values As" configuration: `precision` and `suppressHeaderIndicator`.
+     * Deep-merges from `defaultColDef`. The active mode is the `showValueAs` selector.
+     * `false`/`null` disables the feature for the column (useful to opt a column out via `defaultColDef`).
+     * @agModule `ShowValueAsModule`
+     */
+    showValueAsConfig?: ShowValueAsConfig | false | null;
     /**
      * Specify a grouping hierarchy for this column. This generates one or more virtual columns to group or pivot by when this column is grouped or pivoted.
      *

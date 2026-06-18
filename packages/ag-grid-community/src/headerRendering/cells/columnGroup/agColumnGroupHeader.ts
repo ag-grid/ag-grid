@@ -1,8 +1,7 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
-import type { IComponent } from '../../../agStack/interfaces/iComponent';
-import { _setDisplayed } from '../../../agStack/utils/dom';
-import { _exists } from '../../../agStack/utils/generic';
-import { _toString } from '../../../agStack/utils/string';
+import type { IComponent } from 'ag-stack';
+import { RefPlaceholder, _exists, _setDisplayed, _toString } from 'ag-stack';
+
+import { _setColGroupOpen } from '../../../columns/columnGroups/columnGroupState';
 import { _getInnerHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
@@ -146,7 +145,6 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
             agOpened,
             agClosed,
             params: { columnGroup },
-            beans: { colGroupSvc },
         } = this;
         this.addInIcon('columnGroupOpened', agOpened);
         this.addInIcon('columnGroupClosed', agClosed);
@@ -157,7 +155,8 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
             }
 
             const newExpandedValue = !columnGroup.isExpanded();
-            colGroupSvc!.setColumnGroupOpened(
+            _setColGroupOpen(
+                this.beans,
                 (columnGroup as AgColumnGroup).getProvidedColumnGroup(),
                 newExpandedValue,
                 'uiColumnExpanded'

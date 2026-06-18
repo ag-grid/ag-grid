@@ -1,5 +1,6 @@
+import { _escapeString } from 'ag-stack';
+
 import type { ExcelOOXMLTemplate, XmlElement } from 'ag-grid-community';
-import { _escapeString } from 'ag-grid-community';
 
 import type { ExcelComment } from '../../assets/excelInterfaces';
 import { replaceInvisibleCharacters } from '../../assets/excelUtils';

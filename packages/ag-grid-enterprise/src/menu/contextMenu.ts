@@ -1,3 +1,5 @@
+import { _exists } from 'ag-stack';
+
 import type {
     AgColumn,
     AgComponentSelectorType,
@@ -21,14 +23,7 @@ import type {
     TouchShowContextMenuParam,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _addGridCommonParams,
-    _attemptToRestoreCellFocus,
-    _exists,
-    _getGrandTotalRow,
-    _isIOSUserAgent,
-} from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _attemptToRestoreCellFocus, _getGrandTotalRow } from 'ag-grid-community';
 
 import { AgContextMenuService } from '../agStack/agContextMenuService';
 import { MENU_ITEM_CALLBACKS } from '../widgets/menuItemComponent';
@@ -91,20 +86,10 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         const defaultMenuOptions: DefaultMenuItem[] = [];
 
-        const {
-            clipboardSvc,
-            chartSvc,
-            csvCreator,
-            excelCreator,
-            colModel,
-            rangeSvc,
-            gos,
-            notesSvc,
-            calculatedColsSvc,
-            pdfCreator,
-        } = this.beans;
+        const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos, notesSvc, pdfCreator } =
+            this.beans;
 
-        const isCalculatedColumn = column?.getColDef().calculatedExpression != null && calculatedColsSvc != null;
+        const isCalculatedColumn = !!(column as AgColumn | null)?.isCalculatedCol;
 
         if (_exists(node) && clipboardSvc) {
             if (column) {
@@ -160,8 +145,8 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             const suppressExcel = gos.get('suppressExcelExport') || !excelCreator;
             const suppressCsv = gos.get('suppressCsvExport') || !csvCreator;
             const suppressPdf = gos.get('suppressPdfExport') || !pdfCreator;
-            const onIPad = _isIOSUserAgent();
-            const anyExport = !onIPad && (!suppressExcel || !suppressCsv || !suppressPdf);
+            const anyExport = !suppressExcel || !suppressCsv || !suppressPdf;
+
             if (anyExport) {
                 defaultMenuOptions.push('export');
             }
@@ -215,7 +200,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         let { anchorToElement, value, source, noteParams } = params;
 
         if (rowNode && column && value == null) {
-            value = this.beans.valueSvc.getValueForDisplay({ column, node: rowNode, from: 'edit' }).value;
+            value = this.beans.valueSvc.getDisplayValue(column, rowNode, 'edit');
         }
 
         if (anchorToElement == null) {

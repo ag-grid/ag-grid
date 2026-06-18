@@ -1,3 +1,5 @@
+import { _debounce, _jsonEquals, _missing, _toString } from 'ag-stack';
+
 import type {
     Column,
     FindCellValueParams,
@@ -17,12 +19,8 @@ import type {
 import {
     BeanStub,
     _addGridCommonParams,
-    _debounce,
     _isClientSideRowModel,
     _isFullWidthGroupRow,
-    _jsonEquals,
-    _missing,
-    _toString,
     isSpecialCol,
 } from 'ag-grid-community';
 
@@ -440,7 +438,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 let valueToFind: string | null;
                 const getFindText = (groupRowRendererParams as FindGroupRowRendererParams)?.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay({ node, from: 'batch' }).value;
+                    const value = valueSvc.getDisplayValue(undefined, node, 'batch');
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -489,16 +487,17 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
                 // if node will be hidden by open parent, don't match on showRowGroup cols
                 // as the cell does not have that value yet
-                if (column.colDef.showRowGroup && nodeWillBeHiddenByOpenParent) {
+                if (column.showRowGroup && nodeWillBeHiddenByOpenParent) {
                     continue;
                 }
 
                 let valueToFind: string | null;
 
                 const colDef = column.colDef;
+                const from = column.showValueAs != null ? 'transformed' : 'batch';
                 const getFindText = colDef.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay({ column, node, from: 'batch' }).value;
+                    const value = valueSvc.getDisplayValue(column, node, from);
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -511,7 +510,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                                     column,
                                     node,
                                     includeValueFormatted: true,
-                                    from: 'batch',
+                                    from,
                                 });
                                 return valueFormatted;
                             },
@@ -522,7 +521,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                         column,
                         node,
                         includeValueFormatted: true,
-                        from: 'batch',
+                        from,
                     });
                     valueToFind = valueFormatted ?? value;
                 }

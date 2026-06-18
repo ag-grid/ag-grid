@@ -1,5 +1,7 @@
-import type { AgColumn, IAggColumnNameService, IAggFunc, NamedBean } from 'ag-grid-community';
-import { BeanStub, _exists } from 'ag-grid-community';
+import { _exists } from 'ag-stack';
+
+import type { AgColumn, ColAggFunc, IAggColumnNameService, NamedBean } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 export class AggColumnNameService extends BeanStub implements NamedBean, IAggColumnNameService {
     beanName = 'aggColNameSvc' as const;
@@ -12,9 +14,9 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
         const { valueColsSvc, colModel, rowGroupColsSvc } = this.beans;
 
         // only columns with aggregation active can have aggregations
-        const pivotValueColumn = column.colDef.pivotValueColumn;
+        const pivotValueColumn = column.pivotValueColumn;
         const pivotActiveOnThisColumn = _exists(pivotValueColumn);
-        let aggFunc: string | IAggFunc | null | undefined = null;
+        let aggFunc: ColAggFunc = null;
         let aggFuncFound: boolean;
 
         // otherwise we have a measure that is active, and we are doing aggregation on it
@@ -34,7 +36,7 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
             const aggregationPresent = colModel.pivotMode || isGrouping || this.gos.get('treeData');
 
             if (measureActive && aggregationPresent) {
-                aggFunc = column.getAggFunc();
+                aggFunc = column.aggFunc;
                 aggFuncFound = true;
             } else {
                 aggFuncFound = false;

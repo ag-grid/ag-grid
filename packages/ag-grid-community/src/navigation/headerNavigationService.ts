@@ -1,10 +1,10 @@
-import { _last } from '../agStack/utils/array';
-import { _getDocument } from '../agStack/utils/document';
+import { _getDocument, _last } from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
-import { AgColumnGroup, isColumnGroup } from '../entities/agColumnGroup';
+import { AgColumnGroup, edgeLeafColumn, getColGroupAtLevel, isColumnGroup } from '../entities/agColumnGroup';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { HeaderRowType } from '../headerRendering/row/headerRowComp';
@@ -79,13 +79,10 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     ): HeaderPosition | null {
         let column: AgColumn | AgColumnGroup | null;
 
-        const { colModel, colGroupSvc, ctrlsSvc } = this.beans;
+        const { colModel, ctrlsSvc } = this.beans;
 
         if (typeof colKey === 'string') {
-            column = colModel.getCol(colKey);
-            if (!column) {
-                column = colGroupSvc?.getColumnGroup(colKey) ?? null;
-            }
+            column = colModel.getCol(colKey) ?? colModel.colsGroupsById.get(colKey)?.displayInstances?.[0] ?? null;
         } else {
             column = colKey as AgColumn | AgColumnGroup;
         }
@@ -183,7 +180,10 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         event: KeyboardEvent
     ): boolean {
         const { focusSvc, gos } = this.beans;
-        const focusedHeader = { ...focusSvc.focusedHeader! };
+        if (!focusSvc.focusedHeader) {
+            return false;
+        }
+        const focusedHeader = { ...focusSvc.focusedHeader };
         let nextHeader: HeaderPosition;
         let normalisedDirection: 'Before' | 'After';
 
@@ -298,7 +298,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     }
 
     private findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
-        const { colGroupSvc, visibleCols } = this.beans;
+        const { visibleCols } = this.beans;
 
         let currentFocusedColumn = focusedHeader.column as AgColumn | AgColumnGroup;
         if (currentFocusedColumn instanceof AgColumnGroup) {
@@ -321,7 +321,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
                 column: nextFocusedCol,
             };
         }
-        const groupAtLevel = colGroupSvc?.getColGroupAtLevel(nextFocusedCol, focusedHeader.headerRowIndex);
+        const groupAtLevel = getColGroupAtLevel(nextFocusedCol, focusedHeader.headerRowIndex);
         if (!groupAtLevel) {
             // spanned or filler column
             const isSpanningCol = nextFocusedCol instanceof AgColumn && nextFocusedCol.isSpanHeaderHeight();
@@ -417,17 +417,17 @@ function getColumnVisibleChild(
         // non-rendered padding groups.
         if (optimisticNextIndex >= columnHeaderRowIndex) {
             return {
-                column: column.getDisplayedLeafColumns()[0],
+                column: edgeLeafColumn(column, true, false)!,
                 headerRowIndex: columnHeaderRowIndex,
                 headerRowIndexWithoutSpan: optimisticNextIndex,
             };
         }
 
-        const children = column.getDisplayedChildren();
+        const children = column.displayedChildren;
         let firstChild = children![0];
         if (firstChild instanceof AgColumnGroup && firstChild.isPadding()) {
-            const firstCol = firstChild.getDisplayedLeafColumns()[0];
-            if (firstCol.isSpanHeaderHeight()) {
+            const firstCol = edgeLeafColumn(firstChild, true, false);
+            if (firstCol?.isSpanHeaderHeight()) {
                 firstChild = firstCol;
             }
         }

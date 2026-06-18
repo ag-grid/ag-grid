@@ -1,0 +1,529 @@
+{
+    "url": "https://bryntum.com/products/gantt/",
+    "slug": "gantt",
+    "title": "The Quickest JavaScript Gantt Chart – Bryntum Gantt",
+    "meta": {
+        "description": "A highly configurable, blazing-fast Gantt chart component. Ships with a capable TypeScript scheduling engine and supports React, Angular and Vue.",
+        "og_title": "The Quickest JavaScript Gantt Chart – Bryntum Gantt",
+        "og_description": "A highly configurable, blazing-fast Gantt chart component. Ships with a capable TypeScript scheduling engine and supports React, Angular and Vue."
+    },
+    "sections": [
+        {
+            "id": "block_796ebaa2a15154c0a0173b7898b31b89",
+            "type": "heroTBM",
+            "modifiers": ["animated-hero"],
+            "heading": "The Quickest JS Gantt Chart",
+            "body_html": "<p>Bryntum Gantt is a speed-tuned, fully tailorable Gantt chart suite for your JavaScript, <a href=\"/products/react-gantt-chart/\">React</a>, <a href=\"/products/angular-gantt-chart/\">Angular</a> and <a href=\"/products/vue-gantt-chart/\">Vue</a> apps.</p>",
+            "body_text": "Bryntum Gantt is a speed-tuned, fully tailorable Gantt chart suite for your JavaScript, React , Angular and Vue apps.",
+            "ctas": [
+                {
+                    "text": "Browse Examples",
+                    "href": "/products/gantt/examples",
+                    "title": "Browse Examples"
+                },
+                {
+                    "text": "Get the Trial",
+                    "href": "/download/?product=gantt",
+                    "title": "Get the Trial"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "svg-file",
+                    "src": "heroes/gantt.svg"
+                }
+            ]
+        },
+        {
+            "id": "block_agbryntum_partnership",
+            "type": "partnership",
+            "heading": "Your JavaScript stack just expanded",
+            "body_html": "<p>Since our 2025 <a href=\"https://blog.ag-grid.com/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, Bryntum Gantt sits alongside AG Grid as the obvious next piece in your stack, crafted by a similar team and held to the same bar.</p>",
+            "body_text": "Since our 2025 partnership with Bryntum, Bryntum Gantt sits alongside AG Grid as the obvious next piece in your stack, crafted by a similar team and held to the same bar.",
+            "logo_light_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-light.svg",
+            "logo_dark_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-dark.svg",
+            "logo_alt": "AG Grid x Bryntum partnership"
+        },
+        {
+            "id": "block_agbryntum_intro_video_gantt",
+            "type": "intro-video",
+            "video_src": "https://www.youtube.com/embed/aR1rHGZfOV8?feature=oembed",
+            "title": "Bryntum Gantt Chart"
+        },
+        {
+            "id": "block_3f15ff5b45b62a6f88bc0de39e399b5d",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Real-World Ready",
+            "heading": "Built for Real-World Projects",
+            "body_html": "<p>Bryntum Gantt is built to tame real-world complexity and streamline project planning via smart, intuitive tools:</p> <ul class=\"two-columns\"> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Track the pace of progress with an </span><a href=\"https://bryntum.com/products/gantt/examples/s-curve/\"><span style=\"font-weight: 400;\">S-curve</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Compare task durations across </span><a href=\"https://bryntum.com/products/gantt/examples/planned-percent-done/\"><span style=\"font-weight: 400;\">baselines and chart completion percentages</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Surface </span><a href=\"https://bryntum.com/products/gantt/examples/criticalpaths/\"><span style=\"font-weight: 400;\">critical path</span></a><span style=\"font-weight: 400;\">s to speed up project delivery.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><a href=\"https://bryntum.com/products/gantt/examples/conflicts/\"><span style=\"font-weight: 400;\">Settle</span></a><span style=\"font-weight: 400;\"> or </span><a href=\"https://bryntum.com/products/gantt/examples/postponed-conflicts/\"><span style=\"font-weight: 400;\">defer</span></a><span style=\"font-weight: 400;\"> scheduling conflicts to keep your plan intact.</span></li> </ul>",
+            "body_text": "Bryntum Gantt is built to tame real-world complexity and streamline project planning via smart, intuitive tools: Track the pace of progress with an S-curve . Compare task durations across baselines and chart completion percentages . Surface critical path s to speed up project delivery. Settle or defer scheduling conflicts to keep your plan intact.",
+            "links": [
+                {
+                    "text": "S-curve",
+                    "href": "https://bryntum.com/products/gantt/examples/s-curve/"
+                },
+                {
+                    "text": "baselines and chart completion percentages",
+                    "href": "https://bryntum.com/products/gantt/examples/planned-percent-done/"
+                },
+                {
+                    "text": "critical path",
+                    "href": "https://bryntum.com/products/gantt/examples/criticalpaths/"
+                },
+                {
+                    "text": "Settle",
+                    "href": "https://bryntum.com/products/gantt/examples/conflicts/"
+                },
+                {
+                    "text": "defer",
+                    "href": "https://bryntum.com/products/gantt/examples/postponed-conflicts/"
+                }
+            ],
+            "ctas": [],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/gantt/gantt-s-curve-svalbard-cropped-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "724",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/gantt-s-curve-svalbard-cropped-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_2c3c61d9aa0568d9d622dade60699342",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Performance",
+            "heading": "Lightning-Quick",
+            "body_html": "<p><span style=\"font-weight: 400;\">Written in modern JavaScript (ES6+) for swift, efficient execution, Bryntum Gantt is tuned for speed so teams stay focused on planning:</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Comfortably handle </span><a href=\"https://bryntum.com/products/gantt/examples/bigdataset/\"><span style=\"font-weight: 400;\">huge datasets</span></a><span style=\"font-weight: 400;\"> and advanced features.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Keep interactions fluid and responsive with instant updates.</span></li> </ul>",
+            "body_text": "Written in modern JavaScript (ES6+) for swift, efficient execution, Bryntum Gantt is tuned for speed so teams stay focused on planning: Comfortably handle huge datasets and advanced features. Keep interactions fluid and responsive with instant updates.",
+            "links": [
+                {
+                    "text": "huge datasets",
+                    "href": "https://bryntum.com/products/gantt/examples/bigdataset/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Open big-dataset demo",
+                    "href": "/products/gantt/examples/bigdataset/",
+                    "title": "Open big-dataset demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/gantt/gantt-bigdataset-svalbard-cropped-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "831",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/gantt-bigdataset-svalbard-cropped-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_344b68ae395fbdaeaf56fe3f1d5b57df",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Customisation",
+            "heading": "Fully Flexible Tailoring",
+            "body_html": "<p><span style=\"font-weight: 400;\">Shape the JavaScript Gantt chart to match your project’s look, feel and workflow:</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Pick one of </span><a href=\"https://bryntum.com/products/gantt/examples/theme/\"><span style=\"font-weight: 400;\">five themes</span></a><span style=\"font-weight: 400;\">, or </span><a href=\"https://bryntum.com/products/gantt/examples/custom-theme/\"><span style=\"font-weight: 400;\">roll your own</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Tailor taskbar </span><a href=\"https://bryntum.com/products/gantt/examples/taskstyles/\"><span style=\"font-weight: 400;\">styles</span></a><span style=\"font-weight: 400;\">, </span><a href=\"https://bryntum.com/products/gantt/examples/custom-rendering/\"><span style=\"font-weight: 400;\">content</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/custom-taskbar/\"><span style=\"font-weight: 400;\">labels</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Add richly styled </span><a href=\"https://bryntum.com/products/gantt/examples/tooltips/\"><span style=\"font-weight: 400;\">custom tooltips</span></a><span style=\"font-weight: 400;\">.</span></li> <li class=\"p1\"><span style=\"font-weight: 400;\">Drop in a </span><a href=\"https://bryntum.com/products/gantt/examples/resourceassignment/\"><span style=\"font-weight: 400;\">bespoke assignment picker</span></a><span style=\"font-weight: 400;\"> for fast task delegation.</span></li> </ul>",
+            "body_text": "Shape the JavaScript Gantt chart to match your project’s look, feel and workflow: Pick one of five themes , or roll your own . Tailor taskbar styles , content and labels . Add richly styled custom tooltips . Drop in a bespoke assignment picker for fast task delegation.",
+            "links": [
+                {
+                    "text": "five themes",
+                    "href": "https://bryntum.com/products/gantt/examples/theme/"
+                },
+                {
+                    "text": "roll your own",
+                    "href": "https://bryntum.com/products/gantt/examples/custom-theme/"
+                },
+                {
+                    "text": "styles",
+                    "href": "https://bryntum.com/products/gantt/examples/taskstyles/"
+                },
+                {
+                    "text": "content",
+                    "href": "https://bryntum.com/products/gantt/examples/custom-rendering/"
+                },
+                {
+                    "text": "labels",
+                    "href": "https://bryntum.com/products/gantt/examples/custom-taskbar/"
+                },
+                {
+                    "text": "custom tooltips",
+                    "href": "https://bryntum.com/products/gantt/examples/tooltips/"
+                },
+                {
+                    "text": "bespoke assignment picker",
+                    "href": "https://bryntum.com/products/gantt/examples/resourceassignment/"
+                }
+            ],
+            "ctas": [],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/gantt/gantt-custom-rendering-svalbard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "762",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/gantt-custom-rendering-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_8ec03cd4e84704c583ebdd667f6277f3",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Component Library",
+            "heading": "50+ Additional Widgets",
+            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/gantt/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in <strong>chat boxes, menus, toggles, sliders and more</strong> alongside your Bryntum Gantt chart.</li> <li class=\"li1\">Cut clicks and searching to meet user needs faster.</li> <li class=\"li1\">Wire up widgets straightforwardly via our clear docs.</li> </ul>",
+            "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel: Drop in chat boxes, menus, toggles, sliders and more alongside your Bryntum Gantt chart. Cut clicks and searching to meet user needs faster. Wire up widgets straightforwardly via our clear docs.",
+            "links": [
+                {
+                    "text": "broad set of UI elements",
+                    "href": "/products/gantt/examples/kitchen-sink/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Browse widgets",
+                    "href": "/products/gantt/examples/kitchen-sink/",
+                    "title": "Browse widgets"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/gantt/more-widgets-gantt-2-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "732",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/more-widgets-gantt-2-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_308bfebd6b6058ced7d49c6b5f4ae83d",
+            "type": "text-mini-demo",
+            "eyebrow": "Try It Yourself",
+            "heading": "The Most Flexible JS Gantt on the Web",
+            "body_html": "<p class=\"pre-title\">From developers, to developers</p>  <p><span style=\"font-weight: 400;\">A Gantt chart wraps up a huge amount of complexity. We give you a clean, deeply configurable and thoroughly tested API, so the small details aren’t your problem.</span></p>",
+            "body_text": "From developers, to developers  A Gantt chart wraps up a huge amount of complexity. We give you a clean, deeply configurable and thoroughly tested API, so the small details aren’t your problem.",
+            "ctas": [
+                {
+                    "text": "Open API Docs",
+                    "href": "/products/gantt/docs/",
+                    "title": "Open API Docs"
+                }
+            ],
+            "demo_kind": "gantt",
+            "demo_position": "right"
+        },
+        {
+            "id": "block_9acd2c85d89f9b4d895ff10ee9aac96e",
+            "type": "text-media",
+            "modifiers": ["video-file", "reverse", "added-shadow"],
+            "eyebrow": "Scheduling Engine",
+            "heading": "Top-Tier Scheduling Engine",
+            "body_html": "<p><span style=\"font-weight: 400;\">The JavaScript Gantt engine briskly handles asynchronous scheduling across any number of tasks, taking dependencies, constraints and scheduling modes into account.</span></p> <p><span style=\"font-weight: 400;\">Designed independently of the DOM, it can also run server-side on Node.js.</span></p> <h6 style=\"margin-top: 1em;\">Animated Redraws</h6> <p><span style=\"font-weight: 400;\">Moving a task kicks off a smooth animation that reveals how dependent tasks shift in response.</span></p>",
+            "body_text": "The JavaScript Gantt engine briskly handles asynchronous scheduling across any number of tasks, taking dependencies, constraints and scheduling modes into account. Designed independently of the DOM, it can also run server-side on Node.js. Animated Redraws Moving a task kicks off a smooth animation that reveals how dependent tasks shift in response.",
+            "links": [],
+            "ctas": [],
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/gantt/animated-redraw-big-dataset-3.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/animated-redraw-big-dataset-3.mp4"
+                }
+            ]
+        },
+        {
+            "id": "block_492ed05bbe9a04fbfdaa3f90f6a12ed8",
+            "type": "text-media",
+            "modifiers": ["video-file", "white-section", "added-shadow"],
+            "eyebrow": "Task Editing",
+            "heading": "Tailorable Task Editor and Menu",
+            "body_html": "<p><span style=\"font-weight: 400;\">The built-in </span><a href=\"https://bryntum.com/products/gantt/examples/taskeditor/\"><span style=\"font-weight: 400;\">task editor</span></a><span style=\"font-weight: 400;\"> is designed to be extended and shaped freely in the JS Gantt chart. Make it fit your workflow exactly:</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\"> Adjust which fields are visible</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Bring your own custom tabs</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><a href=\"https://bryntum.com/products/gantt/examples/taskmenu/\"><span style=\"font-weight: 400;\">Tweak</span></a><span style=\"font-weight: 400;\"> or </span><a href=\"https://bryntum.com/products/gantt/examples/custom-taskmenu/\"><span style=\"font-weight: 400;\">swap out</span></a><span style=\"font-weight: 400;\"> the right-click task menu.</span></li> <li><span style=\"font-weight: 400;\">Tailor the </span><a href=\"https://bryntum.com/products/gantt/examples/resourceassignment/\"><span style=\"font-weight: 400;\">resource picker</span></a><span style=\"font-weight: 400;\">.</span></li> </ul>",
+            "body_text": "The built-in task editor is designed to be extended and shaped freely in the JS Gantt chart. Make it fit your workflow exactly: Adjust which fields are visible Bring your own custom tabs Tweak or swap out the right-click task menu. Tailor the resource picker .",
+            "links": [
+                {
+                    "text": "task editor",
+                    "href": "https://bryntum.com/products/gantt/examples/taskeditor/"
+                },
+                {
+                    "text": "Tweak",
+                    "href": "https://bryntum.com/products/gantt/examples/taskmenu/"
+                },
+                {
+                    "text": "swap out",
+                    "href": "https://bryntum.com/products/gantt/examples/custom-taskmenu/"
+                },
+                {
+                    "text": "resource picker",
+                    "href": "https://bryntum.com/products/gantt/examples/resourceassignment/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Open example",
+                    "href": "/products/gantt/examples/taskeditor",
+                    "title": "Open example"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/gantt/gantt-taskeditor-svalbard-2.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/gantt-taskeditor-svalbard-2.mp4"
+                }
+            ]
+        },
+        {
+            "id": "block_ff5073f8911439ab5fdb152e35e4e182",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Integrations",
+            "heading": "Integrations and Export Options",
+            "body_html": "<p><span style=\"font-weight: 400;\">The JavaScript Gantt chart plays nicely with other tools and ships with a versatile set of export options to keep your team and stakeholders in the loop.</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Drop in a </span><a href=\"https://bryntum.com/products/gantt/examples/joint-js/\"><span style=\"font-weight: 400;\">PERT chart</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Push Gantt data to </span><a href=\"https://bryntum.com/products/gantt/examples/exporttoexcel/\"><span style=\"font-weight: 400;\">Microsoft Excel</span></a><span style=\"font-weight: 400;\"> or to </span><a href=\"https://bryntum.com/products/gantt/examples/msprojectexport/\"><span style=\"font-weight: 400;\">Microsoft Project</span></a><span style=\"font-weight: 400;\">, </span><a href=\"https://bryntum.com/products/gantt/examples/print/\"><span style=\"font-weight: 400;\">print it</span></a><span style=\"font-weight: 400;\">, or share it as </span><a href=\"https://bryntum.com/products/gantt/examples/export/\"><span style=\"font-weight: 400;\">PDF, PNG</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/export-to-ics/\"><span style=\"font-weight: 400;\">ICS</span></a><span style=\"font-weight: 400;\">.</span></li> <li><span style=\"font-weight: 400;\">Pair Gantt with other Bryntum components such as </span><a href=\"https://bryntum.com/products/gantt/examples/gantt-schedulerpro/\"><span style=\"font-weight: 400;\">Scheduler Pro</span></a><span style=\"font-weight: 400;\"> and </span><a href=\"https://bryntum.com/products/gantt/examples/gantt-taskboard/\"><span style=\"font-weight: 400;\">Task Board</span></a><span style=\"font-weight: 400;\">.</span></li> </ul>",
+            "body_text": "The JavaScript Gantt chart plays nicely with other tools and ships with a versatile set of export options to keep your team and stakeholders in the loop. Drop in a PERT chart . Push Gantt data to Microsoft Excel or to Microsoft Project , print it , or share it as PDF, PNG and ICS . Pair Gantt with other Bryntum components such as Scheduler Pro and Task Board .",
+            "links": [
+                {
+                    "text": "PERT chart",
+                    "href": "https://bryntum.com/products/gantt/examples/joint-js/"
+                },
+                {
+                    "text": "Microsoft Excel",
+                    "href": "https://bryntum.com/products/gantt/examples/exporttoexcel/"
+                },
+                {
+                    "text": "Microsoft Project",
+                    "href": "https://bryntum.com/products/gantt/examples/msprojectexport/"
+                },
+                {
+                    "text": "print it",
+                    "href": "https://bryntum.com/products/gantt/examples/print/"
+                },
+                {
+                    "text": "PDF, PNG",
+                    "href": "https://bryntum.com/products/gantt/examples/export/"
+                },
+                {
+                    "text": "ICS",
+                    "href": "https://bryntum.com/products/gantt/examples/export-to-ics/"
+                },
+                {
+                    "text": "Scheduler Pro",
+                    "href": "https://bryntum.com/products/gantt/examples/gantt-schedulerpro/"
+                },
+                {
+                    "text": "Task Board",
+                    "href": "https://bryntum.com/products/gantt/examples/gantt-taskboard/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "See all features",
+                    "href": "/products/gantt/features",
+                    "title": "See all features"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/gantt/gantt-taskboard-for-syncfusion-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "768",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2025/10/gantt-taskboard-for-syncfusion-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_b72b060dbbb997a7df42aa88f2040f8e",
+            "type": "text-media",
+            "modifiers": ["video-file", "added-shadow"],
+            "eyebrow": "Quick Start",
+            "heading": "Install via npm",
+            "body_html": "<p>Pull Bryntum Gantt straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial, configure it, and you’re ready to build.</p>",
+            "body_text": "Pull Bryntum Gantt straight from npm. No sign-in or auth needed . Install the trial, configure it, and you’re ready to build.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Read docs",
+                    "href": "/products/gantt/docs/guide/Gantt/quick-start/javascript-npm",
+                    "title": "Read docs"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/gantt/npm-gantt-edit-3.webm",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/npm-gantt-edit-3.webm"
+                }
+            ]
+        },
+        {
+            "id": "block_a1cdca17a5fa084ca46c61aa1cd7c03a",
+            "type": "brands",
+            "modifiers": [],
+            "eyebrow": "Trusted Worldwide",
+            "heading": "Used by the world’s most respected companies",
+            "items": [
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-1.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-2.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-3.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-4.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-5.svg"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "",
+            "type": "live-demo",
+            "modifiers": [],
+            "eyebrow": "Live Demo",
+            "heading": "Have a play yourself",
+            "body_text": "Drag tasks around, edit dependencies and tweak settings. The live Bryntum Gantt engine is running right below.",
+            "demo_src": null,
+            "media": []
+        },
+        {
+            "id": "block_991e10a6193221d97e94aae40a6a8c34",
+            "type": "columns-lib",
+            "modifiers": [],
+            "eyebrow": "Examples Gallery",
+            "heading": "Further Examples",
+            "items": [
+                {
+                    "heading": "gantt-portfolio-planning-svalbard-6",
+                    "href": "/products/gantt/examples/portfolio-planning/",
+                    "body_text": "Portfolio planning",
+                    "description": "Roll up multiple projects into one master Gantt for top-level visibility.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/gantt/gantt-portfolio-planning-svalbard-6-768x523.png",
+                        "alt": "gantt-portfolio-planning-svalbard-6",
+                        "width": "768",
+                        "height": "523",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/gantt-portfolio-planning-svalbard-6-768x523.png"
+                    }
+                },
+                {
+                    "heading": "gantt-versions-svalbard",
+                    "href": "/products/gantt/examples/versions/?theme=svalbard-dark",
+                    "body_text": "Version history",
+                    "description": "Step back through saved revisions and compare changes side by side.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/gantt/gantt-versions-svalbard-768x520.png",
+                        "alt": "gantt-versions-svalbard",
+                        "width": "768",
+                        "height": "520",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/gantt-versions-svalbard-768x520.png"
+                    }
+                },
+                {
+                    "heading": "gantt-resourceassignment-svalbard",
+                    "href": "/products/gantt/examples/resourceassignment/",
+                    "body_text": "Resource assignment",
+                    "description": "Pick assignees inline from a searchable, avatar-rich resource picker.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/gantt/gantt-resourceassignment-svalbard-768x520.png",
+                        "alt": "gantt-resourceassignment-svalbard",
+                        "width": "768",
+                        "height": "520",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/gantt-resourceassignment-svalbard-768x520.png"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "block_692014f744bbf30b69d8e72b94771ce7",
+            "type": "text-button",
+            "modifiers": ["variant-2"],
+            "eyebrow": "Get Started",
+            "heading": "Ready to dive in?",
+            "body_html": "",
+            "body_text": "",
+            "ctas": [
+                {
+                    "text": "Try for Free",
+                    "href": "/download/?product=gantt",
+                    "title": "Try for Free"
+                },
+                {
+                    "text": "Purchase Now",
+                    "href": "/store/gantt/",
+                    "title": "Purchase Now"
+                }
+            ]
+        },
+        {
+            "id": "block_9e17a8fdf3e1dab357214b02beb83203",
+            "type": "columnsWithMedia",
+            "modifiers": [],
+            "heading": "Reference",
+            "items": [
+                {
+                    "heading": "Reference",
+                    "href": "/products/gantt/docs",
+                    "body_text": "",
+                    "media": null
+                },
+                {
+                    "heading": "Recent Releases",
+                    "href": "changelog/#release-7.3.0",
+                    "body_text": "Complete changelog",
+                    "media": null
+                },
+                {
+                    "heading": "Documentation Site",
+                    "href": "/products/gantt/docs",
+                    "body_text": "",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/gantt/docs-bryntum-gantt-scaled.png",
+                        "alt": "docs-bryntum-gantt",
+                        "width": "2560",
+                        "height": "1609",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/docs-bryntum-gantt-scaled.png"
+                    }
+                }
+            ]
+        }
+    ]
+}

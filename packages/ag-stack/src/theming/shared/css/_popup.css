@@ -1,0 +1,13 @@
+.ag-popup {
+    background-color: var(--ag-wrapper-background-color);
+}
+
+.ag-popup-child {
+    /* grid-managed popups must sit above overlays and row content. */
+    z-index: 5;
+    top: 0;
+}
+
+.ag-popup-child:where(:not(.ag-tooltip-custom)) {
+    box-shadow: var(--ag-popup-shadow);
+}

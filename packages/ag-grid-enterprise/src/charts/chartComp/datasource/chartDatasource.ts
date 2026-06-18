@@ -1,3 +1,5 @@
+import { _last } from 'ag-stack';
+
 import type {
     AgColumn,
     AgColumnGroup,
@@ -13,14 +15,7 @@ import type {
     SortOption,
     SortService,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    GROUP_AUTO_COLUMN_ID,
-    _isClientSideRowModel,
-    _isServerSideRowModel,
-    _last,
-    _warn,
-} from 'ag-grid-community';
+import { BeanStub, GROUP_AUTO_COLUMN_ID, _isClientSideRowModel, _isServerSideRowModel, _warn } from 'ag-grid-community';
 
 import type { ColState } from '../model/chartDataModel';
 import { DEFAULT_CHART_CATEGORY } from '../model/chartDataModel';
@@ -423,7 +418,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private updatePivotKeysForSSRM() {
-        const secondaryColumns = this.pivotResultCols?.getPivotResultCols()?.list;
+        const secondaryColumns = this.pivotResultCols?.pivotCols;
 
         if (!secondaryColumns) {
             return;

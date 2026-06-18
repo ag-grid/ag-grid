@@ -1,9 +1,14 @@
-import type { AgComponentPopupPositionParams } from '../../agStack/interfaces/iPopup';
-import { CssClassManager } from '../../agStack/rendering/cssClassManager';
-import { _getActiveDomElement } from '../../agStack/utils/document';
-import { _addStylesToElement, _clearElement, _removeFromParent } from '../../agStack/utils/dom';
-import { _missing } from '../../agStack/utils/generic';
-import { _toString } from '../../agStack/utils/string';
+import type { AgComponentPopupPositionParams } from 'ag-stack';
+import {
+    CssClassManager,
+    _addStylesToElement,
+    _clearElement,
+    _getActiveDomElement,
+    _missing,
+    _removeFromParent,
+    _toString,
+} from 'ag-stack';
+
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapper';

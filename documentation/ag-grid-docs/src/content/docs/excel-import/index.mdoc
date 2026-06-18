@@ -2,13 +2,11 @@
 title: "Excel Import"
 ---
 
-Below we illustrate how you might import an Excel spreadsheet into AG Grid using a third-party library - in this example we're using [xlsx-style](https://github.com/protobi/js-xlsx).
+Below we illustrate how you might import an Excel spreadsheet into AG Grid using a third-party library - in this example we're using [xlsx](https://www.jsdelivr.com/package/npm/xlsx).
 
-In this example we're providing a simple Excel file for importing but in your application you could allow uploading of Excel files by end users.
+[Auto-Generate Columns](./auto-generate-columns/) is used so no column definitions need to be provided upfront — columns are created from the imported data. The `processFileInput` callback parses dropped Excel files using the same library.
 
-The spreadsheet contains a few rows of simple data, which the example parses and sets as row data.
-
-The spreadsheet can be downloaded [here](https://www.ag-grid.com/example-assets/olympic-data.xlsx).
+Click **Load Sample Excel** to fetch a sample spreadsheet, or drag your own `.xlsx` file onto the grid. Click **Upload File** to re-show the file input overlay. The spreadsheet can also be downloaded [here](https://www.ag-grid.com/example-assets/olympic-data.xlsx).
 
 ## Example Import
 

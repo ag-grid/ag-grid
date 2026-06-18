@@ -1,85 +1,108 @@
+@use 'ag';
+
 @mixin output {
     .ag-calculated-column-panel .ag-panel-content-wrapper {
-        padding: var(--ag-grid-size);
+        padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);
     }
 
     .ag-calculated-column-form {
         display: flex;
         flex-direction: column;
-        gap: var(--ag-grid-size);
+        gap: calc(var(--ag-grid-size) * 2);
         min-width: 260px;
+        flex: 1 1 auto;
+        min-height: 0;
     }
 
     .ag-calculated-column-expression-wrap {
-        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        gap: var(--ag-grid-size);
+
+        .ag-text-area {
+            flex: 1 1 auto;
+        }
+
+        .ag-text-area-input-wrapper {
+            height: 100%;
+        }
+
+        .ag-text-area-input {
+            height: 100%;
+            resize: none;
+            padding-top: calc(var(--ag-grid-size) / 2);
+        }
     }
 
-    .ag-calculated-column-expression-error {
-        color: var(--ag-invalid-color);
-        font-size: 11px;
-        line-height: normal;
-        margin-top: calc(var(--ag-grid-size) / 2);
-    }
-
-    .ag-calculated-column-suggestions {
-        position: absolute;
-        z-index: 6;
-        top: calc(100% - 1px);
-        left: 0;
-        min-width: 190px;
-        max-height: 160px;
-        overflow-y: auto;
-        border: var(--ag-borders) var(--ag-border-color);
-        border-radius: var(--ag-border-radius);
-        background-color: var(--ag-background-color);
-        box-shadow: var(--ag-popup-shadow);
+    .ag-rtl .ag-calculated-column-expression-wrap .ag-text-area-input {
+        padding-left: var(--ag-input-padding-start);
+        direction: ltr;
     }
 
     .ag-calculated-column-expression-tools {
         display: flex;
-        gap: calc(var(--ag-grid-size) / 2);
-    }
 
-    .ag-calculated-column-expression-tool {
-        flex: 1 1 0;
-        min-width: 0;
-        border: var(--ag-borders) var(--ag-border-color);
-        border-radius: var(--ag-border-radius);
-        padding: calc(var(--ag-grid-size) / 2) var(--ag-grid-size);
-        background: var(--ag-background-color);
-        color: var(--ag-foreground-color);
-        cursor: pointer;
-        font: inherit;
+        .ag-label {
+            @include ag.unthemed-rtl(
+                (
+                    text-align: right,
+                )
+            );
+        }
 
-        &:hover {
-            background-color: var(--ag-row-hover-color);
+        .ag-field-set-wrapper {
+            gap: var(--ag-grid-size);
+            flex-wrap: nowrap;
+            align-items: center;
         }
     }
 
-    .ag-calculated-column-suggestion {
-        padding: var(--ag-grid-size);
-        cursor: pointer;
+    .ag-standard-button.ag-calculated-column-expression-tool {
+        padding: calc(var(--ag-grid-size) / 2);
     }
 
-    .ag-calculated-column-suggestion-active,
-    .ag-calculated-column-suggestion:hover {
-        background-color: var(--ag-row-hover-color);
-    }
-
-    .ag-calculated-column-properties {
+    .ag-calculated-column-suggestion-path {
         display: flex;
-        flex-direction: column;
+        align-items: center;
         gap: calc(var(--ag-grid-size) / 2);
+    }
+
+    .ag-calculated-column-suggestion-parent {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ag-calculated-column-suggestion-parent,
+    .ag-calculated-column-suggestion-separator {
+        color: var(--ag-calculated-column-parent-suggestion-color);
+    }
+
+    .ag-calculated-column-suggestion-separator {
+        flex: none;
+    }
+
+    .ag-calculated-column-suggestion-leaf {
+        overflow: hidden;
+        flex: none;
+    }
+
+    .ag-calculated-column-picker-list {
+        width: var(--ag-calculated-column-suggestion-list-width);
     }
 
     .ag-calculated-column-actions {
         display: flex;
         justify-content: flex-end;
         gap: calc(var(--ag-grid-size) / 2);
-        margin-top: var(--ag-grid-size);
     }
 
     .ag-calculated-column-action {
         min-width: 72px;
+    }
+
+    .ag-calculated-column-highlighted {
+        background-color: var(--ag-calculated-column-highlight-color);
     }
 }

@@ -1,0 +1,108 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
+import styles from '@pages-styles/contact.module.scss';
+---
+
+<Layout
+    title="Contact AG Grid: Get in Touch with Our Team"
+    description="Have questions or need assistance? Contact the AG Grid team for support, licensing, or any other inquiries."
+    showSearchBar={true}
+    showDocsNav={false}
+>
+    <div class={styles.pageContainer}>
+        <section class={styles.hero}>
+            <div class:list={[styles.heroInner, 'layout-max-width-small']}>
+                <div class={styles.heroText}>
+                    <h1 class={styles.heroHeadline}>Get in touch<br />with our team</h1>
+                    <p class={styles.heroSubheadline}>
+                        Whether you have questions about licensing, need technical support, or want to discuss your use
+                        case, we're here to help.
+                        <br /><br />
+                        Fill in the form and a member of our team will get back to you as soon as possible.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <div class={styles.contentWrapper}>
+            <div class={styles.mainContent}>
+                <section class={styles.contactInfoSection}>
+                    <h2 class={styles.sectionHeading}>Where to find us</h2>
+
+                    <div class={styles.contactOffice}>
+                        <p>
+                            AG Grid Ltd<br />
+                            70 Wilson Street<br />
+                            London<br />
+                            EC2A 2DB<br />
+                        </p>
+                        <div class={styles.officeButton}>
+                            <a
+                                class="button-tertiary"
+                                href="https://maps.app.goo.gl/LhvkucDnWtZ9z7rB8"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Icon name="mapPin" />
+                                <span>Visit our office</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class={styles.socialLinks}>
+                        <a
+                            href="https://github.com/ag-grid/ag-grid"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="GitHub"
+                            class={styles.socialLinkRow}
+                        >
+                            <Icon name="github" />
+                            <span>GitHub</span>
+                        </a>
+                        <a
+                            href="https://x.com/ag_grid"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="X (Twitter)"
+                            class={styles.socialLinkRow}
+                        >
+                            <Icon name="xLogo" />
+                            <span>X</span>
+                        </a>
+                        <a
+                            href="https://youtube.com/c/aggrid"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="YouTube"
+                            class={styles.socialLinkRow}
+                        >
+                            <Icon name="youtube" />
+                            <span>YouTube</span>
+                        </a>
+                        <a
+                            href="https://linkedin.com/company/ag-grid"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="LinkedIn"
+                            class={styles.socialLinkRow}
+                        >
+                            <Icon name="linkedin" />
+                            <span>LinkedIn</span>
+                        </a>
+                    </div>
+                </section>
+            </div>
+
+            <div class={styles.contactFormWrapper}>
+                <ContactForm client:load formLocation="Contact page" />
+                <div class={styles.trustSignals}>
+                    <span class={styles.trustSignal}>Custom pricing for your deployment</span>
+                    <span class={styles.trustSignal}>Dedicated support available</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>

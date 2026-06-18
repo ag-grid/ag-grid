@@ -1,5 +1,5 @@
-import { _areEqual } from '../../agStack/utils/array';
-import { _missing } from '../../agStack/utils/generic';
+import { _areEqual, _missing } from 'ag-stack';
+
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -128,8 +128,12 @@ export class CellPositionFeature extends BeanStub {
         if (!this.colsSpanning) {
             return this.column.getActualWidth();
         }
-
-        return this.colsSpanning.reduce((width, col) => width + col.getActualWidth(), 0);
+        const cols = this.colsSpanning;
+        let width = 0;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            width += cols[i].actualWidth;
+        }
+        return width;
     }
 
     public getColSpanningList(): AgColumn[] {

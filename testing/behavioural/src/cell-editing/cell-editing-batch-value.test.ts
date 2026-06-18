@@ -136,6 +136,17 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `re-edit and commit batch edit updates valueGetter correctly setup`).checkColumns(
+            `
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200
+            `
+        );
+        await new GridRows(api, `re-edit and commit batch edit updates valueGetter correctly setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial" b:"initial"
+        `);
 
         api.startBatchEdit();
 
@@ -172,6 +183,10 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         await asyncSetTimeout(1);
 
         expect(cellB).toHaveTextContent('second');
+        await new GridRows(api, `re-edit and commit batch edit updates valueGetter correctly final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"second" b:"second"
+        `);
     });
 
     test('multiple batch sessions work correctly', async () => {
@@ -186,6 +201,15 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
             rowData: [{ id: '0', a: 'initial' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `multiple batch sessions work correctly setup`).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200
+        `);
+        await new GridRows(api, `multiple batch sessions work correctly setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"initial" b:"initial"
+        `);
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
@@ -236,6 +260,10 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         api.commitBatchEdit();
         await asyncSetTimeout(1);
         expect(cellB).toHaveTextContent('batch3');
+        await new GridRows(api, `multiple batch sessions work correctly final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"batch3" b:"batch3"
+        `);
     });
 
     test('edited cell shows pending value during batch edit', async () => {
@@ -373,6 +401,15 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
             getRowId: (params) => params.data.id,
             valueCache: true,
         });
+        await new GridColumns(api, `valueCache works correctly with batch edit setup`).checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200
+        `);
+        await new GridRows(api, `valueCache works correctly with batch edit setup`).check(`
+            ROOT id:ROOT_NODE_ID b:"Computed: undefined"
+            └── LEAF id:0 a:"initial" b:"Computed: initial"
+        `);
 
         api.startBatchEdit();
 
@@ -405,6 +442,10 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
 
         expect(cellB).toHaveTextContent('Computed: batch-pending');
         expect(valueGetterCallCount).toBeGreaterThanOrEqual(duringBatchCallCount);
+        await new GridRows(api, `valueCache works correctly with batch edit final state`).check(`
+            ROOT id:ROOT_NODE_ID b:"Computed: undefined"
+            └── LEAF id:0 a:"batch-pending" b:"Computed: batch-pending"
+        `);
     });
 
     test('edited cell shows pending value while valueGetter sees committed data', async () => {
@@ -419,6 +460,18 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
             rowData: [{ id: '0', a: 'committed' }],
             getRowId: (params) => params.data.id,
         });
+        await new GridColumns(api, `edited cell shows pending value while valueGetter sees committed data setup`)
+            .checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200
+            `);
+        await new GridRows(api, `edited cell shows pending value while valueGetter sees committed data setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"committed" b:"committed"
+            `
+        );
 
         api.startBatchEdit();
 
@@ -450,5 +503,10 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         expect(cellA).toHaveTextContent('pending');
         expect(cellB).toHaveTextContent('pending');
         expect(rowNode.data.a).toBe('pending');
+        await new GridRows(api, `edited cell shows pending value while valueGetter sees committed data final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"pending" b:"pending"
+            `);
     });
 });

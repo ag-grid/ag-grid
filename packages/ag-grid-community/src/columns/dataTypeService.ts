@@ -1,9 +1,15 @@
-import { KeyCode } from '../agStack/constants/keyCode';
-import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
-import { _parseBigIntOrNull } from '../agStack/utils/bigInt';
-import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../agStack/utils/date';
-import { _toStringOrNull } from '../agStack/utils/generic';
-import { _getValueUsingDotField } from '../agStack/utils/value';
+import type { IEventListener } from 'ag-stack';
+import {
+    KeyCode,
+    _getValueUsingDotField,
+    _isValidDate,
+    _isValidDateTime,
+    _parseBigIntOrNull,
+    _parseDateTimeFromString,
+    _serialiseDate,
+    _toStringOrNull,
+} from 'ag-stack';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -24,7 +30,7 @@ import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { ColumnEventName } from '../interfaces/iColumn';
 import { _warn } from '../validation/logging';
-import { _addColumnDefaultAndTypes } from './columnFactoryUtils';
+import { _addColumnDefaultAndTypes } from './colDefUtils';
 import type { ColumnModel } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
 import { _applyColumnState, getColumnStateFromColDef } from './columnStateUtils';
@@ -89,7 +95,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private initialData: any | null | undefined;
     private isColumnTypeOverrideInDataTypeDefinitions: boolean = false;
     // keep track of any column state updates whilst waiting for data types to be inferred
-    private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = {};
+    private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = Object.create(null);
     private columnStateUpdateListenerDestroyFuncs: (() => void)[] = [];
 
     public postConstruct(): void {
@@ -373,7 +379,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 destroyFunc?.();
                 this.isPendingInference = false;
                 this.processColumnsPendingInference(firstRowData, columnTypeOverridesExist);
-                this.columnStateUpdatesPendingInference = {};
+                this.columnStateUpdatesPendingInference = Object.create(null);
                 if (columnTypeOverridesExist) {
                     colAutosize?.processResizeOperations();
                 }
@@ -385,15 +391,16 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private processColumnsPendingInference(firstRowData: any, columnTypeOverridesExist: boolean): void {
+        const beans = this.beans;
         this.initialData = firstRowData;
         const state: ColumnState[] = [];
         this.destroyColumnStateUpdateListeners();
-        const newRowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
-        const newPivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
+        const rowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
+        const pivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
 
         for (const colId of Object.keys(this.columnStateUpdatesPendingInference)) {
             const columnStateUpdates = this.columnStateUpdatesPendingInference[colId];
-            const column = this.colModel.getCol(colId);
+            const column = this.colModel.colsById[colId];
             if (!column) {
                 continue;
             }
@@ -403,47 +410,30 @@ export class DataTypeService extends BeanStub implements NamedBean {
             }
             const newColDef = column.colDef;
             if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
-                const updatedColumnState = getUpdatedColumnState(column, columnStateUpdates);
+                const updatedColumnState = getUpdatedColumnState(this.beans, column, columnStateUpdates);
                 if (updatedColumnState.rowGroup && updatedColumnState.rowGroupIndex == null) {
-                    newRowGroupColumnStateWithoutIndex[colId] = updatedColumnState;
+                    rowGroupColumnStateWithoutIndex[colId] = updatedColumnState;
                 }
                 if (updatedColumnState.pivot && updatedColumnState.pivotIndex == null) {
-                    newPivotColumnStateWithoutIndex[colId] = updatedColumnState;
+                    pivotColumnStateWithoutIndex[colId] = updatedColumnState;
                 }
                 state.push(updatedColumnState);
             }
         }
 
         if (columnTypeOverridesExist) {
-            state.push(
-                ...this.generateColumnStateForRowGroupAndPivotIndexes(
-                    newRowGroupColumnStateWithoutIndex,
-                    newPivotColumnStateWithoutIndex
-                )
-            );
+            const accumulator: { [colId: string]: ColumnState } = Object.create(null);
+            beans.rowGroupColsSvc?.restoreColumnOrder(rowGroupColumnStateWithoutIndex, accumulator);
+            beans.pivotColsSvc?.restoreColumnOrder(pivotColumnStateWithoutIndex, accumulator);
+            const keys = Object.keys(accumulator);
+            for (let i = 0, len = keys.length; i < len; ++i) {
+                state.push(accumulator[keys[i]]);
+            }
         }
         if (state.length) {
-            _applyColumnState(this.beans, { state }, 'cellDataTypeInferred');
+            _applyColumnState(beans, { state }, 'cellDataTypeInferred');
         }
         this.initialData = null;
-    }
-
-    private generateColumnStateForRowGroupAndPivotIndexes(
-        updatedRowGroupColumnState: { [colId: string]: ColumnState },
-        updatedPivotColumnState: { [colId: string]: ColumnState }
-    ): ColumnState[] {
-        // Generally columns should appear in the order they were before. For any new columns, these should appear in the original col def order.
-        // The exception is for columns that were added via `addGroupColumns`. These should appear at the end.
-        // We don't have to worry about full updates, as in this case the arrays are correct, and they won't appear in the updated lists.
-
-        const existingColumnStateUpdates: { [colId: string]: ColumnState } = {};
-
-        const { rowGroupColsSvc, pivotColsSvc } = this.beans;
-
-        rowGroupColsSvc?.restoreColumnOrder(existingColumnStateUpdates, updatedRowGroupColumnState);
-        pivotColsSvc?.restoreColumnOrder(existingColumnStateUpdates, updatedPivotColumnState);
-
-        return Object.values(existingColumnStateUpdates);
     }
 
     private resetColDefIntoCol(column: AgColumn, source: ColumnEventType): boolean {
@@ -498,7 +488,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
 
         // skip type checking for formulas
-        if (column.colDef.allowFormula && this.beans.formula?.isFormula(value)) {
+        if (column.allowFormula && this.beans.formula?.isFormula(value)) {
             return true;
         }
         return dataTypeMatcher(value);
@@ -537,6 +527,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
     // noinspection JSUnusedGlobalSymbols
     public getFormatValue(cellDataType: string): DataTypeFormatValueFunc | undefined {
         return this.formatValueFuncs[cellDataType];
+    }
+
+    public isDataTypeRegistered(cellDataType: string): boolean {
+        return this.dataTypeDefinitions[cellDataType] != null;
     }
 
     public isColPendingInference(colId: string): boolean {
@@ -600,7 +594,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     useFormatter: true,
                 },
                 comparator: (a: any, b: any) => {
-                    const column = colModel.getColDefCol(colId);
+                    const column = colModel.getNonPivotColById(colId);
                     const colDef = column?.colDef;
                     if (!column || !colDef) {
                         return 0;
@@ -768,7 +762,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.dataTypeDefinitions = {};
         this.dataTypeMatchers = {};
         this.formatValueFuncs = {};
-        this.columnStateUpdatesPendingInference = {};
+        this.columnStateUpdatesPendingInference = Object.create(null);
         this.destroyColumnStateUpdateListeners();
         super.destroy();
     }
@@ -823,10 +817,11 @@ function createGroupSafeValueFormatter(
     }
 
     return (params: ValueFormatterParams) => {
-        const { node, colDef, column, value } = params;
+        const { node, column, value } = params;
 
         if (node?.group) {
-            const aggFunc = (colDef.pivotValueColumn ?? column).getAggFunc();
+            const agColumn = column as AgColumn;
+            const aggFunc = (agColumn.pivotValueColumn ?? agColumn).aggFunc;
             if (aggFunc) {
                 // the resulting type of these will be the same, so we call valueFormatter anyway
                 if (aggFunc === 'first' || aggFunc === 'last') {
@@ -843,11 +838,11 @@ function createGroupSafeValueFormatter(
                         return undefined;
                     }
 
+                    // unwrap an aggregation wrapper (avg/count) to its scalar before formatting
                     if (typeof value === 'object') {
                         if (typeof value.toNumber === 'function') {
                             return dataTypeDefinition.valueFormatter!({ ...params, value: value.toNumber() });
                         }
-
                         if ('value' in value) {
                             return dataTypeDefinition.valueFormatter!({ ...params, value: value.value });
                         }
@@ -944,8 +939,12 @@ function doColDefPropsPreventInference(
     );
 }
 
-function getUpdatedColumnState(column: AgColumn, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
-    const columnState = getColumnStateFromColDef(column);
+function getUpdatedColumnState(
+    beans: BeanCollection,
+    column: AgColumn,
+    columnStateUpdates: Set<keyof ColumnStateParams>
+): ColumnState {
+    const columnState = getColumnStateFromColDef(beans, column);
     for (const key of columnStateUpdates) {
         // if the column state has been updated, don't update again
         delete columnState[key];

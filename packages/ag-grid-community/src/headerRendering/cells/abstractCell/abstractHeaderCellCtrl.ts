@@ -1,10 +1,17 @@
-import type { HorizontalDirection } from '../../../agStack/constants/direction';
-import { KeyCode, _normaliseQwertyAzerty } from '../../../agStack/constants/keyCode';
-import { _setAriaColIndex } from '../../../agStack/utils/aria';
-import { _getActiveDomElement, _getDocument } from '../../../agStack/utils/document';
-import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../../agStack/utils/dom';
-import { _batchCall } from '../../../agStack/utils/function';
-import { _exists } from '../../../agStack/utils/generic';
+import type { HorizontalDirection } from 'ag-stack';
+import {
+    KeyCode,
+    _addOrRemoveAttribute,
+    _batchCall,
+    _exists,
+    _getActiveDomElement,
+    _getDocument,
+    _getElementSize,
+    _normaliseQwertyAzerty,
+    _observeResize,
+    _setAriaColIndex,
+} from 'ag-stack';
+
 import { BeanStub } from '../../../context/beanStub';
 import type { GridDragSource } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -269,7 +276,7 @@ export abstract class AbstractHeaderCellCtrl<
             return;
         }
         refreshFirstAndLastStyles(comp, column, beans.visibleCols);
-        _setAriaColIndex(eGui, beans.visibleCols.getAriaColIndex(column)); // for react, we don't use JSX, as it slowed down column moving
+        _setAriaColIndex(eGui, column.ariaColIndex); // for react, we don't use JSX, as it slowed down column moving
     }
 
     protected addResizeAndMoveKeyboardListeners(compBean: BeanStub): void {

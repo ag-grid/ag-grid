@@ -1,6 +1,6 @@
+import type { CellValueResolveFrom } from '../valueService/valueService';
 import type { Column, ColumnGroup } from './iColumn';
 import type { AgGridCommon } from './iCommon';
-import type { CellValueResolveFrom } from './iEditService';
 import type { IRowNode } from './iRowNode';
 import type { RowPosition } from './iRowPosition';
 
@@ -68,11 +68,13 @@ export interface BaseExportParams {
     skipPinnedBottom?: boolean;
 
     /**
-     * The source to use for getting cell values: 'data', 'batch', or 'edit'.
-     * - `'data'`: Returns values from the underlying row data
-     * - `'batch'`: Returns pending batch edit values (falls back to data if not in batch mode)
-     * - `'edit'`: Returns current editor values including live typing
-     * @default 'data'
+     * The source to use for getting cell values.
+     * - `'transformed'`: the displayed value, including the Show Values As transform (e.g. a percentage of a
+     *   total) for columns that have it active; identical to `'data'` for all other columns.
+     * - `'data'`: values from the underlying row data
+     * - `'batch'`: pending batch edit values (falls back to data if not in batch mode)
+     * - `'edit'`: current editor values including live typing
+     * @default 'transformed'
      */
     valueFrom?: CellValueResolveFrom;
 

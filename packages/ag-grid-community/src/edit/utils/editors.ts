@@ -1,10 +1,9 @@
-import { _setAriaInvalid } from '../../agStack/utils/aria';
-import { _getLocaleTextFunc } from '../../agStack/utils/locale';
+import { _getLocaleTextFunc, _setAriaInvalid } from 'ag-stack';
+
 import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { ColDef } from '../../entities/colDef';
 import type { CellEditingStoppedEvent } from '../../events';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type {
@@ -65,18 +64,14 @@ export function _setupEditors(
 
         if (!curCellCtrl) {
             if (cellRowNode && cellColumn) {
-                const oldValue = valueSvc.getValue(cellColumn as AgColumn, cellRowNode, 'data');
+                const oldValue = valueSvc.getValueFromData(cellColumn as AgColumn, cellRowNode);
                 const isNewValueCell = position?.rowNode === cellRowNode && position?.column === cellColumn;
                 const cellStartValue = (isNewValueCell && key) || undefined;
 
                 const newValue =
                     cellStartValue ??
                     editSvc?.getCellDataValue(cellPosition) ??
-                    valueSvc.getValueForDisplay({
-                        column: cellColumn as AgColumn,
-                        node: cellRowNode,
-                        from: 'edit',
-                    })?.value ??
+                    valueSvc.getDisplayValue(cellColumn as AgColumn, cellRowNode, 'edit') ??
                     oldValue ??
                     UNEDITED;
 
@@ -265,7 +260,7 @@ function _createEditorParams(
     const rowIndex = position.rowNode?.rowIndex ?? (undefined as unknown as number);
     const batchEdit = editSvc?.isBatchEditing();
 
-    const agColumn = beans.colModel.getCol(position.column.getId())!;
+    const agColumn = beans.colModel.getCol(position.column)!;
     const { rowNode, column } = position;
 
     const editor = cellCtrl.comp?.getCellEditor();
@@ -278,14 +273,11 @@ function _createEditorParams(
                 : undefined
             : cellDataValue;
 
-    const value =
-        initialNewValue === UNEDITED
-            ? valueSvc.getValueForDisplay({ column: agColumn, node: rowNode, from: 'edit' })?.value
-            : initialNewValue;
+    const value = initialNewValue === UNEDITED ? valueSvc.getDisplayValue(agColumn, rowNode, 'edit') : initialNewValue;
 
     // if formula, normalise the value to shorthand for users.
     let paramsValue = enableGroupEditing ? initialNewValue : value;
-    if (column.isAllowFormula() && beans.formula?.isFormula(paramsValue)) {
+    if (agColumn.allowFormula && beans.formula?.isFormula(paramsValue)) {
         // normalise to shorthand for editing
         paramsValue = beans.formula?.normaliseFormula(paramsValue, true) ?? paramsValue;
     }
@@ -413,7 +405,7 @@ export function _syncFromEditor(
         // sourceValue not set means sync called without corresponding startEdit - from API call
         const pendingValue = edit ? getNormalisedFormula(beans, edit.editorValue, false, column) : UNEDITED;
         const editValue: Partial<EditValue> = {
-            sourceValue: valueSvc.getValue(column as AgColumn, rowNode, 'data'),
+            sourceValue: valueSvc.getValueFromData(column as AgColumn, rowNode),
             pendingValue,
         };
 
@@ -440,7 +432,7 @@ export function _syncFromEditor(
  */
 function getNormalisedFormula(beans: BeanCollection, value: any, forEditing: boolean, column: Column): any {
     const { formula } = beans;
-    if (column.isAllowFormula() && formula?.isFormula(value)) {
+    if ((column as AgColumn).allowFormula && formula?.isFormula(value)) {
         return formula?.normaliseFormula(value, forEditing) ?? value;
     }
     return value;
@@ -636,12 +628,9 @@ function dispatchEditingStopped(
     }
 }
 
-function _columnDefsRequireValidation(columnDefs?: ColDef[]): boolean {
-    if (!columnDefs) {
-        return false;
-    }
-    for (let i = 0, len = columnDefs.length; i < len; ++i) {
-        const colDef = columnDefs[i];
+function _columnDefsRequireValidation(cols: AgColumn[]): boolean {
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        const colDef = cols[i].colDef;
         const params = colDef.cellEditorParams;
         if (!params || (!colDef.editable && !colDef.groupRowEditable)) {
             continue;
@@ -677,7 +666,7 @@ function _editorsRequireValidation(beans: BeanCollection): boolean {
 function _hasValidationRules(beans: BeanCollection): boolean {
     return (
         !!beans.gos.get('getFullRowEditValidationErrors') ||
-        _columnDefsRequireValidation(beans.colModel.getColumnDefs()) ||
+        _columnDefsRequireValidation(beans.colModel.colDefList) ||
         _editorsRequireValidation(beans)
     );
 }

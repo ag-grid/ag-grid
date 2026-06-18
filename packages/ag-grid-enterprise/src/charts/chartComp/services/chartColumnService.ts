@@ -28,7 +28,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getColumn(colId: string): AgColumn | null {
-        return this.colModel.getColDefColOrCol(colId);
+        return this.colModel.colsById[colId] ?? null;
     }
 
     public getAllDisplayedColumns(): AgColumn[] {
@@ -60,7 +60,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getChartColumns(): { dimensionCols: Set<AgColumn>; valueCols: Set<AgColumn> } {
-        const gridCols = this.colModel.getCols();
+        const gridCols = this.colModel.colsList;
 
         const dimensionCols = new Set<AgColumn>();
         const valueCols = new Set<AgColumn>();

@@ -4,7 +4,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('ag-grid validation warnings', () => {
     const gridsManager = new TestGridsManager({
@@ -59,12 +59,22 @@ describe('ag-grid validation warnings', () => {
             );
         });
 
-        test('warns only once per property name across multiple calls', () => {
+        test('warns only once per property name across multiple calls', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 defaultColDef: { cellDataType: false },
                 columnDefs: [{ field: 'a', ['fakeColProp' as any]: 1 }],
                 rowData: [{ a: 1 }],
             });
+            await new GridColumns(api, `warns only once per property name across multiple calls setup`).checkColumns(
+                `
+                    CENTER
+                    └── a "A" width:200
+                `
+            );
+            await new GridRows(api, `warns only once per property name across multiple calls setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:1
+            `);
 
             const invalidPropWarnings = () =>
                 consoleWarnSpy.mock.calls.filter((args) =>
@@ -75,6 +85,20 @@ describe('ag-grid validation warnings', () => {
 
             // Update colDefs with the same unknown property — should not warn again
             api.setGridOption('columnDefs', [{ field: 'a', ['fakeColProp' as any]: 2 }]);
+            await new GridColumns(
+                api,
+                `warns only once per property name across multiple calls after setGridOption columnDefs`
+            ).checkColumns(`
+                CENTER
+                └── a "A" width:200
+            `);
+            await new GridRows(
+                api,
+                `warns only once per property name across multiple calls after setGridOption columnDefs`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:1
+            `);
 
             expect(invalidPropWarnings()).toHaveLength(1);
         });
@@ -136,12 +160,16 @@ describe('ag-grid validation warnings', () => {
             );
         });
 
-        test('warns only once for same deprecated property', () => {
+        test('warns only once for same deprecated property', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
                 rowData: [],
                 suppressLoadingOverlay: true,
             } as GridOptions);
+            await new GridColumns(api, `warns only once for same deprecated property setup`).checkColumns(``);
+            await new GridRows(api, `warns only once for same deprecated property setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const deprecationWarnings = () =>
                 consoleWarnSpy.mock.calls.filter((args) =>
@@ -154,6 +182,9 @@ describe('ag-grid validation warnings', () => {
             api.updateGridOptions({ suppressLoadingOverlay: true } as GridOptions);
 
             expect(deprecationWarnings()).toHaveLength(1);
+            await new GridRows(api, `warns only once for same deprecated property final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
     });
 
@@ -204,12 +235,18 @@ describe('ag-grid validation warnings', () => {
             );
         });
 
-        test('warns only once for same unsupported row model property', () => {
+        test('warns only once for same unsupported row model property', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
                 rowData: [],
                 serverSideInitialRowCount: 5,
             });
+            await new GridColumns(api, `warns only once for same unsupported row model property setup`).checkColumns(
+                ``
+            );
+            await new GridRows(api, `warns only once for same unsupported row model property setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
 
             const rowModelWarnings = () =>
                 consoleWarnSpy.mock.calls.filter((args) =>
@@ -221,6 +258,9 @@ describe('ag-grid validation warnings', () => {
             api.updateGridOptions({ serverSideInitialRowCount: 10 } as any);
 
             expect(rowModelWarnings()).toHaveLength(1);
+            await new GridRows(api, `warns only once for same unsupported row model property final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
 
         test('does not warn when unsupported row model property has null value', () => {
@@ -237,13 +277,21 @@ describe('ag-grid validation warnings', () => {
             expect(rowModelWarnings).toHaveLength(0);
         });
 
-        test('warns when unsupported row model property is later set to a real value', () => {
+        test('warns when unsupported row model property is later set to a real value', async () => {
             // Initially null (no warning), then updated to a real value (should warn)
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [],
                 rowData: null as any,
                 serverSideInitialRowCount: null as any,
             });
+            await new GridColumns(
+                api,
+                `warns when unsupported row model property is later set to a real value setup`
+            ).checkColumns(``);
+            await new GridRows(api, `warns when unsupported row model property is later set to a real value setup`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                `);
 
             const rowModelWarnings = () =>
                 consoleWarnSpy.mock.calls.filter((args) =>
@@ -256,6 +304,12 @@ describe('ag-grid validation warnings', () => {
             api.updateGridOptions({ serverSideInitialRowCount: 5 } as any);
 
             expect(rowModelWarnings()).toHaveLength(1);
+            await new GridRows(
+                api,
+                `warns when unsupported row model property is later set to a real value final state`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
         });
 
         test('skips value-level validation for unsupported row model properties', () => {

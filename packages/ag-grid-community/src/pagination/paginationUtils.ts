@@ -1,4 +1,5 @@
-import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
+import type { LocaleTextFunc } from 'ag-stack';
+
 import type { GridOptionsService } from '../gridOptionsService';
 import { _formatNumberCommas } from '../utils/number';
 

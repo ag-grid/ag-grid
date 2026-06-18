@@ -1,4 +1,5 @@
-import type { IconValue } from '../../agStack/interfaces/iIcon';
+import type { IconValue } from 'ag-stack';
+
 import type { ValidationModuleName } from '../../interfaces/iModule';
 import type { IconName } from '../../utils/icon';
 
@@ -44,6 +45,7 @@ export const ICON_VALUES: Record<IconValue, 1> = {
     csv: 1,
     excel: 1,
     pdf: 1,
+    document: 1,
     'small-down': 1,
     'small-left': 1,
     'small-right': 1,
@@ -74,6 +76,8 @@ export const ICON_VALUES: Record<IconValue, 1> = {
     'chevron-right': 1,
     edit: 1,
     search: 1,
+    fx: 1,
+    'values-as': 1,
 };
 
 export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationModuleName[]> = {
@@ -137,6 +141,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     menuAlt: 'ColumnHeaderComp',
     menuPin: 'MenuCore',
     menuValue: 'MenuCore',
+    showValueAs: 'ShowValueAs',
     menuAddRowGroup: ['MenuCore', 'ColumnsToolPanel'],
     menuRemoveRowGroup: ['MenuCore', 'ColumnsToolPanel'],
     clipboardCopy: 'MenuCore',
@@ -193,6 +198,8 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     rowPinBottom: 'PinnedRow',
     rowPinTop: 'PinnedRow',
     search: 'Find',
+    document: 'FileInputOverlay',
+    calculatedColumnsHeader: 'CalculatedColumns',
 };
 
 export const DEPRECATED_ICONS_V33: Set<IconName> = new Set([

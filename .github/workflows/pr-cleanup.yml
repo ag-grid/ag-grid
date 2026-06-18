@@ -1,0 +1,37 @@
+name: Cleanup on PR close
+
+# Removes a PR's gh-pages UMD preview (pr-<N>/) on close.
+
+on:
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  contents: read
+
+jobs:
+  gh_pages_cleanup:
+    runs-on: ubuntu-latest
+    name: Remove PR preview from gh-pages
+    # Same-repo PRs only (fork PRs can't hold the write token) — see pr-review.yml.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: write
+    concurrency:
+      group: pr-preview-gh-pages
+      cancel-in-progress: false
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      # Needed for the local shared action below; the action clones gh-pages itself.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Remove PR preview from gh-pages
+        uses: ./external/ag-shared/github/actions/pr-preview-cleanup
+        with:
+          pr_number: ${{ env.PR_NUMBER }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,3 +1,5 @@
+import { _exists, _setAriaLabel, _setAriaLevel } from 'ag-stack';
+
 import type {
     AbstractColDef,
     AgColumn,
@@ -11,15 +13,7 @@ import type {
     ColumnToolPanelState,
     ComponentSelector,
 } from 'ag-grid-community';
-import {
-    Component,
-    DragSourceType,
-    _exists,
-    _setAriaLabel,
-    _setAriaLevel,
-    _warn,
-    isProvidedColumnGroup,
-} from 'ag-grid-community';
+import { Component, DragSourceType, _clamp, _warn, isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../agStack/iVirtualList';
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
@@ -98,7 +92,9 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     public init(params: ToolPanelColumnCompParams, allowDragging: boolean, eventType: ColumnEventType): void {
         this.params = params;
         const { suppressSyncLayoutWithGrid, contractColumnSelection, suppressColumnMove } = params;
-        this.allowDragging = allowDragging;
+        // Drag drives drag-to-zone/hide only (in-panel reorder is blocked via `isPreventMove`), so
+        // `suppressColumnMove` must not disable it; only deferred mode's decoupled layout suppresses it.
+        this.allowDragging = allowDragging && !(suppressSyncLayoutWithGrid && isDeferredMode(params));
         this.eventType = eventType;
 
         if (!suppressSyncLayoutWithGrid) {
@@ -201,7 +197,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         let movePadding = 0;
 
         if (isUp) {
-            const children = item.columnDepth > 0 ? column.getParent()?.getChildren() : null;
+            const children = item.columnDepth > 0 ? column.parent?.children : null;
             if (children?.length && column === children[0]) {
                 movePadding = -1;
             }
@@ -209,7 +205,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             movePadding = expanded ? modelItem.children.length : 0;
         }
 
-        const nextItem = Math.min(Math.max(currentIndex + movePadding + diff, 0), this.displayedColsList.length - 1);
+        const nextItem = _clamp(currentIndex + movePadding + diff, 0, this.displayedColsList.length - 1);
 
         this.skipRefocus = true;
         moveItem(
@@ -308,7 +304,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             const colGroup = item.columnGroup;
             if (colGroup) {
                 // group should always exist, this is defensive
-                res[colGroup.getId()] = item.expanded;
+                res[colGroup.groupId] = item.expanded;
             }
         });
 
@@ -328,7 +324,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             const colGroup = item.columnGroup;
             if (colGroup) {
                 // group should always exist, this is defensive
-                const expanded = states[colGroup.getId()];
+                const expanded = states[colGroup.groupId];
                 const groupExistedLastTime = expanded != null;
                 if (groupExistedLastTime || isInitialState) {
                     item.expanded = !!expanded;
@@ -369,8 +365,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private buildTreeFromProvidedColumnDefs(): void {
         const colModel = this.colModel;
         // add column / group comps to tool panel
-        this.buildListModel(colModel.getColDefColTree());
-        this.groupsExist = !!colModel.colDefCols?.treeDepth;
+        this.buildListModel(colModel.colDefTree);
+        this.groupsExist = !!colModel.colDefTreeDepth;
     }
 
     private buildListModel(columnTree: (AgColumn | AgProvidedColumnGroup)[]): void {
@@ -407,8 +403,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            if (columnGroup.isPadding()) {
-                recursivelyBuild(columnGroup.getChildren(), depth, parentList);
+            if (columnGroup.padding) {
+                recursivelyBuild(columnGroup.children, depth, parentList);
                 return;
             }
 
@@ -424,7 +420,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             parentList.push(item);
             addListeners(item);
 
-            recursivelyBuild(columnGroup.getChildren(), depth + 1, item.children);
+            recursivelyBuild(columnGroup.children, depth + 1, item.children);
         };
 
         const createColumnItem = (column: AgColumn, depth: number, parentList: ColumnModelItem[]): void => {
@@ -456,12 +452,18 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             }
             this.displayedColsList.push(item);
             if (item.group && item.expanded) {
-                item.children.forEach(recursiveFunc);
+                const children = item.children;
+                for (let i = 0, len = children.length; i < len; ++i) {
+                    recursiveFunc(children[i]);
+                }
             }
         };
 
         const virtualList = this.virtualList;
-        this.allColsTree.forEach(recursiveFunc);
+        const allColsTree = this.allColsTree;
+        for (let i = 0, len = allColsTree.length; i < len; ++i) {
+            recursiveFunc(allColsTree[i]);
+        }
         virtualList.setModel(new UIColumnModel(this.displayedColsList));
         let focusedRow: number | null = null;
 
@@ -534,21 +536,22 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             return;
         }
 
-        const expandedGroupIds: string[] = [];
+        const targetGroupIds = new Set(groupIds);
+        const expandedGroupIds = new Set<string>();
 
         this.forEachItem((item) => {
             if (!item.group) {
                 return;
             }
 
-            const groupId = item.columnGroup.getId();
-            if (groupIds.indexOf(groupId) >= 0) {
+            const groupId = item.columnGroup.groupId;
+            if (targetGroupIds.has(groupId)) {
                 item.expanded = expand;
-                expandedGroupIds.push(groupId);
+                expandedGroupIds.add(groupId);
             }
         });
 
-        const unrecognisedGroupIds = groupIds.filter((groupId) => !expandedGroupIds.includes(groupId));
+        const unrecognisedGroupIds = groupIds.filter((groupId) => !expandedGroupIds.has(groupId));
         if (unrecognisedGroupIds.length > 0) {
             _warn(157, { unrecognisedGroupIds });
         }
@@ -709,7 +712,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         this.forEachItem((item) => {
             if (item.group && item.expanded) {
-                expandedGroupIds.push(item.columnGroup.getId());
+                expandedGroupIds.push(item.columnGroup.groupId);
             }
         });
 

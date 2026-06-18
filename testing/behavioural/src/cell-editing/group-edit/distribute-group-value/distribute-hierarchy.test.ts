@@ -562,6 +562,27 @@ describe('distributeGroupValue with groupHideOpenParents', () => {
             groupHideOpenParents: true,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `distribution works correctly when open parent rows are hidden setup`).checkColumns(
+            `
+                CENTER
+                ├── ag-Grid-AutoColumn-region "Region" width:200
+                ├── ag-Grid-AutoColumn-country "Country" width:200
+                └── amount "Amount" width:200 aggFunc:sum editable
+            `
+        );
+        await new GridRows(api, `distribution works correctly when open parent rows are hidden setup`).check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-region:null ag-Grid-AutoColumn-country:null
+            ├── LEAF id:fr-paris ag-Grid-AutoColumn-region:"Europe" ag-Grid-AutoColumn-country:"France" region:"Europe" country:"France" amount:30
+            ├── LEAF id:fr-lyon region:"Europe" country:"France" amount:30
+            ├── LEAF id:de-berlin ag-Grid-AutoColumn-country:"Germany" region:"Europe" country:"Germany" amount:30
+            ├── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
+            ├── LEAF id:it-rome ag-Grid-AutoColumn-country:"Italy" region:"Europe" country:"Italy" amount:30
+            ├── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
+            ├── LEAF id:us-nyc ag-Grid-AutoColumn-region:"Americas" ag-Grid-AutoColumn-country:"USA" region:"Americas" country:"USA" amount:70
+            ├── LEAF id:us-la region:"Americas" country:"USA" amount:30
+            ├── LEAF id:ca-toronto ag-Grid-AutoColumn-country:"Canada" region:"Americas" country:"Canada" amount:35
+            └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
+        `);
 
         // With groupHideOpenParents, expanded group rows are hidden from the display,
         // but the tree structure is unchanged — distribution should still work
@@ -572,6 +593,19 @@ describe('distributeGroupValue with groupHideOpenParents', () => {
         expect(api.getRowNode('fr-paris')?.data?.amount).toBe(50);
         expect(api.getRowNode('fr-lyon')?.data?.amount).toBe(50);
         expect(franceNode.aggData?.amount).toBe(100);
+        await new GridRows(api, `distribution works correctly when open parent rows are hidden final state`).check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-region:null ag-Grid-AutoColumn-country:null
+            ├── LEAF id:fr-paris ag-Grid-AutoColumn-region:"Europe" ag-Grid-AutoColumn-country:"France" region:"Europe" country:"France" amount:50
+            ├── LEAF id:fr-lyon region:"Europe" country:"France" amount:50
+            ├── LEAF id:de-berlin ag-Grid-AutoColumn-country:"Germany" region:"Europe" country:"Germany" amount:30
+            ├── LEAF id:de-hamburg region:"Europe" country:"Germany" amount:30
+            ├── LEAF id:it-rome ag-Grid-AutoColumn-country:"Italy" region:"Europe" country:"Italy" amount:30
+            ├── LEAF id:it-milan region:"Europe" country:"Italy" amount:30
+            ├── LEAF id:us-nyc ag-Grid-AutoColumn-region:"Americas" ag-Grid-AutoColumn-country:"USA" region:"Americas" country:"USA" amount:70
+            ├── LEAF id:us-la region:"Americas" country:"USA" amount:30
+            ├── LEAF id:ca-toronto ag-Grid-AutoColumn-country:"Canada" region:"Americas" country:"Canada" amount:35
+            └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
+        `);
     });
 });
 
@@ -602,6 +636,18 @@ describe('distributeGroupValue with groupHideParentOfSingleChild', () => {
             groupHideParentOfSingleChild: true,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `distribution works when single-child parents are hidden setup`).checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
+        `);
+        await new GridRows(api, `distribution works when single-child parents are hidden setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:a1 region:"Solo" country:"Alone" amount:50
+            └─┬ LEAF_GROUP id:row-group-region-Pair-country-Twin amount:100
+            · ├── LEAF id:a2 region:"Pair" country:"Twin" amount:30
+            · └── LEAF id:a3 region:"Pair" country:"Twin" amount:70
+        `);
 
         // "Pair > Twin" has 2 leaves, distribution works normally
         const twinNode = api.getRowNode('row-group-region-Pair-country-Twin')!;
@@ -611,6 +657,13 @@ describe('distributeGroupValue with groupHideParentOfSingleChild', () => {
         expect(api.getRowNode('a2')?.data?.amount).toBe(100);
         expect(api.getRowNode('a3')?.data?.amount).toBe(100);
         expect(twinNode.aggData?.amount).toBe(200);
+        await new GridRows(api, `distribution works when single-child parents are hidden final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:a1 region:"Solo" country:"Alone" amount:50
+            └─┬ LEAF_GROUP id:row-group-region-Pair-country-Twin amount:200
+            · ├── LEAF id:a2 region:"Pair" country:"Twin" amount:100
+            · └── LEAF id:a3 region:"Pair" country:"Twin" amount:100
+        `);
     });
 });
 
@@ -642,6 +695,23 @@ describe('distributeGroupValue with groupAllowUnbalanced', () => {
             groupAllowUnbalanced: true,
             getRowId: (params) => params.data?.id,
         });
+        await new GridColumns(api, `distribution works with unbalanced groups where some rows skip levels setup`)
+            .checkColumns(`
+                CENTER
+                ├── group "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum editable
+            `);
+        await new GridRows(api, `distribution works with unbalanced groups where some rows skip levels setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-Europe amount:150
+                · ├── LEAF id:a3 region:"Europe" country:null amount:50
+                · ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:30
+                · │ └── LEAF id:a1 region:"Europe" country:"France" amount:30
+                · └─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:70
+                · · └── LEAF id:a2 region:"Europe" country:"Germany" amount:70
+            `
+        );
 
         // Edit the France leaf group (has 1 child), distribute uniformly
         const franceNode = api.getRowNode('row-group-region-Europe-country-France')!;
@@ -650,6 +720,16 @@ describe('distributeGroupValue with groupAllowUnbalanced', () => {
 
         expect(api.getRowNode('a1')?.data?.amount).toBe(90);
         expect(franceNode.aggData?.amount).toBe(90);
+        await new GridRows(api, `distribution works with unbalanced groups where some rows skip levels final state`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-region-Europe amount:210
+                · ├── LEAF id:a3 region:"Europe" country:null amount:50
+                · ├─┬ LEAF_GROUP id:row-group-region-Europe-country-France amount:90
+                · │ └── LEAF id:a1 region:"Europe" country:"France" amount:90
+                · └─┬ LEAF_GROUP id:row-group-region-Europe-country-Germany amount:70
+                · · └── LEAF id:a2 region:"Europe" country:"Germany" amount:70
+            `);
     });
 });
 
@@ -701,6 +781,30 @@ describe('distributeGroupValue with pivot mode', () => {
             getRowId: ({ data }) => data.id,
             rowData: createPivotRowData(),
         });
+        await new GridColumns(
+            api,
+            `uniform distribution on pivot leaf group distributes to matching pivot children setup`
+        ).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "2020" GROUP
+            │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open editable
+            └─┬ "2021" GROUP
+              └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open editable
+        `);
+        await new GridRows(api, `uniform distribution on pivot leaf group distributes to matching pivot children setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:4500 pivot_year_2021_sales:5200
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:1000 pivot_year_2021_sales:1200
+                │ ├── LEAF hidden id:1 pivot_year_2020_sales:1000 pivot_year_2021_sales:1000
+                │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+                ├─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+                │ ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+                │ └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+                └─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+                · ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+                · └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+            `);
 
         const pivotColumns = api.getPivotResultColumns()!;
         const pivotCol2020 = pivotColumns.find((col) => col.getColId().includes('2020_sales'))!;
@@ -713,6 +817,21 @@ describe('distributeGroupValue with pivot mode', () => {
         expect(api.getRowNode('1')?.data?.sales).toBe(3000);
         // Row '2' is year 2021, should be untouched
         expect(api.getRowNode('2')?.data?.sales).toBe(1200);
+        await new GridRows(
+            api,
+            `uniform distribution on pivot leaf group distributes to matching pivot children final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:6500 pivot_year_2021_sales:5200
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France" pivot_year_2020_sales:3000 pivot_year_2021_sales:1200
+            │ ├── LEAF hidden id:1 pivot_year_2020_sales:3000 pivot_year_2021_sales:3000
+            │ └── LEAF hidden id:2 pivot_year_2020_sales:1200 pivot_year_2021_sales:1200
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:1800
+            │ ├── LEAF hidden id:3 pivot_year_2020_sales:1500 pivot_year_2021_sales:1500
+            │ └── LEAF hidden id:4 pivot_year_2020_sales:1800 pivot_year_2021_sales:1800
+            └─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
+            · ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+            · └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+        `);
     });
 
     test('percentage distribution on pivot leaf group scales pivot-matching children', async () => {
@@ -740,6 +859,23 @@ describe('distributeGroupValue with pivot mode', () => {
                 { id: '6', region: 'Americas', country: 'USA', year: 2021, sales: 2200 },
             ],
         });
+        await new GridColumns(api, `percentage distribution on pivot leaf group scales pivot-matching children setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open editable
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open editable
+            `);
+        await new GridRows(api, `percentage distribution on pivot leaf group scales pivot-matching children setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2020_sales:5000 pivot_year_2021_sales:2200
+                └─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:5000 pivot_year_2021_sales:2200
+                · ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+                · ├── LEAF hidden id:"5b" pivot_year_2020_sales:3000 pivot_year_2021_sales:3000
+                · └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+            `);
 
         const pivotColumns = api.getPivotResultColumns()!;
         const pivotCol2020 = pivotColumns.find((col) => col.getColId().includes('2020_sales'))!;
@@ -753,6 +889,16 @@ describe('distributeGroupValue with pivot mode', () => {
         expect(api.getRowNode('5b')?.data?.sales).toBe(6000);
         // 2021 untouched
         expect(api.getRowNode('6')?.data?.sales).toBe(2200);
+        await new GridRows(
+            api,
+            `percentage distribution on pivot leaf group scales pivot-matching children final state`
+        ).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:10000 pivot_year_2021_sales:2200
+            └─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:10000 pivot_year_2021_sales:2200
+            · ├── LEAF hidden id:5 pivot_year_2020_sales:4000 pivot_year_2021_sales:4000
+            · ├── LEAF hidden id:"5b" pivot_year_2020_sales:6000 pivot_year_2021_sales:6000
+            · └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+        `);
     });
 
     test('options object on colDef works with pivot mode', async () => {
@@ -779,6 +925,21 @@ describe('distributeGroupValue with pivot mode', () => {
                 { id: '6', region: 'Americas', country: 'USA', year: 2021, sales: 2200 },
             ],
         });
+        await new GridColumns(api, `options object on colDef works with pivot mode setup`).checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "2020" GROUP
+            │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open editable
+            └─┬ "2021" GROUP
+              └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open editable
+        `);
+        await new GridRows(api, `options object on colDef works with pivot mode setup`).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:5000 pivot_year_2021_sales:2200
+            └─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:5000 pivot_year_2021_sales:2200
+            · ├── LEAF hidden id:5 pivot_year_2020_sales:2000 pivot_year_2021_sales:2000
+            · ├── LEAF hidden id:"5b" pivot_year_2020_sales:3000 pivot_year_2021_sales:3000
+            · └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+        `);
 
         const pivotColumns = api.getPivotResultColumns()!;
         const pivotCol2020 = pivotColumns.find((col) => col.getColId().includes('2020_sales'))!;
@@ -790,6 +951,13 @@ describe('distributeGroupValue with pivot mode', () => {
         expect(api.getRowNode('5')?.data?.sales).toBe(4000);
         expect(api.getRowNode('5b')?.data?.sales).toBe(6000);
         expect(api.getRowNode('6')?.data?.sales).toBe(2200);
+        await new GridRows(api, `options object on colDef works with pivot mode final state`).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_sales:10000 pivot_year_2021_sales:2200
+            └─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:10000 pivot_year_2021_sales:2200
+            · ├── LEAF hidden id:5 pivot_year_2020_sales:4000 pivot_year_2021_sales:4000
+            · ├── LEAF hidden id:"5b" pivot_year_2020_sales:6000 pivot_year_2021_sales:6000
+            · └── LEAF hidden id:6 pivot_year_2020_sales:2200 pivot_year_2021_sales:2200
+        `);
     });
 });
 

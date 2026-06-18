@@ -1,9 +1,9 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _clearElement, _setDisplayed } from '../agStack/utils/dom';
+import { RefPlaceholder, _clearElement, _setDisplayed } from 'ag-stack';
+
 import type { AgColumn } from '../entities/agColumn';
 import { _getDisplaySortForColumn } from '../entities/agColumn';
-import type { SortDef } from '../entities/colDef';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
+import type { SortDef } from '../interfaces/iSort';
 import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
 import { _createIconNoSpan } from '../utils/icon';
@@ -80,7 +80,7 @@ export class SortIndicatorComp extends Component {
 
         this.setupMultiSortIndicator();
 
-        if (!column.isSortable() && !column.colDef.showRowGroup) {
+        if (!column.isSortable() && !column.showRowGroup) {
             return;
         }
 
@@ -160,7 +160,7 @@ export class SortIndicatorComp extends Component {
         const { eSortMixed, column, gos } = this;
         this.addInIcon('sortUnSort', eSortMixed, column);
 
-        const isColumnShowingRowGroup = column.colDef.showRowGroup;
+        const isColumnShowingRowGroup = column.showRowGroup;
         const areGroupsCoupled = _isColumnsSortingCoupledToGroup(gos);
         if (areGroupsCoupled && isColumnShowingRowGroup) {
             this.addManagedEventListeners({
@@ -176,7 +176,7 @@ export class SortIndicatorComp extends Component {
     private updateMultiSortIndicator() {
         const { eSortMixed, beans, column } = this;
         if (eSortMixed) {
-            const isMixedSort = beans.sortSvc!.getDisplaySortForColumn(column)?.direction === 'mixed';
+            const isMixedSort = beans.sortSvc!.getDisplaySort(column)?.direction === 'mixed';
             _setDisplayed(eSortMixed, isMixedSort, { skipAriaHidden: true });
         }
     }
@@ -194,13 +194,8 @@ export class SortIndicatorComp extends Component {
             return;
         }
 
-        const allColumnsWithSorting = sortSvc!.getColumnsWithSortingOrdered();
-
-        const indexThisCol = sortSvc!.getDisplaySortIndexForColumn(column) ?? -1;
-        const moreThanOneColSorting = allColumnsWithSorting.some(
-            (col) => sortSvc!.getDisplaySortIndexForColumn(col) ?? -1 >= 1
-        );
-        const showIndex = indexThisCol >= 0 && moreThanOneColSorting;
+        const indexThisCol = sortSvc!.getDisplaySortIndex(column) ?? -1;
+        const showIndex = indexThisCol >= 0 && sortSvc!.isMultiSort();
         _setDisplayed(eSortOrder, showIndex, { skipAriaHidden: true });
 
         if (indexThisCol >= 0) {

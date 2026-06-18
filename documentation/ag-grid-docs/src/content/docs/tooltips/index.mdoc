@@ -54,9 +54,32 @@ In the example below:
 
 ## Row Groups
 
-The example below shows how to use the default tooltip component with group columns. Because the group column has no real field assigned to it, the `tooltipValueGetter` function must be used.
+When a column is grouped, the generated group column inherits the tooltip properties from the underlying column's [Column Definition](./column-definitions/): `tooltipField`, `tooltipValueGetter`, `tooltipComponent`, and `tooltipComponentParams`. This is consistent with how `valueFormatter` is inherited. With `groupDisplayType: 'multipleColumns'`, the group column header also inherits `headerTooltip`.
+
+Cell tooltip properties set on `autoGroupColumnDef` (`tooltipField`, `tooltipValueGetter`, `tooltipComponent`) apply to leaf rows only. `headerTooltip` still applies to the group column header.
+
+In the example below:
+
+- The Country and Year columns each define a `tooltipValueGetter`. Hover a group key to see the tooltip inherited from the underlying column.
+- `autoGroupColumnDef` defines a `tooltipValueGetter`. Hover a leaf row in the group column to see it.
 
 {% gridExampleRunner title="Row Group Tooltip" name="rowgroups-tooltip" /%}
+
+{% note %}
+`autoGroupColumnDef` cell tooltip properties apply to leaf rows only. Group rows inherit their cell tooltips from the underlying column `colDef`.
+{% /note %}
+
+### Grouped Column Headers
+
+With `groupDisplayType: 'multipleColumns'`, each generated group column header inherits the `headerTooltip` from its underlying column `colDef`. Hover a group column header in the example below to see the inherited tooltip.
+
+{% gridExampleRunner title="Grouped Column Header Tooltip" name="rowgroups-header-tooltip" /%}
+
+### Full Width Group Rows
+
+With `groupDisplayType: 'groupRows'`, full-width group rows inherit their tooltips from the underlying column `colDef`. Hover a group row in the example below to see the tooltip defined on the grouped column.
+
+{% gridExampleRunner title="Full Width Group Row Tooltip" name="rowgroups-fullwidth-tooltip" /%}
 
 ## Mouse Tracking
 

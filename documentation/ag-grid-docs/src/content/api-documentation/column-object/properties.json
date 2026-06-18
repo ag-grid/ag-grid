@@ -15,6 +15,7 @@
         },
         "getColId": {},
         "getColDef": {},
+        "getDisplayName": {},
         "getUserProvidedColDef": {},
         "isColumn": {}
     },
@@ -52,7 +53,14 @@
         },
         "isAllowValue": {},
         "isValueActive": {},
-        "getAggFunc": {}
+        "getAggFunc": {},
+        "getShowValueAs": {
+            "more": {
+                "name": "Show Values As",
+                "url": "./aggregation-show-values-as/"
+            }
+        },
+        "getShowValueAsConfig": {}
     },
     "pivoting": {
         "meta": {

@@ -1,6 +1,5 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
-import { _removeFromParent, _setDisplayed } from '../../../agStack/utils/dom';
-import { _toString } from '../../../agStack/utils/string';
+import { RefPlaceholder, _removeFromParent, _setDisplayed, _toString } from 'ag-stack';
+
 import { _getInnerHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -14,7 +13,12 @@ import { _mergeDeep } from '../../../utils/mergeDeep';
 import { Component } from '../../../widgets/component';
 import { HeaderCellMouseListenerFeature } from './headerCellMouseListenerFeature';
 
-function getHeaderCompElementParams(includeColumnRefIndicator: boolean, includeSortIndicator: boolean): ElementParams {
+function getHeaderCompElementParams(
+    includeColumnRefIndicator: boolean,
+    includeCalculatedColumnIndicator: boolean,
+    includeSortIndicator: boolean,
+    includeShowValueAsIndicator: boolean
+): ElementParams {
     const hiddenAttrs = { 'aria-hidden': 'true' };
     return {
         tag: 'div',
@@ -40,6 +44,14 @@ function getHeaderCompElementParams(includeColumnRefIndicator: boolean, includeS
                 role: 'presentation',
                 children: [
                     includeColumnRefIndicator ? { tag: 'span', ref: 'eColRef', cls: 'ag-header-col-ref' } : null,
+                    includeCalculatedColumnIndicator
+                        ? {
+                              tag: 'span',
+                              ref: 'eCalculatedColumn',
+                              cls: 'ag-header-icon ag-calculated-column-icon',
+                              attrs: hiddenAttrs,
+                          }
+                        : null,
                     { tag: 'span', ref: 'eText', cls: 'ag-header-cell-text' },
                     {
                         tag: 'span',
@@ -47,6 +59,14 @@ function getHeaderCompElementParams(includeColumnRefIndicator: boolean, includeS
                         cls: 'ag-header-icon ag-header-label-icon ag-filter-icon',
                         attrs: hiddenAttrs,
                     },
+                    includeShowValueAsIndicator
+                        ? {
+                              tag: 'span',
+                              ref: 'eShowValueAs',
+                              cls: 'ag-header-icon ag-header-label-icon ag-show-value-as-icon',
+                              attrs: hiddenAttrs,
+                          }
+                        : null,
                     includeSortIndicator ? { tag: 'ag-sort-indicator', ref: 'eSortIndicator' } : null,
                 ],
             },
@@ -58,12 +78,14 @@ function getHeaderCompElementParams(includeColumnRefIndicator: boolean, includeS
 export class AgColumnHeader extends Component implements IHeaderComp {
     // All the elements are optional, as they are not guaranteed to be present if the user provides a custom template
     private readonly eFilter?: HTMLElement = RefPlaceholder;
+    private readonly eShowValueAs?: HTMLElement = RefPlaceholder;
     public eFilterButton?: HTMLElement = RefPlaceholder;
     private eSortIndicator?: SortIndicatorComp = RefPlaceholder;
     public eMenu?: HTMLElement = RefPlaceholder;
     private readonly eLabel?: HTMLElement = RefPlaceholder;
     private readonly eText?: HTMLElement = RefPlaceholder;
     private readonly eColRef?: HTMLElement = RefPlaceholder;
+    private readonly eCalculatedColumn?: HTMLElement = RefPlaceholder;
 
     /**
      * Selectors for custom headers templates, i.e when the ag-sort-indicator is not present.
@@ -121,20 +143,25 @@ export class AgColumnHeader extends Component implements IHeaderComp {
     }
 
     private workOutTemplate(params: IHeaderParams, isSorting: boolean): string | ElementParams {
-        const { formula } = this.beans;
+        const { formula, showValueAsSvc } = this.beans;
         const paramsTemplate = params.template;
         if (paramsTemplate) {
             // take account of any newlines & whitespace before/after the actual template
             return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
         }
-        return getHeaderCompElementParams(!!formula?.active, isSorting);
+        return getHeaderCompElementParams(
+            !!formula?.active,
+            (params.column as AgColumn).isCalculatedCol,
+            isSorting,
+            !!showValueAsSvc
+        );
     }
 
     public init(params: IHeaderParams): void {
         this.params = params;
 
         const { sortSvc, touchSvc, rowNumbersSvc, userCompFactory } = this.beans;
-        const sortComp = sortSvc?.getSortIndicatorSelector();
+        const sortComp = sortSvc?.SortIndicatorSelector;
         this.currentTemplate = this.workOutTemplate(params, !!sortComp);
         this.setTemplate(this.currentTemplate, sortComp ? [sortComp] : undefined);
 
@@ -149,9 +176,11 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         this.setMenu();
         this.setupSort();
         this.setupColumnRefIndicator();
+        this.setupCalculatedColumnIcon();
         rowNumbersSvc?.setupForHeader(this);
         this.setupFilterIcon();
         this.setupFilterButton();
+        this.setupShowValueAsIcon();
         this.workOutInnerHeaderComponent(userCompFactory, params);
         this.setDisplayName(params);
     }
@@ -283,7 +312,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         // templates, in that case, we need to look for provided sort elements and
         // manually create eSortIndicator.
         if (!this.eSortIndicator) {
-            this.eSortIndicator = this.createBean(sortSvc.createSortIndicator(true));
+            this.eSortIndicator = this.createBean(new sortSvc.SortIndicatorComp(true));
             const {
                 eSortIndicator,
                 eSortOrder,
@@ -332,13 +361,24 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             cellEditingStarted: () => {
                 const editPositions = editModelSvc?.getEditPositions();
                 const shouldDisplay =
-                    !!this.currentRef && !!editPositions?.some((position) => position.column.isAllowFormula());
+                    !!this.currentRef &&
+                    !!editPositions?.some((position) => (position.column as AgColumn).allowFormula);
                 _setDisplayed(eColRef, shouldDisplay);
             },
             cellEditingStopped: () => {
                 _setDisplayed(eColRef, false);
             },
         });
+    }
+
+    private setupCalculatedColumnIcon(): void {
+        const { eCalculatedColumn, params } = this;
+
+        if (!eCalculatedColumn) {
+            return;
+        }
+
+        this.addInIcon('calculatedColumnsHeader', eCalculatedColumn, params.column as AgColumn);
     }
 
     private setupFilterIcon(): void {
@@ -351,6 +391,35 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             _setDisplayed(eFilter, filterPresent, { skipAriaHidden: true });
         };
         this.configureFilter(params.enableFilterIcon, eFilter, onFilterChangedIcon, 'filterActive');
+    }
+
+    private setupShowValueAsIcon(): void {
+        const { eShowValueAs, params } = this;
+        const { showValueAsSvc } = this.beans;
+        if (!eShowValueAs || !showValueAsSvc) {
+            return;
+        }
+        const column = params.column as AgColumn;
+        this.addInIcon('showValueAs', eShowValueAs, column);
+        // Three states: hidden (no active mode), active (applying), dormant (active but not meaningful in the
+        // current view — see ShowValueAsService.isApplying). Dormancy flips on grouping/pivot change without a
+        // column-state event, so listen for those too.
+        const refresh = () => {
+            const resolved = column.showValueAs;
+            const show = resolved != null && !column.showValueAsConfig?.suppressHeaderIndicator;
+            _setDisplayed(eShowValueAs, show, { skipAriaHidden: true });
+            if (show) {
+                eShowValueAs.classList.toggle('ag-show-value-as-dormant', !showValueAsSvc.isApplying(column));
+                eShowValueAs.title = showValueAsSvc.getActiveModeTooltip(column) ?? '';
+            }
+        };
+        this.addManagedListeners(column, { columnStateUpdated: refresh });
+        this.addManagedEventListeners({
+            columnRowGroupChanged: refresh,
+            columnPivotChanged: refresh,
+            columnPivotModeChanged: refresh,
+        });
+        refresh();
     }
 
     private setupFilterButton(): void {

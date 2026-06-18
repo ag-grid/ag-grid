@@ -59,6 +59,19 @@ html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-'])
     background-color: rgba(0,0,0, 0.1);
 }
 
+html {
+    --example-background-color: white;
+    --example-text-color: black;
+    --example-color-scheme: light;
+    --example-font-family: 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', 'sans-serif';
+}
+
+html[data-color-scheme='dark'] {
+    --example-background-color: #1f2836;
+    --example-text-color: white;
+    --example-color-scheme: dark;
+}
+
 html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']):disabled {
     opacity: 0.66;
     pointer-events: none;
@@ -116,7 +129,7 @@ html[data-color-scheme='dark'] body {
   color: #fff;
 }
 
-html textarea:not(.ag-root-wrapper textarea) {
+html textarea:not(.ag-root-wrapper textarea):not([class*='ag-']) {
   padding: 8px;
   font-size: 14px;
   line-height: 1.5;
@@ -125,13 +138,13 @@ html textarea:not(.ag-root-wrapper textarea) {
   border: 1px solid rgba(0,0,0, 0.2);
 }
 
-html[data-color-scheme='dark'] textarea:not(.ag-root-wrapper textarea) {
+html[data-color-scheme='dark'] textarea:not(.ag-root-wrapper textarea):not([class*='ag-']) {
   border: 1px solid rgba(255,255,255, 0.2);
   background-color: #0c111d;
   color: #fff;
 }
 
-html[data-color-scheme='dark'] textarea:not(.ag-root-wrapper textarea)::placeholder {
+html[data-color-scheme='dark'] textarea:not(.ag-root-wrapper textarea):not([class*='ag-'])::placeholder {
   color: #98a2b3;
 }
 

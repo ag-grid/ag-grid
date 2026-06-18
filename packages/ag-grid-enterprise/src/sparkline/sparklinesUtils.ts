@@ -1,25 +1,10 @@
 import type { AgSparklineOptions } from 'ag-charts-types';
+import type { LocaleTextFunc } from 'ag-stack';
 
-import type { LocaleTextFunc } from 'ag-grid-community';
+import { _isFiniteNumber } from 'ag-grid-community';
 
-const WrappedFunctionMarker = Symbol('WrappedFunctionMarker');
-
-type FunctionParams = (...args: any[]) => any;
-type WrapperFunctionParams = (fn: FunctionParams, ...args: any[]) => any;
 type SparklineTranslate = (key: string, defaultValue: string, variableValues?: string[]) => string;
 type SparklineNumberFormatter = (value: number) => string;
-
-export const wrapFn = (fn: FunctionParams, wrapperFn: WrapperFunctionParams) => {
-    if ((fn as any)[WrappedFunctionMarker]) {
-        return fn;
-    }
-
-    const wrapped = (...args: any[]) => wrapperFn(fn, ...args);
-
-    wrapped[WrappedFunctionMarker] = WrappedFunctionMarker;
-
-    return wrapped;
-};
 
 // ARIA
 const defaultSparklineAriaDescription =
@@ -131,7 +116,7 @@ const getYValue = (datum: any, yKey: string): number | null => {
 
     if (datum && typeof datum === 'object') {
         const yValue = Array.isArray(datum) ? datum[1] : datum[yKey];
-        return typeof yValue === 'number' && Number.isFinite(yValue) ? yValue : null;
+        return _isFiniteNumber(yValue) ? yValue : null;
     }
 
     return null;

@@ -1,4 +1,5 @@
-import { _isNodeOrElement, _loadTemplate } from '../agStack/utils/dom';
+import { _isNodeOrElement, _loadTemplate } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _warn } from '../validation/logging';
@@ -68,6 +69,7 @@ export type IconName =
     | 'minimize'
     | 'menuPin'
     | 'menuValue'
+    | 'showValueAs'
     | 'menuAddRowGroup'
     | 'menuRemoveRowGroup'
     | 'clipboardCopy'
@@ -120,12 +122,14 @@ export type IconName =
     | 'chartsThemeNext'
     | 'chartsDownload'
     | 'ensureColumnVisible'
+    | 'search'
+    | 'document'
+    | 'calculatedColumnsHeader'
     | 'checkboxChecked' // deprecated v33
     | 'checkboxIndeterminate' // deprecated v33
     | 'checkboxUnchecked' // deprecated v33
     | 'radioButtonOn' // deprecated v33
-    | 'radioButtonOff' // deprecated v33
-    | 'search';
+    | 'radioButtonOff'; // deprecated v33
 
 export type Icons = { [key: string]: ((...args: any[]) => any) | string };
 

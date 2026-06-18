@@ -1,9 +1,16 @@
-import { _setAriaExpanded, _setAriaRowIndex } from '../../agStack/utils/aria';
-import { _getActiveDomElement } from '../../agStack/utils/document';
-import { _addOrRemoveAttribute, _isElementChildOfClass, _isVisible } from '../../agStack/utils/dom';
-import { _batchCall } from '../../agStack/utils/function';
-import { _exists, _makeNull } from '../../agStack/utils/generic';
-import { _escapeString } from '../../agStack/utils/string';
+import {
+    _addOrRemoveAttribute,
+    _batchCall,
+    _escapeString,
+    _exists,
+    _getActiveDomElement,
+    _isElementChildOfClass,
+    _isVisible,
+    _makeNull,
+    _setAriaExpanded,
+    _setAriaRowIndex,
+} from 'ag-stack';
+
 import { setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -30,8 +37,8 @@ import {
     _isRowSelection,
     _setDomData,
 } from '../../gridOptionsUtils';
-import { getAriaHeaderRowCount, getPinnedSectionWidths } from '../../headerRendering/headerUtils';
 import type { PinnedSectionWidths } from '../../headerRendering/headerUtils';
+import { getAriaHeaderRowCount, getPinnedSectionWidths } from '../../headerRendering/headerUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallbackParams';
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
@@ -45,6 +52,7 @@ import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { GetNoteParams } from '../../interfaces/notes';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
+import { _clamp } from '../../utils/number';
 import type { Component } from '../../widgets/component';
 import { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
@@ -64,10 +72,9 @@ export interface IRowComp {
     toggleCss(cssClassName: string, on: boolean): void;
     setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
     getPinnedLeftRowElement(): HTMLElement | undefined;
-    getPinnedLeftSectionElement(): HTMLElement | undefined;
     getScrollingRowElement(): HTMLElement | undefined;
     getPinnedRightRowElement(): HTMLElement | undefined;
-    getPinnedRightSectionElement(): HTMLElement | undefined;
+    refreshPinnedSections(): void;
     showFullWidth(compDetails: UserCompDetails): void;
     showEmbeddedFullWidth?(compDetails: HorizontalSectionMap<UserCompDetails>): void;
     getFullWidthCellRenderers(): (ICellRenderer | null | undefined)[];
@@ -93,6 +100,11 @@ export interface RowGui {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type PinnedCellGroupWidths = PinnedSectionWidths;
+
+interface MappedPinnedCellGroupWidths extends PinnedCellGroupWidths {
+    renderLeft: boolean;
+    renderRight: boolean;
+}
 
 type RowCtrlEvent = RenderedRowEvent;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -464,65 +476,34 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (!rowGui) {
             return;
         }
-        const { rowComp } = rowGui;
-        const widths = this.getMappedPinnedCellGroupWidths();
-
-        this.setPinnedSectionWidth(
-            rowComp.getPinnedLeftRowElement(),
-            rowComp.getPinnedLeftSectionElement(),
-            widths.leftWidth
-        );
-        this.setPinnedSectionWidth(
-            rowComp.getPinnedRightRowElement(),
-            rowComp.getPinnedRightSectionElement(),
-            widths.rightWidth
-        );
-
-        const eScrolling = rowComp.getScrollingRowElement();
-        if (eScrolling) {
-            eScrolling.style.width = `${widths.centerWidth}px`;
-        }
+        rowGui.rowComp.refreshPinnedSections();
     }
 
-    public getMappedPinnedCellGroupWidths(): PinnedCellGroupWidths {
-        const baseWidths = this.getPinnedCellGroupWidths();
+    public getMappedPinnedCellGroupWidths(): MappedPinnedCellGroupWidths {
+        let { leftWidth, centerWidth, rightWidth } = this.getPinnedCellGroupWidths();
 
-        if (!this.isEmbeddedFullWidth) {
-            return baseWidths;
+        if (this.isEmbeddedFullWidth) {
+            const hasLeft = this.embeddedSectionHasContent.left;
+            const hasRight = this.embeddedSectionHasContent.right;
+
+            centerWidth = centerWidth + (hasLeft ? 0 : leftWidth) + (hasRight ? 0 : rightWidth);
+            leftWidth = hasLeft ? leftWidth : 0;
+            rightWidth = hasRight ? rightWidth : 0;
         }
 
-        const hasLeft = this.embeddedSectionHasContent.left;
-        const hasRight = this.embeddedSectionHasContent.right;
+        const isFullWidth = this.isFullWidth();
 
         return {
-            leftWidth: hasLeft ? baseWidths.leftWidth : 0,
-            centerWidth:
-                baseWidths.centerWidth + (hasLeft ? 0 : baseWidths.leftWidth) + (hasRight ? 0 : baseWidths.rightWidth),
-            rightWidth: hasRight ? baseWidths.rightWidth : 0,
+            leftWidth,
+            centerWidth,
+            rightWidth,
+            // Pinned lanes are omitted from the DOM when they have no width to
+            // improve rendering performance. Full width rows always render the
+            // lanes, because the row renderer requires a reference to them even
+            // when they are empty.
+            renderLeft: leftWidth > 0 || isFullWidth,
+            renderRight: rightWidth > 0 || isFullWidth,
         };
-    }
-
-    private setPinnedSectionWidth(
-        wrapper: HTMLElement | undefined,
-        section: HTMLElement | undefined,
-        width: number
-    ): void {
-        if (!wrapper) {
-            return;
-        }
-        const display = width > 0 ? '' : 'none';
-        const widthPx = `${width}px`;
-
-        const setStyles = (e: HTMLElement) => {
-            e.style.width = widthPx;
-            e.style.display = display;
-        };
-
-        setStyles(wrapper);
-
-        if (section) {
-            setStyles(section);
-        }
     }
 
     public getPinnedCellGroupWidths(): PinnedCellGroupWidths {
@@ -1161,7 +1142,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const minPixel = this.applyPaginationOffset(range.top, true) - 100;
         const maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
 
-        return Math.min(Math.max(minPixel, rowTop), maxPixel);
+        return _clamp(rowTop, minPixel, maxPixel);
     }
 
     public isRowRendered() {

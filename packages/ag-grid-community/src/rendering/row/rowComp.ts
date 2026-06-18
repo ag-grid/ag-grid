@@ -1,4 +1,5 @@
-import { _addStylesToElement, _setDomChildOrder } from '../../agStack/utils/dom';
+import { _addStylesToElement, _setDomChildOrder } from 'ag-stack';
+
 import type { BeanCollection } from '../../context/context';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
@@ -14,16 +15,19 @@ import type { IRowComp, RowCtrl } from './rowCtrl';
 
 const LEAF_RENDERER_TAGS = new Set(['CANVAS', 'IMG', 'SVG', 'VIDEO', 'AUDIO', 'INPUT', 'IFRAME', 'PICTURE']);
 
-const createCellSection = (sectionClass: string): { container: HTMLElement; wrapper: HTMLElement } => {
-    const wrapper = _createElement({
-        tag: 'div',
-        role: 'presentation',
-        cls: 'ag-grid-container-wrapper',
-    });
+const createCellSection = (sectionClass: string, pinned: boolean): { container: HTMLElement; wrapper: HTMLElement } => {
     const container = _createElement({
         tag: 'div',
         cls: sectionClass,
         role: 'presentation',
+    });
+    if (!pinned) {
+        return { container, wrapper: container };
+    }
+    const wrapper = _createElement({
+        tag: 'div',
+        role: 'presentation',
+        cls: 'ag-grid-container-wrapper',
     });
     container.appendChild(wrapper);
     return { container, wrapper };
@@ -54,9 +58,9 @@ export class RowComp extends Component {
 
         const rowDiv = _createElement({ tag: 'div', role: 'row', attrs: { 'comp-id': `${this.getCompId()}` } });
         if (shouldCreateCellSections) {
-            const leftSection = createCellSection('ag-grid-pinned-left-cells');
-            const centerSection = createCellSection('ag-grid-scrolling-cells');
-            const rightSection = createCellSection('ag-grid-pinned-right-cells');
+            const leftSection = createCellSection('ag-grid-pinned-left-cells', true);
+            const centerSection = createCellSection('ag-grid-scrolling-cells', false);
+            const rightSection = createCellSection('ag-grid-pinned-right-cells', true);
 
             this.ePinnedLeftSection = leftSection.container;
             this.ePinnedLeftCells = leftSection.wrapper;
@@ -64,7 +68,8 @@ export class RowComp extends Component {
             this.ePinnedRightSection = rightSection.container;
             this.ePinnedRightCells = rightSection.wrapper;
 
-            rowDiv.append(leftSection.container, centerSection.container, rightSection.container);
+            // The centre lane is always present; the pinned lanes are attached on demand.
+            rowDiv.append(centerSection.container);
         }
         this.setInitialStyle(rowDiv);
         this.setTemplateFromElement(rowDiv);
@@ -76,10 +81,9 @@ export class RowComp extends Component {
             setDomOrder: (domOrder) => (this.domOrder = domOrder),
             setCellCtrls: (cellCtrls) => this.setCellCtrls(cellCtrls),
             getPinnedLeftRowElement: () => this.ePinnedLeftCells,
-            getPinnedLeftSectionElement: () => this.ePinnedLeftSection,
             getScrollingRowElement: () => this.eScrollingCells,
             getPinnedRightRowElement: () => this.ePinnedRightCells,
-            getPinnedRightSectionElement: () => this.ePinnedRightSection,
+            refreshPinnedSections: () => this.refreshPinnedSections(),
             showFullWidth: (compDetails) => this.showFullWidth(compDetails),
             showEmbeddedFullWidth: (compDetails) => this.showEmbeddedFullWidth(compDetails),
             getFullWidthCellRenderers: () => this.getAllFullWidthCellRenderers(),
@@ -105,6 +109,36 @@ export class RowComp extends Component {
         this.addDestroyFunc(() => {
             ctrl.unsetComp(containerType);
         });
+    }
+
+    private refreshPinnedSections(): void {
+        const widths = this.rowCtrl.getMappedPinnedCellGroupWidths();
+        const eCenter = this.eScrollingCells;
+        if (eCenter) {
+            eCenter.style.width = `${widths.centerWidth}px`;
+        }
+
+        const refreshPinnedSection = (
+            eSection: HTMLElement | undefined,
+            width: number,
+            shouldRender: boolean,
+            method: 'after' | 'before'
+        ) => {
+            if (!eSection) {
+                return;
+            }
+            if (!shouldRender) {
+                eSection.remove();
+                return;
+            }
+            eSection.style.width = `${width}px`;
+            if (!eSection.parentNode && eCenter) {
+                eCenter[method](eSection);
+            }
+        };
+
+        refreshPinnedSection(this.ePinnedLeftSection, widths.leftWidth, widths.renderLeft, 'before');
+        refreshPinnedSection(this.ePinnedRightSection, widths.rightWidth, widths.renderRight, 'after');
     }
 
     private setInitialStyle(container: HTMLElement): void {

@@ -6,7 +6,11 @@
         border-top-color: var(--ag-border-color);
         color: var(--ag-secondary-foreground-color);
         height: var(--ag-pagination-panel-height);
+        overflow: auto hidden;
+        scrollbar-width: thin;
+    }
 
+    .ag-paging-panel-content {
         > * {
             margin: 0 var(--ag-cell-horizontal-padding);
         }
@@ -25,6 +29,11 @@
         color: var(--ag-disabled-foreground-color);
     }
 
+    .ag-number-field.ag-paging-number .ag-input-field-input {
+        text-align: end;
+        padding-inline: 0 var(--ag-input-padding-start);
+    }
+
     @include ag.keyboard-focus((ag-paging-button), 0px);
 
     .ag-paging-button,
@@ -34,12 +43,31 @@
         line-height: 0;
     }
 
+    .ag-paging-row-summary-panel {
+        display: inline-grid;
+
+        &::before {
+            content: var(--ag-internal-pagination-width-string);
+            grid-area: 1/1;
+            visibility: hidden;
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+
+    .ag-paging-row-summary-content {
+        grid-area: 1/1;
+        justify-self: center;
+    }
+
     .ag-status-bar {
         border-top: var(--ag-borders) var(--ag-border-color);
         color: var(--ag-disabled-foreground-color);
         padding-right: calc(var(--ag-grid-size) * 4);
         padding-left: calc(var(--ag-grid-size) * 4);
         line-height: 1.5;
+        overflow: auto hidden;
+        scrollbar-width: thin;
     }
 
     .ag-status-name-value-value {

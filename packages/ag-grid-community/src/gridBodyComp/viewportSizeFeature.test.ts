@@ -1,10 +1,10 @@
+import { _observeResize, _requestAnimationFrame } from 'ag-stack';
 import type { Mock } from 'vitest';
 
-import { _observeResize, _requestAnimationFrame } from '../agStack/utils/dom';
 import { ViewportSizeFeature } from './viewportSizeFeature';
 
-vi.mock('../agStack/utils/dom', async () => {
-    const actual = await vi.importActual('../agStack/utils/dom');
+vi.mock('ag-stack', async () => {
+    const actual = await vi.importActual('ag-stack');
     return {
         ...actual,
         _observeResize: vi.fn(),

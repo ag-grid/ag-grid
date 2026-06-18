@@ -1,0 +1,414 @@
+name: Jira Agent Pipeline
+
+# ============================================================================
+# End-to-end Jira -> GHA agent pipeline. Stages, one workflow:
+#
+#   triage              — /fr --ci --phase 0..1 <KEY>            (intent / research / plan)
+#   build               — /fr --ci --phase 2..5 --resume --draft-pr <KEY>
+#   pr-iterate          — /fr --ci --pr-iterate <KEY>                              (review-comment driven)
+#   ci-failure-iterate  — /fr --ci --pr-iterate --ci-failure <run_url> <KEY>       (main-CI failure driven)
+#   recycle             — /fr --ci --recycle --prior <merged|abandoned> <KEY>      (new -rN PR after prior PR merged/closed)
+#
+# A single `→ In Progress` JIRA rule dispatches `jira-resume`; the cheap
+# `resume-preflight` job reads AI pr-url + the PR's GitHub state + whether
+# AI plan is populated, and emits a route (triage / build / iterate / recycle)
+# that the single `resume-run` job runs as a parameterised stage (no AI-status
+# guard in the rule — the preflight does the disambiguation JIRA can't: it sees
+# whether the PR is open / merged / closed, and whether a build-ready plan
+# exists yet).
+# First-pass triage hands back to Needs Review for plan review; the human's
+# next drag (now finding a plan) routes to build. See ag-dev-prompts
+# docs/jira-agent-pipeline.md §"Re-engagement after Needs Review".
+#
+# Each stage is its own job, gated on the `resume-preflight` route output
+# (the normal path), a forced `workflow_dispatch` stage input (dry-run /
+# debugging), or — for ci-failure-iterate / ci-success-handler — the
+# `workflow_run.completed` event on main CI (CI-driven, not JIRA-driven).
+#
+# The heavy lifting (App-token mint, MCP setup, status/state/PR/cost
+# writebacks, Claude invocation, trace digest, artefact upload) lives in
+# the shared `jira-pipeline` composite action under ag-dev-prompts. This
+# workflow is the thin per-repo stub: it owns triggers, eligibility
+# gating, and the consumer-local prerequisite (setup-nx, which renders
+# .claude/settings.json for the shared action to verify).
+#
+# Consumption channel: ag-dev-prompts is a private repo, so the shared
+# actions are pulled via the @ag-grid/dev-prompts npm package on GitHub
+# Packages (see the shared `external/ag-shared/github/actions/install-ag-dev-prompts`
+# action and the `pr-review.yml` workflow which uses the same pattern). ag-grid pins
+# the `latest` dist-tag (the post-soak distribution track); ag-charts tracks `canary`.
+#
+# ----------------------------------------------------------------------------
+# Trigger envelopes
+# ----------------------------------------------------------------------------
+#
+#   workflow_dispatch:
+#       gh workflow run jira-agent-pipeline.yml -f issue_key=AG-XXXXX -f stage=triage
+#
+#   repository_dispatch (from the single `→ In Progress → jira-resume` rule):
+#       POST /repos/ag-grid/ag-grid/dispatches
+#       Authorization: Bearer <installation-token>
+#       Body:
+#         {"event_type":"jira-resume", "client_payload":{"issue_key":"AG-XXXXX"}}
+#       The resume-preflight then routes triage / build / iterate / recycle.
+#
+#   workflow_run (auto — fires when the main CI workflow completes on
+#       an agent-shaped branch. The `branches:` filter on the trigger
+#       restricts firings to `ghabot-ag-*` so non-AI PRs don't create
+#       skipped workflow runs in the history):
+#       ci-failure-preflight → ci-failure-iterate (on conclusion=failure)
+#       ci-success-handler                        (on conclusion=success)
+#       Gates inside both jobs:
+#         - workflow_run.head_branch matches 'ghabot-ag-<NNNNN>-<slug>'
+#         - PR author == 'ag-jira-agent-ci[bot]'                   (agent-authored)
+#         - issue's AI status ∈ {draft-pr-open, iterating, pr-iterating}
+#
+# ----------------------------------------------------------------------------
+# Custom-field mapping (operator-side already created)
+# ----------------------------------------------------------------------------
+#
+# The shared action's repo-config.yml maps `ag-grid/ag-grid` to the AG
+# JIRA project's custom-field ids (customfield_10941..10988). See
+# ag-grid/ag-dev-prompts → .github/actions/jira-pipeline/repo-config.yml.
+#
+# ----------------------------------------------------------------------------
+# Operator pre-requisites
+# ----------------------------------------------------------------------------
+#
+#   Repository secrets:
+#       JIRA_AGENT_APP_PRIVATE_KEY  - GitHub App PEM
+#       ANTHROPIC_API_KEY           - Anthropic Enterprise admin key
+#
+#   Organisation secrets (ag-grid org; repo must be in the secret's access list):
+#       JIRA_AI_BOT_API_TOKEN       - Atlassian API token (jira-ai-bot service account; SCOPED token)
+#       JIRA_AI_BOT_EMAIL           - jira-ai-bot service-account email
+#
+#   NOTE: the token is a *scoped* Atlassian API token, so the pipeline's REST
+#   calls go through the api.atlassian.com gateway (cloudId path), resolved
+#   automatically from JIRA_SITE_URL. No extra config needed here.
+#
+#   Repository variables:
+#       JIRA_AGENT_APP_ID           - GitHub App ID
+#       JIRA_SITE_URL               - https://ag-grid.atlassian.net
+#
+#   GitHub App `ag-grid-jira-agents` installed on:
+#       ag-grid/ag-grid              (contents:write, issues:write, pull-requests:write, actions:write)
+#       ag-grid/ag-dev-prompts       (contents:read)
+# ============================================================================
+
+on:
+    # One JIRA-facing entry point: every human gesture is `→ In Progress`,
+    # which the JIRA rule turns into a single `jira-resume` dispatch. The
+    # resume-preflight then routes triage / build / iterate / recycle from
+    # observable state (AI pr-url + PR state + AI plan presence) — JIRA no
+    # longer pre-selects the stage via per-status rules. The legacy
+    # jira-triage / jira-build / jira-pr-iterate dispatch types are retired.
+    repository_dispatch:
+        types: [jira-resume]
+    workflow_dispatch:
+        inputs:
+            issue_key:
+                description: 'JIRA issue key (e.g. AG-12345)'
+                type: string
+                required: true
+            stage:
+                description: 'Pipeline stage to run'
+                type: choice
+                required: true
+                default: resume
+                options:
+                    # `resume` runs the resume-preflight router (triage / build
+                    # / iterate / recycle decided from the ticket's real state) —
+                    # the manual mirror of the → In Progress path. The others
+                    # FORCE a specific stage (debugging / dry-run), bypassing the
+                    # router. `recycle` is not directly forceable — its
+                    # prior_pr_outcome only comes from the preflight.
+                    - resume
+                    - triage
+                    - build
+                    - pr-iterate
+    workflow_run:
+        # Auto-react when the main CI workflow completes on an agent-authored
+        # branch — failure → ci-failure-iterate, success → ci-success-handler
+        # (Needs-Review transition). The `branches:` filter restricts firings
+        # at the trigger level so non-AI PR completions don't create skipped
+        # workflow runs in the Actions history. The agent branch shape is
+        # `ghabot-ag-<NNNNN>-<slug>` (see ag-dev-prompts modes/ci.md). Globs
+        # are case-sensitive, but the agent always produces lowercase.
+        workflows: [CI]
+        types: [completed]
+        branches: ['ghabot-ag-*']
+
+permissions:
+    contents: read
+
+concurrency:
+    # For workflow_run events the dispatch payloads are empty, so fall back
+    # to the failing run's head branch (which encodes the issue key in the
+    # agent branch shape: `ghabot-ag-<NNNNN>-<slug>`). Same group as the
+    # dispatch-driven jobs so a fresh CI-failure iteration queues behind any
+    # in-flight pr-iterate for the same ticket instead of interleaving.
+    group: claude-${{ github.event.client_payload.issue_key || inputs.issue_key || github.event.workflow_run.head_branch }}
+    cancel-in-progress: false
+
+env:
+    ISSUE_KEY: ${{ github.event.client_payload.issue_key || inputs.issue_key }}
+    DEV_PROMPTS_CHANNEL: latest
+
+jobs:
+    # -------------------------------------------------- preflight
+    # The single cheap gate for both human (→ In Progress) and CI-failure
+    # re-entry. No App token, no agent. Branches by event:
+    #   • repository_dispatch jira-resume / workflow_dispatch resume → the
+    #     resume router (AI pr-url + PR state + AI plan) emits `stage`
+    #     (triage / build / pr-iterate / recycle) + prior_pr_outcome.
+    #   • workflow_run · failure → the ci-failure eligibility walk (PR author +
+    #     AI status + branch shape) emits `ci_failure_eligible` + run_url.
+    # The success conclusion is handled by ci-success-handler (terminal REST
+    # work, not a gate). A forced workflow_dispatch stage bypasses this job
+    # entirely (agent-run runs it directly from inputs.stage).
+    preflight:
+        if: |
+            (github.event_name == 'repository_dispatch' && github.event.action == 'jira-resume') ||
+            (github.event_name == 'workflow_dispatch'   && inputs.stage == 'resume') ||
+            (github.event_name == 'workflow_run'        && github.event.workflow_run.conclusion == 'failure')
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            contents: read
+            pull-requests: read
+            packages: read
+        outputs:
+            stage: ${{ steps.resume.outputs.stage }}
+            prior_pr_outcome: ${{ steps.resume.outputs.prior_pr_outcome }}
+            ci_failure_eligible: ${{ steps.cifail.outputs.eligible }}
+            ci_failure_run_url: ${{ steps.cifail.outputs.run_url }}
+            issue_key: ${{ steps.resume.outputs.issue_key || steps.cifail.outputs.issue_key }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+
+            # → In Progress router (every non-workflow_run event that passes the
+            # job gate is a resume dispatch / workflow_dispatch resume).
+            - id: resume
+              if: github.event_name != 'workflow_run'
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-resume-preflight
+              with:
+                  issue_key: ${{ env.ISSUE_KEY }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+
+            # CI-failure re-entry eligibility walk (workflow_run · failure only).
+            - id: cifail
+              if: github.event_name == 'workflow_run'
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-ci-failure-preflight
+              with:
+                  head_branch: ${{ github.event.workflow_run.head_branch }}
+                  head_sha: ${{ github.event.workflow_run.head_sha }}
+                  run_url: ${{ github.event.workflow_run.html_url }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+
+    # -------------------------------------------------- agent-run
+    # The single agent job for every stage that runs `/fr` via jira-pipeline:
+    # the resume routes (triage / build / pr-iterate / recycle) AND ci-failure-
+    # iterate. They share the entire bootstrap (token mint → setup-nx → install
+    # → jira-pipeline) and differ only in the `stage` (+ ci_failure_run_url /
+    # recycle_from), so one parameterised job replaces the four near-identical
+    # ones. Stage precedence: ci-failure-iterate (preflight eligible) → the
+    # resume route → a forced workflow_dispatch stage. `!cancelled()` lets the
+    # gate evaluate even when preflight is skipped (the forced-dispatch path).
+    agent-run:
+        # Both gates feed this one job: `preflight` for the resume routes +
+        # ci-failure-iterate, and `ci-success-handler` for the codex-review
+        # hold (green PR, open P0/P1 findings → pr-iterate). On any given
+        # event only one of the two needed jobs runs and the other is skipped
+        # (empty outputs); `!cancelled()` lets the `if` evaluate regardless.
+        needs: [preflight, ci-success-handler]
+        if: |
+            !cancelled() &&
+            (needs.preflight.outputs.stage != '' ||
+             needs.preflight.outputs.ci_failure_eligible == 'true' ||
+             needs.ci-success-handler.outputs.dispatch_pr_iterate == 'true' ||
+             (github.event_name == 'workflow_dispatch' && inputs.stage != 'resume'))
+        runs-on: ubuntu-latest
+        timeout-minutes: 60
+        permissions:
+            contents: read
+            packages: read
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+
+            - name: Mint ag-dev-prompts read token
+              id: prompts-token
+              uses: actions/create-github-app-token@v1
+              with:
+                  app-id: ${{ vars.JIRA_AGENT_APP_ID }}
+                  private-key: ${{ secrets.JIRA_AGENT_APP_PRIVATE_KEY }}
+                  owner: ag-grid
+                  repositories: ag-dev-prompts
+
+            - name: Setup Nx (renders .claude/settings.json)
+              uses: ./.github/actions/setup-nx
+              env:
+                  GITHUB_TOKEN: ${{ steps.prompts-token.outputs.token }}
+              with:
+                  cache_mode: ro
+                  fetch_base: skip
+
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+
+            - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-pipeline
+              with:
+                  # Stage precedence: ci-failure-iterate (failure preflight eligible)
+                  # → pr-iterate (green CI held on open P0/P1 Codex findings)
+                  # → the resume route → a forced workflow_dispatch stage.
+                  stage: ${{ needs.preflight.outputs.ci_failure_eligible == 'true' && 'ci-failure-iterate' || needs.ci-success-handler.outputs.dispatch_pr_iterate == 'true' && 'pr-iterate' || needs.preflight.outputs.stage || inputs.stage }}
+                  issue_key: ${{ needs.preflight.outputs.issue_key || needs.ci-success-handler.outputs.issue_key || env.ISSUE_KEY }}
+                  ci_failure_run_url: ${{ needs.preflight.outputs.ci_failure_run_url }}
+                  recycle_from: ${{ needs.preflight.outputs.prior_pr_outcome }}
+                  jira_agent_app_id: ${{ vars.JIRA_AGENT_APP_ID }}
+                  jira_agent_app_private_key: ${{ secrets.JIRA_AGENT_APP_PRIVATE_KEY }}
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+
+    # -------------------------------------------------- ci-success-handler
+    # The workflow_run · success counterpart to the preflight failure branch:
+    # same trigger, but when the upstream CI finished successfully. Kept as its
+    # own job (not folded into preflight) because it does terminal REST work,
+    # not gating, and pr-plnkr gates on its outputs.
+    # No agent invocation — pure REST work: verify the run is still the
+    # PR head, transition the JIRA workflow to Needs Review, mark AI
+    # status: done, clear AI failure, zero the recovery counter. See the
+    # shared action for the full eligibility walk.
+    ci-success-handler:
+        if: |
+            github.event_name == 'workflow_run' &&
+            github.event.workflow_run.conclusion == 'success'
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            contents: read
+            pull-requests: read
+            packages: read
+        # Surfaced so the pr-plnkr job can gate on the first promoting green
+        # (handled == 'true') and forward the issue key + PR number.
+        outputs:
+            handled: ${{ steps.handler.outputs.handled }}
+            issue_key: ${{ steps.handler.outputs.issue_key }}
+            pr_number: ${{ steps.handler.outputs.pr_number }}
+            # 'true' when a green PR still has open P0/P1 Codex findings: the
+            # handler HELD the Needs-Review promotion and asks for a pr-iterate
+            # to address them. Routed into agent-run below (the success-side
+            # analog of ci-failure-iterate) — no self-dispatch needed.
+            dispatch_pr_iterate: ${{ steps.handler.outputs.dispatch_pr_iterate }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+
+            - id: handler
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-ci-success-handler
+              with:
+                  head_branch: ${{ github.event.workflow_run.head_branch }}
+                  head_sha: ${{ github.event.workflow_run.head_sha }}
+                  run_url: ${{ github.event.workflow_run.html_url }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  # Live-test snippet — the ci.yml `pr_preview` job publishes
+                  # per-PR UMD bundles to gh-pages, so the reviewer can paste
+                  # these two <script> tags into a vanilla-JS Plunker to
+                  # exercise the actual built library from this PR.
+                  success_comment_body: |
+                      Live-test this PR in Plunker — paste these into a vanilla-JS sandbox:
+
+                      <script src="https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-grid-community.min.js"></script>
+                      <script src="https://ag-grid.github.io/ag-grid/pr-{PR_NUMBER}/ag-grid-enterprise.min.js"></script>
+
+                      Bundles auto-cleanup on PR close. PR: {PR_URL}
+
+    # -------------------------------------------------------------- pr-plnkr
+    # Automates the manual "paste these <script> tags into a Plunker" step the
+    # success comment above describes: clone the reporter's repro Plunker(s)
+    # from the ticket and re-point their AG Charts <script src> tags at this
+    # PR's per-PR UMD bundle, then post the fix-pinned links back to the ticket.
+    #
+    # Gated on ci-success-handler.handled — true ONLY on the first promoting
+    # green (afterwards AI status is `done`, outside the handler's
+    # eligible_statuses), so this runs exactly once per PR with no marker field.
+    # Boots a focused agent (jira-pr-plnkr); orthogonal to AI status, so it does
+    # NOT go through jira-pipeline.
+    pr-plnkr:
+        needs: ci-success-handler
+        if: needs.ci-success-handler.outputs.handled == 'true'
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        permissions:
+            contents: read
+            packages: read
+            # The agent posts a `<!-- pr-plnkr -->` marker comment on the PR
+            # (idempotency guard against single-job re-runs) via the App token.
+            pull-requests: write
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+
+            # Same read token + setup-nx prelude as the agent stages: setup-nx's
+            # postinstall renders .claude/settings.json, which setup-jira-agent
+            # (inside jira-pr-plnkr) verifies. No repo build runs in the agent.
+            - name: Mint ag-dev-prompts read token
+              id: prompts-token
+              uses: actions/create-github-app-token@v1
+              with:
+                  app-id: ${{ vars.JIRA_AGENT_APP_ID }}
+                  private-key: ${{ secrets.JIRA_AGENT_APP_PRIVATE_KEY }}
+                  owner: ag-grid
+                  repositories: ag-dev-prompts
+
+            - name: Setup Nx (renders .claude/settings.json)
+              uses: ./.github/actions/setup-nx
+              env:
+                  GITHUB_TOKEN: ${{ steps.prompts-token.outputs.token }}
+              with:
+                  cache_mode: ro
+                  fetch_base: skip
+
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+
+            - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/jira-pr-plnkr
+              with:
+                  issue_key: ${{ needs.ci-success-handler.outputs.issue_key }}
+                  pr_number: ${{ needs.ci-success-handler.outputs.pr_number }}
+                  community_bundle_url: https://ag-grid.github.io/ag-grid/pr-${{ needs.ci-success-handler.outputs.pr_number }}/ag-grid-community.min.js
+                  enterprise_bundle_url: https://ag-grid.github.io/ag-grid/pr-${{ needs.ci-success-handler.outputs.pr_number }}/ag-grid-enterprise.min.js
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  jira_agent_app_id: ${{ vars.JIRA_AGENT_APP_ID }}
+                  jira_agent_app_private_key: ${{ secrets.JIRA_AGENT_APP_PRIVATE_KEY }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}

@@ -1,7 +1,11 @@
-import type { AgSingletonBeanClass } from '../agStack/core/agContext';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/agCoreBeanCollection';
-import type { IAriaAnnouncementService } from '../agStack/interfaces/iAriaAnnouncementService';
-import type { ClassImp, IContext } from '../agStack/interfaces/iContext';
+import type {
+    AgCoreBeanCollection,
+    AgSingletonBeanClass,
+    ClassImp,
+    IAriaAnnouncementService,
+    IContext,
+} from 'ag-stack';
+
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
@@ -55,10 +59,10 @@ import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterServic
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAggregatedChildrenSvc } from '../interfaces/iAggregatedChildrenSvc';
+import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { ICalculatedColumnsService } from '../interfaces/iCalculatedColumns';
 import type { IClipboardService } from '../interfaces/iClipboardService';
-import type { IColsService } from '../interfaces/iColsService';
-import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
+import type { IPivotColsService, IRowGroupColsService, IValueColsService } from '../interfaces/iColsService';
 import type { IColumnStateUpdateStrategy } from '../interfaces/iColumnStateUpdateStrategy';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
@@ -99,6 +103,7 @@ import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { IShowRowGroupColsValueService } from '../interfaces/iShowRowGroupColsValueService';
+import type { IShowValueAsService } from '../interfaces/iShowValueAsService';
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { ITestIdService } from '../interfaces/iTestIdService';
@@ -203,6 +208,7 @@ export type UserComponentName =
     | 'agExportingOverlay'
     | 'agNoRowsOverlay'
     | 'agNoMatchingRowsOverlay'
+    | 'agFileInputOverlay'
     | 'agTooltipComponent'
     | 'agReadOnlyFloatingFilter'
     | 'agTextColumnFilter'
@@ -313,14 +319,15 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     eRootDiv: HTMLElement;
     withinStudio?: boolean;
     pivotResultCols?: IPivotResultColsService;
-    autoColSvc?: IColumnCollectionService;
+    autoColSvc?: IAutoColService;
     selectionColSvc?: SelectionColService;
     rowNumbersSvc?: IRowNumbersService;
     colDefFactory?: ColumnDefFactory;
     colAutosize?: ColumnAutosizeService;
-    rowGroupColsSvc?: IColsService;
-    valueColsSvc?: IColsService;
-    pivotColsSvc?: IColsService;
+    rowGroupColsSvc?: IRowGroupColsService;
+    valueColsSvc?: IValueColsService;
+    showValueAsSvc?: IShowValueAsService;
+    pivotColsSvc?: IPivotColsService;
     quickFilter?: QuickFilterService;
     showRowGroupCols?: IShowRowGroupColsService;
     showRowGroupColValueSvc?: IShowRowGroupColsValueService;
@@ -387,7 +394,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     cellFlashSvc?: CellFlashService;
     masterDetailSvc?: IMasterDetailService;
     tooltipSvc?: TooltipService;
-    colGroupSvc?: ColumnGroupService;
+    colGroupSvc: ColumnGroupService;
     rowAutoHeight?: RowAutoHeightService;
     rowChildrenSvc?: IRowChildrenService;
     footerSvc?: IFooterService;
@@ -433,6 +440,7 @@ export type BeanName = keyof BeanCollection;
 type UntypedBeanNames =
     | 'advFilterExpSvc'
     | 'advSettingsMenuFactory'
+    | 'autoGenColsSvc'
     | 'agChartsExports'
     | 'chartCrossFilterSvc'
     | 'chartMenuItemMapper'
@@ -457,4 +465,5 @@ type UntypedBeanNames =
     | 'statusBarSvc'
     | 'testIdSvc'
     | 'toolbarMenuBuilder'
-    | 'formula';
+    | 'formula'
+    | 'showValueAsSvc';

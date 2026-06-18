@@ -1,0 +1,60 @@
+---
+import { decorateBryntumHtml } from '@utils/bryntumCampaignAssets';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import BryntumCtaList from './BryntumCtaList.astro';
+import { MINI_DEMO_CONFIG } from './miniDemoProducts';
+import type { BryntumTextMiniDemoSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumTextMiniDemoSection;
+}
+
+const { section } = Astro.props;
+const demoKind = section.demo_kind ?? 'gantt';
+const demoPosition = section.demo_position ?? 'right';
+
+const config = MINI_DEMO_CONFIG[demoKind];
+---
+
+{
+    config && (
+        <>
+            <section class={styles.section}>
+                <div class={styles.sectionInner}>
+                    <div
+                        class:list={[
+                            styles.miniDemo,
+                            demoPosition === 'left' && styles.miniDemoReverse,
+                            demoPosition === 'below' && styles.miniDemoStacked,
+                        ]}
+                    >
+                        <div class={styles.miniDemoCopy}>
+                            {section.eyebrow && <span class={styles.sectionEyebrow}>{section.eyebrow}</span>}
+                            {section.heading && <h2>{section.heading}</h2>}
+                            {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
+                            {section.body_html && (
+                                <div class={styles.bodyText} set:html={decorateBryntumHtml(section.body_html)} />
+                            )}
+
+                            {section.ctas && (
+                                <BryntumCtaList
+                                    ctas={section.ctas}
+                                    buttonClass="button-tertiary"
+                                    wrapperClass={styles.textMediaCtas}
+                                />
+                            )}
+                        </div>
+
+                        <div class={styles.miniDemoFrame}>
+                            <div id={config.mountId} class="bryntum-mini-demo-mount" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <script is:inline src={urlWithBaseUrl(config.scriptPath)} defer />
+        </>
+    )
+}

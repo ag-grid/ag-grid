@@ -895,6 +895,19 @@ describe('ag-grid grouping simple data', () => {
             animateRows: false,
         };
         const api = gridsManager.createGrid('myGrid', gridOptions);
+        await new GridColumns(api, `setRowData without getRowId destroys group filler nodes silently setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `setRowData without getRowId destroys group filler nodes silently setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-IE ag-Grid-AutoColumn:"IE"
+            │ └── LEAF id:0 name:"Alice" country:"IE"
+            └─┬ LEAF_GROUP id:row-group-country-IT ag-Grid-AutoColumn:"IT"
+            · └── LEAF id:1 name:"Bob" country:"IT"
+        `);
         await asyncSetTimeout(1);
 
         const fillers: IRowNode[] = [];
@@ -903,6 +916,14 @@ describe('ag-grid grouping simple data', () => {
                 fillers.push(n);
             }
         });
+        await new GridRows(api, `setRowData without getRowId destroys group filler nodes silently after forEachNode`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-IE ag-Grid-AutoColumn:"IE"
+                │ └── LEAF id:0 name:"Alice" country:"IE"
+                └─┬ LEAF_GROUP id:row-group-country-IT ag-Grid-AutoColumn:"IT"
+                · └── LEAF id:1 name:"Bob" country:"IT"
+            `);
         expect(fillers.length).toBeGreaterThan(0);
 
         let topChangedCount = 0;
@@ -951,6 +972,21 @@ describe('ag-grid grouping simple data', () => {
             animateRows: false,
         };
         const api = gridsManager.createGrid('myGrid', gridOptions);
+        await new GridColumns(api, `removing all rows in a group fires position events on the dying filler setup`)
+            .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── name "Name" width:200
+            `);
+        await new GridRows(api, `removing all rows in a group fires position events on the dying filler setup`).check(
+            `
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-country-IE ag-Grid-AutoColumn:"IE"
+                │ └── LEAF id:Alice name:"Alice" country:"IE"
+                └─┬ LEAF_GROUP id:row-group-country-IT ag-Grid-AutoColumn:"IT"
+                · └── LEAF id:Bob name:"Bob" country:"IT"
+            `
+        );
         await asyncSetTimeout(1);
 
         const itFiller = api.getRowNode('row-group-country-IT');
@@ -966,6 +1002,14 @@ describe('ag-grid grouping simple data', () => {
         });
 
         api.applyTransaction({ remove: [{ name: 'Bob' }] });
+        await new GridRows(
+            api,
+            `removing all rows in a group fires position events on the dying filler after applyTransaction`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-IE ag-Grid-AutoColumn:"IE"
+            · └── LEAF id:Alice name:"Alice" country:"IE"
+        `);
         await asyncSetTimeout(1);
 
         expect(itFiller!.destroyed).toBe(true);

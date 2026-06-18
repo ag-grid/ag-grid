@@ -1,0 +1,63 @@
+<svg class="scheduler" viewbox="0 0 966.14 447.73">
+<defs>
+<style>
+      [data-id="gantt-text"] {
+        font-family: Helvetica, sans-serif;
+        font-weight: 600;
+        font-size: 12px;
+        fill: #fff;
+      }
+    </style>
+<lineargradient gradienttransform="matrix(1, 0, 0, -1, 414, 2402.81)" gradientunits="userSpaceOnUse" id="linear-gradient" x1="-36.93" x2="-36.93" y1="2173.62" y2="1994.54">
+<stop offset="0" stop-color="#45e9cd"></stop>
+<stop offset="1" stop-color="#45e9cd" stop-opacity="0"></stop>
+</lineargradient>
+<clippath id="progress-clip">
+<rect height="42" rx="6" width="448" x="19.07" y="86.86"></rect>
+<rect class="scheduler-website-clip" height="42" rx="6" width="329" x="213.07" y="202.86"></rect>
+</clippath>
+</defs>
+<g class="scheduler-strategy">
+<rect class="scheduler-strategy-block" fill="#15c8ff" height="42" rx="6" width="448" x="19.07" y="86.86"></rect>
+<text data-id="gantt-text" x="35.1" y="111.8">Strategy and Business Rules</text>
+<circle cx="441.07" cy="107.86" fill="#155eff" opacity="0.5" r="7" stroke="#fff" stroke-width="6"></circle>
+<path class="scheduler-strategy-progress-circle" d="M441.07,100.86a7,7,0,0,1,7,7c-.34,9.28-13.66,9.28-14,0a7,7,0,0,1,7-7Z" fill="none" stroke="#fff" stroke-dasharray="43.98" stroke-width="6"></path>
+<circle cx="441.07" cy="107.86" fill="#15c8ff" r="7"></circle>
+</g>
+<g class="scheduler-setup">
+<rect fill="#0076f8" height="42" rx="6" width="215" x="403.07" y="144.86"></rect>
+<circle cx="592.07" cy="165.92" fill="#155eff" opacity="0.5" r="7" stroke="#fff" stroke-width="6"></circle>
+<circle cx="592.07" cy="165.92" fill="#0076f8" r="7"></circle>
+<text data-id="gantt-text" x="418.8" y="169.9">Setup Web Server</text>
+</g>
+<g class="scheduler-website">
+<rect fill="#8352f1" height="42" rx="6" width="329" x="213.07" y="202.86"></rect>
+<text data-id="gantt-text" x="229.2" y="227.8">Website Design</text>
+<circle cx="516.07" cy="223.86" fill="#155eff" opacity="0.5" r="7" stroke="#fff" stroke-width="6"></circle>
+<path class="scheduler-website-progress-circle" d="M516.07,216.86a7,7,0,0,1,7,7c-.34,9.28-13.66,9.28-14,0a7,7,0,0,1,7-7Z" fill="none" stroke="#fff" stroke-dasharray="43.98" stroke-width="6"></path>
+<circle cx="516.07" cy="223.86" fill="#8352f1" r="7"></circle>
+</g>
+<g class="scheduler-test">
+<rect fill="#ff8474" height="42" rx="6" width="221" x="482.07" y="260.86"></rect>
+<text data-id="gantt-text" x="497.8" y="285.8">Test Strategy</text>
+<g>
+<circle cx="677.07" cy="281.86" fill="#155eff" opacity="0.5" r="7" stroke="#fff" stroke-width="6"></circle>
+<circle cx="677.07" cy="281.86" fill="#ff8474" r="7"></circle>
+</g>
+</g>
+<g class="scheduler-implementation">
+<rect fill="#f6d14b" height="42" rx="6" width="329" x="618.07" y="318.86"></rect>
+<text data-id="gantt-text" x="634.0" y="343.9">Implementation</text>
+<g>
+<circle cx="921.07" cy="339.86" fill="#155eff" opacity="0.5" r="7" stroke="#fff" stroke-width="6"></circle>
+<circle cx="921.07" cy="339.86" fill="#f6d14b" r="7"></circle>
+</g>
+</g>
+<g class="scheduler-progress">
+<path class="scheduler-progress-bar" d="M377.07,41.27V431.86" fill="none" stroke="url(#linear-gradient)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path class="scheduler-progress-star" d="M377.07,14.86a16,16,0,1,0,16,16A16,16,0,0,0,377.07,14.86Zm7.27,15-3.07,3,.75,4.28a.79.79,0,0,1-.6.9h-.15a.55.55,0,0,1-.38-.08l-3.82-2-3.83,2a.75.75,0,0,1-1.05-.3,1,1,0,0,1-.07-.45l.75-4.27-3.08-3a.72.72,0,0,1,0-1.05.47.47,0,0,1,.45-.23l4.28-.6,1.87-3.9a.77.77,0,0,1,1.05-.3.59.59,0,0,1,.3.3l1.95,3.9,4.28.6a.71.71,0,0,1,.6.83A.4.4,0,0,1,384.34,29.81Z" fill="#45e9cd"></path>
+</g>
+<g clip-path="url(#progress-clip)">
+<rect class="scheduler-progress-block" fill="#fff" height="160" opacity="0.25" width="357" x="19.07" y="86.86"></rect>
+</g>
+</svg>

@@ -1,14 +1,19 @@
+import { _hasCalculatedExpression, _isCalculatedColumnsEnabled } from '../../columns/calculatedColumnUtils';
 import type { UserComponentName } from '../../context/context';
-import { _isSortDefValid, _isSortDirectionValid } from '../../entities/agColumn';
+import { _isSortDefValid, isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
+import type { GridOptions } from '../../entities/gridOptions';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import { buildAllValidNames } from '../validationTypes';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
+import { buildAllValidNames } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
 function quote(s: string): string {
     return `"${s}"`;
 }
+
+const showValueAsModule = (_colDef: ColDef | ColGroupDef, { rowModelType }: GridOptions): 'ShowValueAs' | null =>
+    rowModelType && rowModelType !== 'clientSide' ? null : 'ShowValueAs';
 
 const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> = () => ({
     checkboxSelection: { version: '32.2', message: 'Use `rowSelection.checkboxes` in `GridOptions` instead.' },
@@ -38,6 +43,9 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     allowFormula: 'Formula',
     calculatedExpression: 'CalculatedColumns',
     aggFunc: 'SharedAggregation',
+    showValueAs: showValueAsModule,
+    showValueAsInitial: showValueAsModule,
+    showValueAsConfig: showValueAsModule,
     autoHeight: 'RowAutoHeight',
     cellClass: 'CellStyle',
     cellClassRules: 'CellStyle',
@@ -126,10 +134,22 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         allowFormula: {
             supportedRowModels: ['clientSide'],
         },
+        showValueAs: {
+            supportedRowModels: ['clientSide'],
+        },
+        showValueAsInitial: {
+            supportedRowModels: ['clientSide'],
+        },
+        showValueAsConfig: {
+            supportedRowModels: ['clientSide'],
+        },
         calculatedExpression: {
-            validate: (colDef) => {
-                if (colDef.calculatedExpression == null) {
+            validate: (colDef, gridOptions) => {
+                if (!_hasCalculatedExpression(colDef)) {
                     return null;
+                }
+                if (!_isCalculatedColumnsEnabled(gridOptions.calculatedColumns)) {
+                    return 'colDef.calculatedExpression requires gridOptions.calculatedColumns to be set to true or an options object.';
                 }
                 if (colDef.field || colDef.valueGetter || colDef.valueSetter) {
                     return 'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.';
@@ -209,7 +229,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         },
         sort: {
             validate: (_options) => {
-                if (_isSortDefValid(_options.sort) || _isSortDirectionValid(_options.sort)) {
+                if (_isSortDefValid(_options.sort) || isSortDirectionValid(_options.sort)) {
                     return null;
                 }
 
@@ -218,7 +238,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         },
         initialSort: {
             validate: (_options) => {
-                if (_isSortDefValid(_options.initialSort) || _isSortDirectionValid(_options.initialSort)) {
+                if (_isSortDefValid(_options.initialSort) || isSortDirectionValid(_options.initialSort)) {
                     return null;
                 }
 
@@ -231,7 +251,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
 
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
                     const invalidItems = sortingOrder.filter((a) => {
-                        return !(_isSortDefValid(a) || _isSortDirectionValid(a));
+                        return !(_isSortDefValid(a) || isSortDirectionValid(a));
                     });
                     if (invalidItems.length > 0) {
                         return `sortingOrder must be an array of type non-null (SortDirection | SortDef)[], incorrect items are: [${invalidItems
@@ -382,6 +402,8 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     initialAggFunc: undefined,
     defaultAggFunc: undefined,
     aggFunc: undefined,
+    valueIndex: undefined,
+    initialValueIndex: undefined,
     groupRowEditable: undefined,
     groupRowValueSetter: undefined,
     pinned: undefined,
@@ -392,6 +414,9 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     headerGroupComponent: undefined,
     headerGroupComponentParams: undefined,
     calculatedExpression: undefined,
+    showValueAs: undefined,
+    showValueAsInitial: undefined,
+    showValueAsConfig: undefined,
     cellStyle: undefined,
     cellRenderer: undefined,
     cellRendererParams: undefined,

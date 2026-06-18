@@ -1,4 +1,5 @@
 import type { ExcelImage, ExcelOOXMLTemplate, XmlElement } from 'ag-grid-community';
+import { _clamp } from 'ag-grid-community';
 
 import type { ExcelCalculatedImage, ImageAnchor, ImageBoxSize, ImageColor } from '../../assets/excelInterfaces';
 import { pixelsToEMU } from '../../assets/excelUtils';
@@ -172,7 +173,7 @@ const getBlipFill = (image: ExcelImage, index: number) => {
     let blipChildren: XmlElement[] | undefined;
 
     if (image.transparency) {
-        const transparency = Math.min(Math.max(image.transparency, 0), 100);
+        const transparency = _clamp(image.transparency, 0, 100);
         blipChildren = [
             {
                 name: 'a:alphaModFix',
@@ -266,7 +267,7 @@ const getSpPr = (image: ExcelImage, imageBoxSize: ImageBoxSize) => {
         const rotation = image.rotation;
         xfrm.properties = {
             rawMap: {
-                rot: Math.min(Math.max(rotation, 0), 360) * 60000,
+                rot: _clamp(rotation, 0, 360) * 60000,
             },
         };
     }

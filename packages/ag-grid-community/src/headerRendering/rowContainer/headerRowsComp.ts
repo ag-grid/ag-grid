@@ -1,4 +1,5 @@
-import { _ensureDomOrder } from '../../agStack/utils/dom';
+import { _ensureDomOrder } from 'ag-stack';
+
 import { BeanStub } from '../../context/beanStub';
 import { HeaderRowComp } from '../row/headerRowComp';
 import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';

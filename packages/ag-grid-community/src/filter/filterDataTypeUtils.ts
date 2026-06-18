@@ -1,7 +1,6 @@
-import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
-import { _parseBigIntOrNull } from '../agStack/utils/bigInt';
-import { _getDateParts } from '../agStack/utils/date';
-import { _exists } from '../agStack/utils/generic';
+import type { LocaleTextFunc } from 'ag-stack';
+import { _exists, _getDateParts, _parseBigIntOrNull } from 'ag-stack';
+
 import type { BeanCollection, UserComponentName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ValueFormatterParams, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
@@ -223,7 +222,11 @@ export function _getFilterParamsForDataType(
     const usingSetFilter = filter === 'agSetColumnFilter';
     if (!filterValueGetter && dataTypeDefinition.baseDataType === 'object' && !usingSetFilter) {
         filterValueGetter = ({ column, node }: ValueGetterParams) =>
-            formatValue({ column, node, value: beans.valueSvc.getValue(column as AgColumn, node, 'data') });
+            formatValue({
+                column,
+                node,
+                value: node ? beans.valueSvc.getValueFromData(column as AgColumn, node) : undefined,
+            });
     }
     const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
     const filterParamsGetter = filterParamsMap[dataTypeDefinition.baseDataType];

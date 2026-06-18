@@ -1,3 +1,5 @@
+import { _debounce, _jsonEquals } from 'ag-stack';
+
 import type {
     AdvancedFilterModel,
     AgColumn,
@@ -30,12 +32,11 @@ import {
     GROUP_TOTAL_ROW_ID_PREFIX,
     ROOT_NODE_ID,
     RowNode,
-    _debounce,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
+    _getSortModel,
     _isGetRowHeightFunction,
     _isRowSelection,
-    _jsonEquals,
     _warn,
 } from 'ag-grid-community';
 
@@ -238,7 +239,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return allColsUnchanged && !missingCols;
         };
 
-        const sortModelDifferent = !_jsonEquals(this.storeParams.sortModel, this.sortSvc?.getSortModel() ?? []);
+        const sortModelDifferent = !_jsonEquals(this.storeParams.sortModel, _getSortModel(this.sortSvc));
         const rowGroupDifferent = !areColsSame({
             oldCols: this.storeParams.rowGroupCols,
             newCols: rowGroupColumnVos,
@@ -374,9 +375,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             (col) =>
                 ({
                     id: col.getId(),
-                    aggFunc: col.getAggFunc(),
+                    aggFunc: col.aggFunc,
                     displayName: this.colNames.getDisplayNameForColumn(col, 'model'),
-                    field: col.colDef.field,
+                    field: col.field,
                 }) as ColumnVO
         );
     }
@@ -399,7 +400,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             filterModel: this.filterManager?.isAdvFilterEnabled()
                 ? this.filterManager?.getAdvFilterModel()
                 : (this.filterManager?.getFilterModel() ?? {}),
-            sortModel: this.sortSvc?.getSortModel() ?? [],
+            sortModel: _getSortModel(this.sortSvc),
 
             datasource: this.datasource,
             lastAccessedSequence: { value: 0 },

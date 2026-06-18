@@ -1,7 +1,8 @@
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-types';
+import { RefPlaceholder, _removeFromParent } from 'ag-stack';
 
 import type { BeanCollection, GridSelect, ListOption } from 'ag-grid-community';
-import { AgSelect, Component, RefPlaceholder, _error, _removeFromParent } from 'ag-grid-community';
+import { AgSelect, Component, _error } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSlider } from '../../../../../agStack/agSlider';
@@ -77,7 +78,7 @@ export class SeriesPanel extends Component {
         tileSpacing: () => new TileSpacingPanel(this.chartMenuUtils),
         shape: () => this.initShape(),
         size: () => this.initSize('size', 'size'),
-        minSize: () => this.initSize('size', 'minSize'),
+        minSize: () => this.initSize('minSize', 'minSize'),
         maxSize: () => this.initSize('maxSize', 'maxSize'),
         dropoff: () => this.initDropOff(),
         stageLabels: () => this.initStageLabels(),
@@ -340,7 +341,7 @@ export class SeriesPanel extends Component {
         );
     }
 
-    private initSize(expression: 'size' | 'maxSize', labelKey: 'size' | 'minSize' | 'maxSize'): GridSlider {
+    private initSize(expression: 'size' | 'minSize' | 'maxSize', labelKey: 'size' | 'minSize' | 'maxSize'): GridSlider {
         return new AgSlider(this.chartMenuUtils.getDefaultSliderParams(expression, labelKey, 60));
     }
 

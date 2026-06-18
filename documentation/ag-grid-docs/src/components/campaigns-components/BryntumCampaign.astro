@@ -1,0 +1,180 @@
+---
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import BrandsSection from './bryntum/BrandsSection.astro';
+import BryntumLiveDemo from './bryntum/BryntumLiveDemo.astro';
+import CtaSection from './bryntum/CtaSection.astro';
+import ExamplesGridSection from './bryntum/ExamplesGridSection.astro';
+import HeroSection from './bryntum/HeroSection.astro';
+import IntroVideoSection from './bryntum/IntroVideoSection.astro';
+import LanguagesSection from './bryntum/LanguagesSection.astro';
+import LiveDemoSection from './bryntum/LiveDemoSection.astro';
+import PartnershipSection from './bryntum/PartnershipSection.astro';
+import TextMediaSection from './bryntum/TextMediaSection.astro';
+import TextMiniDemoSection from './bryntum/TextMiniDemoSection.astro';
+import { LIVE_DEMO_PRODUCT_CONFIG } from './bryntum/liveDemoProducts';
+import { MINI_DEMO_CONFIG } from './bryntum/miniDemoProducts';
+import type { BryntumCampaignContent } from './bryntum/types';
+import styles from './BryntumCampaign.module.scss';
+
+interface Props {
+    content: BryntumCampaignContent;
+}
+
+const { content } = Astro.props;
+const productSlug = content.slug;
+const hasLiveDemo = productSlug in LIVE_DEMO_PRODUCT_CONFIG;
+
+// Collect the unique Bryntum product bundles needed by demo sections on this
+// page. The live-demo section uses the page's product slug; mini-demo sections
+// can configure their own product. Each bundle must only be loaded once or
+// Bryntum throws "bundle was loaded multiple times" at runtime.
+const bryntumProductSlugs = new Set<string>();
+if (hasLiveDemo && content.sections.some((s) => s.type === 'live-demo')) {
+    bryntumProductSlugs.add(productSlug);
+}
+for (const section of content.sections) {
+    if (section.type !== 'text-mini-demo') continue;
+    const config = MINI_DEMO_CONFIG[section.demo_kind ?? 'gantt'];
+    if (config) bryntumProductSlugs.add(config.productSlug);
+}
+const bryntumProducts = [...bryntumProductSlugs].map((slug) => ({
+    slug,
+    base: `https://bryntum.com/products/${slug}/build`,
+}));
+
+// Mark every other qualifying text-media section as `isAlt` so the page
+// alternates the gradient background. Computed up-front to avoid mutating
+// state inside the .map() below.
+const altTextMediaSections = new WeakSet<object>();
+{
+    let qualifiedIndex = 0;
+    for (const section of content.sections) {
+        if (section.type !== 'text-media') continue;
+        const firstMedia = section.media?.[0];
+        const hasImage = firstMedia?.kind === 'image' && Boolean(firstMedia.src);
+        if (!hasImage) continue;
+        if (qualifiedIndex % 2 === 1) {
+            altTextMediaSections.add(section);
+        }
+        qualifiedIndex++;
+    }
+}
+---
+
+{
+    /*
+     * Bryntum partner-demo assets — loaded once per unique product slug on the
+     * page. The Bryntum UMD bundle throws "bundle was loaded multiple times"
+     * if the same product is loaded more than once, so per-section loading
+     * would break pages that combine a live-demo and a mini-demo for the same
+     * product (e.g. /campaigns/bryntum-gantt).
+     *
+     * The CSS and UMD bundle are loaded straight from bryntum.com so the
+     * embedded demo stays in sync with the canonical Bryntum build. Trust
+     * assumption: bryntum.com is a trusted partner origin. If that ever
+     * changes, the bundle/CSS should be self-hosted under public/ and pinned
+     * with an SRI hash.
+     */
+}
+{
+    bryntumProducts.length > 0 && (
+        <>
+            <link rel="stylesheet" href={urlWithBaseUrl('/styles/bryntum-demo.css')} />
+            {bryntumProducts.map(({ slug, base }) => (
+                <>
+                    <link rel="stylesheet" href={`${base}/fontawesome/css/fontawesome.css`} />
+                    <link rel="stylesheet" href={`${base}/fontawesome/css/solid.css`} />
+                    <link rel="stylesheet" href={`${base}/${slug}.css`} />
+                    {/*
+                     * Bryntum ships every theme as light and dark variants
+                     * (svalbard-light.css / svalbard-dark.css). The inline
+                     * script below mirrors the AG site's dark-mode state
+                     * onto these links so the embedded demos follow the
+                     * site's colour scheme.
+                     */}
+                    <link rel="stylesheet" data-bryntum-theme={slug} href={`${base}/svalbard-light.css`} />
+                </>
+            ))}
+            {/*
+             * `set:html` is the canonical Astro pattern for injecting a literal
+             * JS string into an inline <script>. The previous form
+             * `<script is:inline>{`…`}</script>` did NOT work: `is:inline`
+             * disables expression evaluation inside the tag, so the page
+             * shipped the literal template-literal source to the browser and
+             * the IIFE never ran.
+             */}
+            <script
+                is:inline
+                set:html={`
+                    (function () {
+                        var html = document.documentElement;
+                        function syncTheme() {
+                            var dark = html.dataset.darkMode === 'true';
+                            var fromSuffix = dark ? '-light.css' : '-dark.css';
+                            var toSuffix = dark ? '-dark.css' : '-light.css';
+                            var links = document.querySelectorAll('link[data-bryntum-theme]');
+                            for (var i = 0; i < links.length; i++) {
+                                var href = links[i].href;
+                                if (href.indexOf(fromSuffix) !== -1) {
+                                    links[i].href = href.replace(fromSuffix, toSuffix);
+                                }
+                            }
+                        }
+                        syncTheme();
+                        new MutationObserver(syncTheme).observe(html, {
+                            attributes: true,
+                            attributeFilter: ['data-dark-mode'],
+                        });
+                    })();
+                `}
+            />
+            <script is:inline src={urlWithBaseUrl('/scripts/bryntum-demo-bootstrap.js')} />
+            {bryntumProducts.map(({ slug, base }) => (
+                <script is:inline src={`${base}/${slug}.umd.js`} />
+            ))}
+        </>
+    )
+}
+
+<div class={styles.page}>
+    {
+        content.sections.map((section) => {
+            switch (section.type) {
+                case 'heroTBM':
+                    return <HeroSection section={section} productSlug={productSlug} />;
+                case 'text-languages':
+                    return <LanguagesSection section={section} />;
+                case 'text-media':
+                case 'white-section':
+                    return (
+                        <TextMediaSection
+                            section={section}
+                            productSlug={productSlug}
+                            isAlt={altTextMediaSections.has(section)}
+                        />
+                    );
+                case 'live-demo':
+                    return hasLiveDemo ? (
+                        <BryntumLiveDemo section={section} productSlug={productSlug} />
+                    ) : (
+                        <LiveDemoSection section={section} />
+                    );
+                case 'columns-lib':
+                    return <ExamplesGridSection section={section} productSlug={productSlug} />;
+                case 'brands':
+                    return <BrandsSection section={section} />;
+                case 'text-button':
+                    return <CtaSection section={section} />;
+                case 'partnership':
+                    return <PartnershipSection section={section} />;
+                case 'text-mini-demo':
+                    return <TextMiniDemoSection section={section} />;
+                case 'intro-video':
+                    return <IntroVideoSection section={section} />;
+                default:
+                    return null;
+            }
+        })
+    }
+</div>

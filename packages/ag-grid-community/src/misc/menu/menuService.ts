@@ -1,10 +1,9 @@
-import { _isIOSUserAgent } from '../../agStack/utils/browser';
-import { _requestAnimationFrame } from '../../agStack/utils/dom';
+import { _isIOSUserAgent, _requestAnimationFrame } from 'ag-stack';
+
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import { isColumn } from '../../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../../events';
 import { _isLegacyMenuEnabled } from '../../gridOptionsUtils';
@@ -95,7 +94,7 @@ export class MenuService extends BeanStub implements NamedBean {
     }
 
     public isHeaderContextMenuEnabled(column?: AgColumn | AgProvidedColumnGroup): boolean {
-        const colDef = column && isColumn(column) ? column.colDef : column?.getColGroupDef();
+        const colDef = column?.isColumn ? column.colDef : column?.getColGroupDef();
         return !colDef?.suppressHeaderContextMenu && this.gos.get('columnMenu') === 'new';
     }
 

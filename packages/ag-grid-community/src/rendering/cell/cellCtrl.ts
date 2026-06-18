@@ -1,17 +1,21 @@
-import { KeyCode } from '../../agStack/constants/keyCode';
-import { _setAriaColIndex, _setAriaRowIndex } from '../../agStack/utils/aria';
-import { _getActiveDomElement } from '../../agStack/utils/document';
-import { _addOrRemoveAttribute, _placeCaretAtEnd } from '../../agStack/utils/dom';
-import { _findFocusableElements } from '../../agStack/utils/focus';
-import { _makeNull } from '../../agStack/utils/generic';
-import { AgPromise } from '../../agStack/utils/promise';
+import {
+    AgPromise,
+    KeyCode,
+    _addOrRemoveAttribute,
+    _findFocusableElements,
+    _getActiveDomElement,
+    _makeNull,
+    _placeCaretAtEnd,
+    _setAriaColIndex,
+    _setAriaRowIndex,
+} from 'ag-stack';
+
 import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { EditService } from '../../edit/editService';
-import { _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
@@ -39,6 +43,7 @@ import type { IRowNumbersRowResizeFeature } from '../../interfaces/rowNumbers';
 import type { ILoadingCellRendererParams } from '../../main-umd-noStyles';
 import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
+import { CSS_CALCULATED_COLUMN, CSS_CALCULATED_COLUMN_HIGHLIGHTED } from '../../styling/calculatedColumnCss';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _isCellFocusSuppressed } from '../../utils/gridFocus';
@@ -60,7 +65,6 @@ const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
 const CSS_CELL_LAST_LEFT_PINNED = 'ag-cell-last-left-pinned';
 const CSS_CELL_NOT_INLINE_EDITING = 'ag-cell-not-inline-editing';
 const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
-const CSS_CALCULATED_COLUMN = 'ag-calculated-column';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ICellComp {
@@ -116,6 +120,8 @@ export class CellCtrl extends BeanStub {
     public editStyleFeature: ICellStyleFeature | undefined = undefined;
     private mouseListener: CellMouseListenerFeature | undefined = undefined;
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
+    private calculatedColumnCssApplied = false;
+    private calculatedColumnHighlightedCssApplied = false;
 
     public cellPosition: CellPosition;
 
@@ -222,7 +228,7 @@ export class CellCtrl extends BeanStub {
         }
         this.editorTooltipFeature = this.beans.tooltipSvc?.setupCellEditorTooltip(this, editor);
 
-        _populateModelValidationErrors(this.beans);
+        this.editSvc?.populateModelValidationErrors();
     }
 
     public disableEditorTooltipFeature(): void {
@@ -547,7 +553,8 @@ export class CellCtrl extends BeanStub {
         const res: ICellRendererParams = _addGridCommonParams(gos, {
             value: value,
             valueFormatted: valueFormatted,
-            getValue: () => valueSvc.getValueForDisplay({ column, node: rowNode, from: 'edit' }).value,
+            getValue: () =>
+                valueSvc.getDisplayValue(column, rowNode, this.shouldUseShowValueAsValue() ? 'transformed' : 'edit'),
             setValue: (value: any) =>
                 editSvc?.setDataValue({ rowNode, column }, value) || rowNode.setDataValue(column, value),
             formatValue: this.formatValue.bind(this),
@@ -625,14 +632,21 @@ export class CellCtrl extends BeanStub {
             return;
         }
 
-        const { field, valueGetter, showRowGroup, enableCellChangeFlash } = column.colDef;
+        const enableCellChangeFlash = column.enableCellChangeFlash;
         // we always refresh if cell has no value - this can happen when user provides Cell Renderer and the
         // cell renderer doesn't rely on a value, instead it could be looking directly at the data, or maybe
         // printing the current time (which would be silly)???. Generally speaking
         // non of {field, valueGetter, showRowGroup} is bad in the users application, however for this edge case, it's
         // best always refresh and take the performance hit rather than never refresh and users complaining in support
         // that cells are not updating.
-        const noValueProvided = field == null && valueGetter == null && showRowGroup == null;
+        // a calculated column has no field/valueGetter/showRowGroup but DOES have a value (its
+        // expression), so it must not count as value-less here — otherwise it force-refreshes every
+        // pass and flashes on changes to unrelated columns instead of only when its value changes.
+        const noValueProvided =
+            column.field == null &&
+            column.valueGetter == null &&
+            column.showRowGroup == null &&
+            !column.isCalculatedCol;
 
         const newData = params?.newData ?? false;
         const forceRefresh = noValueProvided || (params && (params.force || newData));
@@ -697,11 +711,18 @@ export class CellCtrl extends BeanStub {
     }
 
     public formatValue(value: any): any {
-        return this.callValueFormatter(value) ?? value;
-    }
-
-    private callValueFormatter(value: any): string | null {
-        return this.beans.valueSvc.formatValue(this.column, this.rowNode, value);
+        const valueSvc = this.beans.valueSvc;
+        const column = this.column;
+        const node = this.rowNode;
+        // While a mode is active and there is no live editor, format with the mode's formatter; else the column's.
+        // `showValueAs` is null for every ordinary column, so it short-circuits before touching the edit service.
+        if (this.shouldUseShowValueAsValue()) {
+            const transformed = valueSvc.formatTransformedValue(column, node, value);
+            if (transformed !== undefined) {
+                return transformed ?? value;
+            }
+        }
+        return valueSvc.formatValue(column, node, value) ?? value;
     }
 
     public updateAndFormatValue(compareValues: boolean): boolean {
@@ -712,7 +733,7 @@ export class CellCtrl extends BeanStub {
             column: this.column,
             node: this.rowNode,
             includeValueFormatted: true,
-            from: 'edit',
+            from: this.shouldUseShowValueAsValue() ? 'transformed' : 'edit',
         });
         this.value = value;
         this.valueFormatted = valueFormatted;
@@ -721,6 +742,10 @@ export class CellCtrl extends BeanStub {
             return !this.valuesAreEqual(oldValue, this.value) || this.valueFormatted != oldValueFormatted;
         }
         return true;
+    }
+
+    private shouldUseShowValueAsValue(): boolean {
+        return this.column.showValueAs != null && !this.editSvc?.isEditing(this, { withOpenEditor: true });
     }
 
     private valuesAreEqual(val1: any, val2: any): boolean {
@@ -779,8 +804,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private refreshAriaColIndex(): void {
-        const colIdx = this.beans.visibleCols.getAriaColIndex(this.column);
-        _setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
+        _setAriaColIndex(this.eGui, this.column.ariaColIndex); // for react, we don't use JSX, as it slowed down column moving
     }
 
     public onWidthChanged(): void {
@@ -1026,11 +1050,28 @@ export class CellCtrl extends BeanStub {
     }
 
     private setCalculatedColumnCss(): void {
-        this.comp.toggleCss(CSS_CALCULATED_COLUMN, this.isCalculatedColumn());
+        const calculatedColsSvc = this.beans.calculatedColsSvc;
+        const isCalculatedColumn = calculatedColsSvc != null && this.column.isCalculatedCol;
+
+        if (isCalculatedColumn || this.calculatedColumnCssApplied) {
+            this.comp.toggleCss(CSS_CALCULATED_COLUMN, isCalculatedColumn);
+            this.calculatedColumnCssApplied = isCalculatedColumn;
+        }
+
+        const isHighlightedColumn =
+            calculatedColsSvc != null && isCalculatedColumn && calculatedColsSvc.isHighlightedColumn(this.column);
+        if (isHighlightedColumn || this.calculatedColumnHighlightedCssApplied) {
+            this.comp.toggleCss(CSS_CALCULATED_COLUMN_HIGHLIGHTED, isHighlightedColumn);
+            this.calculatedColumnHighlightedCssApplied = isHighlightedColumn;
+        }
     }
 
     private isCalculatedColumn(): boolean {
-        return this.column.colDef.calculatedExpression != null && this.beans.calculatedColsSvc != null;
+        return this.column.isCalculatedCol;
+    }
+
+    public refreshCalculatedColumnCss(): void {
+        this.setCalculatedColumnCss();
     }
 
     public dispatchCellContextMenuEvent(event: Event | null) {

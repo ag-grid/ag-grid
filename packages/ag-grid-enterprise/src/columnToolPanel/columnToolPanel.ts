@@ -1,24 +1,18 @@
+import { _areEqual, _clearElement, _last } from 'ag-stack';
+
 import type {
     BeanCollection,
+    ColAggFunc,
     ColDef,
     ColGroupDef,
     ColumnToolPanelAction,
     ColumnToolPanelState,
-    IAggFunc,
     IColumnToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
     IToolPanelParams,
 } from 'ag-grid-community';
-import {
-    Component,
-    FilterButtonComp,
-    _addGridCommonParams,
-    _areEqual,
-    _clearElement,
-    _last,
-    _warn,
-} from 'ag-grid-community';
+import { Component, FilterButtonComp, _addGridCommonParams, _warn } from 'ag-grid-community';
 
 import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
@@ -41,7 +35,7 @@ interface GridStateSnapshot {
     columnOrder: string[];
     visibleColIds: string[];
     sortState: string[];
-    aggFuncState: (string | IAggFunc | null | undefined)[];
+    aggFuncState: ColAggFunc[];
     widthState: string[];
 }
 
@@ -289,7 +283,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 .getCols()
                 .filter((c) => c.getSort())
                 .map((c) => `${c.colId}:${c.getSort()}:${c.getSortIndex()}`),
-            aggFuncState: (beans.valueColsSvc?.columns ?? []).map((c) => c.getAggFunc()),
+            aggFuncState: (beans.valueColsSvc?.columns ?? []).map((c) => c.aggFunc),
             widthState: beans.colModel.getCols().map((c) => `${c.colId}:${c.getActualWidth()}`),
         };
     }

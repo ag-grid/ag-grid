@@ -1,0 +1,471 @@
+{
+    "url": "https://bryntum.com/products/scheduler/",
+    "slug": "scheduler",
+    "title": "Bryntum Scheduler – The Scheduling Component With Every Feature",
+    "meta": {
+        "description": "Plan teachers, dentist appointments or even space-shuttle launches. The Scheduler component is highly tunable and engineered ground-up in pure JavaScript. Wrappers are available for React, Angular and Vue.",
+        "og_title": "Bryntum Scheduler – The Scheduling Component With Every Feature",
+        "og_description": "Plan teachers, dentist appointments or even space-shuttle launches. The Scheduler component is highly tunable and engineered ground-up in pure JavaScript. Wrappers are available for React, Angular and Vue."
+    },
+    "sections": [
+        {
+            "id": "block_0bc8388be5eda92312da19c25f1d7b70",
+            "type": "heroTBM",
+            "modifiers": ["animated-hero"],
+            "heading": "The Scheduling Component With Every Feature",
+            "body_html": "<p>Bryntum Scheduler is a contemporary, high-throughput UI component that drops cleanly into every major JavaScript framework, including <a href=\"/products/react-scheduler/\">React</a>, <a href=\"/products/angular-scheduler/\">Angular</a> and <a href=\"/products/vue-scheduler/\">Vue</a>.</p>",
+            "body_text": "Bryntum Scheduler is a contemporary, high-throughput UI component that drops cleanly into every major JavaScript framework, including React , Angular and Vue .",
+            "ctas": [
+                {
+                    "text": "Browse Examples",
+                    "href": "/products/scheduler/examples/",
+                    "title": "Browse Examples"
+                },
+                {
+                    "text": "Get the Trial",
+                    "href": "/download/?product=scheduler",
+                    "title": "Get the Trial"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "svg-file",
+                    "src": "heroes/scheduler.svg"
+                }
+            ]
+        },
+        {
+            "id": "block_agbryntum_partnership",
+            "type": "partnership",
+            "heading": "Your JavaScript stack just expanded",
+            "body_html": "<p>Since our 2025 <a href=\"https://blog.ag-grid.com/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, Bryntum Scheduler sits alongside AG Grid for events, resources and timelines, crafted by a similar team and held to the same bar.</p>",
+            "body_text": "Since our 2025 partnership with Bryntum, Bryntum Scheduler sits alongside AG Grid for events, resources and timelines, crafted by a similar team and held to the same bar.",
+            "logo_light_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-light.svg",
+            "logo_dark_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-dark.svg",
+            "logo_alt": "AG Grid x Bryntum partnership"
+        },
+        {
+            "id": "block_agbryntum_intro_video_scheduler",
+            "type": "intro-video",
+            "video_src": "https://www.youtube.com/embed/lyae71QT0u8?feature=oembed",
+            "title": "Bryntum Scheduler Intro"
+        },
+        {
+            "id": "block_37b7ed910ff1f314c2115ab92055bf8c",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Feature Set",
+            "heading": "Feature-Packed",
+            "body_html": "<p>Built on our <a href=\"/products/grid\">Grid component</a>, Bryntum Scheduler picks up many of its capabilities, delivering an interactive Scheduler that supports:</p> <ul> <li>Drag-and-drop event resizing</li> <li>A handy event editor and keyboard navigation</li> <li><a href=\"/products/scheduler/examples/export/\">PDF, PNG,</a> <a href=\"/products/scheduler/examples/exporttoexcel/\">Excel</a>, <a href=\"/products/scheduler/examples/exporttoics/\">ICS</a> and <a href=\"/products/scheduler/examples/print/\">print</a> data exports</li> <li><a href=\"/products/scheduler/examples/responsive/\">Responsive layout</a></li> <li><a href=\"/products/scheduler/examples/dragfromgrid/\">Drag-and-drop event assignment</a></li> </ul>",
+            "body_text": "Built on our Grid component , Bryntum Scheduler picks up many of its capabilities, delivering an interactive Scheduler that supports: Drag-and-drop event resizing A handy event editor and keyboard navigation PDF, PNG, Excel , ICS and print data exports Responsive layout Drag-and-drop event assignment",
+            "links": [
+                {
+                    "text": "Grid component",
+                    "href": "/products/grid"
+                },
+                {
+                    "text": "PDF, PNG,",
+                    "href": "/products/scheduler/examples/export/"
+                },
+                {
+                    "text": "Excel",
+                    "href": "/products/scheduler/examples/exporttoexcel/"
+                },
+                {
+                    "text": "ICS",
+                    "href": "/products/scheduler/examples/exporttoics/"
+                },
+                {
+                    "text": "print",
+                    "href": "/products/scheduler/examples/print/"
+                },
+                {
+                    "text": "Responsive layout",
+                    "href": "/products/scheduler/examples/responsive/"
+                },
+                {
+                    "text": "Drag-and-drop event assignment",
+                    "href": "/products/scheduler/examples/dragfromgrid/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "See all features",
+                    "href": "/products/scheduler/features",
+                    "title": "See all features"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/scheduler/scheduler-booking-svalbard-2-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "773",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/scheduler-booking-svalbard-2-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "",
+            "type": "white-section",
+            "modifiers": [],
+            "eyebrow": "Pro Edition",
+            "heading": "Want Scheduling Logic Built In?",
+            "body_text": "Want Scheduling Logic Built In? Try Scheduler Pro Compare Features",
+            "media": []
+        },
+        {
+            "id": "block_5ab711fa9026978a2304b954034d59f1",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Performance",
+            "heading": "Tuned for Performance",
+            "body_html": "<p>The Scheduler blends these techniques to keep load times short and scrolling buttery smooth:</p> <ul> <li>Virtual rendering</li> <li>A lean DOM footprint</li> <li>Heavy element reuse</li> </ul> <p>Bryntum Scheduler keeps that excellent performance at scale and with extras, <a href=\"/products/scheduler/examples/paged/\">such as pagination</a>.</p>",
+            "body_text": "The Scheduler blends these techniques to keep load times short and scrolling buttery smooth: Virtual rendering A lean DOM footprint Heavy element reuse Bryntum Scheduler keeps that excellent performance at scale and with extras, such as pagination .",
+            "links": [
+                {
+                    "text": "such as pagination",
+                    "href": "/products/scheduler/examples/paged/"
+                }
+            ],
+            "ctas": [],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/scheduler/scheduler-bigdataset-tree-svalbard-2-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "727",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/scheduler-bigdataset-tree-svalbard-2-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_6fb298a3a638c2c29b8f7fbc5f0fbe4f",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Customisation",
+            "heading": "Fully Tailorable",
+            "body_html": "<p>Bryntum Scheduler ships with a wealth of customisation options and a broad, reactive API for making changes on the fly, so you can:</p> <ul> <li>Pick from five preset themes or apply a <a href=\"/products/scheduler/examples/custom-theme/\">custom theme</a></li> <li><a href=\"/products/scheduler/examples/custom-event-buttons/\">Style event bars</a></li> <li>Render bespoke content</li> <li>Shape the <a href=\"/products/scheduler/examples/custom-event-editor/\">event editor</a></li> <li>Add <a href=\"/products/scheduler/examples/schedule-context-advanced/\">hover widgets</a></li> </ul>",
+            "body_text": "Bryntum Scheduler ships with a wealth of customisation options and a broad, reactive API for making changes on the fly, so you can: Pick from five preset themes or apply a custom theme Style event bars Render bespoke content Shape the event editor Add hover widgets",
+            "links": [
+                {
+                    "text": "custom theme",
+                    "href": "/products/scheduler/examples/custom-theme/"
+                },
+                {
+                    "text": "Style event bars",
+                    "href": "/products/scheduler/examples/custom-event-buttons/"
+                },
+                {
+                    "text": "event editor",
+                    "href": "/products/scheduler/examples/custom-event-editor/"
+                },
+                {
+                    "text": "hover widgets",
+                    "href": "/products/scheduler/examples/schedule-context-advanced/"
+                }
+            ],
+            "ctas": [],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/scheduler/scheduler-custom-event-rendering-svalbard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "676",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/scheduler-custom-event-rendering-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_35b80aec3b5a6c0ba5ef9594bd1ce23f",
+            "type": "text-media",
+            "modifiers": ["video-file", "added-shadow"],
+            "eyebrow": "Planning",
+            "heading": "Streamlined Planning",
+            "body_html": "<p>Bryntum Scheduler comes with event and capacity summaries to back up every decision. Plan and schedule confidently knowing you can:</p> <ul> <li><a href=\"/products/scheduler/examples/tree-summary-custom/\">Stop task overallocation</a></li> <li><a href=\"/products/scheduler/examples/summary/\">Check the totals</a> across events and other categories</li> <li>View <a href=\"/products/scheduler/examples/groupsummary/\">group summaries</a></li> <li>Show <a href=\"/products/scheduler/examples/tree-summary/\">group capacity caps</a></li> </ul>",
+            "body_text": "Bryntum Scheduler comes with event and capacity summaries to back up every decision. Plan and schedule confidently knowing you can: Stop task overallocation Check the totals across events and other categories View group summaries Show group capacity caps",
+            "links": [
+                {
+                    "text": "Stop task overallocation",
+                    "href": "/products/scheduler/examples/tree-summary-custom/"
+                },
+                {
+                    "text": "Check the totals",
+                    "href": "/products/scheduler/examples/summary/"
+                },
+                {
+                    "text": "group summaries",
+                    "href": "/products/scheduler/examples/groupsummary/"
+                },
+                {
+                    "text": "group capacity caps",
+                    "href": "/products/scheduler/examples/tree-summary/"
+                }
+            ],
+            "ctas": [],
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/scheduler/scheduler-overallocation-svalbard-2.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/scheduler-overallocation-svalbard-2.mp4"
+                }
+            ]
+        },
+        {
+            "id": "block_3622808249540b890b8e78c0eff948f3",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Workflows",
+            "heading": "Build Advanced Workflows",
+            "body_html": "<p>Give users advanced scheduling capabilities so they can:</p> <ul> <li>Map <a href=\"/products/scheduler/examples/dependencies/\">task dependencies</a></li> <li><a href=\"/products/scheduler/examples/partners/\">Sync events</a></li> <li>Show <a href=\"/products/scheduler/examples/groupsummary/\">group summaries</a></li> <li><a href=\"/products/scheduler/examples/merge-cells/\">Merge events</a></li> </ul>",
+            "body_text": "Give users advanced scheduling capabilities so they can: Map task dependencies Sync events Show group summaries Merge events",
+            "links": [
+                {
+                    "text": "task dependencies",
+                    "href": "/products/scheduler/examples/dependencies/"
+                },
+                {
+                    "text": "Sync events",
+                    "href": "/products/scheduler/examples/partners/"
+                },
+                {
+                    "text": "group summaries",
+                    "href": "/products/scheduler/examples/groupsummary/"
+                },
+                {
+                    "text": "Merge events",
+                    "href": "/products/scheduler/examples/merge-cells/"
+                }
+            ],
+            "ctas": [],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/scheduler/scheduler-dependencies-svalbard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "736",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/scheduler-dependencies-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_760c4c7cdc72f4963f0b44a291de9598",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Component Library",
+            "heading": "50+ Additional Widgets",
+            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/scheduler/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in <strong>chat boxes, menus, toggles, sliders and more</strong> alongside your Bryntum Scheduler app.</li> <li class=\"li1\">Cut clicks and searching to meet user needs faster.</li> <li class=\"li1\">Wire up widgets straightforwardly via our clear docs.</li> </ul>",
+            "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel: Drop in chat boxes, menus, toggles, sliders and more alongside your Bryntum Scheduler app. Cut clicks and searching to meet user needs faster. Wire up widgets straightforwardly via our clear docs.",
+            "links": [
+                {
+                    "text": "broad set of UI elements",
+                    "href": "/products/scheduler/examples/kitchen-sink/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Browse widgets",
+                    "href": "/products/scheduler/examples/kitchen-sink/",
+                    "title": "Browse widgets"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/scheduler/more-widgets-scheduler-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "732",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/more-widgets-scheduler-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_e95276f79fc286d24c6d6f98e5da5a29",
+            "type": "text-media",
+            "modifiers": ["video-file", "reverse", "added-shadow"],
+            "eyebrow": "Quick Start",
+            "heading": "Install via npm",
+            "body_html": "<p>Pull Bryntum Scheduler straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial, configure it, and you’re ready to build.</p>",
+            "body_text": "Pull Bryntum Scheduler straight from npm. No sign-in or auth needed . Install the trial, configure it, and you’re ready to build.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Read docs",
+                    "href": "/products/scheduler/docs/guide/Scheduler/quick-start/javascript-npm",
+                    "title": "Read docs"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/scheduler/installing-scheduler-trial-3.webm",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/installing-scheduler-trial-3.webm"
+                }
+            ]
+        },
+        {
+            "id": "",
+            "type": "live-demo",
+            "modifiers": [],
+            "eyebrow": "Live Demo",
+            "heading": "Drag Unplanned Tasks In From a Grid",
+            "body_text": "Pick tasks from the unplanned grid and drop them straight onto a resource. The live Bryntum Scheduler engine is running below.",
+            "demo_src": null,
+            "media": []
+        },
+        {
+            "id": "block_1f07b81732a418eb942f9676121440c8",
+            "type": "columns-lib",
+            "modifiers": [],
+            "eyebrow": "Examples Gallery",
+            "heading": "Further Examples",
+            "items": [
+                {
+                    "heading": "scheduler-tree-summary-svalbard",
+                    "href": "/products/scheduler/examples/tree-summary/",
+                    "body_text": "Tree summary",
+                    "description": "Roll grouped events up to summary rows for a quick at-a-glance read.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/scheduler/scheduler-tree-summary-svalbard-768x465.png",
+                        "alt": "scheduler-tree-summary-svalbard",
+                        "width": "768",
+                        "height": "465",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/scheduler-tree-summary-svalbard-768x465.png"
+                    }
+                },
+                {
+                    "heading": "scheduler-multi-groups-svalbard",
+                    "href": "/products/scheduler/examples/multi-groups/",
+                    "body_text": "Multi-group membership",
+                    "description": "Surface a single resource across multiple grouping dimensions.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/scheduler/scheduler-multi-groups-svalbard-768x465.png",
+                        "alt": "scheduler-multi-groups-svalbard",
+                        "width": "768",
+                        "height": "465",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/scheduler-multi-groups-svalbard-768x465.png"
+                    }
+                },
+                {
+                    "heading": "scheduler-tasks-svalbard",
+                    "href": "/products/scheduler/examples/tasks/",
+                    "body_text": "Tasks application",
+                    "description": "Drag, edit and reschedule tasks against a resource timeline.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/scheduler/scheduler-tasks-svalbard-768x465.png",
+                        "alt": "scheduler-tasks-svalbard",
+                        "width": "768",
+                        "height": "465",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/scheduler-tasks-svalbard-768x465.png"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "block_a8b01a9730dde61a17143d794f47d078",
+            "type": "brands",
+            "modifiers": [],
+            "eyebrow": "Trusted Worldwide",
+            "heading": "Used by the world’s most respected companies",
+            "items": [
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-1.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-2.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-3.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-4.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-5.svg"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "block_d65063f8288be8a4ef64332d3c788ca8",
+            "type": "text-button",
+            "modifiers": ["variant-2"],
+            "eyebrow": "Get Started",
+            "heading": "Ready to dive in?",
+            "body_html": "",
+            "body_text": "",
+            "ctas": [
+                {
+                    "text": "Try for Free",
+                    "href": "/download/?product=scheduler",
+                    "title": "Try for Free"
+                },
+                {
+                    "text": "Purchase Now",
+                    "href": "/store/scheduler/",
+                    "title": "Purchase Now"
+                }
+            ]
+        },
+        {
+            "id": "block_d27204e1131e5ae3a1c4d67de7988686",
+            "type": "columnsWithMedia",
+            "modifiers": [],
+            "heading": "Reference",
+            "items": [
+                {
+                    "heading": "Reference",
+                    "href": "/products/scheduler/docs",
+                    "body_text": "",
+                    "media": null
+                },
+                {
+                    "heading": "Recent Releases",
+                    "href": "changelog/#release-7.3.0",
+                    "body_text": "Complete changelog",
+                    "media": null
+                },
+                {
+                    "heading": "Documentation Site",
+                    "href": "/products/scheduler/docs",
+                    "body_text": "",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/scheduler/docs-bryntum-scheduler-1-scaled.png",
+                        "alt": "docs-bryntum-scheduler",
+                        "width": "2560",
+                        "height": "1609",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/docs-bryntum-scheduler-1-scaled.png"
+                    }
+                }
+            ]
+        }
+    ]
+}

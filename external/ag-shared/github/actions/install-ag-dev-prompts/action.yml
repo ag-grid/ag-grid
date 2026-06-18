@@ -1,0 +1,38 @@
+name: 'Install @ag-grid/dev-prompts'
+description: Install the private @ag-grid/dev-prompts package from GitHub Packages into .ag-dev-prompts/ so its shipped composite actions can be used via local-path uses:.
+
+inputs:
+    channel:
+        description: 'npm dist-tag to install (e.g. canary, latest)'
+        required: true
+    github-token:
+        description: 'Token with packages:read scope'
+        required: false
+        default: ${{ github.token }}
+    node-version:
+        description: 'Optional Node version override; defaults to the repo package.json via node-version-file.'
+        required: false
+        default: ''
+
+runs:
+    using: composite
+    steps:
+        - name: Setup Node (GitHub Packages for @ag-grid scope)
+          uses: actions/setup-node@v4
+          with:
+              node-version: ${{ inputs.node-version || '' }}
+              node-version-file: ${{ inputs.node-version == '' && 'package.json' || '' }}
+              registry-url: https://npm.pkg.github.com
+              scope: '@ag-grid'
+
+        - name: Install @ag-grid/dev-prompts@${{ inputs.channel }}
+          shell: bash
+          env:
+              NODE_AUTH_TOKEN: ${{ inputs.github-token }}
+              DEV_PROMPTS_CHANNEL: ${{ inputs.channel }}
+          run: |
+              set -euo pipefail
+              mkdir -p "$GITHUB_WORKSPACE/.ag-dev-prompts"
+              cd "$GITHUB_WORKSPACE/.ag-dev-prompts"
+              echo '{"name":"ag-dev-prompts-install","private":true}' > package.json
+              npm install --no-save --silent "@ag-grid/dev-prompts@${DEV_PROMPTS_CHANNEL}"

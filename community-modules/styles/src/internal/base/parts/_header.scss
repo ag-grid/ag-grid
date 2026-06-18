@@ -29,8 +29,12 @@
     }
 
     .ag-header-cell:not(.ag-right-aligned-header) {
+        .ag-calculated-column-icon,
         .ag-header-col-ref {
             margin-right: var(--ag-grid-size);
+        }
+
+        .ag-header-col-ref {
             color: var(--ag-subtle-text-color);
         }
 
@@ -58,6 +62,12 @@
                 )
             );
         }
+    }
+
+    // "Show Values As" header indicator: heavily muted when the active mode is not applicable in the
+    // current view (dormant — the raw value is shown), to flag that the chosen mode has no effect here.
+    .ag-show-value-as-dormant {
+        opacity: 0.35;
     }
 
     .ag-header-cell,

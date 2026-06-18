@@ -379,3 +379,70 @@ describe('csv exports for server-side grouping', () => {
         `);
     });
 });
+
+describe('SSRM footer mirrors the group field value', () => {
+    const gridManager = new TestGridsManager({
+        modules: [RowGroupingModule, ServerSideRowModelModule],
+    });
+
+    beforeEach(() => gridManager.reset());
+    afterEach(() => gridManager.reset());
+
+    const createMirrorDatasource = (): IServerSideDatasource => ({
+        getRows(params: IServerSideGetRowsParams) {
+            const isRoot = (params.request.groupKeys ?? []).length === 0;
+            setTimeout(() => {
+                params.success?.({
+                    rowData: isRoot
+                        ? [
+                              {
+                                  id: 'g-Ireland',
+                                  key: 'Ireland',
+                                  country: 'Ireland',
+                                  meta: { label: 'meta-IE' },
+                                  group: true,
+                                  leafGroup: true,
+                              },
+                          ]
+                        : [
+                              { id: 'ie-1', country: 'Ireland', meta: { label: 'meta-IE' }, sales: 10 },
+                              { id: 'ie-2', country: 'Ireland', meta: { label: 'meta-IE' }, sales: 20 },
+                          ],
+                });
+            }, 0);
+        },
+    });
+
+    test('footer reads the group field, not the column dotted field', async () => {
+        const api = await gridManager.createGridAndWait(null, {
+            columnDefs: [
+                { colId: 'countryCol', field: 'country', rowGroup: true, hide: true },
+                { colId: 'grp', showRowGroup: 'country', field: 'meta.label', cellRenderer: 'agGroupCellRenderer' },
+                { field: 'sales', aggFunc: 'sum' },
+            ],
+            groupDisplayType: 'custom',
+            rowModelType: 'serverSide',
+            serverSideDatasource: createMirrorDatasource(),
+            getRowId: ({ data, parentKeys }: GetRowIdParams) =>
+                data.id ?? [...(parentKeys ?? []), data.country].join('|'),
+            groupTotalRow: 'bottom',
+        });
+
+        await ssrmExpandAndLoadAll(api);
+        await waitForNoLoadingRows(api);
+
+        // Footer's 'grp' mirrors the group's `country` ('Ireland'), not the column's own `meta.label`.
+        await new GridRows(api, 'ssrm footer mirrors group field').check(`
+            ROOT id:<no-id>
+            └─┬ GROUP-leafGroup id:g-Ireland countryCol:"Ireland"
+            · ├── LEAF id:ie-1 countryCol:"Ireland" grp:"meta-IE" sales:10
+            · ├── LEAF id:ie-2 countryCol:"Ireland" grp:"meta-IE" sales:20
+            · └─ footer collapsed id:rowGroupFooter_g-Ireland countryCol:"Ireland" grp:"Ireland"
+        `);
+
+        const footerNode = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'g-Ireland')!;
+        expect(footerNode.footer).toBe(true);
+
+        expect(api.getCellValue({ rowNode: footerNode, colKey: 'grp' })).toBe('Ireland');
+    });
+});

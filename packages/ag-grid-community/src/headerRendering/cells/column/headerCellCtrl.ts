@@ -1,20 +1,18 @@
-import { KeyCode } from '../../../agStack/constants/keyCode';
-import type { AriaSortState } from '../../../agStack/utils/aria';
-import { _getAriaSortState } from '../../../agStack/utils/aria';
-import { _getActiveDomElement } from '../../../agStack/utils/document';
-import { _setDisplayed } from '../../../agStack/utils/dom';
-import { _isKeyboardMode } from '../../../agStack/utils/focus';
+import type { AriaSortState } from 'ag-stack';
+import { KeyCode, _getActiveDomElement, _isKeyboardMode, _setDisplayed } from 'ag-stack';
+
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
 import { isRowNumberCol } from '../../../columns/columnUtils';
 import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
-import { _getSortDefFromInput } from '../../../entities/agColumn';
-import type { HeaderClassParams, SortDef, SortDirection } from '../../../entities/colDef';
+import { getSortDefFromInput } from '../../../entities/agColumn';
+import type { HeaderClassParams } from '../../../entities/colDef';
 import { _addGridCommonParams, _getEnableColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
+import type { DisplaySortDef, SortDef, SortDirection } from '../../../interfaces/iSort';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
@@ -23,7 +21,7 @@ import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
-import { _getHeaderClassesFromColDef } from '../cssClassApplier';
+import { _getHeaderClassesFromColDef, _refreshCssClasses } from '../cssClassApplier';
 import type { AgColumnHeader } from './agColumnHeader';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -36,7 +34,15 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     removeSelectAllGui(): void;
 }
 
-type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton' | 'cellSelection';
+type HeaderAriaDescriptionKey =
+    | 'filter'
+    | 'menu'
+    | 'sort'
+    | 'selectAll'
+    | 'filterButton'
+    | 'cellSelection'
+    | 'showValueAs'
+    | 'calculatedColumn';
 type RefreshFunction =
     | 'updateSortable'
     | 'tooltip'
@@ -60,7 +66,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private userCompDetails: UserCompDetails;
 
-    private userHeaderClasses: Set<string> = new Set();
+    private userHeaderClasses: Set<string> | undefined;
     private readonly ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
     private tooltipFeature: TooltipFeature | undefined;
 
@@ -141,12 +147,23 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             headerHeightChanged: this.onHeaderHeightChanged.bind(this),
         });
 
+        if (beans.showValueAsSvc) {
+            // The active mode (and its dormancy, which flips on grouping/pivot change) feed the header aria description.
+            const refreshShowValueAsAria = () => this.refreshAriaShowValueAs();
+            compBean.addManagedListeners(column, { columnStateUpdated: refreshShowValueAsAria });
+            compBean.addManagedEventListeners({
+                columnRowGroupChanged: refreshShowValueAsAria,
+                columnPivotChanged: refreshShowValueAsAria,
+                columnPivotModeChanged: refreshShowValueAsAria,
+            });
+        }
+
         compBean.addDestroyFunc(() => {
             this.refreshFunctions = {};
             (this.selectAllFeature as any) = null;
             this.dragSourceElement = undefined;
             (this.userCompDetails as any) = null;
-            this.userHeaderClasses.clear();
+            this.userHeaderClasses?.clear();
             this.ariaDescriptionProperties.clear();
             // Make sure this is the last destroy func as it clears the gui and comp
             this.clearComponent();
@@ -223,7 +240,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
                 sortSvc?.progressSort(this.column, !!multiSort, 'uiColumnSorted');
             },
             setSort: (sort: SortDirection | SortDef, multiSort?: boolean) => {
-                sortSvc?.setSortForColumn(this.column, _getSortDefFromInput(sort), !!multiSort, 'uiColumnSorted');
+                sortSvc?.setSortForColumn(this.column, getSortDefFromInput(sort), !!multiSort, 'uiColumnSorted');
             },
             eGridHeader: this.eGui,
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
@@ -342,23 +359,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             const colDef = this.column.colDef;
             const classes = _getHeaderClassesFromColDef(colDef, this.beans, this.column, null);
 
-            const oldClasses = this.userHeaderClasses;
-            this.userHeaderClasses = new Set(classes);
-
-            for (const c of classes) {
-                if (oldClasses.has(c)) {
-                    // class already added, no need to apply it, but remove from old set
-                    oldClasses.delete(c);
-                } else {
-                    // class new since last time, so apply it
-                    this.comp.toggleCss(c, true);
-                }
-            }
-
-            // now old set only has classes that were applied last time, but not this time, so remove them
-            for (const c of oldClasses) {
-                this.comp.toggleCss(c, false);
-            }
+            this.userHeaderClasses = _refreshCssClasses(this.comp, this.userHeaderClasses, classes);
         };
 
         this.setRefreshFunction('headerClasses', refreshHeaderClasses);
@@ -590,7 +591,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const { beans, column, comp, sortable, gos } = this;
         if (sortable) {
             const translate = this.getLocaleTextFunc();
-            const sortDef = beans.sortSvc?.getDisplaySortForColumn(column) ?? null;
+            const sortDef = beans.sortSvc?.getDisplaySort(column) ?? null;
             comp.setAriaSort(_getAriaSortState(sortDef));
             description = _getEnableColumnSelection(gos)
                 ? translate('ariaSortableColumnWithCellSelection', 'Press ALT ENTER to sort')
@@ -629,6 +630,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.setAriaDescriptionProperty('filter', description);
     }
 
+    private refreshAriaShowValueAs(): void {
+        const translate = this.getLocaleTextFunc();
+        const label = this.beans.showValueAsSvc?.getActiveModeLabel(this.column);
+        this.setAriaDescriptionProperty(
+            'showValueAs',
+            label ? `${translate('ariaColumnShowValueAs', 'Showing Values As')} ${label}` : null
+        );
+    }
+
     private refreshAriaCellSelection(): void {
         let description: string | null = null;
         const { gos, column } = this;
@@ -643,6 +653,16 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
 
         this.setAriaDescriptionProperty('cellSelection', description);
+    }
+
+    private refreshAriaCalculatedColumn(): void {
+        let description: string | null = null;
+        if (this.column.isCalculatedCol) {
+            const translate = this.getLocaleTextFunc();
+            description = translate('ariaCalculatedColumn', 'Calculated column');
+        }
+
+        this.setAriaDescriptionProperty('calculatedColumn', description);
     }
 
     public setAriaDescriptionProperty(property: HeaderAriaDescriptionKey, value: string | null): void {
@@ -673,7 +693,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.refreshAriaMenu();
         this.refreshAriaFilterButton();
         this.refreshAriaFiltered();
+        this.refreshAriaShowValueAs();
         this.refreshAriaCellSelection();
+        this.refreshAriaCalculatedColumn();
     }
 
     private addColumnHoverListener(compBean: BeanStub): void {
@@ -730,4 +752,18 @@ function isHeaderComp(headerComp: IHeader | undefined): headerComp is AgColumnHe
         typeof (headerComp as AgColumnHeader)?.getAnchorElementForMenu === 'function' &&
         typeof (headerComp as AgColumnHeader).onMenuKeyboardShortcut === 'function'
     );
+}
+
+function _getAriaSortState(directionOrDef: DisplaySortDef | null): AriaSortState {
+    const direction = directionOrDef?.direction;
+
+    if (direction === 'asc') {
+        return 'ascending';
+    } else if (direction === 'desc') {
+        return 'descending';
+    } else if (direction === 'mixed') {
+        return 'other';
+    }
+
+    return 'none';
 }

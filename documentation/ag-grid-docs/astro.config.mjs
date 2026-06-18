@@ -11,9 +11,12 @@ import svgr from 'vite-plugin-svgr';
 import agCacheSitemap from '../../external/ag-website-shared/plugins/agCacheSitemap';
 import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecker';
 import agMkcertPreview from '../../external/ag-website-shared/plugins/agMkcertPreview';
+import agSitemapFilterNoindex from '../../external/ag-website-shared/plugins/agSitemapFilterNoindex';
+import agSitemapLastmod from '../../external/ag-website-shared/plugins/agSitemapLastmod';
 import agSourcemapCors from '../../external/ag-website-shared/plugins/agSourcemapCors';
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
+import agDevCsp from './plugins/agDevCsp';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
@@ -22,6 +25,7 @@ import { urlWithBaseUrl } from './src/utils/urlWithBaseUrl';
 
 const { NODE_ENV } = process.env;
 const DEFAULT_BASE_URL = '/';
+const PRODUCTION_SITE_URLS = ['https://ag-grid.com', 'https://www.ag-grid.com'];
 const dotenv = {
     parsed: loadEnv(NODE_ENV, process.cwd(), ''),
 };
@@ -151,7 +155,7 @@ console.log(
     )
 );
 
-const plugins = [agSourcemapCors(), svgr(), agHotModuleReload()];
+const plugins = [agSourcemapCors(), svgr(), agHotModuleReload(), agDevCsp()];
 if (NODE_ENV !== 'test') {
     plugins.push(mkcert()); // mkcert is not necessary for tests
 }
@@ -212,15 +216,8 @@ export default defineConfig({
                 ],
             },
             headers: {
-                'Content-Security-Policy': [
-                    "default-src 'self'",
-                    "script-src 'self' https://*.ag-grid.com https://localhost:4610 https://localhost:4611 https://www.googletagmanager.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'",
-                    "style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com 'unsafe-inline'",
-                    "font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com data:",
-                    "img-src 'self' data: blob: https:",
-                    "connect-src 'self' https:",
-                    "worker-src 'self' blob:",
-                ].join('; '),
+                // Content-Security-Policy is served per request by agDevCsp so
+                // example paths can get a different policy from ordinary pages.
                 'X-Content-Type-Options': 'nosniff',
             },
         },
@@ -251,12 +248,14 @@ export default defineConfig({
         react(),
         markdoc(),
         sitemap(getSitemapConfig({ chartsSitemap: CHARTS_SITEMAP_INDEX_URL, studioSitemap: STUDIO_SITEMAP_INDEX_URL })),
-        agHtaccessGen({ include: HTACCESS === 'true' }),
+        agHtaccessGen({ htaccessEnv: HTACCESS }),
         agRedirectsChecker({
             skip: CHECK_REDIRECTS !== 'true',
         }),
         agLinkChecker({ include: CHECK_LINKS === 'true' }),
 
+        agSitemapFilterNoindex({ enabled: PRODUCTION_SITE_URLS.includes(PUBLIC_SITE_URL) }),
+        agSitemapLastmod(),
         agCacheSitemap({
             cacheFolder: SITEMAP_CACHE_DIR,
         }),

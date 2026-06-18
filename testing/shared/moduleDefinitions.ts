@@ -5,9 +5,10 @@ import type {
 } from '../../packages/ag-grid-community/src/interfaces/iModule';
 
 // Use satisfies for type safety (catches typos) while allowing extra modules not in release types
-export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'BigIntFilterModule', number> = {
+export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'FileInputOverlayModule', number> = {
     AlignedGridsModule: 6.88,
     AllCommunityModule: 511.54,
+    AutoGenerateColumnsModule: 5,
     CellApiModule: 0.28,
     CellSpanModule: 8.08,
     CellStyleModule: 2.24,
@@ -50,6 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'B
     UndoRedoEditModule: 74.12,
     ValidationModule: 74.37,
     ValueCacheModule: 0.65,
+    FileInputOverlayModule: 5,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 223.75,
@@ -84,6 +86,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ServerSideRowModelApiModule: 20.53,
     ServerSideRowModelModule: 160.58,
     SetFilterModule: 157.44,
+    ShowValueAsModule: 84.34,
     SideBarModule: 35.16,
     SparklinesModule: 22.06,
     StatusBarModule: 29.09,

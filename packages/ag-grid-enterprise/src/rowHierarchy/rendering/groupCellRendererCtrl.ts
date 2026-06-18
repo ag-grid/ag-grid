@@ -1,3 +1,5 @@
+import { _isElementInEventPath, _removeAriaExpanded, _setAriaExpanded } from 'ag-stack';
+
 import type {
     AgColumn,
     CheckboxSelectionComponent,
@@ -16,11 +18,8 @@ import {
     _getCheckboxLocation,
     _getCheckboxes,
     _getInnerCellRendererDetails,
-    _isElementInEventPath,
     _isRowSelection,
     _isStopPropagationForAgGrid,
-    _removeAriaExpanded,
-    _setAriaExpanded,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 
@@ -154,13 +153,13 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
         if (this.gos.get('enableRtl')) {
-            if (visibleCols.isPinningLeft()) {
+            if (visibleCols.leftCols.length > 0) {
                 return !pinnedRightCell;
             }
             return !bodyCell;
         }
 
-        if (visibleCols.isPinningLeft()) {
+        if (visibleCols.leftCols.length > 0) {
             return !pinnedLeftCell;
         }
 

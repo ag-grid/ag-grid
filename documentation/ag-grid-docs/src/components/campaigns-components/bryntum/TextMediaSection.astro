@@ -1,0 +1,82 @@
+---
+import { decorateBryntumHtml, resolveBryntumAsset } from '@utils/bryntumCampaignAssets';
+
+import BryntumCtaList from './BryntumCtaList.astro';
+import type { BryntumTextMediaSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumTextMediaSection;
+    productSlug: string;
+    isAlt?: boolean;
+}
+
+const { section, productSlug, isAlt = false } = Astro.props;
+const modifiers = section.modifiers ?? [];
+const isReverse = modifiers.includes('reverse');
+const hasShadow = modifiers.includes('added-shadow');
+const isWhite = section.type === 'white-section' || modifiers.includes('white-section');
+
+const media = section.media?.[0];
+const imageMedia = media?.kind === 'image' && media.src ? media : null;
+const videoMedia = media?.kind === 'video' && media.src ? media : null;
+const hasMedia = imageMedia !== null || videoMedia !== null;
+const showAltBg = isAlt && hasMedia && !isWhite;
+---
+
+<section class:list={[styles.section, isWhite && styles.sectionBgWhite, showAltBg && styles.sectionAltBg]}>
+    <div class={styles.sectionInner}>
+        <div
+            class:list={[
+                hasMedia ? styles.textMedia : styles.textMediaSingle,
+                isReverse && hasMedia && styles.textMediaReverse,
+            ]}
+        >
+            <div class={styles.textMediaCopy}>
+                {section.eyebrow && <span class={styles.sectionEyebrow}>{section.eyebrow}</span>}
+                {section.heading && <h2>{section.heading}</h2>}
+                {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
+                {section.body_html && <div class={styles.bodyText} set:html={decorateBryntumHtml(section.body_html)} />}
+
+                {
+                    section.ctas && (
+                        <BryntumCtaList
+                            ctas={section.ctas}
+                            buttonClass="button-tertiary"
+                            wrapperClass={styles.textMediaCtas}
+                        />
+                    )
+                }
+            </div>
+
+            {
+                hasMedia && (
+                    <div class={styles.textMediaVisual}>
+                        {imageMedia && (
+                            <img
+                                src={resolveBryntumAsset(imageMedia.src, productSlug)}
+                                alt={imageMedia.alt ?? ''}
+                                width={imageMedia.width}
+                                height={imageMedia.height}
+                                class:list={[styles.mediaImage, hasShadow && styles.mediaShadow]}
+                                loading="lazy"
+                            />
+                        )}
+                        {videoMedia && (
+                            <video
+                                src={resolveBryntumAsset(videoMedia.src, productSlug)}
+                                autoplay
+                                muted
+                                loop
+                                playsinline
+                                preload="metadata"
+                                aria-label={section.heading ?? 'Product demo video'}
+                                class:list={[styles.mediaImage, hasShadow && styles.mediaShadow]}
+                            />
+                        )}
+                    </div>
+                )
+            }
+        </div>
+    </div>
+</section>

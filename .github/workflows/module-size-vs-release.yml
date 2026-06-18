@@ -130,7 +130,6 @@ jobs:
           base-ref: ${{ env.TEST_BRANCH }}
 
   # Build and run module size tests on release tag (sharded) - only if cache miss
-  # Uses test branch tooling with source code from the release tag
   module-size-release:
     name: Module Size Release (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
@@ -152,12 +151,12 @@ jobs:
       - name: Run module size tests
         uses: ./.github/actions/module-size-test
         with:
-          ref: ${{ env.TEST_BRANCH }}
+          ref: ${{ needs.prepare.outputs.release-tag }}
           shard: ${{ matrix.shard }}
           total-shards: ${{ strategy.job-total }}
           artifact-prefix: module-size-release
-          base-ref: ${{ env.TEST_BRANCH }}
-          source-ref: ${{ needs.prepare.outputs.release-tag }}
+          cache-mode: 'off'
+          actions-ref: ${{ env.TEST_BRANCH }}
 
   # Cache release results (only when we had to build)
   cache-release-results:

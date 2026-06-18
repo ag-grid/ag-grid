@@ -1,15 +1,15 @@
 import type { AgColumn, BeanCollection, ColumnModel } from 'ag-grid-community';
 
 import { getFormulaRowByIndex, getFormulaRowIndex } from '../rowAccess';
-import { getDefBySymbol } from './operators';
 import type { InfixOpDef } from './operators';
-import { FormulaError } from './utils';
+import { getDefBySymbol } from './operators';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
+import { FormulaError } from './utils';
 
 const isOperationNode = (n: FormulaNode): n is FormulaOperation => n.type === 'operation';
 
 function colLabelFromId(beans: BeanCollection, colId: string): string | null {
-    const col = beans.colModel.getColById(colId);
+    const col = beans.colModel.colsById[colId];
     if (col) {
         return beans.formula?.getColRef(col) ?? null;
     }
@@ -20,7 +20,7 @@ function colIdFromLabel(beans: BeanCollection, label: string): string | null {
 }
 
 export function colIndexFromId(colModel: ColumnModel, cols: AgColumn[], colId: string): number | null {
-    const col = colModel.getColById(colId);
+    const col = colModel.colsById[colId];
 
     if (!col) {
         return null;
@@ -244,6 +244,9 @@ export function serializeFormula(
             }
             if (typeof v === 'boolean') {
                 return v ? 'TRUE' : 'FALSE';
+            }
+            if (v == null) {
+                return 'NULL';
             }
             return useRefFormat
                 ? serializeCellREF(beans, v as Cell, useCalculatedRefs)

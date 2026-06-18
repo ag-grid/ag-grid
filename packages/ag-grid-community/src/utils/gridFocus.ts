@@ -1,6 +1,11 @@
-import { KeyCode } from '../agStack/constants/keyCode';
-import { _isNothingFocused } from '../agStack/utils/document';
-import { _findFocusableElements, _findNextFocusableElement, _isKeyboardMode } from '../agStack/utils/focus';
+import {
+    KeyCode,
+    _findFocusableElements,
+    _findNextFocusableElement,
+    _isKeyboardMode,
+    _isNothingFocused,
+} from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import { _areCellsEqual } from '../entities/positionUtils';
 import type { TabToNextGridContainerTarget } from '../interfaces/iCallbackParams';
@@ -31,6 +36,7 @@ export function _focusGridInnerElement(beans: BeanCollection, fromBottom?: boole
     return beans.ctrlsSvc.get('gridCtrl').focusInnerElement(fromBottom);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isHeaderFocusSuppressed(beans: BeanCollection): boolean {
     return beans.gos.get('suppressHeaderFocus') || !!beans.overlays?.exclusive;
 }

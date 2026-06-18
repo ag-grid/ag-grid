@@ -1,3 +1,5 @@
+import { _exists, _getActiveDomElement, _getDocument, _last, _removeFromArray } from 'ag-stack';
+
 import type {
     AgColumn,
     CellPosition,
@@ -21,16 +23,11 @@ import type {
 import {
     BeanStub,
     _createCellId,
-    _exists,
     _forEachChangedGroupDepthFirst,
-    _getActiveDomElement,
-    _getDocument,
     _getRowBelow,
     _getRowNode,
     _isClientSideRowModel,
     _isSameRow,
-    _last,
-    _removeFromArray,
     _warn,
     isColumnSelectionCol,
     isSpecialCol,
@@ -563,7 +560,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                             return;
                         }
 
-                        const isFormula = column.colDef.allowFormula && formula?.isFormula(firstRowValues[index]);
+                        const isFormula = column.allowFormula && formula?.isFormula(firstRowValues[index]);
 
                         if (isFormula) {
                             firstRowValues[index] = formula?.updateFormulaByOffset({
@@ -951,15 +948,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             Object.assign(allCellsToFlash, cellsToFlash);
         }
 
-        const allColumns = this.beans.visibleCols.allCols;
         const exportedColumns = Array.from(columnsSet);
 
-        exportedColumns.sort((a, b) => {
-            const posA = allColumns.indexOf(a);
-            const posB = allColumns.indexOf(b);
-
-            return posA - posB;
-        });
+        exportedColumns.sort((a, b) => a.allColsIndex - b.allColsIndex);
 
         const data = this.buildExportParams({
             columns: exportedColumns,

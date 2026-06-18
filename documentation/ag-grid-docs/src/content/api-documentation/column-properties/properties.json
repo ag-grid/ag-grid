@@ -532,6 +532,8 @@
             }
         },
         "initialAggFunc": {},
+        "valueIndex": {},
+        "initialValueIndex": {},
         "enableValue": {
             "more": {
                 "name": "Configuring via the UI",
@@ -548,6 +550,19 @@
             "more": {
                 "name": "Default Function",
                 "url": "./aggregation-columns/#default-function"
+            }
+        },
+        "showValueAs": {
+            "more": {
+                "name": "Show Values As",
+                "url": "./aggregation-show-values-as/"
+            }
+        },
+        "showValueAsInitial": {},
+        "showValueAsConfig": {
+            "more": {
+                "name": "Configuration",
+                "url": "./aggregation-show-values-as/#configuration"
             }
         }
     },

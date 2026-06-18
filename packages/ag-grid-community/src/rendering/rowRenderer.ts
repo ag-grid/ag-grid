@@ -1,7 +1,6 @@
-import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
-import { _removeFromArray } from '../agStack/utils/array';
-import { _requestAnimationFrame } from '../agStack/utils/dom';
-import { _exists } from '../agStack/utils/generic';
+import type { IEventListener } from 'ag-stack';
+import { _exists, _removeFromArray, _requestAnimationFrame } from 'ag-stack';
+
 import type { ColumnModel } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -29,6 +28,7 @@ import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
+import type { IShowValueAsService } from '../interfaces/iShowValueAsService';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import { _errMsg } from '../validation/logging';
@@ -59,6 +59,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private rowContainerHeight: RowContainerHeightService;
     private ctrlsSvc: CtrlsService;
     private editSvc?: EditService;
+    private showValueAsSvc: IShowValueAsService | undefined;
 
     public wireBeans(beans: BeanCollection): void {
         this.pageBounds = beans.pageBounds;
@@ -69,6 +70,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.rowContainerHeight = beans.rowContainerHeight;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.editSvc = beans.editSvc;
+        this.showValueAsSvc = beans.showValueAsSvc;
     }
 
     private gridBodyCtrl: GridBodyCtrl;
@@ -404,7 +406,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private refreshListenersToColumnsForCellComps(): void {
         this.removeGridColumnListeners();
 
-        const cols = this.colModel.getCols();
+        const cols = this.colModel.colsList;
 
         for (const col of cols) {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
@@ -695,6 +697,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
 
         this.releaseLockOnRefresh();
+
+        // Recycled rows keep their old DOM, and changed rows may have rendered before aggregation settled, so
+        // aggregate-dependent cells (e.g. Show Values As) can be stale after a model update; refresh them.
+        this.showValueAsSvc?.refreshRenderedCells();
     }
 
     private scrollToTopIfNewData(params: RefreshViewParams): void {
@@ -972,7 +978,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (_exists(columns)) {
             colIdsMap = {};
             columns.forEach((colKey: string | AgColumn) => {
-                const column: AgColumn | null = this.colModel.getCol(colKey);
+                const column = this.colModel.getCol(colKey);
                 if (_exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }
@@ -1056,9 +1062,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // 1) height of grid body changes, ie number of displayed rows has changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
-    public redraw(params: { afterScroll?: boolean } = {}) {
+    public redraw(params: { afterScroll?: boolean; force?: boolean } = {}) {
         const { focusSvc, animationFrameSvc } = this.beans;
-        const { afterScroll } = params;
+        const { afterScroll, force } = params;
         let cellFocused: CellPosition | undefined;
 
         const stickyRowFeature = this.stickyRowFeature;
@@ -1087,7 +1093,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         const rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;
 
-        if (afterScroll && !hasStickyRowChanges && !rangeChanged) {
+        if (afterScroll && !hasStickyRowChanges && !rangeChanged && !force) {
             return;
         }
 
@@ -1228,8 +1234,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private onDisplayedColumnsChanged(): void {
         const { visibleCols } = this.beans;
-        const pinningLeft = visibleCols.isPinningLeft();
-        const pinningRight = visibleCols.isPinningRight();
+        const pinningLeft = visibleCols.leftCols.length > 0;
+        const pinningRight = visibleCols.rightCols.length > 0;
         const atLeastOneChanged = this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight;
 
         if (atLeastOneChanged) {
@@ -1256,7 +1262,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.refreshPinnedRowComps();
         this.removeRowCtrls(rowsToRemove);
-        this.redraw({ afterScroll: true });
+        this.redraw({ afterScroll: true, force: true });
     }
 
     public getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[] {

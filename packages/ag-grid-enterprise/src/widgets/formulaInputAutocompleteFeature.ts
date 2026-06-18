@@ -1,10 +1,8 @@
-import type {
-    AgComponentPopupPositionParams,
-    BeanCollection,
-    IFormulaService,
-    PopupPositionParams,
-} from 'ag-grid-community';
-import { BeanStub, KeyCode, _getDocument } from 'ag-grid-community';
+import type { AgComponentPopupPositionParams } from 'ag-stack';
+import { _getDocument } from 'ag-stack';
+
+import type { BeanCollection, IFormulaService, PopupPositionParams } from 'ag-grid-community';
+import { BeanStub, KeyCode } from 'ag-grid-community';
 
 import { AgAutocompleteList } from '../advancedFilter/autocomplete/agAutocompleteList';
 import type { AutocompleteEntry } from '../advancedFilter/autocomplete/autocompleteParams';

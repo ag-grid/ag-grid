@@ -1,7 +1,7 @@
 import { TextEditorModule } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /**
  * Tests for find with data mutations and cell updates.
@@ -22,13 +22,40 @@ describe('Find Data Mutations', () => {
                 columnDefs: [{ field: 'value' }],
                 rowData: [{ value: 'apple' }, { value: 'banana' }],
             });
+            await new GridColumns(api, `find updates when row data is replaced setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `find updates when row data is replaced setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 value:"apple"
+                └── LEAF id:1 value:"banana"
+            `);
 
             api.setGridOption('findSearchValue', 'apple');
+            await new GridColumns(api, `find updates when row data is replaced after setGridOption findSearchValue`)
+                .checkColumns(`
+                    CENTER
+                    └── value "Value" width:200
+                `);
+            await new GridRows(api, `find updates when row data is replaced after setGridOption findSearchValue`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 value:"apple"
+                    └── LEAF id:1 value:"banana"
+                `
+            );
             await asyncSetTimeout(1);
             expect(api.findGetTotalMatches()).toBe(1);
 
             // Replace all row data
             api.setGridOption('rowData', [{ value: 'orange' }, { value: 'apple' }, { value: 'apple' }]);
+            await new GridRows(api, `find updates when row data is replaced after setGridOption rowData`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 value:"orange"
+                ├── LEAF id:1 value:"apple"
+                └── LEAF id:2 value:"apple"
+            `);
             await asyncSetTimeout(10);
 
             expect(api.findGetTotalMatches()).toBe(2);
@@ -40,8 +67,30 @@ describe('Find Data Mutations', () => {
                 rowData: [{ id: '1', value: 'apple' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `find updates when rows are added via transaction setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `find updates when rows are added via transaction setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:"apple"
+            `);
 
             api.setGridOption('findSearchValue', 'apple');
+            await new GridColumns(
+                api,
+                `find updates when rows are added via transaction after setGridOption findSearchValue`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(
+                api,
+                `find updates when rows are added via transaction after setGridOption findSearchValue`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:"apple"
+            `);
             await asyncSetTimeout(1);
             expect(api.findGetTotalMatches()).toBe(1);
 
@@ -52,6 +101,14 @@ describe('Find Data Mutations', () => {
                     { id: '3', value: 'apple' },
                 ],
             });
+            await new GridRows(api, `find updates when rows are added via transaction after applyTransaction`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:1 value:"apple"
+                    ├── LEAF id:2 value:"apple"
+                    └── LEAF id:3 value:"apple"
+                `
+            );
             await asyncSetTimeout(10);
 
             expect(api.findGetTotalMatches()).toBe(3);
@@ -67,13 +124,46 @@ describe('Find Data Mutations', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `find updates when rows are removed via transaction setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `find updates when rows are removed via transaction setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:"apple"
+                ├── LEAF id:2 value:"apple"
+                └── LEAF id:3 value:"banana"
+            `);
 
             api.setGridOption('findSearchValue', 'apple');
+            await new GridColumns(
+                api,
+                `find updates when rows are removed via transaction after setGridOption findSearchValue`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(
+                api,
+                `find updates when rows are removed via transaction after setGridOption findSearchValue`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:"apple"
+                ├── LEAF id:2 value:"apple"
+                └── LEAF id:3 value:"banana"
+            `);
             await asyncSetTimeout(1);
             expect(api.findGetTotalMatches()).toBe(2);
 
             // Remove one apple row
             api.applyTransaction({ remove: [{ id: '1' }] });
+            await new GridRows(api, `find updates when rows are removed via transaction after applyTransaction`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:2 value:"apple"
+                    └── LEAF id:3 value:"banana"
+                `
+            );
             await asyncSetTimeout(10);
 
             expect(api.findGetTotalMatches()).toBe(1);
@@ -88,13 +178,44 @@ describe('Find Data Mutations', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `find updates when rows are updated via transaction setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `find updates when rows are updated via transaction setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:"apple"
+                └── LEAF id:2 value:"banana"
+            `);
 
             api.setGridOption('findSearchValue', 'orange');
+            await new GridColumns(
+                api,
+                `find updates when rows are updated via transaction after setGridOption findSearchValue`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(
+                api,
+                `find updates when rows are updated via transaction after setGridOption findSearchValue`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:"apple"
+                └── LEAF id:2 value:"banana"
+            `);
             await asyncSetTimeout(1);
             expect(api.findGetTotalMatches()).toBe(0);
 
             // Update a row to have matching value
             api.applyTransaction({ update: [{ id: '2', value: 'orange' }] });
+            await new GridRows(api, `find updates when rows are updated via transaction after applyTransaction`).check(
+                `
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:1 value:"apple"
+                    └── LEAF id:2 value:"orange"
+                `
+            );
             await asyncSetTimeout(10);
 
             expect(api.findGetTotalMatches()).toBe(1);
@@ -108,8 +229,30 @@ describe('Find Data Mutations', () => {
                 rowData: [{ id: '1', value: 'apple' }],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `find updates when cell value is changed directly setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200 editable
+            `);
+            await new GridRows(api, `find updates when cell value is changed directly setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:"apple"
+            `);
 
             api.setGridOption('findSearchValue', 'orange');
+            await new GridColumns(
+                api,
+                `find updates when cell value is changed directly after setGridOption findSearchValue`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200 editable
+            `);
+            await new GridRows(
+                api,
+                `find updates when cell value is changed directly after setGridOption findSearchValue`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 value:"apple"
+            `);
             await asyncSetTimeout(1);
             expect(api.findGetTotalMatches()).toBe(0);
 
@@ -133,8 +276,36 @@ describe('Find Data Mutations', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `active match is preserved after data update if still valid setup`).checkColumns(
+                `
+                    CENTER
+                    └── value "Value" width:200
+                `
+            );
+            await new GridRows(api, `active match is preserved after data update if still valid setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:"apple"
+                ├── LEAF id:2 value:"apple"
+                └── LEAF id:3 value:"apple"
+            `);
 
             api.setGridOption('findSearchValue', 'apple');
+            await new GridColumns(
+                api,
+                `active match is preserved after data update if still valid after setGridOption findSearchValue`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(
+                api,
+                `active match is preserved after data update if still valid after setGridOption findSearchValue`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:"apple"
+                ├── LEAF id:2 value:"apple"
+                └── LEAF id:3 value:"apple"
+            `);
             await asyncSetTimeout(1);
 
             // Navigate to second match
@@ -145,6 +316,14 @@ describe('Find Data Mutations', () => {
 
             // Add a row at the end - active match should still be valid
             api.applyTransaction({ add: [{ id: '4', value: 'apple' }] });
+            await new GridRows(api, `active match is preserved after data update if still valid after applyTransaction`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:1 value:"apple"
+                    ├── LEAF id:2 value:"apple"
+                    ├── LEAF id:3 value:"apple"
+                    └── LEAF id:4 value:"apple"
+                `);
             await asyncSetTimeout(10);
 
             expect(api.findGetTotalMatches()).toBe(4);
@@ -161,8 +340,32 @@ describe('Find Data Mutations', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `active match is cleared when matching row is removed setup`).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(api, `active match is cleared when matching row is removed setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:"apple"
+                └── LEAF id:2 value:"apple"
+            `);
 
             api.setGridOption('findSearchValue', 'apple');
+            await new GridColumns(
+                api,
+                `active match is cleared when matching row is removed after setGridOption findSearchValue`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200
+            `);
+            await new GridRows(
+                api,
+                `active match is cleared when matching row is removed after setGridOption findSearchValue`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:"apple"
+                └── LEAF id:2 value:"apple"
+            `);
             await asyncSetTimeout(1);
 
             // Navigate to first match
@@ -171,6 +374,11 @@ describe('Find Data Mutations', () => {
 
             // Remove the row with active match
             api.applyTransaction({ remove: [{ id: '1' }] });
+            await new GridRows(api, `active match is cleared when matching row is removed after applyTransaction`)
+                .check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:2 value:"apple"
+                `);
             await asyncSetTimeout(10);
 
             // Active match should be cleared or moved
@@ -186,8 +394,34 @@ describe('Find Data Mutations', () => {
                 ],
                 getRowId: (params) => params.data.id,
             });
+            await new GridColumns(api, `active match is cleared when cell value no longer matches setup`).checkColumns(
+                `
+                    CENTER
+                    └── value "Value" width:200 editable
+                `
+            );
+            await new GridRows(api, `active match is cleared when cell value no longer matches setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:"apple"
+                └── LEAF id:2 value:"banana"
+            `);
 
             api.setGridOption('findSearchValue', 'apple');
+            await new GridColumns(
+                api,
+                `active match is cleared when cell value no longer matches after setGridOption findSearchValue`
+            ).checkColumns(`
+                CENTER
+                └── value "Value" width:200 editable
+            `);
+            await new GridRows(
+                api,
+                `active match is cleared when cell value no longer matches after setGridOption findSearchValue`
+            ).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 value:"apple"
+                └── LEAF id:2 value:"banana"
+            `);
             await asyncSetTimeout(1);
 
             api.findNext();

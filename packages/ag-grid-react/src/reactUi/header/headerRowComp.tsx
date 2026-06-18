@@ -1,3 +1,4 @@
+import { _setAriaRowIndex } from 'ag-stack';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import type {
@@ -9,7 +10,12 @@ import type {
     IHeaderRowComp,
     PinnedSectionWidthsCache,
 } from 'ag-grid-community';
-import { _EmptyBean, _partitionByPinned, _setAriaRowIndex, _updatePinnedSectionWidths } from 'ag-grid-community';
+import {
+    _EmptyBean,
+    _isHeaderFocusSuppressed,
+    _partitionByPinned,
+    _updatePinnedSectionWidths,
+} from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { agFlushSync, getNextValueIfDifferent } from '../utils';
@@ -37,7 +43,8 @@ const HeaderRowComp = ({
     ctrl: HeaderRowCtrl;
     setGuiRef?: (eGui: HTMLDivElement | null) => void;
 }) => {
-    const { context, visibleCols, gos } = useContext(BeansContext);
+    const beans = useContext(BeansContext);
+    const { context, visibleCols, gos } = beans;
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const ePinnedLeft = useRef<HTMLDivElement | null>(null);
@@ -158,7 +165,7 @@ const HeaderRowComp = ({
         [ctrl.type]
     );
 
-    const tabIndex = gos.get('tabIndex');
+    const tabIndex = _isHeaderFocusSuppressed(beans) ? undefined : gos.get('tabIndex');
 
     return (
         <div ref={setRef} className={ctrl.headerRowClass} role="row" tabIndex={tabIndex}>

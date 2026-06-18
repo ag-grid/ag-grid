@@ -1,17 +1,28 @@
 [
     {
-        "title": "AG Grid",
-        "description": "Best JavaScript Grid in the World",
-        "url": "https://www.ag-grid.com"
-    },
-    {
-        "title": "AG Charts",
-        "description": "Best JavaScript Charts in the World",
-        "url": "https://www.ag-grid.com/charts"
-    },
-    {
-        "title": "AG Studio",
-        "description": "Best JavaScript Dashboard in the World",
-        "url": "https://www.ag-grid.com/studio"
+        "label": "",
+        "items": [
+            {
+                "title": "AG Grid",
+                "description": "Best JavaScript Grid in the World",
+                "url": "https://www.ag-grid.com"
+            },
+            {
+                "title": "AG Charts",
+                "description": "Best JavaScript Charts in the World",
+                "url": "https://www.ag-grid.com/charts"
+            },
+            {
+                "title": "AG Studio",
+                "description": "Best JavaScript Dashboard in the World",
+                "url": "https://www.ag-grid.com/studio"
+            },
+            {
+                "title": "Bryntum Gantt",
+                "description": "Speed-tuned Gantt chart for project planning",
+                "url": "https://www.ag-grid.com/campaigns/bryntum-gantt",
+                "inlineHeading": "Bryntum"
+            }
+        ]
     }
 ]

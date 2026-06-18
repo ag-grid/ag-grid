@@ -40,10 +40,10 @@
     padding: 20px;
     border-radius: 10px;
     -webkit-font-smoothing: antialiased;
-    background-color: var(--ag-background-color, white);
-    color: var(--ag-text-color, black);
-    color-scheme: var(--ag-browser-color-scheme);
-    font-family: var(--ag-font-family, Arial), sans-serif;
+    background-color: var(--example-background-color, white);
+    color: var(--example-text-color, black);
+    color-scheme: var(--example-color-scheme);
+    font-family: var(--example-font-family, Arial), sans-serif;
     flex-direction: column;
 }
 
@@ -75,10 +75,10 @@
     padding: 20px;
     border-radius: 10px;
     -webkit-font-smoothing: antialiased;
-    background-color: var(--ag-background-color, white);
-    color: var(--ag-text-color, black);
-    color-scheme: var(--ag-browser-color-scheme);
-    font-family: var(--ag-font-family, Arial), sans-serif;
+    background-color: var(--example-background-color, white);
+    color: var(--example-text-color, black);
+    color-scheme: var(--example-color-scheme);
+    font-family: var(--example-font-family, Arial), sans-serif;
     flex-direction: column;
 }
 

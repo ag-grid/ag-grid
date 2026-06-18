@@ -40,8 +40,15 @@ export interface GridColumnsOptions {
     domGroupValidator?: (params: GridColumnsDomGroupValidatorParams) => boolean | void;
 }
 
-export interface GridColumnsBugs {
-    // Known bug flags that disable specific validators — add flags as bugs are discovered
-}
+/**
+ * Known grid bugs that prevent automated column validations from running.
+ * Each property gates a validation that is currently disabled because the grid has a bug.
+ * When a bug is fixed, set the property to true and eventually remove it.
+ *
+ * Tests can override individual flags via `GridColumnsOptions.bugs` to enable or disable
+ * validations on a per-test basis.
+ */
+export const gridColumnsBugs = {} as const;
 
-export const gridColumnsBugs: Readonly<GridColumnsBugs> = Object.freeze({});
+/** The type of the known bugs configuration object. */
+export type GridColumnsBugs = { -readonly [K in keyof typeof gridColumnsBugs]: boolean };

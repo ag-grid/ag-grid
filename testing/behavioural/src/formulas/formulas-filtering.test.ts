@@ -64,7 +64,7 @@ describe('ag-grid formulas filtering', () => {
 
         let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID 
+            ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:10 B:20 name:"John"
             ├── LEAF id:2 row-number:"2" A:25 B:50 name:"Mary"
             ├── LEAF id:3 row-number:"3" A:30 B:60 name:"Bob"
@@ -379,6 +379,20 @@ describe('ag-grid formulas filtering', () => {
         };
 
         const api = gridsManager.createGrid('tc3-2', gridOptions);
+        await new GridColumns(api, `TC3-1 Set filter lists evaluated formula values setup`).checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── country "Country" width:200
+            └── sport "Sport" width:200
+        `);
+        await new GridRows(api, `TC3-1 Set filter lists evaluated formula values setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 row-number:"1" athlete:"Michael Phelps" country:"United States" sport:"Swimming"
+            ├── LEAF id:2 row-number:"2" athlete:"Ref Judge" country:"United States" sport:"Swimming"
+            └── LEAF id:3 row-number:"3" athlete:"Laura Trott" country:"Great Britain" sport:"Cycling"
+        `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -405,6 +419,12 @@ describe('ag-grid formulas filtering', () => {
             'Laura Trott',
             'Michael Phelps',
         ]);
+        await new GridRows(api, `TC3-1 Set filter lists evaluated formula values final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 row-number:"1" athlete:"Michael Phelps" country:"United States" sport:"Swimming"
+            ├── LEAF id:2 row-number:"2" athlete:"Michael Phelps" country:"United States" sport:"Swimming"
+            └── LEAF id:3 row-number:"3" athlete:"Laura Trott" country:"Great Britain" sport:"Cycling"
+        `);
     });
 
     test('TC3-2 Set filter applies evaluated formulas when refiltering', async () => {

@@ -469,7 +469,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
                     continue;
                 }
                 const newValue = values[level];
-                const currentValue = valueSvc.getValue(column, row, 'data');
+                const currentValue = valueSvc.getValueFromData(column, row);
                 if (currentValue === newValue || (currentValue == null && newValue == null)) {
                     continue;
                 }

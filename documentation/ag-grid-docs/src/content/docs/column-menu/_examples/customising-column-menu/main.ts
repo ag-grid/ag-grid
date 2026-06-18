@@ -7,9 +7,15 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
+import {
+    CalculatedColumnsModule,
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    ContextMenuModule,
+} from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
+    CalculatedColumnsModule,
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
@@ -51,6 +57,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
+    calculatedColumns: true,
 };
 
 // setup the grid after the page has finished loading

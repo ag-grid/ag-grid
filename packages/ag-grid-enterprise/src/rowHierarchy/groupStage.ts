@@ -35,8 +35,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
     public grouping: boolean = false;
     private gosTreeData: boolean = false;
     private pivotMode: boolean = false;
-    private hasTreeData: boolean = false;
-    private hasRowGrouping: boolean = false;
+    public hasTreeData: boolean = false;
+    public hasRowGrouping: boolean = false;
     private needReset: boolean = false;
     private nested: boolean = false;
     private strategy: IRowGroupingStrategy<TData> | null | undefined = undefined;

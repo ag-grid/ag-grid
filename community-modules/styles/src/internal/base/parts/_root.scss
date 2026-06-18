@@ -9,6 +9,10 @@
         --ag-indentation-level: 0;
     }
 
+    .ag-styled-root {
+        display: contents;
+    }
+
     [class*='ag-theme-'] {
         -webkit-font-smoothing: antialiased;
         font-family: var(--ag-font-family);

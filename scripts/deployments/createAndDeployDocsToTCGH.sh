@@ -2,6 +2,13 @@
 
 # once tested this script will replace createAndDeployDocsToTC.sh
 
+set -euo pipefail
+
+: "${SSH_KEY_LOCATION:?SSH_KEY_LOCATION is required}"
+: "${SSH_USER:?SSH_USER is required}"
+: "${SSH_HOST:?SSH_HOST is required}"
+: "${WWW_ROOT_DIR:?WWW_ROOT_DIR is required}"
+
 ZIP_PREFIX=`date +%Y%m%d`
 
 echo "Deploying Docs to Build Server"
@@ -17,6 +24,10 @@ cd documentation/ag-grid-docs/dist
 FILENAME=release_"$ZIP_PREFIX"_v"$ZIP_PREFIX".zip
 echo "Creating $FILENAME"
 zip -qr ../../../$FILENAME *
+# The glob above skips dotfiles, so add the generated .htaccess explicitly (present on staging/production builds)
+if [ -f .htaccess ]; then
+  zip -q ../../../$FILENAME .htaccess
+fi
 
 cd ../../../
 

@@ -1,4 +1,5 @@
-import type { AutoScrollService } from '../agStack/rendering/autoScrollService';
+import type { AutoScrollService } from 'ag-stack';
+
 import type { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';

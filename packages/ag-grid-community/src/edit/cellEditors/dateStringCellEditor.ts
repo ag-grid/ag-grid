@@ -1,7 +1,7 @@
-import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
-import { _parseDateTimeFromString, _serialiseDate } from '../../agStack/utils/date';
-import { _exists } from '../../agStack/utils/generic';
-import { AgInputDateFieldSelector } from '../../agStack/widgets/agInputDateField';
+import type { LocaleTextFunc } from 'ag-stack';
+import { _exists, _parseDateTimeFromString, _serialiseDate } from 'ag-stack';
+
+import { AgInputDateFieldSelector } from '../../agWidgets/agInputDateField';
 import type { DataTypeService } from '../../columns/dataTypeService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ElementParams } from '../../utils/element';

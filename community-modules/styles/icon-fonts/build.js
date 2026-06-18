@@ -30,7 +30,6 @@ const nameToCodepoint = {
     cut: 0xf10f,
     desc: 0xf110,
     excel: 0xf111,
-    pdf: 0xf146,
     expanded: 0xf112,
     'eye-slash': 0xf113,
     eye: 0xf114,
@@ -82,6 +81,10 @@ const nameToCodepoint = {
     'filter-add': 0xf144,
     edit: 0xf145,
     search: 0xf146,
+    document: 0xf147,
+    fx: 0xf148,
+    'values-as': 0xf149,
+    pdf: 0xf14a,
 };
 
 function generateFontFile(fontName) {

@@ -1,6 +1,7 @@
 ---
 import { getPageImages } from '@components/docs/utils/filesData';
 import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 import styles from './ImageCaption.module.scss';
 
@@ -71,29 +72,18 @@ const imageId = id ? id : `image-${imagePath}`;
     ]}
     style={style}
 >
-    <img id={imageId} src={imageSrc} class={styles.image} alt={alt} />
+    <img
+        id={imageId}
+        src={imageSrc}
+        class={styles.image}
+        alt={alt}
+        data-darkmode-img={enableDarkModeFilter ? undefined : ''}
+        data-light-src={enableDarkModeFilter ? undefined : imageSrc}
+        data-dark-src={enableDarkModeFilter ? undefined : darkModeImageSrc}
+    />
     <div class={styles.body}>
         <slot />
     </div>
 </div>
 
-<script
-    define:vars={{
-        imageId,
-        imageSrc,
-        darkModeImageSrc,
-        skip: enableDarkModeFilter,
-    }}
->
-    if (skip) {
-        return;
-    }
-    const image = document.getElementById(imageId);
-    globalThis.addDarkmodeOnChange((darkMode) => {
-        if (darkModeImageSrc && darkMode) {
-            image.src = darkModeImageSrc;
-        } else {
-            image.src = imageSrc;
-        }
-    });
-</script>
+<script is:inline src={urlWithBaseUrl('/scripts/image-caption-darkmode.js')}></script>

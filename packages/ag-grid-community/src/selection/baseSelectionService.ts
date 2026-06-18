@@ -1,5 +1,5 @@
-import { _setAriaSelected } from '../agStack/utils/aria';
-import { _getActiveDomElement } from '../agStack/utils/document';
+import { _getActiveDomElement, _setAriaSelected } from 'ag-stack';
+
 import { isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -111,7 +111,11 @@ export abstract class BaseSelectionService extends BeanStub {
         this.beans.ariaAnnounce?.announceValue(label, 'rowSelection');
     }
 
-    public updateGroupsFromChildrenSelections?(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean;
+    public updateGroupsFromChildrenSelections?(
+        source: SelectionEventSourceType,
+        changedPath?: ChangedPath,
+        event?: Event
+    ): boolean;
 
     public abstract setNodesSelected(params: ISetNodesSelectedParams): number;
 

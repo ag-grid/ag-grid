@@ -2,8 +2,8 @@
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
+import type { Theme } from 'ag-stack';
 
-import type { Theme } from '../agStack/theming/theme';
 import type { IsRowValidDropPositionCallback } from '../dragAndDrop/rowDragTypes';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
@@ -135,6 +135,7 @@ import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
 import type { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
+import type { CalculatedColumnsGridOption } from '../interfaces/iCalculatedColumns';
 import type {
     DoesExternalFilterPass,
     FillOperation,
@@ -182,6 +183,7 @@ import type {
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
+import type { ProcessFileInputParams } from '../interfaces/iFileProcessor';
 import type { AlwaysPassFilter, FilterHandlers, QuickFilterMatcher, QuickFilterParser } from '../interfaces/iFilter';
 import type { FindOptions } from '../interfaces/iFind';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
@@ -191,6 +193,7 @@ import type { RowModelType } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
 import type { SideBarDef } from '../interfaces/iSideBar';
+import type { SortDirection } from '../interfaces/iSort';
 import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { Toolbar } from '../interfaces/iToolbar';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
@@ -206,7 +209,6 @@ import type {
     ColTypeDefs,
     GroupHierarchyConfig,
     IAggFuncs,
-    SortDirection,
 } from './colDef';
 import type { DataTypeDefinitions } from './dataType';
 
@@ -410,6 +412,11 @@ export interface GridOptions<TData = any> {
      * or can be custom data types.
      */
     dataTypeDefinitions?: DataTypeDefinitions<TData>;
+    /**
+     * Enables and configures Calculated Columns.
+     * @agModule `CalculatedColumnsModule`
+     */
+    calculatedColumns?: CalculatedColumnsGridOption;
     /**
      * Keeps the order of Columns maintained after new Column Definitions are updated.
      *
@@ -1053,7 +1060,7 @@ export interface GridOptions<TData = any> {
     suppressNoRowsOverlay?: boolean;
 
     /**
-     * List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`.
+     * List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`, `fileInput`.
      */
     suppressOverlays?: OverlayType[];
 
@@ -1089,6 +1096,15 @@ export interface GridOptions<TData = any> {
      * Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`. Updating the params will trigger a refresh of the active overlay.
      */
     activeOverlayParams?: any;
+
+    // *** File Input *** //
+    /**
+     * Callback to handle files received via the file input overlay (drag-and-drop or file browser).
+     * When provided, the file input overlay is shown when there is no row data.
+     * Call `params.success(rowData)` to load parsed data into the grid, or `params.fail(message)` to show an error.
+     * @agModule `FileInputOverlayModule`
+     */
+    processFileInput?: (params: ProcessFileInputParams<TData>) => void;
 
     // *** Pagination *** //
     /**
@@ -1461,6 +1477,7 @@ export interface GridOptions<TData = any> {
     groupDefaultExpanded?: number;
     /**
      * Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
+     * Cell tooltip properties set here (`tooltipField`, `tooltipValueGetter`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     autoGroupColumnDef?: AutoGroupColumnDef<TData>;
@@ -2411,6 +2428,20 @@ export interface GridOptions<TData = any> {
      * @agModule `ClientSideRowModelModule`
      */
     resetRowDataOnUpdate?: boolean;
+    /**
+     * When enabled, column definitions are generated automatically from the first row of `rowData` whenever row data is set or updated.
+     * Set to `true` to use default settings, or provide an `AutoGenerateColumnDefsOptions` object to customise how values are handled.
+     * @default false
+     * @agModule `AutoGenerateColumnsModule`
+     */
+    autoGenerateColumnDefs?: boolean | AutoGenerateColumnDefsOptions;
+    /**
+     * Callback fired after auto-generating column definitions and before they are applied to the grid.
+     * Return the final `(ColDef | ColGroupDef)[]` to use or void if only mutations of generated columnDefs are required.
+     *
+     * @agModule `AutoGenerateColumnsModule`
+     */
+    processAutoGeneratedColumnDefs?: ProcessAutoGeneratedColumnDefs<TData>;
     /**
      * Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
      */
@@ -3385,12 +3416,54 @@ export type AgPublicEventHandlerType = `on${Capitalize<AgPublicEventType>}` & ke
 export type ProcessPivotResultColDef<TData = any, TValue = any> = (colDef: ColDef<TData, TValue>) => void;
 export type ProcessPivotResultColGroupDef<TData = any> = (colDef: ColGroupDef<TData>) => void;
 
+export interface AutoGenerateColumnDefsOptions {
+    /** How to handle plain-object values. `'group'` recurses into the object and creates a column group, `'flatten'` recurses and creates flat leaf columns using dotted field paths, `'skip'` ignores the field entirely.
+     * @default 'group'
+     */
+    objectValues?: 'group' | 'flatten' | 'skip';
+    /** How to handle array values. `'primitives'` creates a leaf column only when the first element is a primitive value, `'include'` creates a leaf column for all arrays, `'skip'` ignores them.
+     * @default 'primitives'
+     */
+    arrayValues?: 'primitives' | 'include' | 'skip';
+    /** How to handle `null` and `undefined` values. `'include'` creates a leaf column, `'skip'` ignores them.
+     * @default 'include'
+     */
+    nullishValues?: 'include' | 'skip';
+}
+
+export interface ProcessAutoGeneratedColumnDefsParams<TData = any, TContext = any> extends AgGridCommon<
+    TData,
+    TContext
+> {
+    /**
+     * The generated column definitions.
+     * May include `ColGroupDef` entries when row data contains nested objects. Use the `forEachColDef` helper function to iterate safely over all leaf columns only.  */
+    columnDefs: (ColDef | ColGroupDef)[];
+    /** Row data that the columns were generated from */
+    rowData: TData[];
+}
+export type ProcessAutoGeneratedColumnDefs<TData = any, TContext = any> = (
+    params: ProcessAutoGeneratedColumnDefsParams<TData, TContext>
+) => (ColDef | ColGroupDef)[] | void;
+
 export interface PageSummaryPanelParams {
     type: 'pageSummary';
     suppressPageInput?: boolean;
 }
 
-export type PaginationPanelParams = PageSummaryPanelParams;
+export interface PageSizePanelParams {
+    type: 'pageSize';
+    /** Panel-level page size. Takes precedence over the grid-level `paginationPageSize` option. */
+    paginationPageSize?: number;
+    /** Panel-level page size selector. Takes precedence over the grid-level `paginationPageSizeSelector` option. */
+    paginationPageSizeSelector?: number[] | boolean;
+}
+
+export interface RowSummaryPanelParams {
+    type: 'rowSummary';
+}
+
+export type PaginationPanelParams = PageSummaryPanelParams | PageSizePanelParams | RowSummaryPanelParams;
 
 export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary' | PaginationPanelParams;
 

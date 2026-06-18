@@ -36,7 +36,7 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
         }
 
         const valueSvc = this.beans.valueSvc;
-        const rowGroupColId = column.colDef.showRowGroup;
+        const rowGroupColId = column.showRowGroup;
         if (!rowGroupColId) {
             return null;
         }
@@ -46,10 +46,9 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
             return { displayedNode: node, value: null };
         }
 
-        // when using multiple columns, special handling
         if (typeof rowGroupColId === 'string') {
-            const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
-            if (colRowGroupIndex > node.level) {
+            const col = this.beans.colModel.colsById[rowGroupColId];
+            if (col?.rowGroupActive && col.rowGroupActiveIndex > node.level) {
                 return null;
             }
 
@@ -58,20 +57,20 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
             if (hideOpenParentsNode) {
                 return {
                     displayedNode: hideOpenParentsNode,
-                    value: valueSvc.getValue(column, hideOpenParentsNode, 'data', ignoreAggData),
+                    value: valueSvc.getValueFromData(column, hideOpenParentsNode, ignoreAggData),
                 };
             }
         }
 
         // cell value > showOpenedGroup
-        const value = valueSvc.getValue(column, node, 'data', ignoreAggData);
+        const value = valueSvc.getValueFromData(column, node, ignoreAggData);
         if (value == null) {
             // showOpenedGroup
             const displayedNode = this.getDisplayedNode(node, column);
             if (displayedNode) {
                 return {
                     displayedNode,
-                    value: valueSvc.getValue(column, displayedNode, 'data', ignoreAggData),
+                    value: valueSvc.getValueFromData(column, displayedNode, ignoreAggData),
                 };
             }
         }
@@ -168,7 +167,7 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
             return undefined;
         }
 
-        const showRowGroup = column.colDef.showRowGroup;
+        const showRowGroup = column.showRowGroup;
         // single auto col can only showOpenedGroup for leaf rows
         if (showRowGroup === true) {
             if (node.group) {
@@ -178,7 +177,7 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
         }
 
         let pointer: RowNode | null = node as RowNode;
-        while (pointer && pointer.rowGroupColumn?.getId() != showRowGroup) {
+        while (pointer && pointer.rowGroupColumn?.colId != showRowGroup) {
             const isFirstChild = pointer === pointer.parent?.getFirstChild();
             if (!isShowOpenedGroupValue && !isFirstChild) {
                 // if not first child and not showOpenedGroup then groupHideOpenParents doesn't

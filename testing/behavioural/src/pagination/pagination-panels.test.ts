@@ -1,9 +1,10 @@
+import { userEvent } from '@testing-library/user-event';
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, PaginationModule, ValidationModule, getGridElement } from 'ag-grid-community';
 
-import { TestGridsManager } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 const COLUMN_DEFS = [{ field: 'name' }];
 const ROW_DATA = Array.from({ length: 50 }, (_, i) => ({ name: `Row ${i + 1}` }));
@@ -33,7 +34,7 @@ function getButtonIconName(panel: HTMLElement, ariaLabel: string): string | unde
 }
 
 function getChildElements(panel: HTMLElement): Element[] {
-    return Array.from(panel.children).filter((el) => !el.classList.contains('ag-tab-guard'));
+    return Array.from(panel.querySelector('.ag-paging-panel-content')!.children);
 }
 
 describe('paginationPanels', () => {
@@ -146,7 +147,7 @@ describe('paginationPanels', () => {
             expect(pageNumbers[1].textContent).toBe('5'); // total pages
         });
 
-        test('page input navigates on value change', () => {
+        test('typing alone does not navigate', () => {
             const api = createPaginationGrid(gridsManager);
             const panel = getPagingPanel(api)!;
             const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
@@ -154,20 +155,98 @@ describe('paginationPanels', () => {
             input.value = '3';
             input.dispatchEvent(new Event('input'));
 
+            expect(api.paginationGetCurrentPage()).toBe(0);
+        });
+
+        test('Enter key navigates to typed page', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            input.value = '3';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
             expect(api.paginationGetCurrentPage()).toBe(2);
         });
 
-        test('clearing the input does not navigate', () => {
+        test('blur navigates to typed page', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            input.value = '3';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new Event('blur'));
+
+            expect(api.paginationGetCurrentPage()).toBe(2);
+        });
+
+        test('Escape cancels edit and restores current page without navigating', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            api.paginationGoToPage(1);
+
+            input.value = '5';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+            expect(api.paginationGetCurrentPage()).toBe(1);
+            expect(input.value).toBe('2');
+        });
+
+        test('ArrowUp navigates to next page', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
+
+            expect(api.paginationGetCurrentPage()).toBe(1);
+        });
+
+        test('ArrowDown navigates to previous page', () => {
             const api = createPaginationGrid(gridsManager);
             const panel = getPagingPanel(api)!;
             const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
 
             api.paginationGoToPage(2);
 
-            input.value = '';
-            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
 
-            expect(api.paginationGetCurrentPage()).toBe(2);
+            expect(api.paginationGetCurrentPage()).toBe(1);
+        });
+
+        test('invalid input resets to current page without navigating', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            api.paginationGoToPage(1);
+
+            input.value = '0';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+            expect(api.paginationGetCurrentPage()).toBe(1);
+            expect(input.value).toBe('2');
+        });
+
+        test('out-of-range input resets to current page without navigating', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            api.paginationGoToPage(1);
+
+            input.value = '99';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+            expect(api.paginationGetCurrentPage()).toBe(1);
+            expect(input.value).toBe('2');
         });
 
         test('blurring with empty input resets to current page', () => {
@@ -183,6 +262,28 @@ describe('paginationPanels', () => {
 
             expect(api.paginationGetCurrentPage()).toBe(2);
             expect(input.value).toBe('3');
+        });
+
+        test('page input has spinbutton role and correct ARIA attributes', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            expect(input.getAttribute('role')).toBe('spinbutton');
+            expect(input.getAttribute('aria-valuenow')).toBe('1');
+            expect(input.getAttribute('aria-valuemin')).toBe('1');
+            expect(input.getAttribute('aria-valuemax')).toBe('5');
+            expect(input.getAttribute('aria-label')).toContain('1');
+        });
+
+        test('ARIA attributes update when page changes', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            api.paginationGoToPage(3);
+
+            expect(input.getAttribute('aria-valuenow')).toBe('4');
         });
     });
 
@@ -610,6 +711,138 @@ describe('paginationPanels', () => {
             const pageSummary = panel.querySelector('.ag-paging-page-summary-panel')!;
             expect(pageSummary.querySelector('input')).toBeNull();
             expect(pageSummary.querySelectorAll('.ag-paging-number')[0].textContent).toBe('1');
+        });
+    });
+
+    describe('object-based pageSize and rowSummary config', () => {
+        function getPageSizeDisplayValue(panel: HTMLElement): string | undefined {
+            return (
+                panel.querySelector<HTMLElement>('.ag-paging-page-size .ag-picker-field-display')?.textContent ??
+                undefined
+            );
+        }
+
+        test('{ type: "pageSize" } renders the page size selector', () => {
+            const api = createPaginationGrid(gridsManager, { paginationPanels: [{ type: 'pageSize' }] });
+            const panel = getPagingPanel(api)!;
+            const pageSizeEl = panel.querySelector<HTMLElement>('.ag-paging-page-size');
+            expect(pageSizeEl).toBeTruthy();
+            expect(pageSizeEl).not.toHaveClass('ag-hidden');
+        });
+
+        test('{ type: "rowSummary" } renders the row summary', () => {
+            const api = createPaginationGrid(gridsManager, { paginationPanels: [{ type: 'rowSummary' }] });
+            const panel = getPagingPanel(api)!;
+            expect(panel.querySelector('.ag-paging-row-summary-panel')).toBeTruthy();
+            const numbers = panel.querySelectorAll('.ag-paging-row-summary-panel-number');
+            expect(numbers[0].textContent).toBe('1');
+            expect(numbers[2].textContent).toBe('50');
+        });
+
+        test('panel-level paginationPageSize overrides grid-level option', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSize: 20,
+                paginationPanels: [{ type: 'pageSize', paginationPageSize: 50 }],
+            });
+            expect(api.paginationGetPageSize()).toBe(50);
+            const panel = getPagingPanel(api)!;
+            expect(getPageSizeDisplayValue(panel)).toBe('50');
+        });
+
+        test('grid-level paginationPageSize still applies when panel omits it', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSize: 20,
+                paginationPanels: [{ type: 'pageSize' }],
+            });
+            expect(api.paginationGetPageSize()).toBe(20);
+        });
+
+        test('panel-level paginationPageSizeSelector: false hides selector despite grid-level array', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSizeSelector: [10, 20, 50],
+                paginationPanels: [{ type: 'pageSize', paginationPageSizeSelector: false }, 'pageSummary'],
+            });
+            const panel = getPagingPanel(api)!;
+            expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
+        });
+
+        test('panel-level paginationPageSizeSelector array shows selector despite grid-level false', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSizeSelector: false,
+                paginationPanels: [{ type: 'pageSize', paginationPageSizeSelector: [10, 20, 50] }],
+            });
+            const panel = getPagingPanel(api)!;
+            expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
+        });
+
+        test('panel-level config takes precedence over both grid-level options (ticket example)', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSize: 20,
+                paginationPageSizeSelector: [10, 20, 50],
+                paginationPanels: [
+                    { type: 'pageSize', paginationPageSize: 100, paginationPageSizeSelector: [25, 50, 100] },
+                ],
+            });
+            expect(api.paginationGetPageSize()).toBe(100);
+            const panel = getPagingPanel(api)!;
+            expect(getPageSizeDisplayValue(panel)).toBe('100');
+        });
+
+        test('panel-level paginationPageSize updates active page size and panel display when paginationPanels changes at runtime', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSize: 20,
+                paginationPanels: ['pageSize'],
+            });
+            expect(api.paginationGetPageSize()).toBe(20);
+            expect(getPageSizeDisplayValue(getPagingPanel(api)!)).toBe('20');
+
+            api.setGridOption('paginationPanels', [{ type: 'pageSize', paginationPageSize: 50 }]);
+
+            expect(api.paginationGetPageSize()).toBe(50);
+            expect(getPageSizeDisplayValue(getPagingPanel(api)!)).toBe('50');
+        });
+
+        test('removing a panel page-size override preserves the user-selected page size', async () => {
+            const userSession = userEvent.setup();
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSizeSelector: [10, 20, 50, 100],
+                paginationPanels: [{ type: 'pageSize', paginationPageSize: 100 }],
+            });
+            expect(api.paginationGetPageSize()).toBe(100);
+
+            const display = getPagingPanel(api)!.querySelector<HTMLElement>(
+                '.ag-paging-page-size .ag-picker-field-display'
+            )!;
+            await userSession.click(display);
+            await asyncSetTimeout(0);
+            const option = Array.from(document.querySelectorAll('.ag-list-item')).find(
+                (item) => item.textContent?.trim() === '50'
+            );
+            await userSession.click(option!);
+            await asyncSetTimeout(0);
+            expect(api.paginationGetPageSize()).toBe(50);
+
+            api.setGridOption('paginationPanels', ['pageSize']);
+
+            expect(api.paginationGetPageSize()).toBe(50);
+            expect(getPageSizeDisplayValue(getPagingPanel(api)!)).toBe('50');
+        });
+
+        test('panel-level paginationPageSizeSelector: false hides the selector when paginationPanels changes at runtime', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSizeSelector: [10, 20, 50],
+                paginationPanels: ['pageSize', 'pageSummary'],
+            });
+            expect(getPagingPanel(api)!.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass(
+                'ag-hidden'
+            );
+
+            api.setGridOption('paginationPanels', [
+                { type: 'pageSize', paginationPageSizeSelector: false },
+                'pageSummary',
+            ]);
+
+            expect(getPagingPanel(api)!.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
         });
     });
 

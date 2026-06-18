@@ -10,9 +10,9 @@ import type {
     ProcessHeaderForExportParams,
     ProcessRowGroupForExportParams,
 } from '../interfaces/exportParams';
-import type { IColsService } from '../interfaces/iColsService';
-import type { CellValueResolveFrom } from '../interfaces/iEditService';
-import type { ValueService } from '../valueService/valueService';
+import type { IRowGroupColsService } from '../interfaces/iColsService';
+import type { CellBaseValueResolveFrom } from '../interfaces/iEditService';
+import type { CellValueResolveFrom, ValueService } from '../valueService/valueService';
 import type {
     GridSerializingParams,
     GridSerializingSession,
@@ -24,14 +24,19 @@ import type {
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public colModel: ColumnModel;
     private readonly colNames: ColumnNameService;
-    public rowGroupColsSvc?: IColsService;
+    public rowGroupColsSvc?: IRowGroupColsService;
     public valueSvc: ValueService;
     public gos: GridOptionsService;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
     public processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
     public processRowGroupCallback?: (params: ProcessRowGroupForExportParams) => string;
-    public valueFrom: CellValueResolveFrom = 'data';
+    public valueFrom: CellValueResolveFrom;
+
+    /** The raw resolution source for `parseValue` — `'transformed'` collapses to `'data'`. */
+    protected get baseValueFrom(): CellBaseValueResolveFrom {
+        return this.valueFrom === 'transformed' ? 'data' : this.valueFrom;
+    }
 
     constructor(config: GridSerializingParams) {
         const {
@@ -56,9 +61,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         this.processHeaderCallback = processHeaderCallback;
         this.processGroupHeaderCallback = processGroupHeaderCallback;
         this.processRowGroupCallback = processRowGroupCallback;
-        if (valueFrom) {
-            this.valueFrom = valueFrom;
-        }
+        this.valueFrom = valueFrom || 'data';
     }
 
     abstract addCustomContent(customContent: T): void;
@@ -93,7 +96,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             return { value: this.processRowGroupCallback(_addGridCommonParams(this.gos, { column, node })) ?? '' };
         }
 
+        const valueSvc = this.valueSvc;
         if (this.processCellCallback) {
+            const valueFrom = this.valueFrom;
             return {
                 value:
                     this.processCellCallback(
@@ -101,33 +106,36 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                             accumulatedRowIndex,
                             column,
                             node,
-                            value: this.valueSvc.getValueForDisplay({ column, node, from: this.valueFrom }).value,
+                            value: valueSvc.getDisplayValue(column, node, valueFrom),
                             type,
                             parseValue: (valueToParse: string) =>
-                                this.valueSvc.parseValue(
+                                valueSvc.parseValue(
                                     column,
                                     node,
                                     valueToParse,
-                                    this.valueSvc.getValue(column, node, this.valueFrom)
+                                    valueSvc.getValue(column, node, this.baseValueFrom)
                                 ),
                             formatValue: (valueToFormat: any) =>
-                                this.valueSvc.formatValue(column, node, valueToFormat) ?? valueToFormat,
+                                (valueFrom === 'transformed'
+                                    ? valueSvc.formatTransformedValue(column, node, valueToFormat)
+                                    : undefined) ??
+                                valueSvc.formatValue(column, node, valueToFormat) ??
+                                valueToFormat,
                         })
                     ) ?? '',
             };
         }
 
         const isTreeData = this.gos.get('treeData');
-        const valueService = this.valueSvc;
 
         const isGrandTotalRow = node.level === -1 && node.footer;
-        const isMultiAutoCol = column.colDef.showRowGroup === true && (node.group || isTreeData);
+        const isMultiAutoCol = column.showRowGroup === true && (node.group || isTreeData);
         // when using single auto group column or group row, create arrow separated string of group vals
         if (!isGrandTotalRow && (isFullWidthGroup || isMultiAutoCol)) {
             let concatenatedGroupValue: string = '';
             let pointer: RowNode | null = node;
             while (pointer && pointer.level !== -1) {
-                const { value, valueFormatted } = valueService.getValueForDisplay({
+                const { value, valueFormatted } = valueSvc.getValueForDisplay({
                     column: isFullWidthGroup ? undefined : column, // full width group doesn't have a column
                     node: pointer,
                     includeValueFormatted: true,
@@ -144,7 +152,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             };
         }
 
-        const { value, valueFormatted } = valueService.getValueForDisplay({
+        const { value, valueFormatted } = valueSvc.getValueForDisplay({
             column,
             node,
             includeValueFormatted: true,

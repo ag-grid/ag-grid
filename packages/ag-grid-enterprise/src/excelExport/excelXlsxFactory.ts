@@ -1,3 +1,5 @@
+import { _escapeString } from 'ag-stack';
+
 import type {
     AgColumn,
     ExcelCustomMetadata,
@@ -11,7 +13,7 @@ import type {
     ExcelWorksheet,
     RowHeightCallbackParams,
 } from 'ag-grid-community';
-import { _escapeString, _warn } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
 
 import type {
     ExcelCalculatedImage,

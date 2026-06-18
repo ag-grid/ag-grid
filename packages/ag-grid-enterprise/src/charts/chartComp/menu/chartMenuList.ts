@@ -1,3 +1,5 @@
+import { RefPlaceholder, _focusInto, _isNothingFocused } from 'ag-stack';
+
 import type {
     BeanCollection,
     ContainerType,
@@ -8,15 +10,7 @@ import type {
     NamedBean,
     PopupService,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    Component,
-    RefPlaceholder,
-    _addGridCommonParams,
-    _createIconNoSpan,
-    _focusInto,
-    _isNothingFocused,
-} from 'ag-grid-community';
+import { BeanStub, Component, _addGridCommonParams, _createIconNoSpan } from 'ag-grid-community';
 
 import { MenuList } from '../../../widgets/menuList';
 import type { ChartController } from '../chartController';

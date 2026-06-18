@@ -1,14 +1,7 @@
+import { RefPlaceholder, _debounce, _setDisplayed } from 'ag-stack';
+
 import type { ComponentSelector, ElementParams, GridCheckbox, GridInputTextField } from 'ag-grid-community';
-import {
-    AgCheckboxSelector,
-    AgInputTextFieldSelector,
-    Component,
-    KeyCode,
-    RefPlaceholder,
-    _createIconNoSpan,
-    _debounce,
-    _setDisplayed,
-} from 'ag-grid-community';
+import { AgCheckboxSelector, AgInputTextFieldSelector, Component, KeyCode, _createIconNoSpan } from 'ag-grid-community';
 
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
 
@@ -114,7 +107,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         const showFilter = !params.suppressColumnFilter;
         const showSelect = !params.suppressColumnSelectAll;
         const showExpand = !params.suppressColumnExpandAll;
-        const groupsPresent = !!this.beans.colModel.colDefCols?.treeDepth;
+        const groupsPresent = !!this.beans.colModel.colDefTreeDepth;
         const translate = this.getLocaleTextFunc();
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));

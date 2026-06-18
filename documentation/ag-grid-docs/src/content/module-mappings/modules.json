@@ -24,6 +24,16 @@
                     "path": "grid-api/#reference-colHover-isColumnHovered"
                 },
                 {
+                    "moduleName": "AutoGenerateColumnsModule",
+                    "name": "Auto-Generate Columns",
+                    "path": "auto-generate-columns"
+                },
+                {
+                    "moduleName": "FileInputOverlayModule",
+                    "name": "File Input Overlay",
+                    "path": "auto-generate-columns/#file-drop-overlay"
+                },
+                {
                     "moduleName": "CalculatedColumnsModule",
                     "name": "Calculated Columns",
                     "path": "calculated-columns",
@@ -335,6 +345,12 @@
             "path": "tree-data",
             "isEnterprise": true,
             "ssrmBundled": true
+        },
+        {
+            "moduleName": "ShowValueAsModule",
+            "name": "Show Values As",
+            "path": "aggregation-show-values-as",
+            "isEnterprise": true
         },
         {
             "moduleName": "MasterDetailModule",

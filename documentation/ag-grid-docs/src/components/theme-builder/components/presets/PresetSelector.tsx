@@ -1,9 +1,10 @@
 import { getChangedModelItemCount } from '@components/theme-builder/model/changed-model-items';
 import styled from '@emotion/styled';
+import { _asThemeImpl } from 'ag-stack';
 import { useStore } from 'jotai';
 import { type RefObject, memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-import { _asThemeImpl, colorSchemeLight, createGrid, themeQuartz } from 'ag-grid-community';
+import { colorSchemeLight, createGrid, themeQuartz } from 'ag-grid-community';
 
 import { ResetChangesModal } from '../general/ResetChangesModal';
 import { PresetRender } from './PresetRender';
@@ -62,7 +63,7 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
                 nonce: undefined,
                 moduleCss: undefined,
             });
-            setThemeClass(theme._getCssClass());
+            setThemeClass(theme._getCssClasses()[1]); // [1] is the theme apply classes eg ag-theme-params-1
 
             style.textContent = theme._getParamsCss();
         }

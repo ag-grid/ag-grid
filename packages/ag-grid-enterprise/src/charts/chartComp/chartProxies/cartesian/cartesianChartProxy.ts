@@ -10,8 +10,7 @@ import type {
     AgLineSeriesOptions,
     AgRangeBarSeriesThemeableOptions,
 } from 'ag-charts-types';
-
-import { _parseDateTimeFromString } from 'ag-grid-community';
+import { _parseDateTimeFromString } from 'ag-stack';
 
 import type { UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';

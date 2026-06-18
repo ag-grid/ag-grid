@@ -1,4 +1,4 @@
-import type { Column, ColumnGroup, GridApi } from 'ag-grid-community';
+import type { AgColumn, Column, ColumnGroup, GridApi } from 'ag-grid-community';
 
 /**
  * Formats a leaf column for the diagram.
@@ -9,8 +9,11 @@ import type { Column, ColumnGroup, GridApi } from 'ag-grid-community';
  *   width:N, flex:N,
  *   sort:asc|desc, sortIndex:N,
  *   rowGroup, rowGroupIndex:N, pivot, pivotIndex:N, aggFunc:name,
- *   filter, columnGroupShow:open|closed, hidden,
+ *   filter, columnGroupShow:open|closed, hidden, !visible,
  *   editable, !resizable, !sortable, suppressMovable, lockPosition:left|right
+ *
+ * `hidden` means not in the displayed set — visibility off or a child of a collapsed group.
+ * `!visible` reflects the grid-state visibility flag (`col.isVisible()`), shown independently of `hidden`.
  */
 export function columnDiagram(col: Column, api: GridApi, isHidden: boolean): string {
     const colId = col.getColId();
@@ -59,10 +62,15 @@ export function columnDiagram(col: Column, api: GridApi, isHidden: boolean): str
         }
     }
 
-    // Aggregation
-    const aggFunc = col.getAggFunc();
+    const aggFunc = col.isValueActive() ? col.getAggFunc() : null;
     if (aggFunc != null) {
         parts.push('aggFunc:' + (typeof aggFunc === 'string' ? aggFunc : 'custom'));
+    }
+
+    // Show Values As mode (the active selector)
+    const showValueAs = (col as AgColumn).showValueAs;
+    if (showValueAs != null) {
+        parts.push('showValueAs:' + showValueAs.type);
     }
 
     // Filter active
@@ -76,9 +84,14 @@ export function columnDiagram(col: Column, api: GridApi, isHidden: boolean): str
         parts.push('columnGroupShow:' + columnGroupShow);
     }
 
-    // Hidden (child of collapsed group)
+    // Hidden: not in the displayed set (visibility off or child of a collapsed group).
     if (isHidden) {
         parts.push('hidden');
+    }
+
+    // Grid-state visibility flag, shown independently of why the column is not displayed.
+    if (!col.isVisible()) {
+        parts.push('!visible');
     }
 
     const colDef = col.getColDef();
@@ -86,6 +99,11 @@ export function columnDiagram(col: Column, api: GridApi, isHidden: boolean): str
     // Editable
     if (colDef.editable === true) {
         parts.push('editable');
+    }
+
+    // Row spanning (CellSpanModule)
+    if (colDef.spanRows) {
+        parts.push(typeof colDef.spanRows === 'function' ? 'spanRows:fn' : 'spanRows');
     }
 
     // Not resizable (show only when explicitly disabled — default is true)

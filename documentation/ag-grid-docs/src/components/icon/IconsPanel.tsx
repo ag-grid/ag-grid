@@ -27,6 +27,7 @@ const ICONS = [
     'cross',
     'csv',
     'desc',
+    'document',
     'down',
     'edit',
     'excel',
@@ -36,6 +37,7 @@ const ICONS = [
     'filter',
     'filter-add',
     'first',
+    'fx',
     'grip',
     'group',
     'last',
@@ -70,6 +72,7 @@ const ICONS = [
     'tree-open',
     'unlinked',
     'up',
+    'values-as',
 ];
 
 const capitalizeName = (name: string) => `${name.slice(0, 1).toUpperCase()}${name.slice(1)}`;

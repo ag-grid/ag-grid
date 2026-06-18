@@ -1,5 +1,7 @@
+import { _last } from 'ag-stack';
+
 import type { CellPosition, CellRange } from 'ag-grid-community';
-import { CellRangeType, _isSameRow, _last } from 'ag-grid-community';
+import { CellRangeType, _isSameRow } from 'ag-grid-community';
 
 import { AbstractSelectionHandle, SelectionHandleType } from './abstractSelectionHandle';
 

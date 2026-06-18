@@ -12,6 +12,10 @@
         "answer": "Yes, AG Grid is designed to be compatible with AG Charts, allowing seamless integration between your JavaScript Data Grids and [JavaScript Charts](https://www.ag-grid.com/charts/react/quick-start/)."
     },
     {
+        "question": "How can I build dashboards with AG Grid?",
+        "answer": "[AG Studio](https://www.ag-grid.com/studio/) is built specifically for embedded analytics, letting you add web dashboards directly into your application. For fully custom solutions, developers can also build with AG Grid and AG Charts."
+    },
+    {
         "question": "Can I customise the style of my Data Grid?",
         "answer": "Yes, you can customise AG Grid with our [Theming API](./themes/) or use our [Theme Builder](/theme-builder/) to build themes with our intuitive UI."
     },
@@ -22,6 +26,10 @@
     {
         "question": "Can I use my own components with AG Grid?",
         "answer": "Yes, you can add your own components to [cells](./component-cell-renderer/) and [headers](./column-headers-components/#custom-component), and replace things like [filters](./component-filter/), [overlays](./overlays-overview), and [tooltips](./tooltips/#custom-component) with your own functionality if you want to."
+    },
+    {
+        "question": "Can I add project planning and scheduling to my AG Grid app?",
+        "answer": "Yes, through our [partnership with Bryntum](/campaigns/bryntum-gantt/), you can pair AG Grid with [Bryntum Gantt](/campaigns/bryntum-gantt/) a fully featured JavaScript Gantt chart built for real-world project complexity, with support for dependencies, critical paths, baselines and more."
     },
     {
         "question": "How is AG Grid different from Tanstacks' React Table",

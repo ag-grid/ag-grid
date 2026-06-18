@@ -1,5 +1,7 @@
+import { _findNextFocusableElement } from 'ag-stack';
+
 import type { AgColumn, ColumnChooserParams, HeaderPosition, NamedBean } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _findNextFocusableElement } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams } from 'ag-grid-community';
 
 import { AgPrimaryCols } from '../columnToolPanel/agPrimaryCols';
 import { Dialog } from '../widgets/dialog';
@@ -73,8 +75,8 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
         const translate = this.getLocaleTextFunc();
         const beans = this.beans;
-        const { visibleCols, focusSvc, menuUtils } = beans;
-        const columnIndex = visibleCols.allCols.indexOf(column as AgColumn);
+        const { focusSvc, menuUtils } = beans;
+        const columnIndex = column?.allColsIndex ?? -1;
         const headerPosition = column ? (focusSvc.focusedHeader ?? providedHeaderPosition ?? null) : null;
 
         this.activeColumnChooserDialog = this.createBean(

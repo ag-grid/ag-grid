@@ -1,14 +1,16 @@
+import type { LocaleTextFunc } from 'ag-stack';
+import { _exists } from 'ag-stack';
+
 import type {
     AgColumn,
     ColumnEventType,
     DefaultMenuItem,
     GetNoteParams,
     IAggFuncService,
-    IColsService,
     IMenuActionParams,
     INoteAccess,
     INotesService,
-    LocaleTextFunc,
+    IValueColsService,
     MenuItemDef,
     NamedBean,
     RowNode,
@@ -17,7 +19,6 @@ import type {
 import {
     BeanStub,
     _createIconNoSpan,
-    _exists,
     _getRowNode,
     _normalizeSortType,
     _resetColumnState,
@@ -120,6 +121,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             pinnedRowModel,
             rangeSvc,
             rowGroupColsSvc,
+            showValueAsSvc,
             sortSvc,
             valueColsSvc,
         } = beans;
@@ -233,12 +235,22 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'valueAggSubMenu':
-                    if (aggFuncSvc && valueColsSvc && (column?.primary || column?.colDef.pivotValueColumn)) {
+                    if (aggFuncSvc && valueColsSvc && (column?.primary || column?.pivotValueColumn)) {
                         return {
                             name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                             icon: _createIconNoSpan('menuValue', beans, null),
                             subMenu: createAggregationSubMenu(column, aggFuncSvc, valueColsSvc, localeTextFunc),
                             disabled: gos.get('functionsReadOnly'),
+                        };
+                    } else {
+                        return null;
+                    }
+                case 'showValueAsSubMenu':
+                    if (showValueAsSvc && column && showValueAsSvc.isMenuEligible(column)) {
+                        return {
+                            name: localeTextFunc('showValueAs', 'Show Values As'),
+                            icon: _createIconNoSpan('showValueAs', beans, null),
+                            subMenu: showValueAsSvc.getMenuItems(column, localeTextFunc),
                         };
                     } else {
                         return null;
@@ -280,7 +292,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         : null;
                 case 'rowUnGroup': {
                     if (rowGroupColsSvc && gos.isModuleRegistered('SharedRowGrouping')) {
-                        const showRowGroup = column?.colDef.showRowGroup;
+                        const showRowGroup = column?.showRowGroup;
                         const lockedGroups = gos.get('groupLockGroupColumns');
                         let name: string;
                         let disabled: boolean;
@@ -296,7 +308,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                 rowGroupColsSvc.setColumns(rowGroupColsSvc.columns.slice(0, lockedGroups), source);
                         } else if (typeof showRowGroup === 'string') {
                             // Handle multiple auto group columns
-                            const underlyingColumn = colModel.getColDefCol(showRowGroup);
+                            const underlyingColumn = colModel.getNonPivotCol(showRowGroup);
                             const ungroupByName =
                                 underlyingColumn != null
                                     ? colNames.getDisplayNameForColumn(underlyingColumn, 'header')
@@ -490,28 +502,47 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 }
-                case 'calculatedColumn':
-                    return calculatedColsSvc
-                        ? {
-                              name: localeTextFunc('calculatedColumnAdd', 'Add Calculated Column'),
-                              icon: _createIconNoSpan('calculatedColumnAdd', beans, null),
-                              action: () => calculatedColsSvc.openCalculatedColumnDialog(column, 'add'),
-                          }
-                        : null;
-                case 'editCalculatedColumn':
-                    return calculatedColsSvc && column?.colDef.calculatedExpression != null
-                        ? {
-                              name: localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
-                              icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
-                              action: () => calculatedColsSvc.openCalculatedColumnDialog(column, 'edit'),
-                          }
-                        : null;
+
+                case 'calculatedColumn': {
+                    if (!calculatedColsSvc?.isEnabled()) {
+                        return null;
+                    }
+
+                    const headerPosition = focusSvc.focusedHeader ?? (column ? { headerRowIndex: 0, column } : null);
+
+                    return {
+                        name: localeTextFunc('calculatedColumnAdd', 'Add Calculated Column'),
+                        icon: _createIconNoSpan('calculatedColumnAdd', beans, null),
+                        action: () =>
+                            calculatedColsSvc.openCalculatedColumnDialog(column, 'add', true, {
+                                eventSource: sourceElement(),
+                                headerPosition,
+                            }),
+                    };
+                }
+                case 'editCalculatedColumn': {
+                    if (!calculatedColsSvc?.isEnabled() || !column?.isCalculatedCol) {
+                        return null;
+                    }
+                    const headerPosition = focusSvc.focusedHeader ?? { headerRowIndex: 0, column };
+
+                    return {
+                        name: localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
+                        icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
+                        action: () =>
+                            calculatedColsSvc.openCalculatedColumnDialog(column, 'edit', true, {
+                                eventSource: sourceElement(),
+                                headerPosition,
+                            }),
+                    };
+                }
+
                 case 'removeCalculatedColumn':
-                    return calculatedColsSvc && column?.colDef.calculatedExpression != null
+                    return calculatedColsSvc?.isEnabled() && column?.isCalculatedCol
                         ? {
                               name: localeTextFunc('calculatedColumnRemove', 'Remove Calculated Column'),
                               icon: _createIconNoSpan('calculatedColumnRemove', beans, null),
-                              action: () => calculatedColsSvc.removeCalculatedColumn(column, 'calculatedColumn'),
+                              action: () => calculatedColsSvc.removeCalculatedColumn(column),
                           }
                         : null;
                 case 'sortUnSort':
@@ -668,14 +699,14 @@ function createNoteMenuItems({
 function createAggregationSubMenu(
     column: AgColumn,
     aggFuncSvc: IAggFuncService,
-    valueColsSvc: IColsService,
+    valueColsSvc: IValueColsService,
     localeTextFunc: LocaleTextFunc
 ): MenuItemDef[] {
     let columnToUse: AgColumn | undefined;
     if (column.primary) {
         columnToUse = column;
     } else {
-        const pivotValueColumn = column.colDef.pivotValueColumn as AgColumn;
+        const pivotValueColumn = column.pivotValueColumn as AgColumn;
         columnToUse = _exists(pivotValueColumn) ? pivotValueColumn : undefined;
     }
 
@@ -700,7 +731,7 @@ function createAggregationSubMenu(
                     valueColsSvc.setColumnAggFunc!(columnToUse, funcName, 'contextMenu');
                     valueColsSvc.addColumns([columnToUse!], 'contextMenu');
                 },
-                checked: columnIsAlreadyAggValue && columnToUse.getAggFunc() === funcName,
+                checked: columnIsAlreadyAggValue && columnToUse.aggFunc === funcName,
             });
         }
     }

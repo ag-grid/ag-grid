@@ -14,7 +14,13 @@ import type {
     SortModelItem,
     SortOption,
 } from 'ag-grid-community';
-import { BeanStub, CellRangeType, _normalizeSortType, isColumnGroupAutoCol } from 'ag-grid-community';
+import {
+    BeanStub,
+    CellRangeType,
+    _normalizeSortType,
+    _resolveSortOptions,
+    isColumnGroupAutoCol,
+} from 'ag-grid-community';
 
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';
@@ -667,9 +673,14 @@ export class ChartDataModel extends BeanStub {
                     sort,
                     column,
                     type: _normalizeSortType(column.getSortDef()?.type),
+                    colComparator: undefined,
+                    leafComparator: undefined,
+                    descending: false,
+                    absolute: false,
                 });
             }
         });
+        _resolveSortOptions(sortOptions, this.beans.colModel);
         return sortOptions;
     }
 }

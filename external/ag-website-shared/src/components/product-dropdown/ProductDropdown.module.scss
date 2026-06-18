@@ -72,28 +72,6 @@
     margin-bottom: 2px;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(-0.5rem) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
 .customContent {
     position: absolute;
     top: 52px;
@@ -104,12 +82,21 @@
     background: var(--color-bg-primary);
     border: 1px solid var(--color-border-primary);
     box-shadow: var(--shadow-sm);
-    opacity: 0;
     z-index: 2;
+    // Closed (resting) state. Opening flips these via the parent `.open`
+    // class — opacity, translate and scale animate. The same transitions
+    // also play in reverse on close, so hover-out mirrors hover-in.
+    // `visibility` is delayed until the fade-out finishes so the dropdown
+    // is removed from the accessibility tree without snap-cutting the
+    // visual transition.
+    opacity: 0;
     transform: translateY(10px) scale(0.95);
+    visibility: hidden;
+    pointer-events: none;
     transition:
         opacity 0.15s ease,
-        transform 0.15s ease;
+        transform 0.15s ease,
+        visibility 0s linear 0.15s;
 
     #{$selector-darkmode}:has([data-is-homepage='false']) &,
     #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
@@ -119,14 +106,44 @@
     @media screen and (min-width: $breakpoint-hero-small) {
         top: 100%;
         left: 0;
-        width: 380px;
+        // Fixed width gives each product row enough room for its title and
+        // description without truncation.
+        width: 400px;
+    }
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.columnHeading {
+    padding: $spacing-size-1 $spacing-size-2 $spacing-size-2;
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-fg-tertiary);
+
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
+        color: var(--color-fg-secondary);
     }
 }
 
 .customMenu.open .customContent {
-    animation: fadeInUp 0.15s ease-in-out;
     opacity: 1;
     transform: translateY(0) scale(1);
+    visibility: visible;
+    pointer-events: auto;
+    // Override the closed-state visibility delay so the dropdown becomes
+    // interactive immediately on open while keeping the same fade/scale
+    // duration on the way in.
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease,
+        visibility 0s linear 0s;
 }
 
 .productTitle {
@@ -147,6 +164,7 @@
 
 .itemsWrapper {
     display: flex;
+    align-items: center;
     padding: 8px;
     border-radius: var(--radius-md);
     transition: 0.5s all;
@@ -159,14 +177,81 @@
 }
 
 .placeholderIcon {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
     background: var(--color-util-brand-100);
-    padding: 12px;
     border-radius: var(--radius-md);
+    // Centre the SVG inside the perfectly-square 48px tile rather than
+    // relying on padding + intrinsic SVG sizing. This keeps the tile a
+    // clean square regardless of how the SVG was authored (24×24, 32×32,
+    // viewBox offsets, etc.) and matches the AG product tiles exactly.
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    // Light/dark variants are nested here so `.placeholderIcon .iconLight`
+    // (specificity 0,2,0) beats the per-svg sizing rule above
+    // (`.placeholderIcon svg`, 0,1,1) which would otherwise force both
+    // SVGs to `display: block` and stack the wrong variant on top.
+    .iconLight {
+        display: block;
+
+        #{$selector-darkmode}:has([data-is-homepage='false']) &,
+        #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
+            display: none;
+        }
+    }
+
+    .iconDark {
+        display: none;
+
+        #{$selector-darkmode}:has([data-is-homepage='false']) &,
+        #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
+            display: block;
+        }
+    }
 
     #{$selector-darkmode}:has([data-is-homepage='false']) &,
     #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
         background: color-mix(in srgb, var(--color-fg-white), var(--color-bg-primary) 85%);
         box-shadow: var(--shadow-lg);
+    }
+}
+
+// Bryntum product icons already have their own gradient/contrast, so the
+// AG-style square tile around them reads as visual noise. Drop the chrome
+// and let the icon sit directly on the dropdown surface in both schemes.
+.placeholderIconBryntum {
+    background: transparent;
+    box-shadow: none;
+
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
+        background: transparent;
+        box-shadow: none;
+    }
+}
+
+// Inline category heading rendered between two items in the same column
+// (e.g. the "Bryntum" divider between AG Studio and Bryntum Gantt). Reuses
+// the columnHeading typography but adds a top spacer so it visually
+// separates the preceding item from the new category, a left padding that
+// matches the 8px itemsWrapper padding plus 12px so the heading lines up
+// under the product titles in the adjacent column, and a slightly lighter
+// foreground so it reads quieter than a top-of-column heading.
+.inlineHeading {
+    margin-top: $spacing-size-2;
+    color: var(--color-fg-quinary);
+
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
+        color: var(--color-fg-quinary);
     }
 }
 
@@ -178,21 +263,5 @@
     #{$selector-darkmode}:has([data-is-homepage='false']) &,
     #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
         background: color-mix(in srgb, var(--color-fg-white), var(--color-bg-primary) 85%);
-    }
-}
-
-.iconLight {
-    #{$selector-darkmode}:has([data-is-homepage='false']) &,
-    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
-        display: none;
-    }
-}
-
-.iconDark {
-    display: none;
-
-    #{$selector-darkmode}:has([data-is-homepage='false']) &,
-    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
-        display: block;
     }
 }

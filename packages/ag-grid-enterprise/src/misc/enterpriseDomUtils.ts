@@ -1,5 +1,6 @@
+import { _getRootNode, _isBrowserFirefox, _isBrowserSafari } from 'ag-stack';
+
 import type { BeanCollection } from 'ag-grid-community';
-import { _getRootNode, _isBrowserFirefox, _isBrowserSafari } from 'ag-grid-community';
 
 function _getTextSelectionRanges(beans: BeanCollection): { selection: Selection | null; ranges: Range[] } {
     const rootNode = _getRootNode(beans);

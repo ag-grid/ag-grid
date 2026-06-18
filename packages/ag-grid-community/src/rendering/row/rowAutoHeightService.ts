@@ -1,7 +1,5 @@
-import { _getDocument } from '../../agStack/utils/document';
-import { _getElementSize, _observeResize } from '../../agStack/utils/dom';
-import { _debounce } from '../../agStack/utils/function';
-import type { ColumnCollections } from '../../columns/columnModel';
+import { _debounce, _getDocument, _getElementSize, _observeResize } from 'ag-stack';
+
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
@@ -201,8 +199,8 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         return true;
     }
 
-    public setAutoHeightActive(cols: ColumnCollections): void {
-        this.active = cols.list.some((col) => col.isVisible() && col.isAutoHeight());
+    public setAutoHeightActive(active: boolean): void {
+        this.active = active;
     }
 
     /**

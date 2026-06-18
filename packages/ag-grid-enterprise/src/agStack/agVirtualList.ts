@@ -1,18 +1,17 @@
 import type {
-    _AgComponent,
-    _AgComponentEvent,
-    _AgCoreBeanCollection,
-    _AgElementParams,
-    _AgStylesChangedEvent,
-    _BaseEvents,
-    _BaseProperties,
-    _IPropertiesService,
-    _StopPropagationCallbacks,
-} from 'ag-grid-community';
+    AgComponent,
+    AgComponentEvent,
+    AgCoreBeanCollection,
+    AgElementParams,
+    AgStylesChangedEvent,
+    BaseEvents,
+    BaseProperties,
+    IPropertiesService,
+    StopPropagationCallbacks,
+} from 'ag-stack';
 import {
-    KeyCode,
+    AgTabGuardComp,
     RefPlaceholder,
-    _AgTabGuardComp,
     _createAgElement,
     _getAriaPosInSet,
     _observeResize,
@@ -22,7 +21,9 @@ import {
     _setAriaRole,
     _setAriaSetSize,
     _waitUntil,
-} from 'ag-grid-community';
+} from 'ag-stack';
+
+import { KeyCode } from 'ag-grid-community';
 
 import agVirtualListCSS from './agVirtualList.css';
 import type { VirtualListModel } from './iVirtualList';
@@ -36,7 +37,7 @@ export interface VirtualListParams<C> {
 
 function getVirtualListTemplate<TComponentSelectorType extends string>(
     cssIdentifier: string
-): _AgElementParams<TComponentSelectorType> {
+): AgElementParams<TComponentSelectorType> {
     return {
         tag: 'div',
         cls: `ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport`,
@@ -52,21 +53,21 @@ function getVirtualListTemplate<TComponentSelectorType extends string>(
 }
 
 export class AgVirtualList<
-    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends _BaseProperties,
-    TGlobalEvents extends _BaseEvents,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
-    C extends _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> = _AgComponent<
+    C extends AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> = AgComponent<
         TBeanCollection,
         TProperties,
         TGlobalEvents,
         any
     >,
     V = any,
-    TEventType extends string = _AgComponentEvent,
-> extends _AgTabGuardComp<
+    TEventType extends string = AgComponentEvent,
+> extends AgTabGuardComp<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -93,7 +94,7 @@ export class AgVirtualList<
     private readonly moveItemCallback?: (item: C, isUp: boolean) => void;
 
     constructor(
-        private readonly stopPropagationCallbacks?: _StopPropagationCallbacks,
+        private readonly stopPropagationCallbacks?: StopPropagationCallbacks,
         params?: VirtualListParams<C>
     ) {
         super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
@@ -127,7 +128,7 @@ export class AgVirtualList<
         this.addManagedEventListeners({ stylesChanged: this.onStylesChanged.bind(this) });
     }
 
-    private onStylesChanged(e: _AgStylesChangedEvent): void {
+    private onStylesChanged(e: AgStylesChangedEvent): void {
         if (e.listItemHeightChanged) {
             this.rowHeight = this.getItemHeight();
             this.refresh();

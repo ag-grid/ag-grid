@@ -1,7 +1,6 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import type { IComponent } from '../agStack/interfaces/iComponent';
-import type { IDragAndDropImage } from '../agStack/interfaces/iDragAndDrop';
-import { _clearElement } from '../agStack/utils/dom';
+import type { IComponent, IDragAndDropImage } from 'ag-stack';
+import { RefPlaceholder, _clearElement } from 'ag-stack';
+
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
@@ -22,19 +21,12 @@ export interface IDragAndDropImageComponent<
 >
     extends IComponent<TParams>, IDragAndDropImage {}
 
-// the wrapper div has no class - the drag and drop service adds the theme class to it
 const DragAndDropElement: ElementParams = {
     tag: 'div',
+    cls: 'ag-dnd-ghost ag-unselectable',
     children: [
-        {
-            tag: 'div',
-            ref: 'eGhost',
-            cls: 'ag-dnd-ghost ag-unselectable',
-            children: [
-                { tag: 'span', ref: 'eIcon', cls: 'ag-dnd-ghost-icon ag-shake-left-to-right' },
-                { tag: 'div', ref: 'eLabel', cls: 'ag-dnd-ghost-label' },
-            ],
-        },
+        { tag: 'span', ref: 'eIcon', cls: 'ag-dnd-ghost-icon ag-shake-left-to-right' },
+        { tag: 'div', ref: 'eLabel', cls: 'ag-dnd-ghost-label' },
     ],
 };
 export class DragAndDropImageComponent extends Component implements IDragAndDropImageComponent<any, any> {
@@ -42,7 +34,6 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
 
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
-    private readonly eGhost: HTMLElement = RefPlaceholder;
 
     private dropIconMap: { [key in DragAndDropIcon]: Element };
 
@@ -68,12 +59,7 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
 
     public init(params: IDragAndDropImageParams): void {
         this.dragSource = params.dragSource;
-
         this.setTemplate(DragAndDropElement);
-        // also apply theme class to the ghost element for backwards compatibility
-        // with themes that use .ag-theme-classname.ag-dnd-ghost, which used to be
-        // required before the theme class was also set on the wrapper.
-        this.beans.environment.applyThemeClasses(this.eGhost);
     }
 
     public override destroy(): void {
@@ -82,7 +68,8 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
     }
 
     public setIcon(iconName: DragAndDropIcon | null, shake: boolean): void {
-        const { eGhost, eIcon, dragSource, dropIconMap, gos } = this;
+        const { eIcon, dragSource, dropIconMap, gos } = this;
+        const eGhost = this.getGui();
 
         _clearElement(eIcon);
 

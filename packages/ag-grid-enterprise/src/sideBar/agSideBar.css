@@ -23,8 +23,10 @@
 }
 
 .ag-tool-panel-external {
+    width: 100%;
     display: flex;
     flex-direction: row;
+    background-color: var(--ag-wrapper-background-color);
 }
 
 :where(.ag-tool-panel-external) .ag-tool-panel-wrapper {

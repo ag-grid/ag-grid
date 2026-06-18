@@ -1,0 +1,1168 @@
+@use 'design-system' as *;
+
+.page {
+    background-color: var(--color-bg-primary);
+    color: var(--color-fg-primary);
+}
+
+.section {
+    padding: $spacing-size-16 0;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        padding: $spacing-size-24 0;
+    }
+}
+
+.sectionInner {
+    margin: 0 auto;
+    padding: 0 var(--layout-horizontal-margins);
+    max-width: 1240px;
+}
+
+.sectionInnerWide {
+    margin: 0 auto;
+    padding: 0 var(--layout-horizontal-margins);
+    max-width: var(--layout-max-width);
+}
+
+.sectionBgSecondary {
+    background-color: var(--color-brand-50);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-gray-100);
+    }
+}
+
+.sectionBgWhite {
+    background-color: var(--color-white);
+    color: var(--color-gray-900);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-gray-100);
+        color: var(--color-fg-primary);
+    }
+}
+
+.hero {
+    background: linear-gradient(180deg, var(--color-bg-site-header) 0%, var(--color-brand-700) 100%);
+    color: var(--color-white);
+    padding: $spacing-size-16 0 $spacing-size-20;
+
+    #{$selector-darkmode} & {
+        background: linear-gradient(180deg, var(--color-util-gray-50) 0%, var(--color-util-gray-100) 100%);
+        border-bottom: 1px solid var(--color-util-gray-300);
+    }
+}
+
+.heroInner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-size-10;
+    align-items: center;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        grid-template-columns: 1.1fr 1fr;
+        gap: $spacing-size-16;
+    }
+}
+
+.heroEyebrow {
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-semibold);
+    color: var(--color-white);
+    opacity: 0.85;
+    margin-bottom: $spacing-size-3;
+}
+
+// Small brand-blue label rendered above non-hero section headings. Matches
+// the eyebrow style used on the AG Grid homepage `LandingPageSection`
+// (`.tag`) so campaign sections sit consistently with the rest of the site.
+.sectionEyebrow {
+    display: block;
+    margin: 0 0 $spacing-size-2;
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    line-height: var(--text-lh-base);
+    color: var(--color-util-brand-600);
+
+    #{$selector-darkmode} & {
+        color: var(--color-util-brand-900);
+    }
+}
+
+// For sections whose heading is centred (`ExamplesGridSection`, `BrandsSection`).
+.sectionEyebrowCentered {
+    text-align: center;
+}
+
+.heroHeading {
+    font-size: 48px;
+    line-height: var(--text-lh-3xl);
+    color: var(--color-white);
+    margin: 0 0 $spacing-size-4;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        font-size: clamp(48px, 5.5vw, 72px);
+    }
+}
+
+.heroBody {
+    font-size: var(--text-fs-lg);
+    line-height: var(--text-lh-base);
+    color: var(--color-white);
+    opacity: 0.92;
+    margin-bottom: $spacing-size-8;
+
+    p {
+        margin-bottom: $spacing-size-3;
+    }
+
+    a {
+        color: var(--color-white);
+        text-decoration: none;
+    }
+}
+
+.heroCtas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $spacing-size-4;
+
+    a {
+        --icon-size: 1.1em;
+    }
+
+    // Primary hero CTA (e.g. "Browse Examples"): white pill with brand-blue
+    // text + chevron, no visible border so it reads cleanly on the dark hero.
+    a:first-child {
+        --icon-color: var(--color-link);
+
+        color: var(--color-link);
+        border-color: transparent;
+
+        &:hover {
+            color: var(--color-link-hover);
+        }
+
+        // Dark mode flips the primary CTA to a solid white pill with dark
+        // text and chevron so it still reads as the dominant action against
+        // the near-black hero gradient.
+        #{$selector-darkmode} & {
+            --icon-color: var(--color-gray-900);
+
+            background-color: var(--color-white);
+            color: var(--color-gray-900);
+            border-color: transparent;
+
+            &:hover {
+                background-color: var(--color-white);
+                color: var(--color-gray-900);
+                border-color: transparent;
+                opacity: 0.9;
+            }
+        }
+    }
+
+    // Subordinate hero CTA (e.g. "Get the Trial" / "Purchase Now"): translucent
+    // white pill with white text + chevron, sat against the dark hero gradient.
+    a + a {
+        --icon-color: var(--color-white);
+
+        background-color: rgb(255 255 255 / 0.12);
+        color: var(--color-white);
+        border-color: transparent;
+
+        &:hover {
+            background-color: rgb(255 255 255 / 0.2);
+            color: var(--color-white);
+            border-color: transparent;
+        }
+    }
+}
+
+.heroMedia {
+    display: flex;
+    justify-content: center;
+
+    svg,
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+.heroMedia :global(svg) {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+}
+
+.textMedia {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-size-10;
+    align-items: start;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        grid-template-columns: 1fr 1fr;
+        gap: $spacing-size-16;
+    }
+}
+
+.sectionAltBg {
+    background: linear-gradient(180deg, var(--color-brand-50) 0%, var(--color-bg-primary) 100%);
+
+    #{$selector-darkmode} & {
+        background: linear-gradient(180deg, var(--color-util-gray-50) 0%, var(--color-util-gray-100) 100%);
+    }
+}
+
+.textMediaSingle {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+
+    .textMediaCtas {
+        justify-content: center;
+    }
+}
+
+.textMediaReverse {
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        .textMediaCopy {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .textMediaVisual {
+            grid-column: 1;
+            grid-row: 1;
+        }
+    }
+}
+
+.textMediaCopy {
+    h2 {
+        font-size: var(--text-fs-2xl);
+        line-height: var(--text-lh-3xl);
+        margin: 0 0 $spacing-size-4;
+    }
+
+    p {
+        font-size: var(--text-fs-base);
+        line-height: var(--text-lh-base);
+        color: var(--color-fg-secondary);
+        margin-bottom: $spacing-size-3;
+    }
+
+    ul {
+        list-style: disc;
+        list-style-position: inside;
+        margin: 0 0 $spacing-size-4;
+        padding-left: 0;
+        color: var(--color-fg-secondary);
+        text-align: left;
+    }
+
+    li {
+        margin-bottom: $spacing-size-2;
+        text-align: left;
+        padding-left: 0;
+    }
+}
+
+// Inline links inside `body_html` content. Scoped to `.bodyText` (added to
+// the body-html wrapper div) rather than to `.textMediaCopy a`, so it doesn't
+// override the styling of CTA buttons (e.g. `.button-tertiary`) that are
+// also rendered as descendants of `.textMediaCopy`.
+.bodyText {
+    a {
+        color: var(--color-link);
+        font-weight: var(--text-semibold);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--color-link-hover);
+        }
+    }
+
+    // Bryntum's exported body_html sometimes nests `<span style="font-weight: 400;">`
+    // inside anchors; force the link's bolder weight to win over the inline style.
+    a span {
+        font-weight: inherit !important;
+    }
+}
+
+.textMediaCtas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $spacing-size-3;
+    margin-top: $spacing-size-4;
+
+    a {
+        --icon-size: 1.1em;
+    }
+}
+
+.textMediaVisual {
+    display: flex;
+    justify-content: center;
+}
+
+.mediaShadow {
+    border-radius: var(--radius-lg);
+    box-shadow:
+        0 12px 32px rgb(0 0 0 / 0.12),
+        0 4px 12px rgb(0 0 0 / 0.06);
+
+    #{$selector-darkmode} & {
+        box-shadow:
+            0 12px 32px rgb(0 0 0 / 0.4),
+            0 4px 12px rgb(0 0 0 / 0.2);
+    }
+}
+
+.mediaImage {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.mediaPlaceholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-fg-tertiary);
+    font-size: var(--text-fs-sm);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-gray-100);
+    }
+}
+
+.partnership {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.introVideo {
+    max-width: 1024px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-bg-tertiary);
+
+    iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+}
+
+.partnershipHeading {
+    font-size: var(--text-fs-2xl);
+    line-height: var(--text-lh-3xl);
+    margin: 0 0 $spacing-size-4;
+}
+
+.partnershipBody {
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-base);
+    color: var(--color-fg-secondary);
+
+    p {
+        margin-bottom: $spacing-size-3;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    a {
+        color: var(--color-link);
+        font-weight: var(--text-semibold);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--color-link-hover);
+        }
+    }
+}
+
+.partnershipLogos {
+    margin-bottom: $spacing-size-6;
+}
+
+.partnershipLogoLight,
+.partnershipLogoDark {
+    max-width: 360px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+.partnershipLogoLight {
+    display: block;
+
+    #{$selector-darkmode} & {
+        display: none;
+    }
+}
+
+.partnershipLogoDark {
+    display: none;
+
+    #{$selector-darkmode} & {
+        display: block;
+    }
+}
+
+/* Embedded mini-demo (text + small Bryntum widget side-by-side). */
+.miniDemo {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-size-10;
+    align-items: start;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        grid-template-columns: 1fr 1.3fr;
+        gap: $spacing-size-16;
+    }
+}
+
+.miniDemoReverse {
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        grid-template-columns: 1.3fr 1fr;
+
+        .miniDemoFrame {
+            order: 1;
+        }
+
+        .miniDemoCopy {
+            order: 2;
+        }
+    }
+}
+
+.miniDemoStacked {
+    grid-template-columns: 1fr;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.miniDemoCopy {
+    h2 {
+        font-size: var(--text-fs-2xl);
+        line-height: var(--text-lh-3xl);
+        margin: 0 0 $spacing-size-4;
+    }
+
+    p {
+        font-size: var(--text-fs-base);
+        line-height: var(--text-lh-base);
+        color: var(--color-fg-secondary);
+        margin-bottom: $spacing-size-3;
+    }
+
+    :global(.pre-title) {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: var(--text-fs-sm);
+        font-weight: var(--text-semibold);
+        color: var(--color-fg-tertiary);
+        margin-bottom: $spacing-size-2;
+    }
+}
+
+.miniDemoFrame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-secondary);
+    box-shadow: var(--shadow-md);
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        aspect-ratio: 16 / 11;
+        min-height: 420px;
+    }
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-gray-50);
+        border-color: var(--color-util-gray-300);
+    }
+
+    :global(.bryntum-mini-demo-mount) {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.languagesHeading {
+    text-align: center;
+    font-size: var(--text-fs-xl);
+    margin-bottom: $spacing-size-2;
+}
+
+.languagesBody {
+    text-align: center;
+    color: var(--color-fg-secondary);
+    margin: 0;
+}
+
+.liveDemo {
+    text-align: center;
+
+    h2 {
+        font-size: var(--text-fs-2xl);
+        margin-bottom: $spacing-size-3;
+    }
+}
+
+.liveDemoSubheading {
+    margin: 0 auto $spacing-size-6;
+    max-width: 720px;
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-base);
+    color: var(--color-fg-secondary);
+}
+
+.liveDemoPlaceholder {
+    max-width: 960px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-secondary);
+    border: 1px dashed var(--color-border-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-fg-tertiary);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-gray-100);
+        border-color: var(--color-util-gray-300);
+    }
+}
+
+.examplesGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-size-6;
+    margin: $spacing-size-10 auto 0;
+    max-width: 1080px;
+
+    @media screen and (min-width: $breakpoint-site-header-medium) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.exampleCard {
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--color-fg-primary);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-gray-50);
+        border-color: var(--color-util-gray-300);
+    }
+}
+
+.exampleCardImage {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    display: block;
+}
+
+.exampleCardBody {
+    padding: $spacing-size-4;
+}
+
+.exampleCardLabel {
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-semibold);
+    margin: 0;
+}
+
+.exampleCardDescription {
+    margin: $spacing-size-1 0 0;
+    font-size: var(--text-fs-sm);
+    line-height: var(--text-lh-base);
+    color: var(--color-fg-secondary);
+}
+
+.sectionHeading {
+    text-align: center;
+    font-size: var(--text-fs-2xl);
+    margin: 0 0 $spacing-size-4;
+}
+
+.sectionSubHeading {
+    text-align: center;
+    color: var(--color-fg-secondary);
+    margin: 0 auto $spacing-size-10;
+    max-width: 720px;
+}
+
+.brandsHeading {
+    text-align: center;
+    font-size: var(--text-fs-xl);
+    color: var(--color-fg-secondary);
+    margin-bottom: $spacing-size-8;
+}
+
+.brandsRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-size-4 $spacing-size-6;
+    max-width: 880px;
+    margin: 0 auto;
+
+    a {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    :global(svg) {
+        max-width: 120px;
+        height: auto;
+        opacity: 0.7;
+        filter: grayscale(1);
+        transition:
+            opacity 0.2s ease,
+            filter 0.2s ease;
+    }
+
+    a:hover :global(svg) {
+        opacity: 1;
+        filter: grayscale(0);
+    }
+
+    #{$selector-darkmode} & {
+        :global(svg) {
+            filter: brightness(0) invert(1);
+            opacity: 0.55;
+        }
+
+        a:hover :global(svg) {
+            filter: brightness(0) invert(1);
+            opacity: 1;
+        }
+    }
+}
+
+.ctaOuter {
+    padding: $spacing-size-20 0 $spacing-size-24;
+}
+
+.heroCtas a,
+.textMediaCtas a,
+.ctaButtons a {
+    text-decoration: none;
+
+    // Slide the trailing chevron rightwards on hover so every CTA gets a
+    // small "go" cue. Mirrors the pattern used on the AG Grid homepage hero.
+    :global(.icon) {
+        transition: transform $transition-default-timing;
+    }
+
+    &:hover :global(.icon) {
+        transform: translate(3px, 0);
+    }
+}
+
+.ctaSection {
+    text-align: center;
+
+    h2 {
+        font-size: var(--text-fs-3xl);
+        margin-bottom: $spacing-size-8;
+    }
+}
+
+.ctaButtons {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: $spacing-size-4;
+    font-size: var(--text-fs-lg);
+
+    a {
+        --icon-size: 1.1em;
+    }
+}
+
+// =============================================================================
+// Hero SVG animations
+//
+// Each Bryntum campaign hero ships with a bespoke SVG illustrating the product.
+// We animate them on page load so the hero feels alive without JavaScript, and
+// so each illustration tells its own story (tasks building, schedules rolling
+// in, calendar events arriving, kanban cards landing in their columns).
+//
+// Animations run a single time forward and are scoped via `:global()` because
+// SVGs are rendered inline as descendants of `.heroMedia`. Users with the
+// reduced-motion preference get every animation cancelled.
+// =============================================================================
+
+@keyframes bryntumFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes bryntumFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bryntumFadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bryntumSlideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-48px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes bryntumPopIn {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    60% {
+        transform: scale(1.18);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes bryntumDrawLine {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes bryntumGrowX {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@keyframes bryntumDiamondIn {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(-135deg);
+    }
+    70% {
+        transform: scale(1.1) rotate(10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+    }
+}
+
+// Fade in to a translucent end state. The Scheduler hero ships with a white
+// "elapsed time" overlay rect baked at `opacity="0.25"` in the SVG; we ramp the
+// element opacity up to that same value so the underlying task bars and labels
+// remain legible after the animation finishes (a generic fade-to-1 would leave
+// the overlay solid white and hide the text behind it).
+@keyframes bryntumFadeInOverlay {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 0.25;
+    }
+}
+
+// ----- Gantt -----------------------------------------------------------------
+//
+// Sequential project plan reveal: the group bar wipes in left-to-right, tasks
+// slide in from the left in row order, their progress fills wipe to the right,
+// dependency arrows draw between connected tasks, arrowheads pop on, and the
+// final milestone diamond rotates and pops into place.
+
+.heroMedia :global(svg.gantt) {
+    :global(.gantt-group-one) {
+        transform-box: fill-box;
+        transform-origin: left center;
+        animation: bryntumGrowX 0.55s ease-out 0.1s both;
+    }
+
+    :global(.gantt-apache),
+    :global(.gantt-ports),
+    :global(.gantt-firewall) {
+        animation: bryntumSlideInLeft 0.55s ease-out both;
+    }
+    :global(.gantt-apache) {
+        animation-delay: 0.35s;
+    }
+    :global(.gantt-ports) {
+        animation-delay: 0.55s;
+    }
+    :global(.gantt-firewall) {
+        animation-delay: 0.75s;
+    }
+
+    :global(.gantt-ports-progress),
+    :global(.gantt-firewall-progress) {
+        transform-box: fill-box;
+        transform-origin: left center;
+        animation: bryntumGrowX 0.6s ease-out both;
+    }
+    :global(.gantt-ports-progress) {
+        animation-delay: 1s;
+    }
+    :global(.gantt-firewall-progress) {
+        animation-delay: 1.2s;
+    }
+
+    :global(.gantt-stroke-apache-ports),
+    :global(.gantt-stroke-apache-ports-light),
+    :global(.gantt-stroke-apache-ports-fake),
+    :global(.gantt-stroke-apache-firewall),
+    :global(.gantt-stroke-apache-firewall-light),
+    :global(.gantt-stroke-ports-confirm),
+    :global(.gantt-stroke-ports-confirm-light) {
+        stroke-dasharray: 260;
+        stroke-dashoffset: 260;
+        animation: bryntumDrawLine 0.7s ease-out both;
+    }
+    :global(.gantt-stroke-apache-ports),
+    :global(.gantt-stroke-apache-ports-light),
+    :global(.gantt-stroke-apache-ports-fake) {
+        animation-delay: 1.4s;
+    }
+    :global(.gantt-stroke-apache-firewall),
+    :global(.gantt-stroke-apache-firewall-light) {
+        animation-delay: 1.6s;
+    }
+    :global(.gantt-stroke-ports-confirm),
+    :global(.gantt-stroke-ports-confirm-light) {
+        animation-delay: 1.85s;
+    }
+
+    :global(.gantt-arrow-apache-ports),
+    :global(.gantt-arrow-apache-firewall),
+    :global(.gantt-arrow-ports-confirm) {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: bryntumPopIn 0.4s ease-out both;
+    }
+    :global(.gantt-arrow-apache-ports) {
+        animation-delay: 2.05s;
+    }
+    :global(.gantt-arrow-apache-firewall) {
+        animation-delay: 2.2s;
+    }
+    :global(.gantt-arrow-ports-confirm) {
+        animation-delay: 2.4s;
+    }
+
+    :global(.gantt-confirm-diamond) {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: bryntumDiamondIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 2.55s both;
+    }
+    :global(.gantt-confirm-text) {
+        animation: bryntumFadeIn 0.4s ease-out 2.85s both;
+    }
+}
+
+// ----- Scheduler -------------------------------------------------------------
+//
+// The vertical "now" timeline draws downward, the star at its head pops in,
+// then resource tasks slide in from the left top-to-bottom. Finally the soft
+// "elapsed time" overlay fades over the leftmost tasks.
+
+.heroMedia :global(svg.scheduler) {
+    :global(.scheduler-progress-bar) {
+        stroke-dasharray: 480;
+        stroke-dashoffset: 480;
+        animation: bryntumDrawLine 0.9s ease-out 0.1s both;
+    }
+
+    :global(.scheduler-progress-star) {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: bryntumPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+    }
+
+    :global(.scheduler-strategy),
+    :global(.scheduler-setup),
+    :global(.scheduler-website),
+    :global(.scheduler-test),
+    :global(.scheduler-implementation) {
+        animation: bryntumSlideInLeft 0.55s ease-out both;
+    }
+    :global(.scheduler-strategy) {
+        animation-delay: 0.7s;
+    }
+    :global(.scheduler-setup) {
+        animation-delay: 0.85s;
+    }
+    :global(.scheduler-website) {
+        animation-delay: 1s;
+    }
+    :global(.scheduler-test) {
+        animation-delay: 1.15s;
+    }
+    :global(.scheduler-implementation) {
+        animation-delay: 1.3s;
+    }
+
+    :global(.scheduler-progress-block) {
+        animation: bryntumFadeInOverlay 0.6s ease-out 1.6s both;
+    }
+}
+
+// ----- Scheduler Pro ---------------------------------------------------------
+//
+// Resources (avatar + name on the left rail) fade up row-by-row, then their
+// task blocks slide in from the left a beat later. Cross-resource dependency
+// arrows draw between tasks once both rows have settled.
+
+.heroMedia :global(svg.schedulerpro) {
+    // The Scheduler Pro hero packs in more rows and longer labels than the
+    // other Bryntum hero illustrations, so the default 600px cap leaves the
+    // text feeling cramped. Allow it to render slightly larger.
+    max-width: 720px;
+
+    :global(.schedulerpro-robert-name),
+    :global(.schedulerpro-lindsey-name),
+    :global(.schedulerpro-christopher-name),
+    :global(.schedulerpro-anika-name) {
+        animation: bryntumFadeInUp 0.5s ease-out both;
+    }
+    :global(.schedulerpro-robert-name) {
+        animation-delay: 0.2s;
+    }
+    :global(.schedulerpro-lindsey-name) {
+        animation-delay: 0.4s;
+    }
+    :global(.schedulerpro-christopher-name) {
+        animation-delay: 0.6s;
+    }
+    :global(.schedulerpro-anika-name) {
+        animation-delay: 0.8s;
+    }
+
+    :global(.schedulerpro-robert-meeting1),
+    :global(.schedulerpro-robert-meeting2),
+    :global(.schedulerpro-lindsey),
+    :global(.schedulerpro-christopher),
+    :global(.schedulerpro-anika) {
+        animation: bryntumSlideInLeft 0.5s ease-out both;
+    }
+    :global(.schedulerpro-robert-meeting1) {
+        animation-delay: 0.55s;
+    }
+    :global(.schedulerpro-robert-meeting2) {
+        animation-delay: 0.7s;
+    }
+    :global(.schedulerpro-lindsey) {
+        animation-delay: 0.75s;
+    }
+    :global(.schedulerpro-christopher) {
+        animation-delay: 0.95s;
+    }
+    :global(.schedulerpro-anika) {
+        animation-delay: 1.15s;
+    }
+
+    :global(.schedulerpro-robert-stroke) {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+        animation: bryntumDrawLine 0.45s ease-out 0.85s both;
+    }
+    :global(.schedulerpro-robert-arrow) {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: bryntumPopIn 0.35s ease-out 1.25s both;
+    }
+    :global(.schedulerpro-lindsey-stroke) {
+        stroke-dasharray: 240;
+        stroke-dashoffset: 240;
+        animation: bryntumDrawLine 0.75s ease-out 1.45s both;
+    }
+    :global(.schedulerpro-lindsey-arrow) {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: bryntumPopIn 0.4s ease-out 2.15s both;
+    }
+    :global(.schedulerpro-lindsey-stroke-fake) {
+        animation: bryntumFadeIn 0.4s ease-out 1.3s both;
+    }
+}
+
+// ----- Calendar --------------------------------------------------------------
+//
+// The week grid lines fade in first to set the canvas, day numbers cascade in,
+// the soft "today" indicator pops, then calendar events appear in reading
+// order across the month (top-left to bottom-right).
+
+.heroMedia :global(svg) :global(.cal-grid) {
+    animation: bryntumFadeIn 0.5s ease-out 0.05s both;
+}
+
+.heroMedia :global(svg) :global(.cal-days) {
+    animation: bryntumFadeIn 0.4s ease-out 0.4s both;
+}
+
+.heroMedia :global(svg) :global(.cal-today) {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: bryntumPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.7s both;
+}
+
+.heroMedia :global(svg) :global(.cal-event) {
+    animation: bryntumFadeInUp 0.5s ease-out both;
+}
+
+.heroMedia :global(svg) :global(.cal-event--1) {
+    animation-delay: 0.95s;
+}
+.heroMedia :global(svg) :global(.cal-event--2) {
+    animation-delay: 1.05s;
+}
+.heroMedia :global(svg) :global(.cal-event--3) {
+    animation-delay: 1.2s;
+}
+.heroMedia :global(svg) :global(.cal-event--4) {
+    animation-delay: 1.3s;
+}
+.heroMedia :global(svg) :global(.cal-event--5) {
+    animation-delay: 1.4s;
+}
+.heroMedia :global(svg) :global(.cal-event--6) {
+    animation-delay: 1.55s;
+}
+
+// ----- Task Board ------------------------------------------------------------
+//
+// Column headings (Requested / In Progress / Completed) fade in left-to-right,
+// then cards drop into their columns in reading order across rows so the board
+// fills from the top of column 1 across to column 3 row by row.
+
+.heroMedia :global(svg.task-board) {
+    :global(.board-text) {
+        animation: bryntumFadeInDown 0.4s ease-out both;
+    }
+    :global(.board-text:nth-of-type(1)) {
+        animation-delay: 0.1s;
+    }
+    :global(.board-text:nth-of-type(2)) {
+        animation-delay: 0.25s;
+    }
+    :global(.board-text:nth-of-type(3)) {
+        animation-delay: 0.4s;
+    }
+
+    :global(.board-block) {
+        animation: bryntumFadeInDown 0.5s ease-out both;
+    }
+    :global(.board-block--1) {
+        animation-delay: 0.55s;
+    } // Requested, row 1
+    :global(.board-block--5) {
+        animation-delay: 0.7s;
+    } // In progress, row 1
+    :global(.board-block--7) {
+        animation-delay: 0.85s;
+    } // Completed, row 1
+    :global(.board-block--2) {
+        animation-delay: 1s;
+    } // Requested, row 2
+    :global(.board-block--6) {
+        animation-delay: 1.15s;
+    } // In progress, row 2
+    :global(.board-block--8) {
+        animation-delay: 1.3s;
+    } // Completed, row 2
+    :global(.board-block--3) {
+        animation-delay: 1.45s;
+    } // Requested, row 3
+    :global(.board-block--9) {
+        animation-delay: 1.6s;
+    } // Completed, row 3
+    :global(.board-block--4) {
+        animation-delay: 1.75s;
+    } // Requested, row 4
+}
+
+// Disable every hero animation when the user opts out of motion. The cascade
+// is wide enough that we use `!important` to undo per-element rules above.
+@media (prefers-reduced-motion: reduce) {
+    .heroMedia :global(svg) *,
+    .heroMedia :global(svg) {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        stroke-dashoffset: 0 !important;
+    }
+}

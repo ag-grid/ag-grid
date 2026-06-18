@@ -1,4 +1,5 @@
-import { _exists } from '../agStack/utils/generic';
+import { _exists } from 'ag-stack';
+
 import { BeanStub } from '../context/beanStub';
 import type { RowNode } from '../entities/rowNode';
 import type { IDatasource } from '../interfaces/iDatasource';

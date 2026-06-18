@@ -49,23 +49,26 @@ There are two main APIs to read cell values but they differ in their default beh
 
 The table below shows the impact of the `from` parameter on the value that is returned. The first non-empty source reading left-to-right is used. The Aggregation column only applies to group rows with an `aggFunc`.
 
-| `from`             | Active Editor (if editing) | Pending Batch (if batching) | Aggregation (if present) | Committed Data |
-| ------------------ | -------------------------- | --------------------------- | ------------------------ | -------------- |
-| `'data'` (default) | —                          | —                           | Agg value                | Fallback       |
-| `'edit'`           | Used if present            | Used if no editor           | Agg value                | Fallback       |
-| `'batch'`          | —                          | Used if present             | Agg value                | Fallback       |
-| `'value'`          | —                          | —                           | Scalar (unwrapped)       | Fallback       |
-| `'data-raw'`       | —                          | —                           | —                        | Always used    |
+| `from`             | Active Editor (if editing) | Pending Batch (if batching) | Aggregation (if present) | Committed Data        |
+| ------------------ | -------------------------- | --------------------------- | ------------------------ | --------------------- |
+| `'data'` (default) | —                          | —                           | Agg value                | Fallback              |
+| `'edit'`           | Used if present            | Used if no editor           | Agg value                | Fallback              |
+| `'batch'`          | —                          | Used if present             | Agg value                | Fallback              |
+| `'value'`          | —                          | —                           | Scalar (unwrapped)       | Fallback              |
+| `'data-raw'`       | —                          | —                           | —                        | Always used           |
+| `'transformed'`    | Editor value, transformed  | Pending value, transformed  | Transformed agg value    | Fallback, transformed |
 
 **Aggregate Values**
 
 - **`'value'`** — same as `'data'`, but unwraps the aggregation result returned by `avg` and `count` to its scalar value.
 - **`'data-raw'`** — same as `'data'` but skips aggregation results (`rowNode.aggData`). For group rows the valueGetter or field value is returned instead, which is typically `undefined` since group rows do not hold leaf data.
+- **`'transformed'`** — same source precedence as `'edit'`, then applies the displayed [Show Values As](./aggregation-show-values-as/) value (e.g. a percentage of a total). Falls back to the raw edit-aware value when the column has no Show Values As mode.
 
 **Formula Cells (`allowFormula: true`)**
 
 - **`'data'` / `'value'`** — return the computed result.
 - **`'edit'` / `'batch'` / `'data-raw'`** — return the raw formula string (e.g. `"=A1*2"`).
+- **`'transformed'`** — resolves the computed result, then applies Show Values As.
 
 ### Example getDataValue()
 
@@ -95,11 +98,14 @@ groupRowNode.getDataValue('revenue', 'data-raw'); // undefined (skips aggData; g
 
 {% apiDocumentation source="grid-api/api.json" section="miscellaneous" names=["getCellValue"] /%}
 
-| `from`             | Active Editor   | Pending Batch     | Aggregation | Committed Data |
-| ------------------ | --------------- | ----------------- | ----------- | -------------- |
-| `'edit'` (default) | Used if present | Used if no editor | Agg value   | Fallback       |
-| `'batch'`          | —               | Used if present   | Agg value   | Fallback       |
-| `'data'`           | —               | —                 | Agg value   | Fallback       |
+| `from`             | Active Editor             | Pending Batch              | Aggregation           | Committed Data        |
+| ------------------ | ------------------------- | -------------------------- | --------------------- | --------------------- |
+| `'edit'` (default) | Used if present           | Used if no editor          | Agg value             | Fallback              |
+| `'batch'`          | —                         | Used if present            | Agg value             | Fallback              |
+| `'data'`           | —                         | —                          | Agg value             | Fallback              |
+| `'transformed'`    | Editor value, transformed | Pending value, transformed | Transformed agg value | Fallback, transformed |
+
+`'transformed'` uses the same edit-aware source precedence as `'edit'`, then applies the displayed [Show Values As](./aggregation-show-values-as/) value. It falls back to the raw edit-aware value when the column has no such mode. The other options return the raw value, unaffected by Show Values As.
 
 ### Example getCellValue()
 

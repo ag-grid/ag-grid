@@ -1,3 +1,5 @@
+import { _missing } from 'ag-stack';
+
 import type {
     FieldPickerValueSelectedEvent,
     ICellEditorParams,
@@ -6,7 +8,7 @@ import type {
     RichCellEditorValuesCallbackParams,
     RichSelectParams,
 } from 'ag-grid-community';
-import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _consoleError, _missing, _warn } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _consoleError, _warn } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 import type { RichSelectAsyncValuesSource } from './richSelectAsyncRequestsFeature';

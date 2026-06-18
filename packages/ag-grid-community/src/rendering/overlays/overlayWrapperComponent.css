@@ -25,7 +25,8 @@
 
 .ag-overlay-loading-wrapper,
 .ag-overlay-exporting-wrapper,
-.ag-overlay-modal-wrapper {
+.ag-overlay-modal-wrapper,
+.ag-overlay-file-input-wrapper {
     /* prevent interaction with grid while it's loading */
     pointer-events: all;
 }
@@ -38,4 +39,70 @@
     box-shadow: var(--ag-popup-shadow);
     padding: var(--ag-spacing);
     display: flex;
+}
+
+.ag-overlay-file-input-center {
+    background: var(--ag-background-color);
+    border: solid var(--ag-border-width) var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
+    box-shadow: var(--ag-popup-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--ag-spacing) * 2);
+    max-width: 420px;
+    padding: calc(var(--ag-spacing) * 2);
+}
+
+.ag-file-input-error-banner {
+    background: color-mix(in srgb, var(--ag-invalid-color) 10%, var(--ag-background-color));
+    color: var(--ag-invalid-color);
+    border-radius: var(--ag-border-radius);
+    padding: calc(var(--ag-spacing) * 0.75) calc(var(--ag-spacing) * 2);
+    width: 100%;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.ag-file-input-drop-zone {
+    border: dashed calc(var(--ag-border-width) * 2) var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
+    padding: calc(var(--ag-spacing) * 4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--ag-spacing);
+    width: 100%;
+}
+
+.ag-file-input-drop-zone-active {
+    border-color: var(--ag-accent-color);
+    background: var(--ag-row-hover-color);
+}
+
+.ag-file-input-processing {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--ag-spacing) * 0.75);
+    padding: calc(var(--ag-spacing) * 4);
+}
+
+.ag-file-input-text-row {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--ag-spacing) * 0.75);
+}
+
+.ag-file-input-text {
+    font-weight: 600;
+}
+
+.ag-file-input-browse {
+    cursor: pointer;
+    border: solid var(--ag-border-width) var(--ag-border-color);
+    background: transparent;
+    color: var(--ag-text-color);
+    border-radius: var(--ag-border-radius);
+    padding: calc(var(--ag-spacing) * 0.5) calc(var(--ag-spacing) * 2);
+    font: inherit;
 }

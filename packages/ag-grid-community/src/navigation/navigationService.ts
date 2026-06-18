@@ -1,7 +1,5 @@
-import { KeyCode } from '../agStack/constants/keyCode';
-import { _last } from '../agStack/utils/array';
-import { _throttle } from '../agStack/utils/function';
-import { _exists, _missing } from '../agStack/utils/generic';
+import { KeyCode, _exists, _last, _missing, _throttle } from 'ag-stack';
+
 import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -21,6 +19,7 @@ import type { RowPosition } from '../interfaces/iRowPosition';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { RowCtrl } from '../rendering/row/rowCtrl';
 import { _focusNextGridCoreContainer, _isHeaderFocusSuppressed } from '../utils/gridFocus';
+import { _clamp } from '../utils/number';
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -328,7 +327,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             currentIndex += step;
         }
 
-        return Math.max(0, Math.min(currentIndex, lastRowIndex));
+        return _clamp(currentIndex, 0, lastRowIndex);
     }
 
     private getViewportHeight(): number {

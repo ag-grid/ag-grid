@@ -13,6 +13,7 @@ export default [
     {
         ignores: [
             '.astro/',
+            'packages/', // gitignored copy of built grid packages, served to local examples
             '**/_examples/',
             'scripts/showcase-github/tmp/',
             '**/.angular',
@@ -20,6 +21,7 @@ export default [
             '**/systemjs.config.dev.js',
             '.playwright-network-cache/',
             '**/*.ics',
+            'public/**/*.css',
         ],
     },
     {

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+    <!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ -->
+    <defs>
+        <linearGradient id="bryntum-calendar-grad-feature" x1="12" y1="2" x2="12" y2="8" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#044B93" stop-opacity="0.69"/>
+            <stop offset="1" stop-color="#044B93"/>
+        </linearGradient>
+        <linearGradient id="bryntum-calendar-grad" x1="12" y1="10" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#044B93" stop-opacity="0.69"/>
+            <stop offset="1" stop-color="#044B93" stop-opacity="0.24"/>
+        </linearGradient>
+    </defs>
+    <path fill="url(#bryntum-calendar-grad)" d="M22 14v-2c0-.839 0-1.585-.013-2.25H2.013C2 10.415 2 11.161 2 12v2c0 3.771 0 5.657 1.172 6.828S6.229 22 10 22h4c3.771 0 5.657 0 6.828-1.172S22 17.771 22 14Z"/>
+    <path fill="url(#bryntum-calendar-grad-feature)" d="M7.75 2.5a.75.75 0 0 0-1.5 0v1.58c-1.44.115-2.384.397-3.078 1.092c-.695.694-.977 1.639-1.093 3.078h19.842c-.116-1.44-.398-2.384-1.093-3.078c-.694-.695-1.639-.977-3.078-1.093V2.5a.75.75 0 0 0-1.5 0v1.513C15.585 4 14.839 4 14 4h-4c-.839 0-1.585 0-2.25.013z"/>
+</svg>

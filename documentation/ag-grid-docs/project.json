@@ -100,10 +100,31 @@
         "production": {}
       }
     },
+    "preview:csp": {
+      "dependsOn": [
+        {
+          "target": "build"
+        }
+      ],
+      "command": "tsx scripts/csp/preview-csp.ts --port=${PORT}",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "lint": {
       "command": "eslint",
       "options": {
         "cwd": "{projectRoot}"
+      }
+    },
+    "generate-csp": {
+      "command": "tsx scripts/csp/generate-csp.ts",
+      "options": {
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": { "args": "--env staging" },
+        "production": { "args": "--env production" }
       }
     },
     "test": {

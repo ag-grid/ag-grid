@@ -231,6 +231,21 @@ describe('ag-grid overlays state', () => {
         expect(getGridApi('#myGrid')).toBeUndefined();
     });
 
+    test('api.getGridElement() returns the correct wrapping DOM element', () => {
+        const element = document.getElementById('myGrid')!;
+
+        const api = createMyGrid(undefined, element);
+
+        const gridElement = api.getGridElement();
+        const helperElement = getGridElement(api);
+
+        expect(gridElement).toBeDefined();
+        expect(gridElement!.parentElement).toBe(element);
+        expect(gridElement).toBe(helperElement);
+
+        api.destroy();
+    });
+
     test('can get gridApi reference from DOM node (React)', () => {
         cleanup();
 

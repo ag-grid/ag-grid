@@ -10,6 +10,7 @@
     "ColumnGroup": {
         "getColGroupDef": {},
         "getGroupId": {},
+        "getDisplayName": {},
         "getProvidedColumnGroup": {},
         "getChildren": {},
         "getDisplayedChildren": {},

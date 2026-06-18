@@ -1,12 +1,13 @@
-import { LocalEventService } from '../agStack/events/localEventService';
-import type { AgEvent } from '../agStack/interfaces/agEvent';
-import type { IAgEventEmitter } from '../agStack/interfaces/iEventEmitter';
-import { _exists, _missing } from '../agStack/utils/generic';
-import { _escapeString } from '../agStack/utils/string';
+import type { AgEvent, IAgEventEmitter } from 'ag-stack';
+import { LocalEventService, _escapeString } from 'ag-stack';
+
+import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
+import { updateSomeColumnState } from '../columns/columnStateUtils';
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType } from '../events';
+import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
     Column,
@@ -21,36 +22,57 @@ import type {
 } from '../interfaces/iColumn';
 import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _mergeDeep } from '../utils/mergeDeep';
+import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
+import { _mergedEqual } from '../utils/mergeDeep';
+import { _clamp } from '../utils/number';
 import { _warn } from '../validation/logging';
 import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type {
     AbstractColDef,
-    BaseColDefParams,
+    ColAggFunc,
     ColDef,
+    ColDefField,
+    ColSpanFunc,
     ColSpanParams,
     ColumnFunctionCallbackParams,
-    IAggFunc,
+    HeaderLocation,
+    RefData,
+    RowSpanFunc,
     RowSpanParams,
-    SortDef,
-    SortDirection,
-    SortType,
+    ValueFormatterFunc,
+    ValueGetterFunc,
 } from './colDef';
-
-const COL_DEF_DEFAULTS: Partial<ColDef> = {
-    resizable: true,
-    sortable: true,
-};
+import type {
+    AgShowValueAsResolved,
+    ShowValueAsConfigResolved,
+    ShowValueAsResolved,
+    ShowValueAsResult,
+} from './colDef-showValueAs';
 
 let instanceIdSequence = 0;
 export function getNextColInstanceId(): ColumnInstanceId {
     return instanceIdSequence++ as ColumnInstanceId;
 }
 
-export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col is AgColumn {
-    return col instanceof AgColumn;
-}
+export const isColumn = (col: Column | ColumnGroup | ProvidedColumnGroup): col is AgColumn => col instanceof AgColumn;
+
+/**
+ * Redirects a pivot result column to its underlying value column for non-group, non-pinned (leaf) rows,
+ * so value get/set reads the real source value. Pinned rows are excluded — their data is keyed by pivot
+ * column ID. Only the deliberate consumers (pivot edit, API reads, pivot aggregation) need this; the hot
+ * read path (`getValueFromData`) does not.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export const _resolvePivotColumnForRow = (column: AgColumn, rowNode: IRowNode): AgColumn => {
+    if (!rowNode.group && !rowNode.rowPinned) {
+        const pivotValueColumn = column.pivotValueColumn;
+        if (pivotValueColumn) {
+            return pivotValueColumn;
+        }
+    }
+    return column;
+};
 
 const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 const DEFAULT_ABSOLUTE_SORTING_ORDER: (SortDef | SortDirection)[] = [
@@ -59,17 +81,15 @@ const DEFAULT_ABSOLUTE_SORTING_ORDER: (SortDef | SortDirection)[] = [
     null,
 ];
 
-// Wrapper around a user provide column definition. The grid treats the column definition as ready only.
-// This class contains all the runtime information about a column, plus some logic (the definition has no logic).
-// This class implements both interfaces ColumnGroupChild and ProvidedColumnGroupChild as the class can
-// appear as a child of either the original tree or the displayed tree. However the relevant group classes
-// for each type only implements one, as each group can only appear in it's associated tree (eg ProvidedColumnGroup
-// can only appear in OriginalColumn tree).
+/** Origin of an `AgColumn`. `user` = application-supplied ColDef; others = grid-generated.
+ *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type ColKind = 'user' | 'auto-group' | 'selection' | 'row-number' | 'hierarchy';
+
+// Runtime wrapper around a (logic-free) column definition, holding all runtime state plus logic.
+// Child of either the original or the displayed tree; each group class implements only its own tree's interface.
 //
-// INTERNAL CALLERS: prefer direct property access (column.colDef, column.primary, column.rowGroupActive,
-// etc.) over the equivalent getter methods (getColDef(), isPrimary(), isRowGroupActive(), …) on hot paths.
-// The getters are kept for the public Column interface; internally the fields are public and reading them
-// directly avoids method-call indirection in tight loops (sort, filter, render).
+// INTERNAL CALLERS: on hot paths read public fields directly (column.colDef, …) rather than the
+// getters — the getters exist only for the public Column interface, direct reads avoid call indirection.
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgColumn<TValue = any>
     extends BeanStub<ColumnEventName>
@@ -77,63 +97,121 @@ export class AgColumn<TValue = any>
 {
     public readonly isColumn = true as const;
 
-    private frameworkEventListenerService?: IFrameworkEventListenerService<any, any>;
+    // framework (React) render key; also identifies old-vs-new cols when destroying unused ones
+    public readonly instanceId: ColumnInstanceId = getNextColInstanceId();
 
-    // used by React (and possibly other frameworks) as key for rendering. also used to
-    // identify old vs new columns for destroying cols when no longer used.
-    private readonly instanceId = getNextColInstanceId();
     /** Sanitised version of the column id */
     public readonly colIdSanitised: string;
 
-    private actualWidth: any;
+    // ── Per-cell hot path ── read by getValue / formatValue / cellCtrl for every cell; clustered first and
+    // contiguous for cache locality. The colDef mirrors are (re)set on colDef change ({@link initColDefHotFields}
+    // / {@link initDotNotation}); internal code reads these fields DIRECTLY (never the getters / colDef) to avoid
+    // a megamorphic load on the user-supplied colDef. The getters exist only for the public interface.
+    public aggFunc: ColAggFunc = undefined;
+    public isCalculatedCol = false;
+    public field: ColDefField<any, TValue> | undefined = undefined;
+    /** Cached split of a dotted `field` (`field.split('.')`); `null` when not dotted / dot-notation suppressed.
+     *  Non-null doubles as the "field contains dots" indicator. Read per cell via `_getValueUsingDotPath`. */
+    public fieldPath: string[] | null = null;
+    public valueGetter: string | ValueGetterFunc<any, TValue> | undefined = undefined;
+    public allowFormula: boolean = false;
+    public showRowGroup: string | boolean | undefined = undefined;
+    public pivotValueColumn: AgColumn | null | undefined = undefined;
+    public valueFormatter: string | ValueFormatterFunc<any, TValue> | undefined = undefined;
+    public refData: RefData | undefined = undefined;
+    public enableCellChangeFlash: boolean | undefined = undefined;
+    /** Read per cell when the colSpan/rowSpan feature is used (`getColSpan`/`getRowSpan`). */
+    public colSpan: ColSpanFunc<any, TValue> | undefined = undefined;
+    public rowSpan: RowSpanFunc<any, TValue> | undefined = undefined;
+    /** Read per cell on calculated columns (`formulaService.ensureCellFormula`/`fetchRawValue`). */
+    public calculatedExpression: string | undefined = undefined;
 
-    // The measured height of this column's header when autoHeaderHeight is enabled
-    private autoHeaderHeight: number | null = null;
+    // ── Layout / display ── read during rendering and header layout (per column, per refresh).
+    /** Current rendered width in px. Writes must go through `setActualWidth` for min/max clamping and the `widthChanged` event. */
+    public actualWidth: number = 0;
+    public minWidth: number = 0;
+    private maxWidth: number = 0;
+    public flex: number | null = null;
+    public pinned: ColumnPinnedType = null;
+    public left: number | null = null;
+    public oldLeft: number | null = null;
+    /** User intent: should this column be shown if display rules allow it. */
+    public visible: boolean = false;
+    /** Whether this column is in the displayed (rendered) columns — kept in lockstep with `allColsIndex >= 0` */
+    public displayed: boolean = false;
+    public filterActive = false;
+    public sortDef: SortDef = getSortDefFromInput();
+    public sortIndex: number | null | undefined = undefined;
+    // measured header height when autoHeaderHeight is enabled
+    public autoHeaderHeight: number | null = null;
+    public tooltipEnabled = false;
+    public tooltipFieldContainsDots: boolean = false;
 
-    private visible: any;
-    public pinned: ColumnPinnedType;
-    private left: number | null;
-    private oldLeft: number | null;
-    public aggFunc: string | IAggFunc | null | undefined;
-    private sortDef: SortDef = _getSortDefFromInput();
-    public sortIndex: number | null | undefined;
+    // ── Cold ── structure, transient interaction state, indices, events.
+    private frameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined = undefined;
+    // Lazy — most columns never get a listener; allocated on first __addEventListener/addEventListener.
+    private colEventSvc: LocalEventService<ColumnEventName> | null = null;
+
+    /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
+    public buildToken: number = 0;
+    /** 0-based index in `VisibleColsService.allCols` (displayed, visual order — RTL reversed), stamped each refresh. `-1` = not displayed. */
+    public allColsIndex: number = -1;
+    /** `true` while in `ColumnModel.colsList` (live cols, hidden included); `false` when only in
+     *  `colsById` — a pivot **primary** parked while a pivot result shows. Set by `refreshCols`. */
+    public inColsList: boolean = false;
+    /** 1-based `aria-colindex`: position in `colsList` reordered `[left, center, right]` (hidden included). `0` = not in `colsList`. */
+    public ariaColIndex: number = 0;
+    /** 0-based index in `ColumnModel.colsList` (stamped lazily by `ensureColsListIndex` for O(1) ordered reads);
+     *  `-1` until first stamped / when not in colsList. In pivot, parked primaries keep their pre-pivot index. */
+    public colsListIndex: number = -1;
+
     public moving = false;
     public resizing = false;
     public menuVisible = false;
-    public highlighted: ColumnHighlightPosition | null;
+    public highlighted: ColumnHighlightPosition | null = null;
     public formulaRef: string | null = null;
+
+    /** The column's "Show Values As" config resolved once on colDef change (built-in modes merged with user
+     *  config), or `null` when the feature is off for this column. The active mode is a lookup into it. */
+    public showValueAsConfig: ShowValueAsConfigResolved | null = null;
+    /** Resolved active "Show Values As" mode for this column (precomputed by the enterprise service), or `null`
+     *  when none. `showValueAs.type` is the active mode; the active mode is owned by column state. */
+    public showValueAs: AgShowValueAsResolved | null = null;
+
+    /** colId this column sits immediately after in display order. Order restoration seats new cols after
+     *  this anchor — handles anchors absent from the tree (e.g. auto-group col) and stacks same-anchor adds
+     *  newest-first. `undefined` = not anchored. Column-kind agnostic (currently set by the calc-column contributor). */
+    public anchoredToColId: string | undefined = undefined;
 
     private lastLeftPinned: boolean = false;
     private firstRightPinned: boolean = false;
 
-    public minWidth: number;
-    private maxWidth: number;
-
-    public filterActive = false;
-
-    private readonly colEventSvc: LocalEventService<ColumnEventName> = new LocalEventService();
-
-    public fieldContainsDots: boolean;
-    private tooltipFieldContainsDots: boolean;
-    public tooltipEnabled = false;
-
     public rowGroupActive = false;
+    /** Position in `rowGroupColsSvc.columns` when {@link rowGroupActive}; else stale — always pair the read with a `rowGroupActive` check. */
+    public rowGroupActiveIndex = -1;
     public pivotActive = false;
+    /** Position in `pivotColsSvc.columns` when {@link pivotActive}; else stale — always pair the read with a `pivotActive` check. */
+    public pivotActiveIndex = -1;
     public aggregationActive = false;
-    public flex: number | null = null;
+    /** Position in `valueColsSvc.columns` when {@link aggregationActive}; else stale — always pair the read with an `aggregationActive` check. */
+    public aggregationActiveIndex = -1;
+    /** The display group col that shows this (source) column; set by `showRowGroupCols` on refresh */
+    public showRowGroupCol: AgColumn | null = null;
 
-    public parent: AgColumnGroup | null;
-    public originalParent: AgProvidedColumnGroup | null;
+    public parent: AgColumnGroup | null = null;
+    public originalParent: AgProvidedColumnGroup | null = null;
+
+    /** Public so the free `getAvailableSortTypes` sort helper can cache on the column; nulled in {@link setColDef}. */
+    public cachedSortTypes: Set<SortType> | null = null;
 
     constructor(
         public colDef: ColDef<any, TValue>,
-        // We do NOT use this anywhere, we just keep a reference. this is to check object equivalence
-        // when the user provides an updated list of columns - so we can check if we have a column already
-        // existing for a col def. we cannot use the this.colDef as that is the result of a merge.
-        // This is used in ColumnFactory
+        // kept only for object-identity checks in ColumnFactory (matching an updated col list to an
+        // existing column); this.colDef can't serve as it is the merge result
         public userProvidedColDef: ColDef<any, TValue> | null,
         public readonly colId: string,
-        public readonly primary: boolean
+        public readonly primary: boolean,
+        public readonly colKind: ColKind
     ) {
         super();
         this.colIdSanitised = _escapeString(colId)!;
@@ -141,6 +219,12 @@ export class AgColumn<TValue = any>
 
     public override destroy() {
         super.destroy();
+        this.allColsIndex = -1;
+        this.displayed = false;
+        this.colsListIndex = -1;
+        this.inColsList = false;
+        this.lastLeftPinned = false;
+        this.firstRightPinned = false;
         this.beans.rowSpanSvc?.deregister(this);
     }
 
@@ -149,42 +233,68 @@ export class AgColumn<TValue = any>
     }
 
     private initState(): void {
-        const {
-            colDef,
-            beans: { sortSvc, pinnedCols, colFlex },
-        } = this;
+        const { beans, colDef } = this;
+        const { sortSvc, pinnedCols, colFlex } = beans;
 
         sortSvc?.initCol(this);
 
         const hide = colDef.hide;
-        if (hide !== undefined) {
-            this.visible = !hide;
-        } else {
-            this.visible = !colDef.initialHide;
-        }
+        this.visible = hide !== undefined ? !hide : !colDef.initialHide;
 
         pinnedCols?.initCol(this);
 
         colFlex?.initCol(this);
     }
 
-    // gets called when user provides an alternative colDef, eg
+    /** Called when user provides an alternative colDef. Returns whether the merged colDef differed (false = nothing changed). */
     public setColDef(
         colDef: ColDef<any, TValue>,
         userProvidedColDef: ColDef<any, TValue> | null,
         source: ColumnEventType
-    ): void {
-        const colSpanChanged = colDef.spanRows !== this.colDef.spanRows;
-        this.colDef = colDef;
+    ): boolean {
+        const oldColDef = this.colDef;
         this.userProvidedColDef = userProvidedColDef;
+        this.colDef = colDef;
+        if (_mergedEqual(colDef, oldColDef)) {
+            this.initCalculatedColumnState(colDef);
+            return false;
+        }
+        this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
+        this.initColDefHotFields();
+        this.beans.showValueAsSvc?.resolveColumn(this, false); // colDef change — `showValueAsInitial` is create-only
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
-        if (colSpanChanged) {
-            this.beans.rowSpanSvc?.deregister(this);
-            this.initRowSpan();
+        if (colDef.spanRows !== oldColDef.spanRows) {
+            this.beans.rowSpanSvc?.columnRowSpanChanged(this);
         }
         this.dispatchColEvent('colDefChanged', source);
+        this.beans.pivotResultCols?.recreateColDefsForSource(this, source);
+        return true;
+    }
+
+    /** Re-apply `def` to a reused column. Stateful attrs are only (re)applied when the user authored the
+     *  definitions (`newColDefs`); an internal rebuild (e.g. calc-col add) must leave live state intact. */
+    public reapplyColDef(def: ColDef, source: ColumnEventType, newColDefs: boolean): void {
+        const merged = _addColumnDefaultAndTypes(this.beans, def, this.colId);
+        this.setColDef(merged, def, source);
+        if (newColDefs) {
+            updateSomeColumnState(
+                this.beans,
+                this,
+                merged.hide,
+                merged.sort,
+                merged.sortIndex,
+                merged.pinned,
+                merged.flex,
+                source
+            );
+            // Read `flex` after the state update so a flex→fixed switch applies before width.
+            const colFlex = this.flex;
+            if (colFlex == null || colFlex <= 0) {
+                this.setActualWidth(merged.width ?? this.actualWidth, source);
+            }
+        }
     }
 
     public getUserProvidedColDef(): ColDef<any, TValue> | null {
@@ -201,61 +311,36 @@ export class AgColumn<TValue = any>
 
     // this is done after constructor as it uses gridOptionsService
     public postConstruct(): void {
+        this.initColDefHotFields();
+        this.beans.showValueAsSvc?.resolveColumn(this, true); // column creation — apply `showValueAsInitial`
         this.initState();
-
         this.initMinAndMaxWidths();
-
         this.resetActualWidth('gridInitializing');
-
         this.initDotNotation();
-
         this.initTooltip();
-
-        this.initRowSpan();
-
-        this.addPivotListener();
     }
 
     private initDotNotation(): void {
-        const {
-            gos,
-            colDef: { field, tooltipField },
-        } = this;
-        const suppressDotNotation = gos.get('suppressFieldDotNotation');
-        this.fieldContainsDots = _exists(field) && field.includes('.') && !suppressDotNotation;
-        this.tooltipFieldContainsDots = _exists(tooltipField) && tooltipField.includes('.') && !suppressDotNotation;
+        const { field, tooltipField } = this.colDef;
+        this.field = field;
+        const suppress = this.gos.get('suppressFieldDotNotation');
+        if (suppress) {
+            this.fieldPath = null;
+            this.tooltipFieldContainsDots = false;
+        } else {
+            this.fieldPath = typeof field === 'string' && field.includes('.') ? field.split('.') : null;
+            this.tooltipFieldContainsDots = typeof tooltipField === 'string' && tooltipField.includes('.');
+        }
     }
 
     private initMinAndMaxWidths(): void {
         const colDef = this.colDef;
-
         this.minWidth = colDef.minWidth ?? this.beans.environment.getDefaultColumnMinWidth();
         this.maxWidth = colDef.maxWidth ?? Number.MAX_SAFE_INTEGER;
     }
 
     private initTooltip(): void {
         this.beans.tooltipSvc?.initCol(this);
-    }
-
-    private initRowSpan(): void {
-        if (this.colDef.spanRows) {
-            this.beans.rowSpanSvc?.register(this);
-        }
-    }
-
-    private addPivotListener(): void {
-        const pivotColDefSvc = this.beans.pivotColDefSvc;
-        const pivotValueColumn = this.colDef.pivotValueColumn;
-        if (!pivotColDefSvc || !pivotValueColumn) {
-            return;
-        }
-
-        this.addManagedListeners(pivotValueColumn, {
-            colDefChanged: (evt) => {
-                const colDef = pivotColDefSvc.recreateColDef(this.colDef);
-                this.setColDef(colDef, colDef, evt.source);
-            },
-        });
     }
 
     public resetActualWidth(source: ColumnEventType): void {
@@ -265,10 +350,10 @@ export class AgColumn<TValue = any>
 
     private calculateColInitialWidth(colDef: ColDef): number {
         const width = colDef.width ?? colDef.initialWidth ?? 200;
-        return Math.max(Math.min(width, this.maxWidth), this.minWidth);
+        return _clamp(width, this.minWidth, this.maxWidth);
     }
 
-    public isEmptyGroup(): boolean {
+    public isEmptyGroup(): false {
         return false;
     }
 
@@ -281,14 +366,12 @@ export class AgColumn<TValue = any>
     }
 
     public isFilterAllowed(): boolean {
-        // filter defined means it's a string, class or true.
-        // if its false, null or undefined then it's false.
-        const filterDefined = !!this.colDef.filter;
-        return filterDefined;
+        // filter defined (string, class or true) is allowed; false/null/undefined is not.
+        return !!this.colDef.filter;
     }
 
     public isFieldContainsDots(): boolean {
-        return this.fieldContainsDots;
+        return this.fieldPath !== null;
     }
 
     public isTooltipEnabled(): boolean {
@@ -303,17 +386,26 @@ export class AgColumn<TValue = any>
         return this.highlighted;
     }
 
+    private getColEventSvc(): LocalEventService<ColumnEventName> {
+        let svc = this.colEventSvc;
+        if (!svc) {
+            svc = new LocalEventService();
+            this.colEventSvc = svc;
+        }
+        return svc;
+    }
+
     public __addEventListener<T extends ColumnEventName>(
         eventType: T,
         listener: (params: ColumnEvent<T>) => void
     ): void {
-        this.colEventSvc.addEventListener(eventType, listener);
+        this.getColEventSvc().addEventListener(eventType, listener);
     }
     public __removeEventListener<T extends ColumnEventName>(
         eventType: T,
         listener: (params: ColumnEvent<T>) => void
     ): void {
-        this.colEventSvc.removeEventListener(eventType, listener);
+        this.colEventSvc?.removeEventListener(eventType, listener);
     }
 
     /**
@@ -323,13 +415,14 @@ export class AgColumn<TValue = any>
         eventType: T,
         userListener: (params: ColumnEvent<T>) => void
     ): void {
+        const colEventSvc = this.getColEventSvc();
         this.frameworkEventListenerService = this.beans.frameworkOverrides.createLocalEventListenerWrapper?.(
             this.frameworkEventListenerService,
-            this.colEventSvc
+            colEventSvc
         );
         const listener = this.frameworkEventListenerService?.wrap(eventType, userListener) ?? userListener;
 
-        this.colEventSvc.addEventListener(eventType, listener);
+        colEventSvc.addEventListener(eventType, listener);
     }
 
     /**
@@ -340,16 +433,11 @@ export class AgColumn<TValue = any>
         userListener: (params: ColumnEvent<T>) => void
     ): void {
         const listener = this.frameworkEventListenerService?.unwrap(eventType, userListener) ?? userListener;
-        this.colEventSvc.removeEventListener(eventType, listener);
+        this.colEventSvc?.removeEventListener(eventType, listener);
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
-        return _addGridCommonParams(this.gos, {
-            node: rowNode,
-            data: rowNode.data,
-            column: this,
-            colDef: this.colDef,
-        });
+        return _addGridCommonParams(this.gos, { node: rowNode, data: rowNode.data, column: this, colDef: this.colDef });
     }
 
     public isSuppressNavigable(rowNode: IRowNode): boolean {
@@ -385,47 +473,42 @@ export class AgColumn<TValue = any>
     }
 
     public isSuppressPaste(rowNode: IRowNode): boolean {
-        if (this.colDef.calculatedExpression != null && this.beans.calculatedColsSvc != null) {
-            return true;
-        }
-        return this.isColumnFunc(rowNode, this.colDef?.suppressPaste ?? null);
+        return this.isCalculatedCol || this.isColumnFunc(rowNode, this.colDef.suppressPaste ?? null);
+    }
+
+    /** Mirror the hot-path colDef fields onto the column so per-cell reads avoid a megamorphic colDef load.
+     *  `field`/`fieldPath` are set by {@link initDotNotation} (they depend on `suppressFieldDotNotation`). */
+    private initColDefHotFields(): void {
+        const colDef = this.colDef;
+        this.valueGetter = colDef.valueGetter;
+        this.allowFormula = colDef.allowFormula === true;
+        this.showRowGroup = colDef.showRowGroup;
+        this.pivotValueColumn = colDef.pivotValueColumn as AgColumn | null | undefined;
+        this.valueFormatter = colDef.valueFormatter;
+        this.refData = colDef.refData;
+        this.enableCellChangeFlash = colDef.enableCellChangeFlash;
+        this.colSpan = colDef.colSpan;
+        this.rowSpan = colDef.rowSpan;
+        this.initCalculatedColumnState(colDef);
+    }
+
+    private initCalculatedColumnState(colDef: ColDef<any, TValue>): void {
+        this.calculatedExpression = colDef.calculatedExpression;
+        this.isCalculatedCol =
+            this.calculatedExpression !== undefined && this.beans.calculatedColsSvc?.isEnabled() === true;
     }
 
     public isResizable(): boolean {
-        return !!this.getColDefValue('resizable');
-    }
-
-    /** Get value from ColDef or default if it exists. */
-    private getColDefValue<K extends keyof ColDef>(key: K): ColDef[K] {
-        return this.colDef[key] ?? COL_DEF_DEFAULTS[key];
+        return this.colDef.resizable ?? true;
     }
 
     public isColumnFunc(
         rowNode: IRowNode,
         value?: boolean | ((params: ColumnFunctionCallbackParams) => boolean) | null
     ): boolean {
-        // if boolean set, then just use it
-        if (typeof value === 'boolean') {
-            return value;
-        }
-
-        // if function, then call the function to find out
-        if (typeof value === 'function') {
-            const params = this.createColumnFunctionCallbackParams(rowNode);
-            const editableFunc = value;
-            return editableFunc(params);
-        }
-
-        return false;
-    }
-
-    private createColumnEvent<T extends ColumnEventName>(type: T, source: ColumnEventType): ColumnEvent<T> {
-        return _addGridCommonParams(this.gos, {
-            type,
-            column: this,
-            columns: [this],
-            source,
-        });
+        return typeof value === 'boolean'
+            ? value
+            : typeof value === 'function' && value(this.createColumnFunctionCallbackParams(rowNode));
     }
 
     public isMoving(): boolean {
@@ -433,55 +516,14 @@ export class AgColumn<TValue = any>
     }
 
     public getSort(): SortDirection {
-        // soft deprecation as of v35 - use getSortDef instead
+        // soft-deprecated v35 - use getSortDef instead
         return this.sortDef.direction;
     }
 
-    /**
-     * Returns null if no sort direction applied
-     */
+    /** Returns null if no sort direction applied */
     public getSortDef(): SortDef | null {
-        if (!this.sortDef.direction) {
-            return null;
-        }
-        return this.sortDef;
-    }
-
-    private getColDefAllowedSortTypes(): SortType[] {
-        const res: SortType[] = [];
-        const { sort, initialSort } = this.colDef;
-
-        const colDefSortType = sort === null ? sort : _normalizeSortType((sort as SortDef)?.type);
-        const colDefInitialSortType =
-            initialSort === null ? initialSort : _normalizeSortType((initialSort as SortDef)?.type);
-
-        if (colDefSortType) {
-            res.push(colDefSortType);
-        }
-        if (colDefInitialSortType) {
-            res.push(colDefInitialSortType);
-        }
-        return res;
-    }
-
-    public getSortingOrder() {
-        const defaultSortingOrder = this.getColDefAllowedSortTypes().includes('absolute')
-            ? DEFAULT_ABSOLUTE_SORTING_ORDER
-            : DEFAULT_SORTING_ORDER;
-
-        return (this.colDef.sortingOrder ?? this.gos.get('sortingOrder') ?? defaultSortingOrder).map(
-            (objOrDirection: unknown) => _getSortDefFromInput(objOrDirection)
-        );
-    }
-
-    public getAvailableSortTypes() {
-        const explicitSortTypesFromSortingOrder = this.getSortingOrder().reduce<string[]>((acc, so) => {
-            if (so.direction) {
-                acc.push(so.type);
-            }
-            return acc;
-        }, this.getColDefAllowedSortTypes());
-        return new Set(explicitSortTypesFromSortingOrder);
+        const sortDef = this.sortDef;
+        return sortDef.direction ? sortDef : null;
     }
 
     public setSortDef(sortDef: SortDef): void {
@@ -489,7 +531,7 @@ export class AgColumn<TValue = any>
     }
 
     public isSortable(): boolean {
-        return !!this.getColDefValue('sortable');
+        return this.colDef.sortable ?? true;
     }
 
     /** @deprecated v32 use col.getSort() === 'asc */
@@ -503,12 +545,12 @@ export class AgColumn<TValue = any>
     }
     /** @deprecated v32 use col.getSort() === undefined */
     public isSortNone(): boolean {
-        return _missing(this.getSort());
+        return !this.getSort();
     }
 
     /** @deprecated v32 use col.getSort() !== undefined */
     public isSorting(): boolean {
-        return _exists(this.getSort());
+        return this.getSort() != null;
     }
 
     public getSortIndex(): number | null | undefined {
@@ -519,8 +561,16 @@ export class AgColumn<TValue = any>
         return this.menuVisible;
     }
 
-    public getAggFunc(): string | IAggFunc | null | undefined {
+    public getAggFunc(): ColAggFunc {
         return this.aggFunc;
+    }
+
+    public getShowValueAs<TOut extends ShowValueAsResult = any>(): ShowValueAsResolved<any, TValue, TOut> | null {
+        return this.showValueAs as ShowValueAsResolved<any, TValue, TOut> | null;
+    }
+
+    public getShowValueAsConfig(): ShowValueAsConfigResolved<any, TValue> | null {
+        return this.showValueAsConfig as ShowValueAsConfigResolved<any, TValue> | null;
     }
 
     public getLeft(): number | null {
@@ -532,12 +582,14 @@ export class AgColumn<TValue = any>
     }
 
     public getRight(): number {
-        return this.left + this.actualWidth;
+        // `left` is non-null on any displayed col, the only ones `getRight` makes sense for
+        return this.left! + this.actualWidth;
     }
 
     public setLeft(left: number | null, source: ColumnEventType) {
-        this.oldLeft = this.left;
-        if (this.left !== left) {
+        const oldLeft = this.left;
+        this.oldLeft = oldLeft;
+        if (oldLeft !== left) {
             this.left = left;
             this.dispatchColEvent('leftChanged', source);
         }
@@ -595,6 +647,13 @@ export class AgColumn<TValue = any>
         const newValue = visible === true;
         if (this.visible !== newValue) {
             this.visible = newValue;
+            let group = this.originalParent;
+            while (group) {
+                if (!group.setExpandable()) {
+                    break;
+                }
+                group = group.originalParent;
+            }
             this.dispatchColEvent('visibleChanged', source);
         }
         this.dispatchStateUpdatedEvent('hide');
@@ -608,13 +667,11 @@ export class AgColumn<TValue = any>
         return !this.colDef.suppressSpanHeaderHeight;
     }
 
-    /**
-     * Returns the first parent that is not a padding group.
-     */
+    /** Returns the first parent that is not a padding group. */
     public getFirstRealParent(): AgProvidedColumnGroup | null {
-        let parent = this.getOriginalParent();
-        while (parent?.isPadding()) {
-            parent = parent.getOriginalParent();
+        let parent = this.originalParent;
+        while (parent?.padding) {
+            parent = parent.originalParent;
         }
         return parent;
     }
@@ -622,7 +679,7 @@ export class AgColumn<TValue = any>
     public getColumnGroupPaddingInfo(): { numberOfParents: number; isSpanningTotal: boolean } {
         let parent = this.parent;
 
-        if (!parent?.isPadding()) {
+        if (!parent?.providedColumnGroup.padding) {
             return { numberOfParents: 0, isSpanningTotal: false };
         }
 
@@ -630,7 +687,7 @@ export class AgColumn<TValue = any>
         let isSpanningTotal = true;
 
         while (parent) {
-            if (!parent.isPadding()) {
+            if (!parent.providedColumnGroup.padding) {
                 isSpanningTotal = false;
                 break;
             }
@@ -655,6 +712,10 @@ export class AgColumn<TValue = any>
         return this.colId;
     }
 
+    public getDisplayName(location: HeaderLocation = 'columnDrop'): string {
+        return this.beans.colNames.getDisplayNameForColumn(this, location) || this.colDef.headerName || this.colId;
+    }
+
     public getId(): string {
         return this.colId;
     }
@@ -673,41 +734,31 @@ export class AgColumn<TValue = any>
 
     /** Returns true if the header height has changed */
     public setAutoHeaderHeight(height: number): boolean {
-        const changed = height !== this.autoHeaderHeight;
-        this.autoHeaderHeight = height;
-        return changed;
-    }
-
-    private createBaseColDefParams(rowNode: IRowNode): BaseColDefParams {
-        const params: BaseColDefParams = _addGridCommonParams(this.gos, {
-            node: rowNode,
-            data: rowNode.data,
-            colDef: this.colDef,
-            column: this,
-        });
-        return params;
+        if (this.autoHeaderHeight !== height) {
+            this.autoHeaderHeight = height;
+            return true;
+        }
+        return false;
     }
 
     public getColSpan(rowNode: IRowNode): number {
-        if (_missing(this.colDef.colSpan)) {
+        const colSpanFn = this.colSpan;
+        if (colSpanFn == null) {
             return 1;
         }
-        const params: ColSpanParams = this.createBaseColDefParams(rowNode);
-        const colSpan = this.colDef.colSpan(params);
-        // colSpan must be number equal to or greater than 1
-
-        return Math.max(colSpan, 1);
+        const params: ColSpanParams = this.createColumnFunctionCallbackParams(rowNode);
+        const colSpan = colSpanFn(params);
+        return colSpan < 1 ? 1 : colSpan; // colSpan must be number equal to or greater than 1
     }
 
     public getRowSpan(rowNode: IRowNode): number {
-        if (_missing(this.colDef.rowSpan)) {
+        const rowSpan = this.rowSpan;
+        if (rowSpan == null) {
             return 1;
         }
-        const params: RowSpanParams = this.createBaseColDefParams(rowNode);
-        const rowSpan = this.colDef.rowSpan(params);
-        // rowSpan must be number equal to or greater than 1
-
-        return Math.max(rowSpan, 1);
+        const params: RowSpanParams = this.createColumnFunctionCallbackParams(rowNode);
+        const rowSpanValue = rowSpan(params);
+        return rowSpanValue < 1 ? 1 : rowSpanValue; // rowSpan must be number equal to or greater than 1
     }
 
     public setActualWidth(actualWidth: number, source: ColumnEventType, silent: boolean = false): void {
@@ -756,11 +807,12 @@ export class AgColumn<TValue = any>
     }
 
     public isAnyFunctionActive(): boolean {
-        return this.isPivotActive() || this.isRowGroupActive() || this.isValueActive();
+        return this.pivotActive || this.rowGroupActive || this.aggregationActive;
     }
 
     public isAnyFunctionAllowed(): boolean {
-        return this.isAllowPivot() || this.isAllowRowGroup() || this.isAllowValue();
+        const colDef = this.colDef;
+        return colDef.enablePivot === true || colDef.enableRowGroup === true || colDef.enableValue === true;
     }
 
     public isValueActive(): boolean {
@@ -780,104 +832,132 @@ export class AgColumn<TValue = any>
     }
 
     public isAllowFormula(): boolean {
-        return this.colDef.allowFormula === true;
+        return this.allowFormula;
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {
-        const colEvent = this.createColumnEvent(type, source);
-        if (additionalEventAttributes) {
-            _mergeDeep(colEvent, additionalEventAttributes);
-        }
-        this.colEventSvc.dispatchEvent(colEvent);
+        this.colEventSvc?.dispatchEvent(
+            _addGridCommonParams<ColumnEvent>(this.gos, {
+                type,
+                column: this,
+                columns: [this],
+                source,
+                ...additionalEventAttributes,
+            })
+        );
     }
 
     public dispatchStateUpdatedEvent(key: keyof ColumnState): void {
-        this.colEventSvc.dispatchEvent({
-            type: 'columnStateUpdated',
-            key,
-        } as AgEvent<'columnStateUpdated'>);
+        this.colEventSvc?.dispatchEvent({ type: 'columnStateUpdated', key } as AgEvent<'columnStateUpdated'>);
     }
 }
 
-/**
- * Helper to convert input into SortDef, does normalisation of direction and type.
- *
- * If input is already a valid SortDef, we pluck the direction and type from it.
- * Otherwise, we normalise the direction and type from input.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _getSortDefFromInput(input?: unknown): SortDef {
+/** Convert input into a SortDef: a valid SortDef passes through, otherwise direction and type are normalised. */
+export const getSortDefFromInput = (input?: unknown): SortDef => {
     if (_isSortDefValid(input)) {
         return { direction: input.direction, type: input.type };
     }
-    return { direction: _normalizeSortDirection(input), type: _normalizeSortType(input) };
-}
+    return { direction: normalizeSortDirection(input), type: _normalizeSortType(input) };
+};
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _isSortDirectionValid(maybeSortDir: unknown): maybeSortDir is SortDirection {
-    return maybeSortDir === 'asc' || maybeSortDir === 'desc' || maybeSortDir === null;
-}
+// Free functions (not class methods) so they tree-shake out of the core bundle when the sort module is unused.
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _isSortTypeValid(maybeSortType: unknown): maybeSortType is SortType {
-    return maybeSortType === 'default' || maybeSortType === 'absolute';
-}
+/** Sort types from `colDef.sort`/`colDef.initialSort`; `null` contributes nothing, bare directions normalise to 'default'. */
+const getColDefAllowedSortTypes = (column: AgColumn): SortType[] => {
+    const res: SortType[] = [];
+    const { sort, initialSort } = column.colDef;
+    if (sort !== null) {
+        res.push(_normalizeSortType((sort as SortDef)?.type));
+    }
+    if (initialSort !== null) {
+        res.push(_normalizeSortType((initialSort as SortDef)?.type));
+    }
+    return res;
+};
 
-export function _isSortDefValid(maybeSortDef: unknown): maybeSortDef is SortDef {
+const getSortingOrderInputs = (
+    gos: GridOptionsService,
+    column: AgColumn,
+    colDefAllowedSortTypes: SortType[]
+): (SortDirection | SortDef)[] =>
+    column.colDef.sortingOrder ??
+    gos.get('sortingOrder') ??
+    (colDefAllowedSortTypes.includes('absolute') ? DEFAULT_ABSOLUTE_SORTING_ORDER : DEFAULT_SORTING_ORDER);
+
+export const getSortingOrder = (gos: GridOptionsService, column: AgColumn): SortDef[] => {
+    const inputs = getSortingOrderInputs(gos, column, getColDefAllowedSortTypes(column));
+    const res = new Array<SortDef>(inputs.length);
+    for (let i = 0, len = inputs.length; i < len; ++i) {
+        res[i] = getSortDefFromInput(inputs[i]);
+    }
+    return res;
+};
+
+const getAvailableSortTypes = (gos: GridOptionsService, column: AgColumn): Set<SortType> => {
+    const cacheable = gos.get('sortingOrder') == null; // deprecated `sortingOrder` disables the cache
+    const cached = column.cachedSortTypes;
+    if (cacheable && cached) {
+        return cached;
+    }
+    const colDefAllowedSortTypes = getColDefAllowedSortTypes(column);
+    const types = new Set<SortType>(colDefAllowedSortTypes);
+    // add each directional order entry's type — mirrors `getSortDefFromInput` without allocating a SortDef per entry
+    const order = getSortingOrderInputs(gos, column, colDefAllowedSortTypes);
+    for (let i = 0, len = order.length; i < len; ++i) {
+        const input = order[i];
+        if (!_isSortDefValid(input)) {
+            if (normalizeSortDirection(input)) {
+                types.add(_normalizeSortType(input));
+            }
+            continue;
+        }
+        if (input.direction) {
+            types.add(input.type);
+        }
+    }
+    if (cacheable) {
+        column.cachedSortTypes = types;
+    }
+    return types;
+};
+
+export const isSortDirectionValid = (maybeSortDir: unknown): maybeSortDir is SortDirection =>
+    maybeSortDir === 'asc' || maybeSortDir === 'desc' || maybeSortDir === null;
+
+export const isSortTypeValid = (maybeSortType: unknown): maybeSortType is SortType =>
+    maybeSortType === 'default' || maybeSortType === 'absolute';
+
+export const _isSortDefValid = (maybeSortDef: unknown): maybeSortDef is SortDef => {
     if (!maybeSortDef || typeof maybeSortDef !== 'object') {
         return false;
     }
-
     const maybeSortDefT = maybeSortDef as { type?: unknown; direction?: unknown };
-    return _isSortTypeValid(maybeSortDefT.type) && _isSortDirectionValid(maybeSortDefT.direction);
-}
+    return isSortTypeValid(maybeSortDefT.type) && isSortDirectionValid(maybeSortDefT.direction);
+};
+
+export const normalizeSortDirection = (sortDirectionLike?: unknown): SortDirection =>
+    isSortDirectionValid(sortDirectionLike) ? sortDirectionLike : null;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _areSortDefsEqual(sortDef1: SortDef | null | undefined, sortDef2: SortDef | null | undefined): boolean {
-    if (!sortDef1) {
-        return sortDef2 ? sortDef2.direction === null : true;
-    }
-    if (!sortDef2) {
-        return sortDef1 ? sortDef1.direction === null : true;
-    }
+export const _normalizeSortType = (sortTypeLike?: unknown): SortType =>
+    isSortTypeValid(sortTypeLike) ? sortTypeLike : 'default';
 
-    return sortDef1.type === sortDef2.type && sortDef1.direction === sortDef2.direction;
-}
+type SortDefOverride = () => SortDef | null | undefined;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _normalizeSortDirection(sortDirectionLike?: unknown): SortDirection {
-    return _isSortDirectionValid(sortDirectionLike) ? sortDirectionLike : null;
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _normalizeSortType(sortTypeLike?: unknown): SortType {
-    return _isSortTypeValid(sortTypeLike) ? sortTypeLike : 'default';
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getDisplaySortForColumn(
-    column: AgColumn,
-    beans: BeanCollection,
-    getSortDefOverride?: () => SortDef | null | undefined
-) {
-    const overrideSortDef = getSortDefOverride?.();
-    const sortDef = overrideSortDef ?? beans.sortSvc!.getDisplaySortForColumn(column);
+export const _getDisplaySortForColumn = (column: AgColumn, beans: BeanCollection, override?: SortDefOverride) => {
+    const overrideSortDef = override?.();
+    const sortDef = overrideSortDef ?? beans.sortSvc?.getDisplaySort(column);
     const type = _normalizeSortType(sortDef?.type);
-    const direction = _normalizeSortDirection(sortDef?.direction);
-    const allowedSortTypes = column.getAvailableSortTypes();
-    const isDefaultSortAllowed = allowedSortTypes.has('default');
-    const isAbsoluteSortAllowed = allowedSortTypes.has('absolute');
-    const isAbsoluteSort = type === 'absolute';
-    const isDefaultSort = type === 'default';
-    const isAscending = direction === 'asc';
-    const isDescending = direction === 'desc';
+    const direction = normalizeSortDirection(sortDef?.direction);
+    const allowedSortTypes = getAvailableSortTypes(beans.gos, column);
     return {
-        isDefaultSortAllowed,
-        isAbsoluteSortAllowed,
-        isAbsoluteSort,
-        isDefaultSort,
-        isAscending,
-        isDescending,
+        isDefaultSortAllowed: allowedSortTypes.has('default'),
+        isAbsoluteSortAllowed: allowedSortTypes.has('absolute'),
+        isAbsoluteSort: type === 'absolute',
+        isDefaultSort: type === 'default',
+        isAscending: direction === 'asc',
+        isDescending: direction === 'desc',
         direction,
     };
-}
+};

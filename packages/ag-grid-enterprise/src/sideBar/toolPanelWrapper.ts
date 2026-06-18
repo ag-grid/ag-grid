@@ -1,3 +1,5 @@
+import { RefPlaceholder, _initDetachedStyledRoot, _setDisplayed } from 'ag-stack';
+
 import type {
     ComponentType,
     ElementParams,
@@ -7,7 +9,7 @@ import type {
     UserCompDetails,
     UserComponentFactory,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import { AgHorizontalResize } from './agHorizontalResize';
 
@@ -45,6 +47,7 @@ export class ToolPanelWrapper extends Component {
     private params: IToolPanelParams;
     private animationId: number = 0;
     private defParent: HTMLElement | null = null;
+    private hasStyledRoot = false;
 
     constructor() {
         super(ToolPanelElement);
@@ -58,6 +61,21 @@ export class ToolPanelWrapper extends Component {
 
         resizeBar.elementToResize = eGui;
         this.appendChild(resizeBar);
+    }
+
+    public ensureStyledRoot(): void {
+        if (this.hasStyledRoot) {
+            return;
+        }
+        this.hasStyledRoot = true;
+        const innerGui = this.getGui();
+        const [styledRootOuter, styledRootDestroy] = _initDetachedStyledRoot(this.beans.environment, innerGui);
+        this.addDestroyFunc(styledRootDestroy);
+        // transfer displayed state the new root
+        const displayed = this.isDisplayed();
+        _setDisplayed(innerGui, true);
+        this.setGui(styledRootOuter);
+        this.setDisplayed(displayed);
     }
 
     public getToolPanelId(): string {

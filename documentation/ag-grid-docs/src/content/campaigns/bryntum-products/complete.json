@@ -1,0 +1,442 @@
+{
+    "url": "https://bryntum.com/products/complete/",
+    "slug": "complete",
+    "title": "Bryntum Complete – A First-Class Web Components Suite",
+    "meta": {
+        "description": "A fast, contemporary component suite featuring Gantt charts and scheduling widgets. Engineered ground-up in pure JavaScript and ready for the framework you’re already shipping (incl. React, Angular and Vue).",
+        "og_title": "Bryntum Complete – A First-Class Web Components Suite",
+        "og_description": "A fast, contemporary component suite featuring Gantt charts and scheduling widgets. Engineered ground-up in pure JavaScript and ready for the framework you’re already shipping (incl. React, Angular and Vue)."
+    },
+    "sections": [
+        {
+            "id": "block_8b6a42153bf3577eecde2a3cccf84f9f",
+            "type": "heroTBM",
+            "modifiers": [],
+            "heading": "Bryntum Complete",
+            "body_html": "<p>A power-packed component bundle that includes every feature of the Gantt, Scheduler, Scheduler Pro, Grid, Calendar and TaskBoard. Excellent value for apps drawing on more than one Bryntum product.</p>",
+            "body_text": "A power-packed component bundle that includes every feature of the Gantt, Scheduler, Scheduler Pro, Grid, Calendar and TaskBoard. Excellent value for apps drawing on more than one Bryntum product.",
+            "ctas": [
+                {
+                    "text": "Browse examples",
+                    "href": "/examples",
+                    "title": "Browse examples"
+                },
+                {
+                    "text": "Purchase Now",
+                    "href": "/store/complete",
+                    "title": "Purchase Now"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/complete/bryntum-complete-v7-2.png",
+                    "alt": "bryntum-complete-v7-2",
+                    "width": "768",
+                    "height": "558",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/06/bryntum-complete-v7-2.png"
+                }
+            ]
+        },
+        {
+            "id": "block_agbryntum_partnership",
+            "type": "partnership",
+            "heading": "Your JavaScript stack just expanded",
+            "body_html": "<p>Since our 2025 <a href=\"https://blog.ag-grid.com/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, the whole Bryntum suite (Gantt, Scheduler, Calendar, Task Board) sits alongside AG Grid for scheduling, planning and task workflows, crafted by a similar team and held to the same bar.</p>",
+            "body_text": "Since our 2025 partnership with Bryntum, the whole Bryntum suite (Gantt, Scheduler, Calendar, Task Board) sits alongside AG Grid for scheduling, planning and task workflows, crafted by a similar team and held to the same bar.",
+            "logo_light_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-light.svg",
+            "logo_dark_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-dark.svg",
+            "logo_alt": "AG Grid x Bryntum partnership"
+        },
+        {
+            "id": "block_948f4b16be9cc9a1ee3a72452105c843",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Pro Scheduler",
+            "heading": "A Scheduler Built for Pros",
+            "body_html": "<p>Scheduler Pro is our pro-grade scheduling product, handling inter-task dependencies, constraints and working-time calendars. Written in ES2020 &amp; TypeScript, it drops cleanly into any React, Angular or Vue app.</p>",
+            "body_text": "Scheduler Pro is our pro-grade scheduling product, handling inter-task dependencies, constraints and working-time calendars. Written in ES2020 & TypeScript, it drops cleanly into any React, Angular or Vue app.",
+            "links": [
+                {
+                    "text": "A Scheduler Built for Pros",
+                    "href": "/products/schedulerpro/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Learn More",
+                    "href": "/products/schedulerpro/",
+                    "title": "Learn More"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/complete/Scheduler-Pro-_-Transparent-_-Minimal-2.svg",
+                    "alt": "",
+                    "width": "1",
+                    "height": "1",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Scheduler-Pro-_-Transparent-_-Minimal-2.svg"
+                }
+            ]
+        },
+        {
+            "id": "block_7279369cdb8981e50e221bd66736d060",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Gantt Chart",
+            "heading": "Feature-Packed Gantt Chart",
+            "body_html": "<p>Our Gantt chart is the most capable JavaScript Gantt component on the market. A wide-reaching API and a vast feature set together cover every project-management need you have. Written in pure JavaScript / TypeScript, it drops cleanly into any React, Angular or Vue app.</p>",
+            "body_text": "Our Gantt chart is the most capable JavaScript Gantt component on the market. A wide-reaching API and a vast feature set together cover every project-management need you have. Written in pure JavaScript / TypeScript, it drops cleanly into any React, Angular or Vue app.",
+            "links": [
+                {
+                    "text": "Feature-Packed Gantt Chart",
+                    "href": "/products/gantt/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Learn More",
+                    "href": "/products/gantt/",
+                    "title": "Learn More"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/complete/Gantt-_-Transparent-_-Minimal-2.svg",
+                    "alt": "",
+                    "width": "1",
+                    "height": "1",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Gantt-_-Transparent-_-Minimal-2.svg"
+                }
+            ]
+        },
+        {
+            "id": "block_d52edbe07e584bc8721052395c4ba60d",
+            "type": "text-media",
+            "modifiers": ["image", "calendar", "added-shadow"],
+            "eyebrow": "Calendar",
+            "heading": "Tailorable Calendar",
+            "body_html": "<p>Our contemporary Calendar component delivers a complete calendar toolkit with day, week, month, year and agenda views. It ships with a set of polished widgets too: filters, an event editor, a month navigation bar and more.</p>",
+            "body_text": "Our contemporary Calendar component delivers a complete calendar toolkit with day, week, month, year and agenda views. It ships with a set of polished widgets too: filters, an event editor, a month navigation bar and more.",
+            "links": [
+                {
+                    "text": "Tailorable Calendar",
+                    "href": "/products/calendar/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Learn More",
+                    "href": "/products/calendar/",
+                    "title": "Learn More"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/complete/Calendar-_-Transparent-_-Minimal-2.svg",
+                    "alt": "",
+                    "width": "1",
+                    "height": "1",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Calendar-_-Transparent-_-Minimal-2.svg"
+                }
+            ]
+        },
+        {
+            "id": "block_6c4410366c4202d5577375e4c860c979",
+            "type": "text-button",
+            "modifiers": ["variant-2"],
+            "eyebrow": "Get Started",
+            "heading": "Ready to dive in?",
+            "body_html": "",
+            "body_text": "",
+            "ctas": [
+                {
+                    "text": "Explore Examples",
+                    "href": "/examples",
+                    "title": "Explore Examples"
+                },
+                {
+                    "text": "Get in Touch",
+                    "href": "/contact/",
+                    "title": "Get in Touch"
+                }
+            ]
+        },
+        {
+            "id": "block_2a6c70a402771bbc11de5d07f6290a54",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Data Grid",
+            "heading": "Blazing-Fast Grid",
+            "body_html": "<p>Bryntum Grid is a capable, high-throughput table component for the web. It’s feature-packed and chews through big datasets without breaking a sweat. Written in pure JavaScript, it plays nicely with the framework you’re already on.</p>",
+            "body_text": "Bryntum Grid is a capable, high-throughput table component for the web. It’s feature-packed and chews through big datasets without breaking a sweat. Written in pure JavaScript, it plays nicely with the framework you’re already on.",
+            "links": [
+                {
+                    "text": "Blazing-Fast Grid",
+                    "href": "/products/grid/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Learn More",
+                    "href": "/products/grid/",
+                    "title": "Learn More"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/complete/Grid-_-Transparent-_-Minimal-2.svg",
+                    "alt": "",
+                    "width": "1",
+                    "height": "1",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Grid-_-Transparent-_-Minimal-2.svg"
+                }
+            ]
+        },
+        {
+            "id": "block_f56f7ec18ae04336c9ab389bfcf96da0",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Task Board",
+            "heading": "Kanban Task Board Component",
+            "body_html": "<p>Our contemporary JS Kanban Task Board web component makes it easy to keep on top of day-to-day work. It supports swimlanes and lets you drag tasks across columns. A handful of config lines is enough to match your workflow with any number of columns &amp; swimlanes.</p>",
+            "body_text": "Our contemporary JS Kanban Task Board web component makes it easy to keep on top of day-to-day work. It supports swimlanes and lets you drag tasks across columns. A handful of config lines is enough to match your workflow with any number of columns & swimlanes.",
+            "links": [
+                {
+                    "text": "Kanban Task Board Component",
+                    "href": "/products/taskboard/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Learn More",
+                    "href": "/products/taskboard/",
+                    "title": "Learn More"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/complete/Kanban-_-Transparent-_-Minimal-1.svg",
+                    "alt": "",
+                    "width": "1",
+                    "height": "1",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/10/Kanban-_-Transparent-_-Minimal-1.svg"
+                }
+            ]
+        },
+        {
+            "id": "block_29545995be5809df3ce8ee752d81e2a6",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Scheduler",
+            "heading": "Schedule Just About Anything",
+            "body_html": "<p>Bryntum Scheduler is a flexible scheduling widget for cases where you don’t need the heavy lifting of Scheduler Pro. It’s still loaded with features and options</p>",
+            "body_text": "Bryntum Scheduler is a flexible scheduling widget for cases where you don’t need the heavy lifting of Scheduler Pro. It’s still loaded with features and options",
+            "links": [
+                {
+                    "text": "Schedule Just About Anything",
+                    "href": "alpha2-staging.kinsta.cloud/products/scheduler/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Learn More",
+                    "href": "/products/grid/",
+                    "title": "Learn More"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/complete/Scheduler-_-Transparent-_-Larger.svg",
+                    "alt": "",
+                    "width": "1",
+                    "height": "1",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/06/Scheduler-_-Transparent-_-Larger.svg"
+                }
+            ]
+        },
+        {
+            "id": "block_6c11329d4d70b0cbf2db97c221a78ebd",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Component Library",
+            "heading": "50+ Additional Widgets",
+            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/grid/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel and meet user needs with fewer clicks and less searching. Drop lists, menus, toggles, sliders and more into Bryntum components.</p>",
+            "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel and meet user needs with fewer clicks and less searching. Drop lists, menus, toggles, sliders and more into Bryntum components.",
+            "links": [
+                {
+                    "text": "broad set of UI elements",
+                    "href": "/products/grid/examples/kitchen-sink/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Browse widgets",
+                    "href": "/products/grid/examples/kitchen-sink/",
+                    "title": "Browse widgets"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/shared/more-widgets-taskboard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "732",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/more-widgets-taskboard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_5de00a582eb994795ddeece5d75822ea",
+            "type": "text-media",
+            "modifiers": ["video-file", "reverse", "added-shadow"],
+            "eyebrow": "Quick Start",
+            "heading": "Install via npm",
+            "body_html": "<p>Pull Bryntum components straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial packages, configure them, and you’re ready to build.</p>",
+            "body_text": "Pull Bryntum components straight from npm. No sign-in or auth needed . Install the trial packages, configure them, and you’re ready to build.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Read docs",
+                    "href": "/products/scheduler/docs/guide/Scheduler/integration/javascript/multiple-products",
+                    "title": "Read docs"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/complete/install-complete-edit-zoom.webm",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/06/install-complete-edit-zoom.webm"
+                }
+            ]
+        },
+        {
+            "id": "block_bc3a52d9a2ced50b318892e74a27f522",
+            "type": "brands",
+            "modifiers": [],
+            "eyebrow": "Trusted Worldwide",
+            "heading": "Used by the world’s most respected companies",
+            "items": [
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-1.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-2.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-3.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-4.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-5.svg"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "block_ad19d118a6e4541069ae79e6c71cd54d",
+            "type": "columns-lib",
+            "modifiers": [],
+            "eyebrow": "Examples Gallery",
+            "heading": "Demos",
+            "items": [
+                {
+                    "heading": "gantt-schedulerpro-svalbard",
+                    "href": "/products/gantt/examples/gantt-schedulerpro",
+                    "body_text": "Gantt + Scheduler Pro",
+                    "description": "Co-ordinate plans and resourcing across two synced timelines.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/complete/gantt-schedulerpro-svalbard-768x452.png",
+                        "alt": "gantt-schedulerpro-svalbard",
+                        "width": "768",
+                        "height": "452",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/06/gantt-schedulerpro-svalbard-768x452.png"
+                    }
+                },
+                {
+                    "heading": "gantt-taskboard-svalbard",
+                    "href": "/products/gantt/examples/gantt-taskboard/ ",
+                    "body_text": "Gantt + Task Board",
+                    "description": "Move tasks between project plan and Kanban with one click.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/complete/gantt-taskboard-svalbard-768x452.png",
+                        "alt": "gantt-taskboard-svalbard",
+                        "width": "768",
+                        "height": "452",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/06/gantt-taskboard-svalbard-768x452.png"
+                    }
+                },
+                {
+                    "heading": "gantt-calendar-scheduler-svalbard-crop",
+                    "href": " /products/calendar/examples/calendar-scheduler",
+                    "body_text": "Calendar + Scheduler",
+                    "description": "Mix high-level calendar entries with detailed timeline views.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/complete/gantt-calendar-scheduler-svalbard-crop-768x452.png",
+                        "alt": "gantt-calendar-scheduler-svalbard-crop",
+                        "width": "768",
+                        "height": "452",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/06/gantt-calendar-scheduler-svalbard-crop-768x452.png"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "block_6f1914f9c528e50e7e6df29301cda51b",
+            "type": "columnsWithMedia",
+            "modifiers": [],
+            "heading": "Demos",
+            "items": [
+                {
+                    "heading": "Demos",
+                    "href": "/products/grid/examples",
+                    "body_text": "",
+                    "media": null
+                },
+                {
+                    "heading": "Reference Docs",
+                    "href": "/products/grid/docs",
+                    "body_text": "",
+                    "media": null
+                },
+                {
+                    "heading": "Changelogs",
+                    "href": "/products/grid/changelog",
+                    "body_text": "",
+                    "media": null
+                }
+            ]
+        }
+    ]
+}

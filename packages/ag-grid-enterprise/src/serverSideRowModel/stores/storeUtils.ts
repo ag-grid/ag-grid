@@ -80,8 +80,8 @@ export class StoreUtils extends BeanStub implements NamedBean {
         const allCols = this.colModel.getCols();
         const affectedGroupCols = allCols
             // find all impacted cols which also a group display column
-            .filter((col) => col.colDef.showRowGroup && params.changedColumns.includes(col.getId()))
-            .map((col) => col.colDef.showRowGroup)
+            .filter((col) => col.showRowGroup && params.changedColumns.includes(col.getId()))
+            .map((col) => col.showRowGroup)
             // if displaying all groups, or displaying the effected col for this group, refresh
             .some((group) => group === true || group === colIdThisGroup);
 

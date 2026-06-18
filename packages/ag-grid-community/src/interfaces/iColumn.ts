@@ -1,8 +1,11 @@
-import type { IEventEmitter } from '../agStack/interfaces/iEventEmitter';
+import type { IEventEmitter } from 'ag-stack';
+
 import type { AgProvidedColumnGroupEvent } from '../entities/agProvidedColumnGroup';
-import type { AbstractColDef, ColDef, ColGroupDef, IAggFunc, SortDef, SortDirection } from '../entities/colDef';
+import type { AbstractColDef, ColAggFunc, ColDef, ColGroupDef, HeaderLocation } from '../entities/colDef';
+import type { ShowValueAsConfigResolved, ShowValueAsResolved, ShowValueAsResult } from '../entities/colDef-showValueAs';
 import type { ColumnEvent } from '../events';
 import type { BrandedType } from '../interfaces/brandedType';
+import type { SortDef, SortDirection } from '../interfaces/iSort';
 import type { IRowNode } from './iRowNode';
 
 export type HeaderColumnId = BrandedType<string, 'HeaderColumnId'>;
@@ -181,7 +184,16 @@ export interface Column<TValue = any>
     getSortIndex(): number | null | undefined;
 
     /** If aggregation is set for the column, returns the aggregation function. */
-    getAggFunc(): string | IAggFunc | null | undefined;
+    getAggFunc(): ColAggFunc;
+
+    /** The active "Show Values As" mode for the column (`.type` is the mode name), or `null` if none.
+     *  `TOut` is the transformed output type. The available modes are on {@link getShowValueAsConfig}. */
+    getShowValueAs<TOut extends ShowValueAsResult = any>(): ShowValueAsResolved<any, TValue, TOut> | null;
+
+    /** The column's resolved "Show Values As" config — every available mode plus the default precision — or
+     *  `null` if the column has none. Not parameterised by output type: each mode has its own. The active mode
+     *  is {@link getShowValueAs}. */
+    getShowValueAsConfig(): ShowValueAsConfigResolved<any, TValue> | null;
 
     /** @deprecated v32 Use col.getLeft() + col.getActualWidth() instead. */
     getRight(): number;
@@ -225,6 +237,10 @@ export interface Column<TValue = any>
      *
      * Equivalent: `getId`, `getUniqueId` */
     getColId(): string;
+
+    /** Returns this column's resolved display name — the header text after any `headerValueGetter` / locale
+     *  resolution for `location` (default `'columnDrop'`), falling back to the colDef `headerName`, then the colId. */
+    getDisplayName(location?: HeaderLocation): string;
 
     /** Returns the auto header height. */
     getAutoHeaderHeight(): number | null;
@@ -281,6 +297,10 @@ export type AgColumnGroupEvent = 'leftChanged' | 'displayedChildrenChanged';
 export interface ColumnGroup<TValue = any> extends IHeaderColumn<TValue, AgColumnGroupEvent> {
     /** Returns the group column id. */
     getGroupId(): string;
+
+    /** Returns this group's resolved display name for `location` (default `'columnDrop'`), falling back to the
+     *  colGroupDef `headerName`, then the group id. */
+    getDisplayName(location?: HeaderLocation): string;
 
     /** @deprecated v32 Internal method no longer to be exposed on Column interface. */
     getPartId(): number;

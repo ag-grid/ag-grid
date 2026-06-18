@@ -1,58 +1,91 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import classnames from 'classnames';
-import Prism from 'prismjs';
-import 'prismjs/components/prism-bash';
-import 'prismjs/components/prism-diff';
-import 'prismjs/components/prism-java';
-import 'prismjs/components/prism-json';
-import 'prismjs/components/prism-jsx';
-import 'prismjs/components/prism-scss';
-import 'prismjs/components/prism-shell-session';
-import 'prismjs/components/prism-sql';
-import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-xml-doc';
-import 'prismjs/plugins/keep-markup/prism-keep-markup';
-import 'prismjs/plugins/line-numbers/prism-line-numbers';
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
+import { getSingletonHighlighter } from 'shiki';
 
 import styles from './Code.module.scss';
+import codeStyles from './CodeHighlight.module.scss';
+import { extractDecorations } from './keepMarkup';
+import agDocsTheme from './theme.json';
 
-const GrammarMap = {
-    js: Prism.languages.javascript,
-    json: Prism.languages.json,
-    ts: Prism.languages.typescript,
-    css: Prism.languages.css,
-    bash: Prism.languages.bash,
-    shell: Prism.languages.shellsession,
-    html: Prism.languages.html,
-    jsx: Prism.languages.jsx,
-    java: Prism.languages.java,
-    sql: Prism.languages.sql,
-    diff: Prism.languages.diff,
-    scss: Prism.languages.scss,
-    xml: Prism.languages.xml,
-    plain: Prism.languages.plain,
-};
+const LANGS = [
+    'javascript',
+    'typescript',
+    'json',
+    'css',
+    'scss',
+    'bash',
+    'html',
+    'jsx',
+    'tsx',
+    'java',
+    'sql',
+    'diff',
+    'xml',
+    'shellsession',
+] as const;
 
-export type Language = keyof typeof GrammarMap;
+export const LanguageMap = {
+    js: 'javascript',
+    json: 'json',
+    ts: 'typescript',
+    css: 'css',
+    bash: 'bash',
+    shell: 'shellsession',
+    html: 'html',
+    jsx: 'jsx',
+    java: 'java',
+    sql: 'sql',
+    diff: 'diff',
+    scss: 'scss',
+    xml: 'xml',
+} as const;
 
-function CopyToClipboardButton({ code }: { code: string | string[] }) {
+export type Language = keyof typeof LanguageMap;
+
+// Initialise once at module load — promise is shared across all component instances.
+const highlighterPromise = getSingletonHighlighter({
+    langs: [...LANGS],
+    themes: [agDocsTheme as Parameters<typeof getSingletonHighlighter>[0]['themes'][number]],
+});
+
+// In-memory cache keyed by `keepMarkup:lang:code` to avoid redundant re-highlighting.
+const cache = new Map<string, string>();
+
+function highlight(code: string, language: Language, keepMarkup: boolean): Promise<string> {
+    const key = `${keepMarkup}:${language}:${code}`;
+    if (cache.has(key)) {
+        return Promise.resolve(cache.get(key)!);
+    }
+
+    const { cleanCode, decorations } = keepMarkup
+        ? extractDecorations(code.trimEnd())
+        : { cleanCode: code.trimEnd(), decorations: [] };
+
+    return highlighterPromise.then((hl) => {
+        const html = hl.codeToHtml(cleanCode, {
+            lang: LanguageMap[language],
+            theme: 'ag-docs',
+            decorations,
+        });
+        cache.set(key, html);
+        return html;
+    });
+}
+
+function CopyToClipboardButton({ code }: { code: string }) {
     const [hasCopied, setHasCopied] = useState(false);
 
-    const copyToClipboard = async (code) => {
+    const copyToClipboard = async () => {
         await navigator.clipboard.writeText(code);
-        await setHasCopied(true);
-        await setTimeout(() => {
-            setHasCopied(false);
-        }, 2000);
+        setHasCopied(true);
+        setTimeout(() => setHasCopied(false), 2000);
     };
 
     return (
         <span
             className={classnames(styles.clipboardButtonOuter, hasCopied ? styles.hasCopied : '')}
-            onClick={() => {
-                copyToClipboard(code);
-            }}
+            onClick={copyToClipboard}
         >
             <span className={styles.clipboardButtonCopiedOuter}>
                 {hasCopied ? (
@@ -68,84 +101,64 @@ function CopyToClipboardButton({ code }: { code: string | string[] }) {
     );
 }
 
-/**
- * This uses Prism to highlight a provided code snippet.
- */
 function Code({
     code,
     language = 'ts',
     className,
-    keepMarkup = false,
     lineNumbers = false,
     copyToClipboard = false,
+    keepMarkup = false,
+    preHighlightedHtml,
     ...props
 }: {
     code: string | string[];
     language?: Language;
     className?: string;
-    keepMarkup?: boolean;
     lineNumbers?: boolean;
     copyToClipboard?: boolean;
+    keepMarkup?: boolean;
+    preHighlightedHtml?: string;
 }) {
-    if (Array.isArray(code)) {
-        code = code.join('\n');
-    }
+    const codeStr = Array.isArray(code) ? code.join('\n') : code;
+
+    const [highlightedHtml, setHighlightedHtml] = useState<string | null>(preHighlightedHtml ?? null);
+
+    useEffect(() => {
+        // keepMarkup content is dynamic (runtime links) so cannot use pre-highlighted HTML.
+        // For all other cases, pre-highlighted HTML from build time is used as-is.
+        if (preHighlightedHtml && !keepMarkup) return;
+        let cancelled = false;
+        highlight(codeStr, language, keepMarkup).then((html) => {
+            if (!cancelled) setHighlightedHtml(html);
+        });
+        return () => {
+            cancelled = true;
+        };
+    }, [codeStr, language, keepMarkup, preHighlightedHtml]);
 
     return (
         <pre
-            suppressHydrationWarning
             className={classnames(
                 'code',
                 `language-${language}`,
                 className,
-                lineNumbers ? 'line-numbers' : null,
+                codeStyles.shikiPre,
+                lineNumbers ? codeStyles.lineNumbers : null,
                 copyToClipboard ? 'copy-to-clipboard' : ''
             )}
             {...props}
         >
-            {copyToClipboard && <CopyToClipboardButton code={code} />}
-
-            {keepMarkup || lineNumbers ? (
-                <CodeWithPrismPlugins code={code} keepMarkup={keepMarkup} />
-            ) : (
-                <CodeWithoutPrismPlugins language={language} code={code} />
-            )}
+            {copyToClipboard && <CopyToClipboardButton code={codeStr} />}
+            {highlightedHtml ? <ShikiCode html={highlightedHtml} /> : <code>{codeStr}</code>}
         </pre>
     );
 }
 
-/**
- * This component uses Prism.highlightElement() rather than Prism.highlight() which utilises more of the Prism lifecycle,
- * allowing us to use plugins (e.g. keep-markup), but is much less performant, so should only be used where plugins
- * are required.
- */
-const CodeWithPrismPlugins = ({ code, keepMarkup }: { code: string; keepMarkup: boolean }) => {
-    const ref = useRef<HTMLElement>(null);
+function ShikiCode({ html }: { html: string }) {
+    const codeMatch = html.match(/<code[^>]*>([\s\S]*)<\/code>/);
+    const innerHtml = codeMatch ? codeMatch[1] : html;
 
-    useEffect(() => {
-        if (ref.current) {
-            Prism.highlightElement(ref.current);
-        }
-    });
-
-    return keepMarkup ? (
-        <code ref={ref} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: code }} />
-    ) : (
-        <code ref={ref} suppressHydrationWarning>
-            {code}
-        </code>
-    );
-};
-
-/**
- * This uses Prism.highlight() which is the most-performant method for syntax highlighting because it only executes a
- * small part of the Prism lifecycle.
- */
-const CodeWithoutPrismPlugins = ({ code, language }: { code: string; language: Language }) => (
-    <code
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: Prism.highlight(code, GrammarMap[language], language) }}
-    />
-);
+    return <code className={codeStyles.shikiCode} data-shiki="" dangerouslySetInnerHTML={{ __html: innerHtml }} />;
+}
 
 export default memo(Code);

@@ -11,6 +11,7 @@ ag-grid-angular {
     overflow: hidden;
     border: var(--ag-wrapper-border);
     border-radius: var(--ag-wrapper-border-radius);
+    background-color: var(--ag-wrapper-background-color);
 
     &.ag-layout-normal {
         content-visibility: auto;

@@ -62,6 +62,10 @@
     mask-image: url('./material-svg-icons/adesc.svg');
 }
 
+.ag-icon-document::before {
+    mask-image: url('./material-svg-icons/document.svg');
+}
+
 .ag-icon-down::before {
     mask-image: url('./material-svg-icons/down.svg');
 }
@@ -92,6 +96,10 @@
 
 .ag-icon-first::before {
     mask-image: url('./material-svg-icons/first.svg');
+}
+
+.ag-icon-fx::before {
+    mask-image: url('./material-svg-icons/fx.svg');
 }
 
 .ag-icon-group::before {
@@ -148,6 +156,10 @@
 
 .ag-icon-paste::before {
     mask-image: url('./material-svg-icons/paste.svg');
+}
+
+.ag-icon-values-as::before {
+    mask-image: url('./material-svg-icons/values-as.svg');
 }
 
 .ag-icon-pin::before {

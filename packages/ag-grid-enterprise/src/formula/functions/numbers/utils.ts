@@ -1,7 +1,6 @@
-import { FormulaError } from '../../ast/utils';
+import { _isFiniteNumber } from 'ag-grid-community';
 
-// Helpers for funcs below
-const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+import { FormulaError } from '../../ast/utils';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -26,7 +25,7 @@ export function coerceFiniteNumber(fname: string, v: unknown): number {
         }
         throw new FormulaError(48, [fname]);
     }
-    if (isFiniteNumber(v)) {
+    if (_isFiniteNumber(v)) {
         return v;
     }
 

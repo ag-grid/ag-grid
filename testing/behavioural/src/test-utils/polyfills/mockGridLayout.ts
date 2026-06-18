@@ -36,6 +36,19 @@ export const mockGridLayout = {
     getBoundingClientRect,
 };
 
+const POPUP_OR_DIALOG_SELECTOR =
+    '.ag-popup,.ag-dialog,.ag-advanced-filter-builder,.ag-tooltip,.ag-rich-select-list,.ag-menu';
+const VIRTUAL_LIST_SELECTOR =
+    '.ag-advanced-filter-builder-virtual-list-viewport,.ag-rich-select-virtual-list-viewport,.ag-advanced-filter-builder-list,.ag-advanced-filter-builder,.ag-rich-select,.ag-virtual-list-viewport';
+
+function inPopupOrDialog(el: HTMLElement): boolean {
+    return !!el.closest(POPUP_OR_DIALOG_SELECTOR);
+}
+
+function inVirtualList(el: HTMLElement): boolean {
+    return !!el.closest(VIRTUAL_LIST_SELECTOR);
+}
+
 const getElementType = (el: HTMLElement) => {
     if (el === document.body) {
         return 'body';
@@ -49,6 +62,9 @@ const getElementType = (el: HTMLElement) => {
     }
     if (classList.contains('ag-header-row')) {
         return 'header-row';
+    }
+    if (classList.contains('ag-advanced-filter-header')) {
+        return 'advanced-filter-header';
     }
     if (classList.contains('ag-row')) {
         return 'row';
@@ -100,6 +116,11 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
         case 'viewport': {
             top = headerHeight;
             height = gridHeight - headerHeight;
+            break;
+        }
+        case 'advanced-filter-header': {
+            top = headerHeight;
+            height = headerHeight;
             break;
         }
         case 'grid': {
@@ -253,10 +274,14 @@ function init(): boolean {
     const installOffsetDimensionPatch = (prop: 'offsetHeight' | 'clientHeight' | 'offsetWidth' | 'clientWidth') => {
         const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, prop);
         const axis = prop === 'offsetWidth' || prop === 'clientWidth' ? 'width' : 'height';
+        const isHeightProp = prop === 'offsetHeight' || prop === 'clientHeight';
         Object.defineProperty(HTMLElement.prototype, prop, {
             configurable: true,
             get(this: HTMLElement) {
                 if (mockGridLayout.useRealOffsetDimensions) {
+                    return this.getBoundingClientRect()[axis];
+                }
+                if (isHeightProp && inVirtualList(this)) {
                     return this.getBoundingClientRect()[axis];
                 }
                 return original?.get?.call(this) ?? 0;
@@ -266,6 +291,21 @@ function init(): boolean {
     for (const prop of ['offsetHeight', 'clientHeight', 'offsetWidth', 'clientWidth'] as const) {
         installOffsetDimensionPatch(prop);
     }
+
+    const origOffsetParentDesc = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
+    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+        configurable: true,
+        get(this: HTMLElement) {
+            const native = origOffsetParentDesc?.get?.call(this);
+            if (native != null) {
+                return native;
+            }
+            if (inPopupOrDialog(this)) {
+                return this.parentElement;
+            }
+            return null;
+        },
+    });
 
     // scrollHeight must account for the virtual scroll container height set by the grid (e.g.
     // ag-center-cols-container gets style.height = rowCount * rowHeight). This is nested 2 levels

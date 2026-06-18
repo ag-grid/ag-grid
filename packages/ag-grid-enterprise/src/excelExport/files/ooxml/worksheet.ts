@@ -1,3 +1,5 @@
+import { _escapeString } from 'ag-stack';
+
 import type {
     ExcelCell,
     ExcelColumn,
@@ -12,7 +14,6 @@ import type {
     ExcelWorksheet,
     XmlElement,
 } from 'ag-grid-community';
-import { _escapeString } from 'ag-grid-community';
 
 import type { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/excelInterfaces';
 import { getExcelColumnName } from '../../assets/excelUtils';

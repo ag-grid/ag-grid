@@ -2,7 +2,7 @@ import type { GridApi, GridOptions, Module, RowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 describe('ag-grid formulas row pinning', () => {
     const rowNumberRefreshBufferMs = 25;
@@ -106,6 +106,19 @@ describe('ag-grid formulas row pinning', () => {
                 { id: 'dep', value: '=REF(COLUMN("value"),ROW("src"))*5' },
             ],
         });
+        await new GridColumns(api, `repeated manual pin and unpin cycles preserve formula results setup`).checkColumns(
+            `
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                └── value "Value" width:200
+            `
+        );
+        await new GridRows(api, `repeated manual pin and unpin cycles preserve formula results setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:src row-number:"1" value:3
+            └── LEAF id:dep row-number:"2" value:15
+        `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         for (const nextValue of [4, 6, 8]) {
@@ -127,6 +140,11 @@ describe('ag-grid formulas row pinning', () => {
             expect(getValue(api, api.getRowNode('dep') as RowNode | undefined)).toBe(nextValue * 5);
             currentSourceValue = nextValue;
         }
+        await new GridRows(api, `repeated manual pin and unpin cycles preserve formula results final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:src row-number:"1" value:8
+            └── LEAF id:dep row-number:"2" value:40
+        `);
     });
 
     test('pinning the source row does not change dependent formula results', async () => {
@@ -245,18 +263,51 @@ describe('ag-grid formulas row pinning', () => {
             pinnedTopRowData: [{ id: 'pt', value: '=REF(COLUMN("value"),ROW("src"))*2' }],
             pinnedBottomRowData: [{ id: 'pb', value: '=REF(COLUMN("value"),ROW("src"))+4' }],
         });
+        await new GridColumns(api, `static pinned top and bottom formulas coexist across independent updates setup`)
+            .checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `static pinned top and bottom formulas coexist across independent updates setup`).check(
+            `
+                PINNED_TOP id:pt row-number:"1" value:12
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:src row-number:"1" value:6
+                PINNED_BOTTOM id:pb row-number:"1" value:10
+            `
+        );
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expect(getValue(api, api.getPinnedTopRow(0) as RowNode | undefined)).toBe(12);
         expect(getValue(api, api.getPinnedBottomRow(0) as RowNode | undefined)).toBe(10);
 
         api.setGridOption('pinnedTopRowData', [{ id: 'pt', value: '=REF(COLUMN("value"),ROW("src"))*3' }]);
+        await new GridRows(
+            api,
+            `static pinned top and bottom formulas coexist across independent updates after setGridOption pinnedTopRowData`
+        ).check(`
+            PINNED_TOP id:pt row-number:"1" value:18
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:src row-number:"1" value:6
+            PINNED_BOTTOM id:pb row-number:"1" value:10
+        `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expect(getValue(api, api.getPinnedTopRow(0) as RowNode | undefined)).toBe(18);
         expect(getValue(api, api.getPinnedBottomRow(0) as RowNode | undefined)).toBe(10);
 
         api.setGridOption('pinnedBottomRowData', [{ id: 'pb', value: '=REF(COLUMN("value"),ROW("src"))+8' }]);
+        await new GridRows(
+            api,
+            `static pinned top and bottom formulas coexist across independent updates after setGridOption pinnedBottomRowData`
+        ).check(`
+            PINNED_TOP id:pt row-number:"1" value:18
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:src row-number:"1" value:6
+            PINNED_BOTTOM id:pb row-number:"1" value:14
+        `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expect(getValue(api, api.getPinnedTopRow(0) as RowNode | undefined)).toBe(18);
@@ -274,6 +325,19 @@ describe('ag-grid formulas row pinning', () => {
             rowData: [{ id: 'src', value: 5 }],
             pinnedTopRowData: [{ id: 'pt', value: '=REF(COLUMN("value"),ROW("src"))*3' }],
         });
+        await new GridColumns(api, `static pinned top row formulas evaluate and refresh when source rows change setup`)
+            .checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                └── value "Value" width:200
+            `);
+        await new GridRows(api, `static pinned top row formulas evaluate and refresh when source rows change setup`)
+            .check(`
+                PINNED_TOP id:pt row-number:"1" value:15
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:src row-number:"1" value:5
+            `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expect(getValue(api, api.getPinnedTopRow(0) as RowNode | undefined)).toBe(15);
@@ -284,6 +348,14 @@ describe('ag-grid formulas row pinning', () => {
         expect(getValue(api, api.getPinnedTopRow(0) as RowNode | undefined)).toBe(27);
 
         api.setGridOption('pinnedTopRowData', [{ id: 'pt', value: '=REF(COLUMN("value"),ROW("src"))*4' }]);
+        await new GridRows(
+            api,
+            `static pinned top row formulas evaluate and refresh when source rows change after setGridOption pinnedTopRowData`
+        ).check(`
+            PINNED_TOP id:pt row-number:"1" value:36
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:src row-number:"1" value:9
+        `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expect(getValue(api, api.getPinnedTopRow(0) as RowNode | undefined)).toBe(36);
@@ -294,6 +366,21 @@ describe('ag-grid formulas row pinning', () => {
             rowData: [{ id: 'src', value: 7 }],
             pinnedBottomRowData: [{ id: 'pb', value: '=REF(COLUMN("value"),ROW("src"))-2' }],
         });
+        await new GridColumns(
+            api,
+            `static pinned bottom row formulas evaluate and refresh when source rows change setup`
+        ).checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            └── value "Value" width:200
+        `);
+        await new GridRows(api, `static pinned bottom row formulas evaluate and refresh when source rows change setup`)
+            .check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:src row-number:"1" value:7
+                PINNED_BOTTOM id:pb row-number:"1" value:5
+            `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expect(getValue(api, api.getPinnedBottomRow(0) as RowNode | undefined)).toBe(5);
@@ -304,6 +391,14 @@ describe('ag-grid formulas row pinning', () => {
         expect(getValue(api, api.getPinnedBottomRow(0) as RowNode | undefined)).toBe(10);
 
         api.setGridOption('pinnedBottomRowData', [{ id: 'pb', value: '=REF(COLUMN("value"),ROW("src"))+1' }]);
+        await new GridRows(
+            api,
+            `static pinned bottom row formulas evaluate and refresh when source rows change after setGridOption pinnedBottomRowData`
+        ).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:src row-number:"1" value:12
+            PINNED_BOTTOM id:pb row-number:"1" value:13
+        `);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expect(getValue(api, api.getPinnedBottomRow(0) as RowNode | undefined)).toBe(13);

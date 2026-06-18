@@ -1,5 +1,5 @@
-import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _isVisible } from '../agStack/utils/dom';
+import { RefPlaceholder, _isVisible } from 'ag-stack';
+
 import type { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import { GridBodySelector } from '../gridBodyComp/gridBodyComp';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
@@ -36,7 +36,6 @@ export class GridComp extends TabGuardComp {
     public postConstruct(): void {
         const compProxy: IGridComp = {
             destroyGridUi: () => this.destroyBean(this),
-            setRtlClass: (cssClass: string) => this.addCss(cssClass),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this),

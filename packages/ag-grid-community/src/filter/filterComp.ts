@@ -1,6 +1,5 @@
-import { _clearElement } from '../agStack/utils/dom';
-import { _exists } from '../agStack/utils/generic';
-import { AgPromise } from '../agStack/utils/promise';
+import { AgPromise, _clearElement, _exists } from 'ag-stack';
+
 import type { AgColumn } from '../entities/agColumn';
 import type { FilterDestroyedEvent } from '../events';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
@@ -122,7 +121,7 @@ export class FilterComp extends Component {
         if (
             (source === 'api' || source === 'paramsUpdated') &&
             column.getId() === this.column.getId() &&
-            this.beans.colModel.getColDefCol(this.column)
+            this.beans.colModel.getNonPivotCol(this.column)
         ) {
             // filter has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
             _clearElement(this.getGui());

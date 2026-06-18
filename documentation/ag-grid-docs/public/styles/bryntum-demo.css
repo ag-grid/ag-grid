@@ -1,0 +1,126 @@
+/* Bryntum "Try it yourself!" demo styles — isolated from page styles.
+   Wrapper rules use the site's CSS-custom-property design tokens (which
+   cascade through :root). The .Started/.Late/etc. status colours below
+   are taken verbatim from bryntum.com's upstream demo CSS and are kept
+   as-is so the embedded demo matches the canonical Bryntum styling. */
+
+.bryntum-demo-section {
+    padding: 64px 0;
+    background-color: var(--color-bg-secondary);
+}
+
+.bryntum-demo-inner {
+    margin: 0 auto;
+    padding: 0 var(--layout-horizontal-margins);
+    max-width: var(--layout-max-width);
+}
+
+.bryntum-demo-eyebrow {
+    display: block;
+    text-align: center;
+    margin: 0 0 8px;
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    line-height: var(--text-lh-base);
+    color: var(--color-util-brand-600);
+}
+
+[data-dark-mode='true'] .bryntum-demo-eyebrow {
+    color: var(--color-util-brand-900);
+}
+
+.bryntum-demo-heading {
+    text-align: center;
+    font-size: var(--text-fs-2xl);
+    margin: 0 0 16px;
+    color: var(--color-fg-primary);
+}
+
+.bryntum-demo-subheading {
+    text-align: center;
+    margin: 0 auto 32px;
+    max-width: 720px;
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-base);
+    color: var(--color-fg-secondary);
+}
+
+.bryntum-demo-frame {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    /* Default height; per-product modifiers below override to match each widget's
+       natural content height so we don't get large empty space at the bottom. */
+    height: 720px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-secondary);
+    box-shadow:
+        0 16px 40px rgb(15 36 88 / 0.18),
+        0 6px 16px rgb(15 36 88 / 0.1);
+}
+
+.bryntum-demo-frame--gantt {
+    height: 720px;
+}
+
+.bryntum-demo-frame--scheduler {
+    height: 720px;
+}
+
+.bryntum-demo-frame--schedulerpro {
+    height: 770px;
+}
+
+.bryntum-demo-frame--taskboard {
+    height: 720px;
+}
+
+.bryntum-demo-mount {
+    width: 100%;
+    height: 100%;
+}
+
+[data-dark-mode='true'] .bryntum-demo-frame {
+    background-color: var(--color-util-gray-50);
+    border-color: var(--color-util-gray-300);
+    box-shadow:
+        0 16px 40px rgb(0 0 0 / 0.45),
+        0 6px 16px rgb(0 0 0 / 0.25);
+}
+
+/* From upstream advanced demo app.css — vendor styles kept as-is. */
+.b-status-column-cell,
+.b-complexity-column-cell {
+    font-size: 0.8em;
+}
+
+.b-status-column-cell i::before,
+.b-complexity-column-cell i::before {
+    margin-inline-end: 0.5em;
+}
+
+.Started {
+    color: #bbb;
+}
+
+.Late {
+    color: #ff5722;
+}
+
+.Completed {
+    color: #34d844;
+}
+
+.Easy {
+    color: #69db7c;
+}
+
+.Normal {
+    color: #fdd835;
+}
+
+.Hard {
+    color: #ffa94d;
+}

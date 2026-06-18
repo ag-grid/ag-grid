@@ -1,3 +1,13 @@
+import {
+    AgPopupComponent,
+    RefPlaceholder,
+    _exists,
+    _fuzzySuggestions,
+    _isVisible,
+    _setAriaActiveDescendant,
+    _setAriaSelected,
+} from 'ag-stack';
+
 import type {
     AgComponentSelectorType,
     AgEventTypeParams,
@@ -8,11 +18,17 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { AgPopupComponent, KeyCode, RefPlaceholder, _exists, _fuzzySuggestions, _isVisible } from 'ag-grid-community';
+import { KeyCode, _clamp } from 'ag-grid-community';
 
 import { VirtualList } from '../../widgets/virtualList';
+import agAutocompleteCSS from './agAutocomplete.css';
 import { AgAutocompleteRow } from './agAutocompleteRow';
 import type { AutocompleteEntry } from './autocompleteParams';
+
+type AutocompleteRowComponent = Component & {
+    updateSelected(selected: boolean): void;
+    setSearchString(searchString: string): void;
+};
 
 const AgAutocompleteListElement: ElementParams = {
     tag: 'div',
@@ -35,7 +51,7 @@ export class AgAutocompleteList extends AgPopupComponent<
 > {
     private readonly eList: HTMLElement = RefPlaceholder;
 
-    private virtualList: VirtualList<any>;
+    private virtualList: VirtualList<AutocompleteRowComponent, AutocompleteEntry>;
 
     private autocompleteEntries: AutocompleteEntry[];
 
@@ -54,15 +70,19 @@ export class AgAutocompleteList extends AgPopupComponent<
             autoSizeList?: boolean;
             maxVisibleItems?: number;
             onListHeightChanged?: () => void;
+            rowComponentCreator?: (value: AutocompleteEntry, selected: boolean) => AutocompleteRowComponent;
             forceLastSelection?: (lastSelection: AutocompleteEntry, searchString: string) => boolean;
+            onActiveOptionChanged?: (optionId: string | null) => void;
         }
     ) {
         super(AgAutocompleteListElement);
+        this.registerCSS(agAutocompleteCSS);
     }
 
     public postConstruct(): void {
         this.autocompleteEntries = this.params.autocompleteEntries;
         this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'autocomplete' }));
+        this.virtualList.getAriaElement().id = this.getListId();
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
         this.eList.appendChild(this.virtualList.getGui());
 
@@ -83,13 +103,32 @@ export class AgAutocompleteList extends AgPopupComponent<
         this.updateListHeight();
     }
 
+    public getActiveOptionId(): string | null {
+        const selectedValue = this.selectedValue;
+        const index = selectedValue ? this.autocompleteEntries.indexOf(selectedValue) : -1;
+
+        return index >= 0 ? this.getOptionId(index) : null;
+    }
+
+    public getListId(): string {
+        return `ag-autocomplete-list-${this.getCompId()}`;
+    }
+
     public onNavigationKeyDown(event: any, key: string): void {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
-        const oldIndex = this.autocompleteEntries.indexOf(this.selectedValue);
-        const newIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
+        if (!this.autocompleteEntries.length) {
+            return;
+        }
 
-        this.checkSetSelectedValue(newIndex);
+        const oldIndex = this.autocompleteEntries.indexOf(this.selectedValue);
+        let nextIndex = 0;
+        if (oldIndex >= 0) {
+            nextIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
+        }
+        const lastIndex = this.autocompleteEntries.length - 1;
+
+        this.setSelectedValue(_clamp(nextIndex, 0, lastIndex));
     }
 
     public setSearch(searchString: string): void {
@@ -99,7 +138,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         } else {
             // reset
             this.autocompleteEntries = this.params.autocompleteEntries;
-            this.virtualList.refresh();
+            this.refreshVirtualList();
             this.checkSetSelectedValue(0);
             this.updateListHeight();
         }
@@ -180,7 +219,7 @@ export class AgAutocompleteList extends AgPopupComponent<
             filteredEntries = [this.selectedValue];
         }
         this.autocompleteEntries = filteredEntries;
-        this.virtualList.refresh();
+        this.refreshVirtualList();
         this.updateListHeight();
 
         if (!topSuggestion) {
@@ -193,7 +232,7 @@ export class AgAutocompleteList extends AgPopupComponent<
     }
 
     private updateSearchInList(): void {
-        this.virtualList.forEachRenderedRow((row: AgAutocompleteRow) => row.setSearchString(this.searchString));
+        this.virtualList.forEachRenderedRow((row) => row.setSearchString(this.searchString));
     }
 
     private updateListHeight(): void {
@@ -229,26 +268,76 @@ export class AgAutocompleteList extends AgPopupComponent<
         }
     }
 
+    private refreshVirtualList(): void {
+        this.virtualList.refresh();
+        this.virtualList.awaitStable(() => {
+            this.refreshRenderedRowsAria();
+            this.refreshActiveDescendant();
+        });
+    }
+
     private setSelectedValue(index: number): void {
         const value = this.autocompleteEntries[index];
 
         if (this.selectedValue === value) {
+            this.refreshRenderedRowsAria();
+            this.refreshActiveDescendant();
             return;
         }
 
         this.selectedValue = value;
         this.virtualList.ensureIndexVisible(index);
 
-        this.virtualList.forEachRenderedRow((cmp: AgAutocompleteRow, idx: number) => {
-            cmp.updateSelected(index === idx);
+        this.refreshRenderedRowsAria();
+        this.refreshActiveDescendant();
+    }
+
+    private refreshRenderedRowsAria(): void {
+        this.virtualList.forEachRenderedRow((rowComponent, rowIndex) => {
+            const rowGui = rowComponent.getGui();
+            const rowParent = rowGui.parentElement;
+            if (rowParent instanceof HTMLElement) {
+                this.updateRowAriaProperties(rowComponent, rowParent, rowIndex);
+            }
         });
     }
 
-    private createRowComponent(value: AutocompleteEntry): Component {
+    private refreshActiveDescendant(): void {
+        const activeOptionId = this.getActiveOptionId();
+
+        _setAriaActiveDescendant(this.virtualList.getAriaElement(), activeOptionId);
+        this.params.onActiveOptionChanged?.(activeOptionId);
+    }
+
+    private updateRowAriaProperties(
+        rowComponent: AutocompleteRowComponent,
+        listItemElement: HTMLElement,
+        rowIndex: number
+    ): void {
+        const isSelected = this.autocompleteEntries[rowIndex] === this.selectedValue;
+
+        rowComponent.updateSelected(isSelected);
+        _setAriaSelected(listItemElement, isSelected);
+        listItemElement.setAttribute('id', this.getOptionId(rowIndex));
+    }
+
+    private getOptionId(index: number): string {
+        return `${this.getListId()}-option-${index}`;
+    }
+
+    private createRowComponent(value: AutocompleteEntry, listItemElement: HTMLElement): AutocompleteRowComponent {
+        const customRow = this.params.rowComponentCreator?.(value, value === this.selectedValue);
+        if (customRow) {
+            this.createBean(customRow);
+            this.updateRowAriaProperties(customRow, listItemElement, this.autocompleteEntries.indexOf(value));
+            return customRow;
+        }
+
         const row = new AgAutocompleteRow();
 
         this.createBean(row);
         row.setState(value.displayValue ?? value.key, value === this.selectedValue);
+        this.updateRowAriaProperties(row, listItemElement, this.autocompleteEntries.indexOf(value));
 
         return row;
     }
@@ -264,7 +353,7 @@ export class AgAutocompleteList extends AgPopupComponent<
     }
 
     public afterGuiAttached(): void {
-        this.virtualList.refresh();
+        this.refreshVirtualList();
         this.updateListHeight();
     }
 

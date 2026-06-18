@@ -1,0 +1,446 @@
+{
+    "url": "https://bryntum.com/products/schedulerpro/",
+    "slug": "schedulerpro",
+    "title": "Bryntum Scheduler Pro – A Pro-Grade Scheduling Component",
+    "meta": {
+        "description": "A contemporary, capable scheduling component with real intelligence. Define non-working time and configure shifts for every resource. Works with all frameworks incl. React, Angular and Vue.",
+        "og_title": "Bryntum Scheduler Pro – A Pro-Grade Scheduling Component",
+        "og_description": "A contemporary, capable scheduling component with real intelligence. Define non-working time and configure shifts for every resource. Works with all frameworks incl. React, Angular and Vue."
+    },
+    "sections": [
+        {
+            "id": "block_67e17f6b1228d9d75851bddbf1df0ace",
+            "type": "heroTBM",
+            "modifiers": ["animated-hero"],
+            "heading": "A Pro-Grade Scheduling Component",
+            "body_html": "<p class=\"p1\">Bryntum Scheduler Pro is a JavaScript UI component built for precise planning. It accounts for resource availability, dependencies and constraints out of the box.</p>",
+            "body_text": "Bryntum Scheduler Pro is a JavaScript UI component built for precise planning. It accounts for resource availability, dependencies and constraints out of the box.",
+            "ctas": [
+                {
+                    "text": "Browse Examples",
+                    "href": "/products/schedulerpro/examples/",
+                    "title": "Browse Examples"
+                },
+                {
+                    "text": "Get the Trial",
+                    "href": "/download/?product=schedulerpro",
+                    "title": "Get the Trial"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "svg-file",
+                    "src": "heroes/schedulerpro.svg"
+                }
+            ]
+        },
+        {
+            "id": "block_agbryntum_partnership",
+            "type": "partnership",
+            "heading": "Your JavaScript stack just expanded",
+            "body_html": "<p>Since our 2025 <a href=\"https://blog.ag-grid.com/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, Bryntum Scheduler Pro sits alongside AG Grid for dependency-aware scheduling and resource planning, crafted by a similar team and held to the same bar.</p>",
+            "body_text": "Since our 2025 partnership with Bryntum, Bryntum Scheduler Pro sits alongside AG Grid for dependency-aware scheduling and resource planning, crafted by a similar team and held to the same bar.",
+            "logo_light_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-light.svg",
+            "logo_dark_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-dark.svg",
+            "logo_alt": "AG Grid x Bryntum partnership"
+        },
+        {
+            "id": "block_agbryntum_intro_video_schedulerpro",
+            "type": "intro-video",
+            "video_src": "https://www.youtube.com/embed/W0CnKcrnoIc?feature=oembed",
+            "title": "Bryntum Scheduler Pro Intro"
+        },
+        {
+            "id": "block_ca62340a695d26f1e58162162bd1cb2b",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Task Dependencies",
+            "heading": "Link Up Your Tasks",
+            "body_html": "<p class=\"p1\">Once your tasks and dependencies are set, the pro-grade scheduling engine handles the rest by:</p> <ul> <li>Arranging tasks based on how they relate and on the rules you’ve set.</li> <li>Auto-shifting downstream tasks whenever you move a leading task.</li> </ul>",
+            "body_text": "Once your tasks and dependencies are set, the pro-grade scheduling engine handles the rest by: Arranging tasks based on how they relate and on the rules you’ve set. Auto-shifting downstream tasks whenever you move a leading task.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "See all features",
+                    "href": "/products/schedulerpro/features",
+                    "title": "See all features"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/schedulerpro/schedulerpro-split-events-svalbard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "699",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-split-events-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_86cff8bcd91213c53bcd78636afc0cd6",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Resource Management",
+            "heading": "Don’t Over-Allocate Your Resources",
+            "body_html": "<p>Track your team’s workload with a built-in histogram so you can decide faster and more fairly.</p> <ul> <li>Bright red highlights make over-capacity workloads obvious at a glance. <span class=\"s1\">No digging through tables or reports.</span></li> <li>Tweak task assignments to keep the plan balanced.</li> </ul>",
+            "body_text": "Track your team’s workload with a built-in histogram so you can decide faster and more fairly. Bright red highlights make over-capacity workloads obvious at a glance. No digging through tables or reports. Tweak task assignments to keep the plan balanced.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/schedulerpro/examples/resourcehistogram",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/schedulerpro/schedulerpro-resourcehistogram-svalbard-2-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "663",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-resourcehistogram-svalbard-2-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_b27deebef856877e482370a5bc9b1a9a",
+            "type": "text-media",
+            "modifiers": ["video-file", "reverse", "added-shadow"],
+            "eyebrow": "Smart Assignment",
+            "heading": "Assign Tasks by Skill",
+            "body_html": "<p>Let Scheduler Pro handle the logic behind the scenes so planning stays efficient:</p> <ul> <li>Match the right tasks with the right people without fuss.</li> <li>Pair tasks with teammates based on skills and availability.</li> <li>Auto-schedule tasks or drag them into suggested time slots.</li> </ul>",
+            "body_text": "Let Scheduler Pro handle the logic behind the scenes so planning stays efficient: Match the right tasks with the right people without fuss. Pair tasks with teammates based on skills and availability. Auto-schedule tasks or drag them into suggested time slots.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/schedulerpro/examples/skill-matching/",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/schedulerpro/schedulerpro-skill-matching-zoom.mp4.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-skill-matching-zoom.mp4.mp4"
+                }
+            ]
+        },
+        {
+            "id": "block_db9616ac89f5620c3b5018eb7d1c9498",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Auto-Scheduling",
+            "heading": "Adaptive, Smarter Planning",
+            "body_html": "<p class=\"p1\">Plan with confidence for real-world conditions:</p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Spot peak activity windows and overloaded categories via the heatmap.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Lean on </span><a href=\"https://bryntum.com/products/schedulerpro/examples/nested-events-dependencies/\"><span style=\"font-weight: 400;\">nested events</span></a> to make related-task handling simpler.</li> <li aria-level=\"1\" style=\"font-weight: 400;\"><a href=\"https://bryntum.com/products/schedulerpro/examples/travel-time/\"><span style=\"font-weight: 400;\">Factor travel time in</span></a><span style=\"font-weight: 400;\"> for tighter callout and field-routing planning.</span></li> <li><span style=\"font-weight: 400;\">Settle </span><a href=\"https://bryntum.com/products/schedulerpro/examples/conflicts/\"><span style=\"font-weight: 400;\">scheduling conflicts</span></a><span style=\"font-weight: 400;\"> and keep the schedule intact.</span></li> </ul>",
+            "body_text": "Plan with confidence for real-world conditions: Spot peak activity windows and overloaded categories via the heatmap. Lean on nested events to make related-task handling simpler. Factor travel time in for tighter callout and field-routing planning. Settle scheduling conflicts and keep the schedule intact.",
+            "links": [
+                {
+                    "text": "nested events",
+                    "href": "https://bryntum.com/products/schedulerpro/examples/nested-events-dependencies/"
+                },
+                {
+                    "text": "Factor travel time in",
+                    "href": "https://bryntum.com/products/schedulerpro/examples/travel-time/"
+                },
+                {
+                    "text": "scheduling conflicts",
+                    "href": "https://bryntum.com/products/schedulerpro/examples/conflicts/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/schedulerpro/examples/resourcehistogram",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/schedulerpro/schedulerpro-tree-summary-heatmap-svalbard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "762",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-tree-summary-heatmap-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "",
+            "type": "live-demo",
+            "modifiers": [],
+            "eyebrow": "Live Demo",
+            "heading": "Set Up Resource Shifts",
+            "body_text": "Define availability for each resource and watch the schedule honour shifts in real time, powered by the live Bryntum Scheduler Pro engine below.",
+            "demo_src": null,
+            "media": []
+        },
+        {
+            "id": "block_78337de647f86a668cc457859b96e116",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Task Editing",
+            "heading": "Tailor Task Editing",
+            "body_html": "<p><span style=\"font-weight: 400;\">Bryntum Scheduler Pro also ships with a capable, customisable task editor:</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Tweak any built-in field and bring your own.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Edit predecessors, successors and constraints.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Show or hide any of the preconfigured fields.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><a href=\"https://bryntum.com/products/schedulerpro/examples/calendar-editor/\"><span style=\"font-weight: 400;\">Create and edit multiple calendars</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Apply changes live, then roll them back if needed.</span></li> </ul>",
+            "body_text": "Bryntum Scheduler Pro also ships with a capable, customisable task editor: Tweak any built-in field and bring your own. Edit predecessors, successors and constraints. Show or hide any of the preconfigured fields. Create and edit multiple calendars . Apply changes live, then roll them back if needed.",
+            "links": [
+                {
+                    "text": "Create and edit multiple calendars",
+                    "href": "https://bryntum.com/products/schedulerpro/examples/calendar-editor/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/schedulerpro/examples/taskeditor",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/schedulerpro/schedulerpro-task-editor-svalbard-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "893",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-task-editor-svalbard-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_568e2c365c073264165eb83fbaa79716",
+            "type": "text-media",
+            "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Customisation",
+            "heading": "Style It However You Like",
+            "body_html": "<p class=\"p1\">Make the scheduler feel on-brand with flexible styling controls.</p> <ul> <li class=\"p1\">Adjust our built-in themes via CSS variables, no fuss.</li> <li class=\"p1\">Roll your own custom theme.</li> <li class=\"p1\">Pick from preconfigured taskbar styles and colour sets.</li> </ul>",
+            "body_text": "Make the scheduler feel on-brand with flexible styling controls. Adjust our built-in themes via CSS variables, no fuss. Roll your own custom theme. Pick from preconfigured taskbar styles and colour sets.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Open demo",
+                    "href": "/products/schedulerpro/examples-scheduler/animations/",
+                    "title": "Open demo"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/schedulerpro/schedulerpro-animations-svalbard-1-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "773",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-animations-svalbard-1-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_e81c12ec56ed0ff49bce53b58de2f4c3",
+            "type": "text-media",
+            "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Component Library",
+            "heading": "50+ Additional Widgets",
+            "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/scheduler/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in <strong>buttons, menus, toggles, charts and more </strong>alongside Bryntum Scheduler Pro.</li> <li class=\"li1\">Cut clicks and searching to meet user needs faster.</li> <li class=\"li1\">Wire up widgets straightforwardly via our clear docs.</li> </ul>",
+            "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel: Drop in buttons, menus, toggles, charts and more alongside Bryntum Scheduler Pro. Cut clicks and searching to meet user needs faster. Wire up widgets straightforwardly via our clear docs.",
+            "links": [
+                {
+                    "text": "broad set of UI elements",
+                    "href": "/products/scheduler/examples/kitchen-sink/"
+                }
+            ],
+            "ctas": [
+                {
+                    "text": "Browse widgets",
+                    "href": "/products/scheduler/examples/kitchen-sink/",
+                    "title": "Browse widgets"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "image",
+                    "src": "../assets/schedulerpro/more-widgets-schedulerpro-scaled.png",
+                    "alt": "",
+                    "width": "1240",
+                    "height": "732",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/more-widgets-schedulerpro-scaled.png"
+                }
+            ]
+        },
+        {
+            "id": "block_4348e94e0e5a386380b5721919b78cf1",
+            "type": "text-media",
+            "modifiers": ["video-file", "added-shadow"],
+            "eyebrow": "Quick Start",
+            "heading": "Install via npm",
+            "body_html": "<p>Pull Bryntum Scheduler Pro straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial, configure it, and you’re ready to build.</p>",
+            "body_text": "Pull Bryntum Scheduler Pro straight from npm. No sign-in or auth needed . Install the trial, configure it, and you’re ready to build.",
+            "links": [],
+            "ctas": [
+                {
+                    "text": "Read docs",
+                    "href": "/products/schedulerpro/docs/guide/SchedulerPro/quick-start/javascript-npm",
+                    "title": "Read docs"
+                }
+            ],
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/schedulerpro/npm-schedulerpro-edit-2.webm",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/npm-schedulerpro-edit-2.webm"
+                }
+            ]
+        },
+        {
+            "id": "block_25b850dbff9816c567b44d488450401f",
+            "type": "columns-lib",
+            "modifiers": [],
+            "eyebrow": "Examples Gallery",
+            "heading": "Sample Demos to Try",
+            "items": [
+                {
+                    "heading": "schedulerpro-nested-events-lazy-load-svalbard",
+                    "href": "/products/schedulerpro/examples/nested-events-lazy-load/",
+                    "body_text": "Lazy-loaded nested events",
+                    "description": "Stream child events on demand for fast, scalable nested timelines.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/schedulerpro/schedulerpro-nested-events-lazy-load-svalbard-768x556.png",
+                        "alt": "schedulerpro-nested-events-lazy-load-svalbard",
+                        "width": "768",
+                        "height": "556",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-nested-events-lazy-load-svalbard-768x556.png"
+                    }
+                },
+                {
+                    "heading": "schedulerpro-maps-svalbard-2",
+                    "href": "/products/schedulerpro/examples/maps/",
+                    "body_text": "Map integration view",
+                    "description": "Pair the schedule with a live map of resource locations.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/schedulerpro/schedulerpro-maps-svalbard-2-768x556.png",
+                        "alt": "schedulerpro-maps-svalbard-2",
+                        "width": "768",
+                        "height": "556",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-maps-svalbard-2-768x556.png"
+                    }
+                },
+                {
+                    "heading": "schedulerpro-constraints-svalbard",
+                    "href": "/products/schedulerpro/examples/constraints",
+                    "body_text": "Apply scheduling constraints",
+                    "description": "Enforce start, end and dependency rules as you plan.",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/schedulerpro/schedulerpro-constraints-svalbard-768x556.png",
+                        "alt": "schedulerpro-constraints-svalbard",
+                        "width": "768",
+                        "height": "556",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-constraints-svalbard-768x556.png"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "block_111df3c81eca350388632d5b48d6804a",
+            "type": "brands",
+            "modifiers": [],
+            "eyebrow": "Trusted Worldwide",
+            "heading": "Used by the world’s most respected companies",
+            "items": [
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-1.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-2.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-3.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-4.svg"
+                    }
+                },
+                {
+                    "href": "/company/customers/",
+                    "media": {
+                        "kind": "svg-file",
+                        "src": "brands/brand-5.svg"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "block_e6ae0c59c6f32222da3fcfad36ae9a1d",
+            "type": "text-button",
+            "modifiers": ["variant-2"],
+            "eyebrow": "Get Started",
+            "heading": "Ready to dive in?",
+            "body_html": "",
+            "body_text": "",
+            "ctas": [
+                {
+                    "text": "Try for Free",
+                    "href": "/download/?product=schedulerpro",
+                    "title": "Try for Free"
+                },
+                {
+                    "text": "Purchase Now",
+                    "href": "/store/schedulerpro",
+                    "title": "Purchase Now"
+                }
+            ]
+        },
+        {
+            "id": "block_1b51d2add2e7ec00cbd950d2fd9b26af",
+            "type": "columnsWithMedia",
+            "modifiers": [],
+            "heading": "Reference",
+            "items": [
+                {
+                    "heading": "Reference",
+                    "href": "/products/schedulerpro/docs",
+                    "body_text": "",
+                    "media": null
+                },
+                {
+                    "heading": "Recent Releases",
+                    "href": "changelog/#release-7.3.0",
+                    "body_text": "Complete changelog",
+                    "media": null
+                },
+                {
+                    "heading": "Documentation Site",
+                    "href": "/products/schedulerpro/docs",
+                    "body_text": "",
+                    "media": {
+                        "kind": "image",
+                        "src": "../assets/schedulerpro/docs-bryntum-schedulerpro-scaled.png",
+                        "alt": "docs-bryntum-schedulerpro",
+                        "width": "2560",
+                        "height": "1609",
+                        "src_original": "https://bryntum.com/wp-content/uploads/2022/05/docs-bryntum-schedulerpro-scaled.png"
+                    }
+                }
+            ]
+        }
+    ]
+}

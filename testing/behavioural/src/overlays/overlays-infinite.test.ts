@@ -2,7 +2,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
 import { InfiniteRowModelModule } from 'ag-grid-community';
 import { TextFilterModule, ValidationModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid overlays state for Infinite Row Model', () => {
     const gridsManager = new TestGridsManager({
@@ -73,6 +73,16 @@ describe('ag-grid overlays state for Infinite Row Model', () => {
                 },
             },
         });
+        await new GridColumns(api, `should show loading and no rows overlay, also when changing columns setup`)
+            .checkColumns(`
+                CENTER
+                ├── 0 "Id" width:200
+                └── athlete "Athlete" width:200
+            `);
+        await new GridRows(api, `should show loading and no rows overlay, also when changing columns setup`).check(`
+            [no root row]
+            └── filler id:rowIndex:0
+        `);
 
         await firstLoadPromise;
 
@@ -84,6 +94,20 @@ describe('ag-grid overlays state for Infinite Row Model', () => {
 
         // Try to change columnDefs, row data still empty, we must still show the no overlay
         api.setGridOption('columnDefs', [{ field: 'athlete', filter: 'agTextColumnFilter' }, { field: 'sport' }]);
+        await new GridColumns(
+            api,
+            `should show loading and no rows overlay, also when changing columns after setGridOption columnDefs`
+        ).checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            └── sport "Sport" width:200
+        `);
+        await new GridRows(
+            api,
+            `should show loading and no rows overlay, also when changing columns after setGridOption columnDefs`
+        ).check(`
+            [no root row]
+        `);
         expect(hasNoRowsOverlay()).toBe(true);
 
         response.rowData = [{ athlete: 'Michael Phelps' }, { athlete: 'Usain Bolt' }];
@@ -119,6 +143,15 @@ describe('ag-grid overlays state for Infinite Row Model', () => {
                 },
             },
         });
+        await new GridColumns(api, `should show no rows and no matching rows when applying a filter setup`)
+            .checkColumns(`
+                CENTER
+                └── athlete "Athlete" width:200
+            `);
+        await new GridRows(api, `should show no rows and no matching rows when applying a filter setup`).check(`
+            [no root row]
+            └── filler id:rowIndex:0
+        `);
 
         await loadPromise;
 
@@ -141,6 +174,11 @@ describe('ag-grid overlays state for Infinite Row Model', () => {
                 filter: 'Test',
             },
         });
+        await new GridRows(api, `should show no rows and no matching rows when applying a filter after setFilterModel`)
+            .check(`
+                [no root row]
+                └── filler id:rowIndex:0
+            `);
 
         await loadPromise;
 
@@ -149,6 +187,13 @@ describe('ag-grid overlays state for Infinite Row Model', () => {
 
         responseRowData = [{ athlete: 'Michael Phelps' }, { athlete: 'Usain Bolt' }];
         api.setFilterModel(null);
+        await new GridRows(
+            api,
+            `should show no rows and no matching rows when applying a filter after setFilterModel #2`
+        ).check(`
+            [no root row]
+            └── filler id:rowIndex:0
+        `);
 
         await loadPromise;
         expect(hasNoRowsOverlay()).toBe(false);

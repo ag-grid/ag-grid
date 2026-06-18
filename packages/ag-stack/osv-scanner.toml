@@ -1,0 +1,3 @@
+[[IgnoredVulns]]
+id = "GHSA-67mh-4wv8-2f99"
+reason = "We do not use the esbuild development server"
