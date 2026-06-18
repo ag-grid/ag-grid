@@ -88,9 +88,9 @@ export class ErrorOverlayComponent
 
         const eLinks = document.createElement('div');
         eLinks.className = 'ag-overlay-error-links';
-        eLinks.appendChild(createLink(getErrorLink(error.id, error.params), `AG Grid Error #${error.id}`));
-        if (modulesDocLink) {
-            eLinks.appendChild(createLink(modulesDocLink, 'Modules Documentation'));
+        const links = getErrorLinks(error, modulesDocLink);
+        for (let i = 0, len = links.length; i < len; ++i) {
+            eLinks.appendChild(createLink(links[i].href, links[i].text));
         }
         eError.appendChild(eLinks);
 
@@ -129,6 +129,15 @@ function createLink(href: string, text: string): HTMLAnchorElement {
     return eLink;
 }
 
+/** Ordered documentation links for an error: the per-error link, plus a modules link when present. */
+function getErrorLinks(error: OverlayError, modulesDocLink?: string): { href: string; text: string }[] {
+    const links = [{ href: getErrorLink(error.id, error.params), text: `AG Grid Error #${error.id}` }];
+    if (modulesDocLink) {
+        links.push({ href: modulesDocLink, text: 'Modules Documentation' });
+    }
+    return links;
+}
+
 function getCopyText(error: OverlayError): string {
     const { message, code, note, modulesDocLink } = _getOverlayErrorContent(
         error.id,
@@ -136,9 +145,6 @@ function getCopyText(error: OverlayError): string {
         error.defaultMessage
     );
     const text = [message, code, note].filter(Boolean).join('\n\n');
-    const links = [getErrorLink(error.id, error.params)];
-    if (modulesDocLink) {
-        links.push(modulesDocLink);
-    }
+    const links = getErrorLinks(error, modulesDocLink).map((link) => link.href);
     return `${text}\n${links.join('\n')}`;
 }

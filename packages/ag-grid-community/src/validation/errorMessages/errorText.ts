@@ -16,20 +16,23 @@ import { resolveModuleNames } from '../resolvableModuleNames';
 import { USER_COMP_MODULES } from '../rules/userCompValidations';
 
 /**
- * Formats a code snippet showing how to register modules. React (`usesAgGridProvider` is a defined
- * boolean, whether or not an AgGridProvider currently wraps the grid) is guided towards the
- * recommended AgGridProvider approach - unless the developer has already opted into the static
+ * Whether to guide the developer towards the recommended AgGridProvider approach. React
+ * (`usesAgGridProvider` is a defined boolean, whether or not an AgGridProvider currently wraps the
+ * grid) is recommended AgGridProvider - unless the developer has already opted into the static
  * ModuleRegistry API (`usedModuleRegistry`), in which case that choice is respected. Non-React
  * (`undefined`) always uses ModuleRegistry.
  */
+const shouldRecommendAgGridProvider = (usesAgGridProvider?: boolean, usedModuleRegistry?: boolean): boolean =>
+    usesAgGridProvider !== undefined && !usedModuleRegistry;
+
+/** Formats a code snippet showing how to register modules — via AgGridProvider for React, or ModuleRegistry otherwise. */
 const moduleRegistrationSnippet = (
     imports: string[],
     moduleList: string,
     usesAgGridProvider?: boolean,
     usedModuleRegistry?: boolean
 ): string => {
-    const recommendAgGridProvider = usesAgGridProvider !== undefined && !usedModuleRegistry;
-    if (recommendAgGridProvider) {
+    if (shouldRecommendAgGridProvider(usesAgGridProvider, usedModuleRegistry)) {
         const allImports = ["import { AgGridProvider, AgGridReact } from 'ag-grid-react';", ...imports];
         return `${allImports.join(' \n')}
 
@@ -63,8 +66,7 @@ const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean
 
     const moduleList = moduleNames.map((m) => convertToUserModuleName(m, true)).join(', ');
 
-    const recommendAgGridProvider = usesAgGridProvider !== undefined && !usedModuleRegistry;
-    if (!recommendAgGridProvider) {
+    if (!shouldRecommendAgGridProvider(usesAgGridProvider, usedModuleRegistry)) {
         imports.unshift("import { ModuleRegistry } from 'ag-grid-community';");
     }
     return `${moduleRegistrationSnippet(imports, moduleList, usesAgGridProvider, usedModuleRegistry)}
