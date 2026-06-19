@@ -1,11 +1,11 @@
 import { ClientSideRowModelModule, NumberEditorModule } from 'ag-grid-community';
-import { BatchEditModule, RowGroupingModule, ShowValueAsModule } from 'ag-grid-enterprise';
+import { BatchEditModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
-describe('showValueAs with batch editing', () => {
+describe('showValuesAs with batch editing', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, BatchEditModule, NumberEditorModule, RowGroupingModule, ShowValueAsModule],
+        modules: [ClientSideRowModelModule, BatchEditModule, NumberEditorModule, RowGroupingModule, ShowValuesAsModule],
     });
 
     afterEach(() => {
@@ -19,7 +19,7 @@ describe('showValueAs with batch editing', () => {
                     field: 'amount',
                     editable: true,
                     aggFunc: 'sum',
-                    showValueAs: 'percentOfGrandTotal',
+                    showValuesAs: 'percentOfGrandTotal',
                 },
             ],
             getRowId: ({ data }) => data.id,
@@ -31,7 +31,7 @@ describe('showValueAs with batch editing', () => {
         const rowNode = api.getRowNode('1')!;
         const cell = () => document.querySelector<HTMLElement>('#sva-batch-edit [row-index="0"] [col-id="amount"]')!;
 
-        expect(api.getCellValue({ rowNode, colKey: 'amount', from: 'transformed' })).toBe(0.75);
+        expect(api.getCellValue({ rowNode, colKey: 'amount', transformValues: true })).toBe(0.75);
         expect(cell()).not.toHaveClass('ag-cell-batch-edit');
 
         api.startBatchEdit();
@@ -42,7 +42,7 @@ describe('showValueAs with batch editing', () => {
         // original grand total of 200 → 1.0 (100%).
         expect(api.getCellValue({ rowNode, colKey: 'amount', from: 'data' })).toBe(150);
         expect(api.getCellValue({ rowNode, colKey: 'amount', from: 'edit' })).toBe(200);
-        expect(api.getCellValue({ rowNode, colKey: 'amount', from: 'transformed' })).toBe(1);
+        expect(api.getCellValue({ rowNode, colKey: 'amount', transformValues: true })).toBe(1);
         expect(cell()).toHaveTextContent('100.00%');
         expect(cell()).toHaveClass('ag-cell-batch-edit');
 
@@ -50,7 +50,7 @@ describe('showValueAs with batch editing', () => {
         await asyncSetTimeout(1);
 
         expect(api.getCellValue({ rowNode, colKey: 'amount', from: 'data' })).toBe(150);
-        expect(api.getCellValue({ rowNode, colKey: 'amount', from: 'transformed' })).toBe(0.75);
+        expect(api.getCellValue({ rowNode, colKey: 'amount', transformValues: true })).toBe(0.75);
         expect(cell()).toHaveTextContent('75.00%');
         expect(cell()).not.toHaveClass('ag-cell-batch-edit');
     });

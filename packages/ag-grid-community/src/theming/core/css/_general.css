@@ -569,6 +569,6 @@
 
 /* A "Show Values As" mode that is not meaningful in the current view: greyed like a disabled item, but
  * still selectable (the menu option carries no disabled state). */
-.ag-show-value-as-inapplicable {
+.ag-show-values-as-inapplicable {
     opacity: 0.5;
 }

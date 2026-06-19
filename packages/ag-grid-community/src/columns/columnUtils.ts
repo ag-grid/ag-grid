@@ -59,10 +59,10 @@ export function _convertColumnEventSourceType(source: AgPropertyChangedSource): 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getColumnStateFromColDef(beans: BeanCollection, colDef: ColDef, colId: string): ColumnState {
     const sortDef = getSortDefFromColDef(colDef);
-    const showValueAs = beans.showValueAsSvc?.colDefSelection(colDef) ?? undefined;
+    const showValuesAs = beans.showValuesAsSvc?.colDefSelection(colDef) ?? undefined;
     return sortDef
-        ? { ...colDef, colId, sort: sortDef.direction, sortType: sortDef.type, showValueAs }
-        : { ...colDef, colId, sort: undefined, showValueAs };
+        ? { ...colDef, colId, sort: sortDef.direction, sortType: sortDef.type, showValuesAs }
+        : { ...colDef, colId, sort: undefined, showValuesAs };
 }
 
 export function getSortDefFromColDef(colDef: ColDef) {

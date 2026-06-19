@@ -552,19 +552,20 @@
                 "url": "./aggregation-columns/#default-function"
             }
         },
-        "showValueAs": {
+        "showValuesAs": {
             "more": {
                 "name": "Show Values As",
                 "url": "./aggregation-show-values-as/"
             }
         },
-        "showValueAsInitial": {},
-        "showValueAsConfig": {
+        "initialShowValuesAs": {},
+        "showValuesAsDef": {
             "more": {
                 "name": "Configuration",
                 "url": "./aggregation-show-values-as/#configuration"
             }
-        }
+        },
+        "enableShowValuesAs": {}
     },
     "pivoting": {
         "meta": {

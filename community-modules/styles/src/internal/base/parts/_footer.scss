@@ -29,9 +29,13 @@
         color: var(--ag-disabled-foreground-color);
     }
 
+    .ag-number-field.ag-paging-number {
+        display: inline-block;
+    }
+
     .ag-number-field.ag-paging-number .ag-input-field-input {
         text-align: end;
-        padding-inline: 0 var(--ag-input-padding-start);
+        padding-inline: var(--ag-grid-size);
     }
 
     @include ag.keyboard-focus((ag-paging-button), 0px);

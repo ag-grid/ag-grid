@@ -16,11 +16,15 @@ export class FindCellRenderer extends Component implements ICellRenderer {
     public refresh(params: ICellRendererParams): boolean {
         const { node, column } = params;
         const { findSvc, valueSvc } = this.beans;
+        const agColumn = column as AgColumn | undefined;
+        // For a "Show Values As" cell, render and highlight the transformed value (e.g. `25.00%`) that findService
+        // searched — not the raw value — so the highlight lands on what Find matched.
         const { value, valueFormatted } = valueSvc.getValueForDisplay({
-            column: column as AgColumn | undefined,
+            column: agColumn,
             node,
             includeValueFormatted: true,
             from: 'edit',
+            transformValues: agColumn?.showValuesAs != null,
         });
         const displayValue = valueFormatted ?? value ?? '';
         const eGui = this.getGui();

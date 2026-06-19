@@ -3,8 +3,8 @@ import { _toString } from 'ag-stack';
 import type { BeanCollection } from '../context/context';
 import { _resolvePivotColumnForRow } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
+import type { CellValueResolveFrom } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { CellValueResolveFrom } from './valueService';
 
 export interface GetCellValueParams<TValue = any> {
     /** The row to read from */
@@ -14,14 +14,17 @@ export interface GetCellValueParams<TValue = any> {
     /** If `true`, returns the formatted string (via the column's `valueFormatter`) instead of the raw value. */
     useFormatter?: boolean;
     /**
-     * Controls which value is returned.
+     * Controls which base value is returned.
      * - `'edit'` (default): Live editor value if the cell is being edited, then any pending batch value, then committed data.
      * - `'batch'`: Pending batch values but excluding live editor typing.
      * - `'data'`: Committed data only, ignoring all edit state.
-     * - `'transformed'`: For `showValueAs` columns, the transformed value (e.g. a percentage of a total). All
-     *   other values return the raw value, unaffected by `showValueAs`.
      */
     from?: CellValueResolveFrom;
+    /**
+     * If `true`, applies the Show Values As transform (e.g. a percentage of a total) on top of the `from` base.
+     * Columns without an active mode return the base value unchanged.
+     */
+    transformValues?: boolean;
 }
 
 export function expireValueCache(beans: BeanCollection): void {
@@ -29,7 +32,7 @@ export function expireValueCache(beans: BeanCollection): void {
 }
 
 export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCellValueParams<TValue>): any {
-    const { colKey, rowNode, useFormatter, from = 'edit' } = params;
+    const { colKey, rowNode, useFormatter, from = 'edit', transformValues } = params;
 
     const column = beans.colModel.getCol(colKey);
     if (!column) {
@@ -42,6 +45,7 @@ export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCel
         node: rowNode,
         includeValueFormatted: useFormatter,
         from,
+        transformValues,
     });
     if (useFormatter) {
         return result.valueFormatted ?? _toString(result.value);

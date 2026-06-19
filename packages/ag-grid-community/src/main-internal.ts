@@ -87,7 +87,7 @@ export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { RowsDrop as _RowsDrop } from './dragAndDrop/rowDragTypes';
 export { _getDisplaySortForColumn, _normalizeSortType, _resolvePivotColumnForRow, AgColumn } from './entities/agColumn';
 export type { ColKind } from './entities/agColumn';
-export type { AgShowValueAsResolved, ShowValueAsConfigInternal, ShowValueAsModes } from './entities/colDef-showValueAs';
+export type { AgShowValuesAsResolved } from './entities/colDef-showValuesAs';
 export { AgColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export {
@@ -297,7 +297,7 @@ export type {
 export type { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
 export type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
 export type { GroupValueResult, IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
-export type { IShowValueAsService } from './interfaces/iShowValueAsService';
+export type { IShowValuesAsService } from './interfaces/iShowValuesAsService';
 export type { ISideBar, ISideBarService } from './interfaces/iSideBar';
 export type { SortOption } from './interfaces/iSortOption';
 export { _resolveSortOptions } from './sort/sortOptionUtils';

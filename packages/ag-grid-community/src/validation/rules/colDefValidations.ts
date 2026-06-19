@@ -2,7 +2,6 @@ import { _hasCalculatedExpression, _isCalculatedColumnsEnabled } from '../../col
 import type { UserComponentName } from '../../context/context';
 import { _isSortDefValid, isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
-import type { GridOptions } from '../../entities/gridOptions';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { buildAllValidNames } from '../validationTypes';
@@ -11,9 +10,6 @@ import { USER_COMP_MODULES } from './userCompValidations';
 function quote(s: string): string {
     return `"${s}"`;
 }
-
-const showValueAsModule = (_colDef: ColDef | ColGroupDef, { rowModelType }: GridOptions): 'ShowValueAs' | null =>
-    rowModelType && rowModelType !== 'clientSide' ? null : 'ShowValueAs';
 
 const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> = () => ({
     checkboxSelection: { version: '32.2', message: 'Use `rowSelection.checkboxes` in `GridOptions` instead.' },
@@ -43,9 +39,10 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     allowFormula: 'Formula',
     calculatedExpression: 'CalculatedColumns',
     aggFunc: 'SharedAggregation',
-    showValueAs: showValueAsModule,
-    showValueAsInitial: showValueAsModule,
-    showValueAsConfig: showValueAsModule,
+    showValuesAs: 'ShowValuesAs',
+    initialShowValuesAs: 'ShowValuesAs',
+    showValuesAsDef: 'ShowValuesAs',
+    enableShowValuesAs: 'ShowValuesAs',
     autoHeight: 'RowAutoHeight',
     cellClass: 'CellStyle',
     cellClassRules: 'CellStyle',
@@ -134,13 +131,16 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         allowFormula: {
             supportedRowModels: ['clientSide'],
         },
-        showValueAs: {
+        showValuesAs: {
             supportedRowModels: ['clientSide'],
         },
-        showValueAsInitial: {
+        initialShowValuesAs: {
             supportedRowModels: ['clientSide'],
         },
-        showValueAsConfig: {
+        showValuesAsDef: {
+            supportedRowModels: ['clientSide'],
+        },
+        enableShowValuesAs: {
             supportedRowModels: ['clientSide'],
         },
         calculatedExpression: {
@@ -414,9 +414,10 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     headerGroupComponent: undefined,
     headerGroupComponentParams: undefined,
     calculatedExpression: undefined,
-    showValueAs: undefined,
-    showValueAsInitial: undefined,
-    showValueAsConfig: undefined,
+    showValuesAs: undefined,
+    initialShowValuesAs: undefined,
+    showValuesAsDef: undefined,
+    enableShowValuesAs: undefined,
     cellStyle: undefined,
     cellRenderer: undefined,
     cellRendererParams: undefined,

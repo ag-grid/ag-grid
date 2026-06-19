@@ -405,6 +405,7 @@ export type {
     SuppressMouseEventHandlingParams,
 } from './rendering/cellRenderers/iCellRenderer';
 export type { GetCellValueParams } from './valueService/cellApi';
+export type { CellValueResolveFrom } from './interfaces/iEditService';
 
 // Status Bar
 export type {
@@ -751,26 +752,25 @@ export type {
     ValueSetterParams,
 } from './entities/colDef';
 export type {
-    ShowValueAs,
-    ShowValueAsApplicableParams,
-    ShowValueAsApplicable,
-    ShowValueAsBuiltInType,
-    ShowValueAsColumnLists,
-    ShowValueAsConfig,
-    ShowValueAsConfigResolved,
-    ShowValueAsDef,
-    ShowValueAsFormatterParams,
-    ShowValueAsMenuParams,
-    ShowValueAsModeResolved,
-    ShowValueAsParamsMap,
-    ShowValueAsParentTotalParams,
-    ShowValueAsResolved,
-    ShowValueAsResult,
-    ShowValueAsStateValue,
-    ShowValueAsTransform,
-    ShowValueAsTransformParams,
-    ShowValueAsType,
-} from './entities/colDef-showValueAs';
+    ShowValuesAs,
+    ShowValuesAsApplicabilityParams,
+    ShowValuesAsApplicability,
+    ShowValuesAsBuiltInType,
+    ShowValuesAsColumnLists,
+    ShowValuesAsDef,
+    ShowValuesAsDefResolved,
+    ShowValuesAsModeDef,
+    ShowValuesAsFormatterParams,
+    ShowValuesAsMenuParams,
+    ShowValuesAsModeDefResolved,
+    ShowValuesAsModesDef,
+    ShowValuesAsResolved,
+    ShowValuesAsResult,
+    ShowValuesAsStateValue,
+    ShowValuesAsTransform,
+    ShowValuesAsTransformParams,
+    ShowValuesAsType,
+} from './entities/colDef-showValuesAs';
 export type {
     BaseCellDataType,
     BooleanDataTypeDefinition,

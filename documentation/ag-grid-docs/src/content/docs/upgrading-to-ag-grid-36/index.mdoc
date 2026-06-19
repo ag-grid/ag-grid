@@ -21,7 +21,7 @@ NOTE: This will not show if the current library version is the same as the migra
 
 ## Behaviour Changes
 
-There are no behaviour changes in AG Grid version {% migrationVersion() %}.
+The default for the [suppressContentVisibilityAuto](./grid-options/#reference-rendering-suppressContentVisibilityAuto) grid option has changed from `false` to `true`, due to reports of rare issues with this feature in some apps. If your app has many grids active at once, but most are off the screen so the user can't see them, consider passing `false` for performance purposes.
 
 ## Removal of Deprecated APIs
 

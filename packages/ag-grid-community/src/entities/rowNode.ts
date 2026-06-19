@@ -588,7 +588,7 @@ export class RowNode<TData = any>
         // Resolve pivot result columns to their underlying value column for non-group, non-pinned rows.
         column = _resolvePivotColumnForRow(column, this);
 
-        const oldValue = valueSvc.getDisplayValue(column, this, 'data');
+        const oldValue = valueSvc.getDisplayValue(column, this, 'data', false);
 
         if (gos.get('readOnlyEdit')) {
             const {

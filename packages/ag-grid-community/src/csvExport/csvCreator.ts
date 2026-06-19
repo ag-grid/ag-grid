@@ -72,6 +72,7 @@ export class CsvCreator
             suppressQuotes,
             columnSeparator,
             valueFrom,
+            transformValues,
         } = params!;
 
         return new CsvSerializingSession({
@@ -86,7 +87,8 @@ export class CsvCreator
             suppressQuotes: suppressQuotes || false,
             columnSeparator: columnSeparator || ',',
             rowGroupColsSvc,
-            valueFrom: valueFrom ?? 'transformed',
+            valueFrom,
+            transformValues,
         });
     }
 

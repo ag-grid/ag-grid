@@ -553,8 +553,7 @@ export class CellCtrl extends BeanStub {
         const res: ICellRendererParams = _addGridCommonParams(gos, {
             value: value,
             valueFormatted: valueFormatted,
-            getValue: () =>
-                valueSvc.getDisplayValue(column, rowNode, this.shouldUseShowValueAsValue() ? 'transformed' : 'edit'),
+            getValue: () => valueSvc.getDisplayValue(column, rowNode, 'edit', this.shouldUseShowValuesAsValue()),
             setValue: (value: any) =>
                 editSvc?.setDataValue({ rowNode, column }, value) || rowNode.setDataValue(column, value),
             formatValue: this.formatValue.bind(this),
@@ -715,8 +714,8 @@ export class CellCtrl extends BeanStub {
         const column = this.column;
         const node = this.rowNode;
         // While a mode is active and there is no live editor, format with the mode's formatter; else the column's.
-        // `showValueAs` is null for every ordinary column, so it short-circuits before touching the edit service.
-        if (this.shouldUseShowValueAsValue()) {
+        // `showValuesAs` is null for every ordinary column, so it short-circuits before touching the edit service.
+        if (this.shouldUseShowValuesAsValue()) {
             const transformed = valueSvc.formatTransformedValue(column, node, value);
             if (transformed !== undefined) {
                 return transformed ?? value;
@@ -733,7 +732,8 @@ export class CellCtrl extends BeanStub {
             column: this.column,
             node: this.rowNode,
             includeValueFormatted: true,
-            from: this.shouldUseShowValueAsValue() ? 'transformed' : 'edit',
+            from: 'edit',
+            transformValues: this.shouldUseShowValuesAsValue(),
         });
         this.value = value;
         this.valueFormatted = valueFormatted;
@@ -744,8 +744,8 @@ export class CellCtrl extends BeanStub {
         return true;
     }
 
-    private shouldUseShowValueAsValue(): boolean {
-        return this.column.showValueAs != null && !this.editSvc?.isEditing(this, { withOpenEditor: true });
+    private shouldUseShowValuesAsValue(): boolean {
+        return this.column.showValuesAs != null && !this.editSvc?.isEditing(this, { withOpenEditor: true });
     }
 
     private valuesAreEqual(val1: any, val2: any): boolean {

@@ -5,7 +5,6 @@ export const MIGRATION_DOCUMENTATION_NAV_DATA = {
     text: 'Documentation',
 };
 
-export const RECAPTCHA_SITE_KEY = '6LfvTQosAAAAABkPY-cWnx2mr29q8xWuQs-bMIu-';
 export const RECAPTCHA_URL = 'https://www.google.com/recaptcha/api.js';
 export const CONTACT_FORM_DATA = {
     default: {
@@ -16,6 +15,7 @@ export const CONTACT_FORM_DATA = {
         messagePlaceholder: 'Tell us about your interest in AG Grid',
         formLocationId: '00NS900000BCx1C',
         enquiryTypeId: '00NS900000IEZRl',
+        captchaSiteKey: '6Ld_ro4sAAAAACjXUk0goeMBFJvD630upERER7pr',
         captchaSettingsKeyName: 'agGridStagingV2',
     },
     production: {
@@ -26,6 +26,7 @@ export const CONTACT_FORM_DATA = {
         leadSource: 'AG Grid Contact Form',
         formLocationId: '00NQ500000CVgqT',
         enquiryTypeId: '00NQ500000IALbt',
+        captchaSiteKey: '6LfvTQosAAAAABkPY-cWnx2mr29q8xWuQs-bMIu-',
         captchaSettingsKeyName: 'agGridComV2',
     },
 };
@@ -39,6 +40,7 @@ export const STUDIO_FORM_DATA = {
         messagePlaceholder: 'Tell us about your interest in AG Studio',
         formLocationId: '00NS900000BCx1C',
         enquiryTypeId: null,
+        captchaSiteKey: '6Ld_ro4sAAAAACjXUk0goeMBFJvD630upERER7pr',
         captchaSettingsKeyName: 'agGridStagingV2',
     },
     production: {
@@ -49,6 +51,7 @@ export const STUDIO_FORM_DATA = {
         messagePlaceholder: 'Tell us about your interest in AG Studio',
         formLocationId: '00NQ500000CVgqT',
         enquiryTypeId: null,
+        captchaSiteKey: '6LfvTQosAAAAABkPY-cWnx2mr29q8xWuQs-bMIu-',
         captchaSettingsKeyName: 'agGridComV2',
     },
 };

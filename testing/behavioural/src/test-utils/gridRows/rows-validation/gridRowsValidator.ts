@@ -791,13 +791,13 @@ export class GridRowsValidator {
         ) {
             return;
         }
-        // No grouping/treeData/pivot — no leaf node should have aggData (true even with showValueAs).
+        // No grouping/treeData/pivot — no leaf node should have aggData (true even with showValuesAs).
         for (const row of state.gridRows.rowNodes) {
             this.errors.add(row, row.aggData != null && 'Row has aggData but grouping/treeData/pivot are not active');
         }
-        const hasShowValueAs = api.getColumns()?.some((col) => (col as AgColumn).showValueAs != null);
+        const hasShowValuesAs = api.getColumns()?.some((col) => (col as AgColumn).showValuesAs != null);
         const root = state.gridRows.rootRowNode;
-        if (root && !hasShowValueAs) {
+        if (root && !hasShowValuesAs) {
             this.errors.add(
                 root,
                 root.aggData != null && 'Root node has aggData but grouping/treeData/pivot are not active'

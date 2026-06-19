@@ -1,12 +1,6 @@
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import {
-    CONTACT_FORM_DATA,
-    PRIVACY_POLICY_URL,
-    RECAPTCHA_SITE_KEY,
-    RECAPTCHA_URL,
-    STUDIO_FORM_DATA,
-} from '@ag-website-shared/constants';
+import { CONTACT_FORM_DATA, PRIVACY_POLICY_URL, RECAPTCHA_URL, STUDIO_FORM_DATA } from '@ag-website-shared/constants';
 import { LIBRARY } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
@@ -27,6 +21,7 @@ const {
     messagePlaceholder,
     formLocationId,
     enquiryTypeId,
+    captchaSiteKey,
     captchaSettingsKeyName,
 } = getIsProduction() ? contactFormData.production : contactFormData.default;
 
@@ -238,7 +233,7 @@ export const ContactForm: FunctionComponent<Props> = ({
                 </div>
             )}
             <div className={classnames('input-field', { 'input-error': captchaError })}>
-                <div className="g-recaptcha" data-sitekey={RECAPTCHA_SITE_KEY} />
+                <div className="g-recaptcha" data-sitekey={captchaSiteKey} />
                 <div className={styles.errorContainer}>
                     {captchaError && <p className="error">Please click on the reCAPTCHA checkbox</p>}
                 </div>

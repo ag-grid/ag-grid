@@ -31,7 +31,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     ServerSideRowModelApi: 1,
     ServerSideRowModel: 1,
     SetFilter: 1,
-    ShowValueAs: 1,
+    ShowValuesAs: 1,
     SideBar: 1,
     Sparklines: 1,
     StatusBar: 1,

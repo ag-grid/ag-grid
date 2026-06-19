@@ -22,7 +22,7 @@ import type {
     GroupRowValueSetterFunc,
     GroupRowValueSetterOptions,
 } from './colDef-groupRowValueSetter';
-import type { ShowValueAs, ShowValueAsConfig, ShowValueAsType } from './colDef-showValueAs';
+import type { ShowValuesAs, ShowValuesAsDef, ShowValuesAsType } from './colDef-showValuesAs';
 import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
 
 export type { BaseColDefParams, ColumnFunctionCallbackParams } from './colDef-base';
@@ -882,26 +882,38 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * parent total. A presentation-layer transform: it changes the displayed value only — the raw value
      * (`getDataValue`, charts, clipboard-of-data) is unchanged. Can be changed at runtime (menu / column state).
      *
-     * A built-in mode name, or the object form `{ type, params, precision }`. `false`/`null` selects no active mode —
-     * the column menu and column state can still select one.
-     * To disable the feature entirely (and its menu), use `showValueAsConfig: false`.
-     * Per-column config (`precision`, `suppressHeaderIndicator`) lives on `showValueAsConfig`.
-     * @agModule `ShowValueAsModule`
+     * A built-in mode name, or the object form `{ type, params, precision }`. `null` selects no active mode — the
+     * column menu and column state can still select one.
+     * Per-column config (`precision`, `suppressHeaderIndicator`, custom `modes`) lives on `showValuesAsDef`.
+     * @agModule `ShowValuesAsModule`
      */
-    showValueAs?: ShowValueAsType | ShowValueAs | false | null;
+    showValuesAs?: ShowValuesAsType | ShowValuesAs | null;
     /**
-     * Same as `showValueAs`, except only applied when creating a new column.
+     * Same as `showValuesAs`, except only applied when creating a new column.
      * @initial
-     * @agModule `ShowValueAsModule`
+     * @agModule `ShowValuesAsModule`
      */
-    showValueAsInitial?: ShowValueAsType | ShowValueAs;
+    initialShowValuesAs?: ShowValuesAsType | ShowValuesAs;
     /**
-     * Per-column "Show Values As" configuration: `precision` and `suppressHeaderIndicator`.
-     * Deep-merges from `defaultColDef`. The active mode is the `showValueAs` selector.
-     * `false`/`null` disables the feature for the column (useful to opt a column out via `defaultColDef`).
-     * @agModule `ShowValueAsModule`
+     * Per-column "Show Values As" configuration: `precision`, `suppressHeaderIndicator`, and user-provided
+     * `modes` (custom modes / overrides of the built-ins). Deep-merges from `defaultColDef`. The active mode is
+     * the `showValuesAs` selector. `null` disables the feature for the column (useful to opt a column out via
+     * `defaultColDef`).
+     * @agModule `ShowValuesAsModule`
      */
-    showValueAsConfig?: ShowValueAsConfig | false | null;
+    showValuesAsDef?: ShowValuesAsDef<TData, TValue> | null;
+    /**
+     * Whether to offer the "Show Values As" selection menu in this column's menu. Off by default. On `defaultColDef`,
+     * `true` enables it grid-wide but only for columns that support it — a value column (any `aggFunc`) or a numeric
+     * column. Set `true` directly on a column to force the menu on for any column type — use this for a column whose
+     * numeric value the grid can't detect statically, such as a `valueGetter` or custom `aggFunc` that produces a
+     * number from string or object data. `false` always hides it. This gates only the menu — a mode applied via
+     * `showValuesAs` / Column State still transforms the displayed value and shows the header indicator (suppress that
+     * separately via `showValuesAsDef.suppressHeaderIndicator`).
+     * @default false
+     * @agModule `ShowValuesAsModule`
+     */
+    enableShowValuesAs?: boolean;
     /**
      * Specify a grouping hierarchy for this column. This generates one or more virtual columns to group or pivot by when this column is grouped or pivoted.
      *
