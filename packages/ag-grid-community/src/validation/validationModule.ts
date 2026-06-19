@@ -15,8 +15,7 @@ export const ValidationModule: _ModuleWithoutApi = {
 /**
  * Registers the {@link ValidationModule}, which surfaces extended development-time diagnostics:
  * detailed console warnings for conflicting or invalid grid options and column definition
- * properties, plus the error overlay. Without it, console messages are reduced to an error code
- * and a documentation link.
+ * properties. Without it, console messages are reduced to an error code and a documentation link.
  *
  * The `ValidationModule` is intentionally excluded from the `AllCommunityModule` and
  * `AllEnterpriseModule` bundles to keep production builds small. Use this helper to opt into
