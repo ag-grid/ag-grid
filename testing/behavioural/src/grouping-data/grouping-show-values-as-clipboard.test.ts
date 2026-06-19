@@ -1,15 +1,15 @@
 import { NumberEditorModule, TextEditorModule, setupAgTestIds } from 'ag-grid-community';
-import { CellSelectionModule, ClipboardModule, RowGroupingModule, ShowValueAsModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, ClipboardModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, clipboardUtils } from '../test-utils';
 
-describe('showValueAs copies the raw value to the clipboard', () => {
+describe('showValuesAs copies the transformed value to the clipboard', () => {
     const gridMgr = new TestGridsManager({
         modules: [
             ClipboardModule,
             CellSelectionModule,
             RowGroupingModule,
-            ShowValueAsModule,
+            ShowValuesAsModule,
             TextEditorModule,
             NumberEditorModule,
         ],
@@ -29,10 +29,13 @@ describe('showValueAs copies the raw value to the clipboard', () => {
         clipboardUtils.reset();
     });
 
-    test('copy uses the raw value, not the transformed percentage shown in the cell', async () => {
+    test('copy puts the transformed percentage shown in the cell on the clipboard', async () => {
         const api = await gridMgr.createGridAndWait('sva-clipboard', {
             cellSelection: true,
-            columnDefs: [{ field: 'country' }, { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' }],
+            columnDefs: [
+                { field: 'country' },
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
+            ],
             getRowId: (params) => params.data.id,
             rowData: [
                 { id: '1', country: 'A', amount: 25 },
@@ -43,7 +46,7 @@ describe('showValueAs copies the raw value to the clipboard', () => {
         await new GridColumns(api, 'clipboard percentOfGrandTotal').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValueAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
         `);
         await new GridRows(api, 'clipboard percentOfGrandTotal').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -51,29 +54,27 @@ describe('showValueAs copies the raw value to the clipboard', () => {
             └── LEAF id:2 country:"B" amount:"75.00%"
         `);
 
-        // The cell displays the transformed percentage…
         expect(
             api.getCellValue({
                 rowNode: api.getRowNode('1')!,
                 colKey: 'amount',
                 useFormatter: true,
-                from: 'transformed',
+                transformValues: true,
             })
         ).toBe('25.00%');
 
-        // …but copy puts the raw value on the clipboard (safe for paste/edit).
         api.setFocusedCell(0, 'amount');
         api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['amount'] });
         api.copyToClipboard();
         await asyncSetTimeout(1);
-        expect(clipboardUtils.getText()).toBe('25');
+        expect(clipboardUtils.getText()).toBe('25.00%');
     });
 
-    test('editing a showValueAs cell operates on the raw value; the cell re-renders transformed', async () => {
+    test('editing a showValuesAs cell operates on the raw value; the cell re-renders transformed', async () => {
         const api = await gridMgr.createGridAndWait('sva-edit', {
             columnDefs: [
                 { field: 'country' },
-                { field: 'amount', aggFunc: 'sum', editable: true, showValueAs: 'percentOfGrandTotal' },
+                { field: 'amount', aggFunc: 'sum', editable: true, showValuesAs: 'percentOfGrandTotal' },
             ],
             getRowId: (params) => params.data.id,
             rowData: [
@@ -85,7 +86,7 @@ describe('showValueAs copies the raw value to the clipboard', () => {
         await new GridColumns(api, 'edit before').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValueAs:percentOfGrandTotal editable
+            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal editable
         `);
         await new GridRows(api, 'edit before').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -95,7 +96,7 @@ describe('showValueAs copies the raw value to the clipboard', () => {
 
         const node1 = api.getRowNode('1')!;
         // The cell shows the transformed percentage, but the edit path sees the RAW value.
-        expect(api.getCellValue({ rowNode: node1, colKey: 'amount', useFormatter: true, from: 'transformed' })).toBe(
+        expect(api.getCellValue({ rowNode: node1, colKey: 'amount', useFormatter: true, transformValues: true })).toBe(
             '25.00%'
         );
         expect(api.getCellValue({ rowNode: node1, colKey: 'amount', from: 'edit' })).toBe(25);
@@ -106,7 +107,7 @@ describe('showValueAs copies the raw value to the clipboard', () => {
         await new GridColumns(api, 'edit after — re-rendered transformed').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValueAs:percentOfGrandTotal editable
+            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal editable
         `);
         await new GridRows(api, 'edit after — re-rendered transformed').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -115,6 +116,6 @@ describe('showValueAs copies the raw value to the clipboard', () => {
         `);
         expect(node1.getDataValue('amount', 'value')).toBe(125);
         // …and the displayed transformed value re-renders to the new share (125 / 200).
-        expect(api.getCellValue({ rowNode: node1, colKey: 'amount', from: 'transformed' })).toBeCloseTo(0.625);
+        expect(api.getCellValue({ rowNode: node1, colKey: 'amount', transformValues: true })).toBeCloseTo(0.625);
     });
 });

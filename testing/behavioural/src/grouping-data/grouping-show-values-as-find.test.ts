@@ -1,17 +1,17 @@
 import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { FindModule, RowGroupingModule, ShowValueAsModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
+import { FindModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /**
  * Find must match what the user sees. For a column with an active Show Values As mode the cell shows the
  * transformed value (e.g. "25.00%"), so Find searches the transformed value — not the raw underlying number.
- * Non-showValueAs columns keep searching their raw/formatted value as before.
+ * Non-showValuesAs columns keep searching their raw/formatted value as before.
  */
-describe('showValueAs + Find', () => {
+describe('showValuesAs + Find', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, ShowValueAsModule, FindModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, ShowValuesAsModule, FindModule],
     });
 
     afterEach(() => {
@@ -24,9 +24,12 @@ describe('showValueAs + Find', () => {
         return api.findGetTotalMatches();
     }
 
-    test('Find matches the transformed value, not the raw value, for a showValueAs column', async () => {
+    test('Find matches the transformed value, not the raw value, for a showValuesAs column', async () => {
         const api = gridsManager.createGrid('sva-find-flat', {
-            columnDefs: [{ field: 'country' }, { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' }],
+            columnDefs: [
+                { field: 'country' },
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
+            ],
             getRowId: ({ data }) => data.id,
             rowData: [
                 { id: '1', country: 'A', amount: 20 }, // 20 / 80 → 25.00%
@@ -46,12 +49,12 @@ describe('showValueAs + Find', () => {
         expect(await search(api, '20')).toBe(0);
     });
 
-    test('Find still searches the raw value for ordinary (non-showValueAs) columns', async () => {
+    test('Find still searches the raw value for ordinary (non-showValuesAs) columns', async () => {
         const api = gridsManager.createGrid('sva-find-mixed', {
             columnDefs: [
                 { field: 'country' },
                 { field: 'units', aggFunc: 'sum' }, // plain value column — raw value shown
-                { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' },
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
             ],
             getRowId: ({ data }) => data.id,
             rowData: [
@@ -74,7 +77,7 @@ describe('showValueAs + Find', () => {
         const api = gridsManager.createGrid('sva-find-grouped', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
-                { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' },
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
             ],
             groupDefaultExpanded: -1,
             getRowId: ({ data }) => data.id,
@@ -98,5 +101,37 @@ describe('showValueAs + Find', () => {
         expect(await search(api, '60.00%')).toBe(2);
         // Group A's transformed total "40.00%" matches; no raw cell holds 40.
         expect(await search(api, '40.00%')).toBe(1);
+    });
+
+    test('Find renders the transformed value in matched cells, not the raw underlying value', async () => {
+        const api = gridsManager.createGrid('sva-find-render', {
+            columnDefs: [
+                { field: 'country' },
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
+            ],
+            getRowId: ({ data }) => data.id,
+            rowData: [
+                { id: '1', country: 'A', amount: 20 }, // 20 / 80 → 25.00%
+                { id: '2', country: 'B', amount: 60 }, // 60 / 80 → 75.00%
+            ],
+        });
+
+        await new GridRows(api, 'sva-find-render setup').check(`
+            ROOT id:ROOT_NODE_ID amount:"100.00%"
+            ├── LEAF id:1 country:"A" amount:"25.00%"
+            └── LEAF id:2 country:"B" amount:"75.00%"
+        `);
+
+        await search(api, '25.00%');
+
+        // While Find is active the cell renders through the find cell renderer: it must show the transformed
+        // text (with the match highlighted), never the raw underlying "20".
+        const gridDiv = getGridElement(api)!;
+        const cells = Array.from(gridDiv.querySelectorAll<HTMLElement>('[col-id="amount"] .ag-find-cell'));
+        const texts = cells.map((c) => c.textContent);
+        expect(texts).toContain('25.00%');
+        expect(texts).not.toContain('20');
+        const highlighted = cells.find((c) => c.querySelector('.ag-find-match'));
+        expect(highlighted?.textContent).toBe('25.00%');
     });
 });

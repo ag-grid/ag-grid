@@ -140,7 +140,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     menuAlt: 'ColumnHeaderComp',
     menuPin: 'MenuCore',
     menuValue: 'MenuCore',
-    showValueAs: 'ShowValueAs',
+    showValuesAs: 'ShowValuesAs',
     menuAddRowGroup: ['MenuCore', 'ColumnsToolPanel'],
     menuRemoveRowGroup: ['MenuCore', 'ColumnsToolPanel'],
     clipboardCopy: 'MenuCore',

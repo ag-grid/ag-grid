@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule, ShowValueAsModule, TreeDataModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingModule, ShowValuesAsModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
@@ -9,9 +9,9 @@ interface SaleRow {
     amount: number;
 }
 
-describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () => {
+describe('showValuesAs displayed values (GridRows + GridColumns snapshots)', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule, PivotModule, ShowValueAsModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule, PivotModule, ShowValuesAsModule],
     });
 
     afterEach(() => {
@@ -20,7 +20,10 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
 
     test('flat grid — percentOfGrandTotal', async () => {
         const api = gridsManager.createGrid('flat', {
-            columnDefs: [{ field: 'country' }, { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' }],
+            columnDefs: [
+                { field: 'country' },
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
+            ],
             getRowId: ({ data }) => data.id,
             rowData: [
                 { id: '1', country: 'A', amount: 25 },
@@ -32,7 +35,7 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
         await new GridColumns(api, 'flat percentOfGrandTotal').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValueAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
         `);
         await new GridRows(api, 'flat percentOfGrandTotal').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -46,7 +49,7 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
         const api = gridsManager.createGrid('grouped-grand', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
-                { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' },
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
             ],
             groupDefaultExpanded: -1,
             getRowId: ({ data }) => data.id,
@@ -60,7 +63,7 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
         await new GridColumns(api, 'grouped percentOfGrandTotal').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValueAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
         `);
         await new GridRows(api, 'grouped percentOfGrandTotal').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -76,7 +79,7 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
         const api = gridsManager.createGrid('grouped-parent', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
-                { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfParentRowTotal' },
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfParentRowTotal' },
             ],
             groupDefaultExpanded: -1,
             getRowId: ({ data }) => data.id,
@@ -90,7 +93,7 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
         await new GridColumns(api, 'grouped percentOfParentRowTotal').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValueAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfParentRowTotal
         `);
         await new GridRows(api, 'grouped percentOfParentRowTotal').check(`
             ROOT id:ROOT_NODE_ID amount:null
@@ -104,7 +107,7 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
 
     test('tree data — percentOfParentRowTotal', async () => {
         const api = gridsManager.createGrid('tree-parent', {
-            columnDefs: [{ field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfParentRowTotal' }],
+            columnDefs: [{ field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfParentRowTotal' }],
             treeData: true,
             groupDefaultExpanded: -1,
             getDataPath: (data: { path: string[] }) => data.path,
@@ -119,7 +122,7 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
         await new GridColumns(api, 'tree percentOfParentRowTotal').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValueAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfParentRowTotal
         `);
         await new GridRows(api, 'tree percentOfParentRowTotal').check(`
             ROOT id:ROOT_NODE_ID amount:null
@@ -130,35 +133,11 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
         `);
     });
 
-    test('tree data — percentOfParentTotal (Default = the outermost ancestor, no row-group fields)', async () => {
-        const api = gridsManager.createGrid('tree-parent-total', {
-            columnDefs: [{ field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfParentTotal' }],
-            treeData: true,
-            groupDefaultExpanded: -1,
-            getDataPath: (data: { path: string[] }) => data.path,
-            getRowId: ({ data }) => data.id,
-            rowData: [
-                { id: 'a', path: ['A', 'a'], amount: 30 },
-                { id: 'b', path: ['A', 'b'], amount: 10 },
-                { id: 'c', path: ['C'], amount: 60 },
-            ],
-        });
-
-        // Each value as a % of its top-level ancestor: A (40) = 100%, its children 75%/25%; C (60) = 100%.
-        await new GridRows(api, 'tree percentOfParentTotal').check(`
-            ROOT id:ROOT_NODE_ID amount:null
-            ├─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A" amount:"100.00%"
-            │ ├── a LEAF id:a ag-Grid-AutoColumn:"a" amount:"75.00%"
-            │ └── b LEAF id:b ag-Grid-AutoColumn:"b" amount:"25.00%"
-            └── C LEAF id:c ag-Grid-AutoColumn:"C" amount:"100.00%"
-        `);
-    });
-
-    test('parent mode on a flat grid is dormant — raw values shown', async () => {
+    test('parent mode on a flat grid is dormant — built-in formatter shows #N/A', async () => {
         const api = gridsManager.createGrid('flat-dormant', {
             columnDefs: [
                 { field: 'country' },
-                { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfParentRowTotal' },
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfParentRowTotal' },
             ],
             getRowId: ({ data }) => data.id,
             rowData: [
@@ -167,16 +146,16 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
             ] satisfies SaleRow[],
         });
 
-        // GridColumns still records the selected mode; GridRows shows the RAW amounts (dormant).
+        // GridColumns still records the selected mode; the dormant built-in mode displays #N/A (value stays raw).
         await new GridColumns(api, 'flat dormant parent mode').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValueAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfParentRowTotal
         `);
         await new GridRows(api, 'flat dormant parent mode').check(`
-            ROOT id:ROOT_NODE_ID amount:100
-            ├── LEAF id:1 country:"A" amount:25
-            └── LEAF id:2 country:"B" amount:75
+            ROOT id:ROOT_NODE_ID amount:"#N/A"
+            ├── LEAF id:1 country:"A" amount:"#N/A"
+            └── LEAF id:2 country:"B" amount:"#N/A"
         `);
     });
 
@@ -185,7 +164,7 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
                 { field: 'year', pivot: true, hide: true },
-                { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfColumnTotal' },
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfColumnTotal' },
             ],
             pivotMode: true,
             groupDefaultExpanded: -1,
@@ -203,9 +182,9 @@ describe('showValueAs displayed values (GridRows + GridColumns snapshots)', () =
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
             ├─┬ "2020" GROUP
-            │ └── pivot_year_2020_amount "Amount" width:200 showValueAs:percentOfColumnTotal columnGroupShow:open
+            │ └── pivot_year_2020_amount "Amount" width:200 showValuesAs:percentOfColumnTotal columnGroupShow:open
             └─┬ "2021" GROUP
-              └── pivot_year_2021_amount "Amount" width:200 showValueAs:percentOfColumnTotal columnGroupShow:open
+              └── pivot_year_2021_amount "Amount" width:200 showValuesAs:percentOfColumnTotal columnGroupShow:open
         `);
         await new GridRows(api, 'pivot percentOfColumnTotal', {
             forcedColumns: ['ag-Grid-AutoColumn', 'pivot_year_2020_amount', 'pivot_year_2021_amount'],

@@ -68,9 +68,9 @@ export function columnDiagram(col: Column, api: GridApi, isHidden: boolean): str
     }
 
     // Show Values As mode (the active selector)
-    const showValueAs = (col as AgColumn).showValueAs;
-    if (showValueAs != null) {
-        parts.push('showValueAs:' + showValueAs.type);
+    const showValuesAs = (col as AgColumn).showValuesAs;
+    if (showValuesAs != null) {
+        parts.push('showValuesAs:' + showValuesAs.type);
     }
 
     // Filter active

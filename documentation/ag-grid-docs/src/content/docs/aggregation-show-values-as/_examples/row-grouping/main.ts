@@ -12,7 +12,7 @@ import {
     ColumnsToolPanelModule,
     ContextMenuModule,
     RowGroupingModule,
-    ShowValueAsModule,
+    ShowValuesAsModule,
 } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
@@ -23,7 +23,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     ColumnsToolPanelModule,
     RowGroupingModule,
-    ShowValueAsModule,
+    ShowValuesAsModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -34,15 +34,16 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'country', rowGroup: true, hide: true },
         { field: 'year', filter: 'agNumberColumnFilter' },
         // Each value as a share of its parent group.
-        { field: 'gold', aggFunc: 'sum', showValueAs: 'percentOfParentTotal' },
+        { field: 'gold', aggFunc: 'sum', showValuesAs: 'percentOfParentRowTotal' },
         { field: 'silver', aggFunc: 'sum' },
         // Each value as a share of the whole column.
-        { field: 'total', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' },
+        { field: 'total', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 130,
         enableValue: true,
+        enableShowValuesAs: true,
         filter: true,
         floatingFilter: true,
     },

@@ -1,6 +1,6 @@
 import type { GridApi, IAggFunc, IRowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule, RenderApiModule } from 'ag-grid-community';
-import { RowGroupingModule, ShowValueAsModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
@@ -20,21 +20,21 @@ function displayedIds(api: GridApi): (string | undefined)[] {
     return ids;
 }
 
-describe('showValueAs breaking-change guardrails', () => {
+describe('showValuesAs breaking-change guardrails', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RenderApiModule, RowGroupingModule, ShowValueAsModule],
+        modules: [ClientSideRowModelModule, RenderApiModule, RowGroupingModule, ShowValuesAsModule],
     });
 
     afterEach(() => {
         gridsManager.reset();
     });
 
-    test('BC2 — getCellValue on a non-showValueAs column is unaffected by a sibling showValueAs column', async () => {
+    test('BC2 — getCellValue on a non-showValuesAs column is unaffected by a sibling showValuesAs column', async () => {
         const api = gridsManager.createGrid('bc2', {
             columnDefs: [
                 { field: 'country' },
-                { field: 'units', aggFunc: 'sum' }, // plain column, no showValueAs
-                { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' },
+                { field: 'units', aggFunc: 'sum' }, // plain column, no showValuesAs
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
             ],
             getRowId: ({ data }) => data.id,
             rowData: [
@@ -47,7 +47,7 @@ describe('showValueAs breaking-change guardrails', () => {
             CENTER
             ├── country "Country" width:200
             ├── units "Units" width:200 aggFunc:sum
-            └── amount "Amount" width:200 aggFunc:sum showValueAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
         `);
         await new GridRows(api, 'bc2 sibling unaffected').check(`
             ROOT id:ROOT_NODE_ID units:10 amount:"100.00%"
@@ -59,7 +59,7 @@ describe('showValueAs breaking-change guardrails', () => {
         // even an explicit 'transformed' (it has no mode, so 'transformed' falls back to raw).
         expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'units' })).toBe(4);
         expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'units', from: 'data' })).toBe(4);
-        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'units', from: 'transformed' })).toBe(4);
+        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'units', transformValues: true })).toBe(4);
     });
 
     test('BC4 — a custom comparator receives the RAW value, not the transformed value (sort stays on raw in P1)', async () => {
@@ -70,7 +70,7 @@ describe('showValueAs breaking-change guardrails', () => {
                 {
                     field: 'amount',
                     aggFunc: 'sum',
-                    showValueAs: 'percentOfGrandTotal',
+                    showValuesAs: 'percentOfGrandTotal',
                     comparator: (a, b) => {
                         seen.push(a, b);
                         return (a as number) - (b as number);
@@ -89,7 +89,7 @@ describe('showValueAs breaking-change guardrails', () => {
         await new GridColumns(api, 'bc4 after sort asc columns').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 sort:asc aggFunc:sum showValueAs:percentOfGrandTotal
+            └── amount "Amount" width:200 sort:asc aggFunc:sum showValuesAs:percentOfGrandTotal
         `);
         await new GridRows(api, 'bc4 after sort asc').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -118,7 +118,7 @@ describe('showValueAs breaking-change guardrails', () => {
         const api = gridsManager.createGrid('bc5', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
-                { field: 'amount', aggFunc: countingSum, showValueAs: 'percentOfGrandTotal' },
+                { field: 'amount', aggFunc: countingSum, showValuesAs: 'percentOfGrandTotal' },
             ],
             groupDefaultExpanded: -1,
             getRowId: ({ data }) => data.id,
@@ -134,7 +134,7 @@ describe('showValueAs breaking-change guardrails', () => {
         await new GridColumns(api, 'bc5 after sort desc columns').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 sort:desc aggFunc:custom showValueAs:percentOfGrandTotal
+            └── amount "Amount" width:200 sort:desc aggFunc:custom showValuesAs:percentOfGrandTotal
         `);
         await new GridRows(api, 'bc5 after sort desc').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -149,16 +149,16 @@ describe('showValueAs breaking-change guardrails', () => {
         const orderBefore = displayedIds(api);
         expect(callsBefore).toBeGreaterThan(0);
         // top groups vs grand total: A=40/100, B=60/100
-        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', from: 'transformed' })).toBeCloseTo(0.3);
+        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', transformValues: true })).toBeCloseTo(0.3);
 
         // Switch the mode: a redraw only — no re-aggregation, no re-sort.
-        api.applyColumnState({ state: [{ colId: 'amount', showValueAs: 'percentOfParentRowTotal' }] });
+        api.applyColumnState({ state: [{ colId: 'amount', showValuesAs: 'percentOfParentRowTotal' }] });
         api.refreshCells({ force: true }); // mode switch updates the model; force a repaint to read the new painted values
 
         await new GridColumns(api, 'bc5 after mode switch').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 sort:desc aggFunc:custom showValueAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 sort:desc aggFunc:custom showValuesAs:percentOfParentRowTotal
         `);
         await new GridRows(api, 'bc5 after mode switch').check(`
             ROOT id:ROOT_NODE_ID amount:null
@@ -172,14 +172,16 @@ describe('showValueAs breaking-change guardrails', () => {
         expect(aggCalls).toBe(callsBefore); // the counting aggFunc was not invoked again
         expect(displayedIds(api)).toEqual(orderBefore); // row order is unchanged
         // …but the painted value reflects the new mode: leaf 1 is now 30/40 of its parent group.
-        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', from: 'transformed' })).toBeCloseTo(0.75);
+        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', transformValues: true })).toBeCloseTo(
+            0.75
+        );
     });
 
     test('T3 — percentOfGrandTotal with avg is cellAvg ÷ grandAvg (documented Excel-aligned semantics)', async () => {
         const api = gridsManager.createGrid('t3-avg', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
-                { field: 'amount', aggFunc: 'avg', showValueAs: 'percentOfGrandTotal' },
+                { field: 'amount', aggFunc: 'avg', showValuesAs: 'percentOfGrandTotal' },
             ],
             groupDefaultExpanded: -1,
             getRowId: ({ data }) => data.id,
@@ -193,7 +195,7 @@ describe('showValueAs breaking-change guardrails', () => {
         await new GridColumns(api, 't3 avg semantics columns').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:avg showValueAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:avg showValuesAs:percentOfGrandTotal
         `);
         await new GridRows(api, 't3 avg semantics').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -205,8 +207,8 @@ describe('showValueAs breaking-change guardrails', () => {
         `);
 
         // grand avg (root) = (10+30+20)/3 = 20; group A avg = 20. The transform divides averages, not sums.
-        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', from: 'transformed' })).toBeCloseTo(0.5); // 10/20
-        expect(api.getCellValue({ rowNode: leaf(api, '2'), colKey: 'amount', from: 'transformed' })).toBeCloseTo(1.5); // 30/20
+        expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', transformValues: true })).toBeCloseTo(0.5); // 10/20
+        expect(api.getCellValue({ rowNode: leaf(api, '2'), colKey: 'amount', transformValues: true })).toBeCloseTo(1.5); // 30/20
     });
 
     test('an out-of-range precision is clamped, never throwing a RangeError from the formatter', async () => {
@@ -216,9 +218,9 @@ describe('showValueAs breaking-change guardrails', () => {
                 {
                     field: 'amount',
                     aggFunc: 'sum',
-                    showValueAs: 'percentOfGrandTotal',
+                    showValuesAs: 'percentOfGrandTotal',
                     // `toFixed(-5)` would throw; the formatter clamps to 0 decimals instead.
-                    showValueAsConfig: { precision: -5 },
+                    showValuesAsDef: { precision: -5 },
                 },
             ],
             getRowId: ({ data }) => data.id,
@@ -235,21 +237,24 @@ describe('showValueAs breaking-change guardrails', () => {
             └── LEAF id:2 country:"B" amount:"75%"
         `);
         expect(
-            api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', useFormatter: true, from: 'transformed' })
+            api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', useFormatter: true, transformValues: true })
         ).toBe('25%');
 
         // A precision beyond `toFixed`'s 100-digit ceiling clamps to 100 rather than throwing.
         api.applyColumnState({
-            state: [{ colId: 'amount', showValueAs: { type: 'percentOfGrandTotal', precision: 500 } }],
+            state: [{ colId: 'amount', showValuesAs: { type: 'percentOfGrandTotal', precision: 500 } }],
         });
         expect(
-            api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', useFormatter: true, from: 'transformed' })
+            api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', useFormatter: true, transformValues: true })
         ).toMatch(/^25\.0+%$/);
     });
 
     test('a zero denominator blanks the cell instead of producing Infinity or NaN', async () => {
         const api = gridsManager.createGrid('sva-zero-denominator', {
-            columnDefs: [{ field: 'country' }, { field: 'amount', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' }],
+            columnDefs: [
+                { field: 'country' },
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
+            ],
             getRowId: ({ data }) => data.id,
             rowData: [
                 // A grand total of 0 makes the denominator zero — the ratio guards against the division.
@@ -261,12 +266,12 @@ describe('showValueAs breaking-change guardrails', () => {
         // A zero denominator yields no value (not Infinity/NaN) → the transform returns null and the formatter renders ''.
         expect(transformed(api, '1', 'amount')).toBeNull();
         expect(
-            api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', useFormatter: true, from: 'transformed' })
+            api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', useFormatter: true, transformValues: true })
         ).toBe('');
     });
 });
 
 /** Raw transformed value (no formatter) for a cell. */
 function transformed(api: GridApi, id: string, colKey: string): any {
-    return api.getCellValue({ rowNode: leaf(api, id), colKey, from: 'transformed' });
+    return api.getCellValue({ rowNode: leaf(api, id), colKey, transformValues: true });
 }

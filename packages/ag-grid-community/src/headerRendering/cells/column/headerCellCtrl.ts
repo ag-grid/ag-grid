@@ -41,7 +41,7 @@ type HeaderAriaDescriptionKey =
     | 'selectAll'
     | 'filterButton'
     | 'cellSelection'
-    | 'showValueAs'
+    | 'showValuesAs'
     | 'calculatedColumn';
 type RefreshFunction =
     | 'updateSortable'
@@ -147,14 +147,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             headerHeightChanged: this.onHeaderHeightChanged.bind(this),
         });
 
-        if (beans.showValueAsSvc) {
+        if (beans.showValuesAsSvc) {
             // The active mode (and its dormancy, which flips on grouping/pivot change) feed the header aria description.
-            const refreshShowValueAsAria = () => this.refreshAriaShowValueAs();
-            compBean.addManagedListeners(column, { columnStateUpdated: refreshShowValueAsAria });
+            const refreshShowValuesAsAria = () => this.refreshAriaShowValuesAs();
+            compBean.addManagedListeners(column, { columnStateUpdated: refreshShowValuesAsAria });
             compBean.addManagedEventListeners({
-                columnRowGroupChanged: refreshShowValueAsAria,
-                columnPivotChanged: refreshShowValueAsAria,
-                columnPivotModeChanged: refreshShowValueAsAria,
+                columnRowGroupChanged: refreshShowValuesAsAria,
+                columnPivotChanged: refreshShowValuesAsAria,
+                columnPivotModeChanged: refreshShowValuesAsAria,
             });
         }
 
@@ -630,12 +630,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.setAriaDescriptionProperty('filter', description);
     }
 
-    private refreshAriaShowValueAs(): void {
+    private refreshAriaShowValuesAs(): void {
         const translate = this.getLocaleTextFunc();
-        const label = this.beans.showValueAsSvc?.getActiveModeLabel(this.column);
+        const label = this.beans.showValuesAsSvc?.getActiveModeLabel(this.column);
         this.setAriaDescriptionProperty(
-            'showValueAs',
-            label ? `${translate('ariaColumnShowValueAs', 'Showing Values As')} ${label}` : null
+            'showValuesAs',
+            label ? `${translate('ariaColumnShowValuesAs', 'Showing Values As')} ${label}` : null
         );
     }
 
@@ -693,7 +693,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.refreshAriaMenu();
         this.refreshAriaFilterButton();
         this.refreshAriaFiltered();
-        this.refreshAriaShowValueAs();
+        this.refreshAriaShowValuesAs();
         this.refreshAriaCellSelection();
         this.refreshAriaCalculatedColumn();
     }

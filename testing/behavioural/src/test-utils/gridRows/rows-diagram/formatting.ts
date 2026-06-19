@@ -48,11 +48,11 @@ function getCellDisplayValue(
     column: Column,
     from?: 'data' | 'batch' | 'edit'
 ): unknown {
-    // For showValueAs columns, mirror the cell: request the transformed displayed value.
-    const resolveFrom = (column as AgColumn).showValueAs ? 'transformed' : from;
+    // For showValuesAs columns, mirror the cell: request the transformed displayed value.
+    const transformValues = (column as AgColumn).showValuesAs != null;
     let value: unknown;
     try {
-        value = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false, from: resolveFrom });
+        value = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false, from, transformValues });
     } catch {
         return '<ERROR>';
     }
@@ -65,7 +65,8 @@ function getCellDisplayValue(
             rowNode: row,
             colKey: column,
             useFormatter: true,
-            from: resolveFrom,
+            from,
+            transformValues,
         });
     } catch {
         return value;

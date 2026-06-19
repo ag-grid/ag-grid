@@ -12,8 +12,8 @@ function quote(s: string): string {
     return `"${s}"`;
 }
 
-const showValueAsModule = (_colDef: ColDef | ColGroupDef, { rowModelType }: GridOptions): 'ShowValueAs' | null =>
-    rowModelType && rowModelType !== 'clientSide' ? null : 'ShowValueAs';
+const showValuesAsModule = (_colDef: ColDef | ColGroupDef, { rowModelType }: GridOptions): 'ShowValuesAs' | null =>
+    rowModelType && rowModelType !== 'clientSide' ? null : 'ShowValuesAs';
 
 const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> = () => ({
     checkboxSelection: { version: '32.2', message: 'Use `rowSelection.checkboxes` in `GridOptions` instead.' },
@@ -43,9 +43,10 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     allowFormula: 'Formula',
     calculatedExpression: 'CalculatedColumns',
     aggFunc: 'SharedAggregation',
-    showValueAs: showValueAsModule,
-    showValueAsInitial: showValueAsModule,
-    showValueAsConfig: showValueAsModule,
+    showValuesAs: showValuesAsModule,
+    initialShowValuesAs: showValuesAsModule,
+    showValuesAsDef: showValuesAsModule,
+    enableShowValuesAs: showValuesAsModule,
     autoHeight: 'RowAutoHeight',
     cellClass: 'CellStyle',
     cellClassRules: 'CellStyle',
@@ -134,13 +135,16 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         allowFormula: {
             supportedRowModels: ['clientSide'],
         },
-        showValueAs: {
+        showValuesAs: {
             supportedRowModels: ['clientSide'],
         },
-        showValueAsInitial: {
+        initialShowValuesAs: {
             supportedRowModels: ['clientSide'],
         },
-        showValueAsConfig: {
+        showValuesAsDef: {
+            supportedRowModels: ['clientSide'],
+        },
+        enableShowValuesAs: {
             supportedRowModels: ['clientSide'],
         },
         calculatedExpression: {
@@ -414,9 +418,10 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     headerGroupComponent: undefined,
     headerGroupComponentParams: undefined,
     calculatedExpression: undefined,
-    showValueAs: undefined,
-    showValueAsInitial: undefined,
-    showValueAsConfig: undefined,
+    showValuesAs: undefined,
+    initialShowValuesAs: undefined,
+    showValuesAsDef: undefined,
+    enableShowValuesAs: undefined,
     cellStyle: undefined,
     cellRenderer: undefined,
     cellRendererParams: undefined,

@@ -120,7 +120,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             pinnedRowModel,
             rangeSvc,
             rowGroupColsSvc,
-            showValueAsSvc,
+            showValuesAsSvc,
             sortSvc,
             valueColsSvc,
         } = beans;
@@ -244,12 +244,12 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     } else {
                         return null;
                     }
-                case 'showValueAsSubMenu':
-                    if (showValueAsSvc && column && showValueAsSvc.isMenuEligible(column)) {
+                case 'showValuesAsSubMenu':
+                    if (showValuesAsSvc && column && showValuesAsSvc.isMenuEligible(column)) {
                         return {
-                            name: localeTextFunc('showValueAs', 'Show Values As'),
-                            icon: _createIconNoSpan('showValueAs', beans, null),
-                            subMenu: showValueAsSvc.getMenuItems(column, localeTextFunc),
+                            name: localeTextFunc('showValuesAs', 'Show Values As'),
+                            icon: _createIconNoSpan('showValuesAs', beans, null),
+                            subMenu: showValuesAsSvc.getMenuItems(column, localeTextFunc),
                         };
                     } else {
                         return null;

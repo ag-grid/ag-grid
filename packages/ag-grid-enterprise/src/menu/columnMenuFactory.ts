@@ -169,8 +169,8 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         }
 
         // Shown on value/numeric columns (numeric ones promote on demand) and any column opted in via config.
-        if (beans.showValueAsSvc?.isMenuEligible(column)) {
-            result.push('showValueAsSubMenu');
+        if (beans.showValuesAsSvc?.isMenuEligible(column)) {
+            result.push('showValuesAsSubMenu');
         }
 
         if (beans.calculatedColsSvc?.isEnabled() === true && isPrimary) {
