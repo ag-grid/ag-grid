@@ -1,5 +1,5 @@
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
-import { ModuleRegistry } from '../modules/moduleRegistry';
+import { _registerModule } from '../modules/moduleRegistry';
 import { VERSION } from '../version';
 import { ValidationService } from './validationService';
 
@@ -37,5 +37,5 @@ export const ValidationModule: _ModuleWithoutApi = {
  * effect. Not intended for production builds.
  */
 export function enableDevValidations(): void {
-    ModuleRegistry.registerModules([ValidationModule]);
+    _registerModule(ValidationModule, undefined);
 }

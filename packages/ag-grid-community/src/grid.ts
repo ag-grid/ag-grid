@@ -185,7 +185,7 @@ export class GridCoreCreator {
         gridId: string,
         rowModelType: RowModelType | undefined
     ): Module[] {
-        _registerModule(CommunityCoreModule, undefined, true);
+        _registerModule(CommunityCoreModule, undefined);
 
         params?.modules?.forEach((m) => _registerModule(m, gridId));
 

@@ -47,8 +47,7 @@ function runVersionChecks(module: Module) {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _registerModule(module: Module, gridId: string | undefined, isInternalRegistration = false): void {
-
+export function _registerModule(module: Module, gridId: string | undefined): void {
     runVersionChecks(module);
     const rowModels = module.rowModels ?? ['all'];
 
@@ -73,7 +72,7 @@ export function _registerModule(module: Module, gridId: string | undefined, isIn
 
     if (module.dependsOn) {
         for (const dependency of module.dependsOn) {
-            _registerModule(dependency, gridId, isInternalRegistration);
+            _registerModule(dependency, gridId);
         }
     }
 }
