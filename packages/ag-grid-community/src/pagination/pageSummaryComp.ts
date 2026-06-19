@@ -218,7 +218,7 @@ export class PageSummaryComp extends Component {
             lbCurrentInput.setMax(pageCount);
             // log10 returns number of digits (as an integer part + fraction) - 1,
             // bump that to 1 + 1x2 each side pad + 0.5 for borders and css oddities
-            lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(pageCount) + 3.5)}ch`;
+            lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(pageCount)) + 3.5}ch`;
             lbCurrentInput.setValue(lbCurrentValue.toString());
             const eInput = lbCurrentInput.getInputElement();
             _setAriaLabel(
