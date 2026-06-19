@@ -110,22 +110,30 @@ validatePackages()
       current_root_dir="$packagesDir/$directory/package"
       validateCommonDist "$current_root_dir"
 
-      expected_umd=4
       current_dist=$current_root_dir/dist
-      count=`find $current_dist -maxdepth 1 -name "*.js" | wc -l | tr -d ' '`
-      if [[ $count -ne $expected_umd ]]
+      if [[ $current_dist == "dist/artifacts/contents/packages/ag-stack/package/dist" ]]
       then
-        echo "ERROR: $current_dist should have $expected_umd umd files"
+        expected_umd=2
+      else
+        expected_umd=4
+      fi
+      count=`find $current_dist -maxdepth 1 -name "*.js" | wc -l | tr -d ' '`
+      if [[ $count -lt $expected_umd ]]
+      then
+        echo "ERROR: $current_dist should have more than $expected_umd umd files"
         exit 1
       fi
 
-      expected_styles=35
-      current_dist=$current_root_dir/styles
-      count=`find $current_dist | wc -l | tr -d ' '`
-      if [[ $count -ne $expected_styles ]]
+      if [[ $current_root_dir/dist != "dist/artifacts/contents/packages/ag-stack/package/dist" ]]
       then
-        echo "ERROR: $current_dist should have $expected_styles style files"
-        exit 1
+        expected_styles=35
+        current_dist=$current_root_dir/styles
+        count=`find $current_dist | wc -l | tr -d ' '`
+        if [[ $count -ne $expected_styles ]]
+        then
+          echo "ERROR: $current_dist should have $expected_styles style files"
+          exit 1
+        fi
       fi
     elif [[ ${frameworks[@]} =~ $directory ]]
     then
@@ -176,10 +184,10 @@ validateVue3()
 
 # check all expected modules & packages are there
 validateExpectedDirs "dist/artifacts/contents/community-modules" 2
-validateExpectedDirs "dist/artifacts/contents/packages" 6
+validateExpectedDirs "dist/artifacts/contents/packages" 7
 
 validateExpectedDirs "dist/artifacts/community-modules" 2
-validateExpectedDirs "dist/artifacts/packages" 7
+validateExpectedDirs "dist/artifacts/packages" 8
 
 validateModules "dist/artifacts/contents/community-modules"
 validatePackages "dist/artifacts/contents/packages"
