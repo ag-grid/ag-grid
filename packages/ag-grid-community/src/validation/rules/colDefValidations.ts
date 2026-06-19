@@ -151,6 +151,10 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 if (!_isCalculatedColumnsEnabled(gridOptions.calculatedColumns)) {
                     return 'colDef.calculatedExpression requires gridOptions.calculatedColumns to be set to true or an options object.';
                 }
+                if (colDef.pivotValueColumn) {
+                    // pivot result colDefs add field/valueGetter internally after copying the value column colDef.
+                    return null;
+                }
                 if (colDef.field || colDef.valueGetter || colDef.valueSetter) {
                     return 'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.';
                 }

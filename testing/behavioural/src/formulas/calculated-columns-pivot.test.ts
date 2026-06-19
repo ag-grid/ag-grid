@@ -1,3 +1,4 @@
+import { _doOnce } from 'ag-stack';
 import { vi } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions, Module } from 'ag-grid-community';
@@ -23,8 +24,14 @@ describe('calculated columns - pivot mode', () => {
         ] as Module[],
     });
 
-    beforeEach(() => gridsManager.reset());
-    afterEach(() => gridsManager.reset());
+    beforeEach(() => {
+        gridsManager.reset();
+        (_doOnce as unknown as { _set: Set<string> })._set.clear();
+    });
+    afterEach(() => {
+        gridsManager.reset();
+        vi.restoreAllMocks();
+    });
 
     function createGrid(id: string, opts: Partial<GridOptions>): GridApi {
         return gridsManager.createGrid(id, {
@@ -40,6 +47,10 @@ describe('calculated columns - pivot mode', () => {
 
     function order(api: GridApi): string[] {
         return api.getAllGridColumns()!.map((col) => col.getColId());
+    }
+
+    function warningText(): string {
+        return vi.mocked(console.warn).mock.calls.flat().join('\n');
     }
 
     const rowData = [
@@ -83,10 +94,11 @@ describe('calculated columns - pivot mode', () => {
         expect(warn).not.toHaveBeenCalled();
 
         // Assigning a pivot column at runtime activates the pivot, so the calc col is turned off
-        // (warning 295) while remaining a resolvable primary column.
+        // while remaining a resolvable primary column.
         api.applyColumnState({ state: [{ colId: 'country', pivot: true }] });
         await asyncSetTimeout(10);
-        expect(warn).toHaveBeenCalled();
+        expect(warningText()).toContain('colDef.calculatedExpression is not supported with Column Pivoting');
+        expect(warningText()).not.toContain('colDef.allowFormula is not supported with Column Pivoting');
         expect(api.getColumn('profit')).toBeTruthy();
 
         // Removing the pivot column re-enables calc evaluation.
@@ -99,7 +111,7 @@ describe('calculated columns - pivot mode', () => {
     });
 
     test('calc col is absent from the pivot display but remains a resolvable primary column', async () => {
-        vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 295: expected — calc col blocked by pivot
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-static-calc', {
             rowData,
             columnDefs: [
@@ -126,6 +138,42 @@ describe('calculated columns - pivot mode', () => {
         `);
     });
 
+    test('calculated value column in pivot mode warns about calculatedExpression, not allowFormula or generated field conflicts', async () => {
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+        createGrid('pivot-calc-warning-text', {
+            rowData: [
+                { id: 'r1', country: 'US', year: 2020, gold: 1, silver: 2 },
+                { id: 'r2', country: 'UK', year: 2020, gold: 3, silver: 4 },
+                { id: 'r3', country: 'US', year: 2021, gold: 5, silver: 6 },
+            ],
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true },
+                { field: 'gold', aggFunc: 'sum' },
+                { field: 'silver', aggFunc: 'sum' },
+                {
+                    headerName: 'Calc',
+                    aggFunc: 'sum',
+                    calculatedExpression: '[gold]+[silver]',
+                },
+                {
+                    headerName: 'VG',
+                    aggFunc: 'sum',
+                    valueGetter: (params) => params.data?.gold + params.data?.silver,
+                },
+            ],
+            pivotMode: true,
+        });
+        await asyncSetTimeout(10);
+
+        const text = warningText();
+        expect(text).toContain('colDef.calculatedExpression is not supported with Column Pivoting');
+        expect(text).not.toContain('colDef.allowFormula is not supported with Column Pivoting');
+        expect(text).not.toContain(
+            'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.'
+        );
+    });
+
     test('addCalculatedColumn while pivot active keeps the pivot result intact', async () => {
         const api = createGrid('pivot-add-calc', {
             rowData,
@@ -150,7 +198,7 @@ describe('calculated columns - pivot mode', () => {
     });
 
     test('pivot mode off then on restores the calc col among the primary cols', async () => {
-        vi.spyOn(console, 'warn').mockImplementation(() => {}); // warning 295: expected — calc col blocked by pivot
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-toggle', {
             rowData,
             columnDefs: [
@@ -184,7 +232,6 @@ describe('calculated columns - pivot mode', () => {
     });
 
     test('calc col referencing a pivot result column id does not read it on a leaf', async () => {
-        // warning 295 is expected — the calc col is blocked by the active pivot.
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-calc-refs-pivot-col', {
             rowData,
@@ -204,7 +251,7 @@ describe('calculated columns - pivot mode', () => {
             api.getCellValue({ rowNode: api.getRowNode(id)!, colKey: 'doubled', useFormatter: false });
 
         expect(doubledOf('r1')).toBeUndefined();
-        expect(warn).toHaveBeenCalled();
+        expect(warningText()).toContain('colDef.calculatedExpression is not supported with Column Pivoting');
         warn.mockRestore();
     });
 });
