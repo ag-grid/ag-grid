@@ -39,7 +39,10 @@ async function setupPage(page: Page): Promise<string[]> {
         }
     });
 
-    await page.route('**://cdn.cookielaw.org/**', (route) => route.abort());
+    // Fulfill rather than abort so the browser doesn't log net::ERR_FAILED to the console.
+    await page.route('**://cdn.cookielaw.org/**', (route) =>
+        route.fulfill({ status: 200, contentType: 'application/javascript', body: '' })
+    );
     page.on('pageerror', (error) => {
         const msg = `Uncaught exception: ${error.message}`;
         if (isCspIssue(msg)) {
