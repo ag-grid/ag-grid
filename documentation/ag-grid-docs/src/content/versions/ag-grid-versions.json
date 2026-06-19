@@ -1,5 +1,32 @@
 [
     {
+        "version": "36.0.0",
+        "date": "June 24th 2026",
+        "landingPageHighlight": "Calculated Columns, Show Values As, Automatic Column Generation, Accessibility Improvements, Theming Improvements",
+        "highlights": [
+            {
+                "text": "Calculated Columns",
+                "path": "./calculated-columns/"
+            },
+            {
+                "text": "Show Values As",
+                "path": "./aggregation-show-values-as/"
+            },
+            {
+                "text": "Automatic Column Generation",
+                "path": "./auto-generate-columns/"
+            },
+            {
+                "text": "Accessibility Improvements"
+            },
+            {
+                "text": "Theming Improvements"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-36",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "35.3.0",
         "date": "12th May 2026",
         "landingPageHighlight": "Quick Access Toolbar, Cell Notes, Grand Total Row for server-side row model, Performance Improvements, Quality Improvements",
