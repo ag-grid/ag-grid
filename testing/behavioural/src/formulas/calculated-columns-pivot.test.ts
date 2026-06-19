@@ -126,6 +126,72 @@ describe('calculated columns - pivot mode', () => {
         `);
     });
 
+    test('calculated value columns do not create pivot result columns', async () => {
+        const api = createGrid('pivot-calc-value-col', {
+            rowData: [
+                { id: 'r1', country: 'US', year: 2020, gold: 1, silver: 2 },
+                { id: 'r2', country: 'UK', year: 2020, gold: 3, silver: 4 },
+                { id: 'r3', country: 'US', year: 2021, gold: 5, silver: 6 },
+            ],
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true },
+                { field: 'gold', aggFunc: 'sum' },
+                { field: 'silver', aggFunc: 'sum' },
+                {
+                    colId: 'calc',
+                    headerName: 'Calc',
+                    aggFunc: 'sum',
+                    calculatedExpression: '[gold]+[silver]',
+                },
+            ],
+            pivotMode: true,
+        });
+        await asyncSetTimeout(10);
+
+        expect(api.getColumn('calc')).toBeTruthy();
+        expect(api.getPivotResultColumns()?.some((col) => col.getColId().includes('calc'))).toBe(false);
+        await new GridColumns(api, 'pivot: calc value col absent from result').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "2020" GROUP
+            │ ├── pivot_year_2020_gold "Gold" width:200 columnGroupShow:open
+            │ └── pivot_year_2020_silver "Silver" width:200 columnGroupShow:open
+            └─┬ "2021" GROUP
+              ├── pivot_year_2021_gold "Gold" width:200 columnGroupShow:open
+              └── pivot_year_2021_silver "Silver" width:200 columnGroupShow:open
+        `);
+    });
+
+    test('only calculated value columns create no pivot result columns', async () => {
+        const api = createGrid('pivot-only-calc-value-col', {
+            rowData: [
+                { id: 'r1', country: 'US', year: 2020, gold: 1, silver: 2 },
+                { id: 'r2', country: 'UK', year: 2020, gold: 3, silver: 4 },
+                { id: 'r3', country: 'US', year: 2021, gold: 5, silver: 6 },
+            ],
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true },
+                {
+                    colId: 'calc',
+                    headerName: 'Calc',
+                    aggFunc: 'sum',
+                    calculatedExpression: '[gold]+[silver]',
+                },
+            ],
+            pivotMode: true,
+        });
+        await asyncSetTimeout(10);
+
+        expect(api.getColumn('calc')).toBeTruthy();
+        expect(api.getPivotResultColumns()).toEqual([]);
+        await new GridColumns(api, 'pivot: only calc value col absent from result').checkColumns(`
+            CENTER
+            └── ag-Grid-AutoColumn "Group" width:200
+        `);
+    });
+
     test('addCalculatedColumn while pivot active keeps the pivot result intact', async () => {
         const api = createGrid('pivot-add-calc', {
             rowData,
