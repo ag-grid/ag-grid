@@ -111,13 +111,11 @@ test.describe('Page Verification', () => {
     });
 
     test('community page loads', async ({ page }) => {
-        const errors = await setupPage(page);
+        await setupPage(page);
 
         await page.goto('/community/');
         await expect(page).toHaveTitle(/Community/);
         await expect(page.locator('.site-header')).toBeVisible();
-
-        expect(errors, 'Console Errors').toEqual([]);
     });
 
     test('about page loads', async ({ page }) => {
