@@ -1065,7 +1065,7 @@ export { CellSpanModule } from './rendering/spanning/cellSpanModule';
 export { RowSelectionModule } from './selection/rowSelectionModule';
 export { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 export { TooltipModule } from './tooltip/tooltipModule';
-export { ValidationModule } from './validation/validationModule';
+export { enableDevValidation, ValidationModule } from './validation/validationModule';
 export { CellApiModule, ValueCacheModule } from './valueService/valueModule';
 
 // Events

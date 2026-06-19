@@ -40,7 +40,6 @@ import { CellSpanModule } from './rendering/spanning/cellSpanModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 import { TooltipModule } from './tooltip/tooltipModule';
-import { ValidationModule } from './validation/validationModule';
 import { CellApiModule, ValueCacheModule } from './valueService/valueModule';
 import { VERSION } from './version';
 
@@ -54,7 +53,6 @@ export const AllCommunityModule: _ModuleWithoutApi = {
         ClientSideRowModelModule,
         CsvExportModule,
         InfiniteRowModelModule,
-        ValidationModule,
         TextEditorModule,
         NumberEditorModule,
         DateEditorModule,
