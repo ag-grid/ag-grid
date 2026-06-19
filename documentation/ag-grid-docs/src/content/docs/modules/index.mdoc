@@ -119,13 +119,13 @@ To work out which modules are required, select the features of the grid that you
 
 The `ValidationModule` adds console warnings and errors that help identify misconfiguration during development. It is not included in the `AllCommunityModule`/`AllEnterpriseModule` bundles, so opt into it yourself — and we recommend doing so only in development builds to keep production bundles small.
 
-Call `enableDevValidation` once, before any grid is created:
+Call `enableDevValidations` once, before any grid is created:
 
 ```js
-import { enableDevValidation } from 'ag-grid-community';
+import { enableDevValidations } from 'ag-grid-community';
 
 if (process.env.NODE_ENV !== 'production') {
-    enableDevValidation();
+    enableDevValidations();
 }
 ```
 

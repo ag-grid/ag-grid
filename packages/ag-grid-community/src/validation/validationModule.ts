@@ -24,7 +24,7 @@ export const ValidationModule: _ModuleWithoutApi = {
  *
  * ```js
  * if (process.env.NODE_ENV !== 'production') {
- *     enableDevValidation();
+ *     enableDevValidations();
  * }
  * ```
  *
@@ -36,6 +36,6 @@ export const ValidationModule: _ModuleWithoutApi = {
  * your other modules — registration is global, so it must run before grid initialisation to take
  * effect. Not intended for production builds.
  */
-export function enableDevValidation(): void {
+export function enableDevValidations(): void {
     ModuleRegistry.registerModules([ValidationModule]);
 }
