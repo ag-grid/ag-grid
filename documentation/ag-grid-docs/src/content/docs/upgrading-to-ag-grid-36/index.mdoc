@@ -108,9 +108,11 @@ There are no deprecations in AG Grid version {% migrationVersion() %}.
 
 ## DOM structure migration reference
 
-Impact summary: there has been significant change in the containers that hold rows and cells and handle scrolling and column pinning. If your application only styles visible grid components like cells, buttons, filters and so forth, there is likely no change. If your application styles containers, or uses containers to select specific cells to style, it is likely to need an update.
+**Impact summary:** there has been significant change in the containers that hold rows and cells and handle scrolling and column pinning. If your application only styles visible grid components like cells, buttons, filters and so forth, there is likely no change. If your application styles containers, or uses containers to select specific cells to style, it is likely to need an update.
 
-Detection: search the codebase for the following class names, either in CSS code or in JS APIs like `document.querySelector('...')`:
+### Detection
+
+Search the codebase for the following class names, either in CSS code or in JS APIs like `document.querySelector('...')`:
 
 - ag-body
 - ag-body-viewport
@@ -140,9 +142,9 @@ Detection: search the codebase for the following class names, either in CSS code
 - ag-floating-top-spanned-cells-container
 - ag-floating-bottom-spanned-cells-container
 
-Mitigation:
+### Mitigation
 
-1. Classes with available replacements
+**1. Classes with available replacements**
 
 If you are styling one of the classes on the left below in CSS, update it to the class on the right and test that the visual effect is the same.
 
@@ -156,7 +158,7 @@ If you are styling one of the classes on the left below in CSS, update it to the
 - ag-floating-top -> `.ag-grid-pinned-top-rows`
 - ag-floating-bottom -> `.ag-grid-pinned-bottom-rows`
 
-2. Classes with alternate selectors
+**2. Classes with alternate selectors**
 
 These elements have no direct replacement, but if using them to select components you can replace them with a descendent selector combining two class names. For example `.ag-pinned-left-sticky-top .ag-icon { ... }` could be replaced with `.ag-grid-sticky-top-rows-container .ag-grid-pinned-left-cells .ag-icon { ... }`
 
@@ -177,7 +179,7 @@ These elements have no direct replacement, but if using them to select component
 - ag-pinned-left-floating-bottom -> `.ag-grid-pinned-bottom-rows-container .ag-grid-pinned-left-cells`
 - ag-pinned-right-floating-bottom -> `.ag-grid-pinned-bottom-rows-container .ag-grid-pinned-right-cells`
 
-3. Elements removed
+**3. Elements removed**
 
 In the old DOM layout, non-scrollable containers had spacing elements below to align better with scrollable regions. These are no longer required as there is one large scrollable region. If you are using these it is likely that they are no longer required under the new layout:
 
