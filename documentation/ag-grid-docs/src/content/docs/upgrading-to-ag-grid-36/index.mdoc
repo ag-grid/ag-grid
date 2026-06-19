@@ -48,6 +48,20 @@ NOTE: This will not show if the current library version is the same as the migra
 
 - The value column order in the columns tool panel is now saved and reloaded as part of state. When loading grid state, pivot result value column header order remains the same, since the order is saved as part of state.
 
+### Modules
+
+- The `ValidationModule` is no longer included in the `AllCommunityModule` and `AllEnterpriseModule` bundles, keeping production bundles smaller by default. Without it, console messages are reduced to an error code and a documentation link. To restore the full development-time diagnostics, call `enableDevValidations()` before any grid is created:
+
+    ```js
+    import { enableDevValidations } from 'ag-grid-community';
+
+    if (process.env.NODE_ENV !== 'production') {
+        enableDevValidations();
+    }
+    ```
+
+- The Client-Side Row Model is now part of the grid core. A grid renders the client-side model without registering `ClientSideRowModelModule` explicitly, so registering no modules no longer reports an error.
+
 ### Overlay
 
 - The DOM element for the overlay is now rendered as a sibling of the grid viewport DOM element, rather than as its child.
