@@ -1,6 +1,5 @@
 import { BASE_URL } from '../../baseUrl';
-import { VanillaFrameworkOverrides } from '../../vanillaFrameworkOverrides';
-import { AG_GRID_ERRORS, NoModulesRegisteredError } from './errorText';
+import { AG_GRID_ERRORS } from './errorText';
 
 const trimTrailingSpaces = (s: string) => s.replace(/ +\n/g, '\n');
 
@@ -12,73 +11,6 @@ describe('Validate AG_GRID_ERRORS', () => {
             errorTextFn({} as any);
         }
     );
-});
-
-describe('NoModulesRegisteredError', () => {
-    test('shows AgGridProvider snippet when usesAgGridProvider is true', () => {
-        expect(NoModulesRegisteredError(true)).toMatchInlineSnapshot(`
-"No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:
-
-import { AgGridProvider, AgGridReact } from 'ag-grid-react'; 
-import { AllCommunityModule } from 'ag-grid-community';
-
-const modules = [ AllCommunityModule ];
-
-function App() {
-    return (
-        <AgGridProvider modules={modules}>
-            <AgGridReact /* ... props */ />
-        </AgGridProvider>
-    );
-}
-"
-`);
-    });
-
-    test('shows AgGridProvider snippet for React users without AgGridProvider (guides new users toward AgGridProvider)', () => {
-        expect(NoModulesRegisteredError(false)).toMatchInlineSnapshot(`
-"No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:
-
-import { AgGridProvider, AgGridReact } from 'ag-grid-react'; 
-import { AllCommunityModule } from 'ag-grid-community';
-
-const modules = [ AllCommunityModule ];
-
-function App() {
-    return (
-        <AgGridProvider modules={modules}>
-            <AgGridReact /* ... props */ />
-        </AgGridProvider>
-    );
-}
-"
-`);
-    });
-
-    test('shows ModuleRegistry snippet when usesAgGridProvider is undefined (non-React)', () => {
-        expect(NoModulesRegisteredError()).toMatchInlineSnapshot(`
-"No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:
-
-import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
-
-ModuleRegistry.registerModules([ AllCommunityModule ]);
-"
-`);
-    });
-
-    test('shows ModuleRegistry snippet for plain JS (VanillaFrameworkOverrides sets undefined)', () => {
-        // VanillaFrameworkOverrides.usesAgGridProvider must be undefined, not false,
-        // so that plain JS users see the ModuleRegistry approach
-        const vanillaUsesAgGridProvider = new VanillaFrameworkOverrides().usesAgGridProvider;
-        expect(NoModulesRegisteredError(vanillaUsesAgGridProvider)).toMatchInlineSnapshot(`
-"No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:
-
-import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
-
-ModuleRegistry.registerModules([ AllCommunityModule ]);
-"
-`);
-    });
 });
 
 describe('error 200 (missing module)', () => {

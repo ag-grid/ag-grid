@@ -14,7 +14,6 @@ const allRegisteredModules = new Set<Module>();
 const globalModulesMap: ModuleStore = {};
 const gridModulesMap: { [gridId: string]: ModuleStore } = {};
 let currentModuleVersion: string;
-let userHasRegistered = false;
 let areGridScopedModules = false;
 let isUmd = false;
 
@@ -49,9 +48,6 @@ function runVersionChecks(module: Module) {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _registerModule(module: Module, gridId: string | undefined, isInternalRegistration = false): void {
-    if (!isInternalRegistration) {
-        userHasRegistered = true;
-    }
 
     runVersionChecks(module);
     const rowModels = module.rowModels ?? ['all'];
@@ -114,11 +110,6 @@ export function _getAllRegisteredModules(): Set<Module> {
 export function _getGridRegisteredModules(gridId: string, rowModel: RowModelType): Module[] {
     const gridModules = gridModulesMap[gridId] ?? {};
     return [...Object.values(gridModules['all'] ?? {}), ...Object.values(gridModules[rowModel] ?? {})];
-}
-
-/** Internal logic to track if the user has registered modules so that we can give an optimised error message. */
-export function _hasUserRegistered(): boolean {
-    return userHasRegistered;
 }
 
 export function _isUmd(): boolean {
