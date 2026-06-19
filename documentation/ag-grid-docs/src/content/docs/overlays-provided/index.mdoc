@@ -34,7 +34,7 @@ The exporting overlay is displayed when data is being exported from the grid to 
 
 ## File Input
 
-When `processFileInput` is provided and `rowData` is not set, the grid shows a built-in file input overlay. Users can drag a file onto the overlay or click the browse button to select one. The `processFileInput` callback will be called with the event enabling the application to parse the file and then take appropriate action.
+When `processFileInput` is provided and `rowData` is not set, the grid shows a built-in file input overlay. Users can drag a file onto the overlay or click the browse button to select one. The `processFileInput` callback receives a `params` object containing the selected `files` along with `success` and `fail` callbacks, enabling the application to parse the files and load or reject the data.
 
 The file input overlay pairs well with [Auto-Generate Columns](./auto-generate-columns/#file-drop-overlay) to load data without defining columns upfront. See that page for the `processFileInput` callback and a worked example.
 
