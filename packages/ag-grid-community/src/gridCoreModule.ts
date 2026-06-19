@@ -10,6 +10,7 @@ import {
     updateGridOptions,
 } from './api/coreApi';
 import type { _CoreGridApi } from './api/gridApi';
+import { ClientSideRowModelModule } from './clientSideRowModel/clientSideRowModelModule';
 import { ColumnMoveModule } from './columnMove/columnMoveModule';
 import { ColumnResizeModule } from './columnResize/columnResizeModule';
 import { ColumnGroupModule } from './columns/columnGroups/columnGroupModule';
@@ -114,6 +115,7 @@ export const CommunityCoreModule: _ModuleWithApi<_CoreGridApi> = {
         isModuleRegistered,
     },
     dependsOn: [
+        ClientSideRowModelModule,
         DataTypeModule,
         ColumnMoveModule,
         ColumnResizeModule,
