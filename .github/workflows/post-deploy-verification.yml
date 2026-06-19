@@ -16,6 +16,10 @@ env:
   CI: true
   YARN_REGISTRY: 'https://registry.ag-grid.com'
 
+concurrency:
+  group: post-deploy-verification-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
+
 permissions:
   contents: read
   actions: write
