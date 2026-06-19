@@ -347,7 +347,7 @@
             "ssrmBundled": true
         },
         {
-            "moduleName": "ShowValueAsModule",
+            "moduleName": "ShowValuesAsModule",
             "name": "Show Values As",
             "path": "aggregation-show-values-as",
             "isEnterprise": true

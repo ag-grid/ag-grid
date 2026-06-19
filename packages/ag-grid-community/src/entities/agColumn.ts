@@ -44,11 +44,11 @@ import type {
     ValueGetterFunc,
 } from './colDef';
 import type {
-    AgShowValueAsResolved,
-    ShowValueAsConfigResolved,
-    ShowValueAsResolved,
-    ShowValueAsResult,
-} from './colDef-showValueAs';
+    AgShowValuesAsResolved,
+    ShowValuesAsDefResolved,
+    ShowValuesAsResolved,
+    ShowValuesAsResult,
+} from './colDef-showValuesAs';
 
 let instanceIdSequence = 0;
 export function getNextColInstanceId(): ColumnInstanceId {
@@ -171,12 +171,13 @@ export class AgColumn<TValue = any>
     public highlighted: ColumnHighlightPosition | null = null;
     public formulaRef: string | null = null;
 
-    /** The column's "Show Values As" config resolved once on colDef change (built-in modes merged with user
-     *  config), or `null` when the feature is off for this column. The active mode is a lookup into it. */
-    public showValueAsConfig: ShowValueAsConfigResolved | null = null;
+    /** The column's "Show Values As" config resolved once on colDef change (built-in modes merged with user config).
+     *  Tri-state: the config object when configured, `null` when explicitly disabled (`colDef.showValuesAsDef: null`),
+     *  `undefined` when unconfigured. The active mode is a lookup into it. */
+    public showValuesAsDef: ShowValuesAsDefResolved | null | undefined = undefined;
     /** Resolved active "Show Values As" mode for this column (precomputed by the enterprise service), or `null`
-     *  when none. `showValueAs.type` is the active mode; the active mode is owned by column state. */
-    public showValueAs: AgShowValueAsResolved | null = null;
+     *  when none. `showValuesAs.type` is the active mode; the active mode is owned by column state. */
+    public showValuesAs: AgShowValuesAsResolved | null = null;
 
     /** colId this column sits immediately after in display order. Order restoration seats new cols after
      *  this anchor — handles anchors absent from the tree (e.g. auto-group col) and stacks same-anchor adds
@@ -261,7 +262,7 @@ export class AgColumn<TValue = any>
         }
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
         this.initColDefHotFields();
-        this.beans.showValueAsSvc?.resolveColumn(this, false); // colDef change — `showValueAsInitial` is create-only
+        this.beans.showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
@@ -312,7 +313,7 @@ export class AgColumn<TValue = any>
     // this is done after constructor as it uses gridOptionsService
     public postConstruct(): void {
         this.initColDefHotFields();
-        this.beans.showValueAsSvc?.resolveColumn(this, true); // column creation — apply `showValueAsInitial`
+        this.beans.showValuesAsSvc?.resolveColumn(this, true); // column creation — apply `initialShowValuesAs`
         this.initState();
         this.initMinAndMaxWidths();
         this.resetActualWidth('gridInitializing');
@@ -565,12 +566,12 @@ export class AgColumn<TValue = any>
         return this.aggFunc;
     }
 
-    public getShowValueAs<TOut extends ShowValueAsResult = any>(): ShowValueAsResolved<any, TValue, TOut> | null {
-        return this.showValueAs as ShowValueAsResolved<any, TValue, TOut> | null;
+    public getShowValuesAs<TOut extends ShowValuesAsResult = any>(): ShowValuesAsResolved<any, TValue, TOut> | null {
+        return this.showValuesAs as ShowValuesAsResolved<any, TValue, TOut> | null;
     }
 
-    public getShowValueAsConfig(): ShowValueAsConfigResolved<any, TValue> | null {
-        return this.showValueAsConfig as ShowValueAsConfigResolved<any, TValue> | null;
+    public getShowValuesAsDef(): ShowValuesAsDefResolved<any, TValue> | null {
+        return this.showValuesAsDef ?? null;
     }
 
     public getLeft(): number | null {

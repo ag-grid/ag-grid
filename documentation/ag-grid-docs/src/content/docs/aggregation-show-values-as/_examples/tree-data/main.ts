@@ -10,7 +10,7 @@ import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
     ContextMenuModule,
-    ShowValueAsModule,
+    ShowValuesAsModule,
     TreeDataModule,
 } from 'ag-grid-enterprise';
 
@@ -24,7 +24,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     ColumnsToolPanelModule,
     TreeDataModule,
-    ShowValueAsModule,
+    ShowValuesAsModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -39,12 +39,13 @@ const gridOptions: GridOptions<FileRow> = {
     columnDefs: [
         // Tree data populates aggregates on parent folders, so each node's size is shown
         // as a share of the folder that contains it.
-        { field: 'size', aggFunc: 'sum', valueFormatter: formatSize, showValueAs: 'percentOfParentTotal' },
+        { field: 'size', aggFunc: 'sum', valueFormatter: formatSize, showValuesAs: 'percentOfParentRowTotal' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 130,
         enableValue: true,
+        enableShowValuesAs: true,
         filter: true,
     },
     autoGroupColumnDef: {

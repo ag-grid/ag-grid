@@ -4,9 +4,9 @@ import type {
     Column,
     GridApi,
     IRowNode,
-    ShowValueAsColumnLists,
-    ShowValueAsMenuParams,
-    ShowValueAsType,
+    ShowValuesAsColumnLists,
+    ShowValuesAsMenuParams,
+    ShowValuesAsType,
 } from 'ag-grid-community';
 
 /** Max dimension-item entries listed in a field's submenu, and max nodes expanded per level while collecting
@@ -14,10 +14,10 @@ import type {
 const DIMENSION_ITEMS_CAP = 100;
 const DIMENSION_WALK_CAP = 10000;
 
-/** The candidate columns a mode's menu can offer, plus the column-naming and dimension-item helpers — computed
+/** The candidate columns a mode's menu can offer, plus the `getColumn` / `dimensionItems` helpers — computed
  *  lazily from the active row-group / pivot / value columns and shared across a column's modes (a mode reading
  *  only `rowGroups` never computes `valueColumns`, and the shared instance is not recomputed per mode). */
-export class ShowValueAsColumnListsImpl implements ShowValueAsColumnLists {
+export class ShowValuesAsColumnListsImpl implements ShowValuesAsColumnLists {
     private _rowGroups?: AgColumn[];
     private _dimensions?: AgColumn[];
     private _valueColumns?: AgColumn[];
@@ -139,33 +139,33 @@ const rowDimensionItems = (beans: BeanCollection, fieldId: string): string[] => 
     return result;
 };
 
-/** Per-mode {@link ShowValueAsMenuParams}: a class with prototype methods. The column lists are created lazily
+/** Per-mode {@link ShowValuesAsMenuParams}: a class with prototype methods. The column lists are created lazily
  *  on first access; `apply` delegates to the service bean, which owns the selection state. */
-export class ShowValueAsMenuParamsImpl implements ShowValueAsMenuParams {
+export class ShowValuesAsMenuParamsImpl implements ShowValuesAsMenuParams {
     constructor(
         public readonly api: GridApi,
         public readonly context: any,
         private readonly _beans: BeanCollection,
         public readonly column: AgColumn,
-        public readonly type: ShowValueAsType,
+        public readonly type: ShowValuesAsType,
         public readonly active: boolean,
-        public readonly columnLists: ShowValueAsColumnListsImpl
+        public readonly columnLists: ShowValuesAsColumnListsImpl
     ) {}
 
     public get currentParams(): any {
-        return this.active ? this.column.showValueAs?.params : undefined;
+        return this.active ? this.column.showValuesAs?.params : undefined;
     }
 
     public apply(params?: any): void {
-        this._beans.showValueAsSvc?.setColumnShowValueAs(
+        this._beans.showValuesAsSvc?.setColumnShowValuesAs(
             this.column,
             params != null ? { type: this.type, params } : this.type
         );
     }
 }
 
-/** Appends to `result` the columns in `cols` other than `column`, skipping duplicates (a field can be both a
- *  row-group and a pivot field). */
+/** Adds to `set` the columns in `cols` other than `column` (the Set dedupes a field that is both a row-group
+ *  and a pivot field). */
 const collectColumns = (cols: AgColumn[] | undefined, column: AgColumn, set: Set<AgColumn>): void => {
     if (cols) {
         for (let i = 0, len = cols.length; i < len; ++i) {

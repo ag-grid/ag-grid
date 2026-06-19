@@ -411,6 +411,16 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 node,
             });
 
+            // A "Show Values As" cell shows a presentation string (e.g. `25.00%`, or `#N/A` when dormant): export
+            // that displayed text, like CSV, not the raw number (which Excel would render as a bare decimal). The
+            // cheap `column.showValuesAs` check (null for every ordinary column) short-circuits before the group
+            // node's expansion is evaluated — mirroring `getValueForDisplay`'s gate.
+            const showValuesAsText =
+                !addedImage &&
+                this.transformValues &&
+                column.showValuesAs != null &&
+                (!node.group || !this.valueSvc.displayIgnoresAggData(node));
+
             if (addedImage) {
                 currentCells.push(
                     this.createCell(
@@ -426,27 +436,29 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 currentCells.push(
                     this.createMergedCell(
                         excelStyleId,
-                        this.getDataTypeForValue(rawValueForCell),
-                        valueForCellString,
+                        showValuesAsText ? 's' : this.getDataTypeForValue(rawValueForCell),
+                        showValuesAsText ? (valueFormatted ?? valueForCellString) : valueForCellString,
                         colSpan - 1,
                         note
                     )
                 );
             } else {
-                const isFormula = column.allowFormula && this.formulaSvc?.isFormula(valueForCellString);
-                const cell = this.createCell(
-                    excelStyleId,
-                    isFormula ? 'f' : this.getDataTypeForValue(rawValueForCell),
-                    isFormula
-                        ? this.formulaSvc?.updateFormulaByOffset({
-                              value: valueForCellString,
-                              rowDelta: rowIndex - (node.formulaRowIndex! + 1),
-                              useRefFormat: false,
-                          })
-                        : valueForCellString,
-                    valueFormatted,
-                    note
-                );
+                const isFormula =
+                    !showValuesAsText && column.allowFormula && this.formulaSvc?.isFormula(valueForCellString);
+                const dataType = showValuesAsText ? 's' : this.getDataTypeForValue(rawValueForCell);
+                let cellValue = valueForCellString;
+                if (isFormula) {
+                    cellValue = this.formulaSvc?.updateFormulaByOffset({
+                        value: valueForCellString,
+                        rowDelta: rowIndex - (node.formulaRowIndex! + 1),
+                        useRefFormat: false,
+                    });
+                } else if (showValuesAsText) {
+                    // The presentation text, like the merged-cell path — a cell style's dataType would otherwise
+                    // bypass createCell's valueFormatted substitution and leak the raw transformed value.
+                    cellValue = valueFormatted ?? valueForCellString;
+                }
+                const cell = this.createCell(excelStyleId, isFormula ? 'f' : dataType, cellValue, valueFormatted, note);
 
                 currentCells.push(cell);
             }
@@ -680,7 +692,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         const { column, node, accumulatedRowIndex } = params;
         const valueSvc = this.valueSvc;
         const valueFrom = this.valueFrom;
-        const value = valueSvc.getDisplayValue(column, node, valueFrom);
+        const value = valueSvc.getDisplayValue(column, node, valueFrom, this.transformValues);
 
         return _addGridCommonParams(this.gos, {
             accumulatedRowIndex,
@@ -689,11 +701,9 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             value,
             type: 'excel',
             parseValue: (valueToParse: string) =>
-                valueSvc.parseValue(column, node, valueToParse, valueSvc.getValue(column, node, this.baseValueFrom)),
+                valueSvc.parseValue(column, node, valueToParse, valueSvc.getValue(column, node, valueFrom)),
             formatValue: (valueToFormat: any) =>
-                (valueFrom === 'transformed'
-                    ? valueSvc.formatTransformedValue(column, node, valueToFormat)
-                    : undefined) ??
+                (this.transformValues ? valueSvc.formatTransformedValue(column, node, valueToFormat) : undefined) ??
                 valueSvc.formatValue(column, node, valueToFormat) ??
                 valueToFormat,
             gridNote,

@@ -16,6 +16,10 @@ env:
   CI: true
   YARN_REGISTRY: 'https://registry.ag-grid.com'
 
+concurrency:
+  group: post-deploy-verification-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
+
 permissions:
   contents: read
   actions: write
@@ -118,14 +122,14 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
-      # - name: Notify Slack
-      #   if: always() && steps.prev_run.outputs.changed == 'true'
-      #   uses: ./external/ag-shared/github/actions/slack-integration
-      #   with:
-      #     AG_LIBRARY: grid
-      #     SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-      #     SLACK_CHANNEL: '#teamcity_status'
-      #     CTRF_REPORT_FILE: reports/ag-grid-examples-interactive-default.json
-      #     CURRENT_COMMIT_SHA: ${{ github.sha }}
-      #     PREV_COMMIT_SHA: ${{ steps.prev_run.outputs.sha }}
-      #     IS_SUCCESS: ${{ steps.run_tests.outcome == 'success' }}
+      - name: Notify Slack
+        if: always() && steps.run_tests.outcome == 'failure'
+        uses: ./external/ag-shared/github/actions/slack-integration
+        with:
+          AG_LIBRARY: grid
+          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+          SLACK_CHANNEL: '#teamcity_status'
+          CTRF_REPORT_FILE: reports/ag-grid-examples-interactive-default.json
+          CURRENT_COMMIT_SHA: ${{ github.sha }}
+          PREV_COMMIT_SHA: ${{ steps.prev_run.outputs.sha }}
+          IS_SUCCESS: ${{ steps.run_tests.outcome == 'success' }}

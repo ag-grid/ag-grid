@@ -94,7 +94,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         // rendered rows NOT refreshed above are now stale — the edit flow re-aggregates without a full model
         // refresh, so nothing else does this. The refreshed rows are skipped via the `nodes`/`path` O(1) lookups
         // (they already flashed their own moved cells); the rest refresh on change per `enableCellChangeFlash`.
-        this.beans.showValueAsSvc?.refreshRenderedCellsExcept(nodes, path);
+        this.beans.showValuesAsSvc?.refreshRenderedCellsExcept(nodes, path);
 
         // If re-entrant events accumulated during the flush, process them now.
         if (this.batchedPath || this.batchedNodes) {

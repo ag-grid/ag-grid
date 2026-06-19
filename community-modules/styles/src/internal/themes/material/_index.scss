@@ -214,6 +214,11 @@
         }
     }
 
+    // Remove text-input mixin's padding-bottom so the page-number text stays centred
+    .ag-paging-number .ag-input-field-input.ag-number-field-input {
+        padding-bottom: 0;
+    }
+
     .ag-standard-button {
         appearance: none;
         background-color: transparent;

@@ -13,7 +13,7 @@ export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc' | 'fillHandle' | 'c
  * - `'batch'`: pending batch values but excluding live editor typing (useful for dependent valueGetters).
  * - `'data'`: the stored data value, ignoring all edit state.
  */
-export type CellBaseValueResolveFrom = 'edit' | 'batch' | 'data';
+export type CellValueResolveFrom = 'edit' | 'batch' | 'data';
 
 export interface StartEditWithPositionParams extends StartEditParams {
     position: Required<EditPosition>;

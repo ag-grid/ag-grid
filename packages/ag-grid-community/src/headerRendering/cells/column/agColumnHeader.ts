@@ -17,7 +17,7 @@ function getHeaderCompElementParams(
     includeColumnRefIndicator: boolean,
     includeCalculatedColumnIndicator: boolean,
     includeSortIndicator: boolean,
-    includeShowValueAsIndicator: boolean
+    includeShowValuesAsIndicator: boolean
 ): ElementParams {
     const hiddenAttrs = { 'aria-hidden': 'true' };
     return {
@@ -59,11 +59,11 @@ function getHeaderCompElementParams(
                         cls: 'ag-header-icon ag-header-label-icon ag-filter-icon',
                         attrs: hiddenAttrs,
                     },
-                    includeShowValueAsIndicator
+                    includeShowValuesAsIndicator
                         ? {
                               tag: 'span',
-                              ref: 'eShowValueAs',
-                              cls: 'ag-header-icon ag-header-label-icon ag-show-value-as-icon',
+                              ref: 'eShowValuesAs',
+                              cls: 'ag-header-icon ag-header-label-icon ag-show-values-as-icon',
                               attrs: hiddenAttrs,
                           }
                         : null,
@@ -78,7 +78,7 @@ function getHeaderCompElementParams(
 export class AgColumnHeader extends Component implements IHeaderComp {
     // All the elements are optional, as they are not guaranteed to be present if the user provides a custom template
     private readonly eFilter?: HTMLElement = RefPlaceholder;
-    private readonly eShowValueAs?: HTMLElement = RefPlaceholder;
+    private readonly eShowValuesAs?: HTMLElement = RefPlaceholder;
     public eFilterButton?: HTMLElement = RefPlaceholder;
     private eSortIndicator?: SortIndicatorComp = RefPlaceholder;
     public eMenu?: HTMLElement = RefPlaceholder;
@@ -143,7 +143,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
     }
 
     private workOutTemplate(params: IHeaderParams, isSorting: boolean): string | ElementParams {
-        const { formula, showValueAsSvc } = this.beans;
+        const { formula, showValuesAsSvc } = this.beans;
         const paramsTemplate = params.template;
         if (paramsTemplate) {
             // take account of any newlines & whitespace before/after the actual template
@@ -153,7 +153,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             !!formula?.active,
             (params.column as AgColumn).isCalculatedCol,
             isSorting,
-            !!showValueAsSvc
+            !!showValuesAsSvc
         );
     }
 
@@ -180,7 +180,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         rowNumbersSvc?.setupForHeader(this);
         this.setupFilterIcon();
         this.setupFilterButton();
-        this.setupShowValueAsIcon();
+        this.setupShowValuesAsIcon();
         this.workOutInnerHeaderComponent(userCompFactory, params);
         this.setDisplayName(params);
     }
@@ -393,24 +393,24 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         this.configureFilter(params.enableFilterIcon, eFilter, onFilterChangedIcon, 'filterActive');
     }
 
-    private setupShowValueAsIcon(): void {
-        const { eShowValueAs, params } = this;
-        const { showValueAsSvc } = this.beans;
-        if (!eShowValueAs || !showValueAsSvc) {
+    private setupShowValuesAsIcon(): void {
+        const { eShowValuesAs, params } = this;
+        const { showValuesAsSvc } = this.beans;
+        if (!eShowValuesAs || !showValuesAsSvc) {
             return;
         }
         const column = params.column as AgColumn;
-        this.addInIcon('showValueAs', eShowValueAs, column);
+        this.addInIcon('showValuesAs', eShowValuesAs, column);
         // Three states: hidden (no active mode), active (applying), dormant (active but not meaningful in the
-        // current view — see ShowValueAsService.isApplying). Dormancy flips on grouping/pivot change without a
+        // current view — see ShowValuesAsService.isApplying). Dormancy flips on grouping/pivot change without a
         // column-state event, so listen for those too.
         const refresh = () => {
-            const resolved = column.showValueAs;
-            const show = resolved != null && !column.showValueAsConfig?.suppressHeaderIndicator;
-            _setDisplayed(eShowValueAs, show, { skipAriaHidden: true });
+            const resolved = column.showValuesAs;
+            const show = resolved != null && !column.showValuesAsDef?.suppressHeaderIndicator;
+            _setDisplayed(eShowValuesAs, show, { skipAriaHidden: true });
             if (show) {
-                eShowValueAs.classList.toggle('ag-show-value-as-dormant', !showValueAsSvc.isApplying(column));
-                eShowValueAs.title = showValueAsSvc.getActiveModeTooltip(column) ?? '';
+                eShowValuesAs.classList.toggle('ag-show-values-as-dormant', !showValuesAsSvc.isApplying(column));
+                eShowValuesAs.title = showValuesAsSvc.getActiveModeTooltip(column) ?? '';
             }
         };
         this.addManagedListeners(column, { columnStateUpdated: refresh });
