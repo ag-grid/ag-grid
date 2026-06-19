@@ -183,12 +183,13 @@ test.describe('Page Verification', () => {
         await page.goto('/react-data-grid/row-sorting/');
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
-        // The iframe uses IntersectionObserver to lazy-load its src — scroll it into view first.
-        // Loading is also blocked while the page is scrolling, so wait for the src attribute to
-        // be populated (which happens once scrolling settles) before checking iframe content.
+        // The iframe uses IntersectionObserver to lazy-load its src.
+        // scrollIntoViewIfNeeded() alone doesn't reliably trigger the observer in headless Chrome —
+        // mouse.wheel() simulates a real scroll event and fires it more reliably.
         const iframeLocator = page.locator('iframe.exampleRunner').first();
         await iframeLocator.scrollIntoViewIfNeeded();
-        await expect(iframeLocator).toHaveAttribute('src', /example-runner/);
+        await page.mouse.wheel(0, 100);
+        await expect(iframeLocator).toHaveAttribute('src', /example-runner/, { timeout: 30_000 });
 
         const exampleFrame = page.locator('iframe.exampleRunner').first().contentFrame();
         await expect(exampleFrame.locator('.ag-root-wrapper')).toBeVisible({ timeout: 30_000 });
