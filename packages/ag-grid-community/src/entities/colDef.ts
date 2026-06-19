@@ -1325,7 +1325,7 @@ export interface ValueFormatterParams<TData = any, TValue = any, TContext = any>
 
 export type ValueFormatterFunc<TData = any, TValue = any, TContext = any> = (
     params: ValueFormatterParams<TData, TValue, TContext>
-) => string;
+) => string | null | undefined;
 
 export type EqualsFunc<TValue = any> = (
     valueA: TValue | null | undefined,

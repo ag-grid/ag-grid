@@ -334,7 +334,7 @@ export class RowNumbersService
                 column,
                 colDef: column.colDef,
             });
-            value = rowNumberOverrides.valueFormatter(valueFormatterParams);
+            value = rowNumberOverrides.valueFormatter(valueFormatterParams) ?? value;
         }
 
         div.textContent = value;

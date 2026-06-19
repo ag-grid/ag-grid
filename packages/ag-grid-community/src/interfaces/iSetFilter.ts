@@ -196,7 +196,7 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * If specified, this formats the value before it is displayed in the Filter List.
      * If a Key Creator is provided (see `keyCreator`), this must also be provided.
      */
-    valueFormatter?: (params: ValueFormatterParams) => string;
+    valueFormatter?: (params: ValueFormatterParams) => string | null | undefined;
     /**
      * Function to return a string key for a value. This is required when the filter values are complex objects,
      * or when `treeList = true` and the column is a group column with Tree Data or Grouping enabled.
