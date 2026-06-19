@@ -76,7 +76,7 @@ jobs:
         working-directory: documentation/ag-grid-docs
         env:
           BASE_URL: ${{ inputs.staging_url || steps.staging_url.outputs.url }}
-        run: /tmp/pw/node_modules/.bin/playwright test src/content/docs/page-verification.spec.ts --project=chromium
+        run: /tmp/pw/node_modules/.bin/playwright test --project=page-verification
 
       - name: Publish CTRF Report
         if: always()

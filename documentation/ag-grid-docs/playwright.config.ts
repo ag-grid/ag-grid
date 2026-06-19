@@ -94,6 +94,13 @@ export default defineConfig({
                 '**/page-verification.spec.ts',
             ],
         },
+        {
+            // Dedicated project for post-deploy verification — run via post-deploy-verification.yml.
+            // Not included in standard ./docs-e2e.sh runs (those use --project=chromium).
+            name: 'page-verification',
+            use: { ...devices['Desktop Chrome'] },
+            testMatch: '**/page-verification.spec.ts',
+        },
 
         /* Test against mobile viewports. */
         // {
