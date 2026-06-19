@@ -2,7 +2,6 @@ import { _hasCalculatedExpression, _isCalculatedColumnsEnabled } from '../../col
 import type { UserComponentName } from '../../context/context';
 import { _isSortDefValid, isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
-import type { GridOptions } from '../../entities/gridOptions';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { buildAllValidNames } from '../validationTypes';
@@ -11,9 +10,6 @@ import { USER_COMP_MODULES } from './userCompValidations';
 function quote(s: string): string {
     return `"${s}"`;
 }
-
-const showValuesAsModule = (_colDef: ColDef | ColGroupDef, { rowModelType }: GridOptions): 'ShowValuesAs' | null =>
-    rowModelType && rowModelType !== 'clientSide' ? null : 'ShowValuesAs';
 
 const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> = () => ({
     checkboxSelection: { version: '32.2', message: 'Use `rowSelection.checkboxes` in `GridOptions` instead.' },
@@ -43,10 +39,10 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     allowFormula: 'Formula',
     calculatedExpression: 'CalculatedColumns',
     aggFunc: 'SharedAggregation',
-    showValuesAs: showValuesAsModule,
-    initialShowValuesAs: showValuesAsModule,
-    showValuesAsDef: showValuesAsModule,
-    enableShowValuesAs: showValuesAsModule,
+    showValuesAs: 'ShowValuesAs',
+    initialShowValuesAs: 'ShowValuesAs',
+    showValuesAsDef: 'ShowValuesAs',
+    enableShowValuesAs: 'ShowValuesAs',
     autoHeight: 'RowAutoHeight',
     cellClass: 'CellStyle',
     cellClassRules: 'CellStyle',
