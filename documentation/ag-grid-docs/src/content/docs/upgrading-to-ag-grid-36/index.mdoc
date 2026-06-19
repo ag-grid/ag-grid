@@ -104,8 +104,6 @@ There are no deprecated API removals in AG Grid version {% migrationVersion() %}
 
 There are no deprecations in AG Grid version {% migrationVersion() %}.
 
-{% changelogSection version=$migrationVersion /%}
-
 ## DOM structure migration reference
 
 **Impact summary:** there has been significant change in the containers that hold rows and cells and handle scrolling and column pinning. If your application only styles visible grid components like cells, buttons, filters and so forth, there is likely no change. If your application styles containers, or uses containers to select specific cells to style, it is likely to need an update.
@@ -186,3 +184,5 @@ In the old DOM layout, non-scrollable containers had spacing elements below to a
 - ag-scroller-corner
 - ag-horizontal-left-spacer
 - ag-horizontal-right-spacer
+
+{% changelogSection version=$migrationVersion /%}
