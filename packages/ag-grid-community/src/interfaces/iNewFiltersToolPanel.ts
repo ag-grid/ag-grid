@@ -2,7 +2,7 @@ import type { IEventEmitter } from 'ag-stack';
 
 import type { AgColumn } from '../entities/agColumn';
 import type { ValueGetterFunc } from '../entities/colDef';
-import type { NewFiltersToolPanelState } from './gridState';
+import type { NewFiltersToolPanelState, SelectableFilterState } from './gridState';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import type { FilterAction, FilterWrapperParams, IFilterDef } from './iFilter';
 import type { IToolPanel, IToolPanelNewFiltersCompParams } from './iToolPanel';
@@ -99,6 +99,6 @@ export interface ISelectableFilterService extends IEventEmitter<'selectedFilterC
     ): { filterDefs: SelectableFilterDef[]; activeFilterDef: SelectableFilterDef } | undefined;
     setActive(colId: string, filterDefs: SelectableFilterDef[], activeFilterDef: SelectableFilterDef): void;
     clearActive(colId: string): void;
-    getState(): { [colId: string]: number };
-    setState(state: { [colId: string]: number }): void;
+    getState(): SelectableFilterState | undefined;
+    setState(state: SelectableFilterState | undefined): void;
 }

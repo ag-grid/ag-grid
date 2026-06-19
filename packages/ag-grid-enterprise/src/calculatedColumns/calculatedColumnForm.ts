@@ -354,14 +354,20 @@ export class CalculatedColumnForm extends Component {
 
     private setTitleError(message: string | null): void {
         this.titleValidationMessage = message;
-        this.applyFieldError(this.eTitle.getInputElement(), message);
+        const inputEl = this.eTitle.getInputElement();
+        this.applyFieldError(inputEl, message);
         this.titleTooltipFeature?.setTooltipAndRefresh(message);
+        // set title to empty string to prevent default browser tooltip from showing when validation tooltip is active
+        inputEl.setAttribute('title', '');
     }
 
     private setExpressionError(message: string | null): void {
         this.expressionValidationMessage = message;
-        this.applyFieldError(this.eExpression.getInputElement(), message);
+        const inputEl = this.eExpression.getInputElement();
+        this.applyFieldError(inputEl, message);
         this.expressionTooltipFeature?.setTooltipAndRefresh(message);
+        // set title to empty string to prevent default browser tooltip from showing when validation tooltip is active
+        inputEl.setAttribute('title', '');
     }
 
     private applyFieldError(input: HTMLInputElement | HTMLTextAreaElement, message: string | null): void {
@@ -371,8 +377,6 @@ export class CalculatedColumnForm extends Component {
         input.classList.toggle('invalid', isInvalid);
         _setAriaInvalid(input, isInvalid);
         this.eApply.disabled = !!this.titleValidationMessage || !!this.expressionValidationMessage;
-        // set title to empty string to prevent default browser tooltip from showing when validation tooltip is active
-        input.setAttribute('title', '');
     }
 
     private setupValidationTooltips(): void {

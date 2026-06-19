@@ -402,6 +402,8 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     initialAggFunc: undefined,
     defaultAggFunc: undefined,
     aggFunc: undefined,
+    valueIndex: undefined,
+    initialValueIndex: undefined,
     groupRowEditable: undefined,
     groupRowValueSetter: undefined,
     pinned: undefined,

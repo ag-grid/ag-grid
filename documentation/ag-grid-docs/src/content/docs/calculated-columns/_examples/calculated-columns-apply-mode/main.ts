@@ -89,12 +89,12 @@ const rowData: SalesRow[] = [
 const gridOptions: GridOptions<SalesRow> = {
     columnDefs,
     rowData,
+    calculatedColumns: {
+        applyMode: 'deferred',
+    },
     defaultColDef: {
         flex: 1,
         minWidth: 130,
-    },
-    calculatedColumns: {
-        applyMode: 'deferred',
     },
 };
 

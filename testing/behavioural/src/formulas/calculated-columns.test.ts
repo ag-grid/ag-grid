@@ -1668,6 +1668,7 @@ describe('ag-grid calculated columns', () => {
             expect(activeOption).toHaveAttribute('aria-selected', 'true');
             expect(activeOption).toHaveAttribute('aria-posinset', '1');
             expect(activeOption).toHaveAttribute('aria-setsize', '2');
+            expect(controlledList).toHaveAttribute('aria-activedescendant', activeId);
             return activeId!;
         });
 
@@ -1678,6 +1679,7 @@ describe('ag-grid calculated columns', () => {
             expect(activeId).toBeTruthy();
             expect(activeId).not.toBe(firstActiveId);
             expect(document.getElementById(activeId!)!).toHaveAttribute('aria-posinset', '2');
+            expect(controlledList).toHaveAttribute('aria-activedescendant', activeId);
         });
 
         input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));

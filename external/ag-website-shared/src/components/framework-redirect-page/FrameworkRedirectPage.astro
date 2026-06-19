@@ -29,15 +29,7 @@ const redirectUrl = `./${Astro.props.redirectPageName}`;
         }
     }
 </style>
-<script>
-    const WAIT_TO_SHOW_REDIRECT_CONTENT = 1000;
-
-    setTimeout(() => {
-        document.querySelector('.redirectContent')?.classList.remove('hidden');
-    }, WAIT_TO_SHOW_REDIRECT_CONTENT);
-</script>
-
-<!-- 
+<!--
     Redirect page to framework page based on stored internal framework
 
     NOTE: Need to put var into data attribute as Astro can't pass directly into build time JavaScript
@@ -47,6 +39,14 @@ const redirectUrl = `./${Astro.props.redirectPageName}`;
     import { $internalFramework } from '@stores/frameworkStore';
     import { getFrameworkFromInternalFramework } from '@utils/framework';
     import { urlWithPrefix } from '@utils/urlWithPrefix';
+
+    // Reveal the fallback content shortly after load (in case the redirect below is
+    // skipped, e.g. ?debug=true). Kept in this imported module — rather than a
+    // separate inline <script> — so the site CSP can authorise it via 'self'.
+    const WAIT_TO_SHOW_REDIRECT_CONTENT = 1000;
+    setTimeout(() => {
+        document.querySelector('.redirectContent')?.classList.remove('hidden');
+    }, WAIT_TO_SHOW_REDIRECT_CONTENT);
 
     const data = document.getElementById('redirectUrl')?.dataset;
     const dataAttrFrameworkOverride = data.frameworkOverride;

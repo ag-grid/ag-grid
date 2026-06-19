@@ -70,17 +70,29 @@ export default defineConfig({
         {
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
-            testIgnore: ['**/async-test/provided/angular/app.component.spec.ts'],
+            testIgnore: [
+                '**/async-test/provided/angular/app.component.spec.ts',
+                // page-verification.spec.ts runs in its own dedicated CI job.
+                '**/page-verification.spec.ts',
+            ],
         },
         {
             name: 'firefox',
             use: { ...devices['Desktop Firefox'] },
-            testIgnore: ['**/async-test/provided/angular/app.component.spec.ts'],
+            testIgnore: [
+                '**/async-test/provided/angular/app.component.spec.ts',
+                // page-verification.spec.ts runs in its own dedicated CI job.
+                '**/page-verification.spec.ts',
+            ],
         },
         {
             name: 'webkit',
             use: { ...devices['Desktop Safari'] },
-            testIgnore: ['**/async-test/provided/angular/app.component.spec.ts'],
+            testIgnore: [
+                '**/async-test/provided/angular/app.component.spec.ts',
+                // page-verification.spec.ts runs in its own dedicated CI job.
+                '**/page-verification.spec.ts',
+            ],
         },
 
         /* Test against mobile viewports. */

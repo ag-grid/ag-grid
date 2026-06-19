@@ -3440,7 +3440,19 @@ export interface PageSummaryPanelParams {
     suppressPageInput?: boolean;
 }
 
-export type PaginationPanelParams = PageSummaryPanelParams;
+export interface PageSizePanelParams {
+    type: 'pageSize';
+    /** Panel-level page size. Takes precedence over the grid-level `paginationPageSize` option. */
+    paginationPageSize?: number;
+    /** Panel-level page size selector. Takes precedence over the grid-level `paginationPageSizeSelector` option. */
+    paginationPageSizeSelector?: number[] | boolean;
+}
+
+export interface RowSummaryPanelParams {
+    type: 'rowSummary';
+}
+
+export type PaginationPanelParams = PageSummaryPanelParams | PageSizePanelParams | RowSummaryPanelParams;
 
 export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary' | PaginationPanelParams;
 

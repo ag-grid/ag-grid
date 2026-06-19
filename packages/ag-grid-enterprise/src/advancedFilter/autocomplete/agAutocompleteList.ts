@@ -1,4 +1,12 @@
-import { AgPopupComponent, RefPlaceholder, _exists, _fuzzySuggestions, _isVisible, _setAriaSelected } from 'ag-stack';
+import {
+    AgPopupComponent,
+    RefPlaceholder,
+    _exists,
+    _fuzzySuggestions,
+    _isVisible,
+    _setAriaActiveDescendant,
+    _setAriaSelected,
+} from 'ag-stack';
 
 import type {
     AgComponentSelectorType,
@@ -264,7 +272,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         this.virtualList.refresh();
         this.virtualList.awaitStable(() => {
             this.refreshRenderedRowsAria();
-            this.params.onActiveOptionChanged?.(this.getActiveOptionId());
+            this.refreshActiveDescendant();
         });
     }
 
@@ -273,6 +281,7 @@ export class AgAutocompleteList extends AgPopupComponent<
 
         if (this.selectedValue === value) {
             this.refreshRenderedRowsAria();
+            this.refreshActiveDescendant();
             return;
         }
 
@@ -280,7 +289,7 @@ export class AgAutocompleteList extends AgPopupComponent<
         this.virtualList.ensureIndexVisible(index);
 
         this.refreshRenderedRowsAria();
-        this.params.onActiveOptionChanged?.(this.getActiveOptionId());
+        this.refreshActiveDescendant();
     }
 
     private refreshRenderedRowsAria(): void {
@@ -291,6 +300,13 @@ export class AgAutocompleteList extends AgPopupComponent<
                 this.updateRowAriaProperties(rowComponent, rowParent, rowIndex);
             }
         });
+    }
+
+    private refreshActiveDescendant(): void {
+        const activeOptionId = this.getActiveOptionId();
+
+        _setAriaActiveDescendant(this.virtualList.getAriaElement(), activeOptionId);
+        this.params.onActiveOptionChanged?.(activeOptionId);
     }
 
     private updateRowAriaProperties(

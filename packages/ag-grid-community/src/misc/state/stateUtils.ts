@@ -25,7 +25,7 @@ export function convertColumnState(
 > {
     const sortColumns: SortModelItem[] = [];
     const groupColIds: string[] = [];
-    const aggregationColumns: AggregationColumnState[] = [];
+    const aggregationColumns: IndexedAggregationColumnState[] = [];
     const pivotColIds: string[] = [];
     const leftColIds: string[] = [];
     const rightColIds: string[] = [];
@@ -43,6 +43,7 @@ export function convertColumnState(
             rowGroup,
             rowGroupIndex,
             aggFunc,
+            valueIndex,
             pivot,
             pivotIndex,
             pinned,
@@ -58,7 +59,7 @@ export function convertColumnState(
             groupColIds[rowGroupIndex ?? 0] = colId;
         }
         if (typeof aggFunc === 'string') {
-            aggregationColumns.push({ colId, aggFunc });
+            aggregationColumns.push({ colId, aggFunc, valueIndex });
         }
         if (pivot) {
             pivotColIds[pivotIndex ?? 0] = colId;
@@ -77,7 +78,9 @@ export function convertColumnState(
     return {
         sort: sortColumns.length ? { sortModel: _removeEmptyValues(sortColumns) } : undefined,
         rowGroup: groupColIds.length ? { groupColIds: _removeEmptyValues(groupColIds) } : undefined,
-        aggregation: aggregationColumns.length ? { aggregationModel: aggregationColumns } : undefined,
+        aggregation: aggregationColumns.length
+            ? { aggregationModel: orderAggregationModel(aggregationColumns) }
+            : undefined,
         pivot:
             pivotColIds.length || enablePivotMode
                 ? { pivotMode: enablePivotMode, pivotColIds: _removeEmptyValues(pivotColIds) }
@@ -94,6 +97,16 @@ export function convertColumnState(
 // e.g. [ 'colId1', undefined, 'colId3' ] => [ 'colId1', 'colId3' ]
 function _removeEmptyValues<T>(array: T[]): T[] {
     return array.filter((a) => a != undefined);
+}
+
+type IndexedAggregationColumnState = AggregationColumnState & { valueIndex: number | null | undefined };
+
+// Order the aggregation model by `valueIndex` without dropping columns: a stable sort keeps the relative
+// order of entries that share (or lack) an index, so duplicate/invalid indexes can't overwrite each other.
+function orderAggregationModel(columns: IndexedAggregationColumnState[]): AggregationColumnState[] {
+    return columns
+        .sort((a, b) => (a.valueIndex ?? Infinity) - (b.valueIndex ?? Infinity))
+        .map((column) => ({ colId: column.colId, aggFunc: column.aggFunc }));
 }
 
 export function _convertColumnGroupState(

@@ -1,3 +1,49 @@
 [[IgnoredVulns]]
 id = "GHSA-67mh-4wv8-2f99"
 reason = "We do not use the esbuild development server"
+
+# Additions from OpenSSF Scorecard review (2026-06-17) - advisories surfaced in this project
+
+[[IgnoredVulns]]
+id = "GHSA-4x5r-pxfx-6jf8"
+reason = "@babel/core is used in build & dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-g7r4-m6w7-qqqr"
+reason = "We do not use the esbuild development server"
+
+# Additions from OpenSSF Scorecard vulnerability review (2026-06-18)
+# Reasons verified against yarn.lock dependency chains (2026-06-18).
+
+[[IgnoredVulns]]
+id = "GHSA-jxxr-4gwj-5jf2"
+reason = "brace-expansion is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-qx2v-qp2m-jg93"
+reason = "postcss is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-w7jw-789q-3m8p"
+reason = "shell-quote is only used in testing/build, not in the final production build"
+
+# OpenSSF Scorecard 'Vulnerabilities' review (2026-06-19) - dev/build transitive deps
+[[IgnoredVulns]]
+id = "GHSA-64mm-vxmg-q3vj"
+reason = "http-proxy-middleware is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-gcq2-9pq2-cxqm"
+reason = "http-proxy-middleware is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-x9g3-xrwr-cwfg"
+reason = "piscina is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-pr7r-676h-xcf6"
+reason = "undici is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-vmh5-mc38-953g"
+reason = "undici is only used in testing/build, not in the final production build"

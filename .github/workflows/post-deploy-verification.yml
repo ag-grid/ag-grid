@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: ['CI']
     types: [completed]
-    branches: ['latest', 'AG-17487-playwright-tests']
+    branches: ['latest']
   workflow_dispatch:
     inputs:
       staging_url:
@@ -24,43 +24,61 @@ jobs:
   page-verification:
     runs-on: ubuntu-latest
     name: Page Verification (Staging)
-    # For workflow_run: only proceed if the CI workflow that triggered us succeeded.
     # For manual dispatch: always run.
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    # For workflow_run: only proceed if triggered by a push to this repo (not a fork PR),
+    # and only if the upstream CI run succeeded. This guards against the untrusted-checkout
+    # risk flagged by OSSF/Scorecard for workflow_run triggers.
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # Pin to the commit that was actually deployed, not HEAD.
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          # Check out the default-branch HEAD (github.sha). In a workflow_run
+          # context this is the branch the run was triggered on; combined with the
+          # job-level `if:` (same-repo push only), the deployed commit is at HEAD.
+          # Avoid referencing workflow_run.head_sha here: it is an untrusted-input
+          # pattern flagged by OSSF/Scorecard for privileged workflow_run checkouts.
+          ref: ${{ github.sha }}
           fetch-depth: 1
 
-      - name: Setup
-        uses: ./.github/actions/setup-nx
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          cache_mode: ro
-          fetch_base: skip
+          node-version-file: '.nvmrc'
+
+      - name: Install Playwright
+        run: |
+          npm init -y --prefix /tmp/pw
+          npm install --prefix /tmp/pw @playwright/test@1.59.1 playwright-ctrf-json-reporter@0.0.29
+          ln -s /tmp/pw/node_modules documentation/ag-grid-docs/node_modules
+          /tmp/pw/node_modules/.bin/playwright install chromium --with-deps
 
       - name: Resolve staging URL
         id: staging_url
         run: |
           URL=$(node -e "
             const { getBaseUrl } = require('./scripts/deployments/prep_and_archive/baseUrlUtils');
-            console.log(getBaseUrl({ env: 'staging' }));
+            console.log(getBaseUrl({ env: 'staging' }).baseUrl);
           ")
           echo "url=${URL}" >> $GITHUB_OUTPUT
           echo "Resolved staging URL: ${URL}"
-
-      - name: Install Playwright Chromium
-        working-directory: documentation/ag-grid-docs
-        run: npx playwright install chromium --with-deps
 
       - name: Run page verification tests
         id: run_tests
         working-directory: documentation/ag-grid-docs
         env:
           BASE_URL: ${{ inputs.staging_url || steps.staging_url.outputs.url }}
-        run: npx playwright test src/content/docs/page-verification.spec.ts --project=chromium
+        run: /tmp/pw/node_modules/.bin/playwright test src/content/docs/page-verification.spec.ts --project=chromium
+
+      - name: Publish CTRF Report
+        if: always()
+        uses: ctrf-io/github-test-reporter@v1
+        with:
+          report-path: 'reports/ag-grid-examples-interactive-default.json'
 
       - name: Upload test results
         if: always()
@@ -100,13 +118,14 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Notify Slack
-        if: always() && steps.prev_run.outputs.changed == 'true'
-        uses: ./external/ag-shared/github/actions/slack-integration
-        with:
-          AG_LIBRARY: grid
-          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-          SLACK_CHANNEL: '#teamcity_status'
-          CURRENT_COMMIT_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
-          PREV_COMMIT_SHA: ${{ steps.prev_run.outputs.sha }}
-          IS_SUCCESS: ${{ steps.run_tests.outcome == 'success' }}
+      # - name: Notify Slack
+      #   if: always() && steps.prev_run.outputs.changed == 'true'
+      #   uses: ./external/ag-shared/github/actions/slack-integration
+      #   with:
+      #     AG_LIBRARY: grid
+      #     SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+      #     SLACK_CHANNEL: '#teamcity_status'
+      #     CTRF_REPORT_FILE: reports/ag-grid-examples-interactive-default.json
+      #     CURRENT_COMMIT_SHA: ${{ github.sha }}
+      #     PREV_COMMIT_SHA: ${{ steps.prev_run.outputs.sha }}
+      #     IS_SUCCESS: ${{ steps.run_tests.outcome == 'success' }}

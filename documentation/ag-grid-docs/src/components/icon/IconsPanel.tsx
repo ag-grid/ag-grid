@@ -72,6 +72,7 @@ const ICONS = [
     'tree-open',
     'unlinked',
     'up',
+    'values-as',
 ];
 
 const capitalizeName = (name: string) => `${name.slice(0, 1).toUpperCase()}${name.slice(1)}`;
