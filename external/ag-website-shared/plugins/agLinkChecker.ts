@@ -123,21 +123,21 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
         const processTag = (tag: string) => {
             // A fragment (#foo) resolves to the first element with id="foo",
             // and failing that an <a name="foo">. Record both as valid targets.
-            const idMatch = /(?:^|\s)id="([^"]*)"/i.exec(tag);
+            const idMatch = /(?:^|\s)id=(["'])(.*?)\1/i.exec(tag);
             if (idMatch) {
-                anchors.add(`${thisFileUrl}#${idMatch[1]}`);
+                anchors.add(`${thisFileUrl}#${idMatch[2]}`);
             }
 
             const tagName = /^([a-zA-Z][\w-]*)/.exec(tag)?.[1]?.toLowerCase();
             if (tagName === 'a') {
-                const nameMatch = /(?:^|\s)name="([^"]*)"/i.exec(tag);
+                const nameMatch = /(?:^|\s)name=(["'])(.*?)\1/i.exec(tag);
                 if (nameMatch) {
-                    anchors.add(`${thisFileUrl}#${nameMatch[1]}`);
+                    anchors.add(`${thisFileUrl}#${nameMatch[2]}`);
                 }
 
-                const hrefMatch = /(?:^|\s)href="([^"]*)"/i.exec(tag);
+                const hrefMatch = /(?:^|\s)href=(["'])(.*?)\1/i.exec(tag);
                 if (hrefMatch) {
-                    recordUsage(hrefMatch[1]);
+                    recordUsage(hrefMatch[2]);
                 }
             }
         };
