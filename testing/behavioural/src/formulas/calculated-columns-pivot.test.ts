@@ -5,12 +5,12 @@ import type { ColDef, GridApi, GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { CalculatedColumnsModule, FormulaModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 // Calculated-column behaviour in PIVOT mode. A calculated column stays active under pivot, evaluating
-// against the primary columns on leaf rows. Without an aggFunc it is a non-value primary column (no pivot
-// result column, absent from the cross-tab); with an aggFunc its per-leaf values aggregate into pivot
-// result columns, exactly like a valueGetter value column.
+// against the primary columns on leaf rows, and works in every pivot role: as a non-value primary column
+// (no aggFunc → no result column), as a pivot value (aggFunc → per-leaf values aggregate into result
+// columns like a valueGetter), and as a pivot dimension (its per-leaf formula result is the pivot key).
 
 describe('calculated columns - pivot mode', () => {
     const gridsManager = new TestGridsManager({
@@ -166,6 +166,41 @@ describe('calculated columns - pivot mode', () => {
         expect(warn).not.toHaveBeenCalled();
     });
 
+    test('a calculated column can be a pivot dimension: its per-leaf formula result is the pivot key', async () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const api = createGrid('pivot-by-calc', {
+            rowData,
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'revenue', aggFunc: 'sum' },
+                { colId: 'band', calculatedExpression: 'IF([revenue] > 12, "High", "Low")', pivot: true },
+            ],
+            pivotMode: true,
+        });
+        await asyncSetTimeout(10);
+
+        // The calc col's per-leaf result (High/Low) is used as the pivot key, exactly like pivoting by a
+        // valueGetter column: revenue aggregates into a result column per distinct band. No warning fires.
+        await new GridColumns(api, 'pivot by calc col').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "High" GROUP
+            │ └── pivot_band_High_revenue "Revenue" width:200 columnGroupShow:open
+            └─┬ "Low" GROUP
+              └── pivot_band_Low_revenue "Revenue" width:200 columnGroupShow:open
+        `);
+        // US has r1 (rev 10 → Low) and r3 (rev 15 → High); UK has r2 (rev 20 → High).
+        await new GridRows(api, 'pivot by calc col values', { useFormatter: false }).check(`
+            ROOT id:ROOT_NODE_ID pivot_band_High_revenue:35 pivot_band_Low_revenue:10
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-US ag-Grid-AutoColumn:"US" pivot_band_High_revenue:15 pivot_band_Low_revenue:10
+            │ ├── LEAF hidden id:r1 pivot_band_High_revenue:10 pivot_band_Low_revenue:10
+            │ └── LEAF hidden id:r3 pivot_band_High_revenue:15 pivot_band_Low_revenue:15
+            └─┬ LEAF_GROUP collapsed id:row-group-country-UK ag-Grid-AutoColumn:"UK" pivot_band_High_revenue:20 pivot_band_Low_revenue:null
+            · └── LEAF hidden id:r2 pivot_band_High_revenue:20 pivot_band_Low_revenue:20
+        `);
+        expect(warn).not.toHaveBeenCalled();
+    });
+
     test('addCalculatedColumn while pivot active keeps the pivot result intact', async () => {
         const api = createGrid('pivot-add-calc', {
             rowData,
@@ -212,7 +247,7 @@ describe('calculated columns - pivot mode', () => {
             ├── year "Year" width:200 pivot
             ├── revenue "Revenue" width:200 aggFunc:sum
             ├── cost "Cost" width:200 aggFunc:sum
-            └── profit width:200
+            └── profit width:200 ƒ
         `);
 
         api.setGridOption('pivotMode', true);
@@ -242,7 +277,7 @@ describe('calculated columns - pivot mode', () => {
         ).toBe(20);
     });
 
-    test('calc col referencing a pivot result column id resolves via the source column on leaf rows', async () => {
+    test('calc col referencing a pivot result column id resolves it like getCellValue (group bucket, leaf source)', async () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-calc-result-ref', {
             rowData,
@@ -258,10 +293,36 @@ describe('calculated columns - pivot mode', () => {
         });
         await asyncSetTimeout(10);
 
-        // A reference to a pivot result column redirects to its source value column on leaf rows, so the
-        // calc col reads the leaf's own revenue (10 * 2) rather than resolving to a silent blank — and no
-        // pivot-incompatibility warning fires.
-        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'doubled', useFormatter: false })).toBe(20);
+        const doubled = (id: string) =>
+            api.getCellValue({ rowNode: api.getRowNode(id)!, colKey: 'doubled', useFormatter: false });
+        // The reference resolves exactly as getCellValue does: a group reads the 2020-revenue bucket from
+        // aggData (US 2020 = 10 → 20, UK 2020 = 20 → 40); a leaf redirects to its source revenue (r1 = 10 → 20,
+        // r3 = 15 → 30) — the same source-redirect the grid uses everywhere for pivot result columns on leaves.
+        expect(doubled('row-group-country-US')).toBe(20);
+        expect(doubled('row-group-country-UK')).toBe(40);
+        expect(doubled('r1')).toBe(20);
+        expect(doubled('r3')).toBe(30);
         expect(warn).not.toHaveBeenCalled();
+    });
+
+    test('pivot result columns keep allowFormula from a non-calc source but drop calc fields for a calc source', async () => {
+        const api = createGrid('pivot-result-allowformula', {
+            rowData,
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true },
+                { field: 'revenue', aggFunc: 'sum', allowFormula: true },
+                { colId: 'calc', aggFunc: 'sum', calculatedExpression: '[revenue]', cellDataType: 'number' },
+            ],
+            pivotMode: true,
+        });
+        await asyncSetTimeout(10);
+
+        // The result column of an ordinary formula-enabled value column keeps allowFormula...
+        expect(api.getColumn('pivot_year_2020_revenue')!.isAllowFormula()).toBe(true);
+        // ...while the calc column's result column is a plain aggregation: no allowFormula, no expression.
+        const calcResult = api.getColumn('pivot_year_2020_calc')!;
+        expect(calcResult.isAllowFormula()).toBe(false);
+        expect(calcResult.getColDef().calculatedExpression).toBeUndefined();
     });
 });

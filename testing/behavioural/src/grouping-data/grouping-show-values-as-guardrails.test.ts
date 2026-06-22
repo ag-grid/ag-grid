@@ -47,7 +47,7 @@ describe('showValuesAs breaking-change guardrails', () => {
             CENTER
             ├── country "Country" width:200
             ├── units "Units" width:200 aggFunc:sum
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfGrandTotal
         `);
         await new GridRows(api, 'bc2 sibling unaffected').check(`
             ROOT id:ROOT_NODE_ID units:10 amount:"100.00%"
@@ -89,7 +89,7 @@ describe('showValuesAs breaking-change guardrails', () => {
         await new GridColumns(api, 'bc4 after sort asc columns').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 sort:asc aggFunc:sum showValuesAs:percentOfGrandTotal
+            └── amount "Amount" width:200 sort:asc aggFunc:sum %:percentOfGrandTotal
         `);
         await new GridRows(api, 'bc4 after sort asc').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -134,7 +134,7 @@ describe('showValuesAs breaking-change guardrails', () => {
         await new GridColumns(api, 'bc5 after sort desc columns').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 sort:desc aggFunc:custom showValuesAs:percentOfGrandTotal
+            └── amount "Amount" width:200 sort:desc aggFunc:custom %:percentOfGrandTotal
         `);
         await new GridRows(api, 'bc5 after sort desc').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -158,7 +158,7 @@ describe('showValuesAs breaking-change guardrails', () => {
         await new GridColumns(api, 'bc5 after mode switch').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 sort:desc aggFunc:custom showValuesAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 sort:desc aggFunc:custom %:percentOfParentRowTotal
         `);
         await new GridRows(api, 'bc5 after mode switch').check(`
             ROOT id:ROOT_NODE_ID amount:null
@@ -195,7 +195,7 @@ describe('showValuesAs breaking-change guardrails', () => {
         await new GridColumns(api, 't3 avg semantics columns').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:avg showValuesAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:avg %:percentOfGrandTotal
         `);
         await new GridRows(api, 't3 avg semantics').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"

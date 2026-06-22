@@ -387,9 +387,9 @@ describe('ag-grid calculated columns', () => {
             ├── cost "Cost" width:200
             ├── first "First" width:200
             ├── last "Last" width:200
-            ├── profit "Profit" width:200
-            ├── profitable width:200
-            └── name width:200
+            ├── profit "Profit" width:200 ƒ
+            ├── profitable width:200 ƒ
+            └── name width:200 ƒ
         `);
 
         api.getRowNode('r1')!.setDataValue('revenueCol', 15);
@@ -575,9 +575,14 @@ describe('ag-grid calculated columns', () => {
                 const rowNode = api.getDisplayedRowAtIndex(0)!;
                 const profitColumn = api.getColumn('profit')!;
 
+                // No `calculated` token: the column is a plain editable field, not a calculated column.
+                await new GridColumns(api, id).checkColumns(`
+                    CENTER
+                    ├── revenue "Revenue" width:200
+                    ├── cost "Cost" width:200
+                    └── profit "Profit" width:200 editable
+                `);
                 expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBe(999);
-                expect(profitColumn.isCalculatedCol).toBe(false);
-                expect(profitColumn.isCellEditable(rowNode)).toBe(true);
                 expect(profitColumn.isSuppressPaste(rowNode)).toBe(false);
                 expect(consoleWarnSpy).toHaveBeenCalledWith(
                     expect.stringContaining(
@@ -604,19 +609,37 @@ describe('ag-grid calculated columns', () => {
             });
             const rowNode = api.getDisplayedRowAtIndex(0)!;
 
-            expect(api.getColumn('profit')!.isCalculatedCol).toBe(false);
+            // calculatedColumns off: no `calculated` token and the expression is not evaluated.
+            await new GridColumns(api, 'toggle off (initial)').checkColumns(`
+                CENTER
+                ├── revenue "Revenue" width:200
+                ├── cost "Cost" width:200
+                └── profit width:200
+            `);
             expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBeUndefined();
 
             api.setGridOption('calculatedColumns', true);
             await asyncSetTimeout(1);
 
-            expect(api.getColumn('profit')!.isCalculatedCol).toBe(true);
+            // calculatedColumns on: the column becomes calculated and the expression evaluates.
+            await new GridColumns(api, 'toggle on').checkColumns(`
+                CENTER
+                ├── revenue "Revenue" width:200
+                ├── cost "Cost" width:200
+                └── profit width:200 ƒ
+            `);
             expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBe(7);
 
             api.setGridOption('calculatedColumns', false);
             await asyncSetTimeout(1);
 
-            expect(api.getColumn('profit')!.isCalculatedCol).toBe(false);
+            // Toggling off again drops the `calculated` token and stops evaluation.
+            await new GridColumns(api, 'toggle off (again)').checkColumns(`
+                CENTER
+                ├── revenue "Revenue" width:200
+                ├── cost "Cost" width:200
+                └── profit width:200
+            `);
             expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBeUndefined();
         } finally {
             consoleWarnSpy.mockRestore();
@@ -702,7 +725,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            └── profit width:200 sort:desc filter
+            └── profit width:200 sort:desc ƒ filter
         `);
     });
 
@@ -838,7 +861,7 @@ describe('ag-grid calculated columns', () => {
                 CENTER
                 ├── revenue "Revenue" width:200
                 ├── cost "Cost" width:200
-                └── profit width:200
+                └── profit width:200 ƒ
             `);
     });
 
@@ -919,8 +942,8 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            ├── profit "Profit" width:200
-            └── calculated_1 "Untitled" width:200
+            ├── profit "Profit" width:200 ƒ
+            └── calculated_1 "Untitled" width:200 ƒ
         `);
     });
 
@@ -967,7 +990,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            └── profitable "Profitable" width:200
+            └── profitable "Profitable" width:200 ƒ
         `);
     });
 
@@ -985,7 +1008,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            └── profit width:200
+            └── profit width:200 ƒ
         `);
         await new GridRows(api, `grid api refreshes calculated-only formula caches setup`).check(`
             ROOT id:ROOT_NODE_ID
@@ -1047,8 +1070,8 @@ describe('ag-grid calculated columns', () => {
             ├── ag-Grid-AutoColumn "Group" width:200
             ├── revenue "Revenue" width:200 aggFunc:sum
             ├── cost "Cost" width:200 aggFunc:sum
-            ├── profit width:200
-            └── doubleProfit width:200
+            ├── profit width:200 ƒ
+            └── doubleProfit width:200 ƒ
         `);
         // Group rows derive from aggregated revenue/cost; leaf rows evaluate from their own data.
         await new GridRows(api, `calculated columns evaluate on row group rows`).check(`
@@ -1148,8 +1171,8 @@ describe('ag-grid calculated columns', () => {
             ├── ag-Grid-AutoColumn "Group" width:200
             ├── revenue "Revenue" width:200 aggFunc:sum
             ├── cost "Cost" width:200 aggFunc:sum
-            ├── profit width:200
-            └── maxProfit width:200 aggFunc:max
+            ├── profit width:200 ƒ
+            └── maxProfit width:200 aggFunc:max ƒ
         `);
         await new GridRows(api, `calculated columns with an aggFunc`).check(`
             ROOT id:ROOT_NODE_ID
@@ -1497,6 +1520,77 @@ describe('ag-grid calculated columns', () => {
         expect(api.getCellValue({ rowNode: grandTotal, colKey: 'profit', useFormatter: false })).toBe(29);
     });
 
+    test('aggregate-after calculated columns read aggData on group and grand-total footer rows', async () => {
+        const api = createGrid('calculated-aggfunc-footers', {
+            rowData: [
+                { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
+                { id: 'r2', region: 'EMEA', revenue: 20, cost: 8 },
+                { id: 'r3', region: 'APAC', revenue: 15, cost: 5 },
+            ],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+                {
+                    colId: 'maxProfit',
+                    calculatedExpression: '[revenue] - [cost]',
+                    aggFunc: 'max',
+                    cellDataType: 'number',
+                },
+            ],
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            grandTotalRow: 'bottom',
+        });
+        await asyncSetTimeout(1);
+
+        // Footers/grand-total are group rows holding aggData, so agg-after reads the aggregated per-leaf
+        // max on each (EMEA & grand = 12), not the agg-first sum(rev)-sum(cost).
+        await new GridRows(api, 'aggfunc footers', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID revenue:45 cost:16 maxProfit:12
+            ├─┬ LEAF_GROUP id:row-group-region-EMEA ag-Grid-AutoColumn:"EMEA"
+            │ ├── LEAF id:r1 region:"EMEA" revenue:10 cost:3 maxProfit:7
+            │ ├── LEAF id:r2 region:"EMEA" revenue:20 cost:8 maxProfit:12
+            │ └─ footer id:rowGroupFooter_row-group-region-EMEA ag-Grid-AutoColumn:"EMEA" revenue:30 cost:11 maxProfit:12
+            ├─┬ LEAF_GROUP id:row-group-region-APAC ag-Grid-AutoColumn:"APAC"
+            │ ├── LEAF id:r3 region:"APAC" revenue:15 cost:5 maxProfit:10
+            │ └─ footer id:rowGroupFooter_row-group-region-APAC ag-Grid-AutoColumn:"APAC" revenue:15 cost:5 maxProfit:10
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:null revenue:45 cost:16 maxProfit:12
+        `);
+    });
+
+    test('aggregate-after calculated columns read aggData on a flat grid grand-total row', async () => {
+        const api = createGrid('calculated-aggfunc-flat-grandtotal', {
+            rowData: [
+                { id: 'r1', revenue: 10, cost: 3 },
+                { id: 'r2', revenue: 20, cost: 8 },
+                { id: 'r3', revenue: 15, cost: 5 },
+            ],
+            columnDefs: [
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+                {
+                    colId: 'maxProfit',
+                    calculatedExpression: '[revenue] - [cost]',
+                    aggFunc: 'max',
+                    cellDataType: 'number',
+                },
+            ],
+            grandTotalRow: 'bottom',
+        });
+        await asyncSetTimeout(1);
+
+        // Even with no row grouping the grand-total row is a group row with aggData: agg-after reads
+        // max(7,12,10)=12, not the agg-first sum(rev)-sum(cost)=45-16=29.
+        await new GridRows(api, 'aggfunc flat grand total', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID revenue:45 cost:16 maxProfit:12
+            ├── LEAF id:r1 revenue:10 cost:3 maxProfit:7
+            ├── LEAF id:r2 revenue:20 cost:8 maxProfit:12
+            ├── LEAF id:r3 revenue:15 cost:5 maxProfit:10
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID revenue:45 cost:16 maxProfit:12
+        `);
+    });
+
     test('grid api adds a calculated column while grouped and it evaluates on group and leaf rows', async () => {
         const api = createGrid('calculated-api-while-grouped', {
             rowData: [
@@ -1674,7 +1768,7 @@ describe('ag-grid calculated columns', () => {
                 CENTER
                 ├── revenue "Revenue" width:200
                 ├── cost "Cost" width:200
-                └── profit width:200
+                └── profit width:200 ƒ
             `
         );
         await new GridRows(api, `server-side store updates invalidate calculated column caches setup`).check(`
@@ -2201,7 +2295,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├─┬ "2025" GROUP
             │ ├── revenue_2025 "Revenue" width:200
-            │ ├── calculated_1 "Untitled" width:200
+            │ ├── calculated_1 "Untitled" width:200 ƒ
             │ └── cost_2025 "Cost" width:200
             └─┬ "2026" GROUP
               ├── revenue_2026 "Revenue" width:200
@@ -2244,7 +2338,7 @@ describe('ag-grid calculated columns', () => {
         ).checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            ├── calculated_1 "Untitled" width:200
+            ├── calculated_1 "Untitled" width:200 ƒ
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
         `);
@@ -2273,7 +2367,7 @@ describe('ag-grid calculated columns', () => {
         await new GridColumns(api, 'auto-group toggle - after add').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            ├── calculated_1 "Untitled" width:200
+            ├── calculated_1 "Untitled" width:200 ƒ
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
         `);
@@ -2282,7 +2376,7 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
         await new GridColumns(api, 'auto-group toggle - ungrouped').checkColumns(`
             CENTER
-            ├── calculated_1 "Untitled" width:200
+            ├── calculated_1 "Untitled" width:200 ƒ
             ├── productType "Product Type" width:200
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
@@ -2293,7 +2387,7 @@ describe('ag-grid calculated columns', () => {
         await new GridColumns(api, 'auto-group toggle - re-grouped').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            ├── calculated_1 "Untitled" width:200
+            ├── calculated_1 "Untitled" width:200 ƒ
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
         `);
@@ -2329,7 +2423,7 @@ describe('ag-grid calculated columns', () => {
         await new GridColumns(api, 'two auto-group toggle - after add').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn-productType "Product Type" width:200
-            ├── calculated_1 "Untitled" width:200
+            ├── calculated_1 "Untitled" width:200 ƒ
             ├── ag-Grid-AutoColumn-country "Country" width:200
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
@@ -2339,7 +2433,7 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
         await new GridColumns(api, 'two auto-group toggle - ungrouped').checkColumns(`
             CENTER
-            ├── calculated_1 "Untitled" width:200
+            ├── calculated_1 "Untitled" width:200 ƒ
             ├── productType "Product Type" width:200
             ├── country "Country" width:200
             ├── revenue "Revenue" width:200
@@ -2352,7 +2446,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├── ag-Grid-AutoColumn-productType "Product Type" width:200
             ├── ag-Grid-AutoColumn-country "Country" width:200
-            ├── calculated_1 "Untitled" width:200
+            ├── calculated_1 "Untitled" width:200 ƒ
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
         `);
@@ -2401,7 +2495,7 @@ describe('ag-grid calculated columns', () => {
         ).checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn-productType "Product Type" width:200
-            ├── calculated_1 "Untitled" width:200
+            ├── calculated_1 "Untitled" width:200 ƒ
             ├── ag-Grid-AutoColumn-country "Country" width:200
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
@@ -2455,7 +2549,7 @@ describe('ag-grid calculated columns', () => {
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
             ├── other "Other" width:200
-            └── calculated_1 "Untitled" width:200
+            └── calculated_1 "Untitled" width:200 ƒ
         `);
     });
 
@@ -2501,9 +2595,9 @@ describe('ag-grid calculated columns', () => {
             .checkColumns(`
                 CENTER
                 ├── ag-Grid-AutoColumn-productType "Product Type" width:200
-                ├── calculated_1 "Untitled" width:200
+                ├── calculated_1 "Untitled" width:200 ƒ
                 ├── ag-Grid-AutoColumn-country "Country" width:200
-                ├── calculated_2 "Untitled" width:200
+                ├── calculated_2 "Untitled" width:200 ƒ
                 ├── revenue "Revenue" width:200
                 └── cost "Cost" width:200
             `);
@@ -2631,7 +2725,7 @@ describe('ag-grid calculated columns', () => {
                 CENTER
                 ├── revenue "Revenue" width:200
                 ├── cost "Cost" width:200
-                └── profit width:200 sort:desc
+                └── profit width:200 sort:desc ƒ
             `);
     });
 
@@ -2702,7 +2796,7 @@ describe('ag-grid calculated columns', () => {
             ├── revenue "Revenue" width:200
             └── cost "Cost" width:200
             RIGHT
-            └── margin width:260
+            └── margin width:260 ƒ
         `);
     });
 
@@ -2726,7 +2820,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            └── profit width:200
+            └── profit width:200 ƒ
         `);
         await new GridRows(api, `dispatches lifecycle events for invalid calculated column columnDefs mutations setup`)
             .check(`
@@ -2781,7 +2875,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            └── profit "Profit" width:200
+            └── profit "Profit" width:200 ƒ
         `);
         await new GridRows(api, `dispatches calculated column UI update and remove events setup`).check(`
             ROOT id:ROOT_NODE_ID
@@ -2843,7 +2937,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            └── profit width:200
+            └── profit width:200 ƒ
         `);
         await new GridRows(
             api,
@@ -2920,7 +3014,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            └── profit width:200
+            └── profit width:200 ƒ
         `);
         await new GridRows(api, `calculated column menu items are grouped by separators setup`).check(`
             ROOT id:ROOT_NODE_ID
@@ -3567,7 +3661,7 @@ describe('ag-grid calculated columns', () => {
                 CENTER
                 ├── revenue "Revenue" width:200
                 ├── cost "Cost" width:200
-                └── profit width:200
+                └── profit width:200 ƒ
             `);
     });
 
@@ -3673,7 +3767,7 @@ describe('ag-grid calculated columns', () => {
             ├── c "C" width:200
             ├── a "A" width:200
             ├── b "B" width:200
-            └── sum width:200
+            └── sum width:200 ƒ
         `);
         await new GridRows(api, 'reorder + addCalculatedColumn rows', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -3708,7 +3802,7 @@ describe('ag-grid calculated columns', () => {
             ├─┬ "G" GROUP
             │ ├── a "A" width:200
             │ └── b "B" width:200
-            └── sum width:200
+            └── sum width:200 ƒ
         `);
         await new GridRows(api, 'group + reorder + addCalculatedColumn rows', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -3746,7 +3840,7 @@ describe('ag-grid calculated columns', () => {
             ├── c "C" width:200
             ├── a "A" width:200
             ├── b "B" width:200
-            └── sum width:200
+            └── sum width:200 ƒ
         `);
         await new GridRows(api, 'applyOrder + addCalculatedColumn rows', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -3803,7 +3897,7 @@ describe('ag-grid calculated columns', () => {
             ├── country "Country" width:200
             ├── date "Date" width:200
             ├── amount "Amount" width:200
-            └── doubled width:200
+            └── doubled width:200 ƒ
         `);
         await new GridRows(api, 'hierarchy + addCalculatedColumn rows', {
             ...gridRowsOpts,
@@ -3869,7 +3963,7 @@ describe('ag-grid calculated columns', () => {
             ├── c "C" width:200
             ├── a "A" width:200
             ├── b "B" width:200
-            └── sum width:200
+            └── sum width:200 ƒ
         `);
         await new GridRows(api, 'maintainColumnOrder=true: move + addCalcCol rows', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -3897,7 +3991,7 @@ describe('ag-grid calculated columns', () => {
             ├── c "C" width:200
             ├── a "A" width:200
             ├── b "B" width:200
-            └── sum width:200
+            └── sum width:200 ƒ
         `);
         await new GridRows(api, 'maintainColumnOrder=false: move + addCalcCol rows', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -3928,7 +4022,7 @@ describe('ag-grid calculated columns', () => {
             ├── c "C" width:200
             ├── a "A" width:200
             ├── b "B" width:200
-            └── sum width:200
+            └── sum width:200 ƒ
         `);
         await new GridRows(api, 'maintainColumnOrder=true: updateColDefs + addCalcCol rows', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -3979,7 +4073,7 @@ describe('ag-grid calculated columns', () => {
             ├── ag-Grid-AutoColumn "Category" width:200
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            └── profit width:200
+            └── profit width:200 ƒ
         `);
         // Expand a group so leaves render and the calc col's per-row evaluation appears.
         // `forceSync=true` skips the async dispatch so the snapshot below sees the expanded
@@ -4053,7 +4147,7 @@ describe('ag-grid calculated columns', () => {
             ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            └── profit width:200
+            └── profit width:200 ƒ
         `);
         await new GridRows(api, 'rowSelection + calc col rows', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -4082,7 +4176,7 @@ describe('ag-grid calculated columns', () => {
             CENTER
             ├── revenue "Revenue" width:200
             ├── cost "Cost" width:200
-            └── profit width:200
+            └── profit width:200 ƒ
         `);
         await new GridRows(api, 'rowNumbers + calc col rows', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
@@ -4111,11 +4205,11 @@ describe('ag-grid calculated columns', () => {
 
         await new GridColumns(api, 'moveColumns on calc col + subsequent add').checkColumns(`
             CENTER
-            ├── sum width:200
+            ├── sum width:200 ƒ
             ├── a "A" width:200
             ├── b "B" width:200
             ├── c "C" width:200
-            └── avg width:200
+            └── avg width:200 ƒ
         `);
         await new GridRows(api, 'moveColumns on calc col + subsequent add rows', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID

@@ -35,7 +35,7 @@ describe('showValuesAs displayed values (GridRows + GridColumns snapshots)', () 
         await new GridColumns(api, 'flat percentOfGrandTotal').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfGrandTotal
         `);
         await new GridRows(api, 'flat percentOfGrandTotal').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -63,7 +63,7 @@ describe('showValuesAs displayed values (GridRows + GridColumns snapshots)', () 
         await new GridColumns(api, 'grouped percentOfGrandTotal').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfGrandTotal
         `);
         await new GridRows(api, 'grouped percentOfGrandTotal').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -93,7 +93,7 @@ describe('showValuesAs displayed values (GridRows + GridColumns snapshots)', () 
         await new GridColumns(api, 'grouped percentOfParentRowTotal').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfParentRowTotal
         `);
         await new GridRows(api, 'grouped percentOfParentRowTotal').check(`
             ROOT id:ROOT_NODE_ID amount:null
@@ -122,7 +122,7 @@ describe('showValuesAs displayed values (GridRows + GridColumns snapshots)', () 
         await new GridColumns(api, 'tree percentOfParentRowTotal').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfParentRowTotal
         `);
         await new GridRows(api, 'tree percentOfParentRowTotal').check(`
             ROOT id:ROOT_NODE_ID amount:null
@@ -150,7 +150,7 @@ describe('showValuesAs displayed values (GridRows + GridColumns snapshots)', () 
         await new GridColumns(api, 'flat dormant parent mode').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfParentRowTotal
         `);
         await new GridRows(api, 'flat dormant parent mode').check(`
             ROOT id:ROOT_NODE_ID amount:"#N/A"
@@ -182,9 +182,9 @@ describe('showValuesAs displayed values (GridRows + GridColumns snapshots)', () 
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
             ├─┬ "2020" GROUP
-            │ └── pivot_year_2020_amount "Amount" width:200 showValuesAs:percentOfColumnTotal columnGroupShow:open
+            │ └── pivot_year_2020_amount "Amount" width:200 %:percentOfColumnTotal columnGroupShow:open
             └─┬ "2021" GROUP
-              └── pivot_year_2021_amount "Amount" width:200 showValuesAs:percentOfColumnTotal columnGroupShow:open
+              └── pivot_year_2021_amount "Amount" width:200 %:percentOfColumnTotal columnGroupShow:open
         `);
         await new GridRows(api, 'pivot percentOfColumnTotal', {
             forcedColumns: ['ag-Grid-AutoColumn', 'pivot_year_2020_amount', 'pivot_year_2021_amount'],

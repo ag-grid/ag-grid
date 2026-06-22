@@ -46,7 +46,7 @@ describe('showValuesAs copies the transformed value to the clipboard', () => {
         await new GridColumns(api, 'clipboard percentOfGrandTotal').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfGrandTotal
         `);
         await new GridRows(api, 'clipboard percentOfGrandTotal').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -86,7 +86,7 @@ describe('showValuesAs copies the transformed value to the clipboard', () => {
         await new GridColumns(api, 'edit before').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal editable
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfGrandTotal editable
         `);
         await new GridRows(api, 'edit before').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -107,7 +107,7 @@ describe('showValuesAs copies the transformed value to the clipboard', () => {
         await new GridColumns(api, 'edit after — re-rendered transformed').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal editable
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfGrandTotal editable
         `);
         await new GridRows(api, 'edit after — re-rendered transformed').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"

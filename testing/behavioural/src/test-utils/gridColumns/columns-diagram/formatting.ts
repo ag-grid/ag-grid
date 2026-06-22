@@ -8,8 +8,8 @@ import type { AgColumn, Column, ColumnGroup, GridApi } from 'ag-grid-community';
  * Properties shown (when non-default):
  *   width:N, flex:N,
  *   sort:asc|desc, sortIndex:N,
- *   rowGroup, rowGroupIndex:N, pivot, pivotIndex:N, aggFunc:name,
- *   filter, columnGroupShow:open|closed, hidden, !visible,
+ *   rowGroup, rowGroupIndex:N, pivot, pivotIndex:N, aggFunc:name, ƒ (calculated column),
+ *   %:mode (showValuesAs), filter, columnGroupShow:open|closed, hidden, !visible,
  *   editable, !resizable, !sortable, suppressMovable, lockPosition:left|right
  *
  * `hidden` means not in the displayed set — visibility off or a child of a collapsed group.
@@ -67,10 +67,15 @@ export function columnDiagram(col: Column, api: GridApi, isHidden: boolean): str
         parts.push('aggFunc:' + (typeof aggFunc === 'string' ? aggFunc : 'custom'));
     }
 
+    // Calculated column (formula-derived, read-only)
+    if ((col as AgColumn).isCalculatedCol) {
+        parts.push('ƒ');
+    }
+
     // Show Values As mode (the active selector)
     const showValuesAs = (col as AgColumn).showValuesAs;
     if (showValuesAs != null) {
-        parts.push('showValuesAs:' + showValuesAs.type);
+        parts.push('%:' + showValuesAs.type);
     }
 
     // Filter active

@@ -434,9 +434,12 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             // very confusing for people thinking the pivot is broken
             colDef.hide = false;
 
-            // A pivot result column is a plain value column, never a calc/formula column: it aggregates.
-            colDef.calculatedExpression = undefined;
-            colDef.allowFormula = undefined;
+            // A pivot result column aggregates its source's per-leaf values. If the source is a calculated
+            // column, drop its calc-col fields so the result aggregates instead of re-evaluating the formula.
+            if (valueColumn.isCalculatedCol) {
+                colDef.calculatedExpression = undefined;
+                colDef.allowFormula = undefined;
+            }
         }
 
         colDef.headerName = headerName;

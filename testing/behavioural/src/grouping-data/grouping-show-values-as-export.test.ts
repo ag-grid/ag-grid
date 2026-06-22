@@ -48,7 +48,7 @@ describe('showValuesAs exports the transformed value', () => {
         await new GridColumns(api, 'csv percentOfGrandTotal').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfGrandTotal
         `);
         await new GridRows(api, 'csv percentOfGrandTotal').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -79,7 +79,7 @@ describe('showValuesAs exports the transformed value', () => {
         await new GridColumns(api, 'excel percentOfGrandTotal').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfGrandTotal
         `);
         await new GridRows(api, 'excel percentOfGrandTotal').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"

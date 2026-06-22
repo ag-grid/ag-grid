@@ -48,6 +48,8 @@ To aggregate the per-row results instead, give the calculated column an `aggFunc
 
 Under [Pivoting](./pivoting/), a calculated column with an `aggFunc` is a value column: it evaluates per leaf and its results aggregate into the pivot result columns, the same as a column with a `valueGetter`. Without an `aggFunc` it is not a value column, so it has no pivot result column and is absent from the cross-tab, like any other non-value column.
 
+A calculated column can also be a pivot column (`pivot: true`): its per-row result becomes the pivot key, so the grid creates a result column for each distinct calculated value — the same as pivoting on a column with a `valueGetter`.
+
 {% gridExampleRunner title="Row Groups with Calculated Columns" name="calculated-columns-row-groups" /%}
 
 ## References with Column Groups

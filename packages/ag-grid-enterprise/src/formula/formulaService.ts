@@ -126,8 +126,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         this.formulaColumnsPresent = formulaColumnsPresent;
         const editableFormulasCompatible =
             editableFormulaColumnsPresent && this.checkForEditableFormulaIncompatibleServices(columns);
-        const calculatedColumnsCompatible =
-            calculatedColumnsPresent && this.checkForCalculatedColumnIncompatibleServices(columns);
+        // Calculated columns work with pivot in every role: as a pivot value (aggFunc) feeding the result
+        // columns, alongside a pivot, and as a pivot dimension (its per-leaf formula result is the key).
+        const calculatedColumnsCompatible = calculatedColumnsPresent && this.checkForBaseIncompatibleServices();
         const editableFormulasSupported = this.beans.rowModel.getType() === 'clientSide';
         const active = editableFormulasCompatible && editableFormulasSupported;
         const calculatedColumnsActive = calculatedColumnsCompatible;
@@ -152,20 +153,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (this.gos.get('enableCellExpressions')) {
             _warn(295, { blockedService: 'Cell Expressions' });
             return false;
-        }
-        return true;
-    }
-
-    private checkForCalculatedColumnIncompatibleServices(columns: AgColumn[]): boolean {
-        if (!this.checkForBaseIncompatibleServices()) {
-            return false;
-        }
-        for (let i = 0, len = columns.length; i < len; ++i) {
-            const col = columns[i];
-            if (col.isCalculatedCol && col.pivotActive) {
-                _warn(306, { blockedService: 'Column Pivoting' });
-                return false;
-            }
         }
         return true;
     }
@@ -751,6 +738,8 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (col.isCalculatedCol) {
             return col.calculatedExpression?.trim() ? undefined : '';
         }
+        // Resolve a referenced pivot result column like every other value read (getCellValue, edit,
+        // aggregation): redirect to the source column on leaves; group rows keep it and read aggData.
         return this.beans.valueSvc.getValueFromData(_resolvePivotColumnForRow(col, row), row);
     }
 

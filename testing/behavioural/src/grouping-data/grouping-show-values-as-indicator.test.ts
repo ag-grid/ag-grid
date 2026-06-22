@@ -56,10 +56,10 @@ describe('showValuesAs header indicator', () => {
         // amount/cost (%grandTotal) applying → percentages; units (%parentTotal, flat) dormant → raw; price has no mode.
         await new GridColumns(api, 'indicator mixed modes').checkColumns(`
             CENTER
-            ├── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
-            ├── units "Units" width:200 aggFunc:sum showValuesAs:percentOfParentRowTotal
+            ├── amount "Amount" width:200 aggFunc:sum %:percentOfGrandTotal
+            ├── units "Units" width:200 aggFunc:sum %:percentOfParentRowTotal
             ├── price "Price" width:200 aggFunc:sum
-            └── cost "Cost" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
+            └── cost "Cost" width:200 aggFunc:sum %:percentOfGrandTotal
         `);
         await new GridRows(api, 'indicator mixed modes').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%" units:"#N/A" price:3 cost:"100.00%"
@@ -133,7 +133,7 @@ describe('showValuesAs header indicator', () => {
         await new GridColumns(api, 'flat dormant').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfParentRowTotal
         `);
         await new GridRows(api, 'flat dormant').check(`
             ROOT id:ROOT_NODE_ID amount:"#N/A"
@@ -151,7 +151,7 @@ describe('showValuesAs header indicator', () => {
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
             ├── country "Country" width:200 rowGroup
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfParentRowTotal
         `);
         await new GridRows(api, 'after grouping added').check(`
             ROOT id:ROOT_NODE_ID amount:null

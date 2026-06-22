@@ -670,7 +670,7 @@ describe('row spanning', () => {
             await new GridColumns(api, 'calc-add columns after').checkColumns(`
                 CENTER
                 ├── athlete "Athlete" width:200 spanRows
-                └── copy width:200 spanRows
+                └── copy width:200 ƒ spanRows
             `);
             await new GridRows(api, 'calc-add rows after').check(`
                 ROOT id:ROOT_NODE_ID

@@ -263,7 +263,7 @@ describe('showValuesAs column menu', () => {
         await new GridColumns(api, 'promote percentOfGrandTotal').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfGrandTotal
         `);
         await new GridRows(api, 'promote percentOfGrandTotal').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -358,7 +358,7 @@ describe('showValuesAs column menu', () => {
         await new GridColumns(api, 'switch to percentOfParentRowTotal').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:custom showValuesAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 aggFunc:custom %:percentOfParentRowTotal
         `);
         await new GridRows(api, 'switch to percentOfParentRowTotal').check(`
             ROOT id:ROOT_NODE_ID amount:null

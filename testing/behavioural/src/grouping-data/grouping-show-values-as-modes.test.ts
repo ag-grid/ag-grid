@@ -47,7 +47,7 @@ describe('showValuesAs built-in modes', () => {
         await new GridColumns(api, 'percentOfParentRowTotal').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfParentRowTotal
         `);
         await new GridRows(api, 'percentOfParentRowTotal').check(`
             ROOT id:ROOT_NODE_ID amount:null
@@ -340,7 +340,7 @@ describe('showValuesAs bigint support', () => {
         await new GridColumns(api, 'bigint percentOfGrandTotal').checkColumns(`
             CENTER
             ├── country "Country" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfGrandTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfGrandTotal
         `);
         await new GridRows(api, 'bigint percentOfGrandTotal').check(`
             ROOT id:ROOT_NODE_ID amount:"100.00%"
@@ -386,7 +386,7 @@ describe('showValuesAs interaction with filtering', () => {
         await new GridColumns(api, 'filter default parent total').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfParentRowTotal
         `);
         await new GridRows(api, 'filter default before filter').check(`
             ROOT id:ROOT_NODE_ID amount:null
@@ -435,7 +435,7 @@ describe('showValuesAs interaction with filtering', () => {
         await new GridColumns(api, 'suppressAggFilteredOnly').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            └── amount "Amount" width:200 aggFunc:sum showValuesAs:percentOfParentRowTotal
+            └── amount "Amount" width:200 aggFunc:sum %:percentOfParentRowTotal
         `);
         await new GridRows(api, 'suppress before filter').check(`
             ROOT id:ROOT_NODE_ID amount:null
