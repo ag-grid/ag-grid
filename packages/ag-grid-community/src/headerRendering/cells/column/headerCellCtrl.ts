@@ -87,6 +87,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.updateState();
         this.setupWidth(compBean);
         this.setupMovingCss(compBean);
+        this.setupPinnedCss(compBean);
         this.setupMenuClass(compBean);
         this.setupSortableClass(compBean);
         this.setupWrapTextClass();
@@ -479,6 +480,19 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         };
 
         compBean.addManagedListeners(this.column, { movingChanged: listener });
+        listener();
+    }
+
+    private setupPinnedCss(compBean: BeanStub): void {
+        const listener = () => {
+            this.comp.toggleCss('ag-header-cell-last-left-pinned', this.column.isLastLeftPinned());
+            this.comp.toggleCss('ag-header-cell-first-right-pinned', this.column.isFirstRightPinned());
+        };
+
+        compBean.addManagedListeners(this.column, {
+            lastLeftPinnedChanged: listener,
+            firstRightPinnedChanged: listener,
+        });
         listener();
     }
 

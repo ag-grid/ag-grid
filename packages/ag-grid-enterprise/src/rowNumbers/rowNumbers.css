@@ -40,7 +40,7 @@
 }
 
 :where(.ag-ltr) {
-    .ag-row-number-header,
+    :where(.ag-row-number-header):not(.ag-header-cell-last-left-pinned),
     :where(.ag-cell.ag-row-number-cell):not(.ag-cell-last-left-pinned) {
         /* rtl:ignore */
         border-right: var(--ag-pinned-column-border);
@@ -54,7 +54,7 @@
 }
 
 :where(.ag-rtl) {
-    .ag-row-number-header,
+    :where(.ag-row-number-header):not(.ag-header-cell-first-right-pinned),
     :where(.ag-cell.ag-row-number-cell):not(.ag-cell-first-right-pinned) {
         /* rtl:ignore */
         border-left: var(--ag-pinned-column-border);

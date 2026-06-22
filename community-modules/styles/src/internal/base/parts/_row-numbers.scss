@@ -21,7 +21,7 @@
     }
 
     .ag-ltr {
-        .ag-row-number-header,
+        .ag-row-number-header:not(.ag-header-cell-last-left-pinned),
         .ag-cell.ag-row-number-cell:not(.ag-cell-last-left-pinned) {
             border-right: var(--ag-pinned-column-border);
         }
@@ -34,7 +34,7 @@
     }
 
     .ag-rtl {
-        .ag-row-number-header,
+        .ag-row-number-header:not(.ag-header-cell-first-right-pinned),
         .ag-cell.ag-row-number-cell:not(.ag-cell-first-right-pinned) {
             border-left: var(--ag-pinned-column-border);
         }
