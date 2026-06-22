@@ -101,6 +101,17 @@
         }
     }
 
+    .ag-grid-pinned-bottom-rows-container {
+        .ag-row:not(.ag-header-row, .ag-full-width-row),
+        .ag-row.ag-embedded-full-width-row {
+            > .ag-grid-pinned-left-cells,
+            > .ag-grid-scrolling-cells,
+            > .ag-grid-pinned-right-cells {
+                border-bottom: none;
+            }
+        }
+    }
+
     :where(.ag-grid-sticky-bottom-rows-container) {
         .ag-row:where(:not(.ag-header-row, .ag-full-width-row)),
         .ag-row:where(.ag-embedded-full-width-row) {
@@ -445,17 +456,6 @@
             > .ag-grid-pinned-right-cells {
                 border-bottom: none;
             }
-        }
-    }
-
-    .ag-grid-scrollable-area.ag-has-top-pinned-rows
-        .ag-grid-pinned-top-rows
-        > .ag-grid-pinned-top-rows-container
-        > .ag-row.ag-row-last {
-        .ag-grid-pinned-left-cells,
-        .ag-grid-scrolling-cells,
-        .ag-grid-pinned-right-cells {
-            border-bottom: none;
         }
     }
 
