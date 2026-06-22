@@ -398,6 +398,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const source: ColumnEventType = 'calculatedColumn';
         const expression = column.colDef.calculatedExpression ?? '';
         const colId = column.colId;
+        this.closeCalculatedColumnDialog(colId);
         if (this.dynamicColumns.delete(colId)) {
             for (const dc of this.dynamicColumns.values()) {
                 if (dc.anchorColId === colId) {
@@ -775,6 +776,16 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     private cancelLiveApplyUpdate(colId: string): void {
         this.pendingLiveApplyUpdatesByColId.delete(colId);
+    }
+
+    private closeCalculatedColumnDialog(colId: string): void {
+        const openDialog = this.openDialogsByColId.get(colId);
+        if (openDialog === undefined) {
+            return;
+        }
+
+        this.cancelLiveApplyUpdate(colId);
+        openDialog.dialog.close();
     }
 
     private getDefaultDraft(): Omit<CalculatedColumnDraft, 'colId' | 'headerName'> {

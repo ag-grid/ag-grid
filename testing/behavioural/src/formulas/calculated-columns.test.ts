@@ -3163,6 +3163,99 @@ describe('ag-grid calculated columns', () => {
         clickDialogButton('Cancel');
     });
 
+    test('multiple live dialogs can close after using the type picker', async () => {
+        const api = createGrid('calculated-column-multi-dialog-live-close', {
+            calculatedColumns: true,
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+        showColumnMenu(api, 'cost');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        const dialogs = Array.from(document.querySelectorAll<HTMLElement>('.ag-calculated-column-form'));
+        expect(dialogs).toHaveLength(2);
+
+        dialogs[0]
+            .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
+            .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        await asyncSetTimeout(1);
+        const typeOption = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).find(
+            (element) => element.textContent?.trim() === 'Text'
+        );
+        expect(typeOption).toBeTruthy();
+        typeOption!.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+
+        let closeButton = document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button');
+        expect(closeButton).toBeTruthy();
+        closeButton!.click();
+        await asyncSetTimeout(1);
+        closeButton = document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button');
+        expect(closeButton).toBeTruthy();
+        closeButton!.click();
+        await asyncSetTimeout(1);
+
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0);
+    });
+
+    test('removing a live calculated column closes its open dialog', async () => {
+        const api = createGrid('calculated-column-remove-live-open-dialog', {
+            calculatedColumns: true,
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        expect(api.getColumn('calculated_1')).toBeTruthy();
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
+
+        showColumnMenu(api, 'calculated_1');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Remove Calculated Column');
+        await asyncSetTimeout(1);
+
+        expect(api.getColumn('calculated_1')).toBeNull();
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0);
+    });
+
+    test('removing a deferred calculated column closes its open dialog', async () => {
+        const api = createGrid('calculated-column-remove-deferred-open-dialog', {
+            calculatedColumns: { applyMode: 'deferred' },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        await openEditDialogViaMenu(api, 'profit');
+
+        expect(api.getColumn('profit')).toBeTruthy();
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
+
+        showColumnMenu(api, 'profit');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Remove Calculated Column');
+        await asyncSetTimeout(1);
+
+        expect(api.getColumn('profit')).toBeNull();
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(0);
+    });
+
     test('unknown references, invalid syntax and cycles surface formula errors', async () => {
         const api = createGrid('calculated-errors', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],

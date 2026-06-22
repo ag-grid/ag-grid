@@ -728,6 +728,18 @@ export abstract class BasePopupService<
         return ePopup.classList.contains('ag-popup') ? ePopup : null;
     }
 
+    private getPopupRoot(ePopup: HTMLElement): HTMLElement {
+        const parent = this.getPopupParent();
+        let popupRoot = ePopup;
+
+        // popups sit inside styled-root wrappers; move that root so its disconnect cleanup still owns the popup.
+        while (popupRoot.parentElement && popupRoot.parentElement !== parent) {
+            popupRoot = popupRoot.parentElement;
+        }
+
+        return popupRoot;
+    }
+
     private setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void {
         const eWrapper = this.getWrapper(ePopup);
 
@@ -794,9 +806,9 @@ export abstract class BasePopupService<
             }
 
             if (i === 0) {
-                parent.prepend(currentPopup);
+                parent.prepend(this.getPopupRoot(currentPopup));
             } else {
-                targetList[i - 1].after(currentPopup);
+                this.getPopupRoot(targetList[i - 1]).after(this.getPopupRoot(currentPopup));
             }
         }
 
