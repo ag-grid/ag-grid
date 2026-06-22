@@ -2257,8 +2257,20 @@
         overflow: hidden;
         visibility: hidden;
 
+        // shim the Theming API border variables the size-measurement probe reads to
+        // their legacy equivalents
+        --ag-header-row-border: var(--ag-borders-critical) var(--ag-border-color);
+        --ag-pinned-row-border: var(--ag-borders-critical) var(--ag-border-color);
+        --ag-row-border: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+
         div {
             position: absolute;
         }
+    }
+
+    .ag-measurement-element-border::before {
+        content: '';
+        display: block;
+        border-left: var(--ag-internal-measurement-border);
     }
 }
