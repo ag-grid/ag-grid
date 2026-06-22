@@ -491,9 +491,7 @@ export class GridBodyCtrl extends BeanStub {
         const headerRowsOffset = this.getHeaderRowsOffset();
 
         // set top on eTopExtraRows
-        const gridHeaderCtrl = this.ctrlsSvc.get('gridHeaderCtrl');
-        const headerHeight = (gridHeaderCtrl?.headerHeight ?? 0) + this.beans.environment.getHeaderRowBorderWidth();
-        this.eTopExtraRows.style.top = `${headerHeight}px`;
+        this.eTopExtraRows.style.top = 'var(--ag-header-rows-height, 0px)';
 
         // set top on pinnedTop container
         const pinnedTopTop = headerRowsOffset;
