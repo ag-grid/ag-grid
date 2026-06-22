@@ -54,7 +54,7 @@ export class GridComp extends TabGuardComp {
         const requiredComps = [GridBodySelector, ...Object.values(comps).filter((c) => !!c)] as ComponentSelector[];
         this.setTemplate(template, requiredComps);
 
-        ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
+        ctrl.setComp(compProxy, this.getGui());
 
         this.insertGridIntoDom();
 

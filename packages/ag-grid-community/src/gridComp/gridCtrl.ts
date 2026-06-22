@@ -47,14 +47,12 @@ const getDefaultTabToNextGridContainerTargetName = (target: TabToNextGridContain
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridCtrl extends BeanStub {
     private view: IGridComp;
-    private eGridHostDiv: HTMLElement;
     private eGui: HTMLElement;
 
     private readonly additionalFocusableContainers: Set<FocusableContainer> = new Set();
 
-    public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
+    public setComp(view: IGridComp, eGui: HTMLElement): void {
         this.view = view;
-        this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
 
         this.eGui.setAttribute('grid-id', this.beans.context.getId());
@@ -69,7 +67,7 @@ export class GridCtrl extends BeanStub {
             this.eGui.style.setProperty('content-visibility', 'visible');
         }
 
-        const unsubscribeFromResize = _observeResize(this.beans, this.eGridHostDiv, this.onGridSizeChanged.bind(this));
+        const unsubscribeFromResize = _observeResize(this.beans, this.eGui, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
 
         ctrlsSvc.register('gridCtrl', this);
@@ -97,8 +95,8 @@ export class GridCtrl extends BeanStub {
     private onGridSizeChanged(): void {
         this.eventSvc.dispatchEvent({
             type: 'gridSizeChanged',
-            clientWidth: this.eGridHostDiv.clientWidth,
-            clientHeight: this.eGridHostDiv.clientHeight,
+            clientWidth: this.eGui.clientWidth,
+            clientHeight: this.eGui.clientHeight,
         });
     }
 

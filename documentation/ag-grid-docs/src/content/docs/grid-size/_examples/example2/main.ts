@@ -67,16 +67,22 @@ function onGridSizeChanged(params: GridSizeChangedEvent) {
 
 const updateRowHeight = (params: { api: GridApi }) => {
     // get the height of the grid body - this excludes the height of the headers
-    const bodyViewport = document.querySelector('.ag-grid-scrolling-rows');
-    if (!bodyViewport) {
+    const gridViewport = document.querySelector<HTMLElement>('.ag-grid-viewport');
+    const topRows = document.querySelector<HTMLElement>('.ag-grid-pinned-top-rows');
+    const bottomRows = document.querySelector<HTMLElement>('.ag-grid-pinned-bottom-rows');
+
+    if (!gridViewport) {
         return;
     }
 
-    const gridHeight = bodyViewport.clientHeight;
+    const gridHeight = gridViewport.clientHeight - (topRows?.clientHeight ?? 0) - (bottomRows?.clientHeight ?? 0);
     // get the rendered rows
     const renderedRowCount = params.api.getDisplayedRowCount();
+    if (renderedRowCount === 0) {
+        return;
+    }
 
-    // if the rendered rows * min height is greater than available height, just just set the height
+    // if the rendered rows * min height is greater than available height, just set the height
     // to the min and let the scrollbar do its thing
     if (renderedRowCount * minRowHeight >= gridHeight) {
         if (currentRowHeight !== minRowHeight) {
