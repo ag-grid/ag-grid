@@ -433,6 +433,10 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             // even if original column was hidden, we always show the pivot value column, otherwise it would be
             // very confusing for people thinking the pivot is broken
             colDef.hide = false;
+
+            // A pivot result column is a plain value column, never a calc/formula column: it aggregates.
+            colDef.calculatedExpression = undefined;
+            colDef.allowFormula = undefined;
         }
 
         colDef.headerName = headerName;

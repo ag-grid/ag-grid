@@ -7,10 +7,10 @@ import { CalculatedColumnsModule, FormulaModule, PivotModule, RowGroupingModule 
 
 import { GridColumns, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
-// Characterization of calculated-column behaviour in PIVOT mode. These lock in the CURRENT behaviour
-// so the one-tree collapse (which re-runs the whole tree build on every pivot change) can be verified
-// to preserve it. Pivot has a distinct flow: colsList = pivot result cols, while the calc col lives
-// in the primary tree (colDefList) and surfaces alongside the pivot result.
+// Calculated-column behaviour in PIVOT mode. A calculated column stays active under pivot, evaluating
+// against the primary columns on leaf rows. Without an aggFunc it is a non-value primary column (no pivot
+// result column, absent from the cross-tab); with an aggFunc its per-leaf values aggregate into pivot
+// result columns, exactly like a valueGetter value column.
 
 describe('calculated columns - pivot mode', () => {
     const gridsManager = new TestGridsManager({
@@ -49,10 +49,6 @@ describe('calculated columns - pivot mode', () => {
         return api.getAllGridColumns()!.map((col) => col.getColId());
     }
 
-    function warningText(): string {
-        return vi.mocked(console.warn).mock.calls.flat().join('\n');
-    }
-
     const rowData = [
         { id: 'r1', country: 'US', year: 2020, revenue: 10, cost: 3 },
         { id: 'r2', country: 'UK', year: 2020, revenue: 20, cost: 5 },
@@ -66,7 +62,7 @@ describe('calculated columns - pivot mode', () => {
         { field: 'cost', aggFunc: 'sum' },
     ];
 
-    test('calc col is gated by an active pivot column, not by enablePivot or pivot mode alone', async () => {
+    test('calc col stays active under an active pivot and remains a resolvable primary column', async () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-enabled-runtime-toggle', {
             defaultColDef: { enablePivot: true, enableRowGroup: true, enableValue: true },
@@ -93,16 +89,15 @@ describe('calculated columns - pivot mode', () => {
         expect(profit()).toBe(7);
         expect(warn).not.toHaveBeenCalled();
 
-        // Assigning a pivot column at runtime activates the pivot, so the calc col is turned off
-        // while remaining a resolvable primary column.
+        // Assigning a pivot column at runtime activates the pivot. The calc col (no aggFunc, not the pivot
+        // dimension) stays active: it keeps evaluating against the primary columns on leaf rows.
         api.applyColumnState({ state: [{ colId: 'country', pivot: true }] });
         await asyncSetTimeout(10);
-        expect(warningText()).toContain('colDef.calculatedExpression is not supported with Column Pivoting');
-        expect(warningText()).not.toContain('colDef.allowFormula is not supported with Column Pivoting');
+        expect(profit()).toBe(7);
+        expect(warn).not.toHaveBeenCalled();
         expect(api.getColumn('profit')).toBeTruthy();
 
-        // Removing the pivot column re-enables calc evaluation.
-        warn.mockClear();
+        // Removing the pivot column leaves calc evaluation unchanged.
         api.applyColumnState({ state: [{ colId: 'country', pivot: false }] });
         api.setGridOption('pivotMode', false);
         await asyncSetTimeout(10);
@@ -111,7 +106,6 @@ describe('calculated columns - pivot mode', () => {
     });
 
     test('calc col is absent from the pivot display but remains a resolvable primary column', async () => {
-        vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-static-calc', {
             rowData,
             columnDefs: [
@@ -138,8 +132,8 @@ describe('calculated columns - pivot mode', () => {
         `);
     });
 
-    test('calculated value column in pivot mode warns about calculatedExpression, not allowFormula or generated field conflicts', async () => {
-        vi.spyOn(console, 'warn').mockImplementation(() => {});
+    test('calculated value column in pivot mode produces no incompatibility or validation warnings', async () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         createGrid('pivot-calc-warning-text', {
             rowData: [
                 { id: 'r1', country: 'US', year: 2020, gold: 1, silver: 2 },
@@ -166,12 +160,10 @@ describe('calculated columns - pivot mode', () => {
         });
         await asyncSetTimeout(10);
 
-        const text = warningText();
-        expect(text).toContain('colDef.calculatedExpression is not supported with Column Pivoting');
-        expect(text).not.toContain('colDef.allowFormula is not supported with Column Pivoting');
-        expect(text).not.toContain(
-            'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.'
-        );
+        // A calc value column aggregates under pivot like a valueGetter column, so no incompatibility or
+        // validation warning fires at all (the old "not supported with Column Pivoting", misleading
+        // allowFormula, and value-source messages are all gone).
+        expect(warn).not.toHaveBeenCalled();
     });
 
     test('addCalculatedColumn while pivot active keeps the pivot result intact', async () => {
@@ -198,7 +190,6 @@ describe('calculated columns - pivot mode', () => {
     });
 
     test('pivot mode off then on restores the calc col among the primary cols', async () => {
-        vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-toggle', {
             rowData,
             columnDefs: [
@@ -231,9 +222,29 @@ describe('calculated columns - pivot mode', () => {
         expect(order(api).some((c) => c.startsWith('pivot_year_2020'))).toBe(true);
     });
 
-    test('calc col referencing a pivot result column id does not read it on a leaf', async () => {
+    test('calc col referencing primary columns evaluates on leaf rows under an active pivot', async () => {
+        const api = createGrid('pivot-calc-primary-ref', {
+            rowData,
+            columnDefs: [
+                ...pivotColumnDefs,
+                {
+                    colId: 'doubledRevenue',
+                    calculatedExpression: '[revenue] * 2',
+                    cellDataType: 'number',
+                },
+            ],
+            pivotMode: true,
+        });
+        await asyncSetTimeout(10);
+
+        expect(
+            api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'doubledRevenue', useFormatter: false })
+        ).toBe(20);
+    });
+
+    test('calc col referencing a pivot result column id resolves via the source column on leaf rows', async () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        const api = createGrid('pivot-calc-refs-pivot-col', {
+        const api = createGrid('pivot-calc-result-ref', {
             rowData,
             columnDefs: [
                 ...pivotColumnDefs,
@@ -247,11 +258,10 @@ describe('calculated columns - pivot mode', () => {
         });
         await asyncSetTimeout(10);
 
-        const doubledOf = (id: string) =>
-            api.getCellValue({ rowNode: api.getRowNode(id)!, colKey: 'doubled', useFormatter: false });
-
-        expect(doubledOf('r1')).toBeUndefined();
-        expect(warningText()).toContain('colDef.calculatedExpression is not supported with Column Pivoting');
-        warn.mockRestore();
+        // A reference to a pivot result column redirects to its source value column on leaf rows, so the
+        // calc col reads the leaf's own revenue (10 * 2) rather than resolving to a silent blank — and no
+        // pivot-incompatibility warning fires.
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'doubled', useFormatter: false })).toBe(20);
+        expect(warn).not.toHaveBeenCalled();
     });
 });

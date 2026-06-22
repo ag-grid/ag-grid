@@ -119,10 +119,8 @@ describe('showValuesAs transform', () => {
         // Apply the mode dynamically (the column-menu path), starting from no mode.
         api.applyColumnState({ state: [{ colId: 'calc', showValuesAs: 'percentOfGrandTotal' }] });
 
-        // The displayed leaf cells show the calc value as a percentage of the grand total — not blank. (The ROOT
-        // is a group node, where calculated columns stay blank — but it is not a displayed row here.)
         await new GridRows(api, 'flat calc percentOfGrandTotal').check(`
-            ROOT id:ROOT_NODE_ID gold:70 silver:30 calc:null
+            ROOT id:ROOT_NODE_ID gold:70 silver:30 calc:"100.00%"
             ├── LEAF id:1 country:"A" gold:10 silver:5 calc:"15.00%"
             └── LEAF id:2 country:"B" gold:60 silver:25 calc:"85.00%"
         `);
@@ -133,7 +131,7 @@ describe('showValuesAs transform', () => {
         expect(api.getCellValue({ rowNode: leaf(api, '2'), colKey: 'calc', transformValues: true })).toBeCloseTo(0.85);
     });
 
-    test('calculated column: leaves transform under percentOfGrandTotal; group rows stay blank (calc-column limitation)', async () => {
+    test('calculated column with aggFunc: leaves and group rows both transform under percentOfGrandTotal', async () => {
         const api = gridsManager.createGrid('sva-calc-grouped', {
             calculatedColumns: true,
             groupDefaultExpanded: -1,
@@ -160,9 +158,7 @@ describe('showValuesAs transform', () => {
         // Leaf rows evaluate the calc, so the transform applies: 15/100, 55/100.
         expect(leaf(api, '1').getDataValue('calc', 'transformed')).toBeCloseTo(0.15);
         expect(api.getCellValue({ rowNode: leaf(api, '3'), colKey: 'calc', transformValues: true })).toBeCloseTo(0.55);
-        // Calculated columns stay blank on group rows by design (see calculated-columns.test.ts: "calculated columns
-        // stay blank on row group rows"). Show Values As has no underlying value to transform there.
-        expect(group(api, 'A').getDataValue('calc', 'transformed')).toBeNull();
+        expect(group(api, 'A').getDataValue('calc', 'transformed')).toBeCloseTo(0.45);
     });
 
     test('percentOfGrandTotal across group rows and leaves', async () => {

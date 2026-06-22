@@ -11,7 +11,7 @@ import type {
     RowNodeDataChangedEvent,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, _convertColumnEventSourceType, _warn } from 'ag-grid-community';
+import { BeanStub, _convertColumnEventSourceType, _resolvePivotColumnForRow, _warn } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
@@ -24,7 +24,6 @@ import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
 import { shiftNode } from './functions/utils';
 import type { FormulaErrorId, FormulaErrorType } from './i18n';
 import { isValidFunctionName } from './refUtils';
-import { isFormulaRowAvailable } from './rowAccess';
 
 /** Shared params object for `rowRenderer.refreshCells`, hoisted to avoid per-call allocation. */
 const REFRESH_CELLS_PARAMS = { suppressFlash: true, force: true } as const;
@@ -163,7 +162,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
         for (let i = 0, len = columns.length; i < len; ++i) {
             const col = columns[i];
-            if (col.isPivotActive()) {
+            if (col.isCalculatedCol && col.pivotActive) {
                 _warn(306, { blockedService: 'Column Pivoting' });
                 return false;
             }
@@ -690,7 +689,16 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     private ensureCalculatedCellFormula(row: RowNode, col: AgColumn, calculatedExpression: string): CellFormula | null {
-        if (!isFormulaRowAvailable(row) || row.group) {
+        if (row.stub || row.failedLoad) {
+            return null;
+        }
+        // An aggFunc calc col's group row shows the aggregated value, not a formula evaluation.
+        if (col.aggFunc && row.group) {
+            return null;
+        }
+        // No source to evaluate against (leaf data, or a group's aggData/own data) stays blank, not error.
+        const hasSource = row.group ? row.aggData != null || row.data != null : row.data != null;
+        if (!hasSource) {
             return null;
         }
 
@@ -743,10 +751,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (col.isCalculatedCol) {
             return col.calculatedExpression?.trim() ? undefined : '';
         }
-
-        // Calculated columns are incompatible with pivot (see checkForCalculatedColumnIncompatibleServices),
-        // so `col` is never a pivot result column here — no redirect needed.
-        return this.beans.valueSvc.getValueFromData(col, row);
+        return this.beans.valueSvc.getValueFromData(_resolvePivotColumnForRow(col, row), row);
     }
 
     /**
