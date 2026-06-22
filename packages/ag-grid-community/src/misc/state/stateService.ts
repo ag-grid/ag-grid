@@ -62,6 +62,8 @@ export class StateService extends BeanStub implements NamedBean {
     );
     private columnStates?: ColumnState[];
     private columnGroupStates?: { groupId: string; open: boolean | undefined }[];
+    /** Filter state held back until firstDataRendered, when pivot result columns exist. */
+    private deferredFilterState?: FilterState;
     private readonly staleStateKeys: Set<keyof GridState> = new Set();
 
     public postConstruct(): void {
@@ -244,7 +246,7 @@ export class StateService extends BeanStub implements NamedBean {
             !ignoreSet?.has(prop) && (propState || source === 'api');
 
         if (shouldSetState('filter', filterState)) {
-            this.setFilterState(filterState);
+            this.setFilterStateDeferringPivot(filterState, source);
         }
         if (
             shouldSetState('rowGroupExpansion', rowGroupExpansionState) ||
@@ -340,6 +342,12 @@ export class StateService extends BeanStub implements NamedBean {
             this.setScrollState(scrollState);
         }
         this.setColumnPivotState(!!columnOrderState?.orderedColIds, source);
+
+        const deferredFilterState = this.deferredFilterState;
+        if (deferredFilterState) {
+            this.deferredFilterState = undefined;
+            this.setFilterState(deferredFilterState);
+        }
 
         const updateCachedState = this.updateCachedState.bind(this);
         // reset sidebar as it could have updated when columns changed
@@ -644,6 +652,23 @@ export class StateService extends BeanStub implements NamedBean {
         if (advancedFilterModel !== undefined) {
             filterManager?.setAdvFilterModel(advancedFilterModel ?? null, 'advancedFilter');
         }
+    }
+
+    /** Defers to firstDataRendered if any target column is missing (a pivot result column not yet created). */
+    private setFilterStateDeferringPivot(state: FilterState | undefined, source: 'gridInitializing' | 'api'): void {
+        const { colModel, pivotResultCols } = this.beans;
+        const filterModel = state?.filterModel;
+        if (filterModel && source === 'gridInitializing' && colModel.pivotMode && !pivotResultCols?.pivotCols) {
+            const colsById = colModel.colsById;
+            const colIds = Object.keys(filterModel);
+            for (let i = 0, len = colIds.length; i < len; ++i) {
+                if (colsById[colIds[i]] == null) {
+                    this.deferredFilterState = state;
+                    return;
+                }
+            }
+        }
+        this.setFilterState(state);
     }
 
     private getRangeSelectionState(): CellSelectionState | undefined {

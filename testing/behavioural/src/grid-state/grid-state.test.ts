@@ -1962,4 +1962,159 @@ describe('StateService - Grid State Management', () => {
             expect(eventState?.sort).toBeDefined();
         });
     });
+
+    describe('Pivot result column state', () => {
+        const columnDefs = [{ field: 'country' }, { field: 'year' }, { field: 'gold', filter: 'agNumberColumnFilter' }];
+        const rowData = [
+            { country: 'Russia', year: 2000, gold: 66 },
+            { country: 'Russia', year: 2004, gold: 10 },
+            { country: 'USA', year: 2000, gold: 40 },
+            { country: 'USA', year: 2004, gold: 20 },
+        ];
+        // Pivot by year, group by country, sum(gold) → pivot result columns pivot_year_2000_gold / pivot_year_2004_gold.
+        const pivotState = {
+            pivot: { pivotMode: true, pivotColIds: ['year'] },
+            rowGroup: { groupColIds: ['country'] },
+            aggregation: { aggregationModel: [{ colId: 'gold', aggFunc: 'sum' }] },
+        };
+
+        test('setState restores a filter on a pivot result column', async () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, rowData });
+            await waitForNoLoadingRows(api);
+
+            api.setState({
+                ...pivotState,
+                filter: { filterModel: { pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 } } },
+            } as GridState);
+            await asyncSetTimeout(50);
+
+            expect(api.getFilterModel()).toEqual({
+                pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
+            });
+            // Print State must report the restored filter, not undefined.
+            expect(api.getState().filter?.filterModel).toEqual({
+                pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
+            });
+            await new GridRows(api, `setState restores a filter on a pivot result column`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2000_gold:106 pivot_year_2004_gold:30
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_year_2000_gold:66 pivot_year_2004_gold:10
+                · ├── LEAF hidden id:0 pivot_year_2000_gold:66 pivot_year_2004_gold:66
+                · └── LEAF hidden id:1 pivot_year_2000_gold:10 pivot_year_2004_gold:10
+            `);
+        });
+
+        test('initialState restores a filter on a pivot result column', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+                initialState: {
+                    ...pivotState,
+                    filter: {
+                        filterModel: { pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 } },
+                    },
+                } as GridState,
+            });
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(50);
+
+            expect(api.getFilterModel()).toEqual({
+                pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
+            });
+            expect(api.getState().filter?.filterModel).toEqual({
+                pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 },
+            });
+            await new GridRows(api, `initialState restores a filter on a pivot result column`).check(`
+                ROOT id:ROOT_NODE_ID pivot_year_2000_gold:106 pivot_year_2004_gold:30
+                └─┬ LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_year_2000_gold:66 pivot_year_2004_gold:10
+                · ├── LEAF hidden id:0 pivot_year_2000_gold:66 pivot_year_2004_gold:66
+                · └── LEAF hidden id:1 pivot_year_2000_gold:10 pivot_year_2004_gold:10
+            `);
+        });
+
+        test('initialState restores sort on a pivot result column', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+                initialState: {
+                    ...pivotState,
+                    sort: { sortModel: [{ colId: 'pivot_year_2000_gold', sort: 'desc' }] },
+                } as GridState,
+            });
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(50);
+
+            expect(api.getColumn('pivot_year_2000_gold')?.getSort()).toBe('desc');
+            expect(api.getState().sort).toEqual({
+                sortModel: [{ colId: 'pivot_year_2000_gold', sort: 'desc', type: 'default' }],
+            });
+        });
+
+        test('initialState restores column sizing on a pivot result column', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+                initialState: {
+                    ...pivotState,
+                    columnSizing: { columnSizingModel: [{ colId: 'pivot_year_2000_gold', width: 333 }] },
+                } as GridState,
+            });
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(50);
+
+            expect(api.getColumn('pivot_year_2000_gold')?.getActualWidth()).toBe(333);
+        });
+
+        test('initialState restores column visibility on a pivot result column', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+                initialState: {
+                    ...pivotState,
+                    columnVisibility: { hiddenColIds: ['pivot_year_2000_gold'] },
+                } as GridState,
+            });
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(50);
+
+            expect(api.getColumn('pivot_year_2000_gold')?.isVisible()).toBe(false);
+            expect(api.getState().columnVisibility).toEqual({ hiddenColIds: ['pivot_year_2000_gold'] });
+        });
+
+        test('initialState restores column pinning on a pivot result column', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+                initialState: { ...pivotState, columnPinning: { leftColIds: ['pivot_year_2000_gold'] } } as GridState,
+            });
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(50);
+
+            expect(api.getColumn('pivot_year_2000_gold')?.getPinned()).toBe('left');
+            expect(api.getState().columnPinning?.leftColIds).toEqual(['pivot_year_2000_gold']);
+        });
+
+        test('initialState restores an open pivot column group', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [...columnDefs, { field: 'silver' }],
+                rowData: [
+                    { country: 'Russia', year: 2000, gold: 66, silver: 5 },
+                    { country: 'USA', year: 2000, gold: 40, silver: 3 },
+                ],
+                initialState: {
+                    ...pivotState,
+                    aggregation: {
+                        aggregationModel: [
+                            { colId: 'gold', aggFunc: 'sum' },
+                            { colId: 'silver', aggFunc: 'sum' },
+                        ],
+                    },
+                    columnGroup: { openColumnGroupIds: ['pivotGroup_year_2000'] },
+                } as GridState,
+            });
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(50);
+
+            expect(api.getState().columnGroup).toEqual({ openColumnGroupIds: ['pivotGroup_year_2000'] });
+        });
+    });
 });
