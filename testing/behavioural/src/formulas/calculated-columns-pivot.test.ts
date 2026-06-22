@@ -316,7 +316,7 @@ describe('calculated columns - pivot mode', () => {
         ).toBe(20);
     });
 
-    test('calc col referencing a pivot result column id reads the row contribution to that bucket', async () => {
+    test('calc col referencing a pivot result column id is bucket-aware on leaves; blank on group rows', async () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-calc-result-ref', {
             rowData,
@@ -334,11 +334,11 @@ describe('calculated columns - pivot mode', () => {
 
         const ref2020 = (id: string) =>
             api.getCellValue({ rowNode: api.getRowNode(id)!, colKey: 'ref2020', useFormatter: false });
-        // The reference resolves to each row's contribution to the 2020-revenue bucket: a group reads the
-        // bucket aggregate (US = 10, UK = 20); a leaf in the bucket reads its source revenue (r1 = 10); a
-        // leaf outside it (r3 is a 2021 row) is blank — it contributes nothing to 2020.
-        expect(ref2020('row-group-country-US')).toBe(10);
-        expect(ref2020('row-group-country-UK')).toBe(20);
+        // Group rows have no data of their own, so the calc col stays blank there. On a leaf the reference
+        // is its contribution to the 2020 bucket: a leaf in the bucket reads its source revenue (r1 = 10);
+        // a leaf outside it (r3 is a 2021 row) is blank.
+        expect(ref2020('row-group-country-US')).toBeUndefined();
+        expect(ref2020('row-group-country-UK')).toBeUndefined();
         expect(ref2020('r1')).toBe(10);
         expect(ref2020('r3')).toBeUndefined();
         expect(warn).not.toHaveBeenCalled();

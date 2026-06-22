@@ -679,13 +679,14 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (row.stub || row.failedLoad) {
             return null;
         }
-        // An aggFunc calc col's group row shows the aggregated value, not a formula evaluation.
-        if (col.aggFunc && row.group) {
+        // An actively-aggregating calc col's group row shows the aggregated value, not a formula evaluation.
+        // Gate on the active state (not just a defined aggFunc), matching getValueFromData.
+        if (col.aggregationActive && row.group) {
             return null;
         }
-        // No source to evaluate against (leaf data, or a group's aggData/own data) stays blank, not error.
-        const hasSource = row.group ? row.aggData != null || row.data != null : row.data != null;
-        if (!hasSource) {
+        // Execute only on rows with their own data — leaf rows and Tree Data parents that carry data.
+        // Synthetic rows without data (group rows, footers, tree filler nodes) stay blank.
+        if (!row.data) {
             return null;
         }
 
@@ -740,10 +741,11 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
         const valueSvc = this.beans.valueSvc;
         // A referenced pivot result column gives the row's contribution to that bucket: aggregate on a group,
-        // source on an in-bucket leaf, blank otherwise. (Shared resolver stays source-uniform; read-only here.)
+        // and on a leaf its source measure if it falls in the bucket, else blank (it contributes nothing).
+        // The blank is returned explicitly — not via getValueFromData, which can resolve the source value.
         const pivotValueCol = col.pivotValueColumn;
-        if (pivotValueCol && !row.group && !row.rowPinned && this.leafInPivotBucket(col, row)) {
-            return valueSvc.getValueFromData(pivotValueCol, row);
+        if (pivotValueCol && !row.group && !row.rowPinned) {
+            return this.leafInPivotBucket(col, row) ? valueSvc.getValueFromData(pivotValueCol, row) : undefined;
         }
         return valueSvc.getValueFromData(col, row);
     }

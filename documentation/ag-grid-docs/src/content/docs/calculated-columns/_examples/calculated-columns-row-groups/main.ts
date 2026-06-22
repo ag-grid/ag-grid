@@ -60,6 +60,8 @@ const columnDefs: ColDef<SalesRow>[] = [
         colId: 'profit',
         headerName: 'Profit',
         calculatedExpression: '[revenue] - [cost]',
+        // aggFunc lets the calculated column aggregate its per-leaf results onto group rows.
+        aggFunc: 'sum',
         cellDataType: 'number',
         filter: 'agNumberColumnFilter',
         valueFormatter: currencyFormatter,
@@ -67,6 +69,7 @@ const columnDefs: ColDef<SalesRow>[] = [
     {
         colId: 'margin',
         headerName: 'Margin',
+        // No aggFunc: a ratio does not aggregate, so margin evaluates on leaf rows and is blank on groups.
         calculatedExpression: '[profit] / [revenue]',
         cellDataType: 'number',
         valueFormatter: percentageFormatter,

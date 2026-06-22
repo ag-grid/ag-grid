@@ -40,11 +40,9 @@ Calculated columns are always read-only. They cannot be edited through cell edit
 
 Calculated columns are full columns, so [Row Grouping](./grouping/), [Tree Data](./tree-data/), [Sorting](./row-sorting/) and [Filtering](./filtering/), [Text Formatting](./value-formatters/) and [Cell Components](./component-cell-renderer/) apply to them the same way as any other column.
 
-A calculated column also evaluates on group rows, Tree Data parents, group footers and the grand-total row. On each of these it uses the values its referenced columns show on the same row. For a group those are the aggregated values, so a group's `[revenue]` is the aggregated revenue of its children. If the referenced columns are blank on the row, the calculated cell is blank too.
+A calculated column evaluates on rows that have their own data: leaf rows, and Tree Data parents that carry data. It stays blank on rows without data — row group rows, group footers, the grand-total row, and Tree Data filler nodes.
 
-The inputs are aggregated first, then the expression is evaluated once. For an additive expression this matches the total of the leaf results, so a group's `[revenue] - [cost]` equals the sum of its rows' profits. For a ratio it gives the group's own ratio of totals: `[revenue] / [cost]` on a group is `sum(revenue) / sum(cost)` — the group-level margin, not the average of each leaf row's ratio.
-
-To aggregate the per-row results instead, give the calculated column an `aggFunc`. Each leaf still evaluates the expression, and the group combines those leaf results with the chosen function. For example `{ calculatedExpression: '[revenue] - [cost]', aggFunc: 'avg' }` shows the average of its rows' profits on a group, rather than the profit of the group's totals.
+To show a value on group rows, give the calculated column an `aggFunc`. Each leaf evaluates the expression, and the group aggregates those per-leaf results with the chosen function — the same as a column with a `valueGetter`. For example `{ calculatedExpression: '[revenue] - [cost]', aggFunc: 'sum' }` shows the total of its rows' profits on a group. A ratio has no meaningful aggregation, so a column like `[profit] / [revenue]` is left without an `aggFunc` and stays blank on group rows.
 
 Under [Pivoting](./pivoting/), a calculated column with an `aggFunc` is a value column: it evaluates per leaf and its results aggregate into the pivot result columns, the same as a column with a `valueGetter`. Without an `aggFunc` it is not a value column, so it has no pivot result column and is absent from the cross-tab, like any other non-value column.
 
