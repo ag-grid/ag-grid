@@ -298,6 +298,15 @@ describe('htaccessRules', () => {
             expect(ifBlock).not.toContain("'unsafe-eval'");
         });
 
+        it('RTI-3353: the campaigns <If> condition also covers archived campaign pages', () => {
+            // Archived campaign pages (/archive/<version>/campaigns/) otherwise fall under
+            // the examples scope and lose the bryntum.com allowances. The condition carries
+            // the optional /archive/<version> prefix so the override applies to them too.
+            expect(campaignsIfOpen).toContain('/archive/');
+            expect(stagingContent).toContain(campaignsIfOpen);
+            expect(productionContent).toContain(campaignsIfOpen);
+        });
+
         it('production: allows bryntum.com for /campaigns/ without unsafe-eval (either phase)', () => {
             const ifBlock = firstCampaignsIfBlock(productionContent);
             expect(ifBlock).toContain('https://bryntum.com');

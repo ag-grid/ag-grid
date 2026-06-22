@@ -141,14 +141,22 @@ const BRYNTUM_HOST = 'https://bryntum.com';
 export const EXAMPLES_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(examples|archive)/#';
 
 // Apache <If> expression matching the partnership campaign pages that get the
-// 'campaigns' scope (e.g. /campaigns/bryntum-gantt/).
-export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/campaigns/#';
+// 'campaigns' scope — both the live page (/campaigns/bryntum-gantt/) and its
+// archived copies (/archive/<version>/campaigns/bryntum-gantt/), which are served
+// from the same vhost and would otherwise fall under the 'examples' scope (matched
+// by EXAMPLES_PATH_CONDITION) and lose the bryntum.com allowances. The optional
+// /archive/<version> prefix covers the archived snapshots.
+export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^(?:/archive/[^/]+)?/campaigns/#';
 
 // JS equivalents of the *_PATH_CONDITION Apache rules above, for the dev-server
 // (agDevCsp) and preview-server (preview-csp) middleware that scope the served
 // CSP by URL path. Keep these in sync with the Apache conditions.
 export const EXAMPLES_PATH_REGEXP = /^\/(examples|archive)\//;
-export const CAMPAIGNS_PATH_REGEXP = /^\/campaigns\//;
+// Matches /campaigns/ and archived /archive/<version>/campaigns/ — see
+// CAMPAIGNS_PATH_CONDITION. An archived campaign path matches BOTH this and
+// EXAMPLES_PATH_REGEXP, so the middleware resolvers must test campaigns first
+// (mirroring the Apache <If> precedence where the campaigns block trails examples).
+export const CAMPAIGNS_PATH_REGEXP = /^(?:\/archive\/[^/]+)?\/campaigns\//;
 
 // 'self' resolves to grid-staging.ag-grid.com on staging / localhost in dev, so
 // cross-subdomain references to the production host need an explicit allowance.
