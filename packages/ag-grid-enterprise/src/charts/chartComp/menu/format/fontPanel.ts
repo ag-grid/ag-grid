@@ -256,18 +256,20 @@ export class FontPanel extends Component {
 
 // charts returns a CSS list of font families. We will just show the first one
 function parseChartFontFamily(family: string) {
-    const firstComma = family.indexOf(',');
-    if (firstComma === -1) {
+    const values = family.split(',');
+    if (values.length === 1) {
         return family;
     }
-    const firstQuote = family.indexOf('"');
-    if (firstQuote === -1 || firstQuote > firstComma) {
-        return family.slice(0, firstComma);
+    const firstValue = values[0];
+    if (!firstValue.startsWith('"') && !firstValue.startsWith(`'`)) {
+        return firstValue;
     }
-    for (let i = firstQuote + 1; i < family.length; ++i) {
-        const char = family[i];
-        if (char === '"') {
-            return family.slice(firstQuote + 1, i);
+    const quote = firstValue[0];
+    const parts: string[] = [];
+    for (const value of values) {
+        parts.push(value);
+        if (value.trim().endsWith(quote)) {
+            return parts.join(',').slice(1, -1);
         }
     }
     return family;
