@@ -52,66 +52,64 @@ const EventItem = ({ event }: { event: Event }) => {
     }, [darkMode]);
 
     return (
-        <div className={styles.linkWrapper}>
-            <div className={styles.eventItemContainer}>
-                <div className={styles.eventItemLeftColumn}>
-                    <div className={styles.titleContainer}>
-                        <p className={styles.title}>{event.title}</p>
-                        <p className={styles.date}>
-                            {new Date(event.startDate).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                            })}
-                        </p>
+        <div className={styles.eventItemContainer}>
+            <div className={styles.eventItemLeftColumn}>
+                <div className={styles.titleContainer}>
+                    <p className={styles.title}>{event.title}</p>
+                    <p className={styles.date}>
+                        {new Date(event.startDate).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                        })}
+                    </p>
+                </div>
+                <p className={styles.description}>{event.description}</p>
+                <div className={styles.footer}>
+                    <div className={styles.locationContainer}>
+                        {event.countryIcon ? (
+                            <img
+                                className={styles.flag}
+                                src={urlWithBaseUrl(`/example-assets/flags/${event.countryIcon}`)}
+                                alt={`${event.countryIcon}`}
+                            />
+                        ) : (
+                            ''
+                        )}
+                        <p className={styles.location}>{event.location}</p>
                     </div>
-                    <p className={styles.description}>{event.description}</p>
-                    <div className={styles.footer}>
-                        <div className={styles.locationContainer}>
-                            {event.countryIcon ? (
-                                <img
-                                    className={styles.flag}
-                                    src={urlWithBaseUrl(`/example-assets/flags/${event.countryIcon}`)}
-                                    alt={`${event.countryIcon}`}
-                                />
-                            ) : (
-                                ''
-                            )}
-                            <p className={styles.location}>{event.location}</p>
-                        </div>
-                        <div className={styles.ctaContainer}>
-                            {event.eventPage && (
-                                <a
-                                    className={event.recording ? styles.secondaryCta : styles.primaryCta}
-                                    href={event.eventPage}
-                                    target="_blank"
-                                >
-                                    View Event
-                                </a>
-                            )}
-                            {event.recording && (
-                                <a
-                                    href={event.recording}
-                                    target="_blank"
-                                    className={event.eventPage ? styles.primaryCta : styles.secondaryCta}
-                                >
-                                    Watch Recording
-                                </a>
-                            )}
-                        </div>
+                    <div className={styles.ctaContainer}>
+                        {event.eventPage && (
+                            <a
+                                className={event.recording ? styles.secondaryCta : styles.primaryCta}
+                                href={event.eventPage}
+                                target="_blank"
+                            >
+                                View Event
+                            </a>
+                        )}
+                        {event.recording && (
+                            <a
+                                href={event.recording}
+                                target="_blank"
+                                className={event.eventPage ? styles.primaryCta : styles.secondaryCta}
+                            >
+                                Watch Recording
+                            </a>
+                        )}
                     </div>
                 </div>
-                <div className={styles.eventItemRightColumn}>
-                    {event.collage ? (
-                        <img
-                            className={styles.eventImage}
-                            src={urlWithBaseUrl(`/community/events/collages/${event.collage}`)}
-                            alt={`${event.collage}`}
-                        />
-                    ) : (
-                        imageUrl && <img className={styles.eventLogo} src={imageUrl} alt={`${event.eventLogo}`} />
-                    )}
-                </div>
+            </div>
+            <div className={styles.eventItemRightColumn}>
+                {event.collage ? (
+                    <img
+                        className={styles.eventImage}
+                        src={urlWithBaseUrl(`/community/events/collages/${event.collage}`)}
+                        alt={`${event.collage}`}
+                    />
+                ) : (
+                    imageUrl && <img className={styles.eventLogo} src={imageUrl} alt={`${event.eventLogo}`} />
+                )}
             </div>
         </div>
     );
