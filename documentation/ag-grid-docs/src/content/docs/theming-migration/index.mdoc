@@ -271,7 +271,7 @@ For Angular, consider using [ViewEncapsulation.ShadowDom](https://angular.dev/gu
 
 If you are familiar with the method of theming applications used in v32 and earlier, the following technical context will help you understand what is changing and what remains the same.
 
-The grid is styled using CSS. A running grid instance contains thousands of DOM elements, and each of them has class names like `ag-header` and `ag-row` that can be used in CSS rules that change the style of that element. The grid package from NPM contains CSS that set up a default grid style and expose CSS custom properties (variables) that allow configuration of colours, borders, padding, fonts etc. When you want to go beyond what is possible with the custom properties, you write your own CSS rules targeting the grid's class names.
+The grid is styled using CSS. A running grid instance contains hundreds of DOM elements, and each of them has class names like `ag-header` and `ag-row` that can be used in CSS rules that change the style of that element. The grid package from NPM contains CSS that set up a default grid style and expose CSS custom properties (variables) that allow configuration of colours, borders, padding, fonts etc. When you want to go beyond what is possible with the custom properties, you write your own CSS rules targeting the grid's class names.
 
 None of this is changing - the grid is still styled with CSS and CSS custom properties, and you can still extend it with your own CSS rules. What the Theming API changes is the following:
 
