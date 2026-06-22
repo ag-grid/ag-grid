@@ -760,7 +760,8 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
         const valueSvc = beans.valueSvc;
         for (let i = 0, len = pivotKeys.length; i < len; ++i) {
-            if (valueSvc.getKeyForNode(pivotCols[i], row) !== pivotKeys[i]) {
+            const pivotCol = pivotCols[i];
+            if (!pivotCol || valueSvc.getKeyForNode(pivotCol, row) !== pivotKeys[i]) {
                 return false;
             }
         }
