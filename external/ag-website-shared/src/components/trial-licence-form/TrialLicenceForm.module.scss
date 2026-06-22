@@ -1,5 +1,6 @@
 @use 'design-system' as *;
 
+$trial-licence-xs: 400px;
 $trial-licence-small: 680px;
 
 .trialForm {
@@ -14,6 +15,15 @@ $trial-licence-small: 680px;
     flex-direction: row;
     flex-wrap: wrap;
     gap: $spacing-size-4;
+
+    @container (max-width: #{$trial-licence-xs}) {
+        flex-direction: column;
+        gap: $spacing-size-2;
+
+        .companyField {
+            margin-bottom: $spacing-size-2;
+        }
+    }
 
     :global(.input-field) {
         flex: 1;
