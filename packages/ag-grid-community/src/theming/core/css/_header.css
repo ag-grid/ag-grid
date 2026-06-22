@@ -251,8 +251,8 @@
 
 /* COLUMN SEPARATOR */
 
-.ag-header-cell::after,
-.ag-header-group-cell::after {
+.ag-header-cell:where(:not(.ag-column-last))::after,
+.ag-header-group-cell:where(:not(.ag-column-last))::after {
     content: '';
     position: absolute;
 
