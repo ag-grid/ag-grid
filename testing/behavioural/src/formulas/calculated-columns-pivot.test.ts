@@ -166,6 +166,45 @@ describe('calculated columns - pivot mode', () => {
         expect(warn).not.toHaveBeenCalled();
     });
 
+    test('calc value column aggregates like a valueGetter under a runtime-activated pivot, no warnings', async () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const api = createGrid('pivot-tc2-runtime', {
+            rowData: [
+                { id: 'r1', country: 'US', year: 2020, gold: 1, silver: 2 },
+                { id: 'r2', country: 'US', year: 2021, gold: 3, silver: 4 },
+            ],
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year' },
+                { field: 'gold', aggFunc: 'sum' },
+                { field: 'silver', aggFunc: 'sum' },
+                { colId: 'calc', aggFunc: 'sum', calculatedExpression: '[gold] + [silver]', cellDataType: 'number' },
+                {
+                    colId: 'vg',
+                    aggFunc: 'sum',
+                    valueGetter: (p) => (p.data ? p.data.gold + p.data.silver : undefined),
+                    cellDataType: 'number',
+                },
+            ],
+        });
+        await asyncSetTimeout(10);
+
+        // Enable pivot mode and drag YEAR into the pivot at runtime (the column-tool-panel path).
+        api.setGridOption('pivotMode', true);
+        api.applyColumnState({ state: [{ colId: 'year', pivot: true }] });
+        await asyncSetTimeout(10);
+
+        // The calc value column's per-year pivot result aggregates its per-leaf (gold+silver), matching the
+        // valueGetter column under every year — and no incompatibility/validation warning fires.
+        await new GridRows(api, 'TC2 runtime pivot calc aggregates', { useFormatter: false }).check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2020_gold:1 pivot_year_2020_silver:2 pivot_year_2020_calc:3 pivot_year_2020_vg:3 pivot_year_2021_gold:3 pivot_year_2021_silver:4 pivot_year_2021_calc:7 pivot_year_2021_vg:7
+            └─┬ LEAF_GROUP collapsed id:row-group-country-US ag-Grid-AutoColumn:"US" pivot_year_2020_gold:1 pivot_year_2020_silver:2 pivot_year_2020_calc:3 pivot_year_2020_vg:3 pivot_year_2021_gold:3 pivot_year_2021_silver:4 pivot_year_2021_calc:7 pivot_year_2021_vg:7
+            · ├── LEAF hidden id:r1 pivot_year_2020_gold:1 pivot_year_2020_silver:2 pivot_year_2020_calc:3 pivot_year_2020_vg:3 pivot_year_2021_gold:1 pivot_year_2021_silver:2 pivot_year_2021_calc:3 pivot_year_2021_vg:3
+            · └── LEAF hidden id:r2 pivot_year_2020_gold:3 pivot_year_2020_silver:4 pivot_year_2020_calc:7 pivot_year_2020_vg:7 pivot_year_2021_gold:3 pivot_year_2021_silver:4 pivot_year_2021_calc:7 pivot_year_2021_vg:7
+        `);
+        expect(warn).not.toHaveBeenCalled();
+    });
+
     test('a calculated column can be a pivot dimension: its per-leaf formula result is the pivot key', async () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-by-calc', {
@@ -277,15 +316,15 @@ describe('calculated columns - pivot mode', () => {
         ).toBe(20);
     });
 
-    test('calc col referencing a pivot result column id resolves it like getCellValue (group bucket, leaf source)', async () => {
+    test('calc col referencing a pivot result column id reads the row contribution to that bucket', async () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-calc-result-ref', {
             rowData,
             columnDefs: [
                 ...pivotColumnDefs,
                 {
-                    colId: 'doubled',
-                    calculatedExpression: '[pivot_year_2020_revenue] * 2',
+                    colId: 'ref2020',
+                    calculatedExpression: '[pivot_year_2020_revenue]',
                     cellDataType: 'number',
                 },
             ],
@@ -293,15 +332,15 @@ describe('calculated columns - pivot mode', () => {
         });
         await asyncSetTimeout(10);
 
-        const doubled = (id: string) =>
-            api.getCellValue({ rowNode: api.getRowNode(id)!, colKey: 'doubled', useFormatter: false });
-        // The reference resolves exactly as getCellValue does: a group reads the 2020-revenue bucket from
-        // aggData (US 2020 = 10 → 20, UK 2020 = 20 → 40); a leaf redirects to its source revenue (r1 = 10 → 20,
-        // r3 = 15 → 30) — the same source-redirect the grid uses everywhere for pivot result columns on leaves.
-        expect(doubled('row-group-country-US')).toBe(20);
-        expect(doubled('row-group-country-UK')).toBe(40);
-        expect(doubled('r1')).toBe(20);
-        expect(doubled('r3')).toBe(30);
+        const ref2020 = (id: string) =>
+            api.getCellValue({ rowNode: api.getRowNode(id)!, colKey: 'ref2020', useFormatter: false });
+        // The reference resolves to each row's contribution to the 2020-revenue bucket: a group reads the
+        // bucket aggregate (US = 10, UK = 20); a leaf in the bucket reads its source revenue (r1 = 10); a
+        // leaf outside it (r3 is a 2021 row) is blank — it contributes nothing to 2020.
+        expect(ref2020('row-group-country-US')).toBe(10);
+        expect(ref2020('row-group-country-UK')).toBe(20);
+        expect(ref2020('r1')).toBe(10);
+        expect(ref2020('r3')).toBeUndefined();
         expect(warn).not.toHaveBeenCalled();
     });
 

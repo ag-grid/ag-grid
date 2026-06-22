@@ -11,7 +11,7 @@ import type {
     RowNodeDataChangedEvent,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, _convertColumnEventSourceType, _resolvePivotColumnForRow, _warn } from 'ag-grid-community';
+import { BeanStub, _convertColumnEventSourceType, _warn } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
@@ -738,9 +738,31 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (col.isCalculatedCol) {
             return col.calculatedExpression?.trim() ? undefined : '';
         }
-        // Resolve a referenced pivot result column like every other value read (getCellValue, edit,
-        // aggregation): redirect to the source column on leaves; group rows keep it and read aggData.
-        return this.beans.valueSvc.getValueFromData(_resolvePivotColumnForRow(col, row), row);
+        const valueSvc = this.beans.valueSvc;
+        // A referenced pivot result column gives the row's contribution to that bucket: aggregate on a group,
+        // source on an in-bucket leaf, blank otherwise. (Shared resolver stays source-uniform; read-only here.)
+        const pivotValueCol = col.pivotValueColumn;
+        if (pivotValueCol && !row.group && !row.rowPinned && this.leafInPivotBucket(col, row)) {
+            return valueSvc.getValueFromData(pivotValueCol, row);
+        }
+        return valueSvc.getValueFromData(col, row);
+    }
+
+    /** True if leaf `row` falls in pivot result column `resultCol`'s bucket — its pivot-dimension keys match. */
+    private leafInPivotBucket(resultCol: AgColumn, row: RowNode): boolean {
+        const beans = this.beans;
+        const pivotCols = beans.pivotColsSvc?.columns;
+        const pivotKeys = resultCol.colDef.pivotKeys;
+        if (!pivotCols || !pivotKeys) {
+            return false;
+        }
+        const valueSvc = beans.valueSvc;
+        for (let i = 0, len = pivotKeys.length; i < len; ++i) {
+            if (valueSvc.getKeyForNode(pivotCols[i], row) !== pivotKeys[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
