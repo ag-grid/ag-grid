@@ -71,7 +71,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
                     this.updateForRangeChange();
                 }
             },
-            columnMoved: listener,
+            columnMoved: this.updateForGridChange.bind(this, { updateOrder: true }),
             columnPinned: listener,
             columnVisible: listener,
             columnRowGroupChanged: listener,
@@ -150,14 +150,18 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         }
     }
 
-    public updateForGridChange(params?: { maintainColState?: boolean; setColsFromRange?: boolean }): void {
+    public updateForGridChange(params?: {
+        maintainColState?: boolean;
+        setColsFromRange?: boolean;
+        updateOrder?: boolean;
+    }): void {
         if (this.model.unlinked) {
             return;
         }
 
-        const { maintainColState, setColsFromRange } = params ?? {};
+        const { maintainColState, setColsFromRange, updateOrder } = params ?? {};
 
-        this.model.updateCellRanges({ maintainColState, setColsFromRange });
+        this.model.updateCellRanges({ maintainColState, setColsFromRange, updateOrder });
         this.model.updateData();
         this.setChartRange();
     }

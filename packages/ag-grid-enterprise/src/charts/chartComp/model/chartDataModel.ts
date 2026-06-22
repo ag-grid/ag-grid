@@ -177,8 +177,9 @@ export class ChartDataModel extends BeanStub {
         resetOrder?: boolean;
         maintainColState?: boolean;
         setColsFromRange?: boolean;
+        updateOrder?: boolean;
     }): void {
-        const { updatedColState, resetOrder, maintainColState, setColsFromRange } = params ?? {};
+        const { updatedColState, resetOrder, maintainColState, setColsFromRange, updateOrder } = params ?? {};
         if (this.valueCellRange) {
             this.referenceCellRange = this.valueCellRange;
         }
@@ -194,7 +195,7 @@ export class ChartDataModel extends BeanStub {
         this.setValueCellRange(valueCols, allColsFromRanges, setColsFromRange);
 
         if (!updatedColState && !maintainColState) {
-            this.resetColumnState();
+            this.resetColumnState(updateOrder);
             // dimension / category cell range could be out of sync after resetting column state when row grouping
             this.syncDimensionCellRange();
         }
@@ -375,14 +376,14 @@ export class ChartDataModel extends BeanStub {
         return { startRow, endRow };
     }
 
-    private resetColumnState(): void {
+    // `updateOrder` re-derives series order from the grid column order (column drag); otherwise the user-defined order is preserved.
+    private resetColumnState(updateOrder?: boolean): void {
         const { dimensionCols, valueCols } = this.chartColSvc.getChartColumns();
         const allCols = this.getAllColumnsFromRanges();
         const isInitialising = this.valueColState.length < 1;
 
-        const savedValueOrder = isInitialising
-            ? undefined
-            : new Map(this.valueColState.map((cs) => [cs.colId, cs.order]));
+        const savedValueOrder =
+            isInitialising || updateOrder ? undefined : new Map(this.valueColState.map((cs) => [cs.colId, cs.order]));
 
         this.dimensionColState = [];
         this.valueColState = [];
