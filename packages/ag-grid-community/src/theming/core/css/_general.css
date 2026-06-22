@@ -346,7 +346,7 @@
     :where(.ag-row:not(.ag-full-width-row)),
     :where(.ag-header-row),
     :where(.ag-row.ag-embedded-full-width-row) {
-        :where(> .ag-grid-scrolling-cells) {
+        > :where(.ag-grid-scrolling-cells) {
             order: 1;
         }
     }
