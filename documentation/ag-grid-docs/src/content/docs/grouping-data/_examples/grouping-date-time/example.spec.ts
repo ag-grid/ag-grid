@@ -59,6 +59,23 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.columnSelectListItemCheckbox('Date (Year) Column')).toBeChecked();
     });
 
+    test.eachFramework('Example reordering date-part chips in the row group panel', async ({ agIdFor }) => {
+        const yearTopRowId = `row-group-${vcolPrefix}-date-year-2008`;
+        const monthTopRowId = `row-group-${vcolPrefix}-date-month-8`;
+
+        // Initially grouped year -> month, so the top-level group is a year
+        await expect(agIdFor.autoGroupCell(yearTopRowId)).toContainText('2008 (5)', { useInnerText: true });
+
+        // Drag the Month chip ahead of the Year chip within the Row Groups panel
+        await dragOverTo(
+            agIdFor.columnDropCellDragHandle('panel', 'Row Groups', 'Date (Month)'),
+            agIdFor.columnDropArea('panel', 'Row Groups').locator('.ag-column-drop-cell').first()
+        );
+
+        // The top-level group is now a month, confirming the chips are reorderable
+        await expect(agIdFor.autoGroupCell(monthTopRowId)).toContainText('8', { useInnerText: true });
+    });
+
     test.eachFramework('Example with formatted months', async ({ agIdFor, page }) => {
         const level0GroupRowId = `row-group-${vcolPrefix}-date-year-2008`;
 
