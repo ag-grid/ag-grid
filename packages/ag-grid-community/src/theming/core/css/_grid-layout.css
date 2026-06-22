@@ -61,7 +61,7 @@
     /* Work out the correct line height. --ag-row-height is the default row
            height, --ag-line-height is the actual row height, only set if variable row
            heights are enabled.
-    
+
           - use line height rather than flex align to centre single line text within a
             default height row, because if the row is made larger than the default height
             then we want all additional space to go at the bottom.
@@ -95,6 +95,19 @@
     > .ag-grid-scrolling-cells,
     > .ag-grid-pinned-right-cells {
         border-bottom: var(--ag-row-border);
+    }
+}
+
+/* Remove the border-bottom for the last row in a pinned-bottom container as
+   the bottom border of the grid serves */
+:where(.ag-grid-pinned-bottom-rows-container) {
+    .ag-row-last:where(:not(.ag-header-row, .ag-full-width-row)),
+    .ag-row-last:where(.ag-embedded-full-width-row) {
+        > .ag-grid-pinned-left-cells,
+        > .ag-grid-scrolling-cells,
+        > .ag-grid-pinned-right-cells {
+            border-bottom: none;
+        }
     }
 }
 
