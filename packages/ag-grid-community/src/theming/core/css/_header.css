@@ -1,5 +1,12 @@
 /* stylelint-disable selector-max-specificity */
 
+.ag-header {
+    font-size: var(--ag-header-font-size);
+    font-family: var(--ag-header-font-family);
+    font-weight: var(--ag-header-font-weight);
+    color: var(--ag-header-text-color);
+}
+
 .ag-header-row {
     .ag-grid-pinned-left-cells,
     .ag-grid-scrolling-cells,
@@ -9,17 +16,12 @@
 
     position: absolute;
     height: var(--ag-header-height);
-    color: var(--ag-header-text-color);
     border-bottom: none;
 
     .ag-grid-pinned-left-cells,
     .ag-grid-pinned-right-cells {
         overflow: visible;
     }
-
-    font-size: var(--ag-header-font-size);
-    font-family: var(--ag-header-font-family);
-    font-weight: var(--ag-header-font-weight);
 }
 
 /* stylelint-enable selector-max-specificity */
