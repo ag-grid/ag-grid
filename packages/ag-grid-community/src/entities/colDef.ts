@@ -463,7 +463,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * the built-in {@link distributeGroupValue | distributeGroupValue} is used automatically.
      *
      * Columns with `groupRowEditable` or `groupRowValueSetter` do not require `field` or
-     * `valueSetter` — the group row value setter handles the edit entirely.
+     * `valueSetter` - the group row value setter handles the edit entirely.
      *
      * Note: if `groupRowValueSetter` resolves to `false` or `null` (via `distribution: false`,
      * a per-aggFunc record entry, or `groupRowValueSetter: false`), the cell is treated as not
@@ -480,7 +480,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * - **`false`**: Explicitly disables group row value distribution and makes the cell not editable,
      *   even if `groupRowEditable` is defined.
      * - **Function**: A custom callback that receives a {@link GroupRowValueSetterParams} and pushes
-     *   edits down to descendants. The column does not need `field` or `valueSetter` — the callback
+     *   edits down to descendants. The column does not need `field` or `valueSetter` - the callback
      *   handles the edit entirely.
      * - **Options object**: Uses the built-in distribution logic with a {@link GroupRowValueSetterOptions}
      *   configuration. When `distribution` resolves to `false` or `null` for the column's aggFunc,
@@ -877,14 +877,14 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     allowedAggFuncs?: string[];
     /**
-     * The active "Show Values As" mode — display this column's aggregated value relative to another
-     * aggregated value, e.g. as a percentage of the grand / column / row /
-     * parent total. A presentation-layer transform: it changes the displayed value only — the raw value
-     * (`getDataValue`, charts, clipboard-of-data) is unchanged. Can be changed at runtime (menu / column state).
-     *
-     * A built-in mode name, or the object form `{ type, params, precision }`. `null` selects no active mode — the
-     * column menu and column state can still select one.
-     * Per-column config (`precision`, `suppressHeaderIndicator`, custom `modes`) lives on `showValuesAsDef`.
+     * The active "Show Values As" mode for this column.
+     * <br /><br />
+     * Shows the column's aggregated value relative to another total, for example as a percentage of the grand total,
+     * column total, row total or parent total. This changes only the displayed value; the underlying value used by
+     * `getDataValue`, charts and clipboard data is unchanged.
+     * <br /><br />
+     * Use a built-in mode name, or the object form `{ type, params, precision }`. Set `null` for no active mode. The
+     * column menu and Column State can still select a mode, and per-column config lives on `showValuesAsDef`.
      * @agModule `ShowValuesAsModule`
      */
     showValuesAs?: ShowValuesAsType | ShowValuesAs | null;
@@ -903,13 +903,14 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     showValuesAsDef?: ShowValuesAsDef<TData, TValue> | null;
     /**
-     * Whether to offer the "Show Values As" selection menu in this column's menu. Off by default. On `defaultColDef`,
-     * `true` enables it grid-wide but only for columns that support it — a value column (any `aggFunc`) or a numeric
-     * column. Set `true` directly on a column to force the menu on for any column type — use this for a column whose
-     * numeric value the grid can't detect statically, such as a `valueGetter` or custom `aggFunc` that produces a
-     * number from string or object data. `false` always hides it. This gates only the menu — a mode applied via
-     * `showValuesAs` / Column State still transforms the displayed value and shows the header indicator (suppress that
-     * separately via `showValuesAsDef.suppressHeaderIndicator`).
+     * Shows the "Show Values As" submenu in the column menu.
+     * <br /><br />
+     * On `defaultColDef`, `true` shows the submenu only for value columns and numeric columns. On an individual
+     * column, `true` always shows it; use this when the grid cannot infer that the column returns numbers, for
+     * example with a `valueGetter` or custom `aggFunc`. `false` hides the submenu.
+     * <br /><br />
+     * This controls menu visibility only. Modes set through `showValuesAs` or Column State still apply and still show
+     * the header indicator unless `showValuesAsDef.suppressHeaderIndicator` is set.
      * @default false
      * @agModule `ShowValuesAsModule`
      */
