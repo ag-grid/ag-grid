@@ -13,8 +13,6 @@ import { AgGridReact } from 'ag-grid-react';
 
 import { defaultRowData } from '../grid-config/grid-data';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
-
 // A tiny non-interactive grid used as a theme thumbnail
 const columnDefs: ColDef[] = [{ field: 'country' }, { field: 'sport' }];
 
