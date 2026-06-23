@@ -79,8 +79,8 @@ export const allPresets: Preset[] = [
             fontSize: 13,
             backgroundColor: '#FFFFFF',
             foregroundColor: '#555B62',
+            accentColor: '#4E06B9',
             browserColorScheme: 'light',
-            accentColor: '#087AD1',
             borderColor: '#D7E2E6',
             chromeBackgroundColor: {
                 ref: 'backgroundColor',
@@ -135,7 +135,7 @@ export const allPresets: Preset[] = [
             backgroundColor: '#ffffff',
             browserColorScheme: 'light',
             headerBackgroundColor: '#F9FAFB',
-            accentColor: '#4E06B9',
+            accentColor: '#087AD1',
             headerTextColor: '#919191',
             foregroundColor: 'rgb(46, 55, 66)',
             fontFamily: 'Arial',
