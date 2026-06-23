@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { memo } from 'react';
+import { memo, useLayoutEffect, useRef } from 'react';
 
 import {
     AllCommunityModule,
@@ -34,9 +34,13 @@ interface PresetRenderProps {
 }
 
 export const PresetRender = memo(({ theme }: PresetRenderProps) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    useLayoutEffect(() => {
+        containerRef.current?.setAttribute('inert', '');
+    }, []);
     return (
-        <Wrapper className="preset-render" tabIndex={1}>
-            <GridContainer>
+        <Wrapper className="preset-render">
+            <GridContainer ref={containerRef}>
                 <AgGridReact
                     theme={theme}
                     loadThemeGoogleFonts={true}

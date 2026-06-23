@@ -81,16 +81,25 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
     );
 };
 
-const SelectButtonWrapper = styled('div')`
+const SelectButtonWrapper = styled('button')`
+    border: solid 2px transparent !important;
+    background: none !important;
     display: inline-block;
-    margin-right: 12px;
+    text-align: left;
+    margin: 0 12px 8px 0;
+    padding: 0;
     scroll-snap-align: center;
-    margin-bottom: 8px;
 
     // Higher z index than blur container z index
     &:first-of-type,
     &:last-of-type {
         z-index: 3;
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: none;
+        border-color: blue !important;
     }
 `;
 
