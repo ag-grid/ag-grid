@@ -146,6 +146,7 @@ describe('calculated columns - pivot mode', () => {
                 { field: 'gold', aggFunc: 'sum' },
                 { field: 'silver', aggFunc: 'sum' },
                 {
+                    colId: 'calc',
                     headerName: 'Calc',
                     aggFunc: 'sum',
                     calculatedExpression: '[gold]+[silver]',
