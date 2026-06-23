@@ -772,6 +772,7 @@
         right: 0;
         background-color: var(--ag-header-background-color);
         border-bottom: var(--ag-borders-critical) var(--ag-border-color);
+        color: var(--ag-header-foreground-color);
         // do not allow sticky rows to scroll in front of the header
         z-index: 1;
     }
