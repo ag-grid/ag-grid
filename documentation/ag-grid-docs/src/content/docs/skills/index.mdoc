@@ -1,20 +1,21 @@
 ---
-title: 'AG Skills'
+title: 'AG Grid AI Skills'
+description: 'Install and use the AG Grid AI skills to build and maintain grid applications with coding agents such as Claude and Codex.'
 ---
 
-We are building a set of AI skills for developing grid and charts applications using coding agents such as Claude and Codex.
+AG Grid publishes a set of AI skills for building and maintaining grid applications with coding agents such as Claude and Codex.
 
-We currently publish one skill, [ag-update](#using-ag-update), which handles version upgrades. We plan to add more over time.
+The first skill is [`ag-update`](#using-ag-update), which handles version upgrades. We plan to add more over time.
 
 {% note %}
-We are actively developing and releasing new versions of our skills. Feedback is welcome [open an issue](https://github.com/ag-grid/skills/issues) on GitHub.
+We are actively developing and releasing new versions of our skills. Feedback is welcome — [open an issue](https://github.com/ag-grid/skills/issues) on GitHub.
 {% /note %}
 
 ## Installation
 
-A skill is just a folder of files that can be installed in your project repo, or your home directory. Use the skills CLI to copy the files to your computer:
+A skill is a folder of files that you install in your project repository or your home directory. Use the skills CLI to copy the files to your machine:
 
-```
+```bash
 npx skills add ag-grid/skills
 ```
 
@@ -22,26 +23,26 @@ npx skills add ag-grid/skills
 
 Update to the latest version at any time:
 
-```
+```bash
 npx skills update ag-grid/skills
 ```
 
 ## Using ag-update
 
-The skill produces a markdown file detailing all the changes that need to be applied to your project in order to update to a new version.
+The `ag-update` skill analyses your codebase and produces a Markdown file listing the changes needed to move to a new version.
 
-In your coding agent you can invoke the skill and it will analyse your codebase and propose what updates can be applied:
+To let the skill detect everything for you, invoke it from your coding agent:
 
 ```
 Use the ag-update skill
 ```
 
-Alternatively, tell the skill exactly what you want to update:
+Alternatively, tell the skill exactly what to update:
 
 ```
-Use the ag-update skill to update all projects in this monorepo except apps/demo-app to ag grid v36
+Use the ag-update skill to update all projects in this monorepo except apps/demo-app to AG Grid v36
 ```
 
-The skill will analyse your repo and our breaking change documentation and produce a markdown file containing a list of changes to apply. In the case of optional changes you'll be asked whether you want to apply them.
+The skill cross-references your repository against the AG Grid breaking change documentation and writes a Markdown file listing the changes to apply. For optional changes, it asks whether you want to include them.
 
-You can then review the generated file and ask your agent to make an implementation plan based on it.
+Review the generated file, then ask your agent to build an implementation plan from it.
