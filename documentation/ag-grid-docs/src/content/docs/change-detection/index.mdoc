@@ -101,7 +101,7 @@ This property triggers the necessary regroup, sort and filter refresh after the 
 By default, the grid does not flash cells when filtering is applied, even if the value in the aggregated cell has changed.
 To change this behaviour, set the grid property `allowShowChangeAfterFilter=true`.
 
-All examples on this page set `allowShowChangeAfterFilter` to `true` to clearly see value changes while experimenting with filters.
+This only affects cell flashing (`enableCellChangeFlash`). The [Value Getters example](#example-change-detection-and-value-getters) above sets `allowShowChangeAfterFilter=true`, so that flashing remains visible while filtering. The other examples on this page use [animation cell renderers](./change-cell-renderers/) instead of flashing, so the property has no effect on them.
 
 ### Example: Re-Aggregation of Groups
 

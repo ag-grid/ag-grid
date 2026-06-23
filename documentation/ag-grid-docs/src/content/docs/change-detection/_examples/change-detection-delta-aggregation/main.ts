@@ -87,7 +87,6 @@ const gridOptions: GridOptions = {
     },
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
-    allowShowChangeAfterFilter: true,
     getRowId: (params: GetRowIdParams) => String(params.data.id),
     onGridReady: (params) => {
         params.api.setGridOption('rowData', createRowData());
