@@ -206,7 +206,10 @@
     .ag-body-vertical-scroll-start-spacer {
         pointer-events: all;
         opacity: 1;
-        background-color: var(--ag-header-background-color);
+
+        /* --ag-header-background-color might be semi-transparent so apply it on top of the known-opaque background color */
+        background-color: var(--ag-background-color);
+        background-image: linear-gradient(0deg, var(--ag-header-background-color), var(--ag-header-background-color));
     }
 }
 
@@ -276,7 +279,6 @@
     top: 0;
     left: 0;
     right: 0;
-    background-color: var(--ag-header-background-color);
     border-bottom: var(--ag-header-row-border);
 
     /* do not allow sticky rows to scroll in front of the header */

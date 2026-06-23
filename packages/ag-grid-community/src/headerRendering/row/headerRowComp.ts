@@ -20,8 +20,10 @@ export type HeaderRowType = 'group' | 'column' | 'filter';
 export class HeaderRowComp extends Component {
     private headerComps: { [key: HeaderCellCtrlInstanceId]: AbstractHeaderCellComp<AbstractHeaderCellCtrl> } = {};
     private readonly ePinnedLeftCells: HTMLElement;
+    private readonly ePinnedLeftWrapper: HTMLElement;
     private readonly eScrollingCells: HTMLElement;
     private readonly ePinnedRightCells: HTMLElement;
+    private readonly ePinnedRightWrapper: HTMLElement;
     private readonly pinnedWidthsCache: PinnedSectionWidthsCache = {
         pinnedLeftWidth: undefined,
         centerWidth: undefined,
@@ -36,16 +38,31 @@ export class HeaderRowComp extends Component {
             cls: 'ag-grid-pinned-left-cells',
             role: 'presentation',
         });
+        this.ePinnedLeftWrapper = _createElement({
+            tag: 'div',
+            cls: 'ag-grid-container-wrapper',
+            role: 'presentation',
+        });
+        this.ePinnedLeftCells.appendChild(this.ePinnedLeftWrapper);
+
         this.eScrollingCells = _createElement({
             tag: 'div',
             cls: 'ag-grid-scrolling-cells',
             role: 'presentation',
         });
+
         this.ePinnedRightCells = _createElement({
             tag: 'div',
             cls: 'ag-grid-pinned-right-cells',
             role: 'presentation',
         });
+        this.ePinnedRightWrapper = _createElement({
+            tag: 'div',
+            cls: 'ag-grid-container-wrapper',
+            role: 'presentation',
+        });
+        this.ePinnedRightCells.appendChild(this.ePinnedRightWrapper);
+
         this.getGui().append(this.ePinnedLeftCells, this.eScrollingCells, this.ePinnedRightCells);
     }
 
@@ -131,7 +148,7 @@ export class HeaderRowComp extends Component {
             right.sort(sortByLeft);
 
             _setDomChildOrder(
-                this.ePinnedLeftCells,
+                this.ePinnedLeftWrapper,
                 left.map((c) => c.getGui())
             );
             _setDomChildOrder(
@@ -139,7 +156,7 @@ export class HeaderRowComp extends Component {
                 center.map((c) => c.getGui())
             );
             _setDomChildOrder(
-                this.ePinnedRightCells,
+                this.ePinnedRightWrapper,
                 right.map((c) => c.getGui())
             );
         }
@@ -152,10 +169,10 @@ export class HeaderRowComp extends Component {
 
         const pinned = ctrl.column.getPinned();
         if (pinned === 'left') {
-            return this.ePinnedLeftCells;
+            return this.ePinnedLeftWrapper;
         }
         if (pinned === 'right') {
-            return this.ePinnedRightCells;
+            return this.ePinnedRightWrapper;
         }
         return this.eScrollingCells;
     }

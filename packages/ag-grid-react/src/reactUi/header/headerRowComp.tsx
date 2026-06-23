@@ -170,13 +170,17 @@ const HeaderRowComp = ({
     return (
         <div ref={setRef} className={ctrl.headerRowClass} role="row" tabIndex={tabIndex}>
             <div ref={ePinnedLeft} className="ag-grid-pinned-left-cells" role="presentation">
-                {leftCells.map(createCellJsx)}
+                <div className="ag-grid-container-wrapper" role="presentation">
+                    {leftCells.map(createCellJsx)}
+                </div>
             </div>
             <div ref={eScrolling} className="ag-grid-scrolling-cells" role="presentation">
                 {centerCells.map(createCellJsx)}
             </div>
             <div ref={ePinnedRight} className="ag-grid-pinned-right-cells" role="presentation">
-                {rightCells.map(createCellJsx)}
+                <div className="ag-grid-container-wrapper" role="presentation">
+                    {rightCells.map(createCellJsx)}
+                </div>
             </div>
         </div>
     );
