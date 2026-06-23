@@ -28,10 +28,6 @@ export interface FontPanelParams {
     cssIdentifier?: string;
 }
 
-function _capitalise(str: string): string {
-    return str[0].toUpperCase() + str.substring(1).toLowerCase();
-}
-
 export class FontPanel extends Component {
     private chartTranslation: ChartTranslationService;
 
