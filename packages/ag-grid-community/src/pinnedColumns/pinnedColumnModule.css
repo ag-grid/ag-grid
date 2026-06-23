@@ -8,12 +8,12 @@
  * visually on the left
  */
 
-.ag-header-row .ag-grid-pinned-right-cells {
+.ag-header-row .ag-grid-pinned-right-cells .ag-grid-container-wrapper {
     /* rtl:ignore */
     border-left: var(--ag-pinned-column-border);
 }
 
-.ag-header-row .ag-grid-pinned-left-cells {
+.ag-header-row .ag-grid-pinned-left-cells .ag-grid-container-wrapper {
     /* rtl:ignore */
     border-right: var(--ag-pinned-column-border);
 }
