@@ -183,9 +183,11 @@ Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
 ${getProductionCspContent()}
 
-# CORS settings
-Header add Access-Control-Allow-Origin "*"
-Header add Access-Control-Allow-Methods: "GET,POST,OPTIONS,DELETE,PUT"
+# CORS settings — use 'set' (not 'add') so any value inherited from the server vhost is
+# replaced rather than appended. 'add' produced a duplicate Access-Control-Allow-Origin
+# header ('*, *'), which browsers reject as multiple values (RTI-3400).
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Methods "GET,POST,OPTIONS,DELETE,PUT"
 
 Options -Indexes
 `;

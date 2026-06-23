@@ -187,6 +187,13 @@ describe('htaccessRules', () => {
             expect(stagingContent).not.toContain('Access-Control-Allow-Origin');
         });
 
+        it("should use 'Header set' for CORS so the vhost value is replaced, not appended (RTI-3400)", () => {
+            // 'Header add' appends, producing a duplicate Access-Control-Allow-Origin
+            // header ('*, *') that browsers reject. 'set' replaces any inherited value.
+            expect(productionContent).toContain('Header set Access-Control-Allow-Origin "*"');
+            expect(productionContent).not.toContain('Header add Access-Control-Allow-Origin');
+        });
+
         it('should include CSP in both environments', () => {
             expect(productionContent).toContain('Content-Security-Policy');
             expect(stagingContent).toContain('Content-Security-Policy');
