@@ -475,6 +475,11 @@
         }
     }
 
+    .ag-body-horizontal-scroll-viewport,
+    .ag-body-vertical-scroll-viewport {
+        background-color: var(--ag-background-color);
+    }
+
     .ag-grid-scrollable-area.ag-has-bottom-pinned-rows .ag-grid-pinned-bottom-rows-container::before {
         content: '';
         position: absolute;
