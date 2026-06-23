@@ -214,9 +214,10 @@
         }
     }
 
-    // Remove text-input mixin's padding-bottom so the page-number text stays centred
+    // Reduce text-input mixin's padding-bottom so the page-number text stays centred.
+    // Input text was vertically off by 1px all this time in the legacy theme; corrected here.
     .ag-paging-number .ag-input-field-input.ag-number-field-input {
-        padding-bottom: 0;
+        padding-bottom: 1px;
     }
 
     .ag-standard-button {
