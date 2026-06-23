@@ -1,14 +1,7 @@
 import styled from '@emotion/styled';
 import { memo, useLayoutEffect, useRef } from 'react';
 
-import {
-    AllCommunityModule,
-    type ColDef,
-    type GridState,
-    ModuleRegistry,
-    type RowSelectionOptions,
-    type Theme,
-} from 'ag-grid-community';
+import type { ColDef, GridState, RowSelectionOptions, Theme } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 import { defaultRowData } from '../grid-config/grid-data';
