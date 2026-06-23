@@ -50,13 +50,13 @@ A numeric column that is not yet aggregated is promoted to a value column when a
 
 ## Built-in Modes
 
-| Mode                         | Shows each value as               | Applies when                 |
-|------------------------------|-----------------------------------|------------------------------|
-| `percentOfGrandTotal`        | Share of the column's grand total | Value or numeric column      |
-| `percentOfColumnTotal`       | Share of its column total         | Value or numeric column      |
-| `percentOfRowTotal`          | Share of the row total            | Pivoting                     |
-| `percentOfParentRowTotal`    | Share of its parent row group     | Row grouping or tree data    |
-| `percentOfParentColumnTotal` | Share of its parent pivot column  | Pivoting                     |
+| Mode                         | Shows each value as               | Applies when              |
+| ---------------------------- | --------------------------------- | ------------------------- |
+| `percentOfGrandTotal`        | Share of the column's grand total | Value or numeric column   |
+| `percentOfColumnTotal`       | Share of its column total         | Value or numeric column   |
+| `percentOfRowTotal`          | Share of the row total            | Pivoting                  |
+| `percentOfParentRowTotal`    | Share of its parent row group     | Row grouping or tree data |
+| `percentOfParentColumnTotal` | Share of its parent pivot column  | Pivoting                  |
 
 `percentOfGrandTotal` and `percentOfColumnTotal` give the same result outside [Pivot](./pivoting/) mode, where there is a single column total. They diverge only while pivoting: `percentOfGrandTotal` keeps the whole column's grand total as the denominator, whereas `percentOfColumnTotal` uses each pivot column's own total, so every pivot column sums to 100%.
 
