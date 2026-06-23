@@ -47,7 +47,8 @@ const gridOptions = {
 {% gridExampleRunner title="Checkbox Selection" name="checkbox-selection" /%}
 
 {% note %}
-You may pass a function to `rowSelection.checkboxes` to dynamically enable or disable checkboxes for given rows.
+You may pass a function to `rowSelection.checkboxes` to dynamically enable or disable checkboxes for given rows. Unlike the boolean `false`, which removes the checkboxes entirely, a selectable row for which the function returns `false` shows a disabled checkbox rather than removing it.
+
 For rows where both `isRowSelectable` and `rowSelection.checkboxes` return `false`, checkboxes will be hidden, rather than disabled.
 {% /note %}
 
