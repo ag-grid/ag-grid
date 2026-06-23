@@ -16,7 +16,7 @@ export const PresetSelector = memo(() => {
         <Scroller ref={scrollerRef}>
             <Horizontal>
                 {allPresets.map((preset, i) => (
-                    <SelectButton key={i} preset={preset} scrollerRef={scrollerRef} />
+                    <SelectButton key={i} preset={preset} scrollerRef={scrollerRef} themeName={`Preset ${i + 1}`} />
                 ))}
             </Horizontal>
         </Scroller>
@@ -26,11 +26,12 @@ export const PresetSelector = memo(() => {
 type SelectButtonProps = {
     preset: Preset;
     scrollerRef: RefObject<HTMLDivElement>;
+    themeName: string;
 };
 
-const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
+const SelectButton = ({ preset, scrollerRef, themeName }: SelectButtonProps) => {
     const [showDialog, setShowDialog] = useState(false);
-    const wrapperRef = useRef<HTMLDivElement>(null);
+    const wrapperRef = useRef<HTMLButtonElement>(null);
 
     const theme = useMemo(() => {
         let built: Theme = themeQuartz.withPart(colorSchemeLight);
@@ -70,6 +71,7 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
                     selectNewPreset();
                 }}
                 style={{ '--page-background-color': preset.pageBackgroundColor } as CSSProperties}
+                aria-label={themeName}
             >
                 <PresetRender theme={theme} />
             </SelectButtonWrapper>
