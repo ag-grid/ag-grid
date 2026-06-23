@@ -26,6 +26,10 @@ const gridOptions = {
 };
 ```
 
+{% note %}
+User-declared calculated columns must define a `colId` explicitly.
+{% /note %}
+
 {% gridExampleRunner title="Calculated Columns" name="calculated-columns" /%}
 
 Calculated expressions do not need a leading equals sign (`=`). The value inside brackets must match a column `colId`, which defaults to the `field` when no explicit `colId` is provided.

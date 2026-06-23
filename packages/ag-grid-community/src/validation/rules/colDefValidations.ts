@@ -155,6 +155,9 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     // pivot result colDefs add field/valueGetter internally after copying the value column colDef.
                     return null;
                 }
+                if (!colDef.colId) {
+                    return 'colDef.calculatedExpression requires colId to be set on the calculated column.';
+                }
                 if (colDef.field || colDef.valueGetter || colDef.valueSetter) {
                     return 'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.';
                 }
