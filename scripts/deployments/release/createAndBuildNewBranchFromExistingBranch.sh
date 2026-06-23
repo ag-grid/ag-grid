@@ -38,6 +38,10 @@ echo "####### Updating  package.json version.ts files                #########"
 node scripts/deployments/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION $PEER_CHARTS_VERSION
 
 echo "########################################################################"
+echo "############### Updating SECURITY.md supported versions ################"
+npx tsx external/ag-shared/scripts/security/update-security-versions.ts --type latest --version $NEW_GRID_VERSION --file SECURITY.md
+
+echo "########################################################################"
 echo "##################### Updating licenses ################################"
 ./scripts/deployments/prep_and_archive/updateLicenses.sh
 
