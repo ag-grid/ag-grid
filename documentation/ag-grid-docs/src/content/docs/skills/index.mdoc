@@ -1,0 +1,49 @@
+---
+title: 'AG Skills'
+---
+
+We are building a set of AI skills for developing grid and charts applications using coding agents such as Claude and Codex.
+
+We currently publish one skill, [ag-update](#using-ag-update), which handles version upgrades. We plan to add more over time.
+
+{% note %}
+We are actively developing and releasing new versions of our skills. Feedback is welcome [open an issue](https://github.com/ag-grid/skills/issues) on GitHub.
+{% /note %}
+
+## Installation
+
+A skill is just a folder of files that can be installed in your project repo, or your home directory.
+
+The easiest way to install a skill is to ask your agent to copy the files:
+
+```
+Install the ag-update skill from the ag-grid/skills GitHub repo into this folder
+```
+
+## Updating
+
+To update to the latest version, you can ask the skill to update itself. In your coding agent:
+
+```
+Ask the ag-update skill to update itself to the latest version
+```
+
+## Using ag-update
+
+The skill produces a markdown file detailing all the changes that need to be applied to your project in order to update to a new version.
+
+In your coding agent you can invoke the skill and it will analyse your codebase and propose what updates can be applied:
+
+```
+Use the ag-update skill
+```
+
+Alternatively, tell the skill exactly what you want to update:
+
+```
+Use the ag-update skill to update all projects in this monorepo except apps/demo-app to ag grid v36
+```
+
+The skill will analyse your repo and our breaking change documentation and produce a markdown file containing a list of changes to apply. In the case of optional changes you'll be asked whether you want to apply them.
+
+You can then review the generated file and ask your agent to make an implementation plan based on it.

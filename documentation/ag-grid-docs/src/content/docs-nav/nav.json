@@ -165,6 +165,11 @@
                     "type": "item",
                     "title": "MCP Server",
                     "path": "mcp-server"
+                },
+                {
+                    "type": "item",
+                    "title": "Skills",
+                    "path": "skills"
                 }
             ]
         },
