@@ -47,12 +47,14 @@ A numeric column that is not yet aggregated is promoted to a value column when a
 ## Built-in Modes
 
 | Mode                         | Shows each value as                                                        |
-| ---------------------------- | -------------------------------------------------------------------------- |
+|------------------------------|----------------------------------------------------------------------------|
 | `percentOfGrandTotal`        | a share of the column's grand total                                        |
 | `percentOfColumnTotal`       | a share of the column total — while pivoting each pivot column totals 100% |
 | `percentOfRowTotal`          | a share of the row total across the pivot columns (pivoting only)          |
 | `percentOfParentRowTotal`    | a share of its parent group (requires row grouping or tree data)           |
 | `percentOfParentColumnTotal` | a share of its parent pivot column (pivoting only)                         |
+
+`percentOfGrandTotal` and `percentOfColumnTotal` give the same result outside [Pivot](./pivoting/) mode, where there is a single column total. They diverge only while pivoting: `percentOfGrandTotal` keeps the whole column's grand total as the denominator, whereas `percentOfColumnTotal` uses each pivot column's own total, so every pivot column sums to 100%. This matters for a grid the user can toggle in and out of pivot mode: in a sales grid pivoted by year, `percentOfColumnTotal` reads each region as its share of *that year's* sales, then reverts to its share of all-time sales when pivot is switched off — so the percentage always reads against the total in view without the user re-choosing the mode.
 
 A mode that is not meaningful in the current view — for example `percentOfParentRowTotal` on a grid with no grouping — shows `#N/A` rather than a transformed value. In the column menu it appears greyed but stays selectable, so it can be chosen ahead of the grouping or pivoting that activates it.
 
