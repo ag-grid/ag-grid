@@ -31,13 +31,19 @@
         }
 
         .ag-grid-pinned-right-cells {
-            border-left: var(--ag-borders-critical) var(--ag-border-color);
             overflow: visible;
+
+            .ag-grid-container-wrapper {
+                border-left: var(--ag-borders-critical) var(--ag-border-color);
+            }
         }
 
         .ag-grid-pinned-left-cells {
-            border-right: var(--ag-borders-critical) var(--ag-border-color);
             overflow: visible;
+
+            .ag-grid-container-wrapper {
+                border-right: var(--ag-borders-critical) var(--ag-border-color);
+            }
         }
     }
 
