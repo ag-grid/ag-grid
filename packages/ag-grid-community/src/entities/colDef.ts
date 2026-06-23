@@ -908,8 +908,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * column, `true` always shows it; use this when the grid cannot infer that the column returns numbers, for
      * example with a `valueGetter` or custom `aggFunc`. `false` hides the submenu.
      * <br /><br />
-     * This controls menu visibility only. Modes set through `showValuesAs` or Column State still apply and still show
-     * the header indicator unless `showValuesAsDef.suppressHeaderIndicator` is set.
+     * This controls menu visibility only. Modes set through `showValuesAs` or Column State still apply.
      * @default false
      * @agModule `ShowValuesAsModule`
      */

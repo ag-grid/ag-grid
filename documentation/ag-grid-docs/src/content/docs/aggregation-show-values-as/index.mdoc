@@ -11,7 +11,7 @@ A mode can be chosen by the user from the column menu, set on the column definit
 
 {% gridExampleRunner title="Show Values As Overview" name="show-values-as-overview" exampleHeight=540 /%}
 
-This example groups Olympic winners by country and year, then shows raw gold medal totals alongside the same values as a percentage of their parent group. It also shows total medals as a percentage of the grand total.
+This example groups Olympic winners by country and year, then shows raw medal totals alongside the same values as a percentage of their parent group.
 
 ## Enabling Show Values As
 
@@ -60,7 +60,7 @@ A numeric column that is not yet aggregated is promoted to a value column when a
 
 `percentOfGrandTotal` and `percentOfColumnTotal` give the same result outside [Pivot](./pivoting/) mode, where there is a single column total. They diverge only while pivoting: `percentOfGrandTotal` keeps the whole column's grand total as the denominator, whereas `percentOfColumnTotal` uses each pivot column's own total, so every pivot column sums to 100%.
 
-A mode that is not meaningful in the current view — for example `percentOfParentRowTotal` on a grid with no grouping — shows `#N/A` rather than a transformed value. In the column menu it appears greyed but stays selectable, so it can be chosen ahead of the grouping or pivoting that activates it.
+A mode that is not meaningful in the current view — for example `percentOfParentRowTotal` on a grid with no grouping — shows `#N/A` rather than a transformed value, and in the column menu it appears greyed out.
 
 ## Setting the Mode in Code
 
@@ -138,7 +138,7 @@ const gridOptions = {
 
 ## Row Grouping
 
-This example groups Olympic winners by country and year, then shows raw gold medal totals alongside the same values as a percentage of their parent group. It also shows total medals as a percentage of the grand total.
+This example groups Olympic winners by country and year, then shows raw medal totals alongside the same values as a percentage of their parent group.
 
 {% gridExampleRunner title="Show Values As with Row Grouping" name="row-grouping" /%}
 
