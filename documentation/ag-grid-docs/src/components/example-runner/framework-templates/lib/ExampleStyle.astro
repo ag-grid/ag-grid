@@ -1,0 +1,52 @@
+---
+/**
+ * These are the CSS styles shared by all examples.
+ *
+ * Authored as an Astro component (not React) so the Google Fonts <link> routes
+ * through Astro's native pipeline. @astrojs/react@5 post-processes React output
+ * with a regex that strips <link> tags, which silently dropped the IBM Plex Sans
+ * font from built example pages — mirrors the Styles/Extras conversion.
+ */
+interface Props {
+    rootSelector?: string;
+    extraStyles?: string;
+}
+
+const { rootSelector, extraStyles } = Astro.props as Props;
+
+const css = String.raw;
+const styles = css`
+    :root,
+    body${rootSelector ? `, ${rootSelector}` : ''} {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        box-sizing: border-box;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 0;
+        overflow: auto;
+        font-family:
+            -apple-system, 'system-ui', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans',
+            sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    }
+
+    body {
+        padding: 16px;
+        overflow: auto;
+        background-color: transparent;
+    }
+
+    ${extraStyles ? extraStyles : ''}
+`;
+
+const fontHref = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap';
+---
+
+<link href={fontHref} rel="stylesheet" />
+<style is:inline set:html={styles} media="only screen"></style>
