@@ -3,9 +3,7 @@ title: 'AG Grid AI Skills'
 description: 'Install and use the AG Grid AI skills to build and maintain grid applications with coding agents such as Claude and Codex.'
 ---
 
-AG Grid publishes a set of AI skills for building and maintaining grid applications with coding agents such as Claude and Codex.
-
-The first skill is [`ag-update`](#using-ag-update), which handles version upgrades. We plan to add more over time.
+Our [AI skills](https://github.com/ag-grid/skills) give coding agents such as Claude and Codex the expertise to build and maintain your AG Grid and AG Charts applications from our official guidance.
 
 {% note %}
 We are actively developing and releasing new versions of our skills. Feedback is welcome — [open an issue](https://github.com/ag-grid/skills/issues) on GitHub.
@@ -13,7 +11,7 @@ We are actively developing and releasing new versions of our skills. Feedback is
 
 ## Installation
 
-A skill is a folder of files that you install in your project repository or your home directory. Use the skills CLI to copy the files to your machine:
+A skill is a folder of files that you install in your project repository or your home directory. Use the skills CLI to copy the files from the [ag-grid/skills](https://github.com/ag-grid/skills) repository to your machine:
 
 ```bash
 npx skills add ag-grid/skills
@@ -21,28 +19,66 @@ npx skills add ag-grid/skills
 
 ## Updating
 
-Update to the latest version at any time:
+We refine the skills and extend them to cover new AG Grid and AG Charts releases, so update at any time to pick up the latest guidance:
 
 ```bash
 npx skills update ag-grid/skills
 ```
 
-## Using ag-update
+## Skills
 
-The `ag-update` skill analyses your codebase and produces a Markdown file listing the changes needed to move to a new version.
+Each skill teaches your coding agent how to carry out a specific task with AG Grid and AG Charts, following our official guidance. Once installed, invoke a skill by name and the agent works through it for you.
+
+## ag-update
+
+Upgrading across major versions normally means reading every release's breaking changes and working out which ones touch your code. The `ag-update` skill hands that work to your coding agent: it reads the AG Grid migration documentation, checks it against your repository, and produces a Markdown file listing the changes needed to move to a new version.
 
 To let the skill detect everything for you, invoke it from your coding agent:
 
 ```
-Use the ag-update skill
+Use the ag-update skill to upgrade my-app
 ```
 
-Alternatively, tell the skill exactly what to update:
+You can also tell it exactly what to update, down to individual projects and target versions.
 
 ```
 Use the ag-update skill to update all projects in this monorepo except apps/demo-app to AG Grid v36
 ```
 
-The skill cross-references your repository against the AG Grid breaking change documentation and writes a Markdown file listing the changes to apply. For optional changes, it asks whether you want to include them.
+### Example run
 
-Review the generated file, then ask your agent to build an implementation plan from it.
+A typical run, updating a single project to AG Grid v36, looks like this:
+
+```bash
+> Use the ag-update skill to update the performance/typescript project to AG Grid v36
+
+Determining scope → AG_UPDATE_SCOPE.md
+  - performance/typescript
+    - ag-grid-community@35.0.1 -> 36.0.0
+    - ag-charts-community@13.0.1 -> 14.0.0
+
+Determining changes → AG_UPDATE_CHANGES.md
+  Found changes to review before applying.
+
+Apply changes? yes
+  Updated package.json
+  $ pnpm install     ✓
+  $ pnpm typecheck   ✓
+  $ pnpm build       ✓
+
+Done — performance/typescript is on AG Grid 36.0.0 and AG Charts 14.0.0.
+```
+
+`AG_UPDATE_CHANGES.md` contains an entry for each change, grouped by product and version transition, labelled `BREAKING` or `BEHAVIOUR`, and paired with how to mitigate it:
+
+```md
+## Grid v35.x -> v36.x
+
+### BEHAVIOUR: ValidationModule no longer bundled by default
+
+Change: The `ValidationModule` is no longer included in the `AllCommunityModule` and `AllEnterpriseModule` bundles, keeping production bundles smaller by default. Without it, console messages are reduced to an error code and a documentation link.
+
+Mitigation: To restore the full development-time diagnostics, call `enableDevValidations()` before any grid is created.
+```
+
+Review the generated files, then ask the agent to apply the plan. It bumps the versions in `package.json`, reinstalls dependencies, and validates the result against your build, typecheck, and dev server.
