@@ -881,10 +881,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * <br /><br />
      * Shows the column's aggregated value relative to another total, for example as a percentage of the grand total,
      * column total, row total or parent total. This changes only the displayed value; the underlying value used by
-     * `getDataValue`, charts and clipboard data is unchanged.
+     * `getDataValue` and charts is unchanged.
      * <br /><br />
-     * Use a built-in mode name, or the object form `{ type, params, precision }`. Set `null` for no active mode. The
-     * column menu and Column State can still select a mode, and per-column config lives on `showValuesAsDef`.
+     * Use a built-in mode name, or the object form `{ type, params, precision }`. Set `null` for no active mode.
      * @agModule `ShowValuesAsModule`
      */
     showValuesAs?: ShowValuesAsType | ShowValuesAs | null;

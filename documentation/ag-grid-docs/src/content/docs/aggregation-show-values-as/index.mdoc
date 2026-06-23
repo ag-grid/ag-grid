@@ -9,6 +9,10 @@ Show each value as a relative figure, such as a percentage of the grand total or
 
 A mode can be chosen by the user from the column menu, set on the column definition, or applied through [Column State](./column-state/).
 
+{% gridExampleRunner title="Show Values As Overview" name="show-values-as-overview" exampleHeight=540 /%}
+
+This example groups Olympic winners by country and year, then shows raw gold medal totals alongside the same values as a percentage of their parent group. It also shows total medals as a percentage of the grand total.
+
 ## Enabling Show Values As
 
 Show Values As is provided by the enterprise `ShowValuesAsModule` and works with the [Client-Side Row Model](./row-models/#client-side) only.
@@ -46,15 +50,15 @@ A numeric column that is not yet aggregated is promoted to a value column when a
 
 ## Built-in Modes
 
-| Mode                         | Shows each value as                                                        |
-|------------------------------|----------------------------------------------------------------------------|
-| `percentOfGrandTotal`        | a share of the column's grand total                                        |
-| `percentOfColumnTotal`       | a share of its column total — when pivoting, of each pivot column's own total, so every pivot column sums to 100% |
-| `percentOfRowTotal`          | a share of the row total across the pivot columns (pivoting only)          |
-| `percentOfParentRowTotal`    | a share of its parent group (requires row grouping or tree data)           |
-| `percentOfParentColumnTotal` | a share of its parent pivot column (pivoting only)                         |
+| Mode                         | Shows each value as               | Applies when                 |
+|------------------------------|-----------------------------------|------------------------------|
+| `percentOfGrandTotal`        | Share of the column's grand total | Value or numeric column      |
+| `percentOfColumnTotal`       | Share of its column total         | Value or numeric column      |
+| `percentOfRowTotal`          | Share of the row total            | Pivoting                     |
+| `percentOfParentRowTotal`    | Share of its parent row group     | Row grouping or tree data    |
+| `percentOfParentColumnTotal` | Share of its parent pivot column  | Pivoting                     |
 
-`percentOfGrandTotal` and `percentOfColumnTotal` give the same result outside [Pivot](./pivoting/) mode, where there is a single column total. They diverge only while pivoting: `percentOfGrandTotal` keeps the whole column's grand total as the denominator, whereas `percentOfColumnTotal` uses each pivot column's own total, so every pivot column sums to 100%. This matters for a grid the user can toggle in and out of pivot mode: in a sales grid pivoted by year, `percentOfColumnTotal` reads each region as its share of *that year's* sales, then reverts to its share of all-time sales when pivot is switched off - so the percentage always reads against the total in view without the user re-choosing the mode.
+`percentOfGrandTotal` and `percentOfColumnTotal` give the same result outside [Pivot](./pivoting/) mode, where there is a single column total. They diverge only while pivoting: `percentOfGrandTotal` keeps the whole column's grand total as the denominator, whereas `percentOfColumnTotal` uses each pivot column's own total, so every pivot column sums to 100%.
 
 A mode that is not meaningful in the current view — for example `percentOfParentRowTotal` on a grid with no grouping — shows `#N/A` rather than a transformed value. In the column menu it appears greyed but stays selectable, so it can be chosen ahead of the grouping or pivoting that activates it.
 
@@ -130,11 +134,11 @@ const gridOptions = {
 };
 ```
 
-`enableShowValuesAs` controls only the column menu (see [Choosing a Mode from the Column Menu](#choosing-a-mode-from-the-column-menu)). A mode applied through `showValuesAs` or [Column State](./column-state/) still transforms the displayed value and shows the header indicator regardless — suppress the indicator with `showValuesAsDef.suppressHeaderIndicator`.
+`enableShowValuesAs` controls only the column menu (see [Choosing a Mode from the Column Menu](#choosing-a-mode-from-the-column-menu)). A mode applied through `showValuesAs` or [Column State](./column-state/) still transforms the displayed value.
 
 ## Row Grouping
 
-With [Row Grouping](./grouping/), parent and grand totals are available, so a value can be shown as a share of its group or of the whole column.
+This example groups Olympic winners by country and year, then shows raw gold medal totals alongside the same values as a percentage of their parent group. It also shows total medals as a percentage of the grand total.
 
 {% gridExampleRunner title="Show Values As with Row Grouping" name="row-grouping" /%}
 
