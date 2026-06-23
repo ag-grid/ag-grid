@@ -102,8 +102,8 @@
     }
 
     .ag-grid-pinned-bottom-rows-container {
-        .ag-row:not(.ag-header-row, .ag-full-width-row),
-        .ag-row.ag-embedded-full-width-row {
+        .ag-row-last:not(.ag-header-row, .ag-full-width-row),
+        .ag-row-last.ag-embedded-full-width-row {
             > .ag-grid-pinned-left-cells,
             > .ag-grid-scrolling-cells,
             > .ag-grid-pinned-right-cells {
