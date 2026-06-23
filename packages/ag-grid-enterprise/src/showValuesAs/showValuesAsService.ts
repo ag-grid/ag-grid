@@ -633,13 +633,15 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
                     ? only.action
                     : () => this.setColumnShowValuesAs(column, type);
         }
-        if (menuState === 'disabled') {
-            // Greyed AND non-interactive — the menu item is disabled altogether.
+        if (menuState === 'disabled' || (menuState === 'inapplicable' && !isActive)) {
+            // Greyed AND non-interactive. An inapplicable mode stays interactive only while it is the active
+            // selection, so a mode chosen in one view (e.g. pivot) can still be changed away from once that
+            // view is removed.
             item.disabled = true;
         } else if (menuState !== 'enabled') {
-            // `'inapplicable'`, or a `'hidden'` mode kept because it is the active selection: greyed like a
-            // disabled item but still selectable, so it can be chosen ahead of the view that activates it (it
-            // stays dormant — raw value — until then) or changed away from.
+            // The active selection in a view where it no longer applies (or a `'hidden'` mode kept because it
+            // is active): greyed to show it is dormant — raw value / `#N/A` — but still selectable so it can
+            // be changed away from.
             item.cssClasses = ['ag-show-values-as-inapplicable'];
         }
         return item;

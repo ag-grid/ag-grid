@@ -60,7 +60,7 @@ A numeric column that is not yet aggregated is promoted to a value column when a
 
 `percentOfGrandTotal` and `percentOfColumnTotal` give the same result outside [Pivot](./pivoting/) mode, where there is a single column total. They diverge only while pivoting: `percentOfGrandTotal` keeps the whole column's grand total as the denominator, whereas `percentOfColumnTotal` uses each pivot column's own total, so every pivot column sums to 100%.
 
-A mode that is not meaningful in the current view — for example `percentOfParentRowTotal` on a grid with no grouping — shows `#N/A` rather than a transformed value, and in the column menu it appears greyed out.
+A mode that is not meaningful in the current view — for example `percentOfParentRowTotal` on a grid with no grouping — shows `#N/A` rather than a transformed value. In the column menu it appears greyed and cannot be selected. If a mode was already active when the grid left the view that supports it, the selection is kept — its cells show `#N/A` and it stays selectable so it can be changed away from.
 
 ## Setting the Mode in Code
 
