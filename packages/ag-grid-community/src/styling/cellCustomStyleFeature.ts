@@ -4,14 +4,12 @@ import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import { processClassRules } from './stylingUtils';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setupCellCustomStyle(beans: BeanCollection, cellCtrl: CellCtrl): void {
     _applyCellUserStyles(beans, cellCtrl);
     _applyCellClassRules(beans, cellCtrl);
     _applyCellClassesFromColDef(beans, cellCtrl);
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _applyCellClassRules(beans: BeanCollection, cellCtrl: CellCtrl): void {
     const { column, comp } = cellCtrl;
     const colDef = column.colDef;
@@ -30,7 +28,6 @@ export function _applyCellClassRules(beans: BeanCollection, cellCtrl: CellCtrl):
     cellCtrl.customStyleClassRules = cellClassRules;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _applyCellUserStyles(beans: BeanCollection, cellCtrl: CellCtrl): void {
     const colDef = cellCtrl.column.colDef;
     const cellStyle = colDef.cellStyle;
@@ -52,7 +49,6 @@ export function _applyCellUserStyles(beans: BeanCollection, cellCtrl: CellCtrl):
     }
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _applyCellClassesFromColDef(beans: BeanCollection, cellCtrl: CellCtrl): void {
     const { column, comp } = cellCtrl;
     const colDef = column.colDef;

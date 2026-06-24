@@ -17,7 +17,6 @@ function _isDeleteKey(key: string, alwaysReturnFalseOnBackspace = false) {
     return false;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _onCellKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {
     const key = event.key;
 
@@ -242,7 +241,6 @@ function onEscapeKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: Keybo
     });
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _processCellCharacter(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {
     // check this, in case focus is on a (for example) a text field inside the cell,
     // in which cse we should not be listening for these key pressed

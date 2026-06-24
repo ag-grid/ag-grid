@@ -8,7 +8,6 @@ import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import { _suppressCellMouseEvent } from '../renderUtils';
 import type { CellCtrl } from './cellCtrl';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _onCellMouseEvent(
     beans: BeanCollection,
     cellCtrl: CellCtrl,
@@ -106,7 +105,6 @@ function onCellClicked(beans: BeanCollection, cellCtrl: CellCtrl, event: MouseEv
     }
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _onCellDoubleClicked(beans: BeanCollection, cellCtrl: CellCtrl, event: MouseEvent): void {
     const { eventSvc, frameworkOverrides, editSvc, editModelSvc, gos } = beans;
     const { column } = cellCtrl;

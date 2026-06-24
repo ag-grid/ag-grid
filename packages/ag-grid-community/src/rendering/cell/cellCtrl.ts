@@ -110,14 +110,16 @@ export class CellCtrl extends BeanStub {
     public value: any;
     public valueFormatted: any;
 
+    // per-cell custom-style diffing state, owned by the cellStyles functions (styling/cellCustomStyleFeature)
+    public customStyleStaticClasses?: string[];
+    public customStyleClassRules?: CellClassRules;
+
+    public lastIPadMouseClickEvent = 0;
+
     public rangeFeature: ICellRangeFeature | undefined = undefined;
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private notesFeature: INotesFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
-    // per-cell custom-style diffing state, owned by the cellStyles functions (styling/cellCustomStyleFeature)
-    public customStyleStaticClasses?: string[];
-    public customStyleClassRules?: CellClassRules;
-    public lastIPadMouseClickEvent = 0;
     private calculatedColumnCssApplied = false;
     private calculatedColumnHighlightedCssApplied = false;
 

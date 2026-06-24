@@ -2,7 +2,6 @@ import type { BeanCollection } from '../../context/context';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _hasEdits, _hasLeafEdits, _hasPinnedEdits } from './style-utils';
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _applyCellEditStyles(beans: BeanCollection, cellCtrl: CellCtrl): void {
     if (!cellCtrl.comp) {
         return;
