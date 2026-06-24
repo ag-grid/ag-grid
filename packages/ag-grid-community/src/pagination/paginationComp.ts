@@ -5,6 +5,7 @@ import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
+import { PageNumbersComp } from './pageNumbersComp';
 import { PageSizeSelectorComp } from './pageSizeSelectorComp';
 import { PageSummaryComp } from './pageSummaryComp';
 import paginationCompCSS from './paginationComp.css';
@@ -12,7 +13,7 @@ import { RowSummaryComp } from './rowSummaryComp';
 
 const DEFAULT_PANELS: readonly PaginationPanel[] = ['pageSize', 'rowSummary', 'pageSummary'];
 
-type AriaAnnounceKey = 'paginationRow' | 'paginationPage';
+type AriaAnnounceKey = 'paginationRow' | 'paginationPage' | 'paginationPageNumbers';
 
 class PaginationComp extends TabGuardComp implements FocusableContainer {
     private readonly eContent: HTMLElement = RefPlaceholder;
@@ -20,6 +21,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     private pageSizeComp: PageSizeSelectorComp | undefined;
     private rowSummaryComp: RowSummaryComp | undefined;
     private pageSummaryComp: PageSummaryComp | undefined;
+    private pageNumbersComp: PageNumbersComp | undefined;
     private hasVisiblePanel = false;
 
     private allowFocusInnerElement = false;
@@ -27,6 +29,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     private readonly lastAriaAnnounced: Record<AriaAnnounceKey, string> = {
         paginationRow: '',
         paginationPage: '',
+        paginationPageNumbers: '',
     };
 
     constructor() {
@@ -111,6 +114,9 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
                     typeof panel === 'object' && panel.type === 'pageSummary' ? panel.suppressPageInput : undefined;
                 this.pageSummaryComp = this.createManagedBean(new PageSummaryComp(idPrefix, suppressPageInput));
                 this.eContent.appendChild(this.pageSummaryComp.getGui());
+            } else if (panelName === 'pageNumbers') {
+                this.pageNumbersComp = this.createManagedBean(new PageNumbersComp(idPrefix));
+                this.eContent.appendChild(this.pageNumbersComp.getGui());
             }
         }
         this.updateHasVisiblePanel();
@@ -120,11 +126,12 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         this.hasVisiblePanel =
             this.rowSummaryComp != null ||
             this.pageSummaryComp != null ||
+            this.pageNumbersComp != null ||
             this.pageSizeComp?.shouldShowPageSizeSelector() === true;
     }
 
     private rebuildComponents(idPrefix: string): void {
-        for (const comp of [this.pageSizeComp, this.rowSummaryComp, this.pageSummaryComp]) {
+        for (const comp of [this.pageSizeComp, this.rowSummaryComp, this.pageSummaryComp, this.pageNumbersComp]) {
             if (comp) {
                 _removeFromParent(comp.getGui());
             }
@@ -132,6 +139,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         this.pageSizeComp = this.destroyBean(this.pageSizeComp);
         this.rowSummaryComp = this.destroyBean(this.rowSummaryComp);
         this.pageSummaryComp = this.destroyBean(this.pageSummaryComp);
+        this.pageNumbersComp = this.destroyBean(this.pageNumbersComp);
         this.buildComponents(idPrefix);
         this.onPaginationChanged();
         this.announceAriaStatus();
@@ -151,6 +159,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     private onPaginationEvent(): void {
         this.rowSummaryComp?.refresh();
         this.pageSummaryComp?.refresh();
+        this.pageNumbersComp?.refresh();
         this.announceAriaStatus();
     }
 
@@ -160,6 +169,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         }
         this.announceIfChanged(this.rowSummaryComp, 'paginationRow');
         this.announceIfChanged(this.pageSummaryComp, 'paginationPage');
+        this.announceIfChanged(this.pageNumbersComp, 'paginationPageNumbers');
     }
 
     private announceIfChanged(comp: { readonly ariaStatus: string } | undefined, key: AriaAnnounceKey): void {

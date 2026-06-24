@@ -23,11 +23,12 @@ The pagination panel can be styled with CSS, use the class `ag-paging-panel` to 
 
 ## Pagination Panel Layout
 
-The pagination panel is composed of three built-in components that can be individually reordered or hidden via the `paginationPanels` grid option:
+The pagination panel is composed of built-in components that can be individually reordered or hidden via the `paginationPanels` grid option:
 
 - `pageSize` — the page size selector dropdown.
 - `rowSummary` — the row range summary (e.g. `1 to 10 of 50`).
 - `pageSummary` — navigation buttons (first, previous, next, last) with an editable page number input for direct page navigation. Use `{ type: 'pageSummary', suppressPageInput: true }` to show a read-only page number instead.
+- `pageNumbers` — numbered page buttons for direct navigation, with ellipses for large page counts (e.g. `1 … 9 10 11 … 51`). Opt-in: not included in the default panels.
 
 The default order is: `['pageSize', 'rowSummary', 'pageSummary']`.
 
@@ -53,6 +54,25 @@ paginationPanels: [
     'pageSize',
 ]
 ```
+
+### Page Number Navigation
+
+The `pageNumbers` panel renders a numbered button for each page so users can jump directly to a page. It is opt-in — add it to `paginationPanels` to enable it:
+
+```js
+paginationPanels: [
+    'pageNumbers',
+    'pageSize',
+]
+```
+
+The current page is highlighted, and clicking a number navigates to that page. When there are more pages than fit, the panel keeps the first and last page alongside the current page and its neighbours, replacing the gaps with an ellipsis:
+
+- Near the start: `1 2 3 … 10`
+- In the middle: `1 … 4 5 6 … 10`
+- Near the end: `1 … 8 9 10`
+
+{% gridExampleRunner title="Page Number Navigation" name="page-numbers" /%}
 
 ## Number Formats
 

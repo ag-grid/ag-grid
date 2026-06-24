@@ -830,6 +830,7 @@ export type {
     LocaleText,
     MasterSelectionMode,
     MultiRowSelectionOptions,
+    PageNumbersPanelParams,
     PageSizePanelParams,
     PageSummaryPanelParams,
     PaginationPanel,
