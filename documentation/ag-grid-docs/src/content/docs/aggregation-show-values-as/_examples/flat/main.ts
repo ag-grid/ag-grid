@@ -7,22 +7,15 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import {
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    ContextMenuModule,
-    RowGroupingModule,
-    ShowValuesAsModule,
-} from 'ag-grid-enterprise';
+import { ColumnMenuModule, ContextMenuModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     TextFilterModule,
     NumberFilterModule,
+    RowGroupingModule,
     ColumnMenuModule,
     ContextMenuModule,
-    ColumnsToolPanelModule,
-    RowGroupingModule,
     ShowValuesAsModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -46,7 +39,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         floatingFilter: true,
     },
     grandTotalRow: 'bottom',
-    sideBar: 'columns',
 };
 
 // setup the grid after the page has finished loading

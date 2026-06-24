@@ -15,11 +15,11 @@ This example groups Olympic winners by country and year, then shows raw medal to
 
 ## Enabling Show Values As
 
-**Show Values As** requires the `ShowValuesAsModule` and only works with the [Client-Side Row Model](./row-models/#client-side).
+Show Values As requires the `ShowValuesAsModule` and only works with the [Client-Side Row Model](./row-models/#client-side).
 
 ## Choosing a Mode from the Column Menu
 
-The **Show Values As** submenu is off by default. To let the user switch mode from the [Column Menu](./column-menu/), register the `ColumnMenuModule` and set `enableShowValuesAs: true` on the required columns. Switching mode only repaints the affected cells — it does not re-aggregate, re-sort or re-filter.
+The Show Values As submenu is off by default. To let the user switch mode from the [Column Menu](./column-menu/), register the `ColumnMenuModule` and set `enableShowValuesAs: true` on the required columns. Switching mode only repaints the affected cells — it does not re-aggregate, re-sort or re-filter.
 
 The effect depends on where you set it:
 
@@ -129,7 +129,7 @@ const gridOptions = {
 
 ## Row Grouping
 
-This example groups Olympic winners by country and year, then shows raw medal totals alongside the same values as a percentage of their parent group.
+This example groups Olympic winners by country, showing gold medals as a percentage of their parent group and the medal total as a percentage of the column's grand total.
 
 {% gridExampleRunner title="Show Values As with Row Grouping" name="row-grouping" /%}
 

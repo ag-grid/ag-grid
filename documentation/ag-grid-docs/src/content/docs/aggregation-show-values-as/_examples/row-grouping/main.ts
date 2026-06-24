@@ -41,7 +41,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 130,
+        minWidth: 160,
         enableValue: true,
         enableShowValuesAs: true,
         filter: true,
@@ -51,7 +51,11 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 220,
     },
     groupDefaultExpanded: 1,
-    sideBar: 'columns',
+    grandTotalRow: 'bottom',
+    sideBar: {
+        toolPanels: ['columns'],
+        defaultToolPanel: undefined,
+    },
 };
 
 // setup the grid after the page has finished loading
@@ -59,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });

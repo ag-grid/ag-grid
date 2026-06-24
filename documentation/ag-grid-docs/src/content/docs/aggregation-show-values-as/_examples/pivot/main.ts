@@ -30,7 +30,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 130,
+        minWidth: 160,
         enableValue: true,
         enableShowValuesAs: true,
     },
@@ -38,7 +38,10 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 200,
     },
     pivotMode: true,
-    sideBar: 'columns',
+    sideBar: {
+        toolPanels: ['columns'],
+        defaultToolPanel: undefined,
+    },
 };
 
 // setup the grid after the page has finished loading
