@@ -31,24 +31,29 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true },
-        { field: 'athlete', rowGroup: true, hide: true },
-        { field: 'total', headerName: 'Total', aggFunc: 'sum' },
+        { field: 'country', rowGroup: true, hide: true, enableRowGroup: true },
+        { field: 'year', rowGroup: true, hide: true, enableRowGroup: true },
+        { field: 'athlete' },
+        {
+            field: 'total',
+            headerName: 'Total',
+            aggFunc: 'sum',
+            enableValue: true,
+            enableShowValuesAs: true,
+        },
         {
             field: 'total',
             colId: 'totalPercentOfParent',
             headerName: 'Total of Parent',
             aggFunc: 'sum',
             showValuesAs: 'percentOfParentRowTotal',
+            enableValue: true,
+            enableShowValuesAs: true,
         },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 130,
-        enableValue: true,
-        enableRowGroup: true,
-        enableShowValuesAs: true,
     },
     autoGroupColumnDef: {
         minWidth: 220,

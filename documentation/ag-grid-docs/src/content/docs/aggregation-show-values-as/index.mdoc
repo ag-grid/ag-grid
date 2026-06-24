@@ -15,25 +15,16 @@ This example groups Olympic winners by country and year, then shows raw medal to
 
 ## Enabling Show Values As
 
-Show Values As is provided by the enterprise `ShowValuesAsModule` and works with the [Client-Side Row Model](./row-models/#client-side) only.
-
-```ts
-import { ModuleRegistry, ClientSideRowModelModule } from 'ag-grid-community';
-import { ShowValuesAsModule } from 'ag-grid-enterprise';
-
-ModuleRegistry.registerModules([ClientSideRowModelModule, ShowValuesAsModule]);
-```
-
-To let the user switch mode from the [Column Menu](./column-menu/), also register the `ColumnMenuModule` and set `enableShowValuesAs: true` on the columns (or on `defaultColDef`).
+**Show Values As** requires the `ShowValuesAsModule` and only works with the [Client-Side Row Model](./row-models/#client-side).
 
 ## Choosing a Mode from the Column Menu
 
-The **Show Values As** submenu is off by default. Set `enableShowValuesAs: true` to add it to a column's [Column Menu](./column-menu/), listing the available modes so the user can switch at runtime. Switching mode only repaints the affected cells — it does not re-aggregate, re-sort or re-filter.
+The **Show Values As** submenu is off by default. To let the user switch mode from the [Column Menu](./column-menu/), register the `ColumnMenuModule` and set `enableShowValuesAs: true` on the required columns. Switching mode only repaints the affected cells — it does not re-aggregate, re-sort or re-filter.
 
-Where `enableShowValuesAs` is set matters:
+The effect depends on where you set it:
 
-- On `defaultColDef`, the submenu is offered only where the column supports it — a value column (any `aggFunc`) or a numeric column — so it never appears where it can't be used.
-- Directly on a column, it forces the submenu on for any column type. Use this for a column whose numeric value the grid can't detect statically, such as a `valueGetter` or custom `aggFunc` that produces a number from string or object data.
+- **On `defaultColDef`** - the grid applies `enableShowValuesAs` selectively only to columns that have a numeric type or an `aggFunc`.
+- **On a single column** - always applied, whatever the column type. Use this when the column type cannot be inferred, such as a `valueGetter` or custom `aggFunc` that returns a number from string or object data.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -60,7 +51,7 @@ A numeric column that is not yet aggregated is promoted to a value column when a
 
 `percentOfGrandTotal` and `percentOfColumnTotal` give the same result outside [Pivot](./pivoting/) mode, where there is a single column total. They diverge only while pivoting: `percentOfGrandTotal` keeps the whole column's grand total as the denominator, whereas `percentOfColumnTotal` uses each pivot column's own total, so every pivot column sums to 100%.
 
-A mode that is not meaningful in the current view — for example `percentOfParentRowTotal` on a grid with no grouping — shows `#N/A` rather than a transformed value. In the column menu it appears greyed and cannot be selected. If a mode was already active when the grid left the view that supports it, the selection is kept — its cells show `#N/A` and it stays selectable so it can be changed away from.
+A mode that is not meaningful in the current view — for example `percentOfParentRowTotal` on a grid with no grouping — shows `#N/A` rather than a transformed value. In the column menu it appears greyed and cannot be selected. If a mode was already active when the grid left the view that supports it, the selection is kept — its cells show `#N/A`.
 
 ## Setting the Mode in Code
 
