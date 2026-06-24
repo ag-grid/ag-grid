@@ -20,6 +20,7 @@ import type { EditPosition } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
+import { _applyCellEditStyles } from '../styles/cellEditStyleFeature';
 import { _getCellCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
@@ -741,7 +742,7 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
         for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
             cellCtrl.tooltipFeature?.refreshTooltip(true);
             cellCtrl.editorTooltipFeature?.refreshTooltip(true);
-            cellCtrl.editStyleFeature?.applyCellStyles?.();
+            _applyCellEditStyles(beans, cellCtrl);
         }
     }
 }

@@ -33,7 +33,6 @@ import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
-import type { ICellStyleFeature } from '../../interfaces/iCellStyleFeature';
 import type { RefreshCellsParams } from '../../interfaces/iCellsParams';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
@@ -53,8 +52,8 @@ import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
-import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
-import { CellMouseListenerFeature } from './cellMouseListenerFeature';
+import { _handleCellKeyDown, _processCellCharacter } from './cellKeyboardListenerFeature';
+import { _handleCellMouseEvent } from './cellMouseListenerFeature';
 import { CellPositionFeature } from './cellPositionFeature';
 
 const CSS_CELL = 'ag-cell';
@@ -117,9 +116,7 @@ export class CellCtrl extends BeanStub {
     private notesFeature: INotesFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
-    public editStyleFeature: ICellStyleFeature | undefined = undefined;
-    private mouseListener: CellMouseListenerFeature | undefined = undefined;
-    private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
+    public lastIPadMouseClickEvent = 0;
     private calculatedColumnCssApplied = false;
     private calculatedColumnHighlightedCssApplied = false;
 
@@ -172,10 +169,6 @@ export class CellCtrl extends BeanStub {
     private addFeatures(): void {
         const { beans } = this;
         this.customStyleFeature = beans.cellStyles?.createCellCustomStyleFeature(this);
-        this.editStyleFeature = beans.editSvc?.createCellStyleFeature(this);
-        this.mouseListener = new CellMouseListenerFeature(this, beans, this.column);
-
-        this.keyboardListener = new CellKeyboardListenerFeature(this, beans, this.rowNode, this.rowCtrl);
 
         this.enableTooltipFeature();
 
@@ -204,9 +197,6 @@ export class CellCtrl extends BeanStub {
         const context = this.beans.context;
         this.editorTooltipFeature = context.destroyBean(this.editorTooltipFeature);
         this.customStyleFeature = context.destroyBean(this.customStyleFeature);
-        this.editStyleFeature = context.destroyBean(this.editStyleFeature);
-        this.mouseListener = context.destroyBean(this.mouseListener);
-        this.keyboardListener = context.destroyBean(this.keyboardListener);
         this.rangeFeature = context.destroyBean(this.rangeFeature);
         this.rowResizeFeature = context.destroyBean(this.rowResizeFeature);
         this.notesFeature = context.destroyBean(this.notesFeature);
@@ -273,9 +263,8 @@ export class CellCtrl extends BeanStub {
 
         this.positionFeature?.init();
         this.customStyleFeature?.setComp(comp);
-        this.editStyleFeature?.setComp(comp);
+        this.editSvc?.applyCellEditStyles(this);
         this.tooltipFeature?.refreshTooltip();
-        this.keyboardListener?.init();
         this.rangeFeature?.setComp(comp);
         this.rowResizeFeature?.refreshRowResizer();
 
@@ -617,7 +606,6 @@ export class CellCtrl extends BeanStub {
     // + rowRenderer: api softRefreshView() {}
     public refreshCell(params?: RefreshCellsParams & { newData?: boolean }): void {
         const {
-            editStyleFeature,
             customStyleFeature,
             rowCtrl: { rowEditStyleFeature },
             beans: { cellFlashSvc, filterManager },
@@ -677,7 +665,7 @@ export class CellCtrl extends BeanStub {
                 cellFlashSvc?.flashCell(this);
             }
 
-            editStyleFeature?.applyCellStyles?.();
+            this.editSvc?.applyCellEditStyles(this);
             customStyleFeature?.applyUserStyles();
             customStyleFeature?.applyClassesFromColDef();
             rowEditStyleFeature?.applyRowStyles();
@@ -768,15 +756,15 @@ export class CellCtrl extends BeanStub {
     }
 
     public processCharacter(event: KeyboardEvent): void {
-        this.keyboardListener?.processCharacter(event);
+        _processCellCharacter(this.beans, this, event);
     }
 
     public onKeyDown(event: KeyboardEvent): void {
-        this.keyboardListener?.onKeyDown(event);
+        _handleCellKeyDown(this.beans, this, event);
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        this.mouseListener?.onMouseEvent(eventName, mouseEvent);
+        _handleCellMouseEvent(this.beans, this, eventName, mouseEvent);
     }
 
     public getColSpanningList(): AgColumn[] {
