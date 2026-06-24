@@ -4,8 +4,10 @@ import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
+import { _getPageNumberItems } from './pageNumberItems';
+import pageNumbersCompCSS from './pageNumbersComp.css';
 import type { PaginationService } from './paginationService';
-import { _formatPaginationNumber, _getPageNumberItems } from './paginationUtils';
+import { _formatPaginationNumber } from './paginationUtils';
 
 const PAGE_ATTR = 'data-page';
 
@@ -30,6 +32,7 @@ export class PageNumbersComp extends Component {
     constructor(idPrefix: string) {
         super();
         this.idPrefix = idPrefix;
+        this.registerCSS(pageNumbersCompCSS);
     }
 
     public wireBeans(beans: BeanCollection): void {

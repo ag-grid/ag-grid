@@ -5,7 +5,7 @@ import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
-import { PageNumbersComp } from './pageNumbersComp';
+import type { PageNumbersComp } from './pageNumbersComp';
 import { PageSizeSelectorComp } from './pageSizeSelectorComp';
 import { PageSummaryComp } from './pageSummaryComp';
 import paginationCompCSS from './paginationComp.css';
@@ -115,8 +115,11 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
                 this.pageSummaryComp = this.createManagedBean(new PageSummaryComp(idPrefix, suppressPageInput));
                 this.eContent.appendChild(this.pageSummaryComp.getGui());
             } else if (panelName === 'pageNumbers') {
-                this.pageNumbersComp = this.createManagedBean(new PageNumbersComp(idPrefix));
-                this.eContent.appendChild(this.pageNumbersComp.getGui());
+                const comp = this.beans.registry.createDynamicBean<PageNumbersComp>('pageNumbers', true, idPrefix);
+                if (comp) {
+                    this.pageNumbersComp = this.createManagedBean(comp);
+                    this.eContent.appendChild(this.pageNumbersComp.getGui());
+                }
             }
         }
         this.updateHasVisiblePanel();

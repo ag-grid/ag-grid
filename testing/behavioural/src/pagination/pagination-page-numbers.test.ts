@@ -1,5 +1,11 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, PaginationModule, ValidationModule, getGridElement } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    PageNumbersModule,
+    PaginationModule,
+    ValidationModule,
+    getGridElement,
+} from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
 
@@ -41,7 +47,7 @@ function getPageButton(api: ReturnType<typeof createPaginationGrid>, text: strin
 
 describe('pagination pageNumbers panel', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, PaginationModule, ValidationModule],
+        modules: [ClientSideRowModelModule, PaginationModule, PageNumbersModule, ValidationModule],
     });
 
     beforeEach(() => {

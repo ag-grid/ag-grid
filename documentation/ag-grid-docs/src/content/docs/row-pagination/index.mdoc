@@ -57,7 +57,13 @@ paginationPanels: [
 
 ### Page Number Navigation
 
-The `pageNumbers` panel renders a numbered button for each page so users can jump directly to a page. It is opt-in — add it to `paginationPanels` to enable it:
+The `pageNumbers` panel renders a numbered button for each page so users can jump directly to a page. It is opt-in — register the `PageNumbersModule` and add the panel to `paginationPanels` to enable it:
+
+```js
+import { PageNumbersModule } from 'ag-grid-community';
+
+ModuleRegistry.registerModules([PageNumbersModule]);
+```
 
 ```js
 paginationPanels: [

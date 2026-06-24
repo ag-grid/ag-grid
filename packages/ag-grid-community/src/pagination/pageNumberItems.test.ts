@@ -1,4 +1,4 @@
-import { _getPageNumberItems } from './paginationUtils';
+import { _getPageNumberItems } from './pageNumberItems';
 
 describe('_getPageNumberItems', () => {
     describe('no truncation when all pages fit contiguously', () => {
