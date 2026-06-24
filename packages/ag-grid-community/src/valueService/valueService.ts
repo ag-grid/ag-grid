@@ -11,6 +11,7 @@ import type { AgColumn } from '../entities/agColumn';
 import { _resolvePivotColumnForRow } from '../entities/agColumn';
 import type {
     ColDef,
+    ColKey,
     KeyCreatorParams,
     ValueFormatterParams,
     ValueGetterParams,
@@ -853,7 +854,7 @@ export class ValueService extends BeanStub implements NamedBean {
             node: rowNode,
             column: column,
             colDef: column.colDef,
-            getValue: (field) => this.getValueCallback(rowNode, field),
+            getValue: (colKey) => this.getValueCallback(rowNode, colKey),
         };
 
         const result =
@@ -865,8 +866,8 @@ export class ValueService extends BeanStub implements NamedBean {
         return result;
     }
 
-    private getValueCallback(node: IRowNode, field: string): any {
-        const otherColumn = this.colModel.getCol(field);
+    private getValueCallback(node: IRowNode, colKey: ColKey): any {
+        const otherColumn = this.colModel.getCol(colKey);
         return otherColumn ? this.getValueFromData(_resolvePivotColumnForRow(otherColumn, node), node) : null;
     }
 

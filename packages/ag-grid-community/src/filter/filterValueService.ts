@@ -35,8 +35,8 @@ export class FilterValueService extends BeanStub implements NamedBean {
                 node: rowNode,
                 column,
                 colDef,
-                getValue: (field) => {
-                    const col = colModel.getCol(field);
+                getValue: (colKey) => {
+                    const col = colModel.getCol(colKey);
                     // arbitrary user-requested field: may be a pivot result column, so resolve it
                     return col ? valueSvc.getValueFromData(_resolvePivotColumnForRow(col, rowNode), rowNode) : null;
                 },

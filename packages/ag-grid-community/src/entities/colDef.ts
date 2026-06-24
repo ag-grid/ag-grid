@@ -1240,8 +1240,8 @@ export interface ValueGetterParams<TData = any, TValue = any, TContext = any> ex
     TValue,
     TContext
 > {
-    /** A utility method for getting other column values */
-    getValue: (field: string) => any;
+    /** A utility method for getting other column values via their `ColKey` */
+    getValue: (colKey: ColKey<TData>) => any;
 }
 export type ValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: ValueGetterParams<TData, TValue, TContext>
