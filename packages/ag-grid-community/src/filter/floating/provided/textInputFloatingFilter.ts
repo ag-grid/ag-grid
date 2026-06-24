@@ -42,9 +42,17 @@ export abstract class TextInputFloatingFilter<
     protected override defaultDebounceMs: number = 500;
 
     protected onModelUpdated(model: M): void {
+        const { inputSvc } = this;
         this.setLastTypeFromModel(model);
         this.setEditable(this.canWeEditAfterModelFromParentFilter(model));
-        this.inputSvc.setValue(this.filterModelFormatter.getModelAsString(model));
+
+        const modelString = this.filterModelFormatter.getModelAsString(model);
+        // Don't clobber a keystroke the user is mid-typing: an interleaving non-floating
+        // filter-changed cycle can deliver a stale model while the input is focused.
+        if (inputSvc.isFocused() && inputSvc.getValue() !== modelString) {
+            return;
+        }
+        inputSvc.setValue(modelString);
     }
 
     protected override setParams(params: TParams): void {

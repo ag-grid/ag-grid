@@ -1,3 +1,5 @@
+import { _getActiveDomElement } from 'ag-stack';
+
 import { AgInputNumberField } from '../../../agWidgets/agInputNumberField';
 import { AgInputTextField } from '../../../agWidgets/agInputTextField';
 import { BeanStub } from '../../../context/beanStub';
@@ -42,6 +44,10 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     public setAutoComplete(autoComplete: boolean | string): void {
         this.eNumberInput.setAutoComplete(autoComplete);
         this.eTextInput.setAutoComplete(autoComplete);
+    }
+
+    public isFocused(): boolean {
+        return _getActiveDomElement(this.beans) === this.getActiveInputElement().getInputElement();
     }
 
     public getValue(): string | null | undefined {
