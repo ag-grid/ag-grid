@@ -9,7 +9,7 @@ import { _suppressCellMouseEvent } from '../renderUtils';
 import type { CellCtrl } from './cellCtrl';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _handleCellMouseEvent(
+export function _onCellMouseEvent(
     beans: BeanCollection,
     cellCtrl: CellCtrl,
     eventName: string,

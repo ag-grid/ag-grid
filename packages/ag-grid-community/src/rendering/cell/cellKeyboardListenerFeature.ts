@@ -18,7 +18,7 @@ function _isDeleteKey(key: string, alwaysReturnFalseOnBackspace = false) {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _handleCellKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {
+export function _onCellKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {
     const key = event.key;
 
     // delegate Enter on Row Number cells to the RowNumbersService

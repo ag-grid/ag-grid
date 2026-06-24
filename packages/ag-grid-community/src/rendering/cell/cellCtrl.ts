@@ -51,8 +51,8 @@ import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
-import { _handleCellKeyDown, _processCellCharacter } from './cellKeyboardListenerFeature';
-import { _handleCellMouseEvent } from './cellMouseListenerFeature';
+import { _onCellKeyDown, _processCellCharacter } from './cellKeyboardListenerFeature';
+import { _onCellMouseEvent } from './cellMouseListenerFeature';
 import { CellPositionFeature } from './cellPositionFeature';
 
 const CSS_CELL = 'ag-cell';
@@ -758,11 +758,11 @@ export class CellCtrl extends BeanStub {
     }
 
     public onKeyDown(event: KeyboardEvent): void {
-        _handleCellKeyDown(this.beans, this, event);
+        _onCellKeyDown(this.beans, this, event);
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        _handleCellMouseEvent(this.beans, this, eventName, mouseEvent);
+        _onCellMouseEvent(this.beans, this, eventName, mouseEvent);
     }
 
     public getColSpanningList(): AgColumn[] {
