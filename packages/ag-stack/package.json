@@ -60,5 +60,8 @@
     "blob-polyfill": "^9.0.20240710",
     "compression-streams-polyfill": "^0.1.7",
     "text-encoding-polyfill": "^0.6.7"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
