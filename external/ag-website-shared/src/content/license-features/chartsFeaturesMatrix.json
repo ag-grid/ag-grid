@@ -7,7 +7,7 @@
             {
                 "label": {
                     "name": "AG Grid Enterprise ",
-                    "link": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/"
+                    "link": "./community-vs-enterprise/"
                 },
                 "community": false,
                 "enterprise": false,
@@ -16,7 +16,7 @@
             {
                 "label": {
                     "name": "Integrated Charts",
-                    "link": "https://www.ag-grid.com/react-data-grid/integrated-charts/"
+                    "link": "./integrated-charts/"
                 },
                 "community": false,
                 "enterprise": false,
