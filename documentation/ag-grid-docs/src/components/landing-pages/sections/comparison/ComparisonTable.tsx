@@ -59,10 +59,10 @@ const FeatureIcon: React.FC<{ value: boolean | FeatureValue }> = ({ value }) => 
 };
 
 const FeatureLabel: React.FC<{ item: FeatureItem }> = ({ item }) => {
+    const framework = useFrameworkFromStore();
     const name = item.label?.name || item.name || '';
     const link = item.label?.link;
     if (link) {
-        const framework = useFrameworkFromStore();
         const url = urlWithPrefix({ url: link, framework });
 
         return (
