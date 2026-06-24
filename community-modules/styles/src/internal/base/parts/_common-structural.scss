@@ -771,6 +771,10 @@
         background-color: var(--ag-data-background-color);
     }
 
+    .ag-header-row::after {
+        background-color: var(--ag-header-background-color);
+    }
+
     .ag-header {
         position: absolute;
         top: 0;

@@ -19,6 +19,10 @@ A skill is a folder of files that you install in your project repository or your
 npx skills add ag-grid/skills
 ```
 
+{% note %}
+In order for `npx skills add` to install skills into your repo, the config folder for your agent must already exist, e.g. `.claude/` or `.codex/` in your repo root. This is normally created the first time you run the agent in the repo.
+{% /note %}
+
 ### Updating
 
 We refine the skills and extend them to cover new AG Grid and AG Charts releases, so update at any time to pick up the latest guidance:
