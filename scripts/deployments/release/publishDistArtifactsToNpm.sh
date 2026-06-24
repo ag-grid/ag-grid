@@ -27,4 +27,4 @@ TAG="${1:-latest}"
 
 cd dist/artifacts/contents/packages/ag-stack/package
 echo "PUBLISHING TO NPM: ag-stack"
-npm publish . --tag $TAG --provenance
+npm publish --tag $TAG --provenance
