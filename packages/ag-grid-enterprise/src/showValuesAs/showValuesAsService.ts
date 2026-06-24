@@ -633,15 +633,14 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
                     ? only.action
                     : () => this.setColumnShowValuesAs(column, type);
         }
-        if (menuState === 'disabled' || (menuState === 'inapplicable' && !isActive)) {
-            // Greyed AND non-interactive. An inapplicable mode stays interactive only while it is the active
-            // selection, so a mode chosen in one view (e.g. pivot) can still be changed away from once that
-            // view is removed.
+        if (menuState === 'disabled' || menuState === 'inapplicable') {
+            // Greyed AND non-interactive — a mode that does not apply in the current view cannot be selected.
+            // An active selection that has become inapplicable still shows checked but is changed away from by
+            // choosing an applicable mode.
             item.disabled = true;
         } else if (menuState !== 'enabled') {
-            // The active selection in a view where it no longer applies (or a `'hidden'` mode kept because it
-            // is active): greyed to show it is dormant — raw value / `#N/A` — but still selectable so it can
-            // be changed away from.
+            // A `'hidden'` mode kept because it is the active selection: greyed to show it is dormant — raw
+            // value / `#N/A` — but still selectable so it stays visible and can be changed away from.
             item.cssClasses = ['ag-show-values-as-inapplicable'];
         }
         return item;
@@ -703,7 +702,7 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
     private buildApplicabilityParams(column: AgColumn): ShowValuesAsApplicabilityParams {
         // `undefined` ⇒ that hierarchy's module is not registered; `false` ⇒ registered but inactive. The `hasX`
         // flags distinguish the two, letting a custom `applicability` callback hide a mode its module can't support.
-        // The built-ins never hide: they stay inapplicable-but-selectable in either case.
+        // The built-ins never hide: they stay greyed and non-interactive in either case.
         const groupStage = this.groupStage;
         return _addGridCommonParams(this.gos, {
             column,

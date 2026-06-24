@@ -398,6 +398,32 @@ describe('showValuesAs column menu', () => {
         expect(api.getColumnState().find((s) => s.colId === 'amount')?.showValuesAs).toBe('percentOfGrandTotal');
     });
 
+    test('an active built-in mode that becomes inapplicable is greyed, checked, and non-interactive', async () => {
+        // Flat grid with an inapplicable mode active (e.g. left over from a grouped view). The menu shows it
+        // checked but disabled — it is changed away from by choosing an applicable mode, not by re-selecting it.
+        const api = await gridMgr.createGridAndWait('sva-menu-inapplicable-active', {
+            columnDefs: [
+                { field: 'country' },
+                { field: 'amount', aggFunc: 'sum', showValuesAs: 'percentOfParentRowTotal', enableShowValuesAs: true },
+            ],
+            getRowId: ({ data }) => data.id,
+            rowData: [
+                { id: '1', country: 'A', amount: 25 },
+                { id: '2', country: 'B', amount: 75 },
+            ],
+        });
+        await openShowValuesAsSubmenu(api, 'amount');
+
+        const active = menuOption('% of Parent Row Total');
+        expect(active).toBeTruthy();
+        expect(active!.classList.contains('ag-menu-option-disabled')).toBe(true); // greyed AND non-interactive
+
+        // Clicking the active inapplicable mode does nothing — it stays put, to be changed away from.
+        active!.click();
+        await asyncSetTimeout(10);
+        expect(api.getColumnState().find((s) => s.colId === 'amount')?.showValuesAs).toBe('percentOfParentRowTotal');
+    });
+
     test('built-in modes stay inapplicable-and-non-interactive even when their required module is not registered', async () => {
         // This suite registers RowGrouping but not Pivot/TreeData. Built-in modes are never hidden for being in the
         // wrong view — pivot-axis modes show greyed-and-disabled here too, so the feature stays discoverable.

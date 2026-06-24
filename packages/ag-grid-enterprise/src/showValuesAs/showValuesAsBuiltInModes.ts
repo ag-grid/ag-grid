@@ -39,12 +39,12 @@ const showValuesAsPercentFormatter = (params: ShowValuesAsFormatterParams): stri
 const num = (p: ShowValuesAsTransformParams): number | null => numericOrNull(p.rawValue);
 
 /** Parent-row modes need a row hierarchy (grouping or tree data). Built-ins are never hidden — inapplicable (greyed
- *  but still selectable) otherwise, so one can be chosen ahead of the grouping that activates it. */
+ *  and non-selectable) otherwise. */
 const whenParentHierarchy = (p: ShowValuesAsApplicabilityParams): ShowValuesAsApplicability =>
     p.rowGroupActive || p.treeData ? true : 'inapplicable';
 
-/** Pivot-axis modes need a pivot column axis. Built-ins are never hidden — inapplicable (greyed-but-selectable) when
- *  not pivoting. */
+/** Pivot-axis modes need a pivot column axis. Built-ins are never hidden — inapplicable (greyed and non-selectable)
+ *  when not pivoting. */
 const whenPivot = (p: ShowValuesAsApplicabilityParams): ShowValuesAsApplicability =>
     p.pivotActive ? true : 'inapplicable';
 
