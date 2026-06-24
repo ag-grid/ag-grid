@@ -1,6 +1,63 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-ASTRO-17356189:
+    - astro@6.1.9:
+        reason: >-
+            The website is a static site, so server-side vulns are not relevant
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:45:27.571Z
+  SNYK-JS-VITE-17353904:
+    - astro@6.1.9 > vite@7.3.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:33:35.225Z
+    - '@astrojs/react@5.0.4 > vite@7.3.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:33:35.222Z
+    - vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:33:35.217Z
+    - vitest@2.1.9 > vite@5.4.21:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:33:35.216Z
+  SNYK-JS-UNDICI-17372697:
+    - cheerio@1.2.0 > undici@7.25.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:31:25.836Z
+  SNYK-JS-UNDICI-17372667:
+    - cheerio@1.2.0 > undici@7.25.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:28:09.933Z
+  SNYK-JS-UNDICI-17372758:
+    - cheerio@1.2.0 > undici@7.25.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:05:22.683Z
+  SNYK-JS-UNDICI-17372754:
+    - cheerio@1.2.0 > undici@7.25.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:57.282Z
+  SNYK-JS-UNDICI-17372658:
+    - cheerio@1.2.0 > undici@7.25.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T09:07:25.538Z
   SNYK-JS-AXIOS-17172681:
     - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
         reason: >-

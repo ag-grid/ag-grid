@@ -1,6 +1,341 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-WS-17344547:
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > ws@8.18.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:36:02.253Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/enhanced@0.9.1 > @module-federation/dts-plugin@0.9.1 > ws@8.18.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:36:02.249Z
+    - '@axe-core/cli@4.11.2 > selenium-webdriver@4.41.0 > ws@8.20.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:36:02.239Z
+  SNYK-JS-VITE-17353904:
+    - vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:33:35.214Z
+    - vitest@2.1.9 > vite@5.4.21:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:33:35.212Z
+    - vite@5.4.21:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:33:35.201Z
+  SNYK-JS-UNDICI-17372697:
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.25.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:31:25.833Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > undici@7.24.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:31:25.821Z
+  SNYK-JS-UNDICI-17372667:
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.25.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:28:09.930Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > undici@7.24.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:28:09.919Z
+  SNYK-JS-UNDICI-17372758:
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.25.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:05:22.680Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > undici@7.24.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:05:22.677Z
+    - '@lavamoat/allow-scripts@5.0.2 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.25.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:05:22.650Z
+  SNYK-JS-UNDICI-17372754:
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.25.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:57.279Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > undici@7.24.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:57.275Z
+    - '@lavamoat/allow-scripts@5.0.2 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.25.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:57.241Z
+  SNYK-JS-TMP-17315641:
+    - '@nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.592Z
+    - '@nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.591Z
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.589Z
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.587Z
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.586Z
+    - '@nx/web@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.584Z
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.582Z
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.581Z
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.579Z
+    - '@nx/rollup@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.578Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.576Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.575Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.573Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.572Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.570Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.566Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.564Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.563Z
+    - '@nx/react@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.561Z
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.559Z
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.557Z
+    - '@nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.555Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.553Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.551Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.549Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.547Z
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.545Z
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.543Z
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.541Z
+    - '@nx/eslint@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.539Z
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.537Z
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.531Z
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.530Z
+    - '@nx/esbuild@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.528Z
+    - '@axe-core/cli@4.11.2 > selenium-webdriver@4.41.0 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.526Z
+    - patch-package@8.0.1 > tmp@0.2.5:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.523Z
+    - nx@20.8.4 > tmp@0.2.5:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.520Z
+    - '@nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.502Z
+  SNYK-JS-HONO-17356430:
+    - rulesync@8.8.1 > fastmcp@3.34.0 > hono@4.11.9:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T10:56:31.481Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T10:56:31.479Z
+    - rulesync@8.8.1 > @modelcontextprotocol/sdk@1.27.1 > hono@4.11.7:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T10:56:31.477Z
+    - '@modelcontextprotocol/server-sequential-thinking@2025.12.18 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T10:56:31.458Z
+  SNYK-JS-HONO-17356405:
+    - rulesync@8.8.1 > fastmcp@3.34.0 > hono@4.11.9:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T10:55:46.780Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T10:55:46.778Z
+    - rulesync@8.8.1 > @modelcontextprotocol/sdk@1.27.1 > hono@4.11.7:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T10:55:46.775Z
+    - '@modelcontextprotocol/server-sequential-thinking@2025.12.18 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T10:55:46.765Z
+  SNYK-JS-UNDICI-17372658:
+    - rulesync@8.8.1 > fastmcp@3.34.0 > undici@7.25.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T09:07:25.536Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > @module-federation/cli@2.3.3 > @module-federation/dts-plugin@2.3.3 > undici@7.24.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T09:07:25.534Z
+    - '@lavamoat/allow-scripts@5.0.2 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.25.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T09:07:25.529Z
   SNYK-JS-AXIOS-17172681:
     - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
         reason: >-

@@ -1,6 +1,42 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-ANGULARCORE-17353317:
+    - '@angular/core@21.2.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T12:00:05.786Z
+  SNYK-JS-ANGULARCOMPILER-17356585:
+    - '@angular/compiler@21.2.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:59:27.916Z
+  SNYK-JS-ANGULARCOMMON-17356486:
+    - '@angular/common@21.2.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:46:17.481Z
+  SNYK-JS-ANGULARCOMMON-17353316:
+    - '@angular/common@21.2.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:45:51.986Z
+  SNYK-JS-WS-17344547:
+    - jest-environment-jsdom@30.3.0 > jsdom@26.1.0 > ws@8.18.3:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:36:02.263Z
+  SNYK-JS-ANGULARCOMMON-17356555:
+    - '@angular/common@21.2.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T10:53:37.136Z
   SNYK-JS-BRACEEXPANSION-15789759:
     - 'jest@30.3.0 > @jest/core@30.3.0 > @jest/reporters@30.3.0 > @jest/transform@30.3.0 > babel-plugin-istanbul@7.0.1 > test-exclude@6.0.0 > glob@7.2.3 > minimatch@3.1.2 > brace-expansion@1.1.12':
         reason: Used in build & dev - not included in final production build

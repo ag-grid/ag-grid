@@ -1,6 +1,12 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-VITE-17353904:
+    - vite@5.4.21:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:33:35.208Z
   SNYK-JS-BRACEEXPANSION-15789759:
     - npm-run-all@4.1.5 > minimatch@3.1.2 > brace-expansion@1.1.12:
         reason: Used in build & dev - not included in final production build

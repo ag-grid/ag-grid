@@ -1,6 +1,89 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-ANGULARCORE-17353317:
+    - '@angular/core@20.3.21':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T12:00:05.768Z
+  SNYK-JS-ANGULARCOMPILER-17356585:
+    - '@angular/compiler@20.3.21':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:59:27.883Z
+  SNYK-JS-ANGULARCOMMON-17356486:
+    - '@angular/common@20.3.21':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:46:17.470Z
+  SNYK-JS-ANGULARCOMMON-17353316:
+    - '@angular/common@20.3.21':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:45:51.978Z
+  SNYK-JS-WS-17344547:
+    - karma@6.4.4 > socket.io@4.8.1 > socket.io-adapter@2.5.5 > ws@8.17.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:36:02.261Z
+    - karma@6.4.4 > socket.io@4.8.1 > engine.io@6.6.4 > ws@8.17.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:36:02.259Z
+  SNYK-JS-VITE-17353904:
+    - '@angular/build@20.3.26 > vite@7.3.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:33:35.227Z
+  SNYK-JS-UNDICI-17372758:
+    - '@angular/cli@20.3.26 > pacote@21.0.4 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.25.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:05:22.686Z
+  SNYK-JS-UNDICI-17372754:
+    - '@angular/cli@20.3.26 > pacote@21.0.4 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.25.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:57.287Z
+  SNYK-JS-TMP-17315641:
+    - karma@6.4.4 > tmp@0.2.5:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.594Z
+  SNYK-JS-HONO-17356430:
+    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T10:56:31.484Z
+  SNYK-JS-HONO-17356405:
+    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T10:55:46.784Z
+  SNYK-JS-ANGULARCOMMON-17356555:
+    - '@angular/common@20.3.21':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T10:53:37.126Z
+  SNYK-JS-UNDICI-17372658:
+    - '@angular/cli@20.3.26 > pacote@21.0.4 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.25.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T09:07:25.543Z
   SNYK-JS-AJV-15274295:
     - 'ng-packagr@20.3.2 > ajv@8.17.1':
         reason: Angular build dependency - not included in final production build

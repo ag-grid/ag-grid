@@ -1,6 +1,12 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-TMP-17315641:
+    - '@nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-06-24T11:04:22.511Z
   SNYK-JS-BRACEEXPANSION-15789759:
     - glob@8.0.3 > minimatch@5.1.6 > brace-expansion@2.0.2:
         reason: Used in build & dev - not included in final production build
