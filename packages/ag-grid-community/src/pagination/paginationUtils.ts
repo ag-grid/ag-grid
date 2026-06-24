@@ -15,7 +15,7 @@ export function _formatPaginationNumber(
     return _formatNumberCommas(value, getLocaleTextFunc);
 }
 
-export type PageNumberItem = number | 'ellipsis';
+type PageNumberItem = number | 'ellipsis';
 
 // Above this many pages the truncated form (first … current±1 … last) is shorter than
 // listing every page, so ellipses only start appearing once the count exceeds it.
