@@ -17,7 +17,7 @@ import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { EditService } from '../../edit/editService';
 import type { AgColumn } from '../../entities/agColumn';
-import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
+import type { CellClassRules, CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
@@ -43,7 +43,6 @@ import type { ILoadingCellRendererParams } from '../../main-umd-noStyles';
 import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { CSS_CALCULATED_COLUMN, CSS_CALCULATED_COLUMN_HIGHLIGHTED } from '../../styling/calculatedColumnCss';
-import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _isCellFocusSuppressed } from '../../utils/gridFocus';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
@@ -115,7 +114,9 @@ export class CellCtrl extends BeanStub {
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private notesFeature: INotesFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
-    private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
+    // per-cell custom-style diffing state, owned by the cellStyles functions (styling/cellCustomStyleFeature)
+    public customStyleStaticClasses?: string[];
+    public customStyleClassRules?: CellClassRules;
     public lastIPadMouseClickEvent = 0;
     private calculatedColumnCssApplied = false;
     private calculatedColumnHighlightedCssApplied = false;
@@ -168,7 +169,6 @@ export class CellCtrl extends BeanStub {
 
     private addFeatures(): void {
         const { beans } = this;
-        this.customStyleFeature = beans.cellStyles?.createCellCustomStyleFeature(this);
 
         this.enableTooltipFeature();
 
@@ -196,7 +196,6 @@ export class CellCtrl extends BeanStub {
     private removeFeatures(): void {
         const context = this.beans.context;
         this.editorTooltipFeature = context.destroyBean(this.editorTooltipFeature);
-        this.customStyleFeature = context.destroyBean(this.customStyleFeature);
         this.rangeFeature = context.destroyBean(this.rangeFeature);
         this.rowResizeFeature = context.destroyBean(this.rowResizeFeature);
         this.notesFeature = context.destroyBean(this.notesFeature);
@@ -262,7 +261,7 @@ export class CellCtrl extends BeanStub {
         this.refreshAriaColIndex();
 
         this.positionFeature?.init();
-        this.customStyleFeature?.setComp(comp);
+        this.beans.cellStyles?.setupCellCustomStyle(this);
         this.editSvc?.applyCellEditStyles(this);
         this.tooltipFeature?.refreshTooltip();
         this.rangeFeature?.setComp(comp);
@@ -606,9 +605,8 @@ export class CellCtrl extends BeanStub {
     // + rowRenderer: api softRefreshView() {}
     public refreshCell(params?: RefreshCellsParams & { newData?: boolean }): void {
         const {
-            customStyleFeature,
             rowCtrl: { rowEditStyleFeature },
-            beans: { cellFlashSvc, filterManager },
+            beans: { cellFlashSvc, filterManager, cellStyles },
             column,
             comp,
             suppressRefreshCell,
@@ -666,8 +664,8 @@ export class CellCtrl extends BeanStub {
             }
 
             this.editSvc?.applyCellEditStyles(this);
-            customStyleFeature?.applyUserStyles();
-            customStyleFeature?.applyClassesFromColDef();
+            cellStyles?.applyCellUserStyles(this);
+            cellStyles?.applyCellClassesFromColDef(this);
             rowEditStyleFeature?.applyRowStyles();
 
             this.checkFormulaError();
@@ -678,7 +676,7 @@ export class CellCtrl extends BeanStub {
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
-        customStyleFeature?.applyCellClassRules();
+        cellStyles?.applyCellClassRules(this);
     }
 
     public showNote(focusEditor = false): void {

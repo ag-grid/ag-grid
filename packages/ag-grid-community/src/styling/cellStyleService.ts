@@ -2,7 +2,12 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { CellClassParams, ColDef } from '../entities/colDef';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
-import { CellCustomStyleFeature } from './cellCustomStyleFeature';
+import {
+    _applyCellClassRules,
+    _applyCellClassesFromColDef,
+    _applyCellUserStyles,
+    _setupCellCustomStyle,
+} from './cellCustomStyleFeature';
 import { processClassRules } from './stylingUtils';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -49,8 +54,20 @@ export class CellStyleService extends BeanStub implements NamedBean {
         return classOrClasses || [];
     }
 
-    public createCellCustomStyleFeature(ctrl: CellCtrl): CellCustomStyleFeature {
-        return new CellCustomStyleFeature(ctrl, this.beans);
+    public setupCellCustomStyle(cellCtrl: CellCtrl): void {
+        _setupCellCustomStyle(this.beans, cellCtrl);
+    }
+
+    public applyCellUserStyles(cellCtrl: CellCtrl): void {
+        _applyCellUserStyles(this.beans, cellCtrl);
+    }
+
+    public applyCellClassesFromColDef(cellCtrl: CellCtrl): void {
+        _applyCellClassesFromColDef(this.beans, cellCtrl);
+    }
+
+    public applyCellClassRules(cellCtrl: CellCtrl): void {
+        _applyCellClassRules(this.beans, cellCtrl);
     }
 
     private processStaticCellClasses(
