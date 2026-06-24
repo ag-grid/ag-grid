@@ -12,7 +12,7 @@ export function Label({ value }: { value: { name: string; icon?: IconName; link:
 
     return (
         <div className={styles.label}>
-            <a href={url}>
+            <a href={url} target="_blank" rel="noopener noreferrer">
                 {iconName && <Icon name={iconName} />}
                 {value.name}
             </a>

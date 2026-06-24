@@ -2,7 +2,9 @@ import { Collapsible } from '@ag-website-shared/components/collapsible/Collapsib
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { TrialButton } from '@ag-website-shared/components/trial-licence-modal/TrialButton';
 import gridFeaturesData from '@ag-website-shared/content/license-features/gridFeaturesMatrix.json';
+import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import React, { useState } from 'react';
 
@@ -59,10 +61,12 @@ const FeatureIcon: React.FC<{ value: boolean | FeatureValue }> = ({ value }) => 
 const FeatureLabel: React.FC<{ item: FeatureItem }> = ({ item }) => {
     const name = item.label?.name || item.name || '';
     const link = item.label?.link;
-
     if (link) {
+        const framework = useFrameworkFromStore();
+        const url = urlWithPrefix({ url: link, framework });
+
         return (
-            <a href={link} target="_blank" rel="noopener noreferrer">
+            <a href={url} target="_blank" rel="noopener noreferrer">
                 {name}
             </a>
         );
