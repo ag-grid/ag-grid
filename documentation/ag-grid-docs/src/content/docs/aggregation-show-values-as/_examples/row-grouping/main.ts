@@ -35,7 +35,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'year', filter: 'agNumberColumnFilter' },
         // Each value as a share of its parent group.
         { field: 'gold', aggFunc: 'sum', showValuesAs: 'percentOfParentRowTotal' },
-        { field: 'silver', aggFunc: 'sum' },
+        { field: 'silver', aggFunc: 'sum', hide: true },
         // Each value as a share of the whole column.
         { field: 'total', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
     ],

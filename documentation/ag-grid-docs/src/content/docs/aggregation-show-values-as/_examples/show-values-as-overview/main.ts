@@ -65,6 +65,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         const destPath = ['United States', '2008'];
         return route.every((item, idx) => destPath[idx] === item);
     },
+    suppressAggFuncInHeader: true,
 };
 
 // setup the grid after the page has finished loading

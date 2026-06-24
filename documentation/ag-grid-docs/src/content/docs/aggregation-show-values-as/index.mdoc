@@ -13,13 +13,13 @@ A mode can be chosen by the user from the column menu, set on the column definit
 
 This example groups Olympic winners by country and year, then shows raw medal totals alongside the same values as a percentage of their parent group.
 
-## Enabling Show Values As
+{% note %}
+Show Values As requires the `ShowValuesAsModule` and is only supported with the [Client-Side Row Model](./row-models/#client-side).
+{% /note %}
 
-Show Values As requires the `ShowValuesAsModule` and only works with the [Client-Side Row Model](./row-models/#client-side).
+## Column Menu
 
-## Choosing a Mode from the Column Menu
-
-The Show Values As submenu is off by default. To let the user switch mode from the [Column Menu](./column-menu/), register the `ColumnMenuModule` and set `enableShowValuesAs: true` on the required columns. Switching mode only repaints the affected cells — it does not re-aggregate, re-sort or re-filter.
+The Show Values As submenu is off by default. To let the user switch mode from the [Column Menu](./column-menu/), register the `ColumnMenuModule` and set `enableShowValuesAs: true` on the required columns. Switching mode only updates the affected column — it does not re-aggregate, re-sort or re-filter.
 
 The effect depends on where you set it:
 
@@ -51,11 +51,11 @@ A numeric column that is not yet aggregated is promoted to a value column when a
 
 `percentOfGrandTotal` and `percentOfColumnTotal` give the same result outside [Pivot](./pivoting/) mode, where there is a single column total. They diverge only while pivoting: `percentOfGrandTotal` keeps the whole column's grand total as the denominator, whereas `percentOfColumnTotal` uses each pivot column's own total, so every pivot column sums to 100%.
 
-A mode that is not meaningful in the current view — for example `percentOfParentRowTotal` on a grid with no grouping — shows `#N/A` rather than a transformed value. In the column menu it appears greyed and cannot be selected. If a mode was already active when the grid left the view that supports it, the selection is kept — its cells show `#N/A`.
+If a mode was already active when the grid left the view that supports it, the selection is kept — its cells show `#N/A`. In the column menu it appears greyed and cannot be selected.
 
-## Setting the Mode in Code
+## Setting the Mode
 
-Set `showValuesAs` on a value column to the mode you want. Use `initialShowValuesAs` instead to set only the starting mode and leave the user free to change it from the menu.
+Set `showValuesAs` on a value column to the mode you want. Use [`initialShowValuesAs`](./column-updating-definitions/#changing-column-state) instead to set only the starting mode and leave the user free to change it from the menu.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -67,7 +67,7 @@ const gridOptions = {
 };
 ```
 
-The object form also takes an optional `precision` to override the configured decimal places for that selection:
+The object form takes an optional `precision` to override the configured decimal places for that selection:
 
 ```{% frameworkTransform=true %}
 const colDef = {
@@ -91,7 +91,7 @@ api.applyColumnState({ state: [{ colId: 'gold', showValuesAs: null }] });
 
 ### Reading the Transformed Value
 
-The value is transformed only for display, export and the column menu — `api.getCellValue` and `rowNode.getDataValue` return the raw aggregate by default. To read the transformed value, pass `transformValues: true` to `api.getCellValue`, or `'transformed'` to `rowNode.getDataValue`:
+The methods `api.getCellValue` and `rowNode.getDataValue` return the raw aggregate by default. To read the transformed value, pass `transformValues: true` to `api.getCellValue`, or `'transformed'` to `rowNode.getDataValue`:
 
 ```{% frameworkTransform=true %}
 const shown = api.getCellValue({ rowNode, colKey: 'gold', transformValues: true });
@@ -110,7 +110,7 @@ const gridOptions = {
 };
 ```
 
-To turn Show Values As off for a column, set `showValuesAsDef` to `null` — on a single column, or on `defaultColDef` for every column. This disables the feature entirely: no transform, no menu, and any `showValuesAs` selection is ignored:
+To turn Show Values As off for a column, set `showValuesAsDef` to `null` — on a single column, or on `defaultColDef` for every column:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -124,8 +124,6 @@ const gridOptions = {
     ],
 };
 ```
-
-`enableShowValuesAs` controls only the column menu (see [Choosing a Mode from the Column Menu](#choosing-a-mode-from-the-column-menu)). A mode applied through `showValuesAs` or [Column State](./column-state/) still transforms the displayed value.
 
 ## Row Grouping
 
@@ -141,7 +139,7 @@ Show Values As does not require grouping. On a flat grid each row can be shown a
 
 ## Tree Data
 
-With [Tree Data](./tree-data/), aggregates are populated on parent nodes, so each node's value can be shown as a share of the folder that contains it.
+With [Tree Data](./tree-data/), aggregates are populated on parent nodes, so each node's value can be shown as a percentage of its parent row total.
 
 {% gridExampleRunner title="Show Values As with Tree Data" name="tree-data" /%}
 
