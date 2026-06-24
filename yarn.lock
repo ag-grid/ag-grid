@@ -297,18 +297,18 @@
     "@jridgewell/gen-mapping" "^0.3.5"
     "@jridgewell/trace-mapping" "^0.3.24"
 
-"@angular-devkit/architect@0.2003.26":
-  version "0.2003.26"
-  resolved "https://registry.ag-grid.com/@angular-devkit/architect/-/architect-0.2003.26.tgz#69a3ee9d5f32aebd158f3e494187a76284b02f79"
-  integrity sha512-osaUGwmGhxHkc59t8Hy2tamzdonkSkz4Hi8CfpBGUuyRJiTFVck+MpOkrKYS0Ok1EFTTEYJI/x+obIKxud0oAA==
+"@angular-devkit/architect@0.2003.30":
+  version "0.2003.30"
+  resolved "https://registry.ag-grid.com/@angular-devkit/architect/-/architect-0.2003.30.tgz#3a19b8915201e89500ca33a2bd056d1154d787f7"
+  integrity sha512-UozRCSvjaLuuyRfXvrqOg0PbDy0rdIrYHMnka+INdmyRykPWlYUxAi+gY21xv82WPU7S7BUXtnCMF1twBvM9Ew==
   dependencies:
-    "@angular-devkit/core" "20.3.26"
+    "@angular-devkit/core" "20.3.30"
     rxjs "7.8.2"
 
-"@angular-devkit/core@20.3.26":
-  version "20.3.26"
-  resolved "https://registry.ag-grid.com/@angular-devkit/core/-/core-20.3.26.tgz#e13ee58e258180a9ef7e358acc25cf62a0ceaf13"
-  integrity sha512-xzxI3OK+P1a/xLPqLrrhGHghifmv7oP8U3k7A/lX3fnYNYkqJzzyhqXsjWxs7U4sv3p3BvygqAJBg1oGFPiJBw==
+"@angular-devkit/core@20.3.30":
+  version "20.3.30"
+  resolved "https://registry.ag-grid.com/@angular-devkit/core/-/core-20.3.30.tgz#f6273edd087b48dadd99acb0606fea94f058e741"
+  integrity sha512-JGsFvKUIZSccqqDg9ZUmjrGh8MxaItFvBKhvcLitwrQdtpBUC6RFATU6vpkAh2KAdNB+YtFGy2ooGX85D1v42w==
   dependencies:
     ajv "8.18.0"
     ajv-formats "3.0.1"
@@ -317,46 +317,39 @@
     rxjs "7.8.2"
     source-map "0.7.6"
 
-"@angular-devkit/schematics@20.3.26":
-  version "20.3.26"
-  resolved "https://registry.ag-grid.com/@angular-devkit/schematics/-/schematics-20.3.26.tgz#9d9b48d8fca2d07eb2396cd916f89e76e37abdc4"
-  integrity sha512-wnWwxhFSXTUL6jrSgvySOr4E/Zx+Flv+4HtpZTaiw+1nf6ekpM4oZWitE8WautT5qanzjXiYPOF9N/cchG5yHQ==
+"@angular-devkit/schematics@20.3.30":
+  version "20.3.30"
+  resolved "https://registry.ag-grid.com/@angular-devkit/schematics/-/schematics-20.3.30.tgz#6a6126a7ad1e8d58cb18a5f45a486eb9a039be56"
+  integrity sha512-thFyLUczELUoZLgFmLoG38ezkH3RGEYhSm1Yr2dT8tnP0ONtK4d5tXzpnA0ZK3rLnGlGd/RGRiax2jmMVNQnSw==
   dependencies:
-    "@angular-devkit/core" "20.3.26"
+    "@angular-devkit/core" "20.3.30"
     jsonc-parser "3.3.1"
     magic-string "0.30.17"
     ora "8.2.0"
     rxjs "7.8.2"
 
-"@angular/animations@^19.0.0":
-  version "19.2.15"
-  resolved "https://registry.ag-grid.com/@angular/animations/-/animations-19.2.15.tgz#6a567ce0af442c3b101c0e133d67f8d5a2108cf4"
-  integrity sha512-eq9vokLU8bjs7g/Znz8zJUQEOhT0MAJ/heBCHbB35S+CtZXJmItrsEqkI1tsRiR58NKXB6cbhBhULVo6qJbhXQ==
+"@angular/animations@^20.3.25":
+  version "20.3.25"
+  resolved "https://registry.ag-grid.com/@angular/animations/-/animations-20.3.25.tgz#f672d78b9282a93f23b91739093dc1b40663e1ef"
+  integrity sha512-lQmti3tI85D525TjUVGqCNLzFxSUoZg+vgIyvuGJZPY0UU/o2S6KAxW6ObmcRotZZHNfenLHIxWgzamBDjIjuw==
   dependencies:
     tslib "^2.3.0"
 
-"@angular/animations@^20.0.0":
-  version "20.3.21"
-  resolved "https://registry.ag-grid.com/@angular/animations/-/animations-20.3.21.tgz#6b9571917d78b4bef2e41004d6af4c4ff890f624"
-  integrity sha512-HsZJzsFwwLp4l6XzhWIWPXjb1SN76XDSfLgp08PYdL3t1VKWAlvgA68xgmWICjkL/FXDMx4AqrdUV5v7qHmV1Q==
-  dependencies:
-    tslib "^2.3.0"
-
-"@angular/build@^20.0.0":
-  version "20.3.26"
-  resolved "https://registry.ag-grid.com/@angular/build/-/build-20.3.26.tgz#55335922416b6f90329cb035c9f46a88ae4b3251"
-  integrity sha512-WXpntiPE3YWprEvam7S2KJd8u/FwAYB5aZqeVniOoa4aru6a33waN8f1oWTM0DeNsvvjl3qI7UpEjbyjZ7QYmA==
+"@angular/build@^20.3.25":
+  version "20.3.30"
+  resolved "https://registry.ag-grid.com/@angular/build/-/build-20.3.30.tgz#3c59ab3a3e4696219408c09ada946ef8822b86c6"
+  integrity sha512-DfSRwmnqyCaeLgsLk58VteXFHDcZ1dofO6He5qwRG3ZlLxxdekeDZMSh4+hIl3Nf5ZgSrLso7jYH/rGwz+t+fw==
   dependencies:
     "@ampproject/remapping" "2.3.0"
-    "@angular-devkit/architect" "0.2003.26"
-    "@babel/core" "7.28.3"
+    "@angular-devkit/architect" "0.2003.30"
+    "@babel/core" "7.29.7"
     "@babel/helper-annotate-as-pure" "7.27.3"
     "@babel/helper-split-export-declaration" "7.24.7"
     "@inquirer/confirm" "5.1.14"
     "@vitejs/plugin-basic-ssl" "2.1.0"
     beasties "0.3.5"
     browserslist "^4.23.0"
-    esbuild "0.28.0"
+    esbuild "0.28.1"
     https-proxy-agent "7.0.6"
     istanbul-lib-instrument "6.0.3"
     jsonc-parser "3.3.1"
@@ -365,52 +358,45 @@
     mrmime "2.0.1"
     parse5-html-rewriting-stream "8.0.0"
     picomatch "4.0.4"
-    piscina "5.1.3"
+    piscina "5.2.0"
     rollup "4.59.0"
     sass "1.90.0"
     semver "7.7.2"
     source-map-support "0.5.21"
     tinyglobby "0.2.14"
-    vite "7.3.2"
+    vite "7.3.5"
     watchpack "2.4.4"
   optionalDependencies:
     lmdb "3.4.2"
 
-"@angular/cli@^20.0.0":
-  version "20.3.26"
-  resolved "https://registry.ag-grid.com/@angular/cli/-/cli-20.3.26.tgz#5b5b6c6dc0133edff0a304d4aa6d4108454b23c9"
-  integrity sha512-HCQrlr0N3ym50ayzBj7x8auokS9C7/Yvn6Iqz4zC4isljIu9uz0pSEesE6pM4WYjmsLt6Jo8OgeGqoniUagqRQ==
+"@angular/cli@^20.3.25":
+  version "20.3.30"
+  resolved "https://registry.ag-grid.com/@angular/cli/-/cli-20.3.30.tgz#40b666aecc910b2baeda344fa09d903fb484d4f3"
+  integrity sha512-Htpl25tDxP+JSugrUZO1pLHDRDZT3NbqsiG/Cw8MdhpjACjJzX5aMh4b5YNaDzfPxvHdbRsrYRnqwlfp1AkkCQ==
   dependencies:
-    "@angular-devkit/architect" "0.2003.26"
-    "@angular-devkit/core" "20.3.26"
-    "@angular-devkit/schematics" "20.3.26"
+    "@angular-devkit/architect" "0.2003.30"
+    "@angular-devkit/core" "20.3.30"
+    "@angular-devkit/schematics" "20.3.30"
     "@inquirer/prompts" "7.8.2"
     "@listr2/prompt-adapter-inquirer" "3.0.1"
     "@modelcontextprotocol/sdk" "1.26.0"
-    "@schematics/angular" "20.3.26"
+    "@schematics/angular" "20.3.30"
     "@yarnpkg/lockfile" "1.1.0"
     algoliasearch "5.35.0"
     ini "5.0.0"
     jsonc-parser "3.3.1"
     listr2 "9.0.1"
     npm-package-arg "13.0.0"
-    pacote "21.0.4"
+    pacote "21.5.1"
     resolve "1.22.10"
     semver "7.7.2"
     yargs "18.0.0"
     zod "4.1.13"
 
-"@angular/common@^19.0.0":
-  version "19.2.15"
-  resolved "https://registry.ag-grid.com/@angular/common/-/common-19.2.15.tgz#934d7ead5c8a3c4660ab131ba129fce6096def1d"
-  integrity sha512-aVa/ctBYH/4qgA7r4sS7TV+/DzRYmcS+3d6l89pNKUXkI8gpmsd+r3FjccaemX4Wqru1QOrMvC+i+e7IBIVv0g==
-  dependencies:
-    tslib "^2.3.0"
-
-"@angular/common@^20.0.0":
-  version "20.3.21"
-  resolved "https://registry.ag-grid.com/@angular/common/-/common-20.3.21.tgz#b7b653f88be6c4b5a5200185a56f7cf6a35eb71c"
-  integrity sha512-BjVpJYaC0T73nIT4BCOR5jcFUcXAFe2kKPlSDfD8mjBl8+Ug3Uy/Xs3Blx/6IKDLwNkbCUAxo/IwT+zzpTYNpw==
+"@angular/common@^20.3.25":
+  version "20.3.25"
+  resolved "https://registry.ag-grid.com/@angular/common/-/common-20.3.25.tgz#0f2bd058ec6595cfb4dd6a05601c41cb5cf3cb23"
+  integrity sha512-rnRGcXbjet0DHgkRL4Dqxk21G2T4UypVfiTV/fay58H8w9U89PJ1L6gRmk8B/uyfpii/9r23cBwnpcguQykxYw==
   dependencies:
     tslib "^2.3.0"
 
@@ -421,10 +407,10 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/compiler-cli@^20.0.0":
-  version "20.3.21"
-  resolved "https://registry.ag-grid.com/@angular/compiler-cli/-/compiler-cli-20.3.21.tgz#4346ef59321cae520a4e9ce17319866fc27cc334"
-  integrity sha512-Bo0lCIm1YZ18b4abP7InqP9q3uxcOzbVxYwdZYTiht4mrV5HUTBjsI5Yn8GL7eXXpjmY4e1CrdDe81+nNDn+0A==
+"@angular/compiler-cli@^20.3.25":
+  version "20.3.25"
+  resolved "https://registry.ag-grid.com/@angular/compiler-cli/-/compiler-cli-20.3.25.tgz#64c7cdcd4118cd24cb1905804754ccf3d90a7df4"
+  integrity sha512-iqxwVo5Pgzt3EfT49OZ6plxA6KKxwv7ixx1XNH7QRvaOJC9gmsPScWpx+LO7ZsVZdo/NkA+rnXDl0PauUgGciw==
   dependencies:
     "@babel/core" "7.28.3"
     "@jridgewell/sourcemap-codec" "^1.4.14"
@@ -449,17 +435,10 @@
     tslib "^2.3.0"
     yargs "^18.0.0"
 
-"@angular/compiler@^19.0.0":
-  version "19.2.15"
-  resolved "https://registry.ag-grid.com/@angular/compiler/-/compiler-19.2.15.tgz#20fb21e77d6c6ace9a0c427a3ca9bcb4415b6336"
-  integrity sha512-hMHZU6/03xG0tbPDIm1hbVSTFLnRkGYfh+xdBwUMnIFYYTS0QJ2hdPfEZKCJIXm+fz9IAI5MPdDTfeyp0sgaHQ==
-  dependencies:
-    tslib "^2.3.0"
-
-"@angular/compiler@^20.0.0":
-  version "20.3.21"
-  resolved "https://registry.ag-grid.com/@angular/compiler/-/compiler-20.3.21.tgz#d2cb4251b952c60f82c70194a5d0ff35cc075e06"
-  integrity sha512-XufWMAUS0gNKE29LkDFf21eTxdBN2WIcN/3ownqfYqKwDzMMpUAm5EEjPYfn0b/2/b5OYGNJrU4yeTHoz0Bt7g==
+"@angular/compiler@^20.3.25":
+  version "20.3.25"
+  resolved "https://registry.ag-grid.com/@angular/compiler/-/compiler-20.3.25.tgz#674d07b2437e9a3c99e9bb1c10e4d13bbedb4086"
+  integrity sha512-TSh6gVoQqlLPqWwsYMK0lfVEQYENQO+USzS+BHFXEHFfgBRap6qDpIUGnRdj0Y2PlaVJUVFbeq1855EZUPUEoA==
   dependencies:
     tslib "^2.3.0"
 
@@ -470,17 +449,10 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/core@^19.0.0":
-  version "19.2.15"
-  resolved "https://registry.ag-grid.com/@angular/core/-/core-19.2.15.tgz#0395b60a8ef9c715a97df7a59fe4973ee3d35a51"
-  integrity sha512-PxhzCwwm23N4Mq6oV7UPoYiJF4r6FzGhRSxOBBlEp322k7zEQbIxd/XO6F3eoG73qC1UsOXMYYv6GnQpx42y3A==
-  dependencies:
-    tslib "^2.3.0"
-
-"@angular/core@^20.0.0":
-  version "20.3.21"
-  resolved "https://registry.ag-grid.com/@angular/core/-/core-20.3.21.tgz#5132c981746a1bc5d99f955eb7d037bb99b04730"
-  integrity sha512-sZMWyxh6dkuT6F90epkM1F7E2WJeduHoA9PRHYChIIVFnBd0VKITxpfrwRQS44IPJAtR456/5twtrcCNBALweQ==
+"@angular/core@^20.3.25":
+  version "20.3.25"
+  resolved "https://registry.ag-grid.com/@angular/core/-/core-20.3.25.tgz#4418a9625a8a152029b49158dbda01f1c83d19c0"
+  integrity sha512-B4XnnR5jzikZDvZ4PjwjAWZMT14dxrKrmJdwa/n0yp7rMPkIJTKF6ZJMg4d1pLWLLSsc2oWHioN3UrWlGqIKnA==
   dependencies:
     tslib "^2.3.0"
 
@@ -491,31 +463,17 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/forms@^19.0.0":
-  version "19.2.15"
-  resolved "https://registry.ag-grid.com/@angular/forms/-/forms-19.2.15.tgz#7f9f81bc8b7ecbdae1b994b7a4dbecb7fc2e7ebf"
-  integrity sha512-pZDElcYPmNzPxvWJpZQCIizsNApDIfk9xLJE4I8hzLISfWGbQvfjuuarDAuQZEXudeLXoDOstDXkDja40muLGg==
+"@angular/forms@^20.3.25":
+  version "20.3.25"
+  resolved "https://registry.ag-grid.com/@angular/forms/-/forms-20.3.25.tgz#10a16a9ebe8e71c2a236b1bf69c3fe4bd44923c5"
+  integrity sha512-vGRo1LVPFo2Cu0k+QyDTlsBv5UbN0c3Et2YMS+43oyi1c4keocntBccOjLyM5C0kpMz4+pP81MqqYpAWu2k+TQ==
   dependencies:
     tslib "^2.3.0"
 
-"@angular/forms@^20.0.0":
-  version "20.3.21"
-  resolved "https://registry.ag-grid.com/@angular/forms/-/forms-20.3.21.tgz#f05a987a1d0f7d711d7b6704c02fbf61be3575ac"
-  integrity sha512-2T2K+32pSCjLH0SmM6ORrQrtyZKOk70APDl3wLUu33aExnrtzI98A32TdJ+G8+FTtZKTUDT22b6aQj+xvSewpA==
-  dependencies:
-    tslib "^2.3.0"
-
-"@angular/platform-browser-dynamic@^19.0.0":
-  version "19.2.15"
-  resolved "https://registry.ag-grid.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-19.2.15.tgz#3fcc613e73d0a4ed8ea768bece6baf7142b884a3"
-  integrity sha512-dKy0SS395FCh8cW9AQ8nf4Wn3XlONaH7z50T1bGxm3eOoRqjxJYyIeIlEbDdJakMz4QPR3dGr81HleZd8TJumQ==
-  dependencies:
-    tslib "^2.3.0"
-
-"@angular/platform-browser-dynamic@^20.0.0":
-  version "20.3.21"
-  resolved "https://registry.ag-grid.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-20.3.21.tgz#44922814872af2ab314d43e892ea8764cbff90cf"
-  integrity sha512-q45qofKVD1ijYlKmbSE5af39cq93wiiUZJmOLqnYfZ6IwHUE8fLbRMVHDNlY4kjO01dZRgBE0vMdwWp5+mEGIw==
+"@angular/platform-browser-dynamic@^20.3.25":
+  version "20.3.25"
+  resolved "https://registry.ag-grid.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-20.3.25.tgz#5051bea6135c0e9585956bc2ec0df4d9dabac182"
+  integrity sha512-3Ku+IsN4tQPVBsw75SoLbLf7TsXAGL0rGPHSsyNYFhG2ZZeQuYNIAi8mc4cwz/qMDnuassHFrCxuLDgN6Yab5w==
   dependencies:
     tslib "^2.3.0"
 
@@ -526,17 +484,10 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/platform-browser@^19.0.0":
-  version "19.2.15"
-  resolved "https://registry.ag-grid.com/@angular/platform-browser/-/platform-browser-19.2.15.tgz#efc814efd98f6e2b958f2a2588de862dcea364a0"
-  integrity sha512-OelQ6weCjon8kZD8kcqNzwugvZJurjS3uMJCwsA2vXmP/3zJ31SWtNqE2zLT1R2csVuwnp0h+nRMgq+pINU7Rg==
-  dependencies:
-    tslib "^2.3.0"
-
-"@angular/platform-browser@^20.0.0":
-  version "20.3.21"
-  resolved "https://registry.ag-grid.com/@angular/platform-browser/-/platform-browser-20.3.21.tgz#bd349d6392a8dd808359c77ea57e41616b62808d"
-  integrity sha512-hhsB2dv4Iq8SMmh50fYkMA2IOQ7JGXfQSBS4pPC3zj5njVQZtSNEJ/il8QNjYyw/KsMSFffhA/if6vSAumYvUg==
+"@angular/platform-browser@^20.3.25":
+  version "20.3.25"
+  resolved "https://registry.ag-grid.com/@angular/platform-browser/-/platform-browser-20.3.25.tgz#f738f1895415c76932b5064d04b4493d17159cdf"
+  integrity sha512-0k06U/AJRQifGMLkcU3R9uEHWbuKEzkKMuKcGagXTrkeFvCG2Ub4JdsbcjFNWB2bspWgaxIMSceuj7c83U5wOA==
   dependencies:
     tslib "^2.3.0"
 
@@ -547,17 +498,10 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/router@^19.0.0":
-  version "19.2.15"
-  resolved "https://registry.ag-grid.com/@angular/router/-/router-19.2.15.tgz#1d2748a9168a524d5ec8490849df2796bda0ab53"
-  integrity sha512-0TM1D8S7RQ00drKy7hA/ZLBY14dUBqFBgm06djcNcOjNzVAtgkeV0i+0Smq9tCC7UsGKdpZu4RgfYjHATBNlTQ==
-  dependencies:
-    tslib "^2.3.0"
-
-"@angular/router@^20.0.0":
-  version "20.3.21"
-  resolved "https://registry.ag-grid.com/@angular/router/-/router-20.3.21.tgz#834595ce570d116d7afd8ebe440469e969c046a8"
-  integrity sha512-8MLfjHVnVs7CLd6ZY9dbwtJfqFqKx9thr0dKzHdlPc/lorGckQ6aco6yOQnPuIeUVIp/zqxokFba27q7Z1aGxw==
+"@angular/router@^20.3.25":
+  version "20.3.25"
+  resolved "https://registry.ag-grid.com/@angular/router/-/router-20.3.25.tgz#0b79c6c0a0f4212002713c03bbb2709dbd79c546"
+  integrity sha512-YIjLHWAufTaukNj15hEoys29e7XNhnCRsS1/95h/OqR69R3adbB8hV7ut7gO6XdXokriYqb4gtoUjoESxR+xFQ==
   dependencies:
     tslib "^2.3.0"
 
@@ -774,6 +718,15 @@
     js-tokens "^4.0.0"
     picocolors "^1.1.1"
 
+"@babel/code-frame@^7.29.7":
+  version "7.29.7"
+  resolved "https://registry.ag-grid.com/@babel/code-frame/-/code-frame-7.29.7.tgz#f2fbbfea87c44a21590ec515b778b2c26d8866e7"
+  integrity sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==
+  dependencies:
+    "@babel/helper-validator-identifier" "^7.29.7"
+    js-tokens "^4.0.0"
+    picocolors "^1.1.1"
+
 "@babel/compat-data@^7.27.2", "@babel/compat-data@^7.27.7", "@babel/compat-data@^7.28.5":
   version "7.28.5"
   resolved "https://registry.ag-grid.com/@babel/compat-data/-/compat-data-7.28.5.tgz#a8a4962e1567121ac0b3b487f52107443b455c7f"
@@ -783,6 +736,11 @@
   version "7.29.0"
   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.29.0.tgz#00d03e8c0ac24dd9be942c5370990cbe1f17d88d"
   integrity sha512-T1NCJqT/j9+cn8fvkt7jtwbLBfLC/1y1c7NtCeXFRgzGTsafi68MRv8yzkYSapBnFA6L3U2VSc02ciDzoAJhJg==
+
+"@babel/compat-data@^7.29.7":
+  version "7.29.7"
+  resolved "https://registry.ag-grid.com/@babel/compat-data/-/compat-data-7.29.7.tgz#6f0237f0f36d2e51c0570a636faed9d2d0efe629"
+  integrity sha512-locTkQyKvwIEgBzVrn8693ebc97F2U8ZHjbXwDXJ5Fn2TCpNwTlKcaKLkdHop5c/icOFE7qt7Q9JC5hnKNa6Gg==
 
 "@babel/core@7.28.3":
   version "7.28.3"
@@ -819,6 +777,27 @@
     "@babel/template" "^7.28.6"
     "@babel/traverse" "^7.29.0"
     "@babel/types" "^7.29.0"
+    "@jridgewell/remapping" "^2.3.5"
+    convert-source-map "^2.0.0"
+    debug "^4.1.0"
+    gensync "^1.0.0-beta.2"
+    json5 "^2.2.3"
+    semver "^6.3.1"
+
+"@babel/core@7.29.7":
+  version "7.29.7"
+  resolved "https://registry.ag-grid.com/@babel/core/-/core-7.29.7.tgz#80c10b17248082968b57a857b91640971f2070f7"
+  integrity sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA==
+  dependencies:
+    "@babel/code-frame" "^7.29.7"
+    "@babel/generator" "^7.29.7"
+    "@babel/helper-compilation-targets" "^7.29.7"
+    "@babel/helper-module-transforms" "^7.29.7"
+    "@babel/helpers" "^7.29.7"
+    "@babel/parser" "^7.29.7"
+    "@babel/template" "^7.29.7"
+    "@babel/traverse" "^7.29.7"
+    "@babel/types" "^7.29.7"
     "@jridgewell/remapping" "^2.3.5"
     convert-source-map "^2.0.0"
     debug "^4.1.0"
@@ -869,6 +848,17 @@
     "@jridgewell/trace-mapping" "^0.3.28"
     jsesc "^3.0.2"
 
+"@babel/generator@^7.29.7":
+  version "7.29.7"
+  resolved "https://registry.ag-grid.com/@babel/generator/-/generator-7.29.7.tgz#cca0b8827e6bcf3ba176788e7f3b180ad6db2fa3"
+  integrity sha512-DkXD5OJQaAQIdZ1bt3UZdEnHAn9Imd3IVBdX03UFe+ony9Ojw5pzr9YVKGDY1jt+Gcn/FnGkNf8r+Vj5NOJWtQ==
+  dependencies:
+    "@babel/parser" "^7.29.7"
+    "@babel/types" "^7.29.7"
+    "@jridgewell/gen-mapping" "^0.3.12"
+    "@jridgewell/trace-mapping" "^0.3.28"
+    jsesc "^3.0.2"
+
 "@babel/helper-annotate-as-pure@7.27.3", "@babel/helper-annotate-as-pure@^7.18.6", "@babel/helper-annotate-as-pure@^7.27.1", "@babel/helper-annotate-as-pure@^7.27.3":
   version "7.27.3"
   resolved "https://registry.ag-grid.com/@babel/helper-annotate-as-pure/-/helper-annotate-as-pure-7.27.3.tgz#f31fd86b915fc4daf1f3ac6976c59be7084ed9c5"
@@ -894,6 +884,17 @@
   dependencies:
     "@babel/compat-data" "^7.28.6"
     "@babel/helper-validator-option" "^7.27.1"
+    browserslist "^4.24.0"
+    lru-cache "^5.1.1"
+    semver "^6.3.1"
+
+"@babel/helper-compilation-targets@^7.29.7":
+  version "7.29.7"
+  resolved "https://registry.ag-grid.com/@babel/helper-compilation-targets/-/helper-compilation-targets-7.29.7.tgz#7a1def704302401c47f64fa85589e974ae217042"
+  integrity sha512-wem6WaBj4NaVYVdNhLPPVacES6ZJ+KBBfSkTMD3YZxbP3rm3Di85tJU5ljaUNhaOynt+Aj0xruhYuzQBt8n71g==
+  dependencies:
+    "@babel/compat-data" "^7.29.7"
+    "@babel/helper-validator-option" "^7.29.7"
     browserslist "^4.24.0"
     lru-cache "^5.1.1"
     semver "^6.3.1"
@@ -936,6 +937,11 @@
   resolved "https://registry.ag-grid.com/@babel/helper-globals/-/helper-globals-7.28.0.tgz#b9430df2aa4e17bc28665eadeae8aa1d985e6674"
   integrity sha512-+W6cISkXFa1jXsDEdYA8HeevQT/FULhxzR99pxphltZcVaugps53THCeiWA8SguxxpSp3gKPiuYfSWopkLQ4hw==
 
+"@babel/helper-globals@^7.29.7":
+  version "7.29.7"
+  resolved "https://registry.ag-grid.com/@babel/helper-globals/-/helper-globals-7.29.7.tgz#f04a96fbd8473241b1079243f5b3f03a3010ab7b"
+  integrity sha512-3nQVUAtvkKH9zahfWgw96Jc/uFOmjACE1kQz82E2lqWmHBgjzbNlsC22nuQTfahmWeQtTq5nQ/4Nnd2A1wj4zA==
+
 "@babel/helper-member-expression-to-functions@^7.27.1", "@babel/helper-member-expression-to-functions@^7.28.5":
   version "7.28.5"
   resolved "https://registry.ag-grid.com/@babel/helper-member-expression-to-functions/-/helper-member-expression-to-functions-7.28.5.tgz#f3e07a10be37ed7a63461c63e6929575945a6150"
@@ -960,6 +966,14 @@
     "@babel/traverse" "^7.28.6"
     "@babel/types" "^7.28.6"
 
+"@babel/helper-module-imports@^7.29.7":
+  version "7.29.7"
+  resolved "https://registry.ag-grid.com/@babel/helper-module-imports/-/helper-module-imports-7.29.7.tgz#ef25048a518e828d7393fac5882ddd73921d7396"
+  integrity sha512-ejHwrQQYcm9xnTivShn2IDOlIzInN34AXskvq9QicvCtEzq1Vzclu/tKF8Jq1Cg8JG2GL6/EmjgsCT7lXepE3g==
+  dependencies:
+    "@babel/traverse" "^7.29.7"
+    "@babel/types" "^7.29.7"
+
 "@babel/helper-module-transforms@^7.27.1", "@babel/helper-module-transforms@^7.28.3":
   version "7.28.3"
   resolved "https://registry.ag-grid.com/@babel/helper-module-transforms/-/helper-module-transforms-7.28.3.tgz#a2b37d3da3b2344fe085dab234426f2b9a2fa5f6"
@@ -977,6 +991,15 @@
     "@babel/helper-module-imports" "^7.28.6"
     "@babel/helper-validator-identifier" "^7.28.5"
     "@babel/traverse" "^7.28.6"
+
+"@babel/helper-module-transforms@^7.29.7":
+  version "7.29.7"
+  resolved "https://registry.ag-grid.com/@babel/helper-module-transforms/-/helper-module-transforms-7.29.7.tgz#b062747a5997ba138637201328bbff77960574ae"
+  integrity sha512-UPUVSyXbOh627KiCIGQSgwWzGeBKLkaJ9PJEdrngIwMSzxLR4jS4+f1f1jb7VzBbg8nFLaYotvVPFCTqdrmTAg==
+  dependencies:
+    "@babel/helper-module-imports" "^7.29.7"
+    "@babel/helper-validator-identifier" "^7.29.7"
+    "@babel/traverse" "^7.29.7"
 
 "@babel/helper-optimise-call-expression@^7.27.1":
   version "7.27.1"
@@ -1048,6 +1071,11 @@
   resolved "https://registry.ag-grid.com/@babel/helper-validator-option/-/helper-validator-option-7.27.1.tgz#fa52f5b1e7db1ab049445b421c4471303897702f"
   integrity sha512-YvjJow9FxbhFFKDSuFnVCe2WxXk1zWc22fFePVNEaWJEu8IrZVlda6N0uHwzZrUM1il7NC9Mlp4MaJYbYd9JSg==
 
+"@babel/helper-validator-option@^7.29.7":
+  version "7.29.7"
+  resolved "https://registry.ag-grid.com/@babel/helper-validator-option/-/helper-validator-option-7.29.7.tgz#cf315be940213b354eb4abcc0bd01ebe3f73bc2a"
+  integrity sha512-N9ZErrD+yW5geCDtBqnOoxmR8+tNKiGuxKlDpuJxfsqpa2dFcexaziGAE/qoHLiDDreVNMupxGmSoNlyvsA3gw==
+
 "@babel/helper-wrap-function@^7.27.1":
   version "7.28.3"
   resolved "https://registry.ag-grid.com/@babel/helper-wrap-function/-/helper-wrap-function-7.28.3.tgz#fe4872092bc1438ffd0ce579e6f699609f9d0a7a"
@@ -1073,6 +1101,14 @@
     "@babel/template" "^7.28.6"
     "@babel/types" "^7.29.0"
 
+"@babel/helpers@^7.29.7":
+  version "7.29.7"
+  resolved "https://registry.ag-grid.com/@babel/helpers/-/helpers-7.29.7.tgz#45abfde7548997e34376c3e69feb475cffb4a607"
+  integrity sha512-1k2lAGRMfHTcwuNYcCNUmaUffmQv8KWMfh2iJUUeRlwlwH4FdNG7mfPI10NPfLHJFThE4Tyr4mv7kTNZOiPuBg==
+  dependencies:
+    "@babel/template" "^7.29.7"
+    "@babel/types" "^7.29.7"
+
 "@babel/parser@^7.1.0", "@babel/parser@^7.14.7", "@babel/parser@^7.20.7", "@babel/parser@^7.23.9", "@babel/parser@^7.27.1", "@babel/parser@^7.27.2", "@babel/parser@^7.28.0", "@babel/parser@^7.28.4", "@babel/parser@^7.28.5":
   version "7.28.5"
   resolved "https://registry.ag-grid.com/@babel/parser/-/parser-7.28.5.tgz#0b0225ee90362f030efd644e8034c99468893b08"
@@ -1087,7 +1123,7 @@
   dependencies:
     "@babel/types" "^7.29.0"
 
-"@babel/parser@^7.25.4":
+"@babel/parser@^7.25.4", "@babel/parser@^7.29.7":
   version "7.29.7"
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.7.tgz#837b87387cbf5ec5530cb634b3c622f68edb9334"
   integrity sha512-hnORnjP/1P/zFEndoeX+n+t1RwWRJiJpM/jO7FW32Kn9r5+sJB2JWOdYo4L6k78j15eCwY3Gm/7364B1EMwtNg==
@@ -1990,6 +2026,15 @@
     "@babel/parser" "^7.28.6"
     "@babel/types" "^7.28.6"
 
+"@babel/template@^7.29.7":
+  version "7.29.7"
+  resolved "https://registry.ag-grid.com/@babel/template/-/template-7.29.7.tgz#4d9d4004f645cdd304de958c725162784ecac700"
+  integrity sha512-puq+Gf35oI24FeN11LkoUQFqv9uwNeWpxXZi/Ji3rRIoKAzKnxRaZ+Gkj0vKS9ZCiTESfng1N9LyOyXvo+m+Gg==
+  dependencies:
+    "@babel/code-frame" "^7.29.7"
+    "@babel/parser" "^7.29.7"
+    "@babel/types" "^7.29.7"
+
 "@babel/traverse@^7.16.0", "@babel/traverse@^7.27.1", "@babel/traverse@^7.28.0", "@babel/traverse@^7.28.3", "@babel/traverse@^7.28.4", "@babel/traverse@^7.28.5":
   version "7.28.5"
   resolved "https://registry.ag-grid.com/@babel/traverse/-/traverse-7.28.5.tgz#450cab9135d21a7a2ca9d2d35aa05c20e68c360b"
@@ -2014,6 +2059,19 @@
     "@babel/parser" "^7.29.0"
     "@babel/template" "^7.28.6"
     "@babel/types" "^7.29.0"
+    debug "^4.3.1"
+
+"@babel/traverse@^7.29.7":
+  version "7.29.7"
+  resolved "https://registry.ag-grid.com/@babel/traverse/-/traverse-7.29.7.tgz#c47b07a41b95da0907d026b5dd894d98de7d2f2d"
+  integrity sha512-EhlfNQtZ+NK22w5BM61ciuiq1m58ed33Wr1Xan//ZRTy6hgjnwyCffRYwzsGXdASJSUJ1guZILsErh1eQcl+zw==
+  dependencies:
+    "@babel/code-frame" "^7.29.7"
+    "@babel/generator" "^7.29.7"
+    "@babel/helper-globals" "^7.29.7"
+    "@babel/parser" "^7.29.7"
+    "@babel/template" "^7.29.7"
+    "@babel/types" "^7.29.7"
     debug "^4.3.1"
 
 "@babel/types@^7.0.0", "@babel/types@^7.20.7", "@babel/types@^7.21.3", "@babel/types@^7.24.7", "@babel/types@^7.27.1", "@babel/types@^7.27.3", "@babel/types@^7.28.2", "@babel/types@^7.28.4", "@babel/types@^7.28.5", "@babel/types@^7.4.4":
@@ -2436,6 +2494,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.28.0.tgz#7a289c158e29cbf59ea0afc83cc80f06d1c89402"
   integrity sha512-lhRUCeuOyJQURhTxl4WkpFTjIsbDayJHih5kZC1giwE+MhIzAb7mEsQMqMf18rHLsrb5qI1tafG20mLxEWcWlA==
 
+"@esbuild/aix-ppc64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/aix-ppc64/-/aix-ppc64-0.28.1.tgz#7a01a8d2ec2fbb2dac78adad09b0fa781e4082be"
+  integrity sha512-Svl7tq8k/08+p6CXPpRjQ1fKX+1odH/BQbb48fV6fj3CWHhsoIOoY87w1oHXm0qEpkIK3ZfVgp0hed3XBXzXMQ==
+
 "@esbuild/android-arm64@0.21.5":
   version "0.21.5"
   resolved "https://registry.ag-grid.com/@esbuild/android-arm64/-/android-arm64-0.21.5.tgz#09d9b4357780da9ea3a7dfb833a1f1ff439b4052"
@@ -2455,6 +2518,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/android-arm64/-/android-arm64-0.28.0.tgz#b8828d9edfa3a92660644eb8de6e4f3c203d7b17"
   integrity sha512-+WzIXQOSaGs33tLEgYPYe/yQHf0WTU0X42Jca3y8NWMbUVhp7rUnw+vAsRC/QiDrdD31IszMrZy+qwPOPjd+rw==
+
+"@esbuild/android-arm64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/android-arm64/-/android-arm64-0.28.1.tgz#b540a27d14e4afd058496a4dbec4d3f414db110a"
+  integrity sha512-34EGEbCIAgosYz6goLcopX6Mo7NyGv9tfwEM2/7Ce2VcVRk568iSvniGWcUXIy7wEDR1wzolcxcriFVrWYcwBg==
 
 "@esbuild/android-arm@0.21.5":
   version "0.21.5"
@@ -2476,6 +2544,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/android-arm/-/android-arm-0.28.0.tgz#5ec1847605e05b5dbe5df90db9ff7e3e4c58dca7"
   integrity sha512-wqh0ByljabXLKHeWXYLqoJ5jKC4XBaw6Hk08OfMrCRd2nP2ZQ5eleDZC41XHyCNgktBGYMbqnrJKq/K/lzPMSQ==
 
+"@esbuild/android-arm@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/android-arm/-/android-arm-0.28.1.tgz#704bd297de6d762de54eabbeafbf55f6756abe2f"
+  integrity sha512-0k2F129Xdio1TdJfzJ8sy1Q47vUD2NnwdhiAf7drUN1EBTfPf4hsFCtmMgu/6m8JSzsBrlmVjudMBQqOfG8usQ==
+
 "@esbuild/android-x64@0.21.5":
   version "0.21.5"
   resolved "https://registry.ag-grid.com/@esbuild/android-x64/-/android-x64-0.21.5.tgz#29918ec2db754cedcb6c1b04de8cd6547af6461e"
@@ -2495,6 +2568,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/android-x64/-/android-x64-0.28.0.tgz#390642175b88ef82bad4cce03f8ab13fe9b1912e"
   integrity sha512-+VJggoaKhk2VNNqVL7f6S189UzShHC/mR9EE8rDdSkdpN0KflSwWY/gWjDrNxxisg8Fp1ZCD9jLMo4m0OUfeUA==
+
+"@esbuild/android-x64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/android-x64/-/android-x64-0.28.1.tgz#d1cb166d34b0fbf0fe8ab460a5594f24a378701e"
+  integrity sha512-dbwY7ltSMDWsRatcRpCnES4F+im88OCUgGZjy52shC7GqHRE/cYlxNbB4Z4UpJswpcc4Qxd2oE/ufM0p61IKng==
 
 "@esbuild/darwin-arm64@0.21.5":
   version "0.21.5"
@@ -2516,6 +2594,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/darwin-arm64/-/darwin-arm64-0.28.0.tgz#ae45325960d5950cd6951e4f97396f4e1ff7d8d3"
   integrity sha512-0T+A9WZm+bZ84nZBtk1ckYsOvyA3x7e2Acj1KdVfV4/2tdG4fzUp91YHx+GArWLtwqp77pBXVCPn2We7Letr0Q==
 
+"@esbuild/darwin-arm64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/darwin-arm64/-/darwin-arm64-0.28.1.tgz#1034b26457fc886368fe61bbd09f653f6afa8e54"
+  integrity sha512-TZbWkQY7kvTAXbXUT7uVACR5cMHsDiSz9z7ZKAX/RTq/WJEk3QyRr0wZpNhBDX+/0CtdqUIJlOiodQcta6tY3Q==
+
 "@esbuild/darwin-x64@0.21.5":
   version "0.21.5"
   resolved "https://registry.ag-grid.com/@esbuild/darwin-x64/-/darwin-x64-0.21.5.tgz#c13838fa57372839abdddc91d71542ceea2e1e22"
@@ -2535,6 +2618,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/darwin-x64/-/darwin-x64-0.28.0.tgz#c079247d589b6b99449659d94f06951b84bff2e4"
   integrity sha512-fyzLm/DLDl/84OCfp2f/XQ4flmORsjU7VKt8HLjvIXChJoFFOIL6pLJPH4Yhd1n1gGFF9mPwtlN5Wf82DZs+LQ==
+
+"@esbuild/darwin-x64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/darwin-x64/-/darwin-x64-0.28.1.tgz#65556a432a1e4d72032d8218c1932fcca1a49772"
+  integrity sha512-zfdzgK9ACBNZLI/CyHTOx81SyNbM6YXn7rxSgX97VjyiPl9W1i4Ka4fgKECEoFCKGpvBj5qArWIGgQjOwkgskQ==
 
 "@esbuild/freebsd-arm64@0.21.5":
   version "0.21.5"
@@ -2556,6 +2644,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/freebsd-arm64/-/freebsd-arm64-0.28.0.tgz#45c456215a486593c94900297202dc11c880a37a"
   integrity sha512-l9GeW5UZBT9k9brBYI+0WDffcRxgHQD8ShN2Ur4xWq/NFzUKm3k5lsH4PdaRgb2w7mI9u61nr2gI2mLI27Nh3Q==
 
+"@esbuild/freebsd-arm64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/freebsd-arm64/-/freebsd-arm64-0.28.1.tgz#2e61e0592f9030d7e3dae18ee25ebc535918aef6"
+  integrity sha512-wG2EA8ENdEI0qhkSZMjfqrdY+ziCYCPMmtZjjIwOmXFjmyzEHn+UUxk5of+SYsjtfs3VpnlC7QLzSI5hY/rOAw==
+
 "@esbuild/freebsd-x64@0.21.5":
   version "0.21.5"
   resolved "https://registry.ag-grid.com/@esbuild/freebsd-x64/-/freebsd-x64-0.21.5.tgz#aa615cfc80af954d3458906e38ca22c18cf5c261"
@@ -2575,6 +2668,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/freebsd-x64/-/freebsd-x64-0.28.0.tgz#0399494c1c85e4388e9b7040bd60d48f2a5b0d2c"
   integrity sha512-BXoQai/A0wPO6Es3yFJ7APCiKGc1tdAEOgeTNy3SsB491S3aHn4S4r3e976eUnPdU+NbdtmBuLncYir2tMU9Nw==
+
+"@esbuild/freebsd-x64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/freebsd-x64/-/freebsd-x64-0.28.1.tgz#c95ec289959ef8079c4dca817a1e2c4be66b9bd3"
+  integrity sha512-i7dZ9vQgnvSCzi/rYCXNgtF/U+eKZNJBzu3eTQbRgHnM7tNSizLOkRFAl3qzVc/Op/u5YkHHa4pf/3DOYHthLQ==
 
 "@esbuild/linux-arm64@0.21.5":
   version "0.21.5"
@@ -2596,6 +2694,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/linux-arm64/-/linux-arm64-0.28.0.tgz#d6d9f09ef0de54116bf459a4d53cac7e0952fe39"
   integrity sha512-RVyzfb3FWsGA55n6WY0MEIEPURL1FcbhFE6BffZEMEekfCzCIMtB5yyDcFnVbTnwk+CLAgTujmV/Lgvih56W+A==
 
+"@esbuild/linux-arm64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/linux-arm64/-/linux-arm64-0.28.1.tgz#40b22175dda06182f3ee8141186c5ff304c4a717"
+  integrity sha512-yHs+0uc8+nvEAfAfxrWQKK5peSNzBc4PegcMO0EJ2hT71uA7vB8Ihg2e77R2P7SG5uYjPbHlLLmve4LLLRCf0g==
+
 "@esbuild/linux-arm@0.21.5":
   version "0.21.5"
   resolved "https://registry.ag-grid.com/@esbuild/linux-arm/-/linux-arm-0.21.5.tgz#fc6fd11a8aca56c1f6f3894f2bea0479f8f626b9"
@@ -2615,6 +2718,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/linux-arm/-/linux-arm-0.28.0.tgz#7b42ffa84c288ae94fdc431c1b28a89e3c3b9278"
   integrity sha512-CjaaREJagqJp7iTaNQjjidaNbCKYcd4IDkzbwwxtSvjI7NZm79qiHc8HqciMddQ6CKvJT6aBd8lO9kN/ZudLlw==
+
+"@esbuild/linux-arm@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/linux-arm/-/linux-arm-0.28.1.tgz#c09a0f67917592ac0de892a9be4d3814debd2a6c"
+  integrity sha512-qVXBOHQS+d5Y722GwJzJUtOLlX7km3CraOaGormF1pDtPd2C/l1SHRPgjLunLGe51Sh5YYWKMFDyV4SxgMQYTQ==
 
 "@esbuild/linux-ia32@0.21.5":
   version "0.21.5"
@@ -2636,6 +2744,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/linux-ia32/-/linux-ia32-0.28.0.tgz#deb15d112ed8dd605346b6b953d23a21ff81253f"
   integrity sha512-KBnSTt1kxl9x70q+ydterVdl+Cn0H18ngRMRCEQfrbqdUuntQQ0LoMZv47uB97NljZFzY6HcfqEZ2SAyIUTQBQ==
 
+"@esbuild/linux-ia32@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/linux-ia32/-/linux-ia32-0.28.1.tgz#a580f9c676797833891e519fc7a1337c8afd8db3"
+  integrity sha512-d1z4ZuP0ajrfz/FhGT4vv278rX8KnPPJx8i5+AtK7TYbx9Le9F1hyzurZpkEyjkGa9dUGhQow4C1NmeGvqxN2w==
+
 "@esbuild/linux-loong64@0.21.5":
   version "0.21.5"
   resolved "https://registry.ag-grid.com/@esbuild/linux-loong64/-/linux-loong64-0.21.5.tgz#ed62e04238c57026aea831c5a130b73c0f9f26df"
@@ -2655,6 +2768,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/linux-loong64/-/linux-loong64-0.28.0.tgz#81fb89d07eecc79b157dea61033757726fce0ca4"
   integrity sha512-zpSlUce1mnxzgBADvxKXX5sl8aYQHo2ezvMNI8I0lbblJtp8V4odlm3Yzlj7gPyt3T8ReksE6bK+pT3WD+aJRg==
+
+"@esbuild/linux-loong64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/linux-loong64/-/linux-loong64-0.28.1.tgz#46452cf321dc7f9e91c2fa780a56bb56e79cd68b"
+  integrity sha512-M5sRjUVZrkm1OAPR3dlOYzNmN+loZKGVi1VUQGrwuqLcbR6qeAz+famMhjASeH3YVKvZz+zT1jlh/keC3Rj/lg==
 
 "@esbuild/linux-mips64el@0.21.5":
   version "0.21.5"
@@ -2676,6 +2794,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/linux-mips64el/-/linux-mips64el-0.28.0.tgz#d0e42691b3ff7af9fb2217b70fc01f343bdb62bb"
   integrity sha512-2jIfP6mmjkdmeTlsX/9vmdmhBmKADrWqN7zcdtHIeNSCH1SqIoNI63cYsjQR8J+wGa4Y5izRcSHSm8K3QWmk3w==
 
+"@esbuild/linux-mips64el@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/linux-mips64el/-/linux-mips64el-0.28.1.tgz#4211b3184dd6608f53dcb22e39f5d34ee08852c8"
+  integrity sha512-mRObBZeHh2OxcBFPWE/FjylkRgZdYuiTR3vaTozquCGOH14iP9oN4x4Ge81CoIDYQrXmIxpFumJBu5MtZpnQJQ==
+
 "@esbuild/linux-ppc64@0.21.5":
   version "0.21.5"
   resolved "https://registry.ag-grid.com/@esbuild/linux-ppc64/-/linux-ppc64-0.21.5.tgz#5f2203860a143b9919d383ef7573521fb154c3e4"
@@ -2695,6 +2818,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/linux-ppc64/-/linux-ppc64-0.28.0.tgz#389f3e5e98f17d477c467cc87136e1a076eead87"
   integrity sha512-bc0FE9wWeC0WBm49IQMPSPILRocGTQt3j5KPCA8os6VprfuJ7KD+5PzESSrJ6GmPIPJK965ZJHTUlSA6GNYEhg==
+
+"@esbuild/linux-ppc64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/linux-ppc64/-/linux-ppc64-0.28.1.tgz#697857c2a61cb9b0b6bb6652e40c1dc5e1ca8e5d"
+  integrity sha512-slScBsMAb3GFDcdrCgLwZtPYRoH2H/youv10QiZyRjmsP48fznoveWytSgCI/R0ZcUgpc0ZhIUEx6LHts8yrfQ==
 
 "@esbuild/linux-riscv64@0.21.5":
   version "0.21.5"
@@ -2716,6 +2844,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/linux-riscv64/-/linux-riscv64-0.28.0.tgz#763bd60d59b242be12da1e67d5729f3024c605fa"
   integrity sha512-SQPZOwoTTT/HXFXQJG/vBX8sOFagGqvZyXcgLA3NhIqcBv1BJU1d46c0rGcrij2B56Z2rNiSLaZOYW5cUk7yLQ==
 
+"@esbuild/linux-riscv64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/linux-riscv64/-/linux-riscv64-0.28.1.tgz#d192943eb146a40ac4c6497d0cf7be35b986bf08"
+  integrity sha512-kw0owk1o0GFETUJyW0jc0G4Yzs0BHZn0JDZ8JRT088vjJYX777BAs1fDGxAC+q831qOs2DTC96mNsG2opdfyyQ==
+
 "@esbuild/linux-s390x@0.21.5":
   version "0.21.5"
   resolved "https://registry.ag-grid.com/@esbuild/linux-s390x/-/linux-s390x-0.21.5.tgz#b7ccf686751d6a3e44b8627ababc8be3ef62d8de"
@@ -2735,6 +2868,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/linux-s390x/-/linux-s390x-0.28.0.tgz#aac6061634872e4677de693bce8030d73b1fd055"
   integrity sha512-SCfR0HN8CEEjnYnySJTd2cw0k9OHB/YFzt5zgJEwa+wL/T/raGWYMBqwDNAC6dqFKmJYZoQBRfHjgwLHGSrn3Q==
+
+"@esbuild/linux-s390x@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/linux-s390x/-/linux-s390x-0.28.1.tgz#acea0356da0e0ebc08f97cf7b9c2e401e1e648dc"
+  integrity sha512-/lAIjX8aYFRByhh6L5rYtPEDRqa9de/4V/juOXcta5frjvzXO4/sqEtyytse0g3zZFuWu5cDN0MkLz2qRDD2Ag==
 
 "@esbuild/linux-x64@0.21.5":
   version "0.21.5"
@@ -2756,6 +2894,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/linux-x64/-/linux-x64-0.28.0.tgz#4f2917747188fe77632bcec65b2d84b422419779"
   integrity sha512-us0dSb9iFxIi8srnpl931Nvs65it/Jd2a2K3qs7fz2WfGPHqzfzZTfec7oxZJRNPXPnNYZtanmRc4AL/JwVzHQ==
 
+"@esbuild/linux-x64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/linux-x64/-/linux-x64-0.28.1.tgz#6f0c3ce0cb64c534b70c4c45ecb2c16d34e35dfd"
+  integrity sha512-u/anNYF2mmVOEDwLtnQ1wOr3EZ9sTNGLWrsYGYwHWzGA3Si84IOkHXlbWTD1NB+9/1lcnweYKO54uhxZydNzfA==
+
 "@esbuild/netbsd-arm64@0.25.12":
   version "0.25.12"
   resolved "https://registry.ag-grid.com/@esbuild/netbsd-arm64/-/netbsd-arm64-0.25.12.tgz#f04c4049cb2e252fe96b16fed90f70746b13f4a4"
@@ -2770,6 +2913,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/netbsd-arm64/-/netbsd-arm64-0.28.0.tgz#814df0ae57a0c386814491b8397eeba82094a947"
   integrity sha512-CR/RYotgtCKwtftMwJlUU7xCVNg3lMYZ0RzTmAHSfLCXw3NtZtNpswLEj/Kkf6kEL3Gw+BpOekRX0BYCtklhUw==
+
+"@esbuild/netbsd-arm64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/netbsd-arm64/-/netbsd-arm64-0.28.1.tgz#8bcd77077a0dce3378b574fedb26d2a253b73d36"
+  integrity sha512-oks0DYbLwWMmaakTsCb+zL4E+aHRVLom9IJZOAthMQEPiQmydXHkziYEsGYRx0uNV/IjEKGAV941JzH02pflqw==
 
 "@esbuild/netbsd-x64@0.21.5":
   version "0.21.5"
@@ -2791,6 +2939,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/netbsd-x64/-/netbsd-x64-0.28.0.tgz#e01bdf7e60fa1a08e46d46d960b0d9bb8ac210af"
   integrity sha512-nU1yhmYutL+fQ71Kxnhg8uEOdC0pwEW9entHykTgEbna2pw2dkbFSMeqjjyHZoCmt8SBkOSvV+yNmm94aUrrqw==
 
+"@esbuild/netbsd-x64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/netbsd-x64/-/netbsd-x64-0.28.1.tgz#e7fb2a01e99c830c94e6623cd9fefb4c8fb58347"
+  integrity sha512-aeL6lAnN89Hz43Mlh1G8ARasbuoYvSITDEx0tHh5b7jJnHcssqgjy9Yx430GDpmCa6OyrKoS0aNRjKundRizGg==
+
 "@esbuild/openbsd-arm64@0.25.12":
   version "0.25.12"
   resolved "https://registry.ag-grid.com/@esbuild/openbsd-arm64/-/openbsd-arm64-0.25.12.tgz#6296f5867aedef28a81b22ab2009c786a952dccd"
@@ -2805,6 +2958,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/openbsd-arm64/-/openbsd-arm64-0.28.0.tgz#4a15c36aacca68d2d5a4c90b710c06759f4c1ffa"
   integrity sha512-cXb5vApOsRsxsEl4mcZ1XY3D4DzcoMxR/nnc4IyqYs0rTI8ZKmW6kyyg+11Z8yvgMfAEldKzP7AdP64HnSC/6g==
+
+"@esbuild/openbsd-arm64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/openbsd-arm64/-/openbsd-arm64-0.28.1.tgz#c52909372db8b86e2c55e05a8940033b5660a3b2"
+  integrity sha512-MEFJe5C3R8pwXdZ5Y21oo6m7ePiS0d9pWucn99O/wvyJZChoIQKrQDxKrGeW8F5+T0okTHesAmDeiHDTIq0V/Q==
 
 "@esbuild/openbsd-x64@0.21.5":
   version "0.21.5"
@@ -2826,6 +2984,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/openbsd-x64/-/openbsd-x64-0.28.0.tgz#475e6101498a8ecce3008d7c388111d7a27c17bd"
   integrity sha512-8wZM2qqtv9UP3mzy7HiGYNH/zjTA355mpeuA+859TyR+e+Tc08IHYpLJuMsfpDJwoLo1ikIJI8jC3GFjnRClzA==
 
+"@esbuild/openbsd-x64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/openbsd-x64/-/openbsd-x64-0.28.1.tgz#c427b9be5a64c262ff9a7eb70b5fbbaadf446c6c"
+  integrity sha512-i/ZLIOafE0Z8cI/XANJAixoJL/uRAoS2xOA3rb0xN+KK0K177cMAsQYkzHtBrtMXAKuAc7HGgcWiZ/sRC1Nxgw==
+
 "@esbuild/openharmony-arm64@0.25.12":
   version "0.25.12"
   resolved "https://registry.ag-grid.com/@esbuild/openharmony-arm64/-/openharmony-arm64-0.25.12.tgz#49e0b768744a3924be0d7fd97dd6ce9b2923d88d"
@@ -2840,6 +3003,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/openharmony-arm64/-/openharmony-arm64-0.28.0.tgz#cfdc3957f0b7a69f1bde129aad17fcc2f6fa033e"
   integrity sha512-FLGfyizszcef5C3YtoyQDACyg95+dndv79i2EekILBofh5wpCa1KuBqOWKrEHZg3zrL3t5ouE5jgr94vA+Wb2w==
+
+"@esbuild/openharmony-arm64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/openharmony-arm64/-/openharmony-arm64-0.28.1.tgz#dc9b147baca2e6c4b3c85571741ef4860a489097"
+  integrity sha512-ge+Z7EXFNt2BO1oAMsVpiQ8EwndV9i1xXerAeTIK7AtPs3bKFXQM7nlRxDSIUIMeueR1CNXxqztLzdNeReKBJg==
 
 "@esbuild/sunos-x64@0.21.5":
   version "0.21.5"
@@ -2861,6 +3029,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/sunos-x64/-/sunos-x64-0.28.0.tgz#a013c856fecacd1c3aec985c8afe1d1cb017497d"
   integrity sha512-1ZgjUoEdHZZl/YlV76TSCz9Hqj9h9YmMGAgAPYd+q4SicWNX3G5GCyx9uhQWSLcbvPW8Ni7lj4gDa1T40akdlw==
 
+"@esbuild/sunos-x64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/sunos-x64/-/sunos-x64-0.28.1.tgz#ce866d12df13c15e4c99f073a3d466f6e0649b3a"
+  integrity sha512-BEjgtECkL3vY+SaSQ6nzVfiALUeFxpawyp8Jmf5PtYhf1Ug40N1h/hxlhts+f1FvSvarEigdxS3BlSMI2PJLcQ==
+
 "@esbuild/win32-arm64@0.21.5":
   version "0.21.5"
   resolved "https://registry.ag-grid.com/@esbuild/win32-arm64/-/win32-arm64-0.21.5.tgz#675b7385398411240735016144ab2e99a60fc75d"
@@ -2880,6 +3053,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/win32-arm64/-/win32-arm64-0.28.0.tgz#eae05e0f35271cad3898b43168d3e9a3bbaf47e5"
   integrity sha512-Q9StnDmQ/enxnpxCCLSg0oo4+34B9TdXpuyPeTedN/6+iXBJ4J+zwfQI28u/Jl40nOYAxGoNi7mFP40RUtkmUA==
+
+"@esbuild/win32-arm64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/win32-arm64/-/win32-arm64-0.28.1.tgz#7468e3692d01d629d5941e5d83817bb80f9e39b4"
+  integrity sha512-lCv9eK/H6ZJWbE7bh2nw54CZ9M2nupBxJcTsdk/QQnWkdSjKGuxmmH8/GWrlT1eMmZfn4dGcCjRte397WqfQXA==
 
 "@esbuild/win32-ia32@0.21.5":
   version "0.21.5"
@@ -2901,6 +3079,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-ia32/-/win32-ia32-0.28.0.tgz#06161ebc5bf75c08d69feb3c6b22560515913998"
   integrity sha512-zF3ag/gfiCe6U2iczcRzSYJKH1DCI+ByzSENHlM2FcDbEeo5Zd2C86Aq0tKUYAJJ1obRP84ymxIAksZUcdztHA==
 
+"@esbuild/win32-ia32@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/win32-ia32/-/win32-ia32-0.28.1.tgz#a5bc0063fb2bcab6d0ed63f2a1537958bc269ec6"
+  integrity sha512-zvb/mB2bSCoJOpoCBgYKKpX6YM6mJBlBUVUtVj41DlZJVEB6/0CKlRYxP5wWl1C1ILiCoAU5wZZ4q1P3qeS6Eg==
+
 "@esbuild/win32-x64@0.21.5":
   version "0.21.5"
   resolved "https://registry.ag-grid.com/@esbuild/win32-x64/-/win32-x64-0.21.5.tgz#acad351d582d157bb145535db2a6ff53dd514b5c"
@@ -2920,6 +3103,11 @@
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.28.0.tgz#04d90d5752b4ce65d2b6ac25eba08ff7624fe07c"
   integrity sha512-pEl1bO9mfAmIC+tW5btTmrKaujg3zGtUmWNdCw/xs70FBjwAL3o9OEKNHvNmnyylD6ubxUERiEhdsL0xBQ9efw==
+
+"@esbuild/win32-x64@0.28.1":
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/@esbuild/win32-x64/-/win32-x64-0.28.1.tgz#10064ee44f4347b90c9a02b446bbf80a91632b12"
+  integrity sha512-bm4Mowrv+GXMlpWX++EcXw/iLyd1o3+bJkC2DkWXYVvgZCqD/bSj9ctZeAMC3cIxgjRVR2Dufaiu4YPxr5gW1A==
 
 "@eslint-community/eslint-utils@^4.7.0", "@eslint-community/eslint-utils@^4.8.0":
   version "4.9.0"
@@ -6352,13 +6540,13 @@
   resolved "https://registry.ag-grid.com/@rspack/lite-tapable/-/lite-tapable-1.0.1.tgz#d4540a5d28bd6177164bc0ba0bee4bdec0458591"
   integrity sha512-VynGOEsVw2s8TAlLf/uESfrgfrq2+rcXB1muPJYBWbsm1Oa6r5qVQhjA5ggM6z/coYPrsVMgovl3Ff7Q7OCp1w==
 
-"@schematics/angular@20.3.26":
-  version "20.3.26"
-  resolved "https://registry.ag-grid.com/@schematics/angular/-/angular-20.3.26.tgz#8250ad10d25bc144223a91e3a8abe266b811dabc"
-  integrity sha512-7XgzAwsOu/cuyt+97uGGRMkROnP/zo0V48uX2//kccZFCrOxlfU4l5/08sC9kIQ2nYdvrTZrOzUv2R6ZOXSqKg==
+"@schematics/angular@20.3.30":
+  version "20.3.30"
+  resolved "https://registry.ag-grid.com/@schematics/angular/-/angular-20.3.30.tgz#ac58e0eb67aee1027dfb1292654394ea6b8d4c55"
+  integrity sha512-UCYMVIr0a/RCPlk5CbMYaC09cSoXCMqdIG6jYNQgxJcPgOMHop1wEEUkOkih7Qy1kN1nBmXnG2tYFVH0Non+uA==
   dependencies:
-    "@angular-devkit/core" "20.3.26"
-    "@angular-devkit/schematics" "20.3.26"
+    "@angular-devkit/core" "20.3.30"
+    "@angular-devkit/schematics" "20.3.30"
     jsonc-parser "3.3.1"
 
 "@sec-ant/readable-stream@^0.4.1":
@@ -8557,61 +8745,61 @@ adm-zip@^0.5.10:
   resolved "https://registry.ag-grid.com/adm-zip/-/adm-zip-0.5.16.tgz#0b5e4c779f07dedea5805cdccb1147071d94a909"
   integrity sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==
 
-ag-charts-angular@14.0.0-beta.20260623.2306:
-  version "14.0.0-beta.20260623.2306"
-  resolved "https://registry.ag-grid.com/ag-charts-angular/-/ag-charts-angular-14.0.0-beta.20260623.2306.tgz#fe9aa72bdab105f894426777d662b4edac6fe913"
-  integrity sha512-xDjdukeTxdkqcMr0WSjQWGMmDVdgxOypUpAjy0SDT1sUq2bdABS1TyTfsHFhrtfZ4Qfyr/kHnlWwb7fQYj+g0Q==
+ag-charts-angular@14.0.0:
+  version "14.0.0"
+  resolved "https://registry.ag-grid.com/ag-charts-angular/-/ag-charts-angular-14.0.0.tgz#e585c7d158cbabb08fc07394b75fd9ad8b09f119"
+  integrity sha512-F+fsJ9vNR7NJetIBtoaqLM3PJdCsbKoNo1K+Cspc/lg00fHPP8320a1JnLZzlqf2gp9VZa+1Ha5gafh4V/Ayeg==
   dependencies:
-    ag-charts-community "14.0.0-beta.20260623.2306"
+    ag-charts-community "14.0.0"
     tslib "^2.8.1"
 
-ag-charts-community@14.0.0-beta.20260623.2306:
-  version "14.0.0-beta.20260623.2306"
-  resolved "https://registry.ag-grid.com/ag-charts-community/-/ag-charts-community-14.0.0-beta.20260623.2306.tgz#fcb320b103d7e023b1cd67c8e4fe6cb2177adf2d"
-  integrity sha512-gAPFLhFXiBrgKjXpHt9D+q75V92ikrsLYkCwIqPdPqFU22LxzMQArweG7iaIwMilaZ2Zq6Gnuuv/CyUGmrmIHg==
+ag-charts-community@14.0.0:
+  version "14.0.0"
+  resolved "https://registry.ag-grid.com/ag-charts-community/-/ag-charts-community-14.0.0.tgz#4d738b73d79d26203edb65ad204e84b646091f28"
+  integrity sha512-u/O7T/EGxj8s6cZjbYU1CaRObnjMzdfXZVido9uXbeAwBkT4rxXF6OWSq1SkkSrZD1+pwusHn3cbul4Ly3yzPA==
   dependencies:
-    ag-charts-core "14.0.0-beta.20260623.2306"
-    ag-charts-locale "14.0.0-beta.20260623.2306"
-    ag-charts-types "14.0.0-beta.20260623.2306"
+    ag-charts-core "14.0.0"
+    ag-charts-locale "14.0.0"
+    ag-charts-types "14.0.0"
 
-ag-charts-core@14.0.0-beta.20260623.2306:
-  version "14.0.0-beta.20260623.2306"
-  resolved "https://registry.ag-grid.com/ag-charts-core/-/ag-charts-core-14.0.0-beta.20260623.2306.tgz#5b05ec4a87c851cf3faac3cb28c5c8fb6c4653c2"
-  integrity sha512-Xu3FjitRweTcTHrxrfBrzcEbnUL7ECktXqKTzLEDqi9RhFREh3kmZzhigDJ5qTQG9VpZnUoNYv9NmNFwjY4hhw==
+ag-charts-core@14.0.0:
+  version "14.0.0"
+  resolved "https://registry.ag-grid.com/ag-charts-core/-/ag-charts-core-14.0.0.tgz#8b179192000f6e3b4ef59e6eaca18c167623fa39"
+  integrity sha512-xcFSQ0Ces8JvH5RpKoZIjrFzdvju91gIXODj33Byg6ShwkixrHyLaCf17addfSsqerSSdMkw0iiceD9afU83UQ==
   dependencies:
-    ag-charts-types "14.0.0-beta.20260623.2306"
+    ag-charts-types "14.0.0"
 
-ag-charts-enterprise@14.0.0-beta.20260623.2306:
-  version "14.0.0-beta.20260623.2306"
-  resolved "https://registry.ag-grid.com/ag-charts-enterprise/-/ag-charts-enterprise-14.0.0-beta.20260623.2306.tgz#bc8f454355e14dba5823f086d07a6ff5f430d8e0"
-  integrity sha512-RU9nUdFm8w8UzEWh+RqTKj8/UscW1erooWT1GoZXvAKyQfbsADAStLb56X1kx2m6VpwaViDxl/YdtdpTAqlbtA==
+ag-charts-enterprise@14.0.0:
+  version "14.0.0"
+  resolved "https://registry.ag-grid.com/ag-charts-enterprise/-/ag-charts-enterprise-14.0.0.tgz#75933eadbd551288c406051a5adc5ec2a1e45734"
+  integrity sha512-C2mAq/GO7giI8iC71K+eIlvZQMaF8ZCSlQGtug2eaxOWvA1iu+A8wHetKhRtXeI96Sf5iR3gnsLQOgDouftL8g==
   dependencies:
-    ag-charts-community "14.0.0-beta.20260623.2306"
-    ag-charts-core "14.0.0-beta.20260623.2306"
+    ag-charts-community "14.0.0"
+    ag-charts-core "14.0.0"
 
-ag-charts-locale@14.0.0-beta.20260623.2306:
-  version "14.0.0-beta.20260623.2306"
-  resolved "https://registry.ag-grid.com/ag-charts-locale/-/ag-charts-locale-14.0.0-beta.20260623.2306.tgz#8c18bcd0a8696557967b78302ebad68e0cc7982a"
-  integrity sha512-V6ECpAAo0Enk4bKkKvRuweA4tEWMmtxeCq18FhHfTcNMpCh2sDPb8ljiSwQSg1fFleOntSxsG0xGnWv4sIp6dg==
+ag-charts-locale@14.0.0:
+  version "14.0.0"
+  resolved "https://registry.ag-grid.com/ag-charts-locale/-/ag-charts-locale-14.0.0.tgz#e7650882a651c5ee48c0689412ecb910857ea9c7"
+  integrity sha512-14mGnsQgG7VzdQwt7Jq2MFPGPtO8y6jAECN4nae7t3fJAPq162mmrgDaqpwHdAZxKPkMNte98DUQ8ULrtSbUpQ==
 
-ag-charts-react@14.0.0-beta.20260623.2306:
-  version "14.0.0-beta.20260623.2306"
-  resolved "https://registry.ag-grid.com/ag-charts-react/-/ag-charts-react-14.0.0-beta.20260623.2306.tgz#ea9b8451ab89a08123df98715a89da9f1ce53973"
-  integrity sha512-6m1lzZ/rJK/oWri8mqfquLQqWP4sRoDI8VGdg+wGsA9LV37vB1N3SQQVRlm5bR8tahx10T9mYXRzOMIsVEZ2+g==
+ag-charts-react@14.0.0:
+  version "14.0.0"
+  resolved "https://registry.ag-grid.com/ag-charts-react/-/ag-charts-react-14.0.0.tgz#2358de9c467ab3112487b216832fa1f4bf753583"
+  integrity sha512-PTwfdmyFbePzaKHuGWfB2o8KNXO5wR5fOCyUCRqdUNnCEK8cBPwlDsfe28CRsevQSLPZqTNpW2y5qJhHC4q6EQ==
   dependencies:
-    ag-charts-community "14.0.0-beta.20260623.2306"
+    ag-charts-community "14.0.0"
 
-ag-charts-types@14.0.0-beta.20260623.2306:
-  version "14.0.0-beta.20260623.2306"
-  resolved "https://registry.ag-grid.com/ag-charts-types/-/ag-charts-types-14.0.0-beta.20260623.2306.tgz#08e8ce184cf408c65fde0610e12179127dda16e3"
-  integrity sha512-LLkjxNYs9DvOiU1fznhmx2GuLh81avl1nGuAGOlqp9agHVFPI+lsifs5gZ9pxi1uT/2DY0vp0PmGlRLptUaGPQ==
+ag-charts-types@14.0.0:
+  version "14.0.0"
+  resolved "https://registry.ag-grid.com/ag-charts-types/-/ag-charts-types-14.0.0.tgz#996ee481a56988840b8e2cafc334e780ce636742"
+  integrity sha512-89X4J/OeOTzTp505126JayGEn3k6QUKz3UHSR0/ggoVZYzVqtMN13k/B136S1+YBwgnzyJ/NARnnIRTPWsWG9g==
 
-ag-charts-vue3@14.0.0-beta.20260623.2306:
-  version "14.0.0-beta.20260623.2306"
-  resolved "https://registry.ag-grid.com/ag-charts-vue3/-/ag-charts-vue3-14.0.0-beta.20260623.2306.tgz#5d181e460674fe427e455a4c39a81b78c8b097e5"
-  integrity sha512-oj/uYhdRpDBnc9cPjmZ3YXfhPwpAPbQl5yVrwr6EqUt9IhjyrQYjo5FAf6MUCqiTpGcngDzjuMlQhwi0qy6djw==
+ag-charts-vue3@14.0.0:
+  version "14.0.0"
+  resolved "https://registry.ag-grid.com/ag-charts-vue3/-/ag-charts-vue3-14.0.0.tgz#c72eff98159abaf139e6ef604381ba593e22cc42"
+  integrity sha512-UclTls+dPIIhTcy2LtEyhirXQ7UH2Wx+rhAsKSP1+csoEtFi57ujPgyblVNf9war1nPjhT+aBJy9i+DH7p4wzQ==
   dependencies:
-    ag-charts-community "14.0.0-beta.20260623.2306"
+    ag-charts-community "14.0.0"
 
 agent-base@6, agent-base@^6.0.2:
   version "6.0.2"
@@ -11769,7 +11957,39 @@ esbuild-wasm@>=0.23.0:
   resolved "https://registry.ag-grid.com/esbuild-wasm/-/esbuild-wasm-0.28.0.tgz#e2e60b86ed19e0f6f5a1e6c1c722f5a811d7d5f7"
   integrity sha512-5TRVKExcEmeMkccIZMzUq+Az6X2RoMAJyfl6SMMO1dMVhmvt0I2mx7gAb6zYi42n4d1ETcatFXazGKzA+aW7fg==
 
-esbuild@0.28.0, esbuild@>=0.23.0, esbuild@^0.28.0:
+esbuild@0.28.1:
+  version "0.28.1"
+  resolved "https://registry.ag-grid.com/esbuild/-/esbuild-0.28.1.tgz#ef45b4634c9c9d97a296aea4114a5f9840f95578"
+  integrity sha512-HrJrvZv5ayxBzPfwphOoNzkzOIIlifzk0KJrGK2c8R4+LKpMtpYLQeUdjnwjWv/LZlkH2laZk+4w78pi99D4Vw==
+  optionalDependencies:
+    "@esbuild/aix-ppc64" "0.28.1"
+    "@esbuild/android-arm" "0.28.1"
+    "@esbuild/android-arm64" "0.28.1"
+    "@esbuild/android-x64" "0.28.1"
+    "@esbuild/darwin-arm64" "0.28.1"
+    "@esbuild/darwin-x64" "0.28.1"
+    "@esbuild/freebsd-arm64" "0.28.1"
+    "@esbuild/freebsd-x64" "0.28.1"
+    "@esbuild/linux-arm" "0.28.1"
+    "@esbuild/linux-arm64" "0.28.1"
+    "@esbuild/linux-ia32" "0.28.1"
+    "@esbuild/linux-loong64" "0.28.1"
+    "@esbuild/linux-mips64el" "0.28.1"
+    "@esbuild/linux-ppc64" "0.28.1"
+    "@esbuild/linux-riscv64" "0.28.1"
+    "@esbuild/linux-s390x" "0.28.1"
+    "@esbuild/linux-x64" "0.28.1"
+    "@esbuild/netbsd-arm64" "0.28.1"
+    "@esbuild/netbsd-x64" "0.28.1"
+    "@esbuild/openbsd-arm64" "0.28.1"
+    "@esbuild/openbsd-x64" "0.28.1"
+    "@esbuild/openharmony-arm64" "0.28.1"
+    "@esbuild/sunos-x64" "0.28.1"
+    "@esbuild/win32-arm64" "0.28.1"
+    "@esbuild/win32-ia32" "0.28.1"
+    "@esbuild/win32-x64" "0.28.1"
+
+esbuild@>=0.23.0, esbuild@^0.28.0:
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.28.0.tgz#5dee347ffb3e3874212a35a69836b077b1ce6d96"
   integrity sha512-sNR9MHpXSUV/XB4zmsFKN+QgVG82Cc7+/aaxJ8Adi8hyOac+EXptIp45QBPaVyX3N70664wRbTcLTOemCAnyqw==
@@ -17311,7 +17531,7 @@ netmask@^2.0.2:
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-2.1.1.tgz#80043d265b53aa521b3bd01e8fcdf353f9e1e81e"
   integrity sha512-eonl3sLUha+S1GzTPxychyhnUzKyeQkZ7jLjKrBagJgPla13F+uQ71HgpFefyHgqrjEbCPkDArxYsjY8/+gLKA==
 
-ng-packagr@^20.0.0:
+ng-packagr@^20.3.2:
   version "20.3.2"
   resolved "https://registry.ag-grid.com/ng-packagr/-/ng-packagr-20.3.2.tgz#4d19856e3188c5187258ed6e1864dffc58fa3629"
   integrity sha512-yW5ME0hqTz38r/th/7zVwX5oSIw1FviSA2PUlGZdVjghDme/KX6iiwmOBmlt9E9whNmwijEC6Gn3KKbrsBx8ig==
@@ -18170,11 +18390,12 @@ package-manager-detector@^1.6.0:
   resolved "https://registry.ag-grid.com/package-manager-detector/-/package-manager-detector-1.6.0.tgz#70d0cf0aa02c877eeaf66c4d984ede0be9130734"
   integrity sha512-61A5ThoTiDG/C8s8UMZwSorAGwMJ0ERVGj2OjoW5pAalsNOg15+iQiPzrLJ4jhZ1HJzmC2PIHT2oEiH3R5fzNA==
 
-pacote@21.0.4:
-  version "21.0.4"
-  resolved "https://registry.ag-grid.com/pacote/-/pacote-21.0.4.tgz#59cd2a2b5a4c8c1b625f33991a96b136d1c05d95"
-  integrity sha512-RplP/pDW0NNNDh3pnaoIWYPvNenS7UqMbXyvMqJczosiFWTeGGwJC2NQBLqKf4rGLFfwCOnntw1aEp9Jiqm1MA==
+pacote@21.5.1:
+  version "21.5.1"
+  resolved "https://registry.ag-grid.com/pacote/-/pacote-21.5.1.tgz#74ab896fc7b1f00545ecbbbf666a61895cd50d38"
+  integrity sha512-KvcJ9iy3crysCsgqc4+PknH/w6jkrp8JN36mpZBPwNaDRwTfMZD37YzRazNstiZUOhuF5pno9f78n9mEJBavwg==
   dependencies:
+    "@gar/promise-retry" "^1.0.0"
     "@npmcli/git" "^7.0.0"
     "@npmcli/installed-package-contents" "^4.0.0"
     "@npmcli/package-json" "^7.0.0"
@@ -18188,7 +18409,6 @@ pacote@21.0.4:
     npm-pick-manifest "^11.0.1"
     npm-registry-fetch "^19.0.0"
     proc-log "^6.0.0"
-    promise-retry "^2.0.1"
     sigstore "^4.0.0"
     ssri "^13.0.0"
     tar "^7.4.3"
@@ -18553,10 +18773,10 @@ pirates@^4.0.1, pirates@^4.0.7:
   resolved "https://registry.yarnpkg.com/pirates/-/pirates-4.0.7.tgz#643b4a18c4257c8a65104b73f3049ce9a0a15e22"
   integrity sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==
 
-piscina@5.1.3:
-  version "5.1.3"
-  resolved "https://registry.ag-grid.com/piscina/-/piscina-5.1.3.tgz#30a460500a08770fc97d622e63857a5978dfc466"
-  integrity sha512-0u3N7H4+hbr40KjuVn2uNhOcthu/9usKhnw5vT3J7ply79v3D3M8naI00el9Klcy16x557VsEkkUQaHCWFXC/g==
+piscina@5.2.0:
+  version "5.2.0"
+  resolved "https://registry.ag-grid.com/piscina/-/piscina-5.2.0.tgz#3a9a568ab9e3a0556b5c94522ba305962de13e3b"
+  integrity sha512-DszUCKeVN/5G5QKo6jAVHL8fmKnkJvQ0ACiVgY7YGCq3TUB2oznAOayvZPIAdEThvhczkXR+qm3IHsNXpFCYfA==
   optionalDependencies:
     "@napi-rs/nice" "^1.0.4"
 
@@ -23348,10 +23568,10 @@ vite-plugin-vue-inspector@^5.3.2:
     kolorist "^1.8.0"
     magic-string "^0.30.4"
 
-vite@7.3.2, vite@^7.3.2:
-  version "7.3.2"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-7.3.2.tgz#cb041794d4c1395e28baea98198fd6e8f4b96b5c"
-  integrity sha512-Bby3NOsna2jsjfLVOHKes8sGwgl4TT0E6vvpYgnAYDIF/tie7MRaFthmKuHx1NSXjiTueXH3do80FMQgvEktRg==
+vite@7.3.5:
+  version "7.3.5"
+  resolved "https://registry.ag-grid.com/vite/-/vite-7.3.5.tgz#90c2d0b7b94a224e7e7dcf22d2912ff0b5291165"
+  integrity sha512-KuOaNhcnGFN2zIPGA7wRmzF+lJA1sea7rHq17aiJ++9lzY1WWG6Jpwqwe1KNbRVPIqHmr8GLYx7jbrQcN/7/ww==
   dependencies:
     esbuild "^0.27.0"
     fdir "^6.5.0"
@@ -23384,6 +23604,20 @@ vite@^6.0.0:
     postcss "^8.5.3"
     rollup "^4.34.9"
     tinyglobby "^0.2.13"
+  optionalDependencies:
+    fsevents "~2.3.3"
+
+vite@^7.3.2:
+  version "7.3.2"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-7.3.2.tgz#cb041794d4c1395e28baea98198fd6e8f4b96b5c"
+  integrity sha512-Bby3NOsna2jsjfLVOHKes8sGwgl4TT0E6vvpYgnAYDIF/tie7MRaFthmKuHx1NSXjiTueXH3do80FMQgvEktRg==
+  dependencies:
+    esbuild "^0.27.0"
+    fdir "^6.5.0"
+    picomatch "^4.0.3"
+    postcss "^8.5.6"
+    rollup "^4.43.0"
+    tinyglobby "^0.2.15"
   optionalDependencies:
     fsevents "~2.3.3"
 
