@@ -1,6 +1,8 @@
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { _registerModule } from '../modules/moduleRegistry';
 import { VERSION } from '../version';
+import type { DevValidationOptions } from './validationConfig';
+import { _applyDevValidationConfig } from './validationConfig';
 import { ValidationService } from './validationService';
 
 /**
@@ -41,7 +43,20 @@ export const ValidationModule: _ModuleWithoutApi = {
  * Call this before any grid is created, and from the same scope (module/bundle) that registers
  * your other modules — registration is global, so it must run before grid initialisation to take
  * effect. Not intended for production builds.
+ *
+ * Pass {@link DevValidationOptions} to configure development-time diagnostics, e.g. `{ throwOn: 'error' }`.
  */
-export function enableDevValidations(): void {
+export function enableDevValidations(options?: DevValidationOptions): void {
     _registerModule(ValidationModule, undefined);
+    _applyDevValidationConfig(options);
+}
+
+/**
+ * Configures the development-time diagnostics provided by the {@link ValidationModule} for users who
+ * register the module directly (via the `modules` array or `ModuleRegistry.registerModules`) rather
+ * than through {@link enableDevValidations}. Call before any grid is created. Not intended for
+ * production builds.
+ */
+export function configureDevValidations(options: DevValidationOptions): void {
+    _applyDevValidationConfig(options);
 }

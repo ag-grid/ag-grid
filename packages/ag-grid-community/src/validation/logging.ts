@@ -25,6 +25,88 @@ export function setValidationDocLink(docLink: string) {
     baseDocLink = docLink;
 }
 
+type Severity = 'error' | 'warning';
+
+/**
+ * A diagnostic captured for the developer error overlay (config errors, runtime errors and warnings).
+ * @knipIgnore Used in tests
+ */
+export interface OverlayError {
+    id: ErrorId;
+    params: any;
+    severity: Severity;
+    /** Fallback message used when the ValidationModule is not registered to supply the full text. */
+    defaultMessage?: string;
+}
+
+type ErrorListener = (error: OverlayError) => void;
+
+const errorListeners = new Set<ErrorListener>();
+
+/**
+ * Diagnostics fired before any listener attached are buffered and replayed to each new listener, so
+ * the error overlay surfaces them too: a grid's OverlayService listener registers during bean init,
+ * after earlier beans (e.g. GridOptionsService) may already have logged. Capped to bound memory on
+ * long-lived pages.
+ */
+const bufferedErrors: OverlayError[] = [];
+const MAX_BUFFERED_ERRORS = 100;
+
+// Both default off so that without the ValidationModule (i.e. production) each log call is two boolean
+// checks and no allocation. The ValidationModule turns them on at registration, before any grid exists.
+let captureEnabled = false;
+let throwThreshold: Severity | false = false;
+
+/**
+ * Pushed in by the ValidationModule (which core never imports) to enable diagnostic capture and/or the
+ * throw threshold, mirroring the provideValidationServiceLogger setter idiom to keep the dependency
+ * direction one-way.
+ */
+export function _configureDiagnostics(config: { capture?: boolean; throwOn?: Severity | false }): void {
+    if (config.capture !== undefined) {
+        captureEnabled = config.capture;
+    }
+    if (config.throwOn !== undefined) {
+        throwThreshold = config.throwOn;
+    }
+}
+
+/**
+ * Registers a listener notified of every captured error/warning, used by the error overlay. Any
+ * diagnostics already buffered (logged before this listener attached) are replayed to it immediately.
+ * Returns a cleanup function that removes the listener and, once the last listener detaches, drops the
+ * buffer so a later grid does not inherit stale diagnostics.
+ * @knipIgnore Used in tests
+ */
+export function _addErrorListener(listener: ErrorListener): () => void {
+    errorListeners.add(listener);
+    for (let i = 0, len = bufferedErrors.length; i < len; ++i) {
+        listener(bufferedErrors[i]);
+    }
+    return () => {
+        errorListeners.delete(listener);
+        if (errorListeners.size === 0) {
+            bufferedErrors.length = 0;
+        }
+    };
+}
+
+function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string): void {
+    if (captureEnabled) {
+        const error: OverlayError = { id, params, severity, defaultMessage };
+        if (bufferedErrors.length < MAX_BUFFERED_ERRORS) {
+            bufferedErrors.push(error);
+        }
+        for (const listener of errorListeners) {
+            listener(error);
+        }
+    }
+    const meetsThreshold = throwThreshold === 'warning' || (throwThreshold === 'error' && severity === 'error');
+    if (meetsThreshold) {
+        throw new Error(`${severity} #${id} ` + getErrorParts(id, params, defaultMessage).join(' '));
+    }
+}
+
 type LogFn = (message: string, ...args: any[]) => void;
 
 function getErrorParts<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>, defaultMessage?: string): any[] {
@@ -140,6 +222,7 @@ export function _warn<
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
     getMsgOrDefault(_warnOnce, args[0], args[1] as any, true);
+    emitDiagnostic(args[0], args[1] as any, 'warning');
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -149,6 +232,7 @@ export function _error<
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
     getMsgOrDefault(_errorOnce, args[0], args[1] as any, false);
+    emitDiagnostic(args[0], args[1] as any, 'error');
 }
 
 /** Used for messages before the ValidationService has been created */
@@ -158,6 +242,7 @@ export function _logPreInitErr<
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
     getMsgOrDefault(_errorOnce, id, args as any, false, defaultMessage);
+    emitDiagnostic(id, args as any, 'error', defaultMessage);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -167,6 +252,7 @@ export function _logPreInitWarn<
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
     getMsgOrDefault(_warnOnce, id, args as any, true, defaultMessage);
+    emitDiagnostic(id, args as any, 'warning', defaultMessage);
 }
 
 function getErrMsg<TId extends ErrorId>(
