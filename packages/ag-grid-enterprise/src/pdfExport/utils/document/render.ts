@@ -192,7 +192,7 @@ export function renderRows(
     let cursorY = startY;
     let bodyRowIndex = 0;
 
-    rows.forEach((row) => {
+    for (const row of rows) {
         cursorY = renderRow(
             row,
             cursorY,
@@ -208,7 +208,7 @@ export function renderRows(
         if (row.type === 'BODY') {
             bodyRowIndex += 1;
         }
-    });
+    }
 
     return cursorY;
 }
@@ -252,7 +252,8 @@ export function renderRow(
     // track the current stroke width to avoid emitting redundant `w` operators for every cell.
     let currentLineWidth = 0.5;
 
-    row.cells.forEach((cell, cellIndex) => {
+    let cellIndex = 0;
+    for (const cell of row.cells) {
         const span = cell.mergeAcross ?? 0;
         const cellWidth = getSpanWidth(columnWidths, colIndex, span + 1);
         const cellStyle = resolvedRowData.cellStyles[cellIndex] ?? resolvedRowData.defaultCellStyle;
@@ -272,7 +273,8 @@ export function renderRow(
 
         x += cellWidth;
         colIndex += span + 1;
-    });
+        cellIndex += 1;
+    }
 
     if (colIndex < columnCount) {
         for (let i = colIndex; i < columnCount; i++) {
@@ -321,7 +323,13 @@ export function createRowRenderData(
     const baseFontFamily = isHeader ? headerFont : bodyFont;
     const defaultFontSize = isHeader ? layout.headerFontSize : layout.fontSize;
     const hasRowStyle = !!row.style;
-    const hasCellStyles = row.cells.some((cell) => !!cell.style);
+    let hasCellStyles = false;
+    for (const cell of row.cells) {
+        if (cell.style) {
+            hasCellStyles = true;
+            break;
+        }
+    }
     const hasPerCellStyle = hasRowStyle || hasCellStyles;
 
     const defaultCellStyle = resolveTableCellStyle(
@@ -333,13 +341,16 @@ export function createRowRenderData(
         defaultFontSize
     );
 
-    const cellStyles = hasCellStyles
-        ? row.cells.map((cell) => {
-              // row style acts as a base layer and per-cell style overrides specific keys.
-              const style = mergePdfCellStyles(row.style, cell.style);
-              return resolveTableCellStyle(style, layout, baseFontFamily, rowStyles, styleColors, defaultFontSize);
-          })
-        : [];
+    const cellStyles: ResolvedCellStyle[] = [];
+    if (hasCellStyles) {
+        for (const cell of row.cells) {
+            // row style acts as a base layer and per-cell style overrides specific keys.
+            const style = mergePdfCellStyles(row.style, cell.style);
+            cellStyles.push(
+                resolveTableCellStyle(style, layout, baseFontFamily, rowStyles, styleColors, defaultFontSize)
+            );
+        }
+    }
     const defaultRowHeight = getRowHeight(row.type, layout);
 
     const rowHeight = hasPerCellStyle
@@ -471,10 +482,10 @@ function getRowHeight(rowType: PdfRowType, layout: LayoutOptions): number {
 function getCustomRowHeight(cellStyles: ResolvedCellStyle[], defaultHeight: number): number {
     let maxHeight = defaultHeight;
 
-    cellStyles.forEach((cellStyle) => {
+    for (const cellStyle of cellStyles) {
         const height = cellStyle.fontSize + cellStyle.padding.top + cellStyle.padding.bottom;
         maxHeight = Math.max(maxHeight, height);
-    });
+    }
 
     return maxHeight;
 }

@@ -47,21 +47,24 @@ class PdfObjectStore {
     public build(rootId: number, infoId?: number): string {
         let body = '%PDF-1.4\n';
         const offsets: number[] = [0];
+        const objects = this.objects;
 
-        this.objects.forEach((object, index) => {
-            offsets[index + 1] = body.length;
-            body += `${index + 1} 0 obj\n${object}\nendobj\n`;
-        });
+        for (let i = 0; i < objects.length; i++) {
+            const object = objects[i];
+            const objectId = i + 1;
+            offsets[objectId] = body.length;
+            body += `${objectId} 0 obj\n${object}\nendobj\n`;
+        }
 
         const xrefOffset = body.length;
-        body += `xref\n0 ${this.objects.length + 1}\n`;
+        body += `xref\n0 ${objects.length + 1}\n`;
         body += '0000000000 65535 f \n';
 
-        for (let i = 1; i <= this.objects.length; i++) {
+        for (let i = 1; i <= objects.length; i++) {
             body += `${String(offsets[i]).padStart(10, '0')} 00000 n \n`;
         }
 
-        const trailerParts = [`/Size ${this.objects.length + 1}`, `/Root ${rootId} 0 R`];
+        const trailerParts = [`/Size ${objects.length + 1}`, `/Root ${rootId} 0 R`];
         if (infoId) {
             trailerParts.push(`/Info ${infoId} 0 R`);
         }
@@ -101,19 +104,22 @@ export function buildPdf(
     const pageIds: number[] = [];
     const fontResources = `<< ${fontResourcesParts.join(' ')} >>`;
 
-    pages.forEach((content) => {
+    for (const content of pages) {
         // each page has its own content stream object and page object.
         const contentStream = `<< /Length ${content.length} >>\nstream\n${content}\nendstream`;
         const contentId = store.add(contentStream);
         const pageObject = `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)}] /Resources << /Font ${fontResources} >> /Contents ${contentId} 0 R >>`;
         const pageId = store.add(pageObject);
         pageIds.push(pageId);
-    });
+    }
 
-    store.set(
-        pagesId,
-        `<< /Type /Pages /Kids [${pageIds.map((id) => `${id} 0 R`).join(' ')}] /Count ${pageIds.length} >>`
-    );
+    const pageKids: string[] = [];
+
+    for (const pageId of pageIds) {
+        pageKids.push(`${pageId} 0 R`);
+    }
+
+    store.set(pagesId, `<< /Type /Pages /Kids [${pageKids.join(' ')}] /Count ${pageIds.length} >>`);
 
     const catalogId = store.add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
 

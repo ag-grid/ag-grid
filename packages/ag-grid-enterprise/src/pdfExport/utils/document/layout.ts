@@ -80,13 +80,13 @@ export function resolveMargin(margin: PdfExportParams['margin']): ResolvedMargin
 export function getMaxColumnCount(rows: PdfRow[]): number {
     let max = 0;
 
-    rows.forEach((row) => {
+    for (const row of rows) {
         let count = 0;
-        row.cells.forEach((cell) => {
+        for (const cell of row.cells) {
             count += 1 + (cell.mergeAcross ?? 0);
-        });
+        }
         max = Math.max(max, count);
-    });
+    }
 
     return max;
 }
@@ -104,9 +104,13 @@ export function getColumnWidths(columnsToExport: AgColumn[], columnCount: number
     }
 
     const baseWidths: number[] = [];
-    const defaultWidth = columnsToExport.length
-        ? columnsToExport.reduce((sum, col) => sum + col.getActualWidth(), 0) / columnsToExport.length
-        : 100;
+    let totalColumnWidth = 0;
+
+    for (const column of columnsToExport) {
+        totalColumnWidth += column.getActualWidth();
+    }
+
+    const defaultWidth = columnsToExport.length ? totalColumnWidth / columnsToExport.length : 100;
 
     for (let i = 0; i < columnCount; i++) {
         if (i < columnsToExport.length) {
@@ -116,13 +120,31 @@ export function getColumnWidths(columnsToExport: AgColumn[], columnCount: number
         }
     }
 
-    const totalWidth = baseWidths.reduce((sum, width) => sum + width, 0);
+    let totalWidth = 0;
+
+    for (const width of baseWidths) {
+        totalWidth += width;
+    }
+
     if (!totalWidth || !availableWidth) {
-        return baseWidths.map(() => availableWidth / columnCount);
+        const fallbackWidths: number[] = [];
+        const fallbackWidth = availableWidth / columnCount;
+
+        while (fallbackWidths.length < columnCount) {
+            fallbackWidths.push(fallbackWidth);
+        }
+
+        return fallbackWidths;
     }
 
     const scale = availableWidth / totalWidth;
-    return baseWidths.map((width) => width * scale);
+    const scaledWidths: number[] = [];
+
+    for (const width of baseWidths) {
+        scaledWidths.push(width * scale);
+    }
+
+    return scaledWidths;
 }
 
 /**
@@ -154,12 +176,12 @@ export function createFontKeyMap(
     registerFont(headerFont);
     registerFont(titleFont);
 
-    rows.forEach((row) => {
+    for (const row of rows) {
         registerFont(row.style?.fontFamily);
-        row.cells.forEach((cell) => {
+        for (const cell of row.cells) {
             registerFont(cell.style?.fontFamily);
-        });
-    });
+        }
+    }
 
     return fontKeyByFamily;
 }

@@ -17,13 +17,14 @@ export function mapCssStylesToPdfStyle(
     resolveColor?: (value?: string) => string | undefined
 ): PdfCellStyle | undefined {
     const mergedStyles: StyleValueMap = {};
-    styles.forEach((style) => {
+
+    for (const style of styles) {
         if (!style) {
-            return;
+            continue;
         }
 
         Object.assign(mergedStyles, style as StyleValueMap);
-    });
+    }
 
     if (!Object.keys(mergedStyles).length) {
         return undefined;

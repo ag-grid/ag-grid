@@ -62,26 +62,29 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
 
         if (typeof content === 'string') {
             const span = Math.max(this.columnsToExport.length - 1, 0);
-            content.split(/\r?\n/).forEach((line) => {
+            const lines = content.split(/\r?\n/);
+
+            for (const line of lines) {
                 const row = this.createRow('CUSTOM');
                 row.cells.push({
                     value: line,
                     mergeAcross: span || undefined,
                 });
-            });
+            }
+
             return;
         }
 
-        content.forEach((rowCells) => {
+        for (const rowCells of content) {
             const row = this.createRow('CUSTOM');
-            rowCells.forEach((cell) => {
+            for (const cell of rowCells) {
                 row.cells.push({
                     value: String(cell?.data?.value ?? ''),
                     mergeAcross: cell?.mergeAcross,
                     style: resolvePdfCellStyleColors(cell?.style, this.config.resolveColor),
                 });
-            });
-        });
+            }
+        }
     }
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
@@ -180,7 +183,8 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                         column,
                     })
                 );
-                const colSpan = column.getColSpan(activeNode);
+                const remainingColumns = Math.max(this.columnsToExport.length - index, 1);
+                const colSpan = Math.min(column.getColSpan(activeNode), remainingColumns);
                 const mergeAcross = colSpan > 1 ? colSpan - 1 : undefined;
 
                 if (mergeAcross) {

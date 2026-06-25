@@ -113,13 +113,13 @@ export function resolvePdfStyles(
         ...overrideStyles,
     };
 
-    PDF_STYLE_COLOR_KEYS.forEach((key) => {
+    for (const key of PDF_STYLE_COLOR_KEYS) {
         const value = mergedStyles[key];
         if (!value) {
-            return;
+            continue;
         }
         mergedStyles[key] = resolveColorValue(value) ?? value;
-    });
+    }
 
     return mergedStyles;
 }
@@ -136,18 +136,19 @@ export function getThemePdfStyles(eRootDiv: HTMLElement | undefined): PdfExportS
 
     const styles = getComputedStyle(eRootDiv);
     const themeStyles: PdfExportStyles = {};
-    PDF_STYLE_COLOR_KEYS.forEach((param) => {
+
+    for (const param of PDF_STYLE_COLOR_KEYS) {
         const cssVar = paramToVariableName(param);
         const value = styles.getPropertyValue(cssVar).trim();
         if (!value) {
-            return;
+            continue;
         }
 
         const resolved = resolveCssColor(value, eRootDiv);
         if (resolved) {
             themeStyles[param] = resolved;
         }
-    });
+    }
 
     // header background can come from class-level styling rather than css vars, so sample the real element too.
     const headerBackground = getElementStyleColor(eRootDiv, '.ag-header', 'backgroundColor');
@@ -193,8 +194,10 @@ function resolveCssColor(value: string, eRootDiv: HTMLElement | undefined): stri
     }
 
     const probe = document.createElement('span');
+    const isCssVariable = /\bvar\(/i.test(value);
     probe.style.color = value;
-    if (!probe.style.color) {
+
+    if (!probe.style.color && !isCssVariable) {
         return '';
     }
 
