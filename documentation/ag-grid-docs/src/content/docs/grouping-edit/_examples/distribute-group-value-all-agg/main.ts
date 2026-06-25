@@ -6,13 +6,18 @@ import {
     NumberFilterModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { MetricsRecord } from './data';
 import { getData } from './data';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     RowGroupingModule,
@@ -22,7 +27,6 @@ ModuleRegistry.registerModules([
     TextEditorModule,
     NumberFilterModule,
     TextFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<MetricsRecord>;

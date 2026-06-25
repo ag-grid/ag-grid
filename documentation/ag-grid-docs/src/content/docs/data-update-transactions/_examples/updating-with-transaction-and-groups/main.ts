@@ -6,12 +6,17 @@ import {
     RowApiModule,
     RowSelectionModule,
     RowStyleModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { createNewRowData, getData } from './data';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
@@ -20,7 +25,6 @@ ModuleRegistry.registerModules([
     RowStyleModule,
     ClientSideRowModelModule,
     RowGroupingModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 function poundFormatter(params: ValueFormatterParams) {

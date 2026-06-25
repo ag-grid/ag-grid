@@ -3,19 +3,18 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     PinnedRowModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
     themeQuartz,
 } from 'ag-grid-community';
 import { ContextMenuModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    RowGroupingModule,
-    ContextMenuModule,
-    PinnedRowModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, ContextMenuModule, PinnedRowModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete' },

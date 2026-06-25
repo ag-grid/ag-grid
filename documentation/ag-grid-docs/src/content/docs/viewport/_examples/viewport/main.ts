@@ -11,21 +11,20 @@ import {
     HighlightChangesModule,
     ModuleRegistry,
     RowSelectionModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { ViewportRowModelModule } from 'ag-grid-enterprise';
 
 import { createMockServer } from './mock-server';
 import { createViewportDatasource } from './viewport-datasource';
 
-ModuleRegistry.registerModules([
-    RowSelectionModule,
-    CellStyleModule,
-    ViewportRowModelModule,
-    HighlightChangesModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([RowSelectionModule, CellStyleModule, ViewportRowModelModule, HighlightChangesModule]);
 
 class RowIndexRenderer implements ICellRendererComp {
     eGui!: HTMLDivElement;

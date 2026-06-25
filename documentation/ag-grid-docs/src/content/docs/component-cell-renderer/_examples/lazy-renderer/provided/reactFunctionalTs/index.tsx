@@ -3,7 +3,7 @@
 import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
@@ -12,7 +12,12 @@ import { LazyCellLoader } from './lazyCellComp';
 import './styles.css';
 import { useFetchJson } from './useFetchJson';
 
-const modules = [ClientSideRowModelModule, ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : [])];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [ClientSideRowModelModule];
 
 const LazyCellRenderer = React.lazy(LazyCellLoader);
 

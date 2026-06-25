@@ -3,15 +3,16 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     PaginationModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    PaginationModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([PaginationModule, ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
     {

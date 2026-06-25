@@ -8,13 +8,18 @@ import {
     HighlightChangesModule,
     RowApiModule,
     RowSelectionModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, MasterDetailModule } from 'ag-grid-enterprise';
 import type { CustomDetailCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IAccount } from './interfaces';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     ClientSideRowModelApiModule,
@@ -26,7 +31,6 @@ const modules = [
     ColumnMenuModule,
     ContextMenuModule,
     ColumnsToolPanelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 let allRowData: any[];

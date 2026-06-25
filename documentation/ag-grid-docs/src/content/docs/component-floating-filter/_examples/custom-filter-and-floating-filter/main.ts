@@ -3,18 +3,19 @@ import {
     ClientSideRowModelModule,
     CustomFilterModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { NumberFilterComponent } from './numberFilterComponent_typescript';
 import { NumberFloatingFilterComponent } from './numberFloatingFilterComponent_typescript';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    CustomFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, CustomFilterModule]);
 
 function doesFilterPass({ node, model, handlerParams }: DoesFilterPassParams<any, any, number>): boolean {
     const value = handlerParams.getValue(node);

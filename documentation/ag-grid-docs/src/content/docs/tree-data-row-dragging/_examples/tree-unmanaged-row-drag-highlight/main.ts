@@ -17,14 +17,19 @@ import {
     ModuleRegistry,
     RenderApiModule,
     RowDragModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 import { getFileCssIcon, moveFiles } from './fileUtils';
 import type { IFile } from './fileUtils';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     RowDragModule,
@@ -33,7 +38,6 @@ ModuleRegistry.registerModules([
     CellStyleModule,
     ClientSideRowModelModule,
     TreeDataModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 class FileCellRenderer {

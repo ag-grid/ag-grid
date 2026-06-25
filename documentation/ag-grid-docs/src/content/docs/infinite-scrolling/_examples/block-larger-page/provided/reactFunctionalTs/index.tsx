@@ -2,12 +2,17 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GetRowIdParams, GridReadyEvent, IDatasource } from 'ag-grid-community';
-import { InfiniteRowModelModule, NumberFilterModule, PaginationModule, ValidationModule } from 'ag-grid-community';
+import { InfiniteRowModelModule, NumberFilterModule, PaginationModule, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { countries } from './countries';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     NumberFilterModule,
@@ -17,7 +22,6 @@ const modules = [
     ColumnMenuModule,
     ContextMenuModule,
     ColumnsToolPanelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 const filterParams = { values: countries() };

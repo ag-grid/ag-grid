@@ -16,13 +16,18 @@ import {
     RowDragModule,
     RowSelectionModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from 'ag-grid-enterprise';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     ClientSideRowModelApiModule,
@@ -32,7 +37,6 @@ const modules = [
     ClientSideRowModelModule,
     CsvExportModule,
     ExcelExportModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 const SportRenderer = (props: CustomCellRendererProps) => {

@@ -4,16 +4,16 @@ import {
     ColumnApiModule,
     ColumnAutoSizeModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    ColumnAutoSizeModule,
-    ColumnApiModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ColumnAutoSizeModule, ColumnApiModule, ClientSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 

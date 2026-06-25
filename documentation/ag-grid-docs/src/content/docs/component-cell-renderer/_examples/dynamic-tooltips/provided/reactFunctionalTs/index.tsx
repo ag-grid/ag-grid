@@ -7,7 +7,7 @@ import {
     TextEditorModule,
     TextFilterModule,
     TooltipModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
@@ -15,13 +15,12 @@ import AthleteCellRenderer from './athleteCellRenderer';
 import type { IOlympicData } from './interfaces';
 import './styles.css';
 
-const modules = [
-    TextEditorModule,
-    TextFilterModule,
-    ClientSideRowModelModule,
-    TooltipModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [TextEditorModule, TextFilterModule, ClientSideRowModelModule, TooltipModule];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact<IOlympicData>>(null);

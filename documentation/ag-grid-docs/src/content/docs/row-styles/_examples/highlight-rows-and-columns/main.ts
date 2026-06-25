@@ -3,15 +3,16 @@ import {
     ClientSideRowModelModule,
     ColumnHoverModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    ColumnHoverModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ColumnHoverModule, ClientSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 

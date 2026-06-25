@@ -9,17 +9,18 @@ import {
     GridApi,
     GridReadyEvent,
     ModuleRegistry,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    FindModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule]);
 
 @Component({
     selector: 'my-app',

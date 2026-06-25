@@ -8,7 +8,7 @@ import {
     type IsFullWidthRowParams,
     ModuleRegistry,
     type RowHeightParams,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
@@ -17,12 +17,12 @@ import { getData, getLatinText } from './data';
 import FullWidthCellRenderer from './fullWidthCellRenderer';
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    FindModule,
-    ToolbarModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([FindModule, ToolbarModule, ClientSideRowModelModule]);
 
 const VueExample = defineComponent({
     template: `

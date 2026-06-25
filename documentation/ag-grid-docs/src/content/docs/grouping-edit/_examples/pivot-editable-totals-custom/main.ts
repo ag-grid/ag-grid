@@ -4,8 +4,8 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     TextEditorModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     ColumnsToolPanelModule,
@@ -27,6 +27,11 @@ interface SalesRecord {
 
 let gridApi: GridApi<SalesRecord>;
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     RowGroupingModule,
     RowGroupingEditModule,
@@ -36,7 +41,6 @@ ModuleRegistry.registerModules([
     PivotModule,
     SideBarModule,
     ColumnsToolPanelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 // Parse input to integer

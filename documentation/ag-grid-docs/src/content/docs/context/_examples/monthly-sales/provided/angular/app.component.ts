@@ -18,11 +18,16 @@ import {
     QuickFilterModule,
     RenderApiModule,
     RowSelectionModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { FiltersToolPanelModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
@@ -34,7 +39,6 @@ ModuleRegistry.registerModules([
     RowGroupingModule,
     SetFilterModule,
     FiltersToolPanelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 @Component({

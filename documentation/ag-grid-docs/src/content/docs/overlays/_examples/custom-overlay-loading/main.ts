@@ -4,18 +4,18 @@ import {
     ModuleRegistry,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { CustomLoadingOverlay } from './customLoadingOverlay_typescript';
 
-ModuleRegistry.registerModules([
-    TextEditorModule,
-    TextFilterModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([TextEditorModule, TextFilterModule, ClientSideRowModelModule]);
 
 interface IAthlete {
     athlete: string;

@@ -3,17 +3,18 @@ import {
     ClientSideRowModelModule,
     DateFilterModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { getData } from './data';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    DateFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, DateFilterModule]);
 
 const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
 

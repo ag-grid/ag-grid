@@ -1,8 +1,8 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
     themeAlpine,
     themeBalham,
     themeMaterial,
@@ -10,10 +10,12 @@ import {
 } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([
-    AllEnterpriseModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete' },

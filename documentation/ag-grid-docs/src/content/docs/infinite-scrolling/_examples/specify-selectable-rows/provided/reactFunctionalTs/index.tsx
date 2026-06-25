@@ -2,15 +2,16 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GridReadyEvent, IDatasource, IRowNode, RowSelectionOptions } from 'ag-grid-community';
-import { InfiniteRowModelModule, RowSelectionModule, ValidationModule } from 'ag-grid-community';
+import { InfiniteRowModelModule, RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-const modules = [
-    RowSelectionModule,
-    InfiniteRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [RowSelectionModule, InfiniteRowModelModule];
 
 const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',

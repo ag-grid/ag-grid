@@ -7,7 +7,7 @@ import {
     CustomEditorModule,
     NumberEditorModule,
     TextEditorModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
@@ -17,14 +17,12 @@ import MoodEditor from './moodEditor';
 import MoodRenderer from './moodRenderer';
 import './styles.css';
 
-const modules = [
-    NumberEditorModule,
-    TextEditorModule,
-    CustomEditorModule,
-    ClientSideRowModelModule,
-    RichSelectModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [NumberEditorModule, TextEditorModule, CustomEditorModule, ClientSideRowModelModule, RichSelectModule];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);

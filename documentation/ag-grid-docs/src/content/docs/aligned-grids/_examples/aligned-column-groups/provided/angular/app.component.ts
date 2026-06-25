@@ -10,8 +10,13 @@ import {
     ColumnAutoSizeModule,
     ModuleRegistry,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     TextFilterModule,
@@ -19,7 +24,6 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     AlignedGridsModule,
     ColumnApiModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 @Component({

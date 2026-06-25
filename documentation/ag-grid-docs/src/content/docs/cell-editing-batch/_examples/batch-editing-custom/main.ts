@@ -5,8 +5,8 @@ import {
     ModuleRegistry,
     NumberEditorModule,
     TextEditorModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { BatchEditModule, ClipboardModule, RichSelectModule } from 'ag-grid-enterprise';
 
@@ -16,6 +16,11 @@ import { MoodEditor } from './moodEditor_typescript';
 import { MoodRenderer } from './moodRenderer_typescript';
 import { SimpleTextEditor } from './simpleTextEditor_typescript';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     RichSelectModule,
@@ -24,7 +29,6 @@ ModuleRegistry.registerModules([
     NumberEditorModule,
     TextEditorModule,
     CustomEditorModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

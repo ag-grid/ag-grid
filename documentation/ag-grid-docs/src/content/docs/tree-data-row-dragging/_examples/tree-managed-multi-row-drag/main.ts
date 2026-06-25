@@ -4,21 +4,20 @@ import {
     ModuleRegistry,
     RowDragModule,
     RowSelectionModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { Task } from './data';
 import { getData } from './data';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    TreeDataModule,
-    RowDragModule,
-    RowSelectionModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, TreeDataModule, RowDragModule, RowSelectionModule]);
 
 const gridOptions: GridOptions<Task> = {
     columnDefs: [{ field: 'assignee' }],

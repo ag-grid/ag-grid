@@ -13,8 +13,8 @@ import {
     HighlightChangesModule,
     ModuleRegistry,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     RowGroupingModule,
@@ -25,6 +25,11 @@ import {
 
 import { getFakeServer, registerObserver } from './fakeServer';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     TextFilterModule,
     HighlightChangesModule,
@@ -33,7 +38,6 @@ ModuleRegistry.registerModules([
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
     RowGroupingPanelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

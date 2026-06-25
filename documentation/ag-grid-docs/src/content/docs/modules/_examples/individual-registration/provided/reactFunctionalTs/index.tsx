@@ -6,7 +6,7 @@ import {
     CsvExportModule,
     NumberFilterModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import type { AgModuleName, ColDef, GridReadyEvent } from 'ag-grid-community';
 import {
@@ -20,12 +20,12 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-const sharedModules = [
-    ClientSideRowModelModule,
-    ColumnMenuModule,
-    ContextMenuModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const sharedModules = [ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule];
 const leftModules = [SetFilterModule, ClipboardModule, CsvExportModule];
 const rightModules = [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];
 

@@ -8,7 +8,7 @@ import {
     NumberEditorModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact, getInstance } from 'ag-grid-react';
 
@@ -16,14 +16,12 @@ import type { MySimpleInterface } from './mySimpleEditor';
 import MySimpleEditor from './mySimpleEditor';
 import './style.css';
 
-const modules = [
-    NumberEditorModule,
-    TextEditorModule,
-    TextFilterModule,
-    CustomEditorModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [NumberEditorModule, TextEditorModule, TextFilterModule, CustomEditorModule, ClientSideRowModelModule];
 
 const createRowData = () => {
     const cloneObject = (obj: any) => JSON.parse(JSON.stringify(obj));

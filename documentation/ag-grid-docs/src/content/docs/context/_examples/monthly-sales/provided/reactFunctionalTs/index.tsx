@@ -9,13 +9,18 @@ import {
     QuickFilterModule,
     RenderApiModule,
     RowSelectionModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { FiltersToolPanelModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     ClientSideRowModelApiModule,
@@ -27,7 +32,6 @@ const modules = [
     RowGroupingModule,
     SetFilterModule,
     FiltersToolPanelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 const monthValueGetter =

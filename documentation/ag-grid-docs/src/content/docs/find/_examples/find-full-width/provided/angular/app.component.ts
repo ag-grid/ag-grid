@@ -9,7 +9,7 @@ import {
     IsFullWidthRowParams,
     ModuleRegistry,
     RowHeightParams,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
@@ -17,12 +17,12 @@ import { getData, getLatinText } from './data';
 import { FullWidthCellRenderer } from './full-width-cell-renderer.component';
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    FindModule,
-    ToolbarModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([FindModule, ToolbarModule, ClientSideRowModelModule]);
 
 @Component({
     selector: 'my-app',

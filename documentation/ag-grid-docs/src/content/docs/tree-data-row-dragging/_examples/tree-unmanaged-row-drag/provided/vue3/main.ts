@@ -1,6 +1,6 @@
 import { createApp, defineComponent, ref } from 'vue';
 
-import { ClientSideRowModelModule, ModuleRegistry, RowDragModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, RowDragModule, enableDevValidations } from 'ag-grid-community';
 import type { GridOptions, RowDragEndEvent, RowDragMoveEvent, ValueFormatterParams } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
@@ -11,12 +11,12 @@ import { moveFiles } from './fileUtils';
 import type { IFile } from './fileUtils';
 import './style.css';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    RowDragModule,
-    TreeDataModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowDragModule, TreeDataModule]);
 
 const VueExample = defineComponent({
     template: `

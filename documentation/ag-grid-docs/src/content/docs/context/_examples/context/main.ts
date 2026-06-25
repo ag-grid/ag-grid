@@ -4,16 +4,16 @@ import {
     HighlightChangesModule,
     ModuleRegistry,
     RenderApiModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    RenderApiModule,
-    HighlightChangesModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([RenderApiModule, HighlightChangesModule, ClientSideRowModelModule]);
 
 const gbpFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',

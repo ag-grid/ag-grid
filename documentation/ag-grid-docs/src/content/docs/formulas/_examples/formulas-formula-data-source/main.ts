@@ -5,10 +5,14 @@ import {
     NumberEditorModule,
     RowApiModule,
     TextEditorModule,
-    ValidationModule,
     createGrid,
 } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -16,7 +20,7 @@ ModuleRegistry.registerModules([
     FormulaModule,
     NumberEditorModule,
     TextEditorModule,
-    ValidationModule,
+    enableDevValidations,
 ]);
 
 type RowData = {

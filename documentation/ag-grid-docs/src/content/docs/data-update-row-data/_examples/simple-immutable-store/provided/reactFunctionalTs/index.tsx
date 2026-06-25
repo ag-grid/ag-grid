@@ -7,10 +7,15 @@ import {
     ColumnApiModule,
     RowSelectionModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { CellSelectionModule, RowGroupingModule, StatusBarModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     ColumnApiModule,
@@ -20,7 +25,6 @@ const modules = [
     RowGroupingModule,
     StatusBarModule,
     CellSelectionModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'

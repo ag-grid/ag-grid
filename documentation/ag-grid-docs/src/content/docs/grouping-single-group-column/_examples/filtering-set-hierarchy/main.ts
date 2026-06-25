@@ -5,18 +5,17 @@ import {
     KeyCreatorParams,
     ModuleRegistry,
     NumberFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([
-    NumberFilterModule,
-    ClientSideRowModelModule,
-    RowGroupingModule,
-    SetFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([NumberFilterModule, ClientSideRowModelModule, RowGroupingModule, SetFilterModule]);
 
 let gridApi: GridApi<IOlympicData>;
 

@@ -7,13 +7,18 @@ import {
     RowSelectionModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact, getInstance } from 'ag-grid-react';
 
 import ClickableStatusBarComponent from './clickableStatusBarComponent';
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     TextEditorModule,
@@ -22,7 +27,6 @@ const modules = [
     ClientSideRowModelModule,
     StatusBarModule,
     CellSelectionModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 export interface IClickableStatusBar extends IStatusPanel {
