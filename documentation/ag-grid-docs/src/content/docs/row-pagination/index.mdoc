@@ -55,31 +55,6 @@ paginationPanels: [
 ]
 ```
 
-### Page Number Navigation
-
-The `pageNumbers` panel renders a numbered button for each page so users can jump directly to a page. It is opt-in — register the `PageNumbersModule` and add the panel to `paginationPanels` to enable it:
-
-```js
-import { PageNumbersModule } from 'ag-grid-community';
-
-ModuleRegistry.registerModules([PageNumbersModule]);
-```
-
-```js
-paginationPanels: [
-    'pageNumbers',
-    'pageSize',
-]
-```
-
-The current page is highlighted, and clicking a number navigates to that page. When there are more pages than fit, the panel keeps the first and last page alongside the current page and its neighbours, replacing the gaps with an ellipsis:
-
-- Near the start: `1 2 3 … 10`
-- In the middle: `1 … 4 5 6 … 10`
-- Near the end: `1 … 8 9 10`
-
-{% gridExampleRunner title="Page Number Navigation" name="page-numbers" /%}
-
 ## Number Formats
 
 The numbers within the Paging Toolbar can be formatted in two ways:
@@ -113,6 +88,24 @@ In this example the default pagination settings are changed. Note the following:
 - `api.paginationGoToPage(4)` is called to go to page 4 (0 based, so the 5th page)
 
 {% gridExampleRunner title="Custom Paging" name="custom-paging" /%}
+
+## Example: Page Number Navigation
+
+The `pageNumbers` panel renders a numbered button for each page so users can jump directly to a page. It is opt-in — register the `PageNumbersModule` and add the panel to `paginationPanels` to enable it:
+
+```js
+import { PageNumbersModule } from 'ag-grid-community';
+
+ModuleRegistry.registerModules([ PaginationModule, PageNumbersModule ]);
+
+const gridOptions = {
+    paginationPanels: ['pageNumbers']
+}
+```
+
+The example below demonstrates page number navigation:
+
+{% gridExampleRunner title="Page Number Navigation" name="page-numbers" /%}
 
 ## Example: Custom Pagination Controls
 
