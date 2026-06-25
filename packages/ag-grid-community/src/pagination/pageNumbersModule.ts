@@ -10,6 +10,6 @@ import { PaginationModule } from './paginationModule';
 export const PageNumbersModule: _ModuleWithoutApi = {
     moduleName: 'PageNumbers',
     version: VERSION,
-    dynamicBeans: { pageNumbers: PageNumbersComp },
+    dynamicBeans: { pageNumbers: PageNumbersComp as any },
     dependsOn: [PaginationModule],
 };

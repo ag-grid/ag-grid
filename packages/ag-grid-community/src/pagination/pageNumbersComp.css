@@ -21,12 +21,12 @@
     font-variant-numeric: tabular-nums;
 }
 
-.ag-paging-page-number:hover {
-    background-color: var(--ag-row-hover-color);
-}
-
 :where(.ag-paging-page-numbers-truncated) .ag-paging-page-number {
     padding: var(--ag-spacing);
+}
+
+.ag-paging-page-number:hover {
+    background-color: var(--ag-row-hover-color);
 }
 
 .ag-paging-page-number-current {
