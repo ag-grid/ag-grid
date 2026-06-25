@@ -42,7 +42,7 @@ import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { EditModelService } from './editModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { isCellEditable, isFullRowCellEditable, shouldStartEditing } from './strategy/strategyUtils';
-import { CellEditStyleFeature } from './styles/cellEditStyleFeature';
+import { _applyCellEditStyles } from './styles/cellEditStyleFeature';
 import { RowEditStyleFeature } from './styles/rowEditStyleFeature';
 import { _addStopEditingWhenGridLosesFocus, _getCellCtrl } from './utils/controllers';
 import {
@@ -848,9 +848,9 @@ export class EditService extends BeanStub implements NamedBean {
                 cellCtrl.refreshCell(params);
                 // During batch, parent/group/grand-total rows need their batch edit CSS
                 // updated even when their aggregated value hasn't changed (dataNeedsUpdating
-                // is false, so refreshCell alone won't run applyCellStyles).
+                // is false, so refreshCell alone won't run _applyCellEditStyles).
                 if (!params.force && this.batch) {
-                    cellCtrl.editStyleFeature?.applyCellStyles?.();
+                    _applyCellEditStyles(beans, cellCtrl);
                 }
             }
         }
@@ -1226,7 +1226,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         // Refresh cell styles after updating the edit model so that the ag-cell-editing
         // class and batch-edit styling reflect the new pending value.
-        cellCtrl.editStyleFeature?.applyCellStyles?.();
+        _applyCellEditStyles(beans, cellCtrl);
 
         // Fast path for built-in editors: update value in-place without recreating
         if ('agSetEditValue' in editor) {
@@ -1500,8 +1500,8 @@ export class EditService extends BeanStub implements NamedBean {
         }
     }
 
-    public createCellStyleFeature(cellCtrl: CellCtrl): CellEditStyleFeature {
-        return new CellEditStyleFeature(cellCtrl, this.beans);
+    public applyCellEditStyles(cellCtrl: CellCtrl): void {
+        _applyCellEditStyles(this.beans, cellCtrl);
     }
 
     public createRowStyleFeature(rowCtrl: RowCtrl): IRowStyleFeature {
