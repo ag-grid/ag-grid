@@ -1,16 +1,3 @@
-.ag-aria-description-container {
-    /* keep the live-region in the top layer so screen readers always receive updates. */
-    z-index: 9999;
-    border: 0;
-    clip-path: inset(50%);
-    height: 1px;
-    width: 1px;
-    position: absolute;
-    overflow: hidden;
-    padding: 0;
-    white-space: nowrap;
-}
-
 .ag-unselectable {
     user-select: none;
 }
