@@ -1,6 +1,7 @@
 import type { PdfCellStyle, PdfExportParams, PdfFontFamily, PdfMargin, PdfTextAlignment } from 'ag-grid-community';
 
 import type { PdfRow, PdfRowType } from '../../pdfSerializingSession';
+import { normalisePdfFontFamily } from '../fonts';
 import type { PdfRgb, PdfRowStyles, PdfStyleColors } from '../pdfColor';
 import { formatColor, getRowStyles, resolveOptionalColor } from '../pdfColor';
 import { mergePdfCellStyles } from '../styles';
@@ -508,7 +509,7 @@ function resolveTitleStyle(
 ): ResolvedCellStyle {
     const headerFontSize = params.headerFontSize ?? defaultHeaderFontSize;
     const fontSize = style?.fontSize ?? Math.max(headerFontSize + 4, 14);
-    const fontFamily = style?.fontFamily ?? headerFont;
+    const fontFamily = normalisePdfFontFamily(style?.fontFamily, headerFont);
     const alignment = style?.alignment ?? DEFAULT_TITLE_ALIGNMENT;
     const padding = resolveBoxSpacing(style?.padding, DEFAULT_TITLE_PADDING);
     const margin = resolveBoxSpacing(style?.margin, DEFAULT_TITLE_MARGIN);
@@ -558,7 +559,7 @@ function resolveTableCellStyle(
         left: layout.cellPadding,
     });
     const resolvedFontSize = style?.fontSize ?? defaultFontSize;
-    const resolvedFontFamily = style?.fontFamily ?? fontFamily;
+    const resolvedFontFamily = normalisePdfFontFamily(style?.fontFamily, fontFamily);
     const alignment = style?.alignment ?? DEFAULT_CELL_ALIGNMENT;
 
     const blendWith = rowStyles.background ?? styleColors.dataBackground ?? styleColors.pageBackground;

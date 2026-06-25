@@ -56,6 +56,35 @@ describe('createPdfDocument', () => {
         expect(pdf).toContain('/Title (PDF Metadata Title)');
     });
 
+    it('falls back to built-in fonts for unsupported runtime font values', () => {
+        const rows = [
+            {
+                type: 'BODY',
+                style: { fontFamily: 'Comic Sans MS' },
+                cells: [{ value: 'Value', style: { fontFamily: 'Papyrus' } }],
+            },
+        ] as unknown as PdfRow[];
+        const columns = [stubColumn(100)];
+        const params = {
+            fontFamily: 'Comic Sans MS',
+            headerFontFamily: 'Papyrus',
+            documentTitle: {
+                data: { value: 'Report' },
+                style: { fontFamily: 'Wingdings' },
+            },
+        } as unknown as PdfExportParams;
+
+        const pdf = createPdfDocument(rows, columns, params);
+
+        expect(pdf).toContain('/BaseFont /Helvetica');
+        expect(pdf).toContain('/BaseFont /Helvetica-Bold');
+        expect(pdf).toContain('(Report) Tj');
+        expect(pdf).toContain('(Value) Tj');
+        expect(pdf).not.toContain('Comic Sans MS');
+        expect(pdf).not.toContain('Papyrus');
+        expect(pdf).not.toContain('Wingdings');
+    });
+
     it('renders srgb header background colours', () => {
         const rows = createRows();
         const columns = [stubColumn(100)];

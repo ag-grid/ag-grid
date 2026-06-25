@@ -1,6 +1,7 @@
 import type { AgColumn, PdfExportParams, PdfFontFamily, PdfPageOrientation, PdfPageSize } from 'ag-grid-community';
 
 import type { PdfRow, PdfRowType } from '../../pdfSerializingSession';
+import { normalisePdfFontFamily } from '../fonts';
 
 export type ResolvedMargin = { top: number; right: number; bottom: number; left: number };
 
@@ -165,10 +166,16 @@ export function createFontKeyMap(
     let nextIndex = 1;
 
     const registerFont = (font?: PdfFontFamily) => {
-        if (!font || fontKeyByFamily.has(font)) {
+        if (!font) {
             return;
         }
-        fontKeyByFamily.set(font, `F${nextIndex}`);
+
+        const resolvedFont = normalisePdfFontFamily(font);
+        if (fontKeyByFamily.has(resolvedFont)) {
+            return;
+        }
+
+        fontKeyByFamily.set(resolvedFont, `F${nextIndex}`);
         nextIndex += 1;
     };
 

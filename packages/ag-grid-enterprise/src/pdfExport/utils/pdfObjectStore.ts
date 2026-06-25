@@ -2,6 +2,7 @@ import type { PdfFontFamily } from 'ag-grid-community';
 
 import type { ResolvedPageSize } from './document/layout';
 import { escapePdfString, fmt, normaliseText } from './document/text';
+import { normalisePdfFontFamily } from './fonts';
 
 /**
  * Mutable store for PDF indirect objects.
@@ -94,9 +95,8 @@ export function buildPdf(
     const fontResourcesParts: string[] = [];
 
     fontKeyByFamily.forEach((fontKey, fontFamily) => {
-        const fontId = store.add(
-            `<< /Type /Font /Subtype /Type1 /BaseFont /${fontFamily} /Encoding /WinAnsiEncoding >>`
-        );
+        const baseFont = normalisePdfFontFamily(fontFamily);
+        const fontId = store.add(`<< /Type /Font /Subtype /Type1 /BaseFont /${baseFont} /Encoding /WinAnsiEncoding >>`);
         fontResourcesParts.push(`/${fontKey} ${fontId} 0 R`);
     });
 

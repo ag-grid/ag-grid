@@ -18,6 +18,7 @@ import {
     resolveDocumentTitle,
 } from './utils/document/render';
 import { fmt, normaliseText } from './utils/document/text';
+import { normalisePdfFontFamily } from './utils/fonts';
 import { formatColor, resolvePdfStyleColors } from './utils/pdfColor';
 import { buildPdf } from './utils/pdfObjectStore';
 
@@ -53,8 +54,8 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     const repeatHeader = params.repeatHeader ?? DEFAULTS.repeatHeader;
     const drawCellBorders = params.drawCellBorders ?? DEFAULTS.drawCellBorders;
 
-    const bodyFont = params.fontFamily ?? 'Helvetica';
-    const headerFont = params.headerFontFamily ?? FONT_BOLD_MAP[bodyFont];
+    const bodyFont = normalisePdfFontFamily(params.fontFamily);
+    const headerFont = normalisePdfFontFamily(params.headerFontFamily, FONT_BOLD_MAP[bodyFont]);
     const titleData = params.documentTitle
         ? resolveDocumentTitle(params.documentTitle, params, styleColors, headerFont, DEFAULTS.headerFontSize)
         : undefined;

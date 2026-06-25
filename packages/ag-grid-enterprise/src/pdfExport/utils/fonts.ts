@@ -1,5 +1,30 @@
 import type { PdfCellStyle, PdfFontFamily } from 'ag-grid-community';
 
+const DEFAULT_PDF_FONT_FAMILY: PdfFontFamily = 'Helvetica';
+const PDF_FONT_FAMILIES = new Set<string>([
+    'Helvetica',
+    'Helvetica-Bold',
+    'Times-Roman',
+    'Times-Bold',
+    'Courier',
+    'Courier-Bold',
+]);
+
+/**
+ * Resolve runtime font values to one of the built-in PDF font families.
+ * @param fontFamily - Candidate font family.
+ * @param fallback - Fallback font family.
+ * @returns Supported PDF font family.
+ */
+export function normalisePdfFontFamily(
+    fontFamily: PdfFontFamily | undefined,
+    fallback: PdfFontFamily = DEFAULT_PDF_FONT_FAMILY
+): PdfFontFamily {
+    const fallbackFont = PDF_FONT_FAMILIES.has(fallback) ? fallback : DEFAULT_PDF_FONT_FAMILY;
+
+    return fontFamily && PDF_FONT_FAMILIES.has(fontFamily) ? fontFamily : fallbackFont;
+}
+
 /**
  * Map CSS text alignment values to PDF alignment values.
  * @param value - CSS alignment token.
