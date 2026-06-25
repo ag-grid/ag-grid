@@ -78,6 +78,31 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         headerRowHeight: params.headerRowHeight,
     };
 
+    const pageContentHeight = Math.max(pageSize.height - margin.top - margin.bottom, 0);
+    const getRowsHeight = (rowsToMeasure: PdfRow[]): number => {
+        let height = 0;
+        let measuredBodyRowIndex = 0;
+
+        for (const row of rowsToMeasure) {
+            height += createRowRenderData(
+                row,
+                layout,
+                bodyFont,
+                headerFont,
+                styleColors,
+                measuredBodyRowIndex
+            ).rowHeight;
+            if (row.type === 'BODY') {
+                measuredBodyRowIndex += 1;
+            }
+        }
+
+        return height;
+    };
+    const repeatedHeaderHeight = getRowsHeight(headerRows);
+    const canRepeatHeadersWithRow = (row: PdfRow, rowHeight: number): boolean =>
+        repeatHeader && row.type === 'BODY' && repeatedHeaderHeight + rowHeight <= pageContentHeight;
+
     const pages: string[] = [];
     let pageParts: string[] = [];
     let cursorY = pageSize.height - margin.top;
@@ -130,7 +155,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     for (const row of rows) {
         const rowRenderData = createRowRenderData(row, layout, bodyFont, headerFont, styleColors, bodyRowIndex);
         if (cursorY - rowRenderData.rowHeight < margin.bottom) {
-            startPage(repeatHeader && row.type === 'BODY');
+            startPage(canRepeatHeadersWithRow(row, rowRenderData.rowHeight));
         }
 
         cursorY = renderRow(

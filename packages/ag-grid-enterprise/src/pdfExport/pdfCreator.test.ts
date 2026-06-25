@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { vi } from 'vitest';
 
 import type { PdfCell, PdfExportParams } from 'ag-grid-community';
 

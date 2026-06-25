@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest';
-
 import type { AgColumn, PdfExportParams } from 'ag-grid-community';
 
 import { createPdfDocument } from './pdfDocument';
@@ -125,6 +123,27 @@ describe('createPdfDocument', () => {
         const pdf = createPdfDocument(rows, columns, params);
 
         expect(countOccurrences(pdf, '(Header) Tj')).toBe(2);
+    });
+
+    it('does not repeat table headers when the repeated headers and body row would overflow', () => {
+        const rows: PdfRow[] = [
+            { type: 'CUSTOM', cells: [{ value: 'Introduction' }] },
+            { type: 'HEADER', cells: [{ value: 'Header' }] },
+            { type: 'BODY', cells: [{ value: 'Value' }] },
+        ];
+        const columns = [stubColumn(100)];
+        const params: PdfExportParams = {
+            pageSize: { width: 200, height: 120 },
+            pageOrientation: 'landscape',
+            margin: 10,
+            rowHeight: 50,
+            headerRowHeight: 60,
+        };
+
+        const pdf = createPdfDocument(rows, columns, params);
+
+        expect(countOccurrences(pdf, '(Header) Tj')).toBe(1);
+        expect(pdf).not.toContain('10 0 180 50 re S');
     });
 
     it('uses header row height for styled header rows', () => {
