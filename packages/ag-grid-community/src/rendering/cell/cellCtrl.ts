@@ -607,7 +607,6 @@ export class CellCtrl extends BeanStub {
     // + rowRenderer: api softRefreshView() {}
     public refreshCell(params?: RefreshCellsParams & { newData?: boolean }): void {
         const {
-            rowCtrl: { rowEditStyleFeature },
             beans: { cellFlashSvc, filterManager, cellStyles },
             column,
             comp,
@@ -668,7 +667,7 @@ export class CellCtrl extends BeanStub {
             this.editSvc?.applyCellEditStyles(this);
             cellStyles?.applyCellUserStyles(this);
             cellStyles?.applyCellClassesFromColDef(this);
-            rowEditStyleFeature?.applyRowStyles();
+            this.editSvc?.applyRowEditStyles(this.rowCtrl);
 
             this.checkFormulaError();
         }

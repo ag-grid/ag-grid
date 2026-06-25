@@ -738,7 +738,7 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
     }
 
     for (const rowCtrl of rowCtrlSet.values()) {
-        rowCtrl.rowEditStyleFeature?.applyRowStyles();
+        beans.editSvc?.applyRowEditStyles(rowCtrl);
         for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
             cellCtrl.tooltipFeature?.refreshTooltip(true);
             cellCtrl.editorTooltipFeature?.refreshTooltip(true);
