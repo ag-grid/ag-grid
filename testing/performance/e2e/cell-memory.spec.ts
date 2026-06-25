@@ -15,21 +15,24 @@ import {
 import type { AllocationProfile } from '../cdp.utils';
 import { gotoUrl, waitFor } from '../playwright.utils';
 
-// Informational CI memory benchmark for the per-cell/per-row CellCtrl footprint (AG-15464).
+// Debug tool: memory footprint of the per-cell/per-row CellCtrl features (AG-15464).
 // Scrolling a non-column-virtualised 100k-row grid churns row virtualisation, so cell
 // controllers (and their feature state) are created/destroyed repeatedly — the path the
-// feature->function conversions affect. We compare published prod vs staging so each
-// scheduled run is a self-contained delta; no cross-run store is needed.
+// feature->function conversions affect. We compare `staging` (≈ latest, the baseline) against
+// `local` — the working-tree/PR build — so the delta isolates the code under test:
+//   - run locally: the perf webServer serves your local build as `local`
+//   - run via the `/benchmarks` PR comment: the workflow checks out + builds the PR as `local`
 //
-// This spec never throws: it records numbers as annotations (surfaced in CTRF under
-// test.extra.annotations) and logs a human-readable report. It is intentionally NOT a
-// gate — adding a threshold later would turn it into a regression guard.
+// Not a `*.cron.spec.ts`, so it does NOT run on the daily schedule — only locally or on demand via
+// `/benchmarks` (alongside the timing benchmarks). It never throws: it records numbers as
+// annotations (surfaced in CTRF under test.extra.annotations, and rendered into the PR comment by
+// scripts/ci/gen-gh-comment.mjs) and logs a human-readable report. Intentionally NOT a gate.
 
 const scrollPage = `/testing/performance/e2e/scroll-benchmark.html`;
 const gridReadyCheck = () => document.querySelector('.ag-row') !== null;
 
-const CONTROL: Version = 'prod';
-const VARIANT: Version = 'staging';
+const CONTROL: Version = 'staging';
+const VARIANT: Version = 'local';
 
 const SCROLL_BURSTS = 5;
 const SCROLL_FROM = 100;
@@ -103,7 +106,7 @@ function pctDelta(control: number, variant: number): number {
 test.describe('CellCtrl memory footprint (scroll churn)', () => {
     test.setTimeout(10 * 60_000);
 
-    test(`Scheduled: scroll-churn memory — ${CONTROL} vs ${VARIANT}`, async ({ page }, testInfo) => {
+    test(`scroll-churn memory — ${CONTROL} vs ${VARIANT}`, async ({ page }, testInfo) => {
         // Measured sequentially in one browser process. Each version is independently warmed up
         // and takes a post-GC baseline, but cross-run V8 state isn't fully isolated — acceptable
         // for an informational metric.
