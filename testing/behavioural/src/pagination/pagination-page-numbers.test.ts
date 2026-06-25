@@ -75,17 +75,17 @@ describe('pagination pageNumbers panel', () => {
         const api = createPaginationGrid(gridsManager);
         expect(api.paginationGetTotalPages()).toBe(51);
 
-        // on the first page the window shifts to keep three pages: 1 2 3 … 51
-        expect(getRenderedSequence(api)).toEqual(['1', '2', '3', '…', '51']);
+        // near the start the window expands to a fixed block: 1 2 3 4 5 … 51
+        expect(getRenderedSequence(api)).toEqual(['1', '2', '3', '4', '5', '…', '51']);
 
         api.paginationGoToPage(1);
-        expect(getRenderedSequence(api)).toEqual(['1', '2', '3', '…', '51']);
+        expect(getRenderedSequence(api)).toEqual(['1', '2', '3', '4', '5', '…', '51']);
 
         api.paginationGoToPage(9);
         expect(getRenderedSequence(api)).toEqual(['1', '…', '9', '10', '11', '…', '51']);
 
         api.paginationGoToPage(49);
-        expect(getRenderedSequence(api)).toEqual(['1', '…', '49', '50', '51']);
+        expect(getRenderedSequence(api)).toEqual(['1', '…', '47', '48', '49', '50', '51']);
     });
 
     test('clicking a page number navigates to that page', () => {

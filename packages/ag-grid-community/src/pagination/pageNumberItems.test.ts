@@ -18,8 +18,8 @@ describe('_getPageNumberItems', () => {
     });
 
     describe('truncation patterns for large page counts', () => {
-        it('start pattern: 1 2 3 ... N', () => {
-            expect(_getPageNumberItems(1, 51, true)).toEqual([1, 2, 3, 'ellipsis', 51]);
+        it('start pattern: 1 2 3 4 5 ... N', () => {
+            expect(_getPageNumberItems(1, 51, true)).toEqual([1, 2, 3, 4, 5, 'ellipsis', 51]);
         });
 
         it('middle pattern: 1 ... X Y Z ... N', () => {
@@ -30,16 +30,16 @@ describe('_getPageNumberItems', () => {
             expect(_getPageNumberItems(4, 10, true)).toEqual([1, 'ellipsis', 4, 5, 6, 'ellipsis', 10]);
         });
 
-        it('end pattern: 1 ... N-2 N-1 N', () => {
-            expect(_getPageNumberItems(50, 51, true)).toEqual([1, 'ellipsis', 49, 50, 51]);
+        it('end pattern: 1 ... N-4 N-3 N-2 N-1 N', () => {
+            expect(_getPageNumberItems(50, 51, true)).toEqual([1, 'ellipsis', 47, 48, 49, 50, 51]);
         });
 
-        it('end pattern with 10 pages: 1 ... 8 9 10', () => {
-            expect(_getPageNumberItems(9, 10, true)).toEqual([1, 'ellipsis', 8, 9, 10]);
+        it('end pattern with 10 pages: 1 ... 6 7 8 9 10', () => {
+            expect(_getPageNumberItems(9, 10, true)).toEqual([1, 'ellipsis', 6, 7, 8, 9, 10]);
         });
 
-        it('first page of a large set keeps a constant-width window: 1 2 3 ... N', () => {
-            expect(_getPageNumberItems(0, 51, true)).toEqual([1, 2, 3, 'ellipsis', 51]);
+        it('first page of a large set expands the edge block: 1 2 3 4 5 ... N', () => {
+            expect(_getPageNumberItems(0, 51, true)).toEqual([1, 2, 3, 4, 5, 'ellipsis', 51]);
         });
     });
 
@@ -68,11 +68,11 @@ describe('_getPageNumberItems', () => {
 
     describe('out-of-range current page is clamped', () => {
         it('does not render page buttons beyond the known total', () => {
-            expect(_getPageNumberItems(99, 10, true)).toEqual([1, 'ellipsis', 8, 9, 10]);
+            expect(_getPageNumberItems(99, 10, true)).toEqual([1, 'ellipsis', 6, 7, 8, 9, 10]);
         });
 
         it('treats a negative current page as the first page', () => {
-            expect(_getPageNumberItems(-5, 10, true)).toEqual([1, 2, 3, 'ellipsis', 10]);
+            expect(_getPageNumberItems(-5, 10, true)).toEqual([1, 2, 3, 4, 5, 'ellipsis', 10]);
         });
     });
 });
