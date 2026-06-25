@@ -1,106 +1,82 @@
-import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { AgColumn } from '../entities/agColumn';
-import type { CellClassParams, CellClassRules, CellStyle, ColDef } from '../entities/colDef';
+import type { CellClassParams, CellStyle, ColDef } from '../entities/colDef';
 import { _addGridCommonParams } from '../gridOptionsUtils';
-import type { ICellStyleFeature } from '../interfaces/iCellStyleFeature';
-import type { CellCtrl, ICellComp } from '../rendering/cell/cellCtrl';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import { processClassRules } from './stylingUtils';
 
-export class CellCustomStyleFeature extends BeanStub implements ICellStyleFeature {
-    private readonly column: AgColumn;
-    private staticClasses: string[] = [];
+export function _setupCellCustomStyle(beans: BeanCollection, cellCtrl: CellCtrl): void {
+    _applyCellUserStyles(beans, cellCtrl);
+    _applyCellClassRules(beans, cellCtrl);
+    _applyCellClassesFromColDef(beans, cellCtrl);
+}
 
-    private cellComp: ICellComp;
+export function _applyCellClassRules(beans: BeanCollection, cellCtrl: CellCtrl): void {
+    const { column, comp } = cellCtrl;
+    const colDef = column.colDef;
+    const cellClassRules = colDef.cellClassRules;
+    const cellClassParams = getCellClassParams(beans, cellCtrl, colDef);
 
-    private cellClassRules?: CellClassRules;
+    processClassRules(
+        beans.expressionSvc,
+        // if current was previous, skip
+        cellClassRules === cellCtrl.customStyleClassRules ? undefined : cellCtrl.customStyleClassRules,
+        cellClassRules,
+        cellClassParams,
+        (className) => comp.toggleCss(className, true),
+        (className) => comp.toggleCss(className, false)
+    );
+    cellCtrl.customStyleClassRules = cellClassRules;
+}
 
-    constructor(
-        private readonly cellCtrl: CellCtrl,
-        beans: BeanCollection
-    ) {
-        super();
+export function _applyCellUserStyles(beans: BeanCollection, cellCtrl: CellCtrl): void {
+    const colDef = cellCtrl.column.colDef;
+    const cellStyle = colDef.cellStyle;
 
-        this.beans = beans;
-
-        this.column = cellCtrl.column;
+    if (!cellStyle) {
+        return;
     }
 
-    public setComp(comp: ICellComp): void {
-        this.cellComp = comp;
+    let styles: CellStyle | null | undefined;
 
-        this.applyUserStyles();
-        this.applyCellClassRules();
-        this.applyClassesFromColDef();
+    if (typeof cellStyle === 'function') {
+        styles = cellStyle(getCellClassParams(beans, cellCtrl, colDef));
+    } else {
+        styles = cellStyle;
     }
 
-    public applyCellClassRules(): void {
-        const { column, cellComp } = this;
-        const colDef = column.colDef;
-        const cellClassRules = colDef.cellClassRules;
-        const cellClassParams = this.getCellClassParams(column, colDef);
-
-        processClassRules(
-            this.beans.expressionSvc,
-            // if current was previous, skip
-            cellClassRules === this.cellClassRules ? undefined : this.cellClassRules,
-            cellClassRules,
-            cellClassParams,
-            (className) => cellComp.toggleCss(className, true),
-            (className) => cellComp.toggleCss(className, false)
-        );
-        this.cellClassRules = cellClassRules;
+    if (styles) {
+        cellCtrl.comp.setUserStyles(styles);
     }
+}
 
-    public applyUserStyles() {
-        const column = this.column;
-        const colDef = column.colDef;
-        const cellStyle = colDef.cellStyle;
+export function _applyCellClassesFromColDef(beans: BeanCollection, cellCtrl: CellCtrl): void {
+    const { column, comp } = cellCtrl;
+    const colDef = column.colDef;
+    const cellClassParams = getCellClassParams(beans, cellCtrl, colDef);
 
-        if (!cellStyle) {
-            return;
-        }
-
-        let styles: CellStyle | null | undefined;
-
-        if (typeof cellStyle === 'function') {
-            const cellStyleParams = this.getCellClassParams(column, colDef);
-            styles = cellStyle(cellStyleParams);
-        } else {
-            styles = cellStyle;
-        }
-
-        if (styles) {
-            this.cellComp.setUserStyles(styles);
+    const prevClasses = cellCtrl.customStyleStaticClasses;
+    if (prevClasses) {
+        for (const className of prevClasses) {
+            comp.toggleCss(className, false);
         }
     }
 
-    public applyClassesFromColDef() {
-        const { column, cellComp } = this;
-        const colDef = column.colDef;
-        const cellClassParams = this.getCellClassParams(column, colDef);
+    const newStaticClasses = beans.cellStyles!.getStaticCellClasses(colDef, cellClassParams);
+    cellCtrl.customStyleStaticClasses = newStaticClasses;
 
-        for (const className of this.staticClasses) {
-            cellComp.toggleCss(className, false);
-        }
-
-        const newStaticClasses = this.beans.cellStyles!.getStaticCellClasses(colDef, cellClassParams);
-        this.staticClasses = newStaticClasses;
-
-        for (const className of newStaticClasses) {
-            cellComp.toggleCss(className, true);
-        }
+    for (const className of newStaticClasses) {
+        comp.toggleCss(className, true);
     }
+}
 
-    private getCellClassParams(column: AgColumn, colDef: ColDef): CellClassParams {
-        const { value, rowNode } = this.cellCtrl;
-        return _addGridCommonParams(this.beans.gos, {
-            value,
-            data: rowNode.data,
-            node: rowNode,
-            colDef,
-            column,
-            rowIndex: rowNode.rowIndex!,
-        });
-    }
+function getCellClassParams(beans: BeanCollection, cellCtrl: CellCtrl, colDef: ColDef): CellClassParams {
+    const { value, rowNode, column } = cellCtrl;
+    return _addGridCommonParams(beans.gos, {
+        value,
+        data: rowNode.data,
+        node: rowNode,
+        colDef,
+        column,
+        rowIndex: rowNode.rowIndex!,
+    });
 }

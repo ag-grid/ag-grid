@@ -5,7 +5,7 @@ import {
     ColumnsToolPanelModule,
     ContextMenuModule,
     PivotModule,
-    ShowValueAsModule,
+    ShowValuesAsModule,
 } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
@@ -14,7 +14,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     ColumnsToolPanelModule,
     PivotModule,
-    ShowValueAsModule,
+    ShowValuesAsModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -25,19 +25,23 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'country', rowGroup: true },
         { field: 'year', pivot: true },
         // In pivot mode each pivot column is shown as a share of that column's total (each column = 100%).
-        { field: 'gold', aggFunc: 'sum', showValueAs: 'percentOfColumnTotal' },
+        { field: 'gold', aggFunc: 'sum', showValuesAs: 'percentOfColumnTotal' },
         { field: 'silver', aggFunc: 'sum' },
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 130,
+        minWidth: 160,
         enableValue: true,
+        enableShowValuesAs: true,
     },
     autoGroupColumnDef: {
         minWidth: 200,
     },
     pivotMode: true,
-    sideBar: 'columns',
+    sideBar: {
+        toolPanels: ['columns'],
+        defaultToolPanel: undefined,
+    },
 };
 
 // setup the grid after the page has finished loading

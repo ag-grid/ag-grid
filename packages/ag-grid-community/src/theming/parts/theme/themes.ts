@@ -30,6 +30,7 @@ import { inputStyleBordered, inputStyleUnderlined } from '../input-style/input-s
 import type { TabStyleParams } from '../tab-style/tab-styles';
 import { tabStyleAlpine, tabStyleMaterial, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
 import materialAdjustmentsCSS from './material-adjustments.css';
+import quartzAdjustmentsCSS from './quartz-adjustments.css';
 
 export type ThemeDefaultParams = CoreParams &
     ButtonStyleParams &
@@ -50,6 +51,14 @@ export const themeQuartzParams = () => ({
     fontFamily: [{ googleFont: 'IBM Plex Sans' }, ...defaultFontFamily()],
 });
 
+const makeStyleQuartzTreeShakeable = () =>
+    createPart({
+        feature: 'styleQuartz',
+        css: quartzAdjustmentsCSS,
+    });
+
+const styleQuartz = /*#__PURE__*/ makeStyleQuartzTreeShakeable();
+
 const makeThemeQuartzTreeShakeable = () =>
     createTheme()
         .withPart(buttonStyleQuartz)
@@ -59,6 +68,7 @@ const makeThemeQuartzTreeShakeable = () =>
         .withPart(tabStyleQuartz)
         .withPart(inputStyleBordered)
         .withPart(columnDropStyleBordered)
+        .withPart(styleQuartz)
         .withParams(themeQuartzParams());
 
 export const themeQuartz: Theme<ThemeDefaultParams> =

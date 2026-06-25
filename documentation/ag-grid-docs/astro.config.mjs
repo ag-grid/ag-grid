@@ -3,6 +3,9 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
 import dotenvExpand from 'dotenv-expand';
+import { rm } from 'node:fs/promises';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import * as sass from 'sass';
 import { loadEnv } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
@@ -17,6 +20,7 @@ import agSourcemapCors from '../../external/ag-website-shared/plugins/agSourcema
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
 import agDevCsp from './plugins/agDevCsp';
+import agDevExampleAssetCors from './plugins/agDevExampleAssetCors';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
@@ -155,7 +159,7 @@ console.log(
     )
 );
 
-const plugins = [agSourcemapCors(), svgr(), agHotModuleReload(), agDevCsp()];
+const plugins = [agSourcemapCors(), svgr(), agHotModuleReload(), agDevCsp(), agDevExampleAssetCors()];
 if (NODE_ENV !== 'test') {
     plugins.push(mkcert()); // mkcert is not necessary for tests
 }
@@ -247,18 +251,34 @@ export default defineConfig({
         buildTime(),
         react(),
         markdoc(),
-        sitemap(getSitemapConfig({ chartsSitemap: CHARTS_SITEMAP_INDEX_URL, studioSitemap: STUDIO_SITEMAP_INDEX_URL })),
+        // Archive builds are fully noindex — omit sitemap generation and remove the /sitemap page.
+        ...(!PUBLIC_BASE_URL?.includes('archive')
+            ? [
+                  sitemap(
+                      getSitemapConfig({
+                          chartsSitemap: CHARTS_SITEMAP_INDEX_URL,
+                          studioSitemap: STUDIO_SITEMAP_INDEX_URL,
+                      })
+                  ),
+                  agSitemapFilterNoindex({ enabled: PRODUCTION_SITE_URLS.includes(PUBLIC_SITE_URL) }),
+                  agSitemapLastmod(),
+                  agCacheSitemap({ cacheFolder: SITEMAP_CACHE_DIR }),
+              ]
+            : [
+                  {
+                      name: 'ag-archive-cleanup',
+                      hooks: {
+                          'astro:build:done': async ({ dir }) => {
+                              await rm(join(fileURLToPath(dir), 'sitemap'), { recursive: true, force: true });
+                          },
+                      },
+                  },
+              ]),
         agHtaccessGen({ htaccessEnv: HTACCESS }),
         agRedirectsChecker({
             skip: CHECK_REDIRECTS !== 'true',
         }),
         agLinkChecker({ include: CHECK_LINKS === 'true' }),
-
-        agSitemapFilterNoindex({ enabled: PRODUCTION_SITE_URLS.includes(PUBLIC_SITE_URL) }),
-        agSitemapLastmod(),
-        agCacheSitemap({
-            cacheFolder: SITEMAP_CACHE_DIR,
-        }),
         agMkcertPreview({ enabled: httpsEnabled }),
     ],
 });

@@ -1,6 +1,6 @@
 {
   "name": "ag-stack",
-  "version": "35.3.0-beta.20260618.121",
+  "version": "36.0.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/package/main.cjs.js",
   "types": "./dist/types/src/main.d.ts",
@@ -60,5 +60,8 @@
     "blob-polyfill": "^9.0.20240710",
     "compression-streams-polyfill": "^0.1.7",
     "text-encoding-polyfill": "^0.6.7"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

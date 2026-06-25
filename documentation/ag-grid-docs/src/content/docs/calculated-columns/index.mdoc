@@ -26,6 +26,10 @@ const gridOptions = {
 };
 ```
 
+{% note %}
+Application-declared calculated columns must define a `colId` explicitly.
+{% /note %}
+
 {% gridExampleRunner title="Calculated Columns" name="calculated-columns" /%}
 
 Calculated expressions do not need a leading equals sign (`=`). The value inside brackets must match a column `colId`, which defaults to the `field` when no explicit `colId` is provided.
@@ -40,9 +44,13 @@ Calculated columns are always read-only. They cannot be edited through cell edit
 
 Calculated columns are full columns, so [Row Grouping](./grouping/), [Tree Data](./tree-data/), [Sorting](./row-sorting/) and [Filtering](./filtering/), [Text Formatting](./value-formatters/) and [Cell Components](./component-cell-renderer/) apply to them the same way as any other column.
 
-Calculated values appear on leaf rows only. Row group rows, Tree Data parents (including parents that carry their own data), group footers and the grand-total row show no calculated value.
+A calculated column evaluates on rows that have their own data: leaf rows, and Tree Data parents that carry data. It stays blank on rows without data — row group rows, group footers, the grand-total row, and Tree Data filler nodes.
 
-This avoids a misleading result. Evaluating the expression against aggregated inputs does not match the aggregate of the per-row results for non-linear expressions: `[revenue] / [cost]` on a group would be `sum(revenue) / sum(cost)`, not the average of each leaf row's ratio.
+To show a value on group rows, give the calculated column an `aggFunc`. Each leaf evaluates the expression, and the group aggregates those per-leaf results with the chosen function — the same as a column with a `valueGetter`. For example `{ calculatedExpression: '[revenue] - [cost]', aggFunc: 'sum' }` shows the total of its rows' profits on a group. A ratio has no meaningful aggregation, so a column like `[profit] / [revenue]` is left without an `aggFunc` and stays blank on group rows.
+
+Under [Pivoting](./pivoting/), a calculated column with an `aggFunc` is a value column: it evaluates per leaf and its results aggregate into the pivot result columns, the same as a column with a `valueGetter`. Without an `aggFunc` it is not a value column, so it has no pivot result column and is absent from the cross-tab, like any other non-value column.
+
+A calculated column can also be a pivot column (`pivot: true`): its per-row result becomes the pivot key, so the grid creates a result column for each distinct calculated value — the same as pivoting on a column with a `valueGetter`.
 
 {% gridExampleRunner title="Row Groups with Calculated Columns" name="calculated-columns-row-groups" /%}
 
@@ -143,7 +151,7 @@ const gridOptions = {
 
 ## Advanced Calculated Columns
 
-Calculated columns can use the same operators and functions as [formulas](./formulas/), and can reference other calculated columns in the same row. This allows chained derived values such as profit, margin and status.
+Calculated columns can use the same [Mathematical Operators](./formula-reference/#mathematical-operators) and [Provided Functions](./formula-reference/#provided-functions) as [formulas](./formulas/), and can reference other calculated columns in the same row. This allows chained derived values such as profit, margin and status.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

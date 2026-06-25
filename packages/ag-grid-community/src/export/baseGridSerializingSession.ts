@@ -11,8 +11,8 @@ import type {
     ProcessRowGroupForExportParams,
 } from '../interfaces/exportParams';
 import type { IRowGroupColsService } from '../interfaces/iColsService';
-import type { CellBaseValueResolveFrom } from '../interfaces/iEditService';
-import type { CellValueResolveFrom, ValueService } from '../valueService/valueService';
+import type { CellValueResolveFrom } from '../interfaces/iEditService';
+import type { ValueService } from '../valueService/valueService';
 import type {
     GridSerializingParams,
     GridSerializingSession,
@@ -32,11 +32,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
     public processRowGroupCallback?: (params: ProcessRowGroupForExportParams) => string;
     public valueFrom: CellValueResolveFrom;
-
-    /** The raw resolution source for `parseValue` — `'transformed'` collapses to `'data'`. */
-    protected get baseValueFrom(): CellBaseValueResolveFrom {
-        return this.valueFrom === 'transformed' ? 'data' : this.valueFrom;
-    }
+    /** Apply the Show Values As transform on top of the `valueFrom` base. */
+    public transformValues: boolean;
 
     constructor(config: GridSerializingParams) {
         const {
@@ -50,6 +47,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             processGroupHeaderCallback,
             processRowGroupCallback,
             valueFrom,
+            transformValues,
         } = config;
 
         this.colModel = colModel;
@@ -62,6 +60,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         this.processGroupHeaderCallback = processGroupHeaderCallback;
         this.processRowGroupCallback = processRowGroupCallback;
         this.valueFrom = valueFrom || 'data';
+        // Exports default to the displayed (Show Values As transformed) value.
+        this.transformValues = transformValues ?? true;
     }
 
     abstract addCustomContent(customContent: T): void;
@@ -106,17 +106,17 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                             accumulatedRowIndex,
                             column,
                             node,
-                            value: valueSvc.getDisplayValue(column, node, valueFrom),
+                            value: valueSvc.getDisplayValue(column, node, valueFrom, this.transformValues),
                             type,
                             parseValue: (valueToParse: string) =>
                                 valueSvc.parseValue(
                                     column,
                                     node,
                                     valueToParse,
-                                    valueSvc.getValue(column, node, this.baseValueFrom)
+                                    valueSvc.getValue(column, node, valueFrom)
                                 ),
                             formatValue: (valueToFormat: any) =>
-                                (valueFrom === 'transformed'
+                                (this.transformValues
                                     ? valueSvc.formatTransformedValue(column, node, valueToFormat)
                                     : undefined) ??
                                 valueSvc.formatValue(column, node, valueToFormat) ??
@@ -141,6 +141,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                     includeValueFormatted: true,
                     exporting: true,
                     from: this.valueFrom,
+                    transformValues: this.transformValues,
                 });
                 concatenatedGroupValue = ` -> ${valueFormatted ?? value ?? ''}${concatenatedGroupValue}`;
                 pointer = pointer.parent;
@@ -159,6 +160,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             exporting: true,
             useRawFormula,
             from: this.valueFrom,
+            transformValues: this.transformValues,
         });
         return {
             value: value ?? '',

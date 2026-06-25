@@ -1084,6 +1084,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 node,
                 includeValueFormatted: true,
                 from: 'batch',
+                transformValues: true,
             });
 
             const val = valueFormatted ?? value ?? '';
@@ -1111,6 +1112,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             columnSeparator: this.getClipboardDelimiter(),
             onlySelected: !rowPositions,
             valueFrom: 'batch',
+            transformValues: true,
             processCellCallback: gos.getCallback('processCellForClipboard'),
             processRowGroupCallback: processRowGroupCallback,
             processHeaderCallback: gos.getCallback('processHeaderForClipboard'),

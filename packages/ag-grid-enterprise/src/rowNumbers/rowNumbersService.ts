@@ -324,7 +324,7 @@ export class RowNumbersService
     private createDummyElement(column: AgColumn): HTMLDivElement {
         const div = _createElement<HTMLDivElement>({ tag: 'div', cls: 'ag-cell-value ag-cell' });
 
-        let value = String(this.beans.rowModel.getRowCount() + 1);
+        let value: string | null = String(this.beans.rowModel.getRowCount() + 1);
         const rowNumberOverrides = this.rowNumberOverrides;
         if (typeof rowNumberOverrides?.valueFormatter === 'function') {
             const valueFormatterParams: ValueFormatterParams = _addGridCommonParams(this.gos, {
@@ -334,7 +334,7 @@ export class RowNumbersService
                 column,
                 colDef: column.colDef,
             });
-            value = rowNumberOverrides.valueFormatter(valueFormatterParams);
+            value = rowNumberOverrides.valueFormatter(valueFormatterParams) ?? null;
         }
 
         div.textContent = value;

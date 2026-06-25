@@ -165,6 +165,11 @@
                     "type": "item",
                     "title": "MCP Server",
                     "path": "mcp-server"
+                },
+                {
+                    "type": "item",
+                    "title": "Skills",
+                    "path": "skills"
                 }
             ]
         },
@@ -765,32 +770,6 @@
                         },
                         {
                             "type": "item",
-                            "title": "Formulas",
-                            "path": "formulas",
-                            "isEnterprise": true,
-                            "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Formula Editor",
-                                    "path": "formula-editor-component",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Formula Reference",
-                                    "path": "formula-reference",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Custom Functions",
-                                    "path": "formula-custom-functions",
-                                    "isEnterprise": true
-                                }
-                            ]
-                        },
-                        {
-                            "type": "item",
                             "title": "Find",
                             "path": "find",
                             "isEnterprise": true
@@ -1321,6 +1300,36 @@
                             "type": "item",
                             "title": "Show Values As",
                             "path": "aggregation-show-values-as",
+                            "isEnterprise": true
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "title": "Formulas",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "Overview",
+                            "path": "formulas",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Formula Editor",
+                            "path": "formula-editor-component",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Formula Reference",
+                            "path": "formula-reference",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Custom Functions",
+                            "path": "formula-custom-functions",
                             "isEnterprise": true
                         }
                     ]

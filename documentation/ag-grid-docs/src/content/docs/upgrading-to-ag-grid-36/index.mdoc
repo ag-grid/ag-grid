@@ -1,12 +1,14 @@
 ---
-title: "Upgrading to AG Grid 36.0"
-description: "See what's new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version v36.0"
-migrationVersion: "36.0"
+title: "Upgrading to AG Grid 36"
+description: "See what's new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version v36."
+migrationVersion: "36.0.0"
 ---
+
+Calculated Columns, Show Values As, Automatic Column Generation, Accessibility Improvements, Theming Improvements.
 
 ## What's New
 
-TODO list major changes
+AG Grid {% migrationVersion() %} adds important new features – [Calculated Columns](./calculated-columns/), [Show Values As](./aggregation-show-values-as/), [Automatic Column Generation](./auto-generate-columns/), Accessibility Improvements, Theming Improvements, as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-36/).
 
 <!--
 Documentation to the highest patch release of the major/minor
@@ -15,13 +17,109 @@ NOTE: This will not show if the current library version is the same as the migra
 
 {% documentationArchiveSection version=migrationVersionPatch() /%}
 
+{% note %}
+To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads this migration guide, checks it against your repository, and produces a plan of the changes needed.
+{% /note %}
+
 ## Breaking Changes
 
-**Native horizontal scrolling:** the grid now uses a single container to permit both vertical and horizontal scrolling natively in the browser (previously the header, body and pinned columns were placed in separate containers with scrolling synchronised using JavaScript, which lead to visible lag on more complex grids or slower computers). As a result, some of the grid's class names relating to high-level layout and scrolling containers have changed. Most applications will be unaffected. If your application contains CSS rules targeting these class names, they will need to be updated.
+### Frameworks
+
+{% if isFramework("angular") %}
+
+- Angular 18/19 support is no longer available due to reaching their end of life. The minimum Angular version is now v20.
+
+{% /if %}
+
+- The minimum TypeScript version is now 5.8.3 across all frameworks.
+
+### Packages
+
+- `ag-grid-community` and `ag-grid-enterprise` now have a dependency on the new AG Grid shared library `ag-stack`.
+
+### Integrated Charts
+
+- Refer to [Upgrade to AG Charts 14](https://www.ag-grid.com/charts/r/upgrade-to-ag-charts-14/) for behaviour and breaking changes.
 
 ## Behaviour Changes
 
-There are no behaviour changes in AG Grid version {% migrationVersion() %}.
+### Aggregation
+
+- Aggregation functions are now displayed in usage-frequency order (Sum, Average, Max, Min, Count, First, Last) instead of alphabetically.
+
+### Column Filters
+
+- When `cellDataType='date'` the Filter Model returns date-only values.
+
+### Column State
+
+- The value column order in the columns tool panel is now saved and reloaded as part of state. When loading grid state, pivot result value column header order remains the same, since the order is saved as part of state.
+
+### Modules
+
+- The `ValidationModule` is no longer included in the `AllCommunityModule` and `AllEnterpriseModule` bundles, keeping production bundles smaller by default. Without it, console messages are reduced to an error code and a documentation link. To restore the full development-time diagnostics, call `enableDevValidations()` before any grid is created:
+
+    ```js
+    import { enableDevValidations } from 'ag-grid-community';
+
+    if (process.env.NODE_ENV !== 'production') {
+        enableDevValidations();
+    }
+    ```
+
+- The Client-Side Row Model is now part of the grid core. A grid renders the client-side model without registering `ClientSideRowModelModule` explicitly, so registering no modules no longer reports an error.
+
+### Overlay
+
+- The DOM element for the overlay is now rendered as a sibling of the grid viewport DOM element, rather than as its child.
+
+### Rendering
+
+- The default for the [suppressContentVisibilityAuto](./grid-options/#reference-rendering-suppressContentVisibilityAuto) grid option has changed from `false` to `true`, due to reports of rare issues with this feature in some apps. If your app has many grids active at once, but most are off the screen so the user can't see them, consider passing `false` for performance purposes.
+
+### Scrolling
+
+- The Pagination Panel and Status Bar now use horizontal scroll overflow when space is constrained.
+
+### Tooltips
+
+- Grouped rows now use tooltip properties inherited from the underlying grouped column `colDef`, including `tooltipField`, `tooltipValueGetter`, and `tooltipComponent`. `autoGroupColumnDef` tooltip properties now apply to leaf rows only.
+
+## Styling Changes
+
+### DOM Structure
+
+The grid now uses a single container to permit both vertical and horizontal scrolling natively in the browser. Previously the header, body and pinned columns were placed in separate containers with scrolling synchronised using JavaScript, which led to visible lag on more complex grids or slower computers. As a result, the 9+ previous containers have been replaced with a single container and some of the grid's class names relating to high-level layout and scrolling containers have changed.
+
+Most applications will be unaffected. If your application targets these containers, the following may need updating:
+
+- CSS-based themes built against the separate pinned column / pinned row containers.
+- Themes referencing the sticky row containers.
+- Any references to CSS selectors of the old pinned containers.
+- Any assumptions about the DOM structure of pinned containers.
+- Pre-recorded tests may fail depending on how they are written.
+
+See the [DOM structure migration reference](#dom-structure-migration-reference) at the end of this guide for the full list of changed class names and their replacements.
+
+### Theme and RTL Class Placement
+
+- Every location where grid elements are inserted into application-owned DOM now has a consistent structure: `application-div > div.ag-theme-x > div.ag-ltr > div.ag-some-component`. The components `.ag-root-wrapper`, `.ag-dnd-ghost`, `.ag-popup`, `.ag-popup-child`, `.ag-tool-panel-external` and `.ag-advanced-filter` previously had theme and/or RTL classes set directly on them; these classes are now set on a parent. Application CSS such as `.ag-root-wrapper.ag-rtl { ... }` will need updating to the new structure: `.ag-rtl .ag-root-wrapper { ... }`.
+
+### Fonts
+
+- The `fontWeight` theme parameter now defaults to `400` instead of inheriting whatever font weight was set on the containing page. To inherit the page's font weight, set `fontWeight: 'inherit'`.
+
+### Pagination Panel
+
+- Previously the height of the pagination panel defaulted to the row height. It now has a default height based on the height of picker fields to ensure correct padding regardless of the size of your picker fields. Use `paginationPanelHeight` and `pickerFieldHeight` to override these heights.
+
+### Theme Parameter Changes
+
+- Picker fields now respect the `borderRadius` theme parameter instead of the hard-coded `5px`.
+
+### Theming API
+
+- To allow apps to minimise bundle size, `createTheme()` no longer bundles styles for buttons and the column drop component. They have been removed and can be re-added if required using `createTheme().withPart(buttonStyleQuartz).withPart(columnDropStyleBordered)`.
 
 ## Removal of Deprecated APIs
 
@@ -31,13 +129,15 @@ There are no deprecated API removals in AG Grid version {% migrationVersion() %}
 
 There are no deprecations in AG Grid version {% migrationVersion() %}.
 
-{% changelogSection version=$migrationVersion /%}
+## DOM structure migration reference
 
-## Breaking change record: native horizontal scrolling
+**Impact summary:** there has been significant change in the containers that hold rows and cells and handle scrolling and column pinning. If your application only styles visible grid components like cells, buttons, filters and so forth, there is likely no change. If your application styles containers, or uses containers to select specific cells to style, it is likely to need an update.
 
-Impact summary: there has been significant change in the containers that hold rows and cells and handle scrolling and column pinning. If your application only styles visible grid components like cells, buttons, filters and so forth, there is likely no change. If your application styles containers, or uses containers to select specific cells to style, it is likely to need an update.
+### Detection
 
-Detection: search the codebase for the following class names, either in CSS code or in JS APIs like `document.querySelector('...')`:
+Search the codebase for the following class names, either in CSS code or in JS APIs like `document.querySelector('...')`:
+
+{% expandingSection headerText="Affected class names" %}
 
 - ag-body
 - ag-body-viewport
@@ -67,9 +167,15 @@ Detection: search the codebase for the following class names, either in CSS code
 - ag-floating-top-spanned-cells-container
 - ag-floating-bottom-spanned-cells-container
 
-Mitigation:
+{% /expandingSection %}
 
-1. Classes with available replacements
+### Mitigation
+
+The class-name changes fall into three categories, depending on whether a direct replacement is available:
+
+{% expandingSection headerText="Class name mappings" %}
+
+**1. Classes with available replacements**
 
 If you are styling one of the classes on the left below in CSS, update it to the class on the right and test that the visual effect is the same.
 
@@ -83,7 +189,7 @@ If you are styling one of the classes on the left below in CSS, update it to the
 - ag-floating-top -> `.ag-grid-pinned-top-rows`
 - ag-floating-bottom -> `.ag-grid-pinned-bottom-rows`
 
-2. Classes with alternate selectors
+**2. Classes with alternate selectors**
 
 These elements have no direct replacement, but if using them to select components you can replace them with a descendent selector combining two class names. For example `.ag-pinned-left-sticky-top .ag-icon { ... }` could be replaced with `.ag-grid-sticky-top-rows-container .ag-grid-pinned-left-cells .ag-icon { ... }`
 
@@ -104,10 +210,14 @@ These elements have no direct replacement, but if using them to select component
 - ag-pinned-left-floating-bottom -> `.ag-grid-pinned-bottom-rows-container .ag-grid-pinned-left-cells`
 - ag-pinned-right-floating-bottom -> `.ag-grid-pinned-bottom-rows-container .ag-grid-pinned-right-cells`
 
-3. Elements removed
+**3. Elements removed**
 
 In the old DOM layout, non-scrollable containers had spacing elements below to align better with scrollable regions. These are no longer required as there is one large scrollable region. If you are using these it is likely that they are no longer required under the new layout:
 
 - ag-scroller-corner
 - ag-horizontal-left-spacer
 - ag-horizontal-right-spacer
+
+{% /expandingSection %}
+
+{% changelogSection version=$migrationVersion /%}

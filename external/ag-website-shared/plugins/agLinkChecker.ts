@@ -13,12 +13,6 @@ type Options = {
 };
 
 const IGNORED_PATHS = ['/archive'];
-const HREF_PATTERNS_TO_IGNORE = [
-    '?', // Links with queries
-    '#reference-', // API references, as it is rendered client side
-    '#example-', // Example references, as they aren't headings
-    '#contact-section', // Contact form on about page
-];
 
 const isCI =
     process.env.NX_TASK_TARGET_CONFIGURATION === 'ci' || process.env.NX_TASK_TARGET_CONFIGURATION === 'staging';
@@ -88,66 +82,91 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
             continue;
         }
 
-        const anchorTags: string[] = [];
+        const thisFileUrl = filePathToUrl(filePath);
 
-        // uses a stream as ingesting the entire file was causing memory crashes.
-        // State is held in the closure here (not inside an event handler) so it
-        // survives across stream chunks — otherwise tags that straddle a chunk
-        // boundary are silently dropped.
-        const fileStream = fs.createReadStream(join(dir, filePath), { encoding: 'utf8' });
-        let prev: string | undefined;
-        let active = false;
-        let str = '';
-        for await (const chunk of fileStream) {
-            const strChunk = chunk as string;
-            for (let i = 0; i < strChunk.length; i++) {
-                const chr = strChunk[i];
-                if (!prev || prev === '<') {
-                    if (chr === 'a') {
-                        active = true;
-                    }
-                } else if (active && chr === '>') {
-                    active = false;
-                    anchorTags.push(str);
-                    str = '';
-                }
-
-                if (active) {
-                    str += chr;
-
-                    if (str.length >= 2 && !str.startsWith('a ')) {
-                        active = false;
-                        str = '';
-                    }
-                }
-
-                prev = chr;
+        const recordUsage = (href: string) => {
+            // Strip any query string (?...) while keeping the path and fragment,
+            // so "/page/?ref=blog#foo" still validates the page and the #foo
+            // anchor. Only treat '?' as the query start when it precedes the
+            // fragment — a '?' after '#' is part of the fragment itself.
+            const firstHash = href.indexOf('#');
+            const queryIndex = href.indexOf('?');
+            if (queryIndex !== -1 && (firstHash === -1 || queryIndex < firstHash)) {
+                href = href.slice(0, queryIndex) + (firstHash !== -1 ? href.slice(firstHash) : '');
             }
-        }
-
-        anchorTags.forEach((tag) => {
-            const regex = /.*href="(.*?)".*/g;
-            const match = regex.exec(tag);
-            if (match) {
-                const href = match[1];
-                if (HREF_PATTERNS_TO_IGNORE.some((pattern) => href.includes(pattern))) {
+            // An empty fragment (#) or #top both scroll to the top of the page;
+            // they always resolve and have no target element to check against.
+            const hashIndex = href.indexOf('#');
+            if (hashIndex !== -1) {
+                const fragment = href.slice(hashIndex + 1);
+                if (fragment === '' || fragment.toLowerCase() === 'top') {
                     return;
                 }
+            }
+            // Same-page (#foo) links resolve against this page; absolute
+            // (/page#foo) links resolve against another page. Anything else
+            // (external, relative) is left to the file-existence checks below.
+            let link: string | undefined;
+            if (href.startsWith('#')) {
+                link = `${thisFileUrl}${href}`;
+            } else if (href.startsWith('/')) {
+                link = href;
+            }
+            if (link == null) {
+                return;
+            }
+            const filePaths = linksToValidate[link]?.filePaths ?? new Set();
+            filePaths.add(filePath);
+            linksToValidate[link] = { filePaths };
+        };
 
-                if (href.startsWith('#')) {
-                    const thisFileUrl = filePathToUrl(filePath);
-                    const thisHash = href;
-                    anchors.add(`${thisFileUrl}${thisHash}`);
-                } else if (href.startsWith('/')) {
-                    const filePaths = linksToValidate[href]?.filePaths ?? new Set();
-                    filePaths.add(filePath);
+        const processTag = (tag: string) => {
+            // A fragment (#foo) resolves to the first element with id="foo",
+            // and failing that an <a name="foo">. Record both as valid targets.
+            const idMatch = /(?:^|\s)id=(["'])(.*?)\1/i.exec(tag);
+            if (idMatch) {
+                anchors.add(`${thisFileUrl}#${idMatch[2]}`);
+            }
 
-                    linksToValidate[href] = {
-                        filePaths,
-                    };
+            const tagName = /^([a-zA-Z][\w-]*)/.exec(tag)?.[1]?.toLowerCase();
+            if (tagName === 'a') {
+                const nameMatch = /(?:^|\s)name=(["'])(.*?)\1/i.exec(tag);
+                if (nameMatch) {
+                    anchors.add(`${thisFileUrl}#${nameMatch[2]}`);
+                }
+
+                const hrefMatch = /(?:^|\s)href=(["'])(.*?)\1/i.exec(tag);
+                if (hrefMatch) {
+                    recordUsage(hrefMatch[2]);
                 }
             }
-        });
+        };
+
+        // Stream the file rather than reading it whole (large files caused OOM
+        // crashes). We accumulate one tag at a time, from '<' to '>', and
+        // process it the moment it closes. The accumulator state lives outside
+        // the chunk loop so a tag straddling a chunk boundary isn't dropped.
+        const fileStream = fs.createReadStream(join(dir, filePath), { encoding: 'utf8' });
+        let inTag = false;
+        let tag = '';
+        for await (const chunk of fileStream) {
+            const strChunk = chunk as string;
+            for (let i = 0, len = strChunk.length; i < len; ++i) {
+                const chr = strChunk[i];
+                if (inTag) {
+                    if (chr === '>') {
+                        inTag = false;
+                        processTag(tag);
+                        tag = '';
+                    } else {
+                        tag += chr;
+                    }
+                } else if (chr === '<') {
+                    inTag = true;
+                    tag = '';
+                }
+            }
+        }
     }
 
     // for junit reporting

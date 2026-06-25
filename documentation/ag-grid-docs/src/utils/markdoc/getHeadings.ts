@@ -46,9 +46,10 @@ function isHeadingTag(node: Node) {
     );
 }
 
-// Only show ApiDocumentation headings if it's not showing a section
+// Only show ApiDocumentation headings if it's not showing a section and the header isn't hidden
+// (a hidden header renders no id, so a heading would point at a non-existent anchor)
 function isApiDocsHeadingNode(node: Node) {
-    return node.tag === 'apiDocumentation' && !node.attributes.section;
+    return node.tag === 'apiDocumentation' && !node.attributes.section && !node.attributes.config?.hideHeader;
 }
 
 function isIfNode(node: Node) {

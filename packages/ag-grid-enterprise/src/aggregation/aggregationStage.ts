@@ -68,12 +68,23 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
 
     // Stale aggData on demoted nodes is cleared by the group stage (setRowNodeGroup), not here.
     public execute(changedPath: ChangedPath | undefined): void {
+        this.aggregate(changedPath, false);
+    }
+
+    /** Re-aggregates only the root node, leaving every group aggregate untouched. Used when a Show Values As
+     *  total mode is switched on for a grid not already aggregating the root (no grand-total row / pivot): the
+     *  groups are already correct, only the root total is missing — so a full re-aggregation would be wasted work. */
+    public aggregateRootOnly(): void {
+        this.aggregate(undefined, true);
+    }
+
+    private aggregate(changedPath: ChangedPath | undefined, rootOnly: boolean): void {
         const { gos, beans } = this;
         const userAggFunc = gos.getCallback('getGroupRowAgg');
         const valueColumns = beans.valueColsSvc?.columns;
 
         if (!valueColumns?.length && !userAggFunc) {
-            if (this.hadAgg && !changedPath) {
+            if (this.hadAgg && !changedPath && !rootOnly) {
                 // Full refresh with no value columns: clear stale aggData from all groups.
                 // Skip during transaction updates (changedPath defined) — the config-change
                 // full refresh will handle it.
@@ -91,12 +102,9 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
 
         const colModel = beans.colModel;
         const aggFuncSvc = beans.aggFuncSvc;
-        // showValueAs total modes (e.g. % of grand total) need a root aggregate even with no grand-total row.
+        // rootOnly is itself a request to aggregate the root (a feature read the root total on demand).
         const aggregateRoot =
-            gos.get('alwaysAggregateAtRootLevel') ||
-            !!_getGrandTotalRow(gos) ||
-            colModel.pivotMode ||
-            (beans.showValueAsSvc?.anyValueColHasActiveMode(valueColumns) ?? false);
+            rootOnly || gos.get('alwaysAggregateAtRootLevel') || !!_getGrandTotalRow(gos) || colModel.pivotMode;
         const filteredOnly = !_getGroupAggFiltering(gos) && !gos.get('suppressAggFilteredOnly');
 
         // Hoist service lookups once — they are accessed per-group inside the traversal callback.
@@ -136,7 +144,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         const values2d = colCount > 0 ? new Array<any[] | null>(colCount) : null;
 
         const rowModel = beans.rowModel;
-        _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, (rowNode) => {
+        const aggregateNode = (rowNode: RowNode): void => {
             if (rowNode.level === -1 && !aggregateRoot) {
                 setAggData(rowNode, null, colModel);
                 return;
@@ -164,7 +172,17 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             }
 
             setAggDataWithSiblings(rowNode, aggResult, colModel);
-        });
+        };
+
+        // Root-only: groups are already aggregated, so recompute just the root total from their aggData.
+        if (rootOnly) {
+            const rootNode = rowModel.rootNode;
+            if (rootNode) {
+                aggregateNode(rootNode);
+            }
+            return;
+        }
+        _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, aggregateNode);
     }
 }
 

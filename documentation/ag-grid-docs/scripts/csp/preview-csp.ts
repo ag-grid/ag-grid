@@ -114,11 +114,14 @@ function makeCspResolver(env: CspEnv): (url: string) => string {
     const examples = getCspValue({ env, scope: 'examples' });
     const campaigns = getCspValue({ env, scope: 'campaigns' });
     return (url: string): string => {
-        if (EXAMPLES_PATH_REGEXP.test(url)) {
-            return examples;
-        }
+        // Campaigns first: archived campaign pages (/archive/<version>/campaigns/) match
+        // BOTH regexps and must get the bryntum-allowing campaigns policy — mirroring the
+        // Apache <If> precedence where the campaigns block trails (and so overrides) examples.
         if (CAMPAIGNS_PATH_REGEXP.test(url)) {
             return campaigns;
+        }
+        if (EXAMPLES_PATH_REGEXP.test(url)) {
+            return examples;
         }
         return site;
     };

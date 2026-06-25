@@ -284,8 +284,6 @@
         left: 0;
         width: var(--ag-internal-fw-anchor-width, 100%);
         height: 100%;
-        display: flex;
-        align-items: center;
     }
 
     .ag-virtual-list-container {
@@ -368,7 +366,13 @@
         .ag-body-vertical-scroll-start-spacer {
             pointer-events: all;
             opacity: 1;
-            background-color: var(--ag-header-background-color);
+            // --ag-header-background-color might be semi-transparent so apply it on top of the known-opaque background color
+            background-color: var(--ag-background-color);
+            background-image: linear-gradient(
+                0deg,
+                var(--ag-header-background-color),
+                var(--ag-header-background-color)
+            );
         }
     }
 
@@ -767,13 +771,17 @@
         background-color: var(--ag-data-background-color);
     }
 
+    .ag-header-row::after {
+        background-color: var(--ag-header-background-color);
+    }
+
     .ag-header {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
-        background-color: var(--ag-header-background-color);
         border-bottom: var(--ag-borders-critical) var(--ag-border-color);
+        color: var(--ag-header-foreground-color);
         // do not allow sticky rows to scroll in front of the header
         z-index: 1;
     }
@@ -2257,8 +2265,20 @@
         overflow: hidden;
         visibility: hidden;
 
+        // shim the Theming API border variables the size-measurement probe reads to
+        // their legacy equivalents
+        --ag-header-row-border: var(--ag-borders-critical) var(--ag-border-color);
+        --ag-pinned-row-border: var(--ag-borders-critical) var(--ag-border-color);
+        --ag-row-border: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+
         div {
             position: absolute;
         }
+    }
+
+    .ag-measurement-element-border::before {
+        content: '';
+        display: block;
+        border-left: var(--ag-internal-measurement-border);
     }
 }

@@ -99,7 +99,7 @@ const GridComp = ({ context }: GridCompProps) => {
             setUserSelect,
         };
 
-        gridCtrl.setComp(compProxy, eRef, eRef);
+        gridCtrl.setComp(compProxy, eRef);
 
         setInitialised(true);
     }, []);

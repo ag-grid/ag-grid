@@ -7,11 +7,14 @@ const EXAMPLES_CSP = getCspValue({ env: 'dev', scope: 'examples' });
 const CAMPAIGNS_CSP = getCspValue({ env: 'dev', scope: 'campaigns' });
 
 function getDevCsp(url: string): string {
-    if (EXAMPLES_PATH_REGEXP.test(url)) {
-        return EXAMPLES_CSP;
-    }
+    // Campaigns first: archived campaign pages (/archive/<version>/campaigns/) match
+    // BOTH regexps, and must get the bryntum-allowing campaigns policy — mirroring the
+    // Apache <If> precedence where the campaigns block trails (and so overrides) examples.
     if (CAMPAIGNS_PATH_REGEXP.test(url)) {
         return CAMPAIGNS_CSP;
+    }
+    if (EXAMPLES_PATH_REGEXP.test(url)) {
+        return EXAMPLES_CSP;
     }
     return SITE_CSP;
 }

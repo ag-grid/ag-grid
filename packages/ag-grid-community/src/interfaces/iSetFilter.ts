@@ -1,6 +1,6 @@
 import type { AgPromise } from 'ag-stack';
 
-import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
+import type { ColDef, KeyCreatorParams, ValueFormatterFunc } from '../entities/colDef';
 import type { FilterUiChangedEvent } from '../events';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type { Column } from '../interfaces/iColumn';
@@ -196,7 +196,7 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * If specified, this formats the value before it is displayed in the Filter List.
      * If a Key Creator is provided (see `keyCreator`), this must also be provided.
      */
-    valueFormatter?: (params: ValueFormatterParams) => string;
+    valueFormatter?: ValueFormatterFunc;
     /**
      * Function to return a string key for a value. This is required when the filter values are complex objects,
      * or when `treeList = true` and the column is a group column with Tree Data or Grouping enabled.

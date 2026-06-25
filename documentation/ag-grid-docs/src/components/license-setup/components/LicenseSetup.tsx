@@ -97,6 +97,10 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
 
     return (
         <>
+            <h2 id="request-trial-licence">
+                Request a Trial Licence
+                <LinkIcon href="#request-trial-licence" />
+            </h2>
             <Note>
                 You can test AG Grid Enterprise locally without a licence. To test in production, access support and
                 remove the watermark & console warnings,{' '}

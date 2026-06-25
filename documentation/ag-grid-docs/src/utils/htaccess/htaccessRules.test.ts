@@ -187,6 +187,13 @@ describe('htaccessRules', () => {
             expect(stagingContent).not.toContain('Access-Control-Allow-Origin');
         });
 
+        it("should use 'Header set' for CORS so the vhost value is replaced, not appended (RTI-3400)", () => {
+            // 'Header add' appends, producing a duplicate Access-Control-Allow-Origin
+            // header ('*, *') that browsers reject. 'set' replaces any inherited value.
+            expect(productionContent).toContain('Header set Access-Control-Allow-Origin "*"');
+            expect(productionContent).not.toContain('Header add Access-Control-Allow-Origin');
+        });
+
         it('should include CSP in both environments', () => {
             expect(productionContent).toContain('Content-Security-Policy');
             expect(stagingContent).toContain('Content-Security-Policy');
@@ -296,6 +303,15 @@ describe('htaccessRules', () => {
             const ifBlock = firstCampaignsIfBlock(stagingContent);
             expect(ifBlock).toContain('https://bryntum.com');
             expect(ifBlock).not.toContain("'unsafe-eval'");
+        });
+
+        it('RTI-3353: the campaigns <If> condition also covers archived campaign pages', () => {
+            // Archived campaign pages (/archive/<version>/campaigns/) otherwise fall under
+            // the examples scope and lose the bryntum.com allowances. The condition carries
+            // the optional /archive/<version> prefix so the override applies to them too.
+            expect(campaignsIfOpen).toContain('/archive/');
+            expect(stagingContent).toContain(campaignsIfOpen);
+            expect(productionContent).toContain(campaignsIfOpen);
         });
 
         it('production: allows bryntum.com for /campaigns/ without unsafe-eval (either phase)', () => {

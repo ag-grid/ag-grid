@@ -4,12 +4,12 @@ import type {
     GridApi,
     IRowNode,
     RowNode,
-    ShowValueAsTransformParams,
+    ShowValuesAsTransformParams,
 } from 'ag-grid-community';
 
-import { pivotResultCol, readAggScalar, readNodeValue, unwrapAggValue } from './showValueAsValueReaders';
+import { pivotResultCol, readAggScalar, readNodeValue, unwrapAggValue } from './showValuesAsValueReaders';
 
-export class ShowValueAsTransformParamsImpl implements ShowValueAsTransformParams {
+export class ShowValuesAsTransformParamsImpl implements ShowValuesAsTransformParams {
     private _rawValue: any = this;
 
     constructor(
@@ -33,23 +33,41 @@ export class ShowValueAsTransformParamsImpl implements ShowValueAsTransformParam
 
     /** This column's total down the rows: the grand total when not pivoting, this pivot column's total when pivoting. */
     public columnTotal(): number | null {
-        const root = this._beans.rowModel.rootNode;
+        const root = this.rootWithTotal();
         return root ? readAggScalar(root, this.column) : null;
     }
 
     /** The overall total: equal to {@link columnTotal} when not pivoting; when pivoting, the value field summed
      *  across all its pivot columns (the 2-D grand total, not just this pivot column). */
     public grandTotal(): number | null {
-        const root = this._beans.rowModel.rootNode;
+        const root = this.rootWithTotal();
         if (!root) {
             return null;
         }
         return this._beans.colModel.isPivotActive() ? this.rowTotalAt(root) : readAggScalar(root, this.column);
     }
 
+    /** Root, ensuring its aggregate exists. The pipeline skips the root aggregate unless a grand-total row / pivot
+     *  needs it, so a total mode triggers it on demand — synchronous, computes only the root from the already
+     *  aggregated groups (no re-sort/filter/render). `null` aggData is the "not yet aggregated" sentinel. */
+    private rootWithTotal(): RowNode | null {
+        const root = this._beans.rowModel.rootNode;
+        if (root && root.aggData == null) {
+            this._beans.aggStage?.aggregateRootOnly();
+        }
+        return root;
+    }
+
     public parentTotal(): number | null {
         const parent = this.node.parent;
-        return parent ? readAggScalar(parent, this.column) : null;
+        if (!parent) {
+            return null;
+        }
+        // A top-level group's parent is the root, which the pipeline may not have aggregated — do it on demand.
+        if (parent.level === -1 && parent.aggData == null) {
+            this._beans.aggStage?.aggregateRootOnly();
+        }
+        return readAggScalar(parent, this.column);
     }
 
     public parentColumnTotal(): number | null {
@@ -89,26 +107,5 @@ export class ShowValueAsTransformParamsImpl implements ShowValueAsTransformParam
             return any ? sum : null;
         }
         return readNodeValue(node, column);
-    }
-
-    /** This column's aggregate at the ancestor grouped by row-group field `field` (the node itself when it is
-     *  that group); with no `field`, the outermost (top-level) ancestor — which also covers tree data, where
-     *  nodes have no `rowGroupColumn`. `null` when no such ancestor exists. Backs `% of Parent Total`. */
-    public ancestorTotal(field?: string): number | null {
-        const column = this.column;
-        if (field) {
-            for (let n = this.node as RowNode | null; n; n = n.parent) {
-                if (n.rowGroupColumn?.colId === field) {
-                    return readNodeValue(n, column);
-                }
-            }
-            return null;
-        }
-        let outermost: RowNode | null = null;
-        for (let n = this.node as RowNode | null; n && n.level >= 0; n = n.parent) {
-            outermost = n; // walking up, the last node above the root is the top-level ancestor
-        }
-        // Read the displayed value (not `aggData`) so a top-level leaf — its own ancestor — resolves too.
-        return outermost ? readNodeValue(outermost, column) : null;
     }
 }

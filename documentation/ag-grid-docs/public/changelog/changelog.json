@@ -1,5 +1,19 @@
 [
     {
+        "key": "AG-17593",
+        "issueType": "Task",
+        "manualEntry": true,
+        "summary": "Placeholder for 36.0.0",
+        "versions": ["36.0.0"],
+        "status": "Done",
+        "resolution": "Done",
+        "features": null,
+        "moreInformation": null,
+        "deprecationNotes": null,
+        "breakingChangesNotes": null,
+        "documentationUrl": null
+    },
+    {
         "key": "AG-17289",
         "issueType": "Task",
         "manualEntry": true,

@@ -1,300 +1,288 @@
 import { _isBrowserSafari, _isElementChildOfClass, _isFocusableFormField } from 'ag-stack';
 
 import { isRowNumberCol } from '../../columns/columnUtils';
-import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { AgColumn } from '../../entities/agColumn';
 import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseDownEvent } from '../../events';
 import { _interpretAsRightClick } from '../../gridOptionsUtils';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import { _suppressCellMouseEvent } from '../renderUtils';
 import type { CellCtrl } from './cellCtrl';
 
-export class CellMouseListenerFeature extends BeanStub {
-    public lastIPadMouseClickEvent: number;
-
-    constructor(
-        private readonly cellCtrl: CellCtrl,
-        beans: BeanCollection,
-        private readonly column: AgColumn
-    ) {
-        super();
-        this.beans = beans;
+export function _onCellMouseEvent(
+    beans: BeanCollection,
+    cellCtrl: CellCtrl,
+    eventName: string,
+    mouseEvent: MouseEvent
+): void {
+    if (_isStopPropagationForAgGrid(mouseEvent)) {
+        return;
     }
 
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (_isStopPropagationForAgGrid(mouseEvent)) {
-            return;
-        }
+    switch (eventName) {
+        case 'click':
+            onCellClicked(beans, cellCtrl, mouseEvent);
+            break;
+        case 'pointerdown':
+        case 'mousedown':
+        case 'touchstart':
+            onMouseDown(beans, cellCtrl, mouseEvent);
+            break;
+        case 'dblclick':
+            _onCellDoubleClicked(beans, cellCtrl, mouseEvent);
+            break;
+        case 'mouseout':
+            onMouseOut(beans, cellCtrl, mouseEvent);
+            break;
+        case 'mouseover':
+            onMouseOver(beans, cellCtrl, mouseEvent);
+            break;
+    }
+}
 
-        switch (eventName) {
-            case 'click':
-                this.onCellClicked(mouseEvent);
-                break;
-            case 'pointerdown':
-            case 'mousedown':
-            case 'touchstart':
-                this.onMouseDown(mouseEvent);
-                break;
-            case 'dblclick':
-                this.onCellDoubleClicked(mouseEvent);
-                break;
-            case 'mouseout':
-                this.onMouseOut(mouseEvent);
-                break;
-            case 'mouseover':
-                this.onMouseOver(mouseEvent);
-                break;
-        }
+function onCellClicked(beans: BeanCollection, cellCtrl: CellCtrl, event: MouseEvent): void {
+    // iPad doesn't have double click - so we need to mimic it to enable editing for iPad.
+    if (beans.touchSvc?.handleCellDoubleClick(cellCtrl, event)) {
+        return;
     }
 
-    private onCellClicked(event: MouseEvent): void {
-        // iPad doesn't have double click - so we need to mimic it to enable editing for iPad.
-        if (this.beans.touchSvc?.handleCellDoubleClick(this, event)) {
-            return;
-        }
+    const { eventSvc, rangeSvc, editSvc, editModelSvc, frameworkOverrides, gos } = beans;
+    const isMultiKey = event.ctrlKey || event.metaKey;
+    const { column, cellPosition, rowNode } = cellCtrl;
+    const suppressMouseEvent = _suppressCellMouseEvent(gos, column, rowNode, event);
 
-        const { eventSvc, rangeSvc, editSvc, editModelSvc, frameworkOverrides, gos } = this.beans;
-        const isMultiKey = event.ctrlKey || event.metaKey;
-        const { cellCtrl } = this;
-        const { column, cellPosition, rowNode } = cellCtrl;
-        const suppressMouseEvent = _suppressCellMouseEvent(gos, column, rowNode, event);
-
-        if (rangeSvc && isMultiKey && !suppressMouseEvent) {
-            // the mousedown event has created the range already, so we only intersect if there is more than one
-            // range on this cell
-            if (rangeSvc.getCellRangeCount(cellPosition) > 1) {
-                rangeSvc.intersectLastRange(true);
-            }
-        }
-
-        const cellClickedEvent: CellClickedEvent = cellCtrl.createEvent(event, 'cellClicked') as CellClickedEvent;
-        cellClickedEvent.isEventHandlingSuppressed = suppressMouseEvent;
-        eventSvc.dispatchEvent(cellClickedEvent);
-
-        const colDef = column.colDef;
-
-        if (colDef.onCellClicked) {
-            // to make callback async, do in a timeout
-            window.setTimeout(() => {
-                frameworkOverrides.wrapOutgoing(() => {
-                    colDef.onCellClicked!(cellClickedEvent);
-                });
-            }, 0);
-        }
-
-        if (suppressMouseEvent) {
-            return;
-        }
-
-        if (editModelSvc?.getState(cellCtrl) !== 'editing') {
-            const editing = editSvc?.isEditing();
-            const isRangeSelectionEnabledWhileEditing = editSvc?.isRangeSelectionEnabledWhileEditing();
-            const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
-            const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
-            if (editing && (isRangeSelectionEnabledWhileEditing || cellValidations > 0 || rowValidations > 0)) {
-                return;
-            }
-
-            if (editSvc?.shouldStartEditing(cellCtrl, event)) {
-                editSvc?.startEditing(cellCtrl, { event });
-            } else if (editSvc?.shouldStopEditing(cellCtrl, event)) {
-                if (this.beans.gos.get('editType') === 'fullRow') {
-                    editSvc?.stopEditing(cellCtrl, {
-                        event,
-                        source: 'edit',
-                    });
-                } else {
-                    // stop all editing
-                    editSvc?.stopEditing(undefined, {
-                        event,
-                        source: 'edit',
-                    });
-                }
-            }
+    if (rangeSvc && isMultiKey && !suppressMouseEvent) {
+        // the mousedown event has created the range already, so we only intersect if there is more than one
+        // range on this cell
+        if (rangeSvc.getCellRangeCount(cellPosition) > 1) {
+            rangeSvc.intersectLastRange(true);
         }
     }
 
-    public onCellDoubleClicked(event: MouseEvent) {
-        const { column, beans, cellCtrl } = this;
-        const { eventSvc, frameworkOverrides, editSvc, editModelSvc, gos } = beans;
+    const cellClickedEvent: CellClickedEvent = cellCtrl.createEvent(event, 'cellClicked') as CellClickedEvent;
+    cellClickedEvent.isEventHandlingSuppressed = suppressMouseEvent;
+    eventSvc.dispatchEvent(cellClickedEvent);
 
-        const suppressMouseEvent = _suppressCellMouseEvent(gos, cellCtrl.column, cellCtrl.rowNode, event);
+    const colDef = column.colDef;
 
-        const colDef = column.colDef;
-        // always dispatch event to eventService
-        const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(
-            event,
-            'cellDoubleClicked'
-        ) as CellDoubleClickedEvent;
-        cellDoubleClickedEvent.isEventHandlingSuppressed = suppressMouseEvent;
-        eventSvc.dispatchEvent(cellDoubleClickedEvent);
+    if (colDef.onCellClicked) {
+        // to make callback async, do in a timeout
+        window.setTimeout(() => {
+            frameworkOverrides.wrapOutgoing(() => {
+                colDef.onCellClicked!(cellClickedEvent);
+            });
+        }, 0);
+    }
 
-        // check if colDef also wants to handle event
-        if (typeof colDef.onCellDoubleClicked === 'function') {
-            // to make the callback async, do in a timeout
-            window.setTimeout(() => {
-                frameworkOverrides.wrapOutgoing(() => {
-                    (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent);
-                });
-            }, 0);
-        }
-        if (suppressMouseEvent) {
+    if (suppressMouseEvent) {
+        return;
+    }
+
+    if (editModelSvc?.getState(cellCtrl) !== 'editing') {
+        const editing = editSvc?.isEditing();
+        const isRangeSelectionEnabledWhileEditing = editSvc?.isRangeSelectionEnabledWhileEditing();
+        const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
+        const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
+        if (editing && (isRangeSelectionEnabledWhileEditing || cellValidations > 0 || rowValidations > 0)) {
             return;
         }
 
-        if (editSvc?.shouldStartEditing(cellCtrl, event) && editModelSvc?.getState(cellCtrl) !== 'editing') {
-            const editing = editSvc?.isEditing();
-            const isRangeSelectionEnabledWhileEditing = editSvc?.isRangeSelectionEnabledWhileEditing();
-            const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
-            const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
-            if (editing && (isRangeSelectionEnabledWhileEditing || cellValidations > 0 || rowValidations > 0)) {
-                return;
-            }
-
+        if (editSvc?.shouldStartEditing(cellCtrl, event)) {
             editSvc?.startEditing(cellCtrl, { event });
-        }
-    }
-
-    private onMouseDown(mouseEvent: MouseEvent): void {
-        const { shiftKey } = mouseEvent;
-        const target = mouseEvent.target as HTMLElement;
-        const { cellCtrl, beans } = this;
-        const { eventSvc, rangeSvc, rowNumbersSvc, focusSvc, gos, editSvc } = beans;
-        const { column, rowNode, cellPosition } = cellCtrl;
-
-        const suppressMouseEvent = _suppressCellMouseEvent(gos, column, rowNode, mouseEvent);
-
-        const fireMouseDownEvent = () => {
-            const cellMouseDownEvent = cellCtrl.createEvent(mouseEvent, 'cellMouseDown') as CellMouseDownEvent;
-            cellMouseDownEvent.isEventHandlingSuppressed = suppressMouseEvent;
-            eventSvc.dispatchEvent(cellMouseDownEvent);
-        };
-
-        if (suppressMouseEvent) {
-            // suppress just prevents grid handling. Events are still passed to users (with suppress property value)
-            fireMouseDownEvent();
-            return;
-        }
-
-        // do not change the range for right-clicks inside an existing range
-        if (this.isRightClickInExistingRange(mouseEvent)) {
-            return;
-        }
-
-        const hasRanges = rangeSvc && !rangeSvc.isEmpty();
-        const containsWidget = this.containsWidget(target);
-
-        const isRowNumberColumn = isRowNumberCol(column);
-
-        if (rowNumbersSvc && isRowNumberColumn && !rowNumbersSvc.handleMouseDownOnCell(cellPosition, mouseEvent)) {
-            return;
-        }
-
-        if (!shiftKey || !hasRanges) {
-            const editing = editSvc?.isEditing(cellCtrl);
-            const isEnableCellTextSelection = gos.get('enableCellTextSelection');
-            // when `enableCellTextSelection` is true, we call prevent default on `mousedown`
-            // within the row dragger to block text selection while dragging, but the cell
-            // should still be selected/focused.
-            const shouldFocus = isEnableCellTextSelection && mouseEvent.defaultPrevented;
-            // however, this should never be true if the mousedown was triggered
-            // due to a click on a cell editor for example, otherwise cell selection within
-            // an editor would be blocked.
-            const forceBrowserFocus =
-                (_isBrowserSafari() || shouldFocus) && !editing && !_isFocusableFormField(target) && !containsWidget;
-
-            cellCtrl.focusCell(forceBrowserFocus, mouseEvent);
-        }
-
-        // if shift clicking, and a range exists, we keep the focus on the cell that started the
-        // range as the user then changes the range selection.
-        if (shiftKey && hasRanges && !focusSvc.isCellFocused(cellPosition)) {
-            // this stops the cell from getting focused
-            mouseEvent.preventDefault();
-
-            const focusedCell = focusSvc.getFocusedCell();
-            if (focusedCell) {
-                const { column, rowIndex, rowPinned } = focusedCell;
-                const allowRangesWhileEditing = !!editSvc?.isRangeSelectionEnabledWhileEditing?.();
-
-                // if the focused cell is editing, need to stop editing first
-                if (editSvc?.isEditing(focusedCell) && !allowRangesWhileEditing) {
-                    editSvc?.stopEditing(focusedCell);
-                }
-
-                // focus could have been lost, so restore it to the starting cell in the range if needed
-                if (!allowRangesWhileEditing) {
-                    focusSvc.setFocusedCell({
-                        column,
-                        rowIndex,
-                        rowPinned,
-                        forceBrowserFocus: true,
-                        preventScrollOnBrowserFocus: true,
-                        sourceEvent: mouseEvent,
-                    });
-                }
+        } else if (editSvc?.shouldStopEditing(cellCtrl, event)) {
+            if (gos.get('editType') === 'fullRow') {
+                editSvc?.stopEditing(cellCtrl, {
+                    event,
+                    source: 'edit',
+                });
+            } else {
+                // stop all editing
+                editSvc?.stopEditing(undefined, {
+                    event,
+                    source: 'edit',
+                });
             }
         }
+    }
+}
 
-        // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
-        // is focused but we don't want to change the range selection, so return here.
-        if (containsWidget) {
+export function _onCellDoubleClicked(beans: BeanCollection, cellCtrl: CellCtrl, event: MouseEvent): void {
+    const { eventSvc, frameworkOverrides, editSvc, editModelSvc, gos } = beans;
+    const { column } = cellCtrl;
+
+    const suppressMouseEvent = _suppressCellMouseEvent(gos, cellCtrl.column, cellCtrl.rowNode, event);
+
+    const colDef = column.colDef;
+    // always dispatch event to eventService
+    const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(
+        event,
+        'cellDoubleClicked'
+    ) as CellDoubleClickedEvent;
+    cellDoubleClickedEvent.isEventHandlingSuppressed = suppressMouseEvent;
+    eventSvc.dispatchEvent(cellDoubleClickedEvent);
+
+    // check if colDef also wants to handle event
+    if (typeof colDef.onCellDoubleClicked === 'function') {
+        // to make the callback async, do in a timeout
+        window.setTimeout(() => {
+            frameworkOverrides.wrapOutgoing(() => {
+                (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent);
+            });
+        }, 0);
+    }
+    if (suppressMouseEvent) {
+        return;
+    }
+
+    if (editSvc?.shouldStartEditing(cellCtrl, event) && editModelSvc?.getState(cellCtrl) !== 'editing') {
+        const editing = editSvc?.isEditing();
+        const isRangeSelectionEnabledWhileEditing = editSvc?.isRangeSelectionEnabledWhileEditing();
+        const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
+        const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
+        if (editing && (isRangeSelectionEnabledWhileEditing || cellValidations > 0 || rowValidations > 0)) {
             return;
         }
 
-        rangeSvc?.handleCellMouseDown(mouseEvent, cellPosition);
+        editSvc?.startEditing(cellCtrl, { event });
+    }
+}
 
+function onMouseDown(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: MouseEvent): void {
+    const { shiftKey } = mouseEvent;
+    const target = mouseEvent.target as HTMLElement;
+    const { eventSvc, rangeSvc, rowNumbersSvc, focusSvc, gos, editSvc } = beans;
+    const { column, rowNode, cellPosition } = cellCtrl;
+
+    const suppressMouseEvent = _suppressCellMouseEvent(gos, column, rowNode, mouseEvent);
+
+    const fireMouseDownEvent = () => {
+        const cellMouseDownEvent = cellCtrl.createEvent(mouseEvent, 'cellMouseDown') as CellMouseDownEvent;
+        cellMouseDownEvent.isEventHandlingSuppressed = suppressMouseEvent;
+        eventSvc.dispatchEvent(cellMouseDownEvent);
+    };
+
+    if (suppressMouseEvent) {
+        // suppress just prevents grid handling. Events are still passed to users (with suppress property value)
         fireMouseDownEvent();
+        return;
     }
 
-    private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {
-        const { rangeSvc } = this.beans;
+    // do not change the range for right-clicks inside an existing range
+    if (isRightClickInExistingRange(beans, cellCtrl, mouseEvent)) {
+        return;
+    }
 
-        if (rangeSvc) {
-            const cellInRange = rangeSvc.isCellInAnyRange(this.cellCtrl.cellPosition);
-            const isRightClick = _interpretAsRightClick(this.beans, mouseEvent);
+    const hasRanges = rangeSvc && !rangeSvc.isEmpty();
+    const containsWidget = cellContainsWidget(target);
 
-            if (cellInRange && isRightClick) {
-                return true;
+    const isRowNumberColumn = isRowNumberCol(column);
+
+    if (rowNumbersSvc && isRowNumberColumn && !rowNumbersSvc.handleMouseDownOnCell(cellPosition, mouseEvent)) {
+        return;
+    }
+
+    if (!shiftKey || !hasRanges) {
+        const editing = editSvc?.isEditing(cellCtrl);
+        const isEnableCellTextSelection = gos.get('enableCellTextSelection');
+        // when `enableCellTextSelection` is true, we call prevent default on `mousedown`
+        // within the row dragger to block text selection while dragging, but the cell
+        // should still be selected/focused.
+        const shouldFocus = isEnableCellTextSelection && mouseEvent.defaultPrevented;
+        // however, this should never be true if the mousedown was triggered
+        // due to a click on a cell editor for example, otherwise cell selection within
+        // an editor would be blocked.
+        const forceBrowserFocus =
+            (_isBrowserSafari() || shouldFocus) && !editing && !_isFocusableFormField(target) && !containsWidget;
+
+        cellCtrl.focusCell(forceBrowserFocus, mouseEvent);
+    }
+
+    // if shift clicking, and a range exists, we keep the focus on the cell that started the
+    // range as the user then changes the range selection.
+    if (shiftKey && hasRanges && !focusSvc.isCellFocused(cellPosition)) {
+        // this stops the cell from getting focused
+        mouseEvent.preventDefault();
+
+        const focusedCell = focusSvc.getFocusedCell();
+        if (focusedCell) {
+            const { column, rowIndex, rowPinned } = focusedCell;
+            const allowRangesWhileEditing = !!editSvc?.isRangeSelectionEnabledWhileEditing?.();
+
+            // if the focused cell is editing, need to stop editing first
+            if (editSvc?.isEditing(focusedCell) && !allowRangesWhileEditing) {
+                editSvc?.stopEditing(focusedCell);
+            }
+
+            // focus could have been lost, so restore it to the starting cell in the range if needed
+            if (!allowRangesWhileEditing) {
+                focusSvc.setFocusedCell({
+                    column,
+                    rowIndex,
+                    rowPinned,
+                    forceBrowserFocus: true,
+                    preventScrollOnBrowserFocus: true,
+                    sourceEvent: mouseEvent,
+                });
             }
         }
+    }
 
+    // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
+    // is focused but we don't want to change the range selection, so return here.
+    if (containsWidget) {
+        return;
+    }
+
+    rangeSvc?.handleCellMouseDown(mouseEvent, cellPosition);
+
+    fireMouseDownEvent();
+}
+
+function isRightClickInExistingRange(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: MouseEvent): boolean {
+    const { rangeSvc } = beans;
+
+    if (rangeSvc) {
+        const cellInRange = rangeSvc.isCellInAnyRange(cellCtrl.cellPosition);
+        const isRightClick = _interpretAsRightClick(beans, mouseEvent);
+
+        if (cellInRange && isRightClick) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function cellContainsWidget(target: HTMLElement): boolean {
+    return (
+        _isElementChildOfClass(target, 'ag-selection-checkbox', 3) ||
+        _isElementChildOfClass(target, 'ag-drag-handle', 3)
+    );
+}
+
+function onMouseOut(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: MouseEvent): void {
+    if (mouseStayingInsideCell(cellCtrl, mouseEvent)) {
+        return;
+    }
+    const { eventSvc, colHover } = beans;
+    eventSvc.dispatchEvent(cellCtrl.createEvent(mouseEvent, 'cellMouseOut'));
+    colHover?.clearMouseOver();
+}
+
+function onMouseOver(beans: BeanCollection, cellCtrl: CellCtrl, mouseEvent: MouseEvent): void {
+    if (mouseStayingInsideCell(cellCtrl, mouseEvent)) {
+        return;
+    }
+    const { eventSvc, colHover } = beans;
+    eventSvc.dispatchEvent(cellCtrl.createEvent(mouseEvent, 'cellMouseOver'));
+    colHover?.setMouseOver([cellCtrl.column]);
+}
+
+function mouseStayingInsideCell(cellCtrl: CellCtrl, e: MouseEvent): boolean {
+    if (!e.target || !e.relatedTarget) {
         return false;
     }
-
-    private containsWidget(target: HTMLElement): boolean {
-        return (
-            _isElementChildOfClass(target, 'ag-selection-checkbox', 3) ||
-            _isElementChildOfClass(target, 'ag-drag-handle', 3)
-        );
-    }
-
-    private onMouseOut(mouseEvent: MouseEvent): void {
-        if (this.mouseStayingInsideCell(mouseEvent)) {
-            return;
-        }
-        const { eventSvc, colHover } = this.beans;
-        eventSvc.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOut'));
-        colHover?.clearMouseOver();
-    }
-
-    private onMouseOver(mouseEvent: MouseEvent): void {
-        if (this.mouseStayingInsideCell(mouseEvent)) {
-            return;
-        }
-        const { eventSvc, colHover } = this.beans;
-        eventSvc.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOver'));
-        colHover?.setMouseOver([this.column]);
-    }
-
-    private mouseStayingInsideCell(e: MouseEvent): boolean {
-        if (!e.target || !e.relatedTarget) {
-            return false;
-        }
-        const eCell = this.cellCtrl.eGui;
-        const cellContainsTarget = eCell.contains(e.target as Node);
-        const cellContainsRelatedTarget = eCell.contains(e.relatedTarget as Node);
-        return cellContainsTarget && cellContainsRelatedTarget;
-    }
+    const eCell = cellCtrl.eGui;
+    const cellContainsTarget = eCell.contains(e.target as Node);
+    const cellContainsRelatedTarget = eCell.contains(e.relatedTarget as Node);
+    return cellContainsTarget && cellContainsRelatedTarget;
 }

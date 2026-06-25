@@ -20,6 +20,7 @@ import type { EditPosition } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
+import { _applyCellEditStyles } from '../styles/cellEditStyleFeature';
 import { _getCellCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
@@ -71,7 +72,7 @@ export function _setupEditors(
                 const newValue =
                     cellStartValue ??
                     editSvc?.getCellDataValue(cellPosition) ??
-                    valueSvc.getDisplayValue(cellColumn as AgColumn, cellRowNode, 'edit') ??
+                    valueSvc.getDisplayValue(cellColumn as AgColumn, cellRowNode, 'edit', false) ??
                     oldValue ??
                     UNEDITED;
 
@@ -273,7 +274,8 @@ function _createEditorParams(
                 : undefined
             : cellDataValue;
 
-    const value = initialNewValue === UNEDITED ? valueSvc.getDisplayValue(agColumn, rowNode, 'edit') : initialNewValue;
+    const value =
+        initialNewValue === UNEDITED ? valueSvc.getDisplayValue(agColumn, rowNode, 'edit', false) : initialNewValue;
 
     // if formula, normalise the value to shorthand for users.
     let paramsValue = enableGroupEditing ? initialNewValue : value;
@@ -740,7 +742,7 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
         for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
             cellCtrl.tooltipFeature?.refreshTooltip(true);
             cellCtrl.editorTooltipFeature?.refreshTooltip(true);
-            cellCtrl.editStyleFeature?.applyCellStyles?.();
+            _applyCellEditStyles(beans, cellCtrl);
         }
     }
 }

@@ -24,7 +24,6 @@ import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
 import { shiftNode } from './functions/utils';
 import type { FormulaErrorId, FormulaErrorType } from './i18n';
 import { isValidFunctionName } from './refUtils';
-import { isFormulaRowAvailable } from './rowAccess';
 
 /** Shared params object for `rowRenderer.refreshCells`, hoisted to avoid per-call allocation. */
 const REFRESH_CELLS_PARAMS = { suppressFlash: true, force: true } as const;
@@ -127,8 +126,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         this.formulaColumnsPresent = formulaColumnsPresent;
         const editableFormulasCompatible =
             editableFormulaColumnsPresent && this.checkForEditableFormulaIncompatibleServices(columns);
-        const calculatedColumnsCompatible =
-            calculatedColumnsPresent && this.checkForCalculatedColumnIncompatibleServices(columns);
+        // Calculated columns work with pivot in every role: as a pivot value (aggFunc) feeding the result
+        // columns, alongside a pivot, and as a pivot dimension (its per-leaf formula result is the key).
+        const calculatedColumnsCompatible = calculatedColumnsPresent && this.checkForBaseIncompatibleServices();
         const editableFormulasSupported = this.beans.rowModel.getType() === 'clientSide';
         const active = editableFormulasCompatible && editableFormulasSupported;
         const calculatedColumnsActive = calculatedColumnsCompatible;
@@ -153,20 +153,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (this.gos.get('enableCellExpressions')) {
             _warn(295, { blockedService: 'Cell Expressions' });
             return false;
-        }
-        return true;
-    }
-
-    private checkForCalculatedColumnIncompatibleServices(columns: AgColumn[]): boolean {
-        if (!this.checkForBaseIncompatibleServices()) {
-            return false;
-        }
-        for (let i = 0, len = columns.length; i < len; ++i) {
-            const col = columns[i];
-            if (col.isPivotActive()) {
-                _warn(295, { blockedService: 'Column Pivoting' });
-                return false;
-            }
         }
         return true;
     }
@@ -690,7 +676,17 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     private ensureCalculatedCellFormula(row: RowNode, col: AgColumn, calculatedExpression: string): CellFormula | null {
-        if (!isFormulaRowAvailable(row) || row.group) {
+        if (row.stub || row.failedLoad) {
+            return null;
+        }
+        // An actively-aggregating calc col's group row shows the aggregated value, not a formula evaluation.
+        // Gate on the active state (not just a defined aggFunc), matching getValueFromData.
+        if (col.aggregationActive && row.group) {
+            return null;
+        }
+        // Execute only on rows with their own data — leaf rows and Tree Data parents that carry data.
+        // Synthetic rows without data (group rows, footers, tree filler nodes) stay blank.
+        if (!row.data) {
             return null;
         }
 
@@ -743,10 +739,33 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (col.isCalculatedCol) {
             return col.calculatedExpression?.trim() ? undefined : '';
         }
+        const valueSvc = this.beans.valueSvc;
+        // A referenced pivot result column gives the row's contribution to that bucket: aggregate on a group,
+        // and on a leaf its source measure if it falls in the bucket, else blank (it contributes nothing).
+        // The blank is returned explicitly — not via getValueFromData, which can resolve the source value.
+        const pivotValueCol = col.pivotValueColumn;
+        if (pivotValueCol && !row.group && !row.rowPinned) {
+            return this.leafInPivotBucket(col, row) ? valueSvc.getValueFromData(pivotValueCol, row) : undefined;
+        }
+        return valueSvc.getValueFromData(col, row);
+    }
 
-        // Calculated columns are incompatible with pivot (see checkForCalculatedColumnIncompatibleServices),
-        // so `col` is never a pivot result column here — no redirect needed.
-        return this.beans.valueSvc.getValueFromData(col, row);
+    /** True if leaf `row` falls in pivot result column `resultCol`'s bucket — its pivot-dimension keys match. */
+    private leafInPivotBucket(resultCol: AgColumn, row: RowNode): boolean {
+        const beans = this.beans;
+        const pivotCols = beans.pivotColsSvc?.columns;
+        const pivotKeys = resultCol.colDef.pivotKeys;
+        if (!pivotCols || !pivotKeys) {
+            return false;
+        }
+        const valueSvc = beans.valueSvc;
+        for (let i = 0, len = pivotKeys.length; i < len; ++i) {
+            const pivotCol = pivotCols[i];
+            if (!pivotCol || valueSvc.getKeyForNode(pivotCol, row) !== pivotKeys[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

@@ -5,6 +5,8 @@ import { DARK_MODE_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScrip
 import {
     ASTRO_HYDRATION_HASHES_VERIFIED_FOR,
     CAMPAIGNS_PATH_CONDITION,
+    CAMPAIGNS_PATH_REGEXP,
+    EXAMPLES_PATH_REGEXP,
     getCspDirectives,
     getScopedCspHtaccessBlock,
 } from './cspRules';
@@ -89,6 +91,34 @@ describe('cspRules', () => {
         });
     });
 
+    describe('RTI-3353: campaigns path matching covers archived campaign pages', () => {
+        // The live campaign page and its archived snapshots both embed the Bryntum
+        // demo, so both must resolve to the campaigns scope. An archived campaign path
+        // matches EXAMPLES_PATH_REGEXP too (it lives under /archive/), so the middleware
+        // resolvers test campaigns first — these assertions pin the matchers down.
+        it('matches the live and archived campaign pages', () => {
+            expect(CAMPAIGNS_PATH_REGEXP.test('/campaigns/bryntum-gantt/')).toBe(true);
+            expect(CAMPAIGNS_PATH_REGEXP.test('/archive/36.0.0/campaigns/bryntum-gantt/')).toBe(true);
+        });
+
+        it('does not match plain archived doc pages (they stay on the examples scope)', () => {
+            expect(CAMPAIGNS_PATH_REGEXP.test('/archive/36.0.0/getting-started/')).toBe(false);
+            // ...which the examples scope still covers.
+            expect(EXAMPLES_PATH_REGEXP.test('/archive/36.0.0/getting-started/')).toBe(true);
+        });
+
+        it('archived campaign paths match both regexps, so campaigns must take precedence', () => {
+            const archivedCampaign = '/archive/36.0.0/campaigns/bryntum-gantt/';
+            expect(CAMPAIGNS_PATH_REGEXP.test(archivedCampaign)).toBe(true);
+            expect(EXAMPLES_PATH_REGEXP.test(archivedCampaign)).toBe(true);
+        });
+
+        it('the Apache condition string carries the optional /archive/<version> prefix', () => {
+            expect(CAMPAIGNS_PATH_CONDITION).toContain('/archive/');
+            expect(CAMPAIGNS_PATH_CONDITION).toContain('/campaigns/');
+        });
+    });
+
     describe("AG-17134 Phase B: script-src 'unsafe-inline' removed from the site scope", () => {
         it('site scope authorises the inline scripts by hash, not unsafe-inline', () => {
             const scriptSrc = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
@@ -105,6 +135,15 @@ describe('cspRules', () => {
             expect(scriptSrc).toContain("'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='"); // <astro-island> runtime
             expect(scriptSrc).toContain("'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c='"); // client:load
             expect(scriptSrc).toContain("'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw='"); // client:idle
+        });
+
+        it('site scope authorises the GTM-injected ZoomInfo bootstrap by hash', () => {
+            // Authored in the shared GTM container (not this repo); hash captured from
+            // the browser CSP violation. Site only — examples keeps unsafe-inline.
+            const site = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
+            expect(site).toContain("'sha256-41l+jvtOjBgKy9345IStB4j1gGPGFMVXADMHn1Acs6E='");
+            const examples = getCspDirectives({ env: 'production', scope: 'examples' })['script-src'];
+            expect(examples).not.toContain("'sha256-41l+jvtOjBgKy9345IStB4j1gGPGFMVXADMHn1Acs6E='");
         });
 
         it('examples and campaigns keep unsafe-inline and carry no hashes', () => {

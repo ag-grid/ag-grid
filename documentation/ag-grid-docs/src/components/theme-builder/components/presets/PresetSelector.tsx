@@ -1,10 +1,9 @@
 import { getChangedModelItemCount } from '@components/theme-builder/model/changed-model-items';
 import styled from '@emotion/styled';
-import { _asThemeImpl } from 'ag-stack';
 import { useStore } from 'jotai';
-import { type RefObject, memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { type CSSProperties, type RefObject, memo, useCallback, useMemo, useRef, useState } from 'react';
 
-import { colorSchemeLight, createGrid, themeQuartz } from 'ag-grid-community';
+import { type Theme, colorSchemeLight, themeQuartz } from 'ag-grid-community';
 
 import { ResetChangesModal } from '../general/ResetChangesModal';
 import { PresetRender } from './PresetRender';
@@ -13,20 +12,11 @@ import { type Preset, allPresets, applyPreset } from './presets';
 export const PresetSelector = memo(() => {
     const scrollerRef = useRef<HTMLDivElement>(null);
 
-    // PresetPreviews are little fake grids - react components that render divs
-    // with grid class names but no associated grid instance. Create a real grid
-    // here so that it will inject the necessary styles into the document for
-    // the presets to render.
-    useEffect(() => {
-        const api = createGrid(document.createElement('div'), { columnDefs: [], rowData: [] });
-        return () => api.destroy();
-    });
-
     return (
         <Scroller ref={scrollerRef}>
             <Horizontal>
                 {allPresets.map((preset, i) => (
-                    <SelectButton key={i} preset={preset} scrollerRef={scrollerRef} />
+                    <SelectButton key={i} preset={preset} scrollerRef={scrollerRef} themeName={`Preset ${i + 1}`} />
                 ))}
             </Horizontal>
         </Scroller>
@@ -36,37 +26,22 @@ export const PresetSelector = memo(() => {
 type SelectButtonProps = {
     preset: Preset;
     scrollerRef: RefObject<HTMLDivElement>;
+    themeName: string;
 };
 
-const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
+const SelectButton = ({ preset, scrollerRef, themeName }: SelectButtonProps) => {
     const [showDialog, setShowDialog] = useState(false);
-    const wrapperRef = useRef<HTMLDivElement>(null);
-    const styleRef = useRef<HTMLStyleElement>(null);
-    const [themeClass, setThemeClass] = useState<string | undefined>();
+    const wrapperRef = useRef<HTMLButtonElement>(null);
 
-    useLayoutEffect(() => {
-        const wrapper = wrapperRef.current;
-        const style = styleRef.current;
-        if (wrapper && style) {
-            let theme = _asThemeImpl(themeQuartz.withPart(colorSchemeLight));
-            if (preset.params) {
-                theme = theme.withParams(preset.params);
-            }
-            for (const part of preset.parts || []) {
-                theme = theme.withPart(part);
-            }
-            wrapper.style.setProperty('--page-background-color', preset.pageBackgroundColor);
-            theme._startUse({
-                styleContainer: document.head,
-                loadThemeGoogleFonts: true,
-                cssLayer: undefined,
-                nonce: undefined,
-                moduleCss: undefined,
-            });
-            setThemeClass(theme._getCssClasses()[1]); // [1] is the theme apply classes eg ag-theme-params-1
-
-            style.textContent = theme._getParamsCss();
+    const theme = useMemo(() => {
+        let built: Theme = themeQuartz.withPart(colorSchemeLight);
+        if (preset.params) {
+            built = built.withParams(preset.params);
         }
+        for (const part of preset.parts || []) {
+            built = built.withPart(part);
+        }
+        return built;
     }, [preset]);
 
     const store = useStore();
@@ -95,11 +70,11 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
                     }
                     selectNewPreset();
                 }}
-                className={themeClass}
+                style={{ '--page-background-color': preset.pageBackgroundColor } as CSSProperties}
+                aria-label={themeName}
             >
-                <PresetRender />
+                <PresetRender theme={theme} />
             </SelectButtonWrapper>
-            <style ref={styleRef}></style>
 
             {showDialog && (
                 <ResetChangesModal showDialog={showDialog} setShowDialog={setShowDialog} onSuccess={selectNewPreset} />
@@ -108,22 +83,32 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
     );
 };
 
-const SelectButtonWrapper = styled('div')`
+const SelectButtonWrapper = styled('button')`
+    border: solid 2px transparent !important;
+    background: none !important;
     display: inline-block;
-    margin-right: 12px;
+    text-align: left;
+    margin: 0 12px 8px 0;
+    padding: 0;
     scroll-snap-align: center;
-    margin-bottom: 8px;
 
     // Higher z index than blur container z index
     &:first-of-type,
     &:last-of-type {
         z-index: 3;
     }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: none;
+        border-color: blue !important;
+    }
 `;
 
 const Horizontal = styled('div')`
     display: flex;
     height: 100%;
+    isolation: isolate;
 `;
 
 const Scroller = styled('div')`

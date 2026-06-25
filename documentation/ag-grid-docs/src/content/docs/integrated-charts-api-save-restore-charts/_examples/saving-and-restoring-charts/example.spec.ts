@@ -168,4 +168,23 @@ test.agExample(import.meta, () => {
             expect(orderAfterRestore).toEqual(['Weight', 'Fat']);
         }
     );
+
+    // TC6 — moving a grid column must update the series order to follow the new column order
+    // (unlike sort/filter/group/hide, which preserve the user-defined order).
+    test.vanilla('TC6 - grid column move updates series order', async ({ page, remoteGrid }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await openChartDataPanel(page);
+
+        const initialOrder = await getSeriesOrder(page);
+        expect(initialOrder).toEqual(['Sugar', 'Fat', 'Weight']);
+
+        // Move 'weight' before 'sugar' in the grid (grid order: country, sugar, fat, weight).
+        const remoteApi = remoteGrid(page);
+        await remoteApi.moveColumns(['weight'], 1);
+
+        const orderAfterMove = await getSeriesOrder(page);
+        expect(orderAfterMove).toEqual(['Weight', 'Sugar', 'Fat']);
+    });
 });

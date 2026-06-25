@@ -10,7 +10,8 @@ import { _isLegacyMenuEnabled } from '../gridOptionsUtils';
 import type { AgColumnHeader } from '../headerRendering/cells/column/agColumnHeader';
 import type { AgColumnGroupHeader } from '../headerRendering/cells/columnGroup/agColumnGroupHeader';
 import type { GridHeaderCtrl } from '../headerRendering/gridHeaderCtrl';
-import type { CellMouseListenerFeature } from '../rendering/cell/cellMouseListenerFeature';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import { _onCellDoubleClicked } from '../rendering/cell/cellMouseListenerFeature';
 import type { LongTapEvent, TapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 
@@ -53,7 +54,7 @@ export class TouchService extends BeanStub implements NamedBean {
         this.mockContextMenu(ctrl, ctrl.element, listener);
     }
 
-    public handleCellDoubleClick(ctrl: CellMouseListenerFeature, mouseEvent: MouseEvent): boolean {
+    public handleCellDoubleClick(ctrl: CellCtrl, mouseEvent: MouseEvent): boolean {
         const isDoubleClickOnIPad = () => {
             if (!_isIOSUserAgent() || _isEventSupported('dblclick')) {
                 return false;
@@ -66,7 +67,7 @@ export class TouchService extends BeanStub implements NamedBean {
             return res;
         };
         if (isDoubleClickOnIPad()) {
-            ctrl.onCellDoubleClicked(mouseEvent);
+            _onCellDoubleClicked(this.beans, ctrl, mouseEvent);
             mouseEvent.preventDefault(); // if we don't do this, then iPad zooms in
 
             return true;

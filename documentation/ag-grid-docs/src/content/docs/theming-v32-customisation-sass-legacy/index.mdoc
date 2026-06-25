@@ -59,7 +59,7 @@ Note how this example includes the structural styles (`ag-gris.scss`) before the
 
 Theme Parameters are arguments to a theme that change its appearance. Some parameters have effects that would be very hard to achieve using CSS rules. Parameters can be set through the Sass API, and colour parameters can additionally be set with CSS variables.
 
-Here are some of the most important theme parameters. There is a [full list](#base-theme-parameters) further down this page.
+Here are some of the most important theme parameters. There is a [full list](#full-list-of-theme-parameters) further down this page.
 
 - `grid-size` is the main control for affecting how tightly data and UI elements are packed together. All padding and spacing in the grid is defined as a multiple of grid-size, so increasing it will make most components larger by increasing their internal white space while leaving the size of text and icons unchanged.
 
@@ -143,7 +143,7 @@ The best way to find the right class name to use in a CSS rule is using the brow
 
 ### Referencing parameter values in CSS rules
 
-If you're using Sass, you can reference theme parameters in your own CSS rules using the [ag-param function](#ag-param) or [ag-color-property mixin](#ag-color-property). These will be replaced at compile time with the value of the parameter.
+If you're using Sass, you can reference theme parameters in your own CSS rules using the [ag-param function](#function-ag-param) or [ag-color-property mixin](#mixin-ag-color-property). These will be replaced at compile time with the value of the parameter.
 
 ### Understanding CSS rule maintenance and breaking changes
 
@@ -172,7 +172,7 @@ find the default values for your theme by inspecting its source code in the grid
 
 Note that some values are defined relative to other values using the `ag-derived` helper function, so
 `data-color: ag-derived(foreground-color)` means that if you don't set the `data-color` property it
-will default to the value of `foreground-color`. See the [ag-derived docs](#ag-derived) for more information.
+will default to the value of `foreground-color`. See the [ag-derived docs](#function-ag-derived) for more information.
 
 ```scss
 // Colour of text and icons in primary UI elements like menus

@@ -1,4 +1,4 @@
-import type { AgColumn, TextFormatter, ValueFormatterParams, ValueService } from 'ag-grid-community';
+import type { AgColumn, TextFormatter, ValueFormatterFunc, ValueService } from 'ag-grid-community';
 
 import type { ISetDisplayValueModel } from './iSetDisplayValueModel';
 import { SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
@@ -9,7 +9,7 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     constructor(
         private readonly valueSvc: ValueService,
-        private readonly getValueFormatter: () => ((params: ValueFormatterParams) => string) | undefined,
+        private readonly getValueFormatter: () => ValueFormatterFunc | undefined,
         private readonly formatter: TextFormatter,
         private readonly column: AgColumn
     ) {}

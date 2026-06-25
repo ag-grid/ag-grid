@@ -1,31 +1,56 @@
 @use 'design-system' as *;
 
+$trial-licence-xs: 400px;
 $trial-licence-small: 680px;
 
 .trialForm {
     display: flex;
     flex-direction: column;
+    container-type: inline-size;
 }
 
 .inputs {
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $spacing-size-4;
 
-    @media screen and (min-width: $trial-licence-small) {
-        flex-direction: row;
-        gap: $spacing-size-4;
+    @container (max-width: #{$trial-licence-xs}) {
+        flex-direction: column;
+        gap: $spacing-size-2;
 
-        :global(.input-field) {
-            flex-grow: 1;
+        .companyField {
+            margin-bottom: $spacing-size-2;
+        }
+    }
+
+    :global(.input-field) {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .companyField {
+        flex: 0 0 100%;
+    }
+
+    .emailField {
+        flex: 2;
+    }
+
+    input {
+        width: 100%;
+    }
+
+    @container (min-width: #{$trial-licence-small}) {
+        flex-wrap: nowrap;
+
+        .companyField {
+            flex: 2;
         }
 
         .emailField {
-            flex-grow: 6;
-        }
-
-        input {
-            width: 100%;
+            flex: 1;
         }
     }
 }
@@ -61,12 +86,12 @@ $trial-licence-small: 680px;
     button {
         width: 100%;
 
-        @media screen and (min-width: $trial-licence-small) {
+        @container (min-width: #{$trial-licence-small}) {
             width: fit-content;
         }
     }
 
-    @media screen and (max-width: $trial-licence-small) {
+    @container (max-width: #{$trial-licence-small}) {
         margin-top: $spacing-size-2;
     }
 }

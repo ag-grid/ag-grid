@@ -1,3 +1,24 @@
 [[IgnoredVulns]]
 id = "GHSA-67mh-4wv8-2f99"
 reason = "We do not use the esbuild development server"
+
+# OpenSSF Scorecard 'Vulnerabilities' review (2026-06-18) - dev/build transitive deps
+[[IgnoredVulns]]
+id = "GHSA-64mm-vxmg-q3vj"
+reason = "http-proxy-middleware is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-gcq2-9pq2-cxqm"
+reason = "http-proxy-middleware is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-x9g3-xrwr-cwfg"
+reason = "piscina is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-pr7r-676h-xcf6"
+reason = "undici is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-vmh5-mc38-953g"
+reason = "undici is only used in testing/build, not in the final production build"

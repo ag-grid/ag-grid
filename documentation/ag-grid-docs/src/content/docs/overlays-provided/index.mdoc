@@ -34,31 +34,9 @@ The exporting overlay is displayed when data is being exported from the grid to 
 
 ## File Input
 
-When `processFileInput` is provided and `rowData` is not set, the grid shows a built-in file input overlay. Users can drag a file onto the overlay or click the browse button to select one.
+When `processFileInput` is provided and `rowData` is not set, the grid shows a built-in file input overlay. Users can drag a file onto the overlay or click the browse button to select one. The `processFileInput` callback receives a `params` object containing the selected `files` along with `success` and `fail` callbacks, enabling the application to parse the files and load or reject the data.
 
-Provide a `processFileInput` callback. The `params` object contains the selected `files` array along with `success` and `fail` callbacks. Call `success(rowData)` to load the parsed data, or `fail(message)` to display an error in the overlay.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    processFileInput: ({ files, success, fail }) => {
-        const file = files[0];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const rowData = parseFile(e)
-                success(rowData);
-            } catch {
-                fail('Failed to parse file');
-            }
-        };
-            reader.readAsArrayBuffer(file);
-    },
-};
-```
-
-The example below shows the file input overlay, using [Auto-Generate Columns](./auto-generate-columns) to create the column definitions from the loaded file. Drag a file onto the overlay or use the browse button to load it.
-
-{% gridExampleRunner title="File Input Overlay" name="file-input-overlay" exampleHeight=400 /%}
+The file input overlay pairs well with [Auto-Generate Columns](./auto-generate-columns/#file-drop-overlay) to load data without defining columns upfront. See that page for the `processFileInput` callback and a worked example.
 
 ## Customisation
 

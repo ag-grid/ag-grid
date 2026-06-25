@@ -115,6 +115,9 @@ describe('ag-grid formulas module interop', () => {
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         expectBlockedWith('Column Pivoting');
+        const warningText = warnSpy!.mock.calls.flat().join('\n');
+        expect(warningText).toContain('colDef.allowFormula is not supported with Column Pivoting');
+        expect(warningText).not.toContain('Calculated Columns');
     });
 
     test('row grouping blocks formulas', async () => {

@@ -54,13 +54,13 @@
         "isAllowValue": {},
         "isValueActive": {},
         "getAggFunc": {},
-        "getShowValueAs": {
+        "getShowValuesAs": {
             "more": {
                 "name": "Show Values As",
                 "url": "./aggregation-show-values-as/"
             }
         },
-        "getShowValueAsConfig": {}
+        "getShowValuesAsDef": {}
     },
     "pivoting": {
         "meta": {

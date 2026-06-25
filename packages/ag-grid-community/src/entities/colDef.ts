@@ -22,7 +22,7 @@ import type {
     GroupRowValueSetterFunc,
     GroupRowValueSetterOptions,
 } from './colDef-groupRowValueSetter';
-import type { ShowValueAs, ShowValueAsConfig, ShowValueAsType } from './colDef-showValueAs';
+import type { ShowValuesAs, ShowValuesAsDef, ShowValuesAsType } from './colDef-showValuesAs';
 import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
 
 export type { BaseColDefParams, ColumnFunctionCallbackParams } from './colDef-base';
@@ -463,7 +463,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * the built-in {@link distributeGroupValue | distributeGroupValue} is used automatically.
      *
      * Columns with `groupRowEditable` or `groupRowValueSetter` do not require `field` or
-     * `valueSetter` — the group row value setter handles the edit entirely.
+     * `valueSetter` - the group row value setter handles the edit entirely.
      *
      * Note: if `groupRowValueSetter` resolves to `false` or `null` (via `distribution: false`,
      * a per-aggFunc record entry, or `groupRowValueSetter: false`), the cell is treated as not
@@ -480,7 +480,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * - **`false`**: Explicitly disables group row value distribution and makes the cell not editable,
      *   even if `groupRowEditable` is defined.
      * - **Function**: A custom callback that receives a {@link GroupRowValueSetterParams} and pushes
-     *   edits down to descendants. The column does not need `field` or `valueSetter` — the callback
+     *   edits down to descendants. The column does not need `field` or `valueSetter` - the callback
      *   handles the edit entirely.
      * - **Options object**: Uses the built-in distribution logic with a {@link GroupRowValueSetterOptions}
      *   configuration. When `distribution` resolves to `false` or `null` for the column's aggFunc,
@@ -877,31 +877,42 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     allowedAggFuncs?: string[];
     /**
-     * The active "Show Values As" mode — display this column's aggregated value relative to another
-     * aggregated value, e.g. as a percentage of the grand / column / row /
-     * parent total. A presentation-layer transform: it changes the displayed value only — the raw value
-     * (`getDataValue`, charts, clipboard-of-data) is unchanged. Can be changed at runtime (menu / column state).
-     *
-     * A built-in mode name, or the object form `{ type, params, precision }`. `false`/`null` selects no active mode —
-     * the column menu and column state can still select one.
-     * To disable the feature entirely (and its menu), use `showValueAsConfig: false`.
-     * Per-column config (`precision`, `suppressHeaderIndicator`) lives on `showValueAsConfig`.
-     * @agModule `ShowValueAsModule`
+     * The active "Show Values As" mode for this column.
+     * <br /><br />
+     * Shows the column's aggregated value relative to another total, for example as a percentage of the grand total,
+     * column total, row total or parent total. This changes only the displayed value; the underlying value used by
+     * `getDataValue` and charts is unchanged.
+     * <br /><br />
+     * Use a built-in mode name, or the object form `{ type, params, precision }`. Set `null` for no active mode.
+     * @agModule `ShowValuesAsModule`
      */
-    showValueAs?: ShowValueAsType | ShowValueAs | false | null;
+    showValuesAs?: ShowValuesAsType | ShowValuesAs | null;
     /**
-     * Same as `showValueAs`, except only applied when creating a new column.
+     * Same as `showValuesAs`, except only applied when creating a new column.
      * @initial
-     * @agModule `ShowValueAsModule`
+     * @agModule `ShowValuesAsModule`
      */
-    showValueAsInitial?: ShowValueAsType | ShowValueAs;
+    initialShowValuesAs?: ShowValuesAsType | ShowValuesAs;
     /**
-     * Per-column "Show Values As" configuration: `precision` and `suppressHeaderIndicator`.
-     * Deep-merges from `defaultColDef`. The active mode is the `showValueAs` selector.
-     * `false`/`null` disables the feature for the column (useful to opt a column out via `defaultColDef`).
-     * @agModule `ShowValueAsModule`
+     * Per-column "Show Values As" configuration: `precision`, `suppressHeaderIndicator`, and user-provided
+     * `modes` (custom modes / overrides of the built-ins). Deep-merges from `defaultColDef`. The active mode is
+     * the `showValuesAs` selector. `null` disables the feature for the column (useful to opt a column out via
+     * `defaultColDef`).
+     * @agModule `ShowValuesAsModule`
      */
-    showValueAsConfig?: ShowValueAsConfig | false | null;
+    showValuesAsDef?: ShowValuesAsDef<TData, TValue> | null;
+    /**
+     * Shows the "Show Values As" submenu in the column menu.
+     * <br /><br />
+     * On `defaultColDef`, `true` shows the submenu only for value columns and numeric columns. On an individual
+     * column, `true` always shows it; use this when the grid cannot infer that the column returns numbers, for
+     * example with a `valueGetter` or custom `aggFunc`. `false` hides the submenu.
+     * <br /><br />
+     * This controls menu visibility only. Modes set through `showValuesAs` or Column State still apply.
+     * @default false
+     * @agModule `ShowValuesAsModule`
+     */
+    enableShowValuesAs?: boolean;
     /**
      * Specify a grouping hierarchy for this column. This generates one or more virtual columns to group or pivot by when this column is grouped or pivoted.
      *
@@ -1229,8 +1240,8 @@ export interface ValueGetterParams<TData = any, TValue = any, TContext = any> ex
     TValue,
     TContext
 > {
-    /** A utility method for getting other column values */
-    getValue: (field: string) => any;
+    /** A utility method for getting other column values via their `ColKey` */
+    getValue: (colKey: ColKey<TData>) => any;
 }
 export type ValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: ValueGetterParams<TData, TValue, TContext>
@@ -1313,7 +1324,7 @@ export interface ValueFormatterParams<TData = any, TValue = any, TContext = any>
 
 export type ValueFormatterFunc<TData = any, TValue = any, TContext = any> = (
     params: ValueFormatterParams<TData, TValue, TContext>
-) => string;
+) => string | null | undefined;
 
 export type EqualsFunc<TValue = any> = (
     valueA: TValue | null | undefined,

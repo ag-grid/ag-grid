@@ -335,8 +335,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.hasMarryChildren = pivotResultCols ? pivotResultCols.pivotHasMarryChildren : this.colDefHasMarryChildren;
         this.colsGroupsById = pivotResultCols ? pivotResultCols.pivotGroupsById : this.colDefGroupsById;
         this.colsAllGroups = pivotResultCols ? pivotResultCols.pivotAllGroups : this.colDefAllGroups;
-        // Service refresh runs in dependency order
-        beans.formula?.setFormulasActive(sourceList);
+        // Service refresh runs in dependency order; formulas operate on the primary cols (colDefList).
+        beans.formula?.setFormulasActive(colDefList);
         const autoCols = beans.autoColSvc?.refreshCols(source);
         const selectionCol = beans.selectionColSvc?.refreshCols();
         const rowNumberCol = beans.rowNumbersSvc?.refreshCols();

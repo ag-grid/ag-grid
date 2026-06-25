@@ -207,6 +207,27 @@ describe('Column Flex', () => {
         );
     });
 
+    test('maxWidth below an inherited minWidth caps at maxWidth and still fills the viewport', async () => {
+        // defaultColDef.minWidth (150) exceeds the per-col maxWidth on b/c, an incoherent config.
+        // maxWidth must win and the freed space must flow to the unconstrained flex cols (no gap).
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'a', flex: 1 },
+                { colId: 'b', flex: 1, maxWidth: 120 },
+                { colId: 'c', flex: 1, maxWidth: 100 },
+                { colId: 'd', flex: 1 },
+            ],
+            defaultColDef: { flex: 1, minWidth: 150 },
+        });
+        // GridColumns snapshot is skipped: its validator (correctly) rejects the incoherent min>max config.
+        const widths = ['a', 'b', 'c', 'd'].map((id) => api.getColumn(id)!.getActualWidth());
+        expect(widths.reduce((s, w) => s + w, 0)).toBe(1000);
+        expect(api.getColumn('b')!.getActualWidth()).toBe(120);
+        expect(api.getColumn('c')!.getActualWidth()).toBe(100);
+        expect(api.getColumn('a')!.getActualWidth()).toBe(390);
+        expect(api.getColumn('d')!.getActualWidth()).toBe(390);
+    });
+
     test('all flex cols hit maxWidth: total stays under viewport', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [

@@ -106,10 +106,25 @@ const ASTRO_HYDRATION_SCRIPT_HASHES = [
     "'sha256-BrDhGE1lwa85arfXcrBxSo+n37uVSX5CAROXnIM6Q+g='", // <astro-island> hydration runtime
 ];
 
+// SHA-256 of the inline ZoomInfo (WebSights) bootstrap that the shared Google Tag
+// Manager container injects as a Custom HTML tag once the visitor accepts functional
+// cookie consent. Unlike the scripts above, this one is authored in GTM, not this
+// repo — so the value is taken from the browser's CSP violation report, NOT by
+// hashing the GTM source (GTM normalises the injected bytes, so the source does not
+// reproduce this digest).
+//
+// FRAGILE — this pins ZoomInfo's exact bytes. If the ZoomInfo tag in GTM is edited,
+// or ZoomInfo regenerates its loader snippet, the hash stops matching and ZoomInfo
+// silently fails to load for consenting users. The GTM tag carries a note pointing
+// back here; if it changes, replace this with the new console-reported hash (here and
+// in the ag-studio / ag-charts CSPs — the GTM container is shared). AG-17134.
+const GTM_ZOOMINFO_HASH = "'sha256-41l+jvtOjBgKy9345IStB4j1gGPGFMVXADMHn1Acs6E='";
+
 const SITE_SCRIPT_HASHES = [
     hashInlineScript(DARK_MODE_INIT_SCRIPT),
     hashInlineScript(PLAUSIBLE_INIT_SCRIPT),
     ...ASTRO_HYDRATION_SCRIPT_HASHES,
+    GTM_ZOOMINFO_HASH,
 ];
 
 // The AG Grid × Bryntum partnership campaign pages embed a live Bryntum Gantt
@@ -126,14 +141,22 @@ const BRYNTUM_HOST = 'https://bryntum.com';
 export const EXAMPLES_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(examples|archive)/#';
 
 // Apache <If> expression matching the partnership campaign pages that get the
-// 'campaigns' scope (e.g. /campaigns/bryntum-gantt/).
-export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/campaigns/#';
+// 'campaigns' scope — both the live page (/campaigns/bryntum-gantt/) and its
+// archived copies (/archive/<version>/campaigns/bryntum-gantt/), which are served
+// from the same vhost and would otherwise fall under the 'examples' scope (matched
+// by EXAMPLES_PATH_CONDITION) and lose the bryntum.com allowances. The optional
+// /archive/<version> prefix covers the archived snapshots.
+export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^(?:/archive/[^/]+)?/campaigns/#';
 
 // JS equivalents of the *_PATH_CONDITION Apache rules above, for the dev-server
 // (agDevCsp) and preview-server (preview-csp) middleware that scope the served
 // CSP by URL path. Keep these in sync with the Apache conditions.
 export const EXAMPLES_PATH_REGEXP = /^\/(examples|archive)\//;
-export const CAMPAIGNS_PATH_REGEXP = /^\/campaigns\//;
+// Matches /campaigns/ and archived /archive/<version>/campaigns/ — see
+// CAMPAIGNS_PATH_CONDITION. An archived campaign path matches BOTH this and
+// EXAMPLES_PATH_REGEXP, so the middleware resolvers must test campaigns first
+// (mirroring the Apache <If> precedence where the campaigns block trails examples).
+export const CAMPAIGNS_PATH_REGEXP = /^(?:\/archive\/[^/]+)?\/campaigns\//;
 
 // 'self' resolves to grid-staging.ag-grid.com on staging / localhost in dev, so
 // cross-subdomain references to the production host need an explicit allowance.

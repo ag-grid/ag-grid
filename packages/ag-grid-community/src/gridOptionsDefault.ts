@@ -172,6 +172,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressMaintainUnsortedOrder: false,
     suppressRowHoverHighlight: false,
     suppressRowTransform: false,
+    suppressContentVisibilityAuto: true,
     columnHoverHighlight: false,
     deltaSort: false,
     enableGroupEdit: false,

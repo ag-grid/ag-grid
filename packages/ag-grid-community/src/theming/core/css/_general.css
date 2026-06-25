@@ -1,16 +1,3 @@
-.ag-aria-description-container {
-    /* keep the live-region in the top layer so screen readers always receive updates. */
-    z-index: 9999;
-    border: 0;
-    clip-path: inset(50%);
-    height: 1px;
-    width: 1px;
-    position: absolute;
-    overflow: hidden;
-    padding: 0;
-    white-space: nowrap;
-}
-
 .ag-unselectable {
     user-select: none;
 }
@@ -51,6 +38,7 @@
     min-width: 0;
     overflow: hidden;
     flex: 1 1 auto;
+    background-color: var(--ag-data-background-color);
 }
 
 .ag-viewport {
@@ -127,8 +115,6 @@
     left: 0;
     width: var(--ag-internal-fw-anchor-width, 100%);
     height: 100%;
-    display: flex;
-    align-items: center;
 }
 
 /**
@@ -207,7 +193,10 @@
     .ag-body-vertical-scroll-start-spacer {
         pointer-events: all;
         opacity: 1;
-        background-color: var(--ag-header-background-color);
+
+        /* --ag-header-background-color might be semi-transparent so apply it on top of the known-opaque background color */
+        background-color: var(--ag-background-color);
+        background-image: linear-gradient(0deg, var(--ag-header-background-color), var(--ag-header-background-color));
     }
 }
 
@@ -272,12 +261,15 @@
     background-color: var(--ag-data-background-color);
 }
 
+:where(.ag-header-row)::after {
+    background-color: var(--ag-header-background-color);
+}
+
 .ag-header {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    background-color: var(--ag-header-background-color);
     border-bottom: var(--ag-header-row-border);
 
     /* do not allow sticky rows to scroll in front of the header */
@@ -345,7 +337,7 @@
     :where(.ag-row:not(.ag-full-width-row)),
     :where(.ag-header-row),
     :where(.ag-row.ag-embedded-full-width-row) {
-        :where(> .ag-grid-scrolling-cells) {
+        > :where(.ag-grid-scrolling-cells) {
             order: 1;
         }
     }
@@ -569,6 +561,6 @@
 
 /* A "Show Values As" mode that is not meaningful in the current view: greyed like a disabled item, but
  * still selectable (the menu option carries no disabled state). */
-.ag-show-value-as-inapplicable {
+.ag-show-values-as-inapplicable {
     opacity: 0.5;
 }

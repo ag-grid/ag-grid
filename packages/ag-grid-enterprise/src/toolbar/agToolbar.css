@@ -88,10 +88,12 @@
 .ag-toolbar-panel {
     display: inline-flex;
 
-    /* Grow to fill spare width, but never shrink below content — the toolbar
-       scrolls instead of clipping embedded panels. */
-    flex: 1 0 auto;
-    min-width: 0;
+    /* Grow to share the spare width equally with a flex-basis of 0, so panels
+       keep a stable size and don't collapse when their content changes (e.g.
+       dragging a pill out). The default min-width:auto keeps each panel at least
+       as wide as its content, so when pills overflow the panel expands and the
+       toolbar scrolls instead of clipping. */
+    flex: 1 0 0;
     padding: 0 calc(var(--ag-spacing) * 2);
 }
 

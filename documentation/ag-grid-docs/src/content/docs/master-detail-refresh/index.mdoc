@@ -57,7 +57,7 @@ This example shows the Refresh Rows strategy. Note the following:
 
 - The Detail Grid is **not** recreated. The callback `getDetailRowData(params)` is called. The row data in the Detail Grid is updated to reflect the new values. The grid's context (column position, vertical scroll) is kept. Try interacting with the Detail Grid for the first row (move columns, vertical scroll) and observe the grid is kept intact.
 
-- Because the Detail Grid is configured with [getRowId()](./row-ids/) the data rows are updated rather than replaced. This allows context such maintaining Row Selection and flashing cells on data changes.
+- Because the Detail Grid is configured with [getRowId()](./row-ids/) the data rows are updated rather than replaced. This preserves row state across data changes, such as keeping Row Selection and flashing cells that have changed.
 
 {% if isFramework("javascript", "angular", "vue") %}
 

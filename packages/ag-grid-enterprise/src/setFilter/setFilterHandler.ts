@@ -12,7 +12,7 @@ import type {
     RowNode,
     SetFilterModel,
     SetFilterModelValue,
-    ValueFormatterParams,
+    ValueFormatterFunc,
 } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _error, _isClientSideRowModel } from 'ag-grid-community';
 
@@ -42,7 +42,7 @@ export class SetFilterHandler<TValue = string>
     private treeDataTreeList = false;
     private groupingTreeList = false;
     private caseSensitive: boolean = false;
-    public valueFormatter?: (params: ValueFormatterParams) => string;
+    public valueFormatter?: ValueFormatterFunc;
     private noValueFormatterSupplied = false;
 
     public init(params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
@@ -394,7 +394,7 @@ export class SetFilterHandler<TValue = string>
     }
 
     private setValueFormatter(
-        providedValueFormatter: ((params: ValueFormatterParams) => string) | undefined,
+        providedValueFormatter: ValueFormatterFunc | undefined,
         keyCreator: ((params: KeyCreatorParams<any, any>) => string) | undefined,
         treeList: boolean,
         isRefData: boolean

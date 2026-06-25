@@ -8,23 +8,41 @@
 
     .ag-header-row {
         border-bottom: none;
-        color: var(--ag-header-foreground-color);
         height: var(--ag-header-height);
 
-        .ag-grid-pinned-left-cells,
-        .ag-grid-scrolling-cells,
-        .ag-grid-pinned-right-cells {
+        .ag-grid-scrolling-cells {
             background-color: var(--ag-header-background-color);
         }
 
+        // Pinned header sections need an opaque background, but --ag-header-background-color might be
+        // semi-transparent, so apply an opaque base and re-apply the header color on top
+        > .ag-grid-pinned-left-cells,
+        > .ag-grid-pinned-right-cells {
+            // apply an opaque background
+            background-image: linear-gradient(var(--ag-background-color), var(--ag-background-color));
+        }
+
+        .ag-grid-container-wrapper {
+            // re-apply the transparent header color over the opaque background
+            background-color: var(--ag-header-background-color);
+            width: 100%;
+            height: 100%;
+        }
+
         .ag-grid-pinned-right-cells {
-            border-left: var(--ag-borders-critical) var(--ag-border-color);
             overflow: visible;
+
+            .ag-grid-container-wrapper {
+                border-left: var(--ag-borders-critical) var(--ag-border-color);
+            }
         }
 
         .ag-grid-pinned-left-cells {
-            border-right: var(--ag-borders-critical) var(--ag-border-color);
             overflow: visible;
+
+            .ag-grid-container-wrapper {
+                border-right: var(--ag-borders-critical) var(--ag-border-color);
+            }
         }
     }
 
@@ -66,7 +84,7 @@
 
     // "Show Values As" header indicator: heavily muted when the active mode is not applicable in the
     // current view (dormant — the raw value is shown), to flag that the chosen mode has no effect here.
-    .ag-show-value-as-dormant {
+    .ag-show-values-as-dormant {
         opacity: 0.35;
     }
 

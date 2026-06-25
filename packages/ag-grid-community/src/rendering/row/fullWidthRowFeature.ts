@@ -255,7 +255,9 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                 if (tooltipField) {
                     const data = rowNode.data;
                     if (!data) {
-                        return undefined;
+                        // Regular row-grouping group nodes carry no `data`; fall back to the group
+                        // display value, matching the auto group column's `tooltipField` behaviour.
+                        return value;
                     }
                     const containsDots = groupCol
                         ? groupCol.tooltipFieldContainsDots

@@ -2,7 +2,11 @@ import type { IEventEmitter } from 'ag-stack';
 
 import type { AgProvidedColumnGroupEvent } from '../entities/agProvidedColumnGroup';
 import type { AbstractColDef, ColAggFunc, ColDef, ColGroupDef, HeaderLocation } from '../entities/colDef';
-import type { ShowValueAsConfigResolved, ShowValueAsResolved, ShowValueAsResult } from '../entities/colDef-showValueAs';
+import type {
+    ShowValuesAsDefResolved,
+    ShowValuesAsResolved,
+    ShowValuesAsResult,
+} from '../entities/colDef-showValuesAs';
 import type { ColumnEvent } from '../events';
 import type { BrandedType } from '../interfaces/brandedType';
 import type { SortDef, SortDirection } from '../interfaces/iSort';
@@ -187,13 +191,13 @@ export interface Column<TValue = any>
     getAggFunc(): ColAggFunc;
 
     /** The active "Show Values As" mode for the column (`.type` is the mode name), or `null` if none.
-     *  `TOut` is the transformed output type. The available modes are on {@link getShowValueAsConfig}. */
-    getShowValueAs<TOut extends ShowValueAsResult = any>(): ShowValueAsResolved<any, TValue, TOut> | null;
+     *  `TOut` is the transformed output type. The available modes are on {@link getShowValuesAsDef}. */
+    getShowValuesAs<TOut extends ShowValuesAsResult = any>(): ShowValuesAsResolved<any, TValue, TOut> | null;
 
     /** The column's resolved "Show Values As" config — every available mode plus the default precision — or
      *  `null` if the column has none. Not parameterised by output type: each mode has its own. The active mode
-     *  is {@link getShowValueAs}. */
-    getShowValueAsConfig(): ShowValueAsConfigResolved<any, TValue> | null;
+     *  is {@link getShowValuesAs}. */
+    getShowValuesAsDef(): ShowValuesAsDefResolved<any, TValue> | null;
 
     /** @deprecated v32 Use col.getLeft() + col.getActualWidth() instead. */
     getRight(): number;

@@ -1,25 +1,40 @@
 /* stylelint-disable selector-max-specificity */
 
+.ag-header {
+    font-size: var(--ag-header-font-size);
+    font-family: var(--ag-header-font-family);
+    font-weight: var(--ag-header-font-weight);
+    color: var(--ag-header-text-color);
+}
+
 .ag-header-row {
-    .ag-grid-pinned-left-cells,
-    .ag-grid-scrolling-cells,
-    .ag-grid-pinned-right-cells {
+    .ag-grid-scrolling-cells {
         background-color: var(--ag-header-background-color);
+    }
+
+    /* Pinned header sections need an opaque background, but --ag-header-background-color might be
+       semi-transparent, so apply an opaque base and re-apply the header color on top */
+    > .ag-grid-pinned-left-cells,
+    > .ag-grid-pinned-right-cells {
+        /* apply an opaque background */
+        background-image: linear-gradient(var(--ag-background-color), var(--ag-background-color));
+    }
+
+    .ag-grid-container-wrapper {
+        /* re-apply the transparent header color over the opaque background */
+        background-color: var(--ag-header-background-color);
+        width: 100%;
+        height: 100%;
     }
 
     position: absolute;
     height: var(--ag-header-height);
-    color: var(--ag-header-text-color);
     border-bottom: none;
 
     .ag-grid-pinned-left-cells,
     .ag-grid-pinned-right-cells {
         overflow: visible;
     }
-
-    font-size: var(--ag-header-font-size);
-    font-family: var(--ag-header-font-family);
-    font-weight: var(--ag-header-font-weight);
 }
 
 /* stylelint-enable selector-max-specificity */
@@ -245,7 +260,7 @@
 
 /* "Show Values As" header indicator: heavily muted when the active mode is not applicable in the current
  * view (dormant — the raw value is shown), to flag that the chosen mode has no effect here. */
-.ag-show-value-as-dormant {
+.ag-show-values-as-dormant {
     opacity: 0.35;
 }
 
@@ -262,6 +277,13 @@
     top: calc(50% - var(--ag-header-column-border-height) * 0.5);
     border-right: var(--ag-header-column-border);
     right: 0;
+}
+
+:where(.ag-body-horizontal-content-no-gap) {
+    .ag-header-cell:where(.ag-column-last)::after,
+    .ag-header-group-cell:where(.ag-column-last)::after {
+        border-right-color: transparent;
+    }
 }
 
 /* DRAG-DROP HIGHLIGHT */

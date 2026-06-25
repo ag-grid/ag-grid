@@ -71,7 +71,10 @@ const executeJiraRequest = (url, componentSelector) => {
                 documentationUrl,
             };
         })
-        .filter((result) => result.componentsByName.some((component) => component === componentSelector));
+        .filter(
+            (result) =>
+                !componentSelector || result.componentsByName.some((component) => component === componentSelector)
+        );
     return JSON.stringify(result);
 };
 

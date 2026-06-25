@@ -488,6 +488,46 @@ describe('Tooltip inheritance in group columns', () => {
         `);
     });
 
+    // TC3 – groupDisplayType: 'groupRows' with regular row grouping: a group node carries no `node.data`,
+    // so `tooltipField` must fall back to the group display value rather than producing no tooltip.
+    test('full-width group row inherits tooltipField from underlying colDef (groupRows, regular grouping)', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    field: 'country',
+                    rowGroup: true,
+                    tooltipField: 'country',
+                },
+                { field: 'bronze' },
+            ],
+            rowData: [
+                { country: 'United States', bronze: 1 },
+                { country: 'United States', bronze: 2 },
+            ],
+            groupDefaultExpanded: -1,
+            groupDisplayType: 'groupRows',
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+        };
+
+        const api = await gridMgr.createGridAndWait('tooltip-group-rows-field-regular', gridOptions);
+        await new GridRows(api, 'full-width group row inherits tooltipField (regular grouping) setup').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:"row-group-country-United States"
+            · ├── LEAF id:0 country:"United States" bronze:1
+            · └── LEAF id:1 country:"United States" bronze:2
+        `);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const groupRow = await waitFor(() =>
+            getByTestId(gridDiv, agTestIdFor.rowNode('row-group-country-United States'))
+        );
+
+        await userEvent.hover(groupRow);
+        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('United States');
+    });
+
     // P1 fix: tooltipValueGetter receives params.value from the owning group column, not the outer group
     test('full-width group row tooltipValueGetter receives value from the owning column (groupRows + multiple groups)', async () => {
         const countryTooltips: string[] = [];

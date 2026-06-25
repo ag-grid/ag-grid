@@ -7,23 +7,16 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import {
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    ContextMenuModule,
-    RowGroupingModule,
-    ShowValueAsModule,
-} from 'ag-grid-enterprise';
+import { ColumnMenuModule, ContextMenuModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     TextFilterModule,
     NumberFilterModule,
+    RowGroupingModule,
     ColumnMenuModule,
     ContextMenuModule,
-    ColumnsToolPanelModule,
-    RowGroupingModule,
-    ShowValueAsModule,
+    ShowValuesAsModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -35,17 +28,17 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'country' },
         { field: 'year', filter: 'agNumberColumnFilter' },
         // No row grouping: each row is shown as its share of the column's grand total.
-        { field: 'gold', aggFunc: 'sum', showValueAs: 'percentOfGrandTotal' },
+        { field: 'gold', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 130,
         enableValue: true,
+        enableShowValuesAs: true,
         filter: true,
         floatingFilter: true,
     },
     grandTotalRow: 'bottom',
-    sideBar: 'columns',
 };
 
 // setup the grid after the page has finished loading

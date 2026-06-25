@@ -269,7 +269,7 @@ export class GridRowDomCellValidator {
             rowNode: row,
             colKey: column,
             useFormatter: true,
-            from: (column as AgColumn).showValueAs ? 'transformed' : undefined,
+            transformValues: (column as AgColumn).showValuesAs != null,
         });
         const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
         const colDef = column.getColDef();
@@ -397,7 +397,7 @@ export class GridRowDomCellValidator {
             rowNode: row,
             colKey: column,
             useFormatter: true,
-            from: (column as AgColumn).showValueAs ? 'transformed' : undefined,
+            transformValues: (column as AgColumn).showValuesAs != null,
         });
         const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
         return this.getExpectedGroupCellText(row, column, stringCellValue) ?? '';

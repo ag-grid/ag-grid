@@ -9,7 +9,7 @@ The Toolbar appears above the grid and provides quick access to common grid acti
 
 ## Configuring the Toolbar
 
-Set the `toolbar` grid option to a [Toolbar](#reference-Toolbar) object. The `items` array accepts built-in item names, [Action Buttons](#action-buttons), and [Custom Components](#custom-components).
+Set the `toolbar` grid option to a [Toolbar](./grid-options/#reference-accessories-toolbar) object. The `items` array accepts built-in item names, [Action Buttons](#action-buttons), and [Custom Components](#custom-components).
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -136,7 +136,7 @@ The example below shows icon-only buttons with tooltips for sizing columns, sort
 
 For controls beyond a button, such as toggles, inputs, or any stateful UI, set `toolbarItem` to a custom component. Custom components can render arbitrary HTML and call any grid API, so they suit cases that the [Action Button](#action-buttons) shorthand cannot express.
 
-The example below defines two custom items: checkbox toggles that apply column filters on the left, and a radio group that opens [Side Bar](./tool-panel/) tool panels on the right. The radio group's `setSelected` method is called via [`getToolbarItemInstance`](#reference-getToolbarItemInstance) in `onToolPanelVisibleChanged` to stay in sync when a panel is opened or closed elsewhere, such as via a sidebar tab.
+The example below defines two custom items: checkbox toggles that apply column filters on the left, and a radio group that opens [Side Bar](./tool-panel/) tool panels on the right. The radio group's `setSelected` method is called via [`getToolbarItemInstance`](#reference-accessories-getToolbarItemInstance) in `onToolPanelVisibleChanged` to stay in sync when a panel is opened or closed elsewhere, such as via a sidebar tab.
 
 {% gridExampleRunner title="Custom Toolbar Item" name="toolbar-custom" /%}
 

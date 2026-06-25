@@ -502,6 +502,28 @@ describe('pivot with groupHierarchy (date-time)', () => {
         expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual([]);
     });
 
+    test('hierarchy virtuals inherit enableRowGroup so their row-group-panel chips stay draggable', async () => {
+        const api = gridsManager.createGrid('hierarchyEnableRowGroup', {
+            columnDefs: [
+                { field: 'country' },
+                { field: 'date', rowGroup: true, enableRowGroup: true, groupHierarchy: ['year', 'month'] },
+            ],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1) },
+                { country: 'UK', date: new Date(2021, 5, 15) },
+            ],
+            groupDisplayType: 'multipleColumns',
+        });
+        await asyncSetTimeout(0);
+
+        // The row-group-panel drop zone only lets a chip drag when its column reports isAllowRowGroup();
+        // the date-part virtuals must inherit it from the source so they can be reordered.
+        const year = api.getColumn('ag-Grid-HierarchyColumn-date-year')!;
+        const month = api.getColumn('ag-Grid-HierarchyColumn-date-month')!;
+        expect(year.isAllowRowGroup()).toBe(true);
+        expect(month.isAllowRowGroup()).toBe(true);
+    });
+
     test('changing an inline hierarchy part def refreshes the hierarchy column in place (same colId)', async () => {
         const api = gridsManager.createGrid('hierarchyInlineRefresh', {
             columnDefs: [{ field: 'date', rowGroup: true, groupHierarchy: [{ colId: 'y', headerName: 'Year A' }] }],

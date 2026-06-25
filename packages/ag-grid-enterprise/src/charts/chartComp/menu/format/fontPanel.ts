@@ -1,4 +1,4 @@
-import { RefPlaceholder, _removeFromParent } from 'ag-stack';
+import { RefPlaceholder, _defaultComparator, _removeFromParent } from 'ag-stack';
 
 import type { AgComponentSelectorType, AgSelectParams, BeanCollection } from 'ag-grid-community';
 import { AgSelectSelector, Component } from 'ag-grid-community';
@@ -26,10 +26,6 @@ export interface FontPanelParams {
     chartMenuParamsFactory: ChartMenuParamsFactory;
     keyMapper: (key: string) => string;
     cssIdentifier?: string;
-}
-
-function _capitalise(str: string): string {
-    return str[0].toUpperCase() + str.substring(1).toLowerCase();
 }
 
 export class FontPanel extends Component {
@@ -132,28 +128,32 @@ export class FontPanel extends Component {
             'Times, serif',
             'Verdana, sans-serif',
         ];
+        const options = families.map((value) => ({ value, text: value }));
 
         const family = this.getInitialFontValue('fontFamily');
         let initialValue = families[0];
 
         if (family) {
+            const familyDisplayName = parseChartFontFamily(family);
             // check for known values using lowercase
             const lowerCaseValues = families.map((f) => f.toLowerCase());
-            const valueIndex = lowerCaseValues.indexOf(family.toLowerCase());
+            const valueIndex = lowerCaseValues.indexOf(familyDisplayName.toLowerCase());
 
             if (valueIndex >= 0) {
                 initialValue = families[valueIndex];
             } else {
                 // add user provided value to list
-                const capitalisedFontValue = _capitalise(family);
+                options.push({
+                    value: family,
+                    text: familyDisplayName,
+                });
 
-                families.push(capitalisedFontValue);
-
-                initialValue = capitalisedFontValue;
+                initialValue = family;
             }
         }
 
-        const options = families.sort().map((value) => ({ value, text: value }));
+        // NOSONAR
+        options.sort(({ text: a }, { text: b }) => _defaultComparator(a, b));
 
         return this.params.chartMenuParamsFactory.getDefaultSelectParamsWithoutValueParams(
             'font',
@@ -246,4 +246,25 @@ export class FontPanel extends Component {
         const { keyMapper } = this.params;
         return this.chartOptions.getValue(keyMapper(fontKey));
     }
+}
+
+// charts returns a CSS list of font families. We will just show the first one
+function parseChartFontFamily(family: string) {
+    const values = family.split(',');
+    if (values.length === 1) {
+        return family;
+    }
+    const firstValue = values[0];
+    if (!firstValue.startsWith('"') && !firstValue.startsWith(`'`)) {
+        return firstValue;
+    }
+    const quote = firstValue[0];
+    const parts: string[] = [];
+    for (const value of values) {
+        parts.push(value);
+        if (value.trim().endsWith(quote)) {
+            return parts.join(',').slice(1, -1);
+        }
+    }
+    return family;
 }

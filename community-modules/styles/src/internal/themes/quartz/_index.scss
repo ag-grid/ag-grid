@@ -25,11 +25,8 @@
         min-height: calc(var(--ag-grid-size) * 4);
         border-radius: var(--ag-border-radius);
 
-        @include ag.theme-rtl(
-            (
-                padding-left: var(--ag-grid-size),
-            )
-        );
+        // Input text was vertically off by 1px all this time in the legacy theme; corrected here
+        padding: 1px var(--ag-grid-size) 2px var(--ag-grid-size);
     }
 
     .ag-picker-field-wrapper {

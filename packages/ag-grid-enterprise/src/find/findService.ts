@@ -438,7 +438,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 let valueToFind: string | null;
                 const getFindText = (groupRowRendererParams as FindGroupRowRendererParams)?.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getDisplayValue(undefined, node, 'batch');
+                    const value = valueSvc.getDisplayValue(undefined, node, 'batch', false);
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -494,10 +494,12 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 let valueToFind: string | null;
 
                 const colDef = column.colDef;
-                const from = column.showValueAs != null ? 'transformed' : 'batch';
+                // A Show Values As column searches its transformed display value (base `'edit'`); otherwise the batch value.
+                const transformValues = column.showValuesAs != null;
+                const from = transformValues ? 'edit' : 'batch';
                 const getFindText = colDef.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getDisplayValue(column, node, from);
+                    const value = valueSvc.getDisplayValue(column, node, from, transformValues);
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -511,6 +513,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                                     node,
                                     includeValueFormatted: true,
                                     from,
+                                    transformValues,
                                 });
                                 return valueFormatted;
                             },
@@ -522,6 +525,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                         node,
                         includeValueFormatted: true,
                         from,
+                        transformValues,
                     });
                     valueToFind = valueFormatted ?? value;
                 }

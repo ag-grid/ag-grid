@@ -26,13 +26,11 @@ import type { RowModelType } from './interfaces/iRowModel';
 import {
     _areModulesGridScoped,
     _getRegisteredModules,
-    _hasUserRegistered,
     _isModuleRegistered,
     _isUmd,
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
-import { NoModulesRegisteredError, missingRowModelTypeError } from './validation/errorMessages/errorText';
 import { _error, _logPreInitErr } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
@@ -127,12 +125,7 @@ export class GridCoreCreator {
 
         const registeredModules = this.getRegisteredModules(params, gridId, gridOptions.rowModelType);
 
-        const beanClasses = this.createBeansList(
-            gridOptions.rowModelType,
-            registeredModules,
-            gridId,
-            params?.frameworkOverrides?.usesAgGridProvider
-        );
+        const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
 
         if (!beanClasses) {
@@ -192,7 +185,7 @@ export class GridCoreCreator {
         gridId: string,
         rowModelType: RowModelType | undefined
     ): Module[] {
-        _registerModule(CommunityCoreModule, undefined, true);
+        _registerModule(CommunityCoreModule, undefined);
 
         params?.modules?.forEach((m) => _registerModule(m, gridId));
 
@@ -244,8 +237,7 @@ export class GridCoreCreator {
     private createBeansList(
         userProvidedRowModelType: RowModelType | undefined,
         registeredModules: Module[],
-        gridId: string,
-        usesAgGridProvider?: boolean
+        gridId: string
     ): SingletonBean[] | undefined {
         // assert that the relevant module has been loaded
         const rowModelModuleNames: Record<RowModelType, CommunityModuleName | EnterpriseModuleName> = {
@@ -261,35 +253,6 @@ export class GridCoreCreator {
             // can't use validation service here as hasn't been created yet
             _logPreInitErr(201, { rowModelType }, `Unknown rowModelType ${rowModelType}.`);
             return;
-        }
-
-        if (!_hasUserRegistered()) {
-            _logPreInitErr(272, undefined, NoModulesRegisteredError(usesAgGridProvider));
-            return;
-        }
-
-        if (!userProvidedRowModelType) {
-            // If the user has not specified a rowModelType, but have registered one of the RowModel modules, we need to check
-            // that the user has registered the correct module for the rowModelType.
-            // eslint-disable-next-line no-restricted-properties
-            const registeredRowModelModules = Object.entries(rowModelModuleNames).filter(([rowModelType, module]) =>
-                _isModuleRegistered(module, gridId, rowModelType as RowModelType)
-            );
-
-            if (registeredRowModelModules.length == 1) {
-                const [userRowModelType, moduleName] = registeredRowModelModules[0] as [
-                    RowModelType,
-                    CommunityModuleName | EnterpriseModuleName,
-                ];
-                if (userRowModelType !== rowModelType) {
-                    const params = {
-                        moduleName,
-                        rowModelType: userRowModelType,
-                    };
-                    _logPreInitErr(275, params, missingRowModelTypeError(params));
-                    return;
-                }
-            }
         }
 
         if (!_isModuleRegistered(rowModuleModelName, gridId, rowModelType)) {

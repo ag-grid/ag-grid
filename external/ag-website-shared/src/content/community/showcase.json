@@ -1,7 +1,7 @@
 {
     "favourites": [
         {
-            "link": "https://docs.openbb.co/workspace/data-widgets/aggrid-table-charts",
+            "link": "https://docs.openbb.co/workspace/developers/widget-types/aggrid-table-charts",
             "repo": "https://github.com/OpenBB-finance/OpenBBTerminal",
             "title": "Terminal Pro @ OpenBB",
             "description": "A sleek graphical interface that is intuitive and fully customizable, making it easier for you to access and analyze financial information with ease.",
@@ -212,7 +212,7 @@
             "open_source": true,
             "stars": 16900,
             "type": "Product",
-            "link": "https://react-pivot-table-demo.cube.dev/#/",
+            "link": "https://cube.dev/blog/react-pivot-table-with-ag-grid",
             "img": "cube-js.webp",
             "tags": ["Library"],
             "frameworks": ["React"],

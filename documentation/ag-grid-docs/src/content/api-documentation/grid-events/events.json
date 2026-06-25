@@ -126,13 +126,13 @@
         "rowSelected": {
             "more": {
                 "name": "Selection Events",
-                "url": "./row-selection-api-reference/#reference--rowSelected"
+                "url": "./row-selection-api-reference/#reference-selection-rowSelected"
             }
         },
         "selectionChanged": {
             "more": {
                 "name": "Selection Events",
-                "url": "./row-selection-api-reference/#reference--selectionChanged"
+                "url": "./row-selection-api-reference/#reference-selection-selectionChanged"
             }
         },
         "cellContextMenu": {},
@@ -145,13 +145,13 @@
         "fillStart": {
             "more": {
                 "name": "Fill Range Event",
-                "url": "./cell-selection-fill-handle/#reference--fillStart"
+                "url": "./cell-selection-fill-handle/#reference-selection-fillStart"
             }
         },
         "fillEnd": {
             "more": {
                 "name": "Fill Range Event",
-                "url": "./cell-selection-fill-handle/#reference--fillEnd"
+                "url": "./cell-selection-fill-handle/#reference-selection-fillEnd"
             }
         }
     },

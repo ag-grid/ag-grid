@@ -1,6 +1,6 @@
-import type { CellValueResolveFrom } from '../valueService/valueService';
 import type { Column, ColumnGroup } from './iColumn';
 import type { AgGridCommon } from './iCommon';
+import type { CellValueResolveFrom } from './iEditService';
 import type { IRowNode } from './iRowNode';
 import type { RowPosition } from './iRowPosition';
 
@@ -68,15 +68,20 @@ export interface BaseExportParams {
     skipPinnedBottom?: boolean;
 
     /**
-     * The source to use for getting cell values.
-     * - `'transformed'`: the displayed value, including the Show Values As transform (e.g. a percentage of a
-     *   total) for columns that have it active; identical to `'data'` for all other columns.
+     * The base source to use for getting cell values.
      * - `'data'`: values from the underlying row data
      * - `'batch'`: pending batch edit values (falls back to data if not in batch mode)
      * - `'edit'`: current editor values including live typing
-     * @default 'transformed'
+     * @default 'data'
      */
     valueFrom?: CellValueResolveFrom;
+
+    /**
+     * Apply the Show Values As transform (e.g. a percentage of a total) on top of the `valueFrom` base, so the
+     * export carries the displayed value for columns with an active mode. Columns without one export the base value.
+     * @default true
+     */
+    transformValues?: boolean;
 
     /**
      * A callback function that will be invoked once per row in the grid. Return true to omit the row from the export.
