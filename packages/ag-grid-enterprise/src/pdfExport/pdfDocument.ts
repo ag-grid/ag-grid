@@ -107,13 +107,21 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     let pageParts: string[] = [];
     let cursorY = pageSize.height - margin.top;
     let isFirstPage = true;
+    let hasPageContent = false;
+
+    const markPageContentIfRendered = (previousPartCount: number): void => {
+        if (pageParts.length > previousPartCount) {
+            hasPageContent = true;
+        }
+    };
 
     const startPage = (includeHeaders: boolean) => {
-        if (pageParts.length) {
+        if (hasPageContent) {
             pages.push(pageParts.join('\n'));
         }
 
         pageParts = ['0.5 w'];
+        hasPageContent = false;
         if (styleColors.pageBackground) {
             pageParts.push(`${formatColor(styleColors.pageBackground)} rg`);
             pageParts.push(`0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)} re f`);
@@ -122,6 +130,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         cursorY = pageSize.height - margin.top;
         if (isFirstPage) {
             if (titleStyle && titleFontKey && documentTitle) {
+                const previousPartCount = pageParts.length;
                 cursorY = renderDocumentTitle(
                     documentTitle,
                     cursorY,
@@ -131,11 +140,13 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
                     titleStyle,
                     titleFontKey
                 );
+                markPageContentIfRendered(previousPartCount);
             }
             isFirstPage = false;
         }
 
         if (includeHeaders && headerRows.length) {
+            const previousPartCount = pageParts.length;
             cursorY = renderRows(
                 headerRows,
                 cursorY,
@@ -146,6 +157,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
                 styleColors,
                 fontKeyByFamily
             );
+            markPageContentIfRendered(previousPartCount);
         }
     };
 
@@ -158,6 +170,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
             startPage(canRepeatHeadersWithRow(row, rowRenderData.rowHeight));
         }
 
+        const previousPartCount = pageParts.length;
         cursorY = renderRow(
             row,
             cursorY,
@@ -170,13 +183,14 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
             fontKeyByFamily,
             rowRenderData
         );
+        markPageContentIfRendered(previousPartCount);
 
         if (row.type === 'BODY') {
             bodyRowIndex += 1;
         }
     }
 
-    if (pageParts.length) {
+    if (hasPageContent || !pages.length) {
         pages.push(pageParts.join('\n'));
     }
 

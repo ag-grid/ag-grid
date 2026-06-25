@@ -146,6 +146,21 @@ describe('createPdfDocument', () => {
         expect(pdf).not.toContain('10 0 180 50 re S');
     });
 
+    it('does not emit a blank leading page when the first row is taller than the page content area', () => {
+        const rows: PdfRow[] = [{ type: 'BODY', cells: [{ value: 'Oversized' }] }];
+        const columns = [stubColumn(100)];
+        const params: PdfExportParams = {
+            pageSize: { width: 100, height: 100 },
+            margin: 10,
+            rowHeight: 120,
+        };
+
+        const pdf = createPdfDocument(rows, columns, params);
+
+        expect(countOccurrences(pdf, '(Oversized) Tj')).toBe(1);
+        expect(countOccurrences(pdf, '/Type /Page /Parent')).toBe(1);
+    });
+
     it('uses header row height for styled header rows', () => {
         const row: PdfRow = {
             type: 'HEADER',
