@@ -32,25 +32,25 @@ ignore:
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-24T11:33:35.230Z
   SNYK-JS-UNDICI-17372758:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.25.0':
+    - '@angular/cli@20.3.30 > pacote@21.5.1 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.25.0':
         reason: >-
             Used in build & dev - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-24T11:05:22.688Z
   SNYK-JS-UNDICI-17372754:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.25.0':
+    - '@angular/cli@20.3.30 > pacote@21.5.1 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.25.0':
         reason: >-
             Used in build & dev - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-24T11:04:57.289Z
   SNYK-JS-HONO-17356430:
-    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
+    - '@angular/cli@20.3.30 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
         reason: >-
             Used in build & dev - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-24T10:56:31.485Z
   SNYK-JS-HONO-17356405:
-    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
+    - '@angular/cli@20.3.30 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
         reason: >-
             Used in build & dev - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
@@ -62,95 +62,95 @@ ignore:
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-24T10:53:37.138Z
   SNYK-JS-UNDICI-17372658:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.25.0':
+    - '@angular/cli@20.3.30 > pacote@21.5.1 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > undici@6.25.0':
         reason: >-
             Used in build & dev - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-06-24T09:07:25.545Z
   SNYK-JS-AJV-15274295:
-    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > ajv@8.17.1':
+    - '@angular/cli@20.3.30 > @modelcontextprotocol/sdk@1.26.0 > ajv@8.17.1':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-    - '@angular/build@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1':
+    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1':
+    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-BRACEEXPANSION-16755174:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > @npmcli/package-json@7.0.5 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
+    - '@angular/cli@20.3.30 > pacote@21.5.1 > @npmcli/package-json@7.0.5 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-EXPRESSRATELIMIT-15440710:
-    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > express-rate-limit@8.2.1':
+    - '@angular/cli@20.3.30 > @modelcontextprotocol/sdk@1.26.0 > express-rate-limit@8.2.1':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-FASTURI-16642394:
-    - '@angular/build@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv@8.18.0 > fast-uri@3.1.0':
+    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv@8.18.0 > fast-uri@3.1.0':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv@8.18.0 > fast-uri@3.1.0':
+    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv@8.18.0 > fast-uri@3.1.0':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-    - '@angular/build@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
+    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
+    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-FASTURI-16642399:
-    - '@angular/build@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv@8.18.0 > fast-uri@3.1.0':
+    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv@8.18.0 > fast-uri@3.1.0':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv@8.18.0 > fast-uri@3.1.0':
+    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv@8.18.0 > fast-uri@3.1.0':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-    - '@angular/build@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
+    - '@angular/build@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
+    - '@angular/cli@20.3.30 > @angular-devkit/architect@0.2003.30 > @angular-devkit/core@20.3.30 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-HONO-16438966:
-    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
+    - '@angular/cli@20.3.30 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-IMMUTABLE-15423650:
-    - '@angular/build@20.3.26 > sass@1.90.0 > immutable@5.1.4':
+    - '@angular/build@20.3.30 > sass@1.90.0 > immutable@5.1.4':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-ISAACSBRACEEXPANSION-15208653:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > sigstore@4.1.0 > @sigstore/tuf@4.0.2 > tuf-js@4.1.0 > @tufjs/models@4.1.0 > minimatch@10.1.1 > @isaacs/brace-expansion@5.0.0':
+    - '@angular/cli@20.3.30 > pacote@21.5.1 > sigstore@4.1.0 > @sigstore/tuf@4.0.2 > tuf-js@4.1.0 > @tufjs/models@4.1.0 > minimatch@10.1.1 > @isaacs/brace-expansion@5.0.0':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-MINIMATCH-15309438:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > sigstore@4.1.0 > @sigstore/tuf@4.0.2 > tuf-js@4.1.0 > @tufjs/models@4.1.0 > minimatch@10.1.1':
+    - '@angular/cli@20.3.30 > pacote@21.5.1 > sigstore@4.1.0 > @sigstore/tuf@4.0.2 > tuf-js@4.1.0 > @tufjs/models@4.1.0 > minimatch@10.1.1':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-MINIMATCH-15353387:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > sigstore@4.1.0 > @sigstore/tuf@4.0.2 > tuf-js@4.1.0 > @tufjs/models@4.1.0 > minimatch@10.1.1':
+    - '@angular/cli@20.3.30 > pacote@21.5.1 > sigstore@4.1.0 > @sigstore/tuf@4.0.2 > tuf-js@4.1.0 > @tufjs/models@4.1.0 > minimatch@10.1.1':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-MINIMATCH-15353389:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > sigstore@4.1.0 > @sigstore/tuf@4.0.2 > tuf-js@4.1.0 > @tufjs/models@4.1.0 > minimatch@10.1.1':
+    - '@angular/cli@20.3.30 > pacote@21.5.1 > sigstore@4.1.0 > @sigstore/tuf@4.0.2 > tuf-js@4.1.0 > @tufjs/models@4.1.0 > minimatch@10.1.1':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
@@ -160,21 +160,25 @@ ignore:
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-PATHTOREGEXP-15789763:
-    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > router@2.2.0 > path-to-regexp@8.3.0':
+    - '@angular/cli@20.3.30 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > router@2.2.0 > path-to-regexp@8.3.0':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-PATHTOREGEXP-15789765:
-    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > router@2.2.0 > path-to-regexp@8.3.0':
+    - '@angular/cli@20.3.30 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > router@2.2.0 > path-to-regexp@8.3.0':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-PICOMATCH-15765511:
-    - '@angular/build@20.3.26 > tinyglobby@0.2.14 > picomatch@4.0.3':
+    - '@angular/build@20.3.30 > tinyglobby@0.2.14 > picomatch@4.0.3':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-    - '@angular/build@20.3.26 > vite@7.3.2 > picomatch@4.0.3':
+    - '@angular/build@20.3.30 > vite@7.3.5 > picomatch@4.0.3':
+        reason: Angular build dependency - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/build@20.3.30 > vite@7.3.5 > tinyglobby@0.2.15 > picomatch@4.0.3':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
@@ -182,11 +186,7 @@ ignore:
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-    - '@angular/build@20.3.26 > vite@7.3.2 > tinyglobby@0.2.15 > picomatch@4.0.3':
-        reason: Angular build dependency - not included in final production build
-        expires: 2026-09-06T00:00:00.000Z
-        created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > tinyglobby@0.2.15 > picomatch@4.0.3':
+    - '@angular/cli@20.3.30 > pacote@21.5.1 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > tinyglobby@0.2.15 > picomatch@4.0.3':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
@@ -195,26 +195,26 @@ ignore:
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-QS-15268416:
-    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > qs@6.14.1':
+    - '@angular/cli@20.3.30 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > qs@6.14.1':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
-    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > body-parser@2.2.2 > qs@6.14.1':
+    - '@angular/cli@20.3.30 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > body-parser@2.2.2 > qs@6.14.1':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-TAR-15307072:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > tar@7.5.2':
+    - '@angular/cli@20.3.30 > pacote@21.5.1 > tar@7.5.2':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-TAR-15416075:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > tar@7.5.2':
+    - '@angular/cli@20.3.30 > pacote@21.5.1 > tar@7.5.2':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
   SNYK-JS-TAR-15456201:
-    - '@angular/cli@20.3.26 > pacote@21.0.4 > tar@7.5.2':
+    - '@angular/cli@20.3.30 > pacote@21.5.1 > tar@7.5.2':
         reason: Angular build dependency - not included in final production build
         expires: 2026-09-06T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
