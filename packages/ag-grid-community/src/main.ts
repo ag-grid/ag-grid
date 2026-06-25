@@ -1058,7 +1058,7 @@ export { LocaleModule } from './misc/locale/localeModule';
 export { GridStateModule } from './misc/state/stateModule';
 export { ModuleRegistry } from './modules/moduleRegistry';
 export { PaginationModule } from './pagination/paginationModule';
-export { PageNumbersModule } from './pagination/pageNumbersModule';
+export { PaginationPageNumbersModule } from './pagination/pageNumbersModule';
 export { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
 export { HighlightChangesModule } from './rendering/cell/highlightChangesModule';
 export { RenderApiModule } from './rendering/renderModule';

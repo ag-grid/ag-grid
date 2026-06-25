@@ -65,7 +65,7 @@
                     "path": "row-pagination"
                 },
                 {
-                    "moduleName": "PageNumbersModule",
+                    "moduleName": "PaginationPageNumbersModule",
                     "name": "Page Number Navigation",
                     "path": "row-pagination/#page-number-navigation"
                 },

@@ -91,12 +91,12 @@ In this example the default pagination settings are changed. Note the following:
 
 ## Example: Page Number Navigation
 
-The `pageNumbers` panel renders a numbered button for each page so users can jump directly to a page. It is opt-in — register the `PageNumbersModule` and add the panel to `paginationPanels` to enable it:
+The `pageNumbers` panel renders a numbered button for each page so users can jump directly to a page. It is opt-in — register the `PaginationPageNumbersModule` and add the panel to `paginationPanels` to enable it:
 
 ```js
-import { PageNumbersModule } from 'ag-grid-community';
+import { PaginationPageNumbersModule } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([ PaginationModule, PageNumbersModule ]);
+ModuleRegistry.registerModules([ PaginationModule, PaginationPageNumbersModule ]);
 
 const gridOptions = {
     paginationPanels: ['pageNumbers']

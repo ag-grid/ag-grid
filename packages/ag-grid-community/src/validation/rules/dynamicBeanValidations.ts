@@ -9,7 +9,7 @@ export const DYNAMIC_BEAN_MODULES: Record<DynamicBeanName, ValidationModuleName>
     headerFilterCellCtrl: 'ColumnFilter',
     headerGroupCellCtrl: 'ColumnGroup',
     rangeHandle: 'CellSelection',
-    pageNumbers: 'PageNumbers',
+    pageNumbers: 'PaginationPageNumbers',
     tooltipFeature: 'Tooltip',
     highlightTooltipFeature: 'Tooltip',
     tooltipStateManager: 'Tooltip',

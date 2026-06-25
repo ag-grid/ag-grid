@@ -2,15 +2,15 @@ import type { ColDef, FirstDataRenderedEvent, GridApi, GridOptions } from 'ag-gr
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
-    PageNumbersModule,
     PaginationModule,
+    PaginationPageNumbersModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([
     PaginationModule,
-    PageNumbersModule,
+    PaginationPageNumbersModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);

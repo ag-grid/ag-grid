@@ -31,7 +31,7 @@ import type { _ModuleWithoutApi } from './interfaces/iModule';
 import { EventApiModule } from './misc/apiEvents/apiEventModule';
 import { LocaleModule } from './misc/locale/localeModule';
 import { GridStateModule } from './misc/state/stateModule';
-import { PageNumbersModule } from './pagination/pageNumbersModule';
+import { PaginationPageNumbersModule } from './pagination/pageNumbersModule';
 import { PaginationModule } from './pagination/paginationModule';
 import { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
 import { HighlightChangesModule } from './rendering/cell/highlightChangesModule';
@@ -72,7 +72,7 @@ export const AllCommunityModule: _ModuleWithoutApi = {
         GridStateModule,
         AlignedGridsModule,
         PaginationModule,
-        PageNumbersModule,
+        PaginationPageNumbersModule,
         ColumnApiModule,
         RowApiModule,
         ScrollApiModule,

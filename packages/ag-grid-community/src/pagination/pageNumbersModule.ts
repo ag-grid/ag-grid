@@ -7,8 +7,8 @@ import { PaginationModule } from './paginationModule';
  * @feature Rows -> Row Pagination
  * @gridOption paginationPanels
  */
-export const PageNumbersModule: _ModuleWithoutApi = {
-    moduleName: 'PageNumbers',
+export const PaginationPageNumbersModule: _ModuleWithoutApi = {
+    moduleName: 'PaginationPageNumbers',
     version: VERSION,
     dynamicBeans: { pageNumbers: PageNumbersComp as any },
     dependsOn: [PaginationModule],
