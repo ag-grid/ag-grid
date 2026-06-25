@@ -14,6 +14,11 @@ export interface PerformanceCounters {
     [name: string]: number;
 }
 
+interface AllocationNode {
+    selfSize: number;
+    children?: AllocationNode[];
+}
+
 /**
  * Create a Chrome DevTools Protocol session for low-level browser instrumentation.
  */
@@ -79,20 +84,28 @@ export async function captureAllocationProfile(
 ): Promise<AllocationProfile> {
     await cdp.send('HeapProfiler.startSampling', { samplingInterval });
 
-    await action();
-
-    const { profile } = await cdp.send('HeapProfiler.stopSampling');
+    let head: AllocationNode | undefined;
+    try {
+        await action();
+    } finally {
+        // always stop the sampler, even if the action throws or times out — otherwise it
+        // stays enabled and contaminates later measurements
+        const { profile } = await cdp.send('HeapProfiler.stopSampling');
+        head = profile.head;
+    }
 
     // Walk the allocation profile tree and sum selfSize at every node
     let totalAllocatedBytes = 0;
-    function walkNodes(node: { selfSize: number; children: (typeof node)[] }): void {
+    function walkNodes(node: AllocationNode): void {
         totalAllocatedBytes += node.selfSize || 0;
-        const children = node.children || [];
+        const children = node.children ?? [];
         for (let i = 0, len = children.length; i < len; i++) {
             walkNodes(children[i]);
         }
     }
-    walkNodes(profile.head);
+    if (head) {
+        walkNodes(head);
+    }
 
     return { totalAllocatedBytes };
 }

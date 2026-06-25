@@ -104,6 +104,9 @@ test.describe('CellCtrl memory footprint (scroll churn)', () => {
     test.setTimeout(10 * 60_000);
 
     test(`Scheduled: scroll-churn memory — ${CONTROL} vs ${VARIANT}`, async ({ page }, testInfo) => {
+        // Measured sequentially in one browser process. Each version is independently warmed up
+        // and takes a post-GC baseline, but cross-run V8 state isn't fully isolated — acceptable
+        // for an informational metric.
         const control = await measureVersion(page, CONTROL);
         const variant = await measureVersion(page, VARIANT);
 
@@ -125,7 +128,9 @@ test.describe('CellCtrl memory footprint (scroll churn)', () => {
                 scriptMs: variant.scriptMs,
             },
             allocDeltaPct: pctDelta(allocControl, allocVariant),
-            retainedDeltaPct: pctDelta(control.retainedBytes, variant.retainedBytes),
+            // retained is a post-GC heap delta that can be ~0 or negative, so a percentage would
+            // mislead (or invert sign) near a zero baseline — report the absolute byte delta instead
+            retainedDeltaBytes: variant.retainedBytes - control.retainedBytes,
         };
 
         // Structured numbers → CTRF (test.extra.annotations). Informational; this test never fails.
@@ -137,7 +142,7 @@ test.describe('CellCtrl memory footprint (scroll churn)', () => {
             'CellCtrl scroll-churn memory benchmark (informational)',
             `  scenario: ${summary.scenario}`,
             `  allocated/run   ${CONTROL}: ${formatBytes(allocControl)}   ${VARIANT}: ${formatBytes(allocVariant)}   Δ ${summary.allocDeltaPct.toFixed(1)}%`,
-            `  retained (GC)   ${CONTROL}: ${formatBytes(control.retainedBytes)}   ${VARIANT}: ${formatBytes(variant.retainedBytes)}   Δ ${summary.retainedDeltaPct.toFixed(1)}%`,
+            `  retained (GC)   ${CONTROL}: ${formatBytes(control.retainedBytes)}   ${VARIANT}: ${formatBytes(variant.retainedBytes)}   Δ ${formatBytes(summary.retainedDeltaBytes)}`,
             `  scriptMs (noisy)${CONTROL}: ${control.scriptMs.toFixed(1)}ms   ${VARIANT}: ${variant.scriptMs.toFixed(1)}ms`,
             '',
         ];
