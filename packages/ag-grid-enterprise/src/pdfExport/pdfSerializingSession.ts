@@ -20,6 +20,7 @@ import { BaseGridSerializingSession, _addGridCommonParams, _isFullWidthGroupRow 
 import { createPdfDocument } from './pdfDocument';
 import { resolvePdfCellStyleColors } from './utils/colors';
 import { mapCssStylesToPdfStyle } from './utils/styleMapping';
+import { mergePdfCellStyles } from './utils/styles';
 
 export type PdfRowType = 'HEADER_GROUPING' | 'HEADER' | 'BODY' | 'CUSTOM';
 
@@ -92,7 +93,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 row.cells.push({
                     value,
                     mergeAcross: span || undefined,
-                    style: this.mergePdfStyles(
+                    style: mergePdfCellStyles(
                         this.resolveColumnGroupHeaderPdfStyle(columnGroup),
                         this.resolveCurrentElementPdfStyle({
                             type: 'groupheader',
@@ -114,7 +115,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 const value = this.extractHeaderValue(column);
                 row.cells.push({
                     value,
-                    style: this.mergePdfStyles(
+                    style: mergePdfCellStyles(
                         this.resolveColumnHeaderPdfStyle(column),
                         this.resolveCurrentElementPdfStyle({
                             type: 'header',
@@ -147,7 +148,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                     return;
                 }
                 if (!rowStyleResolved) {
-                    row.style = this.mergePdfStyles(
+                    row.style = mergePdfCellStyles(
                         this.resolveRowPdfStyle(activeNode, rowIndex),
                         this.resolveCurrentElementPdfStyle({
                             type: 'row',
@@ -169,7 +170,7 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
                 });
 
                 const value = String(rowCellValue.valueFormatted ?? rowCellValue.value ?? '');
-                const style = this.mergePdfStyles(
+                const style = mergePdfCellStyles(
                     this.resolveCellPdfStyle(column, activeNode, rowIndex, rowCellValue.value),
                     this.resolveCurrentElementPdfStyle({
                         type: this.isRowGroupCell(column, activeNode, index) ? 'rowgroup' : 'cell',
@@ -306,20 +307,6 @@ export class PdfSerializingSession extends BaseGridSerializingSession<PdfCustomC
 
         const style = callback(_addGridCommonParams(this.gos, params));
         return resolvePdfCellStyleColors(style, this.config.resolveColor);
-    }
-
-    private mergePdfStyles(
-        baseStyle: PdfCellStyle | undefined,
-        overrideStyle: PdfCellStyle | undefined
-    ): PdfCellStyle | undefined {
-        if (!baseStyle && !overrideStyle) {
-            return undefined;
-        }
-
-        return {
-            ...(baseStyle ?? {}),
-            ...(overrideStyle ?? {}),
-        };
     }
 
     private isRowGroupCell(column: AgColumn, node: RowNode, currentColumnIndex: number): boolean {

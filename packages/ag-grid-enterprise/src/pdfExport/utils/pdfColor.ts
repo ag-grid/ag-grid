@@ -157,7 +157,7 @@ export function resolveOptionalColor(
         return fallback;
     }
     if (parsed.a <= 0) {
-        return fallback;
+        return undefined;
     }
 
     return blendWith && parsed.a < 1 ? blendColors(parsed, blendWith) : stripAlpha(parsed);
@@ -200,6 +200,9 @@ function resolveColor(value: string | undefined, fallback: string, blendWith?: P
     if (value) {
         const parsed = parseColor(value);
         if (parsed === null) {
+            return undefined;
+        }
+        if (parsed && parsed.a <= 0) {
             return undefined;
         }
         if (parsed && parsed.a > 0) {

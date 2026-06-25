@@ -3,6 +3,7 @@ import type { PdfCellStyle, PdfExportParams, PdfFontFamily, PdfMargin, PdfTextAl
 import type { PdfRow, PdfRowType } from '../../pdfSerializingSession';
 import type { PdfRgb, PdfRowStyles, PdfStyleColors } from '../pdfColor';
 import { formatColor, getRowStyles, resolveOptionalColor } from '../pdfColor';
+import { mergePdfCellStyles } from '../styles';
 import type { ResolvedMargin, ResolvedPageSize } from './layout';
 import { getSpanWidth, isHeaderRowType } from './layout';
 import { escapePdfString, estimateTextWidth, fmt, normaliseText, truncateText } from './text';
@@ -335,14 +336,15 @@ export function createRowRenderData(
     const cellStyles = hasCellStyles
         ? row.cells.map((cell) => {
               // row style acts as a base layer and per-cell style overrides specific keys.
-              const style = mergeCellStyles(row.style, cell.style);
+              const style = mergePdfCellStyles(row.style, cell.style);
               return resolveTableCellStyle(style, layout, baseFontFamily, rowStyles, styleColors, defaultFontSize);
           })
         : [];
+    const defaultRowHeight = getRowHeight(row.type, layout);
 
     const rowHeight = hasPerCellStyle
-        ? getCustomRowHeight(cellStyles.length ? cellStyles : [defaultCellStyle], layout)
-        : getRowHeight(row.type, layout);
+        ? getCustomRowHeight(cellStyles.length ? cellStyles : [defaultCellStyle], defaultRowHeight)
+        : defaultRowHeight;
 
     return {
         defaultCellStyle,
@@ -447,23 +449,6 @@ function renderCellText(
 }
 
 /**
- * Merge two PDF cell styles with override precedence.
- * @param baseStyle - Base style.
- * @param overrideStyle - Override style.
- * @returns Merged style object.
- */
-function mergeCellStyles(baseStyle?: PdfCellStyle, overrideStyle?: PdfCellStyle): PdfCellStyle | undefined {
-    if (!baseStyle && !overrideStyle) {
-        return undefined;
-    }
-
-    return {
-        ...(baseStyle ?? {}),
-        ...(overrideStyle ?? {}),
-    };
-}
-
-/**
  * Resolve default row height from row type and layout options.
  * @param rowType - Row type.
  * @param layout - Layout options.
@@ -480,11 +465,10 @@ function getRowHeight(rowType: PdfRowType, layout: LayoutOptions): number {
 /**
  * Compute row height needed for a set of resolved cell styles.
  * @param cellStyles - Cell styles in the row.
- * @param layout - Layout options.
+ * @param defaultHeight - Default row height for the row type.
  * @returns Calculated row height in points.
  */
-function getCustomRowHeight(cellStyles: ResolvedCellStyle[], layout: LayoutOptions): number {
-    const defaultHeight = layout.rowHeight ?? layout.fontSize + layout.cellPadding * 2;
+function getCustomRowHeight(cellStyles: ResolvedCellStyle[], defaultHeight: number): number {
     let maxHeight = defaultHeight;
 
     cellStyles.forEach((cellStyle) => {
@@ -569,9 +553,8 @@ function resolveTableCellStyle(
     const blendWith = rowStyles.background ?? styleColors.dataBackground ?? styleColors.pageBackground;
     const fallbackTextColor = rowStyles.text ?? styleColors.foreground ?? { r: 0, g: 0, b: 0 };
     const textColor = resolveOptionalColor(style?.color, fallbackTextColor, blendWith) ?? fallbackTextColor;
-    const backgroundColor =
-        resolveOptionalColor(style?.backgroundColor, rowStyles.background, blendWith) ?? rowStyles.background;
-    const borderColor = resolveOptionalColor(style?.borderColor, rowStyles.border, blendWith) ?? rowStyles.border;
+    const backgroundColor = resolveOptionalColor(style?.backgroundColor, rowStyles.background, blendWith);
+    const borderColor = resolveOptionalColor(style?.borderColor, rowStyles.border, blendWith);
     const borderWidth = resolveBorderWidth(style?.borderWidth, borderColor);
 
     return {

@@ -1,9 +1,12 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 
 import type { AgColumn, PdfExportParams } from 'ag-grid-community';
 
 import { createPdfDocument } from './pdfDocument';
 import type { PdfRow } from './pdfSerializingSession';
+import type { LayoutOptions } from './utils/document/render';
+import { createRowRenderData } from './utils/document/render';
+import { resolvePdfStyleColors } from './utils/pdfColor';
 
 const stubColumn = (width: number): AgColumn => ({ getActualWidth: () => width }) as any;
 
@@ -11,6 +14,8 @@ const createRows = (): PdfRow[] => [
     { type: 'HEADER', cells: [{ value: 'Header' }] },
     { type: 'BODY', cells: [{ value: 'Value' }] },
 ];
+
+const countOccurrences = (value: string, search: string): number => value.split(search).length - 1;
 
 describe('createPdfDocument', () => {
     it('builds a valid PDF envelope', () => {
@@ -67,5 +72,104 @@ describe('createPdfDocument', () => {
         const pdf = createPdfDocument(rows, columns, params);
 
         expect(pdf).not.toContain(' re S');
+    });
+
+    it('does not repeat table headers before custom content on a new page', () => {
+        const rows: PdfRow[] = [
+            { type: 'HEADER', cells: [{ value: 'Header' }] },
+            { type: 'BODY', cells: [{ value: 'Value' }] },
+            { type: 'CUSTOM', cells: [{ value: 'Appendix' }] },
+        ];
+        const columns = [stubColumn(100)];
+        const params: PdfExportParams = {
+            pageSize: { width: 200, height: 120 },
+            pageOrientation: 'portrait',
+            margin: 10,
+            rowHeight: 50,
+            headerRowHeight: 50,
+        };
+
+        const pdf = createPdfDocument(rows, columns, params);
+
+        expect(countOccurrences(pdf, '(Header) Tj')).toBe(1);
+        expect(countOccurrences(pdf, '/Type /Page /Parent')).toBe(2);
+    });
+
+    it('repeats table headers when body rows continue on a new page', () => {
+        const rows: PdfRow[] = [
+            { type: 'CUSTOM', cells: [{ value: 'Introduction' }] },
+            { type: 'HEADER', cells: [{ value: 'Header' }] },
+            { type: 'BODY', cells: [{ value: 'Value' }] },
+        ];
+        const columns = [stubColumn(100)];
+        const params: PdfExportParams = {
+            pageSize: { width: 200, height: 120 },
+            pageOrientation: 'portrait',
+            margin: 10,
+            rowHeight: 50,
+            headerRowHeight: 50,
+        };
+
+        const pdf = createPdfDocument(rows, columns, params);
+
+        expect(countOccurrences(pdf, '(Header) Tj')).toBe(2);
+    });
+
+    it('uses header row height for styled header rows', () => {
+        const row: PdfRow = {
+            type: 'HEADER',
+            cells: [{ value: 'Header', style: { backgroundColor: '#eeeeee' } }],
+        };
+        const layout: LayoutOptions = {
+            columnCount: 1,
+            columnWidths: [100],
+            margin: { top: 10, right: 10, bottom: 10, left: 10 },
+            drawCellBorders: true,
+            fontSize: 10,
+            headerFontSize: 11,
+            cellPadding: 4,
+            rowHeight: 24,
+            headerRowHeight: 60,
+        };
+
+        const rowRenderData = createRowRenderData(
+            row,
+            layout,
+            'Helvetica',
+            'Helvetica-Bold',
+            resolvePdfStyleColors(),
+            0
+        );
+
+        expect(rowRenderData.rowHeight).toBe(60);
+    });
+
+    it('treats alpha-zero cell colours as transparent', () => {
+        const rows: PdfRow[] = [
+            {
+                type: 'BODY',
+                cells: [
+                    {
+                        value: 'Value',
+                        style: {
+                            backgroundColor: 'rgba(0, 0, 0, 0)',
+                            borderColor: 'rgb(0 0 0 / 0)',
+                        },
+                    },
+                ],
+            },
+        ];
+        const columns = [stubColumn(100)];
+        const params: PdfExportParams = {
+            pdfStyles: {
+                dataBackgroundColor: '#ff0000',
+                borderColor: '#00ff00',
+            },
+        };
+
+        const pdf = createPdfDocument(rows, columns, params);
+
+        expect(pdf).not.toContain('1.000 0.000 0.000 rg');
+        expect(pdf).not.toContain('0.000 1.000 0.000 RG');
     });
 });

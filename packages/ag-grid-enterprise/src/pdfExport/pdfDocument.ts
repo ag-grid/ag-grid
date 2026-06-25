@@ -130,7 +130,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
     for (const row of rows) {
         const rowRenderData = createRowRenderData(row, layout, bodyFont, headerFont, styleColors, bodyRowIndex);
         if (cursorY - rowRenderData.rowHeight < margin.bottom) {
-            startPage(repeatHeader);
+            startPage(repeatHeader && row.type === 'BODY');
         }
 
         cursorY = renderRow(
