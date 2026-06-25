@@ -53,7 +53,13 @@ import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
 import { _onCellKeyDown, _processCellCharacter } from './cellKeyboardListenerFeature';
 import { _onCellMouseEvent } from './cellMouseListenerFeature';
-import { CellPositionFeature } from './cellPositionFeature';
+import {
+    _getColSpanningList,
+    _initCellPosition,
+    _onCellLeftChanged,
+    _onCellWidthChanged,
+    _setupCellPosition,
+} from './cellPositionFeature';
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -116,10 +122,13 @@ export class CellCtrl extends BeanStub {
 
     public lastIPadMouseClickEvent = 0;
 
+    // per-cell positioning state, owned by the cell position functions (rendering/cell/cellPositionFeature)
+    public colsSpanning?: AgColumn[];
+    public rowSpan = 1;
+
     public rangeFeature: ICellRangeFeature | undefined = undefined;
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private notesFeature: INotesFeature | undefined = undefined;
-    private positionFeature: CellPositionFeature | undefined = undefined;
     private calculatedColumnCssApplied = false;
     private calculatedColumnHighlightedCssApplied = false;
 
@@ -166,7 +175,7 @@ export class CellCtrl extends BeanStub {
 
         this.createCellPosition();
         this.updateAndFormatValue(false);
-        this.positionFeature = new CellPositionFeature(this, beans);
+        _setupCellPosition(beans, this);
     }
 
     private addFeatures(): void {
@@ -262,7 +271,7 @@ export class CellCtrl extends BeanStub {
         this.refreshAriaRowIndex();
         this.refreshAriaColIndex();
 
-        this.positionFeature?.init();
+        _initCellPosition(this.beans, this);
         this.beans.cellStyles?.setupCellCustomStyle(this);
         this.editSvc?.applyCellEditStyles(this);
         this.tooltipFeature?.refreshTooltip();
@@ -767,14 +776,14 @@ export class CellCtrl extends BeanStub {
     }
 
     public getColSpanningList(): AgColumn[] {
-        return this.positionFeature?.getColSpanningList() ?? [];
+        return _getColSpanningList(this.beans, this);
     }
 
     public onLeftChanged(): void {
         if (!this.comp) {
             return;
         }
-        this.positionFeature?.onLeftChanged();
+        _onCellLeftChanged(this.beans, this);
     }
 
     public onDisplayedColumnsChanged(): void {
@@ -795,7 +804,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onWidthChanged(): void {
-        return this.positionFeature?.onWidthChanged();
+        _onCellWidthChanged(this);
     }
 
     public getRowPosition(): RowPosition {
@@ -1085,7 +1094,7 @@ export class CellCtrl extends BeanStub {
     public override destroy(): void {
         this.onCompAttachedFuncs = [];
         this.onEditorAttachedFuncs = [];
-        const { focusSvc, context } = this.beans;
+        const { focusSvc } = this.beans;
 
         // if this was focused; (e.g cell span status changes) then we need to restore focus
         if (this.isCellFocused() && this.hasBrowserFocus()) {
@@ -1093,8 +1102,6 @@ export class CellCtrl extends BeanStub {
         }
 
         super.destroy();
-
-        this.positionFeature = context.destroyBean(this.positionFeature);
     }
 
     public hasBrowserFocus(): boolean {
