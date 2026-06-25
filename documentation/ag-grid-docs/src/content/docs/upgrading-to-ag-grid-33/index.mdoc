@@ -215,16 +215,18 @@ The codemod will include the new modules to match the existing behaviour of v32 
 
 ### Validation Module
 
-To help identify configuration issues we strongly recommend including the `ValidationModule` in your development build. This module enables AG Grid to validate your configuration and provide extended error diagnosis to help you resolve issues quickly.
-
-Ensure you’re not including the `ValidationModule` in your production build to avoid increasing bundle size unnecessarily. In v33 the `AllCommunityModule` / `AllEnterpriseModule` bundles included it by default; from v36 onwards it is excluded and must be registered explicitly — see [Upgrading to AG Grid 36](./upgrading-to-ag-grid-36/#behaviour-changes).
+To help identify configuration issues we strongly recommend enabling validation in your development build. This validates your configuration and provides extended error diagnosis to help you resolve issues quickly. Call `enableDevValidations()` once, before any grid is created:
 
 ```js
 // via process.env.NODE_ENV
-if(process.env.NODE_ENV !== 'production') {
-    ModuleRegistry.registerModules([ValidationModule]);
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
 }
 ```
+
+This is equivalent to registering the `ValidationModule` directly, for example `ModuleRegistry.registerModules([ValidationModule])`.
+
+Keep validation out of your production build to avoid increasing bundle size unnecessarily. In v33 the `AllCommunityModule` / `AllEnterpriseModule` bundles included the `ValidationModule` by default; from v36 onwards it is excluded and must be enabled explicitly — see [Upgrading to AG Grid 36](./upgrading-to-ag-grid-36/#behaviour-changes).
 
 ## Migrating from Packages
 

@@ -4,6 +4,13 @@ import { VERSION } from '../version';
 import { ValidationService } from './validationService';
 
 /**
+ * Provides extended development-time diagnostics: detailed console warnings for conflicting or
+ * invalid grid options and column definition properties. It is intentionally excluded from the
+ * `AllCommunityModule` and `AllEnterpriseModule` bundles to keep production builds small.
+ *
+ * {@link enableDevValidations} is the recommended way to opt into validation; registering this
+ * module directly is the equivalent low-level alternative.
+ *
  * @feature Validation
  */
 export const ValidationModule: _ModuleWithoutApi = {
