@@ -3,7 +3,7 @@ import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _hasEdits, _hasLeafEdits, _hasPinnedEdits } from './style-utils';
 
 export function _applyRowEditStyles(beans: BeanCollection, rowCtrl: RowCtrl): void {
-    const { editModelSvc } = beans;
+    const editModelSvc = beans.editModelSvc;
 
     let rowNode = rowCtrl.rowNode;
     let edits = editModelSvc?.getEditRow(rowNode);
@@ -29,7 +29,12 @@ export function _applyRowEditStyles(beans: BeanCollection, rowCtrl: RowCtrl): vo
     applyStyle(beans, rowCtrl, hasErrors);
 }
 
-function applyStyle(beans: BeanCollection, rowCtrl: RowCtrl, hasErrors: boolean = false, editing: boolean = false) {
+function applyStyle(
+    beans: BeanCollection,
+    rowCtrl: RowCtrl,
+    hasErrors: boolean = false,
+    editing: boolean = false
+): void {
     const batchEdit = !!beans.editSvc?.isBatchEditing();
     const fullRow = beans.gos.get('editType') === 'fullRow';
 

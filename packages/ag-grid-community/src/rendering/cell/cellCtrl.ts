@@ -175,6 +175,7 @@ export class CellCtrl extends BeanStub {
 
         this.createCellPosition();
         this.updateAndFormatValue(false);
+        // must stay in the constructor, not setComp — see _setupCellPosition
         _setupCellPosition(beans, this);
     }
 
@@ -1094,11 +1095,10 @@ export class CellCtrl extends BeanStub {
     public override destroy(): void {
         this.onCompAttachedFuncs = [];
         this.onEditorAttachedFuncs = [];
-        const { focusSvc } = this.beans;
 
         // if this was focused; (e.g cell span status changes) then we need to restore focus
         if (this.isCellFocused() && this.hasBrowserFocus()) {
-            focusSvc.attemptToRecoverFocus();
+            this.beans.focusSvc.attemptToRecoverFocus();
         }
 
         super.destroy();

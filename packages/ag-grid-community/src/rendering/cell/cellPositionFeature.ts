@@ -38,25 +38,6 @@ function setupRowSpan(beans: BeanCollection, cellCtrl: CellCtrl): void {
     cellCtrl.addManagedListeners(beans.eventSvc, { newColumnsLoaded: () => onNewColumnsLoaded(beans, cellCtrl) });
 }
 
-function setupColSpan(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    // if no col span is active, then we don't set it up, as it would be wasteful of CPU
-    if (cellCtrl.column.colDef.colSpan == null) {
-        return;
-    }
-
-    cellCtrl.colsSpanning = _getColSpanningList(beans, cellCtrl);
-
-    cellCtrl.addManagedListeners(beans.eventSvc, {
-        // because we are col spanning, a reorder of the cols can change what cols we are spanning over
-        displayedColumnsChanged: () => onDisplayColumnsChanged(beans, cellCtrl),
-        // because we are spanning over multiple cols, we check for width any time any cols width changes.
-        // this is expensive - really we should be explicitly checking only the cols we are spanning over
-        // instead of every col, however it would be tricky code to track the cols we are spanning over, so
-        // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
-        displayedColumnsWidthChanged: () => _onCellWidthChanged(cellCtrl),
-    });
-}
-
 // Called each time the cell component attaches (initial mount and any remount).
 export function _initCellPosition(beans: BeanCollection, cellCtrl: CellCtrl): void {
     _onCellLeftChanged(beans, cellCtrl);
@@ -95,6 +76,25 @@ function onDisplayColumnsChanged(beans: BeanCollection, cellCtrl: CellCtrl): voi
         _onCellWidthChanged(cellCtrl);
         _onCellLeftChanged(beans, cellCtrl); // left changes when doing RTL
     }
+}
+
+function setupColSpan(beans: BeanCollection, cellCtrl: CellCtrl): void {
+    // if no col span is active, then we don't set it up, as it would be wasteful of CPU
+    if (cellCtrl.column.colDef.colSpan == null) {
+        return;
+    }
+
+    cellCtrl.colsSpanning = _getColSpanningList(beans, cellCtrl);
+
+    cellCtrl.addManagedListeners(beans.eventSvc, {
+        // because we are col spanning, a reorder of the cols can change what cols we are spanning over
+        displayedColumnsChanged: () => onDisplayColumnsChanged(beans, cellCtrl),
+        // because we are spanning over multiple cols, we check for width any time any cols width changes.
+        // this is expensive - really we should be explicitly checking only the cols we are spanning over
+        // instead of every col, however it would be tricky code to track the cols we are spanning over, so
+        // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
+        displayedColumnsWidthChanged: () => _onCellWidthChanged(cellCtrl),
+    });
 }
 
 export function _onCellWidthChanged(cellCtrl: CellCtrl): void {
