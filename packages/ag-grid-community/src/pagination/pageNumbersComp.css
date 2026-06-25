@@ -36,6 +36,15 @@
 }
 
 .ag-paging-page-number-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--ag-icon-size);
+    padding: 0 calc(var(--ag-spacing) * 0.5);
     pointer-events: none;
     font-variant-numeric: tabular-nums;
+}
+
+:where(.ag-paging-page-numbers-truncated) .ag-paging-page-number-ellipsis {
+    padding: var(--ag-spacing);
 }

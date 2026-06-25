@@ -2,11 +2,14 @@ type PageNumberItem = number | 'ellipsis';
 
 // Above this many pages the truncated form (first … current±1 … last) is shorter than
 // listing every page, so ellipses only start appearing once the count exceeds it.
-const MAX_PAGES_WITHOUT_ELLIPSIS = 7;
+const MAX_PAGES_WITHOUT_ELLIPSIS = 5;
 
-// Pages shown around (and including) the current page. The window keeps a constant width by
-// shifting at the edges rather than shrinking, so page 1 of many shows `1 2 3`, not `1 2`.
+// Pages shown around (and including) the current page while in the middle of the range.
 const PAGE_WINDOW_SIZE = 3;
+
+// While the current page sits within this many pages of either end, the window expands to a fixed
+// block anchored to that end, so the first/last pages read `1 2 3 4 5 … N` / `1 … N-4 … N`.
+const EDGE_BLOCK_SIZE = 5;
 
 // Turns a sorted list of page numbers into display items, collapsing a single-page gap to that
 // page and a wider gap to a non-interactive ellipsis.
@@ -69,15 +72,24 @@ export function _getPageNumberItems(
         return allPages;
     }
 
-    let windowStart = page - Math.floor(PAGE_WINDOW_SIZE / 2);
-    if (windowStart < 1) {
+    const nearStart = page <= EDGE_BLOCK_SIZE - 1;
+    const nearEnd = page >= totalPages - (EDGE_BLOCK_SIZE - 2);
+
+    let windowStart: number;
+    let windowSize: number;
+    if (nearStart) {
         windowStart = 1;
-    } else if (windowStart + PAGE_WINDOW_SIZE - 1 > totalPages) {
-        windowStart = totalPages - PAGE_WINDOW_SIZE + 1;
+        windowSize = EDGE_BLOCK_SIZE;
+    } else if (nearEnd) {
+        windowStart = totalPages - EDGE_BLOCK_SIZE + 1;
+        windowSize = EDGE_BLOCK_SIZE;
+    } else {
+        windowStart = page - Math.floor(PAGE_WINDOW_SIZE / 2);
+        windowSize = PAGE_WINDOW_SIZE;
     }
 
     const pages = new Set<number>([1, totalPages]);
-    for (let i = 0; i < PAGE_WINDOW_SIZE; ++i) {
+    for (let i = 0; i < windowSize; ++i) {
         pages.add(windowStart + i);
     }
 
