@@ -4,6 +4,7 @@ import type { AgColumn, PdfExportParams } from 'ag-grid-community';
 
 import { createPdfDocument } from './pdfDocument';
 import type { PdfRow } from './pdfSerializingSession';
+import { resolvePageSize } from './utils/document/layout';
 import type { LayoutOptions } from './utils/document/render';
 import { createRowRenderData } from './utils/document/render';
 import { resolvePdfStyleColors } from './utils/pdfColor';
@@ -18,6 +19,17 @@ const createRows = (): PdfRow[] => [
 const countOccurrences = (value: string, search: string): number => value.split(search).length - 1;
 
 describe('createPdfDocument', () => {
+    it('normalises named page sizes to the requested orientation', () => {
+        expect(resolvePageSize('A4', 'portrait')).toEqual({ width: 595.28, height: 841.89 });
+        expect(resolvePageSize('A4', 'landscape')).toEqual({ width: 841.89, height: 595.28 });
+    });
+
+    it('normalises custom page sizes to the requested orientation', () => {
+        expect(resolvePageSize({ width: 1000, height: 500 }, undefined)).toEqual({ width: 1000, height: 500 });
+        expect(resolvePageSize({ width: 1000, height: 500 }, 'portrait')).toEqual({ width: 500, height: 1000 });
+        expect(resolvePageSize({ width: 500, height: 1000 }, 'landscape')).toEqual({ width: 1000, height: 500 });
+    });
+
     it('builds a valid PDF envelope', () => {
         const rows = createRows();
         const columns = [stubColumn(100)];
@@ -83,7 +95,7 @@ describe('createPdfDocument', () => {
         const columns = [stubColumn(100)];
         const params: PdfExportParams = {
             pageSize: { width: 200, height: 120 },
-            pageOrientation: 'portrait',
+            pageOrientation: 'landscape',
             margin: 10,
             rowHeight: 50,
             headerRowHeight: 50,
@@ -104,7 +116,7 @@ describe('createPdfDocument', () => {
         const columns = [stubColumn(100)];
         const params: PdfExportParams = {
             pageSize: { width: 200, height: 120 },
-            pageOrientation: 'portrait',
+            pageOrientation: 'landscape',
             margin: 10,
             rowHeight: 50,
             headerRowHeight: 50,

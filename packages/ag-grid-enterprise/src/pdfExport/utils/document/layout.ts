@@ -41,8 +41,11 @@ export function resolvePageSize(
     let height = resolvedSize.height;
 
     const resolvedOrientation = orientation ?? DEFAULT_PAGE_ORIENTATION;
-    if (resolvedOrientation === 'landscape') {
-        // rotate by swapping the axes, keeping the same absolute dimensions.
+    const shouldSwap =
+        (resolvedOrientation === 'landscape' && width < height) ||
+        (resolvedOrientation === 'portrait' && width > height);
+    if (shouldSwap) {
+        // normalise dimensions to the requested orientation without blindly rotating custom sizes.
         [width, height] = [height, width];
     }
 

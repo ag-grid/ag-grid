@@ -90,6 +90,11 @@ export class PdfCreator
      * @returns The generated PDF as a Blob, or undefined if export is unavailable.
      */
     public getDataAsPdf(params?: PdfExportParams): Blob | undefined {
+        if (this.isExportSuppressed()) {
+            _warn(160);
+            return undefined;
+        }
+
         const mergedParams = this.getMergedParams(params);
         const data = this.getData(mergedParams);
         const mimeType = mergedParams.mimeType || 'application/pdf';
