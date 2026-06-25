@@ -1,11 +1,11 @@
 import ButtonGroup, { type ButtonType } from '@ag-website-shared/components/button-group/ButtonGroup';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
-import React, { useState } from 'react';
 import classnames from 'classnames';
+import React, { useState } from 'react';
 
+import type { RoadmapItem } from '../types';
 import styles from './RoadmapBoard.module.scss';
 import { RoadmapCard } from './roadmap-card/RoadmapCard';
-import type { RoadmapItem } from '../types';
 
 interface RoadmapBoardProps {
     roadmapData: {
@@ -55,7 +55,9 @@ export const RoadmapBoard: React.FC<RoadmapBoardProps> = ({ roadmapData: { items
                                 <span>
                                     Q{quarter} {new Date().getFullYear().toString()}
                                 </span>
-                                <span className={styles.featureCount}>{quarterItems.length} feature{quarterItems.length !== 1 ? 's' : ''}</span>
+                                <span className={styles.featureCount}>
+                                    {quarterItems.length} feature{quarterItems.length !== 1 ? 's' : ''}
+                                </span>
                             </div>
                             <div className={styles.swimlaneCards}>
                                 {quarterItems.map((item) => (

@@ -46,8 +46,7 @@
     scroll-snap-type: x mandatory;
 }
 
-
- @supports (animation-timeline: scroll()) {
+@supports (animation-timeline: scroll()) {
     @media screen and (max-width: 1140px) {
         .swimlanesContainer {
             --scroll-gradient-width: 60px;
@@ -67,7 +66,8 @@
             &::after {
                 grid-column: 3;
                 right: 0;
-                background-image: linear-gradient(to left, var(--color-bg-primary), transparent), 
+                background-image:
+                    linear-gradient(to left, var(--color-bg-primary), transparent),
                     linear-gradient(to left, var(--color-bg-primary), transparent 50%);
             }
         }
@@ -76,7 +76,7 @@
             margin-right: calc(var(--scroll-gradient-width) * -1);
         }
     }
- }
+}
 
 .swimlanes {
     grid-column: 2;

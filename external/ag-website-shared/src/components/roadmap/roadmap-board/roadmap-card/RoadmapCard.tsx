@@ -14,7 +14,11 @@ interface RoadmapCardProps {
     dimmed?: boolean;
 }
 
-export const RoadmapCard: React.FC<RoadmapCardProps> = ({ data: { id, title, desc, why, status, link }, framework, dimmed }) => {
+export const RoadmapCard: React.FC<RoadmapCardProps> = ({
+    data: { id, title, desc, why, status, link },
+    framework,
+    dimmed,
+}) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const colorMap: Record<string, 'blue' | 'green' | 'yellow'> = {
@@ -39,12 +43,7 @@ export const RoadmapCard: React.FC<RoadmapCardProps> = ({ data: { id, title, des
         >
             <span className={styles.itemHeader}>
                 <h5 className={styles.cardTitle}>{title}</h5>
-                {why && (
-                    <Icon
-                        name="chevronDown"
-                        svgClasses={isExpanded ? "expand-icon expanded" : "expand-icon"}
-                    />
-                )}
+                {why && <Icon name="chevronDown" svgClasses={isExpanded ? 'expand-icon expanded' : 'expand-icon'} />}
             </span>
             <span className={styles.itemId}>{id}</span>
             <p className={styles.cardDescription}>{desc}</p>
@@ -60,7 +59,7 @@ export const RoadmapCard: React.FC<RoadmapCardProps> = ({ data: { id, title, des
                 <Pill className={styles.status} color={colorMap[status] || 'blue'} text={status.replace(/-/g, ' ')} />
                 {link ? (
                     <a
-                        href={urlWithPrefix({url: link, framework: framework })}
+                        href={urlWithPrefix({ url: link, framework: framework })}
                         onClick={(e) => e.stopPropagation()}
                         className={styles.readmoreLink}
                         target="_blank"

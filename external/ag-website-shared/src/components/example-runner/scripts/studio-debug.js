@@ -143,8 +143,8 @@ const logStateButton = {
  */
 const internalApi = (api) => {
     const internalsKey = Object.getOwnPropertySymbols(api)[0];
-    return (api)[internalsKey];
-}
+    return api[internalsKey];
+};
 
 /** @type {AgWidgetToolbarItem} */
 const requeryWithExplainButton = {
@@ -160,9 +160,11 @@ const requeryWithExplainButton = {
         const savedOpts = win.agStudioOpts;
         win.agStudioOpts = { ...(savedOpts ?? {}), explain: { mode: 'analyze', samples: true, widgetId } };
         refresh(widgetId);
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-            win.agStudioOpts = savedOpts;
-        }));
+        requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+                win.agStudioOpts = savedOpts;
+            })
+        );
     },
 };
 
@@ -177,7 +179,7 @@ const debugOverrides = {
         return {
             ...widgetConfig,
             widgets: widgetConfig.widgets.map((widget) => {
-                let {toolbar} = widget;
+                let { toolbar } = widget;
 
                 /**
                  * @param {AgWidgetToolbarItem} button
@@ -190,12 +192,12 @@ const debugOverrides = {
                     } else {
                         toolbar.splice(dupIndex, 0, button);
                     }
-                }
+                };
 
                 if (widget.id.includes('chart') && !toolbar?.includes(exportToPlunkerToolbarButton)) {
                     addButton(exportToPlunkerToolbarButton);
                 }
-                
+
                 if (!toolbar?.includes(logStateButton)) {
                     addButton(logStateButton);
                 }
@@ -205,8 +207,8 @@ const debugOverrides = {
                 }
 
                 return { ...widget, toolbar };
-            })
-        }
+            }),
+        };
     },
 };
 
