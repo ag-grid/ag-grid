@@ -16,7 +16,7 @@ const iconNameToSvgFragment: Record<string, string | undefined> = {
     desc: '<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>',
     down: '<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>',
     excel: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h2"/><path d="M8 17h2"/><path d="M14 13h2"/><path d="M14 17h2"/>',
-    pdf: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h2"/><path d="M8 17h2"/><path d="M14 13h2"/><path d="M14 17h2"/>',
+    pdf: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M7 17V12h2.2a1.4 1.4 0 0 1 0 2.8H7"/><path d="M12 17v-5h1.4a2.5 2.5 0 0 1 0 5H12z"/><path d="M17 17v-5h3"/><path d="M17 14h2.5"/>',
     expanded: '<path d="m15 18-6-6 6-6"/>',
     eye: '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
     'eye-slash':

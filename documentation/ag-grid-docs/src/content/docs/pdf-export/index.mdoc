@@ -15,18 +15,19 @@ PDF export is also possible via the [Grid API](./grid-api/) using the following 
 api.exportDataAsPdf();
 ```
 
-For module-based builds, register the `PdfExportModule`:
+For module-based builds, register the `PdfExportModule`. To show the PDF export item in the right-click menu, also register the `ContextMenuModule`:
 
 ```js
 import { ModuleRegistry } from 'ag-grid-community';
-import { PdfExportModule } from 'ag-grid-enterprise';
+import { ContextMenuModule, PdfExportModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
+    ContextMenuModule,
     PdfExportModule
 ]);
 ```
 
-No special configurations or third party libraries are required for either approach. To disable the context menu item, set `suppressPdfExport=true`.
+No third party libraries are required for either approach. To disable PDF export, set `suppressPdfExport=true`.
 
 ## Default PDF Export
 

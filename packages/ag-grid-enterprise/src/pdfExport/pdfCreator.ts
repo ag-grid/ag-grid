@@ -146,6 +146,22 @@ export class PdfCreator
 
     private getResolveColorValueFn(): (value?: string) => string | undefined {
         const { eRootDiv } = this.beans;
-        return (value?: string) => resolveThemeColorValue(value, eRootDiv);
+        const resolvedColorByValue = new Map<string, string | undefined>();
+
+        return (value?: string) => {
+            if (!value) {
+                return undefined;
+            }
+
+            const cachedValue = resolvedColorByValue.get(value);
+            if (cachedValue !== undefined || resolvedColorByValue.has(value)) {
+                return cachedValue;
+            }
+
+            const resolvedValue = resolveThemeColorValue(value, eRootDiv);
+            resolvedColorByValue.set(value, resolvedValue);
+
+            return resolvedValue;
+        };
     }
 }
