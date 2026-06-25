@@ -338,11 +338,13 @@ export const Changelog: FunctionComponent<Props> = ({ library }) => {
     return (
         <>
             <section className={styles.header}>
-                <Alert type="idea">
-                    This changelog enables you to identify the specific version in which a feature request or bug fix
-                    was included. Check out the <a href={urlWithBaseUrl('/pipeline/')}>Pipeline</a> to see what's in our
-                    product backlog.
-                </Alert>
+                {library !== 'studio' && (
+                    <Alert type="idea">
+                        This changelog enables you to identify the specific version in which a feature request or bug
+                        fix was included. Check out the <a href={urlWithBaseUrl('/pipeline/')}>Pipeline</a> to see
+                        what's in our product backlog.
+                    </Alert>
+                )}
 
                 <ReleaseVersionNotes
                     releaseNotes={fixVersion === ALL_FIX_VERSIONS ? undefined : currentReleaseNotes}

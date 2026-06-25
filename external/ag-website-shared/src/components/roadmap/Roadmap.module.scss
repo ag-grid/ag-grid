@@ -1,0 +1,186 @@
+@use 'design-system' as *;
+
+.roadmapHero {
+    position: relative;
+    padding-top: $spacing-size-10;
+    padding-bottom: $spacing-size-10;
+    background: linear-gradient(transparent, var(--color-brand-50));
+
+    #{$selector-darkmode} & {
+        background: linear-gradient(transparent, color-mix(in srgb, transparent, var(--color-brand-50) 5%));
+    }
+
+    @media screen and (min-width: $breakpoint-hero-small) {
+        padding-top: $spacing-size-16;
+        padding-bottom: $spacing-size-16;
+    }
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        padding-top: $spacing-size-24;
+        padding-bottom: $spacing-size-24;
+    }
+}
+
+.heroEyebrow {
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-semibold);
+    color: var(--color-brand-300);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 $spacing-size-4;
+}
+
+.heroInner {
+    display: flex;
+    flex-direction: column;
+    gap: 0 $spacing-size-16;
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        flex-direction: row;
+    }
+}
+
+.heroHeadings {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+
+    h1,
+    h2 {
+        line-height: var(--text-lh-tight);
+        color: var(--color-text-brand-primary);
+
+        #{$selector-darkmode} & {
+            color: var(--color-fg-primary);
+        }
+    }
+
+    h1 {
+        font-size: 28px;
+        letter-spacing: -0.02em;
+        text-align: center;
+        flex-direction: column;
+        display: inline-flex;
+        align-items: center;
+
+        @media screen and (min-width: $breakpoint-hero-small) {
+            font-size: var(--text-fs-2xl);
+            letter-spacing: -0.025em;
+        }
+
+        @media screen and (min-width: $breakpoint-hero-large) {
+            font-size: min(3.4vw, 54px);
+            letter-spacing: -0.03em;
+
+            margin-top: -0.225em;
+            margin-bottom: 0.5em;
+        }
+    }
+
+    h2 {
+        max-width: 18em;
+        margin-right: auto;
+        margin-left: auto;
+        margin-bottom: 1.4em;
+        font-weight: var(--text-normal);
+        letter-spacing: -0.01em;
+        line-height: 150%;
+
+        @media screen and (min-width: $breakpoint-hero-small) {
+            font-size: 22px;
+        }
+
+        @media screen and (min-width: $breakpoint-hero-large) {
+            font-size: 18px;
+            max-width: 800px;
+        }
+    }
+}
+
+.roadmapIntro {
+    padding: $spacing-size-8;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 0;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        padding: $spacing-size-10;
+        padding-bottom: 0;
+    }
+}
+
+.roadmapHeader {
+    display: flex;
+    align-items: baseline;
+    gap: $spacing-size-3;
+    flex-wrap: wrap;
+}
+
+.introLabel {
+    display: inline-block;
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-semibold);
+    color: var(--color-brand-400);
+    background-color: color-mix(in srgb, transparent, var(--color-brand-400) 10%);
+    border-radius: var(--radius-sm);
+    padding: 2px $spacing-size-2;
+    white-space: nowrap;
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, transparent, var(--color-brand-400) 15%);
+    }
+}
+
+.introText {
+    font-size: var(--text-fs-sm);
+    color: var(--color-gray-600);
+    margin: 0;
+
+    #{$selector-darkmode} & {
+        color: var(--color-gray-400);
+    }
+}
+
+.lastUpdated {
+    display: flex;
+    align-items: center;
+}
+
+.seperator {
+    display: none;
+
+    @media screen and (min-width: $breakpoint-hero-small) {
+        display: block;
+    }
+}
+
+.heroCtaButtons {
+    display: flex;
+    gap: $spacing-size-4;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        justify-content: flex-start;
+    }
+}
+
+.heroCta {
+    font-size: var(--text-fs-base);
+    display: block;
+    width: auto;
+    position: relative;
+
+    & svg {
+        height: var(--text-fs-xs);
+        width: var(--text-fs-xs);
+        transition: transform $transition-default-timing;
+    }
+
+    &:hover svg {
+        transform: translateX(2px);
+    }
+}
