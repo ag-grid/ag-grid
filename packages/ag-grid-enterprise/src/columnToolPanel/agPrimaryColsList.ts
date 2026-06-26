@@ -71,6 +71,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private hasLoadedInitialState: boolean = false;
     private isInitialState: boolean = false;
     private skipRefocus: boolean = false;
+    private customColumnLayout: AbstractColDef[] | null = null;
 
     constructor() {
         super({ tag: 'div', cls: PRIMARY_COLS_LIST_PANEL_CLASS, role: 'presentation' });
@@ -266,6 +267,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         if (shouldSyncColumnLayoutWithGrid) {
             this.buildTreeFromWhatGridIsDisplaying();
+        } else if (this.customColumnLayout && !pivotModeActive) {
+            this.applyColumnLayout(this.customColumnLayout);
         } else {
             this.buildTreeFromProvidedColumnDefs();
         }
@@ -338,7 +341,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         if (deferApply && this.beans.columnStateUpdateStrategy.hasDeferredColumnOrder(deferApply)) {
             const columnOrder = this.beans.columnStateUpdateStrategy.getPrimaryColumns(deferApply);
             if (columnOrder.length > 0) {
-                syncLayoutWithColumns(columnOrder, this.setColumnLayout.bind(this));
+                syncLayoutWithColumns(columnOrder, this.applyColumnLayout.bind(this));
                 return;
             }
         }
@@ -346,10 +349,16 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             this.buildTreeFromProvidedColumnDefs();
             return;
         }
-        syncLayoutWithGrid(this.colModel, this.setColumnLayout.bind(this));
+        syncLayoutWithGrid(this.colModel, this.applyColumnLayout.bind(this));
     }
 
     public setColumnLayout(colDefs: AbstractColDef[]): void {
+        // Retain the user-provided layout so it survives grid-driven rebuilds while decoupled from grid order.
+        this.customColumnLayout = colDefs;
+        this.applyColumnLayout(colDefs);
+    }
+
+    private applyColumnLayout(colDefs: AbstractColDef[]): void {
         const columnTree = toolPanelCreateColumnTree(this.colModel, colDefs);
         this.buildListModel(columnTree);
 
