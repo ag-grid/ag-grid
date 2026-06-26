@@ -1,7 +1,7 @@
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
 import type { CspEnv } from './cspRules';
 import { getCampaignsCspIfOverride, getCspHtaccessBlock, getScopedCspHtaccessBlock } from './cspRules';
-import { SITE_301_REDIRECTS } from './redirects';
+import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
 
@@ -13,6 +13,10 @@ export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
 // different output per phase.
 export const PRODUCTION_CSP_PHASE: 'report-only' | 'enforce' = 'report-only';
 
+/**
+ * Note: when changing this file please add/update the tests in
+ * documentation/ag-grid-docs/testing/htaccess-harness
+ */
 const modExpiresRules = `
 <IfModule mod_expires.c>
     # Adds caching headers
@@ -75,6 +79,14 @@ const getModRewriteRules = (): string => `
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # SE-64 / SE-66: single-hop chain shortening. These run before the https-upgrade and
+    # host-swap so a matching legacy path on either www.ag-grid.com or ag-grid.com (any
+    # scheme) lands on its final www URL in ONE 301. Inbound query strings are preserved
+    # (targets carry none). See SITE_SINGLE_HOP_REWRITES in redirects.ts.
+${SITE_SINGLE_HOP_REWRITES.map(
+    (r) => `    RewriteRule "^/?${r.from.replace(/^\//, '').replace(/\./g, '\\.')}$" "${r.to}" [R=301,L]`
+).join('\n')}
+
     # Always use https for secure connections (scoped to www/bare domain only
     # so that charts.ag-grid.com and studio.ag-grid.com are not affected)
     RewriteCond %{HTTP_HOST} ^(www\\.)?ag-grid\\.com$ [NC]
@@ -129,14 +141,19 @@ const getModRewriteRules = (): string => `
     RedirectMatch 302 ^/theo/$ https://www.ag-grid.com/
     
 ${SITE_301_REDIRECTS.map((redirect) => {
-    const { from, fromPattern, to } = redirect as any;
+    const { from, fromPattern, to, gone } = redirect as any;
+    if (!from && !fromPattern) {
+        // eslint-disable-next-line no-console
+        console.warn('Missing `from` in redirect', redirect);
+        return;
+    }
+    // 410 Gone: permanently removed, no target.
+    if (gone) {
+        return from ? `    Redirect 410 ${urlWithBaseUrl(from)}` : `    RedirectMatch 410 "${fromPattern}"`;
+    }
     if (!to) {
         // eslint-disable-next-line no-console
         console.warn('Missing `to` in redirect', redirect);
-        return;
-    } else if (!from && !fromPattern) {
-        // eslint-disable-next-line no-console
-        console.warn('Missing `from` in redirect', redirect);
         return;
     }
     return from

@@ -287,6 +287,12 @@
         "commands": ["npx tsx scripts/validate-example-specs.ts"]
       }
     },
+    "test:htaccess": {
+      "command": "bash testing/htaccess-harness/run.sh",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "update-algolia": {
       "command": "npm run updateLocal",
       "options": {
