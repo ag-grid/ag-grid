@@ -8,8 +8,9 @@ import type {
     UpdateCrossFilterChartParams,
     UpdatePivotChartParams,
     UpdateRangeChartParams,
+    ValidationWarning,
 } from 'ag-grid-community';
-import { _warn, _warnOnce } from 'ag-grid-community';
+import { _warn, _warnOnce, validationWarning } from 'ag-grid-community';
 
 import type { CommonCreateChartParams } from '../../chartService';
 import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
@@ -27,19 +28,27 @@ const isString = (value: any): boolean => typeof value === 'string';
 const isBoolean = (value: any): boolean => typeof value === 'boolean';
 const isValidSeriesChartType = (value: any): boolean => typeof value === 'object';
 const createWarnMessage =
-    (property: string, expectedType: string): ((value: any) => string) =>
+    (property: string, expectedType: string): ((value: any) => ValidationWarning) =>
     (value: any) =>
-        `AG Grid - unable to update chart as invalid params supplied:  \`${property}: ${value}\`, expected ${expectedType}.`;
+        validationWarning(316, { property, value, expectedType });
 
 const createEnterpriseMessage = (feature: string) => {
     const url = 'https://www.ag-grid.com/javascript-data-grid/integrated-charts-installation/';
     return `${feature} is not supported in AG Charts Community ('ag-charts-enterprise' hasn't been loaded). See ${url} for more details.`;
 };
 
+function emitChartWarning(warning: string | ValidationWarning): void {
+    if (typeof warning === 'string') {
+        _warnOnce(warning);
+    } else {
+        warning.emit();
+    }
+}
+
 interface ValidationFunction<T, K extends keyof T = keyof T, V = T[K]> {
     property: K;
     validationFn: (value: T[K]) => boolean | V;
-    warnMessage: (value: T[K]) => string;
+    warnMessage: (value: T[K]) => string | ValidationWarning;
     warnIfFixed?: boolean;
 }
 
@@ -254,7 +263,7 @@ function validateProperties<T extends object>(
                 continue;
             }
             if (validationResult === false) {
-                _warnOnce(warnMessage(value));
+                emitChartWarning(warnMessage(value));
                 return false;
             }
             // If the validation function returned a 'fix' value, we need to return an updated property set.
@@ -263,7 +272,7 @@ function validateProperties<T extends object>(
             /// Then we update the cloned object with the 'fixed' value
             validatedProperties[property] = validationResult;
             if (warnIfFixed) {
-                _warnOnce(warnMessage(value));
+                emitChartWarning(warnMessage(value));
             }
         }
     }
