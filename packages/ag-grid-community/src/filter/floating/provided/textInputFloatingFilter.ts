@@ -33,6 +33,7 @@ export abstract class TextInputFloatingFilter<
     private inputSvc: FloatingFilterInputService;
 
     private applyActive: boolean;
+    private pendingEdit = false;
 
     protected abstract createFloatingFilterInputService(params: TParams): FloatingFilterInputService;
 
@@ -46,13 +47,13 @@ export abstract class TextInputFloatingFilter<
         this.setLastTypeFromModel(model);
         this.setEditable(this.canWeEditAfterModelFromParentFilter(model));
 
-        const modelString = this.filterModelFormatter.getModelAsString(model);
         // Don't clobber a keystroke the user is mid-typing: an interleaving non-floating
         // filter-changed cycle can deliver a stale model while the input is focused.
-        if (inputSvc.isFocused() && inputSvc.getValue() !== modelString) {
+        if (inputSvc.isFocused() && this.pendingEdit) {
             return;
         }
-        inputSvc.setValue(modelString);
+        inputSvc.setValue(this.filterModelFormatter.getModelAsString(model));
+        this.pendingEdit = false;
     }
 
     protected override setParams(params: TParams): void {
@@ -87,7 +88,11 @@ export abstract class TextInputFloatingFilter<
 
         if (!readOnly) {
             const debounceMs = getDebounceMs(filterParams as TextFilterParams, defaultDebounceMs);
-            inputSvc.setValueChangedListener(_debounce(this, this.syncUpWithParentFilter.bind(this), debounceMs));
+            const debouncedSync = _debounce(this, this.syncUpWithParentFilter.bind(this), debounceMs);
+            inputSvc.setValueChangedListener((e) => {
+                this.pendingEdit = true;
+                debouncedSync(e);
+            });
         }
     }
 
@@ -117,6 +122,7 @@ export abstract class TextInputFloatingFilter<
         if (this.applyActive && !isEnterKey) {
             return;
         }
+        this.pendingEdit = false;
 
         const { inputSvc, params, lastType } = this;
         let value = inputSvc.getValue();

@@ -4,6 +4,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     EventApiModule,
+    NumberFilterModule,
     TextFilterModule,
     agTestIdFor,
     getGridElement,
@@ -14,10 +15,12 @@ import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-en
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface Row {
-    name: string;
+    name?: string;
+    age?: number;
 }
 
 const ROW_DATA: Row[] = [{ name: 'michael' }, { name: 'michelle' }, { name: 'bob' }, { name: 'alice' }];
+const NUMBER_ROW_DATA: Row[] = [{ age: 5 }, { age: 58 }, { age: 100 }];
 
 describe('Multi Filter floating filter keystroke race', () => {
     const gridsManager = new TestGridsManager({
@@ -25,6 +28,7 @@ describe('Multi Filter floating filter keystroke race', () => {
             ClientSideRowModelModule,
             EventApiModule,
             MultiFilterModule,
+            NumberFilterModule,
             SetFilterModule,
             TextFilterModule,
             ColumnMenuModule,
@@ -62,6 +66,22 @@ describe('Multi Filter floating filter keystroke race', () => {
         );
     }
 
+    async function getTextFloatingFilterInput(api: GridApi<Row>, colId: string): Promise<HTMLInputElement> {
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        return findByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId })
+        );
+    }
+
+    async function getNumberFloatingFilterInput(api: GridApi<Row>, colId: string): Promise<HTMLInputElement> {
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        return findByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.numberFilterInstanceInput({ source: 'floating-filter', colId })
+        );
+    }
+
     describe.each([false, true])('enableFilterHandlers: %s', (enableFilterHandlers) => {
         test('typed character is not clobbered by an interleaving non-floating filter-changed cycle', async () => {
             const api = await createGrid({ enableFilterHandlers });
@@ -86,6 +106,10 @@ describe('Multi Filter floating filter keystroke race', () => {
 
             // The live keystroke must survive: the input must still read `u8`, not revert to `u`.
             expect(input.value).toBe('u8');
+
+            // ...and the applied filter model must converge on the live keystroke, not the stale `u`.
+            const model = api.getColumnFilterModel<{ filterModels: ({ filter?: string } | null)[] }>('name');
+            expect(model?.filterModels?.[0]?.filter).toBe('u8');
         });
 
         test('external model writeback still updates the input when it is not focused', async () => {
@@ -102,6 +126,85 @@ describe('Multi Filter floating filter keystroke race', () => {
             await asyncSetTimeout(2);
 
             expect(input.value).toBe('bob');
+        });
+
+        test('external model writeback updates a focused input when no keystroke is pending', async () => {
+            const api = await createGrid({ enableFilterHandlers });
+            const input = await getFloatingFilterInput(api);
+
+            // Input is focused but the user has not typed anything, so there is no pending edit to protect.
+            input.focus();
+
+            await api.setColumnFilterModel('name', {
+                filterType: 'multi',
+                filterModels: [{ filterType: 'text', type: 'contains', filter: 'bob' }, null],
+            });
+            await api.onFilterChanged();
+            await asyncSetTimeout(2);
+
+            expect(input.value).toBe('bob');
+        });
+
+        test('number floating filter keystroke is not clobbered by an interleaving filter-changed cycle', async () => {
+            const api = await createGrid({
+                enableFilterHandlers,
+                columnDefs: [
+                    {
+                        field: 'age',
+                        filter: 'agNumberColumnFilter',
+                        filterParams: { debounceMs: 1 },
+                        floatingFilter: true,
+                    },
+                ],
+                rowData: NUMBER_ROW_DATA,
+            });
+            const input = await getNumberFloatingFilterInput(api, 'age');
+
+            // Type and apply `5` so the parent filter model becomes `5`.
+            input.focus();
+            input.value = '5';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            await asyncSetTimeout(2);
+
+            // Continue typing `58` while focused, before the keystroke flushes into the model.
+            input.value = '58';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+
+            api.onFilterChanged();
+            await asyncSetTimeout(2);
+
+            expect(input.value).toBe('58');
+            const model = api.getColumnFilterModel<{ filter?: number }>('age');
+            expect(model?.filter).toBe(58);
+        });
+
+        test('typed character survives an interleaving cycle when an apply button is configured', async () => {
+            const api = await createGrid({
+                enableFilterHandlers,
+                columnDefs: [
+                    {
+                        field: 'name',
+                        filter: 'agTextColumnFilter',
+                        filterParams: { buttons: ['apply'] },
+                        floatingFilter: true,
+                    },
+                ],
+                rowData: ROW_DATA,
+            });
+            const input = await getTextFloatingFilterInput(api, 'name');
+
+            input.focus();
+            input.value = 'mich';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            await asyncSetTimeout(2);
+
+            // With an apply button the keystroke is held until applied, so `pendingEdit` stays set.
+            api.onFilterChanged();
+            await asyncSetTimeout(2);
+
+            expect(input.value).toBe('mich');
+            // Nothing was applied: the apply button still gates the model.
+            expect(api.getColumnFilterModel('name')).toBeNull();
         });
     });
 });
