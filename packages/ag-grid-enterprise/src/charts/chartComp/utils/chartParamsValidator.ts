@@ -10,7 +10,7 @@ import type {
     UpdateRangeChartParams,
     ValidationWarning,
 } from 'ag-grid-community';
-import { _warn, _warnOnce, validationWarning } from 'ag-grid-community';
+import { _warn, validationWarning } from 'ag-grid-community';
 
 import type { CommonCreateChartParams } from '../../chartService';
 import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
@@ -39,7 +39,7 @@ const createEnterpriseMessage = (feature: string) => {
 
 function emitChartWarning(warning: string | ValidationWarning): void {
     if (typeof warning === 'string') {
-        _warnOnce(warning);
+        _warn(322, { message: warning });
     } else {
         warning.emit();
     }
@@ -169,9 +169,9 @@ export function validateUpdateParams(params: UpdateChartParams, isEnterprise: bo
         case 'crossFilterChartUpdate':
             return validateUpdateCrossFilterChartParams(params as UpdateCrossFilterChartParams, isEnterprise);
         default:
-            _warnOnce(
-                `Invalid value supplied for 'type': ${params.type}. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`
-            );
+            _warn(322, {
+                message: `Invalid value supplied for 'type': ${params.type}. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`,
+            });
             return false;
     }
 }

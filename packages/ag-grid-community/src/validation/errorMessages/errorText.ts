@@ -849,9 +849,17 @@ export const AG_GRID_ERRORS = {
     316: ({ property, value, expectedType }: { property: string; value?: unknown; expectedType: string }) =>
         `AG Grid - unable to update chart as invalid params supplied:  \`${property}: ${String(value)}\`, expected ${expectedType}.`,
     317: ({ property, min }: { property: string; min: number }) => `${property} should not be lower than ${min}`,
-    318: ({ feature, conflictsWith, advice }: { feature: string; conflictsWith: string; advice?: string }) =>
-        `${feature} is not supported with ${conflictsWith}.${advice ? ` ${advice}` : ''}`,
+    318: ({ feature, conflictsWith, advice }: { feature: string; conflictsWith: string; advice?: string }) => {
+        const suffix = advice ? ` ${advice}` : '';
+        return `${feature} is not supported with ${conflictsWith}.${suffix}`;
+    },
     319: ({ feature, requirement }: { feature: string; requirement: string }) => `${feature} requires ${requirement}.`,
+    320: ({ property, allowed, value }: { property: string; allowed?: string[]; value?: unknown }) => {
+        const current = value !== undefined ? `, currently it's ${String(value)}` : '';
+        return `${property} must be one of [${(allowed ?? []).join(', ')}]${current}.`;
+    },
+    321: ({ property, expected }: { property: string; expected: string }) => `${property} should be ${expected}.`,
+    322: ({ message }: { message?: string }) => message ?? '',
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

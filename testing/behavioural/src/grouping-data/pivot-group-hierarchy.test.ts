@@ -1377,7 +1377,7 @@ describe('pivot with groupHierarchy (date-time)', () => {
             rowData: [{ country: 'USA', date: new Date(2020, 5, 15) }],
         });
         await asyncSetTimeout(0);
-        expect(consoleWarnSpy.mock.calls[0][0]).toContain('not recognised');
+        expect(consoleWarnSpy.mock.calls[0].join(' ')).toContain('not recognised');
         consoleWarnSpy.mockRestore();
 
         // year + month virtuals exist; 'bogus' was filtered out and produced no virtual.

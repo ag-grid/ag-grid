@@ -3265,11 +3265,15 @@ describe('ag-grid calculated columns', () => {
             expect(api.getEditingCells()).toEqual([]);
             expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBe(7);
 
-            expect(consoleWarnSpy).toHaveBeenCalledWith(
-                expect.stringContaining(
-                    'colDef.calculatedExpression columns are read-only and should not be combined with editable.'
+            expect(
+                consoleWarnSpy.mock.calls.some((c) =>
+                    c
+                        .join(' ')
+                        .includes(
+                            'colDef.calculatedExpression columns are read-only and should not be combined with editable.'
+                        )
                 )
-            );
+            ).toBe(true);
         } finally {
             consoleWarnSpy.mockRestore();
         }
@@ -3298,11 +3302,15 @@ describe('ag-grid calculated columns', () => {
             expect(rowData[0].profit).toBe(999);
             expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBe(7);
 
-            expect(consoleWarnSpy).toHaveBeenCalledWith(
-                expect.stringContaining(
-                    'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.'
+            expect(
+                consoleWarnSpy.mock.calls.some((c) =>
+                    c
+                        .join(' ')
+                        .includes(
+                            'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.'
+                        )
                 )
-            );
+            ).toBe(true);
         } finally {
             consoleWarnSpy.mockRestore();
         }
@@ -3765,11 +3773,15 @@ describe('ag-grid calculated columns', () => {
                 ],
             });
 
-            expect(consoleWarnSpy).toHaveBeenCalledWith(
-                expect.stringContaining(
-                    'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.'
+            expect(
+                consoleWarnSpy.mock.calls.some((c) =>
+                    c
+                        .join(' ')
+                        .includes(
+                            'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.'
+                        )
                 )
-            );
+            ).toBe(true);
         } finally {
             consoleWarnSpy?.mockRestore();
         }

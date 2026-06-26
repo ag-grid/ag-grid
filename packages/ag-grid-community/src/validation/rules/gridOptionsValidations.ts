@@ -187,13 +187,19 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     return null;
                 }
                 if (typeof calculatedColumns !== 'object' || Array.isArray(calculatedColumns)) {
-                    return 'calculatedColumns should be a boolean or an object.';
+                    return validationWarning(321, {
+                        property: 'calculatedColumns',
+                        expected: 'a boolean or an object',
+                    });
                 }
 
                 const { dataTypes, expressionPickers, applyMode } = calculatedColumns;
                 if (dataTypes != null) {
                     if (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string')) {
-                        return 'calculatedColumns.dataTypes should be an array of strings.';
+                        return validationWarning(321, {
+                            property: 'calculatedColumns.dataTypes',
+                            expected: 'an array of strings',
+                        });
                     }
                 }
                 if (expressionPickers != null) {
@@ -206,7 +212,10 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     }
                 }
                 if (applyMode != null && applyMode !== 'live' && applyMode !== 'deferred') {
-                    return "calculatedColumns.applyMode should be 'live' or 'deferred'.";
+                    return validationWarning(320, {
+                        property: 'calculatedColumns.applyMode',
+                        allowed: ['live', 'deferred'],
+                    });
                 }
 
                 return null;
@@ -232,7 +241,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const domLayout = options.domLayout;
                 const validLayouts: DomLayoutType[] = ['autoHeight', 'normal', 'print'];
                 if (domLayout && !validLayouts.includes(domLayout)) {
-                    return `domLayout must be one of [${validLayouts.join()}], currently it's ${domLayout}`;
+                    return validationWarning(320, { property: 'domLayout', allowed: validLayouts, value: domLayout });
                 }
                 return null;
             },
@@ -495,7 +504,11 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     return 'Expected `RowSelectionOptions` object for the `rowSelection` property.';
                 }
                 if (rowSelection && rowSelection.mode !== 'multiRow' && rowSelection.mode !== 'singleRow') {
-                    return `Selection mode "${(rowSelection as any).mode}" is invalid. Use one of 'singleRow' or 'multiRow'.`;
+                    return validationWarning(320, {
+                        property: 'Selection mode',
+                        allowed: ['singleRow', 'multiRow'],
+                        value: (rowSelection as any).mode,
+                    });
                 }
                 return null;
             },
@@ -679,9 +692,13 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         renderingMode: {
             validate: (options) => {
                 const renderingMode = options.renderingMode;
-                const validModes: GridOptions['renderingMode'][] = ['default', 'legacy'];
+                const validModes = ['default', 'legacy'];
                 if (renderingMode && !validModes.includes(renderingMode)) {
-                    return `renderingMode must be one of [${validModes.join()}], currently it's ${renderingMode}`;
+                    return validationWarning(320, {
+                        property: 'renderingMode',
+                        allowed: validModes,
+                        value: renderingMode,
+                    });
                 }
                 return null;
             },

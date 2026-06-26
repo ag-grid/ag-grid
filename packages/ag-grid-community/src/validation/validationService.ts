@@ -11,7 +11,6 @@ import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
 import type { RowNodeEventType } from '../interfaces/iRowNode';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import type { IconName } from '../utils/icon';
-import { _warnOnce } from '../utils/log';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
 import { _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';
@@ -240,7 +239,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         });
         if (warnings.size > 0) {
             for (const warning of warnings) {
-                _warnOnce(warning);
+                _warn(322, { message: warning });
             }
         }
         for (let i = 0, len = idWarnings.length; i < len; ++i) {

@@ -46,9 +46,11 @@ describe('ag-grid parentId tree data warnings', () => {
             treeDataParentIdField: 'parentId',
         });
 
-        expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: getRowId callback not provided, tree data with parent id cannot be built.'
-        );
+        expect(
+            consoleWarnSpy.mock.calls.some((c) =>
+                c.join(' ').includes('getRowId callback not provided, tree data with parent id cannot be built.')
+            )
+        ).toBe(true);
 
         await new GridRows(api, 'rowData').check('empty');
     });

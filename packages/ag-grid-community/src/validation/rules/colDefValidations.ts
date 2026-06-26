@@ -308,7 +308,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 if (typeof type === 'string') {
                     return null;
                 }
-                return "colDef.type should be of type 'string' | 'string[]'";
+                return validationWarning(321, { property: 'colDef.type', expected: "of type 'string' | 'string[]'" });
             },
         },
         rowSpan: {
