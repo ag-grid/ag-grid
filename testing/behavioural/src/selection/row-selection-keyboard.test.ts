@@ -678,4 +678,35 @@ describe('Row Selection with Keyboard', () => {
             `);
         });
     });
+
+    test('pressing SPACE on a focused full-width group row toggles its selection', async () => {
+        const [api, actions] = createGrid({
+            columnDefs: [{ field: 'sport', rowGroup: true, hide: true }, { field: 'athlete' }],
+            rowData: [
+                { sport: 'football', athlete: 'Alice' },
+                { sport: 'football', athlete: 'Bob' },
+                { sport: 'rugby', athlete: 'Carol' },
+            ],
+            groupDisplayType: 'groupRows',
+            rowSelection: { mode: 'multiRow' },
+        });
+        await new GridRows(api, `SPACE on full-width group row setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP collapsed id:row-group-sport-football
+            │ ├── LEAF hidden id:0 sport:"football" athlete:"Alice"
+            │ └── LEAF hidden id:1 sport:"football" athlete:"Bob"
+            └─┬ LEAF_GROUP collapsed id:row-group-sport-rugby
+            · └── LEAF hidden id:2 sport:"rugby" athlete:"Carol"
+        `);
+
+        pressSpaceKey(actions.getRowByIndex(0)!);
+        await new GridRows(api, `SPACE on full-width group row final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP selected collapsed id:row-group-sport-football
+            │ ├── LEAF hidden id:0 sport:"football" athlete:"Alice"
+            │ └── LEAF hidden id:1 sport:"football" athlete:"Bob"
+            └─┬ LEAF_GROUP collapsed id:row-group-sport-rugby
+            · └── LEAF hidden id:2 sport:"rugby" athlete:"Carol"
+        `);
+    });
 });

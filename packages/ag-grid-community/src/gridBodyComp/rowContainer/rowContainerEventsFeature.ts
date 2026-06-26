@@ -9,7 +9,7 @@ import {
 import { BeanStub } from '../../context/beanStub';
 import type { EditService } from '../../edit/editService';
 import type { AgColumn } from '../../entities/agColumn';
-import { _getCtrlASelectsRows, _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
+import { _getCtrlASelectsRows, _getSelectAll, _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
 import type { GetNoteParams } from '../../interfaces/notes';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -187,6 +187,13 @@ export class RowContainerEventsFeature extends BeanStub {
 
             case KeyCode.TAB:
                 rowCtrl.onTabKeyDown(keyboardEvent);
+                return;
+
+            case KeyCode.SPACE:
+                if (_isRowSelection(this.gos)) {
+                    this.beans.selectionSvc?.handleSelectionEvent(keyboardEvent, rowCtrl.rowNode, 'spaceKey');
+                }
+                keyboardEvent.preventDefault();
                 return;
 
             default:
