@@ -800,6 +800,20 @@ export const AG_GRID_ERRORS = {
         }
         return message;
     },
+    308: ({
+        version,
+        apiMethod,
+        replacement,
+        message,
+    }: {
+        version: string;
+        apiMethod: string;
+        replacement?: string;
+        message?: string;
+    }) => {
+        const replacementMessage = replacement ? `Please use ${replacement} instead. ` : '';
+        return `Since ${version} api.${apiMethod} is deprecated. ${replacementMessage}${message ?? ''}`;
+    },
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
