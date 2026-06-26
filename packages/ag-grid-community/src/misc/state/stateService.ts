@@ -347,7 +347,7 @@ export class StateService extends BeanStub implements NamedBean {
         const deferredFilterState = this.deferredFilterState;
         if (deferredFilterState) {
             this.deferredFilterState = undefined;
-            this.setFilterState(deferredFilterState, 'api');
+            this.setFilterState(deferredFilterState, source);
         }
 
         const updateCachedState = this.updateCachedState.bind(this);
@@ -636,7 +636,7 @@ export class StateService extends BeanStub implements NamedBean {
             : undefined;
     }
 
-    private setFilterState(filterState?: FilterState, source: FilterChangedEventSourceType = 'api'): void {
+    private setFilterState(filterState?: FilterState, source: 'gridInitializing' | 'api' = 'api'): void {
         const { filterManager, selectableFilter } = this.beans;
         const { filterModel, columnFilterState, advancedFilterModel, selectableFilters } = filterState ?? {
             filterModel: null,
@@ -648,7 +648,9 @@ export class StateService extends BeanStub implements NamedBean {
             selectableFilter?.setState(selectableFilters ?? undefined);
         }
         if (filterModel !== undefined || columnFilterState !== undefined) {
-            filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, source);
+            // `gridInitializing` is not a public filter source; programmatic state restore surfaces as `api`
+            const filterSource: FilterChangedEventSourceType = source === 'gridInitializing' ? 'api' : source;
+            filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, filterSource);
         }
         if (advancedFilterModel !== undefined) {
             filterManager?.setAdvFilterModel(advancedFilterModel ?? null, 'advancedFilter');
@@ -669,7 +671,7 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             }
         }
-        this.setFilterState(state, 'api');
+        this.setFilterState(state, source);
     }
 
     private getRangeSelectionState(): CellSelectionState | undefined {
