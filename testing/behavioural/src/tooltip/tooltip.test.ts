@@ -2,7 +2,7 @@ import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import type { GridOptions, Module } from 'ag-grid-community';
+import type { GridOptions, ICellRendererComp, ICellRendererParams, Module } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -216,5 +216,135 @@ describe('Tooltips', () => {
             ├── LEAF id:r1 row-number:"1" A:1
             └── LEAF id:r2 row-number:"2" A:2 result:"#ERROR!"
         `);
+    });
+
+    test('AG-17663 destroys cell renderer tooltip when cellRendererSelector swaps the renderer', async () => {
+        class TooltipRenderer implements ICellRendererComp {
+            private eGui!: HTMLElement;
+            public init(params: ICellRendererParams): void {
+                this.eGui = document.createElement('span');
+                this.eGui.textContent = String(params.value);
+                params.setTooltip('Cell renderer tooltip', () => true);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return false;
+            }
+        }
+
+        class PlainRenderer implements ICellRendererComp {
+            private eGui!: HTMLElement;
+            public init(params: ICellRendererParams): void {
+                this.eGui = document.createElement('span');
+                this.eGui.textContent = String(params.value);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return false;
+            }
+        }
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    field: 'A',
+                    valueGetter: (params) => (params.data?.showDetail ? 'detail' : 'plain'),
+                    tooltipValueGetter: () => 'ColDef tooltip',
+                    cellRendererSelector: (params) =>
+                        params.data?.showDetail ? { component: TooltipRenderer } : { component: PlainRenderer },
+                },
+            ],
+            rowData: [{ id: 'r1', showDetail: true }],
+            getRowId: (params) => String(params.data.id),
+            tooltipShowDelay: 200,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-renderer-swap', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
+
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(hasTooltipText('Cell renderer tooltip')).toBe(true);
+
+        await userEvent.unhover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(0);
+
+        for (let i = 0; i < 5; i++) {
+            const showDetail = i % 2 === 1;
+            api.setGridOption('rowData', [{ id: 'r1', showDetail }]);
+            await asyncSetTimeout(50);
+        }
+        // final state: plain renderer (no setTooltip), so only the ColDef tooltip should remain
+        api.setGridOption('rowData', [{ id: 'r1', showDetail: false }]);
+        await asyncSetTimeout(50);
+
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+
+        expect(hasTooltipText('Cell renderer tooltip')).toBe(false);
+        expect(getTooltips().length).toBeLessThanOrEqual(1);
+        expect(getTooltips()[0]).toHaveTextContent('ColDef tooltip');
+    });
+
+    test('AG-17663 destroys cell renderer tooltip when the selector swaps to no renderer', async () => {
+        class TooltipRenderer implements ICellRendererComp {
+            private eGui!: HTMLElement;
+            public init(params: ICellRendererParams): void {
+                this.eGui = document.createElement('span');
+                this.eGui.textContent = String(params.value);
+                params.setTooltip('Cell renderer tooltip', () => true);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return false;
+            }
+        }
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    field: 'A',
+                    valueGetter: (params) => (params.data?.showDetail ? 'detail' : 'plain'),
+                    tooltipValueGetter: () => 'ColDef tooltip',
+                    cellRendererSelector: (params) =>
+                        params.data?.showDetail ? { component: TooltipRenderer } : undefined,
+                },
+            ],
+            rowData: [{ id: 'r1', showDetail: true }],
+            getRowId: (params) => String(params.data.id),
+            tooltipShowDelay: 200,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-renderer-to-none', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
+
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(hasTooltipText('Cell renderer tooltip')).toBe(true);
+
+        await userEvent.unhover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(0);
+
+        api.setGridOption('rowData', [{ id: 'r1', showDetail: false }]);
+        await asyncSetTimeout(50);
+
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+
+        expect(hasTooltipText('Cell renderer tooltip')).toBe(false);
+        expect(getTooltips().length).toBeLessThanOrEqual(1);
+        expect(getTooltips()[0]).toHaveTextContent('ColDef tooltip');
     });
 });

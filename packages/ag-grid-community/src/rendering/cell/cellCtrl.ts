@@ -156,6 +156,8 @@ export class CellCtrl extends BeanStub {
 
     public tooltipFeature: TooltipFeature | undefined = undefined;
     public editorTooltipFeature: TooltipFeature | undefined = undefined;
+    // true when tooltipFeature was registered by the renderer via params.setTooltip, not the ColDef tooltip
+    private rendererOwnsTooltip = false;
 
     constructor(
         public readonly column: AgColumn,
@@ -221,6 +223,18 @@ export class CellCtrl extends BeanStub {
 
     private disableTooltipFeature() {
         this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
+        this.rendererOwnsTooltip = false;
+    }
+
+    // On a renderer class swap, tear down a renderer-registered tooltip and restore the ColDef tooltip.
+    public resetRendererTooltip(): void {
+        if (!this.rendererOwnsTooltip) {
+            return;
+        }
+        this.disableTooltipFeature();
+        if (this.column.isTooltipEnabled()) {
+            this.enableTooltipFeature();
+        }
     }
 
     public enableEditorTooltipFeature(editor: ICellEditor): void {
@@ -578,6 +592,7 @@ export class CellCtrl extends BeanStub {
                     this.disableTooltipFeature();
                 }
                 this.enableTooltipFeature(value, shouldDisplayTooltip);
+                this.rendererOwnsTooltip = true;
                 this.tooltipFeature?.refreshTooltip();
             },
         });
@@ -621,7 +636,6 @@ export class CellCtrl extends BeanStub {
             column,
             comp,
             suppressRefreshCell,
-            tooltipFeature,
         } = this;
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
         if (suppressRefreshCell) {
@@ -682,7 +696,7 @@ export class CellCtrl extends BeanStub {
             this.checkFormulaError();
         }
 
-        tooltipFeature?.refreshTooltip();
+        this.tooltipFeature?.refreshTooltip();
         this.refreshNoteState();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that

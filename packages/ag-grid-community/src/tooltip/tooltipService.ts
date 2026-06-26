@@ -354,7 +354,8 @@ export class TooltipService extends BeanStub implements NamedBean {
             }),
         };
 
-        return this.createTooltipFeature(tooltipCtrl, beans);
+        const tooltipFeature = this.createTooltipFeature(tooltipCtrl, beans);
+        return tooltipFeature ? ctrl.createBean(tooltipFeature, beans.context) : tooltipFeature;
     }
 
     public setupFullWidthRowTooltip(
