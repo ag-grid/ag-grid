@@ -57,6 +57,11 @@ export default [
                     property: 'entries',
                     message: 'Prefer Object.keys() to Object.entries() for performance reasons.',
                 },
+                {
+                    object: 'document',
+                    property: 'createElement',
+                    message: 'Prefer the _createElement helper from utils/element over document.createElement.',
+                },
             ],
             'no-restricted-imports': [
                 'error',
