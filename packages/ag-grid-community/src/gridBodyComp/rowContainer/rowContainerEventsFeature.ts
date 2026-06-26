@@ -141,13 +141,12 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private processFullWidthRowKeyboardEvent(rowCtrl: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
         const { rowNode } = rowCtrl;
-        const { focusSvc, navigation, notesSvc } = this.beans;
-        const focusedCell = focusSvc.getFocusedCell();
+        const focusedCell = this.beans.focusSvc.getFocusedCell();
         const column = focusedCell?.column as AgColumn;
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
 
         if (gridProcessingAllowed && eventName === 'keydown') {
-            this.processFullWidthRowKeyDown(rowCtrl, keyboardEvent, column, navigation, notesSvc);
+            this.processFullWidthRowKeyDown(rowCtrl, keyboardEvent, column);
         }
 
         if (eventName === 'keydown') {
@@ -158,16 +157,14 @@ export class RowContainerEventsFeature extends BeanStub {
     private processFullWidthRowKeyDown(
         rowCtrl: RowCtrl,
         keyboardEvent: KeyboardEvent,
-        focusedColumn: AgColumn | undefined,
-        navigation = this.beans.navigation,
-        notesSvc = this.beans.notesSvc
+        focusedColumn: AgColumn | undefined
     ): void {
         switch (keyboardEvent.key) {
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
-                navigation?.handlePageScrollingKey(keyboardEvent, true);
+                this.beans.navigation?.handlePageScrollingKey(keyboardEvent, true);
                 return;
 
             case KeyCode.LEFT:
@@ -182,7 +179,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 return;
 
             case KeyCode.F2:
-                this.processFullWidthRowNoteShortcut(rowCtrl, keyboardEvent, focusedColumn, notesSvc);
+                this.processFullWidthRowNoteShortcut(rowCtrl, keyboardEvent, focusedColumn, this.beans.notesSvc);
                 return;
 
             case KeyCode.TAB:
