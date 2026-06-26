@@ -42,6 +42,18 @@ WORK="${HARNESS_WORK:-${TMPDIR:-/tmp}/ag-htaccess-harness}"
 HTDOCS="$WORK/htdocs"
 
 # --- locate Apache across macOS / Linux (override with HTTPD=... HTTPD_MODULES=...) ---
+# If Apache or any required module is unavailable, SKIP (exit 0) rather than fail — so this target,
+# wired into `nx test:e2e`, stays green on machines/CI without Apache. Set HTTPD_REQUIRED=1 to turn
+# the skips into hard failures (e.g. an environment where Apache is meant to be present).
+REQUIRED_MODS="mpm_prefork unixd authz_core log_config mime dir alias rewrite headers"
+skip_or_fail() {
+  if [ "${HTTPD_REQUIRED:-}" = "1" ]; then echo "ERROR: $1 (HTTPD_REQUIRED=1)"; exit 1; fi
+  echo "==> SKIP test:htaccess — $1."
+  echo "    Install Apache (macOS: built-in; Debian/Ubuntu: apt-get install apache2; RHEL: yum install httpd)"
+  echo "    with mod_rewrite/mod_alias/mod_headers, or set HTTPD=/HTTPD_MODULES= to run the harness."
+  exit 0
+}
+
 HTTPD="${HTTPD:-}"
 if [ -z "$HTTPD" ]; then
   for c in httpd apache2 /usr/sbin/httpd /usr/sbin/apache2; do
@@ -49,7 +61,7 @@ if [ -z "$HTTPD" ]; then
     [ -x "$c" ] && { HTTPD="$c"; break; }
   done
 fi
-[ -n "$HTTPD" ] || { echo "No httpd/apache2 binary found. Install Apache (macOS: built-in; Debian/Ubuntu: 'apt-get install apache2'; RHEL: 'yum install httpd') or set HTTPD=/path/to/httpd."; exit 1; }
+[ -n "$HTTPD" ] || skip_or_fail "no httpd/apache2 binary found"
 
 MODS="${HTTPD_MODULES:-}"
 if [ -z "$MODS" ]; then
@@ -57,7 +69,10 @@ if [ -z "$MODS" ]; then
     [ -f "$d/mod_rewrite.so" ] && { MODS="$d"; break; }
   done
 fi
-[ -n "$MODS" ] && [ -f "$MODS/mod_rewrite.so" ] || { echo "Apache modules dir not found (need mod_rewrite.so). Set HTTPD_MODULES=/path/to/modules."; exit 1; }
+[ -n "$MODS" ] || skip_or_fail "Apache modules directory not found"
+for m in $REQUIRED_MODS; do
+  [ -f "$MODS/mod_$m.so" ] || skip_or_fail "required Apache module mod_$m.so not found in $MODS"
+done
 echo "==> using httpd: $HTTPD ; modules: $MODS"
 
 rm -rf "$WORK"; mkdir -p "$HTDOCS/charts" "$WORK/logs"

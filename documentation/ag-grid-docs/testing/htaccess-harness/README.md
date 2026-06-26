@@ -80,6 +80,12 @@ It runs as the invoking user on a high port (no root) and writes everything to `
 no distro Apache config / `APACHE_*` envvars. If detection misses your layout, set `HTTPD=` and
 `HTTPD_MODULES=`.
 
+**Skips cleanly when Apache is absent.** If no Apache binary or a required module is missing, the
+harness prints a `SKIP` line and **exits 0** — so it doesn't fail `nx test:e2e` (which it's wired into)
+on machines/CI without Apache. Set `HTTPD_REQUIRED=1` to turn those skips into hard failures (e.g. an
+environment where Apache is expected). Note a genuine `httpd` _start_ failure (bad config / malformed
+generated `.htaccess`) is still a hard failure — that's a real bug worth catching.
+
 ## The two expectation files
 
 Both are tab-separated: `host  path  expect_status  expect_location_substring`.

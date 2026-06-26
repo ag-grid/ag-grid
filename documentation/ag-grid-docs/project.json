@@ -172,7 +172,7 @@
     "test:e2e": {
       "command": "npx vitest",
       "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
-      "dependsOn": ["^pack"],
+      "dependsOn": ["^pack", "test:htaccess"],
       "options": {
         "cwd": "{projectRoot}",
         "config": "vitest.e2e.config.ts",
