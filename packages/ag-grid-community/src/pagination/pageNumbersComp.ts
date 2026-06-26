@@ -2,6 +2,7 @@ import { KeyCode, RefPlaceholder, _setAriaDisabled, _setAriaHidden, _setAriaLabe
 
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
+import { _createElement } from '../utils/element';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
 import { _getPageNumberItems } from './pageNumberItems';
@@ -190,10 +191,12 @@ export class PageNumbersComp extends Component {
     }
 
     private createPageButton(page: number, pageLabel: string): HTMLElement {
-        const button = document.createElement('div');
-        button.className = 'ag-paging-page-number';
-        button.setAttribute('role', 'button');
-        button.setAttribute(PAGE_ATTR, String(page - 1));
+        const button = _createElement({
+            tag: 'div',
+            cls: 'ag-paging-page-number',
+            role: 'button',
+            attrs: { [PAGE_ATTR]: String(page - 1) },
+        });
         button.textContent = this.formatNumber(page);
         _setAriaLabel(button, `${pageLabel} ${page}`);
         this.activateTabIndex([button]);
@@ -202,18 +205,22 @@ export class PageNumbersComp extends Component {
 
     // Current page is a non-interactive indicator (aria-current, no button role) so it cannot navigate.
     private createCurrentPage(page: number, pageLabel: string): HTMLElement {
-        const current = document.createElement('span');
-        current.className = 'ag-paging-page-number ag-paging-page-number-current';
+        const current = _createElement({
+            tag: 'span',
+            cls: 'ag-paging-page-number ag-paging-page-number-current',
+            attrs: { 'aria-current': 'page' },
+        });
         current.textContent = this.formatNumber(page);
-        current.setAttribute('aria-current', 'page');
         _setAriaLabel(current, `${pageLabel} ${page}`);
         return current;
     }
 
     private createEllipsis(index: number): HTMLElement {
-        const ellipsis = document.createElement('span');
-        ellipsis.className = 'ag-paging-page-number-ellipsis';
-        ellipsis.id = `${this.idPrefix}-page-ellipsis-${index}`;
+        const ellipsis = _createElement({
+            tag: 'span',
+            cls: 'ag-paging-page-number-ellipsis',
+            attrs: { id: `${this.idPrefix}-page-ellipsis-${index}` },
+        });
         ellipsis.textContent = '…';
         _setAriaHidden(ellipsis, true);
         return ellipsis;
