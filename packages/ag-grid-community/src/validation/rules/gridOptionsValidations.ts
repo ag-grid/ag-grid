@@ -5,7 +5,7 @@ import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, OptionsValidator, RequiredModule, Validations } from '../validationTypes';
-import { buildAllValidNames, validationWarning } from '../validationTypes';
+import { buildAllValidNames, deprecationWarning, validationWarning } from '../validationTypes';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -498,7 +498,11 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         rowSelection: {
             validate({ rowSelection }) {
                 if (rowSelection && typeof rowSelection === 'string') {
-                    return 'As of version 32.2.1, using `rowSelection` with the values "single" or "multiple" has been deprecated. Use the object value instead.';
+                    return deprecationWarning(306, {
+                        version: '32.2.1',
+                        name: 'using `rowSelection` with the values "single" or "multiple"',
+                        message: 'Use the object value instead.',
+                    });
                 }
                 if (rowSelection && typeof rowSelection !== 'object') {
                     return 'Expected `RowSelectionOptions` object for the `rowSelection` property.';
