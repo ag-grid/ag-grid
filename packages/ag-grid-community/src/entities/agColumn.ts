@@ -142,6 +142,8 @@ export class AgColumn<TValue = any>
     public filterActive = false;
     public sortDef: SortDef = getSortDefFromInput();
     public sortIndex: number | null | undefined = undefined;
+    /** Sort direction applied to this column's pivot result columns. Isolated from {@link sortDef}. */
+    public pivotSort: SortDirection = null;
     // measured header height when autoHeaderHeight is enabled
     public autoHeaderHeight: number | null = null;
     public tooltipEnabled = false;
@@ -529,6 +531,14 @@ export class AgColumn<TValue = any>
 
     public setSortDef(sortDef: SortDef): void {
         this.sortDef = sortDef;
+    }
+
+    public getPivotSort(): SortDirection {
+        return this.pivotSort;
+    }
+
+    public setPivotSort(pivotSort: SortDirection): void {
+        this.pivotSort = pivotSort;
     }
 
     public isSortable(): boolean {

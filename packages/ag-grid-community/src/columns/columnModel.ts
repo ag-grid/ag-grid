@@ -421,7 +421,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
         for (let i = 0; i < sourceTreeLen; ++i) {
             colsTree[serviceColsLen + i] = sourceTree[i];
         }
-        const restoreOrder = !newColDefs || _shouldMaintainColumnOrder(gos, showingPivotResult);
+        // An active interactive pivotSort forces strict pivot column order, overriding sticky-order preservation.
+        const suppressForPivotSort = showingPivotResult && !!beans.pivotColsSvc?.hasInteractivePivotSort();
+        const restoreOrder =
+            !suppressForPivotSort && (!newColDefs || _shouldMaintainColumnOrder(gos, showingPivotResult));
         const lastOrder = showingPivotResult ? this.lastPivotOrder : this.lastOrder;
         const prevOrder = restoreOrder ? lastOrder : null;
         const ordered = prevOrder == null ? colsList : applyPrevColumnsOrder(colsList, colsById, prevOrder);

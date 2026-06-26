@@ -126,6 +126,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressMakeColumnVisibleAfterUnGroup: false,
     treeData: false,
     rowGroupPanelSuppressSort: false,
+    pivotPanelSuppressSort: false,
     suppressGroupRowsSticky: false,
     rowModelType: 'clientSide',
     asyncTransactionWaitMillis: 50,

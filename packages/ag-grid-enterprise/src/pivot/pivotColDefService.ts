@@ -126,9 +126,15 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
 
         // sort by either user provided comparator, or our own one
-        const primaryColDef = primaryPivotColumns[index].colDef;
+        const primaryColumn = primaryPivotColumns[index];
+        const primaryColDef = primaryColumn.colDef;
         const pivotComparator = primaryColDef.pivotComparator;
-        const comparator = pivotComparator ? convertToHeaderNameComparator(pivotComparator) : headerNameComparator;
+        const baseComparator = pivotComparator ? convertToHeaderNameComparator(pivotComparator) : headerNameComparator;
+        // pivotSort is isolated from colDef.sort; 'desc' reverses the base order, 'asc'/null keep it ascending.
+        const comparator =
+            primaryColumn.pivotSort === 'desc'
+                ? (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) => baseComparator(b, a)
+                : baseComparator;
 
         const measureColumns = this.valueColsSvc?.columns;
         // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead

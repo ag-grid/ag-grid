@@ -268,10 +268,15 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
  * function reference or source equality.
  */
 function computePivotOrder(values: Map<string, any>, pivotColumns: AgColumn[], depth: number): string[] {
-    const comparator = pivotColumns[depth]?.colDef.pivotComparator;
+    const pivotColumn = pivotColumns[depth];
+    const comparator = pivotColumn?.colDef.pivotComparator;
     const keys = [...values.keys()];
     if (comparator) {
         keys.sort(comparator);
+    }
+    // Mirror the reversal applied in pivotColDefService so a pivotSort toggle is detected as an order change.
+    if (pivotColumn?.pivotSort === 'desc') {
+        keys.reverse();
     }
     if (depth === pivotColumns.length - 1) {
         return keys;

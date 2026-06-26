@@ -47,6 +47,8 @@ export interface IRowGroupColsService extends IOrderedColsService {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.  */
 export interface IPivotColsService extends IOrderedColsService {
     isStrictColumnOrder(): boolean;
+    /** True if any active pivot col has an interactive `pivotSort` direction set. */
+    hasInteractivePivotSort(): boolean;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.  */

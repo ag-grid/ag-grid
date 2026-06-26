@@ -82,6 +82,35 @@ const gridOptions = {
 }
 ```
 
+## Sorting Pivot Columns
+
+End users can sort the pivot columns interactively by clicking a pivot column's pill in the pivot panel or the
+Column Tool Panel. Clicking cycles the direction through ascending, descending, and none, mirroring how row group
+columns are sorted from their pills.
+
+{% apiDocumentation source="column-properties/properties.json" section="pivoting" names=["pivotSort"] /%}
+
+`pivotSort` is independent of `sort`: it controls the order of a pivoted column's result columns only, and neither
+direction flows to or from the column's own sort. By default pivot columns are ordered ascending with no sort icon,
+matching spreadsheet behaviour. When a `pivotComparator` is supplied, ascending uses that comparator's order and
+descending reverses it.
+
+{% gridExampleRunner title="Sorting Pivot Columns" name="sort-pivot-columns" /%}
+
+The direction can also be set through the API using `applyColumnState`:
+
+```{% frameworkTransform=true %}
+api.applyColumnState({
+    state: [{ colId: 'year', pivotSort: 'desc' }],
+});
+```
+
+Set the `pivotPanelSuppressSort` grid option to `true` to disable this interaction.
+
+{% note %}
+Interactive pivot sorting applies to the Client-Side Row Model only.
+{% /note %}
+
 ## Pivoting by Dates and Times
 
 When pivoting by date/time values, the grid can optionally generate pivot group columns based on components of the date/time.

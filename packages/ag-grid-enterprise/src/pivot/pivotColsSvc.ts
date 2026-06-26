@@ -46,7 +46,23 @@ export class PivotColsSvc extends OrderedColsService implements NamedBean, IPivo
         this.hasPivotComparator = hasPivotComparator;
     }
 
+    /** Computed live: a `pivotSort` toggle does not change pivot-column membership, so it can't be cached. */
+    public hasInteractivePivotSort(): boolean {
+        const cols = this.columns;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            if (cols[i].pivotSort != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public isStrictColumnOrder(): boolean {
-        return this.hasPivotComparator && !!this.gos.get('enableStrictPivotColumnOrder');
+        // An interactive pivotSort forces strict ordering regardless of `enableStrictPivotColumnOrder`,
+        // otherwise toggling pivot sort would silently fail to reorder the pivot columns.
+        return (
+            (this.hasPivotComparator && !!this.gos.get('enableStrictPivotColumnOrder')) ||
+            this.hasInteractivePivotSort()
+        );
     }
 }

@@ -1636,6 +1636,13 @@ export interface GridOptions<TData = any> {
     rowGroupPanelSuppressSort?: boolean;
 
     /**
+     * Set to `true` to suppress sort indicators and actions from the pivot panel and the column tool panel pivot pills.
+     * @default false
+     * @agModule `RowGroupingPanelModule`
+     */
+    pivotPanelSuppressSort?: boolean;
+
+    /**
      * Set to `true` prevent Group Rows from sticking to the top of the grid.
      * @default false
      * @initial
