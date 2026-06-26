@@ -2,7 +2,7 @@ import type { IEnvironment } from '../interfaces/iEnvironment';
 import { VERSION } from '../version';
 import sharedCSS from './shared/shared.css';
 
-export const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
+export const IS_SSR = typeof window !== 'object' || typeof document !== 'object';
 
 /** For testing, if true, only Vanilla examples will work and they will use legacy themes. */
 export const FORCE_LEGACY_THEMES = false;
