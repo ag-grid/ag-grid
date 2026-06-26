@@ -267,14 +267,26 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
  * Used to detect when a comparator's output changes (e.g. due to closure mutation) without relying on
  * function reference or source equality.
  */
+function ascendingStringComparator(a: string, b: string): number {
+    if (a < b) {
+        return -1;
+    } else if (a > b) {
+        return 1;
+    }
+    return 0;
+}
+
 function computePivotOrder(values: Map<string, any>, pivotColumns: AgColumn[], depth: number): string[] {
     const pivotColumn = pivotColumns[depth];
     const comparator = pivotColumn?.colDef.pivotComparator;
     const keys = [...values.keys()];
+    // Mirror pivotColDefService's base ordering (custom comparator, else ascending) so the snapshot tracks the
+    // rendered order; then mirror its pivotSort='desc' reversal so a toggle is detected as an order change.
     if (comparator) {
         keys.sort(comparator);
+    } else {
+        keys.sort(ascendingStringComparator);
     }
-    // Mirror the reversal applied in pivotColDefService so a pivotSort toggle is detected as an order change.
     if (pivotColumn?.pivotSort === 'desc') {
         keys.reverse();
     }

@@ -105,7 +105,8 @@ api.applyColumnState({
 });
 ```
 
-Set the `pivotPanelSuppressSort` grid option to `true` to disable this interaction.
+Set the `pivotPanelSuppressSort` grid option to `true` to disable this interaction. Pills for columns with
+`sortable: false` are not interactive, though `pivotSort` can still be set on them via `applyColumnState`.
 
 {% note %}
 Interactive pivot sorting applies to the Client-Side Row Model only.

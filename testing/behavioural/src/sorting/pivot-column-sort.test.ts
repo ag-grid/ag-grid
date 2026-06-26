@@ -87,6 +87,44 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
         expect(yearState.sort ?? null).toBeNull();
     });
 
+    test('desc reverses correctly when data insertion order differs from sorted order', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'sales', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            getRowId: ({ data }) => data.id,
+        };
+        const api = gridsManager.createGrid('pivotColumnSort', gridOptions);
+        // Insertion order (2022, 2020, 2021) deliberately differs from ascending order.
+        applyTransactionChecked(api, {
+            add: [
+                { id: 'a', country: 'USA', year: 2022, sales: 1 },
+                { id: 'b', country: 'USA', year: 2020, sales: 1 },
+                { id: 'c', country: 'USA', year: 2021, sales: 1 },
+            ],
+        });
+        await asyncSetTimeout(10);
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        await asyncSetTimeout(10);
+        expect(getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'))).toEqual([
+            'pivot_year_2022_sales',
+            'pivot_year_2021_sales',
+            'pivot_year_2020_sales',
+        ]);
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'asc' }] });
+        await asyncSetTimeout(10);
+        expect(getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'))).toEqual([
+            'pivot_year_2020_sales',
+            'pivot_year_2021_sales',
+            'pivot_year_2022_sales',
+        ]);
+    });
+
     test('setting colDef.sort does not affect pivotSort and vice versa', async () => {
         const api = createPivotGrid();
         await asyncSetTimeout(10);
