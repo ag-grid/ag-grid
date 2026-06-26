@@ -8,12 +8,17 @@ import {
     ModuleRegistry,
     PaginationModule,
     PinnedRowModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     FindModule,
@@ -23,7 +28,6 @@ ModuleRegistry.registerModules([
     PinnedRowModule,
     ClientSideRowModelModule,
     PaginationModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const VueExample = defineComponent({

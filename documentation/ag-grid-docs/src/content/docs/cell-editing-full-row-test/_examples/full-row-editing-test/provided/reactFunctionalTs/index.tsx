@@ -10,7 +10,7 @@ import {
     RenderApiModule,
     SelectEditorModule,
     TextEditorModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
@@ -18,6 +18,11 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import './styles.css';
 
 const { StrictMode, useCallback, useMemo, useRef, useState } = React;
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     ClientSideRowModelModule,
@@ -30,7 +35,6 @@ const modules = [
     CustomEditorModule,
     ColumnApiModule,
     RenderApiModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 function getRowData(): any[] {

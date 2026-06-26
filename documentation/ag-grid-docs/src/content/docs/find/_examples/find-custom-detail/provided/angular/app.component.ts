@@ -12,21 +12,19 @@ import {
     GridReadyEvent,
     ModuleRegistry,
     RowApiModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { FindModule, MasterDetailModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { DetailCellRenderer } from './detail-cell-renderer.component';
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    FindModule,
-    ToolbarModule,
-    ClientSideRowModelModule,
-    MasterDetailModule,
-    RowApiModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([FindModule, ToolbarModule, ClientSideRowModelModule, MasterDetailModule, RowApiModule]);
 
 @Component({
     selector: 'my-app',

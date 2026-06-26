@@ -2,11 +2,16 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GridReadyEvent, IDatasource } from 'ag-grid-community';
-import { InfiniteRowModelModule, ValidationModule } from 'ag-grid-community';
+import { InfiniteRowModelModule, enableDevValidations } from 'ag-grid-community';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-const modules = [InfiniteRowModelModule, ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : [])];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [InfiniteRowModelModule];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);

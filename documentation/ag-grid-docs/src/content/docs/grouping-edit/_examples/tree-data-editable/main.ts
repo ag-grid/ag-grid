@@ -3,21 +3,20 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberEditorModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingEditModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import type { BudgetRecord } from './data';
 import { getData } from './data';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    TreeDataModule,
-    RowGroupingEditModule,
-    NumberEditorModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, TreeDataModule, RowGroupingEditModule, NumberEditorModule]);
 
 let gridApi: GridApi<BudgetRecord>;
 

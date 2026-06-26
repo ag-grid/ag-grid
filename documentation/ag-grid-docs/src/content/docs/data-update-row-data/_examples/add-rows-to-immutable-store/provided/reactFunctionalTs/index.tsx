@@ -8,20 +8,18 @@ import {
     NumberEditorModule,
     PinnedRowModule,
     TextEditorModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
 
-const modules = [
-    ColumnApiModule,
-    ClientSideRowModelModule,
-    TextEditorModule,
-    NumberEditorModule,
-    PinnedRowModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [ColumnApiModule, ClientSideRowModelModule, TextEditorModule, NumberEditorModule, PinnedRowModule];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);

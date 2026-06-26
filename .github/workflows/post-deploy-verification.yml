@@ -22,7 +22,8 @@ concurrency:
 
 permissions:
   contents: read
-  actions: write
+  # read is sufficient: the only actions-scope consumer is `gh run list` below.
+  actions: read
 
 jobs:
   page-verification:

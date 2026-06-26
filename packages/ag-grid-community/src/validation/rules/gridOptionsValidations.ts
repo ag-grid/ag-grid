@@ -406,9 +406,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         paginationPanels: {
             validate: ({ paginationPanels }) => {
-                const validNames = new Set<string>(['pageSize', 'rowSummary', 'pageSummary']);
+                const validNames = new Set<string>(['pageSize', 'rowSummary', 'pageSummary', 'pageNumbers']);
                 if (paginationPanels != null && !Array.isArray(paginationPanels)) {
-                    return "'paginationPanels' expects an array of panel names or config objects: ['pageSize', 'rowSummary', 'pageSummary']";
+                    return "'paginationPanels' expects an array of panel names or config objects: ['pageSize', 'rowSummary', 'pageSummary', 'pageNumbers']";
                 }
                 if (
                     paginationPanels?.some((p) => {
@@ -421,7 +421,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                         return true;
                     })
                 ) {
-                    return "'paginationPanels' expects an array of panel names or config objects: ['pageSize', 'rowSummary', 'pageSummary']";
+                    return "'paginationPanels' expects an array of panel names or config objects: ['pageSize', 'rowSummary', 'pageSummary', 'pageNumbers']";
                 }
                 return null;
             },

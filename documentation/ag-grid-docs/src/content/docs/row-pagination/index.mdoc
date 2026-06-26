@@ -23,11 +23,12 @@ The pagination panel can be styled with CSS, use the class `ag-paging-panel` to 
 
 ## Pagination Panel Layout
 
-The pagination panel is composed of three built-in components that can be individually reordered or hidden via the `paginationPanels` grid option:
+The pagination panel is composed of built-in components that can be individually reordered or hidden via the `paginationPanels` grid option:
 
 - `pageSize` — the page size selector dropdown.
 - `rowSummary` — the row range summary (e.g. `1 to 10 of 50`).
 - `pageSummary` — navigation buttons (first, previous, next, last) with an editable page number input for direct page navigation. Use `{ type: 'pageSummary', suppressPageInput: true }` to show a read-only page number instead.
+- `pageNumbers` — numbered page buttons for direct navigation, with ellipses for large page counts (e.g. `1 … 9 10 11 … 51`). Opt-in: not included in the default panels.
 
 The default order is: `['pageSize', 'rowSummary', 'pageSummary']`.
 
@@ -87,6 +88,24 @@ In this example the default pagination settings are changed. Note the following:
 - `api.paginationGoToPage(4)` is called to go to page 4 (0 based, so the 5th page)
 
 {% gridExampleRunner title="Custom Paging" name="custom-paging" /%}
+
+## Example: Page Number Navigation
+
+The `pageNumbers` panel renders a numbered button for each page, letting users jump straight to one. It is opt-in: register `PaginationPageNumbersModule` and add the panel to `paginationPanels`:
+
+```js
+import { PaginationPageNumbersModule } from 'ag-grid-community';
+
+ModuleRegistry.registerModules([ PaginationModule, PaginationPageNumbersModule ]);
+
+const gridOptions = {
+    paginationPanels: ['pageNumbers']
+}
+```
+
+The example below demonstrates page number navigation:
+
+{% gridExampleRunner title="Page Number Navigation" name="page-numbers" /%}
 
 ## Example: Custom Pagination Controls
 

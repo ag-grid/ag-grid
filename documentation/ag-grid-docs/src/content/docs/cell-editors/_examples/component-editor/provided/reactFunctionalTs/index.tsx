@@ -7,20 +7,19 @@ import {
     CustomEditorModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import NumericEditor from './numericEditor';
 import './styles.css';
 
-const modules = [
-    TextEditorModule,
-    TextFilterModule,
-    CustomEditorModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [TextEditorModule, TextFilterModule, CustomEditorModule, ClientSideRowModelModule];
 
 const GridExample = () => {
     const [rowData] = useState([

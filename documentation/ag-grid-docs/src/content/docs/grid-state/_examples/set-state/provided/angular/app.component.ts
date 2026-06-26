@@ -20,7 +20,7 @@ import {
     NumberFilterModule,
     PaginationModule,
     RowSelectionModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -33,6 +33,11 @@ import {
 import type { IOlympicData } from './interfaces';
 import './styles.css';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     NumberFilterModule,
     GridStateModule,
@@ -44,7 +49,6 @@ ModuleRegistry.registerModules([
     CellSelectionModule,
     SetFilterModule,
     PivotModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 @Component({

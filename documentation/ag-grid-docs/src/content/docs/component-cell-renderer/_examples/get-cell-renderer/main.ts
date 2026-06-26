@@ -8,11 +8,16 @@ import {
     RowApiModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { MedalCellRenderer } from './medalCellRenderer_typescript';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     RenderApiModule,
@@ -22,7 +27,6 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     RowApiModule,
     ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

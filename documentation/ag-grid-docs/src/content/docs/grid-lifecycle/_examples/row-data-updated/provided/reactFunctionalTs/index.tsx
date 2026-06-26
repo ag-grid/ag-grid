@@ -1,7 +1,7 @@
 import React, { StrictMode, useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import type { FirstDataRenderedEvent, RowDataUpdatedEvent } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
@@ -9,7 +9,12 @@ import { fetchDataAsync } from './data';
 import type { TAthlete } from './data';
 import './styles.css';
 
-const modules = [ClientSideRowModelModule, ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : [])];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [ClientSideRowModelModule];
 
 const updateRowCount = (id: string) => {
     const element = document.querySelector(`#${id} > .value`);

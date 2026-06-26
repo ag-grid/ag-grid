@@ -12,12 +12,17 @@ import {
     ClientSideRowModelModule,
     HighlightChangesModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import { getData, globalRowData } from './data';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
@@ -26,7 +31,6 @@ ModuleRegistry.registerModules([
     RowGroupingModule,
     RowGroupingPanelModule,
     HighlightChangesModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const UPDATE_COUNT = 20;

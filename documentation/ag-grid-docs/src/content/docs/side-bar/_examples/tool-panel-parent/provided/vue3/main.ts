@@ -10,7 +10,7 @@ import {
     type SideBarDef,
     TextFilterModule,
     type ToolPanelDef,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { ColumnsToolPanelModule, NewFiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
@@ -20,6 +20,11 @@ import { IOlympicData } from './interfaces';
 import './styles.css';
 
 // Register AG Grid modules
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     NumberFilterModule,
     ClientSideRowModelModule,
@@ -27,7 +32,6 @@ ModuleRegistry.registerModules([
     NewFiltersToolPanelModule,
     SetFilterModule,
     TextFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 function addStyles(parentEl: HTMLElement) {

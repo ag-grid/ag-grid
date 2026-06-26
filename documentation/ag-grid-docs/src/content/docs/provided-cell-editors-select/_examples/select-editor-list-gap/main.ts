@@ -3,15 +3,16 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     SelectEditorModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    SelectEditorModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, SelectEditorModule]);
 
 const languages = ['English', 'Spanish', 'French', 'Portuguese', '(other)'];
 

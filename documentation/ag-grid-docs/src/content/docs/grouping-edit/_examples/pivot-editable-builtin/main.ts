@@ -5,13 +5,18 @@ import {
     NumberEditorModule,
     NumberFilterModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { SalesRecord } from './data';
 import { getData } from './data';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     RowGroupingModule,
@@ -21,7 +26,6 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     TextFilterModule,
     PivotModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<SalesRecord>;

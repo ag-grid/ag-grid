@@ -11,12 +11,17 @@ import {
     PivotModule,
     SetFilterModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 import { useFetchJson } from './useFetchJson';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     NumberFilterModule,
@@ -26,7 +31,6 @@ const modules = [
     SetFilterModule,
     PivotModule,
     TextFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 function addStyles(parentEl) {

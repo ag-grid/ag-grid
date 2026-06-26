@@ -11,7 +11,7 @@ import {
     RowApiModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
     iconOverrides,
     themeQuartz,
 } from 'ag-grid-community';
@@ -20,6 +20,11 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomStatsToolPanel from './customStatsToolPanel';
 import type { IOlympicData } from './interfaces';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     ClientSideRowModelApiModule,
@@ -33,7 +38,6 @@ const modules = [
     SetFilterModule,
     RowApiModule,
     EventApiModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 const myTheme = themeQuartz.withPart(

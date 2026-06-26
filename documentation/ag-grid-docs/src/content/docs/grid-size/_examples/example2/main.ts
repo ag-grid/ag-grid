@@ -12,19 +12,18 @@ import {
     ModuleRegistry,
     RenderApiModule,
     RowApiModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { getData } from './data';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelApiModule,
-    RenderApiModule,
-    RowApiModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelApiModule, RenderApiModule, RowApiModule, ClientSideRowModelModule]);
 
 let minRowHeight = 25;
 let currentRowHeight: number;

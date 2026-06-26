@@ -5,19 +5,18 @@ import {
     ModuleRegistry,
     NumberEditorModule,
     TextEditorModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { getData } from './data';
 
-ModuleRegistry.registerModules([
-    TextEditorModule,
-    ColumnAutoSizeModule,
-    ClientSideRowModelModule,
-    NumberEditorModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([TextEditorModule, ColumnAutoSizeModule, ClientSideRowModelModule, NumberEditorModule]);
 
 const columnDefs: ColDef[] = [
     {

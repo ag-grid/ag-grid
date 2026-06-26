@@ -1,5 +1,5 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ModuleRegistry, NumberFilterModule, ValidationModule, createGrid } from 'ag-grid-community';
+import { ModuleRegistry, NumberFilterModule, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
@@ -14,6 +14,11 @@ import {
 import { getCountries } from './countries';
 import { createFakeServer, createServerSideDatasource } from './server';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     NumberFilterModule,
     ColumnsToolPanelModule,
@@ -24,7 +29,6 @@ ModuleRegistry.registerModules([
     ServerSideRowModelModule,
     SetFilterModule,
     RowGroupingPanelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const countries = getCountries();

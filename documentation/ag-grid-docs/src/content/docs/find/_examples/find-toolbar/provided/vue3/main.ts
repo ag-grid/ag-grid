@@ -1,17 +1,23 @@
 import { createApp, defineComponent, ref } from 'vue';
 
-import { ClientSideRowModelModule, ColDef, GridReadyEvent, ModuleRegistry, ValidationModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColDef,
+    GridReadyEvent,
+    ModuleRegistry,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    FindModule,
-    ToolbarModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([FindModule, ToolbarModule, ClientSideRowModelModule]);
 
 const VueExample = defineComponent({
     template: `

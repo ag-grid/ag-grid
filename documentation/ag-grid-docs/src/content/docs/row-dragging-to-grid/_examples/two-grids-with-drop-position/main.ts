@@ -14,11 +14,16 @@ import {
     RowDragModule,
     RowStyleModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 // Register the required feature modules with the Grid
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
     RowApiModule,
@@ -26,7 +31,6 @@ ModuleRegistry.registerModules([
     RowDragModule,
     RowStyleModule,
     ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let rowIdSequence = 100;

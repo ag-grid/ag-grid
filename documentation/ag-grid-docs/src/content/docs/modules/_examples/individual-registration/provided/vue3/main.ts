@@ -7,7 +7,7 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     ClipboardModule,
@@ -20,16 +20,16 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
 
-const sharedModules = [
-    ClientSideRowModelModule,
-    ColumnMenuModule,
-    ContextMenuModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+const sharedModules = [ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule];
 const leftModules = [SetFilterModule, ClipboardModule, CsvExportModule];
 const rightModules = [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];
 
 // Register shared Modules globally
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules(sharedModules);
 
 let rowIdSequence = 100;

@@ -8,20 +8,18 @@ import {
     ColumnApiModule,
     ColumnAutoSizeModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-const modules = [
-    TextFilterModule,
-    ColumnAutoSizeModule,
-    ColumnApiModule,
-    AlignedGridsModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [TextFilterModule, ColumnAutoSizeModule, ColumnApiModule, AlignedGridsModule, ClientSideRowModelModule];
 
 const GridExample = () => {
     const topGridRef = useRef<AgGridReact>(null);

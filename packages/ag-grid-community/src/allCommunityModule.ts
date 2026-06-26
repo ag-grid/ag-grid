@@ -32,6 +32,7 @@ import { EventApiModule } from './misc/apiEvents/apiEventModule';
 import { LocaleModule } from './misc/locale/localeModule';
 import { GridStateModule } from './misc/state/stateModule';
 import { PaginationModule } from './pagination/paginationModule';
+import { PaginationPageNumbersModule } from './pagination/paginationPageNumbersModule';
 import { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
 import { HighlightChangesModule } from './rendering/cell/highlightChangesModule';
 import { RenderApiModule } from './rendering/renderModule';
@@ -71,6 +72,7 @@ export const AllCommunityModule: _ModuleWithoutApi = {
         GridStateModule,
         AlignedGridsModule,
         PaginationModule,
+        PaginationPageNumbersModule,
         ColumnApiModule,
         RowApiModule,
         ScrollApiModule,

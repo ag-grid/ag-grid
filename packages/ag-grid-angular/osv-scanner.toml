@@ -164,3 +164,25 @@ reason = "undici is only used in testing/build, not in the final production buil
 [[IgnoredVulns]]
 id = "GHSA-vmh5-mc38-953g"
 reason = "undici is only used in testing/build, not in the final production build"
+
+# OpenSSF Scorecard 'Vulnerabilities' review (2026-06-26) - dev/build transitive deps
+# undici is pulled in only by build/test/docs tooling and is not bundled into any shipped package.
+[[IgnoredVulns]]
+id = "GHSA-vxpw-j846-p89q"
+reason = "undici is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-hm92-r4w5-c3mj"
+reason = "undici is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-p88m-4jfj-68fv"
+reason = "undici is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-35p6-xmwp-9g52"
+reason = "undici is only used in testing/build, not in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-g8m3-5g58-fq7m"
+reason = "undici is only used in testing/build, not in the final production build"

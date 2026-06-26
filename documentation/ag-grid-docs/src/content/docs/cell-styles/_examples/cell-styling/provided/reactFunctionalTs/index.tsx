@@ -7,20 +7,19 @@ import {
     ClientSideRowModelModule,
     NumberEditorModule,
     TextEditorModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-const modules = [
-    NumberEditorModule,
-    TextEditorModule,
-    CellStyleModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [NumberEditorModule, TextEditorModule, CellStyleModule, ClientSideRowModelModule];
 
 const ragCellClassRules: CellClassRules = {
     'rag-green-outer': (params) => params.value === 2008,

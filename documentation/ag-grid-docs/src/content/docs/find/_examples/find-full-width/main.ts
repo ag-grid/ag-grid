@@ -5,18 +5,18 @@ import type {
     IsFullWidthRowParams,
     RowHeightParams,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { getData, getLatinText } from './data';
 import { FullWidthCellRenderer } from './fullWidthCellRenderer';
 
-ModuleRegistry.registerModules([
-    FindModule,
-    ToolbarModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([FindModule, ToolbarModule, ClientSideRowModelModule]);
 
 const gridOptions: GridOptions = {
     columnDefs: [{ field: 'name' }, { field: 'continent' }, { field: 'language' }],

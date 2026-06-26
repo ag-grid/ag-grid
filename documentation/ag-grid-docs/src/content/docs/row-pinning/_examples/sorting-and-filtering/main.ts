@@ -4,11 +4,16 @@ import {
     ColumnApiModule,
     ModuleRegistry,
     PinnedRowModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
     themeQuartz,
 } from 'ag-grid-community';
 import { ContextMenuModule, SetFilterModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     PinnedRowModule,
@@ -16,7 +21,6 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     SetFilterModule,
     ColumnApiModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

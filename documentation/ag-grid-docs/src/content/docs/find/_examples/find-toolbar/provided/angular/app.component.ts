@@ -2,17 +2,23 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import { ClientSideRowModelModule, ColDef, GridReadyEvent, ModuleRegistry, ValidationModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColDef,
+    GridReadyEvent,
+    ModuleRegistry,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    FindModule,
-    ToolbarModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([FindModule, ToolbarModule, ClientSideRowModelModule]);
 
 @Component({
     selector: 'my-app',

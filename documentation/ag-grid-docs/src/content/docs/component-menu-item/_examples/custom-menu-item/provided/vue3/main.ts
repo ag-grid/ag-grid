@@ -7,7 +7,7 @@ import type {
     GridApi,
     GridReadyEvent,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import {
     CellSelectionModule,
     ClipboardModule,
@@ -19,6 +19,11 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 import MenuItem from './menuItemVue';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnMenuModule,
@@ -26,7 +31,6 @@ ModuleRegistry.registerModules([
     ExcelExportModule,
     CellSelectionModule,
     ClipboardModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const VueExample = defineComponent({

@@ -5,13 +5,18 @@ import {
     ModuleRegistry,
     RowApiModule,
     RowDragModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { Task } from './data';
 import { getData } from './data';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -19,7 +24,6 @@ ModuleRegistry.registerModules([
     RowApiModule,
     TreeDataModule,
     RowDragModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 function arrayEquals<T>(a: T[], b: T[]) {

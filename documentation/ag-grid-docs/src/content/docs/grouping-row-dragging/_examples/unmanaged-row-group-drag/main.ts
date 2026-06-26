@@ -5,8 +5,8 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     RowDragModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -18,6 +18,11 @@ import {
 
 import { getData } from './data';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     RowDragModule,
     ClientSideRowModelApiModule,
@@ -28,7 +33,6 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     RowGroupingModule,
     SetFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const rowDrag = function (params: RowDragCallbackParams) {

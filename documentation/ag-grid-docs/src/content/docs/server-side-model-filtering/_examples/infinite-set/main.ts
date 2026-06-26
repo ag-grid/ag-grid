@@ -10,7 +10,7 @@ import type {
     SetFilterValuesFuncParams,
     ValueFormatterParams,
 } from 'ag-grid-community';
-import { ModuleRegistry, TextFilterModule, ValidationModule, createGrid } from 'ag-grid-community';
+import { ModuleRegistry, TextFilterModule, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ContextMenuModule,
@@ -21,6 +21,11 @@ import {
 
 import { FakeServer } from './fakeServer';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
@@ -28,7 +33,6 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     MultiFilterModule,
     TextFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

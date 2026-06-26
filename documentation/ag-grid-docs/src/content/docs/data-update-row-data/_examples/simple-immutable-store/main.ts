@@ -6,10 +6,15 @@ import {
     ModuleRegistry,
     RowSelectionModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { CellSelectionModule, RowGroupingModule, StatusBarModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ColumnApiModule,
@@ -20,7 +25,6 @@ ModuleRegistry.registerModules([
     CellSelectionModule,
     RowGroupingModule,
     StatusBarModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 function getInitialData() {

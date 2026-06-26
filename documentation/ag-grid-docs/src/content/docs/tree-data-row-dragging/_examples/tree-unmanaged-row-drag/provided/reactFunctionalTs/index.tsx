@@ -7,7 +7,7 @@ import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     RowDragModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import type { GridOptions, RowDragEndEvent, RowDragMoveEvent, ValueFormatterParams } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
@@ -19,13 +19,12 @@ import { moveFiles } from './fileUtils';
 import type { IFile } from './fileUtils';
 import './style.css';
 
-const modules = [
-    ClientSideRowModelApiModule,
-    ClientSideRowModelModule,
-    RowDragModule,
-    TreeDataModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [ClientSideRowModelApiModule, ClientSideRowModelModule, RowDragModule, TreeDataModule];
 
 const STATIC_GRID_OPTIONS: GridOptions<IFile> = {
     columnDefs: [

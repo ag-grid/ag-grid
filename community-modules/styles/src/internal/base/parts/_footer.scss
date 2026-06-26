@@ -39,12 +39,59 @@
     }
 
     @include ag.keyboard-focus((ag-paging-button), 0px);
+    @include ag.keyboard-focus((ag-paging-page-number), 0px);
 
     .ag-paging-button,
     .ag-paging-description {
         margin: 0 var(--ag-grid-size);
         // avoids misalignment of buttons and text
         line-height: 0;
+    }
+
+    .ag-paging-page-numbers-panel {
+        display: flex;
+        align-items: center;
+        gap: calc(var(--ag-grid-size) * 1.5);
+    }
+
+    .ag-paging-page-numbers-panel .ag-paging-button {
+        margin: 0;
+    }
+
+    .ag-paging-page-numbers {
+        display: flex;
+        align-items: center;
+    }
+
+    .ag-paging-page-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 var(--ag-grid-size);
+        margin: 0 calc(var(--ag-grid-size) * 0.25);
+        border-radius: var(--ag-border-radius);
+        cursor: pointer;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .ag-paging-page-numbers-truncated .ag-paging-page-number {
+        padding: var(--ag-grid-size);
+    }
+
+    .ag-paging-page-number:hover {
+        background-color: var(--ag-row-hover-color);
+    }
+
+    .ag-paging-page-number-current {
+        cursor: default;
+        font-weight: 600;
+        background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 5%);
+    }
+
+    .ag-paging-page-number-ellipsis {
+        margin: 0 calc(var(--ag-grid-size) * 0.25);
+        pointer-events: none;
+        font-variant-numeric: tabular-nums;
     }
 
     .ag-paging-row-summary-panel {

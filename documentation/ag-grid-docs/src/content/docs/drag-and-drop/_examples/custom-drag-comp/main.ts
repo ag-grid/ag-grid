@@ -5,20 +5,19 @@ import {
     RowDragModule,
     RowStyleModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { getData } from './data';
 import { DragSourceRenderer } from './dragSourceRenderer_typescript';
 
-ModuleRegistry.registerModules([
-    TextFilterModule,
-    RowDragModule,
-    RowStyleModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([TextFilterModule, RowDragModule, RowStyleModule, ClientSideRowModelModule]);
 
 const rowClassRules = {
     'red-row': 'data.color == "Red"',

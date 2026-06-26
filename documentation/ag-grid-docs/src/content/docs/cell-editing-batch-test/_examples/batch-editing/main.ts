@@ -38,8 +38,8 @@ import {
     TextEditorModule,
     TextFilterModule,
     UndoRedoEditModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     AggregationModule,
@@ -68,6 +68,11 @@ import {
     _getDependentCells,
     _getRelatedRows,
 } from './utils';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     NumberEditorModule,
@@ -98,7 +103,6 @@ ModuleRegistry.registerModules([
     BatchEditModule,
     RenderApiModule,
     RowNumbersModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;

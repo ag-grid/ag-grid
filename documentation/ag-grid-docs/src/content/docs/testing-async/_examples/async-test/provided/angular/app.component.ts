@@ -9,18 +9,18 @@ import {
     ModuleRegistry,
     QuickFilterModule,
     RowApiModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { getData } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    RowApiModule,
-    QuickFilterModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([RowApiModule, QuickFilterModule, ClientSideRowModelModule]);
 
 @Component({
     standalone: true,

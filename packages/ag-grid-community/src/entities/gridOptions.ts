@@ -3452,9 +3452,17 @@ export interface RowSummaryPanelParams {
     type: 'rowSummary';
 }
 
-export type PaginationPanelParams = PageSummaryPanelParams | PageSizePanelParams | RowSummaryPanelParams;
+export interface PageNumbersPanelParams {
+    type: 'pageNumbers';
+}
 
-export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary' | PaginationPanelParams;
+export type PaginationPanelParams =
+    | PageSummaryPanelParams
+    | PageSizePanelParams
+    | RowSummaryPanelParams
+    | PageNumbersPanelParams;
+
+export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary' | 'pageNumbers' | PaginationPanelParams;
 
 export type PivotColumnGroupTotals = 'before' | 'after';
 export type PivotRowTotals = 'before' | 'after';

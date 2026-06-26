@@ -4,14 +4,19 @@ import {
     LargeTextEditorModule,
     ModuleRegistry,
     TextEditorModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, RichSelectModule } from 'ag-grid-enterprise';
 
 import type { IRow } from './data';
 import { getData } from './data';
 import { GenderCellRenderer } from './genderCellRenderer_typescript';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -21,7 +26,6 @@ ModuleRegistry.registerModules([
     RichSelectModule,
     TextEditorModule,
     LargeTextEditorModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const cellCellEditorParams = (params: ICellEditorParams<IRow>) => {

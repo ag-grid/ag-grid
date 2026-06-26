@@ -4,8 +4,8 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     TextEditorModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingEditModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
@@ -21,6 +21,11 @@ interface SalesRecord {
     amount: number;
 }
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     RowGroupingModule,
     RowGroupingEditModule,
@@ -28,7 +33,6 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     SetFilterModule,
     TextEditorModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 // Parse input to integer

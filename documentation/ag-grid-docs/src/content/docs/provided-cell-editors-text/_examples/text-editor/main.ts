@@ -3,17 +3,18 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     TextEditorModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { colors } from './colors';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    TextEditorModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, TextEditorModule]);
 
 const columnDefs: ColDef[] = [
     {

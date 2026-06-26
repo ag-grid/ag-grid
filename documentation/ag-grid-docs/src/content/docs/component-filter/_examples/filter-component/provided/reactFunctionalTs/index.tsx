@@ -7,7 +7,7 @@ import {
     CustomFilterModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact, getInstance } from 'ag-grid-react';
 
@@ -15,13 +15,12 @@ import { getData } from './data';
 import PartialMatchFilter from './partialMatchFilter';
 import './styles.css';
 
-const modules = [
-    TextFilterModule,
-    TextEditorModule,
-    CustomFilterModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [TextFilterModule, TextEditorModule, CustomFilterModule, ClientSideRowModelModule];
 
 function doesFilterPass({ model, node, handlerParams }: DoesFilterPassParams<any, any, string>): boolean {
     const value = handlerParams.getValue(node).toString().toLowerCase();

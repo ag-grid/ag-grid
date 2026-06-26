@@ -16,7 +16,7 @@ import {
     NumberFilterModule,
     PaginationModule,
     RowSelectionModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -29,6 +29,11 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     NumberFilterModule,
@@ -40,7 +45,6 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     CellSelectionModule,
     PivotModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const VueExample = defineComponent({

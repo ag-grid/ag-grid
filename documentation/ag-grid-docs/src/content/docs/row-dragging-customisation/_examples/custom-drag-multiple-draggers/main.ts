@@ -6,9 +6,14 @@ import {
     RowDragModule,
     RowSelectionModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     TextFilterModule,
@@ -16,7 +21,6 @@ ModuleRegistry.registerModules([
     RowDragModule,
     RowSelectionModule,
     ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const athleteRowDragTextCallback = function (params: IRowDragItem, dragItemCount: number) {

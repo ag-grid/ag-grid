@@ -1,0 +1,44 @@
+@use 'design-system' as *;
+
+.buttonGroupContainer {
+    display: flex;
+    gap: $spacing-size-2;
+    flex-direction: column;
+
+    @media screen and (min-width: $breakpoint-docs-search-small) {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+.buttonGroup {
+    display: flex;
+    align-items: center;
+}
+
+.groupButton {
+    display: flex;
+    align-items: center;
+    text-transform: capitalize;
+
+    &:not(:last-child) {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    & + & {
+        border-left: none;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    &.active {
+        background-color: var(--color-gray-200);
+        color: var(--color-gray-900);
+
+        #{$selector-darkmode} & {
+            background-color: var(--color-gray-700);
+            color: var(--color-gray-100);
+        }
+    }
+}

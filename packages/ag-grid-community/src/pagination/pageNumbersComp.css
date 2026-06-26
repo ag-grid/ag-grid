@@ -1,0 +1,50 @@
+.ag-paging-page-numbers-panel {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--ag-spacing) * 1.5);
+}
+
+.ag-paging-page-numbers {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--ag-spacing) * 0.5);
+}
+
+.ag-paging-page-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--ag-icon-size);
+    padding: 0 calc(var(--ag-spacing) * 0.5);
+    border-radius: var(--ag-border-radius);
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+}
+
+:where(.ag-paging-page-numbers-truncated) .ag-paging-page-number {
+    padding: var(--ag-spacing);
+}
+
+.ag-paging-page-number:hover {
+    background-color: var(--ag-row-hover-color);
+}
+
+.ag-paging-page-number-current {
+    cursor: default;
+    font-weight: 600;
+    background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 5%);
+}
+
+.ag-paging-page-number-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--ag-icon-size);
+    padding: 0 calc(var(--ag-spacing) * 0.5);
+    pointer-events: none;
+    font-variant-numeric: tabular-nums;
+}
+
+:where(.ag-paging-page-numbers-truncated) .ag-paging-page-number-ellipsis {
+    padding: var(--ag-spacing);
+}

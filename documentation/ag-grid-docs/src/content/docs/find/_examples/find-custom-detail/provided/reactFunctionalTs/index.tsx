@@ -11,21 +11,19 @@ import type {
     GetFindMatchesParams,
     GridReadyEvent,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowApiModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowApiModule, enableDevValidations } from 'ag-grid-community';
 import { FindModule, MasterDetailModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 import DetailCellRenderer from './detailCellRenderer';
 import './styles.css';
 
-const modules = [
-    FindModule,
-    ToolbarModule,
-    ClientSideRowModelModule,
-    MasterDetailModule,
-    RowApiModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [FindModule, ToolbarModule, ClientSideRowModelModule, MasterDetailModule, RowApiModule];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
