@@ -125,7 +125,10 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             supportedRowModels: ['clientSide', 'serverSide'],
             validate: (_colDef, { paginationAutoPageSize }) => {
                 if (paginationAutoPageSize) {
-                    return 'colDef.autoHeight is not supported with paginationAutoPageSize.';
+                    return validationWarning(318, {
+                        feature: 'colDef.autoHeight',
+                        conflictsWith: 'paginationAutoPageSize',
+                    });
                 }
                 return null;
             },
@@ -189,7 +192,10 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         flex: {
             validate: (_options, gridOptions) => {
                 if (gridOptions.autoSizeStrategy) {
-                    return 'colDef.flex is not supported with gridOptions.autoSizeStrategy';
+                    return validationWarning(318, {
+                        feature: 'colDef.flex',
+                        conflictsWith: 'gridOptions.autoSizeStrategy',
+                    });
                 }
                 return null;
             },
@@ -328,23 +334,32 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             ) => {
                 if (typeof rowSelection === 'object') {
                     if (rowSelection?.mode === 'singleRow' && rowSelection?.enableClickSelection) {
-                        return 'colDef.spanRows is not supported with rowSelection.clickSelection';
+                        return validationWarning(318, {
+                            feature: 'colDef.spanRows',
+                            conflictsWith: 'rowSelection.clickSelection',
+                        });
                     }
                 }
                 if (cellSelection) {
-                    return 'colDef.spanRows is not supported with cellSelection.';
+                    return validationWarning(318, { feature: 'colDef.spanRows', conflictsWith: 'cellSelection' });
                 }
                 if (suppressRowTransform) {
-                    return 'colDef.spanRows is not supported with suppressRowTransform.';
+                    return validationWarning(318, {
+                        feature: 'colDef.spanRows',
+                        conflictsWith: 'suppressRowTransform',
+                    });
                 }
                 if (!enableCellSpan) {
                     return 'colDef.spanRows requires enableCellSpan to be enabled.';
                 }
                 if (rowDragEntireRow) {
-                    return 'colDef.spanRows is not supported with rowDragEntireRow.';
+                    return validationWarning(318, { feature: 'colDef.spanRows', conflictsWith: 'rowDragEntireRow' });
                 }
                 if (enableCellTextSelection) {
-                    return 'colDef.spanRows is not supported with enableCellTextSelection.';
+                    return validationWarning(318, {
+                        feature: 'colDef.spanRows',
+                        conflictsWith: 'enableCellTextSelection',
+                    });
                 }
 
                 return null;

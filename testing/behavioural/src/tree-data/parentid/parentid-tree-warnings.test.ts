@@ -74,7 +74,9 @@ describe('ag-grid parentId tree data warnings', () => {
         });
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            "AG Grid: Cannot use both 'treeDataChildrenField' and 'treeDataParentIdField' at the same time."
+            'AG Grid: warning #318',
+            "'treeDataChildrenField' is not supported with 'treeDataParentIdField'.",
+            expect.anything()
         );
     });
 

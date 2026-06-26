@@ -260,7 +260,11 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide'],
             validate({ enableRowPinning, pinnedTopRowData, pinnedBottomRowData }) {
                 if (enableRowPinning && (pinnedTopRowData || pinnedBottomRowData)) {
-                    return 'Manual row pinning cannot be used together with pinned row data. Either set `enableRowPinning` to `false`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                    return validationWarning(318, {
+                        feature: 'Manual row pinning',
+                        conflictsWith: 'pinned row data',
+                        advice: 'Either set `enableRowPinning` to `false`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.',
+                    });
                 }
                 return null;
             },
@@ -269,7 +273,11 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide'],
             validate({ enableRowPinning, isRowPinnable, pinnedTopRowData, pinnedBottomRowData }) {
                 if (isRowPinnable && (pinnedTopRowData || pinnedBottomRowData)) {
-                    return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinnable`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                    return validationWarning(318, {
+                        feature: 'Manual row pinning',
+                        conflictsWith: 'pinned row data',
+                        advice: 'Either remove `isRowPinnable`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.',
+                    });
                 }
                 if (!enableRowPinning && isRowPinnable) {
                     return '`isRowPinnable` requires `enableRowPinning` to be set.';
@@ -281,7 +289,11 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide'],
             validate({ enableRowPinning, isRowPinned, pinnedTopRowData, pinnedBottomRowData }) {
                 if (isRowPinned && (pinnedTopRowData || pinnedBottomRowData)) {
-                    return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinned`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                    return validationWarning(318, {
+                        feature: 'Manual row pinning',
+                        conflictsWith: 'pinned row data',
+                        advice: 'Either remove `isRowPinned`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.',
+                    });
                 }
                 if (!enableRowPinning && isRowPinned) {
                     return '`isRowPinned` requires `enableRowPinning` to be set.';
@@ -580,10 +592,16 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                         }
                         if (treeDataChildrenField) {
                             if (getDataPath) {
-                                return "Cannot use both 'treeDataChildrenField' and 'getDataPath' at the same time.";
+                                return validationWarning(318, {
+                                    feature: "'treeDataChildrenField'",
+                                    conflictsWith: "'getDataPath'",
+                                });
                             }
                             if (treeDataParentIdField) {
-                                return "Cannot use both 'treeDataChildrenField' and 'treeDataParentIdField' at the same time.";
+                                return validationWarning(318, {
+                                    feature: "'treeDataChildrenField'",
+                                    conflictsWith: "'treeDataParentIdField'",
+                                });
                             }
                         }
                         if (treeDataParentIdField) {
@@ -591,7 +609,10 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                                 return 'getRowId callback not provided, tree data with parent id cannot be built.';
                             }
                             if (getDataPath) {
-                                return "Cannot use both 'treeDataParentIdField' and 'getDataPath' at the same time.";
+                                return validationWarning(318, {
+                                    feature: "'treeDataParentIdField'",
+                                    conflictsWith: "'getDataPath'",
+                                });
                             }
                         }
                         return null;
@@ -625,10 +646,16 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         autoGroupColumnDef: {
             validate({ autoGroupColumnDef, showOpenedGroup }) {
                 if (autoGroupColumnDef?.field && showOpenedGroup) {
-                    return 'autoGroupColumnDef.field and showOpenedGroup are not supported when used together.';
+                    return validationWarning(318, {
+                        feature: 'autoGroupColumnDef.field',
+                        conflictsWith: 'showOpenedGroup',
+                    });
                 }
                 if (autoGroupColumnDef?.valueGetter && showOpenedGroup) {
-                    return 'autoGroupColumnDef.valueGetter and showOpenedGroup are not supported when used together.';
+                    return validationWarning(318, {
+                        feature: 'autoGroupColumnDef.valueGetter',
+                        conflictsWith: 'showOpenedGroup',
+                    });
                 }
                 return null;
             },
