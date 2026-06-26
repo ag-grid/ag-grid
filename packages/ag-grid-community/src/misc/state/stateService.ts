@@ -647,13 +647,16 @@ export class StateService extends BeanStub implements NamedBean {
         if (selectableFilters !== undefined) {
             selectableFilter?.setState(selectableFilters ?? undefined);
         }
+        // A programmatic `api` restore reports `api`; init-time restore has no public source, so it keeps
+        // reporting the filter's own type (`gridInitializing` cannot be added to the public union without a break).
+        const isApi = source === 'api';
         if (filterModel !== undefined || columnFilterState !== undefined) {
-            // `gridInitializing` is not a public filter source; programmatic state restore surfaces as `api`
-            const filterSource: FilterChangedEventSourceType = source === 'gridInitializing' ? 'api' : source;
-            filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, filterSource);
+            const columnFilterSource: FilterChangedEventSourceType = isApi ? 'api' : 'columnFilter';
+            filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, columnFilterSource);
         }
         if (advancedFilterModel !== undefined) {
-            filterManager?.setAdvFilterModel(advancedFilterModel ?? null, 'advancedFilter');
+            const advancedFilterSource: FilterChangedEventSourceType = isApi ? 'api' : 'advancedFilter';
+            filterManager?.setAdvFilterModel(advancedFilterModel ?? null, advancedFilterSource);
         }
     }
 

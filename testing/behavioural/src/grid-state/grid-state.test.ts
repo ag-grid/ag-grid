@@ -1276,7 +1276,7 @@ describe('StateService - Grid State Management', () => {
             expect(sources.every((s) => s === 'api')).toBe(true);
         });
 
-        test('initialState filter restore fires onFilterChanged with source "api", not "columnFilter"', async () => {
+        test('initialState filter restore fires onFilterChanged with source "columnFilter"', async () => {
             const sources: (string | undefined)[] = [];
             gridsManager.createGrid('myGrid', {
                 columnDefs: defaultColumnDefs,
@@ -1290,7 +1290,7 @@ describe('StateService - Grid State Management', () => {
             await asyncSetTimeout(50);
 
             expect(sources.length).toBeGreaterThan(0);
-            expect(sources.every((s) => s === 'api')).toBe(true);
+            expect(sources.every((s) => s === 'columnFilter')).toBe(true);
         });
     });
 
