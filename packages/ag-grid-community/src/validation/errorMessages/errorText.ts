@@ -848,6 +848,7 @@ export const AG_GRID_ERRORS = {
     }) => `'${key}' requires '${failedKey}' to be one of [${(required ?? []).join(', ')}]. ${reason ?? ''}`,
     316: ({ property, value, expectedType }: { property: string; value?: unknown; expectedType: string }) =>
         `AG Grid - unable to update chart as invalid params supplied:  \`${property}: ${String(value)}\`, expected ${expectedType}.`,
+    317: ({ property, min }: { property: string; min: number }) => `${property} should not be lower than ${min}`,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

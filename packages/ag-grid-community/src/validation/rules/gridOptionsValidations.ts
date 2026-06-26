@@ -5,7 +5,7 @@ import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, OptionsValidator, RequiredModule, Validations } from '../validationTypes';
-import { buildAllValidNames } from '../validationTypes';
+import { buildAllValidNames, validationWarning } from '../validationTypes';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -496,7 +496,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         noteHideDelay: {
             validate: (options) => {
                 if (options.noteHideDelay != null && options.noteHideDelay < 0) {
-                    return 'noteHideDelay should not be lower than 0';
+                    return validationWarning(317, { property: 'noteHideDelay', min: 0 });
                 }
                 return null;
             },
@@ -504,7 +504,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         noteShowDelay: {
             validate: (options) => {
                 if (options.noteShowDelay != null && options.noteShowDelay < 0) {
-                    return 'noteShowDelay should not be lower than 0';
+                    return validationWarning(317, { property: 'noteShowDelay', min: 0 });
                 }
                 return null;
             },
@@ -547,7 +547,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         tooltipHideDelay: {
             validate: (options) => {
                 if (options.tooltipHideDelay && options.tooltipHideDelay < 0) {
-                    return 'tooltipHideDelay should not be lower than 0';
+                    return validationWarning(317, { property: 'tooltipHideDelay', min: 0 });
                 }
                 return null;
             },
@@ -555,7 +555,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         tooltipShowDelay: {
             validate: (options) => {
                 if (options.tooltipShowDelay && options.tooltipShowDelay < 0) {
-                    return 'tooltipShowDelay should not be lower than 0';
+                    return validationWarning(317, { property: 'tooltipShowDelay', min: 0 });
                 }
                 return null;
             },
@@ -563,7 +563,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         tooltipSwitchShowDelay: {
             validate: (options) => {
                 if (options.tooltipSwitchShowDelay && options.tooltipSwitchShowDelay < 0) {
-                    return 'tooltipSwitchShowDelay should not be lower than 0';
+                    return validationWarning(317, { property: 'tooltipSwitchShowDelay', min: 0 });
                 }
                 return null;
             },
