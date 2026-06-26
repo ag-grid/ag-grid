@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console -- standalone CLI generator: writes rows to stdout / status to stderr */
 // Generate behavioural expectation rows for the CHARTS /charts redirect rules.
 //
 // Parses the rendered charts redirect block (Redirect 301 / RedirectMatch 301 / RedirectMatch 410,

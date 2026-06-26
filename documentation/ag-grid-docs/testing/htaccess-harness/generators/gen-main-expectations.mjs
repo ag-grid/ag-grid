@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console -- standalone CLI generator: writes rows to stdout / status to stderr */
 // gen-main-expectations.mjs
 //
 // Parse the emitted production .htaccess for the MAIN ag-grid-docs repo and synthesise
@@ -36,7 +37,7 @@ const add = (host, path, status, loc, family, note = '') => rows.push({ host, pa
 // its last segment contains no dot. Mirrors `RewriteCond %{REQUEST_URI} /+[^.]+$` + the rule
 // `^(.+[^/])$` -> `%{REQUEST_URI}/`.
 const isSlashRewritten = (p) => {
-    if (p.endsWith('/')) return false;
+    if (p.endsWith('/')) {return false;}
     const lastSeg = p.slice(p.lastIndexOf('/') + 1);
     return lastSeg.length > 0 && !lastSeg.includes('.');
 };
@@ -74,7 +75,7 @@ const locFor = (to) => to; // substring match works for both relative and absolu
 // ---- Redirect 301 (prefix match in mod_alias) ----
 for (const line of lines) {
     const m = line.match(reRedirect301);
-    if (!m) continue;
+    if (!m) {continue;}
     nRedirect301++;
     const from = m[1];
     const to = m[2];
@@ -113,7 +114,7 @@ for (const line of lines) {
 // ---- Redirect 410 (prefix) ----
 for (const line of lines) {
     const m = line.match(reRedirect410);
-    if (!m) continue;
+    if (!m) {continue;}
     // guard: don't double-count the "Redirect 301" lines (regex is anchored to 410 so fine)
     nRedirect410++;
     const from = m[1];
@@ -131,7 +132,7 @@ for (const line of lines) {
 // status + that Location CONTAINS the rule's target stem. Validation reconciles exact values.
 for (const line of lines) {
     const m = line.match(reRMatch);
-    if (!m) continue;
+    if (!m) {continue;}
     const status = m[1];
     let pat = m[2];
     const to = m[3] || '';
@@ -174,7 +175,7 @@ for (const line of lines) {
         if (new RegExp(pat).test(slashed)) {
             // use slashed sample so mod_alias fires (still need to re-predict backrefs)
             let loc2 = to;
-            if (to.includes('$1') || to.includes('$2')) loc2 = substituteBackrefs(pat, slashed, to);
+            if (to.includes('$1') || to.includes('$2')) {loc2 = substituteBackrefs(pat, slashed, to);}
             add('www', slashed, '301', loc2, family, `pattern ${pat} (slashed sample)`);
             // also record the no-slash -> slash hop to guard that nuance
             add('www', sample, '301', sample + '/', family + '-slashhop', `pattern ${pat}`);
@@ -194,8 +195,8 @@ for (const line of lines) {
 function synthFromPattern(pat) {
     let p = pat;
     const anchoredStart = p.startsWith('^');
-    if (anchoredStart) p = p.slice(1);
-    if (p.endsWith('$')) p = p.slice(0, -1);
+    if (anchoredStart) {p = p.slice(1);}
+    if (p.endsWith('$')) {p = p.slice(0, -1);}
 
     // If not anchored at start (e.g. "/archive$"), prefix something realistic.
     let prefix = anchoredStart ? '' : '/documentation';
@@ -220,8 +221,8 @@ function synthFromPattern(pat) {
                     j += 2;
                     continue;
                 }
-                if (p[j] === '(') depth++;
-                if (p[j] === ')') depth--;
+                if (p[j] === '(') {depth++;}
+                if (p[j] === ')') {depth--;}
                 j++;
             }
             const inner = p.slice(i + 1, j - 1); // content of group
@@ -230,7 +231,7 @@ function synthFromPattern(pat) {
             // Choose an alternative within the group (first alt before any top-level |)
             let alt = inner;
             const bar = topLevelBar(inner);
-            if (bar >= 0) alt = inner.slice(0, bar);
+            if (bar >= 0) {alt = inner.slice(0, bar);}
             // Expand the chosen alt as a sub-pattern.
             let altSample = synthInner(alt);
             // Apply quantifier: ? -> include once; * -> include once (to exercise remainder); + -> once.
@@ -266,11 +267,11 @@ function synthFromPattern(pat) {
         if (c === '[') {
             // char class: pick a letter; skip to ]
             let j = i + 1;
-            while (j < p.length && p[j] !== ']') j++;
+            while (j < p.length && p[j] !== ']') {j++;}
             out += 'a';
             i = j + 1;
             // possible quantifier
-            if (p[i] === '+' || p[i] === '*') i++;
+            if (p[i] === '+' || p[i] === '*') {i++;}
             continue;
         }
         // plain literal
@@ -279,7 +280,7 @@ function synthFromPattern(pat) {
     }
     let result = prefix + out;
     // normalise: ensure starts with /
-    if (!result.startsWith('/')) result = '/' + result;
+    if (!result.startsWith('/')) {result = '/' + result;}
     return result;
 }
 
@@ -307,10 +308,10 @@ function synthInner(s) {
         }
         if (c === '[') {
             let j = i + 1;
-            while (j < s.length && s[j] !== ']') j++;
+            while (j < s.length && s[j] !== ']') {j++;}
             out += 'a';
             i = j + 1;
-            if (s[i] === '+' || s[i] === '*') i++;
+            if (s[i] === '+' || s[i] === '*') {i++;}
             continue;
         }
         out += c;
@@ -326,9 +327,9 @@ function topLevelBar(inner) {
             i++;
             continue;
         }
-        if (inner[i] === '(') depth++;
-        else if (inner[i] === ')') depth--;
-        else if (inner[i] === '|' && depth === 0) return i;
+        if (inner[i] === '(') {depth++;}
+        else if (inner[i] === ')') {depth--;}
+        else if (inner[i] === '|' && depth === 0) {return i;}
     }
     return -1;
 }
@@ -338,7 +339,7 @@ function substituteBackrefs(pat, sample, to) {
     try {
         const re = new RegExp(pat);
         const mm = sample.match(re);
-        if (!mm) return to;
+        if (!mm) {return to;}
         return to.replace(/\$(\d)/g, (_, d) => mm[Number(d)] ?? '');
     } catch {
         return to;
@@ -415,7 +416,7 @@ const noShadow = [
     '/javascript-data-grid/aggregation/',
     '/angular-data-grid/component-cell-renderer/',
 ];
-for (const p of noShadow) add('www', p, '200', '', 'no-shadow', 'live page must stay 200');
+for (const p of noShadow) {add('www', p, '200', '', 'no-shadow', 'live page must stay 200');}
 
 // Explicit nuance: the bare dot-less no-slash /forum (matched by RedirectMatch 410 ^/forum(/|$))
 // first takes the harmless trailing-slash hop, THEN /forum/ 410s. Guards both halves.
@@ -440,5 +441,5 @@ console.error(
 console.error(`# Emitted ${rows.length} candidate rows.`);
 if (skipped.length) {
     console.error(`# SKIPPED ${skipped.length}:`);
-    for (const s of skipped) console.error('#   ' + s);
+    for (const s of skipped) {console.error('#   ' + s);}
 }
