@@ -1,4 +1,4 @@
-import { KeyCode, RefPlaceholder, _setAriaDisabled, _setAriaHidden, _setAriaLabel } from 'ag-stack';
+import { KeyCode, RefPlaceholder, _setAriaDisabled } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -195,10 +195,9 @@ export class PageNumbersComp extends Component {
             tag: 'div',
             cls: 'ag-paging-page-number',
             role: 'button',
-            attrs: { [PAGE_ATTR]: String(page - 1) },
+            attrs: { [PAGE_ATTR]: String(page - 1), 'aria-label': `${pageLabel} ${page}` },
         });
         button.textContent = this.formatNumber(page);
-        _setAriaLabel(button, `${pageLabel} ${page}`);
         this.activateTabIndex([button]);
         return button;
     }
@@ -208,10 +207,9 @@ export class PageNumbersComp extends Component {
         const current = _createElement({
             tag: 'span',
             cls: 'ag-paging-page-number ag-paging-page-number-current',
-            attrs: { 'aria-current': 'page' },
+            attrs: { 'aria-current': 'page', 'aria-label': `${pageLabel} ${page}` },
         });
         current.textContent = this.formatNumber(page);
-        _setAriaLabel(current, `${pageLabel} ${page}`);
         return current;
     }
 
@@ -219,10 +217,9 @@ export class PageNumbersComp extends Component {
         const ellipsis = _createElement({
             tag: 'span',
             cls: 'ag-paging-page-number-ellipsis',
-            attrs: { id: `${this.idPrefix}-page-ellipsis-${index}` },
+            attrs: { id: `${this.idPrefix}-page-ellipsis-${index}`, 'aria-hidden': 'true' },
         });
         ellipsis.textContent = '…';
-        _setAriaHidden(ellipsis, true);
         return ellipsis;
     }
 
