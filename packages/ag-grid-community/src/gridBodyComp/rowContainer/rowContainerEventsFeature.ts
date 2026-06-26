@@ -190,6 +190,10 @@ export class RowContainerEventsFeature extends BeanStub {
                 return;
 
             case KeyCode.SPACE:
+                // leave SPACE to interactive controls inside custom full-width renderers (mirrors the cell path)
+                if (keyboardEvent.target !== rowCtrl.getCurrentRowElement()) {
+                    return;
+                }
                 if (_isRowSelection(this.gos)) {
                     this.beans.selectionSvc?.handleSelectionEvent(keyboardEvent, rowCtrl.rowNode, 'spaceKey');
                 }

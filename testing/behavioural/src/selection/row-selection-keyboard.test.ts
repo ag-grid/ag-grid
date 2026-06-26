@@ -709,4 +709,38 @@ describe('Row Selection with Keyboard', () => {
             · └── LEAF hidden id:2 sport:"rugby" athlete:"Carol"
         `);
     });
+
+    test('SPACE on an interactive control inside a full-width row is left to the control, not row selection', async () => {
+        const [api, actions] = createGrid({
+            columnDefs: [{ field: 'sport' }, { field: 'athlete' }],
+            rowData: [
+                { sport: 'football', athlete: 'Alice' },
+                { sport: 'rugby', athlete: 'Bob' },
+            ],
+            isFullWidthRow: (p) => (p.rowNode.rowIndex ?? -1) === 0,
+            fullWidthCellRenderer: () => '<button class="fw-btn">x</button>',
+            rowSelection: { mode: 'multiRow' },
+        });
+        await new GridRows(api, `SPACE in full-width control setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 sport:"football" athlete:"Alice"
+            └── LEAF id:1 sport:"rugby" athlete:"Bob"
+        `);
+
+        // SPACE on a focusable control inside the full-width renderer must not toggle the row.
+        pressSpaceKey(actions.getRowByIndex(0)!.querySelector<HTMLElement>('.fw-btn')!);
+        await new GridRows(api, `SPACE on full-width child control`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 sport:"football" athlete:"Alice"
+            └── LEAF id:1 sport:"rugby" athlete:"Bob"
+        `);
+
+        // SPACE on the full-width row itself still toggles its selection.
+        pressSpaceKey(actions.getRowByIndex(0)!);
+        await new GridRows(api, `SPACE on full-width row`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF selected id:0 sport:"football" athlete:"Alice"
+            └── LEAF id:1 sport:"rugby" athlete:"Bob"
+        `);
+    });
 });
