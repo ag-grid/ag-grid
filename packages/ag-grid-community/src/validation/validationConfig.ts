@@ -9,6 +9,10 @@ export interface DevValidationOptions {
      * Makes matching diagnostics throw synchronously after logging, so e2e/agent test runs fail
      * loudly. Inclusive threshold: `'error'` throws on errors only; `'warning'` on warnings and
      * errors; `'deprecation'` on deprecations, warnings and errors. Default `false`.
+     *
+     * A diagnostic raised during grid initialisation throws out of bean wiring, leaving the grid
+     * partially constructed and unusable — intended for test harnesses that recreate the grid on
+     * failure, not for reuse after a throw. Not for production builds.
      */
     throwOn?: 'error' | 'warning' | 'deprecation' | false;
 }

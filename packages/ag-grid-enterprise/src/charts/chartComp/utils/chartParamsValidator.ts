@@ -10,7 +10,7 @@ import type {
     UpdateRangeChartParams,
     ValidationWarning,
 } from 'ag-grid-community';
-import { _deprecated, _warn, validationWarning } from 'ag-grid-community';
+import { _deprecated, _warn, emitValidationWarning, validationWarning } from 'ag-grid-community';
 
 import type { CommonCreateChartParams } from '../../chartService';
 import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
@@ -36,14 +36,6 @@ const createEnterpriseMessage = (feature: string) => {
     const url = 'https://www.ag-grid.com/javascript-data-grid/integrated-charts-installation/';
     return `${feature} is not supported in AG Charts Community ('ag-charts-enterprise' hasn't been loaded). See ${url} for more details.`;
 };
-
-function emitChartWarning(warning: string | ValidationWarning): void {
-    if (typeof warning === 'string') {
-        _warn(322, { message: warning });
-    } else {
-        warning.emit();
-    }
-}
 
 interface ValidationFunction<T, K extends keyof T = keyof T, V = T[K]> {
     property: K;
@@ -265,7 +257,7 @@ function validateProperties<T extends object>(
                 continue;
             }
             if (validationResult === false) {
-                emitChartWarning(warnMessage(value));
+                emitValidationWarning(warnMessage(value));
                 return false;
             }
             // If the validation function returned a 'fix' value, we need to return an updated property set.
@@ -274,7 +266,7 @@ function validateProperties<T extends object>(
             /// Then we update the cloned object with the 'fixed' value
             validatedProperties[property] = validationResult;
             if (warnIfFixed) {
-                emitChartWarning(warnMessage(value));
+                emitValidationWarning(warnMessage(value));
             }
         }
     }

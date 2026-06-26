@@ -20,7 +20,7 @@ import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidator, RequiredOptions, ValidationWarning } from './validationTypes';
-import { validationWarning } from './validationTypes';
+import { emitValidationWarning, validationWarning } from './validationTypes';
 
 export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validation' as const;
@@ -239,7 +239,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         });
         if (warnings.size > 0) {
             for (const warning of warnings) {
-                _warn(322, { message: warning });
+                emitValidationWarning(warning);
             }
         }
         for (let i = 0, len = idWarnings.length; i < len; ++i) {

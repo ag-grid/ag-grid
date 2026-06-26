@@ -26,6 +26,18 @@ export function deprecationWarning<TId extends ErrorId>(errorId: TId, params: Ge
     return { errorId, emit: () => (_deprecated as (id: ErrorId, params: unknown) => void)(errorId, params) };
 }
 
+/**
+ * Emits a validation result that may be either a first-class {@link ValidationWarning} or a legacy
+ * free-text string (logged under the generic id 322).
+ */
+export function emitValidationWarning(warning: string | ValidationWarning): void {
+    if (typeof warning === 'string') {
+        _warn(322, { message: warning });
+    } else {
+        warning.emit();
+    }
+}
+
 // Vue adds these properties to all objects, so we ignore them when checking for invalid properties
 const VUE_FRAMEWORK_PROPS = ['__ob__', '__v_skip', '__metadata__'];
 
