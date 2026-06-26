@@ -20,7 +20,7 @@ import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
-import type { DependentValues, OptionsValidator, RequiredOptions } from './validationTypes';
+import type { DependentValues, OptionsValidator, RequiredOptions, ValidationWarning } from './validationTypes';
 
 export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validation' as const;
@@ -191,6 +191,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
         // Run value-level validation only for properties marked valid
         const warnings = new Set<string>();
+        const idWarnings: ValidationWarning[] = [];
 
         optionKeys.forEach((key: keyof T) => {
             if (isValidMap.get(key as string) === false) {
@@ -231,7 +232,11 @@ export class ValidationService extends BeanStub implements NamedBean {
             if (validate) {
                 const warning = validate(options, this.gridOptions, this.beans);
                 if (warning) {
-                    warnings.add(warning);
+                    if (typeof warning === 'string') {
+                        warnings.add(warning);
+                    } else {
+                        idWarnings.push(warning);
+                    }
                     return;
                 }
             }
@@ -240,6 +245,9 @@ export class ValidationService extends BeanStub implements NamedBean {
             for (const warning of warnings) {
                 _warnOnce(warning);
             }
+        }
+        for (let i = 0, len = idWarnings.length; i < len; ++i) {
+            idWarnings[i].emit();
         }
     }
 

@@ -4,7 +4,7 @@ import { _isSortDefValid, isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
-import { buildAllValidNames } from '../validationTypes';
+import { buildAllValidNames, validationWarning } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
 function quote(s: string): string {
@@ -177,7 +177,11 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     colDef.cellRenderer === 'agGroupCellRenderer';
 
                 if (groupColumn && 'checkbox' in colDef.cellRendererParams) {
-                    return 'Since v33.0, `cellRendererParams.checkbox` has been deprecated. Use `rowSelection.checkboxLocation = "autoGroupColumn"` instead.';
+                    return validationWarning(306, {
+                        version: '33.0',
+                        name: 'cellRendererParams.checkbox',
+                        message: 'Use `rowSelection.checkboxLocation = "autoGroupColumn"` instead.',
+                    });
                 }
                 return null;
             },
