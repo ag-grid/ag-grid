@@ -22,30 +22,62 @@ MAIN_REPO="$(cd "$DOCS_DIR/../.." && pwd)"                   # clean-latest
 CHARTS_REPO="${CHARTS_REPO:-$MAIN_REPO/../charts-clean}"
 CHARTS_PKG="$CHARTS_REPO/packages/ag-charts-website"
 PORT="${PORT:-8899}"
+
+# Which site host the redirect targets should resolve to, taken from URL_CONFIG in src/constants.ts.
+# Selected by the Nx configuration via `--env staging|production`; defaults to production (local).
+HTACCESS_ENV="${HTACCESS_ENV:-production}"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --env) HTACCESS_ENV="$2"; shift 2;;
+    --env=*) HTACCESS_ENV="${1#*=}"; shift;;
+    *) shift;;
+  esac
+done
+case "$HTACCESS_ENV" in staging|production) ;; *) echo "invalid --env '$HTACCESS_ENV' (use staging|production)"; exit 1;; esac
+
 # Work dir lives OUTSIDE the repo tree on purpose: if the docroot were inside the project, Apache
 # would walk up and read real ancestor .htaccess files (which contain <IfModule>, invalid in that
 # context) and 500. ${TMPDIR} is outside the repo.
 WORK="${HARNESS_WORK:-${TMPDIR:-/tmp}/ag-htaccess-harness}"
 HTDOCS="$WORK/htdocs"
-MODS=/usr/libexec/apache2
+
+# --- locate Apache across macOS / Linux (override with HTTPD=... HTTPD_MODULES=...) ---
+HTTPD="${HTTPD:-}"
+if [ -z "$HTTPD" ]; then
+  for c in httpd apache2 /usr/sbin/httpd /usr/sbin/apache2; do
+    if command -v "$c" >/dev/null 2>&1; then HTTPD="$(command -v "$c")"; break; fi
+    [ -x "$c" ] && { HTTPD="$c"; break; }
+  done
+fi
+[ -n "$HTTPD" ] || { echo "No httpd/apache2 binary found. Install Apache (macOS: built-in; Debian/Ubuntu: 'apt-get install apache2'; RHEL: 'yum install httpd') or set HTTPD=/path/to/httpd."; exit 1; }
+
+MODS="${HTTPD_MODULES:-}"
+if [ -z "$MODS" ]; then
+  for d in /usr/libexec/apache2 /usr/lib/apache2/modules /usr/lib64/httpd/modules /etc/httpd/modules /usr/lib/httpd/modules; do
+    [ -f "$d/mod_rewrite.so" ] && { MODS="$d"; break; }
+  done
+fi
+[ -n "$MODS" ] && [ -f "$MODS/mod_rewrite.so" ] || { echo "Apache modules dir not found (need mod_rewrite.so). Set HTTPD_MODULES=/path/to/modules."; exit 1; }
+echo "==> using httpd: $HTTPD ; modules: $MODS"
 
 rm -rf "$WORK"; mkdir -p "$HTDOCS/charts" "$WORK/logs"
 
-# --- emit a generated file from a repo via a throwaway vitest test (cleaned up after) ---
-emit() { # <repo-pkg-dir> <out-file>   (emits the production .htaccess from getHtaccessContent)
+# Resolve the canonical site host for this env from URL_CONFIG (src/constants.ts) — the single source
+# of truth, not hardcoded here. Emitted via `tsx` (the repo's existing TS runner); nothing is written
+# into the source tree. PUBLIC_BASE_URL='' satisfies urlWithBaseUrl under a plain node runtime.
+SITE_HOST="$(
+  cd "$DOCS_DIR" && PUBLIC_BASE_URL='' HENV="$HTACCESS_ENV" npx tsx -e \
+    "import('./src/constants.ts').then(m => process.stdout.write(m.URL_CONFIG[process.env.HENV].hosts[0]))" 2>/dev/null
+)"
+[ -n "$SITE_HOST" ] || { echo "could not resolve site host from URL_CONFIG for env '$HTACCESS_ENV'"; exit 1; }
+echo "==> env=$HTACCESS_ENV  site=https://$SITE_HOST"
+
+# --- emit the production .htaccess via tsx (NO temp files written into src/) ---
+emit() { # <repo-pkg-dir> <out-file>
   local pkg="$1" out="$2"
-  local t="$pkg/src/utils/htaccess/__harness_emit.test.ts"
-  cat > "$t" <<EOF
-import { writeFileSync } from 'node:fs';
-import { test } from 'vitest';
-import { getHtaccessContent } from './htaccessRules';
-test('emit', () => { writeFileSync(process.env.HARNESS_OUT!, getHtaccessContent({ env: 'production' })); });
-EOF
-  ( cd "$pkg" && HARNESS_OUT="$out" NX_DAEMON=false npx vitest run src/utils/htaccess/__harness_emit.test.ts >/dev/null 2>&1 )
-  local rc=$?
-  rm -f "$t"
+  ( cd "$pkg" && PUBLIC_BASE_URL='' HARNESS_OUT="$out" npx tsx -e \
+    "import('./src/utils/htaccess/htaccessRules.ts').then(async (m) => { const { writeFileSync } = await import('node:fs'); writeFileSync(process.env.HARNESS_OUT, m.getHtaccessContent({ env: 'production' })); })" >/dev/null 2>&1 )
   [ -s "$out" ] || return 1
-  return $rc
 }
 
 echo "==> emitting main .htaccess from $DOCS_DIR"
@@ -74,6 +106,12 @@ fi
 [ -s "$HTDOCS/.htaccess" ] || { echo "main .htaccess empty"; exit 1; }
 [ "$CHARTS_OK" = 0 ] || [ -s "$HTDOCS/charts/.htaccess" ] || { echo "charts .htaccess empty"; exit 1; }
 
+# Scope B: the generated rules carry the production canonical host (www.ag-grid.com). Map it to the
+# host resolved from URL_CONFIG for this env in both the served .htaccess and the expectations (below)
+# so the two stay consistent. Idempotent for production (maps the host to itself).
+sed -i.bak "s|https://www\.ag-grid\.com|https://$SITE_HOST|g" "$HTDOCS/.htaccess" && rm -f "$HTDOCS/.htaccess.bak"
+[ "$CHARTS_OK" = 1 ] && { sed -i.bak "s|https://www\.ag-grid\.com|https://$SITE_HOST|g" "$HTDOCS/charts/.htaccess" && rm -f "$HTDOCS/charts/.htaccess.bak"; }
+
 # --- create placeholder pages for every 200-expected path (so 'no-shadow' rows can be 200) ---
 while IFS=$'\t' read -r host path status loc; do
   [[ "$host" =~ ^#|^$ ]] && continue
@@ -83,9 +121,14 @@ while IFS=$'\t' read -r host path status loc; do
   fi
 done < <(cat "$HARNESS_DIR"/expectations.tsv "$HARNESS_DIR"/expectations.generated.tsv 2>/dev/null)
 
-# --- minimal httpd.conf ---
+# --- minimal httpd.conf (portable across macOS + Linux) ---
 cat > "$WORK/httpd.conf" <<EOF
-ServerRoot "/usr"
+# ServerRoot/runtime/mutex point at the writable work dir so we don't depend on a distro's
+# default lock/runtime dirs or the Debian APACHE_* envvars. Everything else is absolute.
+ServerRoot "$WORK"
+DefaultRuntimeDir "$WORK"
+Mutex file:$WORK default
+TypesConfig /dev/null
 Listen $PORT
 LoadModule mpm_prefork_module $MODS/mod_mpm_prefork.so
 LoadModule unixd_module $MODS/mod_unixd.so
@@ -110,9 +153,9 @@ DocumentRoot "$HTDOCS"
 </Directory>
 EOF
 
-/usr/sbin/httpd -f "$WORK/httpd.conf" -k start || { echo "httpd failed to start"; cat "$WORK/logs/error.log"; exit 1; }
+"$HTTPD" -f "$WORK/httpd.conf" -k start || { echo "httpd failed to start"; cat "$WORK/logs/error.log"; exit 1; }
 sleep 1
-stop_httpd() { /usr/sbin/httpd -f "$WORK/httpd.conf" -k stop >/dev/null 2>&1; }
+stop_httpd() { "$HTTPD" -f "$WORK/httpd.conf" -k stop >/dev/null 2>&1; }
 [ "${KEEP_RUNNING:-}" = "1" ] || trap stop_httpd EXIT
 
 # --- run assertions ---
@@ -123,6 +166,7 @@ while IFS=$'\t' read -r host path status loc; do
   if [ "$CHARTS_OK" = 0 ] && [[ "$path" == /charts/* ]]; then skipped=$((skipped+1)); continue; fi
   hostarg=(); [ "$host" = "apex" ] && hostarg=(-H "Host: ag-grid.com")
   read -r code redir < <(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" "${hostarg[@]}" "http://localhost:$PORT$path")
+  loc="${loc//www.ag-grid.com/$SITE_HOST}"   # no-op for production; maps to the env host otherwise
   ok=1
   [ "$code" = "$status" ] || ok=0
   if [ -n "${loc:-}" ] && [[ "$redir" != *"$loc"* ]]; then ok=0; fi
@@ -133,5 +177,5 @@ done < <(cat "$HARNESS_DIR"/expectations.tsv "$HARNESS_DIR"/expectations.generat
 
 echo
 echo "==> $pass passed, $fail failed$([ "$skipped" -gt 0 ] && echo ", $skipped skipped (/charts/* — charts .htaccess not available)")"
-[ "${KEEP_RUNNING:-}" = "1" ] && echo "httpd left running on :$PORT (stop: /usr/sbin/httpd -f $WORK/httpd.conf -k stop)"
+[ "${KEEP_RUNNING:-}" = "1" ] && echo "httpd left running on :$PORT (stop: $HTTPD -f $WORK/httpd.conf -k stop)"
 [ "$fail" = 0 ]

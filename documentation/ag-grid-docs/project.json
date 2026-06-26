@@ -291,6 +291,10 @@
       "command": "bash testing/htaccess-harness/run.sh",
       "options": {
         "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": { "args": "--env staging" },
+        "production": { "args": "--env production" }
       }
     },
     "update-algolia": {
