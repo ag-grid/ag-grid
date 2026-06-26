@@ -154,14 +154,20 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     return null;
                 }
                 if (!_isCalculatedColumnsEnabled(gridOptions.calculatedColumns)) {
-                    return 'colDef.calculatedExpression requires gridOptions.calculatedColumns to be set to true or an options object.';
+                    return validationWarning(319, {
+                        feature: 'colDef.calculatedExpression',
+                        requirement: 'gridOptions.calculatedColumns to be set to true or an options object',
+                    });
                 }
                 if (colDef.pivotValueColumn) {
                     // pivot result colDefs add field/valueGetter internally after copying the value column colDef.
                     return null;
                 }
                 if (!colDef.colId) {
-                    return 'colDef.calculatedExpression requires colId to be set on the calculated column.';
+                    return validationWarning(319, {
+                        feature: 'colDef.calculatedExpression',
+                        requirement: 'colId to be set on the calculated column',
+                    });
                 }
                 if (colDef.field || colDef.valueGetter || colDef.valueSetter) {
                     return 'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.';
@@ -308,7 +314,10 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         rowSpan: {
             validate: (_options, { suppressRowTransform }) => {
                 if (!suppressRowTransform) {
-                    return 'colDef.rowSpan requires suppressRowTransform to be enabled.';
+                    return validationWarning(319, {
+                        feature: 'colDef.rowSpan',
+                        requirement: 'suppressRowTransform to be enabled',
+                    });
                 }
                 return null;
             },
@@ -350,7 +359,10 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     });
                 }
                 if (!enableCellSpan) {
-                    return 'colDef.spanRows requires enableCellSpan to be enabled.';
+                    return validationWarning(319, {
+                        feature: 'colDef.spanRows',
+                        requirement: 'enableCellSpan to be enabled',
+                    });
                 }
                 if (rowDragEntireRow) {
                     return validationWarning(318, { feature: 'colDef.spanRows', conflictsWith: 'rowDragEntireRow' });

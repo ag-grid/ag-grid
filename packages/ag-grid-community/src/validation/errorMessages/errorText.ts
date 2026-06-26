@@ -851,6 +851,7 @@ export const AG_GRID_ERRORS = {
     317: ({ property, min }: { property: string; min: number }) => `${property} should not be lower than ${min}`,
     318: ({ feature, conflictsWith, advice }: { feature: string; conflictsWith: string; advice?: string }) =>
         `${feature} is not supported with ${conflictsWith}.${advice ? ` ${advice}` : ''}`,
+    319: ({ feature, requirement }: { feature: string; requirement: string }) => `${feature} requires ${requirement}.`,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

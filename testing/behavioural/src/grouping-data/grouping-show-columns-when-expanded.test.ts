@@ -1058,7 +1058,11 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
             `
         );
 
-        expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('groupHideColumnsUntilExpanded = true'));
+        expect(warnSpy).toHaveBeenCalledWith(
+            expect.stringContaining('warning #319'),
+            expect.stringContaining('groupHideColumnsUntilExpanded = true'),
+            expect.anything()
+        );
 
         // In singleColumn mode, feature has no effect - one auto col always visible
         expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn']);
@@ -1137,7 +1141,11 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
         // Switch back to singleColumn at runtime
         api.updateGridOptions({ groupDisplayType: 'singleColumn' });
 
-        expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('groupHideColumnsUntilExpanded = true'));
+        expect(warnSpy).toHaveBeenCalledWith(
+            expect.stringContaining('warning #319'),
+            expect.stringContaining('groupHideColumnsUntilExpanded = true'),
+            expect.anything()
+        );
 
         // Feature no longer active: single auto col visible
         expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn']);
@@ -1201,7 +1209,11 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
             · · └── LEAF hidden id:4 country:"France" year:"2021" athlete:"Jean Dupont" gold:1
         `);
 
-        expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('groupHideColumnsUntilExpanded = true'));
+        expect(warnSpy).toHaveBeenCalledWith(
+            expect.stringContaining('warning #319'),
+            expect.stringContaining('groupHideColumnsUntilExpanded = true'),
+            expect.anything()
+        );
 
         // Without groupHideOpenParents, singleColumn mode (default) - feature has no effect
         expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn']);
@@ -1261,7 +1273,11 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
         // Disable groupHideOpenParents at runtime
         api.updateGridOptions({ groupHideOpenParents: false });
 
-        expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('groupHideColumnsUntilExpanded = true'));
+        expect(warnSpy).toHaveBeenCalledWith(
+            expect.stringContaining('warning #319'),
+            expect.stringContaining('groupHideColumnsUntilExpanded = true'),
+            expect.anything()
+        );
 
         // Without multipleColumns mode, feature deactivates - single auto col visible
         expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn']);
@@ -1366,7 +1382,11 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
             · · └── LEAF hidden id:4 country:"France" year:"2021" athlete:"Jean Dupont" gold:1
         `);
 
-        expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('groupHideColumnsUntilExpanded = true'));
+        expect(warnSpy).toHaveBeenCalledWith(
+            expect.stringContaining('warning #319'),
+            expect.stringContaining('groupHideColumnsUntilExpanded = true'),
+            expect.anything()
+        );
 
         // Single auto group column should always be visible
         expect(getVisibleAutoGroupColIds(api)).toEqual(['ag-Grid-AutoColumn']);
@@ -1496,7 +1516,11 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
             · · └── LEAF hidden id:4 country:"France" year:"2021" athlete:"Jean Dupont" gold:1
         `);
 
-        expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('groupHideColumnsUntilExpanded = true'));
+        expect(warnSpy).toHaveBeenCalledWith(
+            expect.stringContaining('warning #319'),
+            expect.stringContaining('groupHideColumnsUntilExpanded = true'),
+            expect.anything()
+        );
 
         // No auto group columns in groupRows mode
         expect(getVisibleAutoGroupColIds(api)).toEqual([]);

@@ -585,9 +585,11 @@ describe('ag-grid calculated columns', () => {
                 expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBe(999);
                 expect(profitColumn.isSuppressPaste(rowNode)).toBe(false);
                 expect(consoleWarnSpy).toHaveBeenCalledWith(
+                    expect.stringContaining('warning #319'),
                     expect.stringContaining(
                         'colDef.calculatedExpression requires gridOptions.calculatedColumns to be set to true or an options object.'
-                    )
+                    ),
+                    expect.any(String)
                 );
             }
         } finally {
@@ -3807,9 +3809,11 @@ describe('ag-grid calculated columns', () => {
                 expect.any(String)
             );
             expect(consoleWarnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #319'),
                 expect.stringContaining(
                     'colDef.calculatedExpression requires gridOptions.calculatedColumns to be set to true or an options object.'
-                )
+                ),
+                expect.any(String)
             );
         } finally {
             formulaOnlyGridsManager.reset();

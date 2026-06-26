@@ -280,7 +280,10 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     });
                 }
                 if (!enableRowPinning && isRowPinnable) {
-                    return '`isRowPinnable` requires `enableRowPinning` to be set.';
+                    return validationWarning(319, {
+                        feature: '`isRowPinnable`',
+                        requirement: '`enableRowPinning` to be set',
+                    });
                 }
                 return null;
             },
@@ -296,7 +299,10 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     });
                 }
                 if (!enableRowPinning && isRowPinned) {
-                    return '`isRowPinned` requires `enableRowPinning` to be set.';
+                    return validationWarning(319, {
+                        feature: '`isRowPinned`',
+                        requirement: '`enableRowPinning` to be set',
+                    });
                 }
                 return null;
             },
@@ -309,7 +315,10 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide'],
             validate({ groupHideColumnsUntilExpanded, groupHideOpenParents, groupDisplayType }) {
                 if (groupHideColumnsUntilExpanded && !groupHideOpenParents && groupDisplayType !== 'multipleColumns') {
-                    return "`groupHideColumnsUntilExpanded = true` requires either `groupDisplayType = 'multipleColumns'` or `groupHideOpenParents = true`";
+                    return validationWarning(319, {
+                        feature: '`groupHideColumnsUntilExpanded = true`',
+                        requirement: "either `groupDisplayType = 'multipleColumns'` or `groupHideOpenParents = true`",
+                    });
                 }
                 return null;
             },
@@ -386,7 +395,10 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                         return "'ssrmExpandAllAffectsAllRows' is only supported with the Server Side Row Model.";
                     }
                     if (options.ssrmExpandAllAffectsAllRows && typeof options.getRowId !== 'function') {
-                        return `'getRowId' callback must be provided for Server Side Row Model grouping to work correctly.`;
+                        return validationWarning(319, {
+                            feature: 'Server Side Row Model grouping',
+                            requirement: "the 'getRowId' callback",
+                        });
                     }
                 }
 
@@ -500,7 +512,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         notesDataSource: {
             validate: ({ getRowId }) => {
                 if (!getRowId) {
-                    return `'getRowId' callback must be provided for Notes to work correctly.`;
+                    return validationWarning(319, { feature: 'Notes', requirement: "the 'getRowId' callback" });
                 }
                 return null;
             },
@@ -588,7 +600,11 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     case 'clientSide': {
                         const { treeDataChildrenField, treeDataParentIdField, getDataPath, getRowId } = options;
                         if (!treeDataChildrenField && !treeDataParentIdField && !getDataPath) {
-                            return "treeData requires either 'treeDataChildrenField' or 'treeDataParentIdField' or 'getDataPath' in the clientSide row model.";
+                            return validationWarning(319, {
+                                feature: 'treeData',
+                                requirement:
+                                    "either 'treeDataChildrenField' or 'treeDataParentIdField' or 'getDataPath' in the clientSide row model",
+                            });
                         }
                         if (treeDataChildrenField) {
                             if (getDataPath) {
