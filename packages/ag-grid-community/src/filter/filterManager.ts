@@ -47,7 +47,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         const updateAdvFilterColumns = this.updateAdvFilterColumns.bind(this);
         this.addManagedEventListeners({
             columnValueChanged: refreshFiltersForAggregations,
-            columnPivotChanged: refreshFiltersForAggregations,
+            columnPivotChanged: this.onPivotColumnsChanged.bind(this),
             columnPivotModeChanged: refreshFiltersForAggregations,
             newColumnsLoaded: updateAdvFilterColumns,
             columnVisible: updateAdvFilterColumns,
@@ -170,6 +170,14 @@ export class FilterManager extends BeanStub implements NamedBean {
 
     private refreshFiltersForAggregations() {
         if (_getGroupAggFiltering(this.gos) && this.isAnyFilterPresent()) {
+            this.onFilterChanged();
+        }
+    }
+
+    // Regenerated pivot value columns leave any active filter classified against the old columns.
+    // Secondary-column filters are always aggregate filters, so re-evaluate regardless of `groupAggFiltering`.
+    private onPivotColumnsChanged() {
+        if (this.isAnyFilterPresent()) {
             this.onFilterChanged();
         }
     }
