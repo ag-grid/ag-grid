@@ -2,10 +2,25 @@ import type { IEnvironment } from '../interfaces/iEnvironment';
 import { VERSION } from '../version';
 import sharedCSS from './shared/shared.css';
 
-export const IS_SSR = typeof window !== 'object' || typeof document !== 'object';
+const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
 
 /** For testing, if true, only Vanilla examples will work and they will use legacy themes. */
 export const FORCE_LEGACY_THEMES = false;
+
+let styleInjectionForcedForTesting = false;
+
+/**
+ * @internal Test hook — force CSS injection to run even when IS_SSR is true (e.g.
+ * jsdom, which lacks document.fonts). Lets theming tests exercise real injection
+ * without enabling it for the rest of the test suite.
+ */
+export const _setStyleInjectionEnabledForTesting = (enabled: boolean): void => {
+    styleInjectionForcedForTesting = enabled;
+};
+
+/** @internal True when injection must be skipped: no DOM (unless force-enabled for tests) or legacy themes. */
+export const _isStyleInjectionDisabled = (): boolean =>
+    (IS_SSR && !styleInjectionForcedForTesting) || FORCE_LEGACY_THEMES;
 
 type InjectedStyle = {
     rawCss: string;
@@ -24,7 +39,7 @@ export const _injectGlobalCSS = (
     nonce: string | undefined,
     isParams: boolean = false
 ) => {
-    if (IS_SSR || FORCE_LEGACY_THEMES) {
+    if (_isStyleInjectionDisabled()) {
         return;
     }
 
@@ -94,7 +109,7 @@ export const _useParamsCss = (
     layer: string | undefined,
     nonce: string | undefined
 ) => {
-    if (IS_SSR || FORCE_LEGACY_THEMES) {
+    if (_isStyleInjectionDisabled()) {
         return;
     }
 

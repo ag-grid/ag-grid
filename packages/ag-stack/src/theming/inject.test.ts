@@ -1,7 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import type { IEnvironment } from '../interfaces/iEnvironment';
-import { _injectGlobalCSS, _unregisterInstanceUsingThemingAPI, _useParamsCss } from './inject';
+import {
+    _injectGlobalCSS,
+    _setStyleInjectionEnabledForTesting,
+    _unregisterInstanceUsingThemingAPI,
+    _useParamsCss,
+} from './inject';
 
 // jsdom does not implement the CSS namespace, patch it.
 if (typeof (globalThis as { CSS?: unknown }).CSS === 'undefined') {
@@ -17,6 +22,11 @@ const injectedStyles = (container: HTMLElement): HTMLStyleElement[] =>
 
 const injectedCssTexts = (container: HTMLElement): string[] =>
     injectedStyles(container).map((el) => el.textContent ?? '');
+
+// IS_SSR is true under jsdom (no document.fonts), so injection is off by default; force it on for these tests.
+beforeAll(() => {
+    _setStyleInjectionEnabledForTesting(true);
+});
 
 describe('style injection', () => {
     it('deduplicates by css content', () => {

@@ -1,3 +1,4 @@
+import { _setStyleInjectionEnabledForTesting } from 'ag-stack';
 import { vi } from 'vitest';
 
 import { inputStyleBordered, inputStyleUnderlined, themeQuartz } from 'ag-grid-community';
@@ -33,6 +34,11 @@ const injectionVersions = () => (globalThis as WindowState).agStyleInjectionVers
 
 describe('theme style injection across grids', () => {
     const gridsManager = new TestGridsManager({ modules: [] });
+
+    // IS_SSR is true under jsdom (no document.fonts) so grids don't inject by default; force it on here.
+    beforeEach(() => {
+        _setStyleInjectionEnabledForTesting(true);
+    });
 
     afterEach(() => {
         gridsManager.reset();
