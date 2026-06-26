@@ -1,7 +1,7 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { BeanCollection } from '../context/context';
 import type { RowModelType } from '../interfaces/iRowModel';
-import { _error, _warn } from './logging';
+import { _deprecated, _error } from './logging';
 
 const clientSide = 'clientSide';
 const serverSide = 'serverSide';
@@ -98,7 +98,7 @@ export function validateApiFunction<TFunctionName extends ApiFunctionName>(
         const { version, new: replacement, old, message } = deprecation;
         const apiMethod = old ?? functionName;
         return (...args: any[]) => {
-            _warn(308, { version, apiMethod, replacement, message });
+            _deprecated(308, { version, apiMethod, replacement, message });
             return apiFunction.apply(apiFunction, args);
         };
     }

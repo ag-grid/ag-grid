@@ -1,6 +1,14 @@
 import { _errorOnce, _warnOnce } from '../utils/log';
 import type { OverlayError } from './logging';
-import { _addErrorListener, _configureDiagnostics, _error, _logPreInitErr, _logPreInitWarn, _warn } from './logging';
+import {
+    _addErrorListener,
+    _configureDiagnostics,
+    _deprecated,
+    _error,
+    _logPreInitErr,
+    _logPreInitWarn,
+    _warn,
+} from './logging';
 
 vi.mock('../utils/log', () => ({
     _warnOnce: vi.fn(),
@@ -44,10 +52,12 @@ describe('diagnostic capture', () => {
 
         _error(11);
         _warn(11);
+        _deprecated(11);
 
-        expect(received).toHaveLength(2);
+        expect(received).toHaveLength(3);
         expect(received[0].severity).toBe('error');
         expect(received[1].severity).toBe('warning');
+        expect(received[2].severity).toBe('deprecation');
         expect(received[0].id).toBe(11);
         off();
     });
@@ -108,12 +118,21 @@ describe('throw mode', () => {
         expect(() => _logPreInitWarn(11, undefined as any, 'boom')).not.toThrow();
     });
 
-    test("throwOn 'warning' throws on both errors and warnings", () => {
+    test("throwOn 'warning' throws on errors and warnings but not deprecations", () => {
         _configureDiagnostics({ throwOn: 'warning' });
 
         expect(() => _error(11)).toThrow();
         expect(() => _warn(11)).toThrow();
         expect(() => _logPreInitWarn(11, undefined as any, 'boom')).toThrow();
+        expect(() => _deprecated(11)).not.toThrow();
+    });
+
+    test("throwOn 'deprecation' throws on deprecations, warnings and errors", () => {
+        _configureDiagnostics({ throwOn: 'deprecation' });
+
+        expect(() => _deprecated(11)).toThrow();
+        expect(() => _warn(11)).toThrow();
+        expect(() => _error(11)).toThrow();
     });
 
     test('logs to the console before throwing', () => {

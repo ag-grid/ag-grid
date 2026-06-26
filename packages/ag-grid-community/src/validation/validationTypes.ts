@@ -3,7 +3,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { ValidationModuleName } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
 import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
-import { _warn } from './logging';
+import { _deprecated, _warn } from './logging';
 
 /**
  * A validation result that resolves to a first-class error id (so it is captured by the diagnostic
@@ -19,6 +19,11 @@ export function validationWarning<TId extends ErrorId>(errorId: TId, params: Get
     // params is bound to errorId by this signature; the cast only erases _warn's variadic-overload
     // conditional, which TS cannot resolve for a still-generic id.
     return { errorId, emit: () => (_warn as (id: ErrorId, params: unknown) => void)(errorId, params) };
+}
+
+/** As {@link validationWarning}, but the diagnostic is captured as a deprecation (see {@link _deprecated}). */
+export function deprecationWarning<TId extends ErrorId>(errorId: TId, params: GetErrorParams<TId>): ValidationWarning {
+    return { errorId, emit: () => (_deprecated as (id: ErrorId, params: unknown) => void)(errorId, params) };
 }
 
 // Vue adds these properties to all objects, so we ignore them when checking for invalid properties

@@ -13,7 +13,7 @@ import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import type { IconName } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
-import { _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';
+import { _deprecated, _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
@@ -149,7 +149,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             const deprecation = deprecations[name as keyof T];
             if (deprecation) {
                 const { message, version } = deprecation;
-                _warn(306, { version, name, message });
+                _deprecated(306, { version, name, message });
             }
 
             const rules = validations[name as keyof T];

@@ -10,7 +10,7 @@ import type {
     UpdateRangeChartParams,
     ValidationWarning,
 } from 'ag-grid-community';
-import { _warn, validationWarning } from 'ag-grid-community';
+import { _deprecated, _warn, validationWarning } from 'ag-grid-community';
 
 import type { CommonCreateChartParams } from '../../chartService';
 import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
@@ -78,7 +78,7 @@ const validateChartType = validateIfDefined<UpdateChartParams['chartType'], Excl
         }
         if (isLegacyChartType(chartType)) {
             const renamedChartType = getCanonicalChartType(chartType);
-            _warn(312, { chartType, renamedChartType });
+            _deprecated(312, { chartType, renamedChartType });
             return renamedChartType;
         }
         return false;

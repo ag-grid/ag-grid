@@ -25,7 +25,10 @@ export function setValidationDocLink(docLink: string) {
     baseDocLink = docLink;
 }
 
-type Severity = 'error' | 'warning';
+type Severity = 'error' | 'warning' | 'deprecation';
+
+// Inclusive throw ordering: throwOn a given level fires on that level and every more-severe one.
+const SEVERITY_ORDER: Record<Severity, number> = { deprecation: 1, warning: 2, error: 3 };
 
 /**
  * A diagnostic captured for the developer error overlay (config errors, runtime errors and warnings).
@@ -101,7 +104,7 @@ function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMes
             listener(error);
         }
     }
-    const meetsThreshold = throwThreshold === 'warning' || (throwThreshold === 'error' && severity === 'error');
+    const meetsThreshold = throwThreshold !== false && SEVERITY_ORDER[severity] >= SEVERITY_ORDER[throwThreshold];
     if (meetsThreshold) {
         throw new Error(`${severity} #${id} ` + getErrorParts(id, params, defaultMessage).join(' '));
     }
@@ -223,6 +226,20 @@ export function _warn<
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
     getMsgOrDefault(_warnOnce, args[0], args[1] as any, true);
     emitDiagnostic(args[0], args[1] as any, 'warning');
+}
+
+/**
+ * Logs at warning level (console) but captures the diagnostic as a deprecation, so the overlay can
+ * group it and `throwOn: 'deprecation'` can target it.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _deprecated<
+    TId extends ErrorId,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    TShowMessageAtCallLocation = ErrorMap[TId],
+>(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
+    getMsgOrDefault(_warnOnce, args[0], args[1] as any, true);
+    emitDiagnostic(args[0], args[1] as any, 'deprecation');
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

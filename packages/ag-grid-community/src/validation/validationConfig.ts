@@ -7,10 +7,10 @@ import { _configureDiagnostics } from './logging';
 export interface DevValidationOptions {
     /**
      * Makes matching diagnostics throw synchronously after logging, so e2e/agent test runs fail
-     * loudly. `'error'` throws on errors only; `'warning'` throws on both errors and warnings.
-     * Default `false`.
+     * loudly. Inclusive threshold: `'error'` throws on errors only; `'warning'` on warnings and
+     * errors; `'deprecation'` on deprecations, warnings and errors. Default `false`.
      */
-    throwOn?: 'error' | 'warning' | false;
+    throwOn?: 'error' | 'warning' | 'deprecation' | false;
 }
 
 const config: Required<DevValidationOptions> = {

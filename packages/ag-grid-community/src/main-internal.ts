@@ -374,7 +374,7 @@ export { _isProtoPollutionKey, _mergeDeep, _mergedEqual } from './utils/mergeDee
 export { _clamp, _formatNumberCommas, _isFiniteNumber, _toFiniteNumber } from './utils/number';
 export { _selectAllCells } from './utils/selection';
 export { _getValueUsingDotPath } from './utils/value';
-export { _errMsg, _error, _logPreInitWarn, _preInitErrMsg, _warn } from './validation/logging';
+export { _deprecated, _errMsg, _error, _logPreInitWarn, _preInitErrMsg, _warn } from './validation/logging';
 export { validationWarning } from './validation/validationTypes';
 export type { ValidationWarning } from './validation/validationTypes';
 export type { ExpressionService } from './valueService/expressionService';
