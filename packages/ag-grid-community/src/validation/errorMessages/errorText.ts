@@ -860,6 +860,8 @@ export const AG_GRID_ERRORS = {
     },
     321: ({ property, expected }: { property: string; expected: string }) => `${property} should be ${expected}.`,
     322: ({ message }: { message?: string }) => message ?? '',
+    323: () =>
+        "'paginationPanels' expects an array of panel names or config objects: ['pageSize', 'rowSummary', 'pageSummary', 'pageNumbers']" as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

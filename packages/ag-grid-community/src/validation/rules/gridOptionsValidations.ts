@@ -4,7 +4,13 @@ import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } fr
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import type { Deprecations, OptionsValidator, RequiredModule, Validations } from '../validationTypes';
+import type {
+    Deprecations,
+    OptionsValidator,
+    RequiredModule,
+    ValidationWarning,
+    Validations,
+} from '../validationTypes';
 import { buildAllValidNames, deprecationWarning, validationWarning } from '../validationTypes';
 
 /**
@@ -95,12 +101,12 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     },
 });
 
-function toConstrainedNum(key: keyof GridOptions, value: any, min: number): string | null {
+function toConstrainedNum(key: keyof GridOptions, value: any, min: number): string | ValidationWarning | null {
     if (typeof value === 'number' || value == null) {
         if (value == null) {
             return null;
         }
-        return value >= min ? null : `${key}: value should be greater than or equal to ${min}`;
+        return value >= min ? null : validationWarning(317, { property: String(key), min });
     }
     return `${key}: value should be a number`;
 }
@@ -441,7 +447,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             validate: ({ paginationPanels }) => {
                 const validNames = new Set<string>(['pageSize', 'rowSummary', 'pageSummary', 'pageNumbers']);
                 if (paginationPanels != null && !Array.isArray(paginationPanels)) {
-                    return "'paginationPanels' expects an array of panel names or config objects: ['pageSize', 'rowSummary', 'pageSummary', 'pageNumbers']";
+                    return validationWarning(323, undefined);
                 }
                 if (
                     paginationPanels?.some((p) => {
@@ -454,7 +460,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                         return true;
                     })
                 ) {
-                    return "'paginationPanels' expects an array of panel names or config objects: ['pageSize', 'rowSummary', 'pageSummary', 'pageNumbers']";
+                    return validationWarning(323, undefined);
                 }
                 return null;
             },
@@ -720,7 +726,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 ];
                 const type = autoSizeStrategy.type;
                 if (type !== 'fitCellContents' && type !== 'fitGridWidth' && type !== 'fitProvidedWidth') {
-                    return `Invalid Auto-size strategy. \`autoSizeStrategy\` must be one of ${validModes.map((m) => '"' + m + '"').join(', ')}, currently it's ${type}`;
+                    return validationWarning(320, { property: 'autoSizeStrategy', allowed: validModes, value: type });
                 }
                 if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
                     return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;

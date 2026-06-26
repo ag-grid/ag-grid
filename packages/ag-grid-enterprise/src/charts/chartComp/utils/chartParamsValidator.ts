@@ -169,8 +169,10 @@ export function validateUpdateParams(params: UpdateChartParams, isEnterprise: bo
         case 'crossFilterChartUpdate':
             return validateUpdateCrossFilterChartParams(params as UpdateCrossFilterChartParams, isEnterprise);
         default:
-            _warn(322, {
-                message: `Invalid value supplied for 'type': ${params.type}. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`,
+            _warn(320, {
+                property: "'type'",
+                allowed: ['rangeChartUpdate', 'pivotChartUpdate', 'crossFilterChartUpdate'],
+                value: params.type,
             });
             return false;
     }
