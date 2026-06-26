@@ -1,8 +1,7 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { BeanCollection } from '../context/context';
 import type { RowModelType } from '../interfaces/iRowModel';
-import { _errorOnce } from '../utils/log';
-import { _warn } from './logging';
+import { _error, _warn } from './logging';
 
 const clientSide = 'clientSide';
 const serverSide = 'serverSide';
@@ -108,9 +107,7 @@ export function validateApiFunction<TFunctionName extends ApiFunctionName>(
         return (...args: any[]) => {
             const rowModel = beans.rowModel.getType();
             if (!rowModels.includes(rowModel)) {
-                _errorOnce(
-                    `api.${functionName} can only be called when gridOptions.rowModelType is ${rowModels.join(' or ')}`
-                );
+                _error(311, { functionName, rowModels });
                 return undefined as any;
             }
             return apiFunction.apply(apiFunction, args);

@@ -814,6 +814,16 @@ export const AG_GRID_ERRORS = {
         const replacementMessage = replacement ? `Please use ${replacement} instead. ` : '';
         return `Since ${version} api.${apiMethod} is deprecated. ${replacementMessage}${message ?? ''}`;
     },
+    309: ({ name, rowModel, supportedRowModels }: { name: string; rowModel: string; supportedRowModels?: string[] }) =>
+        `${name} is not supported with the '${rowModel}' row model. It is only valid with: ${(supportedRowModels ?? []).join(', ')}.`,
+    310: ({ objectName, url }: { objectName: string; url: string }) =>
+        `to see all the valid ${objectName} properties please check: ${url}`,
+    311: ({ functionName, rowModels }: { functionName: string; rowModels?: string[] }) =>
+        `api.${functionName} can only be called when gridOptions.rowModelType is ${(rowModels ?? []).join(' or ')}`,
+    312: ({ chartType, renamedChartType }: { chartType: string; renamedChartType: string }) =>
+        `The chart type '${chartType}' has been deprecated. Please use '${renamedChartType}' instead.`,
+    313: ({ paramsType, property }: { paramsType?: string; property: string }) =>
+        `Unexpected property supplied. ${paramsType} does not contain: \`${property}\`.`,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

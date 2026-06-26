@@ -161,9 +161,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                     // so the check runs again if a real value is provided later
                     continue;
                 }
-                _warnOnce(
-                    `${name} is not supported with the '${rowModel}' row model. It is only valid with: ${rules.supportedRowModels.join(', ')}.`
-                );
+                _warn(309, { name, rowModel, supportedRowModels: rules.supportedRowModels });
                 isValidMap.set(name, false);
                 continue;
             }
@@ -186,7 +184,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
         if (hasInvalidName && docsUrl && checkPropertyNames) {
             const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
-            _warnOnce(`to see all the valid ${objectName} properties please check: ${url}`);
+            _warn(310, { objectName, url });
         }
 
         // Run value-level validation only for properties marked valid

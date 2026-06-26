@@ -9,7 +9,7 @@ import type {
     UpdatePivotChartParams,
     UpdateRangeChartParams,
 } from 'ag-grid-community';
-import { _warnOnce } from 'ag-grid-community';
+import { _warn, _warnOnce } from 'ag-grid-community';
 
 import type { CommonCreateChartParams } from '../../chartService';
 import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
@@ -69,7 +69,7 @@ const validateChartType = validateIfDefined<UpdateChartParams['chartType'], Excl
         }
         if (isLegacyChartType(chartType)) {
             const renamedChartType = getCanonicalChartType(chartType);
-            _warnOnce(`The chart type '${chartType}' has been deprecated. Please use '${renamedChartType}' instead.`);
+            _warn(312, { chartType, renamedChartType });
             return renamedChartType;
         }
         return false;
@@ -272,7 +272,7 @@ function validateProperties<T extends object>(
         // Check for unexpected properties
         for (const property of Object.keys(params)) {
             if (!validPropertyNames.includes(property as keyof T)) {
-                _warnOnce(`Unexpected property supplied. ${paramsType} does not contain: \`${property}\`.`);
+                _warn(313, { paramsType, property });
                 return false;
             }
         }
