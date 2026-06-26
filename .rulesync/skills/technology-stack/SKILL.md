@@ -44,8 +44,8 @@ The core grid logic is framework-agnostic. Framework-specific wrappers (`ag-grid
 
 ## Testing Technologies
 
-- **Jest**: Unit and integration testing
-- **Playwright**: E2E testing
+- **Vitest**: Unit, integration, and behavioural testing (`testing/angular-tests` still uses Jest)
+- **Playwright**: E2E testing, and the default engine for behavioural benchmarks (`./benches.sh`)
 - **jsdom**: DOM simulation for unit tests
 
 ## Code Style

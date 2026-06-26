@@ -24,7 +24,8 @@ if (Error.stackTraceLimit < 40) {
 //   ./behave.sh --update-grid-rows                    # convenience alias
 
 {
-    const envVal = process.env.UPDATE_GRID_ROWS_SNAPSHOTS;
+    // `process` is absent in browser mode (BENCH_BROWSER); snapshot updating is node-only anyway.
+    const envVal = typeof process !== 'undefined' ? process.env.UPDATE_GRID_ROWS_SNAPSHOTS : undefined;
     if (envVal) {
         const mode = envVal === 'dry' ? 'dry' : 'update';
         (globalThis as any).__gridRowsSnapshotUpdateMode = mode;

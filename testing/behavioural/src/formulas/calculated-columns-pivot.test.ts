@@ -346,6 +346,7 @@ describe('calculated columns - pivot mode', () => {
     });
 
     test('pivot result columns keep allowFormula from a non-calc source but drop calc fields for a calc source', async () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const api = createGrid('pivot-result-allowformula', {
             rowData,
             columnDefs: [
@@ -364,5 +365,13 @@ describe('calculated columns - pivot mode', () => {
         const calcResult = api.getColumn('pivot_year_2020_calc')!;
         expect(calcResult.isAllowFormula()).toBe(false);
         expect(calcResult.getColDef().calculatedExpression).toBeUndefined();
+
+        // The calc source under Row Groups is unsupported, so #295 fires and turns its formula off —
+        // the observable cause of the dropped calc fields asserted above.
+        expect(warn).toHaveBeenCalledWith(
+            'AG Grid: warning #295',
+            expect.stringContaining('allowFormula is not supported with Row Groups'),
+            expect.stringContaining('/errors/295')
+        );
     });
 });

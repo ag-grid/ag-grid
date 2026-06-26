@@ -12,7 +12,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { default as TypescriptImport } from 'typescript';
 
-import { unindentText } from '../utils';
+import { unindentText } from '../string-utils';
 
 type Typescript = typeof TypescriptImport;
 

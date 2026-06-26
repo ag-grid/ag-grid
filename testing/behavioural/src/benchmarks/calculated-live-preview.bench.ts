@@ -4,7 +4,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { CellApiModule, ClientSideRowModelModule, RowApiModule, ValidationModule } from 'ag-grid-community';
 import { CalculatedColumnsModule, ColumnMenuModule, FormulaModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { BenchGridsManager, IS_JSDOM, benchDefaults } from './bench-utils';
 
 // Measures the live-preview keystroke flush WORK (rebuildCols + CSRM refreshModel + formula cache
 // wipe + viewport re-evaluation). requestAnimationFrame is overridden to fire synchronously so the
@@ -21,17 +21,19 @@ const modules = [
     ValidationModule,
 ];
 
-// jsdom has no layout: the dialog's centering reads offsetParent, so route it to parentElement
-// (same polyfill the calculated-columns behavioural tests use).
-Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-    configurable: true,
-    get(this: HTMLElement) {
-        if (this.closest('.ag-measurement-container')) {
-            return null;
-        }
-        return this.parentElement;
-    },
-});
+// Only jsdom needs this: it has no layout, so the dialog's centering reads a null offsetParent.
+// A real browser (`--browser`) has native offsetParent — overriding it there would corrupt layout.
+if (IS_JSDOM) {
+    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+        configurable: true,
+        get(this: HTMLElement) {
+            if (this.closest('.ag-measurement-container')) {
+                return null;
+            }
+            return this.parentElement;
+        },
+    });
+}
 
 // Synchronous rAF: the live-preview scheduler coalesces per frame; firing inline makes each
 // keystroke's flush run synchronously inside the input event so the bench measures only the work.
@@ -39,8 +41,6 @@ window.requestAnimationFrame = ((cb: FrameRequestCallback) => {
     cb(0);
     return 0;
 }) as typeof window.requestAnimationFrame;
-
-const VIEWPORT_ROWS = 30;
 
 const buildRows = (n: number) => {
     const rows: { id: string; revenue: number; cost: number; region: string }[] = [];
@@ -71,6 +71,9 @@ const baseOptions = (rows: number, sortOnMargin: boolean, extraCols = 0, grouped
         getRowId: (params) => params.data?.id,
         rowData: buildRows(rows),
         calculatedColumns: { applyMode: 'live' },
+        animateRows: false,
+        // Expand groups so the grouped variant displays leaf rows for readAllRows to re-evaluate.
+        groupDefaultExpanded: grouped ? -1 : undefined,
         columnDefs,
     };
 };
@@ -84,12 +87,14 @@ const typeExpression = (expression: string): void => {
     input.dispatchEvent(new Event('input', { bubbles: true }));
 };
 
-// What the renderer does after a flush: re-read the visible cells of both calc columns.
-const readViewport = (api: GridApi): void => {
-    for (let i = 0; i < VIEWPORT_ROWS; ++i) {
+// Force a full re-evaluation of both (lazy) calc columns over every row, so the bench captures the
+// whole flush cost — not just the ~30 cells the live preview lazily repaints in the viewport.
+const readAllRows = (api: GridApi): void => {
+    const count = api.getDisplayedRowCount();
+    for (let i = 0; i < count; ++i) {
         const rowNode = api.getDisplayedRowAtIndex(i);
         if (!rowNode) {
-            break;
+            continue;
         }
         api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false });
         api.getCellValue({ rowNode, colKey: 'margin', useFormatter: false });
@@ -100,7 +105,7 @@ suite('calculated columns — live preview keystroke flush (synchronous rAF)', (
     let gridId = 0;
     const benchKeystroke = (name: string, rows: number, sortOnMargin: boolean, extraCols = 0, grouped = false) => {
         const id = `LP${++gridId}`;
-        const gridsManager = new TestGridsManager({ benchmark: true, modules });
+        const gridsManager = new BenchGridsManager({ modules });
         let api!: GridApi;
         let iter = 0;
         bench(
@@ -108,12 +113,13 @@ suite('calculated columns — live preview keystroke flush (synchronous rAF)', (
             () => {
                 // Alternate so every flush is a real expression change on the chained `profit` column.
                 typeExpression(iter++ & 1 ? '[revenue] - [cost] + 1' : '[revenue] - [cost] + 2');
-                readViewport(api);
+                api.flushAllAnimationFrames();
+                readAllRows(api);
             },
             {
-                throws: true,
+                ...benchDefaults(),
                 setup: async () => {
-                    gridsManager.reset();
+                    await gridsManager.reset();
                     iter = 0;
                     api = gridsManager.createGrid(id, baseOptions(rows, sortOnMargin, extraCols, grouped));
                     api.showColumnMenu('profit');

@@ -106,13 +106,15 @@ For detailed information about preferred technologies and architectural constrai
 - `./behave.sh --update-grid-rows` – update GridRows inline snapshots after diagram format changes.
 - `./behave.sh --update-grid-rows "<pattern>"` – update snapshots in matching test files only.
 - `./behave.sh --update-grid-rows=dry` – dry run, shows what would change without writing files.
-- `./benches.sh` – run behavioural benchmarks via `vitest bench` (non-watch by default).
+- `./benches.sh` – run behavioural benchmarks (real headless Chromium by default; non-watch). Run `./benches.sh --help` for full usage.
 - `./benches.sh "<file-pattern>"` – run benchmarks matching a file pattern.
 - `./benches.sh "<file-pattern>" -t "<bench-name>"` – run a specific benchmark by name.
+- `./benches.sh --profile "<file-pattern>"` – node run with a V8 CPU profile (`.cpuprofile`) for method-cost analysis.
+- `./benches.sh --bench-compare <base|test|compare|all|backup> [...]` – baseline/compare benchmark runs (forwards to `bench-compare.mjs`).
 - `./benches.sh --watch` – run benchmarks in watch mode.
-- `yarn nx test <package>` – execute Jest unit tests for the affected package.
-- `yarn nx test <package> --testPathPattern="<file-name>"` - test specific test file
-- `yarn nx test <package> --testPathPattern="<file-name>" --testNamePattern="<test-name>"` - test specific test name in a specific test file
+- `yarn nx test <package>` – run the package's Vitest unit tests.
+- `yarn nx test <package> -- "<file-pattern>"` – run unit tests in files matching a pattern (forwarded to `vitest run`).
+- `yarn nx test <package> -- "<file-pattern>" -t "<test-name>"` – run a specific test by name within matching files. Vitest uses positional patterns and `-t`, not jest's `--testPathPattern`/`--testNamePattern`.
 - `./docs-e2e.sh` – run docs Playwright E2E tests directly, bypassing Nx (chromium by default).
 - `./docs-e2e.sh "<file-pattern>"` – run E2E tests matching a file pattern.
 - `./docs-e2e.sh "<file-pattern>" --grep "<test-name>"` – run a specific E2E test by name.
@@ -170,7 +172,7 @@ For comprehensive testing information, see [Testing Guide](.rulesync/rules/testi
 **Behavioural tests are the primary test suite.** When verifying grid changes, run behavioural tests first. Key testing tools:
 
 - **Behavioural tests** (primary): `testing/behavioural/` for grid behaviour verification — use Vitest
-- **Unit tests**: Jest with jsdom environment for package-level tests
+- **Unit tests**: Vitest with jsdom environment for package-level tests (`testing/angular-tests` still uses Jest)
 - **E2E tests**: Playwright for website interaction testing
 - **Accessibility tests**: `testing/accessibility/` for a11y compliance
 - **Performance tests**: `testing/performance/` for performance regression testing

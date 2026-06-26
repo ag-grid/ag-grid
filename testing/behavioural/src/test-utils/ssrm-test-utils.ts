@@ -1,6 +1,6 @@
 import type { GridApi, IRowNode } from 'ag-grid-community';
 
-import { asyncSetTimeout } from './utils';
+import { asyncSetTimeout } from './node-utils';
 
 export function countLoadingRows(api: GridApi): number {
     if (api.isDestroyed?.()) {

@@ -19,11 +19,13 @@ Performance benchmarks help detect regressions and validate optimizations.
 
 ## Running Benchmarks
 
+Behavioural benchmarks run via `./benches.sh`, in a real headless Chromium (Playwright) by **default** so layout-dependent work is measured against a real layout engine. Run `./benches.sh --help` for the full usage — it prints vitest's `bench --help` followed by benches.sh's own options.
+
 ```bash
 # Run all behavioural benchmarks
 ./benches.sh
 
-# Run specific benchmark file (any positional arg is forwarded to `vitest bench`)
+# Run specific benchmark file (positional arg forwarded to `vitest bench`)
 ./benches.sh "tree-data-path"
 
 # Run a specific benchmark by name within matching files
@@ -31,9 +33,27 @@ Performance benchmarks help detect regressions and validate optimizations.
 
 # Watch mode for development
 ./benches.sh --watch
+```
 
-# Update benchmark snapshots
-./benches.sh --update
+### Profiling
+
+For method-cost analysis, `--profile` runs node-only with a V8 CPU profile and writes a `.cpuprofile` (path printed after the run) to open in Chrome DevTools or speedscope:
+
+```bash
+./benches.sh --profile "tree-data-path"
+```
+
+### Comparing runs
+
+`--bench-compare` forwards to `bench-compare.mjs` for baseline/compare workflows (`base`, `test`, `compare`, `all`, `backup`); everything after it is passed through verbatim:
+
+```bash
+# Record a baseline, then compare a later run against it
+./benches.sh --bench-compare base
+./benches.sh --bench-compare compare
+
+# Baseline + test + compare in one go, averaged over 3 runs
+./benches.sh --bench-compare all --runs 3
 ```
 
 ## Key Performance Areas

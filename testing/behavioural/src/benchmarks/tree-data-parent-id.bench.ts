@@ -1,25 +1,22 @@
-import type { BenchOptions } from 'vitest';
 import { bench, suite } from 'vitest';
 
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { SimplePRNG, TestGridsManager } from '../test-utils';
+import { BenchGridsManager, SimplePRNG, benchDefaults } from './bench-utils';
 
 suite('treeData with parentId', () => {
-    const gridsManager = new TestGridsManager({
-        benchmark: true,
+    const gridsManager = new BenchGridsManager({
         modules: [ValidationModule, ClientSideRowModelModule, ClientSideRowModelApiModule, TreeDataModule],
     });
-
     let api!: GridApi<TreeDataParentIdRow>;
 
-    const rowData = buildRandomParentIdRows(20000);
+    const rowData = buildRandomParentIdRows(12000);
     const rowData1 = buildUpdatedRowData(rowData);
 
-    const benchOptions: BenchOptions = {
-        throws: true,
+    const options = benchDefaults({
+        noiseFactor: 3,
         setup: () => {
             api ??= gridsManager.createGrid('G', {
                 columnDefs: [{ field: 'label' }],
@@ -31,11 +28,11 @@ suite('treeData with parentId', () => {
                 getRowId: ({ data }: { data: TreeDataParentIdRow }) => data.id,
             });
         },
-        teardown: () => {
-            gridsManager.reset();
+        teardown: async () => {
             api = undefined!;
+            await gridsManager.reset();
         },
-    };
+    }); // noisy suite (~3.4% rme @1×)
 
     bench(
         'build from scratch ' + rowData.length + ' rows',
@@ -43,7 +40,7 @@ suite('treeData with parentId', () => {
             api.setGridOption('rowData', []);
             api.setGridOption('rowData', rowData);
         },
-        benchOptions
+        options
     );
 
     let updateForward = true;
@@ -53,7 +50,7 @@ suite('treeData with parentId', () => {
             api.setGridOption('rowData', updateForward ? rowData1 : rowData);
             updateForward = !updateForward;
         },
-        benchOptions
+        options
     );
 });
 

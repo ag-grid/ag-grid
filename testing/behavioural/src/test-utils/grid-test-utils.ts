@@ -1,29 +1,6 @@
 import type { GridApi, IRowNode, RowDataTransaction, RowNode, RowNodeTransaction } from 'ag-grid-community';
 
-import { GridRows } from './gridRows/gridRows';
-import { GridRowsDiagramTree } from './gridRows/rows-diagram/gridRowsDiagramTree';
-
-export function optionalEscapeString(s: string): string {
-    // Bare identifier or all-digit literal — no quoting needed.
-    if (/^(?!\d)\w[._-\w]*$|^\d+$/.test(s)) {
-        return s;
-    }
-    // For strings containing control chars, backslash, or both quote styles we fall back to
-    // `JSON.stringify` (whose `\"` form would need ugly double-backslash escaping in the snapshot
-    // template literal — kept as a last resort).
-    if (/[\n\r\t\\]/.test(s)) {
-        return JSON.stringify(s);
-    }
-    const hasDouble = s.includes('"');
-    const hasSingle = s.includes("'");
-    // String has `"` but no `'` → wrap in single quotes (avoids `\"` in the snapshot source).
-    if (hasDouble && !hasSingle) {
-        return `'${s}'`;
-    }
-    // Fallback to the historical double-quoted form. JSON.stringify handles any remaining edge
-    // case where the string mixes both quote styles.
-    return JSON.stringify(s);
-}
+import { optionalEscapeString } from './string-utils';
 
 export function rowIdToString(row: IRowNode | string | number | null | undefined): string {
     if (typeof row === 'string') {
@@ -243,10 +220,4 @@ export function isAgHtmlElementVisible(element: Element | string | null | undefi
         current = current.parentElement;
     }
     return true;
-}
-
-export function drawGrid(api: GridApi): void {
-    const gr = new GridRows(api);
-    const tr = new GridRowsDiagramTree(gr);
-    console.log(tr.diagramToString(false, null));
 }
