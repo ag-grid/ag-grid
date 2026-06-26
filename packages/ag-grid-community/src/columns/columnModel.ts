@@ -74,6 +74,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
     /** Prior display order per mode, as colId snapshots, so the next refresh can restore user moves. */
     private lastOrder: string[] | null = null;
     private lastPivotOrder: string[] | null = null;
+    /** True when `lastPivotOrder` came from a strictly-ordered (comparator/pivotSort) refresh, so it must not
+     *  be treated as a user order to restore. */
+    private prevPivotStrict = false;
     /** Set when colsList order changes; {@link ensureColsListIndex} re-stamps `colsListIndex` lazily. */
     private colsListIndexDirty = true;
 
@@ -344,11 +347,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const oldColsList = this.colsList;
         if (oldColsList.length > 0) {
             if (prevWasPivot) {
-                this.lastPivotOrder = snapshotColIds(oldColsList, this.lastPivotOrder);
+                // A strict pivot order (comparator/pivotSort) isn't a user arrangement to preserve - skip it so
+                // clearing pivotSort restores the prior non-strict order rather than the transient asc/desc one.
+                if (!this.prevPivotStrict) {
+                    this.lastPivotOrder = snapshotColIds(oldColsList, this.lastPivotOrder);
+                }
             } else {
                 this.lastOrder = snapshotColIds(oldColsList, this.lastOrder);
             }
         }
+        this.prevPivotStrict = showingPivotResult && (beans.pivotColsSvc?.isStrictColumnOrder() ?? false);
         // Emit in display order: rowNumbers → selection → autoGroup → user/pivot body cols.
         const autoColsLen = autoCols?.length ?? 0;
         const sourceListLen = sourceList.length;

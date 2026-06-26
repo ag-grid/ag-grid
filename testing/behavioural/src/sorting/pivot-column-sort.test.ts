@@ -125,6 +125,28 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
         ]);
     });
 
+    test('clearing pivotSort directly from desc restores ascending order', async () => {
+        const api = createPivotGrid();
+        await asyncSetTimeout(10);
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        await asyncSetTimeout(10);
+        expect(getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'))).toEqual([
+            'pivot_year_2022_sales',
+            'pivot_year_2021_sales',
+            'pivot_year_2020_sales',
+        ]);
+
+        // desc -> null directly (no asc in between) must not leave the sticky descending order in place.
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: null }] });
+        await asyncSetTimeout(10);
+        expect(getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'))).toEqual([
+            'pivot_year_2020_sales',
+            'pivot_year_2021_sales',
+            'pivot_year_2022_sales',
+        ]);
+    });
+
     test('setting colDef.sort does not affect pivotSort and vice versa', async () => {
         const api = createPivotGrid();
         await asyncSetTimeout(10);
