@@ -149,7 +149,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             const deprecation = deprecations[name as keyof T];
             if (deprecation) {
                 const { message, version } = deprecation;
-                _warnOnce(`As of v${version}, ${name} is deprecated. ${message ?? ''}`);
+                _warn(306, { version, name, message });
             }
 
             const rules = validations[name as keyof T];
@@ -173,12 +173,8 @@ export class ValidationService extends BeanStub implements NamedBean {
                     const suggestions = _fuzzySuggestions({
                         inputValue: name,
                         allSuggestions: allProperties,
-                    }).values;
-                    let message = `invalid ${objectName} property '${name}' did you mean any of these: ${suggestions.slice(0, 8).join(', ')}.`;
-                    if (allValidNames.has('context')) {
-                        message += `\nIf you are trying to annotate ${objectName} with application data, use the '${objectName}.context' property instead.`;
-                    }
-                    _warnOnce(message);
+                    }).values.slice(0, 8);
+                    _warn(307, { objectName, name, suggestions, hasContext: allValidNames.has('context') });
                 }
                 hasInvalidName = true;
                 isValidMap.set(name, false);

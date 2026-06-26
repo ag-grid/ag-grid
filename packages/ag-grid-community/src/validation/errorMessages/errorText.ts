@@ -781,6 +781,25 @@ export const AG_GRID_ERRORS = {
         `Invalid calculatedColumns.dataTypes entry "${dataType}" - it must be a built-in data type or registered via dataTypeDefinitions. It has been ignored.` as const,
     305: () =>
         `The file input overlay is shown but no 'processFileInput' is configured. The overlay will not work without a 'processFileInput'.` as const,
+    306: ({ version, name, message }: { version: string; name: string; message?: string }) =>
+        `As of v${version}, ${name} is deprecated. ${message ?? ''}`,
+    307: ({
+        objectName,
+        name,
+        suggestions,
+        hasContext,
+    }: {
+        objectName: string;
+        name: string;
+        suggestions: string[];
+        hasContext?: boolean;
+    }) => {
+        let message = `invalid ${objectName} property '${name}' did you mean any of these: ${(suggestions ?? []).slice(0, 8).join(', ')}.`;
+        if (hasContext) {
+            message += `\nIf you are trying to annotate ${objectName} with application data, use the '${objectName}.context' property instead.`;
+        }
+        return message;
+    },
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
