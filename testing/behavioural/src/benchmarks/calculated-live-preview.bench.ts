@@ -4,7 +4,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { CellApiModule, ClientSideRowModelModule, RowApiModule, ValidationModule } from 'ag-grid-community';
 import { CalculatedColumnsModule, ColumnMenuModule, FormulaModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { BenchGridsManager, IS_JSDOM, benchDefaults } from './bench-utils';
 
 // Measures the live-preview keystroke flush WORK (rebuildCols + CSRM refreshModel + formula cache
 // wipe + viewport re-evaluation). requestAnimationFrame is overridden to fire synchronously so the
@@ -21,17 +21,19 @@ const modules = [
     ValidationModule,
 ];
 
-// jsdom has no layout: the dialog's centering reads offsetParent, so route it to parentElement
-// (same polyfill the calculated-columns behavioural tests use).
-Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-    configurable: true,
-    get(this: HTMLElement) {
-        if (this.closest('.ag-measurement-container')) {
-            return null;
-        }
-        return this.parentElement;
-    },
-});
+// Only jsdom needs this: it has no layout, so the dialog's centering reads a null offsetParent.
+// A real browser (`--browser`) has native offsetParent — overriding it there would corrupt layout.
+if (IS_JSDOM) {
+    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+        configurable: true,
+        get(this: HTMLElement) {
+            if (this.closest('.ag-measurement-container')) {
+                return null;
+            }
+            return this.parentElement;
+        },
+    });
+}
 
 // Synchronous rAF: the live-preview scheduler coalesces per frame; firing inline makes each
 // keystroke's flush run synchronously inside the input event so the bench measures only the work.
@@ -100,7 +102,7 @@ suite('calculated columns — live preview keystroke flush (synchronous rAF)', (
     let gridId = 0;
     const benchKeystroke = (name: string, rows: number, sortOnMargin: boolean, extraCols = 0, grouped = false) => {
         const id = `LP${++gridId}`;
-        const gridsManager = new TestGridsManager({ benchmark: true, modules });
+        const gridsManager = new BenchGridsManager({ modules });
         let api!: GridApi;
         let iter = 0;
         bench(
@@ -111,7 +113,7 @@ suite('calculated columns — live preview keystroke flush (synchronous rAF)', (
                 readViewport(api);
             },
             {
-                throws: true,
+                ...benchDefaults(),
                 setup: async () => {
                     gridsManager.reset();
                     iter = 0;

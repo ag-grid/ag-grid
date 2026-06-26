@@ -4,7 +4,7 @@ import { expect } from 'vitest';
 import type { GridApi, IRowNode, RowNode } from 'ag-grid-community';
 import { ROOT_NODE_ID } from 'ag-grid-community';
 
-import { unindentText } from '../utils';
+import { unindentText } from '../string-utils';
 import type { GridRows } from './gridRows';
 import type { GridRowsOptions } from './gridRowsOptions';
 import type { GridRowsErrors } from './rows-validation/gridRowsErrors';

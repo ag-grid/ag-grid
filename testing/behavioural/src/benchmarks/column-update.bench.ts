@@ -4,7 +4,7 @@ import type { ColDef, ColGroupDef, ColumnState, GridApi, GridOptions } from 'ag-
 import { ClientSideRowModelModule, ColumnApiModule, RowSelectionModule } from 'ag-grid-community';
 import { GroupFilterModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { BenchGridsManager, benchDefaults } from './bench-utils';
 
 const modules = [
     ClientSideRowModelModule,
@@ -63,9 +63,16 @@ const colIdsOf = (defs: (ColDef | ColGroupDef)[]): string[] => {
 
 suite('column update — applyColumnState / getColumnState paths (tiny rowData)', () => {
     let gridId = 0;
-    const benchUpdate = (name: string, initial: GridOptions, apply: (api: GridApi, iter: number) => void) => {
+    // noiseFactor defaults to 2 (this suite's column-state benches sit ~2–5% rme at 1×); pass a
+    // per-bench value to a quiet bench (1) or an inherently noisy one (3–4) — see the report.
+    const benchUpdate = (
+        name: string,
+        initial: GridOptions,
+        apply: (api: GridApi, iter: number) => void,
+        noiseFactor = 2
+    ) => {
         const id = `CU${++gridId}`;
-        const gridsManager = new TestGridsManager({ benchmark: true, modules });
+        const gridsManager = new BenchGridsManager({ modules });
         let api!: GridApi;
         let iter = 0;
         bench(
@@ -74,7 +81,7 @@ suite('column update — applyColumnState / getColumnState paths (tiny rowData)'
                 apply(api, iter++);
             },
             {
-                throws: true,
+                ...benchDefaults({ noiseFactor }),
                 setup: () => {
                     gridsManager.reset();
                     iter = 0;

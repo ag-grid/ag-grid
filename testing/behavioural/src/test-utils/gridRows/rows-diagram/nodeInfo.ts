@@ -1,6 +1,6 @@
 import type { RowNode } from 'ag-grid-community';
 
-import { optionalEscapeString } from '../../grid-test-utils';
+import { optionalEscapeString } from '../../string-utils';
 import type { GridRows } from '../gridRows';
 
 /** Resolves the best available children array for a row node. */

@@ -22,30 +22,96 @@ const aliases: Alias[] = [
 ];
 
 // Point package names at TypeScript source so tests run against uncompiled code.
+// AG_BENCH_PACKAGES overrides which checkout's `packages/` the grid imports resolve to — set by
+// `bench-compare.mjs --latest-benches` so one checkout's benches can measure another's grid source.
 if (process.env.TESTS_USE_ORIGINAL_SOURCE_CODE !== 'false') {
-    const packagesDir = path.resolve(repoRoot, 'packages');
+    const packagesDir = process.env.AG_BENCH_PACKAGES
+        ? path.resolve(process.env.AG_BENCH_PACKAGES)
+        : path.resolve(repoRoot, 'packages');
     if (existsSync(packagesDir)) {
         await loadSourceCodeAliases(aliases, packagesDir);
     }
 }
 
-export default defineConfig({
-    esbuild: { target: 'esnext', jsx: 'automatic' },
-    resolve: { alias: aliases },
-    test: {
-        globals: true,
-        environment: 'jsdom',
-        setupFiles: [path.resolve(thisDir, 'vitest.setup.ts')],
-        reporters: ['basic'],
-        watch: false,
-        pool: 'threads',
-        root: repoRoot,
-        dir: path.resolve(thisDir, 'src'),
-        include: ['**/*.test.ts', '**/*.test.tsx'],
-        benchmark: { include: ['**/*.bench.ts'] },
-        css: false,
+// The grid's Theming API imports CSS as a default-exported string (e.g. inject.ts:
+// `import sharedCSS from './shared/shared.css'`) and injects it at runtime. Vite only produces that
+// string for `.css?inline`; a bare `.css` import resolves to a styles side-effect with no default
+// export. Route bare `.css` imports through `?inline` so theming works the same as a real build.
+const cssInlinePlugin = {
+    name: 'bench-css-inline',
+    enforce: 'pre' as const,
+    async resolveId(this: any, source: string, importer: string | undefined, options: any) {
+        if (!source.endsWith('.css') || source.includes('?') || !importer) {
+            return null;
+        }
+        const resolved = await this.resolve(`${source}?inline`, importer, { ...options, skipSelf: true });
+        return resolved?.id ?? null;
     },
-    clearScreen: false,
+};
+
+// Benchmarks default to a real Chromium (via Playwright) so layout-dependent work is measured
+// against a real layout engine; `BENCH_NODE=1` (`./benches.sh --node`) opts back into node/jsdom.
+// Tests (mode 'test') always use jsdom — only benchmark runs go to the browser.
+// `BENCH_BROWSER_HEADED=1` (`./benches.sh --headed`) opens a visible window to watch the run.
+export default defineConfig(({ mode }) => {
+    const isBench = mode === 'benchmark';
+    const browserEnabled = isBench && !process.env.BENCH_NODE;
+    const browserHeadless = !process.env.BENCH_BROWSER_HEADED;
+
+    // `--profile` (BENCH_PROFILE, node-only — browser mode doesn't use the forks pool) emits a V8 CPU
+    // profile from the forked child. `--expose-gc` is always on so the harness can reclaim grids.
+    const benchExecArgv = ['--expose-gc'];
+    if (process.env.BENCH_PROFILE) {
+        const profileDir = process.env.BENCH_PROFILE_DIR || path.resolve(thisDir, 'profiles');
+        benchExecArgv.push('--cpu-prof', `--cpu-prof-dir=${profileDir}`);
+    }
+
+    return {
+        esbuild: { target: 'esnext', jsx: 'automatic' },
+        resolve: { alias: aliases },
+        plugins: browserEnabled ? [cssInlinePlugin] : [],
+        test: {
+            globals: true,
+            environment: 'jsdom',
+            setupFiles: [path.resolve(thisDir, 'vitest.setup.ts')],
+            reporters: ['basic'],
+            watch: false,
+            // Benchmarks run in a single forked child (clean process isolation, no file parallelism)
+            // so runs don't contend for cores or pay worker-migration noise. `--expose-gc` lives here
+            // (not in the shell wrappers) so `./benches.sh`, raw `vitest bench` and `bench-compare`
+            // all behave identically — the harness reclaims destroyed grids between benches when gc
+            // is present. Worker threads reject `--expose-gc`, hence forks. (Tests keep the defaults.)
+            pool: isBench ? 'forks' : 'threads',
+            fileParallelism: isBench ? false : undefined,
+            poolOptions: isBench ? { forks: { singleFork: true, execArgv: benchExecArgv } } : undefined,
+            root: repoRoot,
+            dir: path.resolve(thisDir, 'src'),
+            include: ['**/*.test.ts', '**/*.test.tsx'],
+            benchmark: { include: ['**/*.bench.ts'] },
+            css: browserEnabled,
+            browser: {
+                enabled: browserEnabled,
+                provider: 'playwright',
+                name: 'chromium',
+                headless: browserHeadless,
+                // No in-browser overlay — `--headed` shows the grid full-window, and `--ui` serves the
+                // separate Vitest dashboard (the bench picker) at a localhost URL, not this overlay.
+                ui: false,
+                screenshotFailures: false,
+                // Large, fixed viewport so the grid (sized 100vw×100vh) renders a representative number
+                // of rows consistently across machines, and fills the window when headed.
+                viewport: { width: 1600, height: 1200 },
+                // Only `--js-flags=--expose-gc` (so window.gc exists — the harness reclaims destroyed
+                // grids between benches, mirroring the node forks' gc). Everything else that reduces
+                // headless noise — timer throttling, renderer/occluded-window backgrounding, background
+                // networking, component-update, metrics, sync, MediaRouter/Translate/etc. — is ALREADY
+                // in Playwright's default chromium switches. Do NOT add a second `--disable-features`
+                // here: Chromium keeps only the last occurrence, so it would clobber Playwright's list.
+                providerOptions: { launch: { args: ['--js-flags=--expose-gc'] } },
+            },
+        },
+        clearScreen: false,
+    };
 });
 
 /** Recursively discover packages under `dir` and alias them to their source entry. */

@@ -4,7 +4,7 @@ import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-communit
 import { ClientSideRowModelModule, ColumnApiModule, RowSelectionModule } from 'ag-grid-community';
 import { GroupFilterModule, PivotModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { BenchGridsManager, benchDefaults } from './bench-utils';
 
 const modules = [
     ClientSideRowModelModule,
@@ -58,9 +58,16 @@ const buildGroupedCols = (leavesPerGroup: number, groupCount: number, variant: '
 
 suite('column refresh — pure col-model rebuild paths (tiny rowData)', () => {
     let gridId = 0;
-    const benchRefresh = (name: string, initial: GridOptions, apply: (api: GridApi, iter: number) => void) => {
+    // noiseFactor defaults to 2 (this suite's col-rebuild benches sit ~2–4% rme at 1×); pass a
+    // per-bench value to a quiet bench (1) or an inherently noisy one (3–4) — see the report.
+    const benchRefresh = (
+        name: string,
+        initial: GridOptions,
+        apply: (api: GridApi, iter: number) => void,
+        noiseFactor = 2
+    ) => {
         const id = `CR${++gridId}`;
-        const gridsManager = new TestGridsManager({ benchmark: true, modules });
+        const gridsManager = new BenchGridsManager({ modules });
         let api!: GridApi;
         let iter = 0;
         bench(
@@ -69,7 +76,7 @@ suite('column refresh — pure col-model rebuild paths (tiny rowData)', () => {
                 apply(api, iter++);
             },
             {
-                throws: true,
+                ...benchDefaults({ noiseFactor }),
                 setup: () => {
                     gridsManager.reset();
                     iter = 0;

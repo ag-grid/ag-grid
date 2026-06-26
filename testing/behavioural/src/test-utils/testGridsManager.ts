@@ -16,7 +16,7 @@ import {
 import { patchBeansToJson } from './patchBeansToJson';
 import { mockGridLayout } from './polyfills/mockGridLayout';
 import { waitForEvent } from './test-utils-events';
-import { ignoreConsoleLicenseKeyError } from './utils';
+import { ignoreConsoleLicenseKeyError } from './ignoreConsoleLicenseKeyError';
 
 export interface TestGridManagerOptions {
     /** The modules to register when a grid gets created */

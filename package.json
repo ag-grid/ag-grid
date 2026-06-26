@@ -142,6 +142,7 @@
       "tsx>esbuild#0.27.7": true,
       "vite>esbuild#0.21.5": true,
       "vite>sass>@parcel/watcher#2.5.1": true,
+      "vitest>@vitest/mocker>msw#2.14.6": false,
       "vitest>jsdom>canvas#3.2.3": true
     }
   }

@@ -1,6 +1,6 @@
 import type { AgPublicEventType, GridApi } from 'ag-grid-community';
 
-import { asyncSetTimeout } from './utils';
+import { asyncSetTimeout } from './node-utils';
 
 export function waitForEvent(event: AgPublicEventType, api: GridApi, n = 1): Promise<void> {
     let count = n;

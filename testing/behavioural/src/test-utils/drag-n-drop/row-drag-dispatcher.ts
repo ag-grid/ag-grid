@@ -6,7 +6,7 @@ import { getGridOwnerDocument, getRowHtmlElement } from '../gridRows/gridHtmlRow
 import { mockGridLayout } from '../polyfills/mockGridLayout';
 import { initPointerEventPolyfill } from '../polyfills/pointerEvent';
 import { TestGridsManager } from '../testGridsManager';
-import { asyncSetTimeout } from '../utils';
+import { asyncSetTimeout } from '../node-utils';
 import type { DragInteractionType } from './drag-event-dispatcher';
 import { DragEventDispatcher } from './drag-event-dispatcher';
 import { assertDropIndicatorVisible } from './drag-n-drop-utils';

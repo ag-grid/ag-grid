@@ -1,4 +1,4 @@
-import { asyncSetTimeout } from '../utils';
+import { asyncSetTimeout } from '../node-utils';
 
 export type InteractionEventOptions = MouseEventInit | PointerEventInit | TouchEventInit;
 
