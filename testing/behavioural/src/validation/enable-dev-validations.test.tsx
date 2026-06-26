@@ -23,18 +23,21 @@ describe('enableDevValidations', () => {
             rowData: [],
             ['notARealOption' as any]: true,
         };
-        const invalidPropertyWarning = expect.stringContaining("invalid gridOptions property 'notARealOption'");
+        const hasInvalidPropertyWarning = () =>
+            consoleWarnSpy.mock.calls.some((args) =>
+                args.join(' ').includes("invalid gridOptions property 'notARealOption'")
+            );
 
         // AllCommunityModule no longer bundles the ValidationModule, so an invalid grid option is
         // silently ignored - no validation warning is produced.
         createGrid(document.getElementById('grid1')!, invalidOptions, { modules: [AllCommunityModule] });
-        expect(consoleWarnSpy).not.toHaveBeenCalledWith(invalidPropertyWarning);
+        expect(hasInvalidPropertyWarning()).toBe(false);
 
         enableDevValidations();
 
         // Once opted in, the same invalid option produces the validation warning.
         consoleWarnSpy.mockClear();
         createGrid(document.getElementById('grid2')!, invalidOptions, { modules: [AllCommunityModule] });
-        expect(consoleWarnSpy).toHaveBeenCalledWith(invalidPropertyWarning);
+        expect(hasInvalidPropertyWarning()).toBe(true);
     });
 });

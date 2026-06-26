@@ -21,6 +21,7 @@ import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidator, RequiredOptions, ValidationWarning } from './validationTypes';
+import { validationWarning } from './validationTypes';
 
 export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validation' as const;
@@ -213,17 +214,15 @@ export class ValidationService extends BeanStub implements NamedBean {
             if (expectedType) {
                 const actualType = typeof value;
                 if (actualType !== expectedType) {
-                    warnings.add(
-                        `${String(key)} should be of type '${expectedType}' but received '${actualType}' (${value}).`
-                    );
+                    idWarnings.push(validationWarning(314, { key: String(key), expectedType, actualType, value }));
                     return;
                 }
             }
 
             if (dependencies) {
-                const warning = this.checkForRequiredDependencies(key, dependencies, options);
-                if (warning) {
-                    warnings.add(warning);
+                const depWarnings = this.checkForRequiredDependencies(key, dependencies, options);
+                if (depWarnings.length > 0) {
+                    idWarnings.push(...depWarnings);
                     return;
                 }
             }
@@ -253,7 +252,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         key: keyof T,
         validator: RequiredOptions<T>,
         options: T
-    ): string | null {
+    ): ValidationWarning[] {
         // eslint-disable-next-line no-restricted-properties
         const optionEntries = Object.entries<DependentValues<T, keyof T>>(validator);
         const failedOptions = optionEntries.filter(([key, value]) => {
@@ -261,25 +260,17 @@ export class ValidationService extends BeanStub implements NamedBean {
             return !value.required.includes(gridOptionValue);
         });
 
-        if (failedOptions.length === 0) {
-            return null;
-        }
-
-        return failedOptions
-            .map(
-                ([failedKey, possibleOptions]: [string, DependentValues<any, any>]) =>
-                    `'${String(key)}' requires '${failedKey}' to be one of [${possibleOptions.required
-                        .map((o: any) => {
-                            if (o === null) {
-                                return 'null';
-                            } else if (o === undefined) {
-                                return 'undefined';
-                            }
-                            return o;
-                        })
-                        .join(', ')}]. ${possibleOptions.reason ?? ''}`
-            )
-            .join('\n           '); // make multiple messages easier to read
+        return failedOptions.map(([failedKey, possibleOptions]: [string, DependentValues<any, any>]) => {
+            const required = possibleOptions.required.map((o: any) => {
+                if (o === null) {
+                    return 'null';
+                } else if (o === undefined) {
+                    return 'undefined';
+                }
+                return String(o);
+            });
+            return validationWarning(315, { key: String(key), failedKey, required, reason: possibleOptions.reason });
+        });
     }
 }
 

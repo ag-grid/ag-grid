@@ -824,6 +824,28 @@ export const AG_GRID_ERRORS = {
         `The chart type '${chartType}' has been deprecated. Please use '${renamedChartType}' instead.`,
     313: ({ paramsType, property }: { paramsType?: string; property: string }) =>
         `Unexpected property supplied. ${paramsType} does not contain: \`${property}\`.`,
+    314: ({
+        key,
+        expectedType,
+        actualType,
+        value,
+    }: {
+        key: string;
+        expectedType: string;
+        actualType: string;
+        value?: unknown;
+    }) => `${key} should be of type '${expectedType}' but received '${actualType}' (${String(value)}).`,
+    315: ({
+        key,
+        failedKey,
+        required,
+        reason,
+    }: {
+        key: string;
+        failedKey: string;
+        required?: string[];
+        reason?: string;
+    }) => `'${key}' requires '${failedKey}' to be one of [${(required ?? []).join(', ')}]. ${reason ?? ''}`,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
