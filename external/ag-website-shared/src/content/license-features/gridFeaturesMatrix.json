@@ -7,7 +7,7 @@
             {
                 "label": {
                     "name": "MCP Server",
-                    "link": "./mcp-server/"
+                    "link": "grid:./mcp-server/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -16,7 +16,7 @@
             {
                 "label": {
                     "name": "AI Toolkit",
-                    "link": "./ai-toolkit/"
+                    "link": "grid:./ai-toolkit/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -32,7 +32,7 @@
             {
                 "label": {
                     "name": "Sparklines",
-                    "link": "./sparklines-overview/"
+                    "link": "grid:./sparklines-overview/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -41,7 +41,7 @@
             {
                 "label": {
                     "name": "Integrated Charts",
-                    "link": "./integrated-charts/"
+                    "link": "grid:./integrated-charts/"
                 },
                 "community": false,
                 "enterprise": false,
@@ -70,7 +70,7 @@
                     {
                         "label": {
                             "name": "Text Filter",
-                            "link": "./filter-text/"
+                            "link": "grid:./filter-text/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -79,7 +79,7 @@
                     {
                         "label": {
                             "name": "Number Filter",
-                            "link": "./filter-number/"
+                            "link": "grid:./filter-number/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -88,7 +88,7 @@
                     {
                         "label": {
                             "name": "Date Filter",
-                            "link": "./filter-date/"
+                            "link": "grid:./filter-date/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -99,7 +99,7 @@
             {
                 "label": {
                     "name": "Quick Filter",
-                    "link": "./filter-quick/"
+                    "link": "grid:./filter-quick/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -108,7 +108,7 @@
             {
                 "label": {
                     "name": "External Filter",
-                    "link": "./filter-external/"
+                    "link": "grid:./filter-external/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -121,7 +121,7 @@
                     {
                         "label": {
                             "name": "Set Filter",
-                            "link": "./filter-set/"
+                            "link": "grid:./filter-set/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -130,7 +130,7 @@
                     {
                         "label": {
                             "name": "Multi Filter",
-                            "link": "./filter-multi/"
+                            "link": "grid:./filter-multi/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -141,7 +141,7 @@
             {
                 "label": {
                     "name": "Advanced Filter",
-                    "link": "./filter-advanced/"
+                    "link": "grid:./filter-advanced/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -157,7 +157,7 @@
             {
                 "label": {
                     "name": "Row Selection",
-                    "link": "./row-selection/"
+                    "link": "grid:./row-selection/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -166,7 +166,7 @@
             {
                 "label": {
                     "name": "Row Numbers",
-                    "link": "./row-numbers/"
+                    "link": "grid:./row-numbers/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -175,7 +175,7 @@
             {
                 "label": {
                     "name": "Cell Range Selection",
-                    "link": "./range-selection/"
+                    "link": "grid:./range-selection/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -184,7 +184,7 @@
             {
                 "label": {
                     "name": "Fill Handle",
-                    "link": "./range-selection-fill-handle/"
+                    "link": "grid:./range-selection-fill-handle/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -200,7 +200,7 @@
             {
                 "label": {
                     "name": "Formulas",
-                    "link": "./formulas"
+                    "link": "grid:./formulas"
                 },
                 "community": false,
                 "enterprise": true,
@@ -209,7 +209,7 @@
             {
                 "label": {
                     "name": "Find",
-                    "link": "./find"
+                    "link": "grid:./find"
                 },
                 "community": false,
                 "enterprise": true,
@@ -229,7 +229,7 @@
                     {
                         "label": {
                             "name": "Text Editor",
-                            "link": "./provided-cell-editors-text/"
+                            "link": "grid:./provided-cell-editors-text/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -238,7 +238,7 @@
                     {
                         "label": {
                             "name": "Number Editor",
-                            "link": "./provided-cell-editors-number/"
+                            "link": "grid:./provided-cell-editors-number/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -247,7 +247,7 @@
                     {
                         "label": {
                             "name": "Date Editor",
-                            "link": "./provided-cell-editors-date/"
+                            "link": "grid:./provided-cell-editors-date/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -256,7 +256,7 @@
                     {
                         "label": {
                             "name": "Checkbox Editor",
-                            "link": "./provided-cell-editors-checkbox/"
+                            "link": "grid:./provided-cell-editors-checkbox/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -265,7 +265,7 @@
                     {
                         "label": {
                             "name": "Large Text Editor",
-                            "link": "./provided-cell-editors-large-text/"
+                            "link": "grid:./provided-cell-editors-large-text/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -274,7 +274,7 @@
                     {
                         "label": {
                             "name": "Select Editor",
-                            "link": "./provided-cell-editors-select/"
+                            "link": "grid:./provided-cell-editors-select/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -285,7 +285,7 @@
             {
                 "label": {
                     "name": "Batch Editing",
-                    "link": "./cell-editing-batch/"
+                    "link": "grid:./cell-editing-batch/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -294,7 +294,7 @@
             {
                 "label": {
                     "name": "Undo / Redo",
-                    "link": "./undo-redo-edits/"
+                    "link": "grid:./undo-redo-edits/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -303,7 +303,7 @@
             {
                 "label": {
                     "name": "Advanced Select Editor",
-                    "link": "./provided-cell-editors-rich-select/"
+                    "link": "grid:./provided-cell-editors-rich-select/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -319,7 +319,7 @@
             {
                 "label": {
                     "name": "CSV Export",
-                    "link": "./csv-export/"
+                    "link": "grid:./csv-export/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -328,7 +328,7 @@
             {
                 "label": {
                     "name": "Excel Export",
-                    "link": "./excel-export/"
+                    "link": "grid:./excel-export/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -337,7 +337,7 @@
             {
                 "label": {
                     "name": "Clipboard Operations",
-                    "link": "./clipboard/"
+                    "link": "grid:./clipboard/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -346,7 +346,7 @@
             {
                 "label": {
                     "name": "Drag & Drop",
-                    "link": "./drag-and-drop/"
+                    "link": "grid:./drag-and-drop/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -362,7 +362,7 @@
             {
                 "label": {
                     "name": "Aggregation",
-                    "link": "./aggregation/"
+                    "link": "grid:./aggregation/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -371,7 +371,7 @@
             {
                 "label": {
                     "name": "Row Grouping",
-                    "link": "./grouping/"
+                    "link": "grid:./grouping/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -380,7 +380,7 @@
             {
                 "label": {
                     "name": "Pivoting",
-                    "link": "./pivoting/"
+                    "link": "grid:./pivoting/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -389,7 +389,7 @@
             {
                 "label": {
                     "name": "Tree Data",
-                    "link": "./tree-data/"
+                    "link": "grid:./tree-data/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -398,7 +398,7 @@
             {
                 "label": {
                     "name": "Master Detail",
-                    "link": "./server-side-model-master-detail/"
+                    "link": "grid:./server-side-model-master-detail/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -418,7 +418,7 @@
                     {
                         "label": {
                             "name": "Sorting",
-                            "link": "./infinite-scrolling/#sorting--filtering"
+                            "link": "grid:./infinite-scrolling/#sorting--filtering"
                         },
                         "community": true,
                         "enterprise": true,
@@ -427,7 +427,7 @@
                     {
                         "label": {
                             "name": "Filtering",
-                            "link": "./infinite-scrolling/#sorting--filtering"
+                            "link": "grid:./infinite-scrolling/#sorting--filtering"
                         },
                         "community": true,
                         "enterprise": true,
@@ -436,7 +436,7 @@
                     {
                         "label": {
                             "name": "Selection",
-                            "link": "./infinite-scrolling/#selection"
+                            "link": "grid:./infinite-scrolling/#selection"
                         },
                         "community": true,
                         "enterprise": true,
@@ -445,7 +445,7 @@
                     {
                         "label": {
                             "name": "Pagination",
-                            "link": "./infinite-scrolling/#pagination"
+                            "link": "grid:./infinite-scrolling/#pagination"
                         },
                         "community": true,
                         "enterprise": true,
@@ -460,7 +460,7 @@
                     {
                         "label": {
                             "name": "Row Grouping",
-                            "link": "./grouping/"
+                            "link": "grid:./grouping/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -469,7 +469,7 @@
                     {
                         "label": {
                             "name": "Pivoting",
-                            "link": "./pivoting/"
+                            "link": "grid:./pivoting/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -478,7 +478,7 @@
                     {
                         "label": {
                             "name": "Tree Data",
-                            "link": "./server-side-model-tree-data/"
+                            "link": "grid:./server-side-model-tree-data/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -487,7 +487,7 @@
                     {
                         "label": {
                             "name": "Master Detail",
-                            "link": "./server-side-model-master-detail/"
+                            "link": "grid:./server-side-model-master-detail/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -496,7 +496,7 @@
                     {
                         "label": {
                             "name": "Transactions",
-                            "link": "./server-side-model-updating-transactions/"
+                            "link": "grid:./server-side-model-updating-transactions/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -514,7 +514,7 @@
             {
                 "label": {
                     "name": "Column Menu",
-                    "link": "./column-menu/"
+                    "link": "grid:./column-menu/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -523,7 +523,7 @@
             {
                 "label": {
                     "name": "Context Menu",
-                    "link": "./context-menu/"
+                    "link": "grid:./context-menu/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -532,7 +532,7 @@
             {
                 "label": {
                     "name": "Columns Tool Panel",
-                    "link": "./tool-panel-columns/"
+                    "link": "grid:./tool-panel-columns/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -541,7 +541,7 @@
             {
                 "label": {
                     "name": "Filters Tool Panel",
-                    "link": "./tool-panel-filters/"
+                    "link": "grid:./tool-panel-filters/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -550,7 +550,7 @@
             {
                 "label": {
                     "name": "Status Bar",
-                    "link": "./status-bar/"
+                    "link": "grid:./status-bar/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -566,7 +566,7 @@
             {
                 "label": {
                     "name": "Accessibility",
-                    "link": "./accessibility/"
+                    "link": "grid:./accessibility/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -575,7 +575,7 @@
             {
                 "label": {
                     "name": "Localisation",
-                    "link": "./localisation/"
+                    "link": "grid:./localisation/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -584,7 +584,7 @@
             {
                 "label": {
                     "name": "Custom Components",
-                    "link": "./components/"
+                    "link": "grid:./components/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -600,7 +600,7 @@
             {
                 "label": {
                     "name": "Enterprise Support",
-                    "link": "./community-vs-enterprise/"
+                    "link": "grid:./community-vs-enterprise/"
                 },
                 "community": {
                     "value": false,
@@ -618,7 +618,7 @@
             {
                 "label": {
                     "name": "Perpetual License",
-                    "link": "./community-vs-enterprise/"
+                    "link": "grid:./community-vs-enterprise/"
                 },
                 "community": {
                     "value": false,
