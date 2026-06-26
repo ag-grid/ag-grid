@@ -7,6 +7,10 @@ on:
         branches: ['latest', 'b[0-9][0-9].[0-9].[0-9]', 'lts']
         types: [opened, synchronize, reopened, ready_for_review]
 
+# Least-privilege default; the analyze job overrides this with its own block.
+permissions:
+    contents: read
+
 jobs:
     analyze:
         name: Analyze (${{ matrix.language }})
