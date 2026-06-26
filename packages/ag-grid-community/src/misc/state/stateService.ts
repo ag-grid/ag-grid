@@ -6,6 +6,7 @@ import { _applyColumnState, _getColumnState } from '../../columns/columnStateUti
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
+import type { FilterChangedEventSourceType } from '../../events';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellRange } from '../../interfaces/IRangeService';
 import type {
@@ -346,7 +347,7 @@ export class StateService extends BeanStub implements NamedBean {
         const deferredFilterState = this.deferredFilterState;
         if (deferredFilterState) {
             this.deferredFilterState = undefined;
-            this.setFilterState(deferredFilterState);
+            this.setFilterState(deferredFilterState, 'api');
         }
 
         const updateCachedState = this.updateCachedState.bind(this);
@@ -635,7 +636,7 @@ export class StateService extends BeanStub implements NamedBean {
             : undefined;
     }
 
-    private setFilterState(filterState?: FilterState): void {
+    private setFilterState(filterState?: FilterState, source: FilterChangedEventSourceType = 'api'): void {
         const { filterManager, selectableFilter } = this.beans;
         const { filterModel, columnFilterState, advancedFilterModel, selectableFilters } = filterState ?? {
             filterModel: null,
@@ -647,7 +648,7 @@ export class StateService extends BeanStub implements NamedBean {
             selectableFilter?.setState(selectableFilters ?? undefined);
         }
         if (filterModel !== undefined || columnFilterState !== undefined) {
-            filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, 'columnFilter');
+            filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, source);
         }
         if (advancedFilterModel !== undefined) {
             filterManager?.setAdvFilterModel(advancedFilterModel ?? null, 'advancedFilter');
@@ -668,7 +669,7 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             }
         }
-        this.setFilterState(state);
+        this.setFilterState(state, 'api');
     }
 
     private getRangeSelectionState(): CellSelectionState | undefined {
