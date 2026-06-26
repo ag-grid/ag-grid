@@ -5,6 +5,14 @@ import type { DevValidationOptions } from './validationConfig';
 import { _applyDevValidationConfig } from './validationConfig';
 import { ValidationService } from './validationService';
 
+type ValidationModuleType = {
+    /**
+     * Configures development-time diagnostics, then returns the module to register, e.g.
+     * `ModuleRegistry.registerModules([ValidationModule.with({ throwOn: 'error' })])`.
+     */
+    with: (options?: DevValidationOptions) => _ModuleWithoutApi;
+} & _ModuleWithoutApi;
+
 /**
  * Provides extended development-time diagnostics: detailed console warnings for conflicting or
  * invalid grid options and column definition properties. It is intentionally excluded from the
@@ -15,10 +23,14 @@ import { ValidationService } from './validationService';
  *
  * @feature Validation
  */
-export const ValidationModule: _ModuleWithoutApi = {
+export const ValidationModule: ValidationModuleType = {
     moduleName: 'Validation',
     version: VERSION,
     beans: [ValidationService],
+    with: (options) => {
+        _applyDevValidationConfig(options);
+        return ValidationModule;
+    },
 };
 
 /**
@@ -36,9 +48,9 @@ export const ValidationModule: _ModuleWithoutApi = {
  * }
  * ```
  *
- * This is equivalent to registering the `ValidationModule` yourself, i.e.
- * `ModuleRegistry.registerModules([ValidationModule])` (or including it in the `modules` array
- * passed to a framework wrapper).
+ * This is the promoted equivalent of registering the module yourself, i.e.
+ * `ModuleRegistry.registerModules([ValidationModule.with(options)])` (or including
+ * `ValidationModule.with(options)` in the `modules` array passed to a framework wrapper).
  *
  * Call this before any grid is created, and from the same scope (module/bundle) that registers
  * your other modules — registration is global, so it must run before grid initialisation to take
@@ -47,16 +59,5 @@ export const ValidationModule: _ModuleWithoutApi = {
  * Pass {@link DevValidationOptions} to configure development-time diagnostics, e.g. `{ throwOn: 'error' }`.
  */
 export function enableDevValidations(options?: DevValidationOptions): void {
-    _registerModule(ValidationModule, undefined);
-    _applyDevValidationConfig(options);
-}
-
-/**
- * Configures the development-time diagnostics provided by the {@link ValidationModule} for users who
- * register the module directly (via the `modules` array or `ModuleRegistry.registerModules`) rather
- * than through {@link enableDevValidations}. Call before any grid is created. Not intended for
- * production builds.
- */
-export function configureDevValidations(options: DevValidationOptions): void {
-    _applyDevValidationConfig(options);
+    _registerModule(ValidationModule.with(options), undefined);
 }
