@@ -29,8 +29,17 @@ const { data: faqData } = (await getEntry('faqs', 'homepage')) as CollectionEntr
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
 const { blogPrefix } = whatsNewData['grid'];
 
-// Strip markdown link syntax ([text](url)) so the FAQ structured data carries clean plain-text answers.
-const toPlainText = (markdown: string): string => markdown.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
+// Reduce the markdown FAQ answers to plain text so the structured data matches the visible answer and
+// stays valid for rich results. Covers the inline markdown used in these answers: images, links,
+// bold/italic emphasis, inline code, and line-leading heading/quote/list markers.
+const toPlainText = (markdown: string): string =>
+    markdown
+        .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1') // images -> alt text
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1') // links -> link text
+        .replace(/(\*\*|__)(.*?)\1/g, '$2') // bold
+        .replace(/(\*|_)(.*?)\1/g, '$2') // italic
+        .replace(/`([^`]+)`/g, '$1') // inline code
+        .replace(/^\s{0,3}(?:#{1,6}|>|[-*+]|\d+\.)\s+/gm, ''); // heading / quote / list markers
 const faqStructuredData = buildFAQPage({
     pageUrl: siteRootUrl(metadata.canonicalUrlBase),
     items: faqData.map(({ question, answer }) => ({ question, answer: toPlainText(answer) })),
