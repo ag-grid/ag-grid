@@ -18,7 +18,7 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
 
     return footerItems.map(({ title, links }) => (
         <div key={title} className={styles.menuColumn}>
-            <h2>{title}</h2>
+            <span className={styles.menuColumnTitle}>{title}</span>
             <ul className="list-style-none">
                 {links.map(({ name, url, newTab, iconName }: any) => (
                     <li key={`${title}_${name}`}>
