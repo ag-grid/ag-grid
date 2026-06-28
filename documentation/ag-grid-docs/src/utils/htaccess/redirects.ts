@@ -3294,8 +3294,13 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     },
     { from: '/vue-data-grid/vue2/', to: '/vue-data-grid/getting-started/' },
     { from: '/v31.3/javascript-data-grid/archive-31-3/', to: '/documentation-archive/' },
-    { fromPattern: '^/forum(/|$)', gone: true },
-    { from: '/community-forums/', gone: true },
+    // Forum landing pages 301 to the successor /community/ hub (preserve link equity);
+    // individual forum threads have no equivalent and stay 410. Anchored patterns are used
+    // (not bare `from`s) because Apache's `Redirect` prefix-matches and would otherwise
+    // swallow the thread URLs into the landing redirect.
+    { fromPattern: '^/forum/$', to: '/community/' },
+    { fromPattern: '^/community-forums/$', to: '/community/' },
+    { fromPattern: '^/forum/.+', gone: true },
     { from: '/testimonials.php', gone: true },
     { from: '/start-trial.php', to: '/license-pricing/' },
     { from: '/options/series/radial-column/', to: 'https://www.ag-grid.com/charts/options/series/radial-column/' },

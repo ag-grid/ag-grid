@@ -6650,7 +6650,7 @@ www	/core-data-grid/integrated-charts/child/	301	/javascript-data-grid/integrate
 www	/vuejs-charts/	301	https://www.ag-grid.com/charts/
 www	/vuejs-charts/child	301	/vuejs-charts/child/
 www	/vuejs-charts/child/	301	https://www.ag-grid.com/charts/child/
-www	/community-forums/	410	
+www	/community-forums/	301	/community/
 www	/testimonials.php	410	
 www	/theo/	302	https://www.ag-grid.com/
 www	/javascript-data-grid/	301	https://www.ag-grid.com/javascript-data-grid/getting-started/
@@ -6689,7 +6689,9 @@ www	/example-runner/sample/	301	/example/
 www	/example-runner/sample	301	/example-runner/sample/
 www	/example-account-report/sample/	301	/example/
 www	/example-account-report/sample	301	/example-account-report/sample/
-www	/forum/	410	
+www	/forum/	301	/community/
+www	/forum/sample	301	/forum/sample/
+www	/forum/sample/	410	
 www	/gallery/sample/	301	https://www.ag-grid.com/charts/gallery/sample/
 www	/gallery/sample	301	/gallery/sample/
 www	/options/sample/	301	https://www.ag-grid.com/charts/options/

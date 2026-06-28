@@ -2646,8 +2646,9 @@ AddType application/x-gzip .gz .tgz
     Redirect 301 /angular-data-grid/global-style-upgrading-to-v28-sass/ /angular-data-grid/theming-v32-upgrading-to-v28-sass/
     Redirect 301 /vue-data-grid/vue2/ /vue-data-grid/getting-started/
     Redirect 301 /v31.3/javascript-data-grid/archive-31-3/ /documentation-archive/
-    RedirectMatch 410 "^/forum(/|$)"
-    Redirect 410 /community-forums/
+    RedirectMatch 301 "^/forum/$" "/community/"
+    RedirectMatch 301 "^/community-forums/$" "/community/"
+    RedirectMatch 410 "^/forum/.+"
     Redirect 410 /testimonials.php
     Redirect 301 /start-trial.php /license-pricing/
     Redirect 301 /options/series/radial-column/ https://www.ag-grid.com/charts/options/series/radial-column/

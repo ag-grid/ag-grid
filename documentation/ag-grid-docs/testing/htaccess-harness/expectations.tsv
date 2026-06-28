@@ -22,8 +22,9 @@ apex	/charts/react/zoom	301	https://www.ag-grid.com/charts/react/zoom/
 
 # --- SE-61 main (non-/charts) ---
 www	/javascript-grid-cell-style/	301	/javascript-data-grid/cell-styles/
+www	/forum/	301	/community/
+www	/community-forums/	301	/community/
 www	/forum/showthread.php	410
-www	/community-forums/	410
 www	/testimonials.php	410
 www	/start-trial.php	301	/license-pricing/
 www	/gallery/simple-area/	301	https://www.ag-grid.com/charts/gallery/simple-area/
