@@ -70,8 +70,19 @@ if [ -z "$MODS" ]; then
   done
 fi
 [ -n "$MODS" ] || skip_or_fail "Apache modules directory not found"
+# Debian/Ubuntu compile some modules (e.g. unixd, log_config) statically into the apache2 binary;
+# these appear in `httpd -l` and have NO `.so` on disk, so they must be neither required on disk nor
+# LoadModule'd (doing so errors with "module is built-in"). macOS ships them as separate `.so` files.
+# Build the LoadModule block dynamically: require + load only the modules that aren't built-in.
+BUILTIN="$("$HTTPD" -l 2>/dev/null || true)"
+LOADMODULES=""
 for m in $REQUIRED_MODS; do
+  if printf '%s\n' "$BUILTIN" | grep -Eq "mod_$m\.c$"; then
+    continue
+  fi
   [ -f "$MODS/mod_$m.so" ] || skip_or_fail "required Apache module mod_$m.so not found in $MODS"
+  LOADMODULES="$LOADMODULES
+LoadModule ${m}_module $MODS/mod_$m.so"
 done
 echo "==> using httpd: $HTTPD ; modules: $MODS"
 
@@ -144,16 +155,7 @@ ServerRoot "$WORK"
 DefaultRuntimeDir "$WORK"
 Mutex file:$WORK default
 TypesConfig /dev/null
-Listen $PORT
-LoadModule mpm_prefork_module $MODS/mod_mpm_prefork.so
-LoadModule unixd_module $MODS/mod_unixd.so
-LoadModule authz_core_module $MODS/mod_authz_core.so
-LoadModule log_config_module $MODS/mod_log_config.so
-LoadModule mime_module $MODS/mod_mime.so
-LoadModule dir_module $MODS/mod_dir.so
-LoadModule alias_module $MODS/mod_alias.so
-LoadModule rewrite_module $MODS/mod_rewrite.so
-LoadModule headers_module $MODS/mod_headers.so
+Listen $PORT$LOADMODULES
 ServerName localhost
 PidFile "$WORK/httpd.pid"
 ErrorLog "$WORK/logs/error.log"
