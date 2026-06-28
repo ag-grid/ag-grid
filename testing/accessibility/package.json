@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-accessibility",
-  "version": "36.0.0-beta.20260625.1543",
+  "version": "36.0.0-beta.20260628.2115",
   "scripts": {
     "download-examples": "curl --retry 5 -retry-all-errors https://grid-staging.ag-grid.com/debug/all-examples.json > ./all-examples.json",
     "download-examples-local": "curl https://localhost:4610/debug/all-examples.json > ./all-examples.json",
@@ -18,9 +18,9 @@
     "@angular/platform-browser": "^20.3.25",
     "@angular/platform-browser-dynamic": "^20.3.25",
     "@angular/router": "^20.3.25",
-    "ag-grid-angular": "36.0.0-beta.20260625.1543",
-    "ag-grid-community": "36.0.0-beta.20260625.1543",
-    "ag-grid-enterprise": "36.0.0-beta.20260625.1543",
+    "ag-grid-angular": "36.0.0-beta.20260628.2115",
+    "ag-grid-community": "36.0.0-beta.20260628.2115",
+    "ag-grid-enterprise": "36.0.0-beta.20260628.2115",
     "ag-charts-community": "14.0.0-beta.20260628",
     "ag-charts-enterprise": "14.0.0-beta.20260628",
     "rxjs": "~7.8.2",
