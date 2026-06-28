@@ -5,7 +5,7 @@
 # the redirect is a single hop.
 
 # --- SE-30 ---
-www	/introducing-the-ag-grid-model-context-protocol-mcp-server/	301	/javascript-data-grid/mcp-server/
+www	/introducing-the-ag-grid-model-context-protocol-mcp-server/	301	https://blog.ag-grid.com/introducing-the-ag-grid-model-context-protocol-mcp-server/
 
 # --- SE-60 (grid; the /charts/* ones are asserted in the charts section) ---
 www	/javascript-data-grid/grouping-sticky-groups/	301	/javascript-data-grid/grouping-display-types/

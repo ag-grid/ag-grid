@@ -397,8 +397,12 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
 ];
 
 export const SITE_301_REDIRECTS: Redirect[] = [
-    // SE-30: legacy MCP announcement slug that 404s -> current MCP server docs page
-    { from: '/introducing-the-ag-grid-model-context-protocol-mcp-server/', to: '/javascript-data-grid/mcp-server/' },
+    // SE-30: legacy MCP announcement slug that 404s on www -> the blog post (same slug) where the
+    // announcement actually lives, preserving the content for external links / historical index entries.
+    {
+        from: '/introducing-the-ag-grid-model-context-protocol-mcp-server/',
+        to: 'https://blog.ag-grid.com/introducing-the-ag-grid-model-context-protocol-mcp-server/',
+    },
 
     // SE-60: legacy URLs returning 404 that are still internally linked.
     // NOTE: the three /charts/javascript|react/{toolbar,line} entries from this ticket are NOT here —

@@ -339,7 +339,7 @@ AddType application/x-gzip .gz .tgz
     # temporary redirect for tracking of partnership   
     RedirectMatch 302 ^/theo/$ https://www.ag-grid.com/
     
-    Redirect 301 /introducing-the-ag-grid-model-context-protocol-mcp-server/ /javascript-data-grid/mcp-server/
+    Redirect 301 /introducing-the-ag-grid-model-context-protocol-mcp-server/ https://blog.ag-grid.com/introducing-the-ag-grid-model-context-protocol-mcp-server/
     Redirect 301 /javascript-data-grid/grouping-sticky-groups/ /javascript-data-grid/grouping-display-types/
     Redirect 301 /javascript-data-grid/global-style-upgrading-to-v28/ /javascript-data-grid/theming-v32-upgrading-to-v28/
     Redirect 301 /javascript-data-grid/integrated-charts-api-chart-tool-panel/ /javascript-data-grid/integrated-charts-chart-tool-panels/
