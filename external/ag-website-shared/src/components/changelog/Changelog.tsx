@@ -22,7 +22,7 @@ const CHANGELOG_DATA_URL = urlWithBaseUrl('/changelog/changelog.json');
 const RELEASE_VERSION_NOTES_URL = urlWithBaseUrl('/changelog/releaseVersionNotes.json');
 
 function getChangelogReleaseNotesUrl(pageName: string) {
-    return urlWithBaseUrl(`/changelog/${pageName}`);
+    return urlWithBaseUrl(`/changelog/${pageName.replace(/^\//, '')}`);
 }
 
 function useFixVersion() {
