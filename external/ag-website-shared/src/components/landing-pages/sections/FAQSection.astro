@@ -12,7 +12,7 @@ interface Props {
 
 const { section, pageContent } = Astro.props;
 
-const framework = getFrameworkFromInternalFramework(pageContent.framework);
+const framework = getFrameworkFromInternalFramework(pageContent.internalFramework);
 const faqData = renderFAQAnswers(section.items, framework);
 ---
 
