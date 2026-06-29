@@ -91,7 +91,7 @@ const showCustomerLogos = section.showCustomerLogos !== false;
                     )
                 }
             </div>
-            <div class={styles.heroSectionButtonContainer}>
+            <!-- <div class={styles.heroSectionButtonContainer}>
                 {
                     section.primaryCta?.useTrialButton ? (
                         <slot name="hero-trial-button" />
@@ -116,7 +116,31 @@ const showCustomerLogos = section.showCustomerLogos !== false;
                         </div>
                     )
                 }
+            </div> -->
+            <div class={styles.heroSectionButtonContainer}>
+                <a
+                    id="get-started"
+                    class:list={[
+                        'button-secondary',
+                        styles.heroSectionCta1,
+                        `plausible-event-name=${pageContent.analyticsPrefix}-get-started`,
+                    ]}
+                    href={urlWithBaseUrl(`./${pageContent.docsPath}/getting-started/`)}
+                >
+                    Get Started
+                </a>
+
+                {
+                    pageContent.packageName && (
+                        <div class={styles.heroSectionCta2}>
+                            <slot name="hero-install" />
+                        </div>
+                    )
+                }
+
+                <slot name="hero-trial-button" />
             </div>
+
             <div class={styles.heroSectionDemoContainer}>
                 <slot name="hero-demo" />
             </div>

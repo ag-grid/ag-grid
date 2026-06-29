@@ -112,15 +112,15 @@ const themeBuilderVideo = isEnterprise
                                 enableRowGroup={section.demo?.enableRowGroup}
                             />
                             <InstallText slot="hero-install" client:load packageName={content.packageName} />
-                            {section.primaryCta?.useTrialButton && (
-                                <TrialButton
-                                    slot="hero-trial-button"
-                                    client:load
-                                    className={`button-secondary ${styles.heroSectionCta1} plausible-event-name=${content.analyticsPrefix}-trial-cta`}
-                                >
-                                    {section.primaryCta.text}
-                                </TrialButton>
-                            )}
+
+                            <TrialButton
+                                slot="hero-trial-button"
+                                client:load
+                                className={`button-secondary ${styles.heroSectionCta1} plausible-event-name=${content.analyticsPrefix}-trial-cta`}
+                            >
+                                Start Free Trial
+                            </TrialButton>
+
                             <CustomerLogos slot="hero-logos" client:load />
                         </HeroSection>
                     );
