@@ -2770,6 +2770,14 @@ Header always set Content-Security-Policy "default-src 'self'; script-src 'self'
     Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://*.ag-grid.com https://plausible.io https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://js.zi-scripts.com https://*.zoominfo.com https://www.google.com https://www.gstatic.com https://apis.google.com https://www.youtube.com https://cdn.cookielaw.org blob: 'wasm-unsafe-eval' https://bryntum.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline' https://bryntum.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com data: https://bryntum.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.ag-grid.com https://plausible.io https://*.algolia.net https://*.algolianet.com https://*.google-analytics.com https://*.analytics.google.com https://analytics.google.com https://stats.g.doubleclick.net https://flagcdn.com https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://js.zi-scripts.com https://*.zoominfo.com https://www.google.com https://cdn.cookielaw.org https://*.onetrust.com https://www.googleapis.com https://securetoken.googleapis.com https://us-central1-stripe-testing-19784.cloudfunctions.net https://bryntum.com; frame-src 'self' https://www.googletagmanager.com https://www.youtube.com https://www.google.com https://pay.sandbox.realexpayments.com https://stripe-testing-19784.firebaseapp.com; media-src 'self' data: blob: https:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://us-central1-stripe-testing-19784.cloudfunctions.net https://test.salesforce.com https://pay.sandbox.realexpayments.com https://codesandbox.io https://plnkr.co; frame-ancestors 'self' https://*.ag-grid.com"
 </If>
 
+# /branch-builds/ holds preserved per-branch documentation builds (staging only):
+# arbitrary historical snapshots, internal and password-protected, whose pages predate
+# the tightened policy (e.g. inline event handlers, which CSP can't authorise by hash).
+# Drop the CSP entirely for them rather than force-fit a scope.
+<If "%{REQUEST_URI} =~ m#^/branch-builds/#">
+    Header always unset Content-Security-Policy
+</If>
+
 Options -Indexes
 "
 `;

@@ -1,6 +1,11 @@
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
 import type { CspEnv } from './cspRules';
-import { getCampaignsCspIfOverride, getCspHtaccessBlock, getScopedCspHtaccessBlock } from './cspRules';
+import {
+    getBranchBuildsCspIfOverride,
+    getCampaignsCspIfOverride,
+    getCspHtaccessBlock,
+    getScopedCspHtaccessBlock,
+} from './cspRules';
 import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
@@ -181,6 +186,8 @@ function getStagingHtaccessContent(): string {
 # Content-Security-Policy — enforced, path-scoped. Unsets the legacy wildcard CSP on
 # the staging vhost so this tightened policy is the only one in effect.
 ${getScopedCspHtaccessBlock({ env: 'staging' }, 'enforce')}
+
+${getBranchBuildsCspIfOverride('enforce')}
 
 Options -Indexes
 `;

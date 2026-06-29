@@ -1,4 +1,4 @@
-import { CAMPAIGNS_PATH_CONDITION, EXAMPLES_PATH_CONDITION } from './cspRules';
+import { BRANCH_BUILDS_PATH_CONDITION, CAMPAIGNS_PATH_CONDITION, EXAMPLES_PATH_CONDITION } from './cspRules';
 import { PRODUCTION_CSP_PHASE, getHtaccessContent } from './htaccessRules';
 import { SITE_301_REDIRECTS } from './redirects';
 
@@ -340,6 +340,33 @@ describe('htaccessRules', () => {
                 expect(ifBlock).toContain('Header always set Content-Security-Policy "');
             });
         }
+    });
+
+    describe('AG-17134: /branch-builds/ CSP exemption', () => {
+        const branchBuildsIfOpen = `<If "${BRANCH_BUILDS_PATH_CONDITION}">`;
+
+        const branchBuildsIfBlock = (content: string) => {
+            const start = content.indexOf(branchBuildsIfOpen);
+            expect(start).toBeGreaterThan(-1);
+            return content.slice(start, content.indexOf('</If>', start));
+        };
+
+        it('staging: drops the CSP entirely for /branch-builds/ (unset, no re-set)', () => {
+            const ifBlock = branchBuildsIfBlock(stagingContent);
+            expect(ifBlock).toContain('Header always unset Content-Security-Policy');
+            expect(ifBlock).not.toContain('Header always set Content-Security-Policy');
+        });
+
+        it('staging: the branch-builds override trails the site-wide set so it wins for those paths', () => {
+            const setIndex = stagingContent.indexOf('Header always set Content-Security-Policy "');
+            const ifIndex = stagingContent.indexOf(branchBuildsIfOpen);
+            expect(setIndex).toBeGreaterThan(-1);
+            expect(ifIndex).toBeGreaterThan(setIndex);
+        });
+
+        it('production: no /branch-builds/ override (the tree is staging-only)', () => {
+            expect(productionContent).not.toContain(branchBuildsIfOpen);
+        });
     });
 
     describe('basic structure', () => {
