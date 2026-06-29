@@ -1018,17 +1018,24 @@ export class CellCtrl extends BeanStub {
         this.beans.colHover?.onCellColumnHover(this.column, this.comp);
     }
 
+    public resetTooltipToColDef(): void {
+        if (!this.comp) {
+            return;
+        }
+
+        this.disableTooltipFeature();
+        if (this.column.isTooltipEnabled()) {
+            this.enableTooltipFeature();
+        }
+        this.tooltipFeature?.refreshTooltip();
+    }
+
     public onColDefChanged(): void {
         if (!this.comp) {
             return;
         }
 
-        if (this.column.isTooltipEnabled()) {
-            this.disableTooltipFeature();
-            this.enableTooltipFeature();
-        } else {
-            this.disableTooltipFeature();
-        }
+        this.resetTooltipToColDef();
 
         this.setWrapText();
         this.setCalculatedColumnCss();

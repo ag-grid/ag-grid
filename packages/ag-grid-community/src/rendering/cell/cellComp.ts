@@ -175,15 +175,18 @@ export class CellComp extends Component {
         this.refreshEditStyles(false);
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
+        const hadRenderer = this.cellRenderer != null;
         if (compDetails) {
             const neverRefresh = forceNewCellRendererInstance || controlWrapperChanged;
             const cellRendererRefreshSuccessful = neverRefresh ? false : this.refreshCellRenderer(compDetails);
             if (!cellRendererRefreshSuccessful) {
                 this.destroyRenderer();
+                this.resetCellRendererTooltip(hadRenderer);
                 this.createCellRendererInstance(compDetails);
             }
         } else {
             this.destroyRenderer();
+            this.resetCellRendererTooltip(hadRenderer);
             this.insertValueWithoutCellRenderer(valueToDisplay);
         }
 
@@ -306,6 +309,13 @@ export class CellComp extends Component {
         const escapedValue = _toString(valueToDisplay);
         if (escapedValue != null) {
             eParent.textContent = escapedValue;
+        }
+    }
+
+    // must run before the new renderer is created, so an incoming setTooltip still wins over this reset
+    private resetCellRendererTooltip(hadRenderer: boolean): void {
+        if (hadRenderer) {
+            this.cellCtrl.resetTooltipToColDef();
         }
     }
 
