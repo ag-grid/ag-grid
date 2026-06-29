@@ -582,12 +582,13 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
                     const invalidItems = sortingOrder.filter((a) => !getSortDefFromInput(a));
                     if (invalidItems.length > 0) {
-                        return `sortingOrder must be an array of type (SortDirection | SortDef)[], incorrect items are: ${invalidItems.map(
-                            (item) =>
+                        return `sortingOrder must be an array of type (SortDirection | SortDef)[], incorrect items are: [${invalidItems
+                            .map((item) =>
                                 typeof item === 'string' || item == null
                                     ? toStringWithNullUndefined(item)
                                     : JSON.stringify(item)
-                        )}]`;
+                            )
+                            .join(', ')}]`;
                     }
                 } else if (!Array.isArray(sortingOrder) || !sortingOrder.length) {
                     return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
