@@ -14,17 +14,16 @@ export interface DevValidationOptions {
     throwOn?: 'error' | 'warning' | 'deprecation' | false;
 }
 
-const config: Required<DevValidationOptions> = {
+const DEV_VALIDATION_DEFAULTS: Required<DevValidationOptions> = {
     throwOn: false,
 };
 
 /**
- * Stores the supplied options and pushes the resulting diagnostic configuration into the logging
- * layer. Always enables capture, since reaching here means the ValidationModule is active.
+ * Resolves the supplied options against the defaults and pushes the resulting diagnostic configuration
+ * into the logging layer. Each call fully replaces the previous configuration — options left out reset
+ * to their defaults, so registering without options does not inherit an earlier `throwOn`. Always
+ * enables capture, since reaching here means the ValidationModule is active.
  */
 export function _applyDevValidationConfig(options?: DevValidationOptions): void {
-    if (options?.throwOn !== undefined) {
-        config.throwOn = options.throwOn;
-    }
-    _configureDiagnostics({ capture: true, throwOn: config.throwOn });
+    _configureDiagnostics({ capture: true, throwOn: options?.throwOn ?? DEV_VALIDATION_DEFAULTS.throwOn });
 }

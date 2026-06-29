@@ -10,6 +10,7 @@ import {
     _runWithActiveGrid,
     _warn,
 } from './logging';
+import { _applyDevValidationConfig } from './validationConfig';
 
 vi.mock('../utils/log', () => ({
     _warnOnce: vi.fn(),
@@ -234,5 +235,16 @@ describe('throw mode', () => {
     test('does not throw when no threshold is configured', () => {
         expect(() => _error(11)).not.toThrow();
         expect(() => _warn(11)).not.toThrow();
+    });
+});
+
+describe('dev validation config', () => {
+    test('registering without options resets a previously-configured throw threshold', () => {
+        _applyDevValidationConfig({ throwOn: 'error' });
+        expect(() => _error(11)).toThrow();
+
+        // A later registration with no options must not inherit the earlier throwOn.
+        _applyDevValidationConfig();
+        expect(() => _error(11)).not.toThrow();
     });
 });
