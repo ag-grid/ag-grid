@@ -42,15 +42,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # Use workflow_run.head_sha (the commit CI actually deployed) so that the
-          # data.json read by page-verification.spec.ts matches what is on staging.
-          # Using github.sha (branch HEAD) caused a race: if a second commit landed
-          # before this workflow started, the test would reference examples not yet
-          # deployed. The OSSF/Scorecard untrusted-input concern does not apply here
-          # because the if-condition above already guards against fork PRs
-          # (head_repository.full_name == github.repository). The || github.sha
-          # fallback covers the workflow_dispatch path where head_sha is absent.
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          # Check out the default-branch HEAD (github.sha). In a workflow_run
+          # context this is the branch the run was triggered on; combined with the
+          # job-level `if:` (same-repo push only), the deployed commit is at HEAD.
+          # Avoid referencing workflow_run.head_sha here: it is an untrusted-input
+          # pattern flagged by OSSF/Scorecard for privileged workflow_run checkouts.
+          ref: ${{ github.sha }}
           fetch-depth: 1
 
       - name: Setup Node
