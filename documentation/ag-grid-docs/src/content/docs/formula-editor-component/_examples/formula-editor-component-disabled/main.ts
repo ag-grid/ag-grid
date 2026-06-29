@@ -5,6 +5,7 @@ import {
     NumberEditorModule,
     TextEditorModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
@@ -18,7 +19,6 @@ ModuleRegistry.registerModules([
     FormulaModule,
     NumberEditorModule,
     TextEditorModule,
-    enableDevValidations,
 ]);
 
 let gridApi: GridApi;
