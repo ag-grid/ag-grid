@@ -10,9 +10,10 @@ export const FORCE_LEGACY_THEMES = false;
 let styleInjectionForcedForTesting = false;
 
 /**
- * @internal Test hook — force CSS injection to run even when IS_SSR is true (e.g.
- * jsdom, which lacks document.fonts). Lets theming tests exercise real injection
- * without enabling it for the rest of the test suite.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ * Test hook — force CSS injection to run even when IS_SSR is true (e.g. jsdom, which
+ * lacks document.fonts). Lets theming tests exercise real injection without enabling
+ * it for the rest of the test suite.
  */
 export const _setStyleInjectionEnabledForTesting = (enabled: boolean): void => {
     styleInjectionForcedForTesting = enabled;
