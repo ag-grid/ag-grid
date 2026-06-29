@@ -11,7 +11,7 @@ import type {
 import type { RowModelType } from '../../interfaces/iRowModel';
 import type { RowNodeEventType, RowPinnedType } from '../../interfaces/iRowNode';
 import { ENTERPRISE_MODULE_NAMES } from '../enterpriseModuleNames';
-import { baseDocLink, getErrorLink } from '../logging';
+import { baseDocLink, getErrorLink, toStringWithNullUndefined } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
 import { USER_COMP_MODULES } from '../rules/userCompValidations';
 
@@ -864,6 +864,16 @@ export const AG_GRID_ERRORS = {
         const names = (validNames ?? []).map((n) => `'${n}'`).join(', ');
         return `'paginationPanels' expects an array of panel names or config objects: [${names}]`;
     },
+    324: ({ property, invalidItems }: { property: string; invalidItems?: unknown[] }) => {
+        const items = (invalidItems ?? [])
+            .map((item) =>
+                typeof item === 'string' || item == null ? toStringWithNullUndefined(item) : JSON.stringify(item)
+            )
+            .join(', ');
+        return `${property} must be an array of type (SortDirection | SortDef)[], incorrect items are: [${items}]`;
+    },
+    325: ({ property, value }: { property: string; value?: unknown }) =>
+        `${property} must be an array with at least one element, currently it is [${String(value)}]`,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

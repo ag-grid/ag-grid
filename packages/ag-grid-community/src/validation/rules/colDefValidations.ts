@@ -279,16 +279,10 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                         return !(_isSortDefValid(a) || isSortDirectionValid(a));
                     });
                     if (invalidItems.length > 0) {
-                        return `sortingOrder must be an array of type non-null (SortDirection | SortDef)[], incorrect items are: [${invalidItems
-                            .map((item) =>
-                                typeof item === 'string' || item == null
-                                    ? toStringWithNullUndefined(item)
-                                    : JSON.stringify(item)
-                            )
-                            .join(', ')}]`;
+                        return _createValidationWarning(324, { property: 'sortingOrder', invalidItems });
                     }
                 } else if (!Array.isArray(sortingOrder) || !sortingOrder.length) {
-                    return `sortingOrder must be an array with at least one element, currently it is [${sortingOrder}]`;
+                    return _createValidationWarning(325, { property: 'sortingOrder', value: sortingOrder });
                 }
                 return null;
             },

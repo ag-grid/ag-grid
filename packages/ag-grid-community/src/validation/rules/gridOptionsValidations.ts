@@ -3,7 +3,7 @@ import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
-import { _errMsg, toStringWithNullUndefined } from '../logging';
+import { _errMsg } from '../logging';
 import type {
     Deprecations,
     OptionsValidator,
@@ -582,16 +582,10 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
                     const invalidItems = sortingOrder.filter((a) => !getSortDefFromInput(a));
                     if (invalidItems.length > 0) {
-                        return `sortingOrder must be an array of type (SortDirection | SortDef)[], incorrect items are: [${invalidItems
-                            .map((item) =>
-                                typeof item === 'string' || item == null
-                                    ? toStringWithNullUndefined(item)
-                                    : JSON.stringify(item)
-                            )
-                            .join(', ')}]`;
+                        return _createValidationWarning(324, { property: 'sortingOrder', invalidItems });
                     }
                 } else if (!Array.isArray(sortingOrder) || !sortingOrder.length) {
-                    return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
+                    return _createValidationWarning(325, { property: 'sortingOrder', value: sortingOrder });
                 }
                 return null;
             },
