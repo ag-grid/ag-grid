@@ -14,12 +14,7 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    FormulaModule,
-    NumberEditorModule,
-    TextEditorModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, FormulaModule, NumberEditorModule, TextEditorModule]);
 
 let gridApi: GridApi;
 
