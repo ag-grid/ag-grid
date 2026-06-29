@@ -16,9 +16,6 @@
             "subHeading": "Vue Data Grids",
             "subHeadingHtml": "Add <b>high-performance</b>, <b>feature rich</b>, and <b>fully customisable</b> Vue Data Grids to your application in <b>minutes</b>, all for <b>free</b>.",
             "showVersionBadge": true,
-            "primaryCta": {
-                "text": "Get Started"
-            },
             "secondaryCta": {
                 "text": "View All Demos",
                 "url": "./example"
