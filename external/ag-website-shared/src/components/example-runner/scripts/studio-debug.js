@@ -156,15 +156,38 @@ const requeryWithExplainButton = {
         const { api } = params;
         const widgetId = /** @type {any} */ (params).widgetId;
         const refresh = internalApi(api)?.refresh;
+        if (typeof refresh !== 'function') {
+            return;
+        }
         const win = /** @type {{agStudioOpts?: Record<string, unknown>}} */ (window);
         const savedOpts = win.agStudioOpts;
         win.agStudioOpts = { ...(savedOpts ?? {}), explain: { mode: 'analyze', samples: true, widgetId } };
+
+        // The widget re-queries asynchronously, and the query engine reads
+        // window.agStudioOpts.explain only when that re-query actually runs — at a point
+        // that differs between the dev and production builds. A fixed requestAnimationFrame
+        // reset races that read, so the explain plan prints on dev but not on a
+        // production/staging build. Instead, hold the explain option until the next user
+        // interaction (which always lands after the re-query has consumed it), with a
+        // timeout backstop so an untouched page does not keep explaining later queries.
+        let restored = false;
+        /** @type {ReturnType<typeof setTimeout>} */
+        let timer;
+        const restore = () => {
+            if (restored) {
+                return;
+            }
+            restored = true;
+            win.agStudioOpts = savedOpts;
+            window.removeEventListener('pointerdown', restore, true);
+            window.removeEventListener('keydown', restore, true);
+            clearTimeout(timer);
+        };
+        window.addEventListener('pointerdown', restore, true);
+        window.addEventListener('keydown', restore, true);
+        timer = setTimeout(restore, 10000);
+
         refresh(widgetId);
-        requestAnimationFrame(() =>
-            requestAnimationFrame(() => {
-                win.agStudioOpts = savedOpts;
-            })
-        );
     },
 };
 
