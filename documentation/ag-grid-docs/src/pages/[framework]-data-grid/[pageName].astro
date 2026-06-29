@@ -35,10 +35,9 @@ const seoTagline = `Download AG Grid v${version} today: The best ${frameworkDisp
 const migrationVersionEntry = migrationVersion
     ? versionsData.find((v: { version: string; landingPageHighlight?: string }) => v.version === migrationVersion)
     : null;
-const upgradePageDescription =
-    migrationVersionEntry?.landingPageHighlight
-        ? `Upgrade your $framework Data Grid to AG Grid v${migrationVersion}: ${migrationVersionEntry.landingPageHighlight}.`
-        : null;
+const upgradePageDescription = migrationVersionEntry?.landingPageHighlight
+    ? `Upgrade your $framework Data Grid to AG Grid v${migrationVersion}: ${migrationVersionEntry.landingPageHighlight}.`
+    : null;
 
 const description = getPageDescription({
     framework: currentFramework,
