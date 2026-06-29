@@ -1,6 +1,9 @@
 export type SimpleRedirectRule = { from: string; to: string };
 export type RedirectMatchRule = { fromPattern: string; to: string };
-export type Redirect = SimpleRedirectRule | RedirectMatchRule;
+// A 410 Gone rule: the page is permanently removed with no equivalent. Has no `to`; emitted
+// as `Redirect 410 <from>` or `RedirectMatch 410 "<fromPattern>"`.
+export type GoneRule = { from: string; gone: true } | { fromPattern: string; gone: true };
+export type Redirect = SimpleRedirectRule | RedirectMatchRule | GoneRule;
 
 /**
  * Where this file lives
@@ -18,7 +21,421 @@ const pageForAllFrameworks = (from: string, to: string): Redirect[] => [
     { from: `/vue-data-grid/${from}`, to: `/vue-data-grid/${to}` },
 ];
 
+/**
+ * Note: when changing this file please add/update the tests in
+ * documentation/ag-grid-docs/testing/htaccess-harness
+ */
+
+// SE-64 (www) and SE-66 (bare apex) chain shortening. These legacy paths currently reach
+// their final page through 2-4 redirects. Emitted as mod_rewrite RewriteRules placed BEFORE
+// the https-upgrade and host-swap (see htaccessRules.ts), so a request lands on the final
+// www URL in a SINGLE hop regardless of host or scheme. Targets are absolute www URLs (with
+// no query string, so Apache preserves any inbound query). Destinations were derived by
+// replaying the current redirect rules to their fixpoint.
+export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
+    // Shadowed /{framework}-grid/<subpage>/ rules converted to single hop. The broad /{fw}-grid/
+    // prefix rule (mod_alias, first-match) otherwise shadows these specifics: 128 took 2 hops and 14
+    // landed on the wrong (404) page. As mod_rewrite, these run before mod_alias so each resolves in
+    // one hop to its final page. (The 610 other shadowed specifics already resolve in one hop via the
+    // broad prefix, so they need no rewrite.)
+    {
+        from: '/javascript-grid/cell-rendering/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/',
+    },
+    { from: '/javascript-grid/client-side-model/', to: 'https://www.ag-grid.com/javascript-data-grid/row-models/' },
+    {
+        from: '/javascript-grid/component-cell-editor/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/cell-editors/',
+    },
+    { from: '/javascript-grid/component-date/', to: 'https://www.ag-grid.com/javascript-data-grid/filter-date/' },
+    { from: '/javascript-grid/component-header/', to: 'https://www.ag-grid.com/javascript-data-grid/column-headers/' },
+    { from: '/javascript-grid/component-overlay/', to: 'https://www.ag-grid.com/javascript-data-grid/overlays/' },
+    { from: '/javascript-grid/component-status-bar/', to: 'https://www.ag-grid.com/javascript-data-grid/status-bar/' },
+    { from: '/javascript-grid/component-tooltip/', to: 'https://www.ag-grid.com/javascript-data-grid/tooltips/' },
+    { from: '/javascript-grid/component-types/', to: 'https://www.ag-grid.com/javascript-data-grid/components/' },
+    { from: '/javascript-grid/expressions-and-context/', to: 'https://www.ag-grid.com/javascript-data-grid/context/' },
+    { from: '/javascript-grid/filter-custom/', to: 'https://www.ag-grid.com/javascript-data-grid/component-filter/' },
+    { from: '/javascript-grid/filter-provided/', to: 'https://www.ag-grid.com/javascript-data-grid/filtering/' },
+    { from: '/javascript-grid/filter-provided-simple/', to: 'https://www.ag-grid.com/javascript-data-grid/filtering/' },
+    {
+        from: '/javascript-grid/flashing-cells/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/change-cell-renderers/',
+    },
+    { from: '/javascript-grid/grid-callbacks/', to: 'https://www.ag-grid.com/javascript-data-grid/grid-options/' },
+    { from: '/javascript-grid/grid-features/', to: 'https://www.ag-grid.com/' },
+    { from: '/javascript-grid/grid-properties/', to: 'https://www.ag-grid.com/javascript-data-grid/grid-options/' },
+    { from: '/javascript-grid/group-cell-renderer/', to: 'https://www.ag-grid.com/javascript-data-grid/grouping/' },
+    { from: '/javascript-grid/immutable-data/', to: 'https://www.ag-grid.com/' },
+    { from: '/javascript-grid/index.html', to: 'https://www.ag-grid.com/javascript-data-grid/getting-started/' },
+    {
+        from: '/javascript-grid/integrated-charts-toolbar/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/integrated-charts-menu/',
+    },
+    {
+        from: '/javascript-grid/licensing/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/community-vs-enterprise/',
+    },
+    { from: '/javascript-grid/modules-building/', to: 'https://www.ag-grid.com/javascript-data-grid/modules/' },
+    { from: '/javascript-grid/modules-more-details/', to: 'https://www.ag-grid.com/javascript-data-grid/modules/' },
+    { from: '/javascript-grid/packages/', to: 'https://www.ag-grid.com/javascript-data-grid/modules/' },
+    { from: '/javascript-grid/packages-modules/', to: 'https://www.ag-grid.com/javascript-data-grid/modules/' },
+    { from: '/javascript-grid/range-selection/', to: 'https://www.ag-grid.com/javascript-data-grid/cell-selection/' },
+    {
+        from: '/javascript-grid/range-selection-fill-handle/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/cell-selection-fill-handle/',
+    },
+    {
+        from: '/javascript-grid/range-selection-handle/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/cell-selection-handle/',
+    },
+    { from: '/javascript-grid/rendering-api/', to: 'https://www.ag-grid.com/javascript-data-grid/dom-virtualisation/' },
+    {
+        from: '/javascript-grid/scrolling-scenarios/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/scrolling-performance/',
+    },
+    { from: '/javascript-grid/selection-overview/', to: 'https://www.ag-grid.com/javascript-data-grid/row-selection/' },
+    { from: '/javascript-grid/themes-customising/', to: 'https://www.ag-grid.com/javascript-data-grid/themes/' },
+    { from: '/javascript-grid/themes-provided/', to: 'https://www.ag-grid.com/javascript-data-grid/themes/' },
+    { from: '/angular-grid/cell-rendering/', to: 'https://www.ag-grid.com/angular-data-grid/component-cell-renderer/' },
+    { from: '/angular-grid/client-side-model/', to: 'https://www.ag-grid.com/angular-data-grid/row-models/' },
+    { from: '/angular-grid/component-cell-editor/', to: 'https://www.ag-grid.com/angular-data-grid/cell-editors/' },
+    { from: '/angular-grid/component-date/', to: 'https://www.ag-grid.com/angular-data-grid/filter-date/' },
+    { from: '/angular-grid/component-header/', to: 'https://www.ag-grid.com/angular-data-grid/column-headers/' },
+    { from: '/angular-grid/component-overlay/', to: 'https://www.ag-grid.com/angular-data-grid/overlays/' },
+    { from: '/angular-grid/component-status-bar/', to: 'https://www.ag-grid.com/angular-data-grid/status-bar/' },
+    { from: '/angular-grid/component-tooltip/', to: 'https://www.ag-grid.com/angular-data-grid/tooltips/' },
+    { from: '/angular-grid/component-types/', to: 'https://www.ag-grid.com/angular-data-grid/components/' },
+    { from: '/angular-grid/expressions-and-context/', to: 'https://www.ag-grid.com/angular-data-grid/context/' },
+    { from: '/angular-grid/filter-custom/', to: 'https://www.ag-grid.com/angular-data-grid/component-filter/' },
+    { from: '/angular-grid/filter-provided/', to: 'https://www.ag-grid.com/angular-data-grid/filtering/' },
+    { from: '/angular-grid/filter-provided-simple/', to: 'https://www.ag-grid.com/angular-data-grid/filtering/' },
+    { from: '/angular-grid/flashing-cells/', to: 'https://www.ag-grid.com/angular-data-grid/change-cell-renderers/' },
+    { from: '/angular-grid/grid-callbacks/', to: 'https://www.ag-grid.com/angular-data-grid/grid-options/' },
+    { from: '/angular-grid/grid-features/', to: 'https://www.ag-grid.com/' },
+    { from: '/angular-grid/grid-properties/', to: 'https://www.ag-grid.com/angular-data-grid/grid-options/' },
+    { from: '/angular-grid/group-cell-renderer/', to: 'https://www.ag-grid.com/angular-data-grid/grouping/' },
+    { from: '/angular-grid/index.html', to: 'https://www.ag-grid.com/angular-data-grid/getting-started/' },
+    {
+        from: '/angular-grid/integrated-charts-toolbar/',
+        to: 'https://www.ag-grid.com/angular-data-grid/integrated-charts-menu/',
+    },
+    { from: '/angular-grid/modules-building/', to: 'https://www.ag-grid.com/angular-data-grid/modules/' },
+    { from: '/angular-grid/modules-more-details/', to: 'https://www.ag-grid.com/angular-data-grid/modules/' },
+    { from: '/angular-grid/packages/', to: 'https://www.ag-grid.com/angular-data-grid/modules/' },
+    { from: '/angular-grid/packages-modules/', to: 'https://www.ag-grid.com/angular-data-grid/modules/' },
+    { from: '/angular-grid/range-selection/', to: 'https://www.ag-grid.com/angular-data-grid/cell-selection/' },
+    {
+        from: '/angular-grid/range-selection-fill-handle/',
+        to: 'https://www.ag-grid.com/angular-data-grid/cell-selection-fill-handle/',
+    },
+    {
+        from: '/angular-grid/range-selection-handle/',
+        to: 'https://www.ag-grid.com/angular-data-grid/cell-selection-handle/',
+    },
+    { from: '/angular-grid/rendering-api/', to: 'https://www.ag-grid.com/angular-data-grid/dom-virtualisation/' },
+    { from: '/angular-grid/rxjs/', to: 'https://www.ag-grid.com/angular-data-grid/data-update/' },
+    {
+        from: '/angular-grid/scrolling-scenarios/',
+        to: 'https://www.ag-grid.com/angular-data-grid/scrolling-performance/',
+    },
+    { from: '/angular-grid/selection-overview/', to: 'https://www.ag-grid.com/angular-data-grid/row-selection/' },
+    {
+        from: '/angular-grid/server-side-model-refresh/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model-updating-refresh/',
+    },
+    { from: '/angular-grid/themes-customising/', to: 'https://www.ag-grid.com/angular-data-grid/themes/' },
+    { from: '/angular-grid/themes-provided/', to: 'https://www.ag-grid.com/angular-data-grid/themes/' },
+    { from: '/react-grid/cell-rendering/', to: 'https://www.ag-grid.com/react-data-grid/component-cell-renderer/' },
+    { from: '/react-grid/client-side-model/', to: 'https://www.ag-grid.com/react-data-grid/row-models/' },
+    { from: '/react-grid/component-date/', to: 'https://www.ag-grid.com/react-data-grid/filter-date/' },
+    { from: '/react-grid/component-header/', to: 'https://www.ag-grid.com/react-data-grid/column-headers/' },
+    { from: '/react-grid/component-overlay/', to: 'https://www.ag-grid.com/react-data-grid/overlays/' },
+    { from: '/react-grid/component-status-bar/', to: 'https://www.ag-grid.com/react-data-grid/status-bar/' },
+    { from: '/react-grid/component-styling/', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
+    { from: '/react-grid/component-tooltip/', to: 'https://www.ag-grid.com/react-data-grid/tooltips/' },
+    { from: '/react-grid/component-types/', to: 'https://www.ag-grid.com/react-data-grid/components/' },
+    { from: '/react-grid/expressions-and-context/', to: 'https://www.ag-grid.com/react-data-grid/context/' },
+    { from: '/react-grid/filter-custom/', to: 'https://www.ag-grid.com/react-data-grid/component-filter/' },
+    { from: '/react-grid/filter-provided/', to: 'https://www.ag-grid.com/react-data-grid/filtering/' },
+    { from: '/react-grid/filter-provided-simple/', to: 'https://www.ag-grid.com/react-data-grid/filtering/' },
+    { from: '/react-grid/fine-tuning/', to: 'https://www.ag-grid.com/react-data-grid/react-hooks/' },
+    { from: '/react-grid/flashing-cells/', to: 'https://www.ag-grid.com/react-data-grid/change-cell-renderers/' },
+    { from: '/react-grid/framework-hoc/', to: 'https://www.ag-grid.com/react-data-grid/components/' },
+    { from: '/react-grid/grid-callbacks/', to: 'https://www.ag-grid.com/react-data-grid/grid-options/' },
+    { from: '/react-grid/grid-features/', to: 'https://www.ag-grid.com/' },
+    { from: '/react-grid/grid-properties/', to: 'https://www.ag-grid.com/react-data-grid/grid-options/' },
+    { from: '/react-grid/group-cell-renderer/', to: 'https://www.ag-grid.com/react-data-grid/grouping/' },
+    { from: '/react-grid/immutable-data/', to: 'https://www.ag-grid.com/' },
+    { from: '/react-grid/index.html', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
+    {
+        from: '/react-grid/integrated-charts-toolbar/',
+        to: 'https://www.ag-grid.com/react-data-grid/integrated-charts-menu/',
+    },
+    { from: '/react-grid/modules-building/', to: 'https://www.ag-grid.com/react-data-grid/modules/' },
+    { from: '/react-grid/modules-more-details/', to: 'https://www.ag-grid.com/react-data-grid/modules/' },
+    { from: '/react-grid/packages/', to: 'https://www.ag-grid.com/react-data-grid/modules/' },
+    { from: '/react-grid/packages-modules/', to: 'https://www.ag-grid.com/react-data-grid/modules/' },
+    { from: '/react-grid/range-selection/', to: 'https://www.ag-grid.com/react-data-grid/cell-selection/' },
+    {
+        from: '/react-grid/range-selection-fill-handle/',
+        to: 'https://www.ag-grid.com/react-data-grid/cell-selection-fill-handle/',
+    },
+    {
+        from: '/react-grid/range-selection-handle/',
+        to: 'https://www.ag-grid.com/react-data-grid/cell-selection-handle/',
+    },
+    { from: '/react-grid/redux-integration-pt1/', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
+    { from: '/react-grid/redux-integration-pt2/', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
+    { from: '/react-grid/rendering-api/', to: 'https://www.ag-grid.com/react-data-grid/dom-virtualisation/' },
+    { from: '/react-grid/scrolling-scenarios/', to: 'https://www.ag-grid.com/react-data-grid/scrolling-performance/' },
+    { from: '/react-grid/selection-overview/', to: 'https://www.ag-grid.com/react-data-grid/row-selection/' },
+    {
+        from: '/react-grid/server-side-model-refresh/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model-updating-refresh/',
+    },
+    { from: '/react-grid/themes-customising/', to: 'https://www.ag-grid.com/react-data-grid/themes/' },
+    { from: '/react-grid/themes-provided/', to: 'https://www.ag-grid.com/react-data-grid/themes/' },
+    { from: '/vue-grid/cell-rendering/', to: 'https://www.ag-grid.com/vue-data-grid/component-cell-renderer/' },
+    { from: '/vue-grid/client-side-model/', to: 'https://www.ag-grid.com/vue-data-grid/row-models/' },
+    { from: '/vue-grid/component-cell-editor/', to: 'https://www.ag-grid.com/vue-data-grid/cell-editors/' },
+    { from: '/vue-grid/component-date/', to: 'https://www.ag-grid.com/vue-data-grid/filter-date/' },
+    { from: '/vue-grid/component-header/', to: 'https://www.ag-grid.com/vue-data-grid/column-headers/' },
+    { from: '/vue-grid/component-overlay/', to: 'https://www.ag-grid.com/vue-data-grid/overlays/' },
+    { from: '/vue-grid/component-status-bar/', to: 'https://www.ag-grid.com/vue-data-grid/status-bar/' },
+    { from: '/vue-grid/component-tooltip/', to: 'https://www.ag-grid.com/vue-data-grid/tooltips/' },
+    { from: '/vue-grid/component-types/', to: 'https://www.ag-grid.com/vue-data-grid/components/' },
+    { from: '/vue-grid/expressions-and-context/', to: 'https://www.ag-grid.com/vue-data-grid/context/' },
+    { from: '/vue-grid/filter-custom/', to: 'https://www.ag-grid.com/vue-data-grid/component-filter/' },
+    { from: '/vue-grid/filter-provided/', to: 'https://www.ag-grid.com/vue-data-grid/filtering/' },
+    { from: '/vue-grid/filter-provided-simple/', to: 'https://www.ag-grid.com/vue-data-grid/filtering/' },
+    { from: '/vue-grid/flashing-cells/', to: 'https://www.ag-grid.com/vue-data-grid/change-cell-renderers/' },
+    { from: '/vue-grid/grid-callbacks/', to: 'https://www.ag-grid.com/vue-data-grid/grid-options/' },
+    { from: '/vue-grid/grid-features/', to: 'https://www.ag-grid.com/' },
+    { from: '/vue-grid/grid-properties/', to: 'https://www.ag-grid.com/vue-data-grid/grid-options/' },
+    { from: '/vue-grid/group-cell-renderer/', to: 'https://www.ag-grid.com/vue-data-grid/grouping/' },
+    { from: '/vue-grid/immutable-data/', to: 'https://www.ag-grid.com/' },
+    { from: '/vue-grid/index.html', to: 'https://www.ag-grid.com/vue-data-grid/getting-started/' },
+    {
+        from: '/vue-grid/integrated-charts-toolbar/',
+        to: 'https://www.ag-grid.com/vue-data-grid/integrated-charts-menu/',
+    },
+    { from: '/vue-grid/licensing/', to: 'https://www.ag-grid.com/vue-data-grid/community-vs-enterprise/' },
+    { from: '/vue-grid/modules-building/', to: 'https://www.ag-grid.com/vue-data-grid/modules/' },
+    { from: '/vue-grid/modules-more-details/', to: 'https://www.ag-grid.com/vue-data-grid/modules/' },
+    { from: '/vue-grid/packages/', to: 'https://www.ag-grid.com/vue-data-grid/modules/' },
+    { from: '/vue-grid/packages-modules/', to: 'https://www.ag-grid.com/vue-data-grid/modules/' },
+    { from: '/vue-grid/range-selection/', to: 'https://www.ag-grid.com/vue-data-grid/cell-selection/' },
+    {
+        from: '/vue-grid/range-selection-fill-handle/',
+        to: 'https://www.ag-grid.com/vue-data-grid/cell-selection-fill-handle/',
+    },
+    { from: '/vue-grid/range-selection-handle/', to: 'https://www.ag-grid.com/vue-data-grid/cell-selection-handle/' },
+    { from: '/vue-grid/rendering-api/', to: 'https://www.ag-grid.com/vue-data-grid/dom-virtualisation/' },
+    { from: '/vue-grid/rxjs/', to: 'https://www.ag-grid.com/vue-data-grid/data-update/' },
+    { from: '/vue-grid/scrolling-scenarios/', to: 'https://www.ag-grid.com/vue-data-grid/scrolling-performance/' },
+    { from: '/vue-grid/selection-overview/', to: 'https://www.ag-grid.com/vue-data-grid/row-selection/' },
+    {
+        from: '/vue-grid/server-side-model-refresh/',
+        to: 'https://www.ag-grid.com/vue-data-grid/server-side-model-updating-refresh/',
+    },
+    { from: '/vue-grid/themes-customising/', to: 'https://www.ag-grid.com/vue-data-grid/themes/' },
+    { from: '/vue-grid/themes-provided/', to: 'https://www.ag-grid.com/vue-data-grid/themes/' },
+    // SE-64 chains where an exact mod_alias rule exists but a broader prefix rule (e.g. /react-grid/)
+    // appears earlier — mod_alias is FIRST-match, so the prefix wins and the path takes 2 hops. The
+    // rewrite override below pre-empts mod_alias, collapsing these to a single hop. (Verified with the
+    // local Apache harness in testing/htaccess-harness — the offline resolver wrongly assumed
+    // longest-match, which is why these were initially missed.)
+    { from: '/react-grid/rxjs/', to: 'https://www.ag-grid.com/react-data-grid/data-update/' },
+    { from: '/angular-grid/immutable-data/', to: 'https://www.ag-grid.com/' },
+    { from: '/angular-grid/licensing/', to: 'https://www.ag-grid.com/angular-data-grid/community-vs-enterprise/' },
+    { from: '/react-grid/licensing/', to: 'https://www.ag-grid.com/react-data-grid/community-vs-enterprise/' },
+    { from: '/react-grid/component-cell-editor/', to: 'https://www.ag-grid.com/react-data-grid/cell-editors/' },
+    {
+        from: '/javascript-grid/server-side-model-high-frequency/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-refresh/',
+    },
+
+    {
+        from: '/react-data-grid/grouping-footers',
+        to: 'https://www.ag-grid.com/react-data-grid/aggregation-total-rows/',
+    },
+    {
+        from: '/javascript-grid-server-side-model',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
+    },
+    { from: '/angular-grid-api', to: 'https://www.ag-grid.com/angular-data-grid/grid-api/' },
+    { from: '/ag-grid-changelog', to: 'https://www.ag-grid.com/changelog/' },
+    { from: '/example-react-redux', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
+    { from: '/javascript-grid/building-typescript/', to: 'https://www.ag-grid.com/javascript-data-grid/installation/' },
+    { from: '/charts/documentation', to: 'https://www.ag-grid.com/charts/documentation/' },
+    {
+        from: '/documentation/javascript/server-side-model-row-stores/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model-configuration/',
+    },
+    { from: '/javascript-grid-value-formatters', to: 'https://www.ag-grid.com/javascript-data-grid/value-formatters/' },
+    {
+        from: '/documentation/javascript/accessibility',
+        to: 'https://www.ag-grid.com/javascript-data-grid/accessibility/',
+    },
+    { from: '/vue-grid/', to: 'https://www.ag-grid.com/vue-data-grid/getting-started/' },
+    { from: '/angular-grid-cell-rendering', to: 'https://www.ag-grid.com/angular-data-grid/component-cell-renderer/' },
+    { from: '/features-overview', to: 'https://www.ag-grid.com/' },
+    {
+        from: '/nodejs-server-side-operations',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-operations-nodejs/',
+    },
+    {
+        from: '/documentation/javascript/integrated-charts-cross-filtering/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/integrated-charts-api-cross-filter-chart/',
+    },
+    { from: '/angular-grid-filtering', to: 'https://www.ag-grid.com/angular-data-grid/filtering/' },
+    {
+        from: '/javascript-grid-column-definitions',
+        to: 'https://www.ag-grid.com/javascript-data-grid/column-definitions/',
+    },
+    {
+        from: '/angular-data-grid/cell-rendering/',
+        to: 'https://www.ag-grid.com/angular-data-grid/component-cell-renderer/',
+    },
+    { from: '/charts/react/cone-funnel-series', to: 'https://www.ag-grid.com/charts/react/cone-funnel-series/' },
+    {
+        from: '/javascript-data-grid/applying-theme-builder-styling-grid/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/theming/',
+    },
+    {
+        from: '/charts/react/financial-charts-toolbar',
+        to: 'https://www.ag-grid.com/charts/react/financial-charts-toolbar/',
+    },
+    { from: '/charts/react/api-state', to: 'https://www.ag-grid.com/charts/react/api-state/' },
+    { from: '/javascript-grid-cell-editor/', to: 'https://www.ag-grid.com/javascript-data-grid/cell-editors/' },
+    {
+        from: '/documentation/javascript/component-header/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/column-headers/',
+    },
+    { from: '/react-grid/getting-started/', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
+    { from: '/javascript-grid-components/', to: 'https://www.ag-grid.com/javascript-data-grid/components/' },
+    { from: '/javascript-charts/overlays/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
+    { from: '/charts/react/candlestick-series', to: 'https://www.ag-grid.com/charts/react/candlestick-series/' },
+    { from: '/charts/react/zoom', to: 'https://www.ag-grid.com/charts/react/zoom/' },
+    { from: '/angular-data-grid/grid-properties/', to: 'https://www.ag-grid.com/angular-data-grid/grid-options/' },
+    {
+        from: '/react-data-grid/cell-rendering/',
+        to: 'https://www.ag-grid.com/react-data-grid/component-cell-renderer/',
+    },
+    {
+        from: '/javascript-data-grid/integrated-charts-toolbar/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/integrated-charts-menu/',
+    },
+    { from: '/javascript-grid-data-update/', to: 'https://www.ag-grid.com/javascript-data-grid/data-update/' },
+    { from: '/charts/react/linear-gauge', to: 'https://www.ag-grid.com/charts/react/linear-gauge/' },
+    {
+        from: '/javascript-grid-provided-renderer-change/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/change-cell-renderers/',
+    },
+    { from: '/javascript-charts/overview/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
+    {
+        from: '/javascript-data-grid/grid-properties/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/grid-options/',
+    },
+    {
+        from: '/javascript-grid-cell-rendering-components/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/',
+    },
+    { from: '/theme-builder', to: 'https://www.ag-grid.com/theme-builder/' },
+    { from: '/changelog', to: 'https://www.ag-grid.com/changelog/' },
+    {
+        from: '/charts/react/upgrade-to-ag-charts-11-2',
+        to: 'https://www.ag-grid.com/charts/react/upgrade-to-ag-charts-11-2/',
+    },
+    {
+        from: '/charts/react/upgrade-to-ag-charts-11-3',
+        to: 'https://www.ag-grid.com/charts/react/upgrade-to-ag-charts-11-3/',
+    },
+    { from: '/charts/react/financial-charts', to: 'https://www.ag-grid.com/charts/react/financial-charts/' },
+    { from: '/javascript-data-grid/packages/', to: 'https://www.ag-grid.com/javascript-data-grid/modules/' },
+    { from: '/charts/react/radial-gauge', to: 'https://www.ag-grid.com/charts/react/radial-gauge/' },
+    { from: '/charts/react/bullet-series/', to: 'https://www.ag-grid.com/charts/react/bullet-series/' },
+    { from: '/charts/react/range-bar-series', to: 'https://www.ag-grid.com/charts/react/range-bar-series/' },
+    { from: '/vue-data-grid/', to: 'https://www.ag-grid.com/vue-data-grid/getting-started/' },
+    { from: '/charts/react/pyramid-series', to: 'https://www.ag-grid.com/charts/react/pyramid-series/' },
+    { from: '/charts/react/ohlc-series', to: 'https://www.ag-grid.com/charts/react/ohlc-series/' },
+    { from: '/javascript-charts/bar-series/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
+    { from: '/documentation/vue/aggregation/', to: 'https://www.ag-grid.com/vue-data-grid/aggregation/' },
+    { from: '/vue-data-grid/cell-rendering/', to: 'https://www.ag-grid.com/vue-data-grid/component-cell-renderer/' },
+    { from: '/javascript-data-grid/packages-modules/', to: 'https://www.ag-grid.com/javascript-data-grid/modules/' },
+    {
+        from: '/documentation/javascript/server-side-model/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
+    },
+    {
+        from: '/blog/charts/ag-charts-13-release-demos/high-frequency-synced-series',
+        to: 'https://www.ag-grid.com/blog/charts/ag-charts-13-release-demos/high-frequency-synced-series/',
+    },
+    { from: '/javascript-charts-overview/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
+    { from: '/charts/react/funnel-series', to: 'https://www.ag-grid.com/charts/react/funnel-series/' },
+    { from: '/javascript-charts/pie-series/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
+    { from: '/javascript-grid-rendering-flow/', to: 'https://www.ag-grid.com/javascript-data-grid/cell-content/' },
+    {
+        from: '/documentation/javascript/accessibility/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/accessibility/',
+    },
+    {
+        from: '/documentation/javascript/server-side-model-grouping/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model-grouping/',
+    },
+    { from: '/angular-data-grid/packages-modules/', to: 'https://www.ag-grid.com/angular-data-grid/modules/' },
+    {
+        from: '/javascript-data-grid/cell-rendering/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/',
+    },
+    { from: '/documentation/javascript/grid-api/', to: 'https://www.ag-grid.com/javascript-data-grid/grid-api/' },
+    { from: '/javascript-data-grid/grid-callbacks/', to: 'https://www.ag-grid.com/javascript-data-grid/grid-options/' },
+    {
+        from: '/javascript-grid-cell-rendering/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/',
+    },
+];
+
 export const SITE_301_REDIRECTS: Redirect[] = [
+    // SE-30: legacy MCP announcement slug that 404s on www -> the blog post (same slug) where the
+    // announcement actually lives, preserving the content for external links / historical index entries.
+    {
+        from: '/introducing-the-ag-grid-model-context-protocol-mcp-server/',
+        to: 'https://blog.ag-grid.com/introducing-the-ag-grid-model-context-protocol-mcp-server/',
+    },
+
+    // SE-60: legacy URLs returning 404 that are still internally linked.
+    // NOTE: the three /charts/javascript|react/{toolbar,line} entries from this ticket are NOT here —
+    // /charts is served by the charts subdirectory (its own mod_alias .htaccess from ag-charts-website),
+    // so those belong in that repo's redirects, not this one.
+    { from: '/javascript-data-grid/grouping-sticky-groups/', to: '/javascript-data-grid/grouping-display-types/' },
+    {
+        from: '/javascript-data-grid/global-style-upgrading-to-v28/',
+        to: '/javascript-data-grid/theming-v32-upgrading-to-v28/',
+    },
+    {
+        from: '/javascript-data-grid/integrated-charts-api-chart-tool-panel/',
+        to: '/javascript-data-grid/integrated-charts-chart-tool-panels/',
+    },
+    {
+        from: '/javascript-grid-charts-customisation-line/',
+        to: '/javascript-data-grid/integrated-charts-customisation/',
+    },
+    {
+        from: '/javascript-grid-charts-customisation-bar/',
+        to: '/javascript-data-grid/integrated-charts-customisation/',
+    },
+    {
+        from: '/javascript-grid-charts-customisation-general/',
+        to: '/javascript-data-grid/integrated-charts-customisation/',
+    },
+    { from: '/javascript-grid-charts-customisation/', to: '/javascript-data-grid/integrated-charts-customisation/' },
+    { from: '/javascript-grid-charts-overview/', to: '/javascript-data-grid/integrated-charts/' },
+    { from: '/javascript-grid-charts-pivot-chart/', to: '/javascript-data-grid/integrated-charts-api-pivot-chart/' },
+    { from: '/javascript-grid-charts-range-chart/', to: '/javascript-data-grid/integrated-charts-api-range-chart/' },
+    { from: '/react-data-grid/reactui/', to: '/react-data-grid/getting-started/' },
+    { from: '/react-data-grid/global-style-customisation/', to: '/react-data-grid/theming-v32-customisation/' },
+
     // Redirect pipeline and changelog to new gatsby components (instead of old php ones)
     { from: '/ag-grid-changelog/', to: '/changelog/' },
     { from: '/ag-grid-pipeline/', to: '/pipeline/' },
@@ -2692,11 +3109,12 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/component-date-imperative-react/', to: '/react-data-grid/filter-date/' },
     { from: '/react-data-grid/component-cell-editor-imperative-react/', to: '/react-data-grid/cell-editors/' },
 
-    { from: '/cookies.php', to: '/cookies' },
-    { from: '/privacy.php', to: '/privacy' },
+    // SE-64: target the final (trailing-slashed) page directly to remove the extra hop
+    { from: '/cookies.php', to: '/cookies/' },
+    { from: '/privacy.php', to: '/privacy/' },
     { from: '/about.php', to: '/about' },
-    { from: '/license-pricing.php', to: '/license-pricing' },
-    { from: '/example.php', to: '/example' },
+    { from: '/license-pricing.php', to: '/license-pricing/' },
+    { from: '/example.php', to: '/example/' },
     { from: '/ag-grid-jobs-board.php', to: '/ag-grid-jobs-board' },
 
     { from: '/react-data-grid/whats-new', to: '/whats-new' },
@@ -2751,4 +3169,190 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     ...pageForAllFrameworks('tree-data-hierarchy', 'tree-data-paths'),
     ...pageForAllFrameworks('upgrading-to-ag-grid-32-2', 'upgrading-to-ag-grid-32-2-1'),
     ...pageForAllFrameworks('accented-sort', '#locale-specific-sort'),
+
+    // ===== SE-61: legacy 404 redirects (non-/charts; /charts/* live in the ag-charts-website repo) =====
+    // grid, documentation, examples, legacy entry points, gone (410) pages.
+    { fromPattern: '^/javascript-grid-virtual-paging/.*', to: '/javascript-data-grid/infinite-scrolling/' },
+    { fromPattern: '^/javascript-grid-enterprise-model/.*', to: '/javascript-data-grid/server-side-model/' },
+    { from: '/javascript-grid-cell-style/', to: '/javascript-data-grid/cell-styles/' },
+    { from: '/javascript-grid-cell-style-theme/', to: '/javascript-data-grid/cell-styles/' },
+    { from: '/javascript-grid-cell-styling/', to: '/javascript-data-grid/cell-styles/' },
+    { from: '/javascript-grid-columnproperties/', to: '/javascript-data-grid/column-properties/' },
+    { from: '/javascript-grid-pinned-columns/', to: '/javascript-data-grid/column-pinning/' },
+    { from: '/javascript-grid-auto-size-columns/', to: '/javascript-data-grid/column-sizing/' },
+    { from: '/javascript-grid-user-experience/', to: '/javascript-data-grid/keyboard-navigation/' },
+    { from: '/javascript-grid-appearance/', to: '/javascript-data-grid/themes/' },
+    { from: '/javascript-grid-highlighting-rows-and-columns/', to: '/javascript-data-grid/cell-styles/' },
+    { from: '/javascript-grid-overview/', to: '/javascript-data-grid/getting-started/' },
+    { from: '/javascript-grid-row-grouping/', to: '/javascript-data-grid/grouping/' },
+    { from: '/javascript-grid-row-group-panel/', to: '/javascript-data-grid/grouping-group-panel/' },
+    { from: '/javascript-grid-custom-editing-cells/', to: '/javascript-data-grid/cell-editing/' },
+    { from: '/javascript-grid-custom-cell-editor/', to: '/javascript-data-grid/cell-editors/' },
+    { from: '/javascript-grid-custom-cell-renderer/', to: '/javascript-data-grid/component-cell-renderer/' },
+    { from: '/javascript-grid-custom-filter/', to: '/javascript-data-grid/component-filter/' },
+    { from: '/javascript-grid-tree/', to: '/javascript-data-grid/tree-data/' },
+    { from: '/javascript-grid-openfin/', to: 'https://www.ag-grid.com/' },
+    {
+        from: '/javascript-grid-server-side-model-configuration/',
+        to: '/javascript-data-grid/server-side-model-configuration/',
+    },
+    { from: '/javascript-grid-server-side-model-infinite/', to: '/javascript-data-grid/server-side-model/' },
+    { from: '/javascript-grid-charts-integrated-overview/', to: '/javascript-data-grid/integrated-charts/' },
+    { from: '/javascript-grid-charts-integrated-container/', to: '/javascript-data-grid/integrated-charts-container/' },
+    {
+        from: '/javascript-grid-charts-integrated-range-chart/',
+        to: '/javascript-data-grid/integrated-charts-range-chart/',
+    },
+    {
+        from: '/javascript-grid-charts-integrated-time-series/',
+        to: '/javascript-data-grid/integrated-charts-time-series/',
+    },
+    {
+        from: '/javascript-grid-charts-integrated-chart-toolbar/',
+        to: '/javascript-data-grid/integrated-charts-chart-tool-panels/',
+    },
+    {
+        from: '/javascript-grid-charts-customisation-pie/',
+        to: '/javascript-data-grid/integrated-charts-customisation/',
+    },
+    {
+        from: '/javascript-grid-charts-customisation-doughnut/',
+        to: '/javascript-data-grid/integrated-charts-customisation/',
+    },
+    {
+        from: '/javascript-grid-charts-chart-range-api/',
+        to: '/javascript-data-grid/integrated-charts-api-range-chart/',
+    },
+    { from: '/javascript-grid-data-functions/', to: '/javascript-data-grid/aggregation/' },
+    { from: '/javascriptgridicons/', to: '/javascript-data-grid/custom-icons/' },
+    { from: '/javascriptgrid/packages-modules/', to: '/javascript-data-grid/modules/' },
+    { from: '/javascriptgrid/packages/', to: '/javascript-data-grid/modules/' },
+    { from: '/javascriptgrid/cell-rendering/', to: '/javascript-data-grid/component-cell-renderer/' },
+    { from: '/react-grid-apis/', to: '/react-data-grid/grid-api/' },
+    { fromPattern: '^/(side|core)-data-grid/integrated-charts.*', to: '/javascript-data-grid/integrated-charts/' },
+    { fromPattern: '^/best-aurelia-data-grid.*', to: '/javascript-data-grid/getting-started/' },
+    { fromPattern: '^/best-web-component-data-grid.*', to: '/javascript-data-grid/getting-started/' },
+    // (Removed the broad ^/{fw}/.* -> quick-start landing rules: superseded by the per-page
+    // bare-framework catch-all at the end of this block, which preserves the slug.)
+    { fromPattern: '^/example-runner/.*', to: '/example/' },
+    { fromPattern: '^/example-(account-report|file-browser|javascript|angular-[a-z-]+)(/.*)?$', to: '/example/' },
+    { from: '/documentation.php', to: '/documentation/' },
+    { from: '/documentation/getting-started/introduction/', to: '/javascript-data-grid/getting-started/' },
+    { from: '/documentation/grid-api/', to: '/javascript-data-grid/grid-api/' },
+    { from: '/documentation/api/gridOptions/', to: '/javascript-data-grid/grid-options/' },
+    { from: '/documentation/gridOptionsApi/settings/gridProperties/theme/', to: '/javascript-data-grid/themes/' },
+    { from: '/documentation/api/interfaces/coldefinition.coldef/', to: '/javascript-data-grid/column-properties/' },
+    { from: '/documentation/v35-1/changelog/', to: '/changelog/' },
+    { from: '/getting-started/', to: '/javascript-data-grid/getting-started/' },
+    { from: '/download/', to: '/javascript-data-grid/installation/' },
+    { from: '/download.html', to: '/javascript-data-grid/installation/' },
+    { from: '/community-edition/', to: '/javascript-data-grid/community-vs-enterprise/' },
+    { from: '/ecosystem/', to: '/community/tools-extensions/' },
+    { from: '/support-channels/', to: '/community/' },
+    { from: '/themes-api/', to: '/javascript-data-grid/theming-api/' },
+    { from: '/en/agGridFromAngular/', to: '/angular-data-grid/getting-started/' },
+    { from: '/ag-grid-angular-angularcli/', to: '/angular-data-grid/getting-started/' },
+    { from: '/ag-grid-aurelia-support-v7/', to: '/javascript-data-grid/getting-started/' },
+    { from: '/ag-grid-datagrid-aurelia/', to: '/javascript-data-grid/getting-started/' },
+    { from: '/ag-grid-next-steps/', to: '/javascript-data-grid/getting-started/' },
+    { from: '/ag-grid-typescript-webpack-2/', to: '/javascript-data-grid/installation/' },
+    { from: '/ag-grid-react/api/', to: '/react-data-grid/grid-api/' },
+    { from: '/docs/javascript/cell-style/', to: '/javascript-data-grid/cell-styles/' },
+    { from: '/javascript-data-grid/keyboard-events/', to: '/javascript-data-grid/keyboard-navigation/' },
+    { from: '/javascript-data-grid/component-interface/', to: '/javascript-data-grid/components/' },
+    { from: '/javascript-data-grid/cell-flash/', to: '/javascript-data-grid/change-cell-renderers/' },
+    { from: '/javascript-data-grid/esm-packages/', to: '/javascript-data-grid/modules/' },
+    { from: '/javascript-data-grid/filtering-tree-data/', to: '/javascript-data-grid/tree-data/' },
+    { from: '/javascript-data-grid/javascript-charts/api/', to: 'https://www.ag-grid.com/charts/' },
+    { from: '/javascript-table/packages-modules/', to: '/javascript-data-grid/modules/' },
+    { from: '/react-data-grid/virtual-dom/', to: '/react-data-grid/dom-virtualisation/' },
+    { from: '/react-data-grid/performance/', to: '/react-data-grid/scrolling-performance/' },
+    { from: '/react-data-grid/row-data/', to: '/react-data-grid/data-update/' },
+    { from: '/react-data-grid/row-operations/', to: '/react-data-grid/data-update/' },
+    { from: '/react-data-grid/server-side-row-model/', to: '/react-data-grid/server-side-model/' },
+    { from: '/react-data-grid/set-filter/', to: '/react-data-grid/filter-set/' },
+    { from: '/react-data-grid/grouping-sticky-groups/', to: '/react-data-grid/grouping/' },
+    { from: '/react-data-grid/licensing-api/', to: '/react-data-grid/community-vs-enterprise/' },
+    { from: '/react-data-grid/migrating-to-v33-1/', to: '/react-data-grid/upgrading-to-ag-grid-33-1/' },
+    { from: '/angular-data-grid/state-management/', to: '/angular-data-grid/grid-state/' },
+    { from: '/angular-data-grid/global-style-customisation/', to: '/angular-data-grid/theming-v32-customisation/' },
+    {
+        from: '/javascript-data-grid/global-style-customisation/',
+        to: '/javascript-data-grid/theming-v32-customisation/',
+    },
+    {
+        from: '/angular-data-grid/global-style-upgrading-to-v28/',
+        to: '/angular-data-grid/theming-v32-upgrading-to-v28/',
+    },
+    {
+        from: '/javascript-data-grid/global-style-upgrading-to-v28-css/',
+        to: '/javascript-data-grid/theming-v32-upgrading-to-v28-css/',
+    },
+    {
+        from: '/vue-data-grid/global-style-upgrading-to-v28-css/',
+        to: '/vue-data-grid/theming-v32-upgrading-to-v28-css/',
+    },
+    {
+        from: '/angular-data-grid/global-style-upgrading-to-v28-sass/',
+        to: '/angular-data-grid/theming-v32-upgrading-to-v28-sass/',
+    },
+    { from: '/vue-data-grid/vue2/', to: '/vue-data-grid/getting-started/' },
+    { from: '/v31.3/javascript-data-grid/archive-31-3/', to: '/documentation-archive/' },
+    // Forum landing pages 301 to the successor /community/ hub (preserve link equity);
+    // individual forum threads have no equivalent and stay 410. Anchored patterns are used
+    // (not bare `from`s) because Apache's `Redirect` prefix-matches and would otherwise
+    // swallow the thread URLs into the landing redirect.
+    { fromPattern: '^/forum/$', to: '/community/' },
+    { fromPattern: '^/community-forums/$', to: '/community/' },
+    { fromPattern: '^/forum/.+', gone: true },
+    { from: '/testimonials.php', gone: true },
+    { from: '/start-trial.php', to: '/license-pricing/' },
+    { from: '/options/series/radial-column/', to: 'https://www.ag-grid.com/charts/options/series/radial-column/' },
+    { from: '/options/series/area/', to: 'https://www.ag-grid.com/charts/options/series/area/' },
+    { from: '/options/series/box-plot/', to: 'https://www.ag-grid.com/charts/options/series/box-plot/' },
+    { from: '/options/axes/unit-time/', to: 'https://www.ag-grid.com/charts/options/axes/unit-time/' },
+    {
+        from: '/options/initialState/annotations/date-price-range/',
+        to: 'https://www.ag-grid.com/charts/options/initialState/annotations/date-price-range/',
+    },
+    {
+        from: '/options/initialState/annotations/line/',
+        to: 'https://www.ag-grid.com/charts/options/initialState/annotations/line/',
+    },
+    {
+        from: '/options/initialState/annotations/disjoint-channel/',
+        to: 'https://www.ag-grid.com/charts/options/initialState/annotations/disjoint-channel/',
+    },
+    {
+        from: '/options/initialState/annotations/parallel-channel/',
+        to: 'https://www.ag-grid.com/charts/options/initialState/annotations/parallel-channel/',
+    },
+    { from: '/r/bar-series/', to: 'https://www.ag-grid.com/charts/react/bar-series/' },
+    { from: '/r/scrollbar/', to: 'https://www.ag-grid.com/charts/react/scrollbar/' },
+    { from: '/r/supported-frameworks/', to: 'https://www.ag-grid.com/charts/react/supported-frameworks/' },
+    {
+        from: '/r/large-dataset-interactivity/',
+        to: 'https://www.ag-grid.com/charts/react/large-dataset-interactivity/',
+    },
+    { from: '/ag-charts-overview/', to: 'https://www.ag-grid.com/charts/' },
+    { from: '/enterprise-charts/', to: 'https://www.ag-grid.com/charts/' },
+    { from: '/best-aurelia-data-grid/', to: '/javascript-data-grid/getting-started/' },
+    { from: '/side-data-grid/integrated-charts/', to: '/javascript-data-grid/integrated-charts/' },
+    { from: '/core-data-grid/integrated-charts/', to: '/javascript-data-grid/integrated-charts/' },
+    { from: '/vuejs-charts/', to: 'https://www.ag-grid.com/charts/' },
+    { fromPattern: '^/gallery/(.*)', to: 'https://www.ag-grid.com/charts/gallery/$1' },
+    { fromPattern: '^/options(/.*)?', to: 'https://www.ag-grid.com/charts/options/' },
+    { fromPattern: '^/vuejs-charts.*', to: 'https://www.ag-grid.com/charts/vue/quick-start/' },
+    { fromPattern: '^/enterprise-charts.*', to: 'https://www.ag-grid.com/charts/enterprise-charts/' },
+    { fromPattern: '^/ag-charts-overview.*', to: 'https://www.ag-grid.com/charts/' },
+
+    // Bare-framework legacy AG Charts pages (/{fw}/<slug>/). Slugs with no current equivalent first,
+    // then the broad catch-all LAST so the specific fallbacks win (first-match).
+    // (/{fw}/fonts is intentionally NOT special-cased: the catch-all sends it to /charts/{fw}/fonts,
+    // which the charts repo's own .htaccess then 301s to the renamed /charts/{fw}/text page.)
+    { fromPattern: '^/angular/active(/.*)?', to: 'https://www.ag-grid.com/charts/angular/quick-start/' },
+    { fromPattern: '^/vue/active(/.*)?', to: 'https://www.ag-grid.com/charts/vue/quick-start/' },
+    { fromPattern: '^/react/expressions(/.*)?', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
+    { fromPattern: '^/react/overview(/.*)?', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
+    { fromPattern: '^/(react|angular|vue|javascript)/(.*)', to: 'https://www.ag-grid.com/charts/$1/$2' },
 ];

@@ -1,0 +1,55 @@
+# host	path	expect_status	expect_location_substring
+# host: "www" (default) or "apex" (sends Host: ag-grid.com). For 410/200, location is empty.
+# Assertions are on the SINGLE response (status + Location) so we never follow a redirect to
+# production (CloudFront would 403). A single response whose Location is the final target proves
+# the redirect is a single hop.
+
+# --- SE-30 ---
+www	/introducing-the-ag-grid-model-context-protocol-mcp-server/	301	https://blog.ag-grid.com/introducing-the-ag-grid-model-context-protocol-mcp-server/
+
+# --- SE-60 (grid; the /charts/* ones are asserted in the charts section) ---
+www	/javascript-data-grid/grouping-sticky-groups/	301	/javascript-data-grid/grouping-display-types/
+www	/react-data-grid/reactui/	301	/react-data-grid/getting-started/
+
+# --- SE-64 single-hop (www): Location must already be the FINAL page (one hop) ---
+www	/angular-grid-api	301	https://www.ag-grid.com/angular-data-grid/grid-api/
+www	/react-data-grid/grouping-footers	301	https://www.ag-grid.com/react-data-grid/aggregation-total-rows/
+www	/cookies.php	301	/cookies/
+
+# --- SE-66 apex single-hop (Host: ag-grid.com): one hop straight to the final www URL ---
+apex	/angular-data-grid/cell-rendering/	301	https://www.ag-grid.com/angular-data-grid/component-cell-renderer/
+apex	/charts/react/zoom	301	https://www.ag-grid.com/charts/react/zoom/
+
+# --- SE-61 main (non-/charts) ---
+www	/javascript-grid-cell-style/	301	/javascript-data-grid/cell-styles/
+www	/forum/	301	/community/
+www	/community-forums/	301	/community/
+www	/forum/showthread.php	410
+www	/testimonials.php	410
+www	/start-trial.php	301	/license-pricing/
+www	/gallery/simple-area/	301	https://www.ag-grid.com/charts/gallery/simple-area/
+www	/options/series/area/	301	https://www.ag-grid.com/charts/options/
+www	/angular/pie-series/	301	https://www.ag-grid.com/charts/angular/pie-series/
+www	/react/expressions/	301	https://www.ag-grid.com/charts/react/quick-start/
+www	/ecosystem/	301	/community/tools-extensions/
+
+# --- SE-61 / SE-60 charts (served by the charts subdir .htaccess) ---
+www	/charts/core/bar-series/	301	/charts/javascript/bar-series/
+www	/charts/side/axes-types/	301	/charts/javascript/axes-types/
+# Note: a slash-less, dot-less path (e.g. /charts/privacy) first takes a harmless 301 to add a
+# trailing slash (parent trailing-slash rule), THEN 410s. Indexed URLs are typically trailing-slashed,
+# which 410s directly — that's what we assert here.
+www	/charts/archive/13.1.0/javascript/getting-started/	410
+www	/charts/privacy/	410
+www	/charts/react-charts/react/area-series/	301	/charts/react/area-series/
+www	/charts/javascript/toolbar/	301	/charts/javascript/financial-charts-toolbar/
+
+# --- Regression: pre-existing redirects must still work unchanged ---
+www	/javascript-grid/	301	/javascript-data-grid/
+www	/documentation/angular/grouping/	301	/angular-data-grid/grouping/
+www	/react-grid/rxjs/	301	https://www.ag-grid.com/react-data-grid/data-update/
+
+# --- No-shadow negatives: real live pages must NOT be redirected (expect 200) ---
+www	/angular-data-grid/getting-started/	200
+www	/react-data-grid/cell-editing/	200
+www	/charts/react/bar-series/	200

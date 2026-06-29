@@ -61,13 +61,19 @@ function checkPathExists(pathToCheck: string): Result {
 
 export function redirectsChecker({ buildDir, logger }: { buildDir: string; logger: AstroIntegrationLogger }) {
     const results: Result[] = SITE_301_REDIRECTS.map((redirect) => {
-        const { to } = redirect;
         const from = 'from' in redirect ? redirect.from : null;
 
-        // Check that redirect source doesn't shadow an existing page
+        // Check that redirect source doesn't shadow an existing page (also flags a 410 on a live page)
         if (from && existsSync(path.join(buildDir, from, 'index.html'))) {
             return { type: 'error', message: 'Redirect shadows existing page', path: from };
         }
+
+        // 410 Gone rules have no target to validate
+        if ('gone' in redirect) {
+            return { type: 'ignored', path: from ?? ('fromPattern' in redirect ? redirect.fromPattern : '') };
+        }
+
+        const { to } = redirect;
 
         if (to.startsWith('/')) {
             const toPath = to.split('#')[0]; // Remove search params
