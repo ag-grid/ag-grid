@@ -1,0 +1,247 @@
+@use 'design-system' as *;
+
+@keyframes roadmap-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes roadmap-show-scroll-indicator {
+    0% {
+        opacity: 1;
+    }
+    75% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.roadmapSection {
+    padding: $spacing-size-8;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        padding: $spacing-size-10;
+    }
+}
+
+.swimlanesContainer {
+    --scroll-gradient-width: 60px;
+
+    display: grid;
+    grid-template-columns: 0 1fr 0;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-button-secondary-border);
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+}
+
+@supports (animation-timeline: scroll()) {
+    @media screen and (max-width: 1140px) {
+        .swimlanesContainer {
+            --scroll-gradient-width: 60px;
+
+            &::after {
+                content: '';
+                position: sticky;
+                z-index: 2;
+                width: var(--scroll-gradient-width);
+                height: 100%;
+                opacity: 0;
+                pointer-events: none;
+                animation: roadmap-show-scroll-indicator linear;
+                animation-timeline: scroll(nearest inline);
+            }
+
+            &::after {
+                grid-column: 3;
+                right: 0;
+                background-image:
+                    linear-gradient(to left, var(--color-bg-primary), transparent),
+                    linear-gradient(to left, var(--color-bg-primary), transparent 50%);
+            }
+        }
+
+        .swimlanes {
+            margin-right: calc(var(--scroll-gradient-width) * -1);
+        }
+    }
+}
+
+.swimlanes {
+    grid-column: 2;
+    display: grid;
+    min-width: 600px;
+    grid-template-columns: repeat(4, 75vw);
+
+    @media screen and (min-width: $breakpoint-docs-search-small) {
+        min-width: unset;
+        grid-template-columns: repeat(4, minmax(276px, 1fr));
+    }
+}
+
+.swimlaneHeader {
+    background-color: color-mix(in srgb, white, #181d1f 2%);
+    display: flex;
+    flex-direction: column;
+    padding: $spacing-size-4;
+    font-weight: var(--text-bold);
+    font-size: var(--text-fs-md);
+    border-bottom: 1px solid var(--color-button-secondary-border);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-gray-800);
+        border-color: var(--color-gray-700);
+    }
+
+    & .featureCount {
+        color: var(--color-gray-600);
+        font-weight: var(--text-regular);
+        font-size: var(--text-fs-sm);
+
+        #{$selector-darkmode} & {
+            color: var(--color-gray-500);
+        }
+    }
+}
+
+.swimlane {
+    overflow: hidden;
+    scroll-snap-align: start;
+
+    #{$selector-darkmode} & {
+        border-color: var(--color-gray-700);
+    }
+
+    &:not(:last-child) {
+        border-right: 1px solid var(--color-button-secondary-border);
+    }
+
+    &:first-child {
+        border-top-left-radius: var(--radius-lg);
+        border-bottom-left-radius: var(--radius-lg);
+    }
+
+    &:last-child {
+        border-top-right-radius: var(--radius-lg);
+        border-bottom-right-radius: var(--radius-lg);
+    }
+}
+
+.swimlaneCards {
+    padding: $spacing-size-4;
+    animation: roadmap-fade-in 0.2s ease-in-out;
+}
+
+.filters {
+    margin-bottom: 20px;
+    font-size: var(--text-fs-sm);
+    display: none;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        display: flex;
+    }
+}
+
+.all {
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        vertical-align: middle;
+    }
+
+    &.hasPlanned.hasInprogress.hasShipped::before {
+        background-color: var(--color-warning-300);
+        margin-right: 20px;
+        box-shadow:
+            0 0 0 0.5px var(--color-warning-300),
+            8px 0 0 var(--color-brand-400),
+            8px 0 0 0.5px var(--color-brand-400),
+            16px 0 0 var(--color-success),
+            16px 0 0 0.5px var(--color-success);
+    }
+
+    &.hasPlanned.hasInprogress:not(.hasShipped)::before {
+        background-color: var(--color-warning-300);
+        margin-right: 12px;
+        box-shadow:
+            0 0 0 0.5px var(--color-warning-300),
+            8px 0 0 var(--color-brand-400),
+            8px 0 0 0.5px var(--color-brand-400);
+    }
+
+    &.hasPlanned.hasShipped:not(.hasInprogress)::before {
+        background-color: var(--color-warning-300);
+        margin-right: 12px;
+        box-shadow:
+            0 0 0 0.5px var(--color-warning-300),
+            8px 0 0 var(--color-success),
+            8px 0 0 0.5px var(--color-success);
+    }
+
+    &.hasInprogress.hasShipped:not(.hasPlanned)::before {
+        background-color: var(--color-brand-400);
+        margin-right: 12px;
+        box-shadow:
+            0 0 0 0.5px var(--color-brand-400),
+            8px 0 0 var(--color-success),
+            8px 0 0 0.5px var(--color-success);
+    }
+
+    &.hasPlanned:not(.hasInprogress):not(.hasShipped)::before {
+        background-color: var(--color-warning-300);
+        margin-right: 8px;
+    }
+
+    &.hasInprogress:not(.hasPlanned):not(.hasShipped)::before {
+        background-color: var(--color-brand-400);
+        margin-right: 8px;
+    }
+
+    &.hasShipped:not(.hasPlanned):not(.hasInprogress)::before {
+        background-color: var(--color-success);
+        margin-right: 8px;
+    }
+}
+.planned,
+.inprogress,
+.shipped {
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+}
+.planned {
+    &::before {
+        background-color: var(--color-warning-300);
+    }
+}
+
+.inprogress {
+    &::before {
+        background-color: var(--color-brand-400);
+    }
+}
+
+.shipped {
+    &::before {
+        background-color: var(--color-success);
+    }
+}
