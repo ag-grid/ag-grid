@@ -1541,6 +1541,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingPanelModule`
      */
     @Input({ transform: booleanAttribute }) public rowGroupPanelSuppressSort: boolean | undefined = undefined;
+    /** Set to `true` to suppress sort indicators and actions from the pivot panel and the column tool panel pivot pills.
+     * @default false
+     * @agModule `RowGroupingPanelModule`
+     */
+    @Input({ transform: booleanAttribute }) public pivotPanelSuppressSort: boolean | undefined = undefined;
     /** Set to `true` prevent Group Rows from sticking to the top of the grid.
      * @default false
      * @initial
