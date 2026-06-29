@@ -30,14 +30,17 @@ const noop = () => {};
 type StrategyBeans = BeanCollection;
 
 /** Pivot sort cycle: none → asc → desc → none. `null` is the default (ascending order, no icon). */
-function getNextPivotSort(current: SortDirection): SortDirection {
-    if (current === 'asc') {
-        return 'desc';
-    }
+// The default (`null`) orders ascending, identical to `'asc'`, and is shown as ascending in the pill.
+// The cycle is therefore a two-state toggle: ascending default <-> descending.
+// Cycle: ascending default (`undefined`/`'asc'`) -> descending -> `null` (no sort, natural order) -> ascending.
+function getNextPivotSort(current: SortDirection | undefined): SortDirection {
     if (current === 'desc') {
         return null;
     }
-    return 'asc';
+    if (current === null) {
+        return 'asc';
+    }
+    return 'desc';
 }
 
 export class ColumnStateUpdateExecutionStrategy extends BeanStub implements IColumnStateUpdateStrategy {
@@ -124,7 +127,7 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     public progressPivotSortFromEvent(deferMode: boolean, column: AgColumn): void {
         this.getUpdateStrategy(deferMode).progressPivotSortFromEvent(column);
     }
-    public getPivotSort(deferMode: boolean, column: AgColumn): SortDirection {
+    public getPivotSort(deferMode: boolean, column: AgColumn): SortDirection | undefined {
         return this.getUpdateStrategy(deferMode).getPivotSort(column);
     }
 
@@ -262,7 +265,7 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
         _dispatchColumnChangedEvent(this.beans.eventSvc, 'columnPivotChanged', [column], 'uiColumnSorted');
     }
 
-    public getPivotSort(column: AgColumn): SortDirection {
+    public getPivotSort(column: AgColumn): SortDirection | undefined {
         return column.getPivotSort();
     }
 }
@@ -728,10 +731,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         columnState.eventType = 'uiColumnSorted';
     }
 
-    public getPivotSort(column: AgColumn): SortDirection {
+    public getPivotSort(column: AgColumn): SortDirection | undefined {
         const patch = this.state.columnState?.patches.get(column.colId);
         if (patch?.pivotSort !== undefined) {
-            return patch.pivotSort ?? null;
+            return patch.pivotSort;
         }
         return column.getPivotSort();
     }

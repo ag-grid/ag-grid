@@ -46,11 +46,13 @@ export class PivotColsSvc extends OrderedColsService implements NamedBean, IPivo
         this.hasPivotComparator = hasPivotComparator;
     }
 
-    /** Computed live: a `pivotSort` toggle does not change pivot-column membership, so it can't be cached. */
+    /** Computed live: a `pivotSort` toggle does not change pivot-column membership, so it can't be cached.
+     *  Any explicitly-set direction counts, including `null` ("no sort"); only the unset default (`undefined`)
+     *  does not - so clearing to `null` still forces the freshly-generated natural order over the sticky one. */
     public hasInteractivePivotSort(): boolean {
         const cols = this.columns;
         for (let i = 0, len = cols.length; i < len; ++i) {
-            if (cols[i].pivotSort != null) {
+            if (cols[i].pivotSort !== undefined) {
                 return true;
             }
         }

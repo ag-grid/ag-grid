@@ -323,6 +323,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
         const beans = this.beans;
         const gos = this.gos;
+        // Pivot-sort reorders existing columns, so reuse the column-move animation to slide them.
+        const animatePivotSort = this.isPivotSortReorder();
+        if (animatePivotSort) {
+            beans.colAnimation?.start();
+        }
         const colDefList = this.colDefList;
         const prevColTree = this.colsTree;
         const prevWasPivot = this.showingPivotResult;
@@ -458,6 +463,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (this.colsTree !== prevColTree) {
             this.eventSvc.dispatchEvent({ type: 'gridColumnsChanged' });
         }
+        if (animatePivotSort) {
+            beans.colAnimation?.finish();
+        }
+    }
+
+    /** True when this refresh reorders pivot columns due to an interactive pivot sort - either a sort is active,
+     *  or the prior refresh was a strict pivot-sort order being cleared (desc→null) back to the default order. */
+    private isPivotSortReorder(): boolean {
+        return !!this.beans.pivotColsSvc?.hasInteractivePivotSort() || this.prevPivotStrict;
     }
 
     /** Refresh state derived from `colsList` (group + quick-filter cols, colSpan/autoHeight flags) and

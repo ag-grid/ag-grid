@@ -29,5 +29,5 @@ export interface IColumnStateUpdateStrategy {
     progressSortFromEvent(deferMode: boolean, column: AgColumn, event: MouseEvent | KeyboardEvent): void;
     getSortDef(deferMode: boolean, column: AgColumn): SortDef | null;
     progressPivotSortFromEvent(deferMode: boolean, column: AgColumn): void;
-    getPivotSort(deferMode: boolean, column: AgColumn): SortDirection;
+    getPivotSort(deferMode: boolean, column: AgColumn): SortDirection | undefined;
 }

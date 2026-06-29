@@ -225,11 +225,14 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         return this.beans.columnStateUpdateStrategy.getSortDef(this.deferApply, this.column);
     }
 
-    // Pivot sort is isolated from the column's own sort, so the indicator must read pivotSort directly in
-    // both immediate and deferred modes; `null` (none/default) renders no icon, matching Excel.
+    // Pivot sort is isolated from the column's own sort. The unset default (`undefined`) and `'asc'` both
+    // show ascending; `null` is an explicit "no sort" and shows no icon. Never falls back to the column's sort.
     private getPivotSortDefOverride(): SortDef | null {
         const direction = this.beans.columnStateUpdateStrategy.getPivotSort(this.deferApply, this.column);
-        return direction ? { type: 'default', direction } : null;
+        if (direction === null) {
+            return null;
+        }
+        return { type: 'default', direction: direction ?? 'asc' };
     }
 
     protected override getDefaultIconName(): DragAndDropIcon {

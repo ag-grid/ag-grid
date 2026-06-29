@@ -278,17 +278,21 @@ function ascendingStringComparator(a: string, b: string): number {
 
 function computePivotOrder(values: Map<string, any>, pivotColumns: AgColumn[], depth: number): string[] {
     const pivotColumn = pivotColumns[depth];
-    const comparator = pivotColumn?.colDef.pivotComparator;
     const keys = [...values.keys()];
-    // Mirror pivotColDefService's base ordering (custom comparator, else ascending) so the snapshot tracks the
-    // rendered order; then mirror its pivotSort='desc' reversal so a toggle is detected as an order change.
-    if (comparator) {
-        keys.sort(comparator);
-    } else {
-        keys.sort(ascendingStringComparator);
-    }
-    if (pivotColumn?.pivotSort === 'desc') {
-        keys.reverse();
+    // Mirror pivotColDefService's ordering so the snapshot tracks the rendered order and a toggle is detected as
+    // an order change: `null` keeps the natural (insertion) key order, `'desc'` reverses, and the unset default
+    // and `'asc'` sort ascending by the custom comparator or string order.
+    const pivotSort = pivotColumn?.pivotSort;
+    if (pivotSort !== null) {
+        const comparator = pivotColumn?.colDef.pivotComparator;
+        if (comparator) {
+            keys.sort(comparator);
+        } else {
+            keys.sort(ascendingStringComparator);
+        }
+        if (pivotSort === 'desc') {
+            keys.reverse();
+        }
     }
     if (depth === pivotColumns.length - 1) {
         return keys;

@@ -1,6 +1,6 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import { getColumnOrder } from '../columns/column-test-utils';
 import { TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
@@ -8,7 +8,7 @@ import { TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../t
 // AG-9664: pivotSort reorders the generated pivot columns interactively, isolated from colDef.sort.
 describe('pivot: interactive pivot column sorting (pivotSort)', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, RowGroupingPanelModule, PivotModule],
     });
     beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
@@ -207,6 +207,55 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
             'pivot_sport_Alpine_gold',
         ]);
         expect(api.getColumn('pivot_sport_Alpine_gold')?.getActualWidth()).toBe(321);
+    });
+
+    test('click cycle: unset(asc) -> desc -> null(natural order) -> asc, with null distinct from asc', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'sales', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            getRowId: ({ data }) => data.id,
+        };
+        const api = gridsManager.createGrid('pivotColumnSort', gridOptions);
+        // Insertion order is deliberately not ascending, so the natural (null) order differs from asc.
+        applyTransactionChecked(api, {
+            add: [
+                { id: 'a', country: 'USA', year: 2022, sales: 1 },
+                { id: 'b', country: 'USA', year: 2020, sales: 1 },
+                { id: 'c', country: 'USA', year: 2021, sales: 1 },
+            ],
+        });
+        await asyncSetTimeout(10);
+        const pivots = () => getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'));
+        const ascending = ['pivot_year_2020_sales', 'pivot_year_2021_sales', 'pivot_year_2022_sales'];
+        const descending = ['pivot_year_2022_sales', 'pivot_year_2021_sales', 'pivot_year_2020_sales'];
+        const natural = ['pivot_year_2022_sales', 'pivot_year_2020_sales', 'pivot_year_2021_sales'];
+
+        const yearCol = api.getColumn('year') as any;
+        const strategy = yearCol.beans.columnStateUpdateStrategy;
+
+        // Unset default resolves to ascending.
+        expect(strategy.getPivotSort(false, yearCol)).toBeUndefined();
+        expect(pivots()).toEqual(ascending);
+
+        strategy.progressPivotSortFromEvent(false, yearCol);
+        await asyncSetTimeout(10);
+        expect(strategy.getPivotSort(false, yearCol)).toBe('desc');
+        expect(pivots()).toEqual(descending);
+
+        // null is an explicit "no sort": the columns return to their natural generated order, not ascending.
+        strategy.progressPivotSortFromEvent(false, yearCol);
+        await asyncSetTimeout(10);
+        expect(strategy.getPivotSort(false, yearCol)).toBeNull();
+        expect(pivots()).toEqual(natural);
+
+        strategy.progressPivotSortFromEvent(false, yearCol);
+        await asyncSetTimeout(10);
+        expect(strategy.getPivotSort(false, yearCol)).toBe('asc');
+        expect(pivots()).toEqual(ascending);
     });
 
     test('setting colDef.sort does not affect pivotSort and vice versa', async () => {

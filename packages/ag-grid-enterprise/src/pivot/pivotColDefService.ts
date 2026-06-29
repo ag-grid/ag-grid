@@ -38,6 +38,9 @@ const convertToHeaderNameComparator =
     (comparator: (valueA: string, valueB: string) => number) => (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) =>
         comparator(a.headerName!, b.headerName!);
 
+// `pivotSort: null` is an explicit "no sort": keep the order the columns were generated in (stable sort no-op).
+const naturalOrderComparator = (): number => 0;
+
 export class PivotColDefService extends BeanStub implements NamedBean, IPivotColDefService {
     beanName = 'pivotColDefSvc' as const;
 
@@ -496,14 +499,19 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
      * Used by the SSRM to create secondary columns from provided fields
      * @param fields
      */
-    /** Comparator ordering a pivot column's groups: custom `pivotComparator` or header name, reversed when
-     *  the column's `pivotSort` is `'desc'`. `pivotSort` is isolated from `colDef.sort`. */
+    /** Comparator ordering a pivot column's groups. `pivotSort` is isolated from `colDef.sort`:
+     *  `null` keeps the natural (generated) order, `'desc'` reverses, and the unset default (`undefined`)
+     *  and `'asc'` both sort ascending by the custom `pivotComparator` or header name. */
     private getPivotGroupComparator(
         primaryColumn: AgColumn
     ): (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) => number {
+        const pivotSort = primaryColumn.pivotSort;
+        if (pivotSort === null) {
+            return naturalOrderComparator;
+        }
         const pivotComparator = primaryColumn.colDef.pivotComparator;
         const baseComparator = pivotComparator ? convertToHeaderNameComparator(pivotComparator) : headerNameComparator;
-        if (primaryColumn.pivotSort === 'desc') {
+        if (pivotSort === 'desc') {
             return (a, b) => baseComparator(b, a);
         }
         return baseComparator;

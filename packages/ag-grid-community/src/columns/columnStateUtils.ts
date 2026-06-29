@@ -98,7 +98,7 @@ interface ColumnStateBefore {
     sortType: SortType | undefined;
     sortIndex: number | null;
     aggFunc: ColAggFunc;
-    pivotSort: SortDirection;
+    pivotSort: SortDirection | undefined;
 }
 
 /** Updates hide/sort/sortIndex/pinned/flex. Per field: `null`/empty clears, only `undefined` is skipped. */
@@ -782,6 +782,12 @@ export const _getColumnState = (beans: BeanCollection): ColumnState[] => {
     return res;
 };
 
+// Unset (`undefined`) is left as-is so it resolves to ascending; an explicit `null` ("no sort") is preserved.
+function resolveInitialPivotSort(colDef: AgColumn['colDef']): SortDirection | undefined {
+    const pivotSortLike = colDef.pivotSort !== undefined ? colDef.pivotSort : colDef.initialPivotSort;
+    return pivotSortLike === undefined ? undefined : normalizeSortDirection(pivotSortLike);
+}
+
 export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn): ColumnState {
     const colDef = column.colDef;
     const sortDef = getSortDefFromInput(colDef.sort ?? colDef.initialSort ?? null);
@@ -808,7 +814,7 @@ export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn
         rowGroupIndex,
         pivot,
         pivotIndex,
-        pivotSort: normalizeSortDirection(colDef.pivotSort ?? colDef.initialPivotSort ?? null),
+        pivotSort: resolveInitialPivotSort(colDef),
         aggFunc: colDef.aggFunc ?? colDef.initialAggFunc ?? null,
         showValuesAs: beans.showValuesAsSvc?.colDefSelection(colDef) ?? null,
     };
