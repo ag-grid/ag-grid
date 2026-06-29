@@ -218,12 +218,7 @@ describe('Tooltips', () => {
         `);
     });
 
-    // Skipped: the renderer-swap correctly resets the CellCtrl tooltip feature (the new colDef tooltip
-    // resolves and shows), but the outgoing custom renderer's tooltip state-manager leaves a zombie
-    // mouseenter listener on the reused cell element, so a stale "Cell renderer tooltip" still shows
-    // alongside the colDef one. The remaining teardown gap is in the shared ag-stack tooltip
-    // state-manager lifecycle, not in this swap path. Un-skip once that is fixed.
-    test.skip('AG-17663 tears down cell-renderer tooltip when cellRendererSelector swaps the renderer', async () => {
+    test('AG-17663 tears down cell-renderer tooltip when cellRendererSelector swaps the renderer', async () => {
         class TooltipRenderer {
             private eGui!: HTMLElement;
             public init(params: ICellRendererParams): void {

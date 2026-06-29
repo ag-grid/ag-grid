@@ -621,7 +621,6 @@ export class CellCtrl extends BeanStub {
             column,
             comp,
             suppressRefreshCell,
-            tooltipFeature,
         } = this;
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
         if (suppressRefreshCell) {
@@ -682,7 +681,9 @@ export class CellCtrl extends BeanStub {
             this.checkFormulaError();
         }
 
-        tooltipFeature?.refreshTooltip();
+        // read after showValue: a renderer swap can destroy and replace the tooltip feature, so the
+        // pre-showValue reference would point at a destroyed feature and resurrect its stale listeners
+        this.tooltipFeature?.refreshTooltip();
         this.refreshNoteState();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
