@@ -147,6 +147,28 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
         ]);
     });
 
+    test('pivotSort asc forces ascending order, overriding a prior user column move', async () => {
+        const api = createPivotGrid();
+        await asyncSetTimeout(10);
+
+        // User drags the 2022 column to the front.
+        api.moveColumns(['pivot_year_2022_sales'], 1);
+        await asyncSetTimeout(10);
+        expect(getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'))).toEqual([
+            'pivot_year_2022_sales',
+            'pivot_year_2020_sales',
+            'pivot_year_2021_sales',
+        ]);
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'asc' }] });
+        await asyncSetTimeout(10);
+        expect(getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'))).toEqual([
+            'pivot_year_2020_sales',
+            'pivot_year_2021_sales',
+            'pivot_year_2022_sales',
+        ]);
+    });
+
     test('setting colDef.sort does not affect pivotSort and vice versa', async () => {
         const api = createPivotGrid();
         await asyncSetTimeout(10);
