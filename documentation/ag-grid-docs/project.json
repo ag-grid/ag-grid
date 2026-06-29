@@ -172,7 +172,7 @@
     "test:e2e": {
       "command": "npx vitest",
       "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
-      "dependsOn": ["^pack"],
+      "dependsOn": ["^pack", "test:htaccess"],
       "options": {
         "cwd": "{projectRoot}",
         "config": "vitest.e2e.config.ts",
@@ -285,6 +285,16 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": ["npx tsx scripts/validate-example-specs.ts"]
+      }
+    },
+    "test:htaccess": {
+      "command": "bash testing/htaccess-harness/run.sh",
+      "options": {
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": { "args": "--env staging" },
+        "production": { "args": "--env production" }
       }
     },
     "update-algolia": {

@@ -273,6 +273,10 @@ jobs:
       fail-fast: false
     env:
       NX_PARALLEL: 1
+      # Turn the htaccess redirect harness (test:htaccess, a dependsOn of test:e2e) into a hard
+      # gate in CI: ubuntu-latest ships apache2, so a skip here means Apache went missing rather
+      # than a legitimately-unavailable environment. Local runs without Apache still skip.
+      HTTPD_REQUIRED: 1
     steps:
       - name: Checkout
         id: checkout

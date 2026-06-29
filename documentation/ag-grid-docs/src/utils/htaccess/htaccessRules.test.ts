@@ -11,6 +11,19 @@ describe('htaccessRules', () => {
         stagingContent = getHtaccessContent({ env: 'staging' });
     });
 
+    // Full-output snapshots. These are the regression guard: any change to the generated rules
+    // (additions, removals, reordering, or edits to existing redirects) shows up as a snapshot
+    // diff in review. Update intentionally with `vitest -u` and eyeball the diff.
+    describe('generated .htaccess snapshot', () => {
+        it('production output is unchanged', () => {
+            expect(productionContent).toMatchSnapshot();
+        });
+
+        it('staging output is unchanged', () => {
+            expect(stagingContent).toMatchSnapshot();
+        });
+    });
+
     describe('AG-17159 / AG-17158: non-www to www redirect', () => {
         it('should redirect ag-grid.com to www.ag-grid.com', () => {
             expect(productionContent).toContain('RewriteCond %{HTTP_HOST} ^ag-grid\\.com$ [NC]');
