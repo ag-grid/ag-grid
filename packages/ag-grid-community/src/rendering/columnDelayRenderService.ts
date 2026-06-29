@@ -47,13 +47,33 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
             return;
         }
 
+        this.checkAndReveal();
+    }
+
+    /**
+     * Checks whether headers are rendered and reveals the grid if so. Separated from
+     * `revealColumns` so that retries do not mutate `requesters` — re-entrant callers
+     * (e.g. an auto-group column triggering a second flex recalculation in SSRM + tree
+     * data mode) legitimately re-add keys to `requesters` after the initial reveal was
+     * scheduled, and the retry must not silently remove those keys.
+     */
+    private checkAndReveal(): void {
+        if (this.alreadyRevealed || !this.isAlive()) {
+            return;
+        }
+        if (this.requesters.size > 0) {
+            // A new requester was added while we were waiting for headers to render.
+            // It will call revealColumns when done, which will invoke checkAndReveal again.
+            return;
+        }
+
         const { renderStatus, ctrlsSvc } = this.beans;
         if (renderStatus) {
             // For React, we need to check that the headers are actually rendered before revealing them.
             // We add a fail safe to only try this 5 times, after that we reveal anyway.
             if (!renderStatus.areHeaderCellsRendered() && this.timesRetried < 5) {
                 this.timesRetried++;
-                setTimeout(() => this.revealColumns(key));
+                setTimeout(() => this.checkAndReveal());
                 return;
             }
             this.timesRetried = 0;
