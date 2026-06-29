@@ -31,29 +31,69 @@ type Severity = 'error' | 'warning' | 'deprecation';
 const SEVERITY_ORDER: Record<Severity, number> = { deprecation: 1, warning: 2, error: 3 };
 
 /**
- * A diagnostic captured for the developer error overlay (config errors, runtime errors and warnings).
+ * A diagnostic captured for the developer overlay (config errors, runtime errors and warnings).
  * @knipIgnore Used in tests
  */
-export interface OverlayError {
+export interface CapturedDiagnostic {
     id: ErrorId;
     params: any;
     severity: Severity;
+    /**
+     * The grid whose synchronous work emitted this, so a listener surfaces only its own grid's
+     * diagnostics. Undefined when emitted outside any grid (e.g. a bootstrap failure).
+     */
+    gridId?: string;
     /** Fallback message used when the ValidationModule is not registered to supply the full text. */
     defaultMessage?: string;
 }
 
-type ErrorListener = (error: OverlayError) => void;
+type DiagnosticListener = (diagnostic: CapturedDiagnostic) => void;
 
-const errorListeners = new Set<ErrorListener>();
+interface DiagnosticListenerEntry {
+    gridId: string | undefined;
+    listener: DiagnosticListener;
+}
+
+const diagnosticListeners = new Set<DiagnosticListenerEntry>();
+
+// A stack, not a single value: grid operations nest (a component created during one grid's init or
+// render can synchronously create another grid), so diagnostics are attributed to the top — the grid
+// actually executing — never to every grid on the stack.
+const activeGridIds: string[] = [];
+
+/**
+ * Runs `fn` with `gridId` marked as the executing grid, so diagnostics it emits are attributed to that
+ * grid. The pop is in a finally so a thrown diagnostic (throw mode) still leaves the stack balanced.
+ *
+ * `fn` MUST be synchronous: the grid is popped when `fn` returns, so any work deferred past an `await`
+ * or scheduled callback runs unattributed (its diagnostics fall back to no grid rather than the wrong
+ * one). Attribution rides the synchronous call stack, which does not survive async boundaries.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _runWithActiveGrid<T>(gridId: string, fn: () => T): T {
+    activeGridIds.push(gridId);
+    try {
+        return fn();
+    } finally {
+        activeGridIds.pop();
+    }
+}
+
+// Whether a diagnostic from `diagnosticGridId` should be delivered to a listener bound to
+// `listenerGridId`. A listener bound to no grid sees every diagnostic (a page-level panel); a grid's
+// listener sees its own diagnostics plus any not tied to a grid (e.g. bootstrap failures).
+function shouldNotify(diagnosticGridId: string | undefined, listenerGridId: string | undefined): boolean {
+    return listenerGridId === undefined || diagnosticGridId === undefined || diagnosticGridId === listenerGridId;
+}
 
 /**
  * Diagnostics fired before any listener attached are buffered and replayed to each new listener, so
- * the error overlay surfaces them too: a grid's OverlayService listener registers during bean init,
+ * the overlay surfaces them too: a grid's OverlayService listener registers during bean init,
  * after earlier beans (e.g. GridOptionsService) may already have logged. Capped to bound memory on
  * long-lived pages.
  */
-const bufferedErrors: OverlayError[] = [];
-const MAX_BUFFERED_ERRORS = 100;
+const bufferedDiagnostics: CapturedDiagnostic[] = [];
+const MAX_BUFFERED_DIAGNOSTICS = 100;
 
 // Both default off so that without the ValidationModule (i.e. production) each log call is two boolean
 // checks and no allocation. The ValidationModule turns them on at registration, before any grid exists.
@@ -75,33 +115,50 @@ export function _configureDiagnostics(config: { capture?: boolean; throwOn?: Sev
 }
 
 /**
- * Registers a listener notified of every captured error/warning, used by the error overlay. Any
- * diagnostics already buffered (logged before this listener attached) are replayed to it immediately.
- * Returns a cleanup function that removes the listener and, once the last listener detaches, drops the
- * buffer so a later grid does not inherit stale diagnostics.
+ * Whether captured diagnostics are being collected, so hot paths (e.g. API dispatch) can skip the
+ * active-grid bookkeeping — and its closure allocation — entirely when no consumer is listening.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isDiagnosticCaptureActive(): boolean {
+    return captureEnabled;
+}
+
+/**
+ * Registers a listener notified of captured diagnostics for `gridId` (plus any not tied to a grid),
+ * used by the error overlay; pass `gridId: undefined` for a page-level listener that sees everything.
+ * Diagnostics already buffered before it attached (and matching it) are replayed immediately. Returns
+ * a cleanup function that removes the listener and, once the last listener detaches, drops the buffer
+ * so a later grid does not inherit stale diagnostics.
  * @knipIgnore Used in tests
  */
-export function _addErrorListener(listener: ErrorListener): () => void {
-    errorListeners.add(listener);
-    for (let i = 0, len = bufferedErrors.length; i < len; ++i) {
-        listener(bufferedErrors[i]);
+export function _addDiagnosticListener(gridId: string | undefined, listener: DiagnosticListener): () => void {
+    const entry: DiagnosticListenerEntry = { gridId, listener };
+    diagnosticListeners.add(entry);
+    for (let i = 0, len = bufferedDiagnostics.length; i < len; ++i) {
+        const diagnostic = bufferedDiagnostics[i];
+        if (shouldNotify(diagnostic.gridId, gridId)) {
+            listener(diagnostic);
+        }
     }
     return () => {
-        errorListeners.delete(listener);
-        if (errorListeners.size === 0) {
-            bufferedErrors.length = 0;
+        diagnosticListeners.delete(entry);
+        if (diagnosticListeners.size === 0) {
+            bufferedDiagnostics.length = 0;
         }
     };
 }
 
 function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string): void {
     if (captureEnabled) {
-        const error: OverlayError = { id, params, severity, defaultMessage };
-        if (bufferedErrors.length < MAX_BUFFERED_ERRORS) {
-            bufferedErrors.push(error);
+        const gridId = activeGridIds[activeGridIds.length - 1];
+        const diagnostic: CapturedDiagnostic = { id, params, severity, gridId, defaultMessage };
+        if (bufferedDiagnostics.length < MAX_BUFFERED_DIAGNOSTICS) {
+            bufferedDiagnostics.push(diagnostic);
         }
-        for (const listener of errorListeners) {
-            listener(error);
+        for (const entry of diagnosticListeners) {
+            if (shouldNotify(gridId, entry.gridId)) {
+                entry.listener(diagnostic);
+            }
         }
     }
     const meetsThreshold = throwThreshold !== false && SEVERITY_ORDER[severity] >= SEVERITY_ORDER[throwThreshold];

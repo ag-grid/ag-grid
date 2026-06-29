@@ -1,12 +1,13 @@
 import { _errorOnce, _warnOnce } from '../utils/log';
-import type { OverlayError } from './logging';
+import type { CapturedDiagnostic } from './logging';
 import {
-    _addErrorListener,
+    _addDiagnosticListener,
     _configureDiagnostics,
     _deprecated,
     _error,
     _logPreInitErr,
     _logPreInitWarn,
+    _runWithActiveGrid,
     _warn,
 } from './logging';
 
@@ -18,11 +19,16 @@ vi.mock('../utils/log', () => ({
 const mockWarnOnce = vi.mocked(_warnOnce);
 const mockErrorOnce = vi.mocked(_errorOnce);
 
+/** Attaches a page-level listener (no grid id) that receives every captured diagnostic. */
+function listenAll(listener: (diagnostic: CapturedDiagnostic) => void): () => void {
+    return _addDiagnosticListener(undefined, listener);
+}
+
 /** Resets the module-level diagnostic state between tests (flags off, buffer drained). */
 function resetDiagnostics(): void {
     _configureDiagnostics({ capture: false, throwOn: false });
     // Attaching then detaching the only listener drops the buffer (cleared on last detach).
-    _addErrorListener(() => undefined)();
+    listenAll(() => undefined)();
 }
 
 beforeEach(() => {
@@ -33,7 +39,7 @@ beforeEach(() => {
 describe('diagnostic capture', () => {
     test('does not buffer or notify listeners when capture is disabled', () => {
         const listener = vi.fn();
-        const off = _addErrorListener(listener);
+        const off = listenAll(listener);
 
         _error(11);
         _warn(11);
@@ -47,8 +53,8 @@ describe('diagnostic capture', () => {
 
     test('notifies listeners of errors and warnings with the correct severity', () => {
         _configureDiagnostics({ capture: true });
-        const received: OverlayError[] = [];
-        const off = _addErrorListener((e) => received.push(e));
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
 
         _error(11);
         _warn(11);
@@ -67,8 +73,8 @@ describe('diagnostic capture', () => {
         _error(11);
         _warn(11);
 
-        const received: OverlayError[] = [];
-        const off = _addErrorListener((e) => received.push(e));
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
 
         expect(received.map((e) => e.severity)).toEqual(['error', 'warning']);
         off();
@@ -76,21 +82,21 @@ describe('diagnostic capture', () => {
 
     test('drops the buffer only once the last listener detaches', () => {
         _configureDiagnostics({ capture: true });
-        const off1 = _addErrorListener(() => undefined);
-        const off2 = _addErrorListener(() => undefined);
+        const off1 = listenAll(() => undefined);
+        const off2 = listenAll(() => undefined);
         _error(11);
 
         // First detach leaves a listener, so the buffer survives for a newcomer.
         off1();
-        const afterFirstDetach: OverlayError[] = [];
-        const off3 = _addErrorListener((e) => afterFirstDetach.push(e));
+        const afterFirstDetach: CapturedDiagnostic[] = [];
+        const off3 = listenAll((e) => afterFirstDetach.push(e));
         expect(afterFirstDetach).toHaveLength(1);
 
         // Once every listener has gone the buffer is cleared.
         off2();
         off3();
-        const afterAllDetached: OverlayError[] = [];
-        const off4 = _addErrorListener((e) => afterAllDetached.push(e));
+        const afterAllDetached: CapturedDiagnostic[] = [];
+        const off4 = listenAll((e) => afterAllDetached.push(e));
         expect(afterAllDetached).toHaveLength(0);
         off4();
     });
@@ -101,9 +107,86 @@ describe('diagnostic capture', () => {
             _error(11);
         }
 
-        const received: OverlayError[] = [];
-        const off = _addErrorListener((e) => received.push(e));
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
         expect(received).toHaveLength(100);
+        off();
+    });
+});
+
+describe('grid scoping', () => {
+    test('tags a diagnostic with the executing grid', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        _runWithActiveGrid('grid-a', () => _warn(11));
+        _warn(11); // no active grid
+
+        expect(received.map((e) => e.gridId)).toEqual(['grid-a', undefined]);
+        off();
+    });
+
+    test('attributes to the innermost grid when grids nest', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        _runWithActiveGrid('outer', () => {
+            _runWithActiveGrid('inner', () => _warn(11));
+            _warn(11); // back to the outer grid
+        });
+
+        expect(received.map((e) => e.gridId)).toEqual(['inner', 'outer']);
+        off();
+    });
+
+    test('a grid listener receives only its own grid plus untied diagnostics', () => {
+        _configureDiagnostics({ capture: true });
+        const a: CapturedDiagnostic[] = [];
+        const b: CapturedDiagnostic[] = [];
+        const offA = _addDiagnosticListener('grid-a', (e) => a.push(e));
+        const offB = _addDiagnosticListener('grid-b', (e) => b.push(e));
+
+        _runWithActiveGrid('grid-a', () => _warn(11));
+        _runWithActiveGrid('grid-b', () => _error(11));
+        _warn(11); // untied — both listeners see it
+
+        expect(a.map((e) => [e.gridId, e.severity])).toEqual([
+            ['grid-a', 'warning'],
+            [undefined, 'warning'],
+        ]);
+        expect(b.map((e) => [e.gridId, e.severity])).toEqual([
+            ['grid-b', 'error'],
+            [undefined, 'warning'],
+        ]);
+        offA();
+        offB();
+    });
+
+    test('replays only matching buffered diagnostics to a grid listener', () => {
+        _configureDiagnostics({ capture: true });
+        _runWithActiveGrid('grid-a', () => _warn(11));
+        _runWithActiveGrid('grid-b', () => _warn(11));
+
+        const received: CapturedDiagnostic[] = [];
+        const off = _addDiagnosticListener('grid-a', (e) => received.push(e));
+
+        expect(received.map((e) => e.gridId)).toEqual(['grid-a']);
+        off();
+    });
+
+    test('pops the active grid even when a diagnostic throws', () => {
+        _configureDiagnostics({ capture: true, throwOn: 'error' });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        expect(() => _runWithActiveGrid('grid-a', () => _error(11))).toThrow();
+        // Stack is balanced, so the next untied diagnostic is not attributed to grid-a.
+        _configureDiagnostics({ throwOn: false });
+        _warn(11);
+
+        expect(received.map((e) => e.gridId)).toEqual(['grid-a', undefined]);
         off();
     });
 });
