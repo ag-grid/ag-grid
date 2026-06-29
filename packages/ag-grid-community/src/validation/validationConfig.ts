@@ -1,6 +1,10 @@
 import { _configureDiagnostics } from './logging';
 
-/** Development-time configuration for the {@link ValidationModule}. */
+/**
+ * Development-time configuration for the {@link ValidationModule}. Configuration is global, not
+ * per-grid: the most recent `enableDevValidations`/`ValidationModule.with` call wins and applies to
+ * every grid on the page.
+ */
 export interface DevValidationOptions {
     /**
      * Makes matching diagnostics throw synchronously after logging, so e2e/agent test runs fail

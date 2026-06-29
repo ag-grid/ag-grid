@@ -8,7 +8,9 @@ import { ValidationService } from './validationService';
 type ValidationModuleType = {
     /**
      * Configures development-time diagnostics, then returns the module to register, e.g.
-     * `ModuleRegistry.registerModules([ValidationModule.with({ throwOn: 'error' })])`.
+     * `ModuleRegistry.registerModules([ValidationModule.with({ throwOn: 'error' })])`. Configuration
+     * is global (see {@link DevValidationOptions}) — passing different options per grid does not scope
+     * them per grid; the last call wins for all grids.
      */
     with: (options?: DevValidationOptions) => _ModuleWithoutApi;
 } & _ModuleWithoutApi;
@@ -54,7 +56,9 @@ export const ValidationModule: ValidationModuleType = {
  *
  * Call this before any grid is created, and from the same scope (module/bundle) that registers
  * your other modules — registration is global, so it must run before grid initialisation to take
- * effect. Not intended for production builds.
+ * effect. Configuration is global too: calling again (or registering `ValidationModule.with` per
+ * grid) replaces the previous options for all grids, with the last call winning. Not intended for
+ * production builds.
  *
  * Pass {@link DevValidationOptions} to configure development-time diagnostics, e.g. `{ throwOn: 'error' }`.
  */
