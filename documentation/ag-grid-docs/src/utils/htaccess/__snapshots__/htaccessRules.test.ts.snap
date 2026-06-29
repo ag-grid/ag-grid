@@ -2597,7 +2597,6 @@ AddType application/x-gzip .gz .tgz
     RedirectMatch 301 "^/(side|core)-data-grid/integrated-charts.*" "/javascript-data-grid/integrated-charts/"
     RedirectMatch 301 "^/best-aurelia-data-grid.*" "/javascript-data-grid/getting-started/"
     RedirectMatch 301 "^/best-web-component-data-grid.*" "/javascript-data-grid/getting-started/"
-    RedirectMatch 301 "^/example-runner/.*" "/example/"
     RedirectMatch 301 "^/example-(account-report|file-browser|javascript|angular-[a-z-]+)(/.*)?$" "/example/"
     Redirect 301 /documentation.php /documentation/
     Redirect 301 /documentation/getting-started/introduction/ /javascript-data-grid/getting-started/

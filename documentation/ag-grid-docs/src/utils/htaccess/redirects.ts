@@ -3234,7 +3234,12 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/best-web-component-data-grid.*', to: '/javascript-data-grid/getting-started/' },
     // (Removed the broad ^/{fw}/.* -> quick-start landing rules: superseded by the per-page
     // bare-framework catch-all at the end of this block, which preserves the slug.)
-    { fromPattern: '^/example-runner/.*', to: '/example/' },
+    // NB: do NOT add a broad `^/example-runner/.*` redirect — `/example-runner/` is a LIVE asset
+    // path (the example SystemJS boilerplate, e.g.
+    // `/example-runner/grid-vue3-boilerplate/systemjs.config.js`). Redirecting it to the `/example/`
+    // HTML page makes the browser refuse the script (MIME 'text/html'), breaking every embedded
+    // example. Archive paths (`/archive/<v>/example-runner/...`) don't match, which is why only
+    // the live site was affected.
     { fromPattern: '^/example-(account-report|file-browser|javascript|angular-[a-z-]+)(/.*)?$', to: '/example/' },
     { from: '/documentation.php', to: '/documentation/' },
     { from: '/documentation/getting-started/introduction/', to: '/javascript-data-grid/getting-started/' },
