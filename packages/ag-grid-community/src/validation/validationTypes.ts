@@ -9,12 +9,14 @@ import { _deprecated, _warn } from './logging';
  * A validation result that resolves to a first-class error id (so it is captured by the diagnostic
  * overlay and throw mode), rather than a free-text message. Build via {@link createValidationWarning}.
  * `emit` is captured at construction, where the id/params pairing is concrete.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export interface ValidationWarning {
     errorId: ErrorId;
     emit: () => void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function createValidationWarning<TId extends ErrorId>(
     errorId: TId,
     params: GetErrorParams<TId>
@@ -24,7 +26,10 @@ export function createValidationWarning<TId extends ErrorId>(
     return { errorId, emit: () => (_warn as (id: ErrorId, params: unknown) => void)(errorId, params) };
 }
 
-/** As {@link createValidationWarning}, but the diagnostic is captured as a deprecation (see {@link _deprecated}). */
+/**
+ * As {@link createValidationWarning}, but the diagnostic is captured as a deprecation (see {@link _deprecated}).
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export function createDeprecationWarning<TId extends ErrorId>(
     errorId: TId,
     params: GetErrorParams<TId>
@@ -35,6 +40,7 @@ export function createDeprecationWarning<TId extends ErrorId>(
 /**
  * Emits a validation result that may be either a first-class {@link ValidationWarning} or a legacy
  * free-text string (logged under the generic id 322).
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function emitValidationWarning(warning: string | ValidationWarning): void {
     if (typeof warning === 'string') {

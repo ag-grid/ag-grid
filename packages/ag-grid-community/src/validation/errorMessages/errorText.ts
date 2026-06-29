@@ -861,7 +861,7 @@ export const AG_GRID_ERRORS = {
     321: ({ property, expected }: { property: string; expected: string }) => `${property} should be ${expected}.`,
     322: ({ message }: { message?: string }) => message ?? '',
     323: ({ validNames }: { validNames: string[] }) => {
-        const names = validNames.map((n) => `'${n}'`).join(', ');
+        const names = (validNames ?? []).map((n) => `'${n}'`).join(', ');
         return `'paginationPanels' expects an array of panel names or config objects: [${names}]`;
     },
 };
