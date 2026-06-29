@@ -57,6 +57,16 @@ interface BreadcrumbListInput {
     items: BreadcrumbItem[];
 }
 
+export interface FaqItem {
+    question: string;
+    answer: string;
+}
+
+interface FAQPageInput {
+    pageUrl: string;
+    items: FaqItem[];
+}
+
 /**
  * Return `canonicalUrlBase` with a trailing slash, so callers can append a
  * site-root-relative path or fragment without worrying about the input form
@@ -78,6 +88,7 @@ export const getSoftwareApplicationId = (canonicalUrlBase: string): string =>
 
 const ARTICLE_ID_FRAGMENT = '#article';
 const BREADCRUMB_ID_FRAGMENT = '#breadcrumb';
+const FAQ_ID_FRAGMENT = '#faq';
 
 export function buildOrganization({ canonicalUrlBase, name, logoUrl, sameAs }: OrgInput): JsonLdObject {
     return {
@@ -159,6 +170,26 @@ export function buildBreadcrumbList({ pageUrl, items }: BreadcrumbListInput): Js
             position: index + 1,
             name: item.name,
             item: item.url,
+        })),
+    };
+}
+
+/**
+ * Build a `FAQPage` node from question/answer pairs. Answers should be plain
+ * text (strip any markdown before passing them in) — schema.org allows limited
+ * HTML, but the surrounding `serializeJsonLd` does not expect markdown markup.
+ */
+export function buildFAQPage({ pageUrl, items }: FAQPageInput): JsonLdObject {
+    return {
+        '@type': 'FAQPage',
+        '@id': `${pageUrl}${FAQ_ID_FRAGMENT}`,
+        mainEntity: items.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: item.answer,
+            },
         })),
     };
 }
