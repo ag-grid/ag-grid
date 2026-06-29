@@ -1,13 +1,6 @@
-import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
-import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
-import {
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    RowGroupingPanelModule,
-    ServerSideRowModelModule,
-} from 'ag-grid-enterprise';
-
-import { FakeServer } from './fakeServer';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
+import { ColumnMenuModule, ColumnsToolPanelModule, PivotModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 // Enable extended validations only for development
 if (process.env.NODE_ENV !== 'production') {
@@ -15,7 +8,8 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 ModuleRegistry.registerModules([
-    ServerSideRowModelModule,
+    ClientSideRowModelModule,
+    PivotModule,
     RowGroupingPanelModule,
     ColumnsToolPanelModule,
     ColumnMenuModule,
@@ -43,10 +37,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     autoGroupColumnDef: {
         minWidth: 200,
     },
-
-    // use the server-side row model
-    rowModelType: 'serverSide',
-
     pivotMode: true,
     sideBar: {
         toolPanels: ['columns'],
@@ -63,40 +53,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
-        .then(function (data) {
-            // setup the fake server with entire dataset
-            const fakeServer = new FakeServer(data);
-
-            // create datasource with a reference to the fake server
-            const datasource = getServerSideDatasource(fakeServer);
-
-            // register the datasource with the grid
-            gridApi!.setGridOption('serverSideDatasource', datasource);
-        });
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });
-
-function getServerSideDatasource(server: any): IServerSideDatasource {
-    return {
-        getRows: (params) => {
-            const request = params.request;
-
-            console.log('[Datasource] - rows requested by grid: ', params.request);
-
-            const response = server.getData(request);
-
-            // simulating real server call with a 500ms delay
-            setTimeout(() => {
-                if (response.success) {
-                    // supply data to grid
-                    params.success({
-                        rowData: response.rows,
-                        rowCount: response.lastRow,
-                        pivotResultFields: response.pivotFields,
-                    });
-                } else {
-                    params.fail();
-                }
-            }, 500);
-        },
-    };
-}
