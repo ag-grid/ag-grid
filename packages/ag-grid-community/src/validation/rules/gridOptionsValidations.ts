@@ -11,7 +11,7 @@ import type {
     ValidationWarning,
     Validations,
 } from '../validationTypes';
-import { buildAllValidNames, createDeprecationWarning, createValidationWarning } from '../validationTypes';
+import { _createDeprecationWarning, _createValidationWarning, buildAllValidNames } from '../validationTypes';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -106,7 +106,7 @@ function toConstrainedNum(key: keyof GridOptions, value: any, min: number): stri
         if (value == null) {
             return null;
         }
-        return value >= min ? null : createValidationWarning(317, { property: String(key), min });
+        return value >= min ? null : _createValidationWarning(317, { property: String(key), min });
     }
     return `${key}: value should be a number`;
 }
@@ -193,7 +193,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     return null;
                 }
                 if (typeof calculatedColumns !== 'object' || Array.isArray(calculatedColumns)) {
-                    return createValidationWarning(321, {
+                    return _createValidationWarning(321, {
                         property: 'calculatedColumns',
                         expected: 'a boolean or an object',
                     });
@@ -202,7 +202,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const { dataTypes, expressionPickers, applyMode } = calculatedColumns;
                 if (dataTypes != null) {
                     if (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string')) {
-                        return createValidationWarning(321, {
+                        return _createValidationWarning(321, {
                             property: 'calculatedColumns.dataTypes',
                             expected: 'an array of strings',
                         });
@@ -218,7 +218,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     }
                 }
                 if (applyMode != null && applyMode !== 'live' && applyMode !== 'deferred') {
-                    return createValidationWarning(320, {
+                    return _createValidationWarning(320, {
                         property: 'calculatedColumns.applyMode',
                         allowed: ['live', 'deferred'],
                     });
@@ -247,7 +247,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const domLayout = options.domLayout;
                 const validLayouts: DomLayoutType[] = ['autoHeight', 'normal', 'print'];
                 if (domLayout && !validLayouts.includes(domLayout)) {
-                    return createValidationWarning(320, {
+                    return _createValidationWarning(320, {
                         property: 'domLayout',
                         allowed: validLayouts,
                         value: domLayout,
@@ -279,7 +279,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide'],
             validate({ enableRowPinning, pinnedTopRowData, pinnedBottomRowData }) {
                 if (enableRowPinning && (pinnedTopRowData || pinnedBottomRowData)) {
-                    return createValidationWarning(318, {
+                    return _createValidationWarning(318, {
                         feature: 'Manual row pinning',
                         conflictsWith: 'pinned row data',
                         advice: 'Either set `enableRowPinning` to `false`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.',
@@ -292,14 +292,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide'],
             validate({ enableRowPinning, isRowPinnable, pinnedTopRowData, pinnedBottomRowData }) {
                 if (isRowPinnable && (pinnedTopRowData || pinnedBottomRowData)) {
-                    return createValidationWarning(318, {
+                    return _createValidationWarning(318, {
                         feature: 'Manual row pinning',
                         conflictsWith: 'pinned row data',
                         advice: 'Either remove `isRowPinnable`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.',
                     });
                 }
                 if (!enableRowPinning && isRowPinnable) {
-                    return createValidationWarning(319, {
+                    return _createValidationWarning(319, {
                         feature: '`isRowPinnable`',
                         requirement: '`enableRowPinning` to be set',
                     });
@@ -311,14 +311,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide'],
             validate({ enableRowPinning, isRowPinned, pinnedTopRowData, pinnedBottomRowData }) {
                 if (isRowPinned && (pinnedTopRowData || pinnedBottomRowData)) {
-                    return createValidationWarning(318, {
+                    return _createValidationWarning(318, {
                         feature: 'Manual row pinning',
                         conflictsWith: 'pinned row data',
                         advice: 'Either remove `isRowPinned`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.',
                     });
                 }
                 if (!enableRowPinning && isRowPinned) {
-                    return createValidationWarning(319, {
+                    return _createValidationWarning(319, {
                         feature: '`isRowPinned`',
                         requirement: '`enableRowPinning` to be set',
                     });
@@ -334,7 +334,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide'],
             validate({ groupHideColumnsUntilExpanded, groupHideOpenParents, groupDisplayType }) {
                 if (groupHideColumnsUntilExpanded && !groupHideOpenParents && groupDisplayType !== 'multipleColumns') {
-                    return createValidationWarning(319, {
+                    return _createValidationWarning(319, {
                         feature: '`groupHideColumnsUntilExpanded = true`',
                         requirement: "either `groupDisplayType = 'multipleColumns'` or `groupHideOpenParents = true`",
                     });
@@ -414,7 +414,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                         return "'ssrmExpandAllAffectsAllRows' is only supported with the Server Side Row Model.";
                     }
                     if (options.ssrmExpandAllAffectsAllRows && typeof options.getRowId !== 'function') {
-                        return createValidationWarning(319, {
+                        return _createValidationWarning(319, {
                             feature: 'Server Side Row Model grouping',
                             requirement: "the 'getRowId' callback",
                         });
@@ -451,7 +451,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             validate: ({ paginationPanels }) => {
                 const validNames = new Set<string>(['pageSize', 'rowSummary', 'pageSummary', 'pageNumbers']);
                 if (paginationPanels != null && !Array.isArray(paginationPanels)) {
-                    return createValidationWarning(323, { validNames: Array.from(validNames) });
+                    return _createValidationWarning(323, { validNames: Array.from(validNames) });
                 }
                 if (
                     paginationPanels?.some((p) => {
@@ -464,7 +464,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                         return true;
                     })
                 ) {
-                    return createValidationWarning(323, { validNames: Array.from(validNames) });
+                    return _createValidationWarning(323, { validNames: Array.from(validNames) });
                 }
                 return null;
             },
@@ -508,7 +508,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         rowSelection: {
             validate({ rowSelection }) {
                 if (rowSelection && typeof rowSelection === 'string') {
-                    return createDeprecationWarning(306, {
+                    return _createDeprecationWarning(306, {
                         version: '32.2.1',
                         name: 'using `rowSelection` with the values "single" or "multiple"',
                         message: 'Use the object value instead.',
@@ -518,7 +518,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     return 'Expected `RowSelectionOptions` object for the `rowSelection` property.';
                 }
                 if (rowSelection && rowSelection.mode !== 'multiRow' && rowSelection.mode !== 'singleRow') {
-                    return createValidationWarning(320, {
+                    return _createValidationWarning(320, {
                         property: 'Selection mode',
                         allowed: ['singleRow', 'multiRow'],
                         value: (rowSelection as any).mode,
@@ -539,7 +539,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         notesDataSource: {
             validate: ({ getRowId }) => {
                 if (!getRowId) {
-                    return createValidationWarning(319, { feature: 'Notes', requirement: "the 'getRowId' callback" });
+                    return _createValidationWarning(319, { feature: 'Notes', requirement: "the 'getRowId' callback" });
                 }
                 return null;
             },
@@ -547,7 +547,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         noteHideDelay: {
             validate: (options) => {
                 if (options.noteHideDelay != null && options.noteHideDelay < 0) {
-                    return createValidationWarning(317, { property: 'noteHideDelay', min: 0 });
+                    return _createValidationWarning(317, { property: 'noteHideDelay', min: 0 });
                 }
                 return null;
             },
@@ -555,7 +555,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         noteShowDelay: {
             validate: (options) => {
                 if (options.noteShowDelay != null && options.noteShowDelay < 0) {
-                    return createValidationWarning(317, { property: 'noteShowDelay', min: 0 });
+                    return _createValidationWarning(317, { property: 'noteShowDelay', min: 0 });
                 }
                 return null;
             },
@@ -598,7 +598,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         tooltipHideDelay: {
             validate: (options) => {
                 if (options.tooltipHideDelay && options.tooltipHideDelay < 0) {
-                    return createValidationWarning(317, { property: 'tooltipHideDelay', min: 0 });
+                    return _createValidationWarning(317, { property: 'tooltipHideDelay', min: 0 });
                 }
                 return null;
             },
@@ -606,7 +606,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         tooltipShowDelay: {
             validate: (options) => {
                 if (options.tooltipShowDelay && options.tooltipShowDelay < 0) {
-                    return createValidationWarning(317, { property: 'tooltipShowDelay', min: 0 });
+                    return _createValidationWarning(317, { property: 'tooltipShowDelay', min: 0 });
                 }
                 return null;
             },
@@ -614,7 +614,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         tooltipSwitchShowDelay: {
             validate: (options) => {
                 if (options.tooltipSwitchShowDelay && options.tooltipSwitchShowDelay < 0) {
-                    return createValidationWarning(317, { property: 'tooltipSwitchShowDelay', min: 0 });
+                    return _createValidationWarning(317, { property: 'tooltipSwitchShowDelay', min: 0 });
                 }
                 return null;
             },
@@ -627,7 +627,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     case 'clientSide': {
                         const { treeDataChildrenField, treeDataParentIdField, getDataPath, getRowId } = options;
                         if (!treeDataChildrenField && !treeDataParentIdField && !getDataPath) {
-                            return createValidationWarning(319, {
+                            return _createValidationWarning(319, {
                                 feature: 'treeData',
                                 requirement:
                                     "either 'treeDataChildrenField' or 'treeDataParentIdField' or 'getDataPath' in the clientSide row model",
@@ -635,13 +635,13 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                         }
                         if (treeDataChildrenField) {
                             if (getDataPath) {
-                                return createValidationWarning(318, {
+                                return _createValidationWarning(318, {
                                     feature: "'treeDataChildrenField'",
                                     conflictsWith: "'getDataPath'",
                                 });
                             }
                             if (treeDataParentIdField) {
-                                return createValidationWarning(318, {
+                                return _createValidationWarning(318, {
                                     feature: "'treeDataChildrenField'",
                                     conflictsWith: "'treeDataParentIdField'",
                                 });
@@ -652,7 +652,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                                 return 'getRowId callback not provided, tree data with parent id cannot be built.';
                             }
                             if (getDataPath) {
-                                return createValidationWarning(318, {
+                                return _createValidationWarning(318, {
                                     feature: "'treeDataParentIdField'",
                                     conflictsWith: "'getDataPath'",
                                 });
@@ -689,13 +689,13 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         autoGroupColumnDef: {
             validate({ autoGroupColumnDef, showOpenedGroup }) {
                 if (autoGroupColumnDef?.field && showOpenedGroup) {
-                    return createValidationWarning(318, {
+                    return _createValidationWarning(318, {
                         feature: 'autoGroupColumnDef.field',
                         conflictsWith: 'showOpenedGroup',
                     });
                 }
                 if (autoGroupColumnDef?.valueGetter && showOpenedGroup) {
-                    return createValidationWarning(318, {
+                    return _createValidationWarning(318, {
                         feature: 'autoGroupColumnDef.valueGetter',
                         conflictsWith: 'showOpenedGroup',
                     });
@@ -708,7 +708,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const renderingMode = options.renderingMode;
                 const validModes = ['default', 'legacy'];
                 if (renderingMode && !validModes.includes(renderingMode)) {
-                    return createValidationWarning(320, {
+                    return _createValidationWarning(320, {
                         property: 'renderingMode',
                         allowed: validModes,
                         value: renderingMode,
@@ -730,7 +730,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 ];
                 const type = autoSizeStrategy.type;
                 if (type !== 'fitCellContents' && type !== 'fitGridWidth' && type !== 'fitProvidedWidth') {
-                    return createValidationWarning(320, {
+                    return _createValidationWarning(320, {
                         property: 'autoSizeStrategy',
                         allowed: validModes,
                         value: type,

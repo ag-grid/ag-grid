@@ -4,7 +4,7 @@ import { _isSortDefValid, isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
-import { buildAllValidNames, createDeprecationWarning, createValidationWarning } from '../validationTypes';
+import { _createDeprecationWarning, _createValidationWarning, buildAllValidNames } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
 function quote(s: string): string {
@@ -125,7 +125,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             supportedRowModels: ['clientSide', 'serverSide'],
             validate: (_colDef, { paginationAutoPageSize }) => {
                 if (paginationAutoPageSize) {
-                    return createValidationWarning(318, {
+                    return _createValidationWarning(318, {
                         feature: 'colDef.autoHeight',
                         conflictsWith: 'paginationAutoPageSize',
                     });
@@ -154,7 +154,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     return null;
                 }
                 if (!_isCalculatedColumnsEnabled(gridOptions.calculatedColumns)) {
-                    return createValidationWarning(319, {
+                    return _createValidationWarning(319, {
                         feature: 'colDef.calculatedExpression',
                         requirement: 'gridOptions.calculatedColumns to be set to true or an options object',
                     });
@@ -164,7 +164,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     return null;
                 }
                 if (!colDef.colId) {
-                    return createValidationWarning(319, {
+                    return _createValidationWarning(319, {
                         feature: 'colDef.calculatedExpression',
                         requirement: 'colId to be set on the calculated column',
                     });
@@ -186,7 +186,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     colDef.cellRenderer === 'agGroupCellRenderer';
 
                 if (groupColumn && 'checkbox' in colDef.cellRendererParams) {
-                    return createDeprecationWarning(306, {
+                    return _createDeprecationWarning(306, {
                         version: '33.0',
                         name: 'cellRendererParams.checkbox',
                         message: 'Use `rowSelection.checkboxLocation = "autoGroupColumn"` instead.',
@@ -198,7 +198,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         flex: {
             validate: (_options, gridOptions) => {
                 if (gridOptions.autoSizeStrategy) {
-                    return createValidationWarning(318, {
+                    return _createValidationWarning(318, {
                         feature: 'colDef.flex',
                         conflictsWith: 'gridOptions.autoSizeStrategy',
                     });
@@ -308,7 +308,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 if (typeof type === 'string') {
                     return null;
                 }
-                return createValidationWarning(321, {
+                return _createValidationWarning(321, {
                     property: 'colDef.type',
                     expected: "of type 'string' | 'string[]'",
                 });
@@ -317,7 +317,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         rowSpan: {
             validate: (_options, { suppressRowTransform }) => {
                 if (!suppressRowTransform) {
-                    return createValidationWarning(319, {
+                    return _createValidationWarning(319, {
                         feature: 'colDef.rowSpan',
                         requirement: 'suppressRowTransform to be enabled',
                     });
@@ -346,35 +346,38 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             ) => {
                 if (typeof rowSelection === 'object') {
                     if (rowSelection?.mode === 'singleRow' && rowSelection?.enableClickSelection) {
-                        return createValidationWarning(318, {
+                        return _createValidationWarning(318, {
                             feature: 'colDef.spanRows',
                             conflictsWith: 'rowSelection.clickSelection',
                         });
                     }
                 }
                 if (cellSelection) {
-                    return createValidationWarning(318, { feature: 'colDef.spanRows', conflictsWith: 'cellSelection' });
+                    return _createValidationWarning(318, {
+                        feature: 'colDef.spanRows',
+                        conflictsWith: 'cellSelection',
+                    });
                 }
                 if (suppressRowTransform) {
-                    return createValidationWarning(318, {
+                    return _createValidationWarning(318, {
                         feature: 'colDef.spanRows',
                         conflictsWith: 'suppressRowTransform',
                     });
                 }
                 if (!enableCellSpan) {
-                    return createValidationWarning(319, {
+                    return _createValidationWarning(319, {
                         feature: 'colDef.spanRows',
                         requirement: 'enableCellSpan to be enabled',
                     });
                 }
                 if (rowDragEntireRow) {
-                    return createValidationWarning(318, {
+                    return _createValidationWarning(318, {
                         feature: 'colDef.spanRows',
                         conflictsWith: 'rowDragEntireRow',
                     });
                 }
                 if (enableCellTextSelection) {
-                    return createValidationWarning(318, {
+                    return _createValidationWarning(318, {
                         feature: 'colDef.spanRows',
                         conflictsWith: 'enableCellTextSelection',
                     });

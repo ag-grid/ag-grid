@@ -375,7 +375,7 @@ export { _clamp, _formatNumberCommas, _isFiniteNumber, _toFiniteNumber } from '.
 export { _selectAllCells } from './utils/selection';
 export { _getValueUsingDotPath } from './utils/value';
 export { _deprecated, _errMsg, _error, _logPreInitWarn, _preInitErrMsg, _warn } from './validation/logging';
-export { emitValidationWarning, createValidationWarning } from './validation/validationTypes';
+export { _emitValidationWarning, _createValidationWarning } from './validation/validationTypes';
 export type { ValidationWarning } from './validation/validationTypes';
 export type { ExpressionService } from './valueService/expressionService';
 export type { ValueCache } from './valueService/valueCache';
