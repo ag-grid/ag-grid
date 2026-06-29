@@ -54,11 +54,11 @@ describe('diagnostic capture', () => {
         _warn(11);
         _deprecated(11);
 
-        expect(received).toHaveLength(3);
-        expect(received[0].severity).toBe('error');
-        expect(received[1].severity).toBe('warning');
-        expect(received[2].severity).toBe('deprecation');
-        expect(received[0].id).toBe(11);
+        expect(received.map((e) => ({ id: e.id, severity: e.severity }))).toEqual([
+            { id: 11, severity: 'error' },
+            { id: 11, severity: 'warning' },
+            { id: 11, severity: 'deprecation' },
+        ]);
         off();
     });
 

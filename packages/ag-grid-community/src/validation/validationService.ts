@@ -20,7 +20,7 @@ import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidator, RequiredOptions, ValidationWarning } from './validationTypes';
-import { emitValidationWarning, validationWarning } from './validationTypes';
+import { createValidationWarning, emitValidationWarning } from './validationTypes';
 
 export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validation' as const;
@@ -213,7 +213,9 @@ export class ValidationService extends BeanStub implements NamedBean {
             if (expectedType) {
                 const actualType = typeof value;
                 if (actualType !== expectedType) {
-                    idWarnings.push(validationWarning(314, { key: String(key), expectedType, actualType, value }));
+                    idWarnings.push(
+                        createValidationWarning(314, { key: String(key), expectedType, actualType, value })
+                    );
                     return;
                 }
             }
@@ -268,7 +270,12 @@ export class ValidationService extends BeanStub implements NamedBean {
                 }
                 return String(o);
             });
-            return validationWarning(315, { key: String(key), failedKey, required, reason: possibleOptions.reason });
+            return createValidationWarning(315, {
+                key: String(key),
+                failedKey,
+                required,
+                reason: possibleOptions.reason,
+            });
         });
     }
 }

@@ -1061,7 +1061,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
         expect(warnSpy).toHaveBeenCalledWith(
             expect.stringContaining('warning #319'),
             expect.stringContaining('groupHideColumnsUntilExpanded = true'),
-            expect.anything()
+            expect.any(String)
         );
 
         // In singleColumn mode, feature has no effect - one auto col always visible
@@ -1144,7 +1144,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
         expect(warnSpy).toHaveBeenCalledWith(
             expect.stringContaining('warning #319'),
             expect.stringContaining('groupHideColumnsUntilExpanded = true'),
-            expect.anything()
+            expect.any(String)
         );
 
         // Feature no longer active: single auto col visible
@@ -1212,7 +1212,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
         expect(warnSpy).toHaveBeenCalledWith(
             expect.stringContaining('warning #319'),
             expect.stringContaining('groupHideColumnsUntilExpanded = true'),
-            expect.anything()
+            expect.any(String)
         );
 
         // Without groupHideOpenParents, singleColumn mode (default) - feature has no effect
@@ -1276,7 +1276,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
         expect(warnSpy).toHaveBeenCalledWith(
             expect.stringContaining('warning #319'),
             expect.stringContaining('groupHideColumnsUntilExpanded = true'),
-            expect.anything()
+            expect.any(String)
         );
 
         // Without multipleColumns mode, feature deactivates - single auto col visible
@@ -1385,7 +1385,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
         expect(warnSpy).toHaveBeenCalledWith(
             expect.stringContaining('warning #319'),
             expect.stringContaining('groupHideColumnsUntilExpanded = true'),
-            expect.anything()
+            expect.any(String)
         );
 
         // Single auto group column should always be visible
@@ -1519,7 +1519,7 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
         expect(warnSpy).toHaveBeenCalledWith(
             expect.stringContaining('warning #319'),
             expect.stringContaining('groupHideColumnsUntilExpanded = true'),
-            expect.anything()
+            expect.any(String)
         );
 
         // No auto group columns in groupRows mode

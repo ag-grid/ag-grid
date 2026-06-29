@@ -10,7 +10,7 @@ import type {
     UpdateRangeChartParams,
     ValidationWarning,
 } from 'ag-grid-community';
-import { _deprecated, _warn, emitValidationWarning, validationWarning } from 'ag-grid-community';
+import { _deprecated, _warn, createValidationWarning, emitValidationWarning } from 'ag-grid-community';
 
 import type { CommonCreateChartParams } from '../../chartService';
 import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
@@ -30,7 +30,7 @@ const isValidSeriesChartType = (value: any): boolean => typeof value === 'object
 const createWarnMessage =
     (property: string, expectedType: string): ((value: any) => ValidationWarning) =>
     (value: any) =>
-        validationWarning(316, { property, value, expectedType });
+        createValidationWarning(316, { property, value, expectedType });
 
 const createEnterpriseMessage = (feature: string) => {
     const url = 'https://www.ag-grid.com/javascript-data-grid/integrated-charts-installation/';

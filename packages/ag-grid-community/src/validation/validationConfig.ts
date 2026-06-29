@@ -1,9 +1,6 @@
 import { _configureDiagnostics } from './logging';
 
-/**
- * Development-time configuration for the {@link ValidationModule}. Optional fields are added as the
- * features that consume them land; in this phase only `throwOn` is wired.
- */
+/** Development-time configuration for the {@link ValidationModule}. */
 export interface DevValidationOptions {
     /**
      * Makes matching diagnostics throw synchronously after logging, so e2e/agent test runs fail

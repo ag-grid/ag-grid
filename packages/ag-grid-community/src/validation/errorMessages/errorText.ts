@@ -847,7 +847,7 @@ export const AG_GRID_ERRORS = {
         reason?: string;
     }) => `'${key}' requires '${failedKey}' to be one of [${(required ?? []).join(', ')}]. ${reason ?? ''}`,
     316: ({ property, value, expectedType }: { property: string; value?: unknown; expectedType: string }) =>
-        `AG Grid - unable to update chart as invalid params supplied:  \`${property}: ${String(value)}\`, expected ${expectedType}.`,
+        `unable to update chart as invalid params supplied: \`${property}: ${String(value)}\`, expected ${expectedType}.`,
     317: ({ property, min }: { property: string; min: number }) => `${property} should not be lower than ${min}`,
     318: ({ feature, conflictsWith, advice }: { feature: string; conflictsWith: string; advice?: string }) => {
         const suffix = advice ? ` ${advice}` : '';
@@ -860,8 +860,10 @@ export const AG_GRID_ERRORS = {
     },
     321: ({ property, expected }: { property: string; expected: string }) => `${property} should be ${expected}.`,
     322: ({ message }: { message?: string }) => message ?? '',
-    323: () =>
-        "'paginationPanels' expects an array of panel names or config objects: ['pageSize', 'rowSummary', 'pageSummary', 'pageNumbers']" as const,
+    323: ({ validNames }: { validNames: string[] }) => {
+        const names = validNames.map((n) => `'${n}'`).join(', ');
+        return `'paginationPanels' expects an array of panel names or config objects: [${names}]`;
+    },
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

@@ -7,7 +7,7 @@ import { _deprecated, _warn } from './logging';
 
 /**
  * A validation result that resolves to a first-class error id (so it is captured by the diagnostic
- * overlay and throw mode), rather than a free-text message. Build via {@link validationWarning}.
+ * overlay and throw mode), rather than a free-text message. Build via {@link createValidationWarning}.
  * `emit` is captured at construction, where the id/params pairing is concrete.
  */
 export interface ValidationWarning {
@@ -15,14 +15,20 @@ export interface ValidationWarning {
     emit: () => void;
 }
 
-export function validationWarning<TId extends ErrorId>(errorId: TId, params: GetErrorParams<TId>): ValidationWarning {
+export function createValidationWarning<TId extends ErrorId>(
+    errorId: TId,
+    params: GetErrorParams<TId>
+): ValidationWarning {
     // params is bound to errorId by this signature; the cast only erases _warn's variadic-overload
     // conditional, which TS cannot resolve for a still-generic id.
     return { errorId, emit: () => (_warn as (id: ErrorId, params: unknown) => void)(errorId, params) };
 }
 
-/** As {@link validationWarning}, but the diagnostic is captured as a deprecation (see {@link _deprecated}). */
-export function deprecationWarning<TId extends ErrorId>(errorId: TId, params: GetErrorParams<TId>): ValidationWarning {
+/** As {@link createValidationWarning}, but the diagnostic is captured as a deprecation (see {@link _deprecated}). */
+export function createDeprecationWarning<TId extends ErrorId>(
+    errorId: TId,
+    params: GetErrorParams<TId>
+): ValidationWarning {
     return { errorId, emit: () => (_deprecated as (id: ErrorId, params: unknown) => void)(errorId, params) };
 }
 
