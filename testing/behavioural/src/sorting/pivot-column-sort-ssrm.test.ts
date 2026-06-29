@@ -37,6 +37,9 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
 
         api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
         await waitForNoLoadingRows(api);
+        // The reorder animates once data has loaded: refreshCols brackets the column rebuild, so the
+        // async reload happens before the animation window rather than inside it.
+        expect(document.querySelector('.ag-column-moving')).not.toBeNull();
         await asyncSetTimeout(50);
         expect(pivots()).toEqual(['2008_gold', '2004_gold', '2000_gold']);
     });
