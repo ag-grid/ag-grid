@@ -138,7 +138,20 @@
         min-width: calc(50% - $spacing-size-2);
     }
 
-    &.expandedChildProps::after {
+    > .expandedContent {
+        flex-basis: 100%;
+        min-width: 100%;
+    }
+
+    &.expandedUnionTypes > .expandedContent {
+        margin-left: $spacing-size-6;
+        // Account for the left margin so the code block stays within the row's bounds.
+        flex-basis: calc(100% - #{$spacing-size-6});
+        min-width: calc(100% - #{$spacing-size-6});
+    }
+
+    &.expandedChildProps::after,
+    &.expandedUnionTypes::after {
         content: '';
         position: absolute;
         top: $spacing-size-10;
@@ -169,7 +182,11 @@
         margin-top: $spacing-size-3;
         width: 100%;
 
-        .expandedChildProps & {
+        // When the row stacks, the right column drops onto its own line beneath the side-line that
+        // marks the expansion. Indent it past the line so the description and toggle button clear it,
+        // matching the type meta above. Both expanded variants draw the line, so both need the indent.
+        .expandedChildProps &,
+        .expandedUnionTypes & {
             padding-left: $spacing-size-6;
         }
     }
@@ -215,7 +232,9 @@
     left: 2px;
     transition: transform 0.33s ease-in-out;
 
-    .expandedChildProps & {
+    .expandedChildProps &,
+    .expandedUnionTypes &,
+    .expandedUnionTypes > * > & {
         transform: rotate(90deg);
     }
 }
@@ -239,7 +258,8 @@
     align-items: center;
     flex-wrap: wrap;
 
-    .expandedChildProps & {
+    .expandedChildProps &,
+    .expandedUnionTypes > * > & {
         margin-left: $spacing-size-6;
     }
 }
@@ -272,6 +292,10 @@
     #{$selector-darkmode} & {
         background-color: color-mix(in srgb, var(--color-fg-code), var(--color-bg-primary) 90%);
     }
+}
+
+.metaValue.isClickable {
+    cursor: pointer;
 }
 
 .defaultValue {
@@ -327,6 +351,7 @@ a.metaValue {
 
 .childButton {
     font-weight: var(--text-semibold);
+    cursor: pointer;
 
     svg {
         transition: transform 0.33s ease-in-out;
@@ -347,8 +372,26 @@ a.metaValue {
     fill: var(--color-link) !important;
 }
 
+.unionTypesButton {
+    font-weight: var(--text-semibold);
+    cursor: pointer;
+
+    svg {
+        transition: transform 0.33s ease-in-out;
+    }
+
+    &:hover svg {
+        fill: var(--color-link-hover) !important;
+    }
+
+    &.isExpanded svg {
+        transform: rotate(90deg);
+    }
+}
+
 button.seeMore {
     color: var(--color-link);
+    cursor: pointer;
     justify-content: center;
     align-items: center;
     display: flex;
@@ -478,6 +521,7 @@ button.seeMore {
     position: relative;
     border-top: 1px dashed var(--color-util-gray-200) !important;
 
+    &::before,
     &::before,
     &::after {
         content: '';

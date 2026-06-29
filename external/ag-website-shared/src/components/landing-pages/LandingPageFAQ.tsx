@@ -1,28 +1,23 @@
-import type { Framework } from '@ag-grid-types';
 import { Collapsible } from '@ag-website-shared/components/collapsible/Collapsible';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { useFrameworkSelector } from '@ag-website-shared/utils/useFrameworkSelector';
-import { transformMarkdoc } from '@utils/markdoc/transformMarkdoc';
 import classnames from 'classnames';
 import { useState } from 'react';
 import type { FunctionComponent } from 'react';
 
 import styles from './LandingPageFAQ.module.scss';
+import type { RenderedFAQItem } from './renderFAQAnswers';
 
-interface FAQItemData {
-    question: string;
-    answer: string;
+interface FAQItemProps {
+    itemData: RenderedFAQItem;
+    isOpen: boolean;
+    onClick: () => void;
 }
 
 interface Props {
-    FAQData: FAQItemData[];
-    framework: Framework;
+    FAQData: RenderedFAQItem[];
 }
 
-const FAQItem: FunctionComponent<FAQItemData> = ({ itemData, isOpen, onClick }) => {
-    const { framework } = useFrameworkSelector();
-    const { MarkdocContent } = transformMarkdoc({ framework, markdocContent: itemData.answer });
-
+const FAQItem: FunctionComponent<FAQItemProps> = ({ itemData, isOpen, onClick }) => {
     return (
         <div className={classnames(styles.questionContainer, 'plausible-event-name=react-table-expand-faq')}>
             <div className={styles.titleContainer} onClick={onClick}>
@@ -31,9 +26,7 @@ const FAQItem: FunctionComponent<FAQItemData> = ({ itemData, isOpen, onClick }) 
             </div>
 
             <Collapsible isOpen={isOpen}>
-                <div className={styles.answerContainer}>
-                    <MarkdocContent />
-                </div>
+                <div className={styles.answerContainer} dangerouslySetInnerHTML={{ __html: itemData.answerHtml }} />
             </Collapsible>
         </div>
     );
@@ -42,11 +35,11 @@ const FAQItem: FunctionComponent<FAQItemData> = ({ itemData, isOpen, onClick }) 
 export const LandingPageFAQ: FunctionComponent<Props> = ({ FAQData }) => {
     const [activeItemIndex, setActiveItemIndex] = useState(-1);
 
-    const clickHandler = (activeIndex) => {
+    const clickHandler = (activeIndex: number) => {
         setActiveItemIndex(activeIndex !== activeItemIndex ? activeIndex : -1);
     };
 
-    const getColumnItems = (columnIndex) => {
+    const getColumnItems = (columnIndex: number) => {
         return FAQData.map((item, i) => {
             if (i % 2 !== columnIndex) return;
 
