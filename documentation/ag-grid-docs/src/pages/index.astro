@@ -14,6 +14,7 @@ import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import whatsNewData from '@ag-website-shared/content/whats-new/data.json';
 import { LandingPageSection } from '@ag-website-shared/components/landing-pages/LandingPageSection';
 import { LandingPageFAQ } from '@ag-website-shared/components/landing-pages/LandingPageFAQ';
+import { renderFAQAnswers } from '@ag-website-shared/components/landing-pages/renderFAQAnswers';
 import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import { Finance } from 'src/components/demos/examples/finance';
 import { ThemeBuilderHomepage } from '@components/theme-builder-homepage/ThemeBuilderHomepage';
@@ -44,6 +45,9 @@ const faqStructuredData = buildFAQPage({
     pageUrl: siteRootUrl(metadata.canonicalUrlBase),
     items: faqData.map(({ question, answer }) => ({ question, answer: toPlainText(answer) })),
 });
+
+// Render the markdown FAQ answers to HTML on the server so Markdoc stays out of the client bundle.
+const renderedFaqData = renderFAQAnswers(faqData, 'react');
 
 const frameworksData = [
     {
@@ -271,7 +275,7 @@ const frameworksData = [
         subHeading="How many rows can AG Grid handle? How fast is AG Grid? Is AG Grid free? Answers to these common questions and more."
         sectionClass={styles.faqSection}
     >
-        <LandingPageFAQ client:load FAQData={faqData} framework={'react'} />
+        <LandingPageFAQ client:load FAQData={renderedFaqData} />
     </LandingPageSection>
 </Layout>
 
