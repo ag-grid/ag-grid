@@ -1,0 +1,138 @@
+.ag-overlay-error-panel {
+    /* the grid font (--ag-font-family) is sans-serif; code terms and snippets use a monospace stack. */
+    --ag-internal-overlay-mono: ui-monospace, sfmono-regular, menlo, consolas, 'Liberation Mono', monospace;
+
+    /* non-blocking: only the panel captures pointer events, the rest passes through to the grid. */
+    pointer-events: all;
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    width: 100%;
+    height: 100%;
+
+    /* panel clips; the header stays pinned and the body scrolls (see .ag-overlay-error-body). */
+    overflow: hidden;
+    color: var(--ag-text-color);
+    background: var(--ag-background-color);
+    border: solid calc(var(--ag-border-width) * 2)
+        color-mix(in srgb, var(--ag-invalid-color) 60%, var(--ag-border-color));
+
+    /* the panel fills the body, so only the bottom corners meet the grid's rounded wrapper; match its
+       radius there so the border is not clipped (the top edge sits flush under the header). */
+    border-radius: 0 0 var(--ag-wrapper-border-radius) var(--ag-wrapper-border-radius);
+}
+
+.ag-overlay-error-header {
+    display: flex;
+
+    /* stay pinned at the top while the body scrolls. */
+    flex: none;
+    align-items: center;
+    gap: calc(var(--ag-spacing) * 0.5);
+    padding: var(--ag-spacing) calc(var(--ag-spacing) * 1.5);
+    color: var(--ag-invalid-color);
+    border-bottom: solid var(--ag-border-width) var(--ag-border-color);
+}
+
+.ag-overlay-error-title {
+    flex: 1;
+    font-weight: 700;
+}
+
+.ag-overlay-error-button {
+    cursor: pointer;
+    border: solid var(--ag-border-width) var(--ag-border-color);
+    background: var(--ag-background-color);
+    color: var(--ag-text-color);
+    border-radius: var(--ag-border-radius);
+    padding: 0 calc(var(--ag-spacing) * 0.75);
+    font: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* keep the header controls on a shared height so Copy and dismiss line up. */
+    height: calc(var(--ag-spacing) * 3.5);
+}
+
+.ag-overlay-error-button:hover {
+    background: var(--ag-row-hover-color);
+}
+
+.ag-overlay-error-dismiss {
+    /* icon-only affordance: drop the border/background so the themed cancel icon
+       doesn't read as a box-within-a-box. */
+    border: none;
+    background: transparent;
+    padding: 0;
+    width: calc(var(--ag-spacing) * 3.5);
+}
+
+.ag-overlay-error-body {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--ag-spacing) * 1.5);
+    padding: calc(var(--ag-spacing) * 1.5);
+
+    /* take the remaining height and scroll internally when there are many diagnostics. */
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+}
+
+.ag-overlay-error-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ag-spacing);
+    border-inline-start: solid calc(var(--ag-border-width) * 3) var(--ag-border-color);
+    padding-inline-start: var(--ag-spacing);
+}
+
+.ag-overlay-error-item-error {
+    border-inline-start-color: var(--ag-invalid-color);
+}
+
+.ag-overlay-error-item-warning {
+    border-inline-start-color: color-mix(in srgb, var(--ag-invalid-color) 45%, #d98300);
+}
+
+.ag-overlay-error-divider {
+    /* separates stacked diagnostics; the margin scales the gap with the theme's spacing. */
+    margin: var(--ag-spacing) 0;
+    border-top: solid var(--ag-border-width) var(--ag-border-color);
+}
+
+.ag-overlay-error-message,
+.ag-overlay-error-code {
+    margin: 0;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    user-select: text;
+}
+
+.ag-overlay-error-inline-code {
+    font-family: var(--ag-internal-overlay-mono);
+    background: color-mix(in srgb, var(--ag-border-color) 35%, transparent);
+    border-radius: var(--ag-border-radius);
+    padding: 0 0.3em;
+}
+
+.ag-overlay-error-code {
+    font-family: var(--ag-internal-overlay-mono);
+    font-size: 0.85em;
+    background: var(--ag-header-background-color);
+    border: solid var(--ag-border-width) var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
+    padding: var(--ag-spacing);
+
+    /* cap the snippet height so it scrolls internally and the link below stays visible. */
+    max-height: 50vh;
+    overflow: auto;
+}
+
+.ag-overlay-error-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--ag-spacing) * 1.5);
+}

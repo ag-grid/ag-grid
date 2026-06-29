@@ -1,0 +1,256 @@
+import { _createElement } from '../../utils/element';
+import { getError } from '../errorMessages/errorText';
+import type { CapturedDiagnostic } from '../logging';
+import { getErrorLink } from '../logging';
+
+const DOC_LINK_REGEX = /\s*(See|Visit) https?:\/\/\S+/g;
+const MODULES_LINK_REGEX = /\s*For more info see:\s*(https?:\/\/\S+)/;
+const IMPORT_LINE_REGEX = /^\s*import\s/;
+const CODE_LINE_PREFIX_REGEX = /^(import |const |let |function |class |ModuleRegistry|<|>|\}|\))/;
+const URL_REGEX = /https?:\/\/\S+/g;
+/** Trailing punctuation that follows a URL in prose rather than being part of it. */
+const URL_TRAILING_PUNCTUATION_REGEX = /[.,;:)\]]+$/;
+
+/** Delimiter the error messages use to mark inline code (reasons, module names). See `asCode` in errorText.ts. */
+const CODE_DELIMITER = '`';
+
+/** Message and documentation links for a captured diagnostic, split out for separate rendering. */
+interface DiagnosticContent {
+    /** Human-readable explanation, rendered as prose above the code snippet. */
+    message: string;
+    /** Module-registration snippet, rendered in its own code block. Absent when there is no snippet. */
+    code?: string;
+    /** Trailing prose shown below the code snippet (e.g. "The item will not be rendered."). */
+    note?: string;
+    /** Present for module-registration errors: link to the modules docs, rendered outside the snippet. */
+    modulesDocLink?: string;
+}
+
+function stringifyPart(part: any): string {
+    if (typeof part === 'string') {
+        return part;
+    }
+    if (part == null) {
+        return '';
+    }
+    try {
+        return JSON.stringify(part);
+    } catch {
+        return String(part);
+    }
+}
+
+/** Full message text for a diagnostic, sourced from the ValidationModule's error definitions. */
+function getRawMessage(diagnostic: CapturedDiagnostic): string {
+    const { id, params, defaultMessage } = diagnostic;
+    const raw = getError(id, params as any)
+        .map(stringifyPart)
+        .join(' ')
+        .trim();
+    return raw || defaultMessage || '';
+}
+
+/**
+ * Builds the developer-facing content from a raw message. Inline documentation references
+ * (`See`/`Visit <link>` and the module guidance's `For more info see: <link>`) are removed because the
+ * overlay renders them as separate links; the registration snippet, when present, is split out from the
+ * surrounding explanation so the overlay can render it as a distinct code block.
+ * @knipIgnore Used in tests
+ */
+export function parseDiagnosticText(raw: string): DiagnosticContent {
+    const modulesDocLink = raw.match(MODULES_LINK_REGEX)?.[1];
+    const text = raw.replace(DOC_LINK_REGEX, '').replace(MODULES_LINK_REGEX, '').trim();
+    return { ...splitCodeSnippet(text), modulesDocLink };
+}
+
+function getDiagnosticContent(diagnostic: CapturedDiagnostic): DiagnosticContent {
+    return parseDiagnosticText(getRawMessage(diagnostic));
+}
+
+function isCodeLine(line: string): boolean {
+    const trimmed = line.trim();
+    if (trimmed === '') {
+        return false;
+    }
+    return CODE_LINE_PREFIX_REGEX.test(trimmed) || /[;{(]$/.test(trimmed) || trimmed.includes('=>');
+}
+
+/**
+ * Separates a registration snippet (a contiguous run of code lines starting at the first `import`) from
+ * the explanation before it and any note after it. Returns the whole message untouched when there is no
+ * snippet — the common case for warnings and deprecations.
+ */
+function splitCodeSnippet(text: string): { message: string; code?: string; note?: string } {
+    const lines = text.split('\n');
+    let start = -1;
+    for (let i = 0, len = lines.length; i < len; ++i) {
+        if (IMPORT_LINE_REGEX.test(lines[i])) {
+            start = i;
+            break;
+        }
+    }
+    if (start === -1) {
+        return { message: text };
+    }
+    let end = start;
+    for (let i = start, len = lines.length; i < len; ++i) {
+        if (lines[i].trim() === '' || isCodeLine(lines[i])) {
+            end = i;
+        } else {
+            break;
+        }
+    }
+    const message = lines.slice(0, start).join('\n').trim();
+    const code = lines
+        .slice(start, end + 1)
+        .join('\n')
+        .trim();
+    const note = lines
+        .slice(end + 1)
+        .join('\n')
+        .trim();
+    return { message, code, note: note || undefined };
+}
+
+/**
+ * Appends `text` to `el`, rendering backtick-delimited spans (marked at the message source) as `<code>`
+ * elements so reasons and option names stand out, and any URLs as clickable links.
+ */
+function appendRichText(el: HTMLElement, text: string): void {
+    const parts = text.split(CODE_DELIMITER);
+    for (let i = 0, len = parts.length; i < len; ++i) {
+        const part = parts[i];
+        if (part === '') {
+            continue;
+        }
+        // Odd segments sit between a pair of delimiters, so they are the code spans.
+        if (i % 2 === 1) {
+            const eCode = _createElement({ tag: 'code', cls: 'ag-overlay-error-inline-code' });
+            eCode.textContent = part;
+            el.appendChild(eCode);
+        } else {
+            appendTextWithLinks(el, part);
+        }
+    }
+}
+
+/** Appends `text` to `el`, rendering any embedded URLs as clickable links. */
+function appendTextWithLinks(el: HTMLElement, text: string): void {
+    let lastIndex = 0;
+    URL_REGEX.lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = URL_REGEX.exec(text)) !== null) {
+        if (match.index > lastIndex) {
+            el.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+        }
+        // Keep trailing sentence punctuation out of the href.
+        let href = match[0];
+        const trailing = URL_TRAILING_PUNCTUATION_REGEX.exec(href)?.[0] ?? '';
+        if (trailing) {
+            href = href.slice(0, href.length - trailing.length);
+        }
+        el.appendChild(createLink(href, href));
+        if (trailing) {
+            el.appendChild(document.createTextNode(trailing));
+        }
+        lastIndex = URL_REGEX.lastIndex;
+    }
+    if (lastIndex < text.length) {
+        el.appendChild(document.createTextNode(text.slice(lastIndex)));
+    }
+}
+
+function createTextEl(text: string): HTMLElement {
+    const eText = _createElement({ tag: 'div', cls: 'ag-overlay-error-message' });
+    appendRichText(eText, text);
+    return eText;
+}
+
+function createLink(href: string, text: string): HTMLAnchorElement {
+    const eLink = _createElement<HTMLAnchorElement>({ tag: 'a', cls: 'ag-overlay-error-link' });
+    eLink.href = href;
+    eLink.target = '_blank';
+    eLink.rel = 'noopener noreferrer';
+    eLink.textContent = text;
+    return eLink;
+}
+
+/**
+ * Builds the rich DOM for a diagnostic's parsed content. Split out from getError lookup for testing.
+ * @knipIgnore Used in tests
+ */
+export function renderDiagnosticElement(
+    severity: CapturedDiagnostic['severity'],
+    content: DiagnosticContent,
+    errorLink: string,
+    errorLinkText: string
+): HTMLElement {
+    const eItem = _createElement({ tag: 'div', cls: `ag-overlay-error-item ag-overlay-error-item-${severity}` });
+    const { message, code, note, modulesDocLink } = content;
+
+    if (message) {
+        eItem.appendChild(createTextEl(message));
+    }
+    if (code) {
+        const eCode = _createElement({ tag: 'pre', cls: 'ag-overlay-error-code' });
+        eCode.textContent = code;
+        eItem.appendChild(eCode);
+    }
+    if (note) {
+        eItem.appendChild(createTextEl(note));
+    }
+
+    const eLinks = _createElement({ tag: 'div', cls: 'ag-overlay-error-links' });
+    eLinks.appendChild(createLink(errorLink, errorLinkText));
+    if (modulesDocLink) {
+        eLinks.appendChild(createLink(modulesDocLink, 'Modules Documentation'));
+    }
+    eItem.appendChild(eLinks);
+
+    return eItem;
+}
+
+/** Builds the rich DOM for a single captured diagnostic. */
+export function renderDiagnostic(diagnostic: CapturedDiagnostic): HTMLElement {
+    return renderDiagnosticElement(
+        diagnostic.severity,
+        getDiagnosticContent(diagnostic),
+        getErrorLink(diagnostic.id, diagnostic.params),
+        `AG Grid #${diagnostic.id}`
+    );
+}
+
+/**
+ * Plain-text/markdown rendering of parsed content for the Copy button. Split out for testing.
+ * @knipIgnore Used in tests
+ */
+export function diagnosticContentToMarkdown(
+    severity: CapturedDiagnostic['severity'],
+    id: CapturedDiagnostic['id'],
+    content: DiagnosticContent,
+    link: string
+): string {
+    const { message, code, note } = content;
+    const lines = [`### ${severity} #${id}`];
+    if (message) {
+        lines.push(message.replace(/`/g, ''));
+    }
+    if (code) {
+        lines.push('```', code, '```');
+    }
+    if (note) {
+        lines.push(note.replace(/`/g, ''));
+    }
+    lines.push(`Docs: ${link}`);
+    return lines.join('\n');
+}
+
+/** Plain-text/markdown rendering of a diagnostic for the Copy button. */
+export function diagnosticToMarkdown(diagnostic: CapturedDiagnostic): string {
+    return diagnosticContentToMarkdown(
+        diagnostic.severity,
+        diagnostic.id,
+        getDiagnosticContent(diagnostic),
+        getErrorLink(diagnostic.id, diagnostic.params)
+    );
+}

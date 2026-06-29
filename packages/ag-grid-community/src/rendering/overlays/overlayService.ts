@@ -22,6 +22,7 @@ type OverlayCompType =
     | 'agNoMatchingRowsOverlay'
     | 'agExportingOverlay'
     | 'agFileInputOverlay'
+    | 'agErrorOverlay'
     | 'activeOverlay';
 
 type OverlayDef = Readonly<{
@@ -34,6 +35,8 @@ type OverlayDef = Readonly<{
     paramsKey?: keyof GridOptions;
     isSuppressed?: (gos: GridOptionsService) => boolean;
     overriddenComp?: UserCompDetails<any>;
+    /** Provided overlay that must not be replaced by a user-supplied `overlayComponent`. */
+    noUserOverride?: boolean;
 }>;
 
 const LoadingOverlayDef: OverlayDef = {
@@ -90,6 +93,18 @@ const CustomOverlayDef: Readonly<OverlayDef> = {
     exclusive: true,
 };
 
+// Dev-only overlay surfacing captured validation diagnostics. The component (agErrorOverlay) is
+// supplied by the ValidationModule, so this def resolves only when that module is registered. It is
+// driven by ErrorOverlayService via setDevErrorOverlay, never by the user-facing activeOverlay option.
+const ErrorOverlayDef: OverlayDef = {
+    id: 'agErrorOverlay',
+    overlayType: 'error',
+    comp: overlayCompType('agErrorOverlay'),
+    wrapperCls: 'ag-overlay-error-wrapper',
+    exclusive: false,
+    noUserOverride: true,
+};
+
 const getActiveOverlayDef = (activeOverlay: any): OverlayDef | null => {
     if (!activeOverlay) {
         return null;
@@ -133,6 +148,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     private userForcedNoRows: boolean = false;
     private exportsInProgress: number = 0;
     private focusedCell: CellPosition | null;
+    private devErrorOverlayActive: boolean = false;
 
     private newColumnsLoadedCleanup: (() => void) | null = null;
     public postConstruct(): void {
@@ -196,6 +212,20 @@ export class OverlayService extends BeanStub implements NamedBean {
     /** Returns true if the overlay is visible. */
     public isVisible(): boolean {
         return !!this.currentDef;
+    }
+
+    /**
+     * Shows or hides the dev-only validation error overlay. Driven by the ValidationModule's
+     * ErrorOverlayService; takes priority over the data-driven overlays while active. Re-evaluates
+     * immediately so the overlay appears as soon as the wrapper exists (or once it later mounts).
+     * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+     */
+    public setDevErrorOverlay(active: boolean): void {
+        if (this.devErrorOverlayActive === active) {
+            return;
+        }
+        this.devErrorOverlayActive = active;
+        this.updateOverlay(false);
     }
 
     public showLoadingOverlay(): void {
@@ -391,6 +421,11 @@ export class OverlayService extends BeanStub implements NamedBean {
         const { gos, beans } = this;
         const { rowModel } = beans;
 
+        // Dev validation errors take priority over the data-driven overlays (loading / no-rows).
+        if (this.devErrorOverlayActive && this.eWrapper) {
+            return ErrorOverlayDef;
+        }
+
         const loading = gos.get('loading');
 
         const loadingDefined = loading !== undefined;
@@ -454,7 +489,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
 
         let compDetails = undefined;
-        if (isProvidedOverlay) {
+        if (isProvidedOverlay && !componentDef.noUserOverride) {
             // For provided overlays check if the user is providing overrides for them
             if (gos.get('overlayComponent') || gos.get('overlayComponentSelector')) {
                 compDetails = userCompFactory.getCompDetailsFromGridOptions(

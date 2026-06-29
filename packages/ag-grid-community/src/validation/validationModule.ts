@@ -1,6 +1,9 @@
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { _registerModule } from '../modules/moduleRegistry';
 import { VERSION } from '../version';
+import errorOverlayCSS from './errorOverlay/errorOverlay.css';
+import { ErrorOverlayComponent } from './errorOverlay/errorOverlayComponent';
+import { ErrorOverlayService } from './errorOverlay/errorOverlayService';
 import type { DevValidationOptions } from './validationConfig';
 import { _applyDevValidationConfig } from './validationConfig';
 import { ValidationService } from './validationService';
@@ -28,7 +31,11 @@ type ValidationModuleType = {
 export const ValidationModule: ValidationModuleType = {
     moduleName: 'Validation',
     version: VERSION,
-    beans: [ValidationService],
+    beans: [ValidationService, ErrorOverlayService],
+    userComponents: {
+        agErrorOverlay: ErrorOverlayComponent,
+    },
+    css: [errorOverlayCSS],
     with: (options) => {
         _applyDevValidationConfig(options);
         return ValidationModule;

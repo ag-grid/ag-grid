@@ -1104,6 +1104,132 @@
         pointer-events: all;
     }
 
+    // Dev-only validation overlay (ValidationModule). Mirrors the Theming API rules in
+    // packages/ag-grid-community/src/validation/errorOverlay/errorOverlay.css, adapted to legacy vars.
+    // Inert unless the dev-only overlay component is rendered.
+    .ag-overlay-error-panel {
+        // the grid font is sans-serif; code terms and snippets use a monospace stack.
+        --ag-internal-overlay-mono: ui-monospace, sfmono-regular, menlo, consolas, 'Liberation Mono', monospace;
+
+        // only the panel captures pointer events; the rest passes through to the grid.
+        pointer-events: all;
+        display: flex;
+        flex-direction: column;
+        text-align: start;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        color: var(--ag-foreground-color);
+        background: var(--ag-background-color);
+        border: solid 2px color-mix(in srgb, var(--ag-invalid-color) 60%, var(--ag-border-color));
+        // match the grid's rounded wrapper on the bottom corners so the border is not clipped.
+        border-radius: 0 0 var(--ag-wrapper-border-radius) var(--ag-wrapper-border-radius);
+    }
+
+    .ag-overlay-error-header {
+        display: flex;
+        flex: none;
+        align-items: center;
+        gap: calc(var(--ag-grid-size) * 0.5);
+        padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 1.5);
+        color: var(--ag-invalid-color);
+        border-bottom: solid 1px var(--ag-border-color);
+    }
+
+    .ag-overlay-error-title {
+        flex: 1;
+        font-weight: 700;
+    }
+
+    .ag-overlay-error-button {
+        cursor: pointer;
+        border: solid 1px var(--ag-border-color);
+        background: var(--ag-background-color);
+        color: var(--ag-foreground-color);
+        border-radius: var(--ag-border-radius);
+        padding: 0 calc(var(--ag-grid-size) * 0.75);
+        font: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: calc(var(--ag-grid-size) * 3.5);
+    }
+
+    .ag-overlay-error-button:hover {
+        background: var(--ag-row-hover-color);
+    }
+
+    .ag-overlay-error-dismiss {
+        border: none;
+        background: transparent;
+        padding: 0;
+        width: calc(var(--ag-grid-size) * 3.5);
+    }
+
+    .ag-overlay-error-body {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--ag-grid-size) * 1.5);
+        padding: calc(var(--ag-grid-size) * 1.5);
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: auto;
+    }
+
+    .ag-overlay-error-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--ag-grid-size);
+        border-inline-start: solid 3px var(--ag-border-color);
+        padding-inline-start: var(--ag-grid-size);
+    }
+
+    .ag-overlay-error-item-error {
+        border-inline-start-color: var(--ag-invalid-color);
+    }
+
+    .ag-overlay-error-item-warning {
+        border-inline-start-color: color-mix(in srgb, var(--ag-invalid-color) 45%, #d98300);
+    }
+
+    .ag-overlay-error-divider {
+        margin: var(--ag-grid-size) 0;
+        border-top: solid 1px var(--ag-border-color);
+    }
+
+    .ag-overlay-error-message,
+    .ag-overlay-error-code {
+        margin: 0;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        user-select: text;
+    }
+
+    .ag-overlay-error-inline-code {
+        font-family: var(--ag-internal-overlay-mono);
+        background: color-mix(in srgb, var(--ag-border-color) 35%, transparent);
+        border-radius: var(--ag-border-radius);
+        padding: 0 0.3em;
+    }
+
+    .ag-overlay-error-code {
+        font-family: var(--ag-internal-overlay-mono);
+        font-size: 0.85em;
+        background: var(--ag-header-background-color);
+        border: solid 1px var(--ag-border-color);
+        border-radius: var(--ag-border-radius);
+        padding: var(--ag-grid-size);
+        max-height: 50vh;
+        overflow: auto;
+    }
+
+    .ag-overlay-error-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: calc(var(--ag-grid-size) * 1.5);
+    }
+
     .ag-overlay-file-input-center {
         border: solid 1px var(--ag-border-color);
         background: var(--ag-background-color);
