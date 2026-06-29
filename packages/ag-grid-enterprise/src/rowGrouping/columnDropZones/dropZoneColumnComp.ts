@@ -200,6 +200,10 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             } else {
                 strategy.progressPivotSortFromEvent(this.deferApply, column);
             }
+            // In synchronous mode, the strategy dispatches events that can destroy this component, nulling this.column
+            if (!this.column) {
+                return;
+            }
             eSortIndicator.refresh();
             this.setupAria();
             refreshDeferredToolPanelUi(this.beans, this.updateParams);
