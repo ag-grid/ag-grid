@@ -322,12 +322,23 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return;
         }
         const beans = this.beans;
-        const gos = this.gos;
         // Pivot-sort reorders existing columns, so reuse the column-move animation to slide them.
         const animatePivotSort = this.isPivotSortReorder();
         if (animatePivotSort) {
             beans.colAnimation?.start();
         }
+        try {
+            this.refreshColsBody(newColDefs, source);
+        } finally {
+            if (animatePivotSort) {
+                beans.colAnimation?.finish();
+            }
+        }
+    }
+
+    private refreshColsBody(newColDefs: boolean, source: ColumnEventType): void {
+        const beans = this.beans;
+        const gos = this.gos;
         const colDefList = this.colDefList;
         const prevColTree = this.colsTree;
         const prevWasPivot = this.showingPivotResult;
@@ -462,9 +473,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
         if (this.colsTree !== prevColTree) {
             this.eventSvc.dispatchEvent({ type: 'gridColumnsChanged' });
-        }
-        if (animatePivotSort) {
-            beans.colAnimation?.finish();
         }
     }
 
