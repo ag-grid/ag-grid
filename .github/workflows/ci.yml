@@ -90,6 +90,12 @@ jobs:
               - 'nx.json'
               - 'tsconfig.*.json'
               - 'jest.preset.js'
+              # The .htaccess / CSP generation lives under documentation/ but is exercised
+              # by code-CI jobs — the e2e htaccess harness (test:htaccess) and its own unit
+              # tests (cspRules/htaccessRules .test.ts) — so route changes here through full
+              # code CI rather than the docs-only path, where both would be skipped.
+              - 'documentation/ag-grid-docs/src/utils/htaccess/**'
+              - 'documentation/ag-grid-docs/src/utils/csp/**'
             ci:
               - '.github/**'
             docs:
