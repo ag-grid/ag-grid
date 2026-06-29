@@ -128,13 +128,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         // sort by either user provided comparator, or our own one
         const primaryColumn = primaryPivotColumns[index];
         const primaryColDef = primaryColumn.colDef;
-        const pivotComparator = primaryColDef.pivotComparator;
-        const baseComparator = pivotComparator ? convertToHeaderNameComparator(pivotComparator) : headerNameComparator;
-        // pivotSort is isolated from colDef.sort; 'desc' reverses the base order, 'asc'/null keep it ascending.
-        const comparator =
-            primaryColumn.pivotSort === 'desc'
-                ? (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) => baseComparator(b, a)
-                : baseComparator;
+        const comparator = this.getPivotGroupComparator(primaryColumn);
 
         const measureColumns = this.valueColsSvc?.columns;
         // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead
@@ -502,7 +496,21 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
      * Used by the SSRM to create secondary columns from provided fields
      * @param fields
      */
+    /** Comparator ordering a pivot column's groups: custom `pivotComparator` or header name, reversed when
+     *  the column's `pivotSort` is `'desc'`. `pivotSort` is isolated from `colDef.sort`. */
+    private getPivotGroupComparator(
+        primaryColumn: AgColumn
+    ): (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) => number {
+        const pivotComparator = primaryColumn.colDef.pivotComparator;
+        const baseComparator = pivotComparator ? convertToHeaderNameComparator(pivotComparator) : headerNameComparator;
+        if (primaryColumn.pivotSort === 'desc') {
+            return (a, b) => baseComparator(b, a);
+        }
+        return baseComparator;
+    }
+
     public createColDefsFromFields(fields: string[]): (ColDef | ColGroupDef)[] {
+        const pivotColumns = this.pivotColsSvc?.columns ?? [];
         type UniqueValue = Map<string, UniqueValue>;
         // tear the ids down into groups, while this could be done in-step with the next stage, the lookup is faster
         // than searching col group children array for the right group
@@ -527,15 +535,30 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             id: string,
             key: string,
             uniqueValues: UniqueValue,
-            depth: number
+            depth: number,
+            path: string[]
         ): ColDef | ColGroupDef => {
             const children: (ColDef | ColGroupDef)[] = [];
-            for (const [key, item] of uniqueValues) {
-                const child = uniqueValuesToGroups(`${id}${this.fieldSeparator}${key}`, key, item, depth + 1);
+            for (const [childKey, item] of uniqueValues) {
+                const child = uniqueValuesToGroups(
+                    `${id}${this.fieldSeparator}${childKey}`,
+                    childKey,
+                    item,
+                    depth + 1,
+                    [...path, childKey]
+                );
                 children.push(child);
             }
 
+            // Children are the next pivot level; the measure level (>= pivot column count) keeps server order.
+            const childLevel = depth + 1;
+            if (childLevel < pivotColumns.length) {
+                children.sort(this.getPivotGroupComparator(pivotColumns[childLevel]));
+            }
+
             if (children.length === 0) {
+                // The leaf's own key is the measure column; the preceding path entries are the pivot keys.
+                const pivotKeys = path.slice(0, -1);
                 const potentialAggCol = this.colModel.getNonPivotCol(key);
                 if (potentialAggCol) {
                     const headerName = this.colNames.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
@@ -543,12 +566,14 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                     colDef.colId = id;
                     colDef.aggFunc = potentialAggCol.aggFunc;
                     colDef.valueGetter = (params) => params.data?.[id];
+                    colDef.pivotKeys = pivotKeys;
                     return colDef;
                 }
 
                 const col: ColDef = {
                     colId: id,
                     headerName: key,
+                    pivotKeys,
                     // this is to support using pinned rows, normally the data will be extracted from the aggData object using the colId
                     // however pinned rows still access the data object by field, this prevents values with dots from being treated as complex objects
                     valueGetter: (params) => params.data?.[id],
@@ -575,8 +600,11 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         const res: (ColDef | ColGroupDef)[] = [];
         for (const [key, item] of uniqueValues) {
-            const col = uniqueValuesToGroups(key, key, item, 0);
+            const col = uniqueValuesToGroups(key, key, item, 0, [key]);
             res.push(col);
+        }
+        if (pivotColumns.length > 0) {
+            res.sort(this.getPivotGroupComparator(pivotColumns[0]));
         }
         return res;
     }
