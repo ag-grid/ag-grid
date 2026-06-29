@@ -78,10 +78,11 @@ function umdMissingModule(
     const agChartsDynamic = (globalThis as any)?.agCharts;
 
     if (!agChartsDynamic && chartModules.length > 0) {
-        message = `Unable to use ${reasonOrId} as either the ag-charts-community or ag-charts-enterprise script needs to be included alongside ag-grid-enterprise.\n`;
+        message = `Unable to use ${reasonOrId} as either the \`ag-charts-community\` or \`ag-charts-enterprise\` script needs to be included alongside \`ag-grid-enterprise\`.\n`;
     } else if (moduleNames.some((m) => ENTERPRISE_MODULE_NAMES[m as EnterpriseModuleName])) {
         message =
-            message + `Unable to use ${reasonOrId} as that requires the ag-grid-enterprise script to be included.\n`;
+            message +
+            `Unable to use ${reasonOrId} as that requires the \`ag-grid-enterprise\` script to be included.\n`;
     }
     return message;
 }
@@ -115,10 +116,14 @@ const missingModule = ({
     const chartModules = resolvedModuleNames.filter((m) => m === 'IntegratedCharts' || m === 'Sparklines');
     const chartImportRequired =
         chartModules.length > 0
-            ? `${chartModules.map((m) => convertToUserModuleName(m)).join()} must be initialised with an AG Charts module. One of 'AgChartsCommunityModule' / 'AgChartsEnterpriseModule'.`
+            ? `${chartModules.map((m) => convertToUserModuleName(m)).join()} must be initialised with an AG Charts module. One of \`AgChartsCommunityModule\` / \`AgChartsEnterpriseModule\`.`
             : '';
 
-    const explanation = `Unable to use ${reason} as ${resolvedModuleNames.length > 1 ? 'one of ' + resolvedModuleNames.map((m) => convertToUserModuleName(m)).join(', ') : convertToUserModuleName(resolvedModuleNames[0])} is not registered${gridScoped ? ' for gridId: ' + gridId : ''}. ${chartImportRequired} Check if you have registered the module:\n`;
+    const moduleList =
+        resolvedModuleNames.length > 1
+            ? 'one of ' + resolvedModuleNames.map((m) => `\`${convertToUserModuleName(m)}\``).join(', ')
+            : `\`${convertToUserModuleName(resolvedModuleNames[0])}\``;
+    const explanation = `Unable to use ${reason} as ${moduleList} is not registered${gridScoped ? ' for gridId: ' + gridId : ''}. ${chartImportRequired} Check if you have registered the module:\n`;
 
     return (
         `${explanation}
@@ -127,7 +132,7 @@ ${moduleImportMsg(resolvedModuleNames, usesAgGridProvider)}` + (additionalText ?
 };
 
 const missingChartsWithModule = (gridModule: 'IntegratedChartsModule' | 'SparklinesModule') => {
-    return `${gridModule} must be initialised with an AG Charts module. One of 'AgChartsCommunityModule' / 'AgChartsEnterpriseModule'.
+    return `${gridModule} must be initialised with an AG Charts module. One of \`AgChartsCommunityModule\` / \`AgChartsEnterpriseModule\`.
 
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { ModuleRegistry } from 'ag-grid-community';
@@ -153,7 +158,7 @@ const clipboardApiError = (method: string) =>
 export const AG_GRID_ERRORS = {
     1: () => '`rowData` must be an array' as const,
     2: ({ nodeId }: { nodeId: string | undefined }) =>
-        `Duplicate node id '${nodeId}' detected from getRowId callback, this could cause issues in your grid.` as const,
+        `Duplicate node id \`${nodeId}\` detected from getRowId callback, this could cause issues in your grid.` as const,
     3: () => 'Calling gridApi.resetRowHeights() makes no sense when using Auto Row Height.' as const,
     4: ({ id }: { id: string }) => `Could not find row id=${id}, data item was not found for this id` as const,
     5: ({ data }: { data: any }) =>
@@ -168,7 +173,7 @@ export const AG_GRID_ERRORS = {
     9: ({ variable }: { variable: { cssName: string; defaultValue: number } }) =>
         `No value for ${variable?.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable?.defaultValue} will be used and updated when styles load.` as const,
     10: ({ eventType }: { eventType: RowNodeEventType }) =>
-        `As of v33, the '${eventType}' event is deprecated. Use the global 'modelUpdated' event to determine when row children have changed.`,
+        `As of v33, the \`${eventType}\` event is deprecated. Use the global 'modelUpdated' event to determine when row children have changed.`,
     11: () => 'No gridOptions provided to createGrid' as const,
     12: ({ colKey }: { colKey: string | Column }) => ['column ', colKey, ' not found'] as const,
     13: () =>
@@ -204,7 +209,7 @@ export const AG_GRID_ERRORS = {
         return `Grid API function ${fnName}() cannot be called as the grid has been destroyed.\n Either clear local references to the grid api, when it is destroyed, or check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.\n To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: ${preDestroyLink}` as const;
     },
     27: ({ fnName, module }: { fnName: string; module: string }) =>
-        `API function '${fnName}' not registered to module '${module}'` as const,
+        `API function \`${fnName}\` not registered to module \`${module}\`` as const,
     28: () => 'setRowCount cannot be used while using row grouping.' as const,
     29: () =>
         'tried to call sizeColumnsToFit() but the grid is coming back with zero width, maybe the grid is not visible yet on the screen?' as const,
@@ -221,13 +226,13 @@ export const AG_GRID_ERRORS = {
         'stateItem.aggFunc must be a string. if using your own aggregation functions, register the functions first before using them in get/set state. This is because it is intended for the column state to be stored and retrieved as simple JSON.' as const,
 
     34: ({ key }: { key: string }) =>
-        `the column type '${key}' is a default column type and cannot be overridden.` as const,
+        `the column type \`${key}\` is a default column type and cannot be overridden.` as const,
     35: () =>
         `Column type definitions 'columnTypes' with a 'type' attribute are not supported because a column type cannot refer to another column type. Only column definitions 'columnDefs' can use the 'type' attribute to refer to a column type.` as const,
     36: ({ t }: { t: string }) => "colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes",
     37: () => `Changing the column pinning status is not allowed with domLayout='print'` as const,
     38: ({ iconName }: { iconName: string }) =>
-        `provided icon '${iconName}' needs to be a string or a function` as const,
+        `provided icon \`${iconName}\` needs to be a string or a function` as const,
     39: () =>
         'Applying column order broke a group where columns should be married together. Applying new order has been discarded.' as const,
     40: ({ e, method }: { e: any; method: string }) => `${e}\n${clipboardApiError(method)}` as const,
@@ -235,7 +240,7 @@ export const AG_GRID_ERRORS = {
         "Browser did not allow document.execCommand('copy'). Ensure 'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise the browser will prevent it for security reasons." as const,
     42: () => "Browser does not support document.execCommand('copy') for clipboard operations" as const,
     43: ({ iconName }: { iconName: string }) =>
-        `As of v33, icon '${iconName}' is deprecated. Use the icon CSS name instead.` as const,
+        `As of v33, icon \`${iconName}\` is deprecated. Use the icon CSS name instead.` as const,
     44: () =>
         'Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.' as const,
     45: ({ parentCellDataType }: { parentCellDataType: string }) =>
@@ -331,7 +336,7 @@ export const AG_GRID_ERRORS = {
         paginationPageSizeOption: number;
         paginationPageSizeSelector: string;
     }) =>
-        `Either set '${paginationPageSizeSelector}' to an array that includes ${paginationPageSizeOption} or to 'false' to disable the page size selector.` as const,
+        `Either set \`${paginationPageSizeSelector}\` to an array that includes ${paginationPageSizeOption} or to 'false' to disable the page size selector.` as const,
     96: ({ id, data }: { id: string; data: any }) =>
         [
             'Duplicate ID',
@@ -374,7 +379,7 @@ export const AG_GRID_ERRORS = {
         }).values;
 
         textOutput.push(
-            `Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.\n`
+            `Could not find \`${componentName}\` component. It was configured as "${propertyName}: \`${componentName}\`" but it wasn't found in the list of registered components.\n`
         );
         if (suggestions.length > 0) {
             textOutput.push(`         Did you mean: [${suggestions.slice(0, 3)}]?\n`);
@@ -401,7 +406,7 @@ export const AG_GRID_ERRORS = {
             maxSuggestions: 4,
         }).values;
         return [
-            `Could not find '${inputValue}' aggregate function. It was configured as "aggFunc: '${inputValue}'" but it wasn't found in the list of registered aggregations.`,
+            `Could not find \`${inputValue}\` aggregate function. It was configured as "aggFunc: \`${inputValue}\`" but it wasn't found in the list of registered aggregations.`,
             suggestions.length > 0 ? `         Did you mean: [${suggestions.slice(0, 3)}]?` : '',
             `If using a custom aggregation function check it has been registered correctly.`,
         ].join('\n');
@@ -437,41 +442,41 @@ export const AG_GRID_ERRORS = {
     // 131: () => 'cannot range select while selecting multiple rows' as const,
     132: () => 'Row selection features are not available unless `rowSelection` is enabled.' as const,
     133: ({ iconName }: { iconName: string }) =>
-        `icon '${iconName}' function should return back a string or a dom object` as const,
-    134: ({ iconName }: { iconName: string }) => `Did not find icon '${iconName}'` as const,
+        `icon \`${iconName}\` function should return back a string or a dom object` as const,
+    134: ({ iconName }: { iconName: string }) => `Did not find icon \`${iconName}\`` as const,
     135: () => `Data type of the new value does not match the cell data type of the column` as const,
     136: () =>
         `Unable to update chart as the 'type' is missing. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.` as const,
     137: ({ type, currentChartType }: { type: string; currentChartType: string }) =>
-        `Unable to update chart as a '${type}' update type is not permitted on a ${currentChartType}.` as const,
+        `Unable to update chart as a \`${type}\` update type is not permitted on a ${currentChartType}.` as const,
     138: ({ chartType }: { chartType: string }) => `invalid chart type supplied: ${chartType}` as const,
     139: ({ customThemeName }: { customThemeName: string }) =>
         `a custom chart theme with the name ${customThemeName} has been supplied but not added to the 'chartThemes' list` as const,
     140: ({ name }: { name: string }) =>
-        `no stock theme exists with the name '${name}' and no custom chart theme with that name was supplied to 'customChartThemes'` as const,
+        `no stock theme exists with the name \`${name}\` and no custom chart theme with that name was supplied to 'customChartThemes'` as const,
     141: () => 'cross filtering with row grouping is not supported.' as const,
     142: () => 'cross filtering is only supported in the client side row model.' as const,
-    143: ({ panel }: { panel: string | undefined }) => `'${panel}' is not a valid Chart Tool Panel name` as const,
-    144: ({ type }: { type: string }) => `Invalid charts data panel group name supplied: '${type}'` as const,
+    143: ({ panel }: { panel: string | undefined }) => `\`${panel}\` is not a valid Chart Tool Panel name` as const,
+    144: ({ type }: { type: string }) => `Invalid charts data panel group name supplied: \`${type}\`` as const,
     145: ({ group }: { group: string }) =>
-        `As of v32, only one charts customize panel group can be expanded at a time. '${group}' will not be expanded.` as const,
+        `As of v32, only one charts customize panel group can be expanded at a time. \`${group}\` will not be expanded.` as const,
     146: ({ comp }: { comp: string }) =>
-        `Unable to instantiate component '${comp}' as its module hasn't been loaded. Add 'ValidationModule' to see which module is required.` as const,
-    147: ({ group }: { group: string }) => `Invalid charts customize panel group name supplied: '${group}'` as const,
-    148: ({ group }: { group: string }) => `invalid chartGroupsDef config '${group}'` as const,
+        `Unable to instantiate component \`${comp}\` as its module hasn't been loaded. Add 'ValidationModule' to see which module is required.` as const,
+    147: ({ group }: { group: string }) => `Invalid charts customize panel group name supplied: \`${group}\`` as const,
+    148: ({ group }: { group: string }) => `invalid chartGroupsDef config \`${group}\`` as const,
     149: ({ group, chartType }: { group: string; chartType: string }) =>
         `invalid chartGroupsDef config '${group}.${chartType}'` as const,
     150: () => `'seriesChartTypes' are required when the 'customCombo' chart type is specified.` as const,
     151: ({ chartType }: { chartType: string }) =>
-        `invalid chartType '${chartType}' supplied in 'seriesChartTypes', converting to 'line' instead.` as const,
+        `invalid chartType \`${chartType}\` supplied in 'seriesChartTypes', converting to 'line' instead.` as const,
     152: ({ colId }: { colId: string }) =>
-        `no 'seriesChartType' found for colId = '${colId}', defaulting to 'line'.` as const,
+        `no 'seriesChartType' found for colId = \`${colId}\`, defaulting to 'line'.` as const,
     153: ({ chartDataType }: { chartDataType: string }) =>
-        `unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'` as const,
+        `unexpected chartDataType value \`${chartDataType}\` supplied, instead use 'category', 'series' or 'excluded'` as const,
     154: ({ colId }: { colId: string }) =>
         `cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' to be defined on the column with id: ${colId}` as const,
-    155: ({ option }: { option: string }) => `'${option}' is not a valid Chart Toolbar Option` as const,
-    156: ({ panel }: { panel: string }) => `Invalid panel in chartToolPanelsDef.panels: '${panel}'` as const,
+    155: ({ option }: { option: string }) => `\`${option}\` is not a valid Chart Toolbar Option` as const,
+    156: ({ panel }: { panel: string }) => `Invalid panel in chartToolPanelsDef.panels: \`${panel}\`` as const,
     157: ({ unrecognisedGroupIds }: { unrecognisedGroupIds: string[] }) =>
         ['unable to find group(s) for supplied groupIds:', unrecognisedGroupIds] as const,
     158: () => 'can not expand a column item that does not represent a column group header' as const,
@@ -498,12 +503,12 @@ export const AG_GRID_ERRORS = {
         'could not find detail grid options for master detail, please set gridOptions.detailCellRendererParams.detailGridOptions' as const,
     172: () =>
         'could not find getDetailRowData for master / detail, please set gridOptions.detailCellRendererParams.getDetailRowData' as const,
-    173: ({ group }: { group: string }) => `invalid chartGroupsDef config '${group}'` as const,
+    173: ({ group }: { group: string }) => `invalid chartGroupsDef config \`${group}\`` as const,
     174: ({ group, chartType }: { group: string; chartType: string }) =>
         `invalid chartGroupsDef config '${group}.${chartType}'` as const,
     175: ({ menuTabName, itemsToConsider }: { menuTabName: string; itemsToConsider: string[] }) =>
         [
-            `Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of `,
+            `Trying to render an invalid menu item \`${menuTabName}\`. Check that your 'menuTabs' contains one of `,
             itemsToConsider,
         ] as const,
     176: ({ key }: { key: string }) => `unknown menu item type ${key}` as const,
@@ -593,13 +598,13 @@ export const AG_GRID_ERRORS = {
     214: ({ key }: { key: string }) => `unable to lookup Tool Panel as invalid key supplied: ${key}` as const,
     215: ({ key, defaultByKey }: { key: string; defaultByKey: object }) =>
         `the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(defaultByKey ?? {}).join(',')}` as const,
-    216: ({ name }: { name: string }) => `Missing component for '${name}'` as const,
+    216: ({ name }: { name: string }) => `Missing component for \`${name}\`` as const,
     217: ({ invalidColIds }: { invalidColIds: any[] }) =>
         ['unable to find grid columns for the supplied colDef(s):', invalidColIds] as const,
     218: ({ property, defaultOffset }: { property: string; defaultOffset: number | undefined }) =>
         `${property} must be a number, the value you provided is not a valid number. Using the default of ${defaultOffset}px.` as const,
     219: ({ property }: { property: string }) => `Property ${property} does not exist on the target object.` as const,
-    220: ({ lineDash }: { lineDash: string }) => `'${lineDash}' is not a valid 'lineDash' option.` as const,
+    220: ({ lineDash }: { lineDash: string }) => `\`${lineDash}\` is not a valid 'lineDash' option.` as const,
     221: () => `agAggregationComponent should only be used with the client and server side row model.` as const,
     222: () => `agFilteredRowCountComponent should only be used with the client side row model.` as const,
     223: () => `agSelectedRowCountComponent should only be used with the client and server side row model.` as const,
@@ -642,7 +647,7 @@ export const AG_GRID_ERRORS = {
     250: () =>
         'Must supply a Key Creator in Set Filter params when `treeList = true` on a group column, and Tree Data or Row Grouping is enabled.' as const,
     251: ({ chartType }: { chartType: string }) =>
-        `AG Grid: Unable to create chart as an invalid chartType = '${chartType}' was supplied.` as const,
+        `AG Grid: Unable to create chart as an invalid chartType = \`${chartType}\` was supplied.` as const,
     252: () =>
         'cannot get grid to draw rows when it is in the middle of drawing rows. \nYour code probably called a grid API method while the grid was in the render stage. \nTo overcome this, put the API call into a timeout, e.g. instead of api.redrawRows(), call setTimeout(function() { api.redrawRows(); }, 0). \nTo see what part of your code that caused the refresh check this stacktrace.' as const,
     253: ({ version }: { version: string }) => ['Illegal version string: ', version] as const,
@@ -670,7 +675,7 @@ export const AG_GRID_ERRORS = {
         usesAgGridProvider?: boolean;
     }) =>
         missingModule({
-            reasonOrId: `AG Grid '${propName}' component: ${compName}`,
+            reasonOrId: `AG Grid \`${propName}\` component: \`${compName}\``,
             moduleName: USER_COMP_MODULES[compName as UserComponentName],
             gridId,
             gridScoped,
@@ -685,7 +690,7 @@ export const AG_GRID_ERRORS = {
     264: () =>
         'As of v33, icon key "smallRight" is deprecated. Use "panelDelimiter" for Row Group Panel / Pivot Panel, "subMenuOpen" for sub-menus.' as const,
     265: ({ colId }: { colId: string }) =>
-        `Unable to infer chart data type for column '${colId}' if first data entry is null. Please specify "chartDataType", or a "cellDataType" in the column definition. For more information, see ${baseDocLink}/integrated-charts-range-chart#coldefchartdatatype .` as const,
+        `Unable to infer chart data type for column \`${colId}\` if first data entry is null. Please specify "chartDataType", or a "cellDataType" in the column definition. For more information, see ${baseDocLink}/integrated-charts-range-chart#coldefchartdatatype .` as const,
     266: () =>
         'As of v33.1, using "keyCreator" with the Rich Select Editor has been deprecated. It now requires the "formatValue" callback to convert complex data to strings.' as const,
     267: () =>
@@ -693,12 +698,12 @@ export const AG_GRID_ERRORS = {
     268: () => "Transactions aren't supported with tree data when using treeDataChildrenField" as const,
     269: () => "When `masterSelects: 'detail'`, detail grids must be configured with multi-row selection" as const,
     270: ({ id, parentId }: { id: string; parentId: string }) =>
-        `Cycle detected for row with id='${id}' and parent id='${parentId}'. Resetting the parent for row with id='${id}' and showing it as a root-level node.` as const,
+        `Cycle detected for row with id=\`${id}\` and parent id=\`${parentId}\`. Resetting the parent for row with id=\`${id}\` and showing it as a root-level node.` as const,
     271: ({ id, parentId }: { id: string; parentId: string }) =>
-        `Parent row not found for row with id='${id}' and parent id='${parentId}'. Showing row with id='${id}' as a root-level node.` as const,
+        `Parent row not found for row with id=\`${id}\` and parent id=\`${parentId}\`. Showing row with id=\`${id}\` as a root-level node.` as const,
     // 272: () => NoModulesRegisteredError(),
     273: ({ providedId, usedId }: { providedId: string; usedId: string }) =>
-        `Provided column id '${providedId}' was already in use, ensure all column and group ids are unique. Using '${usedId}' instead.` as const,
+        `Provided column id \`${providedId}\` was already in use, ensure all column and group ids are unique. Using \`${usedId}\` instead.` as const,
     274: ({ prop }: { prop: string }) => {
         let msg = `Since v33, ${prop} has been deprecated.`;
         switch (prop) {
@@ -717,13 +722,13 @@ export const AG_GRID_ERRORS = {
     // 275: missingRowModelTypeError,
     276: () => 'Row Numbers Row Resizer cannot be used when Grid Columns have `autoHeight` enabled.' as const,
     277: ({ colId }: { colId: string }) =>
-        `'enableFilterHandlers' is set to true, but column '${colId}' does not have 'filter.doesFilterPass' or 'filter.handler' set.` as const,
-    278: ({ colId }: { colId: string }) => `Unable to create filter handler for column '${colId}'` as const,
-    279: (_: { name: DynamicBeanName }) => {}, // `Unable to create dynamic bean '${name}' during module init lifecycle, dynamic beans must be initialised on first use.` as const,
+        `'enableFilterHandlers' is set to true, but column \`${colId}\` does not have 'filter.doesFilterPass' or 'filter.handler' set.` as const,
+    278: ({ colId }: { colId: string }) => `Unable to create filter handler for column \`${colId}\`` as const,
+    279: (_: { name: DynamicBeanName }) => {}, // `Unable to create dynamic bean \`${name}\` during module init lifecycle, dynamic beans must be initialised on first use.` as const,
     280: ({ colId }: { colId: string }) =>
         `'name' must be provided for custom filter components for column '${colId}` as const,
     281: ({ colId }: { colId: string }) =>
-        `Filter for column '${colId}' does not have 'filterParams.buttons', but the new Filters Tool Panel has buttons configured. Either configure buttons for the filter, or disable buttons on the Filters Tool Panel.` as const,
+        `Filter for column \`${colId}\` does not have 'filterParams.buttons', but the new Filters Tool Panel has buttons configured. Either configure buttons for the filter, or disable buttons on the Filters Tool Panel.` as const,
     282: () => 'New filter tool panel requires `enableFilterHandlers: true`.' as const,
     283: () =>
         'As of v34, use the same method on the filter handler (`api.getColumnFilterHandler(colKey)`) instead.' as const,
@@ -734,13 +739,13 @@ export const AG_GRID_ERRORS = {
     287: () => '`api.doFilterAction()` requires `enableFilterHandlers = true' as const,
     288: () => '`api.getColumnFilterModel(key, true)` requires `enableFilterHandlers = true' as const,
     289: ({ rowModelType }: { rowModelType: string }) =>
-        `Row Model '${rowModelType}' is not supported with Batch Editing` as const,
+        `Row Model \`${rowModelType}\` is not supported with Batch Editing` as const,
     290: ({ rowIndex, rowPinned }: { rowIndex: number; rowPinned: RowPinnedType }) =>
-        `Row with index '${rowIndex}' and pinned state '${rowPinned}' not found` as const,
+        `Row with index \`${rowIndex}\` and pinned state \`${rowPinned}\` not found` as const,
     291: () =>
         'License Key being set multiple times with different values. This can result in an incorrect license key being used,' as const,
     292: ({ colId }: { colId: string }) =>
-        `The Multi Filter for column '${colId}' has buttons configured against the child filters. When 'enableFilterHandlers=true', buttons must instead be provided against the parent Multi Filter params. The child filter buttons will be ignored.` as const,
+        `The Multi Filter for column \`${colId}\` has buttons configured against the child filters. When 'enableFilterHandlers=true', buttons must instead be provided against the parent Multi Filter params. The child filter buttons will be ignored.` as const,
     293: () =>
         `The grid was initialised detached from the DOM and was then inserted into a Shadow Root. Theme styles are probably broken. Pass the themeStyleContainer grid option to let the grid know where in the document to insert theme CSS.` as const,
     294: () =>
@@ -753,7 +758,7 @@ export const AG_GRID_ERRORS = {
         '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
     298: () => `Columns Tool Panel 'buttons' requires 'apply' to enable Deferred Updates.` as const,
     301: ({ key }: { key: string }) =>
-        `Toolbar item '${key}' is missing the 'toolbarItem' property and will not be rendered.` as const,
+        `Toolbar item \`${key}\` is missing the 'toolbarItem' property and will not be rendered.` as const,
     302: ({
         itemName,
         moduleName,
@@ -768,7 +773,7 @@ export const AG_GRID_ERRORS = {
         rowModelType: RowModelType;
     }) =>
         missingModule({
-            reasonOrId: `Toolbar item '${itemName}'`,
+            reasonOrId: `Toolbar item \`${itemName}\``,
             moduleName,
             gridId,
             gridScoped,
@@ -776,13 +781,13 @@ export const AG_GRID_ERRORS = {
             additionalText: 'The item will not be rendered.',
         }),
     303: ({ key }: { key: string }) =>
-        `Multiple toolbar items share the explicit key '${key}'. Only the first item is rendered.` as const,
+        `Multiple toolbar items share the explicit key \`${key}\`. Only the first item is rendered.` as const,
     304: ({ dataType }: { dataType: string }) =>
         `Invalid calculatedColumns.dataTypes entry "${dataType}" - it must be a built-in data type or registered via dataTypeDefinitions. It has been ignored.` as const,
     305: () =>
         `The file input overlay is shown but no 'processFileInput' is configured. The overlay will not work without a 'processFileInput'.` as const,
     306: ({ version, name, message }: { version: string; name: string; message?: string }) =>
-        `As of v${version}, ${name} is deprecated. ${message ?? ''}`,
+        `As of v${version}, \`${name}\` is deprecated. ${message ?? ''}`,
     307: ({
         objectName,
         name,
@@ -794,9 +799,12 @@ export const AG_GRID_ERRORS = {
         suggestions: string[];
         hasContext?: boolean;
     }) => {
-        let message = `invalid ${objectName} property '${name}' did you mean any of these: ${(suggestions ?? []).slice(0, 8).join(', ')}.`;
+        let message = `Invalid \`${objectName}\` property \`${name}\` did you mean any of these: ${(suggestions ?? [])
+            .slice(0, 8)
+            .map((s) => `\`${s}\``)
+            .join(', ')}.`;
         if (hasContext) {
-            message += `\nIf you are trying to annotate ${objectName} with application data, use the '${objectName}.context' property instead.`;
+            message += `\nIf you are trying to annotate \`${objectName}\` with application data, use the \`${objectName}.context\` property instead.`;
         }
         return message;
     },
@@ -811,19 +819,19 @@ export const AG_GRID_ERRORS = {
         replacement?: string;
         message?: string;
     }) => {
-        const replacementMessage = replacement ? `Please use ${replacement} instead. ` : '';
-        return `Since ${version} api.${apiMethod} is deprecated. ${replacementMessage}${message ?? ''}`;
+        const replacementMessage = replacement ? `Please use \`${replacement}\` instead. ` : '';
+        return `Since ${version} \`api.${apiMethod}\` is deprecated. ${replacementMessage}${message ?? ''}`;
     },
     309: ({ name, rowModel, supportedRowModels }: { name: string; rowModel: string; supportedRowModels?: string[] }) =>
-        `${name} is not supported with the '${rowModel}' row model. It is only valid with: ${(supportedRowModels ?? []).join(', ')}.`,
+        `\`${name}\` is not supported with the \`${rowModel}\` row model. It is only valid with: ${(supportedRowModels ?? []).join(', ')}.`,
     310: ({ objectName, url }: { objectName: string; url: string }) =>
-        `to see all the valid ${objectName} properties please check: ${url}`,
+        `To see all the valid \`${objectName}\` properties please check: ${url}`,
     311: ({ functionName, rowModels }: { functionName: string; rowModels?: string[] }) =>
-        `api.${functionName} can only be called when gridOptions.rowModelType is ${(rowModels ?? []).join(' or ')}`,
+        `\`api.${functionName}\` can only be called when \`gridOptions.rowModelType\` is ${(rowModels ?? []).join(' or ')}.`,
     312: ({ chartType, renamedChartType }: { chartType: string; renamedChartType: string }) =>
-        `The chart type '${chartType}' has been deprecated. Please use '${renamedChartType}' instead.`,
+        `The chart type \`${chartType}\` has been deprecated. Please use \`${renamedChartType}\` instead.`,
     313: ({ paramsType, property }: { paramsType?: string; property: string }) =>
-        `Unexpected property supplied. ${paramsType} does not contain: \`${property}\`.`,
+        `Unexpected property supplied. \`${paramsType}\` does not contain: \`${property}\`.`,
     314: ({
         key,
         expectedType,
@@ -834,7 +842,7 @@ export const AG_GRID_ERRORS = {
         expectedType: string;
         actualType: string;
         value?: unknown;
-    }) => `${key} should be of type '${expectedType}' but received '${actualType}' (${String(value)}).`,
+    }) => `\`${key}\` should be of type \`${expectedType}\` but received \`${actualType}\` (${String(value)}).`,
     315: ({
         key,
         failedKey,
@@ -845,10 +853,10 @@ export const AG_GRID_ERRORS = {
         failedKey: string;
         required?: string[];
         reason?: string;
-    }) => `'${key}' requires '${failedKey}' to be one of [${(required ?? []).join(', ')}]. ${reason ?? ''}`,
+    }) => `\`${key}\` requires \`${failedKey}\` to be one of [${(required ?? []).join(', ')}]. ${reason ?? ''}`,
     316: ({ property, value, expectedType }: { property: string; value?: unknown; expectedType: string }) =>
-        `unable to update chart as invalid params supplied: \`${property}: ${String(value)}\`, expected ${expectedType}.`,
-    317: ({ property, min }: { property: string; min: number }) => `${property} should not be lower than ${min}`,
+        `Unable to update chart as invalid params supplied: \`${property}: ${String(value)}\`, expected \`${expectedType}\`.`,
+    317: ({ property, min }: { property: string; min: number }) => `\`${property}\` should not be lower than ${min}.`,
     318: ({ feature, conflictsWith, advice }: { feature: string; conflictsWith: string; advice?: string }) => {
         const suffix = advice ? ` ${advice}` : '';
         return `${feature} is not supported with ${conflictsWith}.${suffix}`;
@@ -856,13 +864,13 @@ export const AG_GRID_ERRORS = {
     319: ({ feature, requirement }: { feature: string; requirement: string }) => `${feature} requires ${requirement}.`,
     320: ({ property, allowed, value }: { property: string; allowed?: string[]; value?: unknown }) => {
         const current = value !== undefined ? `, currently it's ${String(value)}` : '';
-        return `${property} must be one of [${(allowed ?? []).join(', ')}]${current}.`;
+        return `\`${property}\` must be one of [${(allowed ?? []).join(', ')}]${current}.`;
     },
-    321: ({ property, expected }: { property: string; expected: string }) => `${property} should be ${expected}.`,
+    321: ({ property, expected }: { property: string; expected: string }) => `\`${property}\` should be ${expected}.`,
     322: ({ message }: { message?: string }) => message ?? '',
     323: ({ validNames }: { validNames: string[] }) => {
-        const names = (validNames ?? []).map((n) => `'${n}'`).join(', ');
-        return `'paginationPanels' expects an array of panel names or config objects: [${names}]`;
+        const names = (validNames ?? []).map((n) => `\`${n}\``).join(', ');
+        return `\`paginationPanels\` expects an array of panel names or config objects: [${names}]`;
     },
     324: ({ property, invalidItems }: { property: string; invalidItems?: unknown[] }) => {
         const items = (invalidItems ?? [])
@@ -870,10 +878,10 @@ export const AG_GRID_ERRORS = {
                 typeof item === 'string' || item == null ? toStringWithNullUndefined(item) : JSON.stringify(item)
             )
             .join(', ');
-        return `${property} must be an array of type (SortDirection | SortDef)[], incorrect items are: [${items}]`;
+        return `\`${property}\` must be an array of type \`(SortDirection | SortDef)[]\`, incorrect items are: [${items}]`;
     },
     325: ({ property, value }: { property: string; value?: unknown }) =>
-        `${property} must be an array with at least one element, currently it is [${String(value)}]`,
+        `\`${property}\` must be an array with at least one element, currently it is [${String(value)}]`,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
@@ -898,8 +906,8 @@ export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId
 
 const MISSING_MODULE_REASONS = {
     1: 'Charting Aggregation',
-    2: 'pivotResultFields',
-    3: 'setTooltip',
+    2: '`pivotResultFields`',
+    3: '`setTooltip`',
 } as const;
 
 export type MissingModuleErrors = typeof MISSING_MODULE_REASONS;

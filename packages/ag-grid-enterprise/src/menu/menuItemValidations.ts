@@ -45,6 +45,6 @@ const MENU_ITEM_MODULES: Record<DefaultMenuItem, _ValidationModuleName | _Valida
 export function validateMenuItem(gos: GridOptionsService, key: string): void {
     const moduleName = MENU_ITEM_MODULES[key as DefaultMenuItem];
     if (moduleName) {
-        gos.assertModuleRegistered(moduleName, `menu item '${key}'`);
+        gos.assertModuleRegistered(moduleName, `menu item \`${key}\``);
     }
 }

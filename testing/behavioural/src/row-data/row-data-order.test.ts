@@ -187,7 +187,7 @@ describe('ag-grid rows-ordering', () => {
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
             'AG Grid: warning #2',
-            "Duplicate node id '9' detected from getRowId callback, this could cause issues in your grid.",
+            'Duplicate node id `9` detected from getRowId callback, this could cause issues in your grid.',
             expect.stringContaining(`/javascript-data-grid/errors/2?_version_=${VERSION}&nodeId=9`)
         );
 

@@ -307,7 +307,7 @@ export class GridOptionsService
                 moduleToCheck = moduleToCheck(options, this.gridOptions, this.beans);
             }
             if (moduleToCheck) {
-                this.assertModuleRegistered(moduleToCheck, key);
+                this.assertModuleRegistered(moduleToCheck, `\`${key}\``);
             }
         }
     }

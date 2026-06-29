@@ -32,7 +32,7 @@ describe('ag-grid validation warnings', () => {
 
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #307'),
-                expect.stringContaining("invalid gridOptions property 'notARealOption'"),
+                expect.stringContaining('Invalid `gridOptions` property `notARealOption`'),
                 expect.any(String)
             );
         });
@@ -46,7 +46,7 @@ describe('ag-grid validation warnings', () => {
 
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #310'),
-                expect.stringContaining('to see all the valid gridOptions properties please check:'),
+                expect.stringContaining('To see all the valid `gridOptions` properties please check:'),
                 expect.any(String)
             );
         });
@@ -60,7 +60,7 @@ describe('ag-grid validation warnings', () => {
 
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #307'),
-                expect.stringContaining("invalid colDef property 'notAColProp'"),
+                expect.stringContaining('Invalid `colDef` property `notAColProp`'),
                 expect.any(String)
             );
         });
@@ -84,7 +84,7 @@ describe('ag-grid validation warnings', () => {
 
             const invalidPropWarnings = () =>
                 consoleWarnSpy.mock.calls.filter((args) =>
-                    args.join(' ').includes("invalid colDef property 'fakeColProp'")
+                    args.join(' ').includes('Invalid `colDef` property `fakeColProp`')
                 );
 
             expect(invalidPropWarnings()).toHaveLength(1);
@@ -120,7 +120,7 @@ describe('ag-grid validation warnings', () => {
             } as GridOptions);
 
             const invalidPropWarnings = consoleWarnSpy.mock.calls.filter((args) =>
-                args.join(' ').includes("invalid gridOptions property 'notARealOption'")
+                args.join(' ').includes('Invalid `gridOptions` property `notARealOption`')
             );
             expect(invalidPropWarnings).toHaveLength(0);
         });
@@ -134,7 +134,7 @@ describe('ag-grid validation warnings', () => {
             } as GridOptions);
 
             const docsWarnings = consoleWarnSpy.mock.calls.filter((args) =>
-                args.join(' ').includes('to see all the valid gridOptions properties please check:')
+                args.join(' ').includes('To see all the valid `gridOptions` properties please check:')
             );
             expect(docsWarnings).toHaveLength(0);
         });
@@ -149,7 +149,7 @@ describe('ag-grid validation warnings', () => {
 
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #306'),
-                expect.stringContaining('suppressLoadingOverlay is deprecated'),
+                expect.stringContaining('`suppressLoadingOverlay` is deprecated'),
                 expect.any(String)
             );
         });
@@ -165,7 +165,7 @@ describe('ag-grid validation warnings', () => {
 
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #306'),
-                expect.stringContaining('suppressLoadingOverlay is deprecated'),
+                expect.stringContaining('`suppressLoadingOverlay` is deprecated'),
                 expect.any(String)
             );
         });
@@ -183,7 +183,7 @@ describe('ag-grid validation warnings', () => {
 
             const deprecationWarnings = () =>
                 consoleWarnSpy.mock.calls.filter((args) =>
-                    args.join(' ').includes('suppressLoadingOverlay is deprecated')
+                    args.join(' ').includes('`suppressLoadingOverlay` is deprecated')
                 );
 
             expect(deprecationWarnings()).toHaveLength(1);
@@ -242,7 +242,7 @@ describe('ag-grid validation warnings', () => {
 
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #309'),
-                expect.stringContaining("serverSideInitialRowCount is not supported with the 'clientSide' row model"),
+                expect.stringContaining('`serverSideInitialRowCount` is not supported with the `clientSide` row model'),
                 expect.any(String)
             );
         });
@@ -262,7 +262,7 @@ describe('ag-grid validation warnings', () => {
 
             const rowModelWarnings = () =>
                 consoleWarnSpy.mock.calls.filter((args) =>
-                    args.join(' ').includes('serverSideInitialRowCount is not supported')
+                    args.join(' ').includes('`serverSideInitialRowCount` is not supported')
                 );
 
             expect(rowModelWarnings()).toHaveLength(1);
@@ -307,7 +307,7 @@ describe('ag-grid validation warnings', () => {
 
             const rowModelWarnings = () =>
                 consoleWarnSpy.mock.calls.filter((args) =>
-                    args.join(' ').includes('serverSideInitialRowCount is not supported')
+                    args.join(' ').includes('`serverSideInitialRowCount` is not supported')
                 );
 
             expect(rowModelWarnings()).toHaveLength(0);
@@ -339,7 +339,7 @@ describe('ag-grid validation warnings', () => {
 
             // Should only have the "not supported with row model" warning
             expect(serverSideWarnings).toHaveLength(1);
-            expect(serverSideWarnings[0]).toContain("not supported with the 'clientSide' row model");
+            expect(serverSideWarnings[0]).toContain('not supported with the `clientSide` row model');
         });
     });
 });

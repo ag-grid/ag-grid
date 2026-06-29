@@ -66,7 +66,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         if (moduleForComponent) {
             this.gos.assertModuleRegistered(
                 moduleForComponent,
-                `AG Grid '${propertyName}' component: ${componentName}`
+                `AG Grid \`${propertyName}\` component: \`${componentName}\``
             );
         } else {
             _warn(101, {
@@ -84,7 +84,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             ? _errMsg(200, {
                   ...this.gos.getModuleErrorParams(),
                   moduleName,
-                  reasonOrId: beanName,
+                  reasonOrId: `\`${beanName}\``,
               })
             : undefined;
     }
@@ -106,7 +106,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         const moduleName = ICON_MODULES[iconName];
         if (moduleName) {
             _error(200, {
-                reasonOrId: `icon '${iconName}'`,
+                reasonOrId: `icon \`${iconName}\``,
                 moduleName,
                 gridScoped: _areModulesGridScoped(),
                 gridId: this.beans.context.getId(),
