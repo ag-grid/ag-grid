@@ -23,11 +23,13 @@ import { AutomatedIntegratedCharts } from '@ag-website-shared/components/automat
 import { FrameworkTextAnimation } from '@ag-website-shared/components/framework-text-animation/FrameworkTextAnimation';
 import LogoMark from '@components/logo/LogoMark';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
-import { buildFAQPage, siteRootUrl } from '@ag-website-shared/utils/structuredData';
+import { DEFAULT_FRAMEWORK } from '@constants';
+import { buildFAQPage, buildSiteNavigationElement, siteRootUrl } from '@ag-website-shared/utils/structuredData';
 
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 const { data: faqData } = (await getEntry('faqs', 'homepage')) as CollectionEntry<'faqs'>;
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
+const { data: headerData } = (await getEntry('siteHeader', 'header')) as CollectionEntry<'siteHeader'>;
 const { blogPrefix } = whatsNewData['grid'];
 
 // Reduce the markdown FAQ answers to plain text so the structured data matches the visible answer and
@@ -41,9 +43,24 @@ const toPlainText = (markdown: string): string =>
         .replace(/(\*|_)(.*?)\1/g, '$2') // italic
         .replace(/`([^`]+)`/g, '$1') // inline code
         .replace(/^\s{0,3}(?:#{1,6}|>|[-*+]|\d+\.)\s+/gm, ''); // heading / quote / list markers
+const siteRoot = siteRootUrl(metadata.canonicalUrlBase);
 const faqStructuredData = buildFAQPage({
-    pageUrl: siteRootUrl(metadata.canonicalUrlBase),
+    pageUrl: siteRoot,
     items: faqData.map(({ question, answer }) => ({ question, answer: toPlainText(answer) })),
+});
+
+// SiteNavigationElement built from the primary header nav, so it stays in sync with the
+// rendered navigation. GitHub is dropped (external repo, already in Organization.sameAs).
+// Paths are resolved exactly as the header does (urlWithPrefix): './' paths take the default
+// framework prefix, '/' paths sit at the site root. The result is made absolute for crawlers.
+const siteOrigin = new URL(siteRoot).origin;
+const toAbsoluteNavUrl = (item: { url?: string; path?: string }): string =>
+    item.url ?? `${siteOrigin}${urlWithPrefix({ url: item.path ?? '/', framework: DEFAULT_FRAMEWORK })}`;
+const siteNavigationStructuredData = buildSiteNavigationElement({
+    canonicalUrlBase: metadata.canonicalUrlBase,
+    items: (headerData.header?.items ?? [])
+        .filter((item) => item.title !== 'GitHub')
+        .map((item) => ({ name: item.title, url: toAbsoluteNavUrl(item) })),
 });
 
 // Render the markdown FAQ answers to HTML on the server so Markdoc stays out of the client bundle.
@@ -95,15 +112,11 @@ const frameworksData = [
     description={'AG Grid is a feature-rich Data Grid for all major JavaScript frameworks, offering filtering, grouping, pivoting, and more. Free and open-source. Upgrade to Enterprise for advanced features.'}
     showSearchBar={false}
     showDocsNav={false}
-    pageStructuredData={[faqStructuredData]}
+    pageStructuredData={[siteNavigationStructuredData, faqStructuredData]}
 >
     <div class={styles.homepageHero}>
         <section class:list={[styles.heroInner, 'layout-max-width-small']}>
             <section class={styles.heroHeadings}>
-                <noscript>
-                    <h1>The Best JavaScript Grid in the World</h1>
-                </noscript>
-
                 <h1 className="text-xl">
                     <span className={styles.heroTopLine}>
                         <span>The Best</span>&nbsp;<FrameworkTextAnimation client:load />
