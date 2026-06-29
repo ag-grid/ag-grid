@@ -158,6 +158,8 @@ export class CellCtrl extends BeanStub {
     public editorTooltipFeature: TooltipFeature | undefined = undefined;
     // true when tooltipFeature was registered by the renderer via params.setTooltip, not the ColDef tooltip
     private rendererOwnsTooltip = false;
+    // componentClass of the cell renderer currently rendered, to detect renderer swaps across frameworks
+    private renderedRendererClass: any = undefined;
 
     constructor(
         public readonly column: AgColumn,
@@ -227,7 +229,7 @@ export class CellCtrl extends BeanStub {
     }
 
     // On a renderer class swap, tear down a renderer-registered tooltip and restore the ColDef tooltip.
-    public resetRendererTooltip(): void {
+    private resetRendererTooltip(): void {
         if (!this.rendererOwnsTooltip) {
             return;
         }
@@ -434,6 +436,16 @@ export class CellCtrl extends BeanStub {
                     valueToDisplay = result.valueToDisplay;
                 }
             }
+        }
+
+        // A renderer-set tooltip (params.setTooltip) belongs to its renderer instance; when the renderer
+        // class changes or is removed, drop it and fall back to the ColDef tooltip. Done here rather than in
+        // the framework CellComp so React/Angular/Vue, which share this ctrl, are covered too. The incoming
+        // renderer re-registers its own tooltip as it initialises.
+        const newRendererClass = compDetails?.componentClass;
+        if (newRendererClass !== this.renderedRendererClass) {
+            this.renderedRendererClass = newRendererClass;
+            this.resetRendererTooltip();
         }
 
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);

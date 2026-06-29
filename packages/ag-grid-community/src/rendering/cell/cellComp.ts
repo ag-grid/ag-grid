@@ -179,20 +179,11 @@ export class CellComp extends Component {
             const neverRefresh = forceNewCellRendererInstance || controlWrapperChanged;
             const cellRendererRefreshSuccessful = neverRefresh ? false : this.refreshCellRenderer(compDetails);
             if (!cellRendererRefreshSuccessful) {
-                const rendererClassChanged =
-                    this.cellRenderer != null && this.cellRendererClass !== compDetails.componentClass;
                 this.destroyRenderer();
-                if (rendererClassChanged) {
-                    this.cellCtrl.resetRendererTooltip();
-                }
                 this.createCellRendererInstance(compDetails);
             }
         } else {
-            const hadRenderer = this.cellRenderer != null;
             this.destroyRenderer();
-            if (hadRenderer) {
-                this.cellCtrl.resetRendererTooltip();
-            }
             this.insertValueWithoutCellRenderer(valueToDisplay);
         }
 
