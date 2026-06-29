@@ -169,6 +169,46 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
         ]);
     });
 
+    test('sorting reorders groups but preserves user within-group order and widths', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport', pivot: true, hide: true },
+                { field: 'gold', aggFunc: 'sum', hide: true },
+                { field: 'silver', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            pivotDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        };
+        const api = gridsManager.createGrid('g', gridOptions);
+        applyTransactionChecked(api, {
+            add: [
+                { id: '1', country: 'USA', sport: 'Alpine', gold: 1, silver: 2 },
+                { id: '2', country: 'USA', sport: 'Ski', gold: 3, silver: 4 },
+            ],
+        });
+        await asyncSetTimeout(10);
+        const pivots = () => getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'));
+
+        // User reorders silver before gold within Alpine and widens a column.
+        api.moveColumns(['pivot_sport_Alpine_silver'], pivots().indexOf('pivot_sport_Alpine_gold'));
+        api.setColumnWidths([{ key: 'pivot_sport_Alpine_gold', newWidth: 321 }]);
+        await asyncSetTimeout(10);
+
+        api.applyColumnState({ state: [{ colId: 'sport', pivotSort: 'desc' }] });
+        await asyncSetTimeout(10);
+
+        // Groups resorted (Ski before Alpine), but Alpine keeps the user's silver/gold order and width.
+        expect(pivots()).toEqual([
+            'pivot_sport_Ski_gold',
+            'pivot_sport_Ski_silver',
+            'pivot_sport_Alpine_silver',
+            'pivot_sport_Alpine_gold',
+        ]);
+        expect(api.getColumn('pivot_sport_Alpine_gold')?.getActualWidth()).toBe(321);
+    });
+
     test('setting colDef.sort does not affect pivotSort and vice versa', async () => {
         const api = createPivotGrid();
         await asyncSetTimeout(10);

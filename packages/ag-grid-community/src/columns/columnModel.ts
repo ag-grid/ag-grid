@@ -430,11 +430,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
             colsTree[serviceColsLen + i] = sourceTree[i];
         }
         // An active interactive pivotSort forces strict pivot column order, overriding sticky-order preservation.
-        const suppressForPivotSort = showingPivotResult && !!beans.pivotColsSvc?.hasInteractivePivotSort();
-        const restoreOrder =
-            !suppressForPivotSort && (!newColDefs || _shouldMaintainColumnOrder(gos, showingPivotResult));
+        const restoreOrder = !newColDefs || _shouldMaintainColumnOrder(gos, showingPivotResult);
         const lastOrder = showingPivotResult ? this.lastPivotOrder : this.lastOrder;
-        const prevOrder = restoreOrder ? lastOrder : null;
+        let prevOrder = restoreOrder ? lastOrder : null;
+        // pivotSort reorders the groups but keeps the user's within-group order and widths: re-rank the
+        // preserved order by the freshly-sorted group order rather than discarding it.
+        if (prevOrder != null && showingPivotResult && !!beans.pivotColsSvc?.hasInteractivePivotSort()) {
+            prevOrder = reRankByPivotGroupOrder(colsList, prevOrder, colsById);
+        }
         const ordered = prevOrder == null ? colsList : applyPrevColumnsOrder(colsList, colsById, prevOrder);
         const finalColsList = placeLockedColumns(ordered, gos);
         const colsListChanged = !_areEqual(finalColsList, oldColsList);
@@ -630,6 +633,34 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return map;
     }
 }
+
+const pivotGroupKey = (col: AgColumn): string => (col.getColDef().pivotKeys ?? []).join('');
+
+/** Re-rank `stickyOrder` so its pivot groups follow the freshly-sorted `defColsList` group order, while
+ *  keeping each group's within-group (user) column order. Stable: equal group rank keeps sticky order. */
+const reRankByPivotGroupOrder = (
+    defColsList: AgColumn[],
+    stickyOrder: string[],
+    colsById: Record<string, AgColumn>
+): string[] => {
+    const groupRank = new Map<string, number>();
+    for (let i = 0, len = defColsList.length; i < len; ++i) {
+        const key = pivotGroupKey(defColsList[i]);
+        if (!groupRank.has(key)) {
+            groupRank.set(key, groupRank.size);
+        }
+    }
+    const ranked: { id: string; order: number; rank: number }[] = [];
+    for (let i = 0, len = stickyOrder.length; i < len; ++i) {
+        const id = stickyOrder[i];
+        const col = colsById[id];
+        if (col != null) {
+            ranked.push({ id, order: i, rank: groupRank.get(pivotGroupKey(col)) ?? groupRank.size });
+        }
+    }
+    ranked.sort((a, b) => a.rank - b.rank || a.order - b.order);
+    return ranked.map((entry) => entry.id);
+};
 
 const snapshotColIds = (list: AgColumn[], out?: string[] | null): string[] => {
     const len = list.length;
