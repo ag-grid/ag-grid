@@ -1108,6 +1108,15 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     gap: 10px;
 }
 
+// Rotating-head video, shown in place of the avatar + name on row hover.
+.agendaSpeakerRotating {
+    display: none;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 // Round avatar: the 30x30 speaker head (beyond-cream), crossfading to the
 // beyond-orange variant when the row turns orange on hover.
 .agendaAvatar {
@@ -1167,6 +1176,16 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     // Crossfade each avatar to its orange-bg illustration on the orange row.
     .agendaRow:hover .agendaAvatarImgOrange {
         opacity: 1;
+    }
+
+    // On hover, swap each speaker's avatar + name for their rotating-head video.
+    .agendaRow:hover .agendaAvatar,
+    .agendaRow:hover .agendaSpeakerName {
+        display: none;
+    }
+
+    .agendaRow:hover .agendaSpeakerRotating {
+        display: block;
     }
 }
 

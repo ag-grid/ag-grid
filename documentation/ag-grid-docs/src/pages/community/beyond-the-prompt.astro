@@ -432,7 +432,7 @@ const GALLERY_IMAGES = [
                             {
                                 SESSIONS.map((item) => {
                                     return (
-                                        <li class={styles.agendaRow}>
+                                        <li class={styles.agendaRow} data-session-row>
                                             <div class={styles.agendaBody}>
                                                 {item.youtubeUrl ? (
                                                     <a
@@ -485,6 +485,17 @@ const GALLERY_IMAGES = [
                                                         <span class={styles.agendaSpeakerName}>
                                                             {sp.name} ({sp.role})
                                                         </span>
+                                                        <video
+                                                            class={styles.agendaSpeakerRotating}
+                                                            src={urlWithBaseUrl(
+                                                                `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-rotating.webm`
+                                                            )}
+                                                            muted
+                                                            loop
+                                                            playsinline
+                                                            preload="none"
+                                                            aria-hidden="true"
+                                                        />
                                                     </div>
                                                 ))}
                                             </div>
@@ -628,6 +639,24 @@ const GALLERY_IMAGES = [
             iframe.allow = 'autoplay; encrypted-media; picture-in-picture; web-share';
             iframe.allowFullscreen = true;
             frame.replaceChildren(iframe);
+        });
+    }
+
+    // Rotating speaker heads: play on row hover, reset on leave. preload="none"
+    // means the webms only download the first time a row is hovered.
+    for (const row of document.querySelectorAll<HTMLElement>('[data-session-row]')) {
+        const videos = Array.from(row.querySelectorAll('video'));
+        if (videos.length === 0) continue;
+        row.addEventListener('mouseenter', () => {
+            for (const video of videos) {
+                void video.play().catch(() => {});
+            }
+        });
+        row.addEventListener('mouseleave', () => {
+            for (const video of videos) {
+                video.pause();
+                video.currentTime = 0;
+            }
         });
     }
 
