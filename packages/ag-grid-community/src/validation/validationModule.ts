@@ -5,7 +5,7 @@ import errorOverlayCSS from './errorOverlay/errorOverlay.css';
 import { ErrorOverlayComponent } from './errorOverlay/errorOverlayComponent';
 import { ErrorOverlayService } from './errorOverlay/errorOverlayService';
 import type { DevValidationOptions } from './validationConfig';
-import { _applyDevValidationConfig } from './validationConfig';
+import { _applyDevValidationConfig, _enableDiagnosticCapture } from './validationConfig';
 import { ValidationService } from './validationService';
 
 type ValidationModuleType = {
@@ -36,6 +36,9 @@ export const ValidationModule: ValidationModuleType = {
         agErrorOverlay: ErrorOverlayComponent,
     },
     css: [errorOverlayCSS],
+    // Registering the module is itself the opt-in: enable capture so diagnostics buffer for the overlay
+    // even when registered directly rather than via enableDevValidations/ValidationModule.with.
+    onRegister: _enableDiagnosticCapture,
     with: (options) => {
         _applyDevValidationConfig(options);
         return ValidationModule;

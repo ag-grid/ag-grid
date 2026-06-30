@@ -71,3 +71,13 @@ export function _applyDevValidationConfig(options?: DevValidationOptions): void 
     });
     overlayMode = options?.overlay ?? DEV_VALIDATION_DEFAULTS.overlay;
 }
+
+/**
+ * Turns on diagnostic capture without touching `throwOn`/`overlay`, so registering the ValidationModule
+ * directly (without {@link enableDevValidations} or `ValidationModule.with`) still buffers diagnostics
+ * for the overlay. Touching only capture means it cannot clobber options set by a `with` call, whatever
+ * the registration order.
+ */
+export function _enableDiagnosticCapture(): void {
+    _configureDiagnostics({ capture: true });
+}

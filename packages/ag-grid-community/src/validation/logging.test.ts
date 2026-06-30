@@ -10,7 +10,7 @@ import {
     _runWithActiveGrid,
     _warn,
 } from './logging';
-import { _applyDevValidationConfig } from './validationConfig';
+import { _applyDevValidationConfig, _enableDiagnosticCapture } from './validationConfig';
 
 vi.mock('../utils/log', () => ({
     _warnOnce: vi.fn(),
@@ -284,5 +284,24 @@ describe('dev validation config', () => {
         _warn(11);
         expect(received.map((e) => e.id)).toEqual([11]);
         off();
+    });
+
+    test('enabling capture alone buffers diagnostics without a throw threshold', () => {
+        _enableDiagnosticCapture();
+
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+        expect(() => _error(11)).not.toThrow();
+
+        expect(received.map((e) => e.id)).toEqual([11]);
+        off();
+    });
+
+    test('enabling capture does not clobber a throw threshold set by a with call', () => {
+        _applyDevValidationConfig({ throwOn: 'error' });
+        // A bare registration enables capture only, so the earlier throwOn must survive.
+        _enableDiagnosticCapture();
+
+        expect(() => _error(11)).toThrow();
     });
 });

@@ -75,6 +75,8 @@ export function _registerModule(module: Module, gridId: string | undefined): voi
             _registerModule(dependency, gridId);
         }
     }
+
+    module.onRegister?.();
 }
 
 export function _unRegisterGridModules(gridId: string): void {

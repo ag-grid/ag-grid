@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextFilterModule, enableDevValidations } from 'ag-grid-community';
 
 import {
     GridColumns,
@@ -55,6 +55,9 @@ describe('ag-grid overlays state', () => {
     beforeEach(() => {
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         gridsManager.reset();
+        // These tests assert the functional loading/no-rows overlays; disable the dev validation
+        // overlay so a deprecation/warning diagnostic does not mask them.
+        enableDevValidations({ overlay: false });
     });
 
     afterEach(() => {
