@@ -6,11 +6,11 @@ const DATE_TIME_SEPARATOR_REGEXP = new RegExp(`[${DATE_TIME_SEPARATOR} ]`);
 /**
  * Validates the whole string so a date-like prefix on otherwise non-date content
  * (e.g. `2025-05-23T11-08-35.rtf`) is rejected. The optional time portion must be
- * well-shaped `HH:MM:SS` with optional fractional seconds and timezone; range is
- * checked downstream.
+ * well-shaped `HH:MM` with optional seconds, fractional seconds and timezone; range
+ * is checked downstream.
  */
 const DATE_TIME_REGEXP = new RegExp(
-    `^\\d{4}-\\d{2}-\\d{2}([${DATE_TIME_SEPARATOR} ]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}(:?\\d{2})?)?)?$`
+    `^\\d{4}-\\d{2}-\\d{2}([${DATE_TIME_SEPARATOR} ]\\d{2}:\\d{2}(:\\d{2})?(\\.\\d+)?(Z|[+-]\\d{2}(:?\\d{2})?)?)?$`
 );
 
 function _padStartWidthZeros(value: number, totalStringSize: number): string {
