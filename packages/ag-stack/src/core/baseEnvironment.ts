@@ -186,6 +186,7 @@ export abstract class BaseEnvironment<
         if (!container) {
             container = this.eMeasurementContainer = _createAgElement({ tag: 'div', cls: 'ag-measurement-container' });
             this.eRootDiv.appendChild(container);
+            this.addDestroyFunc(() => container?.remove());
         }
         return container;
     }

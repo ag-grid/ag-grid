@@ -51,15 +51,17 @@ export class GridCtrl extends BeanStub {
 
     private readonly additionalFocusableContainers: Set<FocusableContainer> = new Set();
 
-    public setComp(view: IGridComp, eGui: HTMLElement): void {
+    public setComp(view: IGridComp, eGui: HTMLElement, eAriaDescription: HTMLElement): void {
         this.view = view;
         this.eGui = eGui;
 
         this.eGui.setAttribute('grid-id', this.beans.context.getId());
 
-        const { dragAndDrop, ctrlsSvc } = this.beans;
+        const { dragAndDrop, ctrlsSvc, ariaAnnounce } = this.beans;
 
         dragAndDrop?.registerGridDropTarget(() => this.eGui, this);
+
+        ariaAnnounce.setDescriptionContainer(eAriaDescription);
 
         this.createManagedBean(new LayoutFeature(this.view));
 

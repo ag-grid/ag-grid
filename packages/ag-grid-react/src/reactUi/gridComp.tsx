@@ -33,6 +33,7 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const gridCtrlRef = useRef<GridCtrl>();
     const eRootWrapperRef = useRef<HTMLDivElement | null>(null);
+    const eAriaDescriptionRef = useRef<HTMLDivElement | null>(null);
     const tabGuardRef = useRef<TabGuardCompCallback>();
     // eGridBodyParent is state as we use it in render
     const [eGridBodyParent, setGridBodyParent] = useState<HTMLDivElement | null>(null);
@@ -99,7 +100,7 @@ const GridComp = ({ context }: GridCompProps) => {
             setUserSelect,
         };
 
-        gridCtrl.setComp(compProxy, eRef);
+        gridCtrl.setComp(compProxy, eRef, eAriaDescriptionRef.current!);
 
         setInitialised(true);
     }, []);
@@ -129,18 +130,21 @@ const GridComp = ({ context }: GridCompProps) => {
 
         const addComponentToDom = <T extends Component>(
             component: ComponentSelector<T>['component'],
-            position: 'beforebegin' | 'afterbegin' | 'beforeend' | 'afterend' = 'beforeend'
+            position: 'beforebegin' | 'afterbegin' | 'beforeend' | 'afterend' = 'beforeend',
+            anchor: Element = eRootWrapper
         ): T => {
             const comp = context.createBean(new component()) as T;
             const eGui = comp.getGui();
-            eRootWrapper.insertAdjacentElement(position, eGui);
+            anchor.insertAdjacentElement(position, eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(comp);
             return comp;
         };
 
+        const eAriaDescription = eAriaDescriptionRef.current!;
+
         if (toolbarSelector) {
-            const toolbarComp = addComponentToDom(toolbarSelector.component, 'afterbegin');
+            const toolbarComp = addComponentToDom(toolbarSelector.component, 'afterend', eAriaDescription);
             focusableContainersRef.current.push(toolbarComp);
         }
 
@@ -149,12 +153,12 @@ const GridComp = ({ context }: GridCompProps) => {
                 new gridHeaderDropZonesSelector.component()
             ) as HeaderDropZonesComp;
             const eGui = headerDropZonesComp.getGui();
-            // Insert after toolbar (if present) or at the start
+            // Insert after toolbar (if present) or after the aria description container
             const toolbar = eRootWrapper.querySelector('.ag-toolbar');
             if (toolbar) {
                 toolbar.after(eGui);
             } else {
-                eRootWrapper.prepend(eGui);
+                eAriaDescription.after(eGui);
             }
             additionalEls.push(eGui);
             beansToDestroy.push(headerDropZonesComp);
@@ -223,6 +227,7 @@ const GridComp = ({ context }: GridCompProps) => {
 
     return (
         <div ref={setRef} className={rootWrapperClasses} style={topStyle} role="presentation">
+            <div className="ag-aria-description-container" ref={eAriaDescriptionRef} />
             <div className={rootWrapperBodyClasses} ref={setGridBodyParent} role="presentation">
                 {initialised && eGridBodyParent && !context.isDestroyed() && (
                     <BeansContext.Provider value={context.getBeans()}>
