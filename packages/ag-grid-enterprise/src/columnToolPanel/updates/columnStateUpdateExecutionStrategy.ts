@@ -29,10 +29,7 @@ import type {
 const noop = () => {};
 type StrategyBeans = BeanCollection;
 
-/** Pivot sort cycle: none → asc → desc → none. `null` is the default (ascending order, no icon). */
-// The default (`null`) orders ascending, identical to `'asc'`, and is shown as ascending in the pill.
-// The cycle is therefore a two-state toggle: ascending default <-> descending.
-// Cycle: ascending default (`undefined`/`'asc'`) -> descending -> `null` (no sort, natural order) -> ascending.
+/** Cycle: ascending default (`undefined`/`'asc'`) -> descending -> `null` (no sort, natural order) -> ascending. */
 function getNextPivotSort(current: SortDirection | undefined): SortDirection {
     if (current === 'desc') {
         return null;
