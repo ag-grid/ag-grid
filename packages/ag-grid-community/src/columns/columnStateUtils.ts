@@ -774,7 +774,7 @@ export const _getColumnState = (beans: BeanCollection): ColumnState[] => {
             rowGroupIndex: rowGroupActive ? column.rowGroupActiveIndex : null,
             pivot: pivotActive,
             pivotIndex: pivotActive ? column.pivotActiveIndex : null,
-            pivotSort: column.pivotSort,
+            pivotSort: column.pivotSort ?? 'asc',
             flex: column.flex ?? null,
             showValuesAs: beans.showValuesAsSvc?.toColState(column) ?? null,
         };
