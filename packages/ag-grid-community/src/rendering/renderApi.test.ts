@@ -3,16 +3,16 @@ import { setGridAriaProperty } from './renderApi';
 
 describe('setGridAriaProperty', () => {
     const createBeans = (role: 'grid' | 'treegrid'): BeanCollection => {
-        const eGridBody = document.createElement('div');
-        const eGridViewport = document.createElement('div');
+        const root = document.createElement('div');
+        const gridElement = document.createElement('div');
 
-        eGridBody.classList.add('ag-root');
-        eGridViewport.setAttribute('role', role);
-        eGridBody.appendChild(eGridViewport);
+        root.classList.add('ag-root');
+        gridElement.setAttribute('role', role);
+        root.appendChild(gridElement);
 
         return {
             ctrlsSvc: {
-                getGridBodyCtrl: () => ({ eGridBody, eGridViewport }),
+                getGridBodyCtrl: () => ({ eGridBody: root, eGridViewport: gridElement }),
             },
         } as any;
     };
@@ -21,17 +21,17 @@ describe('setGridAriaProperty', () => {
         'sets and removes aria properties on the element with role="%s"',
         (role) => {
             const beans = createBeans(role);
-            const { eGridBody, eGridViewport } = beans.ctrlsSvc.getGridBodyCtrl();
+            const { eGridBody: root } = beans.ctrlsSvc.getGridBodyCtrl();
+            const roleElement = root.querySelector(`[role="${role}"]`);
 
             setGridAriaProperty(beans, 'label', 'my grid');
 
-            expect(eGridViewport.getAttribute('aria-label')).toBe('my grid');
-            expect(eGridBody.getAttribute('aria-label')).toBeNull();
+            expect(root.querySelector('[aria-label="my grid"]')).toBe(roleElement);
 
             setGridAriaProperty(beans, 'label', null);
 
-            expect(eGridViewport.getAttribute('aria-label')).toBeNull();
-            expect(eGridBody.getAttribute('aria-label')).toBeNull();
+            expect(root.querySelector('[aria-label]')).toBeNull();
+            expect(roleElement?.getAttribute('aria-label')).toBeNull();
         }
     );
 });
