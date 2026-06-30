@@ -414,8 +414,8 @@ const VENUE_IMAGES: VenueImage[] = [
         </section>
 
         <nav class={styles.sectionNav} aria-label="Jump to section">
-            <a href="#speakers">Speakers</a>
-            <a href="#agenda">Agenda</a>
+            <a href="#programme" data-jump-tab="talks">Sessions</a>
+            <a href="#programme" data-jump-tab="speakers">Speakers</a>
             <a href="#venue">Venue</a>
         </nav>
 
@@ -440,31 +440,56 @@ const VENUE_IMAGES: VenueImage[] = [
             </div>
         </section>
 
-        <section id="speakers" class={styles.speakersSection} aria-labelledby="speakers-heading">
+        <section id="programme" class={styles.programmeSection}>
             <div class={styles.sectionRule}>
-                <h2 id="speakers-heading" class={styles.sectionRuleTitle}>Speakers</h2>
+                <div class={styles.programmeTabs} role="tablist" aria-label="Programme">
+                    <button
+                        type="button"
+                        role="tab"
+                        id="tab-talks"
+                        class={styles.programmeTab}
+                        aria-controls="panel-talks"
+                        aria-selected="true"
+                        data-tab="talks"
+                    >
+                        Sessions
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        id="tab-speakers"
+                        class={styles.programmeTab}
+                        aria-controls="panel-speakers"
+                        aria-selected="false"
+                        data-tab="speakers"
+                    >
+                        Speakers
+                    </button>
+                </div>
             </div>
-            <div class={styles.container}>
-                <p class={styles.sectionLead}>
-                    Engineers and experts from AG Grid, Bryntum, and beyond — talking about what it takes to build
-                    applications that hold up in production.
-                </p>
 
-                <div class={styles.speakerGrid}>
-                    {
-                        SPEAKERS.map((speaker) => (
-                            <article class={styles.speakerCard}>
-                                <div class={styles.speakerImageWrap}>
-                                    <img
-                                        src={urlWithBaseUrl(speaker.image)}
-                                        alt={speaker.name}
-                                        class:list={[
-                                            styles.speakerImage,
-                                            speaker.imageFit === 'contain' && styles.speakerImageContain,
-                                        ]}
-                                        loading="lazy"
-                                    />
-                                    {/*
+            <div id="panel-speakers" role="tabpanel" aria-labelledby="tab-speakers" data-panel="speakers" hidden>
+                <div class={styles.container}>
+                    <p class={styles.sectionLead}>
+                        Engineers and experts from AG Grid, Bryntum, and beyond — talking about what it takes to build
+                        applications that hold up in production.
+                    </p>
+
+                    <div class={styles.speakerGrid}>
+                        {
+                            SPEAKERS.map((speaker) => (
+                                <article class={styles.speakerCard}>
+                                    <div class={styles.speakerImageWrap}>
+                                        <img
+                                            src={urlWithBaseUrl(speaker.image)}
+                                            alt={speaker.name}
+                                            class:list={[
+                                                styles.speakerImage,
+                                                speaker.imageFit === 'contain' && styles.speakerImageContain,
+                                            ]}
+                                            loading="lazy"
+                                        />
+                                        {/*
                                         Re-shaded variant for the orange hover state. Sits on top of
                                         the default illustration via `position: absolute` so the two
                                         portraits crossfade in place when the card is hovered. The
@@ -472,85 +497,84 @@ const VENUE_IMAGES: VenueImage[] = [
                                         SVG's dither/knockout reads correctly. Decorative — the
                                         first <img> already carries the speaker's name as alt text.
                                     */}
-                                    {speaker.imageOrange && (
-                                        <img
-                                            src={urlWithBaseUrl(speaker.imageOrange)}
-                                            alt=""
-                                            aria-hidden="true"
-                                            class:list={[
-                                                styles.speakerImage,
-                                                styles.speakerImageOrange,
-                                                speaker.imageFit === 'contain' && styles.speakerImageContain,
-                                            ]}
-                                            loading="lazy"
-                                        />
-                                    )}
-                                </div>
-                                <h3 class={styles.speakerName}>{speaker.name}</h3>
-                                <p class={styles.speakerTitle}>{speaker.title}</p>
-                                <p class={styles.speakerBio}>{speaker.bio}</p>
-                            </article>
-                        ))
-                    }
+                                        {speaker.imageOrange && (
+                                            <img
+                                                src={urlWithBaseUrl(speaker.imageOrange)}
+                                                alt=""
+                                                aria-hidden="true"
+                                                class:list={[
+                                                    styles.speakerImage,
+                                                    styles.speakerImageOrange,
+                                                    speaker.imageFit === 'contain' && styles.speakerImageContain,
+                                                ]}
+                                                loading="lazy"
+                                            />
+                                        )}
+                                    </div>
+                                    <h3 class={styles.speakerName}>{speaker.name}</h3>
+                                    <p class={styles.speakerTitle}>{speaker.title}</p>
+                                    <p class={styles.speakerBio}>{speaker.bio}</p>
+                                </article>
+                            ))
+                        }
+                    </div>
                 </div>
             </div>
-        </section>
 
-        <section id="agenda" class={styles.agendaSection} aria-labelledby="agenda-heading">
-            <div class={styles.sectionRule}>
-                <h2 id="agenda-heading" class={styles.sectionRuleTitle}>Full schedule</h2>
-            </div>
-            <div class={styles.container}>
-                <p class={styles.sectionLead}>
-                    A single track across the day, with breaks designed for conversation. Some sessions are still being
-                    finalised and speakers may be added.
-                </p>
+            <div id="panel-talks" role="tabpanel" aria-labelledby="tab-talks" data-panel="talks">
+                <div class={styles.container}>
+                    <p class={styles.sectionLead}>
+                        A single track across the day, with breaks designed for conversation. Some sessions are still
+                        being finalised and speakers may be added.
+                    </p>
 
-                <p class={styles.agendaDownloads}>
-                    <a
-                        href={urlWithBaseUrl('/downloads/beyond-the-prompt/beyond-the-prompt-agenda.ics')}
-                        download
-                        class={styles.btnPrimary}
-                    >
-                        Download .ics agenda <Icon name="download" />
-                    </a>
-                    <a
-                        href={urlWithBaseUrl('/downloads/beyond-the-prompt/beyond-the-prompt-agenda.json')}
-                        download
-                        class={styles.btnPrimary}
-                    >
-                        Download .json agenda <Icon name="download" />
-                    </a>
-                </p>
-            </div>
+                    <p class={styles.agendaDownloads}>
+                        <a
+                            href={urlWithBaseUrl('/downloads/beyond-the-prompt/beyond-the-prompt-agenda.ics')}
+                            download
+                            class={styles.btnPrimary}
+                        >
+                            Download .ics agenda <Icon name="download" />
+                        </a>
+                        <a
+                            href={urlWithBaseUrl('/downloads/beyond-the-prompt/beyond-the-prompt-agenda.json')}
+                            download
+                            class={styles.btnPrimary}
+                        >
+                            Download .json agenda <Icon name="download" />
+                        </a>
+                    </p>
+                </div>
 
-            {
-                AGENDA_SECTIONS.map((section) => (
-                    <div class={styles.container}>
-                        <div class={styles.agenda}>
-                            <div class={styles.agendaSectionHeader}>
-                                <p class={styles.agendaSectionLabel}>{section.label}</p>
-                            </div>
-                            <ol class={styles.agendaList}>
-                                {section.items.map((item) => {
-                                    const speakerImages = getSpeakerImagesForItem(item.speakers);
-                                    // Render the wrap whenever a row has *either* a description or
-                                    // a matching speaker portrait — so sessions like the Opening
-                                    // Keynote (speakers but no copy) still get the hover reveal.
-                                    const hasOverlay = Boolean(item.description) || speakerImages.length > 0;
-                                    return (
-                                        <li class:list={[styles.agendaRow, { [styles.agendaBreak]: item.isBreak }]}>
-                                            <div class={styles.agendaTime}>{item.time}</div>
-                                            <div class={styles.agendaBody}>
-                                                <h3 class={styles.agendaTitle}>{item.title}</h3>
-                                                {item.speakers && <p class={styles.agendaSpeakers}>{item.speakers}</p>}
-                                            </div>
-                                            {hasOverlay && (
-                                                <div class={styles.agendaDescriptionWrap}>
-                                                    {item.description && (
-                                                        <p class={styles.agendaDescription}>{item.description}</p>
+                {
+                    AGENDA_SECTIONS.map((section) => (
+                        <div class={styles.container}>
+                            <div class={styles.agenda}>
+                                <div class={styles.agendaSectionHeader}>
+                                    <p class={styles.agendaSectionLabel}>{section.label}</p>
+                                </div>
+                                <ol class={styles.agendaList}>
+                                    {section.items.map((item) => {
+                                        const speakerImages = getSpeakerImagesForItem(item.speakers);
+                                        // Render the wrap whenever a row has *either* a description or
+                                        // a matching speaker portrait — so sessions like the Opening
+                                        // Keynote (speakers but no copy) still get the hover reveal.
+                                        const hasOverlay = Boolean(item.description) || speakerImages.length > 0;
+                                        return (
+                                            <li class:list={[styles.agendaRow, { [styles.agendaBreak]: item.isBreak }]}>
+                                                <div class={styles.agendaTime}>{item.time}</div>
+                                                <div class={styles.agendaBody}>
+                                                    <h3 class={styles.agendaTitle}>{item.title}</h3>
+                                                    {item.speakers && (
+                                                        <p class={styles.agendaSpeakers}>{item.speakers}</p>
                                                     )}
-                                                    {/*
+                                                </div>
+                                                {hasOverlay && (
+                                                    <div class={styles.agendaDescriptionWrap}>
+                                                        {item.description && (
+                                                            <p class={styles.agendaDescription}>{item.description}</p>
+                                                        )}
+                                                        {/*
                                                         Speaker portraits rise + fade in on row hover.
                                                         They share the row's bounding box and the row
                                                         clips overflow, so portraits can scale up past
@@ -558,32 +582,33 @@ const VENUE_IMAGES: VenueImage[] = [
                                                         already appear in the body column, so this
                                                         layer is purely decorative.
                                                     */}
-                                                    {speakerImages.length > 0 && (
-                                                        <div class={styles.agendaSpeakerStack} aria-hidden="true">
-                                                            {speakerImages.map((src) => (
-                                                                <img
-                                                                    src={urlWithBaseUrl(src)}
-                                                                    alt=""
-                                                                    class:list={[
-                                                                        styles.agendaSpeakerImage,
-                                                                        item.keepDefaultPortraitScale &&
-                                                                            styles.agendaSpeakerImageDefaultScale,
-                                                                    ]}
-                                                                    loading="lazy"
-                                                                />
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </li>
-                                    );
-                                })}
-                            </ol>
+                                                        {speakerImages.length > 0 && (
+                                                            <div class={styles.agendaSpeakerStack} aria-hidden="true">
+                                                                {speakerImages.map((src) => (
+                                                                    <img
+                                                                        src={urlWithBaseUrl(src)}
+                                                                        alt=""
+                                                                        class:list={[
+                                                                            styles.agendaSpeakerImage,
+                                                                            item.keepDefaultPortraitScale &&
+                                                                                styles.agendaSpeakerImageDefaultScale,
+                                                                        ]}
+                                                                        loading="lazy"
+                                                                    />
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </li>
+                                        );
+                                    })}
+                                </ol>
+                            </div>
                         </div>
-                    </div>
-                ))
-            }
+                    ))
+                }
+            </div>
         </section>
 
         <section id="venue" class={styles.venueSection} aria-labelledby="venue-heading">
@@ -635,3 +660,27 @@ const VENUE_IMAGES: VenueImage[] = [
         </section>
     </div>
 </Layout>
+
+<script>
+    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[role="tab"][data-tab]'));
+    const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-panel]'));
+
+    const activate = (name: string) => {
+        for (const tab of tabs) {
+            tab.setAttribute('aria-selected', tab.dataset.tab === name ? 'true' : 'false');
+        }
+        for (const panel of panels) {
+            panel.hidden = panel.dataset.panel !== name;
+        }
+    };
+
+    for (const tab of tabs) {
+        tab.addEventListener('click', () => activate(tab.dataset.tab ?? 'talks'));
+    }
+
+    // The top "jump to section" links double as tab selectors: clicking Speakers
+    // both scrolls to the Programme section and switches it to the Speakers panel.
+    for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-jump-tab]')) {
+        link.addEventListener('click', () => activate(link.dataset.jumpTab ?? 'talks'));
+    }
+</script>

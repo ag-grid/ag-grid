@@ -717,8 +717,44 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 }
 
 // ─── Speakers ────────────────────────────────────────────────────────────────
-.speakersSection {
+.programmeSection {
     composes: section;
+}
+
+.programmeTabs {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+}
+
+// Tabs read like the section-rule titles elsewhere on the page (centered mono
+// caps), not filled buttons: the active tab carries a subtle orange underline,
+// inactive tabs are muted and brighten on hover.
+.page .programmeTab {
+    appearance: none;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 4px 0;
+    cursor: pointer;
+    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--btp-ink-muted);
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease;
+
+    &:hover {
+        color: var(--btp-ink);
+    }
+
+    &[aria-selected='true'] {
+        color: var(--btp-orange);
+        border-bottom-color: var(--btp-orange);
+    }
 }
 
 .speakerGrid {
@@ -837,10 +873,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 }
 
 // ─── Agenda ──────────────────────────────────────────────────────────────────
-.agendaSection {
-    composes: section;
-}
-
 // Each Morning / Afternoon block is its own white card with hard corners.
 // The section label sits inside the card as a banner, sharing the same hairline
 // border that separates the rows below it, so the whole thing reads as one
@@ -983,7 +1015,8 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     overflow: hidden;
     transition:
         background-color 0.32s ease,
-        border-bottom-color 0.32s ease;
+        border-bottom-color 0.32s ease,
+        opacity 0.32s ease;
 
     &:last-child {
         border-bottom: 0;
@@ -1177,6 +1210,13 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         // sliver showing through. The pair rule below kills the hairline
         // above by retroactively dropping the *previous* row's border.
         border-bottom-color: transparent;
+    }
+
+    // Spotlight: while an orange-fill row is hovered, dim every other row in the
+    // schedule to 0.6 so the active session stands out. Scoped to the Sessions
+    // panel so the dimming spans both the Morning and Afternoon cards.
+    [data-panel='talks']:has(.agendaRow:has(.agendaSpeakerStack):hover) .agendaRow:not(:hover) {
+        opacity: 0.6;
     }
 
     // `:has(+ X)` is the closest CSS gets to a "previous sibling" selector.
