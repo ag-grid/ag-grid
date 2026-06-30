@@ -273,5 +273,13 @@ const announcementBannerProps = {
                 />
             )
         }
+
+        {/* SE-44: strip heading semantics from the GTM-injected OneTrust cookie banner/modal
+        so it doesn't pollute the document heading outline. No-ops when OneTrust is absent. */}
+        <script>
+            import { neutraliseOneTrustHeadings } from '@utils/neutraliseOneTrustHeadings';
+
+            neutraliseOneTrustHeadings();
+        </script>
     </body>
 </html>
