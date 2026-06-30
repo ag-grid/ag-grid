@@ -299,6 +299,15 @@
                 "community": false,
                 "enterprise": true,
                 "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Cell Notes",
+                    "link": "grid:./notes"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
             }
         ]
     },
