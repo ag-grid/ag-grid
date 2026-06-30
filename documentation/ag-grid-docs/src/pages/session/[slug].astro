@@ -1,0 +1,86 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { SESSIONS, sessionSlug, youtubeId } from '@utils/beyondThePromptSessions';
+
+// One real, crawlable page per recorded session. On the Beyond the Prompt page
+// the same URL opens the recording in a modal; visited directly (deep link,
+// refresh, search result) it renders this standalone page.
+export function getStaticPaths() {
+    return SESSIONS.filter((session) => session.youtubeUrl).map((session) => ({
+        params: { slug: sessionSlug(session.title) },
+        props: { session },
+    }));
+}
+
+const { session } = Astro.props;
+const videoId = session.youtubeUrl ? youtubeId(session.youtubeUrl) : null;
+const description =
+    session.description ?? `Watch "${session.title}" from Beyond the Prompt, the AG Grid and Bryntum conference.`;
+---
+
+<Layout
+    title={`${session.title} — Beyond the Prompt`}
+    description={description}
+    showDocsNav={false}
+    showSearchBar={false}
+>
+    <div class="layout-max-width-small">
+        <article class="session-page">
+            <a class="session-back" href={urlWithBaseUrl('/community/beyond-the-prompt/')}
+                >← Back to Beyond the Prompt</a
+            >
+            <h1>{session.title}</h1>
+            {session.speakers && <p class="session-speakers">{session.speakers}</p>}
+            {
+                videoId && (
+                    <div class="session-video">
+                        <iframe
+                            src={`https://www.youtube.com/embed/${videoId}`}
+                            title={session.title}
+                            allow="autoplay; encrypted-media; picture-in-picture; web-share"
+                            allowfullscreen
+                        />
+                    </div>
+                )
+            }
+            {session.description && <p class="session-description">{session.description}</p>}
+        </article>
+    </div>
+</Layout>
+
+<style>
+    .session-page {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 48px 0 96px;
+    }
+
+    .session-back {
+        font-size: 14px;
+    }
+
+    .session-speakers {
+        color: var(--color-text-secondary, #666);
+    }
+
+    .session-video {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+    }
+
+    .session-video iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    .session-description {
+        max-width: 640px;
+        line-height: 1.6;
+    }
+</style>

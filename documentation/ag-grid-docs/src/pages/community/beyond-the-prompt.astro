@@ -4,19 +4,10 @@ import styles from '../../pages-styles/beyond-the-prompt.module.scss';
 
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { SESSIONS, sessionSlug, youtubeId } from '@utils/beyondThePromptSessions';
 
 const VENUE_MAP_HREF = 'https://maps.app.goo.gl/GRcWV6LPBoXJwDLu6';
 const SOCIAL_IMAGE_URL = 'images/campaigns/beyond-the-prompt/social-card.png';
-
-type Session = {
-    title: string;
-    speakers?: string;
-    description?: string;
-    // YouTube watch URL for the recorded session. Sessions with one link to
-    // /session/<slug>, which opens the recording in a modal (and is a real,
-    // crawlable page in its own right).
-    youtubeUrl?: string;
-};
 
 type Speaker = {
     name: string;
@@ -45,75 +36,6 @@ type VenueImage = {
     alt: string;
     caption?: string;
 };
-
-// Single-track running order, talks only. Breaks, registration, the welcome and
-// the closing remarks are intentionally omitted now the event has run.
-const SESSIONS: Session[] = [
-    {
-        title: 'Opening Keynote',
-        speakers: 'John Masterson (CEO, AG Grid) & Mats Bryntse (Founder & CEO, Bryntum)',
-    },
-    {
-        title: 'Goodbye slop; welcome determinism',
-        speakers: 'David Khourshid',
-        description:
-            'Vibe coding feels productive until you have to maintain it. Come for the critique of the nondeterministic status quo, leave with a framework for using AI to build software you actually understand.',
-        youtubeUrl: 'https://www.youtube.com/watch?v=uMvTAF280so',
-    },
-    {
-        title: 'Codebase design for the agent era',
-        speakers: 'Stephen Cooper (Team Lead, AG Grid)',
-        description:
-            "As AI agents become part of the development workflow, codebase structure and well-designed system prompts matter more than ever. This session will show you how we're approaching this in the AG Grid and AG Charts codebases..",
-    },
-    {
-        title: 'AI in AG Studio',
-        speakers: 'Josh Hobson (Developer, AG Grid)',
-        description:
-            "How do you build a dashboard you can't see? A behind-the-scenes look at AG Studio's multi-agent architecture and the client-side tools that let any LLM build reports it otherwise couldn't.",
-    },
-    {
-        title: 'Bringing AI to the Canvas',
-        speakers: 'Steve Ruiz (CEO, tldraw)',
-        description: `At tldraw, we've been bringing agents to our infinite canvas. In December 2025, we ran a one-month experiment named Fairydraw where users could work with three fairies - virtual collaborators who work with you, with your human collaborators, and coordinate together on large tasks.`,
-    },
-    {
-        title: 'Debugging CSS performance with AI',
-        speakers: 'Bernie Sumption (Developer, AG Grid)',
-        description:
-            'CSS performance issues can be subtle and time-consuming. This talk will show you how you can guide AI to uncover bugs without needing to learn the intricacies of CSS rendering internals.',
-    },
-    {
-        title: 'Software that moves fleets: Lessons from AG Grid, Bryntum, and Beyond',
-        speakers: 'Patrick Rau (Developer, TCS)',
-        description:
-            "In aviation, the software has to be rock solid. Patrick pulls back the curtain on the components powering Fleetplan's UI, including AG Grid, Bryntum's Scheduler Pro, and the modules behind audit tracking and safety reporting that keep operations airtight.",
-    },
-    {
-        title: 'Product Roadmap',
-        speakers: 'Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (AG Studio Product Lead, AG Grid)',
-        description: "A detailed look at our upcoming roadmap, covering AG Grid and Bryntum's suite of tools.",
-    },
-    {
-        title: 'One-click agentic SDLC',
-        speakers: 'Mats Bryntse (Founder & CEO, Bryntum)',
-        description:
-            'A demo of a headless Claude workflow, built by Bryntum CEO Mats, that turns GitHub issues into mergeable PRs, with agents doing the work, and a custom Kanban UI keeping things in check.',
-    },
-    {
-        title: 'How agentic AI Is reshaping software engineering',
-        speakers:
-            'Maggie Appleton (Staff Research Engineer, GitHub), Matt Pocock (Senior Developer Educator, AI Hero), Sophie Koonin (Web Discipline Lead, Monzo)',
-        description:
-            'As AI reshapes how software gets built, what actually changes for engineers, teams, and developer tools? This panel explores the real-world impact of agentic workflows on software engineering - from code review and system design to cognitive skills, ownership, and developer experience. Expect practical insights, rapid-fire hot takes, and honest discussion from engineers building beyond the prompt.',
-    },
-    {
-        title: 'Vibe Coding as a Maker',
-        speakers: 'Matt Webb',
-        description:
-            'Matt will show his vibe coding experiments, from his AI clock to an app that points to the centre of the galaxy, and share some learnings from building hardware at his startup, Inanimate. Then we ask: what are the limits of vibing and agentic coding? And how might we create libraries that agents love?',
-    },
-];
 
 const SPEAKERS: Speaker[] = [
     {
@@ -517,7 +439,18 @@ const GALLERY_IMAGES = [
                                     return (
                                         <li class={styles.agendaRow}>
                                             <div class={styles.agendaBody}>
-                                                <h3 class={styles.agendaTitle}>{item.title}</h3>
+                                                {item.youtubeUrl ? (
+                                                    <a
+                                                        class={styles.agendaTitleLink}
+                                                        href={urlWithBaseUrl(`/session/${sessionSlug(item.title)}/`)}
+                                                        data-session-modal
+                                                        data-youtube-id={youtubeId(item.youtubeUrl)}
+                                                    >
+                                                        <h3 class={styles.agendaTitle}>{item.title}</h3>
+                                                    </a>
+                                                ) : (
+                                                    <h3 class={styles.agendaTitle}>{item.title}</h3>
+                                                )}
                                                 {item.description && (
                                                     <p class={styles.agendaDescription}>{item.description}</p>
                                                 )}
@@ -567,7 +500,15 @@ const GALLERY_IMAGES = [
                     {
                         [...GALLERY_IMAGES, ...GALLERY_IMAGES].map((src) => (
                             <li class={styles.gallerySlide}>
-                                <img src={urlWithBaseUrl(src)} alt="" loading="lazy" class={styles.galleryImage} />
+                                <img
+                                    src={urlWithBaseUrl(src)}
+                                    alt=""
+                                    loading="lazy"
+                                    class:list={[
+                                        styles.galleryImage,
+                                        src.includes('gallery-02') && styles.galleryImageTop,
+                                    ]}
+                                />
                             </li>
                         ))
                     }
@@ -622,6 +563,28 @@ const GALLERY_IMAGES = [
                 </div>
             </div>
         </section>
+        <div class={styles.sessionModal} data-session-modal-root hidden>
+            <button
+                type="button"
+                class={styles.sessionModalBackdrop}
+                data-session-modal-close
+                aria-label="Close recording"></button>
+            <div class={styles.sessionModalDialog} role="dialog" aria-modal="true" aria-label="Session recording">
+                <button
+                    type="button"
+                    class={styles.sessionModalClose}
+                    data-session-modal-close
+                    aria-label="Close recording">×</button
+                >
+                <div class={styles.sessionModalVideo}>
+                    <iframe
+                        data-session-modal-iframe
+                        title="Session recording"
+                        allow="autoplay; encrypted-media; picture-in-picture; web-share"
+                        allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
     </div>
 </Layout>
 
@@ -641,4 +604,49 @@ const GALLERY_IMAGES = [
     for (const tab of tabs) {
         tab.addEventListener('click', () => activate(tab.dataset.tab ?? 'talks'));
     }
+
+    // Session recording modal. Session titles with a recording link to a real
+    // /session/<slug> page; here we intercept the click, play the video in a
+    // modal, and sync the URL so it stays shareable and back-button friendly.
+    const sessionModal = document.querySelector<HTMLElement>('[data-session-modal-root]');
+    const sessionFrame = document.querySelector<HTMLIFrameElement>('[data-session-modal-iframe]');
+
+    const openSession = (videoId: string) => {
+        if (!sessionModal || !sessionFrame || !videoId) return;
+        sessionFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        sessionModal.hidden = false;
+        document.body.style.overflow = 'hidden';
+    };
+    const closeSession = () => {
+        if (!sessionModal || !sessionFrame) return;
+        sessionModal.hidden = true;
+        sessionFrame.src = '';
+        document.body.style.overflow = '';
+    };
+
+    for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-session-modal]')) {
+        link.addEventListener('click', (event) => {
+            const videoId = link.dataset.youtubeId;
+            if (!videoId) return;
+            event.preventDefault();
+            openSession(videoId);
+            history.pushState({ btpSession: videoId }, '', link.getAttribute('href'));
+        });
+    }
+    for (const closer of document.querySelectorAll('[data-session-modal-close]')) {
+        closer.addEventListener('click', () => history.back());
+    }
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && sessionModal && !sessionModal.hidden) {
+            history.back();
+        }
+    });
+    window.addEventListener('popstate', (event) => {
+        const state = event.state as { btpSession?: string } | null;
+        if (state && state.btpSession) {
+            openSession(state.btpSession);
+        } else {
+            closeSession();
+        }
+    });
 </script>
