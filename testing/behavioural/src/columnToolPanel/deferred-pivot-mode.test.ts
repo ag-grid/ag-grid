@@ -1987,4 +1987,25 @@ describe('deferred column tool panel pivot mode', () => {
 
         expect(getApplyButton(toolPanelGui).disabled).toBe(false);
     });
+
+    test('apply button becomes enabled when a value column is re-added via checkbox in pivot mode after committing its removal', async () => {
+        const { toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
+        const strategy = getUpdateStrategy(toolPanel);
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+
+        // Remove Bronze from Values via its checkbox, then commit the removal
+        createPrimaryColumnComp(toolPanel, 'Bronze')['onChangeCommon'](false);
+        commitChanges(toolPanel);
+        toolPanel.refreshDeferredUi();
+
+        expect(getApplyButton(toolPanelGui).disabled).toBe(true);
+
+        // Re-add Bronze via its checkbox — its colDef aggFunc ('sum') still matches the live column
+        createPrimaryColumnComp(toolPanel, 'Bronze')['onChangeCommon'](true);
+        toolPanel.refreshDeferredUi();
+
+        expect(strategy.hasPendingChanges(true)).toBe(true);
+        expect(getApplyButton(toolPanelGui).disabled).toBe(false);
+    });
 });
