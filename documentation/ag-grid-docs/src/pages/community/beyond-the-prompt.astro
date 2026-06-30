@@ -637,6 +637,14 @@ const GALLERY_IMAGES = [
         document.body.style.overflow = '';
     };
 
+    // Remember this page's URL so closing always returns here, never further
+    // back in history (e.g. to /community/).
+    const sessionReturnUrl = window.location.href;
+    const closeAndReturn = () => {
+        closeSession();
+        history.replaceState(null, '', sessionReturnUrl);
+    };
+
     for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-session-modal]')) {
         link.addEventListener('click', (event) => {
             const videoId = link.dataset.youtubeId;
@@ -647,13 +655,14 @@ const GALLERY_IMAGES = [
         });
     }
     for (const closer of document.querySelectorAll('[data-session-modal-close]')) {
-        closer.addEventListener('click', () => history.back());
+        closer.addEventListener('click', closeAndReturn);
     }
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && sessionModal && !sessionModal.hidden) {
-            history.back();
+            closeAndReturn();
         }
     });
+    // Browser back/forward has already moved the URL, so just sync the modal.
     window.addEventListener('popstate', (event) => {
         const state = event.state as { btpSession?: string } | null;
         if (state && state.btpSession) {

@@ -1460,14 +1460,28 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     padding: 24px;
 }
 
-// White wash over the page (per spec: white background at 0.8 opacity).
-.sessionModalBackdrop {
+// White wash over the page (per spec: white background at 0.8 opacity). Scoped
+// with `.page` and with explicit hover/focus states so it never picks up the
+// global button styling's blue highlight.
+.page .sessionModalBackdrop {
     position: absolute;
     inset: 0;
     padding: 0;
     border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    appearance: none;
     background: rgba(255, 255, 255, 0.8);
     cursor: pointer;
+
+    &:hover,
+    &:focus,
+    &:focus-visible,
+    &:active {
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: none;
+        outline: none;
+    }
 }
 
 .sessionModalDialog {
