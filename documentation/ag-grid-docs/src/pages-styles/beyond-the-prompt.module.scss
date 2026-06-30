@@ -1110,11 +1110,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     color: inherit;
     text-decoration: none;
     cursor: pointer;
-
-    &:hover .agendaTitle {
-        text-decoration: underline;
-        text-underline-offset: 3px;
-    }
 }
 
 .agendaSpeakers {
