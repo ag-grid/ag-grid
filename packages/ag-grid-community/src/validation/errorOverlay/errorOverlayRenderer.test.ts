@@ -141,4 +141,10 @@ describe('against real error definitions', () => {
         expect(md).toContain('### warning #22');
         expect(md).toContain('/errors/22');
     });
+
+    test('renders an embedded object value (array-returning message) as inline code', () => {
+        const el = renderDiagnostic({ id: 5, params: { data: { make: 'Tesla' } }, severity: 'warning' });
+        const codes = Array.from(el.querySelectorAll('code.ag-overlay-error-inline-code')).map((c) => c.textContent);
+        expect(codes).toContain('{"make":"Tesla"}');
+    });
 });

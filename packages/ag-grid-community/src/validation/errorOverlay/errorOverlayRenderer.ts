@@ -34,11 +34,15 @@ function stringifyPart(part: any): string {
     if (part == null) {
         return '';
     }
+    // Non-string parts are logged objects/values; serialise to JSON and wrap in backticks so the
+    // overlay renders them as inline code rather than bare JSON in the prose.
+    let serialised: string;
     try {
-        return JSON.stringify(part);
+        serialised = JSON.stringify(part);
     } catch {
-        return String(part);
+        serialised = String(part);
     }
+    return `\`${serialised}\``;
 }
 
 /** Full message text for a diagnostic, sourced from the ValidationModule's error definitions. */
