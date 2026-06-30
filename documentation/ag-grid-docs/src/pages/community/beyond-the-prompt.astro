@@ -78,7 +78,7 @@ const AGENDA_SECTIONS: AgendaSection[] = [
                 title: 'Goodbye slop; welcome determinism',
                 speakers: 'David Khourshid',
                 description:
-                    'Vibe coding feels productive until you have to maintain it. Behind the agent "thinking..." you ignore and the code you never opened lies a growing pile of wasted tokens, nondeterministic behavior, and compounding errors hiding in plain sight. This talk pushes back on the status quo: elaborate agent architectures, "prompting astrology", overnight automation loops burning through context windows and credit cards. Come for the critique, leave with a framework for using AI to build software you actually understand.',
+                    'Vibe coding feels productive until you have to maintain it. Come for the critique of the nondeterministic status quo, leave with a framework for using AI to build software you actually understand.',
                 keepDefaultPortraitScale: true,
             },
             { time: '10:40 – 11:10', title: 'Coffee break', isBreak: true },
@@ -413,12 +413,6 @@ const VENUE_IMAGES: VenueImage[] = [
             </div>
         </section>
 
-        <nav class={styles.sectionNav} aria-label="Jump to section">
-            <a href="#programme" data-jump-tab="talks">Sessions</a>
-            <a href="#programme" data-jump-tab="speakers">Speakers</a>
-            <a href="#venue">Venue</a>
-        </nav>
-
         <section class={styles.intro}>
             <div class={styles.container}>
                 <div class={styles.sectionHeader}>
@@ -676,11 +670,5 @@ const VENUE_IMAGES: VenueImage[] = [
 
     for (const tab of tabs) {
         tab.addEventListener('click', () => activate(tab.dataset.tab ?? 'talks'));
-    }
-
-    // The top "jump to section" links double as tab selectors: clicking Speakers
-    // both scrolls to the Programme section and switches it to the Speakers panel.
-    for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-jump-tab]')) {
-        link.addEventListener('click', () => activate(link.dataset.jumpTab ?? 'talks'));
     }
 </script>
