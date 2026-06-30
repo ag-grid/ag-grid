@@ -790,6 +790,32 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     background: var(--btp-bg);
 }
 
+// Two-column intro: copy on the left, event photo on the right (stacks on mobile).
+.introGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+
+    @media (min-width: 720px) {
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+    }
+}
+
+.introText {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+.introImage {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
 .introBody {
     display: grid;
     gap: 24px;
@@ -1022,6 +1048,59 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 
 .agendaBody {
     display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+    min-width: 0;
+}
+
+// Session thumbnail (16:9) to the left of the title. The whole row is clickable
+// via the title link's stretched ::after, so this is purely decorative.
+.agendaThumbWrap {
+    position: relative;
+    flex: 0 0 auto;
+    width: 160px;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--btp-bg-alt);
+}
+
+.agendaThumb {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+// Play affordance: a semi-transparent black disc with a white triangle.
+.agendaThumbPlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.6);
+    transition: background-color 0.32s ease;
+
+    &::after {
+        content: '';
+        width: 0;
+        height: 0;
+        margin-left: 3px;
+        border-style: solid;
+        border-width: 7px 0 7px 12px;
+        border-color: transparent transparent transparent #ffffff;
+    }
+}
+
+.agendaText {
+    display: flex;
     flex-direction: column;
     gap: 6px;
     min-width: 0;
@@ -1133,6 +1212,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     z-index: 2;
     font-family: 'Geist Mono', ui-monospace, monospace;
     font-size: 12px;
+    font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--btp-bg);
@@ -1232,12 +1312,13 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     .agendaRow:hover .agendaSpeakersColMulti .agendaSpeakerRotating {
         position: absolute;
         top: 0;
-        width: 140px;
-        height: 140px;
+        width: 200px;
+        height: 200px;
         max-width: none;
     }
 
-    // Two speakers (e.g. the keynote): big heads sitting close together.
+    // Two speakers (keynote, roadmap): full-size heads with a bit of space. The
+    // 387px column plus the row's right padding fits both 200px heads.
     .agendaRow:hover
         .agendaSpeakersColMulti:not(.agendaSpeakersColWide)
         .agendaSpeaker:first-child
@@ -1248,28 +1329,53 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         .agendaSpeakersColMulti:not(.agendaSpeakersColWide)
         .agendaSpeaker:last-child
         .agendaSpeakerRotating {
-        left: 110px;
+        left: 210px;
     }
 
-    // Three speakers (the panel): three smaller heads spread across the column.
+    // Three speakers (the panel): bigger than before but not full size, spread
+    // across the column so they overlap and clip rather than shrink to fit.
     .agendaRow:hover .agendaSpeakersColWide .agendaSpeakerRotating {
-        width: 104px;
-        height: 104px;
+        width: 150px;
+        height: 150px;
     }
     .agendaRow:hover .agendaSpeakersColWide .agendaSpeaker:nth-child(1) .agendaSpeakerRotating {
         left: 0;
     }
     .agendaRow:hover .agendaSpeakersColWide .agendaSpeaker:nth-child(2) .agendaSpeakerRotating {
-        left: 76px;
+        left: 120px;
     }
     .agendaRow:hover .agendaSpeakersColWide .agendaSpeaker:nth-child(3) .agendaSpeakerRotating {
-        left: 152px;
+        left: 240px;
+    }
+
+    // Some heads sit low in their frame; nudge them up so the face is centred in
+    // the clipped row. Placed after the size rules so it wins on equal specificity.
+    .agendaRow:hover .agendaSpeakerRotating[data-head='bernie-sumption'],
+    .agendaRow:hover .agendaSpeakerRotating[data-head='david-khourshid'],
+    .agendaRow:hover .agendaSpeakerRotating[data-head='mats-bryntse'],
+    .agendaRow:hover .agendaSpeakerRotating[data-head='adam-wang'],
+    .agendaRow:hover .agendaSpeakerRotating[data-head='johan-isaksson'],
+    .agendaRow:hover .agendaSpeakerRotating[data-head='josh-hobson'],
+    .agendaRow:hover .agendaSpeakerRotating[data-head='john-masterson'] {
+        top: -24px;
+    }
+
+    // John's head fills more of its frame than the others; scale it down so it
+    // sits at a similar size to Mats beside it.
+    .agendaRow:hover .agendaSpeakerRotating[data-head='john-masterson'] {
+        width: 160px;
+        height: 160px;
     }
 
     // Reveal the "Watch talk" affordance as the row turns orange.
     .agendaRow:hover .agendaWatch {
         opacity: 1;
         transform: translateY(0);
+    }
+
+    // The play disc picks up the brand orange while the row is hovered.
+    .agendaRow:hover .agendaThumbPlay {
+        background-color: var(--btp-orange);
     }
 }
 

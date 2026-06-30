@@ -125,3 +125,32 @@ export const youtubeId = (url: string): string | null => {
     const match = url.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/);
     return match ? match[1] : null;
 };
+
+// Branded 1600x900 thumbnails live in /images/.../thumbnails/<slug>.webp, one per
+// speaker. Group talks pick a single representative speaker; the rest default to
+// their (only) speaker.
+const THUMB_OVERRIDE: Record<string, string> = {
+    'Opening Keynote': 'john-masterson',
+    'Product Roadmap': 'johan-isaksson',
+    'How agentic AI Is reshaping software engineering': 'maggie-appleton',
+};
+
+// Speakers we have a thumbnail image for. Sessions whose chosen speaker is not
+// here (Patrick Rau, Steve Ruiz) fall back to the YouTube thumbnail.
+const THUMBS_AVAILABLE = new Set([
+    'john-masterson',
+    'david-khourshid',
+    'stephen-cooper',
+    'josh-hobson',
+    'bernie-sumption',
+    'johan-isaksson',
+    'mats-bryntse',
+    'maggie-appleton',
+    'matt-webb',
+]);
+
+// The branded thumbnail slug for a session, or null to fall back to YouTube.
+export const sessionThumbSlug = (session: Session): string | null => {
+    const slug = THUMB_OVERRIDE[session.title] ?? (session.speakers ? headSlug(session.speakers[0].name) : '');
+    return THUMBS_AVAILABLE.has(slug) ? slug : null;
+};

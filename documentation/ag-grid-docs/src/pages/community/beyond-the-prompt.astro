@@ -4,7 +4,7 @@ import styles from '../../pages-styles/beyond-the-prompt.module.scss';
 
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { SESSIONS, sessionSlug, youtubeId } from '@utils/beyondThePromptSessions';
+import { SESSIONS, sessionSlug, sessionThumbSlug, youtubeId } from '@utils/beyondThePromptSessions';
 
 const VENUE_MAP_HREF = 'https://maps.app.goo.gl/GRcWV6LPBoXJwDLu6';
 const SOCIAL_IMAGE_URL = 'images/campaigns/beyond-the-prompt/social-card.png';
@@ -321,21 +321,33 @@ const GALLERY_IMAGES = [
 
         <section class={styles.intro}>
             <div class={styles.container}>
-                <div class={styles.sectionHeader}>
-                    <h2 class={styles.sectionTitle}>Getting to a prototype with AI is easy. Production is not.</h2>
-                </div>
-                <div class={styles.introBody}>
-                    <p>
-                        Beyond the Prompt was built around a simple observation: getting to a working prototype with AI
-                        is easy. But when real data arrives, everything changes. Performance degrades, edge cases
-                        multiply, and the application you built is not the one you need. That is the point where AI
-                        helps less, and where the real engineering begins.
-                    </p>
-                    <p>
-                        The day brought together engineers and experts to talk honestly about what it takes to build
-                        applications that hold up in production, with time to connect with our teams over lunch, coffee,
-                        and drinks.
-                    </p>
+                <div class={styles.introGrid}>
+                    <div class={styles.introText}>
+                        <div class={styles.sectionHeader}>
+                            <h2 class={styles.sectionTitle}>
+                                Getting to a prototype with AI is easy. Production is not.
+                            </h2>
+                        </div>
+                        <div class={styles.introBody}>
+                            <p>
+                                Beyond the Prompt was built around a simple observation: getting to a working prototype
+                                with AI is easy. But when real data arrives, everything changes. Performance degrades,
+                                edge cases multiply, and the application you built is not the one you need. That is the
+                                point where AI helps less, and where the real engineering begins.
+                            </p>
+                            <p>
+                                The day brought together engineers and experts to talk honestly about what it takes to
+                                build applications that hold up in production, with time to connect with our teams over
+                                lunch, coffee, and drinks.
+                            </p>
+                        </div>
+                    </div>
+                    <img
+                        class={styles.introImage}
+                        src={urlWithBaseUrl('images/campaigns/beyond-the-prompt/intro-production.webp')}
+                        alt="Beyond the Prompt signage at IET London"
+                        loading="lazy"
+                    />
                 </div>
             </div>
         </section>
@@ -352,7 +364,7 @@ const GALLERY_IMAGES = [
                         aria-selected="true"
                         data-tab="talks"
                     >
-                        Sessions
+                        Talks
                     </button>
                     <button
                         type="button"
@@ -431,24 +443,47 @@ const GALLERY_IMAGES = [
                         <ol class={styles.agendaList}>
                             {
                                 SESSIONS.map((item) => {
+                                    const thumbSlug = sessionThumbSlug(item);
                                     return (
                                         <li class={styles.agendaRow} data-session-row>
                                             <div class={styles.agendaBody}>
-                                                {item.youtubeUrl ? (
-                                                    <a
-                                                        class={styles.agendaTitleLink}
-                                                        href={urlWithBaseUrl(`/session/${sessionSlug(item.title)}/`)}
-                                                        data-session-modal
-                                                        data-youtube-id={youtubeId(item.youtubeUrl)}
-                                                    >
+                                                {item.youtubeUrl && (
+                                                    <span class={styles.agendaThumbWrap}>
+                                                        <img
+                                                            class={styles.agendaThumb}
+                                                            src={
+                                                                thumbSlug
+                                                                    ? urlWithBaseUrl(
+                                                                          `images/campaigns/beyond-the-prompt/thumbnails/${thumbSlug}.webp`
+                                                                      )
+                                                                    : `https://i.ytimg.com/vi/${youtubeId(item.youtubeUrl)}/hqdefault.jpg`
+                                                            }
+                                                            alt=""
+                                                            aria-hidden="true"
+                                                            loading="lazy"
+                                                        />
+                                                        <span class={styles.agendaThumbPlay} aria-hidden="true" />
+                                                    </span>
+                                                )}
+                                                <div class={styles.agendaText}>
+                                                    {item.youtubeUrl ? (
+                                                        <a
+                                                            class={styles.agendaTitleLink}
+                                                            href={urlWithBaseUrl(
+                                                                `/session/${sessionSlug(item.title)}/`
+                                                            )}
+                                                            data-session-modal
+                                                            data-youtube-id={youtubeId(item.youtubeUrl)}
+                                                        >
+                                                            <h3 class={styles.agendaTitle}>{item.title}</h3>
+                                                        </a>
+                                                    ) : (
                                                         <h3 class={styles.agendaTitle}>{item.title}</h3>
-                                                    </a>
-                                                ) : (
-                                                    <h3 class={styles.agendaTitle}>{item.title}</h3>
-                                                )}
-                                                {item.description && (
-                                                    <p class={styles.agendaDescription}>{item.description}</p>
-                                                )}
+                                                    )}
+                                                    {item.description && (
+                                                        <p class={styles.agendaDescription}>{item.description}</p>
+                                                    )}
+                                                </div>
                                             </div>
                                             <div
                                                 class:list={[
@@ -490,6 +525,7 @@ const GALLERY_IMAGES = [
                                                         </span>
                                                         <video
                                                             class={styles.agendaSpeakerRotating}
+                                                            data-head={headSlug(sp.name)}
                                                             src={urlWithBaseUrl(
                                                                 `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-rotating.webm`
                                                             )}
@@ -552,8 +588,8 @@ const GALLERY_IMAGES = [
             </div>
             <div class={styles.container}>
                 <p class={styles.sectionLead}>
-                    IET London at 2 Savoy Place - a historical, Grade II listed building on the Thames, home to the
-                    Institution of Engineering and Technology.
+                    We were delighted to be hosted by IET London at 2 Savoy Place, a historical, Grade II listed
+                    building on the Thames, home to the Institution of Engineering and Technology.
                 </p>
 
                 <div class={styles.venueGrid}>
