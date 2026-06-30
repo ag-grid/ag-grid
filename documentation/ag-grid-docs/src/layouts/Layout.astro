@@ -1,5 +1,6 @@
 ---
 import { Font } from 'astro:assets';
+import { ClientRouter, fade } from 'astro:transitions';
 import { DevTools } from '@ag-website-shared/components/dev-tools/DevTools';
 import { getEntry, type CollectionEntry } from 'astro:content';
 import dsStylesUrl from '@design-system/design-system.scss?url';
@@ -147,6 +148,7 @@ const announcementBannerProps = {
         {(!isProduction || isArchive || hidePageFromSearchEngines) && <meta name="robots" content="noindex" />}
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
+        <ClientRouter />
         {!isStaging && <link rel="canonical" href={canonicalUrl} />}
         {
             !isDev && (
@@ -248,7 +250,7 @@ const announcementBannerProps = {
 
         <div id="mainContainer" class:list={styles.mainContainer}>
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}
-            <main class:list={styles.pageMain}>
+            <main class:list={styles.pageMain} transition:name="main" transition:animate={fade({ duration: '0.07s' })}>
                 <slot />
             </main>
         </div>
