@@ -153,11 +153,18 @@ const SPEAKERS: Speaker[] = [
 // `SPEAKERS` keeps the avatar order stable across rows. Returns both the default
 // and orange-bg variants so the small avatar can crossfade to the orange-tuned
 // illustration when the row turns orange on hover.
-const getSpeakerAvatarsForItem = (speakers?: string): { image: string; imageOrange?: string }[] => {
+// Slug for the 30x30 speaker-head PNGs, e.g. "John Masterson" -> "john-masterson".
+const headSlug = (name: string): string =>
+    name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+const getSpeakerAvatarsForItem = (speakers?: string): { image: string; imageOrange: string }[] => {
     if (!speakers) return [];
     return SPEAKERS.filter((s) => speakers.includes(s.name)).map((s) => ({
-        image: s.image,
-        imageOrange: s.imageOrange,
+        image: `images/campaigns/beyond-the-prompt/heads/${headSlug(s.name)}-cream.png`,
+        imageOrange: `images/campaigns/beyond-the-prompt/heads/${headSlug(s.name)}-orange.png`,
     }));
 };
 
