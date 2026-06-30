@@ -495,10 +495,6 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         return `pivot_${pivotCols.join('-')}_${pivotKeys.join('-')}_${measureColumnId}`;
     }
 
-    /**
-     * Used by the SSRM to create secondary columns from provided fields
-     * @param fields
-     */
     /** Comparator ordering a pivot column's groups. `pivotSort` is isolated from `colDef.sort`:
      *  `null` keeps the natural (generated) order, `'desc'` reverses, and the unset default (`undefined`)
      *  and `'asc'` both sort ascending by the custom `pivotComparator` or header name. */
@@ -517,8 +513,15 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         return baseComparator;
     }
 
+    /**
+     * Used by the SSRM to create secondary columns from provided fields
+     * @param fields
+     */
     public createColDefsFromFields(fields: string[]): (ColDef | ColGroupDef)[] {
         const pivotColumns = this.pivotColsSvc?.columns ?? [];
+        // The comparator only depends on the level's pivot column, so resolve one per level up front rather
+        // than reconstructing it for every group node during the recursive walk.
+        const levelComparators = pivotColumns.map((col) => this.getPivotGroupComparator(col));
         type UniqueValue = Map<string, UniqueValue>;
         // tear the ids down into groups, while this could be done in-step with the next stage, the lookup is faster
         // than searching col group children array for the right group
@@ -561,7 +564,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             // Children are the next pivot level; the measure level (>= pivot column count) keeps server order.
             const childLevel = depth + 1;
             if (childLevel < pivotColumns.length) {
-                children.sort(this.getPivotGroupComparator(pivotColumns[childLevel]));
+                children.sort(levelComparators[childLevel]);
             }
 
             if (children.length === 0) {
@@ -612,7 +615,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             res.push(col);
         }
         if (pivotColumns.length > 0) {
-            res.sort(this.getPivotGroupComparator(pivotColumns[0]));
+            res.sort(levelComparators[0]);
         }
         return res;
     }

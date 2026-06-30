@@ -263,9 +263,10 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 }
 
 /**
- * Returns a flat depth-first array of pivot value keys sorted at each level by their column's pivotComparator.
- * Used to detect when a comparator's output changes (e.g. due to closure mutation) without relying on
- * function reference or source equality.
+ * Returns a flat depth-first array of pivot value keys ordered at each level to mirror pivotColDefService's
+ * rendered column order (honouring `pivotSort` and the column's `pivotComparator`). Used to detect when that
+ * order changes (e.g. a sort toggle or comparator closure mutation) without relying on function reference or
+ * source equality.
  */
 function computePivotOrder(values: Map<string, any>, pivotColumns: AgColumn[], depth: number): string[] {
     const pivotColumn = pivotColumns[depth];
