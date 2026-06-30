@@ -67,6 +67,16 @@ interface FAQPageInput {
     items: FaqItem[];
 }
 
+export interface SiteNavigationItem {
+    name: string;
+    url: string;
+}
+
+interface SiteNavigationElementInput {
+    canonicalUrlBase: string;
+    items: SiteNavigationItem[];
+}
+
 /**
  * Return `canonicalUrlBase` with a trailing slash, so callers can append a
  * site-root-relative path or fragment without worrying about the input form
@@ -85,6 +95,8 @@ export const getOrganizationId = (canonicalUrlBase: string): string => `${siteRo
 export const getWebSiteId = (canonicalUrlBase: string): string => `${siteRootUrl(canonicalUrlBase)}#website`;
 export const getSoftwareApplicationId = (canonicalUrlBase: string): string =>
     `${siteRootUrl(canonicalUrlBase)}#software-application`;
+export const getSiteNavigationElementId = (canonicalUrlBase: string): string =>
+    `${siteRootUrl(canonicalUrlBase)}#site-navigation`;
 
 const ARTICLE_ID_FRAGMENT = '#article';
 const BREADCRUMB_ID_FRAGMENT = '#breadcrumb';
@@ -191,6 +203,22 @@ export function buildFAQPage({ pageUrl, items }: FAQPageInput): JsonLdObject {
                 text: item.answer,
             },
         })),
+    };
+}
+
+/**
+ * Build a `SiteNavigationElement` node describing the site's primary navigation.
+ * Names and URLs are emitted as parallel arrays (a valid, compact schema.org
+ * form) and the node references the `WebSite` it belongs to. URLs should be
+ * absolute and canonical so crawlers resolve them without the framework prefix.
+ */
+export function buildSiteNavigationElement({ canonicalUrlBase, items }: SiteNavigationElementInput): JsonLdObject {
+    return {
+        '@type': 'SiteNavigationElement',
+        '@id': getSiteNavigationElementId(canonicalUrlBase),
+        name: items.map((item) => item.name),
+        url: items.map((item) => item.url),
+        isPartOf: { '@id': getWebSiteId(canonicalUrlBase) },
     };
 }
 
