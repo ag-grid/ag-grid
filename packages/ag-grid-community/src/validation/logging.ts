@@ -189,9 +189,17 @@ export function _renderBootstrapPanel(container: HTMLElement): void {
             untied.push(bufferedDiagnostics[i]);
         }
     }
-    if (untied.length > 0) {
-        bootstrapPanelRenderer(container, untied);
+    if (untied.length === 0) {
+        return;
     }
+    // Consume the rendered diagnostics so a re-created grid (e.g. React's dev/StrictMode double-invoke,
+    // which aborts again with a fresh gridId) renders only its own failure rather than stacking them.
+    for (let i = bufferedDiagnostics.length - 1; i >= 0; --i) {
+        if (bufferedDiagnostics[i].gridId === undefined) {
+            bufferedDiagnostics.splice(i, 1);
+        }
+    }
+    bootstrapPanelRenderer(container, untied);
 }
 
 function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string): void {

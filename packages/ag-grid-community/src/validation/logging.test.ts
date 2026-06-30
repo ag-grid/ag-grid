@@ -334,4 +334,18 @@ describe('bootstrap panel', () => {
 
         expect(renderer).not.toHaveBeenCalled();
     });
+
+    test('consumes rendered diagnostics so a re-render does not repeat them', () => {
+        _configureDiagnostics({ capture: true });
+        _logPreInitErr(200, {} as any, 'boom');
+
+        const renderer = vi.fn();
+        _provideBootstrapPanelRenderer(renderer);
+
+        // A re-created grid (e.g. React StrictMode) renders again; the consumed diagnostic must not repeat.
+        _renderBootstrapPanel(document.createElement('div'));
+        _renderBootstrapPanel(document.createElement('div'));
+
+        expect(renderer).toHaveBeenCalledTimes(1);
+    });
 });

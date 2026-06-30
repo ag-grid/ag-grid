@@ -25,4 +25,18 @@ describe('dev validation bootstrap panel (React)', () => {
         expect(panel!.textContent).toContain('AG Grid failed to initialise');
         expect(panel!.querySelector<HTMLAnchorElement>('a.ag-overlay-error-link')?.href).toContain('/errors/200');
     });
+
+    test('renders a single panel under StrictMode (no double render)', () => {
+        vitest.spyOn(console, 'error').mockImplementation(() => {});
+
+        const { container } = render(
+            <React.StrictMode>
+                <AgGridReact rowModelType="serverSide" columnDefs={[{ field: 'a' }]} modules={[ValidationModule]} />
+            </React.StrictMode>
+        );
+
+        // StrictMode double-invokes creation; the panel must not stack or accumulate duplicate entries.
+        expect(container.querySelectorAll('.ag-overlay-error-bootstrap-panel')).toHaveLength(1);
+        expect(container.querySelectorAll('.ag-overlay-error-item')).toHaveLength(1);
+    });
 });

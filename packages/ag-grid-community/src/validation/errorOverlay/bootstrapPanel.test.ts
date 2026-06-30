@@ -40,4 +40,24 @@ describe('renderBootstrapPanel', () => {
 
         expect(container.querySelectorAll('.ag-overlay-error-item')).toHaveLength(1);
     });
+
+    test('renders a single panel when called repeatedly on the same container', () => {
+        _applyDevValidationConfig({ overlay: 'all' });
+        const container = document.createElement('div');
+
+        // A re-created grid (e.g. React StrictMode) renders into the same container more than once.
+        renderBootstrapPanel(container, [errorDiagnostic]);
+        renderBootstrapPanel(container, [errorDiagnostic, errorDiagnostic]);
+
+        expect(container.querySelectorAll('.ag-overlay-error-bootstrap-panel')).toHaveLength(1);
+    });
+
+    test('dedupes identical diagnostics within a single render', () => {
+        _applyDevValidationConfig({ overlay: 'all' });
+        const container = document.createElement('div');
+
+        renderBootstrapPanel(container, [errorDiagnostic, errorDiagnostic]);
+
+        expect(container.querySelectorAll('.ag-overlay-error-item')).toHaveLength(1);
+    });
 });

@@ -1,0 +1,17 @@
+---
+title: "Dev Validation Test"
+---
+
+This is an internal page used to validate the development-only validation overlay and bootstrap-failure panel across frameworks. It is intentionally left out of the site navigation.
+
+## Overlay over a live grid
+
+A diagnostic captured while the grid is running is shown in an overlay over the grid. Here `sideBar: true` is set without the enterprise SideBar module, so a missing-module error is surfaced.
+
+{% gridExampleRunner title="Overlay" name="overlay" /%}
+
+## Bootstrap failure panel
+
+When grid creation aborts before the grid exists (here a `serverSide` row model with no row-model module registered), there is no grid to overlay, so a standalone panel is rendered in its place.
+
+{% gridExampleRunner title="Bootstrap" name="bootstrap" /%}

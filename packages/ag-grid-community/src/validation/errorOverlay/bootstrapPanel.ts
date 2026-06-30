@@ -33,7 +33,7 @@ const HEADER_STYLE = [
     'border-bottom: 1px solid #babfc7',
 ].join(';');
 
-const BODY_STYLE = 'padding: 16px';
+const BODY_STYLE = ['display: flex', 'flex-direction: column', 'gap: 12px', 'padding: 12px 16px'].join(';');
 
 const TITLE_STYLE = ['font-weight: 600', 'font-size: 14px', 'color: #cc222f'].join(';');
 
@@ -111,6 +111,27 @@ function ensureBootstrapPanelStyles(): void {
     document.head.appendChild(eStyle);
 }
 
+/** Removes duplicate diagnostics (same id and params), keeping the first occurrence. */
+function dedupeDiagnostics(diagnostics: CapturedDiagnostic[]): CapturedDiagnostic[] {
+    const seen = new Set<string>();
+    const result: CapturedDiagnostic[] = [];
+    for (let i = 0, len = diagnostics.length; i < len; ++i) {
+        const diagnostic = diagnostics[i];
+        let key: string;
+        try {
+            key = `${diagnostic.id}:${JSON.stringify(diagnostic.params)}`;
+        } catch {
+            // Non-serialisable params: fall back to a unique key so the diagnostic is not dropped.
+            key = `${diagnostic.id}:${i}`;
+        }
+        if (!seen.has(key)) {
+            seen.add(key);
+            result.push(diagnostic);
+        }
+    }
+    return result;
+}
+
 /**
  * Renders the bootstrap-failure diagnostics into the grid root for the case where grid creation aborts
  * before any bean exists (e.g. a missing row-model module). Inline-styled and bean-free, reusing
@@ -122,7 +143,17 @@ export function renderBootstrapPanel(container: HTMLElement, diagnostics: Captur
     if (mode === false) {
         return;
     }
-    const visible = mode === 'errors' ? diagnostics.filter((d) => d.severity === 'error') : diagnostics;
+
+    // A re-created grid (e.g. React's dev/StrictMode double-invoke) calls this again against the same
+    // container; remove any panel from a previous render so they do not stack.
+    const previous = container.querySelectorAll('.ag-overlay-error-bootstrap-panel');
+    for (let i = 0, len = previous.length; i < len; ++i) {
+        previous[i].remove();
+    }
+
+    // The untied-diagnostics buffer accumulates across re-creates, so dedupe before rendering.
+    const deduped = dedupeDiagnostics(diagnostics);
+    const visible = mode === 'errors' ? deduped.filter((d) => d.severity === 'error') : deduped;
     if (visible.length === 0) {
         return;
     }
