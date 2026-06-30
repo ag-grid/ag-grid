@@ -8,23 +8,14 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 const VENUE_MAP_HREF = 'https://maps.app.goo.gl/GRcWV6LPBoXJwDLu6';
 const SOCIAL_IMAGE_URL = 'images/campaigns/beyond-the-prompt/social-card.png';
 
-type AgendaItem = {
-    time: string;
+type Session = {
     title: string;
     speakers?: string;
     description?: string;
-    isBreak?: boolean;
-    // Solo-speaker rows normally get a heavy 2.4x portrait on hover to fill
-    // the otherwise short cell. Set this on rows that are already tall (long
-    // description) where the heavy scale clips the head awkwardly.
-    keepDefaultPortraitScale?: boolean;
-};
-
-// The schedule is grouped into named blocks (Morning / Afternoon) so each
-// chunk can sit between full-width section rules in the rendered page.
-type AgendaSection = {
-    label: string;
-    items: AgendaItem[];
+    // YouTube watch URL for the recorded session. Sessions with one link to
+    // /session/<slug>, which opens the recording in a modal (and is a real,
+    // crawlable page in its own right).
+    youtubeUrl?: string;
 };
 
 type Speaker = {
@@ -55,112 +46,72 @@ type VenueImage = {
     caption?: string;
 };
 
-// Lunch sits at the boundary between the morning and afternoon programmes;
-// we keep it at the end of the morning block so the afternoon section opens
-// with a return-to-sessions cue (the 13:15 talk) rather than a long break.
-const AGENDA_SECTIONS: AgendaSection[] = [
+// Single-track running order, talks only. Breaks, registration, the welcome and
+// the closing remarks are intentionally omitted now the event has run.
+const SESSIONS: Session[] = [
     {
-        label: 'Morning',
-        items: [
-            { time: '08:30 – 09:30', title: 'Registration and coffee', isBreak: true },
-            {
-                time: '09:30 – 09:40',
-                title: 'Welcome',
-                description: 'Opening remarks to set the theme for the day: building with tools you can trust.',
-            },
-            {
-                time: '09:40 – 10:10',
-                title: 'Opening Keynote',
-                speakers: 'John Masterson (CEO, AG Grid) & Mats Bryntse (Founder & CEO, Bryntum)',
-            },
-            {
-                time: '10:10 – 10:40',
-                title: 'Goodbye slop; welcome determinism',
-                speakers: 'David Khourshid',
-                description:
-                    'Vibe coding feels productive until you have to maintain it. Come for the critique of the nondeterministic status quo, leave with a framework for using AI to build software you actually understand.',
-                keepDefaultPortraitScale: true,
-            },
-            { time: '10:40 – 11:10', title: 'Coffee break', isBreak: true },
-            {
-                time: '11:10 – 11:35',
-                title: 'Codebase design for the agent era',
-                speakers: 'Stephen Cooper (Team Lead, AG Grid)',
-                description:
-                    "As AI agents become part of the development workflow, codebase structure and well-designed system prompts matter more than ever. This session will show you how we're approaching this in the AG Grid and AG Charts codebases..",
-                keepDefaultPortraitScale: true,
-            },
-            {
-                time: '11:35 – 12:00',
-                title: 'AI in AG Studio',
-                speakers: 'Josh Hobson (Developer, AG Grid)',
-                description:
-                    "How do you build a dashboard you can't see? A behind-the-scenes look at AG Studio's multi-agent architecture and the client-side tools that let any LLM build reports it otherwise couldn't.",
-            },
-            {
-                time: '12:00 – 12:25',
-                title: 'Bringing AI to the Canvas',
-                speakers: 'Steve Ruiz (CEO, tldraw)',
-                description: `At tldraw, we've been bringing agents to our infinite canvas. In December 2025, we ran a one-month experiment named Fairydraw where users could work with three fairies - virtual collaborators who work with you, with your human collaborators, and coordinate together on large tasks.`,
-            },
-            { time: '12:25 – 13:35', title: 'Lunch and product demos', isBreak: true },
-        ],
+        title: 'Opening Keynote',
+        speakers: 'John Masterson (CEO, AG Grid) & Mats Bryntse (Founder & CEO, Bryntum)',
     },
     {
-        label: 'Afternoon',
-        items: [
-            {
-                time: '13:35 – 14:05',
-                title: 'Debugging CSS performance with AI',
-                speakers: 'Bernie Sumption (Developer, AG Grid)',
-                description:
-                    'CSS performance issues can be subtle and time-consuming. This talk will show you how you can guide AI to uncover bugs without needing to learn the intricacies of CSS rendering internals.',
-            },
-            {
-                time: '14:05 – 14:20',
-                title: 'Software that moves fleets: Lessons from AG Grid, Bryntum, and Beyond',
-                speakers: 'Patrick Rau (Developer, TCS)',
-                description:
-                    "In aviation, the software has to be rock solid. Patrick pulls back the curtain on the components powering Fleetplan's UI, including AG Grid, Bryntum's Scheduler Pro, and the modules behind audit tracking and safety reporting that keep operations airtight.",
-            },
-            {
-                time: '14:20 – 14:50',
-                title: 'Product Roadmap',
-                speakers: 'Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (AG Studio Product Lead, AG Grid)',
-                description: "A detailed look at our upcoming roadmap, covering AG Grid and Bryntum's suite of tools.",
-            },
-            { time: '14:50 – 15:20', title: 'Coffee break', isBreak: true },
-            {
-                time: '15:20 – 15:45',
-                title: 'One-click agentic SDLC',
-                speakers: 'Mats Bryntse (Founder & CEO, Bryntum)',
-                description:
-                    'A demo of a headless Claude workflow, built by Bryntum CEO Mats, that turns GitHub issues into mergeable PRs, with agents doing the work, and a custom Kanban UI keeping things in check.',
-            },
-            {
-                time: '15:45 – 16:30',
-                title: 'How agentic AI Is reshaping software engineering',
-                speakers:
-                    'Maggie Appleton (Staff Research Engineer, GitHub), Matt Pocock (Senior Developer Educator, AI Hero), Sophie Koonin (Web Discipline Lead, Monzo), Phil Hawksworth (MC)',
-                description:
-                    'As AI reshapes how software gets built, what actually changes for engineers, teams, and developer tools? This panel explores the real-world impact of agentic workflows on software engineering - from code review and system design to cognitive skills, ownership, and developer experience. Expect practical insights, rapid-fire hot takes, and honest discussion from engineers building beyond the prompt.',
-            },
-            {
-                time: '16:30 – 17:00',
-                title: 'Vibe Coding as a Maker',
-                speakers: 'Matt Webb',
-                description:
-                    'Matt will show his vibe coding experiments, from his AI clock to an app that points to the centre of the galaxy, and share some learnings from building hardware at his startup, Inanimate. Then we ask: what are the limits of vibing and agentic coding? And how might we create libraries that agents love?',
-                keepDefaultPortraitScale: true,
-            },
-
-            {
-                time: '17:00 – 17:10',
-                title: 'Closing Remarks',
-                description: 'Closing thoughts to wrap up the day and set the stage for the networking reception.',
-            },
-            { time: '17:10 – 20:00', title: 'Networking reception', isBreak: true },
-        ],
+        title: 'Goodbye slop; welcome determinism',
+        speakers: 'David Khourshid',
+        description:
+            'Vibe coding feels productive until you have to maintain it. Come for the critique of the nondeterministic status quo, leave with a framework for using AI to build software you actually understand.',
+        youtubeUrl: 'https://www.youtube.com/watch?v=uMvTAF280so',
+    },
+    {
+        title: 'Codebase design for the agent era',
+        speakers: 'Stephen Cooper (Team Lead, AG Grid)',
+        description:
+            "As AI agents become part of the development workflow, codebase structure and well-designed system prompts matter more than ever. This session will show you how we're approaching this in the AG Grid and AG Charts codebases..",
+    },
+    {
+        title: 'AI in AG Studio',
+        speakers: 'Josh Hobson (Developer, AG Grid)',
+        description:
+            "How do you build a dashboard you can't see? A behind-the-scenes look at AG Studio's multi-agent architecture and the client-side tools that let any LLM build reports it otherwise couldn't.",
+    },
+    {
+        title: 'Bringing AI to the Canvas',
+        speakers: 'Steve Ruiz (CEO, tldraw)',
+        description: `At tldraw, we've been bringing agents to our infinite canvas. In December 2025, we ran a one-month experiment named Fairydraw where users could work with three fairies - virtual collaborators who work with you, with your human collaborators, and coordinate together on large tasks.`,
+    },
+    {
+        title: 'Debugging CSS performance with AI',
+        speakers: 'Bernie Sumption (Developer, AG Grid)',
+        description:
+            'CSS performance issues can be subtle and time-consuming. This talk will show you how you can guide AI to uncover bugs without needing to learn the intricacies of CSS rendering internals.',
+    },
+    {
+        title: 'Software that moves fleets: Lessons from AG Grid, Bryntum, and Beyond',
+        speakers: 'Patrick Rau (Developer, TCS)',
+        description:
+            "In aviation, the software has to be rock solid. Patrick pulls back the curtain on the components powering Fleetplan's UI, including AG Grid, Bryntum's Scheduler Pro, and the modules behind audit tracking and safety reporting that keep operations airtight.",
+    },
+    {
+        title: 'Product Roadmap',
+        speakers: 'Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (AG Studio Product Lead, AG Grid)',
+        description: "A detailed look at our upcoming roadmap, covering AG Grid and Bryntum's suite of tools.",
+    },
+    {
+        title: 'One-click agentic SDLC',
+        speakers: 'Mats Bryntse (Founder & CEO, Bryntum)',
+        description:
+            'A demo of a headless Claude workflow, built by Bryntum CEO Mats, that turns GitHub issues into mergeable PRs, with agents doing the work, and a custom Kanban UI keeping things in check.',
+    },
+    {
+        title: 'How agentic AI Is reshaping software engineering',
+        speakers:
+            'Maggie Appleton (Staff Research Engineer, GitHub), Matt Pocock (Senior Developer Educator, AI Hero), Sophie Koonin (Web Discipline Lead, Monzo), Phil Hawksworth (MC)',
+        description:
+            'As AI reshapes how software gets built, what actually changes for engineers, teams, and developer tools? This panel explores the real-world impact of agentic workflows on software engineering - from code review and system design to cognitive skills, ownership, and developer experience. Expect practical insights, rapid-fire hot takes, and honest discussion from engineers building beyond the prompt.',
+    },
+    {
+        title: 'Vibe Coding as a Maker',
+        speakers: 'Matt Webb',
+        description:
+            'Matt will show his vibe coding experiments, from his AI clock to an app that points to the centre of the galaxy, and share some learnings from building hardware at his startup, Inanimate. Then we ask: what are the limits of vibing and agentic coding? And how might we create libraries that agents love?',
     },
 ];
 
@@ -274,22 +225,18 @@ const SPEAKERS: Speaker[] = [
     },
 ];
 
-// Map an agenda item's free-text `speakers` string to the matching SVG
-// portraits. We do a substring `includes` check against each canonical
-// `SPEAKERS[].name` so strings like
-//   "Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (...)"
-// resolve to multiple portraits. Iterating `SPEAKERS` (rather than
-// splitting the input string) keeps the render order stable across rows
-// even when the agenda lists speakers in a different sequence.
-//
-// We return the *orange-bg* variant here because the agenda overlay only
-// renders behind the row's hover state (which paints the row orange);
-// the orange-tuned dither pattern reads correctly there. Falls back to
-// the default illustration if a speaker hasn't been given an orange
-// variant yet.
-const getSpeakerImagesForItem = (speakers?: string): string[] => {
+// Map a session's free-text `speakers` string to the matching speaker SVGs
+// (substring `includes` against each canonical `SPEAKERS[].name`, so a string
+// like "Johan Isaksson (...) & Adam Wang (...)" resolves to both). Iterating
+// `SPEAKERS` keeps the avatar order stable across rows. Returns both the default
+// and orange-bg variants so the small avatar can crossfade to the orange-tuned
+// illustration when the row turns orange on hover.
+const getSpeakerAvatarsForItem = (speakers?: string): { image: string; imageOrange?: string }[] => {
     if (!speakers) return [];
-    return SPEAKERS.filter((s) => speakers.includes(s.name)).map((s) => s.imageOrange ?? s.image);
+    return SPEAKERS.filter((s) => speakers.includes(s.name)).map((s) => ({
+        image: s.image,
+        imageOrange: s.imageOrange,
+    }));
 };
 
 // Featured faces for the hero (use the SVG illustrations).
@@ -540,68 +487,59 @@ const VENUE_IMAGES: VenueImage[] = [
                     </p>
                 </div>
 
-                {
-                    AGENDA_SECTIONS.map((section) => (
-                        <div class={styles.container}>
-                            <div class={styles.agenda}>
-                                <div class={styles.agendaSectionHeader}>
-                                    <p class={styles.agendaSectionLabel}>{section.label}</p>
-                                </div>
-                                <ol class={styles.agendaList}>
-                                    {section.items.map((item) => {
-                                        const speakerImages = getSpeakerImagesForItem(item.speakers);
-                                        // Render the wrap whenever a row has *either* a description or
-                                        // a matching speaker portrait — so sessions like the Opening
-                                        // Keynote (speakers but no copy) still get the hover reveal.
-                                        const hasOverlay = Boolean(item.description) || speakerImages.length > 0;
-                                        return (
-                                            <li class:list={[styles.agendaRow, { [styles.agendaBreak]: item.isBreak }]}>
-                                                <div class={styles.agendaTime}>{item.time}</div>
-                                                <div class={styles.agendaBody}>
-                                                    <h3 class={styles.agendaTitle}>{item.title}</h3>
-                                                    {item.speakers && (
-                                                        <p class={styles.agendaSpeakers}>{item.speakers}</p>
-                                                    )}
-                                                </div>
-                                                {hasOverlay && (
-                                                    <div class={styles.agendaDescriptionWrap}>
-                                                        {item.description && (
-                                                            <p class={styles.agendaDescription}>{item.description}</p>
-                                                        )}
-                                                        {/*
-                                                        Speaker portraits rise + fade in on row hover.
-                                                        They share the row's bounding box and the row
-                                                        clips overflow, so portraits can scale up past
-                                                        the cell without forcing a layout shift. Names
-                                                        already appear in the body column, so this
-                                                        layer is purely decorative.
-                                                    */}
-                                                        {speakerImages.length > 0 && (
-                                                            <div class={styles.agendaSpeakerStack} aria-hidden="true">
-                                                                {speakerImages.map((src) => (
+                <div class={styles.container}>
+                    <div class={styles.agenda}>
+                        <div class={styles.agendaHead}>
+                            <span>Title</span>
+                            <span>Speakers</span>
+                        </div>
+                        <ol class={styles.agendaList}>
+                            {
+                                SESSIONS.map((item) => {
+                                    const avatars = getSpeakerAvatarsForItem(item.speakers);
+                                    return (
+                                        <li class={styles.agendaRow}>
+                                            <div class={styles.agendaBody}>
+                                                <h3 class={styles.agendaTitle}>{item.title}</h3>
+                                                {item.description && (
+                                                    <p class={styles.agendaDescription}>{item.description}</p>
+                                                )}
+                                            </div>
+                                            <div class={styles.agendaSpeakersCol}>
+                                                {avatars.length > 0 && (
+                                                    <div class={styles.agendaAvatars} aria-hidden="true">
+                                                        {avatars.map((a) => (
+                                                            <span class={styles.agendaAvatar}>
+                                                                <img
+                                                                    src={urlWithBaseUrl(a.image)}
+                                                                    alt=""
+                                                                    loading="lazy"
+                                                                    class={styles.agendaAvatarImg}
+                                                                />
+                                                                {a.imageOrange && (
                                                                     <img
-                                                                        src={urlWithBaseUrl(src)}
+                                                                        src={urlWithBaseUrl(a.imageOrange)}
                                                                         alt=""
-                                                                        class:list={[
-                                                                            styles.agendaSpeakerImage,
-                                                                            item.keepDefaultPortraitScale &&
-                                                                                styles.agendaSpeakerImageDefaultScale,
-                                                                        ]}
                                                                         loading="lazy"
+                                                                        class:list={[
+                                                                            styles.agendaAvatarImg,
+                                                                            styles.agendaAvatarImgOrange,
+                                                                        ]}
                                                                     />
-                                                                ))}
-                                                            </div>
-                                                        )}
+                                                                )}
+                                                            </span>
+                                                        ))}
                                                     </div>
                                                 )}
-                                            </li>
-                                        );
-                                    })}
-                                </ol>
-                            </div>
-                        </div>
-                    ))
-                }
+                                                {item.speakers && <p class={styles.agendaSpeakers}>{item.speakers}</p>}
+                                            </div>
+                                        </li>
+                                    );
+                                })
+                            }
+                        </ol>
+                    </div>
+                </div>
             </div>
         </section>
 

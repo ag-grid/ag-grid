@@ -1003,34 +1003,17 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     padding: 0;
 }
 
-// Three-column flex layout per row: [time] [title + speakers] [description].
-// On mobile the columns stack in document order. On ≥720px the row becomes a
-// flex row, with the time pinned at 160px and the body / description sharing
-// the remaining width 50/50. When a row has no description (e.g. "Welcome",
-// "Coffee break"), the body simply fills the post-time area.
+// Two-column grid per row: [title + description] [speakers]. On mobile the two
+// columns stack; from 720px they sit side by side, mirroring the `.agendaHead`
+// column headers above the list.
 .agendaRow {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    // Mobile keeps the classic outer padding — the row stacks vertically
-    // and there's no portrait overlay to fight with, so a unified inset
-    // reads as expected. On desktop the vertical padding moves onto the
-    // inner columns (see `.agendaTime` / `.agendaBody` / `.agendaDescription`)
-    // so the speaker portrait overlay can fill the row's full height. If
-    // we kept the padding on the row itself, the orange hover background
-    // would render correctly but the portrait inside `.agendaDescriptionWrap`
-    // would stop short of the row top/bottom, leaving a visible "padding
-    // gap" above and below the speaker on hover.
-    padding: 16px 24px;
-    // Belt-and-braces against any default `<li>` margin (some user agents
-    // / global resets add it) — without this, the hovered row's orange
-    // background would float on a sliver of cream between rows.
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 20px 24px;
     margin-bottom: 0;
     border-bottom: 1px solid var(--btp-border);
-    // `overflow: hidden` lets the speaker portrait scale up past the cell on
-    // hover and bleed into the row's padding without affecting siblings.
-    overflow: hidden;
     transition:
         background-color 0.32s ease,
         border-bottom-color 0.32s ease,
@@ -1041,10 +1024,10 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 
     @media (min-width: 720px) {
-        flex-direction: row;
-        align-items: flex-start;
+        grid-template-columns: 1.6fr 1fr;
+        align-items: start;
         gap: 32px;
-        padding: 0 32px;
+        padding: 20px 32px;
     }
 }
 
@@ -1083,12 +1066,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     display: flex;
     flex-direction: column;
     gap: 6px;
-
-    @media (min-width: 720px) {
-        flex: 1 1 0;
-        min-width: 0;
-        padding: 18px 0;
-    }
+    min-width: 0;
 }
 
 .agendaTitle {
@@ -1108,6 +1086,68 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     text-transform: uppercase;
     color: var(--btp-ink-muted);
     transition: color 0.32s ease;
+}
+
+// Column headers above the list (Title | Speakers), mono caps like the section
+// rule titles. Mirrors the `.agendaRow` grid so each label sits over its column.
+// Hidden on mobile where the row collapses to a single column.
+.agendaHead {
+    display: none;
+
+    @media (min-width: 720px) {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 32px;
+        padding: 14px 32px;
+        border-bottom: 1px solid var(--btp-border);
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--btp-ink-muted);
+    }
+}
+
+.agendaSpeakersCol {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.agendaAvatars {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+// Round avatar. The speaker SVGs are tall full-figure illustrations, so we crop
+// to a circle anchored at the top (the head) and crossfade to the orange-bg
+// variant when the row turns orange on hover.
+.agendaAvatar {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--btp-card);
+    flex: 0 0 auto;
+}
+
+.agendaAvatarImg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: opacity 0.32s ease;
+}
+
+.agendaAvatarImgOrange {
+    opacity: 0;
 }
 
 // `.agendaDescriptionWrap` is the flex item on desktop (the description
@@ -1131,19 +1171,9 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 
 .agendaDescription {
     font-size: 15px;
-    line-height: 1.55;
+    line-height: 1.5;
     color: var(--btp-ink-muted);
-    transition:
-        opacity 0.32s ease,
-        color 0.32s ease;
-
-    // Match the vertical inset that used to live on `.agendaRow`. Padding
-    // is on the text, not on `.agendaDescriptionWrap`, so the wrap itself
-    // can stretch the full row height and the speaker overlay (`inset: 0`
-    // of the wrap) covers the whole row top-to-bottom.
-    @media (min-width: 720px) {
-        padding: 18px 0;
-    }
+    transition: color 0.32s ease;
 }
 
 // Speaker portrait overlay. Anchored to the right of the wrap and sized
@@ -1221,54 +1251,43 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 //      so we never fade copy out into nothing or flip a row to orange
 //      with no payoff.
 @media (hover: hover) {
-    .agendaRow:has(.agendaSpeakerStack):hover {
+    .agendaRow:hover {
         background-color: var(--btp-orange);
-        // Hide the hairline at the bottom of the hovered row so the
-        // orange block sits flush against the next row with no white-ish
-        // sliver showing through. The pair rule below kills the hairline
-        // above by retroactively dropping the *previous* row's border.
+        // Hide this row's bottom hairline (and the previous row's, below) so the
+        // orange block sits flush against its neighbours with no cream sliver.
         border-bottom-color: transparent;
     }
 
-    // Spotlight: while an orange-fill row is hovered, dim every other row in the
-    // schedule to 0.6 so the active session stands out. Scoped to the Sessions
-    // panel so the dimming spans both the Morning and Afternoon cards.
-    [data-panel='talks']:has(.agendaRow:has(.agendaSpeakerStack):hover) .agendaRow:not(:hover) {
+    // Spotlight: while a session is hovered, dim the other rows to 0.6 so the
+    // active one stands out.
+    [data-panel='talks']:has(.agendaRow:hover) .agendaRow:not(:hover) {
         opacity: 0.6;
     }
 
-    // `:has(+ X)` is the closest CSS gets to a "previous sibling" selector.
-    // It matches a row whose immediate next sibling is the hovered orange
-    // row, letting us erase that neighbour's bottom border so the orange
-    // block extends right up to the row above it.
-    .agendaRow:has(+ .agendaRow:has(.agendaSpeakerStack):hover) {
+    // `:has(+ X)` approximates a previous-sibling selector: drop the border of
+    // the row directly above the hovered one so the orange block meets it.
+    .agendaRow:has(+ .agendaRow:hover) {
         border-bottom-color: transparent;
     }
 
-    .agendaRow:has(.agendaSpeakerStack):hover .agendaTime,
-    .agendaRow:has(.agendaSpeakerStack):hover .agendaTitle,
-    .agendaRow:has(.agendaSpeakerStack):hover .agendaSpeakers,
-    .agendaRow:has(.agendaSpeakerStack):hover .agendaDescription {
+    .agendaRow:hover .agendaTitle,
+    .agendaRow:hover .agendaSpeakers,
+    .agendaRow:hover .agendaDescription {
         color: var(--btp-bg);
     }
 
-    .agendaRow:has(.agendaSpeakerStack):hover .agendaDescription {
-        opacity: 0;
-    }
-
-    .agendaRow:has(.agendaSpeakerStack):hover .agendaSpeakerStack {
+    // Crossfade each avatar to its orange-bg illustration on the orange row.
+    .agendaRow:hover .agendaAvatarImgOrange {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .agendaRow,
-    .agendaTime,
     .agendaTitle,
     .agendaSpeakers,
     .agendaDescription,
-    .agendaSpeakerStack {
+    .agendaAvatarImg {
         transition: none;
     }
 }
