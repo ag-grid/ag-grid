@@ -17,44 +17,51 @@
 // to avoid adding a fetch before first paint. No server-injected values.
 export const DARK_MODE_INIT_SCRIPT = `
     const htmlEl = document.querySelector('html');
-    const localDarkmode = localStorage['documentation:darkmode'];
-    const isOSDarkmode = (
-        window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-    ).toString();
 
-    if (localDarkmode === undefined) {
-        localStorage.setItem('documentation:darkmode', isOSDarkmode);
-    }
+    // Guard against re-execution on Astro view-transition navigations.
+    // The <html> element persists across transitions so theme attributes survive navigation;
+    // we only need to apply them on a hard page load. The listeners and MutationObserver
+    // must also only be registered once to avoid accumulating duplicates.
+    if (!globalThis.addDarkmodeOnChange) {
+        const localDarkmode = localStorage['documentation:darkmode'];
+        const isOSDarkmode = (
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        ).toString();
 
-    htmlEl.classList.add('no-transitions');
-    htmlEl.dataset.darkMode = localDarkmode !== undefined ? localDarkmode : isOSDarkmode;
+        if (localDarkmode === undefined) {
+            localStorage.setItem('documentation:darkmode', isOSDarkmode);
+        }
 
-    const getDarkmode = () => htmlEl.dataset.darkMode === 'true';
-    htmlEl.dataset.agThemeMode = getDarkmode() ? 'dark-blue' : 'light';
-    htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
-    htmlEl.classList.remove('no-transitions');
+        htmlEl.classList.add('no-transitions');
+        htmlEl.dataset.darkMode = localDarkmode !== undefined ? localDarkmode : isOSDarkmode;
 
-    // Set up dark mode on change listeners
-    const darkModeListeners = [];
-    globalThis.addDarkmodeOnChange = (onChange) => {
-        darkModeListeners.push(onChange);
+        const getDarkmode = () => htmlEl.dataset.darkMode === 'true';
+        htmlEl.dataset.agThemeMode = getDarkmode() ? 'dark-blue' : 'light';
+        htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
+        htmlEl.classList.remove('no-transitions');
 
-        // Run once on initialisation
-        onChange(getDarkmode());
-    };
+        // Set up dark mode on change listeners
+        const darkModeListeners = [];
+        globalThis.addDarkmodeOnChange = (onChange) => {
+            darkModeListeners.push(onChange);
 
-    // Listen to changes to html[data-dark-mode] attribute and notify listeners
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.attributeName === 'data-dark-mode') {
-                const newDarkmode = getDarkmode();
-                darkModeListeners.forEach((listener) => {
-                    listener(newDarkmode);
-                });
-            }
+            // Run once on initialisation
+            onChange(getDarkmode());
+        };
+
+        // Listen to changes to html[data-dark-mode] attribute and notify listeners
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'data-dark-mode') {
+                    const newDarkmode = getDarkmode();
+                    darkModeListeners.forEach((listener) => {
+                        listener(newDarkmode);
+                    });
+                }
+            });
         });
-    });
-    observer.observe(htmlEl, { attributes: true });
+        observer.observe(htmlEl, { attributes: true });
+    }
 
     if (localStorage.getItem('documentation:announcement-banner-dismissed') !== 'true') {
         document.documentElement.dataset.showAnnouncement = 'true';
@@ -69,4 +76,22 @@ export const PLAUSIBLE_INIT_SCRIPT = `
         function () {
             (window.plausible.q = window.plausible.q || []).push(arguments);
         };
+`;
+
+// Plausible view-transition pageview tracker. Fires a synthetic pageview on each
+// client-side navigation. astro:page-load fires on hard load too, so the first
+// event is skipped (the tagged-events script auto-fires the initial pageview).
+// Guard prevents duplicate listener registration if the script is ever re-executed.
+export const PLAUSIBLE_PAGE_LOAD_SCRIPT = `
+    if (!globalThis.plausiblePageViewRegistered) {
+        let firstLoad = true;
+        globalThis.plausiblePageViewRegistered = true;
+        document.addEventListener('astro:page-load', function () {
+            if (firstLoad) {
+                firstLoad = false;
+                return;
+            }
+            window.plausible?.('pageview');
+        });
+    }
 `;
