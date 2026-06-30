@@ -1409,11 +1409,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
-// Let the scroll rest when someone wants a closer look.
-.galleryViewport:hover .galleryTrack {
-    animation-play-state: paused;
-}
-
 @media (prefers-reduced-motion: reduce) {
     .galleryTrack {
         animation: none;

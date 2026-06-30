@@ -520,7 +520,8 @@ const GALLERY_IMAGES = [
                             <li
                                 class:list={[
                                     styles.gallerySlide,
-                                    src.includes('gallery-18') && styles.gallerySlidePortrait,
+                                    (src.includes('gallery-17') || src.includes('gallery-18')) &&
+                                        styles.gallerySlidePortrait,
                                 ]}
                             >
                                 <img
