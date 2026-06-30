@@ -282,7 +282,8 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     padding: 0;
     border: 0;
     border-radius: 0;
-    background: none;
+    // White backdrop behind the (transparent/letterboxed) PNG thumbnail.
+    background: #fff;
     box-shadow: none;
     cursor: pointer;
 }
