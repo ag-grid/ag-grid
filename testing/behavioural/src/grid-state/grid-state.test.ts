@@ -1257,6 +1257,41 @@ describe('StateService - Grid State Management', () => {
             const restoredFilterModel = api2.getFilterModel();
             expect(restoredFilterModel?.id?.filter).toBe('2n');
         });
+
+        test('setState filter restore fires onFilterChanged with source "api", not "columnFilter"', async () => {
+            const sources: (string | undefined)[] = [];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+                defaultColDef: { filter: 'agTextColumnFilter' },
+                onFilterChanged: (e) => sources.push(e.source),
+            });
+
+            api.setState({
+                filter: { filterModel: { name: { filterType: 'text', type: 'startsWith', filter: 'A' } } },
+            } as GridState);
+            await asyncSetTimeout(50);
+
+            expect(sources.length).toBeGreaterThan(0);
+            expect(sources.every((s) => s === 'api')).toBe(true);
+        });
+
+        test('initialState filter restore fires onFilterChanged with source "columnFilter"', async () => {
+            const sources: (string | undefined)[] = [];
+            gridsManager.createGrid('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+                defaultColDef: { filter: 'agTextColumnFilter' },
+                initialState: {
+                    filter: { filterModel: { name: { filterType: 'text', type: 'startsWith', filter: 'A' } } },
+                },
+                onFilterChanged: (e) => sources.push(e.source),
+            });
+            await asyncSetTimeout(50);
+
+            expect(sources.length).toBeGreaterThan(0);
+            expect(sources.every((s) => s === 'columnFilter')).toBe(true);
+        });
     });
 
     // ===== CELL STATE TESTS =====

@@ -3,7 +3,7 @@
         "title": "AG Grid: A Fast, Powerful, and Flexible Vue Data Grid",
         "description": "Explore AG Grid's fast, powerful, and customisable Vue Data Grid library. Add high-performance Vue Data Grids to your Vue 3 applications in minutes, for free."
     },
-    "framework": "vue3",
+    "internalFramework": "vue3",
     "packageName": "ag-grid-vue3",
     "docsPath": "vue-data-grid",
     "analyticsPrefix": "vue-data-grid",

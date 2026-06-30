@@ -148,6 +148,19 @@ export const EXAMPLES_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(examples|archive)
 // /archive/<version> prefix covers the archived snapshots.
 export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^(?:/archive/[^/]+)?/campaigns/#';
 
+// Apache <If> expression matching the staging-only /branch-builds/ tree: a directory
+// of full per-branch documentation builds, preserved across deployments (backed up
+// and restored by scripts/deployments/*) rather than produced by this build. Each is
+// an arbitrary historical snapshot of the docs at whatever code — and CSP needs —
+// existed when that branch was built: old example HTML carries inline event handlers
+// (onclick=, onchange=, …) and eval that the tightened site policy blocks, and CSP
+// cannot authorise inline event handlers by hash at all. The tree is internal and
+// password-protected, so it is exempted from the CSP entirely (see
+// getBranchBuildsCspIfOverride) rather than force-fitted to a scope. Staging-only:
+// the tree does not exist on production www. No JS PATH_REGEXP counterpart because
+// the dev/preview middleware never serves these paths.
+export const BRANCH_BUILDS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/branch-builds/#';
+
 // JS equivalents of the *_PATH_CONDITION Apache rules above, for the dev-server
 // (agDevCsp) and preview-server (preview-csp) middleware that scope the served
 // CSP by URL path. Keep these in sync with the Apache conditions.
@@ -425,6 +438,31 @@ export function getCampaignsCspIfOverride(options: Omit<CspOptions, 'scope'>, mo
         { ...options, scope: 'campaigns' },
         mode
     );
+}
+
+/**
+ * The `<If>` override that drops the CSP header entirely for the staging-only
+ * /branch-builds/ tree matched by BRANCH_BUILDS_PATH_CONDITION.
+ *
+ * Unlike the examples/campaigns overrides — which unset the inherited header and
+ * re-set a relaxed-but-still-restrictive policy — this one only unsets it, leaving
+ * no Content-Security-Policy for these paths. Branch builds are arbitrary, internal,
+ * password-protected snapshots of past documentation builds whose pages predate (and
+ * cannot satisfy) the tightened site policy; notably their example HTML uses inline
+ * event handlers, which CSP cannot authorise by hash. `mode` selects which header
+ * form to clear so this drops whichever header the site-wide block set for the page.
+ */
+export function getBranchBuildsCspIfOverride(mode: CspMode): string {
+    const headerName = getCspHeaderName(mode);
+    return [
+        '# /branch-builds/ holds preserved per-branch documentation builds (staging only):',
+        '# arbitrary historical snapshots, internal and password-protected, whose pages predate',
+        "# the tightened policy (e.g. inline event handlers, which CSP can't authorise by hash).",
+        '# Drop the CSP entirely for them rather than force-fit a scope.',
+        `<If "${BRANCH_BUILDS_PATH_CONDITION}">`,
+        `    Header always unset ${headerName}`,
+        '</If>',
+    ].join('\n');
 }
 
 /**

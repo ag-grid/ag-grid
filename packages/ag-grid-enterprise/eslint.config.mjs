@@ -35,7 +35,7 @@ export default [
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-for-in-array': 'error',
             'no-restricted-properties': [
-                'warn',
+                'error',
                 { property: 'innerText', message: 'Prefer textContent where possible.' },
                 { property: 'innerHTML', message: 'Prefer textContent where possible.' },
                 {
@@ -92,6 +92,13 @@ export default [
             'sonarjs/use-type-alias': 0,
             'sonarjs/no-nested-template-literals': 0,
             'unicorn/prefer-modern-dom-apis': 'error',
+        },
+    },
+    {
+        // Test files are exempt from the runtime-focused restrictions above.
+        files: ['**/*.test.ts', '**/*.test.tsx'],
+        rules: {
+            'no-restricted-properties': 'off',
         },
     },
     {

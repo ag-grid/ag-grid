@@ -60,6 +60,91 @@
     },
     {
         "group": {
+            "name": "Columns"
+        },
+        "items": [
+            {
+                "name": "Basic Column Operations",
+                "isSubGroup": true,
+                "items": [
+                    {
+                        "label": {
+                            "name": "Headers",
+                            "link": "grid:./column-headers/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Groups",
+                            "link": "grid:./column-groups/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Sizing",
+                            "link": "grid:./column-sizing/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Moving",
+                            "link": "grid:./column-moving/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Pinning",
+                            "link": "grid:./column-pinning/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Spanning",
+                            "link": "grid:./column-spanning/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    }
+                ]
+            },
+            {
+                "label": {
+                    "name": "Auto-Generate Columns",
+                    "link": "grid:./auto-generate-columns/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Calculated Columns",
+                    "link": "grid:./calculated-columns/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            }
+        ]
+    },
+    {
+        "group": {
             "name": "Filtering"
         },
         "items": [

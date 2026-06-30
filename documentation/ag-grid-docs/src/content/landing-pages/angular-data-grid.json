@@ -3,7 +3,7 @@
         "title": "AG Grid: A Fast, Powerful, and Flexible Angular Data Grid",
         "description": "Explore AG Grid's fast, powerful, and customisable Angular Data Grid library. Add high-performance Angular Data Grids to your Angular applications in minutes, for free."
     },
-    "framework": "angular",
+    "internalFramework": "angular",
     "packageName": "ag-grid-angular",
     "docsPath": "angular-data-grid",
     "analyticsPrefix": "angular-data-grid",

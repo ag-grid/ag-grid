@@ -9,7 +9,7 @@ import {
 import { BeanStub } from '../../context/beanStub';
 import type { EditService } from '../../edit/editService';
 import type { AgColumn } from '../../entities/agColumn';
-import { _getCtrlASelectsRows, _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
+import { _getCtrlASelectsRows, _getSelectAll, _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
 import type { GetNoteParams } from '../../interfaces/notes';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -141,13 +141,12 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private processFullWidthRowKeyboardEvent(rowCtrl: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
         const { rowNode } = rowCtrl;
-        const { focusSvc, navigation, notesSvc } = this.beans;
-        const focusedCell = focusSvc.getFocusedCell();
+        const focusedCell = this.beans.focusSvc.getFocusedCell();
         const column = focusedCell?.column as AgColumn;
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
 
         if (gridProcessingAllowed && eventName === 'keydown') {
-            this.processFullWidthRowKeyDown(rowCtrl, keyboardEvent, column, navigation, notesSvc);
+            this.processFullWidthRowKeyDown(rowCtrl, keyboardEvent, column);
         }
 
         if (eventName === 'keydown') {
@@ -158,16 +157,14 @@ export class RowContainerEventsFeature extends BeanStub {
     private processFullWidthRowKeyDown(
         rowCtrl: RowCtrl,
         keyboardEvent: KeyboardEvent,
-        focusedColumn: AgColumn | undefined,
-        navigation = this.beans.navigation,
-        notesSvc = this.beans.notesSvc
+        focusedColumn: AgColumn | undefined
     ): void {
         switch (keyboardEvent.key) {
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
             case KeyCode.PAGE_UP:
             case KeyCode.PAGE_DOWN:
-                navigation?.handlePageScrollingKey(keyboardEvent, true);
+                this.beans.navigation?.handlePageScrollingKey(keyboardEvent, true);
                 return;
 
             case KeyCode.LEFT:
@@ -182,11 +179,22 @@ export class RowContainerEventsFeature extends BeanStub {
                 return;
 
             case KeyCode.F2:
-                this.processFullWidthRowNoteShortcut(rowCtrl, keyboardEvent, focusedColumn, notesSvc);
+                this.processFullWidthRowNoteShortcut(rowCtrl, keyboardEvent, focusedColumn, this.beans.notesSvc);
                 return;
 
             case KeyCode.TAB:
                 rowCtrl.onTabKeyDown(keyboardEvent);
+                return;
+
+            case KeyCode.SPACE:
+                // leave SPACE to interactive controls inside custom full-width renderers (mirrors the cell path)
+                if (keyboardEvent.target !== rowCtrl.getCurrentRowElement()) {
+                    return;
+                }
+                if (_isRowSelection(this.gos)) {
+                    this.beans.selectionSvc?.handleSelectionEvent(keyboardEvent, rowCtrl.rowNode, 'spaceKey');
+                }
+                keyboardEvent.preventDefault();
                 return;
 
             default:

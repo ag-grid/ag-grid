@@ -2,7 +2,6 @@
 
 .animatedWordsOuter {
     --word-height: 1.3em;
-    --word-index: 0;
 
     position: relative;
     display: inline-flex;
@@ -13,15 +12,24 @@
     overflow: hidden;
 }
 
-.animatedWordsInner {
-    display: inline-flex;
-    flex-direction: column;
-    transform: translateY(calc(var(--word-height) * var(--word-index) * 1.5));
-    transition: transform 0.25s cubic-bezier(0.6, 0.3, 0.5, 1.4);
+.animatedWord {
+    display: inline-block;
+    animation: framework-word-in 0.25s cubic-bezier(0.6, 0.3, 0.5, 1.4);
 
-    > span {
-        height: calc(var(--word-height) * 1.5);
-        padding-top: calc(var(--word-height) * 0.5);
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+}
+
+@keyframes framework-word-in {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }
 

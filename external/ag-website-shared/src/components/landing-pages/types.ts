@@ -1,3 +1,5 @@
+import type { InternalFramework } from '@ag-grid-types';
+
 // ============================================================================
 // Section Content Types
 // ============================================================================
@@ -207,7 +209,7 @@ export interface LandingPageContent {
     /** Product name for display (e.g., 'AG Grid', 'AG Charts') */
     productName?: string;
     /** Framework identifier for examples (e.g., 'reactFunctionalTs', 'angular', 'vue3') */
-    framework?: string;
+    internalFramework: InternalFramework;
     packageName?: string;
     docsPath: string;
     analyticsPrefix: string;

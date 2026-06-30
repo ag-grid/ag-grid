@@ -330,7 +330,7 @@ const landingPages = defineCollection({
             title: z.string(),
             description: z.string(),
         }),
-        framework: internalFramework.optional(),
+        internalFramework,
         packageName: z.string().optional(),
         docsPath: z.string(),
         analyticsPrefix: z.string(),
