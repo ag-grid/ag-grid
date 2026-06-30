@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
+import { _createElement } from '../utils/element';
 
 export class AutoWidthCalculator extends BeanStub implements NamedBean {
     beanName = 'autoWidthCalc' as const;
@@ -52,7 +53,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
         // this element has to be a form, otherwise form elements within a cell
         // will be validated while being cloned. This can cause issues such as
         // radio buttons being reset and losing their values.
-        const eDummyContainer = document.createElement('form');
+        const eDummyContainer = _createElement<HTMLFormElement>({ tag: 'form' });
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
 
@@ -97,7 +98,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
         // we put the cell into a containing div, as otherwise the cells would just line up
         // on the same line, standard flow layout, by putting them into divs, they are laid
         // out one per line
-        const eCloneParent = document.createElement('div');
+        const eCloneParent = _createElement({ tag: 'div' });
         const eCloneParentClassList = eCloneParent.classList;
         const isHeader = ['ag-header-cell', 'ag-header-group-cell'].some((cls) => eCellClone.classList.contains(cls));
 

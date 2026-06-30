@@ -16,7 +16,6 @@ const flushMicrotasks = async (): Promise<void> => {
 
 describe('AgRichSelect', () => {
     afterEach(() => {
-        // eslint-disable-next-line no-restricted-properties
         document.body.innerHTML = '';
     });
 

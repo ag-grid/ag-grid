@@ -1,7 +1,7 @@
 import type { AgChartThemePalette } from 'ag-charts-types';
 import { RefPlaceholder, _areEqual, _clearElement, _getAbsoluteWidth, _radioCssClass, _setDisplayed } from 'ag-stack';
 
-import { Component, _createIconNoSpan } from 'ag-grid-community';
+import { Component, _createElement, _createIconNoSpan } from 'ag-grid-community';
 
 import type { AgChartsExports } from '../../../agChartsExports';
 import type { ChartController } from '../../chartController';
@@ -130,8 +130,7 @@ export class ChartSettingsPanel extends Component {
     }
 
     private addCardLink(index: number): void {
-        const link = document.createElement('div');
-        link.classList.add('ag-chart-settings-card-item');
+        const link = _createElement({ tag: 'div', cls: 'ag-chart-settings-card-item' });
 
         this.addManagedElementListeners(link, {
             click: () => {
