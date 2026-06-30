@@ -41,6 +41,13 @@ const updateHtml = (darkmode: boolean | undefined) => {
 $darkmode.listen(updateHtml);
 
 if (globalThis.window) {
+    // Re-apply dark mode after each Astro view-transition swap. Astro resets <html>
+    // attributes to the server-rendered value (<html lang="en">, no data-dark-mode),
+    // which would strip the theme on every navigation. The atom retains its value but
+    // its listener only fires on changes, so we need an explicit re-apply here.
+    document.addEventListener('astro:after-swap', () => {
+        updateHtml($darkmode.get());
+    });
     updateHtml($darkmode.get() ?? window?.matchMedia('(prefers-color-scheme: dark)')?.matches);
 }
 

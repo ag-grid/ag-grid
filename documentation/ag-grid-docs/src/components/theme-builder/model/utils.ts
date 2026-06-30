@@ -183,7 +183,7 @@ export const reinterpretCSSValue = (value: string, type: ParamType): string | nu
 let _reinterpretationElement: HTMLElement | null = null;
 
 export const getReinterpretationElement = () => {
-    if (!_reinterpretationElement) {
+    if (!_reinterpretationElement || !_reinterpretationElement.isConnected) {
         _reinterpretationElement = document.createElement('span');
         document.body.appendChild(_reinterpretationElement);
     }
