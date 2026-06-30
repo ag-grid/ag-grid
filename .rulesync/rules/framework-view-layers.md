@@ -32,5 +32,15 @@ React re-implements the **core grid scaffolding** — cells, rows, row container
 ## Verification
 
 -   **Vanilla behavioural tests do not exercise React.** The behavioural suite defaults to the vanilla grid (which Angular and Vue share), so green vanilla tests say nothing about React's `reactUi` layer.
--   **Add (or explicitly reason about) a React `.test.tsx` case** for any view-layer behaviour, since React is the one implementation the vanilla tests miss, and its async mount + reconciliation diverges most. See [Testing Guide](.rulesync/rules/testing.md) for the `render(<AgGridReact .../>)` pattern.
--   If you knowingly ship without React coverage, say so and flag the gap for the reviewer rather than letting green vanilla tests imply full coverage.
+-   **A shared-controller fix still needs a React test.** "It lives in the `*Ctrl`, so React is covered by construction" is a hypothesis, not a verification. The shared method runs under React's async mount and reconciliation, whose timing diverges from vanilla's synchronous render — a fix that holds for vanilla can still break under React. Confirm it; don't assert it.
+-   **A React `.test.tsx` is the default for any lifecycle, teardown, or state-reset change to a twinned controller**, not an optional extra. Make it a real regression guard: confirm it fails without the fix and passes with it. See [Testing Guide](.rulesync/rules/testing.md) for the `render(<AgGridReact .../>)` pattern.
+-   **Skip the React test only when it is genuinely infeasible** — for example, no way to drive the scenario through `AgGridReact`. Then trace the exact React call path that reaches your fix, state that trace, and flag the missing coverage to the reviewer. Never let a green vanilla suite stand in for React.
+
+## Pre-PR checkpoint
+
+Before opening a PR whose diff touches a twinned `*Ctrl` or `*Comp` (the set named above), confirm one of:
+
+1.  A React `.test.tsx` covers the changed behaviour and is a real regression guard (red without the fix, green with it); **or**
+2.  A React test is infeasible, and the PR description states the React call path reaching the fix plus the explicit coverage gap.
+
+Treat green vanilla tests alone as **not done** for these files.
