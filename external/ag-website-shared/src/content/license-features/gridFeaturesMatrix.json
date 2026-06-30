@@ -299,6 +299,15 @@
                 "community": false,
                 "enterprise": true,
                 "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Cell Notes",
+                    "link": "https://www.ag-grid.com/react-data-grid/notes"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
             }
         ]
     },
