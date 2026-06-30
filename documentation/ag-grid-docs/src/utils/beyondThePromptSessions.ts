@@ -155,3 +155,25 @@ export const sessionThumbSlug = (session: Session): string | null => {
     const slug = THUMB_OVERRIDE[session.title] ?? (session.speakers ? headSlug(session.speakers[0].name) : '');
     return THUMBS_AVAILABLE.has(slug) ? slug : null;
 };
+
+// Talk runtimes (minutes, rounded to the nearest 5) keyed by YouTube id, taken
+// from each recording's actual length.
+const DURATION_MINS: Record<string, number> = {
+    'XY30-iUTB3E': 25,
+    uMvTAF280so: 30,
+    q61M5ch5dVs: 20,
+    erP7U61RqL0: 25,
+    TDvXe6XHU3c: 25,
+    GCJv3w5CDbI: 30,
+    mB4odIH_V1w: 15,
+    C_Ii7v4AWvw: 25,
+    gTjoAERDB5M: 25,
+    q5H2Lcjo29E: 45,
+    mcHscAcv288: 30,
+};
+
+// Rounded runtime in minutes for a session's recording, or null if unknown.
+export const sessionDurationMins = (session: Session): number | null => {
+    const id = session.youtubeUrl ? youtubeId(session.youtubeUrl) : null;
+    return id ? (DURATION_MINS[id] ?? null) : null;
+};
