@@ -18,53 +18,61 @@ export const SESSIONS: Session[] = [
     {
         title: 'Opening Keynote',
         speakers: 'John Masterson (CEO, AG Grid) & Mats Bryntse (Founder & CEO, Bryntum)',
+        youtubeUrl: 'https://youtu.be/XY30-iUTB3E',
     },
     {
         title: 'Goodbye slop; welcome determinism',
         speakers: 'David Khourshid',
         description:
             'Vibe coding feels productive until you have to maintain it. Come for the critique of the nondeterministic status quo, leave with a framework for using AI to build software you actually understand.',
-        youtubeUrl: 'https://www.youtube.com/watch?v=uMvTAF280so',
+        youtubeUrl: 'https://youtu.be/uMvTAF280so',
     },
     {
         title: 'Codebase design for the agent era',
         speakers: 'Stephen Cooper (Team Lead, AG Grid)',
         description:
             "As AI agents become part of the development workflow, codebase structure and well-designed system prompts matter more than ever. This session showed how we're approaching this in the AG Grid and AG Charts codebases..",
+        youtubeUrl: 'https://youtu.be/q61M5ch5dVs',
     },
     {
         title: 'AI in AG Studio',
         speakers: 'Josh Hobson (Developer, AG Grid)',
         description:
             "How do you build a dashboard you can't see? A behind-the-scenes look at AG Studio's multi-agent architecture and the client-side tools that let any LLM build reports it otherwise couldn't.",
+        youtubeUrl: 'https://youtu.be/erP7U61RqL0',
     },
     {
         title: 'Bringing AI to the Canvas',
         speakers: 'Steve Ruiz (CEO, tldraw)',
         description: `At tldraw, we've been bringing agents to our infinite canvas. In December 2025, we ran a one-month experiment named Fairydraw where users could work with three fairies - virtual collaborators who work with you, with your human collaborators, and coordinate together on large tasks.`,
+        youtubeUrl: 'https://youtu.be/TDvXe6XHU3c',
     },
     {
         title: 'Debugging CSS performance with AI',
         speakers: 'Bernie Sumption (Developer, AG Grid)',
         description:
             'CSS performance issues can be subtle and time-consuming. This talk showed how you can guide AI to uncover bugs without needing to learn the intricacies of CSS rendering internals.',
+        youtubeUrl: 'https://youtu.be/GCJv3w5CDbI',
     },
     {
         title: 'Software that moves fleets: Lessons from AG Grid, Bryntum, and Beyond',
         speakers: 'Patrick Rau (Developer, TCS)',
         description:
             "In aviation, the software has to be rock solid. Patrick pulled back the curtain on the components powering Fleetplan's UI, including AG Grid, Bryntum's Scheduler Pro, and the modules behind audit tracking and safety reporting that keep operations airtight.",
+        youtubeUrl: 'https://youtu.be/mB4odIH_V1w',
     },
     {
         title: 'Product Roadmap',
         speakers: 'Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (AG Studio Product Lead, AG Grid)',
         description: "A detailed look at our roadmap, covering AG Grid and Bryntum's suite of tools.",
+        youtubeUrl: 'https://youtu.be/C_Ii7v4AWvw',
     },
     {
         title: 'One-click agentic SDLC',
         speakers: 'Mats Bryntse (Founder & CEO, Bryntum)',
         description:
             'A demo of a headless Claude workflow, built by Bryntum CEO Mats, that turns GitHub issues into mergeable PRs, with agents doing the work, and a custom Kanban UI keeping things in check.',
+        youtubeUrl: 'https://youtu.be/gTjoAERDB5M',
     },
     {
         title: 'How agentic AI Is reshaping software engineering',
@@ -72,12 +80,14 @@ export const SESSIONS: Session[] = [
             'Maggie Appleton (Staff Research Engineer, GitHub), Matt Pocock (Senior Developer Educator, AI Hero), Sophie Koonin (Web Discipline Lead, Monzo)',
         description:
             'As AI reshapes how software gets built, what actually changes for engineers, teams, and developer tools? This panel explored the real-world impact of agentic workflows on software engineering - from code review and system design to cognitive skills, ownership, and developer experience. Practical insights, rapid-fire hot takes, and honest discussion from engineers building beyond the prompt.',
+        youtubeUrl: 'https://youtu.be/q5H2Lcjo29E',
     },
     {
         title: 'Vibe Coding as a Maker',
         speakers: 'Matt Webb',
         description:
             'Matt showed his vibe coding experiments, from his AI clock to an app that points to the centre of the galaxy, and shared some learnings from building hardware at his startup, Inanimate. Then we asked: what are the limits of vibing and agentic coding? And how might we create libraries that agents love?',
+        youtubeUrl: 'https://youtu.be/mcHscAcv288',
     },
 ];
 
