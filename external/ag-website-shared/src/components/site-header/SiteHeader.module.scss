@@ -1,11 +1,20 @@
 @use 'design-system' as *;
 
+// The header element is the container for all nav breakpoints.
+// Use @container site-header queries (not @media) throughout this file so the header
+// responds to its own rendered width — semantically correct and enables per-repo tuning
+// by adjusting .site-header padding in each repo's global CSS without touching this file.
+//
+// Exception: .header's own sticky behaviour stays as @media because a container cannot
+// query its own size.
 .header {
     display: flex;
     align-items: center;
     position: relative;
     background-color: var(--color-bg-site-header);
     transition: background-color 0.5s ease-in-out;
+    container-type: inline-size;
+    container-name: site-header;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         position: sticky;
@@ -32,7 +41,7 @@
     margin-right: auto;
     justify-content: space-between;
 
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+    @container site-header (min-width: #{$breakpoint-docs-nav-medium}) {
         flex-wrap: nowrap;
     }
 }
@@ -63,15 +72,15 @@
     width: 100%;
     margin: 0 var(--layout-horizontal-margins) $spacing-size-4 var(--layout-horizontal-margins);
 
-    @media screen and (min-width: $breakpoint-site-header-extra-small) {
+    @container site-header (min-width: #{$breakpoint-site-header-extra-small}) {
         flex-wrap: nowrap;
     }
 
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+    @container site-header (min-width: #{$breakpoint-docs-nav-medium}) {
         display: contents;
     }
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$breakpoint-site-header-small}) {
         order: 4;
     }
 }
@@ -103,11 +112,11 @@ button.mobileNavButton {
         }
     }
 
-    @media screen and (min-width: $breakpoint-site-header-extra-small) {
+    @container site-header (min-width: #{$breakpoint-site-header-extra-small}) {
         max-width: 120px;
     }
 
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+    @container site-header (min-width: #{$breakpoint-docs-nav-medium}) {
         display: none;
     }
 
@@ -155,7 +164,7 @@ button.mobileNavButton {
         left: 1px;
     }
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$breakpoint-site-header-small}) {
         display: none;
     }
 }
@@ -216,7 +225,7 @@ button.mobileNavButton {
 .mainNavLarge {
     display: none;
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$breakpoint-site-header-small}) {
         display: block;
     }
 }
@@ -224,7 +233,7 @@ button.mobileNavButton {
 #mainNavSmall {
     width: 100%;
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$breakpoint-site-header-small}) {
         display: none;
     }
 }
@@ -235,7 +244,7 @@ button.mobileNavButton {
     background-color: var(--color-bg-mobile-nav);
     transition: background-color 0.5s ease-in-out;
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$breakpoint-site-header-small}) {
         width: auto;
         margin-right: $spacing-size-2;
         margin-left: $spacing-size-2;
@@ -243,7 +252,7 @@ button.mobileNavButton {
 }
 
 .navItemList {
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$breakpoint-site-header-small}) {
         display: flex;
         height: var(--layout-site-header-height);
         align-items: center;
@@ -252,11 +261,11 @@ button.mobileNavButton {
 }
 
 .navItem {
-    @media screen and (max-width: $breakpoint-site-header-small) {
+    @container site-header (max-width: #{$breakpoint-site-header-small}) {
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$breakpoint-site-header-small}) {
         &:hover a::after {
             opacity: 0.25;
             transform: scaleX(1);
@@ -279,7 +288,7 @@ button.mobileNavButton {
     }
 
     #{$selector-darkmode} & {
-        @media screen and (min-width: $breakpoint-site-header-small) {
+        @container site-header (min-width: #{$breakpoint-site-header-small}) {
             border-bottom: none;
         }
     }
@@ -287,7 +296,10 @@ button.mobileNavButton {
 
 a.navLink,
 button.navLink {
-    --horizontal-padding: #{$spacing-size-4 - 2px};
+    // clamp() compresses nav link padding gracefully as the header narrows, widening the
+    // zone in which all links still fit before the hamburger kicks in. The fixed 14px
+    // ceiling and 8px floor keep touch targets reasonable at both extremes.
+    --horizontal-padding: clamp(8px, 1vw, 14px);
 
     display: block;
     position: relative;
@@ -312,7 +324,7 @@ button.navLink {
         color: var(--color-white);
     }
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$breakpoint-site-header-small}) {
         padding-left: var(--horizontal-padding);
         padding-right: var(--horizontal-padding);
 
@@ -362,7 +374,7 @@ button.navLink {
         fill: var(--color-white);
     }
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$breakpoint-site-header-small}) {
         span:not(.navLink) {
             display: none;
         }
@@ -396,7 +408,7 @@ button.navLink {
 .toggleDarkText {
     display: none;
 
-    @media screen and (max-width: $breakpoint-site-header-small) {
+    @container site-header (max-width: #{$breakpoint-site-header-small}) {
         display: inline;
     }
 }

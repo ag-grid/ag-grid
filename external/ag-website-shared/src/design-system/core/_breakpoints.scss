@@ -1,9 +1,14 @@
 // All breakpoints have $breakpoint prefix
-// E.g. @media screen and (min-width: $breakpoint-site-header-small) {}
-$site-header-extra-small: 520px;
-$site-header-small: 960px;
-$site-header-medium: 1200px;
-$site-header-large: 1400px;
+// E.g. @container site-header (min-width: $breakpoint-site-header-small) {}
+//
+// Site-header breakpoints use !default so individual repos can override the collapse
+// point at compile time by setting the variable before their first @use of the design
+// system. The most common one to change is $site-header-small — it controls when the
+// hamburger menu switches to the full horizontal nav.
+$site-header-extra-small: 520px !default;
+$site-header-small: 960px !default;
+$site-header-medium: 1200px !default;
+$site-header-large: 1400px !default;
 
 $horizontal-margins-large: 920px;
 
