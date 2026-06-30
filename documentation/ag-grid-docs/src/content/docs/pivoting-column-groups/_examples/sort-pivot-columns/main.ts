@@ -19,20 +19,17 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', rowGroup: true },
-        { field: 'sport' },
-        { field: 'year', pivot: true },
-        { field: 'age' },
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver' },
-        { field: 'bronze' },
+        { field: 'country', rowGroup: true, enableRowGroup: true, enablePivot: true },
+        { field: 'sport', enableRowGroup: true, enablePivot: true },
+        { field: 'year', pivot: true, enableRowGroup: true, enablePivot: true },
+        { field: 'age', enableValue: true },
+        { field: 'gold', aggFunc: 'sum', enableValue: true },
+        { field: 'silver', enableValue: true },
+        { field: 'bronze', enableValue: true },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 130,
-        enableRowGroup: true,
-        enablePivot: true,
-        enableValue: true,
     },
     autoGroupColumnDef: {
         minWidth: 200,
