@@ -103,7 +103,7 @@ const SESSIONS: Session[] = [
     {
         title: 'How agentic AI Is reshaping software engineering',
         speakers:
-            'Maggie Appleton (Staff Research Engineer, GitHub), Matt Pocock (Senior Developer Educator, AI Hero), Sophie Koonin (Web Discipline Lead, Monzo), Phil Hawksworth (MC)',
+            'Maggie Appleton (Staff Research Engineer, GitHub), Matt Pocock (Senior Developer Educator, AI Hero), Sophie Koonin (Web Discipline Lead, Monzo)',
         description:
             'As AI reshapes how software gets built, what actually changes for engineers, teams, and developer tools? This panel explores the real-world impact of agentic workflows on software engineering - from code review and system design to cognitive skills, ownership, and developer experience. Expect practical insights, rapid-fire hot takes, and honest discussion from engineers building beyond the prompt.',
     },
@@ -255,6 +255,23 @@ const VENUE_IMAGES: VenueImage[] = [
         srcMobile: 'images/campaigns/beyond-the-prompt/venue/savoy-mobile.webp',
         alt: 'Line drawing of IET London at 2 Savoy Place',
     },
+];
+
+// Photos from the day, shown as a black-and-white carousel before the venue
+// section (webp conversions of the event photography).
+const GALLERY_IMAGES = [
+    'images/campaigns/beyond-the-prompt/gallery/gallery-01.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-02.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-03.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-04.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-05.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-06.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-07.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-08.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-09.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-10.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-11.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-12.webp',
 ];
 ---
 
@@ -543,6 +560,36 @@ const VENUE_IMAGES: VenueImage[] = [
             </div>
         </section>
 
+        <section class={styles.gallerySection} aria-label="Photos from the day">
+            <div class={styles.galleryViewport} data-gallery>
+                <ol class={styles.galleryTrack} data-gallery-track>
+                    {
+                        GALLERY_IMAGES.map((src) => (
+                            <li class={styles.gallerySlide}>
+                                <img src={urlWithBaseUrl(src)} alt="" loading="lazy" class={styles.galleryImage} />
+                            </li>
+                        ))
+                    }
+                </ol>
+                <button
+                    type="button"
+                    class:list={[styles.galleryNav, styles.galleryNavPrev]}
+                    data-gallery-prev
+                    aria-label="Previous photo"
+                >
+                    <Icon name="chevronLeft" />
+                </button>
+                <button
+                    type="button"
+                    class:list={[styles.galleryNav, styles.galleryNavNext]}
+                    data-gallery-next
+                    aria-label="Next photo"
+                >
+                    <Icon name="chevronRight" />
+                </button>
+            </div>
+        </section>
+
         <section id="venue" class={styles.venueSection} aria-labelledby="venue-heading">
             <div class={styles.sectionRule}>
                 <h2 id="venue-heading" class={styles.sectionRuleTitle}>The venue</h2>
@@ -608,5 +655,15 @@ const VENUE_IMAGES: VenueImage[] = [
 
     for (const tab of tabs) {
         tab.addEventListener('click', () => activate(tab.dataset.tab ?? 'talks'));
+    }
+
+    // Photo carousel: prev/next buttons scroll the snap track by ~one viewport.
+    for (const gallery of document.querySelectorAll<HTMLElement>('[data-gallery]')) {
+        const track = gallery.querySelector<HTMLElement>('[data-gallery-track]');
+        if (!track) continue;
+        const stepBy = (dir: number) =>
+            track.scrollBy({ left: dir * Math.max(track.clientWidth * 0.8, 280), behavior: 'smooth' });
+        gallery.querySelector('[data-gallery-prev]')?.addEventListener('click', () => stepBy(-1));
+        gallery.querySelector('[data-gallery-next]')?.addEventListener('click', () => stepBy(1));
     }
 </script>
