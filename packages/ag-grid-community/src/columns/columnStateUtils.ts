@@ -401,7 +401,7 @@ function applyFieldState(
     // Pivot sort is isolated from `sort` - applied directly, never routed through the sort service.
     const maybePivotSort = orDefault(stateItem?.pivotSort, defaultState?.pivotSort);
     if (maybePivotSort !== undefined) {
-        column.setPivotSort(normalizeSortDirection(maybePivotSort));
+        column.pivotSort = normalizeSortDirection(maybePivotSort);
     }
 }
 

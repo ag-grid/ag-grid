@@ -259,14 +259,14 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
     }
 
     public progressPivotSortFromEvent(column: AgColumn): void {
-        column.setPivotSort(getNextPivotSort(column.getPivotSort()));
+        column.pivotSort = getNextPivotSort(column.pivotSort);
         // Pivot membership is unchanged, so applyColumnState wouldn't fire this - dispatch it to trigger
         // the pivot refresh (columnPivotChanged → refreshModel step 'pivot') that re-derives column order.
         _dispatchColumnChangedEvent(this.beans.eventSvc, 'columnPivotChanged', [column], 'uiColumnSorted');
     }
 
     public getPivotSort(column: AgColumn): SortDirection | undefined {
-        return column.getPivotSort();
+        return column.pivotSort;
     }
 }
 
@@ -736,7 +736,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         if (patch?.pivotSort !== undefined) {
             return patch.pivotSort;
         }
-        return column.getPivotSort();
+        return column.pivotSort;
     }
 
     public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {

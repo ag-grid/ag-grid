@@ -534,14 +534,6 @@ export class AgColumn<TValue = any>
         this.sortDef = sortDef;
     }
 
-    public getPivotSort(): SortDirection | undefined {
-        return this.pivotSort;
-    }
-
-    public setPivotSort(pivotSort: SortDirection | undefined): void {
-        this.pivotSort = pivotSort;
-    }
-
     public isSortable(): boolean {
         return this.colDef.sortable ?? true;
     }
