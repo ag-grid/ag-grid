@@ -246,6 +246,9 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 .heroMeta {
     display: flex;
     flex-wrap: wrap;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
     gap: 8px 24px;
     margin-top: 8px;
     font-family: 'Geist Mono', ui-monospace, monospace;
