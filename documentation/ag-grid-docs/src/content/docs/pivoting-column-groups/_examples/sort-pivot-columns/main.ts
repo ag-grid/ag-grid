@@ -37,7 +37,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     pivotMode: true,
     sideBar: {
         toolPanels: ['columns'],
-        defaultToolPanel: '',
     },
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
