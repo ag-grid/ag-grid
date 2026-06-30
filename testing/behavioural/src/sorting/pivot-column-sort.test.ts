@@ -87,6 +87,19 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
         expect(yearState.sort ?? null).toBeNull();
     });
 
+    test('column state round-trips pivotSort: unset serializes as asc, null (no sort) is preserved', async () => {
+        const api = createPivotGrid();
+        await asyncSetTimeout(10);
+
+        // Unset resolves to the ascending default.
+        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('asc');
+
+        // null is the distinct "no sort" value and must survive serialization, not collapse to asc.
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: null }] });
+        await asyncSetTimeout(10);
+        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBeNull();
+    });
+
     test('desc reverses correctly when data insertion order differs from sorted order', async () => {
         const gridOptions: GridOptions = {
             columnDefs: [
