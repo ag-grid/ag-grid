@@ -2667,6 +2667,7 @@ AddType application/x-gzip .gz .tgz
     Redirect 301 /side-data-grid/integrated-charts/ /javascript-data-grid/integrated-charts/
     Redirect 301 /core-data-grid/integrated-charts/ /javascript-data-grid/integrated-charts/
     Redirect 301 /vuejs-charts/ https://www.ag-grid.com/charts/
+    Redirect 301 /campaigns/beyond-the-prompt/ /community/beyond-the-prompt/
     RedirectMatch 301 "^/gallery/(.*)" "https://www.ag-grid.com/charts/gallery/$1"
     RedirectMatch 301 "^/options(/.*)?" "https://www.ag-grid.com/charts/options/"
     RedirectMatch 301 "^/vuejs-charts.*" "https://www.ag-grid.com/charts/vue/quick-start/"
