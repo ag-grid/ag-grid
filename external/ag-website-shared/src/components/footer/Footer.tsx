@@ -16,25 +16,32 @@ interface FooterProps {
 const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
     const slugger = new GithubSlugger();
 
-    return footerItems.map(({ title, links }) => (
-        <div key={title} className={styles.menuColumn}>
-            <h2>{title}</h2>
-            <ul className="list-style-none">
-                {links.map(({ name, url, newTab, iconName }: any) => (
-                    <li key={`${title}_${name}`}>
-                        <a
-                            id={`${slugger.slug(name)}-nav`}
-                            href={urlWithBaseUrl(url)}
-                            {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
-                        >
-                            {iconName && <Icon name={iconName} />}
-                            {name}
-                        </a>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    ));
+    return footerItems.map(({ title, links }) => {
+        // Associate each link list with its (non-heading) title so assistive tech still announces the
+        // group label. SE-45 deliberately drops the <h2> to keep these out of the page heading outline.
+        const titleId = `footer-${new GithubSlugger().slug(title)}`;
+        return (
+            <div key={title} className={styles.menuColumn}>
+                <span className={styles.menuColumnTitle} id={titleId}>
+                    {title}
+                </span>
+                <ul className="list-style-none" aria-labelledby={titleId}>
+                    {links.map(({ name, url, newTab, iconName }: any) => (
+                        <li key={`${title}_${name}`}>
+                            <a
+                                id={`${slugger.slug(name)}-nav`}
+                                href={urlWithBaseUrl(url)}
+                                {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
+                            >
+                                {iconName && <Icon name={iconName} />}
+                                {name}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        );
+    });
 };
 
 export const Footer = ({ showMicrosoftMessage, footerItems }: FooterProps) => {

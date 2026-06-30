@@ -4,9 +4,11 @@ import { createHash } from 'node:crypto';
 import { DARK_MODE_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
 import {
     ASTRO_HYDRATION_HASHES_VERIFIED_FOR,
+    BRANCH_BUILDS_PATH_CONDITION,
     CAMPAIGNS_PATH_CONDITION,
     CAMPAIGNS_PATH_REGEXP,
     EXAMPLES_PATH_REGEXP,
+    getBranchBuildsCspIfOverride,
     getCspDirectives,
     getScopedCspHtaccessBlock,
 } from './cspRules';
@@ -177,6 +179,36 @@ describe('cspRules', () => {
             //      scripts log their missing 'sha256-...' hashes in the console.
             //   4. update ASTRO_HYDRATION_SCRIPT_HASHES and ASTRO_HYDRATION_HASHES_VERIFIED_FOR.
             expect(astroPackageJson.version).toBe(ASTRO_HYDRATION_HASHES_VERIFIED_FOR);
+        });
+    });
+
+    describe('AG-17134: /branch-builds/ CSP exemption (staging-only)', () => {
+        it('matches only paths under /branch-builds/', () => {
+            const matches = (uri: string) =>
+                new RegExp(BRANCH_BUILDS_PATH_CONDITION.replace('%{REQUEST_URI} =~ m#', '').replace(/#$/, '')).test(
+                    uri
+                );
+            expect(matches('/branch-builds/')).toBe(true);
+            expect(matches('/branch-builds/my-branch/getting-started/')).toBe(true);
+            // A branch build's own /examples/ paths live under /branch-builds/, so they
+            // must NOT be picked up by the site-wide examples/campaigns conditions.
+            expect(EXAMPLES_PATH_REGEXP.test('/branch-builds/my-branch/examples/foo/')).toBe(false);
+            expect(CAMPAIGNS_PATH_REGEXP.test('/branch-builds/my-branch/campaigns/bryntum-gantt/')).toBe(false);
+            expect(matches('/getting-started/')).toBe(false);
+        });
+
+        it('unsets the CSP header without re-setting one (no policy served)', () => {
+            const block = getBranchBuildsCspIfOverride('enforce');
+            expect(block).toContain(`<If "${BRANCH_BUILDS_PATH_CONDITION}">`);
+            expect(block).toContain('Header always unset Content-Security-Policy');
+            // Exempt, not scoped: nothing is re-set inside the override.
+            expect(block).not.toContain('Header always set Content-Security-Policy');
+        });
+
+        it('clears the header form matching the mode', () => {
+            expect(getBranchBuildsCspIfOverride('report-only')).toContain(
+                'Header always unset Content-Security-Policy-Report-Only'
+            );
         });
     });
 

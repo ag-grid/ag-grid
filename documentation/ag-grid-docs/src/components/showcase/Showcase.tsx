@@ -83,10 +83,7 @@ const ShowcaseItem: React.FC<ShowcaseItemProps> = ({
                 <span className={styles.showcaseIcon}>{titleIcon}</span>
                 <span className={styles.showcaseLogo}>{projectLogo}</span>
             </div>
-            <h3 className={styles.showcaseTitle}>
-                {title}
-                <span className={styles.showcaseName}></span>
-            </h3>
+            <h3 className={styles.showcaseTitle}>{title}</h3>
             <p className={styles.showcaseDescription}>{description}</p>
             <div className={styles.showcaseLinksWrapper}>
                 <a

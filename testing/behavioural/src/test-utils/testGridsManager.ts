@@ -13,10 +13,10 @@ import {
     getGridElement,
 } from 'ag-grid-community';
 
+import { ignoreConsoleLicenseKeyError } from './ignoreConsoleLicenseKeyError';
 import { patchBeansToJson } from './patchBeansToJson';
 import { mockGridLayout } from './polyfills/mockGridLayout';
 import { waitForEvent } from './test-utils-events';
-import { ignoreConsoleLicenseKeyError } from './utils';
 
 export interface TestGridManagerOptions {
     /** The modules to register when a grid gets created */

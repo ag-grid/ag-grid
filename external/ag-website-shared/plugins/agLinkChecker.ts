@@ -13,6 +13,12 @@ type Options = {
 };
 
 const IGNORED_PATHS = ['/archive'];
+const HREF_PATTERNS_TO_IGNORE = [
+    '?', // Links with queries
+    '#reference-', // API references, as they are rendered client side
+    '#example-', // Example references, as they aren't headings
+    '#contact-section', // Contact form on about page
+];
 
 const isCI =
     process.env.NX_TASK_TARGET_CONFIGURATION === 'ci' || process.env.NX_TASK_TARGET_CONFIGURATION === 'staging';
@@ -85,14 +91,11 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
         const thisFileUrl = filePathToUrl(filePath);
 
         const recordUsage = (href: string) => {
-            // Strip any query string (?...) while keeping the path and fragment,
-            // so "/page/?ref=blog#foo" still validates the page and the #foo
-            // anchor. Only treat '?' as the query start when it precedes the
-            // fragment — a '?' after '#' is part of the fragment itself.
-            const firstHash = href.indexOf('#');
-            const queryIndex = href.indexOf('?');
-            if (queryIndex !== -1 && (firstHash === -1 || queryIndex < firstHash)) {
-                href = href.slice(0, queryIndex) + (firstHash !== -1 ? href.slice(firstHash) : '');
+            // Query links and anchors injected client-side (API/example
+            // references, the about-page contact form) have no static target
+            // to resolve against.
+            if (HREF_PATTERNS_TO_IGNORE.some((pattern) => href.includes(pattern))) {
+                return;
             }
             // An empty fragment (#) or #top both scroll to the top of the page;
             // they always resolve and have no target element to check against.
@@ -109,6 +112,10 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
             let link: string | undefined;
             if (href.startsWith('#')) {
                 link = `${thisFileUrl}${href}`;
+                // A page linking to its own anchor also marks that anchor as a
+                // valid target, covering headings rendered by client-only
+                // components (e.g. the licence-install steps).
+                anchors.add(link);
             } else if (href.startsWith('/')) {
                 link = href;
             }

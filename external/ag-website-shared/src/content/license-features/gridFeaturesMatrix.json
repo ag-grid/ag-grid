@@ -7,7 +7,7 @@
             {
                 "label": {
                     "name": "MCP Server",
-                    "link": "https://www.ag-grid.com/react-data-grid/mcp-server/"
+                    "link": "grid:./mcp-server/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -16,7 +16,7 @@
             {
                 "label": {
                     "name": "AI Toolkit",
-                    "link": "https://www.ag-grid.com/react-data-grid/ai-toolkit/"
+                    "link": "grid:./ai-toolkit/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -32,7 +32,7 @@
             {
                 "label": {
                     "name": "Sparklines",
-                    "link": "https://www.ag-grid.com/react-data-grid/sparklines-overview/"
+                    "link": "grid:./sparklines-overview/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -41,7 +41,7 @@
             {
                 "label": {
                     "name": "Integrated Charts",
-                    "link": "https://www.ag-grid.com/react-data-grid/integrated-charts/"
+                    "link": "grid:./integrated-charts/"
                 },
                 "community": false,
                 "enterprise": false,
@@ -60,6 +60,91 @@
     },
     {
         "group": {
+            "name": "Columns"
+        },
+        "items": [
+            {
+                "name": "Basic Column Operations",
+                "isSubGroup": true,
+                "items": [
+                    {
+                        "label": {
+                            "name": "Headers",
+                            "link": "grid:./column-headers/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Groups",
+                            "link": "grid:./column-groups/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Sizing",
+                            "link": "grid:./column-sizing/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Moving",
+                            "link": "grid:./column-moving/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Pinning",
+                            "link": "grid:./column-pinning/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Spanning",
+                            "link": "grid:./column-spanning/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    }
+                ]
+            },
+            {
+                "label": {
+                    "name": "Auto-Generate Columns",
+                    "link": "grid:./auto-generate-columns/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Calculated Columns",
+                    "link": "grid:./calculated-columns/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            }
+        ]
+    },
+    {
+        "group": {
             "name": "Filtering"
         },
         "items": [
@@ -70,7 +155,7 @@
                     {
                         "label": {
                             "name": "Text Filter",
-                            "link": "https://www.ag-grid.com/react-data-grid/filter-text/"
+                            "link": "grid:./filter-text/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -79,7 +164,7 @@
                     {
                         "label": {
                             "name": "Number Filter",
-                            "link": "https://www.ag-grid.com/react-data-grid/filter-number/"
+                            "link": "grid:./filter-number/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -88,7 +173,7 @@
                     {
                         "label": {
                             "name": "Date Filter",
-                            "link": "https://www.ag-grid.com/react-data-grid/filter-date/"
+                            "link": "grid:./filter-date/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -99,7 +184,7 @@
             {
                 "label": {
                     "name": "Quick Filter",
-                    "link": "https://www.ag-grid.com/react-data-grid/filter-quick/"
+                    "link": "grid:./filter-quick/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -108,7 +193,7 @@
             {
                 "label": {
                     "name": "External Filter",
-                    "link": "https://www.ag-grid.com/react-data-grid/filter-external/"
+                    "link": "grid:./filter-external/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -121,7 +206,7 @@
                     {
                         "label": {
                             "name": "Set Filter",
-                            "link": "https://www.ag-grid.com/react-data-grid/filter-set/"
+                            "link": "grid:./filter-set/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -130,7 +215,7 @@
                     {
                         "label": {
                             "name": "Multi Filter",
-                            "link": "https://www.ag-grid.com/react-data-grid/filter-multi/"
+                            "link": "grid:./filter-multi/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -141,7 +226,7 @@
             {
                 "label": {
                     "name": "Advanced Filter",
-                    "link": "https://www.ag-grid.com/react-data-grid/filter-advanced/"
+                    "link": "grid:./filter-advanced/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -157,7 +242,7 @@
             {
                 "label": {
                     "name": "Row Selection",
-                    "link": "https://www.ag-grid.com/react-data-grid/row-selection/"
+                    "link": "grid:./row-selection/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -166,7 +251,7 @@
             {
                 "label": {
                     "name": "Row Numbers",
-                    "link": "https://www.ag-grid.com/react-data-grid/row-numbers/"
+                    "link": "grid:./row-numbers/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -175,7 +260,7 @@
             {
                 "label": {
                     "name": "Cell Range Selection",
-                    "link": "https://www.ag-grid.com/react-data-grid/range-selection/"
+                    "link": "grid:./range-selection/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -184,7 +269,7 @@
             {
                 "label": {
                     "name": "Fill Handle",
-                    "link": "https://www.ag-grid.com/react-data-grid/range-selection-fill-handle/"
+                    "link": "grid:./range-selection-fill-handle/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -200,7 +285,7 @@
             {
                 "label": {
                     "name": "Formulas",
-                    "link": "https://www.ag-grid.com/react-data-grid/formulas"
+                    "link": "grid:./formulas"
                 },
                 "community": false,
                 "enterprise": true,
@@ -209,7 +294,7 @@
             {
                 "label": {
                     "name": "Find",
-                    "link": "https://www.ag-grid.com/react-data-grid/find"
+                    "link": "grid:./find"
                 },
                 "community": false,
                 "enterprise": true,
@@ -229,7 +314,7 @@
                     {
                         "label": {
                             "name": "Text Editor",
-                            "link": "https://www.ag-grid.com/react-data-grid/provided-cell-editors-text/"
+                            "link": "grid:./provided-cell-editors-text/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -238,7 +323,7 @@
                     {
                         "label": {
                             "name": "Number Editor",
-                            "link": "https://www.ag-grid.com/react-data-grid/provided-cell-editors-number/"
+                            "link": "grid:./provided-cell-editors-number/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -247,7 +332,7 @@
                     {
                         "label": {
                             "name": "Date Editor",
-                            "link": "https://www.ag-grid.com/react-data-grid/provided-cell-editors-date/"
+                            "link": "grid:./provided-cell-editors-date/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -256,7 +341,7 @@
                     {
                         "label": {
                             "name": "Checkbox Editor",
-                            "link": "https://www.ag-grid.com/react-data-grid/provided-cell-editors-checkbox/"
+                            "link": "grid:./provided-cell-editors-checkbox/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -265,7 +350,7 @@
                     {
                         "label": {
                             "name": "Large Text Editor",
-                            "link": "https://www.ag-grid.com/react-data-grid/provided-cell-editors-large-text/"
+                            "link": "grid:./provided-cell-editors-large-text/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -274,7 +359,7 @@
                     {
                         "label": {
                             "name": "Select Editor",
-                            "link": "https://www.ag-grid.com/react-data-grid/provided-cell-editors-select/"
+                            "link": "grid:./provided-cell-editors-select/"
                         },
                         "community": true,
                         "enterprise": true,
@@ -285,7 +370,7 @@
             {
                 "label": {
                     "name": "Batch Editing",
-                    "link": "https://www.ag-grid.com/react-data-grid/cell-editing-batch/"
+                    "link": "grid:./cell-editing-batch/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -294,7 +379,7 @@
             {
                 "label": {
                     "name": "Undo / Redo",
-                    "link": "https://www.ag-grid.com/react-data-grid/undo-redo-edits/"
+                    "link": "grid:./undo-redo-edits/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -303,7 +388,7 @@
             {
                 "label": {
                     "name": "Advanced Select Editor",
-                    "link": "https://www.ag-grid.com/react-data-grid/provided-cell-editors-rich-select/"
+                    "link": "grid:./provided-cell-editors-rich-select/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -319,7 +404,7 @@
             {
                 "label": {
                     "name": "CSV Export",
-                    "link": "https://www.ag-grid.com/react-data-grid/csv-export/"
+                    "link": "grid:./csv-export/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -328,7 +413,7 @@
             {
                 "label": {
                     "name": "Excel Export",
-                    "link": "https://www.ag-grid.com/react-data-grid/excel-export/"
+                    "link": "grid:./excel-export/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -337,7 +422,7 @@
             {
                 "label": {
                     "name": "Clipboard Operations",
-                    "link": "https://www.ag-grid.com/react-data-grid/clipboard/"
+                    "link": "grid:./clipboard/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -346,7 +431,7 @@
             {
                 "label": {
                     "name": "Drag & Drop",
-                    "link": "https://www.ag-grid.com/react-data-grid/drag-and-drop/"
+                    "link": "grid:./drag-and-drop/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -362,7 +447,7 @@
             {
                 "label": {
                     "name": "Aggregation",
-                    "link": "https://www.ag-grid.com/react-data-grid/aggregation/"
+                    "link": "grid:./aggregation/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -371,7 +456,7 @@
             {
                 "label": {
                     "name": "Row Grouping",
-                    "link": "https://www.ag-grid.com/react-data-grid/grouping/"
+                    "link": "grid:./grouping/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -380,7 +465,7 @@
             {
                 "label": {
                     "name": "Pivoting",
-                    "link": "https://www.ag-grid.com/react-data-grid/pivoting/"
+                    "link": "grid:./pivoting/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -389,7 +474,7 @@
             {
                 "label": {
                     "name": "Tree Data",
-                    "link": "https://www.ag-grid.com/react-data-grid/tree-data/"
+                    "link": "grid:./tree-data/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -398,7 +483,7 @@
             {
                 "label": {
                     "name": "Master Detail",
-                    "link": "https://www.ag-grid.com/react-data-grid/server-side-model-master-detail/"
+                    "link": "grid:./server-side-model-master-detail/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -418,7 +503,7 @@
                     {
                         "label": {
                             "name": "Sorting",
-                            "link": "https://www.ag-grid.com/react-data-grid/infinite-scrolling/#sorting--filtering"
+                            "link": "grid:./infinite-scrolling/#sorting--filtering"
                         },
                         "community": true,
                         "enterprise": true,
@@ -427,7 +512,7 @@
                     {
                         "label": {
                             "name": "Filtering",
-                            "link": "https://www.ag-grid.com/react-data-grid/infinite-scrolling/#sorting--filtering"
+                            "link": "grid:./infinite-scrolling/#sorting--filtering"
                         },
                         "community": true,
                         "enterprise": true,
@@ -436,7 +521,7 @@
                     {
                         "label": {
                             "name": "Selection",
-                            "link": "https://www.ag-grid.com/react-data-grid/infinite-scrolling/#selection"
+                            "link": "grid:./infinite-scrolling/#selection"
                         },
                         "community": true,
                         "enterprise": true,
@@ -445,7 +530,7 @@
                     {
                         "label": {
                             "name": "Pagination",
-                            "link": "https://www.ag-grid.com/react-data-grid/infinite-scrolling/#pagination"
+                            "link": "grid:./infinite-scrolling/#pagination"
                         },
                         "community": true,
                         "enterprise": true,
@@ -460,7 +545,7 @@
                     {
                         "label": {
                             "name": "Row Grouping",
-                            "link": "https://www.ag-grid.com/react-data-grid/grouping/"
+                            "link": "grid:./grouping/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -469,7 +554,7 @@
                     {
                         "label": {
                             "name": "Pivoting",
-                            "link": "https://www.ag-grid.com/react-data-grid/pivoting/"
+                            "link": "grid:./pivoting/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -478,7 +563,7 @@
                     {
                         "label": {
                             "name": "Tree Data",
-                            "link": "https://www.ag-grid.com/react-data-grid/server-side-model-tree-data/"
+                            "link": "grid:./server-side-model-tree-data/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -487,7 +572,7 @@
                     {
                         "label": {
                             "name": "Master Detail",
-                            "link": "https://www.ag-grid.com/react-data-grid/server-side-model-master-detail/"
+                            "link": "grid:./server-side-model-master-detail/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -496,7 +581,7 @@
                     {
                         "label": {
                             "name": "Transactions",
-                            "link": "https://www.ag-grid.com/react-data-grid/server-side-model-updating-transactions/"
+                            "link": "grid:./server-side-model-updating-transactions/"
                         },
                         "community": false,
                         "enterprise": true,
@@ -514,7 +599,7 @@
             {
                 "label": {
                     "name": "Column Menu",
-                    "link": "https://www.ag-grid.com/react-data-grid/column-menu/"
+                    "link": "grid:./column-menu/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -523,7 +608,7 @@
             {
                 "label": {
                     "name": "Context Menu",
-                    "link": "https://www.ag-grid.com/react-data-grid/context-menu/"
+                    "link": "grid:./context-menu/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -532,7 +617,7 @@
             {
                 "label": {
                     "name": "Columns Tool Panel",
-                    "link": "https://www.ag-grid.com/react-data-grid/tool-panel-columns/"
+                    "link": "grid:./tool-panel-columns/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -541,7 +626,7 @@
             {
                 "label": {
                     "name": "Filters Tool Panel",
-                    "link": "https://www.ag-grid.com/react-data-grid/tool-panel-filters/"
+                    "link": "grid:./tool-panel-filters/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -550,7 +635,7 @@
             {
                 "label": {
                     "name": "Status Bar",
-                    "link": "https://www.ag-grid.com/react-data-grid/status-bar/"
+                    "link": "grid:./status-bar/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -566,7 +651,7 @@
             {
                 "label": {
                     "name": "Accessibility",
-                    "link": "https://www.ag-grid.com/react-data-grid/accessibility/"
+                    "link": "grid:./accessibility/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -575,7 +660,7 @@
             {
                 "label": {
                     "name": "Localisation",
-                    "link": "https://www.ag-grid.com/react-data-grid/localisation/"
+                    "link": "grid:./localisation/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -584,7 +669,7 @@
             {
                 "label": {
                     "name": "Custom Components",
-                    "link": "https://www.ag-grid.com/react-data-grid/components/"
+                    "link": "grid:./components/"
                 },
                 "community": true,
                 "enterprise": true,
@@ -600,7 +685,7 @@
             {
                 "label": {
                     "name": "Enterprise Support",
-                    "link": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/"
+                    "link": "grid:./community-vs-enterprise/"
                 },
                 "community": {
                     "value": false,
@@ -618,7 +703,7 @@
             {
                 "label": {
                     "name": "Perpetual License",
-                    "link": "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/"
+                    "link": "grid:./community-vs-enterprise/"
                 },
                 "community": {
                     "value": false,

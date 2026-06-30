@@ -3,7 +3,7 @@
         "title": "AG Grid: A Fast, Powerful, and Flexible JavaScript Data Grid",
         "description": "Explore AG Grid's fast, powerful, and customisable JavaScript Data Grid library. Add high-performance JavaScript Data Grids to your applications in minutes, for free."
     },
-    "framework": "typescript",
+    "internalFramework": "typescript",
     "packageName": "ag-grid-community",
     "docsPath": "javascript-data-grid",
     "analyticsPrefix": "javascript-data-grid",

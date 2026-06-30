@@ -73,6 +73,7 @@ export { AgPositionableFeature } from './rendering/agPositionableFeature';
 export type { PositionableOptions, ResizableSides, ResizableStructure } from './rendering/agPositionableFeature';
 export { AutoScrollService } from './rendering/autoScrollService';
 export { CssClassManager } from './rendering/cssClassManager';
+export { _setStyleInjectionEnabledForTesting } from './theming/inject';
 export { defaultFontFamily, defaultLightColorSchemeParams, sharedDefaults } from './theming/shared/shared-css';
 export type { SharedThemeParams } from './theming/shared/shared-css';
 export {

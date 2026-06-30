@@ -229,6 +229,11 @@ export class GridRows<TData = any> {
         return new GridRowsDiagramTree(this).diagramToString(printErrors, columns);
     }
 
+    /** Log this grid's diagram to the console — debugging aid. */
+    public draw(): void {
+        console.log(this.makeDiagram());
+    }
+
     [util.inspect.custom](): string {
         return this.makeDiagram(true);
     }

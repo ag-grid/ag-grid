@@ -49,7 +49,7 @@ export default [
                 },
             ],
             'no-restricted-properties': [
-                'warn',
+                'error',
                 { property: 'innerText', message: 'Prefer textContent where possible' },
                 { property: 'innerHTML', message: 'Prefer textContent where possible' },
                 {
@@ -73,6 +73,13 @@ export default [
             'no-console': 'error',
 
             'unicorn/prefer-modern-dom-apis': 'error',
+        },
+    },
+    {
+        // Test files are exempt from the runtime-focused restrictions above.
+        files: ['**/*.test.ts', '**/*.test.tsx'],
+        rules: {
+            'no-restricted-properties': 'off',
         },
     },
     {

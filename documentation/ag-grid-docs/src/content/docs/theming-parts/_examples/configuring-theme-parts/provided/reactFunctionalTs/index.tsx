@@ -16,6 +16,7 @@ import {
     iconSetQuartzRegular,
     themeAlpine,
     themeBalham,
+    themeMaterial,
     themeQuartz,
 } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
@@ -25,6 +26,7 @@ const baseThemes = [
     { id: 'themeQuartz', value: themeQuartz },
     { id: 'themeBalham', value: themeBalham },
     { id: 'themeAlpine', value: themeAlpine },
+    { id: 'themeMaterial', value: themeMaterial },
 ];
 
 const colorSchemes = [

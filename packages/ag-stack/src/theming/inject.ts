@@ -2,10 +2,23 @@ import type { IEnvironment } from '../interfaces/iEnvironment';
 import { VERSION } from '../version';
 import sharedCSS from './shared/shared.css';
 
-export const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
+const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
 
 /** For testing, if true, only Vanilla examples will work and they will use legacy themes. */
 export const FORCE_LEGACY_THEMES = false;
+
+let styleInjectionForcedForTesting = false;
+
+/**
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export const _setStyleInjectionEnabledForTesting = (enabled: boolean): void => {
+    styleInjectionForcedForTesting = enabled;
+};
+
+/** @internal True when injection must be skipped: no DOM (unless force-enabled for tests) or legacy themes. */
+export const _isStyleInjectionDisabled = (): boolean =>
+    (IS_SSR && !styleInjectionForcedForTesting) || FORCE_LEGACY_THEMES;
 
 type InjectedStyle = {
     rawCss: string;
@@ -24,7 +37,7 @@ export const _injectGlobalCSS = (
     nonce: string | undefined,
     isParams: boolean = false
 ) => {
-    if (IS_SSR || FORCE_LEGACY_THEMES) {
+    if (_isStyleInjectionDisabled()) {
         return;
     }
 
@@ -94,7 +107,7 @@ export const _useParamsCss = (
     layer: string | undefined,
     nonce: string | undefined
 ) => {
-    if (IS_SSR || FORCE_LEGACY_THEMES) {
+    if (_isStyleInjectionDisabled()) {
         return;
     }
 

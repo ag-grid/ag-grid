@@ -3,10 +3,10 @@ import type { GridApi, RowDragCancelEvent, RowDragEndEvent, RowDragEvent, RowDra
 import { DestroyedRowNodesChecker } from '../grid-test-utils';
 import type { RowElementReference } from '../gridRows/gridHtmlRows';
 import { getGridOwnerDocument, getRowHtmlElement } from '../gridRows/gridHtmlRows';
+import { asyncSetTimeout } from '../node-utils';
 import { mockGridLayout } from '../polyfills/mockGridLayout';
 import { initPointerEventPolyfill } from '../polyfills/pointerEvent';
 import { TestGridsManager } from '../testGridsManager';
-import { asyncSetTimeout } from '../utils';
 import type { DragInteractionType } from './drag-event-dispatcher';
 import { DragEventDispatcher } from './drag-event-dispatcher';
 import { assertDropIndicatorVisible } from './drag-n-drop-utils';

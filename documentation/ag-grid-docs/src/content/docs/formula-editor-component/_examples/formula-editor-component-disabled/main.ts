@@ -5,6 +5,7 @@ import {
     NumberEditorModule,
     TextEditorModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
@@ -13,13 +14,7 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    FormulaModule,
-    NumberEditorModule,
-    TextEditorModule,
-    enableDevValidations,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, FormulaModule, NumberEditorModule, TextEditorModule]);
 
 let gridApi: GridApi;
 

@@ -90,6 +90,12 @@ jobs:
               - 'nx.json'
               - 'tsconfig.*.json'
               - 'jest.preset.js'
+              # The .htaccess / CSP generation lives under documentation/ but is exercised
+              # by code-CI jobs — the e2e htaccess harness (test:htaccess) and its own unit
+              # tests (cspRules/htaccessRules .test.ts) — so route changes here through full
+              # code CI rather than the docs-only path, where both would be skipped.
+              - 'documentation/ag-grid-docs/src/utils/htaccess/**'
+              - 'documentation/ag-grid-docs/src/utils/csp/**'
             ci:
               - '.github/**'
             docs:
@@ -273,6 +279,10 @@ jobs:
       fail-fast: false
     env:
       NX_PARALLEL: 1
+      # Turn the htaccess redirect harness (test:htaccess, a dependsOn of test:e2e) into a hard
+      # gate in CI: ubuntu-latest ships apache2, so a skip here means Apache went missing rather
+      # than a legitimately-unavailable environment. Local runs without Apache still skip.
+      HTTPD_REQUIRED: 1
     steps:
       - name: Checkout
         id: checkout

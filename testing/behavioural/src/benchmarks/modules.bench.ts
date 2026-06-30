@@ -1,31 +1,27 @@
-import type { BenchOptions } from 'vitest';
 import { bench, suite } from 'vitest';
 
 import type { ColDef, GridOptions, Module, Params } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, NumberFilterModule, TextEditorModule } from 'ag-grid-community';
 import { AllEnterpriseModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { BenchGridsManager, benchDefaults } from './bench-utils';
 
 suite('render cells with different module sets', () => {
     const rowData = buildRandomData(100);
     const columnDefs: ColDef[] = buildColDefs(15);
-    const element = document.createElement('div');
     let params: Params | undefined;
 
-    const gridsManager = new TestGridsManager({ benchmark: true });
+    const gridsManager = new BenchGridsManager();
 
-    const makeBenchOptions = (modules: Module[] = []): BenchOptions => {
-        return {
-            throws: true,
+    const makeBenchOptions = (modules: Module[] = []) =>
+        benchDefaults({
             setup: () => {
                 params = { modules };
             },
-            teardown: () => {
-                gridsManager.reset();
+            teardown: async () => {
+                await gridsManager.reset();
             },
-        };
-    };
+        });
 
     const gridOptions: GridOptions = { columnDefs, rowData };
 
@@ -39,8 +35,8 @@ suite('render cells with different module sets', () => {
         bench(
             'Run with ' + modules.map((m) => m.moduleName).join(),
             () => {
-                gridsManager.createGrid(element, gridOptions, params);
-                gridsManager.reset();
+                gridsManager.createGrid('M', gridOptions, params);
+                gridsManager.destroyAll();
             },
             makeBenchOptions(modules)
         );
@@ -76,12 +72,7 @@ function buildRandomData(numberOfRows: number): IRowData[] {
 function buildColDefs(numberOfCols: number): ColDef[] {
     const cols: ColDef[] = [];
     for (let i = 0; i < numberOfCols; i++) {
-        cols.push({
-            field: `col-${i}`,
-            // rowGroup: i === 0,
-            width: 150,
-            // editable: i % 2 === 0, // make every second column editable
-        });
+        cols.push({ field: `col-${i}`, width: 150 });
     }
     return cols;
 }

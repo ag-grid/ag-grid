@@ -3,7 +3,7 @@
         "title": "AG Grid: A Fast, Powerful, and Flexible React Data Table",
         "description": "Explore AG Grid's fast, powerful, and customisable React Table library. Add high-performance React Data Tables to your React applications in minutes, for free."
     },
-    "framework": "reactFunctionalTs",
+    "internalFramework": "reactFunctionalTs",
     "packageName": "ag-grid-react",
     "docsPath": "react-data-grid",
     "analyticsPrefix": "react-table",

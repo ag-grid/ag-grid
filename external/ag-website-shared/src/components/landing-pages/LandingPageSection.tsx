@@ -176,6 +176,12 @@ export const LandingPageSection: FunctionComponent<Props> = ({
     children,
     maxWidth,
 }) => {
+    // Only emit heading elements that have content — sections such as the customer-logos
+    // strip pass no tag/heading/subHeading and must not render empty <h2>/<h3>/<h4> tags.
+    const hasHeading = Boolean(heading || headingHtml);
+    const hasSubHeading = Boolean(subHeading || subHeadingHtml);
+    const hasHeader = Boolean(tag) || hasHeading || hasSubHeading || Boolean(ctaUrl);
+
     return (
         <div
             id={id}
@@ -183,32 +189,36 @@ export const LandingPageSection: FunctionComponent<Props> = ({
                 [styles.withBackgroundGradient]: showBackgroundGradient,
             })}
         >
-            <header className={styles.headingContainer} style={{ maxWidth: maxWidth }}>
-                <h2 className={styles.tag}>{tag}</h2>
+            {hasHeader && (
+                <header className={styles.headingContainer} style={{ maxWidth: maxWidth }}>
+                    {tag && <h2 className={styles.tag}>{tag}</h2>}
 
-                {headingHtml ? (
-                    <h3
-                        className={styles.heading}
-                        dangerouslySetInnerHTML={{ __html: decodeURIComponent(headingHtml) }}
-                    />
-                ) : (
-                    <h3 className={styles.heading}>{heading}</h3>
-                )}
+                    {hasHeading &&
+                        (headingHtml ? (
+                            <h3
+                                className={styles.heading}
+                                dangerouslySetInnerHTML={{ __html: decodeURIComponent(headingHtml) }}
+                            />
+                        ) : (
+                            <h3 className={styles.heading}>{heading}</h3>
+                        ))}
 
-                {subHeadingHtml ? (
-                    <h4 className={styles.subHeading} dangerouslySetInnerHTML={{ __html: subHeadingHtml }}></h4>
-                ) : (
-                    <h4 className={styles.subHeading}>{subHeading}</h4>
-                )}
+                    {hasSubHeading &&
+                        (subHeadingHtml ? (
+                            <h4 className={styles.subHeading} dangerouslySetInnerHTML={{ __html: subHeadingHtml }}></h4>
+                        ) : (
+                            <h4 className={styles.subHeading}>{subHeading}</h4>
+                        ))}
 
-                {ctaUrl && isFramework && <CTAWithFrameworks ctaId={ctaId} ctaTitle={ctaTitle} ctaUrl={ctaUrl} />}
+                    {ctaUrl && isFramework && <CTAWithFrameworks ctaId={ctaId} ctaTitle={ctaTitle} ctaUrl={ctaUrl} />}
 
-                {ctaUrl && !isFramework && (
-                    <a id={ctaId} href={ctaUrl} className={classnames([styles.ctaButton, 'button-tertiary'])}>
-                        {ctaTitle} <Icon name="chevronRight" />
-                    </a>
-                )}
-            </header>
+                    {ctaUrl && !isFramework && (
+                        <a id={ctaId} href={ctaUrl} className={classnames([styles.ctaButton, 'button-tertiary'])}>
+                            {ctaTitle} <Icon name="chevronRight" />
+                        </a>
+                    )}
+                </header>
+            )}
 
             {children}
         </div>

@@ -1,6 +1,9 @@
 export const DARK_MODE_START = '/** DARK MODE START **/';
 export const DARK_MODE_END = '/** DARK MODE END **/';
 
+export const E2E_THEME_START = '/** E2E THEME START **/';
+export const E2E_THEME_END = '/** E2E THEME END **/';
+
 export const CONSOLE_LOG_START = '/** CONSOLE LOG START **/';
 export const CONSOLE_LOG_END = '/** CONSOLE LOG END **/';
 
@@ -14,6 +17,7 @@ export const TEST_ID_START = '/** ENABLE AG-TEST-ID START **/';
 export const TEST_ID_END = '/** ENABLE AG-TEST-ID END **/';
 
 export const DARK_MODE_REGEX = getSnippetRegex({ startDelimiter: DARK_MODE_START, endDelimiter: DARK_MODE_END });
+export const E2E_THEME_REGEX = getSnippetRegex({ startDelimiter: E2E_THEME_START, endDelimiter: E2E_THEME_END });
 export const CONSOLE_LOG_REGEX = getSnippetRegex({ startDelimiter: CONSOLE_LOG_START, endDelimiter: CONSOLE_LOG_END });
 export const DARK_INTEGRATED_REGEX = getSnippetRegex({
     startDelimiter: DARK_INTEGRATED_START,

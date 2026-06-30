@@ -70,8 +70,8 @@ const styles = isEnterprise ? enterpriseStyles : frameworkStyles;
 // For framework pages, add logo to headings (only for specific framework landing pages)
 const frameworkLandingPageSlugs = ['react-data-grid', 'javascript-data-grid', 'vue-data-grid', 'angular-data-grid'];
 const isFrameworkLandingPage =
-    !isEnterprise && content.framework && frameworkLandingPageSlugs.includes(content.docsPath);
-const frameworkKey = isFrameworkLandingPage ? content.framework || '' : '';
+    !isEnterprise && content.internalFramework && frameworkLandingPageSlugs.includes(content.docsPath);
+const frameworkKey = isFrameworkLandingPage ? content.internalFramework || '' : '';
 
 // Get theme builder video for enterprise pages
 const themeBuilderVideo = isEnterprise
@@ -140,7 +140,7 @@ const themeBuilderVideo = isEnterprise
                             : section;
                     return (
                         <FeaturesSection section={featuresSectionWithLogo} pageContent={content}>
-                            <FeaturesWithExamples features={section.items} framework={content.framework} />
+                            <FeaturesWithExamples features={section.items} framework={content.internalFramework} />
                         </FeaturesSection>
                     );
 

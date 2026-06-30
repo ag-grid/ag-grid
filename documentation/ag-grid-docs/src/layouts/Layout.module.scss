@@ -15,3 +15,10 @@ html {
         overflow-x: hidden;
     }
 }
+
+// The <main> landmark wraps the page slot for accessibility. `display: contents`
+// removes its box so the page sections remain direct flex children of .mainContainer,
+// preserving the existing layout while still exposing a single main landmark.
+.pageMain {
+    display: contents;
+}

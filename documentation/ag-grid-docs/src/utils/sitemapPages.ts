@@ -17,6 +17,9 @@ export async function getSitemapIgnorePaths() {
 
         // Test pages
         urlWithBaseUrl('/*-data-grid/*-test'),
+
+        // Release note stubs — minimal content, crawl waste
+        urlWithBaseUrl('/changelog/releases'),
     ];
     const folderPaths = ignorePaths.map(addTrailingSlash);
 

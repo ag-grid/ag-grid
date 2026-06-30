@@ -1,4 +1,10 @@
-import { FORCE_LEGACY_THEMES, IS_SSR, _injectCoreAndModuleCSS, _injectGlobalCSS, getInjectionState } from './inject';
+import {
+    FORCE_LEGACY_THEMES,
+    _injectCoreAndModuleCSS,
+    _injectGlobalCSS,
+    _isStyleInjectionDisabled,
+    getInjectionState,
+} from './inject';
 import type { Part } from './part';
 import { PartImpl, createPart, defaultModeName } from './partImpl';
 import { sharedDefaults } from './shared/shared-css';
@@ -70,11 +76,7 @@ export class ThemeImpl {
     }
 
     _startUse({ styleContainer, cssLayer, nonce, loadThemeGoogleFonts, moduleCss }: themeUseArgs): void {
-        if (IS_SSR) {
-            return;
-        }
-
-        if (FORCE_LEGACY_THEMES) {
+        if (_isStyleInjectionDisabled()) {
             return;
         }
 
