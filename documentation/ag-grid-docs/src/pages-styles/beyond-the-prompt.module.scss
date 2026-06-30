@@ -1460,6 +1460,12 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     padding: 24px;
 }
 
+// `display: flex` above would otherwise beat the browser's `[hidden]` rule and
+// leave the modal permanently on screen, so hide it explicitly when closed.
+.sessionModal[hidden] {
+    display: none;
+}
+
 // White wash over the page (per spec: white background at 0.8 opacity). Scoped
 // with `.page` and with explicit hover/focus states so it never picks up the
 // global button styling's blue highlight.
