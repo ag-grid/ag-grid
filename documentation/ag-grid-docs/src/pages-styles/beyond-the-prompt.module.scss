@@ -258,6 +258,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     width: 100%;
     aspect-ratio: 16 / 9;
     overflow: hidden;
+    border-radius: 8px;
     background: #000;
 
     iframe {
