@@ -825,7 +825,7 @@ export const AG_GRID_ERRORS = {
     309: ({ name, rowModel, supportedRowModels }: { name: string; rowModel: string; supportedRowModels?: string[] }) =>
         `\`${name}\` is not supported with the \`${rowModel}\` row model. It is only valid with: ${(supportedRowModels ?? []).join(', ')}.`,
     310: ({ objectName, url }: { objectName: string; url: string }) =>
-        `To see all the valid \`${objectName}\` properties please check: ${url}`,
+        `One or more \`${objectName}\` properties are not recognised. For more info see: ${url}`,
     311: ({ functionName, rowModels }: { functionName: string; rowModels?: string[] }) =>
         `\`api.${functionName}\` can only be called when \`gridOptions.rowModelType\` is ${(rowModels ?? []).join(' or ')}.`,
     312: ({ chartType, renamedChartType }: { chartType: string; renamedChartType: string }) =>

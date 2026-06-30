@@ -46,7 +46,7 @@ describe('ag-grid validation warnings', () => {
 
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #310'),
-                expect.stringContaining('To see all the valid `gridOptions` properties please check:'),
+                expect.stringContaining('One or more `gridOptions` properties are not recognised.'),
                 expect.any(String)
             );
         });
@@ -134,7 +134,7 @@ describe('ag-grid validation warnings', () => {
             } as GridOptions);
 
             const docsWarnings = consoleWarnSpy.mock.calls.filter((args) =>
-                args.join(' ').includes('To see all the valid `gridOptions` properties please check:')
+                args.join(' ').includes('One or more `gridOptions` properties are not recognised.')
             );
             expect(docsWarnings).toHaveLength(0);
         });

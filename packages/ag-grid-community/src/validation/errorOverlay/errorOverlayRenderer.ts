@@ -4,7 +4,8 @@ import type { CapturedDiagnostic } from '../logging';
 import { getErrorLink } from '../logging';
 
 const DOC_LINK_REGEX = /\s*(See|Visit) https?:\/\/\S+/g;
-const MODULES_LINK_REGEX = /\s*For more info see:\s*(https?:\/\/\S+)/;
+/** The general "For more info see: <url>" convention messages use to point at documentation. */
+const MORE_INFO_LINK_REGEX = /\s*For more info see:\s*(https?:\/\/\S+)/;
 const IMPORT_LINE_REGEX = /^\s*import\s/;
 const CODE_LINE_PREFIX_REGEX = /^(import |const |let |function |class |ModuleRegistry|<|>|\}|\))/;
 const URL_REGEX = /https?:\/\/\S+/g;
@@ -22,8 +23,8 @@ interface DiagnosticContent {
     code?: string;
     /** Trailing prose shown below the code snippet (e.g. "The item will not be rendered."). */
     note?: string;
-    /** Present for module-registration errors: link to the modules docs, rendered outside the snippet. */
-    modulesDocLink?: string;
+    /** Documentation URL from the message's "For more info see:" hint, rendered as a link. */
+    docLink?: string;
 }
 
 function stringifyPart(part: any): string {
@@ -51,16 +52,16 @@ function getRawMessage(diagnostic: CapturedDiagnostic): string {
 }
 
 /**
- * Builds the developer-facing content from a raw message. Inline documentation references
- * (`See`/`Visit <link>` and the module guidance's `For more info see: <link>`) are removed because the
- * overlay renders them as separate links; the registration snippet, when present, is split out from the
- * surrounding explanation so the overlay can render it as a distinct code block.
+ * Builds the developer-facing content from a raw message. Documentation references (`See`/`Visit <link>`
+ * and the `For more info see: <link>` hint) are removed from the prose because the overlay renders them
+ * as separate links; the registration snippet, when present, is split out so the overlay can render it
+ * as a distinct code block.
  * @knipIgnore Used in tests
  */
 export function parseDiagnosticText(raw: string): DiagnosticContent {
-    const modulesDocLink = raw.match(MODULES_LINK_REGEX)?.[1];
-    const text = raw.replace(DOC_LINK_REGEX, '').replace(MODULES_LINK_REGEX, '').trim();
-    return { ...splitCodeSnippet(text), modulesDocLink };
+    const docLink = raw.match(MORE_INFO_LINK_REGEX)?.[1];
+    const text = raw.replace(DOC_LINK_REGEX, '').replace(MORE_INFO_LINK_REGEX, '').trim();
+    return { ...splitCodeSnippet(text), docLink };
 }
 
 function getDiagnosticContent(diagnostic: CapturedDiagnostic): DiagnosticContent {
@@ -186,7 +187,7 @@ export function renderDiagnosticElement(
     errorLinkText: string
 ): HTMLElement {
     const eItem = _createElement({ tag: 'div', cls: `ag-overlay-error-item ag-overlay-error-item-${severity}` });
-    const { message, code, note, modulesDocLink } = content;
+    const { message, code, note, docLink } = content;
 
     if (message) {
         eItem.appendChild(createTextEl(message));
@@ -202,8 +203,8 @@ export function renderDiagnosticElement(
 
     const eLinks = _createElement({ tag: 'div', cls: 'ag-overlay-error-links' });
     eLinks.appendChild(createLink(errorLink, errorLinkText));
-    if (modulesDocLink) {
-        eLinks.appendChild(createLink(modulesDocLink, 'Modules Documentation'));
+    if (docLink) {
+        eLinks.appendChild(createLink(docLink, 'Documentation'));
     }
     eItem.appendChild(eLinks);
 
@@ -230,7 +231,7 @@ export function diagnosticContentToMarkdown(
     content: DiagnosticContent,
     link: string
 ): string {
-    const { message, code, note } = content;
+    const { message, code, note, docLink } = content;
     const lines = [`### ${severity} #${id}`];
     if (message) {
         lines.push(message.replace(/`/g, ''));
@@ -240,6 +241,9 @@ export function diagnosticContentToMarkdown(
     }
     if (note) {
         lines.push(note.replace(/`/g, ''));
+    }
+    if (docLink) {
+        lines.push(`Documentation: ${docLink}`);
     }
     lines.push(`Docs: ${link}`);
     return lines.join('\n');

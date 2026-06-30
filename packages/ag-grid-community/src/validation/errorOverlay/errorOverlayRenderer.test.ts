@@ -34,19 +34,19 @@ describe('parseDiagnosticText', () => {
         expect(content.note).toBe('The feature will not work.');
     });
 
-    test('extracts the module documentation link and removes it from the prose', () => {
+    test('extracts the "For more info see:" documentation link and removes it from the prose', () => {
         const raw = 'Register the module. For more info see: https://ag-grid.com/javascript-data-grid/modules';
         const content = parseDiagnosticText(raw);
-        expect(content.modulesDocLink).toBe('https://ag-grid.com/javascript-data-grid/modules');
+        expect(content.docLink).toBe('https://ag-grid.com/javascript-data-grid/modules');
         expect(content.message).not.toContain('For more info see');
     });
 });
 
 describe('renderDiagnosticElement', () => {
-    test('renders the severity class, error-code link and module-docs link', () => {
+    test('renders the severity class, error-code link and documentation link', () => {
         const el = renderDiagnosticElement(
             'warning',
-            { message: 'something', modulesDocLink: 'https://ag-grid.com/modules' },
+            { message: 'something', docLink: 'https://ag-grid.com/grid-options' },
             'https://ag-grid.com/errors/22',
             'AG Grid #22'
         );
@@ -57,7 +57,7 @@ describe('renderDiagnosticElement', () => {
         expect(links).toHaveLength(2);
         expect(links[0].href).toContain('/errors/22');
         expect(links[0].textContent).toBe('AG Grid #22');
-        expect(links[1].textContent).toBe('Modules Documentation');
+        expect(links[1].textContent).toBe('Documentation');
     });
 
     test('renders backtick-delimited spans as inline code', () => {
