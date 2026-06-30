@@ -30,7 +30,7 @@ export const SESSIONS: Session[] = [
         title: 'Codebase design for the agent era',
         speakers: 'Stephen Cooper (Team Lead, AG Grid)',
         description:
-            "As AI agents become part of the development workflow, codebase structure and well-designed system prompts matter more than ever. This session will show you how we're approaching this in the AG Grid and AG Charts codebases..",
+            "As AI agents become part of the development workflow, codebase structure and well-designed system prompts matter more than ever. This session showed how we're approaching this in the AG Grid and AG Charts codebases..",
     },
     {
         title: 'AI in AG Studio',
@@ -47,18 +47,18 @@ export const SESSIONS: Session[] = [
         title: 'Debugging CSS performance with AI',
         speakers: 'Bernie Sumption (Developer, AG Grid)',
         description:
-            'CSS performance issues can be subtle and time-consuming. This talk will show you how you can guide AI to uncover bugs without needing to learn the intricacies of CSS rendering internals.',
+            'CSS performance issues can be subtle and time-consuming. This talk showed how you can guide AI to uncover bugs without needing to learn the intricacies of CSS rendering internals.',
     },
     {
         title: 'Software that moves fleets: Lessons from AG Grid, Bryntum, and Beyond',
         speakers: 'Patrick Rau (Developer, TCS)',
         description:
-            "In aviation, the software has to be rock solid. Patrick pulls back the curtain on the components powering Fleetplan's UI, including AG Grid, Bryntum's Scheduler Pro, and the modules behind audit tracking and safety reporting that keep operations airtight.",
+            "In aviation, the software has to be rock solid. Patrick pulled back the curtain on the components powering Fleetplan's UI, including AG Grid, Bryntum's Scheduler Pro, and the modules behind audit tracking and safety reporting that keep operations airtight.",
     },
     {
         title: 'Product Roadmap',
         speakers: 'Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (AG Studio Product Lead, AG Grid)',
-        description: "A detailed look at our upcoming roadmap, covering AG Grid and Bryntum's suite of tools.",
+        description: "A detailed look at our roadmap, covering AG Grid and Bryntum's suite of tools.",
     },
     {
         title: 'One-click agentic SDLC',
@@ -71,13 +71,13 @@ export const SESSIONS: Session[] = [
         speakers:
             'Maggie Appleton (Staff Research Engineer, GitHub), Matt Pocock (Senior Developer Educator, AI Hero), Sophie Koonin (Web Discipline Lead, Monzo)',
         description:
-            'As AI reshapes how software gets built, what actually changes for engineers, teams, and developer tools? This panel explores the real-world impact of agentic workflows on software engineering - from code review and system design to cognitive skills, ownership, and developer experience. Expect practical insights, rapid-fire hot takes, and honest discussion from engineers building beyond the prompt.',
+            'As AI reshapes how software gets built, what actually changes for engineers, teams, and developer tools? This panel explored the real-world impact of agentic workflows on software engineering - from code review and system design to cognitive skills, ownership, and developer experience. Practical insights, rapid-fire hot takes, and honest discussion from engineers building beyond the prompt.',
     },
     {
         title: 'Vibe Coding as a Maker',
         speakers: 'Matt Webb',
         description:
-            'Matt will show his vibe coding experiments, from his AI clock to an app that points to the centre of the galaxy, and share some learnings from building hardware at his startup, Inanimate. Then we ask: what are the limits of vibing and agentic coding? And how might we create libraries that agents love?',
+            'Matt showed his vibe coding experiments, from his AI clock to an app that points to the centre of the galaxy, and shared some learnings from building hardware at his startup, Inanimate. Then we asked: what are the limits of vibing and agentic coding? And how might we create libraries that agents love?',
     },
 ];
 
