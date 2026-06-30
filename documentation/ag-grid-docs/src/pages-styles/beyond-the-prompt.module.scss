@@ -1339,41 +1339,56 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
-// ─── Photo gallery (carousel) ────────────────────────────────────────────────
+// ─── Photo gallery (continuous marquee) ──────────────────────────────────────
 .gallerySection {
     composes: section;
 }
 
 .galleryViewport {
     position: relative;
+    overflow: hidden;
 }
 
+// The track holds two copies of the gallery; translating it left by half its
+// width and looping gives a seamless, continuous scroll. Each slide owns its
+// trailing gap (margin-right) so the -50% offset lands exactly one set over.
 .galleryTrack {
     display: flex;
-    gap: 16px;
+    width: max-content;
     margin: 0;
-    padding: 0 24px;
+    padding: 0;
     list-style: none;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
+    animation: btp-marquee 60s linear infinite;
+}
 
-    &::-webkit-scrollbar {
-        display: none;
+@keyframes btp-marquee {
+    from {
+        transform: translateX(0);
     }
 
-    @media (min-width: 900px) {
-        padding: 0 48px;
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+// Let the scroll rest when someone wants a closer look.
+.galleryViewport:hover .galleryTrack {
+    animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .galleryTrack {
+        animation: none;
     }
 }
 
 .gallerySlide {
     flex: 0 0 auto;
     width: min(82vw, 680px);
+    margin-right: 16px;
     aspect-ratio: 3 / 2;
     overflow: hidden;
     background: var(--btp-card);
-    scroll-snap-align: center;
 }
 
 .galleryImage {
@@ -1383,43 +1398,4 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     object-fit: cover;
     // Black-and-white treatment for the event photography.
     filter: grayscale(1);
-}
-
-.galleryNav {
-    position: absolute;
-    top: 50%;
-    z-index: 2;
-    transform: translateY(-50%);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border: 1px solid var(--btp-border);
-    border-radius: 50%;
-    background: var(--btp-bg);
-    color: var(--btp-ink);
-    cursor: pointer;
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease,
-        border-color 0.2s ease;
-
-    @media (min-width: 720px) {
-        display: inline-flex;
-    }
-
-    &:hover {
-        background: var(--btp-orange);
-        border-color: var(--btp-orange);
-        color: var(--btp-bg);
-    }
-}
-
-.galleryNavPrev {
-    left: 16px;
-}
-
-.galleryNavNext {
-    right: 16px;
 }

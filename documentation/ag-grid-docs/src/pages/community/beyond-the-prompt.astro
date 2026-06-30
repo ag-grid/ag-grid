@@ -561,32 +561,17 @@ const GALLERY_IMAGES = [
         </section>
 
         <section class={styles.gallerySection} aria-label="Photos from the day">
-            <div class={styles.galleryViewport} data-gallery>
-                <ol class={styles.galleryTrack} data-gallery-track>
+            <div class={styles.galleryViewport}>
+                {/* Slides are rendered twice so the marquee loops seamlessly. */}
+                <ol class={styles.galleryTrack} aria-hidden="true">
                     {
-                        GALLERY_IMAGES.map((src) => (
+                        [...GALLERY_IMAGES, ...GALLERY_IMAGES].map((src) => (
                             <li class={styles.gallerySlide}>
                                 <img src={urlWithBaseUrl(src)} alt="" loading="lazy" class={styles.galleryImage} />
                             </li>
                         ))
                     }
                 </ol>
-                <button
-                    type="button"
-                    class:list={[styles.galleryNav, styles.galleryNavPrev]}
-                    data-gallery-prev
-                    aria-label="Previous photo"
-                >
-                    <Icon name="chevronLeft" />
-                </button>
-                <button
-                    type="button"
-                    class:list={[styles.galleryNav, styles.galleryNavNext]}
-                    data-gallery-next
-                    aria-label="Next photo"
-                >
-                    <Icon name="chevronRight" />
-                </button>
             </div>
         </section>
 
@@ -655,15 +640,5 @@ const GALLERY_IMAGES = [
 
     for (const tab of tabs) {
         tab.addEventListener('click', () => activate(tab.dataset.tab ?? 'talks'));
-    }
-
-    // Photo carousel: prev/next buttons scroll the snap track by ~one viewport.
-    for (const gallery of document.querySelectorAll<HTMLElement>('[data-gallery]')) {
-        const track = gallery.querySelector<HTMLElement>('[data-gallery-track]');
-        if (!track) continue;
-        const stepBy = (dir: number) =>
-            track.scrollBy({ left: dir * Math.max(track.clientWidth * 0.8, 280), behavior: 'smooth' });
-        gallery.querySelector('[data-gallery-prev]')?.addEventListener('click', () => stepBy(-1));
-        gallery.querySelector('[data-gallery-next]')?.addEventListener('click', () => stepBy(1));
     }
 </script>
