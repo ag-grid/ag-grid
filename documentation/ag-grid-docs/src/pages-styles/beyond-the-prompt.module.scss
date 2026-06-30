@@ -269,6 +269,63 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
+// Custom thumbnail + play button shown until the keynote is clicked, when the
+// script swaps in the autoplay embed.
+.page .heroVideoPlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.heroVideoThumb {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.heroVideoPlayIcon {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--btp-orange);
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease;
+
+    // White play triangle.
+    &::after {
+        content: '';
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 11px 0 11px 18px;
+        border-color: transparent transparent transparent #fff;
+        margin-left: 4px;
+    }
+}
+
+.page .heroVideoPlay:hover .heroVideoPlayIcon {
+    transform: scale(1.08);
+    background: var(--btp-orange-dark);
+}
+
 .heroMeta {
     display: flex;
     flex-direction: row;
@@ -918,110 +975,12 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 }
 
 // ─── Agenda ──────────────────────────────────────────────────────────────────
-// Each Morning / Afternoon block is its own white card with hard corners.
-// The section label sits inside the card as a banner, sharing the same hairline
-// border that separates the rows below it, so the whole thing reads as one
-// continuous slab rather than a card with a floating header above it.
+// The schedule table: a white card with hard corners and a hairline border
+// separating its column-header row from the session rows below.
 .agenda {
     border: 1px solid var(--btp-border);
     overflow: hidden;
     background: var(--btp-card);
-
-    // When two agenda cards stack (Morning then Afternoon), give them a small
-    // breathing gap so the borders don't double-up into a heavy 2px line.
-    & + & {
-        margin-top: 24px;
-    }
-}
-
-// "Morning" / "Afternoon" header strip inside each agenda card. We dress
-// it up with a subtle orange wash plus a pixel-art dither: a sparse
-// checker covers the whole strip, and a denser checker fades in from
-// the right edge so the eye lands there as a graphic accent. The label
-// sits above both layers via `isolation: isolate` + `z-index: -1` on the
-// pseudo-elements (no positioning needed on the <p> itself).
-.agendaSectionHeader {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    border-bottom: 1px solid var(--btp-border);
-    padding: 18px 0;
-    background-color: rgba(244, 56, 0, 0.04);
-
-    @media (min-width: 900px) {
-        padding: 22px 0;
-    }
-
-    // Whisper-light checker across the whole strip. The two staggered
-    // 45deg gradients are the classic CSS checkerboard recipe — each
-    // gradient draws opposite triangles, and offsetting the second tile
-    // by half its size aligns them into squares.
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        background-image:
-            linear-gradient(
-                45deg,
-                rgba(244, 56, 0, 0.55) 25%,
-                transparent 25%,
-                transparent 75%,
-                rgba(244, 56, 0, 0.55) 75%
-            ),
-            linear-gradient(
-                45deg,
-                rgba(244, 56, 0, 0.55) 25%,
-                transparent 25%,
-                transparent 75%,
-                rgba(244, 56, 0, 0.55) 75%
-            );
-        background-size: 4px 4px;
-        background-position:
-            0 0,
-            2px 2px;
-        opacity: 0.16;
-        pointer-events: none;
-    }
-
-    // Denser dither cluster anchored to the right edge. A horizontal
-    // mask-image fades the cluster out to the left so it reads as a
-    // pixel-art "fall-off" rather than a hard band.
-    &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: 240px;
-        z-index: -1;
-        background-image:
-            linear-gradient(45deg, var(--btp-orange) 25%, transparent 25%, transparent 75%, var(--btp-orange) 75%),
-            linear-gradient(45deg, var(--btp-orange) 25%, transparent 25%, transparent 75%, var(--btp-orange) 75%);
-        background-size: 5px 5px;
-        background-position:
-            0 0,
-            2.5px 2.5px;
-        opacity: 0.4;
-        mask-image: linear-gradient(to right, transparent, black 75%);
-        -webkit-mask-image: linear-gradient(to right, transparent, black 75%);
-        pointer-events: none;
-
-        @media (min-width: 900px) {
-            width: 320px;
-        }
-    }
-}
-
-.page .agendaSectionLabel {
-    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--btp-ink);
-    text-align: center;
-    margin: 0;
 }
 
 .agendaList {
@@ -1057,37 +1016,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
-.agendaBreak {
-    .agendaTitle {
-        // Break rows (Registration, Coffee break, Lunch, Networking) read
-        // as labels rather than session titles, so we drop them into an
-        // uppercase mono treatment. Kept at full ink colour (not muted)
-        // so the break still anchors the schedule visually.
-        font-family: 'Geist Mono', ui-monospace, monospace;
-        font-size: 14px;
-        font-weight: 500;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-    }
-}
-
-.agendaTime {
-    font-family: 'Geist Mono', ui-monospace, monospace;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    color: var(--btp-orange);
-    font-variant-numeric: tabular-nums;
-    transition: color 0.32s ease;
-
-    @media (min-width: 720px) {
-        flex: 0 0 160px;
-        // Vertical padding lives on the column (not the row) so the speaker
-        // overlay in `.agendaDescriptionWrap` can stretch the full row height.
-        padding: 18px 0;
-    }
-}
-
 .agendaBody {
     display: flex;
     flex-direction: column;
@@ -1104,12 +1032,21 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     transition: color 0.32s ease;
 }
 
-// Session titles with a recording become a link that opens the video modal.
+// Session titles with a recording become a link that opens the video modal. The
+// ::after stretches over the whole (position: relative) row so a click anywhere
+// in the row opens it, not just the title text.
 .agendaTitleLink {
     display: inline-block;
     color: inherit;
     text-decoration: none;
     cursor: pointer;
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+    }
 }
 
 .agendaSpeakers {
@@ -1158,9 +1095,8 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     flex: 0 0 auto;
 }
 
-// Round avatar. The speaker SVGs are tall full-figure illustrations, so we crop
-// to a circle anchored at the top (the head) and crossfade to the orange-bg
-// variant when the row turns orange on hover.
+// Round avatar: the 30x30 speaker head (beyond-cream), crossfading to the
+// beyond-orange variant when the row turns orange on hover.
 .agendaAvatar {
     position: relative;
     display: inline-block;
@@ -1185,25 +1121,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     opacity: 0;
 }
 
-// `.agendaDescriptionWrap` is the flex item on desktop (the description
-// itself used to play that role). It exists so we can layer a speaker
-// portrait overlay (`.agendaSpeakerStack`) on top of the description and
-// swap between the two on row hover.
-//
-// `align-self: stretch` is what lets the overlay use the row's full
-// content height — important for short rows like the David Kourshid
-// keynote where there's no description and the wrap would otherwise
-// collapse to nothing.
-.agendaDescriptionWrap {
-    position: relative;
-
-    @media (min-width: 720px) {
-        flex: 1 1 0;
-        min-width: 0;
-        align-self: stretch;
-    }
-}
-
 .agendaDescription {
     font-size: 15px;
     line-height: 1.5;
@@ -1212,80 +1129,8 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     transition: color 0.32s ease;
 }
 
-// Speaker portrait overlay. Anchored to the right of the wrap and sized
-// taller than the row so the silhouette reads as a knockout that bleeds
-// into the cell padding. The row's `overflow: hidden` clips the bottom
-// edge — the user explicitly opted into this clipping over the previous
-// `object-fit: contain` (which kept portraits prim but tiny).
-//
-// On hover the stack rises 16px and fades in, choreographed with the
-// row's bg colour shift to feel like a single gesture.
-.agendaSpeakerStack {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: stretch;
-    justify-content: flex-end;
-    // 24px feels right at the row scale: enough breathing room between
-    // two heads (e.g. Opening Keynote: John + Mats) that they read as
-    // distinct portraits, but tight enough that they still feel like a
-    // pair sharing the right column.
-    gap: 24px;
-    opacity: 0;
-    transform: translateY(16px);
-    pointer-events: none;
-    transition:
-        opacity 0.32s ease,
-        transform 0.32s ease;
-}
-
-// Multi-speaker rows keep the flex layout — two portraits laid out
-// side-by-side with the 24px gap from `.agendaSpeakerStack`. Scale stays
-// modest here so John+Mats / Johan+Adam / Maggie+Matt P don't overlap
-// or fight each other for space.
-.agendaSpeakerImage {
-    height: 100%;
-    width: auto;
-    object-fit: contain;
-    // `transform-origin: top right` keeps the head pinned at the top of
-    // the cell while the body extends downwards (and gets clipped). If
-    // we anchored bottom-right the head would shift up and out of frame.
-    transform: scale(1.4);
-    transform-origin: top right;
-}
-
-// Solo-speaker rows. Most of these have short or no descriptions, so the
-// row's content height is dictated by the title + speakers column on the
-// left and `height: 100%` ends up tiny. Pop out of the flex layout, scale
-// hard, and lift up so the portrait dominates the right side of the row
-// — the row's `overflow: hidden` then clips whatever overflows.
-.agendaSpeakerImage:only-child {
-    position: absolute;
-    top: -20px;
-    right: 0;
-    transform: scale(2.4);
-    transform-origin: top;
-}
-
-// Per-row opt-out for solo-speaker cells that are already tall (e.g.
-// David Khourshid's row, which has a long description). Reverts the
-// portrait to the default flex layout + 1.4x scale so the heavy 2.4x
-// crop doesn't clip the head off the top and right edges.
-.agendaSpeakerImage:only-child.agendaSpeakerImageDefaultScale {
-    position: static;
-    top: auto;
-    right: auto;
-    transform: scale(1.4);
-    transform-origin: top right;
-}
-
-// Hover state. Gated on:
-//   1. `(hover: hover)` — touch devices would otherwise latch into the
-//      hover state on tap with no obvious way to undo it.
-//   2. `:has(.agendaSpeakerStack)` — rows without a matching speaker
-//      (`Welcome`, `Customer Showcase`) keep their default appearance,
-//      so we never fade copy out into nothing or flip a row to orange
-//      with no payoff.
+// Row hover, only on hover-capable devices so a touch tap doesn't latch the
+// orange state with no easy way to undo it.
 @media (hover: hover) {
     .agendaRow:hover {
         background-color: var(--btp-orange);

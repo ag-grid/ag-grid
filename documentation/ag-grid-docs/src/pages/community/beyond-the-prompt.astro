@@ -234,8 +234,8 @@ const GALLERY_IMAGES = [
 
     /*
         Brand-coloured text selection. `::selection` is a pseudo-element and
-        can't be hashed by CSS Modules, so we route it through `is:global`
-        — but because this <style> block lives in a page component, it's
+        can't be hashed by CSS Modules, so we route it through `is:global`,
+        but because this <style> block lives in a page component, it's
         only emitted into the bundle for this route, so other pages keep
         the browser default.
     */
@@ -314,13 +314,21 @@ const GALLERY_IMAGES = [
 
         <section class={styles.heroVideo} aria-label="Beyond the Prompt">
             <div class={styles.container}>
-                <div class={styles.heroVideoFrame}>
-                    <iframe
-                        src="https://www.youtube.com/embed/XY30-iUTB3E"
-                        title="Beyond the Prompt"
-                        allow="autoplay; encrypted-media; picture-in-picture; web-share"
-                        allowfullscreen
-                        loading="lazy"></iframe>
+                <div class={styles.heroVideoFrame} data-hero-video data-youtube-id="XY30-iUTB3E">
+                    <button
+                        type="button"
+                        class={styles.heroVideoPlay}
+                        data-hero-video-play
+                        aria-label="Play the opening keynote"
+                    >
+                        <img
+                            src={urlWithBaseUrl('images/campaigns/beyond-the-prompt/opening-keynote.png')}
+                            alt="Opening Keynote"
+                            class={styles.heroVideoThumb}
+                            loading="lazy"
+                        />
+                        <span class={styles.heroVideoPlayIcon} aria-hidden="true"></span>
+                    </button>
                 </div>
             </div>
         </section>
@@ -400,7 +408,7 @@ const GALLERY_IMAGES = [
                                         the default illustration via `position: absolute` so the two
                                         portraits crossfade in place when the card is hovered. The
                                         wrap turns orange in CSS at the same time, so the orange-bg
-                                        SVG's dither/knockout reads correctly. Decorative — the
+                                        SVG's dither/knockout reads correctly. Decorative; the
                                         first <img> already carries the speaker's name as alt text.
                                     */}
                                         {speaker.imageOrange && (
@@ -428,29 +436,6 @@ const GALLERY_IMAGES = [
             </div>
 
             <div id="panel-talks" role="tabpanel" aria-labelledby="tab-talks" data-panel="talks">
-                <div class={styles.container}>
-                    <p class={styles.sectionLead}>
-                        A single track across the day, with breaks designed for conversation.
-                    </p>
-
-                    <p class={styles.agendaDownloads}>
-                        <a
-                            href={urlWithBaseUrl('/downloads/beyond-the-prompt/beyond-the-prompt-agenda.ics')}
-                            download
-                            class={styles.btnPrimary}
-                        >
-                            Download .ics agenda <Icon name="download" />
-                        </a>
-                        <a
-                            href={urlWithBaseUrl('/downloads/beyond-the-prompt/beyond-the-prompt-agenda.json')}
-                            download
-                            class={styles.btnPrimary}
-                        >
-                            Download .json agenda <Icon name="download" />
-                        </a>
-                    </p>
-                </div>
-
                 <div class={styles.container}>
                     <div class={styles.agenda}>
                         <div class={styles.agendaHead}>
@@ -634,6 +619,21 @@ const GALLERY_IMAGES = [
 
     for (const tab of tabs) {
         tab.addEventListener('click', () => activate(tab.dataset.tab ?? 'talks'));
+    }
+
+    // Hero keynote: clicking the custom thumbnail swaps in the autoplay embed.
+    for (const frame of document.querySelectorAll<HTMLElement>('[data-hero-video]')) {
+        const playBtn = frame.querySelector('[data-hero-video-play]');
+        playBtn?.addEventListener('click', () => {
+            const videoId = frame.dataset.youtubeId;
+            if (!videoId) return;
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            iframe.title = 'Opening Keynote';
+            iframe.allow = 'autoplay; encrypted-media; picture-in-picture; web-share';
+            iframe.allowFullscreen = true;
+            frame.replaceChildren(iframe);
+        });
     }
 
     // Session recording modal. Session titles with a recording link to a real
