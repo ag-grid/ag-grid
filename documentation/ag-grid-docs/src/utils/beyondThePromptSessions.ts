@@ -147,6 +147,7 @@ const THUMBS_AVAILABLE = new Set([
     'mats-bryntse',
     'maggie-appleton',
     'matt-webb',
+    'patrick-rau',
 ]);
 
 // The branded thumbnail slug for a session, or null to fall back to YouTube.

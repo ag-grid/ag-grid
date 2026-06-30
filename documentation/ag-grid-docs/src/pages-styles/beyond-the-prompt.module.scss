@@ -113,11 +113,6 @@ $btp-card: #ffffff;
     }
 }
 
-// Community section nav, rendered at the very top of the page.
-.communityNav {
-    padding-top: 24px;
-}
-
 // ─── Hero ────────────────────────────────────────────────────────────────────
 .hero {
     position: relative;
@@ -354,6 +349,9 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         display: flex;
         align-items: center;
         gap: 8px;
+        // Reset the global `li:not(:last-child)` bottom margin, which would
+        // otherwise offset the first item and break vertical centring.
+        margin-bottom: 0;
         color: var(--btp-ink);
 
         :global(.icon) {
