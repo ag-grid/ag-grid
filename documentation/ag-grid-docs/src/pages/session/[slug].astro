@@ -31,7 +31,11 @@ const description =
                 >← Back to Beyond the Prompt</a
             >
             <h1>{session.title}</h1>
-            {session.speakers && <p class="session-speakers">{session.speakers}</p>}
+            {
+                session.speakers && (
+                    <p class="session-speakers">{session.speakers.map((s) => `${s.name} (${s.role})`).join(', ')}</p>
+                )
+            }
             {
                 videoId && (
                     <div class="session-video">
