@@ -282,9 +282,9 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     padding: 0;
     border: 0;
     border-radius: 0;
-    // Backdrop behind the (transparent/letterboxed) PNG thumbnail: a hair lighter
+    // Backdrop behind the (transparent/letterboxed) PNG thumbnail: a little lighter
     // than the page bg (#f2f2f2) so the keynote frame lifts off the page slightly.
-    background: #f7f7f7;
+    background: #fbfbfb;
     box-shadow: none;
     cursor: pointer;
 }
