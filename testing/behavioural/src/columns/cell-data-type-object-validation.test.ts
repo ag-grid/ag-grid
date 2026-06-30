@@ -46,7 +46,7 @@ describe('object cellDataType validation warnings', () => {
         expect(warnSpy).toHaveBeenCalledWith(
             expect.any(String),
             expect.stringContaining(
-                'Cell data type is "object" (inferred) but no Value `Formatter` has been provided for column "value"'
+                'Cell data type is `object` (inferred) but no Value `Formatter` has been provided for column "value"'
             ),
             expect.any(String)
         );
@@ -65,7 +65,7 @@ describe('object cellDataType validation warnings', () => {
 
         expect(warnSpy).toHaveBeenCalledWith(
             expect.any(String),
-            expect.stringContaining('Cell data type is "object" but no Value `Formatter` has been provided'),
+            expect.stringContaining('Cell data type is `object` but no Value `Formatter` has been provided'),
             expect.any(String)
         );
         expect(warnSpy).not.toHaveBeenCalledWith(
@@ -84,7 +84,7 @@ describe('object cellDataType validation warnings', () => {
 
         expect(warnSpy).toHaveBeenCalledWith(
             expect.any(String),
-            expect.stringContaining('Cell data type is "object" but no Value `Formatter` has been provided'),
+            expect.stringContaining('Cell data type is `object` but no Value `Formatter` has been provided'),
             expect.any(String)
         );
         expect(warnSpy).not.toHaveBeenCalledWith(
@@ -102,7 +102,7 @@ describe('object cellDataType validation warnings', () => {
 
         expect(warnSpy).toHaveBeenCalledWith(
             expect.any(String),
-            expect.stringContaining('Cell data type is "object" (inferred) but no Value `Parser` has been provided'),
+            expect.stringContaining('Cell data type is `object` (inferred) but no Value `Parser` has been provided'),
             expect.any(String)
         );
         expect(warnSpy).toHaveBeenCalledWith(
@@ -120,7 +120,7 @@ describe('object cellDataType validation warnings', () => {
 
         expect(warnSpy).not.toHaveBeenCalledWith(
             expect.any(String),
-            expect.stringContaining('Cell data type is "object"'),
+            expect.stringContaining('Cell data type is `object`'),
             expect.any(String)
         );
     });
@@ -140,7 +140,7 @@ describe('object cellDataType validation warnings', () => {
 
         expect(warnSpy).not.toHaveBeenCalledWith(
             expect.any(String),
-            expect.stringContaining('Cell data type is "object"'),
+            expect.stringContaining('Cell data type is `object`'),
             expect.any(String)
         );
     });

@@ -192,7 +192,7 @@ export const AG_GRID_ERRORS = {
             'Exception = ',
             e,
         ] as const,
-    17: () => 'you need either field or `valueSetter` set on `colDef` for editing to work' as const,
+    17: () => 'you need either `field` or `valueSetter` set on `colDef` for editing to work' as const,
     18: () => `\`alignedGrids\` contains an \`undefined\` option.` as const,
     19: () => `\`alignedGrids\` - No api found on the linked grid.` as const,
     20: () =>
@@ -230,7 +230,8 @@ export const AG_GRID_ERRORS = {
         `the column type \`${key}\` is a default column type and cannot be overridden.` as const,
     35: () =>
         `Column type definitions \`columnTypes\` with a \`type\` attribute are not supported because a column type cannot refer to another column type. Only column definitions \`columnDefs\` can use the \`type\` attribute to refer to a column type.` as const,
-    36: ({ t }: { t: string }) => "`colDef.type` '" + t + "' does not correspond to defined `gridOptions.columnTypes`",
+    36: ({ t }: { t: string }) =>
+        `\`colDef.type\` \`${t}\` does not correspond to defined \`gridOptions.columnTypes\`` as const,
     37: () => `Changing the column pinning status is not allowed with \`domLayout='print'\`` as const,
     38: ({ iconName }: { iconName: string }) =>
         `provided icon \`${iconName}\` needs to be a string or a function` as const,
@@ -252,7 +253,7 @@ export const AG_GRID_ERRORS = {
         const inferredStr = inferred ? ' (inferred)' : '';
         const colIdStr = colId ? ` for column "${colId}"` : '';
         const parserHint = inferred && property === 'Parser' ? "\n  - `colDef.cellDataType = 'object'`" : '';
-        return `Cell data type is "object"${inferredStr} but no Value \`${property}\` has been provided${colIdStr}. Please either provide an object data type definition with a Value \`${property}\`, or set:\n  - \`colDef.value${property}\`${parserHint}` as const;
+        return `Cell data type is \`object\`${inferredStr} but no Value \`${property}\` has been provided${colIdStr}. Please either provide an object data type definition with a Value \`${property}\`, or set:\n  - \`colDef.value${property}\`${parserHint}` as const;
     },
     49: ({ methodName }: { methodName: string }) =>
         `Framework component is missing the method \`${methodName}()\`` as const,
@@ -329,7 +330,7 @@ export const AG_GRID_ERRORS = {
         pageSizesSet: any;
         pageSizeOptions: any[];
     }) =>
-        `'paginationPageSize=${paginationPageSizeOption}'${pageSizeSet ? '' : ' (default value)'}, but ${paginationPageSizeOption} is not included in${pageSizesSet ? '' : ' the default'} paginationPageSizeSelector=[${pageSizeOptions?.join(', ')}].` as const,
+        `\`paginationPageSize=${paginationPageSizeOption}\`${pageSizeSet ? '' : ' (default value)'}, but ${paginationPageSizeOption} is not included in${pageSizesSet ? '' : ' the default'} \`paginationPageSizeSelector=[${pageSizeOptions?.join(', ')}]\`.` as const,
     95: ({
         paginationPageSizeOption,
         paginationPageSizeSelector,
@@ -337,7 +338,7 @@ export const AG_GRID_ERRORS = {
         paginationPageSizeOption: number;
         paginationPageSizeSelector: string;
     }) =>
-        `Either set \`${paginationPageSizeSelector}\` to an array that includes ${paginationPageSizeOption} or to 'false' to disable the page size selector.` as const,
+        `Either set \`${paginationPageSizeSelector}\` to an array that includes ${paginationPageSizeOption} or to \`false\` to disable the page size selector.` as const,
     96: ({ id, data }: { id: string; data: any }) =>
         [
             'Duplicate ID',
@@ -392,10 +393,10 @@ export const AG_GRID_ERRORS = {
     103: () =>
         'Invalid selection state. When using client-side row model, the state must conform to `string[]`.' as const,
     104: ({ value, param }: { value: number; param: string }) =>
-        `Numeric value ${value} passed to ${param} param will be interpreted as ${value} seconds. If this is intentional use "${value}s" to silence this warning.` as const,
+        `Numeric value ${value} passed to ${param} param will be interpreted as ${value} seconds. If this is intentional use \`${value}s\` to silence this warning.` as const,
     105: ({ e }: { e: any }) => [`chart rendering failed`, e] as const,
     106: () =>
-        `Theming API and Legacy Themes are both used in the same page. A Theming API theme has been provided to the 'theme' grid option, but the file (ag-grid.css) is also included and will cause styling issues. Remove ag-grid.css from the page. See the migration guide: ${baseDocLink}/theming-migration/` as const,
+        `Theming API and Legacy Themes are both used in the same page. A Theming API theme has been provided to the \`theme\` grid option, but the file (\`ag-grid.css\`) is also included and will cause styling issues. Remove \`ag-grid.css\` from the page. See the migration guide: ${baseDocLink}/theming-migration/` as const,
     107: ({ key, value }: { key: string; value: unknown }) =>
         `Invalid value for theme param ${key} - ${value}` as const,
     108: ({ e }: { e: any }) => ['chart update failed', e] as const,
@@ -412,7 +413,7 @@ export const AG_GRID_ERRORS = {
             `If using a custom aggregation function check it has been registered correctly.`,
         ].join('\n');
     },
-    110: () => 'groupHideOpenParents only works when specifying specific columns for `colDef.showRowGroup`' as const,
+    110: () => '`groupHideOpenParents` only works when specifying specific columns for `colDef.showRowGroup`' as const,
     111: () =>
         'Invalid selection state. When `groupSelects` is enabled, the state must conform to `IServerSideGroupSelectionState`.' as const,
     113: () =>
@@ -436,10 +437,10 @@ export const AG_GRID_ERRORS = {
     127: ({ allRange }: { allRange?: boolean }) =>
         `unable to create chart as ${allRange ? 'there are no columns in the grid' : 'no range is selected'}.` as const,
     128: ({ feature }: { feature: string }) =>
-        `${feature} is only available if using 'multiRow' selection mode.` as const,
+        `${feature} is only available if using \`multiRow\` selection mode.` as const,
     129: ({ feature, rowModel }: { feature: string; rowModel: string }) =>
-        `${feature} is only available if using 'clientSide' or 'serverSide' \`rowModelType\`, you are using \`${rowModel}\`.` as const,
-    130: () => 'cannot multi select unless selection mode is "multiRow"' as const,
+        `${feature} is only available if using \`clientSide\` or \`serverSide\` \`rowModelType\`, you are using \`${rowModel}\`.` as const,
+    130: () => 'cannot multi select unless selection mode is `multiRow`' as const,
     // 131: () => 'cannot range select while selecting multiple rows' as const,
     132: () => 'Row selection features are not available unless `rowSelection` is enabled.' as const,
     133: ({ iconName }: { iconName: string }) =>
@@ -452,7 +453,7 @@ export const AG_GRID_ERRORS = {
         `Unable to update chart as a \`${type}\` update type is not permitted on a ${currentChartType}.` as const,
     138: ({ chartType }: { chartType: string }) => `invalid chart type supplied: ${chartType}` as const,
     139: ({ customThemeName }: { customThemeName: string }) =>
-        `a custom chart theme with the name \`${customThemeName}\` has been supplied but not added to the 'chartThemes' list` as const,
+        `a custom chart theme with the name \`${customThemeName}\` has been supplied but not added to the \`chartThemes\` list` as const,
     140: ({ name }: { name: string }) =>
         `no stock theme exists with the name \`${name}\` and no custom chart theme with that name was supplied to \`customChartThemes\`` as const,
     141: () => 'cross filtering with row grouping is not supported.' as const,
@@ -462,18 +463,18 @@ export const AG_GRID_ERRORS = {
     145: ({ group }: { group: string }) =>
         `As of v32, only one charts customize panel group can be expanded at a time. \`${group}\` will not be expanded.` as const,
     146: ({ comp }: { comp: string }) =>
-        `Unable to instantiate component \`${comp}\` as its module hasn't been loaded. Add 'ValidationModule' to see which module is required.` as const,
+        `Unable to instantiate component \`${comp}\` as its module hasn't been loaded. Add \`ValidationModule\` to see which module is required.` as const,
     147: ({ group }: { group: string }) => `Invalid charts customize panel group name supplied: \`${group}\`` as const,
     148: ({ group }: { group: string }) => `invalid \`chartGroupsDef\` config \`${group}\`` as const,
     149: ({ group, chartType }: { group: string; chartType: string }) =>
         `invalid \`chartGroupsDef\` config \`${group}.${chartType}\`` as const,
-    150: () => `\`seriesChartTypes\` are required when the 'customCombo' chart type is specified.` as const,
+    150: () => `\`seriesChartTypes\` are required when the \`customCombo\` chart type is specified.` as const,
     151: ({ chartType }: { chartType: string }) =>
-        `invalid chartType \`${chartType}\` supplied in \`seriesChartTypes\`, converting to 'line' instead.` as const,
+        `invalid chartType \`${chartType}\` supplied in \`seriesChartTypes\`, converting to \`line\` instead.` as const,
     152: ({ colId }: { colId: string }) =>
-        `no \`seriesChartType\` found for colId = \`${colId}\`, defaulting to 'line'.` as const,
+        `no \`seriesChartType\` found for colId = \`${colId}\`, defaulting to \`line\`.` as const,
     153: ({ chartDataType }: { chartDataType: string }) =>
-        `unexpected \`chartDataType\` value \`${chartDataType}\` supplied, instead use 'category', 'series' or 'excluded'` as const,
+        `unexpected \`chartDataType\` value \`${chartDataType}\` supplied, instead use \`category\`, \`series\` or \`excluded\`` as const,
     154: ({ colId }: { colId: string }) =>
         `cross filtering requires a \`agSetColumnFilter\` or \`agMultiColumnFilter\` to be defined on the column with id: ${colId}` as const,
     155: ({ option }: { option: string }) => `\`${option}\` is not a valid Chart Toolbar Option` as const,
@@ -504,16 +505,16 @@ export const AG_GRID_ERRORS = {
         'could not find detail grid options for master detail, please set `gridOptions.detailCellRendererParams.detailGridOptions`' as const,
     172: () =>
         'could not find `getDetailRowData` for master / detail, please set `gridOptions.detailCellRendererParams.getDetailRowData`' as const,
-    173: ({ group }: { group: string }) => `invalid chartGroupsDef config \`${group}\`` as const,
+    173: ({ group }: { group: string }) => `invalid \`chartGroupsDef\` config \`${group}\`` as const,
     174: ({ group, chartType }: { group: string; chartType: string }) =>
-        `invalid chartGroupsDef config '${group}.${chartType}'` as const,
+        `invalid \`chartGroupsDef\` config \`${group}.${chartType}\`` as const,
     175: ({ menuTabName, itemsToConsider }: { menuTabName: string; itemsToConsider: string[] }) =>
         [
             `Trying to render an invalid menu item \`${menuTabName}\`. Check that your \`menuTabs\` contains one of `,
             itemsToConsider,
         ] as const,
     176: ({ key }: { key: string }) => `unknown menu item type ${key}` as const,
-    177: () => `valid values for \`cellSelection.handle.direction\` are 'x', 'y' and 'xy'. Default to 'xy'.` as const,
+    177: () => `valid values for \`cellSelection.handle.direction\` are \`x\`, \`y\` and \`xy\`. Default to \`xy\`.` as const,
     178: ({ colId }: { colId: string }) => `column ${colId} is not visible` as const,
     179: () => '`totalValueGetter` should be either a function or a string (expression)' as const,
     180: () => '`agRichSelectCellEditor` requires `cellEditorParams.values` to be set' as const,
@@ -633,9 +634,9 @@ export const AG_GRID_ERRORS = {
         'Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.' as const,
     238: () => '`setRowCount` can only accept a positive row count.' as const,
     239: () =>
-        'Theming API and CSS File Themes are both used in the same page. In v33 we released the Theming API as the new default method of styling the grid. See the migration docs https://www.ag-grid.com/react-data-grid/theming-migration/. Because no value was provided to the `theme` grid option it defaulted to themeQuartz. But the file (`ag-grid.css`) is also included and will cause styling issues. Either pass the string "legacy" to the theme grid option to use v32 style themes, or remove `ag-grid.css` from the page to use Theming API.' as const,
+        'Theming API and CSS File Themes are both used in the same page. In v33 we released the Theming API as the new default method of styling the grid. See the migration docs https://www.ag-grid.com/react-data-grid/theming-migration/. Because no value was provided to the `theme` grid option it defaulted to themeQuartz. But the file (`ag-grid.css`) is also included and will cause styling issues. Either pass the string `legacy` to the theme grid option to use v32 style themes, or remove `ag-grid.css` from the page to use Theming API.' as const,
     240: ({ theme }: { theme: any }) =>
-        `theme grid option must be a Theming API theme object or the string "legacy", received: ${theme}` as const,
+        `theme grid option must be a Theming API theme object or the string \`legacy\`, received: ${theme}` as const,
     // 241: () => `cannot select multiple rows when rowSelection.mode is set to 'singleRow'` as const,
     // 242: () => 'cannot select multiple rows when using rangeSelect' as const,
     243: () => 'Failed to deserialize state - each provided state object must be an object.' as const,
@@ -728,7 +729,7 @@ export const AG_GRID_ERRORS = {
     278: ({ colId }: { colId: string }) => `Unable to create filter handler for column \`${colId}\`` as const,
     279: (_: { name: DynamicBeanName }) => {}, // `Unable to create dynamic bean \`${name}\` during module init lifecycle, dynamic beans must be initialised on first use.` as const,
     280: ({ colId }: { colId: string }) =>
-        `\`name\` must be provided for custom filter components for column '${colId}'` as const,
+        `\`name\` must be provided for custom filter components for column \`${colId}\`` as const,
     281: ({ colId }: { colId: string }) =>
         `Filter for column \`${colId}\` does not have \`filterParams.buttons\`, but the new Filters Tool Panel has buttons configured. Either configure buttons for the filter, or disable buttons on the Filters Tool Panel.` as const,
     282: () => 'New filter tool panel requires `enableFilterHandlers: true`.' as const,
@@ -785,7 +786,7 @@ export const AG_GRID_ERRORS = {
     303: ({ key }: { key: string }) =>
         `Multiple toolbar items share the explicit key \`${key}\`. Only the first item is rendered.` as const,
     304: ({ dataType }: { dataType: string }) =>
-        `Invalid \`calculatedColumns.dataTypes\` entry "${dataType}" - it must be a built-in data type or registered via \`dataTypeDefinitions\`. It has been ignored.` as const,
+        `Invalid \`calculatedColumns.dataTypes\` entry \`${dataType}\` - it must be a built-in data type or registered via \`dataTypeDefinitions\`. It has been ignored.` as const,
     305: () =>
         `The file input overlay is shown but no \`processFileInput\` is configured. The overlay will not work without a \`processFileInput\`.` as const,
     306: ({ version, name, message }: { version: string; name: string; message?: string }) =>
