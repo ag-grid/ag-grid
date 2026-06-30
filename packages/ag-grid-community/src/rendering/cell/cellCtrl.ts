@@ -156,6 +156,10 @@ export class CellCtrl extends BeanStub {
 
     public tooltipFeature: TooltipFeature | undefined = undefined;
     public editorTooltipFeature: TooltipFeature | undefined = undefined;
+    private renderedCellRendererClass: any = undefined;
+    // True while the current tooltipFeature was supplied by a cell renderer via params.setTooltip,
+    // so it can be torn down when that renderer instance is replaced.
+    private tooltipSetByRenderer = false;
 
     constructor(
         public readonly column: AgColumn,
@@ -221,6 +225,15 @@ export class CellCtrl extends BeanStub {
 
     private disableTooltipFeature() {
         this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
+    }
+
+    // Restores the cell tooltip to its fresh-render baseline (matching addFeatures), discarding any
+    // renderer-supplied tooltip from params.setTooltip. Must run when a new cell renderer instance is
+    // created so a previous renderer's tooltip cannot persist or accumulate.
+    private resetTooltipFeature(): void {
+        this.disableTooltipFeature();
+        this.enableTooltipFeature();
+        this.tooltipSetByRenderer = false;
     }
 
     public enableEditorTooltipFeature(editor: ICellEditor): void {
@@ -422,6 +435,16 @@ export class CellCtrl extends BeanStub {
             }
         }
 
+        // A renderer-supplied tooltip (params.setTooltip) belongs to the renderer instance that set it.
+        // When that instance is replaced — selector swap, class change, or a forced new instance — clear it
+        // back to the colDef tooltip so a stale renderer's tooltip cannot persist or accumulate in the DOM.
+        const cellRendererClass = compDetails?.componentClass;
+        const rendererReplaced = forceNewCellRendererInstance || cellRendererClass !== this.renderedCellRendererClass;
+        if (rendererReplaced && this.tooltipSetByRenderer) {
+            this.resetTooltipFeature();
+        }
+        this.renderedCellRendererClass = cellRendererClass;
+
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
 
         this.customRowDragComp?.refreshVisibility();
@@ -578,6 +601,7 @@ export class CellCtrl extends BeanStub {
                     this.disableTooltipFeature();
                 }
                 this.enableTooltipFeature(value, shouldDisplayTooltip);
+                this.tooltipSetByRenderer = true;
                 this.tooltipFeature?.refreshTooltip();
             },
         });
@@ -621,7 +645,6 @@ export class CellCtrl extends BeanStub {
             column,
             comp,
             suppressRefreshCell,
-            tooltipFeature,
         } = this;
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
         if (suppressRefreshCell) {
@@ -682,7 +705,7 @@ export class CellCtrl extends BeanStub {
             this.checkFormulaError();
         }
 
-        tooltipFeature?.refreshTooltip();
+        this.tooltipFeature?.refreshTooltip();
         this.refreshNoteState();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that

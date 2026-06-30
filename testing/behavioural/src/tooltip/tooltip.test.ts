@@ -2,7 +2,7 @@ import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import type { GridOptions, Module } from 'ag-grid-community';
+import type { GridOptions, ICellRendererComp, ICellRendererParams, Module } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -131,6 +131,83 @@ describe('Tooltips', () => {
             ├── LEAF id:0 A:"one"
             └── LEAF id:1 A:"two"
         `);
+    });
+
+    test('resets renderer tooltip to colDef when cellRendererSelector swaps the renderer', async () => {
+        class DetailRenderer implements ICellRendererComp {
+            private eGui!: HTMLElement;
+            public init(params: ICellRendererParams): void {
+                this.eGui = document.createElement('span');
+                this.eGui.textContent = 'Detail';
+                params.setTooltip('Cell renderer tooltip', () => true);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return false;
+            }
+        }
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    colId: 'A',
+                    tooltipValueGetter: () => 'ColDef tooltip',
+                    cellRendererSelector: (params) =>
+                        params.data?.showDetail ? { component: DetailRenderer } : undefined,
+                },
+            ],
+            rowData: [{ id: 'r1', A: 'value', showDetail: true }],
+            getRowId: (params) => params.data.id,
+            tooltipShowDelay: 200,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-renderer-swap', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
+
+        // Renderer-supplied tooltip is shown for the detail renderer.
+        await waitFor(() => expect(cell).toHaveTextContent('Detail'));
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Cell renderer tooltip');
+        await userEvent.unhover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(0);
+
+        // Swapping to the default renderer must fall back to the colDef tooltip, not keep the old one.
+        // Wait for the swap to actually render before hovering, otherwise we read the pre-swap tooltip.
+        api.setGridOption('rowData', [{ id: 'r1', A: 'value', showDetail: false }]);
+        await waitFor(() => expect(cell).not.toHaveTextContent('Detail'));
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('ColDef tooltip');
+        expect(hasTooltipText('Cell renderer tooltip')).toBe(false);
+        await userEvent.unhover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(0);
+
+        // Repeated swaps must not leave orphaned tooltip elements accumulating in the DOM.
+        for (let i = 0; i < 5; i++) {
+            const showDetail = i % 2 === 0;
+            api.setGridOption('rowData', [{ id: 'r1', A: 'value', showDetail }]);
+            await waitFor(() => {
+                if (showDetail) {
+                    expect(cell).toHaveTextContent('Detail');
+                } else {
+                    expect(cell).not.toHaveTextContent('Detail');
+                }
+            });
+        }
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        await userEvent.unhover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(0);
     });
 
     test('does not duplicate after formula errors toggle during edits', async () => {
