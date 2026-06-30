@@ -266,13 +266,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
-.heroCtas {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 8px;
-}
-
 // ─── Hero faces (right side) ─────────────────────────────────────────────────
 // Three same-sized portraits laid out with a clear gap. They share a single
 // `max-height` so the heads read at a uniform scale; the only variation is
@@ -1266,43 +1259,5 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 
     @media (min-width: 900px) {
         margin-top: 40px;
-    }
-}
-
-// ─── Final CTA ───────────────────────────────────────────────────────────────
-.finalCta {
-    padding: 96px 0 128px;
-    text-align: center;
-}
-
-.finalCtaInner {
-    max-width: 640px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-}
-
-.finalCtaTitle {
-    font-size: clamp(32px, 4vw, 48px);
-    line-height: 1.05;
-    letter-spacing: -0.025em;
-    font-weight: 600;
-}
-
-.finalCtaBody {
-    font-size: 18px;
-    line-height: 1.55;
-    color: var(--btp-ink-muted);
-
-    a {
-        color: var(--btp-orange);
-        text-decoration: underline;
-        text-underline-offset: 2px;
-
-        &:hover {
-            color: var(--btp-orange-dark);
-        }
     }
 }

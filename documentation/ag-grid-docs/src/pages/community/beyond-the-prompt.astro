@@ -5,8 +5,6 @@ import styles from '../../pages-styles/beyond-the-prompt.module.scss';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
-const MAILTO_HREF = 'mailto:info@ag-grid.com?subject=Beyond the Prompt enquiry';
-const BOOK_TICKETS_HREF = 'https://maglo.co.uk/event/ag-grid/ag-grid-bryntum';
 const VENUE_MAP_HREF = 'https://maps.app.goo.gl/GRcWV6LPBoXJwDLu6';
 const SOCIAL_IMAGE_URL = 'images/campaigns/beyond-the-prompt/social-card.png';
 
@@ -632,23 +630,6 @@ const VENUE_IMAGES: VenueImage[] = [
                         <Icon name="mapPin" />
                         IET London
                     </a>
-                </div>
-            </div>
-        </section>
-
-        <section class={styles.finalCta}>
-            <div class={styles.container}>
-                <div class={styles.finalCtaInner}>
-                    <h2 class={styles.finalCtaTitle}>Join us on 19 May in London</h2>
-                    <p class={styles.finalCtaBody}>
-                        Early bird tickets are £149. <a href={BOOK_TICKETS_HREF}>Book your place</a> or email
-                        <a href={MAILTO_HREF}>info@ag-grid.com</a> with any questions.
-                    </p>
-                    <div class={styles.heroCtas}>
-                        <a href={BOOK_TICKETS_HREF} class={styles.btnPrimary}>
-                            Register Now <Icon name="arrowRight" />
-                        </a>
-                    </div>
                 </div>
             </div>
         </section>
