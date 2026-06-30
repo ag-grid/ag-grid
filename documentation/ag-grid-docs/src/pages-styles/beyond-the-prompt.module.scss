@@ -1429,6 +1429,12 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     background: var(--btp-card);
 }
 
+// Portrait slide: narrower and a bit taller than the 3:2 landscape frames.
+.gallerySlidePortrait {
+    width: min(70vw, 380px);
+    aspect-ratio: 3 / 4;
+}
+
 .galleryImage {
     display: block;
     width: 100%;

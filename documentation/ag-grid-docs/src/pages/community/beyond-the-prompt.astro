@@ -194,6 +194,12 @@ const GALLERY_IMAGES = [
     'images/campaigns/beyond-the-prompt/gallery/gallery-10.webp',
     'images/campaigns/beyond-the-prompt/gallery/gallery-11.webp',
     'images/campaigns/beyond-the-prompt/gallery/gallery-12.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-13.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-14.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-15.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-16.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-17.webp',
+    'images/campaigns/beyond-the-prompt/gallery/gallery-18.webp',
 ];
 ---
 
@@ -511,7 +517,12 @@ const GALLERY_IMAGES = [
                 <ol class={styles.galleryTrack} aria-hidden="true">
                     {
                         [...GALLERY_IMAGES, ...GALLERY_IMAGES].map((src) => (
-                            <li class={styles.gallerySlide}>
+                            <li
+                                class:list={[
+                                    styles.gallerySlide,
+                                    src.includes('gallery-18') && styles.gallerySlidePortrait,
+                                ]}
+                            >
                                 <img
                                     src={urlWithBaseUrl(src)}
                                     alt=""
