@@ -28,7 +28,6 @@ export async function getSitemapIgnorePaths() {
 
 export async function getSitemapAllowPaths() {
     const allowPaths = [
-        urlWithBaseUrl('/community/beyond-the-prompt'),
         urlWithBaseUrl('/campaigns/bryntum-gantt'),
         urlWithBaseUrl('/campaigns/bryntum-calendar'),
         urlWithBaseUrl('/campaigns/bryntum-complete'),
