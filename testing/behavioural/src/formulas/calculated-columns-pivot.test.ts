@@ -370,7 +370,7 @@ describe('calculated columns - pivot mode', () => {
         // the observable cause of the dropped calc fields asserted above.
         expect(warn).toHaveBeenCalledWith(
             'AG Grid: warning #295',
-            expect.stringContaining('allowFormula is not supported with Row Groups'),
+            expect.stringContaining('`colDef.allowFormula` is not supported with Row Groups'),
             expect.stringContaining('/errors/295')
         );
     });

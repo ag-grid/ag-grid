@@ -165,6 +165,17 @@ function appendTextWithLinks(el: HTMLElement, text: string): void {
     }
 }
 
+/**
+ * Capitalises the first letter when the message begins with prose. Skipped when it starts with a code
+ * span (backtick), since the leading token is then a case-sensitive identifier.
+ */
+function capitaliseLeadingProse(text: string): string {
+    if (text.startsWith(CODE_DELIMITER)) {
+        return text;
+    }
+    return text.replace(/^[a-z]/, (c) => c.toUpperCase());
+}
+
 function createTextEl(text: string): HTMLElement {
     const eText = _createElement({ tag: 'div', cls: 'ag-overlay-error-message' });
     appendRichText(eText, text);
@@ -194,7 +205,7 @@ export function renderDiagnosticElement(
     const { message, code, note, docLink } = content;
 
     if (message) {
-        eItem.appendChild(createTextEl(message));
+        eItem.appendChild(createTextEl(capitaliseLeadingProse(message)));
     }
     if (code) {
         const eCode = _createElement({ tag: 'pre', cls: 'ag-overlay-error-code' });
@@ -238,7 +249,7 @@ export function diagnosticContentToMarkdown(
     const { message, code, note, docLink } = content;
     const lines = [`### ${severity} #${id}`];
     if (message) {
-        lines.push(message.replace(/`/g, ''));
+        lines.push(capitaliseLeadingProse(message).replace(/`/g, ''));
     }
     if (code) {
         lines.push('```', code, '```');

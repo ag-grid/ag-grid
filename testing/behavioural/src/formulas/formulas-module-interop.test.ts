@@ -116,7 +116,7 @@ describe('ag-grid formulas module interop', () => {
 
         expectBlockedWith('Column Pivoting');
         const warningText = warnSpy!.mock.calls.flat().join('\n');
-        expect(warningText).toContain('colDef.allowFormula is not supported with Column Pivoting');
+        expect(warningText).toContain('`colDef.allowFormula` is not supported with Column Pivoting');
         expect(warningText).not.toContain('Calculated Columns');
     });
 

@@ -230,7 +230,7 @@ export const AG_GRID_ERRORS = {
         `the column type \`${key}\` is a default column type and cannot be overridden.` as const,
     35: () =>
         `Column type definitions \`columnTypes\` with a \`type\` attribute are not supported because a column type cannot refer to another column type. Only column definitions \`columnDefs\` can use the \`type\` attribute to refer to a column type.` as const,
-    36: ({ t }: { t: string }) => "colDef.type '" + t + "' does not correspond to defined `gridOptions.columnTypes`",
+    36: ({ t }: { t: string }) => "`colDef.type` '" + t + "' does not correspond to defined `gridOptions.columnTypes`",
     37: () => `Changing the column pinning status is not allowed with \`domLayout='print'\`` as const,
     38: ({ iconName }: { iconName: string }) =>
         `provided icon \`${iconName}\` needs to be a string or a function` as const,
@@ -255,38 +255,38 @@ export const AG_GRID_ERRORS = {
         return `Cell data type is "object"${inferredStr} but no Value \`${property}\` has been provided${colIdStr}. Please either provide an object data type definition with a Value \`${property}\`, or set:\n  - \`colDef.value${property}\`${parserHint}` as const;
     },
     49: ({ methodName }: { methodName: string }) =>
-        `Framework component is missing the method ${methodName}()` as const,
+        `Framework component is missing the method \`${methodName}()\`` as const,
     50: ({ compName }: { compName: string | undefined }) =>
-        `Could not find component ${compName}, did you forget to configure this component?` as const,
+        `Could not find component \`${compName}\`, did you forget to configure this component?` as const,
     51: () => `Export cancelled. Export is not allowed as per your configuration.` as const,
     52: () => 'There is no `window` associated with the current `document`' as const,
     53: () => `unknown value type during csv conversion` as const,
     54: () => 'Could not find document body, it is needed for drag and drop and context menu.' as const,
-    55: () => 'addRowDropZone - A container target needs to be provided' as const,
+    55: () => '`addRowDropZone` - A container target needs to be provided' as const,
     56: () =>
-        'addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.' as const,
+        '`addRowDropZone` - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.' as const,
     57: () => 'unable to show popup filter, filter instantiation failed' as const,
     58: () => 'no values found for select cellEditor' as const,
     59: () => 'cannot select pinned rows' as const,
     60: () => 'cannot select node until it has finished loading' as const,
     61: () =>
-        'since version v32.2.0, rowNode.isFullWidthCell() has been deprecated. Instead check `rowNode.detail` followed by the user provided `isFullWidthRow` grid option.' as const,
-    62: ({ colId }: { colId: string }) => `setFilterModel() - no column found for colId: ${colId}` as const,
+        'since version v32.2.0, `rowNode.isFullWidthCell()` has been deprecated. Instead check `rowNode.detail` followed by the user provided `isFullWidthRow` grid option.' as const,
+    62: ({ colId }: { colId: string }) => `\`setFilterModel()\` - no column found for colId: ${colId}` as const,
     63: ({ colId }: { colId: string }) =>
-        `setFilterModel() - unable to fully apply model, filtering disabled for colId: ${colId}` as const,
+        `\`setFilterModel()\` - unable to fully apply model, filtering disabled for colId: ${colId}` as const,
     64: ({ colId }: { colId: string }) =>
-        `setFilterModel() - unable to fully apply model, unable to create filter for colId: ${colId}` as const,
-    65: () => 'filter missing setModel method, which is needed for setFilterModel' as const,
-    66: () => 'filter API missing getModel method, which is needed for getFilterModel' as const,
-    67: () => 'Filter is missing isFilterActive() method' as const,
+        `\`setFilterModel()\` - unable to fully apply model, unable to create filter for colId: ${colId}` as const,
+    65: () => 'filter missing setModel method, which is needed for `setFilterModel`' as const,
+    66: () => 'filter API missing getModel method, which is needed for `getFilterModel`' as const,
+    67: () => 'Filter is missing `isFilterActive()` method' as const,
     68: () => 'Column Filter API methods have been disabled as Advanced Filters are enabled.' as const,
     69: ({ guiFromFilter }: { guiFromFilter: any }) =>
-        `getGui method from filter returned ${guiFromFilter}; it should be a DOM element.` as const,
+        `\`getGui\` method from filter returned \`${guiFromFilter}\`; it should be a DOM element.` as const,
     70: ({ newFilter }: { newFilter: any }) =>
-        `Grid option quickFilterText only supports string inputs, received: ${typeof newFilter}` as const,
-    71: () => 'debounceMs is ignored when apply button is present' as const,
-    72: ({ keys }: { keys: string[] }) => [`ignoring FilterOptionDef as it doesn't contain one of `, keys] as const,
-    73: () => `invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'` as const,
+        `Grid option \`quickFilterText\` only supports string inputs, received: ${typeof newFilter}` as const,
+    71: () => '`debounceMs` is ignored when apply button is present' as const,
+    72: ({ keys }: { keys: string[] }) => [`ignoring \`FilterOptionDef\` as it doesn't contain one of `, keys] as const,
+    73: () => `invalid \`FilterOptionDef\` supplied as it doesn't contain a \`displayKey\`` as const,
     74: () => 'no filter options for filter' as const,
     75: () => 'Unknown button type specified' as const,
     76: ({ filterModelType }: { filterModelType: any }) =>
@@ -295,28 +295,28 @@ export const AG_GRID_ERRORS = {
             filterModelType,
             '", it looks like the filter was configured with incorrect Filter Options',
         ] as const,
-    77: () => `Filter model is missing 'conditions'` as const,
+    77: () => `Filter model is missing \`conditions\`` as const,
     78: () =>
-        'Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.' as const,
-    79: () => '"filterParams.maxNumConditions" must be greater than or equal to zero.' as const,
-    80: () => '"filterParams.numAlwaysVisibleConditions" must be greater than or equal to zero.' as const,
+        'Filter Model contains more conditions than `filterParams.maxNumConditions`. Additional conditions have been ignored.' as const,
+    79: () => '`filterParams.maxNumConditions` must be greater than or equal to zero.' as const,
+    80: () => '`filterParams.numAlwaysVisibleConditions` must be greater than or equal to zero.' as const,
     81: () =>
-        '"filterParams.numAlwaysVisibleConditions" cannot be greater than "filterParams.maxNumConditions".' as const,
-    82: ({ param }: { param: any }) => `DateFilter ${param} is not a number` as const,
-    83: () => `DateFilter minValidYear should be <= maxValidYear` as const,
-    84: () => `DateFilter minValidDate should be <= maxValidDate` as const,
+        '`filterParams.numAlwaysVisibleConditions` cannot be greater than `filterParams.maxNumConditions`.' as const,
+    82: ({ param }: { param: any }) => `\`DateFilter\` \`${param}\` is not a number` as const,
+    83: () => `\`DateFilter\` \`minValidYear\` should be <= \`maxValidYear\`` as const,
+    84: () => `\`DateFilter\` \`minValidDate\` should be <= \`maxValidDate\`` as const,
     85: () =>
-        'DateFilter should not have both minValidDate and minValidYear parameters set at the same time! minValidYear will be ignored.' as const,
+        '`DateFilter` should not have both `minValidDate` and `minValidYear` parameters set at the same time! `minValidYear` will be ignored.' as const,
     86: () =>
-        'DateFilter should not have both maxValidDate and maxValidYear parameters set at the same time! maxValidYear will be ignored.' as const,
+        '`DateFilter` should not have both `maxValidDate` and `maxValidYear` parameters set at the same time! `maxValidYear` will be ignored.' as const,
     87: () =>
-        'DateFilter parameter minValidDate should always be lower than or equal to parameter maxValidDate.' as const,
-    88: ({ index }: { index: number }) => `Invalid row index for ensureIndexVisible: ${index}` as const,
+        '`DateFilter` parameter `minValidDate` should always be lower than or equal to parameter `maxValidDate`.' as const,
+    88: ({ index }: { index: number }) => `Invalid row index for \`ensureIndexVisible\`: ${index}` as const,
     89: () =>
         `A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)` as const,
-    90: () => `datasource is missing getRows method` as const,
-    91: () => 'Filter is missing method doesFilterPass' as const,
-    92: () => `AnimationFrameService called but animation frames are off` as const,
+    90: () => `datasource is missing \`getRows\` method` as const,
+    91: () => 'Filter is missing method `doesFilterPass`' as const,
+    92: () => `\`AnimationFrameService\` called but animation frames are off` as const,
     93: () => 'cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`' as const,
     94: ({
         paginationPageSizeOption,
@@ -388,7 +388,7 @@ export const AG_GRID_ERRORS = {
         textOutput.push(`If using a custom component check it has been registered correctly.`);
         return textOutput;
     },
-    102: () => "selectAll: 'filtered' only works when gridOptions.rowModelType='clientSide'" as const,
+    102: () => "`selectAll`: `filtered` only works when `gridOptions.rowModelType='clientSide'`" as const,
     103: () =>
         'Invalid selection state. When using client-side row model, the state must conform to `string[]`.' as const,
     104: ({ value, param }: { value: number; param: string }) =>
@@ -412,13 +412,13 @@ export const AG_GRID_ERRORS = {
             `If using a custom aggregation function check it has been registered correctly.`,
         ].join('\n');
     },
-    110: () => 'groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup' as const,
+    110: () => 'groupHideOpenParents only works when specifying specific columns for `colDef.showRowGroup`' as const,
     111: () =>
         'Invalid selection state. When `groupSelects` is enabled, the state must conform to `IServerSideGroupSelectionState`.' as const,
     113: () =>
         'Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values' as const,
     114: ({ component }: { component: string }) =>
-        `Could not find component with name of ${component}. Is it in Vue.components?` as const,
+        `Could not find component with name of \`${component}\`. Is it in \`Vue.components\`?` as const,
     // 115: () => 'The provided selection state should be an object.' as const,
     116: () => 'Invalid selection state. The state must conform to `IServerSideSelectionState`.' as const,
     117: () => '`selectAll` must be of boolean type.' as const,
@@ -438,7 +438,7 @@ export const AG_GRID_ERRORS = {
     128: ({ feature }: { feature: string }) =>
         `${feature} is only available if using 'multiRow' selection mode.` as const,
     129: ({ feature, rowModel }: { feature: string; rowModel: string }) =>
-        `${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModel}.` as const,
+        `${feature} is only available if using 'clientSide' or 'serverSide' \`rowModelType\`, you are using \`${rowModel}\`.` as const,
     130: () => 'cannot multi select unless selection mode is "multiRow"' as const,
     // 131: () => 'cannot range select while selecting multiple rows' as const,
     132: () => 'Row selection features are not available unless `rowSelection` is enabled.' as const,
@@ -452,7 +452,7 @@ export const AG_GRID_ERRORS = {
         `Unable to update chart as a \`${type}\` update type is not permitted on a ${currentChartType}.` as const,
     138: ({ chartType }: { chartType: string }) => `invalid chart type supplied: ${chartType}` as const,
     139: ({ customThemeName }: { customThemeName: string }) =>
-        `a custom chart theme with the name ${customThemeName} has been supplied but not added to the 'chartThemes' list` as const,
+        `a custom chart theme with the name \`${customThemeName}\` has been supplied but not added to the 'chartThemes' list` as const,
     140: ({ name }: { name: string }) =>
         `no stock theme exists with the name \`${name}\` and no custom chart theme with that name was supplied to \`customChartThemes\`` as const,
     141: () => 'cross filtering with row grouping is not supported.' as const,
@@ -466,7 +466,7 @@ export const AG_GRID_ERRORS = {
     147: ({ group }: { group: string }) => `Invalid charts customize panel group name supplied: \`${group}\`` as const,
     148: ({ group }: { group: string }) => `invalid \`chartGroupsDef\` config \`${group}\`` as const,
     149: ({ group, chartType }: { group: string; chartType: string }) =>
-        `invalid chartGroupsDef config '${group}.${chartType}'` as const,
+        `invalid \`chartGroupsDef\` config \`${group}.${chartType}\`` as const,
     150: () => `\`seriesChartTypes\` are required when the 'customCombo' chart type is specified.` as const,
     151: ({ chartType }: { chartType: string }) =>
         `invalid chartType \`${chartType}\` supplied in \`seriesChartTypes\`, converting to 'line' instead.` as const,
@@ -488,7 +488,7 @@ export const AG_GRID_ERRORS = {
     162: ({ id, dataType }: { id: string; dataType: string }) =>
         `Unrecognized data type for excel export [${id}.dataType=${dataType}]` as const,
     163: ({ featureName }: { featureName: string }) =>
-        `Excel table export does not work with ${featureName}. The exported Excel file will not contain any Excel tables.\n Please turn off ${featureName} to enable Excel table exports.` as const,
+        `Excel table export does not work with ${featureName}. The exported Excel file will not contain any Excel tables.\nPlease turn off ${featureName} to enable Excel table exports.` as const,
     164: () => 'Unable to add data table to Excel sheet: A table already exists.' as const,
     165: () => 'Unable to add data table to Excel sheet: Missing required parameters.' as const,
     166: ({ unrecognisedGroupIds }: { unrecognisedGroupIds: string[] }) =>
@@ -542,14 +542,14 @@ export const AG_GRID_ERRORS = {
         ] as const,
     187: ({ rowId, firstData, secondData }: { rowId: string; firstData: any; secondData: any }) =>
         [
-            `Duplicate node id ${rowId}. Row IDs are provided via the getRowId() callback. Please modify the getRowId() callback code to provide unique row id values.`,
+            `Duplicate node id ${rowId}. Row IDs are provided via the \`getRowId()\` callback. Please modify the \`getRowId()\` callback code to provide unique row id values.`,
             'first instance',
             firstData,
             'second instance',
             secondData,
         ] as const,
     188: (props?: { feature?: string }) =>
-        `getRowId callback must be provided for Server Side Row Model ${props?.feature || 'selection'} to work correctly.` as const,
+        `\`getRowId\` callback must be provided for Server Side Row Model ${props?.feature || 'selection'} to work correctly.` as const,
     189: ({ startRow }: { startRow: number }) =>
         `invalid value ${startRow} for startRow, the value should be >= 0` as const,
     190: ({ rowGroupId, data }: { rowGroupId: string | undefined; data: any }) =>
@@ -563,28 +563,28 @@ export const AG_GRID_ERRORS = {
     // 192: () => `cannot use range selection when multi selecting rows` as const,
     // 193: () => "cannot multi select unless selection mode is 'multiRow'" as const,
     194: ({ method }: { method: string }) =>
-        `calling gridApi.${method}() is only possible when using rowModelType=\`clientSide\`.` as const,
+        `calling \`gridApi.${method}()\` is only possible when using \`rowModelType='clientSide'\`.` as const,
     195: ({ justCurrentPage }: { justCurrentPage: boolean | undefined }) =>
-        `selecting just ${justCurrentPage ? 'current page' : 'filtered'} only works when gridOptions.rowModelType='clientSide'` as const,
+        `selecting just ${justCurrentPage ? 'current page' : 'filtered'} only works when \`gridOptions.rowModelType='clientSide'\`` as const,
     196: ({ key }: { key: string }) => `Provided ids must be of string type. Invalid id provided: ${key}` as const,
     197: () => '`toggledNodes` must be an array of string ids.' as const,
     // 198: () => `cannot multi select unless selection mode is 'multiRow'` as const,
     199: () =>
-        `getSelectedNodes and getSelectedRows functions cannot be used with select all functionality with the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
+        `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with select all functionality with the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
     200: missingModule,
     201: ({ rowModelType }: { rowModelType: string }) => `Could not find row model for rowModelType = ${rowModelType}`,
 
     202: () =>
         `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`groupSelectsChildren\` and the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
     203: () =>
-        'Server Side Row Model does not support Dynamic Row Height and Cache Purging. Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.' as const,
+        'Server Side Row Model does not support Dynamic Row Height and Cache Purging. Either a) remove `getRowHeight()` callback or b) remove `maxBlocksInCache` property. Purging has been disabled.' as const,
     204: () =>
-        'Server Side Row Model does not support Auto Row Height and Cache Purging. Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.' as const,
+        'Server Side Row Model does not support Auto Row Height and Cache Purging. Either a) remove `colDef.autoHeight` or b) remove `maxBlocksInCache` property. Purging has been disabled.' as const,
     205: ({ duplicateIdText }: { duplicateIdText: string }) =>
         `Unable to display rows as duplicate row ids (${duplicateIdText}) were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.` as const,
     206: () => 'getRowId callback must be implemented for transactions to work. Transaction was ignored.' as const,
     207: () =>
-        'The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.' as const,
+        'The Set Filter Parameter `defaultToNothingSelected` value was ignored because it does not work when `excelMode` is used.' as const,
     208: () =>
         `Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects.` as const,
     209: () =>
@@ -592,7 +592,7 @@ export const AG_GRID_ERRORS = {
     210: () =>
         'Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects?' as const,
     211: () =>
-        'property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.' as const,
+        'property `treeList=true` for Set Filter params, but you did not provide a `treeListPathGetter` or values of type Date.' as const,
     212: () =>
         `please review all your toolPanel components, it seems like at least one of them doesn't have an id` as const,
     213: () => 'Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.' as const,
@@ -605,12 +605,13 @@ export const AG_GRID_ERRORS = {
     218: ({ property, defaultOffset }: { property: string; defaultOffset: number | undefined }) =>
         `${property} must be a number, the value you provided is not a valid number. Using the default of ${defaultOffset}px.` as const,
     219: ({ property }: { property: string }) => `Property ${property} does not exist on the target object.` as const,
-    220: ({ lineDash }: { lineDash: string }) => `\`${lineDash}\` is not a valid 'lineDash' option.` as const,
-    221: () => `agAggregationComponent should only be used with the client and server side row model.` as const,
-    222: () => `agFilteredRowCountComponent should only be used with the client side row model.` as const,
-    223: () => `agSelectedRowCountComponent should only be used with the client and server side row model.` as const,
-    224: () => `agTotalAndFilteredRowCountComponent should only be used with the client side row model.` as const,
-    225: () => 'agTotalRowCountComponent should only be used with the client side row model.' as const,
+    220: ({ lineDash }: { lineDash: string }) => `\`${lineDash}\` is not a valid \`lineDash\` option.` as const,
+    221: () => `\`agAggregationComponent\` should only be used with the client and server side row model.` as const,
+    222: () => `\`agFilteredRowCountComponent\` should only be used with the client side row model.` as const,
+    223: () =>
+        `\`agSelectedRowCountComponent\` should only be used with the client and server side row model.` as const,
+    224: () => `\`agTotalAndFilteredRowCountComponent\` should only be used with the client side row model.` as const,
+    225: () => '`agTotalRowCountComponent` should only be used with the client side row model.' as const,
     226: () => 'viewport is missing init method.' as const,
     227: () => 'menu item icon must be DOM node or string' as const,
     228: ({ menuItemOrString }: { menuItemOrString: string }) => `unrecognised menu item ${menuItemOrString}` as const,
@@ -623,16 +624,16 @@ export const AG_GRID_ERRORS = {
     233: ({ methodName }: { methodName: string }) =>
         `Framework component is missing the method \`${methodName}()\`` as const,
     234: () =>
-        'Group Column Filter does not work with the colDef property `field`. This property will be ignored.' as const,
+        'Group Column Filter does not work with the `colDef` property `field`. This property will be ignored.' as const,
     235: () =>
-        'Group Column Filter does not work with the colDef property `filterValueGetter`. This property will be ignored.' as const,
+        'Group Column Filter does not work with the `colDef` property `filterValueGetter`. This property will be ignored.' as const,
     236: () =>
-        'Group Column Filter does not work with the colDef property `filterParams`. This property will be ignored.' as const,
+        'Group Column Filter does not work with the `colDef` property `filterParams`. This property will be ignored.' as const,
     237: () =>
         'Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.' as const,
     238: () => '`setRowCount` can only accept a positive row count.' as const,
     239: () =>
-        'Theming API and CSS File Themes are both used in the same page. In v33 we released the Theming API as the new default method of styling the grid. See the migration docs https://www.ag-grid.com/react-data-grid/theming-migration/. Because no value was provided to the `theme` grid option it defaulted to themeQuartz. But the file (ag-grid.css) is also included and will cause styling issues. Either pass the string "legacy" to the theme grid option to use v32 style themes, or remove ag-grid.css from the page to use Theming API.' as const,
+        'Theming API and CSS File Themes are both used in the same page. In v33 we released the Theming API as the new default method of styling the grid. See the migration docs https://www.ag-grid.com/react-data-grid/theming-migration/. Because no value was provided to the `theme` grid option it defaulted to themeQuartz. But the file (`ag-grid.css`) is also included and will cause styling issues. Either pass the string "legacy" to the theme grid option to use v32 style themes, or remove `ag-grid.css` from the page to use Theming API.' as const,
     240: ({ theme }: { theme: any }) =>
         `theme grid option must be a Theming API theme object or the string "legacy", received: ${theme}` as const,
     // 241: () => `cannot select multiple rows when rowSelection.mode is set to 'singleRow'` as const,
@@ -655,7 +656,7 @@ export const AG_GRID_ERRORS = {
     254: () => 'Cannot create chart: no chart themes available.' as const,
     255: ({ point }: { point: number }) =>
         `Lone surrogate U+${point?.toString(16).toUpperCase()} is not a scalar value` as const,
-    256: () => 'Unable to initialise. See validation error, or load ValidationModule if missing.' as const,
+    256: () => 'Unable to initialise. See validation error, or load `ValidationModule` if missing.' as const,
     257: () => missingChartsWithModule('IntegratedChartsModule'),
     258: () => missingChartsWithModule('SparklinesModule'),
     259: ({ part }: { part: any }) =>
@@ -685,18 +686,18 @@ export const AG_GRID_ERRORS = {
         }),
     261: () => 'As of v33, `column.isHovered()` is deprecated. Use `api.isColumnHovered(column)` instead.' as const,
     262: () =>
-        'As of v33, icon key "smallDown" is deprecated. Use "advancedFilterBuilderSelect" for Advanced Filter Builder dropdown, "selectOpen" for Select cell editor and dropdowns (e.g. Integrated Charts menu), "richSelectOpen" for Rich Select cell editor.' as const,
+        'As of v33, icon key `smallDown` is deprecated. Use `advancedFilterBuilderSelect` for Advanced Filter Builder dropdown, `selectOpen` for Select cell editor and dropdowns (e.g. Integrated Charts menu), `richSelectOpen` for Rich Select cell editor.' as const,
     263: () =>
-        'As of v33, icon key "smallLeft" is deprecated. Use "panelDelimiterRtl" for Row Group Panel / Pivot Panel, "subMenuOpenRtl" for sub-menus.' as const,
+        'As of v33, icon key `smallLeft` is deprecated. Use `panelDelimiterRtl` for Row Group Panel / Pivot Panel, `subMenuOpenRtl` for sub-menus.' as const,
     264: () =>
-        'As of v33, icon key "smallRight" is deprecated. Use "panelDelimiter" for Row Group Panel / Pivot Panel, "subMenuOpen" for sub-menus.' as const,
+        'As of v33, icon key `smallRight` is deprecated. Use `panelDelimiter` for Row Group Panel / Pivot Panel, `subMenuOpen` for sub-menus.' as const,
     265: ({ colId }: { colId: string }) =>
-        `Unable to infer chart data type for column \`${colId}\` if first data entry is null. Please specify "chartDataType", or a "cellDataType" in the column definition. For more information, see ${baseDocLink}/integrated-charts-range-chart#coldefchartdatatype .` as const,
+        `Unable to infer chart data type for column \`${colId}\` if first data entry is null. Please specify \`chartDataType\`, or a \`cellDataType\` in the column definition. For more information, see ${baseDocLink}/integrated-charts-range-chart#coldefchartdatatype .` as const,
     266: () =>
-        'As of v33.1, using "keyCreator" with the Rich Select Editor has been deprecated. It now requires the "formatValue" callback to convert complex data to strings.' as const,
+        'As of v33.1, using `keyCreator` with the Rich Select Editor has been deprecated. It now requires the `formatValue` callback to convert complex data to strings.' as const,
     267: () =>
         'Detail grids can not use a different theme to the master grid, the `theme` detail grid option will be ignored.' as const,
-    268: () => "Transactions aren't supported with tree data when using treeDataChildrenField" as const,
+    268: () => "Transactions aren't supported with tree data when using `treeDataChildrenField`" as const,
     269: () => "When `masterSelects: 'detail'`, detail grids must be configured with multi-row selection" as const,
     270: ({ id, parentId }: { id: string; parentId: string }) =>
         `Cycle detected for row with id=\`${id}\` and parent id=\`${parentId}\`. Resetting the parent for row with id=\`${id}\` and showing it as a root-level node.` as const,
@@ -706,7 +707,7 @@ export const AG_GRID_ERRORS = {
     273: ({ providedId, usedId }: { providedId: string; usedId: string }) =>
         `Provided column id \`${providedId}\` was already in use, ensure all column and group ids are unique. Using \`${usedId}\` instead.` as const,
     274: ({ prop }: { prop: string }) => {
-        let msg = `Since v33, ${prop} has been deprecated.`;
+        let msg = `Since v33, \`${prop}\` has been deprecated.`;
         switch (prop) {
             case 'maxComponentCreationTimeMs':
                 msg += ' This property is no longer required and so will be removed in a future version.';
@@ -723,13 +724,13 @@ export const AG_GRID_ERRORS = {
     // 275: missingRowModelTypeError,
     276: () => 'Row Numbers Row Resizer cannot be used when Grid Columns have `autoHeight` enabled.' as const,
     277: ({ colId }: { colId: string }) =>
-        `'enableFilterHandlers' is set to true, but column \`${colId}\` does not have 'filter.doesFilterPass' or 'filter.handler' set.` as const,
+        `\`enableFilterHandlers\` is set to true, but column \`${colId}\` does not have \`filter.doesFilterPass\` or \`filter.handler\` set.` as const,
     278: ({ colId }: { colId: string }) => `Unable to create filter handler for column \`${colId}\`` as const,
     279: (_: { name: DynamicBeanName }) => {}, // `Unable to create dynamic bean \`${name}\` during module init lifecycle, dynamic beans must be initialised on first use.` as const,
     280: ({ colId }: { colId: string }) =>
-        `'name' must be provided for custom filter components for column '${colId}` as const,
+        `\`name\` must be provided for custom filter components for column '${colId}'` as const,
     281: ({ colId }: { colId: string }) =>
-        `Filter for column \`${colId}\` does not have 'filterParams.buttons', but the new Filters Tool Panel has buttons configured. Either configure buttons for the filter, or disable buttons on the Filters Tool Panel.` as const,
+        `Filter for column \`${colId}\` does not have \`filterParams.buttons\`, but the new Filters Tool Panel has buttons configured. Either configure buttons for the filter, or disable buttons on the Filters Tool Panel.` as const,
     282: () => 'New filter tool panel requires `enableFilterHandlers: true`.' as const,
     283: () =>
         'As of v34, use the same method on the filter handler (`api.getColumnFilterHandler(colKey)`) instead.' as const,
@@ -746,20 +747,20 @@ export const AG_GRID_ERRORS = {
     291: () =>
         'License Key being set multiple times with different values. This can result in an incorrect license key being used,' as const,
     292: ({ colId }: { colId: string }) =>
-        `The Multi Filter for column \`${colId}\` has buttons configured against the child filters. When 'enableFilterHandlers=true', buttons must instead be provided against the parent Multi Filter params. The child filter buttons will be ignored.` as const,
+        `The Multi Filter for column \`${colId}\` has buttons configured against the child filters. When \`enableFilterHandlers=true\`, buttons must instead be provided against the parent Multi Filter params. The child filter buttons will be ignored.` as const,
     293: () =>
-        `The grid was initialised detached from the DOM and was then inserted into a Shadow Root. Theme styles are probably broken. Pass the themeStyleContainer grid option to let the grid know where in the document to insert theme CSS.` as const,
+        `The grid was initialised detached from the DOM and was then inserted into a Shadow Root. Theme styles are probably broken. Pass the \`themeStyleContainer\` grid option to let the grid know where in the document to insert theme CSS.` as const,
     294: () =>
         `When using the \`agRichSelectCellEditor\` setting \`filterListAsync = true\` requires \`allowTyping = true\` and the \`values()\` callback must return a Promise of filtered values.` as const,
     295: ({ blockedService }: { blockedService: string }) =>
-        `colDef.allowFormula is not supported with ${blockedService}. Formulas has been turned off.`,
+        `\`colDef.allowFormula\` is not supported with ${blockedService}. Formulas has been turned off.`,
     296: () =>
         'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
     297: () =>
         '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
-    298: () => `Columns Tool Panel 'buttons' requires 'apply' to enable Deferred Updates.` as const,
+    298: () => `Columns Tool Panel \`buttons\` requires \`apply\` to enable Deferred Updates.` as const,
     301: ({ key }: { key: string }) =>
-        `Toolbar item \`${key}\` is missing the 'toolbarItem' property and will not be rendered.` as const,
+        `Toolbar item \`${key}\` is missing the \`toolbarItem\` property and will not be rendered.` as const,
     302: ({
         itemName,
         moduleName,
@@ -784,9 +785,9 @@ export const AG_GRID_ERRORS = {
     303: ({ key }: { key: string }) =>
         `Multiple toolbar items share the explicit key \`${key}\`. Only the first item is rendered.` as const,
     304: ({ dataType }: { dataType: string }) =>
-        `Invalid calculatedColumns.dataTypes entry "${dataType}" - it must be a built-in data type or registered via dataTypeDefinitions. It has been ignored.` as const,
+        `Invalid \`calculatedColumns.dataTypes\` entry "${dataType}" - it must be a built-in data type or registered via \`dataTypeDefinitions\`. It has been ignored.` as const,
     305: () =>
-        `The file input overlay is shown but no 'processFileInput' is configured. The overlay will not work without a 'processFileInput'.` as const,
+        `The file input overlay is shown but no \`processFileInput\` is configured. The overlay will not work without a \`processFileInput\`.` as const,
     306: ({ version, name, message }: { version: string; name: string; message?: string }) =>
         `As of v${version}, \`${name}\` is deprecated. ${message ?? ''}`,
     307: ({
@@ -854,7 +855,7 @@ export const AG_GRID_ERRORS = {
         failedKey: string;
         required?: string[];
         reason?: string;
-    }) => `\`${key}\` requires \`${failedKey}\` to be one of [${(required ?? []).join(', ')}]. ${reason ?? ''}`,
+    }) => `\`${key}\` requires \`${failedKey}\` to be one of \`[${(required ?? []).join(', ')}]\`. ${reason ?? ''}`,
     316: ({ property, value, expectedType }: { property: string; value?: unknown; expectedType: string }) =>
         `Unable to update chart as invalid params supplied: \`${property}: ${String(value)}\`, expected \`${expectedType}\`.`,
     317: ({ property, min }: { property: string; min: number }) => `\`${property}\` should not be lower than ${min}.`,
@@ -865,13 +866,13 @@ export const AG_GRID_ERRORS = {
     319: ({ feature, requirement }: { feature: string; requirement: string }) => `${feature} requires ${requirement}.`,
     320: ({ property, allowed, value }: { property: string; allowed?: string[]; value?: unknown }) => {
         const current = value !== undefined ? `, currently it's ${String(value)}` : '';
-        return `\`${property}\` must be one of [${(allowed ?? []).join(', ')}]${current}.`;
+        return `\`${property}\` must be one of \`[${(allowed ?? []).join(', ')}]\`${current}.`;
     },
     321: ({ property, expected }: { property: string; expected: string }) => `\`${property}\` should be ${expected}.`,
     322: ({ message }: { message?: string }) => message ?? '',
     323: ({ validNames }: { validNames: string[] }) => {
-        const names = (validNames ?? []).map((n) => `\`${n}\``).join(', ');
-        return `\`paginationPanels\` expects an array of panel names or config objects: [${names}]`;
+        const names = (validNames ?? []).join(', ');
+        return `\`paginationPanels\` expects an array of panel names or config objects: \`[${names}]\``;
     },
     324: ({ property, invalidItems }: { property: string; invalidItems?: unknown[] }) => {
         const items = (invalidItems ?? [])
@@ -879,10 +880,10 @@ export const AG_GRID_ERRORS = {
                 typeof item === 'string' || item == null ? toStringWithNullUndefined(item) : JSON.stringify(item)
             )
             .join(', ');
-        return `\`${property}\` must be an array of type \`(SortDirection | SortDef)[]\`, incorrect items are: [${items}]`;
+        return `\`${property}\` must be an array of type \`(SortDirection | SortDef)[]\`, incorrect items are: \`[${items}]\``;
     },
     325: ({ property, value }: { property: string; value?: unknown }) =>
-        `\`${property}\` must be an array with at least one element, currently it is [${String(value)}]`,
+        `\`${property}\` must be an array with at least one element, currently it is \`[${String(value)}]\``,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

@@ -100,7 +100,7 @@ describe('renderDiagnosticElement', () => {
         const el = renderDiagnosticElement('warning', { message: 'see https://ag-grid.com/x.' }, 'https://x/e/1', '#1');
         const message = el.querySelector('.ag-overlay-error-message')!;
         expect(message.querySelector('a')!.getAttribute('href')).toBe('https://ag-grid.com/x');
-        expect(message.textContent).toBe('see https://ag-grid.com/x.');
+        expect(message.textContent).toBe('See https://ag-grid.com/x.');
     });
 });
 
@@ -140,6 +140,16 @@ describe('against real error definitions', () => {
         const md = diagnosticToMarkdown(diagnostic);
         expect(md).toContain('### warning #22');
         expect(md).toContain('/errors/22');
+    });
+
+    test('capitalises the first letter when the message starts with prose', () => {
+        const el = renderDiagnosticElement('warning', { message: 'to see all properties' }, 'https://x/e/1', '#1');
+        expect(el.querySelector('.ag-overlay-error-message')!.textContent).toMatch(/^To see/);
+    });
+
+    test('does not capitalise a leading code identifier', () => {
+        const el = renderDiagnosticElement('error', { message: '`rowData` must be an array' }, 'https://x/e/1', '#1');
+        expect(el.querySelector('code.ag-overlay-error-inline-code')!.textContent).toBe('rowData');
     });
 
     test('renders an embedded object value (array-returning message) as inline code', () => {
