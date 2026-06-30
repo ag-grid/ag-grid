@@ -174,8 +174,9 @@ export class FilterManager extends BeanStub implements NamedBean {
         }
     }
 
-    // Regenerated pivot value columns leave any active filter classified against the old columns.
-    // Secondary-column filters are always aggregate filters, so re-evaluate regardless of `groupAggFiltering`.
+    // Regenerated pivot value columns leave any active filter classified against the old columns, so
+    // re-evaluate regardless of `groupAggFiltering`. This refresh runs the full pipeline including the
+    // pivot stage, so ClientSideRowModel skips its own pivot refresh when a filter is present.
     private onPivotColumnsChanged() {
         if (this.isAnyFilterPresent()) {
             this.onFilterChanged();

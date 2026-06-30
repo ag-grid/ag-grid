@@ -117,7 +117,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             newColumnsLoaded: onColumnsChanged,
             columnRowGroupChanged: onColumnsChanged,
             columnValueChanged: this.onValueChanged.bind(this),
-            columnPivotChanged: () => this.refreshModel({ step: 'pivot' }),
+            columnPivotChanged: this.onPivotChanged.bind(this),
             columnPivotModeChanged: () => this.refreshModel({ step: 'group' }),
             filterChanged: this.onFilterChanged.bind(this),
             sortChanged: this.onSortChanged.bind(this),
@@ -488,6 +488,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             const primaryOrQuickFilterChanged = columns.length === 0 || columns.some((col) => col.isPrimary());
             const step: ClientSideRowModelStage = primaryOrQuickFilterChanged ? 'filter' : 'filter_aggregates';
             this.refreshModel({ step: step, keepRenderedRows: true, animate: _isAnimateRows(this.gos) });
+        }
+    }
+
+    private onPivotChanged(): void {
+        // With a filter present, FilterManager's columnPivotChanged handler runs a comprehensive
+        // filter refresh that already rebuilds the pivot stage, so this would be a redundant repeat.
+        if (!this.beans.filterManager?.isAnyFilterPresent()) {
+            this.refreshModel({ step: 'pivot' });
         }
     }
 
