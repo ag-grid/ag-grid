@@ -273,3 +273,30 @@ export function diagnosticToMarkdown(diagnostic: CapturedDiagnostic): string {
         getErrorLink(diagnostic.id, diagnostic.params)
     );
 }
+
+/**
+ * Writes `text` to the clipboard, falling back to a hidden textarea + execCommand in non-secure
+ * contexts where `navigator.clipboard` is unavailable. Shared by the dev overlay and bootstrap panel.
+ */
+export function copyDiagnosticsToClipboard(text: string): void {
+    if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+        return;
+    }
+    fallbackCopy(text);
+}
+
+function fallbackCopy(text: string): void {
+    const eTextarea = _createElement<HTMLTextAreaElement>({ tag: 'textarea' });
+    eTextarea.value = text;
+    eTextarea.style.position = 'fixed';
+    eTextarea.style.opacity = '0';
+    document.body.appendChild(eTextarea);
+    eTextarea.select();
+    try {
+        document.execCommand('copy');
+    } catch {
+        // Clipboard unavailable (non-secure context, restricted environment); nothing more we can do.
+    }
+    eTextarea.remove();
+}

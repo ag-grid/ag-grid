@@ -1,12 +1,22 @@
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { _registerModule } from '../modules/moduleRegistry';
 import { VERSION } from '../version';
+import { renderBootstrapPanel } from './errorOverlay/bootstrapPanel';
 import errorOverlayCSS from './errorOverlay/errorOverlay.css';
 import { ErrorOverlayComponent } from './errorOverlay/errorOverlayComponent';
 import { ErrorOverlayService } from './errorOverlay/errorOverlayService';
+import { _provideBootstrapPanelRenderer } from './logging';
 import type { DevValidationOptions } from './validationConfig';
 import { _applyDevValidationConfig, _enableDiagnosticCapture } from './validationConfig';
 import { ValidationService } from './validationService';
+
+// Registering the module is the opt-in: enable capture so diagnostics buffer for the overlay, and
+// provide the bootstrap panel renderer so a pre-init failure (which aborts before any bean exists) is
+// still surfaced. Runs on every registration path, including enableDevValidations/ValidationModule.with.
+function onValidationModuleRegister(): void {
+    _enableDiagnosticCapture();
+    _provideBootstrapPanelRenderer(renderBootstrapPanel);
+}
 
 type ValidationModuleType = {
     /**
@@ -36,9 +46,7 @@ export const ValidationModule: ValidationModuleType = {
         agErrorOverlay: ErrorOverlayComponent,
     },
     css: [errorOverlayCSS],
-    // Registering the module is itself the opt-in: enable capture so diagnostics buffer for the overlay
-    // even when registered directly rather than via enableDevValidations/ValidationModule.with.
-    onRegister: _enableDiagnosticCapture,
+    onRegister: onValidationModuleRegister,
     with: (options) => {
         _applyDevValidationConfig(options);
         return ValidationModule;

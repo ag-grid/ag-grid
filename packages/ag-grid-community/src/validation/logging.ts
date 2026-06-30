@@ -160,6 +160,40 @@ export function _addDiagnosticListener(gridId: string | undefined, listener: Dia
     };
 }
 
+type BootstrapPanelRenderer = (container: HTMLElement, diagnostics: CapturedDiagnostic[]) => void;
+let bootstrapPanelRenderer: BootstrapPanelRenderer | null = null;
+
+/**
+ * Pushed in by the ValidationModule (which core never imports) to render a standalone panel of
+ * bootstrap-failure diagnostics, for when grid creation aborts before any bean — and thus the overlay —
+ * exists. Mirrors the provideValidationServiceLogger setter idiom to keep the dependency direction one-way.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _provideBootstrapPanelRenderer(renderer: BootstrapPanelRenderer): void {
+    bootstrapPanelRenderer = renderer;
+}
+
+/**
+ * Renders the buffered diagnostics not tied to a grid (e.g. a missing row-model module that aborts grid
+ * creation) into `container`, when the ValidationModule has provided a renderer. No-op otherwise, so core
+ * stays decoupled and production pays nothing.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _renderBootstrapPanel(container: HTMLElement): void {
+    if (!bootstrapPanelRenderer) {
+        return;
+    }
+    const untied: CapturedDiagnostic[] = [];
+    for (let i = 0, len = bufferedDiagnostics.length; i < len; ++i) {
+        if (bufferedDiagnostics[i].gridId === undefined) {
+            untied.push(bufferedDiagnostics[i]);
+        }
+    }
+    if (untied.length > 0) {
+        bootstrapPanelRenderer(container, untied);
+    }
+}
+
 function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string): void {
     // Suppressed ids are omitted from the overlay and never throw; the console log has already fired.
     if (suppressedIds.has(id)) {

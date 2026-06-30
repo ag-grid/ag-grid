@@ -7,6 +7,8 @@ import {
     _error,
     _logPreInitErr,
     _logPreInitWarn,
+    _provideBootstrapPanelRenderer,
+    _renderBootstrapPanel,
     _runWithActiveGrid,
     _warn,
 } from './logging';
@@ -303,5 +305,33 @@ describe('dev validation config', () => {
         _enableDiagnosticCapture();
 
         expect(() => _error(11)).toThrow();
+    });
+});
+
+describe('bootstrap panel', () => {
+    test('renders only the buffered diagnostics not tied to a grid', () => {
+        _configureDiagnostics({ capture: true });
+        _runWithActiveGrid('grid-a', () => _error(11)); // tied to a grid
+        _logPreInitErr(200, {} as any, 'boom'); // a bootstrap failure, not tied to any grid
+
+        const renderer = vi.fn();
+        _provideBootstrapPanelRenderer(renderer);
+        _renderBootstrapPanel(document.createElement('div'));
+
+        expect(renderer).toHaveBeenCalledTimes(1);
+        const passed = renderer.mock.calls[0][1] as CapturedDiagnostic[];
+        expect(passed.map((d) => d.id)).toEqual([200]);
+        expect(passed.every((d) => d.gridId === undefined)).toBe(true);
+    });
+
+    test('does not invoke the renderer when there are no untied diagnostics', () => {
+        _configureDiagnostics({ capture: true });
+        _runWithActiveGrid('grid-a', () => _error(11)); // tied only
+
+        const renderer = vi.fn();
+        _provideBootstrapPanelRenderer(renderer);
+        _renderBootstrapPanel(document.createElement('div'));
+
+        expect(renderer).not.toHaveBeenCalled();
     });
 });

@@ -6,7 +6,7 @@ import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import { _createIconNoSpan } from '../../utils/icon';
 import type { CapturedDiagnostic } from '../logging';
-import { diagnosticToMarkdown, renderDiagnostic } from './errorOverlayRenderer';
+import { copyDiagnosticsToClipboard, diagnosticToMarkdown, renderDiagnostic } from './errorOverlayRenderer';
 
 const ErrorOverlayElement: ElementParams = {
     tag: 'div',
@@ -98,7 +98,7 @@ export class ErrorOverlayComponent extends OverlayComponent<any, any, IErrorOver
             return;
         }
         const text = diagnostics.map(diagnosticToMarkdown).join('\n\n');
-        copyTextToClipboard(text);
+        copyDiagnosticsToClipboard(text);
         this.flashCopied();
     }
 
@@ -137,27 +137,4 @@ function getTitle(diagnostics: readonly CapturedDiagnostic[]): string {
         }
     }
     return parts.length ? `AG Grid found ${parts.join(', ')}` : 'AG Grid';
-}
-
-function copyTextToClipboard(text: string): void {
-    if (navigator.clipboard?.writeText) {
-        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
-        return;
-    }
-    fallbackCopy(text);
-}
-
-function fallbackCopy(text: string): void {
-    const eTextarea = _createElement<HTMLTextAreaElement>({ tag: 'textarea' });
-    eTextarea.value = text;
-    eTextarea.style.position = 'fixed';
-    eTextarea.style.opacity = '0';
-    document.body.appendChild(eTextarea);
-    eTextarea.select();
-    try {
-        document.execCommand('copy');
-    } catch {
-        // Clipboard unavailable (non-secure context, restricted environment); nothing more we can do.
-    }
-    eTextarea.remove();
 }
