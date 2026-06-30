@@ -1,3 +1,6 @@
+/* Canonical (Theming API) styles for the dev validation overlay. The item/message/code/links rules are
+   mirrored, with legacy vars, in community-modules/styles/.../_common-structural.scss, and again as a
+   theme-free copy in errorOverlay/bootstrapPanel.ts (CONTENT_STYLES) — keep all three in sync. */
 .ag-overlay-error-panel {
     /* the grid font (--ag-font-family) is sans-serif; code terms and snippets use a monospace stack. */
     --ag-internal-overlay-mono: ui-monospace, sfmono-regular, menlo, consolas, 'Liberation Mono', monospace;

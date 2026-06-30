@@ -274,6 +274,22 @@ export function diagnosticToMarkdown(diagnostic: CapturedDiagnostic): string {
     );
 }
 
+export const COPY_LABEL = 'Copy';
+const COPIED_LABEL = 'Copied';
+const COPY_RESET_MS = 1500;
+
+/**
+ * Flashes a copy button's label to {@link COPIED_LABEL}, resetting it to {@link COPY_LABEL} after a short
+ * delay. Returns the timeout handle so a managed caller (the overlay bean) can cancel it on destroy; the
+ * bean-free bootstrap panel ignores the return value. Shared so both copy buttons behave identically.
+ */
+export function flashCopied(button: HTMLButtonElement): number {
+    button.textContent = COPIED_LABEL;
+    return window.setTimeout(() => {
+        button.textContent = COPY_LABEL;
+    }, COPY_RESET_MS);
+}
+
 /**
  * Writes `text` to the clipboard, falling back to a hidden textarea + execCommand in non-secure
  * contexts where `navigator.clipboard` is unavailable. Shared by the dev overlay and bootstrap panel.

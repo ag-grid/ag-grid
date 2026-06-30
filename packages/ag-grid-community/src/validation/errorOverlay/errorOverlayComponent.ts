@@ -6,7 +6,13 @@ import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import { _createIconNoSpan } from '../../utils/icon';
 import type { CapturedDiagnostic } from '../logging';
-import { copyDiagnosticsToClipboard, diagnosticToMarkdown, renderDiagnostic } from './errorOverlayRenderer';
+import {
+    COPY_LABEL,
+    copyDiagnosticsToClipboard,
+    diagnosticToMarkdown,
+    flashCopied,
+    renderDiagnostic,
+} from './errorOverlayRenderer';
 
 const ErrorOverlayElement: ElementParams = {
     tag: 'div',
@@ -24,9 +30,6 @@ const ErrorOverlayElement: ElementParams = {
         { tag: 'div', ref: 'eBody', cls: 'ag-overlay-error-body' },
     ],
 };
-
-const COPY_LABEL = 'Copy';
-const COPIED_LABEL = 'Copied';
 
 /**
  * Dev-only overlay (ValidationModule) listing the captured validation diagnostics for the grid, with
@@ -99,20 +102,10 @@ export class ErrorOverlayComponent extends OverlayComponent<any, any, IErrorOver
         }
         const text = diagnostics.map(diagnosticToMarkdown).join('\n\n');
         copyDiagnosticsToClipboard(text);
-        this.flashCopied();
-    }
-
-    private flashCopied(): void {
-        this.eCopy.textContent = COPIED_LABEL;
         if (this.copyResetTimeout !== undefined) {
             window.clearTimeout(this.copyResetTimeout);
         }
-        this.copyResetTimeout = window.setTimeout(() => {
-            this.copyResetTimeout = undefined;
-            if (this.isAlive()) {
-                this.eCopy.textContent = COPY_LABEL;
-            }
-        }, 1500);
+        this.copyResetTimeout = flashCopied(this.eCopy);
     }
 }
 

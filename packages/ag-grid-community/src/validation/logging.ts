@@ -47,6 +47,24 @@ export interface CapturedDiagnostic {
     defaultMessage?: string;
 }
 
+/**
+ * Stable identity key for deduping captured diagnostics: the same `id` and `params` yield the same key.
+ * Non-serialisable params (functions, circular refs) fall back to `${id}:unserialisable:${fallbackSeed}`
+ * so distinct entries are never collapsed — callers pass a per-call seed (a counter or index) for this.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _diagnosticKey(diagnostic: CapturedDiagnostic, fallbackSeed: string | number): string {
+    const { id, params } = diagnostic;
+    if (params == null) {
+        return `${id}`;
+    }
+    try {
+        return `${id}:${JSON.stringify(params)}`;
+    } catch {
+        return `${id}:unserialisable:${fallbackSeed}`;
+    }
+}
+
 type DiagnosticListener = (diagnostic: CapturedDiagnostic) => void;
 
 interface DiagnosticListenerEntry {

@@ -1,7 +1,14 @@
 import { _createElement } from '../../utils/element';
 import type { CapturedDiagnostic } from '../logging';
+import { _diagnosticKey } from '../logging';
 import { _getDevOverlayMode } from '../validationConfig';
-import { copyDiagnosticsToClipboard, diagnosticToMarkdown, renderDiagnostic } from './errorOverlayRenderer';
+import {
+    COPY_LABEL,
+    copyDiagnosticsToClipboard,
+    diagnosticToMarkdown,
+    flashCopied,
+    renderDiagnostic,
+} from './errorOverlayRenderer';
 
 // Grid creation aborts before the Environment bean runs, so no theme or module CSS is injected. The
 // panel therefore carries its own inline styles rather than relying on the `ag-overlay-error-*` classes.
@@ -51,15 +58,14 @@ const COPY_STYLE = [
 
 const DIVIDER_STYLE = ['height: 1px', 'background: #e2e2e2', 'margin: 4px 0'].join(';');
 
-const COPY_LABEL = 'Copy';
-const COPIED_LABEL = 'Copied';
-
 const MONO = "ui-monospace, sfmono-regular, menlo, consolas, 'Liberation Mono', monospace";
 
 // `renderDiagnostic` emits `ag-overlay-error-*` elements styled by the module's errorOverlay.css, but
 // that CSS resolves theme variables scoped to a grid root — which the bootstrap panel does not have (the
 // abort happens before any theme is applied), and which are absent entirely in a pure bootstrap failure.
 // Provide concrete, theme-free rules scoped to the panel so the content renders consistently either way.
+// These are a third copy of the `.ag-overlay-error-item`/`-message`/`-inline-code`/`-code`/`-links`
+// styling: keep them in sync with errorOverlay.css (Theming API) and _common-structural.scss (Legacy).
 const STYLE_ID = 'ag-overlay-error-bootstrap-styles';
 const CONTENT_STYLES = `
 .ag-overlay-error-bootstrap-panel .ag-overlay-error-item {
@@ -117,13 +123,7 @@ function dedupeDiagnostics(diagnostics: CapturedDiagnostic[]): CapturedDiagnosti
     const result: CapturedDiagnostic[] = [];
     for (let i = 0, len = diagnostics.length; i < len; ++i) {
         const diagnostic = diagnostics[i];
-        let key: string;
-        try {
-            key = `${diagnostic.id}:${JSON.stringify(diagnostic.params)}`;
-        } catch {
-            // Non-serialisable params: fall back to a unique key so the diagnostic is not dropped.
-            key = `${diagnostic.id}:${i}`;
-        }
+        const key = _diagnosticKey(diagnostic, i);
         if (!seen.has(key)) {
             seen.add(key);
             result.push(diagnostic);
@@ -178,7 +178,7 @@ export function renderBootstrapPanel(container: HTMLElement, diagnostics: Captur
     eCopy.style.cssText = COPY_STYLE;
     eCopy.addEventListener('click', () => {
         copyDiagnosticsToClipboard(visible.map(diagnosticToMarkdown).join('\n\n'));
-        eCopy.textContent = COPIED_LABEL;
+        flashCopied(eCopy);
     });
     eHeader.appendChild(eCopy);
 

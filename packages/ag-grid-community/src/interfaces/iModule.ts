@@ -31,8 +31,9 @@ export interface Module {
      */
     validate?: () => ModuleValidationResult;
     /**
-     * Side effect run once when the module is registered, before any grid is created. For module-level
-     * setup that must happen at registration time rather than at grid/bean initialisation.
+     * Side effect run when the module is registered, before any grid is created, for module-level setup
+     * that must happen at registration time rather than at grid/bean initialisation. Fires on every
+     * registration call for the module (it is not deduplicated), so the implementation must be idempotent.
      */
     onRegister?: () => void;
     /** singleton beans which are created once on grid init */

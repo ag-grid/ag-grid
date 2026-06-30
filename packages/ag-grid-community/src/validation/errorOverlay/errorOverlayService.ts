@@ -3,7 +3,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { OverlayService } from '../../rendering/overlays/overlayService';
 import type { CapturedDiagnostic } from '../logging';
-import { _addDiagnosticListener } from '../logging';
+import { _addDiagnosticListener, _diagnosticKey } from '../logging';
 import type { DevOverlayMode } from '../validationConfig';
 import { _getDevOverlayMode } from '../validationConfig';
 
@@ -24,7 +24,7 @@ export class ErrorOverlayService extends BeanStub implements NamedBean {
     private readonly diagnostics: CapturedDiagnostic[] = [];
     private readonly seenKeys = new Set<string>();
     private readonly updateListeners = new Set<UpdateListener>();
-    private unserialisableCount = 0;
+    private keySeed = 0;
 
     public wireBeans(beans: BeanCollection): void {
         this.overlays = beans.overlays;
@@ -80,14 +80,6 @@ export class ErrorOverlayService extends BeanStub implements NamedBean {
 
     /** Stable dedup key; tolerates non-serialisable params (functions, circular refs). */
     private getKey(diagnostic: CapturedDiagnostic): string {
-        const { id, params } = diagnostic;
-        if (params == null) {
-            return `${id}`;
-        }
-        try {
-            return `${id}:${JSON.stringify(params)}`;
-        } catch {
-            return `${id}:unserialisable:${this.unserialisableCount++}`;
-        }
+        return _diagnosticKey(diagnostic, this.keySeed++);
     }
 }
