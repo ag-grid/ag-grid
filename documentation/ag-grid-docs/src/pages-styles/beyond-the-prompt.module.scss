@@ -1217,36 +1217,53 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         display: block;
     }
 
-    // Multi-speaker rows: lay the heads out in a row, in flow and scaled to fit
-    // the column, so they sit side by side instead of overlapping absolutely.
+    // Multi-speaker rows: overlay the heads side by side, absolutely positioned
+    // over the speakers column. The column keeps its (hidden) avatar/name boxes
+    // via the visibility rule above, and the heads are taken out of flow, so the
+    // row height is unchanged on hover.
     .agendaRow:hover .agendaSpeakersColMulti {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 8px;
+        position: relative;
     }
 
     .agendaRow:hover .agendaSpeakersColMulti .agendaSpeaker {
-        flex: 1 1 0;
-        min-width: 0;
-        justify-content: center;
-    }
-
-    .agendaRow:hover .agendaSpeakersColMulti .agendaAvatar,
-    .agendaRow:hover .agendaSpeakersColMulti .agendaSpeakerName {
-        display: none;
+        position: static;
     }
 
     .agendaRow:hover .agendaSpeakersColMulti .agendaSpeakerRotating {
-        position: static;
-        top: auto;
-        left: auto;
-        width: 100%;
-        max-width: 104px;
-        height: auto;
-        aspect-ratio: 1 / 1;
+        position: absolute;
+        top: 0;
+        width: 140px;
+        height: 140px;
+        max-width: none;
+    }
+
+    // Two speakers (e.g. the keynote): big heads sitting close together.
+    .agendaRow:hover
+        .agendaSpeakersColMulti:not(.agendaSpeakersColWide)
+        .agendaSpeaker:first-child
+        .agendaSpeakerRotating {
+        left: 0;
+    }
+    .agendaRow:hover
+        .agendaSpeakersColMulti:not(.agendaSpeakersColWide)
+        .agendaSpeaker:last-child
+        .agendaSpeakerRotating {
+        left: 110px;
+    }
+
+    // Three speakers (the panel): three smaller heads spread across the column.
+    .agendaRow:hover .agendaSpeakersColWide .agendaSpeakerRotating {
+        width: 104px;
+        height: 104px;
+    }
+    .agendaRow:hover .agendaSpeakersColWide .agendaSpeaker:nth-child(1) .agendaSpeakerRotating {
+        left: 0;
+    }
+    .agendaRow:hover .agendaSpeakersColWide .agendaSpeaker:nth-child(2) .agendaSpeakerRotating {
+        left: 76px;
+    }
+    .agendaRow:hover .agendaSpeakersColWide .agendaSpeaker:nth-child(3) .agendaSpeakerRotating {
+        left: 152px;
     }
 
     // Reveal the "Watch talk" affordance as the row turns orange.
