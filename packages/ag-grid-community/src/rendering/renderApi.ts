@@ -11,7 +11,7 @@ export function setGridAriaProperty(beans: BeanCollection, property: string, val
     if (!property) {
         return;
     }
-    const eGrid = beans.ctrlsSvc.getGridBodyCtrl().eGridBody;
+    const eGrid = beans.ctrlsSvc.getGridBodyCtrl().eGridViewport;
     const ariaProperty = `aria-${property}`;
 
     if (value === null) {
