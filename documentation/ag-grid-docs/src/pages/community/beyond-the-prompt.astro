@@ -359,38 +359,7 @@ const VENUE_IMAGES: VenueImage[] = [
     showAnnouncementBanner={false}
 >
     <div class={styles.page}>
-        {
-            /*
-            Sticky page nav. Hidden by default; revealed via `data-visible="true"`
-            once the hero scrolls fully out of view. The IntersectionObserver
-            script lives at the end of this file. Background matches the page
-            (var(--btp-bg) === #f2f2f2) so it reads as a continuation rather
-            than a chrome bar.
-        */
-        }
-        <nav class={styles.stickyNav} data-sticky-nav aria-label="Beyond the Prompt page nav">
-            <div class={`${styles.container} ${styles.stickyNavInner}`}>
-                <a href="#top" class={styles.stickyNavBrand} aria-label="Back to top">
-                    <img
-                        src={urlWithBaseUrl('images/campaigns/beyond-the-prompt/logo-btp.svg')}
-                        alt=""
-                        aria-hidden="true"
-                        class={styles.stickyNavLogo}
-                        width="48"
-                        height="34"
-                    />
-                </a>
-                <a
-                    href={BOOK_TICKETS_HREF}
-                    class={`${styles.btnPrimary} ${styles.stickyNavCta}`}
-                    aria-label="Book tickets"
-                >
-                    Book tickets <Icon name="chevronRight" />
-                </a>
-            </div>
-        </nav>
-
-        <section class={styles.hero} data-sticky-trigger id="top">
+        <section class={styles.hero} id="top">
             <div class={styles.container}>
                 <div class={styles.heroInner}>
                     <div class={styles.heroContent}>
@@ -432,60 +401,7 @@ const VENUE_IMAGES: VenueImage[] = [
                                 <Icon name="mapPin" />
                                 <span>IET London, 2 Savoy Place</span>
                             </li>
-                            <li>
-                                <Icon name="creditCard" />
-                                <span>Early bird £149</span>
-                            </li>
                         </ul>
-
-                        <div class={styles.heroCtas}>
-                            <a href={BOOK_TICKETS_HREF} class={styles.btnPrimary} aria-label="Book tickets">
-                                <span class={styles.btnRoll} aria-hidden="true">
-                                    <span class={styles.btnRollLayer}>
-                                        {
-                                            Array.from('Book tickets').map((c, i) => (
-                                                <span class={styles.btnRollChar} style={`--btn-roll-i: ${i}`}>
-                                                    {c === ' ' ? '\u00A0' : c}
-                                                </span>
-                                            ))
-                                        }
-                                    </span>
-                                    <span class={styles.btnRollLayer}>
-                                        {
-                                            Array.from('Book tickets').map((c, i) => (
-                                                <span class={styles.btnRollChar} style={`--btn-roll-i: ${i}`}>
-                                                    {c === ' ' ? '\u00A0' : c}
-                                                </span>
-                                            ))
-                                        }
-                                    </span>
-                                </span>
-                                <Icon name="chevronRight" />
-                            </a>
-                            <a href={MAILTO_HREF} class={styles.btnSecondary} aria-label="Contact us">
-                                <span class={styles.btnRoll} aria-hidden="true">
-                                    <span class={styles.btnRollLayer}>
-                                        {
-                                            Array.from('Contact us').map((c, i) => (
-                                                <span class={styles.btnRollChar} style={`--btn-roll-i: ${i}`}>
-                                                    {c === ' ' ? '\u00A0' : c}
-                                                </span>
-                                            ))
-                                        }
-                                    </span>
-                                    <span class={styles.btnRollLayer}>
-                                        {
-                                            Array.from('Contact us').map((c, i) => (
-                                                <span class={styles.btnRollChar} style={`--btn-roll-i: ${i}`}>
-                                                    {c === ' ' ? '\u00A0' : c}
-                                                </span>
-                                            ))
-                                        }
-                                    </span>
-                                </span>
-                                <Icon name="email" />
-                            </a>
-                        </div>
                     </div>
 
                     <div class={styles.heroFaces} aria-hidden="true">
@@ -776,23 +692,3 @@ const VENUE_IMAGES: VenueImage[] = [
         </section>
     </div>
 </Layout>
-
-<script>
-    // Reveal the sticky nav once the hero has scrolled fully out of view.
-    // We watch the hero with `threshold: 0`; when `isIntersecting` flips
-    // to false, we set `data-visible="true"` on the nav. The state lives
-    // in a data-attribute (rather than a class) so it doesn't have to
-    // round-trip through CSS Modules name hashing.
-    const stickyNav = document.querySelector<HTMLElement>('[data-sticky-nav]');
-    const stickyTrigger = document.querySelector<HTMLElement>('[data-sticky-trigger]');
-
-    if (stickyNav && stickyTrigger && 'IntersectionObserver' in window) {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                stickyNav.dataset.visible = entry.isIntersecting ? 'false' : 'true';
-            },
-            { threshold: 0 }
-        );
-        observer.observe(stickyTrigger);
-    }
-</script>
