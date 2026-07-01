@@ -118,8 +118,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         this.positionLeafsAndGroups(rootNode, changedPath);
         this.orderGroups(rootNode);
-
-        this.selectionSvc?.updateSelectableAfterGrouping(changedPath);
     }
 
     private positionLeafsAndGroups(rootNode: RowNode, changedPath: ChangedPath | undefined) {
@@ -343,7 +341,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
         const selectionSvc = this.selectionSvc;
-        let nodesToUnselect: RowNode[] | undefined;
         const possibleEmptyGroups = Array.from(parents);
         const groupsById = this.nonLeafsById;
         do {
@@ -366,11 +363,10 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     }
                     parents.add(parent);
                     this.removeFromParent(pointer);
-                    // we remove selection on filler nodes here, as the selection would not be removed
-                    // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                    if (selectionSvc && pointer.isSelected()) {
-                        nodesToUnselect ??= [];
-                        nodesToUnselect.push(pointer);
+                    // filler nodes don't exist on the RowNodeManager, so their selection isn't
+                    // cleaned up elsewhere — drop it as we destroy them.
+                    if (pointer.isSelected()) {
+                        selectionSvc?.removeFromSelection?.(pointer, 'rowGroupChanged');
                     }
                     possibleEmptyGroups[idx] = parent;
                     groupsById.delete(pointer.id!);
@@ -380,14 +376,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             }
             batchedRemove(parents);
         } while (parents.size);
-
-        if (nodesToUnselect) {
-            selectionSvc!.setNodesSelected({
-                nodes: nodesToUnselect,
-                newValue: false,
-                source: 'rowGroupChanged',
-            });
-        }
     }
 
     // removes the node from the parent by:
@@ -472,23 +460,15 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     /** Remove and destroy group nodes that were not reused (still have childrenAfterGroup === null) */
     private destroyStaleGroups(groupsById: Map<string, RowNode>): void {
         const selectionSvc = this.selectionSvc;
-        let nodesToDeselect: RowNode[] | undefined;
         for (const [id, node] of groupsById) {
             if (node.childrenAfterGroup !== null) {
                 continue;
             }
-            if (selectionSvc && node.isSelected()) {
-                (nodesToDeselect ??= []).push(node);
+            if (node.isSelected()) {
+                selectionSvc?.removeFromSelection?.(node, 'rowGroupChanged');
             }
             groupsById.delete(id);
             node._destroy(false);
-        }
-        if (nodesToDeselect) {
-            selectionSvc!.setNodesSelected({
-                nodes: nodesToDeselect,
-                newValue: false,
-                source: 'rowGroupChanged',
-            });
         }
     }
 

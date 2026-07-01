@@ -89,6 +89,167 @@ describe('Row Selection Grid Options', () => {
         consoleWarnSpy.mockRestore();
     });
 
+    describe('deselection when rows leave the model', () => {
+        // Immutable rowData removal destroys the dropped node (deleteUnusedNodes); it must leave the
+        // selection, while the surviving selected row stays selected.
+        test('selected row dropped from selection on immutable rowData removal', async () => {
+            const [api] = createGrid({
+                columnDefs,
+                rowSelection: { mode: 'multiRow' },
+                getRowId: (p) => p.data.id,
+                rowData: [
+                    { id: '1', sport: 'football' },
+                    { id: '2', sport: 'rugby' },
+                    { id: '3', sport: 'tennis' },
+                ],
+            });
+
+            const removed = api.getRowNode('2')!;
+            api.setNodesSelected({ nodes: [removed, api.getRowNode('3')!], newValue: true });
+            expect(
+                api
+                    .getSelectedNodes()
+                    .map((n) => n.id)
+                    .sort()
+            ).toEqual(['2', '3']);
+
+            api.setGridOption('rowData', [
+                { id: '1', sport: 'football' },
+                { id: '3', sport: 'tennis' },
+            ]);
+
+            expect(removed.destroyed).toBe(true);
+            expect(api.getSelectedNodes().map((n) => n.id)).toEqual(['3']);
+            await new GridRows(api, 'after immutable removal of selected row 2').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 sport:"football"
+                └── LEAF selected id:3 sport:"tennis"
+            `);
+        });
+
+        // A data update normally reapplies isRowSelectable in refreshModel's grouping pass. When that
+        // refresh is suppressed, selectable must still be reapplied so a now-unselectable row is dropped.
+        test('suppressModelUpdateAfterUpdateTransaction still recomputes selectable on an update transaction', () => {
+            const [api] = createGrid({
+                columnDefs,
+                getRowId: (p) => p.data.id,
+                suppressModelUpdateAfterUpdateTransaction: true,
+                rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data?.sport === 'football' },
+                rowData: [
+                    { id: '1', sport: 'football' },
+                    { id: '2', sport: 'rugby' },
+                ],
+            });
+
+            api.setNodesSelected({ nodes: [api.getRowNode('1')!], newValue: true });
+            expect(api.getRowNode('1')!.isSelected()).toBe(true);
+            expect(api.getRowNode('1')!.selectable).toBe(true);
+
+            api.applyTransaction({ update: [{ id: '1', sport: 'rugby' }] });
+
+            expect(api.getRowNode('1')!.selectable).toBe(false);
+            expect(api.getRowNode('1')!.isSelected()).toBe(false);
+            expect(api.getSelectedNodes()).toEqual([]);
+        });
+
+        // A removal recorded while a refresh is deferred (here, column change events dispatching) must flush
+        // its selectionChanged this turn, so an unrelated later change can't emit it with a stale source.
+        test('removal during a deferred refresh flushes selectionChanged with its own source', async () => {
+            const sources: string[] = [];
+            const [api] = createGrid({
+                columnDefs,
+                getRowId: (p) => p.data.id,
+                rowSelection: { mode: 'multiRow' },
+                rowData: [
+                    { id: '1', sport: 'football' },
+                    { id: '2', sport: 'rugby' },
+                    { id: '3', sport: 'tennis' },
+                ],
+            });
+            api.addEventListener('selectionChanged', (e) => sources.push(e.source));
+
+            api.setNodesSelected({ nodes: [api.getRowNode('1')!, api.getRowNode('3')!], newValue: true });
+            await asyncSetTimeout(0);
+            sources.length = 0;
+
+            const colModel = (api.getRowNode('1') as any).beans.colModel;
+            colModel.changeEventsDispatching = true;
+            try {
+                api.applyTransaction({ remove: [{ id: '1' }] });
+            } finally {
+                colModel.changeEventsDispatching = false;
+            }
+            expect(api.getSelectedNodes().map((n) => n.id)).toEqual(['3']);
+
+            api.setGridOption('rowSelection', {
+                mode: 'multiRow',
+                isRowSelectable: (node) => node.data?.sport !== 'tennis',
+            });
+            expect(api.getRowNode('3')!.isSelected()).toBe(false);
+            await asyncSetTimeout(0);
+
+            expect(sources).toEqual(['rowDataChanged', 'selectableChanged']);
+        });
+    });
+
+    describe('isRowSelectable invocation count', () => {
+        test('flat grid invokes isRowSelectable once per node on load and on update', () => {
+            const counts: Record<string, number> = {};
+            const [api] = createGrid({
+                columnDefs,
+                rowData,
+                getRowId: (p) => p.data.sport,
+                rowSelection: {
+                    mode: 'multiRow',
+                    isRowSelectable: (node) => {
+                        const id = node.id!;
+                        counts[id] = (counts[id] ?? 0) + 1;
+                        return true;
+                    },
+                },
+            });
+            // flat: every leaf computed once at data-set (there is no grouping pass)
+            for (const id of Object.keys(counts)) {
+                expect(counts[id]).toBe(1);
+            }
+            expect(counts['football']).toBe(1);
+
+            for (const id of Object.keys(counts)) {
+                delete counts[id];
+            }
+            api.applyTransaction({ update: [{ sport: 'football' }] });
+            expect(counts['football']).toBe(1); // updated once, never double
+        });
+
+        test('row grouping invokes isRowSelectable once per node, on fully-formed nodes (groupSelects: "self")', () => {
+            const counts: Record<string, number> = {};
+            const groupAtCall: Record<string, boolean> = {};
+            createGrid({
+                ...groupGridOptions,
+                rowSelection: {
+                    mode: 'multiRow',
+                    groupSelects: 'self',
+                    isRowSelectable: (node) => {
+                        const id = node.id!;
+                        counts[id] = (counts[id] ?? 0) + 1;
+                        groupAtCall[id] = !!node.group;
+                        return true;
+                    },
+                },
+            });
+            // no node computed more than once
+            for (const id of Object.keys(counts)) {
+                expect(counts[id]).toBe(1);
+            }
+            // filler group nodes were fully formed (group===true) when the callback ran
+            const groupIds = Object.keys(groupAtCall).filter((id) => id.startsWith('row-group-'));
+            expect(groupIds.length).toBeGreaterThan(0);
+            for (const id of groupIds) {
+                expect(groupAtCall[id]).toBe(true);
+            }
+        });
+    });
+
     describe('Basic Interactions', () => {
         describe('Single Row Selection', () => {
             test('Select single row', async () => {
@@ -487,7 +648,7 @@ describe('Row Selection Grid Options', () => {
                 `);
                 await new GridRows(api, `un-selectable row cannot be selected setup`).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -500,7 +661,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
                 await new GridRows(api, `un-selectable row cannot be selected final state`).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -530,13 +691,13 @@ describe('Row Selection Grid Options', () => {
                 await new GridRows(api, `can update _isRowSelectable_ to _undefined_ to make all rows selectable setup`)
                     .check(`
                         ROOT id:ROOT_NODE_ID
-                        ├── LEAF id:0 sport:"football"
-                        ├── LEAF id:1 sport:"rugby"
-                        ├── LEAF id:2 sport:"tennis"
-                        ├── LEAF id:3 sport:"cricket"
-                        ├── LEAF id:4 sport:"golf"
-                        ├── LEAF id:5 sport:"swimming"
-                        └── LEAF id:6 sport:"rowing"
+                        ├── LEAF 🚫 id:0 sport:"football"
+                        ├── LEAF 🚫 id:1 sport:"rugby"
+                        ├── LEAF 🚫 id:2 sport:"tennis"
+                        ├── LEAF 🚫 id:3 sport:"cricket"
+                        ├── LEAF 🚫 id:4 sport:"golf"
+                        ├── LEAF 🚫 id:5 sport:"swimming"
+                        └── LEAF 🚫 id:6 sport:"rowing"
                     `);
 
                 actions.toggleCheckboxByIndex(0);
@@ -587,7 +748,7 @@ describe('Row Selection Grid Options', () => {
                 `);
                 await new GridRows(api, `un-selectable row cannot be selected setup`).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -609,7 +770,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
                 await new GridRows(api, `un-selectable row cannot be selected final state`).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -2352,7 +2513,7 @@ describe('Row Selection Grid Options', () => {
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF 🚫 id:4 sport:"golf"
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
@@ -2369,7 +2530,7 @@ describe('Row Selection Grid Options', () => {
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF 🚫 id:4 sport:"golf"
                     ├── LEAF selected id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
@@ -3503,7 +3664,7 @@ describe('Row Selection Grid Options', () => {
                 `);
                 await new GridRows(api, `un-selectable rows are not part of the selection setup`).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -3516,7 +3677,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([1, 2, 3, 4, 5, 6], api);
                 await new GridRows(api, `un-selectable rows are not part of the selection final state`).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF selected id:1 sport:"rugby"
                     ├── LEAF selected id:2 sport:"tennis"
                     ├── LEAF selected id:3 sport:"cricket"
@@ -4687,8 +4848,8 @@ describe('Row Selection Grid Options', () => {
                     `Cannot select group rows where _isRowSelectable_ returns false and _groupSelects setup`
                 ).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├─┬ filler id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
-                    │ ├─┬ LEAF_GROUP id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
+                    ├─┬ filler 🚫 id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
+                    │ ├─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
                     │ │ ├── LEAF id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
                     │ │ ├── LEAF id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
                     │ │ ├── LEAF id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
@@ -4699,31 +4860,31 @@ describe('Row Selection Grid Options', () => {
                     │ │ ├── LEAF id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
                     │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
                     │ │ └── LEAF id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                    │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
-                    ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
+                    │ · ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ · └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ · └── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    ├─┬ filler 🚫 id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
                     │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
                     │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
-                    ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
-                    │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-China ag-Grid-AutoColumn:"China"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
-                    ├─┬ filler id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    ├─┬ filler 🚫 id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · └── LEAF id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    └─┬ filler id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
-                    · └─┬ LEAF_GROUP id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    └─┬ filler 🚫 id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
+                    · └─┬ LEAF_GROUP 🚫 id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     · · └── LEAF id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
                 `);
 
@@ -4737,8 +4898,8 @@ describe('Row Selection Grid Options', () => {
                     `Cannot select group rows where _isRowSelectable_ returns false and _groupSelects final state`
                 ).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├─┬ filler id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
-                    │ ├─┬ LEAF_GROUP id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
+                    ├─┬ filler 🚫 id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
+                    │ ├─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
                     │ │ ├── LEAF selected id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
                     │ │ ├── LEAF id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
                     │ │ ├── LEAF id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
@@ -4749,31 +4910,31 @@ describe('Row Selection Grid Options', () => {
                     │ │ ├── LEAF id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
                     │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
                     │ │ └── LEAF id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                    │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
-                    ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
+                    │ · ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ · └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ · └── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    ├─┬ filler 🚫 id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
                     │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
                     │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
-                    ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
-                    │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-China ag-Grid-AutoColumn:"China"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
-                    ├─┬ filler id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    ├─┬ filler 🚫 id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · └── LEAF id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    └─┬ filler id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
-                    · └─┬ LEAF_GROUP id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    └─┬ filler 🚫 id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
+                    · └─┬ LEAF_GROUP 🚫 id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     · · └── LEAF id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
                 `);
             });
@@ -4815,23 +4976,23 @@ describe('Row Selection Grid Options', () => {
                     │ │ ├── LEAF id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
                     │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
                     │ │ └── LEAF id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                    │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
+                    │ · ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ · └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ · └── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
                     ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
                     │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
                     │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
                     │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
                     ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
                     │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
@@ -4862,23 +5023,23 @@ describe('Row Selection Grid Options', () => {
                     │ │ ├── LEAF selected id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
                     │ │ ├── LEAF selected id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
                     │ │ └── LEAF selected id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                    │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
+                    │ · ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ · └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ · └── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
                     ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
                     │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
                     │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
                     │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
                     ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
                     │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
@@ -4928,23 +5089,23 @@ describe('Row Selection Grid Options', () => {
                     │ │ ├── LEAF id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
                     │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
                     │ │ └── LEAF id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                    │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
+                    │ · ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ · └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ · └── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
                     ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
                     │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
                     │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
                     │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
                     ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
                     │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
@@ -4975,23 +5136,23 @@ describe('Row Selection Grid Options', () => {
                     │ │ ├── LEAF selected id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
                     │ │ ├── LEAF selected id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
                     │ │ └── LEAF selected id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                    │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
+                    │ · ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ · └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ · └── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
                     ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
                     │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
                     │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
                     │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
                     ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
                     │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
@@ -5037,23 +5198,23 @@ describe('Row Selection Grid Options', () => {
                     │ │ ├── LEAF id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
                     │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
                     │ │ └── LEAF id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                    │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
+                    │ · ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ · └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ · └── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
                     ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
                     │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
                     │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
                     │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
                     ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
                     │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
@@ -5089,44 +5250,44 @@ describe('Row Selection Grid Options', () => {
                     `Selection state changes when _isRowSelectable_ changes after setGridOption rowSelection`
                 ).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├─┬ filler indeterminate id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
-                    │ ├─┬ LEAF_GROUP selected id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
-                    │ │ ├── LEAF id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    │ │ ├── LEAF id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
-                    │ │ ├── LEAF id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:3 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:25 year:2008 date:"24/08/2008"
-                    │ │ ├── LEAF id:6 ag-Grid-AutoColumn:"Missy Franklin" country:"United States" sport:"Swimming" age:17 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:7 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:8 ag-Grid-AutoColumn:"Allison Schmitt" country:"United States" sport:"Swimming" age:22 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
-                    │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
-                    │ │ └── LEAF id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
+                    ├─┬ filler id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
+                    │ ├─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
+                    │ │ ├── LEAF 🚫 id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
+                    │ │ ├── LEAF 🚫 id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
+                    │ │ ├── LEAF 🚫 id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:3 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:25 year:2008 date:"24/08/2008"
+                    │ │ ├── LEAF 🚫 id:6 ag-Grid-AutoColumn:"Missy Franklin" country:"United States" sport:"Swimming" age:17 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:7 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:8 ag-Grid-AutoColumn:"Allison Schmitt" country:"United States" sport:"Swimming" age:22 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
+                    │ │ ├── LEAF 🚫 id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
+                    │ │ └── LEAF 🚫 id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
                     │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
                     │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
                     │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
                     ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
                     │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
                     │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
-                    ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
-                    │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
-                    │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
-                    ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
-                    │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
-                    ├─┬ filler id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · └── LEAF id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    └─┬ filler id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
-                    · └─┬ LEAF_GROUP id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    · · └── LEAF id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
+                    ├─┬ filler 🚫 id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · ├── LEAF 🚫 id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
+                    │ · ├── LEAF 🚫 id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
+                    │ · └── LEAF 🚫 id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-China ag-Grid-AutoColumn:"China"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · └── LEAF 🚫 id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
+                    ├─┬ filler 🚫 id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · └── LEAF 🚫 id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
+                    └─┬ filler 🚫 id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
+                    · └─┬ LEAF_GROUP 🚫 id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    · · └── LEAF 🚫 id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
                 `);
 
                 assertSelectedRowsByIndex([], api);
@@ -5163,23 +5324,23 @@ describe('Row Selection Grid Options', () => {
                     │ │ ├── LEAF id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
                     │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
                     │ │ └── LEAF id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                    │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
+                    │ · ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ · └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ · └── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
                     ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
                     │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
                     │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
                     │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
                     ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
                     │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
                     │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
@@ -5233,14 +5394,14 @@ describe('Row Selection Grid Options', () => {
                     │ ├── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
                     │ ├── LEAF selected id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
                     │ └── LEAF id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
-                    ├─┬ LEAF_GROUP id:row-group-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ ├── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
-                    │ ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ LEAF_GROUP id:"row-group-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    └─┬ LEAF_GROUP id:"row-group-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ LEAF_GROUP 🚫 id:row-group-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ ├── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    │ ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ LEAF_GROUP 🚫 id:"row-group-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    └─┬ LEAF_GROUP 🚫 id:"row-group-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
                 `);
             });
 
@@ -5409,45 +5570,45 @@ describe('Row Selection Grid Options', () => {
                     api,
                     `parent with unselectable children is unselectable when groupSelects: descendants setup`
                 ).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├─┬ filler id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
-                    │ ├─┬ LEAF_GROUP id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
-                    │ │ ├── LEAF id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    │ │ ├── LEAF id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
-                    │ │ ├── LEAF id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:3 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:25 year:2008 date:"24/08/2008"
-                    │ │ ├── LEAF id:6 ag-Grid-AutoColumn:"Missy Franklin" country:"United States" sport:"Swimming" age:17 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:7 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:8 ag-Grid-AutoColumn:"Allison Schmitt" country:"United States" sport:"Swimming" age:22 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
-                    │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
-                    │ │ └── LEAF id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                    │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
-                    ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
-                    │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
-                    │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
-                    ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
-                    │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
-                    ├─┬ filler id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · └── LEAF id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    └─┬ filler id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
-                    · └─┬ LEAF_GROUP id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    · · └── LEAF id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
+                    ROOT 🚫 id:ROOT_NODE_ID
+                    ├─┬ filler 🚫 id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
+                    │ ├─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
+                    │ │ ├── LEAF 🚫 id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
+                    │ │ ├── LEAF 🚫 id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
+                    │ │ ├── LEAF 🚫 id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:3 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:25 year:2008 date:"24/08/2008"
+                    │ │ ├── LEAF 🚫 id:6 ag-Grid-AutoColumn:"Missy Franklin" country:"United States" sport:"Swimming" age:17 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:7 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:8 ag-Grid-AutoColumn:"Allison Schmitt" country:"United States" sport:"Swimming" age:22 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
+                    │ │ ├── LEAF 🚫 id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
+                    │ │ └── LEAF 🚫 id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
+                    │ · ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ · └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ · └── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    ├─┬ filler 🚫 id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · ├── LEAF 🚫 id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
+                    │ · ├── LEAF 🚫 id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
+                    │ · └── LEAF 🚫 id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-China ag-Grid-AutoColumn:"China"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · └── LEAF 🚫 id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
+                    ├─┬ filler 🚫 id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · └── LEAF 🚫 id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
+                    └─┬ filler 🚫 id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
+                    · └─┬ LEAF_GROUP 🚫 id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    · · └── LEAF 🚫 id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
                 `);
 
                 expect(api.getRowNode('row-group-country-United States')?.selectable).toBe(false);
@@ -5456,45 +5617,45 @@ describe('Row Selection Grid Options', () => {
                     api,
                     `parent with unselectable children is unselectable when groupSelects: descendants final state`
                 ).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├─┬ filler id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
-                    │ ├─┬ LEAF_GROUP id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
-                    │ │ ├── LEAF id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    │ │ ├── LEAF id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
-                    │ │ ├── LEAF id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:3 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:25 year:2008 date:"24/08/2008"
-                    │ │ ├── LEAF id:6 ag-Grid-AutoColumn:"Missy Franklin" country:"United States" sport:"Swimming" age:17 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:7 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:8 ag-Grid-AutoColumn:"Allison Schmitt" country:"United States" sport:"Swimming" age:22 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
-                    │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
-                    │ │ └── LEAF id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                    │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
-                    ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
-                    │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
-                    │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
-                    ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
-                    │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
-                    ├─┬ filler id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · └── LEAF id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    └─┬ filler id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
-                    · └─┬ LEAF_GROUP id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    · · └── LEAF id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
+                    ROOT 🚫 id:ROOT_NODE_ID
+                    ├─┬ filler 🚫 id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
+                    │ ├─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
+                    │ │ ├── LEAF 🚫 id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
+                    │ │ ├── LEAF 🚫 id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
+                    │ │ ├── LEAF 🚫 id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:3 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:25 year:2008 date:"24/08/2008"
+                    │ │ ├── LEAF 🚫 id:6 ag-Grid-AutoColumn:"Missy Franklin" country:"United States" sport:"Swimming" age:17 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:7 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:8 ag-Grid-AutoColumn:"Allison Schmitt" country:"United States" sport:"Swimming" age:22 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
+                    │ │ ├── LEAF 🚫 id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
+                    │ │ └── LEAF 🚫 id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
+                    │ · ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ · └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ · └── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    ├─┬ filler 🚫 id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · ├── LEAF 🚫 id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
+                    │ · ├── LEAF 🚫 id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
+                    │ · └── LEAF 🚫 id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-China ag-Grid-AutoColumn:"China"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · └── LEAF 🚫 id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
+                    ├─┬ filler 🚫 id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · └── LEAF 🚫 id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
+                    └─┬ filler 🚫 id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
+                    · └─┬ LEAF_GROUP 🚫 id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    · · └── LEAF 🚫 id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
                 `);
             });
 
@@ -5522,45 +5683,45 @@ describe('Row Selection Grid Options', () => {
                     api,
                     `parent with unselectable children is unselectable when groupSelects: filteredDes setup`
                 ).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├─┬ filler id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
-                    │ ├─┬ LEAF_GROUP id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
-                    │ │ ├── LEAF id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    │ │ ├── LEAF id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
-                    │ │ ├── LEAF id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:3 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:25 year:2008 date:"24/08/2008"
-                    │ │ ├── LEAF id:6 ag-Grid-AutoColumn:"Missy Franklin" country:"United States" sport:"Swimming" age:17 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:7 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:8 ag-Grid-AutoColumn:"Allison Schmitt" country:"United States" sport:"Swimming" age:22 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
-                    │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
-                    │ │ └── LEAF id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                    │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
-                    ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
-                    │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
-                    │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
-                    ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
-                    │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
-                    ├─┬ filler id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · └── LEAF id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    └─┬ filler id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
-                    · └─┬ LEAF_GROUP id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    · · └── LEAF id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
+                    ROOT 🚫 id:ROOT_NODE_ID
+                    ├─┬ filler 🚫 id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
+                    │ ├─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
+                    │ │ ├── LEAF 🚫 id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
+                    │ │ ├── LEAF 🚫 id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
+                    │ │ ├── LEAF 🚫 id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:3 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:25 year:2008 date:"24/08/2008"
+                    │ │ ├── LEAF 🚫 id:6 ag-Grid-AutoColumn:"Missy Franklin" country:"United States" sport:"Swimming" age:17 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:7 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:8 ag-Grid-AutoColumn:"Allison Schmitt" country:"United States" sport:"Swimming" age:22 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
+                    │ │ ├── LEAF 🚫 id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
+                    │ │ └── LEAF 🚫 id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
+                    │ · ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ · └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ · └── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    ├─┬ filler 🚫 id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · ├── LEAF 🚫 id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
+                    │ · ├── LEAF 🚫 id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
+                    │ · └── LEAF 🚫 id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-China ag-Grid-AutoColumn:"China"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · └── LEAF 🚫 id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
+                    ├─┬ filler 🚫 id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · └── LEAF 🚫 id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
+                    └─┬ filler 🚫 id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
+                    · └─┬ LEAF_GROUP 🚫 id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    · · └── LEAF 🚫 id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
                 `);
 
                 expect(api.getRowNode('row-group-country-United States')?.selectable).toBe(false);
@@ -5569,45 +5730,45 @@ describe('Row Selection Grid Options', () => {
                     api,
                     `parent with unselectable children is unselectable when groupSelects: filteredDes final state`
                 ).check(`
-                    ROOT id:ROOT_NODE_ID
-                    ├─┬ filler id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
-                    │ ├─┬ LEAF_GROUP id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
-                    │ │ ├── LEAF id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    │ │ ├── LEAF id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
-                    │ │ ├── LEAF id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:3 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:25 year:2008 date:"24/08/2008"
-                    │ │ ├── LEAF id:6 ag-Grid-AutoColumn:"Missy Franklin" country:"United States" sport:"Swimming" age:17 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:7 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:8 ag-Grid-AutoColumn:"Allison Schmitt" country:"United States" sport:"Swimming" age:22 year:2012 date:"12/08/2012"
-                    │ │ ├── LEAF id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
-                    │ │ ├── LEAF id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
-                    │ │ └── LEAF id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
-                    │ · ├── LEAF id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
-                    │ · └── LEAF id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
-                    │ · └── LEAF id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
-                    ├─┬ filler id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · ├── LEAF id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
-                    │ · ├── LEAF id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
-                    │ · └── LEAF id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
-                    ├─┬ filler id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
-                    │ · └── LEAF id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
-                    ├─┬ filler id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
-                    │ └─┬ LEAF_GROUP id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
-                    │ · └── LEAF id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
-                    ├─┬ filler id:row-group-country-China ag-Grid-AutoColumn:"China"
-                    │ └─┬ LEAF_GROUP id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · └── LEAF id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
-                    ├─┬ filler id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
-                    │ └─┬ LEAF_GROUP id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    │ · └── LEAF id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
-                    └─┬ filler id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
-                    · └─┬ LEAF_GROUP id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
-                    · · └── LEAF id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
+                    ROOT 🚫 id:ROOT_NODE_ID
+                    ├─┬ filler 🚫 id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
+                    │ ├─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Swimming" ag-Grid-AutoColumn:"Swimming"
+                    │ │ ├── LEAF 🚫 id:0 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
+                    │ │ ├── LEAF 🚫 id:1 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:19 year:2004 date:"29/08/2004"
+                    │ │ ├── LEAF 🚫 id:2 ag-Grid-AutoColumn:"Michael Phelps" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:3 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:25 year:2008 date:"24/08/2008"
+                    │ │ ├── LEAF 🚫 id:6 ag-Grid-AutoColumn:"Missy Franklin" country:"United States" sport:"Swimming" age:17 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:7 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:27 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:8 ag-Grid-AutoColumn:"Allison Schmitt" country:"United States" sport:"Swimming" age:22 year:2012 date:"12/08/2012"
+                    │ │ ├── LEAF 🚫 id:9 ag-Grid-AutoColumn:"Natalie Coughlin" country:"United States" sport:"Swimming" age:21 year:2004 date:"29/08/2004"
+                    │ │ ├── LEAF 🚫 id:11 ag-Grid-AutoColumn:"Dara Torres" country:"United States" sport:"Swimming" age:33 year:2000 date:"01/10/2000"
+                    │ │ └── LEAF 🚫 id:18 ag-Grid-AutoColumn:"Ryan Lochte" country:"United States" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-United States-sport-Gymnastics" ag-Grid-AutoColumn:"Gymnastics"
+                    │ · ├── LEAF 🚫 id:13 ag-Grid-AutoColumn:"Nastia Liukin" country:"United States" sport:"Gymnastics" age:18 year:2008 date:"24/08/2008"
+                    │ · └── LEAF 🚫 id:20 ag-Grid-AutoColumn:"Justin Spring" country:"United States" sport:"Gymnastics" age:25 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics"
+                    │ · └── LEAF 🚫 id:4 ag-Grid-AutoColumn:"Aleksey Nemov" country:"Russia" sport:"Gymnastics" age:24 year:2000 date:"01/10/2000"
+                    ├─┬ filler 🚫 id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Australia-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · ├── LEAF 🚫 id:5 ag-Grid-AutoColumn:"Alicia Coutts" country:"Australia" sport:"Swimming" age:24 year:2012 date:"12/08/2012"
+                    │ · ├── LEAF 🚫 id:10 ag-Grid-AutoColumn:"Ian Thorpe" country:"Australia" sport:"Swimming" age:17 year:2000 date:"01/10/2000"
+                    │ · └── LEAF 🚫 id:17 ag-Grid-AutoColumn:"Libby Lenton-Trickett" country:"Australia" sport:"Swimming" age:23 year:2008 date:"24/08/2008"
+                    ├─┬ filler 🚫 id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Canada-sport-Speed Skating" ag-Grid-AutoColumn:"Speed Skating"
+                    │ · └── LEAF 🚫 id:12 ag-Grid-AutoColumn:"Cindy Klassen" country:"Canada" sport:"Speed Skating" age:26 year:2006 date:"26/02/2006"
+                    ├─┬ filler 🚫 id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+                    │ └─┬ LEAF_GROUP 🚫 id:"row-group-country-Norway-sport-Cross Country Skiing" ag-Grid-AutoColumn:"Cross Country Skiing"
+                    │ · └── LEAF 🚫 id:14 ag-Grid-AutoColumn:"Marit Bjørgen" country:"Norway" sport:"Cross Country Skiing" age:29 year:2010 date:"28/02/2010"
+                    ├─┬ filler 🚫 id:row-group-country-China ag-Grid-AutoColumn:"China"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-China-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · └── LEAF 🚫 id:15 ag-Grid-AutoColumn:"Sun Yang" country:"China" sport:"Swimming" age:20 year:2012 date:"12/08/2012"
+                    ├─┬ filler 🚫 id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
+                    │ └─┬ LEAF_GROUP 🚫 id:row-group-country-Zimbabwe-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    │ · └── LEAF 🚫 id:16 ag-Grid-AutoColumn:"Kirsty Coventry" country:"Zimbabwe" sport:"Swimming" age:24 year:2008 date:"24/08/2008"
+                    └─┬ filler 🚫 id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
+                    · └─┬ LEAF_GROUP 🚫 id:row-group-country-Netherlands-sport-Swimming ag-Grid-AutoColumn:"Swimming"
+                    · · └── LEAF 🚫 id:19 ag-Grid-AutoColumn:"Inge de Bruijn" country:"Netherlands" sport:"Swimming" age:30 year:2004 date:"29/08/2004"
                 `);
             });
 
@@ -7827,7 +7988,7 @@ describe('Row Selection Grid Options', () => {
             await new GridRows(api, `selectable refreshed when changing cell value final state`).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 sport:"football"
-                ├── LEAF id:1 sport:"foo"
+                ├── LEAF 🚫 id:1 sport:"foo"
                 ├── LEAF id:2 sport:"tennis"
                 ├── LEAF id:3 sport:"cricket"
                 ├── LEAF id:4 sport:"golf"

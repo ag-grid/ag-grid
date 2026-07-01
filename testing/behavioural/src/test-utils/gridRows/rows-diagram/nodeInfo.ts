@@ -68,6 +68,10 @@ export function getRowStateFlags(gridRows: GridRows, row: RowNode): string {
     } else if (selectionState === undefined) {
         result += ' indeterminate';
     }
+    // detail rows are structurally non-selectable and already labelled 'detail', so don't flag them
+    if (!row.selectable && !row.detail) {
+        result += ' 🚫';
+    }
     if (row.level >= 0 && !row.expanded && (row.group || row.master || row.isExpandable())) {
         result += ' collapsed';
     }
