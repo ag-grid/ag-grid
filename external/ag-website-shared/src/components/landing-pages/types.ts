@@ -7,8 +7,6 @@ import type { InternalFramework } from '@ag-grid-types';
 export interface HeroCta {
     text: string;
     url?: string;
-    /** If true, renders a trial button component instead of a regular link */
-    useTrialButton?: boolean;
 }
 
 export interface HeroGalleryExample {
@@ -42,8 +40,6 @@ export interface HeroSection {
     showVersionBadge?: boolean;
     /** Whether to show customer logos in the hero section (default: true) */
     showCustomerLogos?: boolean;
-    /** Primary CTA button (e.g., "Get Started" or "Start Free Trial") */
-    primaryCta?: HeroCta;
     /** Secondary CTA link below the demo (e.g., "View All Demos") */
     secondaryCta?: HeroCta;
     /** Demo grid configuration (AG Grid specific) */
