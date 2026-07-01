@@ -118,24 +118,41 @@ describe('renderDiagnosticElement', () => {
 });
 
 describe('diagnosticContentToMarkdown', () => {
-    test('includes the severity, id, docs link and fenced code', () => {
+    test('renders the heading, prose with inline code preserved, and both links', () => {
+        const md = diagnosticContentToMarkdown(
+            'warning',
+            307,
+            {
+                message: 'Invalid `gridOptions` property `notAValidGridOption`.',
+                note: 'Use the `gridOptions.context` property instead.',
+                docLink: 'https://ag-grid.com/grid-options/',
+            },
+            'https://ag-grid.com/errors/307'
+        );
+        expect(md).toMatchInlineSnapshot(`
+          "### [Warning] AG Grid #307
+          Invalid \`gridOptions\` property \`notAValidGridOption\`.
+          Use the \`gridOptions.context\` property instead.
+          Documentation: https://ag-grid.com/grid-options/
+          More info: https://ag-grid.com/errors/307"
+        `);
+    });
+
+    test('renders a fenced code block when a code snippet is present', () => {
         const md = diagnosticContentToMarkdown(
             'error',
             200,
             { message: 'No module.', code: 'ModuleRegistry.registerModules([ X ]);' },
             'https://ag-grid.com/errors/200'
         );
-        expect(md).toContain('### error #200');
-        expect(md).toContain('No module.');
-        expect(md).toContain('```');
-        expect(md).toContain('ModuleRegistry.registerModules([ X ]);');
-        expect(md).toContain('Docs: https://ag-grid.com/errors/200');
-    });
-
-    test('strips backticks from prose', () => {
-        const md = diagnosticContentToMarkdown('warning', 22, { message: 'Use `foo`.' }, 'https://x/errors/22');
-        expect(md).toContain('Use foo.');
-        expect(md).not.toContain('`');
+        expect(md).toMatchInlineSnapshot(`
+          "### [Error] AG Grid #200
+          No module.
+          \`\`\`
+          ModuleRegistry.registerModules([ X ]);
+          \`\`\`
+          More info: https://ag-grid.com/errors/200"
+        `);
     });
 });
 
@@ -151,7 +168,7 @@ describe('against real error definitions', () => {
 
     test('diagnosticToMarkdown produces a docs link for the id', () => {
         const md = diagnosticToMarkdown(diagnostic);
-        expect(md).toContain('### warning #22');
+        expect(md).toContain('### [Warning] AG Grid #22');
         expect(md).toContain('/errors/22');
     });
 

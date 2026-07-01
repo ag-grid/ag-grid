@@ -256,20 +256,21 @@ export function diagnosticContentToMarkdown(
     link: string
 ): string {
     const { message, code, note, docLink } = content;
-    const lines = [`### ${severity} #${id}`];
+    const severityLabel = severity[0].toUpperCase() + severity.slice(1);
+    const lines = [`### [${severityLabel}] AG Grid #${id}`];
     if (message) {
-        lines.push(capitaliseLeadingProse(message).replace(/`/g, ''));
+        lines.push(capitaliseLeadingProse(message));
     }
     if (code) {
         lines.push('```', code, '```');
     }
     if (note) {
-        lines.push(note.replace(/`/g, ''));
+        lines.push(note);
     }
     if (docLink) {
         lines.push(`Documentation: ${docLink}`);
     }
-    lines.push(`Docs: ${link}`);
+    lines.push(`More info: ${link}`);
     return lines.join('\n');
 }
 
