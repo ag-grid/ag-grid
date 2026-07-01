@@ -155,10 +155,6 @@ export class CellCtrl extends BeanStub {
     private readonly hasEdit: boolean = false;
 
     public tooltipFeature: TooltipFeature | undefined = undefined;
-    // true when the current tooltipFeature was registered by a cellRenderer via params.setTooltip. Such a
-    // tooltip is only valid for that renderer instance, so it is reset when the renderer is (re)created.
-    private tooltipSetByRenderer = false;
-    private lastCellRendererClass: unknown;
     public editorTooltipFeature: TooltipFeature | undefined = undefined;
 
     constructor(
@@ -224,7 +220,6 @@ export class CellCtrl extends BeanStub {
     }
 
     private disableTooltipFeature() {
-        this.tooltipSetByRenderer = false;
         this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
     }
 
@@ -437,17 +432,6 @@ export class CellCtrl extends BeanStub {
             }
         }
 
-        // a tooltip registered by the previous renderer (via setTooltip) is only valid for that instance.
-        // when the renderer is recreated - forced, or because cellRendererSelector returned a different
-        // component - reset to the column default so the incoming renderer re-registers or falls back to the colDef.
-        const rendererClass = compDetails?.componentClass;
-        const rendererRecreated = forceNewCellRendererInstance || rendererClass !== this.lastCellRendererClass;
-        this.lastCellRendererClass = rendererClass;
-        if (rendererRecreated && this.tooltipSetByRenderer) {
-            this.disableTooltipFeature();
-            this.enableTooltipFeature();
-        }
-
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
 
         this.customRowDragComp?.refreshVisibility();
@@ -604,7 +588,6 @@ export class CellCtrl extends BeanStub {
                     this.disableTooltipFeature();
                 }
                 this.enableTooltipFeature(value, shouldDisplayTooltip);
-                this.tooltipSetByRenderer = true;
                 this.tooltipFeature?.refreshTooltip();
             },
         });
