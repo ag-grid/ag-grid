@@ -228,6 +228,16 @@ export class CellCtrl extends BeanStub {
         this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
     }
 
+    public resetCellRendererTooltip(): void {
+        if (!this.isAlive()) {
+            return;
+        }
+
+        this.disableTooltipFeature();
+        this.enableTooltipFeature();
+        this.tooltipFeature?.refreshTooltip();
+    }
+
     public enableEditorTooltipFeature(editor: ICellEditor): void {
         if (this.editorTooltipFeature) {
             this.disableEditorTooltipFeature();

@@ -115,6 +115,7 @@ const CellComp = ({
     }
 
     const suppressJsRenderer = !!editDetails && !editDetails.popup;
+    const resetCellRendererTooltip = useCallback(() => cellCtrl.resetCellRendererTooltip(), [cellCtrl]);
     useJsCellRenderer(
         renderDetails,
         showCellWrapper,
@@ -122,7 +123,8 @@ const CellComp = ({
         cellValueVersion,
         jsCellRendererRef,
         eGui,
-        suppressJsRenderer
+        suppressJsRenderer,
+        resetCellRendererTooltip
     );
 
     // if RenderDetails changed, need to call refresh. This is not our preferred way (the preferred
@@ -164,6 +166,7 @@ const CellComp = ({
             // however the GroupCellRenderer has this logic in it and would need a small refactor
             // to get it working without using refresh() returning false. so this hack staying in,
             // in React if refresh() is implemented and returns false (or undefined), we force a refresh
+            cellCtrl.resetCellRendererTooltip();
             setRenderKey((prev) => prev + 1);
         }
     }, [renderDetails]);
@@ -295,6 +298,17 @@ const CellComp = ({
                 const setDetails = () => {
                     setRenderDetails((prev) => {
                         if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
+                            const previousCompDetails = prev?.compDetails;
+                            const rendererRemoved = previousCompDetails != null && compDetails == null;
+                            const rendererReplaced =
+                                previousCompDetails != null &&
+                                compDetails != null &&
+                                previousCompDetails.componentClass !== compDetails.componentClass;
+
+                            if (rendererRemoved || rendererReplaced) {
+                                cellCtrl.resetCellRendererTooltip();
+                            }
+
                             return {
                                 value,
                                 compDetails,

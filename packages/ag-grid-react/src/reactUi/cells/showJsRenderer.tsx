@@ -13,11 +13,12 @@ const useJsCellRenderer = (
     cellValueVersion: number,
     jsCellRendererRef: MutableRefObject<ICellRendererComp | undefined>,
     eGui: MutableRefObject<any>,
-    suppressInlineEditRenderer = false
+    suppressInlineEditRenderer = false,
+    onRendererDestroyed?: () => void
 ) => {
     const { context } = useContext(BeansContext);
 
-    const destroyCellRenderer = useCallback(() => {
+    const destroyCellRenderer = useCallback((resetTooltip = true) => {
         const comp = jsCellRendererRef.current;
         if (!comp) {
             return;
@@ -31,6 +32,12 @@ const useJsCellRenderer = (
 
         context.destroyBean(comp);
         jsCellRendererRef.current = undefined;
+
+        if (!resetTooltip) {
+            return;
+        }
+
+        onRendererDestroyed?.();
     }, []);
 
     // create or refresh JS cell renderer
@@ -88,7 +95,7 @@ const useJsCellRenderer = (
     // component is destroyed. as the other effect only updates when there
     // is a change in state
     useEffect(() => {
-        return destroyCellRenderer;
+        return () => destroyCellRenderer(false);
     }, []);
 };
 
