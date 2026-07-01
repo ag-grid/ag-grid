@@ -16,6 +16,7 @@ import { SITE_BASE_URL, PUBLIC_GTM_ID, PUBLIC_GTM_AUTH, PUBLIC_GTM_PREVIEW, agGr
 import GoogleTagManager from '@ag-website-shared/components/google-tag-manager/GoogleTagManager.astro';
 import GoogleTagManagerBody from '@ag-website-shared/components/google-tag-manager/GoogleTagManagerBody.astro';
 import AnnouncementBanner from '@components/announcement-banner/AnnouncementBanner.astro';
+import { announcementBannerConfig } from '@components/announcement-banner/announcementBanner.config';
 import JsonLd from '@ag-website-shared/components/structured-data/JsonLd.astro';
 import {
     buildOrganization,
@@ -60,7 +61,7 @@ const {
     hideFooter,
     hidePageFromSearchEngines,
     showMicrosoftMessage,
-    showAnnouncementBanner = false,
+    showAnnouncementBanner = announcementBannerConfig.enabled,
     overrideSocialImage,
     pageStructuredData,
 } = Astro.props;
@@ -119,13 +120,6 @@ const structuredData: JsonLdObject[] = includeStructuredData
           ...(pageStructuredData ?? []),
       ]
     : [];
-
-const announcementBannerProps = {
-    href: urlWithBaseUrl('/campaigns/beyond-the-prompt/'),
-    title: 'Beyond the Prompt',
-    description: 'A one-day AG Grid & Bryntum conference • 19th May 26',
-    ctaLabel: 'Learn more',
-};
 ---
 
 <!doctype html>
@@ -238,10 +232,11 @@ const announcementBannerProps = {
         {
             !isArchive && showAnnouncementBanner && (
                 <AnnouncementBanner
-                    href={announcementBannerProps.href}
-                    title={announcementBannerProps.title}
-                    description={announcementBannerProps.description}
-                    ctaLabel={announcementBannerProps.ctaLabel}
+                    href={urlWithBaseUrl(announcementBannerConfig.href)}
+                    title={announcementBannerConfig.title}
+                    description={announcementBannerConfig.description}
+                    ctaLabel={announcementBannerConfig.ctaLabel}
+                    external={announcementBannerConfig.external}
                 />
             )
         }
