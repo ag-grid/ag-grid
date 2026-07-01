@@ -40,7 +40,7 @@ describe('Set Filter dropdown opened before data arrives (AG-17369)', () => {
             ...overrides,
         });
 
-        api.setColumnFilterModel('value', { filterType: 'set', values: ['one'] });
+        void api.setColumnFilterModel('value', { filterType: 'set', values: ['one'] });
         api.onFilterChanged();
         await asyncSetTimeout(0);
 
