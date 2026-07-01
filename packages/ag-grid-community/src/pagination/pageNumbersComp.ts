@@ -202,14 +202,17 @@ export class PageNumbersComp extends Component {
         return button;
     }
 
-    // Current page is a non-interactive indicator (aria-current, no button role) so it cannot navigate.
+    // Current page stays in the tab order as a disabled button so screen readers announce it as an
+    // unavailable page; it carries no data-page attr, so activating it never triggers navigation.
     private createCurrentPage(page: number, pageLabel: string): HTMLElement {
         const current = _createElement({
-            tag: 'span',
+            tag: 'div',
             cls: 'ag-paging-page-number ag-paging-page-number-current',
-            attrs: { 'aria-current': 'page', 'aria-label': `${pageLabel} ${page}` },
+            role: 'button',
+            attrs: { 'aria-current': 'page', 'aria-disabled': 'true', 'aria-label': `${pageLabel} ${page}` },
         });
         current.textContent = this.formatNumber(page);
+        this.activateTabIndex([current]);
         return current;
     }
 

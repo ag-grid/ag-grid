@@ -97,15 +97,27 @@ describe('pagination pageNumbers panel', () => {
         expect(api.paginationGetCurrentPage()).toBe(10);
     });
 
-    test('current page is indicated with aria-current and is not a button', () => {
+    test('current page is a focusable disabled button indicated with aria-current', () => {
         const api = createPaginationGrid(gridsManager);
         api.paginationGoToPage(9);
 
         const current = getPageNumbersPanel(api).querySelector('.ag-paging-page-number-current')!;
         expect(current.textContent).toBe('10');
         expect(current.getAttribute('aria-current')).toBe('page');
-        expect(current.getAttribute('role')).toBeNull();
+        expect(current.getAttribute('role')).toBe('button');
+        expect(current.getAttribute('aria-disabled')).toBe('true');
+        expect(current.getAttribute('tabindex')).toBe('0');
         expect(current.hasAttribute('data-page')).toBe(false);
+    });
+
+    test('current page can receive keyboard focus', () => {
+        const api = createPaginationGrid(gridsManager);
+        api.paginationGoToPage(9);
+
+        const current = getPageNumbersPanel(api).querySelector<HTMLElement>('.ag-paging-page-number-current')!;
+        current.focus();
+
+        expect(document.activeElement).toBe(current);
     });
 
     test('clicking the current page does not dispatch a page change event', () => {
