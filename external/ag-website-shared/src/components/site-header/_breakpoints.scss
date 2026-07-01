@@ -1,0 +1,53 @@
+@use 'design-system' as *;
+
+// Site header — every threshold that governs header layout or visibility, gathered in
+// one place and named for what it controls (not by size-tier). Two kinds of entries:
+//
+//   1. Aliases onto shared, site-wide breakpoint tokens ($breakpoint-site-header-*,
+//      $breakpoint-docs-nav-medium — declared in design-system/core/_breakpoints.scss)
+//      that the header happens to consume. The alias documents *why* the header cares;
+//      the underlying pixel value stays owned by the shared token, because other,
+//      unrelated components (the announcement banner, campaign pages, automated
+//      examples) depend on that same shared value. Do not redefine the number here, or
+//      the two will drift apart.
+//
+//   2. Tokens owned exclusively by header-area components — currently the product/site
+//      switcher, whose two thresholds used to be unnamed literals directly in
+//      ProductDropdown.module.scss (one of which accidentally reused an unrelated
+//      landing-page token). Declared here with !default so individual repos can
+//      override them.
+
+// --- Nav collapse (hamburger <-> full nav) ---
+// Consumed by: SiteHeader.module.scss (.mainNavLarge, .mobileMenuButton, .mainNav,
+// .navItemList, .navItem, .navLink, .buttonItem, .toggleDarkText)
+$nav-collapse: $breakpoint-site-header-small;
+
+// --- Docs button + search bar stacking ---
+// Consumed by: SiteHeader.module.scss (.docsNavBtnSearchContainer, .mobileNavButton)
+$docs-search-stack: $breakpoint-site-header-extra-small;
+
+// --- Header goes fully inline (single row) / becomes sticky ---
+// The same shared value governs two related but distinct concerns, kept as separate
+// aliases so they can be decoupled later without archaeology:
+//   - $docs-search-inline: .headerInner drops multi-row wrapping in favour of a single
+//     grid row; the docs/search cluster and switcher take their own place in it.
+//     Consumed by: SiteHeader.module.scss (.headerInner, .docsNavBtnSearchContainer,
+//     .mobileNavButton)
+//   - $sticky-at: .header switches from static to sticky positioning. Stays @media
+//     (viewport), not @container — a container cannot query its own size.
+//     Consumed by: SiteHeader.module.scss (.header)
+$docs-search-inline: $breakpoint-docs-nav-medium;
+$sticky-at: $breakpoint-docs-nav-medium;
+
+// --- Product/site switcher visibility ---
+// Owned here. Below this width there isn't room for the AG Grid/Charts/Studio switcher
+// alongside the logo, docs/search cluster, and nav — hidden until the header is wide
+// enough for all of them. Consumed by: ProductDropdown.module.scss (.customMenu)
+$switcher-show: 1220px !default;
+
+// Width/position of the switcher's own popup once opened. Previously borrowed
+// $breakpoint-hero-small (a landing-page token) purely by coincidence of value — a
+// latent bug risk, since changing hero sizing for a marketing page would have silently
+// moved this too. Decoupled and named here instead.
+// Consumed by: ProductDropdown.module.scss (.customMenu, .customContent)
+$switcher-popup-at: 620px !default;
