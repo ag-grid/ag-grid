@@ -1,4 +1,4 @@
-import { KeyCode, RefPlaceholder, _setAriaDisabled } from 'ag-stack';
+import { KeyCode, RefPlaceholder, _getActiveDomElement, _setAriaDisabled } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -147,19 +147,28 @@ export class PageNumbersComp extends Component {
         const items = _getPageNumberItems(currentPage, totalPages, this.rowModel.isLastRowIndexKnown());
         const { eNumbers } = this;
 
+        // Rebuilding the numbers drops the focused button; move focus to the rebuilt current page so it isn't lost.
+        const restoreFocus = eNumbers.contains(_getActiveDomElement(this.beans));
+
         eNumbers.replaceChildren();
         eNumbers.classList.toggle('ag-paging-page-numbers-truncated', items.includes('ellipsis'));
 
         const pageLabel = localeTextFunc('page', 'Page');
+        let eCurrentPage: HTMLElement | undefined;
         for (let i = 0, len = items.length; i < len; ++i) {
             const item = items[i];
             if (item === 'ellipsis') {
                 eNumbers.appendChild(this.createEllipsis(i));
             } else if (item === currentPage + 1) {
-                eNumbers.appendChild(this.createCurrentPage(item, pageLabel));
+                eCurrentPage = this.createCurrentPage(item, pageLabel);
+                eNumbers.appendChild(eCurrentPage);
             } else {
                 eNumbers.appendChild(this.createPageButton(item, pageLabel));
             }
+        }
+
+        if (restoreFocus) {
+            eCurrentPage?.focus();
         }
 
         this.updateArrows(currentPage, totalPages);
@@ -202,14 +211,17 @@ export class PageNumbersComp extends Component {
         return button;
     }
 
-    // Current page is a non-interactive indicator (aria-current, no button role) so it cannot navigate.
+    // Current page stays in the tab order as a disabled button so screen readers announce it as an
+    // unavailable page; it carries no data-page attr, so activating it never triggers navigation.
     private createCurrentPage(page: number, pageLabel: string): HTMLElement {
         const current = _createElement({
-            tag: 'span',
+            tag: 'div',
             cls: 'ag-paging-page-number ag-paging-page-number-current',
-            attrs: { 'aria-current': 'page', 'aria-label': `${pageLabel} ${page}` },
+            role: 'button',
+            attrs: { 'aria-current': 'page', 'aria-disabled': 'true', 'aria-label': `${pageLabel} ${page}` },
         });
         current.textContent = this.formatNumber(page);
+        this.activateTabIndex([current]);
         return current;
     }
 
