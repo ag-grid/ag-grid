@@ -64,9 +64,11 @@ function concreteForPattern(pattern) {
     p = p.replace(/\[a-z\]\+/g, 'javascript'); // [a-z]+ → javascript
 
     // Family-specific realistic completions (most specific first).
-    // 410 archive: a real versioned archive path.
-    if (p.startsWith('/charts/archive/')) {
-        return '/charts/archive/13.1.0/javascript/getting-started/';
+    // Archive index: the rule is bare-only (`^/charts/archive/?$`) — it redirects the archive
+    // landing to /documentation-archive and must NOT match versioned paths (`/archive/<v>/…`),
+    // which stay live. Synthesise the bare path so the rule fires.
+    if (p.startsWith('/charts/archive')) {
+        return '/charts/archive/';
     }
     // 410 privacy: bare page.
     if (p.startsWith('/charts/privacy')) {
