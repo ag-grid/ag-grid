@@ -1,3 +1,5 @@
+import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
 import { Provider } from 'jotai';
 import { useLayoutEffect, useMemo, useState } from 'react';
 
@@ -10,6 +12,11 @@ import { addChangedModelItem, getChangedModelItemCount } from './model/changed-m
 import { initialiseStore } from './model/store';
 
 export const ThemeBuilder = () => {
+    // Fresh Emotion cache per mount so styles are always re-inserted after Astro's
+    // view-transition head swap removes the previous <style> elements. Without this,
+    // Emotion's module-level cache marks styles as "inserted" but the DOM nodes are
+    // gone, leaving Emotion class names with no CSS rules on the second visit.
+    const emotionCache = useMemo(() => createCache({ key: 'tb' }), []);
     const store = useMemo(() => initialiseStore(), []);
 
     const [initialised, setInitialised] = useState(false);
@@ -40,9 +47,11 @@ export const ThemeBuilder = () => {
     }, []);
 
     return (
-        <Provider store={store}>
-            <LoadFontFamilyMenuFonts />
-            {initialised && <RootContainer />}
-        </Provider>
+        <CacheProvider value={emotionCache}>
+            <Provider store={store}>
+                <LoadFontFamilyMenuFonts />
+                {initialised && <RootContainer />}
+            </Provider>
+        </CacheProvider>
     );
 };

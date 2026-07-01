@@ -17,6 +17,7 @@ export async function getStaticPaths() {
     showDocsNav={true}
     showSearchBar={true}
     hideFooter
+    noMainTransition={true}
 >
     <div class:list={['contentViewport layout-grid']}>
         <ThemeBuilder client:only="react" />
