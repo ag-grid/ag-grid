@@ -31,9 +31,17 @@ const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) 
 const version = versionsData[0]?.version;
 const frameworkDisplayText = getFrameworkDisplayText(currentFramework);
 const seoTagline = `Download AG Grid v${version} today: The best ${frameworkDisplayText} Table & ${frameworkDisplayText} Data Grid in the world.`;
+
+const migrationVersionEntry = migrationVersion
+    ? versionsData.find((v: { version: string; landingPageHighlight?: string }) => v.version === migrationVersion)
+    : null;
+const upgradePageDescription = migrationVersionEntry?.landingPageHighlight
+    ? `Upgrade your $framework Data Grid to AG Grid v${migrationVersion}: ${migrationVersionEntry.landingPageHighlight}.`
+    : null;
+
 const description = getPageDescription({
     framework: currentFramework,
-    pageDescription: page.data.description,
+    pageDescription: upgradePageDescription ?? page.data.description,
     body: page.body,
 });
 const descriptionWithSeoTagline = `${description ? `${description} ` : ''}${seoTagline}`;
