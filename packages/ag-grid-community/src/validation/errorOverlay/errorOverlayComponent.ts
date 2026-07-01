@@ -84,12 +84,15 @@ export class ErrorOverlayComponent extends OverlayComponent<any, any, IErrorOver
         const diagnostics = this.beans.errorOverlay?.getDiagnostics() ?? [];
         this.eTitle.textContent = getTitle(diagnostics);
 
+        const ownGridId = this.beans.context.getId();
         this.eBody.replaceChildren();
         for (let i = 0, len = diagnostics.length; i < len; ++i) {
             if (i > 0) {
                 this.eBody.appendChild(_createElement({ tag: 'div', cls: 'ag-overlay-error-divider' }));
             }
-            this.eBody.appendChild(renderDiagnostic(diagnostics[i]));
+            const diagnostic = diagnostics[i];
+            const isNested = diagnostic.gridId !== undefined && diagnostic.gridId !== ownGridId;
+            this.eBody.appendChild(renderDiagnostic(diagnostic, isNested));
         }
 
         this.beans.ariaAnnounce?.announceValue(this.eTitle.textContent ?? '', 'overlay');
