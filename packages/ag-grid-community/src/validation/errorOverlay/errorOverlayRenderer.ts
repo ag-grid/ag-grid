@@ -167,13 +167,11 @@ function appendTextWithLinks(el: HTMLElement, text: string): void {
 }
 
 /**
- * Capitalises the first letter when the message begins with prose. Skipped when it starts with a code
- * span (backtick), since the leading token is then a case-sensitive identifier.
+ * Capitalises a leading lowercase letter. A message beginning with a code span (backtick) is left
+ * untouched, since the regex only matches a lowercase letter at position 0 — the identifier is
+ * case-sensitive and must not be altered.
  */
 function capitaliseLeadingProse(text: string): string {
-    if (text.startsWith(CODE_DELIMITER)) {
-        return text;
-    }
     return text.replace(/^[a-z]/, (c) => c.toUpperCase());
 }
 

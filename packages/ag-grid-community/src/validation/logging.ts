@@ -32,7 +32,6 @@ const SEVERITY_ORDER: Record<Severity, number> = { deprecation: 1, warning: 2, e
 
 /**
  * A diagnostic captured for the developer overlay (config errors, runtime errors and warnings).
- * @knipIgnore Used in tests
  */
 export interface CapturedDiagnostic {
     id: ErrorId;
@@ -159,7 +158,6 @@ export function _isDiagnosticCaptureActive(): boolean {
  * Diagnostics already buffered before it attached (and matching it) are replayed immediately. Returns
  * a cleanup function that removes the listener and, once the last listener detaches, drops the buffer
  * so a later grid does not inherit stale diagnostics.
- * @knipIgnore Used in tests
  */
 export function _addDiagnosticListener(gridId: string | undefined, listener: DiagnosticListener): () => void {
     const entry: DiagnosticListenerEntry = { gridId, listener };
