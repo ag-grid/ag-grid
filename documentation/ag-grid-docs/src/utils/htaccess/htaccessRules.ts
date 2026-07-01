@@ -11,7 +11,7 @@ export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
 // path-scoped split. Flip to 'enforce' once the report-only window is clean.
 // Staging always enforces the split. Exported for the tests, which assert
 // different output per phase.
-export const PRODUCTION_CSP_PHASE: 'report-only' | 'enforce' = 'report-only';
+export const PRODUCTION_CSP_PHASE: 'report-only' | 'enforce' = 'enforce';
 
 /**
  * Note: when changing this file please add/update the tests in
