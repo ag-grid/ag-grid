@@ -1,4 +1,9 @@
-import { BRANCH_BUILDS_PATH_CONDITION, CAMPAIGNS_PATH_CONDITION, EXAMPLES_PATH_CONDITION } from './cspRules';
+import {
+    BRANCH_BUILDS_PATH_CONDITION,
+    CAMPAIGNS_PATH_CONDITION,
+    ECOMMERCE_PATH_CONDITION,
+    EXAMPLES_PATH_CONDITION,
+} from './cspRules';
 import { PRODUCTION_CSP_PHASE, getHtaccessContent } from './htaccessRules';
 import { SITE_301_REDIRECTS } from './redirects';
 
@@ -367,6 +372,42 @@ describe('htaccessRules', () => {
         it('production: no /branch-builds/ override (the tree is staging-only)', () => {
             expect(productionContent).not.toContain(branchBuildsIfOpen);
         });
+    });
+
+    describe('AG-17134: /ecommerce/ CSP override (separately-managed checkout SPA)', () => {
+        const ecommerceIfOpen = `<If "${ECOMMERCE_PATH_CONDITION}">`;
+
+        const ecommerceIfBlock = (content: string) => {
+            const start = content.indexOf(ecommerceIfOpen);
+            expect(start).toBeGreaterThan(-1);
+            return content.slice(start, content.indexOf('</If>', start));
+        };
+
+        it("staging: <If> override re-allows 'unsafe-inline' for /ecommerce/ without unsafe-eval", () => {
+            const ifBlock = ecommerceIfBlock(stagingContent);
+            expect(ifBlock).toContain('Header always unset Content-Security-Policy\n');
+            expect(ifBlock).toContain("'unsafe-inline'");
+            expect(ifBlock).not.toContain("'unsafe-eval'");
+        });
+
+        it('production: emits the /ecommerce/ override in either phase', () => {
+            expect(productionContent).toContain(ecommerceIfOpen);
+            const ifBlock = ecommerceIfBlock(productionContent);
+            expect(ifBlock).toContain("'unsafe-inline'");
+            expect(ifBlock).not.toContain("'unsafe-eval'");
+        });
+
+        if (PRODUCTION_CSP_PHASE === 'report-only') {
+            it('production (report-only window): the /ecommerce/ override only swaps the report-only header', () => {
+                // During the window the enforced baseline is the permissive examples policy
+                // (which already allows inline), so /ecommerce/ keeps working; this override
+                // just stops it reporting under the tightened report-only site policy.
+                const ifBlock = ecommerceIfBlock(productionContent);
+                expect(ifBlock).toContain('Header always unset Content-Security-Policy-Report-Only\n');
+                expect(ifBlock).toContain('Header always set Content-Security-Policy-Report-Only "');
+                expect(ifBlock).not.toContain('Header always set Content-Security-Policy "');
+            });
+        }
     });
 
     describe('basic structure', () => {
