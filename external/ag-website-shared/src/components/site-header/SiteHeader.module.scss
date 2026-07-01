@@ -84,6 +84,13 @@
     flex-wrap: wrap;
     gap: $spacing-size-2 $spacing-size-4;
     width: 100%;
+    // This margin (particularly the bottom value) exists for the wrapped/mobile layout,
+    // where this cluster sits on its own row below the logo and needs a gap before the
+    // next wrapped row. Previously erased for free by display:contents once inline
+    // (this box generated no box at that width at all); now that it's a real grid cell,
+    // it must be explicitly reset there or the leftover margin-bottom throws this
+    // cluster's vertical centering off within the row (align-items: center on
+    // .headerInner centers the item's full margin box, so an asymmetric margin skews it).
     margin: 0 var(--layout-horizontal-margins) $spacing-size-4 var(--layout-horizontal-margins);
     grid-area: docs-search;
 
@@ -98,6 +105,11 @@
     // (above) takes over positioning instead.
     @container site-header (min-width: #{$nav-collapse}) {
         order: 4;
+    }
+
+    @container site-header (min-width: #{$docs-search-inline}) {
+        margin: 0;
+        width: auto;
     }
 }
 
