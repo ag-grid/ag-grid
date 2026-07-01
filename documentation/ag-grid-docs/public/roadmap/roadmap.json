@@ -1,0 +1,88 @@
+{
+    "lastUpdated": "2026-06-29",
+    "introTitle": "Q2 2026 focus",
+    "introText": "A description of the focus for Q2 2026, including a summary of the key areas of development and strategic initiatives.",
+    "items": [
+        {
+            "id": "AG-00001",
+            "title": "Shipped Feature With Link",
+            "q": 1,
+            "status": "shipped",
+            "why": "Placeholder why text.",
+            "desc": "Placeholder description for a shipped feature that links to a docs page.",
+            "link": "./getting-started"
+        },
+        {
+            "id": "AG-00002",
+            "title": "Shipped Feature Without Link",
+            "q": 1,
+            "status": "shipped",
+            "why": "Placeholder why text.",
+            "desc": "Placeholder description for a shipped feature with no docs link.",
+            "link": null
+        },
+        {
+            "id": "AG-00003",
+            "title": "Another Shipped Feature",
+            "q": 1,
+            "status": "shipped",
+            "why": "Placeholder why text.",
+            "desc": "Placeholder description for another shipped feature in Q1.",
+            "link": null
+        },
+        {
+            "id": "AG-00004",
+            "title": "In Progress Feature A",
+            "q": 2,
+            "status": "in-progress",
+            "why": "Placeholder why text.",
+            "desc": "Placeholder description for a feature currently in development.",
+            "link": null
+        },
+        {
+            "id": "AG-00005",
+            "title": "In Progress Feature B",
+            "q": 2,
+            "status": "in-progress",
+            "why": "Placeholder why text.",
+            "desc": "Placeholder description for another feature currently in development.",
+            "link": null
+        },
+        {
+            "id": "AG-00006",
+            "title": "In Progress Feature C",
+            "q": 2,
+            "status": "in-progress",
+            "why": "Placeholder why text.",
+            "desc": "Placeholder description for a third feature currently in development.",
+            "link": null
+        },
+        {
+            "id": "AG-00007",
+            "title": "Planned Feature A",
+            "q": 3,
+            "status": "planned",
+            "why": "Placeholder why text.",
+            "desc": "Placeholder description for a planned Q3 feature.",
+            "link": null
+        },
+        {
+            "id": "AG-00008",
+            "title": "Planned Feature B",
+            "q": 3,
+            "status": "planned",
+            "why": "Placeholder why text.",
+            "desc": "Placeholder description for another planned Q3 feature.",
+            "link": null
+        },
+        {
+            "id": "AG-00009",
+            "title": "Planned Feature C",
+            "q": 4,
+            "status": "planned",
+            "why": "Placeholder why text.",
+            "desc": "Placeholder description for a planned Q4 feature.",
+            "link": null
+        }
+    ]
+}
