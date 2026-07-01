@@ -440,8 +440,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         let prevOrder = restoreOrder ? lastOrder : null;
         // pivotSort reorders the groups but keeps the user's within-group order and widths: re-rank the
         // preserved order by the freshly-sorted group order rather than discarding it.
-        if (prevOrder != null && showingPivotResult && !!beans.pivotColsSvc?.hasInteractivePivotSort()) {
-            prevOrder = reRankByPivotGroupOrder(colsList, prevOrder, colsById);
+        const pivotColsSvc = beans.pivotColsSvc;
+        if (prevOrder != null && showingPivotResult && !!pivotColsSvc?.hasInteractivePivotSort()) {
+            prevOrder = pivotColsSvc.reRankByPivotGroupOrder(colsList, prevOrder, colsById);
         }
         const ordered = prevOrder == null ? colsList : applyPrevColumnsOrder(colsList, colsById, prevOrder);
         const finalColsList = placeLockedColumns(ordered, gos);
@@ -647,49 +648,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return map;
     }
 }
-
-const pivotGroupKey = (col: AgColumn): string => (col.colDef.pivotKeys ?? []).join('');
-
-interface RankedColId {
-    id: string;
-    order: number;
-    rank: number;
-}
-
-const byRankThenOrder = (a: RankedColId, b: RankedColId): number => a.rank - b.rank || a.order - b.order;
-
-/** Re-rank `stickyOrder` so its pivot groups follow the freshly-sorted `defColsList` group order, while
- *  keeping each group's within-group (user) column order. Stable: equal group rank keeps sticky order. */
-const reRankByPivotGroupOrder = (
-    defColsList: AgColumn[],
-    stickyOrder: string[],
-    colsById: Record<string, AgColumn>
-): string[] => {
-    const groupRank = new Map<string, number>();
-    for (let i = 0, len = defColsList.length; i < len; ++i) {
-        const key = pivotGroupKey(defColsList[i]);
-        if (!groupRank.has(key)) {
-            groupRank.set(key, groupRank.size);
-        }
-    }
-    // Cols absent from defColsList have no known group, so they rank last (after every known group).
-    const unknownRank = groupRank.size;
-    const ranked: RankedColId[] = [];
-    for (let i = 0, len = stickyOrder.length; i < len; ++i) {
-        const id = stickyOrder[i];
-        const col = colsById[id];
-        if (col != null) {
-            ranked.push({ id, order: i, rank: groupRank.get(pivotGroupKey(col)) ?? unknownRank });
-        }
-    }
-    ranked.sort(byRankThenOrder);
-    const rankedLen = ranked.length;
-    const result = new Array<string>(rankedLen);
-    for (let i = 0; i < rankedLen; ++i) {
-        result[i] = ranked[i].id;
-    }
-    return result;
-};
 
 const snapshotColIds = (list: AgColumn[], out?: string[] | null): string[] => {
     const len = list.length;
