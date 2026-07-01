@@ -52,6 +52,18 @@ describe('renderBootstrapPanel', () => {
         expect(container.querySelectorAll('.ag-overlay-error-bootstrap-panel')).toHaveLength(1);
     });
 
+    test('removes a stale panel when the overlay is disabled before a re-render', () => {
+        _applyDevValidationConfig({ overlay: 'all' });
+        const container = document.createElement('div');
+        renderBootstrapPanel(container, [errorDiagnostic]);
+
+        // Overlay config is global and last-write-wins, so it can be turned off between grid re-creations.
+        _applyDevValidationConfig({ overlay: false });
+        renderBootstrapPanel(container, [errorDiagnostic]);
+
+        expect(container.childElementCount).toBe(0);
+    });
+
     test('dedupes identical diagnostics within a single render', () => {
         _applyDevValidationConfig({ overlay: 'all' });
         const container = document.createElement('div');

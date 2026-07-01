@@ -56,10 +56,11 @@ function getRawMessage(diagnostic: CapturedDiagnostic): string {
 }
 
 /**
- * Builds the developer-facing content from a raw message. Documentation references (`See`/`Visit <link>`
- * and the `For more info see: <link>` hint) are removed from the prose because the overlay renders them
- * as separate links; the registration snippet, when present, is split out so the overlay can render it
- * as a distinct code block.
+ * Builds the developer-facing content from a raw message. The `For more info see: <link>` hint is
+ * captured into `docLink` and rendered as a separate documentation link. Bare `See`/`Visit <link>`
+ * references are stripped and discarded, not surfaced: they would otherwise render as raw inline URLs in
+ * the prose, and the canonical `AG Grid #<id>` link the overlay always shows already points at the docs.
+ * The registration snippet, when present, is split out so the overlay can render it as a distinct code block.
  * @knipIgnore Used in tests
  */
 export function parseDiagnosticText(raw: string): DiagnosticContent {

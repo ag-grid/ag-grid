@@ -139,16 +139,17 @@ function dedupeDiagnostics(diagnostics: CapturedDiagnostic[]): CapturedDiagnosti
  * `overlay: 'errors'` shows only errors.
  */
 export function renderBootstrapPanel(container: HTMLElement, diagnostics: CapturedDiagnostic[]): void {
-    const mode = _getDevOverlayMode();
-    if (mode === false) {
-        return;
-    }
-
     // A re-created grid (e.g. React's dev/StrictMode double-invoke) calls this again against the same
-    // container; remove any panel from a previous render so they do not stack.
+    // container; remove any panel from a previous render before the mode checks below, so disabling the
+    // overlay between renders clears the old panel rather than leaving it stranded.
     const previous = container.querySelectorAll('.ag-overlay-error-bootstrap-panel');
     for (let i = 0, len = previous.length; i < len; ++i) {
         previous[i].remove();
+    }
+
+    const mode = _getDevOverlayMode();
+    if (mode === false) {
+        return;
     }
 
     // The untied-diagnostics buffer accumulates across re-creates, so dedupe before rendering.
