@@ -141,18 +141,28 @@ const MAX_BUFFERED_DIAGNOSTICS = 100;
 // checks and no allocation. The ValidationModule turns them on at registration, before any grid exists.
 let captureEnabled = false;
 let throwThreshold: Severity | false = false;
+// Error ids the developer has opted to ignore: kept out of the overlay and exempt from throw mode. The
+// console log still fires — suppression is a knob on the dev-diagnostics surfaces, not the base logger.
+let suppressedIds = new Set<ErrorId>();
 
 /**
- * Pushed in by the ValidationModule (which core never imports) to enable diagnostic capture and/or the
- * throw threshold, mirroring the provideValidationServiceLogger setter idiom to keep the dependency
- * direction one-way.
+ * Pushed in by the ValidationModule (which core never imports) to enable diagnostic capture, the throw
+ * threshold, and/or the suppressed-id set, mirroring the provideValidationServiceLogger setter idiom to
+ * keep the dependency direction one-way.
  */
-export function _configureDiagnostics(config: { capture?: boolean; throwOn?: Severity | false }): void {
+export function _configureDiagnostics(config: {
+    capture?: boolean;
+    throwOn?: Severity | false;
+    suppress?: ErrorId[];
+}): void {
     if (config.capture !== undefined) {
         captureEnabled = config.capture;
     }
     if (config.throwOn !== undefined) {
         throwThreshold = config.throwOn;
+    }
+    if (config.suppress !== undefined) {
+        suppressedIds = new Set(config.suppress);
     }
 }
 
@@ -191,6 +201,10 @@ export function _addDiagnosticListener(gridId: string | undefined, listener: Dia
 }
 
 function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string): void {
+    // Suppressed ids are omitted from the overlay and never throw; the console log has already fired.
+    if (suppressedIds.has(id)) {
+        return;
+    }
     if (captureEnabled) {
         const diagnostic: CapturedDiagnostic = { id, params, severity, gridId: activeGridId, defaultMessage };
         if (bufferedDiagnostics.length < MAX_BUFFERED_DIAGNOSTICS) {

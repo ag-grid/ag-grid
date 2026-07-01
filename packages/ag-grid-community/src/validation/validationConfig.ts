@@ -1,3 +1,4 @@
+import type { ErrorId } from './errorMessages/errorText';
 import { _configureDiagnostics } from './logging';
 
 /**
@@ -16,10 +17,17 @@ export interface DevValidationOptions {
      * failure, not for reuse after a throw. Not for production builds.
      */
     throwOn?: 'error' | 'warning' | 'deprecation' | false;
+    /**
+     * Error ids to ignore, for diagnostics the developer has reviewed and accepted. Suppressed ids are
+     * kept out of the overlay and are never thrown by {@link throwOn}; they are still logged once to the
+     * console. Default none.
+     */
+    suppress?: ErrorId[];
 }
 
 const DEV_VALIDATION_DEFAULTS: Required<DevValidationOptions> = {
     throwOn: false,
+    suppress: [],
 };
 
 /**
@@ -29,5 +37,9 @@ const DEV_VALIDATION_DEFAULTS: Required<DevValidationOptions> = {
  * enables capture, since reaching here means the ValidationModule is active.
  */
 export function _applyDevValidationConfig(options?: DevValidationOptions): void {
-    _configureDiagnostics({ capture: true, throwOn: options?.throwOn ?? DEV_VALIDATION_DEFAULTS.throwOn });
+    _configureDiagnostics({
+        capture: true,
+        throwOn: options?.throwOn ?? DEV_VALIDATION_DEFAULTS.throwOn,
+        suppress: options?.suppress ?? DEV_VALIDATION_DEFAULTS.suppress,
+    });
 }
