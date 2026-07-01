@@ -2,12 +2,14 @@ import { _errorOnce, _warnOnce } from '../utils/log';
 import type { CapturedDiagnostic } from './logging';
 import {
     _addDiagnosticListener,
+    _clearGridParent,
     _configureDiagnostics,
     _deprecated,
     _error,
     _logPreInitErr,
     _logPreInitWarn,
     _runWithActiveGrid,
+    _setGridParent,
     _warn,
 } from './logging';
 import { _applyDevValidationConfig } from './validationConfig';
@@ -163,6 +165,54 @@ describe('grid scoping', () => {
         ]);
         offA();
         offB();
+    });
+
+    test("a nested grid's diagnostics surface on the emitting grid and its root, skipping intermediate levels", () => {
+        _configureDiagnostics({ capture: true });
+        // A three-level chain grandparent > parent > child; sibling is unrelated.
+        _setGridParent('parent', 'grandparent');
+        _setGridParent('child', 'parent');
+        const child: CapturedDiagnostic[] = [];
+        const parent: CapturedDiagnostic[] = [];
+        const grandparent: CapturedDiagnostic[] = [];
+        const sibling: CapturedDiagnostic[] = [];
+        const offChild = _addDiagnosticListener('child', (e) => child.push(e));
+        const offParent = _addDiagnosticListener('parent', (e) => parent.push(e));
+        const offGrandparent = _addDiagnosticListener('grandparent', (e) => grandparent.push(e));
+        const offSibling = _addDiagnosticListener('sibling', (e) => sibling.push(e));
+
+        _runWithActiveGrid('child', () => _warn(11));
+
+        // Reaches the emitting grid and the root (keeping its true origin); the intermediate parent and
+        // unrelated siblings do not see it.
+        expect(child.map((e) => e.gridId)).toEqual(['child']);
+        expect(grandparent.map((e) => e.gridId)).toEqual(['child']);
+        expect(parent).toEqual([]);
+        expect(sibling).toEqual([]);
+
+        offChild();
+        offParent();
+        offGrandparent();
+        offSibling();
+        _clearGridParent('parent');
+        _clearGridParent('child');
+    });
+
+    test('terminates delivery even if duplicate gridIds form a cycle in the parent chain', () => {
+        _configureDiagnostics({ capture: true });
+        // A malformed chain from reused gridIds: a-> b-> a. The bounded walk must not loop forever.
+        _setGridParent('a', 'b');
+        _setGridParent('b', 'a');
+        const received: CapturedDiagnostic[] = [];
+        const off = _addDiagnosticListener('a', (e) => received.push(e));
+
+        _runWithActiveGrid('a', () => _warn(11));
+
+        // The emitting grid still sees its own diagnostic; the point is that this call returns at all.
+        expect(received.map((e) => e.gridId)).toEqual(['a']);
+        off();
+        _clearGridParent('a');
+        _clearGridParent('b');
     });
 
     test('replays only matching buffered diagnostics to a grid listener', () => {
