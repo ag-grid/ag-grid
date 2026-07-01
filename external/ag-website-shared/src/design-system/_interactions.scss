@@ -21,3 +21,11 @@
 .no-overflow-anchor {
     overflow-anchor: none; // Prevent expanding sections from moving the page up. E.g. mobile docs nav menu
 }
+
+// Disable the browser's default full-page cross-fade so only named view transitions
+// (e.g. transition:name="main") animate. Without this, every navigation would produce
+// two simultaneous fades: one on the root and one on <main>.
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+}

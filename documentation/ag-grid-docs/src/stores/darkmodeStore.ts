@@ -52,7 +52,13 @@ if (globalThis.window) {
 }
 
 export const setDarkmode = (darkmode: boolean) => {
-    $darkmode.set(darkmode);
+    if (typeof document !== 'undefined' && 'startViewTransition' in document) {
+        document.startViewTransition(() => {
+            $darkmode.set(darkmode);
+        });
+    } else {
+        $darkmode.set(darkmode);
+    }
 };
 
 export const getDarkmode = (): boolean | undefined => {

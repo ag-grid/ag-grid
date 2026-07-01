@@ -38,6 +38,7 @@ interface Props {
     showAnnouncementBanner?: boolean;
     overrideSocialImage?: string;
     pageStructuredData?: JsonLdObject[];
+    noMainTransition?: boolean;
 }
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
@@ -64,6 +65,7 @@ const {
     showAnnouncementBanner = false,
     overrideSocialImage,
     pageStructuredData,
+    noMainTransition = false,
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -250,9 +252,15 @@ const announcementBannerProps = {
 
         <div id="mainContainer" class:list={styles.mainContainer}>
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}
-            <main class:list={styles.pageMain} transition:name="main" transition:animate={fade({ duration: '0.07s' })}>
-                <slot />
-            </main>
+            {noMainTransition ? (
+                <main class:list={styles.pageMain}>
+                    <slot />
+                </main>
+            ) : (
+                <main class:list={styles.pageMain} transition:name="main" transition:animate={fade({ duration: '0.07s' })}>
+                    <slot />
+                </main>
+            )}
         </div>
 
         {
