@@ -5,6 +5,7 @@ import styles from '@pages-styles/example.module.scss';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import DemoTabs from '@components/demos/DemosTabs.astro';
 import LogoMark from '@components/logo/LogoMark';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 ---
 
 <Layout
@@ -17,26 +18,27 @@ import LogoMark from '@components/logo/LogoMark';
         <div>
             <div class={styles.headerTitle}>
                 <h1 class={styles.headerHeading}>Performance</h1>
-                <div class={styles.headerActions}>
-                    <a
-                        class="button-secondary"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href="https://github.com/ag-grid/ag-grid-demos/tree/main/performance"
-                    >
-                        <Icon name="github" svgClasses={styles.githubIcon} />
-                        <span>See on GitHub</span>
-                    </a>
-                    <a
-                        class="button-secondary"
-                        href="https://youtu.be/bcMvTUVbMvI"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <Icon alt={`Youtube logo`} name="youtube" svgClasses={styles.youtubeIcon} />
-                        <span>See the video tour</span>
-                    </a>
-                </div>
+                <a
+                    class="button-secondary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://github.com/ag-grid/ag-grid-demos/tree/main/performance"
+                >
+                    <Icon name="github" svgClasses={styles.githubIcon} />
+                    <span>See On GitHub</span>
+                </a>
+                <a
+                    class="button-secondary"
+                    href="https://youtu.be/bcMvTUVbMvI"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <Icon alt={`Youtube logo`} name="youtube" svgClasses={styles.youtubeIcon} />
+                    <span>See The Video Tour</span>
+                </a>
+                <a class="button-secondary" href={urlWithBaseUrl('/about/#contact-section')}>
+                    <span>Contact Us</span>
+                </a>
             </div>
             <p>Example showing grid performance with adjustable rows and columns.</p>
         </div>
