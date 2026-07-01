@@ -32,4 +32,7 @@ export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
 export interface InternalAgGridReactProps<TData = any> extends AgGridReactProps<TData> {
     /** Internal method to pass api to top level class component. */
     passGridApi?: (gridApi: GridApi<TData>) => void;
+    /** Internal: the grid this one is nested inside (e.g. a master/detail master), so dev-validation
+     * diagnostics bubble up to the parent's overlay. */
+    parentGridId?: string;
 }
