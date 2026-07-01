@@ -15,3 +15,9 @@ A diagnostic captured while the grid is running is shown in an overlay over the 
 When grid creation aborts before the grid exists (here a `serverSide` row model with no row-model module registered), there is no grid to overlay, so a standalone panel is rendered in its place.
 
 {% gridExampleRunner title="Bootstrap" name="bootstrap" /%}
+
+## Nested (master/detail) grids
+
+A diagnostic emitted by a detail grid shows on the detail grid and bubbles up to the master grid's overlay, labelled as coming from a nested grid. Here the detail grid enables `sideBar` without its enterprise module; the first row auto-expands so the error surfaces on load.
+
+{% gridExampleRunner title="Master Detail" name="master-detail" /%}
