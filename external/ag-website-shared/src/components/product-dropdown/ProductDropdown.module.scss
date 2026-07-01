@@ -14,6 +14,14 @@
     // SiteHeader.module.scss's .headerInner grid-template-areas.
     grid-area: switcher;
 
+    // Narrow band: nav fits alongside the logo on the header's top line, but we're not
+    // yet at $docs-search-inline (where the layout changes to grid and $switcher-show
+    // takes over below). See $switcher-show-narrow in ../site-header/_breakpoints.scss —
+    // this value is a placeholder pending live verification.
+    @container site-header (min-width: #{$switcher-show-narrow}) and (max-width: #{$docs-search-inline - 1px}) {
+        display: block;
+    }
+
     @container site-header (min-width: #{$switcher-show}) {
         display: block;
     }
