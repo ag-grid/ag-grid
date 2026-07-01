@@ -51,3 +51,14 @@ $switcher-show: 1220px !default;
 // moved this too. Decoupled and named here instead.
 // Consumed by: ProductDropdown.module.scss (.customMenu, .customContent)
 $switcher-popup-at: 620px !default;
+
+// --- Search trigger box max-width ---
+// Owned here. Above this width the search trigger caps at 512px and centres in the
+// remaining space; below it, it's full width. Previously three separate @media rules
+// ($breakpoint-site-header-medium at 1200px, plus two unnamed literals at 1275px and
+// 1050px) where only 1275px ever had any visible effect — the 1200px rule was always
+// immediately overridden by the (later, equal-specificity) 1275px rule for every width
+// it could match, and the 1050px rule was a strict subset of the 1275px rule setting
+// the identical value. Consolidated to the one threshold that actually does anything.
+// Consumed by: Search.module.scss (.headerSearchBox)
+$search-box-cap-at: 1275px !default;

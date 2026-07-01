@@ -90,6 +90,15 @@
     @container site-header (min-width: #{$docs-search-stack}) {
         flex-wrap: nowrap;
     }
+
+    // Only meaningful while .headerInner is still flex (below $docs-search-inline) —
+    // pushes this cluster after the nav, which sits at the default order (0), once the
+    // nav itself has room to render inline (from $nav-collapse). Once .headerInner
+    // switches to grid at $docs-search-inline, `order` has no effect and grid-area
+    // (above) takes over positioning instead.
+    @container site-header (min-width: #{$nav-collapse}) {
+        order: 4;
+    }
 }
 
 button.mobileNavButton {
