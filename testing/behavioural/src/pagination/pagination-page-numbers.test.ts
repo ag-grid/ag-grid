@@ -120,6 +120,22 @@ describe('pagination pageNumbers panel', () => {
         expect(document.activeElement).toBe(current);
     });
 
+    test('keeps focus on the new current page after activating a page number by keyboard', () => {
+        const api = createPaginationGrid(gridsManager);
+        api.paginationGoToPage(9);
+
+        const target = getPageButton(api, '11')!;
+        target.focus();
+        expect(document.activeElement).toBe(target);
+
+        target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+        expect(api.paginationGetCurrentPage()).toBe(10);
+        const current = getPageNumbersPanel(api).querySelector<HTMLElement>('.ag-paging-page-number-current')!;
+        expect(current.textContent).toBe('11');
+        expect(document.activeElement).toBe(current);
+    });
+
     test('clicking the current page does not dispatch a page change event', () => {
         const api = createPaginationGrid(gridsManager);
         api.paginationGoToPage(9);
