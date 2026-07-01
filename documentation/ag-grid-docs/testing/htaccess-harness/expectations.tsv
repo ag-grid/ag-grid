@@ -36,11 +36,12 @@ www	/ecosystem/	301	/community/tools-extensions/
 # --- SE-61 / SE-60 charts (served by the charts subdir .htaccess) ---
 www	/charts/core/bar-series/	301	/charts/javascript/bar-series/
 www	/charts/side/axes-types/	301	/charts/javascript/axes-types/
-# Note: a slash-less, dot-less path (e.g. /charts/privacy) first takes a harmless 301 to add a
-# trailing slash (parent trailing-slash rule), THEN 410s. Indexed URLs are typically trailing-slashed,
-# which 410s directly — that's what we assert here.
-www	/charts/archive/13.1.0/javascript/getting-started/	410
-www	/charts/privacy/	410
+# Archive: versioned archive docs are live content (the blanket 410 was removed), so a versioned
+# path serves; only the bare archive index redirects, to /documentation-archive. Privacy redirects
+# to the apex policy page (301) — it is not gone.
+www	/charts/archive/13.1.0/javascript/getting-started/	200
+www	/charts/archive/	301	/charts/documentation-archive/
+www	/charts/privacy/	301	https://www.ag-grid.com/privacy/
 www	/charts/react-charts/react/area-series/	301	/charts/react/area-series/
 www	/charts/javascript/toolbar/	301	/charts/javascript/financial-charts-toolbar/
 
