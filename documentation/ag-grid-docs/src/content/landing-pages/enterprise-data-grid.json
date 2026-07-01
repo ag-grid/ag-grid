@@ -16,10 +16,6 @@
             "heading": "Enterprise Grade Data Grid for Web Apps",
             "subHeading": "Fast, secure and accessible, AG Grid Enterprise handles millions of rows and comes with advanced features, including an AI Toolkit, Integrated Charts, Grouping, and Pivoting.",
             "showVersionBadge": true,
-            "primaryCta": {
-                "text": "Start Free Trial",
-                "useTrialButton": true
-            },
             "secondaryCta": {
                 "text": "View All Demos",
                 "url": "./example"

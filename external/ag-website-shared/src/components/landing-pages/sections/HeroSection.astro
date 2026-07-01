@@ -7,7 +7,7 @@
  * Uses named slots to allow site-specific components to be passed in:
  * - hero-demo: The main demo component (Finance grid, etc.)
  * - hero-install: Package install text component
- * - hero-trial-button: Trial button component (when primaryCta.useTrialButton is true)
+ * - hero-trial-button: Trial button component
  * - hero-logos: Customer logos component
  */
 import type { HeroSection, LandingPageContent } from '../types';
@@ -27,19 +27,11 @@ interface Props {
 const { section, pageContent, latestVersion, urlWithBaseUrl, styles } = Astro.props;
 
 // Resolve URLs with defaults
-const primaryCtaUrl = section.primaryCta?.url
-    ? urlWithBaseUrl(section.primaryCta.url)
-    : urlWithBaseUrl(`./${pageContent.docsPath}/getting-started/`);
-
 const secondaryCtaUrl = section.secondaryCta?.url
     ? urlWithBaseUrl(section.secondaryCta.url)
     : urlWithBaseUrl('./example');
 
 // Analytics event names
-const primaryCtaAnalytics = section.primaryCta?.useTrialButton
-    ? `${pageContent.analyticsPrefix}-trial-cta`
-    : `${pageContent.analyticsPrefix}-get-started`;
-
 const secondaryCtaAnalytics = `${pageContent.analyticsPrefix}-view-demos`;
 
 // Product name for version badge (defaults to 'AG Grid' for backwards compatibility)
@@ -92,23 +84,18 @@ const showCustomerLogos = section.showCustomerLogos !== false;
                 }
             </div>
             <div class={styles.heroSectionButtonContainer}>
-                {
-                    section.primaryCta?.useTrialButton ? (
-                        <slot name="hero-trial-button" />
-                    ) : section.primaryCta ? (
-                        <a
-                            id="get-started"
-                            class:list={[
-                                'button-secondary',
-                                styles.heroSectionCta1,
-                                `plausible-event-name=${primaryCtaAnalytics}`,
-                            ]}
-                            href={primaryCtaUrl}
-                        >
-                            {section.primaryCta.text}
-                        </a>
-                    ) : null
-                }
+                <a
+                    id="get-started"
+                    class:list={[
+                        'button-secondary',
+                        styles.heroSectionCta1,
+                        `plausible-event-name=${pageContent.analyticsPrefix}-get-started`,
+                    ]}
+                    href={urlWithBaseUrl(`./${pageContent.docsPath}/getting-started/`)}
+                >
+                    Get Started
+                </a>
+
                 {
                     pageContent.packageName && (
                         <div class={styles.heroSectionCta2}>
@@ -116,7 +103,10 @@ const showCustomerLogos = section.showCustomerLogos !== false;
                         </div>
                     )
                 }
+
+                <slot name="hero-trial-button" />
             </div>
+
             <div class={styles.heroSectionDemoContainer}>
                 <slot name="hero-demo" />
             </div>
