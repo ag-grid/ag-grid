@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "strict": false,
+    "moduleResolution": "node",
+    "noEmit": true
+  },
+  "files": ["../../packages/ag-grid-enterprise/dist/types/src/main.d.ts"]
+}

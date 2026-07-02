@@ -460,7 +460,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * a callback to control editability per row.
      *
      * When `groupRowEditable` is defined and no explicit `groupRowValueSetter` is provided,
-     * the built-in {@link distributeGroupValue | distributeGroupValue} is used automatically.
+     * the built-in `distributeGroupValue` (exported from `ag-grid-enterprise`) is used automatically.
      *
      * Columns with `groupRowEditable` or `groupRowValueSetter` do not require `field` or
      * `valueSetter` - the group row value setter handles the edit entirely.
@@ -475,7 +475,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Controls how a group row value edit is distributed to descendant rows.
      *
-     * - **`true`**: Uses the built-in {@link distributeGroupValue | distributeGroupValue} with default settings.
+     * - **`true`**: Uses the built-in `distributeGroupValue` (exported from `ag-grid-enterprise`) with default settings.
      *   Also enabled implicitly when `groupRowEditable` is defined and `groupRowValueSetter` is not set.
      * - **`false`**: Explicitly disables group row value distribution and makes the cell not editable,
      *   even if `groupRowEditable` is defined.

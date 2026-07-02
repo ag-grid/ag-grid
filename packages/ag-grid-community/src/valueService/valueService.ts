@@ -300,7 +300,7 @@ export class ValueService extends BeanStub implements NamedBean {
     /**
      * Reads a cell value honouring pending edits for non-`'data'` sources. Does NOT redirect pivot result
      * columns — display/selection callers only ever pair them with group rows (no redirect needed). The
-     * value APIs that accept an arbitrary node ({@link getCellValue}, {@link getDataValue}) pre-resolve via
+     * value APIs that accept an arbitrary node (`getCellValue`, `getDataValue`) pre-resolve via
      * `_resolvePivotColumnForRow` since they can be handed a leaf. Hot committed-data reads of a known column
      * should call {@link getValueFromData} directly to skip the edit-state lookup too.
      */
