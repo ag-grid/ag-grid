@@ -40,23 +40,26 @@ $docs-search-inline: $breakpoint-docs-nav-medium;
 $sticky-at: $breakpoint-docs-nav-medium;
 
 // --- Product/site switcher visibility ---
-// Owned here. Below this width there isn't room for the AG Grid/Charts/Studio switcher
-// alongside the logo, docs/search cluster, and nav — hidden until the header is wide
-// enough for all of them. Consumed by: ProductDropdown.module.scss (.customMenu)
-$switcher-show: 1220px !default;
-
-// A second, narrower band where the switcher can also show: for the whole range
-// [$nav-collapse, $docs-search-inline), .headerInner is flex-wrapping and
-// .docsNavBtnSearchContainer is unconditionally width:100% — i.e. the docs/search
-// cluster is *always* alone on its own line there, regardless of width, so it never
-// competes with logo/switcher/nav for room on the top line. The only thing gating
-// whether logo+switcher+nav share that top line is whether nav itself fits alongside
-// the logo — which is exactly what $nav-collapse already measures. So this band's
-// lower bound is $nav-collapse itself, not a new number: verified live (2026-07-02)
-// that the switcher can stay visible for the entire flex-mode nav-visible range, not
-// just a narrower slice of it.
 // Consumed by: ProductDropdown.module.scss (.customMenu)
-$switcher-show-narrow: $nav-collapse;
+//
+// Below $nav-collapse there isn't room for the switcher alongside the logo (nav is
+// still a hamburger there, so nothing to compare against). From $nav-collapse onward,
+// two things are both true and cover the entire remaining range with no gap:
+//   - Below $docs-search-inline, .headerInner is still flex-wrapping and
+//     .docsNavBtnSearchContainer is unconditionally width:100% -- the docs/search
+//     cluster is *always* alone on its own line there, so it never competes with
+//     logo/switcher/nav for room on the top line. The only real gate is whether nav
+//     fits alongside the logo, which is exactly what $nav-collapse measures.
+//   - At and above $docs-search-inline, .headerInner is a grid with docs-search on a
+//     1fr track, which absorbs whatever space is left automatically -- there's no
+//     separate "is there room" threshold to tune here either.
+// A previous version of this token (1220px, then split into two bands with a gap
+// between 1100-1220px) was tuned for the pre-Grid flex layout, where the docs/search
+// cluster was unwrapped into individual flex items competing for room via
+// space-between -- that constraint no longer exists now that .headerInner is Grid.
+// Verified live (2026-07-02) that the switcher can simply stay visible for the entire
+// range from $nav-collapse onward.
+$switcher-show: $nav-collapse;
 
 // Width/position of the switcher's own popup once opened. Previously borrowed
 // $breakpoint-hero-small (a landing-page token) purely by coincidence of value — a
