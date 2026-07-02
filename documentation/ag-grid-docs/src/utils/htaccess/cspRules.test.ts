@@ -7,6 +7,7 @@ import {
     BRANCH_BUILDS_PATH_CONDITION,
     CAMPAIGNS_PATH_CONDITION,
     CAMPAIGNS_PATH_REGEXP,
+    ECOMMERCE_PATH_CONDITION,
     EXAMPLES_PATH_REGEXP,
     getBranchBuildsCspIfOverride,
     getCspDirectives,
@@ -56,7 +57,7 @@ describe('cspRules', () => {
         });
 
         it("style-src keeps 'unsafe-inline' in every scope", () => {
-            const scopes = ['site', 'examples', 'campaigns'] as const;
+            const scopes = ['site', 'examples', 'campaigns', 'ecommerce'] as const;
             for (let i = 0, len = scopes.length; i < len; ++i) {
                 expect(getCspDirectives({ env: 'production', scope: scopes[i] })['style-src']).toContain(
                     "'unsafe-inline'"
@@ -90,6 +91,36 @@ describe('cspRules', () => {
             // directives neither scope touches stay identical
             expect(campaigns['frame-src']).toEqual(site['frame-src']);
             expect(campaigns['form-action']).toEqual(site['form-action']);
+        });
+    });
+
+    describe('ecommerce scope (AG-17134: separately-managed checkout SPA)', () => {
+        it("re-allows 'unsafe-inline' in script-src without 'unsafe-eval' or hashes", () => {
+            const scriptSrc = getCspDirectives({ env: 'production', scope: 'ecommerce' })['script-src'];
+            expect(scriptSrc).toContain("'unsafe-inline'");
+            expect(scriptSrc).not.toContain("'unsafe-eval'");
+            // A hash would make the browser ignore 'unsafe-inline', re-blocking the scripts.
+            expect(hasHash(scriptSrc)).toBe(false);
+        });
+
+        it('differs from the site scope only in script-src', () => {
+            const site = getCspDirectives({ env: 'production', scope: 'site' });
+            const ecommerce = getCspDirectives({ env: 'production', scope: 'ecommerce' });
+
+            expect(Object.keys(ecommerce)).toEqual(Object.keys(site));
+            const otherNames = Object.keys(site).filter((name) => name !== 'script-src');
+            for (let i = 0, len = otherNames.length; i < len; ++i) {
+                expect(ecommerce[otherNames[i]]).toEqual(site[otherNames[i]]);
+            }
+        });
+
+        it('matches only paths under /ecommerce/', () => {
+            const matches = (uri: string) =>
+                new RegExp(ECOMMERCE_PATH_CONDITION.replace('%{REQUEST_URI} =~ m#', '').replace(/#$/, '')).test(uri);
+            expect(matches('/ecommerce/')).toBe(true);
+            expect(matches('/ecommerce/#/ecommerce/')).toBe(true);
+            expect(matches('/getting-started/')).toBe(false);
+            expect(EXAMPLES_PATH_REGEXP.test('/ecommerce/')).toBe(false);
         });
     });
 
@@ -238,6 +269,15 @@ describe('cspRules', () => {
             expect(start).toBeGreaterThan(-1);
             const ifBlock = block.slice(start, block.indexOf('</If>', start));
             expect(ifBlock).toContain('https://bryntum.com');
+            expect(ifBlock).not.toContain("'unsafe-eval'");
+        });
+
+        it("emits an /ecommerce/ <If> override allowing 'unsafe-inline' without unsafe-eval", () => {
+            const block = getScopedCspHtaccessBlock({ env: 'production' }, 'enforce');
+            const start = block.indexOf(`<If "${ECOMMERCE_PATH_CONDITION}">`);
+            expect(start).toBeGreaterThan(-1);
+            const ifBlock = block.slice(start, block.indexOf('</If>', start));
+            expect(ifBlock).toContain("'unsafe-inline'");
             expect(ifBlock).not.toContain("'unsafe-eval'");
         });
     });

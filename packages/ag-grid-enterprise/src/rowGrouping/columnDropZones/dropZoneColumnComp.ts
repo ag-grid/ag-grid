@@ -102,7 +102,6 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         ariaInstructions: string[],
         translate: (key: string, defaultValue: string) => string
     ): void {
-        const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');
         const isFunctionsReadOnly = this.gos.get('functionsReadOnly');
         if (this.isAggregationZone() && !isFunctionsReadOnly) {
             const aggregationMenuAria = translate(
@@ -112,7 +111,10 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             ariaInstructions.push(aggregationMenuAria);
         }
 
-        if (this.isGroupingZone() && this.column.isSortable() && !isSortSuppressed) {
+        const isSortable = this.column.isSortable();
+        const isGroupSortable = isSortable && this.isGroupingZone() && !this.gos.get('rowGroupPanelSuppressSort');
+        const isPivotSortable = isSortable && this.isPivotZone() && !this.gos.get('pivotPanelSuppressSort');
+        if (isGroupSortable || isPivotSortable) {
             const sortProgressAria = translate('ariaDropZoneColumnGroupItemDescription', 'Press ENTER to sort');
             ariaInstructions.push(sortProgressAria);
         }
@@ -172,29 +174,59 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     private setupSort(): void {
-        if (!this.column.isSortable() || !this.isGroupingZone()) {
+        if (!this.column.isSortable()) {
             return;
         }
-        const { gos, column, eSortIndicator } = this;
-
-        if (!gos.get('rowGroupPanelSuppressSort')) {
-            eSortIndicator.setupSort(column, true, this.getSortDefOverride.bind(this));
-            const performSort = (event: MouseEvent | KeyboardEvent) => {
-                event.preventDefault();
-                this.beans.columnStateUpdateStrategy.progressSortFromEvent(this.deferApply, column, event);
-                eSortIndicator.refresh();
-                this.setupAria();
-                refreshDeferredToolPanelUi(this.beans, this.updateParams);
-            };
-
-            this.addGuiEventListener('click', performSort);
-            this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
-                const isEnter = e.key === KeyCode.ENTER;
-                if (isEnter && this.isGroupingZone()) {
-                    performSort(e);
-                }
-            });
+        if (this.isGroupingZone()) {
+            this.setupGroupSort();
+        } else if (this.isPivotZone()) {
+            this.setupPivotSort();
         }
+    }
+
+    private setupGroupSort(): void {
+        if (this.gos.get('rowGroupPanelSuppressSort')) {
+            return;
+        }
+        this.bindSort(this.getSortDefOverride.bind(this), (column, event) =>
+            this.beans.columnStateUpdateStrategy.progressSortFromEvent(this.deferApply, column, event)
+        );
+    }
+
+    private setupPivotSort(): void {
+        if (this.gos.get('pivotPanelSuppressSort')) {
+            return;
+        }
+        this.bindSort(this.getPivotSortDefOverride.bind(this), (column) =>
+            this.beans.columnStateUpdateStrategy.progressPivotSortFromEvent(this.deferApply, column)
+        );
+    }
+
+    private bindSort(
+        override: () => SortDef | null | undefined,
+        progress: (column: AgColumn, event: MouseEvent | KeyboardEvent) => void
+    ): void {
+        const { column, eSortIndicator } = this;
+        eSortIndicator.setupSort(column, true, override);
+
+        const performSort = (event: MouseEvent | KeyboardEvent) => {
+            event.preventDefault();
+            progress(column, event);
+            // In synchronous mode, the strategy dispatches events that can destroy this component, nulling this.column
+            if (!this.column) {
+                return;
+            }
+            eSortIndicator.refresh();
+            this.setupAria();
+            refreshDeferredToolPanelUi(this.beans, this.updateParams);
+        };
+
+        this.addGuiEventListener('click', performSort);
+        this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === KeyCode.ENTER) {
+                performSort(e);
+            }
+        });
     }
 
     private getCurrentSortDirection(column: AgColumn): SortDirection {
@@ -207,6 +239,16 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         }
 
         return this.beans.columnStateUpdateStrategy.getSortDef(this.deferApply, this.column);
+    }
+
+    // Pivot sort is isolated from the column's own sort. The unset default (`undefined`) and `'asc'` both
+    // show ascending; `null` is an explicit "no sort" and shows no icon. Never falls back to the column's sort.
+    private getPivotSortDefOverride(): SortDef | null {
+        const direction = this.beans.columnStateUpdateStrategy.getPivotSort(this.deferApply, this.column);
+        if (direction === null) {
+            return null;
+        }
+        return { type: 'default', direction: direction ?? 'asc' };
     }
 
     protected override getDefaultIconName(): DragAndDropIcon {
@@ -391,6 +433,10 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
     private isGroupingZone() {
         return this.dropZonePurpose === 'rowGroup';
+    }
+
+    private isPivotZone() {
+        return this.dropZonePurpose === 'pivot';
     }
 
     protected getDragSourceType(): DragSourceType {

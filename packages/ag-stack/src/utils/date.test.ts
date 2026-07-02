@@ -56,10 +56,14 @@ describe('_parseDateTimeFromString', () => {
         expect(result).toStrictEqual(new Date(2020, 2, 30, 14, 19, 34));
     });
 
-    it.each(['25:61:61', '-1:-1:-1'])('ignores invalid time parts: %s', (value) => {
-        const result = _parseDateTimeFromString('2020-03-30T' + value);
+    it('ignores out-of-range but well-shaped time parts', () => {
+        const result = _parseDateTimeFromString('2020-03-30T25:61:61');
 
         expect(result).toStrictEqual(new Date(2020, 2, 30));
+    });
+
+    it('returns null for a malformed time portion', () => {
+        expect(_parseDateTimeFromString('2020-03-30T-1:-1:-1')).toBeNull();
     });
 });
 
@@ -94,4 +98,24 @@ describe('isValidDate', () => {
             expect(_isValidDate(date)).toBe(false);
         }
     );
+
+    it.each(['2025-05-23T11-08-35.rtf', '2025-05-23 invoice', '2020-03-30-extra', '2020-03-30T14:19:345'])(
+        'returns false for a date prefix followed by non-time content: %s',
+        (date) => {
+            expect(_isValidDate(date)).toBe(false);
+        }
+    );
+
+    it.each([
+        '2020-03-30T14:19',
+        '2020-03-30T14:19:34',
+        '2020-03-30T14:19:34Z',
+        '2020-03-30T14:19:34.123',
+        '2020-03-30T14:19:34.123Z',
+        '2020-03-30T14:19:34+00:00',
+        '2020-03-30T14:19:34+01:00',
+        '2020-03-30T25:61:61',
+    ])('returns true for a well-shaped time portion (range-permissive): %s', (date) => {
+        expect(_isValidDate(date)).toBe(true);
+    });
 });

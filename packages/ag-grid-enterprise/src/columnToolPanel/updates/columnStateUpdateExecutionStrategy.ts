@@ -8,8 +8,16 @@ import type {
     ColumnState,
     IColumnStateUpdateStrategy,
     SortDef,
+    SortDirection,
 } from 'ag-grid-community';
-import { BeanStub, _applyColumnState, _setColsVisible, isColumnGroupAutoCol, isSpecialCol } from 'ag-grid-community';
+import {
+    BeanStub,
+    _applyColumnState,
+    _dispatchColumnChangedEvent,
+    _setColsVisible,
+    isColumnGroupAutoCol,
+    isSpecialCol,
+} from 'ag-grid-community';
 
 import type {
     ColumnStateConcreteUpdateStrategy,
@@ -20,6 +28,17 @@ import type {
 
 const noop = () => {};
 type StrategyBeans = BeanCollection;
+
+/** Cycle: ascending default (`undefined`/`'asc'`) -> descending -> `null` (no sort, natural order) -> ascending. */
+function getNextPivotSort(current: SortDirection | undefined): SortDirection {
+    if (current === 'desc') {
+        return null;
+    }
+    if (current === null) {
+        return 'asc';
+    }
+    return 'desc';
+}
 
 export class ColumnStateUpdateExecutionStrategy extends BeanStub implements IColumnStateUpdateStrategy {
     public beanName = 'columnStateUpdateExecutionStrategy' as const;
@@ -101,6 +120,12 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     }
     public getSortDef(deferMode: boolean, column: AgColumn): SortDef | null {
         return this.getUpdateStrategy(deferMode).getSortDef(column);
+    }
+    public progressPivotSortFromEvent(deferMode: boolean, column: AgColumn): void {
+        this.getUpdateStrategy(deferMode).progressPivotSortFromEvent(column);
+    }
+    public getPivotSort(deferMode: boolean, column: AgColumn): SortDirection | undefined {
+        return this.getUpdateStrategy(deferMode).getPivotSort(column);
     }
 
     private getUpdateStrategy(deferApply: boolean): ColumnStateConcreteUpdateStrategy {
@@ -228,6 +253,17 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
 
     public getSortDef(column: AgColumn): SortDef | null {
         return column.getSortDef();
+    }
+
+    public progressPivotSortFromEvent(column: AgColumn): void {
+        column.pivotSort = getNextPivotSort(column.pivotSort);
+        // Pivot membership is unchanged, so applyColumnState wouldn't fire this - dispatch it to trigger
+        // the pivot refresh (columnPivotChanged → refreshModel step 'pivot') that re-derives column order.
+        _dispatchColumnChangedEvent(this.beans.eventSvc, 'columnPivotChanged', [column], 'uiColumnSorted');
+    }
+
+    public getPivotSort(column: AgColumn): SortDirection | undefined {
+        return column.pivotSort;
     }
 }
 
@@ -683,6 +719,23 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             return null;
         }
         return column.getSortDef();
+    }
+
+    public progressPivotSortFromEvent(column: AgColumn): void {
+        const next = getNextPivotSort(this.getPivotSort(column));
+        mergeColumnStatePatch(this.state, { colId: column.colId, pivotSort: next });
+        const columnState = ensureColumnStateDraft(this.state);
+        columnState.seq = nextSeq(this.sequence);
+        this.sequence = columnState.seq;
+        columnState.eventType = 'uiColumnSorted';
+    }
+
+    public getPivotSort(column: AgColumn): SortDirection | undefined {
+        const patch = this.state.columnState?.patches.get(column.colId);
+        if (patch?.pivotSort !== undefined) {
+            return patch.pivotSort;
+        }
+        return column.pivotSort;
     }
 
     public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {

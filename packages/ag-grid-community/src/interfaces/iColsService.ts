@@ -47,6 +47,15 @@ export interface IRowGroupColsService extends IOrderedColsService {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.  */
 export interface IPivotColsService extends IOrderedColsService {
     isStrictColumnOrder(): boolean;
+    /** True if any active pivot col has an interactive `pivotSort` direction set. */
+    hasInteractivePivotSort(): boolean;
+    /** Re-rank `stickyOrder` so its pivot groups follow the freshly-sorted `defColsList` group order, while
+     *  keeping each group's within-group (user) column order. Stable: equal group rank keeps sticky order. */
+    reRankByPivotGroupOrder(
+        defColsList: AgColumn[],
+        stickyOrder: string[],
+        colsById: Record<string, AgColumn>
+    ): string[];
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.  */

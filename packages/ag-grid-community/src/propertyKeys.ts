@@ -326,6 +326,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressGroupRowsSticky',
     'suppressCutToClipboard',
     'rowGroupPanelSuppressSort',
+    'pivotPanelSuppressSort',
     'allowShowChangeAfterFilter',
     'enableAdvancedFilter',
     'masterDetail',

@@ -263,15 +263,28 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 }
 
 /**
- * Returns a flat depth-first array of pivot value keys sorted at each level by their column's pivotComparator.
- * Used to detect when a comparator's output changes (e.g. due to closure mutation) without relying on
- * function reference or source equality.
+ * Returns a flat depth-first array of pivot value keys ordered at each level to mirror pivotColDefService's
+ * rendered column order (honouring `pivotSort` and the column's `pivotComparator`). Used to detect when that
+ * order changes (e.g. a sort toggle or comparator closure mutation) without relying on function reference or
+ * source equality.
  */
 function computePivotOrder(values: Map<string, any>, pivotColumns: AgColumn[], depth: number): string[] {
-    const comparator = pivotColumns[depth]?.colDef.pivotComparator;
+    const pivotColumn = pivotColumns[depth];
     const keys = [...values.keys()];
-    if (comparator) {
-        keys.sort(comparator);
+    // Mirror pivotColDefService's ordering so the snapshot tracks the rendered order and a toggle is detected as
+    // an order change: `null` keeps the natural (insertion) key order, `'desc'` reverses, and the unset default
+    // and `'asc'` sort ascending by the custom comparator or string order.
+    const pivotSort = pivotColumn?.pivotSort;
+    if (pivotSort !== null) {
+        const comparator = pivotColumn?.colDef.pivotComparator;
+        if (comparator) {
+            keys.sort(comparator);
+        } else {
+            keys.sort();
+        }
+        if (pivotSort === 'desc') {
+            keys.reverse();
+        }
     }
     if (depth === pivotColumns.length - 1) {
         return keys;

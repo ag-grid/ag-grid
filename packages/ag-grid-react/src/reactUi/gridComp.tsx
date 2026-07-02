@@ -33,6 +33,7 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const gridCtrlRef = useRef<GridCtrl>();
     const eRootWrapperRef = useRef<HTMLDivElement | null>(null);
+    const ariaDescriptionRef = useRef<HTMLDivElement | null>(null);
     const tabGuardRef = useRef<TabGuardCompCallback>();
     // eGridBodyParent is state as we use it in render
     const [eGridBodyParent, setGridBodyParent] = useState<HTMLDivElement | null>(null);
@@ -99,7 +100,7 @@ const GridComp = ({ context }: GridCompProps) => {
             setUserSelect,
         };
 
-        gridCtrl.setComp(compProxy, eRef);
+        gridCtrl.setComp(compProxy, eRef, ariaDescriptionRef.current!);
 
         setInitialised(true);
     }, []);
@@ -223,6 +224,7 @@ const GridComp = ({ context }: GridCompProps) => {
 
     return (
         <div ref={setRef} className={rootWrapperClasses} style={topStyle} role="presentation">
+            <div className="ag-aria-description-container" ref={ariaDescriptionRef} />
             <div className={rootWrapperBodyClasses} ref={setGridBodyParent} role="presentation">
                 {initialised && eGridBodyParent && !context.isDestroyed() && (
                     <BeansContext.Provider value={context.getBeans()}>

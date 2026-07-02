@@ -38,6 +38,9 @@ const convertToHeaderNameComparator =
     (comparator: (valueA: string, valueB: string) => number) => (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) =>
         comparator(a.headerName!, b.headerName!);
 
+// `pivotSort: null` is an explicit "no sort": keep the order the columns were generated in (stable sort no-op).
+const naturalOrderComparator = (): number => 0;
+
 export class PivotColDefService extends BeanStub implements NamedBean, IPivotColDefService {
     beanName = 'pivotColDefSvc' as const;
 
@@ -126,9 +129,9 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
 
         // sort by either user provided comparator, or our own one
-        const primaryColDef = primaryPivotColumns[index].colDef;
-        const pivotComparator = primaryColDef.pivotComparator;
-        const comparator = pivotComparator ? convertToHeaderNameComparator(pivotComparator) : headerNameComparator;
+        const primaryColumn = primaryPivotColumns[index];
+        const primaryColDef = primaryColumn.colDef;
+        const comparator = this.getPivotGroupComparator(primaryColumn);
 
         const measureColumns = this.valueColsSvc?.columns;
         // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead
@@ -492,11 +495,33 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         return `pivot_${pivotCols.join('-')}_${pivotKeys.join('-')}_${measureColumnId}`;
     }
 
+    /** Comparator ordering a pivot column's groups. `pivotSort` is isolated from `colDef.sort`:
+     *  `null` keeps the natural (generated) order, `'desc'` reverses, and the unset default (`undefined`)
+     *  and `'asc'` both sort ascending by the custom `pivotComparator` or header name. */
+    private getPivotGroupComparator(
+        primaryColumn: AgColumn
+    ): (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) => number {
+        const pivotSort = primaryColumn.pivotSort;
+        if (pivotSort === null) {
+            return naturalOrderComparator;
+        }
+        const pivotComparator = primaryColumn.colDef.pivotComparator;
+        const baseComparator = pivotComparator ? convertToHeaderNameComparator(pivotComparator) : headerNameComparator;
+        if (pivotSort === 'desc') {
+            return (a, b) => baseComparator(b, a);
+        }
+        return baseComparator;
+    }
+
     /**
      * Used by the SSRM to create secondary columns from provided fields
      * @param fields
      */
     public createColDefsFromFields(fields: string[]): (ColDef | ColGroupDef)[] {
+        const pivotColumns = this.pivotColsSvc?.columns ?? [];
+        // The comparator only depends on the level's pivot column, so resolve one per level up front rather
+        // than reconstructing it for every group node during the recursive walk.
+        const levelComparators = pivotColumns.map((col) => this.getPivotGroupComparator(col));
         type UniqueValue = Map<string, UniqueValue>;
         // tear the ids down into groups, while this could be done in-step with the next stage, the lookup is faster
         // than searching col group children array for the right group
@@ -521,15 +546,30 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             id: string,
             key: string,
             uniqueValues: UniqueValue,
-            depth: number
+            depth: number,
+            path: string[]
         ): ColDef | ColGroupDef => {
             const children: (ColDef | ColGroupDef)[] = [];
-            for (const [key, item] of uniqueValues) {
-                const child = uniqueValuesToGroups(`${id}${this.fieldSeparator}${key}`, key, item, depth + 1);
+            for (const [childKey, item] of uniqueValues) {
+                const child = uniqueValuesToGroups(
+                    `${id}${this.fieldSeparator}${childKey}`,
+                    childKey,
+                    item,
+                    depth + 1,
+                    [...path, childKey]
+                );
                 children.push(child);
             }
 
+            // Children are the next pivot level; the measure level (>= pivot column count) keeps server order.
+            const childLevel = depth + 1;
+            if (childLevel < pivotColumns.length) {
+                children.sort(levelComparators[childLevel]);
+            }
+
             if (children.length === 0) {
+                // The leaf's own key is the measure column; the preceding path entries are the pivot keys.
+                const pivotKeys = path.slice(0, -1);
                 const potentialAggCol = this.colModel.getNonPivotCol(key);
                 if (potentialAggCol) {
                     const headerName = this.colNames.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
@@ -537,12 +577,14 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                     colDef.colId = id;
                     colDef.aggFunc = potentialAggCol.aggFunc;
                     colDef.valueGetter = (params) => params.data?.[id];
+                    colDef.pivotKeys = pivotKeys;
                     return colDef;
                 }
 
                 const col: ColDef = {
                     colId: id,
                     headerName: key,
+                    pivotKeys,
                     // this is to support using pinned rows, normally the data will be extracted from the aggData object using the colId
                     // however pinned rows still access the data object by field, this prevents values with dots from being treated as complex objects
                     valueGetter: (params) => params.data?.[id],
@@ -569,8 +611,11 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         const res: (ColDef | ColGroupDef)[] = [];
         for (const [key, item] of uniqueValues) {
-            const col = uniqueValuesToGroups(key, key, item, 0);
+            const col = uniqueValuesToGroups(key, key, item, 0, [key]);
             res.push(col);
+        }
+        if (pivotColumns.length > 0) {
+            res.sort(levelComparators[0]);
         }
         return res;
     }

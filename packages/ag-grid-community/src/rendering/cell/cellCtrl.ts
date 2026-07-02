@@ -223,6 +223,16 @@ export class CellCtrl extends BeanStub {
         this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
     }
 
+    public resetCellRendererTooltip(): void {
+        if (!this.isAlive()) {
+            return;
+        }
+
+        this.disableTooltipFeature();
+        this.enableTooltipFeature();
+        this.tooltipFeature?.refreshTooltip();
+    }
+
     public enableEditorTooltipFeature(editor: ICellEditor): void {
         if (this.editorTooltipFeature) {
             this.disableEditorTooltipFeature();
@@ -621,7 +631,6 @@ export class CellCtrl extends BeanStub {
             column,
             comp,
             suppressRefreshCell,
-            tooltipFeature,
         } = this;
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
         if (suppressRefreshCell) {
@@ -682,7 +691,7 @@ export class CellCtrl extends BeanStub {
             this.checkFormulaError();
         }
 
-        tooltipFeature?.refreshTooltip();
+        this.tooltipFeature?.refreshTooltip();
         this.refreshNoteState();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
@@ -1023,11 +1032,9 @@ export class CellCtrl extends BeanStub {
             return;
         }
 
+        this.disableTooltipFeature();
         if (this.column.isTooltipEnabled()) {
-            this.disableTooltipFeature();
             this.enableTooltipFeature();
-        } else {
-            this.disableTooltipFeature();
         }
 
         this.setWrapText();

@@ -346,13 +346,6 @@ const landingPages = defineCollection({
                     subHeading: z.string(),
                     subHeadingHtml: z.string().optional(),
                     showVersionBadge: z.boolean().optional(),
-                    primaryCta: z
-                        .object({
-                            text: z.string(),
-                            url: z.string().optional(),
-                            useTrialButton: z.boolean().optional(),
-                        })
-                        .optional(),
                     secondaryCta: z
                         .object({
                             text: z.string(),

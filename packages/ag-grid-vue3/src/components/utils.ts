@@ -1365,6 +1365,11 @@ export interface Props<TData> {
          * @agModule `RowGroupingPanelModule`
          */
     rowGroupPanelSuppressSort?: boolean,
+    /** Set to `true` to suppress sort indicators and actions from the pivot panel and the column tool panel pivot pills.
+         * @default false
+         * @agModule `RowGroupingPanelModule`
+         */
+    pivotPanelSuppressSort?: boolean,
     /** Set to `true` prevent Group Rows from sticking to the top of the grid.
          * @default false
          * @initial
@@ -2336,6 +2341,7 @@ export function getProps() {
         treeDataChildrenField: undefined,
         treeDataParentIdField: undefined,
         rowGroupPanelSuppressSort: undefined,
+        pivotPanelSuppressSort: undefined,
         suppressGroupRowsSticky: undefined,
         groupHierarchyConfig: undefined,
         pinnedTopRowData: undefined,

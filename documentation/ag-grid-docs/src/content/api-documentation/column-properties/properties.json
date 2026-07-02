@@ -592,7 +592,14 @@
                 "name": "Ordering Pivot Result Groups",
                 "url": "./pivoting-column-groups/#ordering-groups"
             }
-        }
+        },
+        "pivotSort": {
+            "more": {
+                "name": "Sorting Pivot Columns",
+                "url": "./pivoting-column-groups/#sorting-pivot-columns"
+            }
+        },
+        "initialPivotSort": {}
     },
     "row dragging": {
         "meta": {

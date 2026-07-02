@@ -6673,8 +6673,7 @@ www	/documentation/react/chartssample/	301	/react-data-grid/chartssample/
 www	/documentation/react/chartssample	301	/documentation/react/chartssample/
 www	/documentation/vue/chartssample/	301	/vue-data-grid/chartssample/
 www	/documentation/vue/chartssample	301	/documentation/vue/chartssample/
-www	/documentation/archive	301	/documentation/archive/
-www	/documentation/archive/	301	/documentation-archive
+www	/archive/	301	/documentation-archive
 www	/javascript-grid-virtual-paging/sample/	301	/javascript-data-grid/infinite-scrolling/
 www	/javascript-grid-virtual-paging/sample	301	/javascript-grid-virtual-paging/sample/
 www	/javascript-grid-enterprise-model/sample/	301	/javascript-data-grid/server-side-model/
@@ -6869,9 +6868,11 @@ www	/charts/angular	301	/charts/angular/
 www	/charts/javascript/toolbar/	301	/charts/javascript/financial-charts-toolbar/
 www	/charts/react/toolbar/	301	/charts/react/financial-charts-toolbar/
 www	/charts/react/line/	301	/charts/react/line-series/
-www	/charts/archive/13.1.0/javascript/getting-started/	410	
+www	/charts/archive/13.1.0/javascript/getting-started/	200	
+www	/charts/archive/	301	/charts/documentation-archive/
+www	/charts/archive	301	/charts/archive/
 www	/charts/archive/13.1.0/javascript/getting-started	301	/charts/archive/13.1.0/javascript/getting-started/
-www	/charts/privacy/	410	
+www	/charts/privacy/	301	https://www.ag-grid.com/privacy/
 www	/charts/privacy	301	/charts/privacy/
 www	/charts/javascript-charts/javascript/bar-series/	301	/charts/javascript/bar-series/
 www	/charts/javascript-charts/javascript/bar-series	301	/charts/javascript-charts/javascript/bar-series/
@@ -6889,13 +6890,13 @@ www	/charts/javascript-charts/options/	301	/charts/options/
 www	/charts/javascript-charts/options	301	/charts/javascript-charts/options/
 www	/charts/enterprise-charts/license-pricing/	301	/charts/enterprise-charts/
 www	/charts/enterprise-charts/license-pricing	301	/charts/enterprise-charts/license-pricing/
-www	/charts/javascript-charts/license-pricing/	301	/charts/javascript/quick-start/
+www	/charts/javascript-charts/license-pricing/	200	
 www	/charts/javascript-charts/license-pricing	301	/charts/javascript-charts/license-pricing/
-www	/charts/angular-charts/license-pricing/	301	/charts/angular/quick-start/
+www	/charts/angular-charts/license-pricing/	200	
 www	/charts/angular-charts/license-pricing	301	/charts/angular-charts/license-pricing/
-www	/charts/react-charts/license-pricing/	301	/charts/react/quick-start/
+www	/charts/react-charts/license-pricing/	200	
 www	/charts/react-charts/license-pricing	301	/charts/react-charts/license-pricing/
-www	/charts/vue-charts/license-pricing/	301	/charts/vue/quick-start/
+www	/charts/vue-charts/license-pricing/	200	
 www	/charts/vue-charts/license-pricing	301	/charts/vue-charts/license-pricing/
 www	/charts/core/bar-series/	301	/charts/javascript/bar-series/
 www	/charts/core/bar-series	301	/charts/core/bar-series/

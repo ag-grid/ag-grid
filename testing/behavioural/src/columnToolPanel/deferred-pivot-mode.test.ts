@@ -1988,6 +1988,88 @@ describe('deferred column tool panel pivot mode', () => {
         expect(getApplyButton(toolPanelGui).disabled).toBe(false);
     });
 
+    // AG-9664: pivotSort from a deferred panel pill stages until Apply, mirroring the synchronous coverage in
+    // sorting/pivot-column-sort.test.ts.
+    async function createDeferredPivotSortGrid(): Promise<{ gridApi: GridApi; toolPanel: any }> {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'sales', aggFunc: 'sum', hide: true },
+            ],
+            // Insertion order is deliberately not ascending, so natural (null) order differs from ascending.
+            rowData: [
+                { country: 'USA', year: 2022, sales: 1 },
+                { country: 'USA', year: 2020, sales: 1 },
+                { country: 'USA', year: 2021, sales: 1 },
+            ],
+            pivotMode: true,
+            sideBar: {
+                toolPanels: [
+                    {
+                        id: 'columns',
+                        labelDefault: 'Columns',
+                        labelKey: 'columns',
+                        iconKey: 'columns',
+                        toolPanel: 'agColumnsToolPanel',
+                        toolPanelParams: { buttons: ['apply', 'cancel'] as const },
+                    },
+                ],
+                defaultToolPanel: 'columns',
+            },
+        });
+        await asyncSetTimeout(50);
+        return { gridApi, toolPanel: gridApi.getToolPanelInstance('columns') as any };
+    }
+
+    function getPivotColumnOrder(gridApi: GridApi): string[] {
+        return gridApi
+            .getAllDisplayedColumns()
+            .map((col) => col.getColId())
+            .filter((id) => id.startsWith('pivot_'));
+    }
+
+    test('pivot sort in deferred pivot mode stages until commit', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotSortGrid();
+        const year = gridApi.getColumn('year')! as AgColumn;
+        const strategy = getUpdateStrategy(toolPanel);
+        const ascending = ['pivot_year_2020_sales', 'pivot_year_2021_sales', 'pivot_year_2022_sales'];
+        const descending = ['pivot_year_2022_sales', 'pivot_year_2021_sales', 'pivot_year_2020_sales'];
+
+        expect(getPivotColumnOrder(gridApi)).toEqual(ascending);
+
+        // Unset default cycles to descending; the change is staged, the grid is untouched.
+        strategy.progressPivotSortFromEvent(true, year);
+        await asyncSetTimeout(50);
+        expect(strategy.getPivotSort(true, year)).toBe('desc');
+        expect(year.pivotSort).toBeUndefined();
+        expect(getPivotColumnOrder(gridApi)).toEqual(ascending);
+
+        commitChanges(toolPanel);
+        await asyncSetTimeout(50);
+
+        expect(getPivotColumnOrder(gridApi)).toEqual(descending);
+        expect(gridApi.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+    });
+
+    test('pivot sort staged in deferred pivot mode is discarded on cancel', async () => {
+        const { gridApi, toolPanel } = await createDeferredPivotSortGrid();
+        const year = gridApi.getColumn('year')! as AgColumn;
+        const strategy = getUpdateStrategy(toolPanel);
+        const ascending = ['pivot_year_2020_sales', 'pivot_year_2021_sales', 'pivot_year_2022_sales'];
+
+        strategy.progressPivotSortFromEvent(true, year);
+        await asyncSetTimeout(50);
+        expect(strategy.getPivotSort(true, year)).toBe('desc');
+
+        cancelDeferredChanges(toolPanel);
+        await asyncSetTimeout(50);
+
+        expect(strategy.getPivotSort(true, year)).toBeUndefined();
+        expect(year.pivotSort).toBeUndefined();
+        expect(getPivotColumnOrder(gridApi)).toEqual(ascending);
+    });
+
     test('apply button becomes enabled when a value column is re-added via checkbox in pivot mode after committing its removal', async () => {
         const { toolPanel, toolPanelGui } = await createDeferredPivotModeGrid();
         const strategy = getUpdateStrategy(toolPanel);

@@ -70,6 +70,7 @@ export const RowGroupingModule: _ModuleWithoutApi = {
 
 /**
  * @feature Row Grouping -> Row Group Panel
+ * @feature Pivoting
  */
 export const RowGroupingPanelModule: _ModuleWithoutApi = {
     moduleName: 'RowGroupingPanel',

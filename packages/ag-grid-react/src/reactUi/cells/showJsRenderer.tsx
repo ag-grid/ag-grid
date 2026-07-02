@@ -1,5 +1,5 @@
 import type { MutableRefObject } from 'react';
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 
 import type { ICellRendererComp } from 'ag-grid-community';
 
@@ -13,11 +13,18 @@ const useJsCellRenderer = (
     cellValueVersion: number,
     jsCellRendererRef: MutableRefObject<ICellRendererComp | undefined>,
     eGui: MutableRefObject<any>,
-    suppressInlineEditRenderer = false
+    suppressInlineEditRenderer = false,
+    onRendererDestroyed?: () => void
 ) => {
     const { context } = useContext(BeansContext);
 
-    const destroyCellRenderer = useCallback(() => {
+    // keep the latest onRendererDestroyed in a ref so destroyCellRenderer can
+    // stay memoised with empty deps (used by the unmount-cleanup effect) while
+    // always invoking the current handler
+    const onRendererDestroyedRef = useRef(onRendererDestroyed);
+    onRendererDestroyedRef.current = onRendererDestroyed;
+
+    const destroyCellRenderer = useCallback((resetTooltip = true) => {
         const comp = jsCellRendererRef.current;
         if (!comp) {
             return;
@@ -31,6 +38,12 @@ const useJsCellRenderer = (
 
         context.destroyBean(comp);
         jsCellRendererRef.current = undefined;
+
+        if (!resetTooltip) {
+            return;
+        }
+
+        onRendererDestroyedRef.current?.();
     }, []);
 
     // create or refresh JS cell renderer
@@ -88,7 +101,7 @@ const useJsCellRenderer = (
     // component is destroyed. as the other effect only updates when there
     // is a change in state
     useEffect(() => {
-        return destroyCellRenderer;
+        return () => destroyCellRenderer(false);
     }, []);
 };
 

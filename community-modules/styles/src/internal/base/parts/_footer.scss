@@ -64,6 +64,8 @@
     }
 
     .ag-paging-page-number {
+        // relative so the keyboard-focus ::after focus ring positions over the button
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;

@@ -309,12 +309,18 @@ export class CellComp extends Component {
         }
     }
 
-    private destroyRenderer(): void {
+    private destroyRenderer(resetTooltip = true): void {
         const { context } = this.beans;
         this.cellRenderer = context.destroyBean(this.cellRenderer);
         _removeFromParent(this.cellRendererGui);
         this.cellRendererGui = null;
         this.rendererVersion++;
+
+        if (!resetTooltip) {
+            return;
+        }
+
+        this.cellCtrl.resetCellRendererTooltip();
     }
 
     private destroyEditor(): void {
@@ -582,7 +588,7 @@ export class CellComp extends Component {
     //
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
     public override destroy(): void {
-        this.destroyRenderer();
+        this.destroyRenderer(false);
         this.destroyEditor();
         this.removeControls();
 

@@ -74,6 +74,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
     /** Prior display order per mode, as colId snapshots, so the next refresh can restore user moves. */
     private lastOrder: string[] | null = null;
     private lastPivotOrder: string[] | null = null;
+    /** True when `lastPivotOrder` came from a strictly-ordered (comparator/pivotSort) refresh, so it must not
+     *  be treated as a user order to restore. */
+    private prevPivotStrict = false;
     /** Set when colsList order changes; {@link ensureColsListIndex} re-stamps `colsListIndex` lazily. */
     private colsListIndexDirty = true;
 
@@ -320,6 +323,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
         const beans = this.beans;
         const gos = this.gos;
+        // Pivot-sort reorders existing columns, so reuse the column-move animation to slide them.
+        const animatePivotSort = this.isPivotSortReorder();
+        if (animatePivotSort) {
+            beans.colAnimation?.start();
+        }
         const colDefList = this.colDefList;
         const prevColTree = this.colsTree;
         const prevWasPivot = this.showingPivotResult;
@@ -344,11 +352,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const oldColsList = this.colsList;
         if (oldColsList.length > 0) {
             if (prevWasPivot) {
-                this.lastPivotOrder = snapshotColIds(oldColsList, this.lastPivotOrder);
+                // A strict pivot order (comparator/pivotSort) isn't a user arrangement to preserve - skip it so
+                // clearing pivotSort restores the prior non-strict order rather than the transient asc/desc one.
+                if (!this.prevPivotStrict) {
+                    this.lastPivotOrder = snapshotColIds(oldColsList, this.lastPivotOrder);
+                }
             } else {
                 this.lastOrder = snapshotColIds(oldColsList, this.lastOrder);
             }
         }
+        this.prevPivotStrict = showingPivotResult && (beans.pivotColsSvc?.isStrictColumnOrder() ?? false);
         // Emit in display order: rowNumbers → selection → autoGroup → user/pivot body cols.
         const autoColsLen = autoCols?.length ?? 0;
         const sourceListLen = sourceList.length;
@@ -421,9 +434,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
         for (let i = 0; i < sourceTreeLen; ++i) {
             colsTree[serviceColsLen + i] = sourceTree[i];
         }
+        // An active interactive pivotSort forces strict pivot column order, overriding sticky-order preservation.
         const restoreOrder = !newColDefs || _shouldMaintainColumnOrder(gos, showingPivotResult);
         const lastOrder = showingPivotResult ? this.lastPivotOrder : this.lastOrder;
-        const prevOrder = restoreOrder ? lastOrder : null;
+        let prevOrder = restoreOrder ? lastOrder : null;
+        // pivotSort reorders the groups but keeps the user's within-group order and widths: re-rank the
+        // preserved order by the freshly-sorted group order rather than discarding it.
+        const pivotColsSvc = beans.pivotColsSvc;
+        if (prevOrder != null && showingPivotResult && !!pivotColsSvc?.hasInteractivePivotSort()) {
+            prevOrder = pivotColsSvc.reRankByPivotGroupOrder(colsList, prevOrder, colsById);
+        }
         const ordered = prevOrder == null ? colsList : applyPrevColumnsOrder(colsList, colsById, prevOrder);
         const finalColsList = placeLockedColumns(ordered, gos);
         const colsListChanged = !_areEqual(finalColsList, oldColsList);
@@ -444,6 +464,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (this.colsTree !== prevColTree) {
             this.eventSvc.dispatchEvent({ type: 'gridColumnsChanged' });
         }
+        if (animatePivotSort) {
+            beans.colAnimation?.finish();
+        }
+    }
+
+    /** True when this refresh reorders pivot columns due to an interactive pivot sort - either a sort is active,
+     *  or the prior refresh was a strict pivot-sort order being cleared (desc→null) back to the default order. */
+    private isPivotSortReorder(): boolean {
+        return !!this.beans.pivotColsSvc?.hasInteractivePivotSort() || this.prevPivotStrict;
     }
 
     /** Refresh state derived from `colsList` (group + quick-filter cols, colSpan/autoHeight flags) and

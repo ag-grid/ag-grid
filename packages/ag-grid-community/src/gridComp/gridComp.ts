@@ -25,6 +25,7 @@ export class GridComp extends TabGuardComp {
     private readonly statusBar: Component & FocusableContainer = RefPlaceholder;
     private readonly pagination: TabGuardComp & FocusableContainer = RefPlaceholder;
     private readonly rootWrapperBody: HTMLElement = RefPlaceholder;
+    private readonly ariaDescription: HTMLElement = RefPlaceholder;
 
     private readonly eGridDiv: HTMLElement;
 
@@ -54,7 +55,7 @@ export class GridComp extends TabGuardComp {
         const requiredComps = [GridBodySelector, ...Object.values(comps).filter((c) => !!c)] as ComponentSelector[];
         this.setTemplate(template, requiredComps);
 
-        ctrl.setComp(compProxy, this.getGui());
+        ctrl.setComp(compProxy, this.getGui(), this.ariaDescription);
 
         this.insertGridIntoDom();
 
@@ -107,6 +108,11 @@ export class GridComp extends TabGuardComp {
         const pagination: ElementParams | null = params.paginationSelector
             ? { tag: 'ag-pagination', ref: 'pagination' }
             : null;
+        const ariaDescription: ElementParams = {
+            tag: 'div',
+            ref: 'ariaDescription',
+            cls: 'ag-aria-description-container',
+        };
 
         return {
             tag: 'div',
@@ -115,6 +121,7 @@ export class GridComp extends TabGuardComp {
             children: [
                 toolbar,
                 dropZones,
+                ariaDescription,
                 {
                     tag: 'div',
                     ref: 'rootWrapperBody',
