@@ -103,7 +103,6 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             frameworkOverrides,
             providedBeanInstances: { frameworkCompWrapper },
             modules: _getGridRegisteredModules(this.params.api.getGridId(), gridOptions.rowModelType ?? 'clientSide'),
-            parentGridId: this.params.api.getGridId(),
         } as GridParams);
 
         this.detailApi = api;

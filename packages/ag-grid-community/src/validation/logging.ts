@@ -82,50 +82,11 @@ export function _runWithActiveGrid<T>(gridId: string, fn: () => T): T {
     }
 }
 
-// childId -> parentId, forming a tree (each grid has at most one parent). A nested grid — e.g. a
-// detail grid — is created on a later frame than its parent, so the parent is never on the synchronous
-// call stack when the child runs; the relationship must be registered explicitly.
-const gridParents = new Map<string, string>();
-
-/**
- * Records that `childId` is a grid nested inside `parentId`, so a nested grid's diagnostics also reach
- * its root grid's listener (they bubble up to the top-level overlay). Cleared via {@link _clearGridParent}.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _setGridParent(childId: string, parentId: string): void {
-    gridParents.set(childId, parentId);
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _clearGridParent(childId: string): void {
-    gridParents.delete(childId);
-}
-
-// The top-level grid of `gridId`'s nesting chain: follow parent links until one has no parent. Returns
-// `gridId` unchanged when it is not nested.
-function rootOf(gridId: string): string {
-    let current = gridId;
-    let parent = gridParents.get(current);
-    // A valid (acyclic) chain visits each link at most once; the bound stops a malformed chain from
-    // duplicate user gridIds (e.g. a grid sharing an ancestor's id) looping forever.
-    let remaining = gridParents.size;
-    while (parent !== undefined && remaining-- > 0) {
-        current = parent;
-        parent = gridParents.get(current);
-    }
-    return current;
-}
-
 // Whether a diagnostic from `diagnosticGridId` should be delivered to a listener bound to
-// `listenerGridId`. A page-level listener (no grid) sees everything. A grid sees its own diagnostics;
-// additionally, a nested grid's diagnostics bubble to its root grid — so a bubbled diagnostic surfaces
-// on the emitting grid and the top-level grid, skipping intermediate levels. Untied diagnostics (e.g.
-// bootstrap failures) reach every listener.
+// `listenerGridId`. A listener bound to no grid sees every diagnostic (a page-level panel); a grid's
+// listener sees its own diagnostics plus any not tied to a grid (e.g. bootstrap failures).
 function shouldNotify(diagnosticGridId: string | undefined, listenerGridId: string | undefined): boolean {
-    if (listenerGridId === undefined || diagnosticGridId === undefined) {
-        return true;
-    }
-    return listenerGridId === diagnosticGridId || listenerGridId === rootOf(diagnosticGridId);
+    return listenerGridId === undefined || diagnosticGridId === undefined || diagnosticGridId === listenerGridId;
 }
 
 /**

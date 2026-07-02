@@ -31,14 +31,7 @@ import {
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
-import {
-    _clearGridParent,
-    _error,
-    _isDiagnosticCaptureActive,
-    _logPreInitErr,
-    _runWithActiveGrid,
-    _setGridParent,
-} from './validation/logging';
+import { _error, _logPreInitErr, _runWithActiveGrid } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -53,9 +46,6 @@ export interface GridParams {
     providedBeanInstances?: { [key: string]: any };
     // INTERNAL - set by studio
     withinStudio?: boolean;
-    // INTERNAL - the grid this one is nested inside (its parent), so dev-validation diagnostics bubble
-    // up to the parent's overlay.
-    parentGridId?: string;
 
     /**
      * Modules to be registered directly with this grid instance.
@@ -133,11 +123,6 @@ export class GridCoreCreator {
 
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 
-        // Only record the parent link when diagnostics are being captured
-        if (params?.parentGridId !== undefined && _isDiagnosticCaptureActive()) {
-            _setGridParent(gridId, params.parentGridId);
-        }
-
         const registeredModules = this.getRegisteredModules(params, gridId, gridOptions.rowModelType);
 
         const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
@@ -152,7 +137,6 @@ export class GridCoreCreator {
         const destroyCallback = () => {
             _gridElementCache.delete(api);
             _gridApiCache.delete(eOutermostGridOwned);
-            _clearGridParent(gridId);
             _unRegisterGridModules(gridId);
             _destroyCallback?.();
         };

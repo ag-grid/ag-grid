@@ -75,7 +75,6 @@ const reactPropsNotGridOptions: ReactCompProps = {
     containerStyle: undefined,
     className: undefined,
     passGridApi: undefined,
-    parentGridId: undefined,
     componentWrappingElement: undefined,
     ...deprecatedProps,
 };
@@ -160,7 +159,6 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             },
             modules,
             frameworkOverrides,
-            parentGridId: props.parentGridId,
         };
 
         const createUiCallback = (ctx: Context) => {
@@ -475,7 +473,6 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
                     modules={parentModules}
                     rowData={detailRowData}
                     passGridApi={registerGridApi}
-                    parentGridId={props.api.getGridId()}
                 />
             )}
         </div>
