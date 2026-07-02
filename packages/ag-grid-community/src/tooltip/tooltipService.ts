@@ -5,6 +5,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -115,6 +116,25 @@ const buildCellTooltipDisplayFunctions = (
     };
 };
 
+// The tooltip is a display feature, so resolving via the field's column surfaces pending batch-edit
+// values like cell rendering and copy/paste do; a field with no column falls back to committed data.
+const resolveTooltipFieldValue = (
+    beans: BeanCollection,
+    column: AgColumn,
+    rowNode: RowNode,
+    data: any,
+    tooltipField: string
+): any => {
+    const tooltipColumn = beans.colModel.getCol(tooltipField);
+    if (tooltipColumn) {
+        return beans.valueSvc.getValue(tooltipColumn, rowNode, 'batch');
+    }
+    if (column.tooltipFieldContainsDots) {
+        return _getValueUsingDotField(data, tooltipField);
+    }
+    return data[tooltipField];
+};
+
 const resolveCellTooltip = ({
     beans,
     ctrl,
@@ -169,9 +189,8 @@ const resolveCellTooltip = ({
 
     // 4) column tooltip field/valueGetter is the final fallback.
     if (colDef.tooltipField && _exists(data)) {
-        const tooltipField = colDef.tooltipField;
         return {
-            value: column.tooltipFieldContainsDots ? _getValueUsingDotField(data, tooltipField) : data[tooltipField],
+            value: resolveTooltipFieldValue(beans, column, rowNode, data, colDef.tooltipField),
             location: 'cell',
             shouldDisplay: shouldDisplayColumnTooltip,
         };
