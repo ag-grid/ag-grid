@@ -72,7 +72,7 @@ The threshold is inclusive, from least to most severe:
 
 `suppress` takes the error ids to ignore, for diagnostics you have reviewed and accepted. A suppressed id is kept out of the overlay and is never thrown by `throwOn`, but is still logged to the console once. Suppression is by id, so it silences every diagnostic with that number — not one specific occurrence.
 
-For example, a shared wrapper that spreads unrelated props onto your column definitions makes the grid report properties it does not recognise — a per-property warning (`307`) and a summary (`310`). Until the wrapper is fixed, suppress both:
+For example, a third-party wrapper you cannot change spreads unrelated props onto your column definitions, so the grid reports properties it does not recognise — a per-property warning (`307`) and a summary (`310`). Suppress both while the source is out of your control:
 
 ```js
 enableDevValidations({
@@ -83,4 +83,4 @@ enableDevValidations({
 });
 ```
 
-The id is the number shown in the console message and the overlay, for example `#310`.
+The id is the number shown in the console message and the overlay, for example `#310`. Suppression should be used as a last resort for problems outside your control.
