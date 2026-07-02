@@ -173,18 +173,19 @@ const GridExample = () => {
                         <button onClick={() => updateChart('line')}>Line Chart</button>
                     </span>
                 </div>
-                <AgGridReact
-                    className="my-grid"
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    columnTypes={columnTypes}
-                    enableCharts={true}
-                    suppressAggFuncInHeader={true}
-                    getRowId={getRowId}
-                    getChartToolbarItems={() => []}
-                    onGridReady={onGridReady}
-                    onFirstDataRendered={onFirstDataRendered}
-                />
+                <div className="my-grid">
+                    <AgGridReact
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        columnTypes={columnTypes}
+                        enableCharts={true}
+                        suppressAggFuncInHeader={true}
+                        getRowId={getRowId}
+                        getChartToolbarItems={() => []}
+                        onGridReady={onGridReady}
+                        onFirstDataRendered={onFirstDataRendered}
+                    />
+                </div>
                 <div id="myChart" className="my-chart"></div>
             </div>
         </AgGridProvider>
