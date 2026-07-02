@@ -35,12 +35,28 @@ const injectionVersions = () => (globalThis as WindowState).agStyleInjectionVers
 describe('theme style injection across grids', () => {
     const gridsManager = new TestGridsManager({ modules: [] });
 
+    // jsdom's CSS parser rejects the Theming API's modern CSS (nested rules, @layer, color-mix), reporting
+    // "Could not parse CSS stylesheet" via console.error; real browsers accept it. Swallow only that error and
+    // count it (so the test can prove injection happened), letting every other console.error through.
+    let cssParseErrors = 0;
+    let realConsoleError: typeof console.error;
+
     // IS_SSR is true under jsdom (no document.fonts) so grids don't inject by default; force it on here.
     beforeEach(() => {
         _setStyleInjectionEnabledForTesting(true);
+        cssParseErrors = 0;
+        realConsoleError = console.error;
+        console.error = (...args: unknown[]): void => {
+            if (typeof args[0] === 'string' && args[0].includes('Could not parse CSS stylesheet')) {
+                cssParseErrors++;
+                return;
+            }
+            realConsoleError.apply(console, args);
+        };
     });
 
     afterEach(() => {
+        console.error = realConsoleError;
         gridsManager.reset();
     });
 
@@ -64,6 +80,9 @@ describe('theme style injection across grids', () => {
         // Grid A injects its input-style part css and its own params.
         expect(inputStyleDebugIds()).toHaveLength(1);
         expect(paramsDebugIds()).toEqual(['ag-theme-params-1']);
+
+        // jsdom rejected the injected (nested) part css — proof real theme css reached the DOM.
+        expect(cssParseErrors).toBeGreaterThan(0);
 
         const inputStyleA = inputStyleDebugIds()[0];
         const styleCountAfterA = allDebugIds().length;

@@ -437,4 +437,48 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         expect(api.getRowNode('b2')?.data.level1).toBe('Gamma');
         expect(api.getRowNode('b1')?.data.level1).toBe('Beta');
     });
+
+    test('groupSelects descendants: grabbing a cascade-selected group drags the full selection', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'group', rowGroup: true, hide: true }, { field: 'value' }],
+            autoGroupColumnDef: { headerName: 'Group', rowDrag: true },
+            rowData: [
+                { id: '1', group: 'A', value: 'A1' },
+                { id: '2', group: 'A', value: 'A2' },
+                { id: '3', group: 'B', value: 'B1' },
+                { id: '4', group: 'C', value: 'C1' },
+            ],
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+            rowDragManaged: true,
+            rowDragMultiRow: true,
+            suppressMoveWhenRowDragging: noMove,
+            groupDefaultExpanded: 1,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = gridsManager.createGrid('row-group-select-descendants', gridOptions);
+
+        api.setNodesSelected({
+            nodes: [api.getRowNode('row-group-group-A')!, api.getRowNode('row-group-group-B')!],
+            newValue: true,
+        });
+        await asyncSetTimeout(0);
+
+        expect(
+            api
+                .getSelectedNodes()
+                .map((node) => node.id)
+                .sort()
+        ).toEqual(['1', '2', '3']);
+
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start('row-group-group-A');
+        await dispatcher.move('row-group-group-C', { yOffsetPercent: 0.7 });
+        await dispatcher.finish();
+        await asyncSetTimeout(0);
+
+        // event.nodes is the full selection (the leaves, matching getSelectedNodes), not just the grabbed group.
+        const draggedIds = (dispatcher.rowDragEndEvents.at(-1)?.nodes ?? []).map((node) => node.id).sort();
+        expect(draggedIds).toEqual(['1', '2', '3']);
+    });
 });

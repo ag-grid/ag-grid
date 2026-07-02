@@ -52,6 +52,73 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         return gridsManager.createGrid(id, gridOptions);
     };
 
+    test('dragging a selected parent plus children of another parent moves the subtree intact and re-parents the children', async () => {
+        const mixed = [
+            {
+                id: 'target',
+                name: 'Target',
+                type: 'folder',
+                children: [{ id: 'tc1', name: 'TC1', type: 'file', children: [] }],
+            },
+            {
+                id: 'P',
+                name: 'P',
+                type: 'folder',
+                children: [
+                    { id: 'pc1', name: 'PC1', type: 'file', children: [] },
+                    { id: 'pc2', name: 'PC2', type: 'file', children: [] },
+                ],
+            },
+            {
+                id: 'Q',
+                name: 'Q',
+                type: 'folder',
+                children: [
+                    { id: 'qc1', name: 'QC1', type: 'file', children: [] },
+                    { id: 'qc2', name: 'QC2', type: 'file', children: [] },
+                    { id: 'qc3', name: 'QC3', type: 'file', children: [] },
+                ],
+            },
+        ];
+
+        const api = createGrid('tree-mixed', mixed, {
+            rowSelection: { mode: 'multiRow' },
+            rowDragMultiRow: true,
+        });
+
+        // Select parent P (which keeps its own subtree) plus 3 children of a different parent Q.
+        api.setNodesSelected({
+            nodes: [api.getRowNode('P')!, api.getRowNode('qc1')!, api.getRowNode('qc2')!, api.getRowNode('qc3')!],
+            newValue: true,
+        });
+        await asyncSetTimeout(0);
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('P');
+        await dispatcher.move('target', { yOffsetPercent: 0.4 });
+        await dispatcher.move('target', { center: true });
+        await dispatcher.finish();
+        await asyncSetTimeout(0);
+
+        // Payload is the top-most selected set: the grabbed folder P (not its leaves) and Q's 3 children.
+        const draggedIds = (dispatcher.rowDragEndEvents.at(-1)?.nodes ?? []).map((n) => n.id).sort();
+        expect(draggedIds).toEqual(['P', 'qc1', 'qc2', 'qc3']);
+
+        // P relocates into target with its subtree intact; qc1/qc2/qc3 re-parent into target; Q is left empty.
+        await new GridRows(api, 'mixed after drop').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ target GROUP id:target ag-Grid-AutoColumn:"Target" type:"folder"
+            │ ├─┬ P GROUP selected id:P ag-Grid-AutoColumn:"P" type:"folder"
+            │ │ ├── pc1 LEAF id:pc1 ag-Grid-AutoColumn:"PC1" type:"file"
+            │ │ └── pc2 LEAF id:pc2 ag-Grid-AutoColumn:"PC2" type:"file"
+            │ ├── qc1 LEAF selected id:qc1 ag-Grid-AutoColumn:"QC1" type:"file"
+            │ ├── qc2 LEAF selected id:qc2 ag-Grid-AutoColumn:"QC2" type:"file"
+            │ ├── qc3 LEAF selected id:qc3 ag-Grid-AutoColumn:"QC3" type:"file"
+            │ └── tc1 LEAF id:tc1 ag-Grid-AutoColumn:"TC1" type:"file"
+            └── Q LEAF id:Q ag-Grid-AutoColumn:"Q" type:"folder"
+        `);
+    });
+
     test('multi-row drag moves every selected node', async () => {
         const rowData = [
             {
@@ -413,5 +480,201 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         expect(dropInfo?.position).toBe('above');
         expect(dropInfo?.newParent?.id).toBe('beta');
         expect(api.getRowNode('alpha-item')?.parent?.id).toBe('beta');
+    });
+
+    describe('groupSelects filteredDescendants', () => {
+        const groupSelectRowData = [
+            {
+                id: 'p1',
+                name: 'Parent 1',
+                type: 'folder',
+                children: [
+                    { id: 'p1-c1', name: 'Child 1a', type: 'file', children: [] },
+                    { id: 'p1-c2', name: 'Child 1b', type: 'file', children: [] },
+                ],
+            },
+            {
+                id: 'p2',
+                name: 'Parent 2',
+                type: 'folder',
+                children: [{ id: 'p2-c1', name: 'Child 2a', type: 'file', children: [] }],
+            },
+            { id: 'p3', name: 'Parent 3', type: 'folder', children: [] },
+        ];
+
+        test('dragging a selected parent that has children drags the whole selection', async () => {
+            const api = createGrid('tree-group-selects-parent', groupSelectRowData, {
+                rowSelection: { mode: 'multiRow', groupSelects: 'filteredDescendants' },
+                rowDragMultiRow: true,
+            });
+
+            api.setNodesSelected({ nodes: [api.getRowNode('p1')!, api.getRowNode('p3')!], newValue: true });
+            await asyncSetTimeout(0);
+
+            await new GridRows(api, 'selected').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ p1 GROUP selected id:p1 ag-Grid-AutoColumn:"Parent 1" type:"folder"
+                │ ├── p1-c1 LEAF selected id:p1-c1 ag-Grid-AutoColumn:"Child 1a" type:"file"
+                │ └── p1-c2 LEAF selected id:p1-c2 ag-Grid-AutoColumn:"Child 1b" type:"file"
+                ├─┬ p2 GROUP id:p2 ag-Grid-AutoColumn:"Parent 2" type:"folder"
+                │ └── p2-c1 LEAF id:p2-c1 ag-Grid-AutoColumn:"Child 2a" type:"file"
+                └── p3 LEAF selected id:p3 ag-Grid-AutoColumn:"Parent 3" type:"folder"
+            `);
+
+            const dispatcher = new RowDragDispatcher({ api });
+            await dispatcher.start('p1');
+            // Ghost reflects the top-most selected nodes (the folder p1 + leaf p3), so subtrees move intact.
+            await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('2 rows'));
+            await dispatcher.move('p3', { yOffsetPercent: 0.7 });
+            await dispatcher.finish();
+            await asyncSetTimeout(0);
+
+            // event.nodes is the top-most selected set: the grabbed folder p1 (not its leaves) and p3.
+            const draggedIds = (dispatcher.rowDragEndEvents.at(-1)?.nodes ?? []).map((node) => node.id).sort();
+            expect(draggedIds).toEqual(['p1', 'p3']);
+        });
+
+        test('dragging one of several selected parents with children drags every selected row', async () => {
+            const api = createGrid('tree-group-selects-multi-parent', groupSelectRowData, {
+                rowSelection: { mode: 'multiRow', groupSelects: 'filteredDescendants' },
+                rowDragMultiRow: true,
+            });
+
+            // p1 and p2 both have children; grabbing p1 must still include the non-grabbed p2.
+            api.setNodesSelected({ nodes: [api.getRowNode('p1')!, api.getRowNode('p2')!], newValue: true });
+            await asyncSetTimeout(0);
+
+            const dispatcher = new RowDragDispatcher({ api });
+            await dispatcher.start('p1');
+            await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('2 rows'));
+            await dispatcher.move('p3', { yOffsetPercent: 0.7 });
+            await dispatcher.finish();
+            await asyncSetTimeout(0);
+
+            // Both selected folders drag as units (their subtrees follow), not the individual leaves.
+            const draggedIds = (dispatcher.rowDragEndEvents.at(-1)?.nodes ?? []).map((node) => node.id).sort();
+            expect(draggedIds).toEqual(['p1', 'p2']);
+        });
+
+        test('dragging a selected parent with a multi-level subtree relocates the whole subtree', async () => {
+            const nestedRowData = [
+                { id: 'dst', name: 'Destination', type: 'folder', children: [] },
+                {
+                    id: 'src',
+                    name: 'Source',
+                    type: 'folder',
+                    children: [
+                        {
+                            id: 'src-a',
+                            name: 'Source A',
+                            type: 'folder',
+                            children: [
+                                { id: 'src-a-1', name: 'Leaf A1', type: 'file', children: [] },
+                                { id: 'src-a-2', name: 'Leaf A2', type: 'file', children: [] },
+                            ],
+                        },
+                    ],
+                },
+            ];
+
+            const api = createGrid('tree-group-selects-nested', nestedRowData, {
+                rowSelection: { mode: 'multiRow', groupSelects: 'filteredDescendants' },
+                rowDragMultiRow: true,
+            });
+
+            api.setNodesSelected({ nodes: [api.getRowNode('src')!], newValue: true });
+            await asyncSetTimeout(0);
+
+            await new GridRows(api, 'nested selected').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── dst LEAF id:dst ag-Grid-AutoColumn:"Destination" type:"folder"
+                └─┬ src GROUP selected id:src ag-Grid-AutoColumn:"Source" type:"folder"
+                · └─┬ src-a GROUP selected id:src-a ag-Grid-AutoColumn:"Source A" type:"folder"
+                · · ├── src-a-1 LEAF selected id:src-a-1 ag-Grid-AutoColumn:"Leaf A1" type:"file"
+                · · └── src-a-2 LEAF selected id:src-a-2 ag-Grid-AutoColumn:"Leaf A2" type:"file"
+            `);
+
+            const dispatcher = new RowDragDispatcher({ api });
+            await dispatcher.start('src');
+            // event.nodes is the grabbed folder (a single top-most selected node), not its leaves.
+            const draggedIds = () => (dispatcher.rowDragEnterEvents.at(-1)?.nodes ?? []).map((node) => node.id);
+            await dispatcher.move('dst', { yOffsetPercent: 0.2 });
+            expect(draggedIds()).toEqual(['src']);
+            await dispatcher.finish();
+            await asyncSetTimeout(0);
+
+            // The whole subtree relocates intact above dst; no leaves are torn out to the root.
+            await new GridRows(api, 'nested after drop').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ src GROUP selected id:src ag-Grid-AutoColumn:"Source" type:"folder"
+                │ └─┬ src-a GROUP selected id:src-a ag-Grid-AutoColumn:"Source A" type:"folder"
+                │ · ├── src-a-1 LEAF selected id:src-a-1 ag-Grid-AutoColumn:"Leaf A1" type:"file"
+                │ · └── src-a-2 LEAF selected id:src-a-2 ag-Grid-AutoColumn:"Leaf A2" type:"file"
+                └── dst LEAF id:dst ag-Grid-AutoColumn:"Destination" type:"folder"
+            `);
+        });
+    });
+});
+
+describe('tree drag multi with per-node rowDrag and custom rowDragText', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowDragModule, RowSelectionModule, TreeDataModule],
+    });
+
+    beforeEach(() => {
+        gridsManager.reset();
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('grabbing one of several selected parents drags all of them, counted as parents', async () => {
+        const rowDragTextCounts: number[] = [];
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'medal' }],
+            autoGroupColumnDef: {
+                headerName: 'Athlete',
+                // Per-node rowDrag: only the parent athlete rows are draggable.
+                rowDrag: ({ data }) => data?.parentId === null,
+                rowDragText: (params, dragItemCount) => {
+                    rowDragTextCounts.push(dragItemCount);
+                    return dragItemCount > 1 ? `${dragItemCount} athletes` : (params.rowNode?.data?.athlete ?? '');
+                },
+            },
+            rowData: [
+                { id: 'phelps', athlete: 'Michael Phelps', parentId: null },
+                { id: 'phelps-g1', medal: 'Gold 200m', parentId: 'phelps' },
+                { id: 'phelps-g2', medal: 'Gold 400m', parentId: 'phelps' },
+                { id: 'nemov', athlete: 'Aleksey Nemov', parentId: null },
+                { id: 'nemov-g1', medal: 'Gold Vault', parentId: 'nemov' },
+                { id: 'other', athlete: 'Other Athlete', parentId: null },
+                { id: 'other-g1', medal: 'Silver', parentId: 'other' },
+            ],
+            rowSelection: { mode: 'multiRow', groupSelects: 'filteredDescendants' },
+            rowDragMultiRow: true,
+            treeData: true,
+            treeDataParentIdField: 'parentId',
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        };
+
+        const api = gridsManager.createGrid('tree-parentid-rowdrag-text', gridOptions);
+
+        api.setNodesSelected({ nodes: [api.getRowNode('phelps')!, api.getRowNode('nemov')!], newValue: true });
+        await asyncSetTimeout(0);
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('phelps');
+        // Both selected athletes drag; the ghost counts the athletes (2), not their medals.
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('2 athletes'));
+        await dispatcher.move('other', { yOffsetPercent: 0.7 });
+        await dispatcher.finish();
+        await asyncSetTimeout(0);
+
+        const draggedIds = (dispatcher.rowDragEndEvents.at(-1)?.nodes ?? []).map((node) => node.id).sort();
+        expect(draggedIds).toEqual(['nemov', 'phelps']);
+        expect(rowDragTextCounts.length).toBeGreaterThan(0);
+        expect(rowDragTextCounts.every((count) => count === 2)).toBe(true);
     });
 });
