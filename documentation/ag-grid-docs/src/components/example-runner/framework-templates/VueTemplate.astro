@@ -59,6 +59,16 @@ const startFile = pathJoin(appLocation, entryFileName);
     <body>
         <div id="app"><my-component></my-component></div>
 
+        <script
+            is:inline
+            nonce={nonce}
+            define:vars={{
+                appLocation,
+            }}
+        >
+            window.__basePath = appLocation;
+        </script>
+
         <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce} />
         <SystemJs
             isDev={isDev}

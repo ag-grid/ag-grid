@@ -1,0 +1,20 @@
+.number {
+    text-align: right;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.my-grid {
+    flex-grow: 1;
+}
+
+.my-chart {
+    flex-grow: 1;
+    height: 135px;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
