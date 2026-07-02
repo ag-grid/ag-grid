@@ -24,6 +24,6 @@ When grid creation aborts before the grid exists (here a `serverSide` row model 
 
 ## Nested (master/detail) grids
 
-A diagnostic emitted by a detail grid shows on the detail grid and bubbles up to the master grid's overlay, labelled as coming from a nested grid. Here the detail grid enables `sideBar` without its enterprise module; the first row auto-expands so the error surfaces on load.
+Each grid surfaces its own diagnostics on its own overlay, so a diagnostic emitted by a detail grid stays on that detail grid and the master grid is unaffected. Here the detail grid sets an invalid option; the first row auto-expands so the error surfaces on load.
 
 {% gridExampleRunner title="Master Detail" name="master-detail" /%}

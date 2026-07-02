@@ -67,19 +67,6 @@ describe('renderDiagnosticElement', () => {
         expect(code!.textContent).toBe('foo');
     });
 
-    test('renders a nested-source label when supplied, and omits it otherwise', () => {
-        const withSource = renderDiagnosticElement('warning', { message: 'm' }, 'https://x/e/1', '#1', 'From a grid');
-        expect(withSource.querySelector('.ag-overlay-error-nested-source')?.textContent).toBe('From a grid');
-
-        const withoutSource = renderDiagnosticElement('warning', { message: 'm' }, 'https://x/e/1', '#1');
-        expect(withoutSource.querySelector('.ag-overlay-error-nested-source')).toBeNull();
-    });
-
-    test('renderDiagnostic labels a nested diagnostic', () => {
-        const el = renderDiagnostic({ id: 307, params: {}, severity: 'warning', gridId: '2' }, true);
-        expect(el.querySelector('.ag-overlay-error-nested-source')?.textContent).toBe('Reported by a nested grid');
-    });
-
     test('renders a code snippet block when present', () => {
         const el = renderDiagnosticElement(
             'error',

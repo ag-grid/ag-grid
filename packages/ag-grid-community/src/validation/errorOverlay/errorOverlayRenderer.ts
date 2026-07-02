@@ -198,17 +198,11 @@ export function renderDiagnosticElement(
     severity: CapturedDiagnostic['severity'],
     content: DiagnosticContent,
     errorLink: string,
-    errorLinkText: string,
-    nestedSource?: string
+    errorLinkText: string
 ): HTMLElement {
     const eItem = _createElement({ tag: 'div', cls: `ag-overlay-error-item ag-overlay-error-item-${severity}` });
     const { message, code, note, docLink } = content;
 
-    if (nestedSource) {
-        const eSource = _createElement({ tag: 'div', cls: 'ag-overlay-error-nested-source' });
-        eSource.textContent = nestedSource;
-        eItem.appendChild(eSource);
-    }
     if (message) {
         eItem.appendChild(createTextEl(capitaliseLeadingProse(message)));
     }
@@ -231,15 +225,13 @@ export function renderDiagnosticElement(
     return eItem;
 }
 
-/** Builds the rich DOM for a single captured diagnostic. `isNested` labels diagnostics bubbled up from
- * a grid nested inside this one (e.g. a master/detail detail grid), so they read as coming from there. */
-export function renderDiagnostic(diagnostic: CapturedDiagnostic, isNested = false): HTMLElement {
+/** Builds the rich DOM for a single captured diagnostic. */
+export function renderDiagnostic(diagnostic: CapturedDiagnostic): HTMLElement {
     return renderDiagnosticElement(
         diagnostic.severity,
         getDiagnosticContent(diagnostic),
         getErrorLink(diagnostic.id, diagnostic.params),
-        `AG Grid #${diagnostic.id}`,
-        isNested ? 'Reported by a nested grid' : undefined
+        `AG Grid #${diagnostic.id}`
     );
 }
 

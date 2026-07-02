@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
         detailGridOptions: {
             columnDefs: [{ field: 'callId' }, { field: 'duration' }],
             // An invalid grid option on the detail grid. The resulting error shows on the detail grid's
-            // own overlay and bubbles up to the master grid's overlay.
+            // own overlay; diagnostics stay on the grid that emitted them, so the master grid is unaffected.
             notAValidGridOption: true,
         } as GridOptions,
         getDetailRowData: (params: GetDetailRowDataParams) => {

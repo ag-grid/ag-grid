@@ -1192,12 +1192,6 @@
         border-inline-start-color: color-mix(in srgb, var(--ag-invalid-color) 45%, #d98300);
     }
 
-    .ag-overlay-error-nested-source {
-        font-size: 0.85em;
-        font-style: italic;
-        opacity: 0.8;
-    }
-
     .ag-overlay-error-divider {
         margin: var(--ag-grid-size) 0;
         border-top: solid 1px var(--ag-border-color);
