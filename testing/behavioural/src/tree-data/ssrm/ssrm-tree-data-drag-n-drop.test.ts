@@ -135,4 +135,39 @@ describe('ag-grid SSRM treeData managed drag and drop', () => {
             expect(rowDragCancelEvents[0].node?.id).toBe('105');
         }
     });
+
+    test('multi-row drag reports the full selection in event.nodes', async () => {
+        const data = getSmallTreeDataSet();
+        const fakeServer = createFakeServer(data);
+        const datasource = createServerSideDatasource(fakeServer);
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'employeeName', rowDrag: true }, { field: 'employeeId' }, { field: 'jobTitle' }],
+            treeData: true,
+            rowModelType: 'serverSide',
+            getRowId: ({ data }) => data.employeeId,
+            isServerSideGroup: (dataItem: any) => !!dataItem.group,
+            getServerSideGroupKey: (dataItem: any) => dataItem.employeeId,
+            autoGroupColumnDef: { field: 'employeeName' },
+            rowSelection: { mode: 'multiRow' },
+            rowDragMultiRow: true,
+        };
+
+        const api = gridsManager.createGrid('ssrm-managed-dnd-multi', gridOptions);
+        api.setGridOption('serverSideDatasource', datasource);
+        await ssrmExpandAndLoadAll(api);
+        await waitForNoLoadingRows(api);
+
+        // 105 and 107 are leaves under different parent groups.
+        api.setNodesSelected({ nodes: [api.getRowNode('105')!, api.getRowNode('107')!], newValue: true });
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('105');
+        await dispatcher.move('107');
+        await dispatcher.finish();
+        await waitForNoLoadingRows(api);
+
+        const draggedIds = (dispatcher.rowDragEndEvents.at(-1)?.nodes ?? []).map((node) => node.id).sort();
+        expect(draggedIds).toEqual(['105', '107']);
+    });
 });
