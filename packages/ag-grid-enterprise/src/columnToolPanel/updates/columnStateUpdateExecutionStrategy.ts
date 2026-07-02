@@ -364,7 +364,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
             }
         }
 
-        const sortedEntries = operations.sort((a, b) => a.seq - b.seq);
+        // aggFuncs must apply after aggregation: setColumnAggFunc adds the value column, which turns a
+        // same-seq aggregation setColumns into a no-op and skips the pivot result-column refresh.
+        const commitRank = (operation: CommitOperation) => (operation.type === 'aggFuncs' ? 1 : 0);
+        const sortedEntries = operations.sort((a, b) => a.seq - b.seq || commitRank(a) - commitRank(b));
 
         // Batch the role-column operations (rowGroup/aggregation/pivot) so consecutive ones share one
         // refresh. Order-sensitive ops read live model state that a deferred role op leaves stale until
