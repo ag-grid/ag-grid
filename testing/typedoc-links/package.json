@@ -1,0 +1,15 @@
+{
+  "name": "ag-grid-typedoc-links",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Validates that AG Grid's published .d.ts JSDoc {@link} references resolve under TypeDoc, reproducing the environment downstream consumers build their API docs in.",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typedoc": "0.28.19",
+    "typescript": "~5.8.3",
+    "vitest": "2.1.9"
+  }
+}

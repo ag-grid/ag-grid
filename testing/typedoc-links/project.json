@@ -1,0 +1,34 @@
+{
+  "name": "ag-grid-typedoc-links",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/typedoc-links",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "command": "npx vitest run",
+      "dependsOn": ["ag-grid-community:build:types", "ag-grid-enterprise:build:types"],
+      "outputs": ["{workspaceRoot}/reports/ag-grid-typedoc-links.xml"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "config": "vitest.config.ts"
+      },
+      "configurations": {
+        "ci": {
+          "outputFile": "../../reports/ag-grid-typedoc-links.xml",
+          "reporters": ["junit"]
+        },
+        "run": {
+          "watch": false
+        }
+      }
+    }
+  },
+  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise"],
+  "tags": ["test", "module"]
+}

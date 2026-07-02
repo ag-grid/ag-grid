@@ -108,6 +108,7 @@
       "plugins/ag-grid-generate-example-files",
       "plugins/ag-grid-task-autogen",
       "testing/behavioural",
+      "testing/typedoc-links",
       "testing/module-size",
       "testing/module-size-angular",
       "testing/angular-package-tests",
