@@ -1116,14 +1116,17 @@
         display: flex;
         flex-direction: column;
         text-align: start;
-        width: 100%;
-        height: 100%;
+        // float as a centred card (the wrapper centres it) sized to content within these caps; the
+        // margin keeps a gap on every side so the grid stays visible behind it.
+        max-width: 640px;
+        max-height: calc(100% - var(--ag-grid-size) * 4);
+        margin: calc(var(--ag-grid-size) * 2);
         overflow: hidden;
         color: var(--ag-foreground-color);
         background: var(--ag-background-color);
         border: solid 2px color-mix(in srgb, var(--ag-invalid-color) 60%, var(--ag-border-color));
-        // match the grid's rounded wrapper on the bottom corners so the border is not clipped.
-        border-radius: 0 0 var(--ag-wrapper-border-radius) var(--ag-wrapper-border-radius);
+        border-radius: var(--ag-card-radius);
+        box-shadow: var(--ag-card-shadow);
     }
 
     .ag-overlay-error-header {

@@ -10,8 +10,12 @@
     display: flex;
     flex-direction: column;
     text-align: start;
-    width: 100%;
-    height: 100%;
+
+    /* float as a centred card (the wrapper centres it) sized to content within these caps; the margin
+       keeps a gap on every side so the grid stays visible behind it. */
+    max-width: 640px;
+    max-height: calc(100% - var(--ag-spacing) * 4);
+    margin: calc(var(--ag-spacing) * 2);
 
     /* panel clips; the header stays pinned and the body scrolls (see .ag-overlay-error-body). */
     overflow: hidden;
@@ -19,10 +23,8 @@
     background: var(--ag-background-color);
     border: solid calc(var(--ag-border-width) * 2)
         color-mix(in srgb, var(--ag-invalid-color) 60%, var(--ag-border-color));
-
-    /* the panel fills the body, so only the bottom corners meet the grid's rounded wrapper; match its
-       radius there so the border is not clipped (the top edge sits flush under the header). */
-    border-radius: 0 0 var(--ag-wrapper-border-radius) var(--ag-wrapper-border-radius);
+    border-radius: var(--ag-border-radius);
+    box-shadow: var(--ag-popup-shadow);
 }
 
 .ag-overlay-error-header {
