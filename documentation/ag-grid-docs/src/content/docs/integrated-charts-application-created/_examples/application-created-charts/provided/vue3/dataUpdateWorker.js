@@ -30,6 +30,7 @@ let nextBookId = 62472;
 let nextTradeId = 24287;
 let nextBatchId = 101;
 let latestUpdateId = 0;
+let intervalId;
 
 /**
  * Generates a random number between min and max
@@ -100,24 +101,32 @@ function updateSomeItems(updateCount) {
 }
 
 function startUpdates(thisUpdateId) {
+    // Cancel any interval a previous 'start' left running so only one is ever active.
+    clearInterval(intervalId);
+
     postMessage({
         type: 'start',
         updateCount: UPDATES_PER_MESSAGE,
         interval: MILLISECONDS_BETWEEN_MESSAGES,
     });
 
-    var intervalId;
     function intervalFunc() {
+        // Check for cancellation before posting so Stop takes effect without an extra batch.
+        if (thisUpdateId !== latestUpdateId) {
+            clearInterval(intervalId);
+            return;
+        }
         postMessage({
             type: 'updateData',
             records: updateSomeItems(UPDATES_PER_MESSAGE),
         });
-        if (thisUpdateId !== latestUpdateId) {
-            clearInterval(intervalId);
-        }
     }
 
     intervalId = setInterval(intervalFunc, MILLISECONDS_BETWEEN_MESSAGES);
+}
+
+function stopUpdates() {
+    clearInterval(intervalId);
 }
 
 // Initialize Row Data
@@ -134,5 +143,7 @@ self.addEventListener('message', function (e) {
     latestUpdateId++;
     if (e.data === 'start') {
         startUpdates(latestUpdateId);
+    } else if (e.data === 'stop') {
+        stopUpdates();
     }
 });
