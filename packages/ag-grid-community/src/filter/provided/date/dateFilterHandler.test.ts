@@ -1,6 +1,10 @@
 import type { ISimpleFilterModelPresetType } from '../iSimpleFilter';
 import { DateFilterHandler, presetDateFilterTypeRelativeFromToMap } from './dateFilterHandler';
 
+type PresetKey = keyof typeof presetDateFilterTypeRelativeFromToMap;
+type RangeFn = (from: Date, to: Date) => [Date, Date];
+type DateFn = (date: Date) => Date;
+
 describe('presetDateFilterTypeRelativeFromToMap', () => {
     beforeAll(() => {
         if (typeof navigator === 'undefined') {
@@ -86,7 +90,9 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
     ])('%s', (fnName, expected) =>
         it('returns correct from/to', () =>
             expect(
-                presetDateFilterTypeRelativeFromToMap[fnName](FROM, TO).map((d: Date) => d.toString())
+                (presetDateFilterTypeRelativeFromToMap[fnName as PresetKey] as RangeFn)(FROM, TO).map((d: Date) =>
+                    d.toString()
+                )
             ).toStrictEqual(expected))
     );
     describe.each([
@@ -105,7 +111,10 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
         ['setPreviousMonth', ANSWERS.previousMonth],
         ['setPreviousQuarter', ANSWERS.previousQuarter],
     ])('%s', (fnName, expected) =>
-        it('works', () => expect(presetDateFilterTypeRelativeFromToMap[fnName](FROM).toString()).toContain(expected))
+        it('works', () =>
+            expect((presetDateFilterTypeRelativeFromToMap[fnName as PresetKey] as DateFn)(FROM).toString()).toContain(
+                expected
+            ))
     );
 });
 
@@ -142,7 +151,7 @@ describe('getFirstDayOfWeek', () => {
         });
 
         const { presetDateFilterTypeRelativeFromToMap: map } = await import('./dateFilterHandler');
-        const result = map.setStartOfWeek(new Date(base));
+        const result = (map.setStartOfWeek as DateFn)(new Date(base));
         expect(result.toUTCString()).toContain('Sun, 05 Apr 2020');
 
         expect(getWeekInfo).toHaveBeenCalledTimes(1);
@@ -169,8 +178,8 @@ describe('getOrRefreshRangeCacheItem', () => {
         const second = handler.getOrRefreshRangeCacheItem(key, rangeFn);
 
         expect(rangeFn).toHaveBeenCalledTimes(1);
-        expect(first[0]).toBe(second[0]);
-        expect(first[1]).toBe(second[1]);
+        expect(first.from).toBe(second.from);
+        expect(first.to).toBe(second.to);
     });
 
     it('refreshes the cache when expired', () => {

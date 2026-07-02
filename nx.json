@@ -107,6 +107,16 @@
       "inputs": ["production", "^production"],
       "cache": true
     },
+    "build:test": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build:types", "build:types"],
+      "inputs": ["default", "buildOutputExcludes", "^production"],
+      "outputs": ["{projectRoot}/dist/test"],
+      "cache": true,
+      "options": {
+        "command": "npx tsc -p {projectRoot}/tsconfig.spec.json --outDir {projectRoot}/dist/test"
+      }
+    },
     "build:package": {
       "dependsOn": ["^build:package"],
       "inputs": ["production", "^production"],

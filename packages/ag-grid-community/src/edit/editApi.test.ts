@@ -74,7 +74,7 @@ describe('Edit API', () => {
         beans = {
             editModelSvc: {
                 getEditMap: vi.fn(() => editMap),
-                setEditMap: vi.fn((em) => {
+                setEditMap: vi.fn((em: EditMap) => {
                     editMap?.clear();
                     em.forEach((value, key) => editMap!.set(key, value));
                 }),

@@ -1,8 +1,10 @@
 import type { Mock } from 'vitest';
 
 import type { BeanCollection } from '../../context/context';
+import type { EditModelService } from '../../edit/editModelService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
+import type { IFormulaService } from '../../interfaces/formulas';
 import { CellCtrl } from './cellCtrl';
 
 describe('CellCtrl', () => {
@@ -18,13 +20,13 @@ describe('CellCtrl', () => {
         (ctrl as unknown as { beans: Partial<BeanCollection> }).beans = {
             formula: {
                 active: true,
-                getFormulaError: vi.fn(() => (formulaError ? { message: 'Formula error' } : null)),
-            },
+                getFormulaError: vi.fn(() => (formulaError ? new Error('Formula error') : null)),
+            } as unknown as IFormulaService,
             editModelSvc: {
                 getCellValidationModel: () => ({
                     hasCellValidation: vi.fn(() => cellValidationError),
                 }),
-            },
+            } as unknown as EditModelService,
         };
 
         return ctrl;

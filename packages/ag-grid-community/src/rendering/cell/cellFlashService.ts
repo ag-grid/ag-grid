@@ -73,7 +73,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
         if (!this.nextAnimationCycle) {
             // then once that is applied, we remove the highlight with animation
             this.beans.frameworkOverrides.wrapIncoming(() => {
-                this.nextAnimationCycle = setTimeout(this.advanceAnimations.bind(this), flashDuration);
+                this.nextAnimationCycle = window.setTimeout(this.advanceAnimations.bind(this), flashDuration);
             });
             this.nextAnimationTime = flashEndTime;
         }
@@ -131,7 +131,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
             this.nextAnimationTime = null;
             this.nextAnimationCycle = null;
         } else if (nextAnimationTime) {
-            this.nextAnimationCycle = setTimeout(this.advanceAnimations.bind(this), nextAnimationTime - time);
+            this.nextAnimationCycle = window.setTimeout(this.advanceAnimations.bind(this), nextAnimationTime - time);
             this.nextAnimationTime = nextAnimationTime;
         }
     }
