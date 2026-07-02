@@ -45,7 +45,7 @@ const NEXT_VERSIONS = nextVersions();
 const CURRENT_VERSION = VERSION.includes('-beta') ? VERSION.replace(/-beta.*/, '') : VERSION;
 
 describe('chartModelMigration', () => {
-    const SNAPSHOT_CASES = {
+    const SNAPSHOT_CASES: Record<string, { detectedVersion?: string }> = {
         '22.1.0': {},
         '22.1.0-bar': {},
         '22.1.0-pie': {},

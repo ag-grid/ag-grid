@@ -2,7 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "emitDecoratorMetadata": false,
-    "noImplicitAny": false,
     "types": ["vitest/globals", "node"]
   },
   "include": [
