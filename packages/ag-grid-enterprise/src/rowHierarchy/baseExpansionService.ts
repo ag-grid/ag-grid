@@ -68,15 +68,18 @@ export abstract class BaseExpansionService extends BeanStub {
     }
 
     public isExpandable(rowNode: RowNode): boolean {
+        return this.checkExpandable(rowNode, rowNode.hasChildren());
+    }
+
+    /** Shared expandability rule; callers pass hasChildren() for "expandable now" or the group flag for "could ever expand". */
+    protected checkExpandable(rowNode: RowNode, hasChildren: boolean): boolean {
         if (rowNode.footer) {
             return false;
         }
-
         if (this.beans.colModel.pivotMode) {
-            // master detail and leaf groups aren't expandable in pivot mode.
-            return rowNode.hasChildren() && !rowNode.leafGroup;
+            return hasChildren && !rowNode.leafGroup;
         }
-        return rowNode.hasChildren() || rowNode.master;
+        return hasChildren || rowNode.master;
     }
 
     private updateExpandedCss(rowCtrl: RowCtrl, rowNode: RowNode): void {
