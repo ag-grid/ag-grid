@@ -20,6 +20,12 @@ const WORDS: { text: string; className: string }[] = [
 
 const CYCLE_MS = 2500;
 
+// The widest word, used by an invisible sizer to reserve a stable width so the heading
+// doesn't reflow (layout shift / CLS) as words cycle. Picked by character length, which
+// is a safe proxy here because 'JavaScript' is clearly the longest of the set; if the
+// word list changes such that width no longer tracks length, revisit this.
+const LONGEST_WORD = WORDS.reduce((longest, w) => (w.text.length > longest.length ? w.text : longest), '');
+
 export const FrameworkTextAnimation: FunctionComponent<Props> = ({ prefix, suffix }) => {
     const [wordIndex, setWordIndex] = useState(0);
 
@@ -36,10 +42,16 @@ export const FrameworkTextAnimation: FunctionComponent<Props> = ({ prefix, suffi
 
     const word = WORDS[wordIndex];
 
-    // One word lives in the DOM at a time so the H1 reads as a single clean heading
-    // for crawlers and screen readers. `key` retriggers the entry animation on swap.
+    // One visible word at a time so the H1 reads as a single clean heading for crawlers
+    // and screen readers. The sizer is an aria-hidden copy of the widest word that stays
+    // in the DOM purely to reserve width — the two are stacked in the same grid cell, so
+    // the container width is fixed to the widest word and never shifts as words cycle.
+    // `key` retriggers the entry animation on swap.
     return (
         <span className={styles.animatedWordsOuter}>
+            <span aria-hidden="true" className={styles.sizer}>
+                {`${prefixText}${LONGEST_WORD}${suffixText}`}
+            </span>
             <span key={wordIndex} className={classnames(styles.animatedWord, word.className)}>
                 {`${prefixText}${word.text}${suffixText}`}
             </span>
