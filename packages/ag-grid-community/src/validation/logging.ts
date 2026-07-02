@@ -228,7 +228,7 @@ function getErrorParts<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>, 
     return getConsoleMessage?.(id, args) ?? [minifiedLog(id, args, defaultMessage)];
 }
 
-function getMsgOrDefault<TId extends ErrorId>(
+function logToConsole<TId extends ErrorId>(
     logger: LogFn,
     id: TId,
     args: GetErrorParams<TId>,
@@ -336,7 +336,7 @@ export function _warn<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    getMsgOrDefault(_warnOnce, args[0], args[1] as any, true);
+    logToConsole(_warnOnce, args[0], args[1] as any, true);
     emitDiagnostic(args[0], args[1] as any, 'warning');
 }
 
@@ -350,7 +350,7 @@ export function _deprecated<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    getMsgOrDefault(_warnOnce, args[0], args[1] as any, true);
+    logToConsole(_warnOnce, args[0], args[1] as any, true);
     emitDiagnostic(args[0], args[1] as any, 'deprecation');
 }
 
@@ -360,7 +360,7 @@ export function _error<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    getMsgOrDefault(_errorOnce, args[0], args[1] as any, false);
+    logToConsole(_errorOnce, args[0], args[1] as any, false);
     emitDiagnostic(args[0], args[1] as any, 'error');
 }
 
@@ -370,7 +370,7 @@ export function _logPreInitErr<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
-    getMsgOrDefault(_errorOnce, id, args as any, false, defaultMessage);
+    logToConsole(_errorOnce, id, args as any, false, defaultMessage);
     emitDiagnostic(id, args as any, 'error', defaultMessage);
 }
 
@@ -380,7 +380,7 @@ export function _logPreInitWarn<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
-    getMsgOrDefault(_warnOnce, id, args as any, true, defaultMessage);
+    logToConsole(_warnOnce, id, args as any, true, defaultMessage);
     emitDiagnostic(id, args as any, 'warning', defaultMessage);
 }
 
