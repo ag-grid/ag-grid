@@ -27,3 +27,9 @@ When grid creation aborts before the grid exists (here a `serverSide` row model 
 Each grid surfaces its own diagnostics on its own overlay, so a diagnostic emitted by a detail grid stays on that detail grid and the master grid is unaffected. Here the detail grid sets an invalid option; the first row auto-expands so the error surfaces on load.
 
 {% gridExampleRunner title="Master Detail" name="master-detail" /%}
+
+## Structured error parameters
+
+Some diagnostics carry array or object parameters, which must survive being encoded into the error-page URL and decoded back. This grid emits two: an unregistered `aggFunc` surfaces error #109 (its suggestions are an array), and an unregistered `cellRenderer` surfaces error #101 (its component maps are objects). Open each error page from the overlay to check both round-trip correctly.
+
+{% gridExampleRunner title="Structured Params" name="structured-params" /%}

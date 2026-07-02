@@ -357,38 +357,17 @@ export const AG_GRID_ERRORS = {
     101: ({
         propertyName,
         componentName,
-        agGridDefaults,
-        jsComps,
+        suggestions,
     }: {
         propertyName: string;
         componentName: string;
-        agGridDefaults: { [key in UserComponentName]?: any };
-        jsComps: { [key: string]: any };
-    }) => {
-        const textOutput: string[] = [];
-        const validComponents = [
-            // Don't include the old names / internals in potential suggestions
-            ...Object.keys(agGridDefaults ?? []).filter(
-                (k) => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)
-            ),
-            ...Object.keys(jsComps ?? []).filter((k) => !!jsComps[k]),
-        ];
-        const suggestions = _fuzzySuggestions({
-            inputValue: componentName,
-            allSuggestions: validComponents,
-            hideIrrelevant: true,
-            maxSuggestions: 4,
-        }).values;
-
-        textOutput.push(
-            `Could not find \`${componentName}\` component. It was configured as "${propertyName}: \`${componentName}\`" but it wasn't found in the list of registered components.\n`
-        );
-        if (suggestions.length > 0) {
-            textOutput.push(`         Did you mean: [${suggestions.slice(0, 3)}]?\n`);
-        }
-        textOutput.push(`If using a custom component check it has been registered correctly.`);
-        return textOutput;
-    },
+        suggestions: string[];
+    }) =>
+        [
+            `Could not find \`${componentName}\` component. It was configured as "${propertyName}: \`${componentName}\`" but it wasn't found in the list of registered components.`,
+            suggestions?.length ? `\n         Did you mean: \`[${suggestions.slice(0, 3)}]\`?\n` : '',
+            `If using a custom component check it has been registered correctly.`,
+        ].join('\n'),
     102: () => "`selectAll`: `filtered` only works when `gridOptions.rowModelType='clientSide'`" as const,
     103: () =>
         'Invalid selection state. When using client-side row model, the state must conform to `string[]`.' as const,
@@ -409,7 +388,7 @@ export const AG_GRID_ERRORS = {
         }).values;
         return [
             `Could not find \`${inputValue}\` aggregate function. It was configured as "aggFunc: \`${inputValue}\`" but it wasn't found in the list of registered aggregations.`,
-            suggestions.length > 0 ? `         Did you mean: [${suggestions.slice(0, 3)}]?` : '',
+            suggestions.length > 0 ? `\n         Did you mean: \`[${suggestions.slice(0, 3)}]\`?\n` : '',
             `If using a custom aggregation function check it has been registered correctly.`,
         ].join('\n');
     },
@@ -599,8 +578,8 @@ export const AG_GRID_ERRORS = {
         `please review all your toolPanel components, it seems like at least one of them doesn't have an id` as const,
     213: () => 'Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.' as const,
     214: ({ key }: { key: string }) => `unable to lookup Tool Panel as invalid key supplied: ${key}` as const,
-    215: ({ key, defaultByKey }: { key: string; defaultByKey: object }) =>
-        `the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(defaultByKey ?? {}).join(',')}` as const,
+    215: ({ key, validKeys }: { key: string; validKeys: string[] }) =>
+        `the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${(validKeys ?? []).join(',')}` as const,
     216: ({ name }: { name: string }) => `Missing component for \`${name}\`` as const,
     217: ({ invalidColIds }: { invalidColIds: any[] }) =>
         ['unable to find grid columns for the supplied colDef(s):', invalidColIds] as const,
@@ -905,7 +884,7 @@ export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId
     const errorBody = msgOrFunc(args as any);
     const errorLink = getErrorLink(errorId, args);
     const errorSuffix = `\nSee ${errorLink}`;
-    return Array.isArray(errorBody) ? errorBody.concat(errorSuffix) : [errorBody, errorSuffix];
+    return Array.isArray(errorBody) ? [...errorBody, errorSuffix] : [errorBody, errorSuffix];
 }
 
 const MISSING_MODULE_REASONS = {

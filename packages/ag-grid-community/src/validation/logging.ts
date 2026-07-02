@@ -256,8 +256,13 @@ function logToConsole<TId extends ErrorId>(
     logger(`${isWarning ? 'warning' : 'error'} #${id}`, ...getErrorParts(id, args, defaultMessage));
 }
 
+function isPrimitive(value: any): boolean {
+    return typeof value !== 'object' && typeof value !== 'function';
+}
+
 /**
- * Stringify object, removing any circular dependencies
+ * Stringify object as JSON, keeping only primitive-valued properties so nested objects/functions (and
+ * thus circular references) are never traversed. The reconstructed object is decoded on the error page.
  */
 function stringifyObject(inputObj: any) {
     if (!inputObj) {
@@ -265,17 +270,34 @@ function stringifyObject(inputObj: any) {
     }
     const object: Record<string, any> = {};
     for (const prop of Object.keys(inputObj)) {
-        if (typeof inputObj[prop] !== 'object' && typeof inputObj[prop] !== 'function') {
+        if (isPrimitive(inputObj[prop])) {
             object[prop] = inputObj[prop];
         }
     }
     return JSON.stringify(object);
 }
 
+/**
+ * Stringify array as JSON, keeping only primitive elements (same circular-safety rationale as
+ * {@link stringifyObject}) so it round-trips as a real array rather than a numeric-keyed object.
+ */
+function stringifyArray(inputArr: any[]) {
+    const array: any[] = [];
+    for (let i = 0, len = inputArr.length; i < len; ++i) {
+        const value = inputArr[i];
+        if (isPrimitive(value)) {
+            array.push(value);
+        }
+    }
+    return JSON.stringify(array);
+}
+
 function stringifyValue(value: any) {
     let output = value;
     if (value instanceof Error) {
         output = value.toString();
+    } else if (Array.isArray(value)) {
+        output = stringifyArray(value);
     } else if (typeof value === 'object') {
         output = stringifyObject(value);
     }

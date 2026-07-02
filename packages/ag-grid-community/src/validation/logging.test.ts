@@ -11,6 +11,7 @@ import {
     _renderBootstrapPanel,
     _runWithActiveGrid,
     _warn,
+    getErrorLink,
 } from './logging';
 import { _applyDevValidationConfig, _enableDiagnosticCapture } from './validationConfig';
 
@@ -347,5 +348,26 @@ describe('bootstrap panel', () => {
         _renderBootstrapPanel(document.createElement('div'));
 
         expect(renderer).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe('getErrorLink serialisation', () => {
+    function queryParams(url: string): URLSearchParams {
+        return new URLSearchParams(url.split('?')[1]);
+    }
+
+    test('serialises an array param as a JSON array so it round-trips on the error page', () => {
+        const url = getErrorLink(109, { inputValue: 'sm', allSuggestions: ['sum', 'avg'] } as any);
+
+        expect(queryParams(url).get('allSuggestions')).toBe('["sum","avg"]');
+    });
+
+    test('keeps only primitive array elements, dropping nested objects/functions', () => {
+        const url = getErrorLink(109, {
+            inputValue: 'x',
+            allSuggestions: ['a', { nested: 1 }, () => undefined, 'b'],
+        } as any);
+
+        expect(queryParams(url).get('allSuggestions')).toBe('["a","b"]');
     });
 });

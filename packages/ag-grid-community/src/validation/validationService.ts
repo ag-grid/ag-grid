@@ -69,12 +69,22 @@ export class ValidationService extends BeanStub implements NamedBean {
                 `AG Grid \`${propertyName}\` component: \`${componentName}\``
             );
         } else {
-            _warn(101, {
-                propertyName,
-                componentName,
-                agGridDefaults,
-                jsComps,
-            });
+            // Resolve the valid component names here (where the maps live) and fuzzy-match them now, so
+            // only the handful of suggestions travels in the error-page URL rather than the full registry.
+            const validComponents = [
+                // Don't include the old names / internals in potential suggestions
+                ...Object.keys(agGridDefaults ?? {}).filter(
+                    (k) => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)
+                ),
+                ...Object.keys(jsComps ?? {}).filter((k) => !!jsComps[k]),
+            ];
+            const suggestions = _fuzzySuggestions({
+                inputValue: componentName,
+                allSuggestions: validComponents,
+                hideIrrelevant: true,
+                maxSuggestions: 4,
+            }).values;
+            _warn(101, { propertyName, componentName, suggestions });
         }
     }
 
