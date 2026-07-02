@@ -37,7 +37,7 @@ describe('buildAgentsMd', () => {
     const md = buildAgentsMd(INPUT);
 
     test('opens with the coding-assistant guide heading', () => {
-        expect(md.startsWith('# AG Grid — guide for AI coding assistants')).toBe(true);
+        expect(md.startsWith('# AG Grid - guide for AI coding assistants')).toBe(true);
     });
 
     test('states the major version and points at the MCP server and llms.txt', () => {
