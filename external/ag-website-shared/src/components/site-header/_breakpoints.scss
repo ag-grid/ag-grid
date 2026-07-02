@@ -45,23 +45,18 @@ $sticky-at: $breakpoint-docs-nav-medium;
 // enough for all of them. Consumed by: ProductDropdown.module.scss (.customMenu)
 $switcher-show: 1220px !default;
 
-// PLACEHOLDER — needs live tuning, see note below.
-// A second, narrower band where the switcher can also show: once nav fits on the
-// header's top line alongside the logo (below $docs-search-inline, .headerInner is
-// still flex-wrapping, and .docsNavBtnSearchContainer is unconditionally width:100% —
-// i.e. it's always already wrapped onto its own line there, regardless of width), the
-// only thing actually gating whether logo+switcher+nav share the top line is whether
-// nav itself fits alongside the logo. $switcher-show-narrow marks that point.
-// Picked without a live browser to verify against: 1024px sits between $nav-collapse
-// (960px, where nav becomes an inline row) and $docs-search-inline (1100px, where the
-// layout changes entirely to grid), and is already an established "tablet" value
-// elsewhere in this design system's shared breakpoints. It has NOT been checked against
-// actual rendered nav width and almost certainly needs a different value per repo —
-// AG Grid, AG Charts, and AG Studio have different nav item counts, so the width at
-// which nav starts fitting alongside the logo will differ between them. Tune per repo
-// via !default override once visually verified.
+// A second, narrower band where the switcher can also show: for the whole range
+// [$nav-collapse, $docs-search-inline), .headerInner is flex-wrapping and
+// .docsNavBtnSearchContainer is unconditionally width:100% — i.e. the docs/search
+// cluster is *always* alone on its own line there, regardless of width, so it never
+// competes with logo/switcher/nav for room on the top line. The only thing gating
+// whether logo+switcher+nav share that top line is whether nav itself fits alongside
+// the logo — which is exactly what $nav-collapse already measures. So this band's
+// lower bound is $nav-collapse itself, not a new number: verified live (2026-07-02)
+// that the switcher can stay visible for the entire flex-mode nav-visible range, not
+// just a narrower slice of it.
 // Consumed by: ProductDropdown.module.scss (.customMenu)
-$switcher-show-narrow: 1024px !default;
+$switcher-show-narrow: $nav-collapse;
 
 // Width/position of the switcher's own popup once opened. Previously borrowed
 // $breakpoint-hero-small (a landing-page token) purely by coincidence of value — a
