@@ -16,7 +16,6 @@ import { SITE_BASE_URL, PUBLIC_GTM_ID, PUBLIC_GTM_AUTH, PUBLIC_GTM_PREVIEW, agGr
 import GoogleTagManager from '@ag-website-shared/components/google-tag-manager/GoogleTagManager.astro';
 import GoogleTagManagerBody from '@ag-website-shared/components/google-tag-manager/GoogleTagManagerBody.astro';
 import AnnouncementBanner from '@components/announcement-banner/AnnouncementBanner.astro';
-import { announcementBannerConfig } from '@components/announcement-banner/announcementBanner.config';
 import JsonLd from '@ag-website-shared/components/structured-data/JsonLd.astro';
 import {
     buildOrganization,
@@ -44,6 +43,10 @@ const { data: metadata } = (await getEntry('metadata', 'metadata')) as Collectio
 const { data: apiNavData } = (await getEntry('apiNav', 'nav')) as CollectionEntry<'apiNav'>;
 
 const { data: footerItems } = (await getEntry('footer', 'footer')) as CollectionEntry<'footer'>;
+const { data: announcementBannerContent } = (await getEntry(
+    'announcementBanner',
+    'announcement-banner'
+)) as CollectionEntry<'announcementBanner'>;
 const apiPaths = getApiPaths(apiNavData);
 
 const isProduction = getIsProduction();
@@ -61,7 +64,7 @@ const {
     hideFooter,
     hidePageFromSearchEngines,
     showMicrosoftMessage,
-    showAnnouncementBanner = announcementBannerConfig.enabled,
+    showAnnouncementBanner = announcementBannerContent.enabled,
     overrideSocialImage,
     pageStructuredData,
 } = Astro.props;
@@ -232,11 +235,11 @@ const structuredData: JsonLdObject[] = includeStructuredData
         {
             !isArchive && showAnnouncementBanner && (
                 <AnnouncementBanner
-                    href={urlWithBaseUrl(announcementBannerConfig.href)}
-                    title={announcementBannerConfig.title}
-                    description={announcementBannerConfig.description}
-                    ctaLabel={announcementBannerConfig.ctaLabel}
-                    external={announcementBannerConfig.external}
+                    href={urlWithBaseUrl(announcementBannerContent.href)}
+                    title={announcementBannerContent.title}
+                    description={announcementBannerContent.description}
+                    ctaLabel={announcementBannerContent.ctaLabel}
+                    external={announcementBannerContent.external}
                 />
             )
         }
