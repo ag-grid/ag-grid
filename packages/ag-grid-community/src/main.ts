@@ -1068,6 +1068,7 @@ export { RowSelectionModule } from './selection/rowSelectionModule';
 export { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 export { TooltipModule } from './tooltip/tooltipModule';
 export { enableDevValidations, ValidationModule } from './validation/validationModule';
+export type { DevValidationOptions } from './validation/validationConfig';
 export { CellApiModule, ValueCacheModule } from './valueService/valueModule';
 
 // Events

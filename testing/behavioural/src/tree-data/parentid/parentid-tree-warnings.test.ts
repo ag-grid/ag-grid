@@ -46,9 +46,11 @@ describe('ag-grid parentId tree data warnings', () => {
             treeDataParentIdField: 'parentId',
         });
 
-        expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: getRowId callback not provided, tree data with parent id cannot be built.'
-        );
+        expect(
+            consoleWarnSpy.mock.calls.some((c) =>
+                c.join(' ').includes('getRowId callback not provided, tree data with parent id cannot be built.')
+            )
+        ).toBe(true);
 
         await new GridRows(api, 'rowData').check('empty');
     });
@@ -74,7 +76,9 @@ describe('ag-grid parentId tree data warnings', () => {
         });
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            "AG Grid: Cannot use both 'treeDataChildrenField' and 'treeDataParentIdField' at the same time."
+            'AG Grid: warning #318',
+            "'treeDataChildrenField' is not supported with 'treeDataParentIdField'.",
+            expect.anything()
         );
     });
 

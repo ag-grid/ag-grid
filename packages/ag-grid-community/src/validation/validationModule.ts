@@ -1,7 +1,19 @@
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { _registerModule } from '../modules/moduleRegistry';
 import { VERSION } from '../version';
+import type { DevValidationOptions } from './validationConfig';
+import { _applyDevValidationConfig } from './validationConfig';
 import { ValidationService } from './validationService';
+
+type ValidationModuleType = {
+    /**
+     * Configures development-time diagnostics, then returns the module to register, e.g.
+     * `ModuleRegistry.registerModules([ValidationModule.with({ throwOn: 'error' })])`. Configuration
+     * is global (see {@link DevValidationOptions}) — passing different options per grid does not scope
+     * them per grid; the last call wins for all grids.
+     */
+    with: (options?: DevValidationOptions) => _ModuleWithoutApi;
+} & _ModuleWithoutApi;
 
 /**
  * Provides extended development-time diagnostics: detailed console warnings for conflicting or
@@ -13,10 +25,14 @@ import { ValidationService } from './validationService';
  *
  * @feature Validation
  */
-export const ValidationModule: _ModuleWithoutApi = {
+export const ValidationModule: ValidationModuleType = {
     moduleName: 'Validation',
     version: VERSION,
     beans: [ValidationService],
+    with: (options) => {
+        _applyDevValidationConfig(options);
+        return ValidationModule;
+    },
 };
 
 /**
@@ -34,14 +50,18 @@ export const ValidationModule: _ModuleWithoutApi = {
  * }
  * ```
  *
- * This is equivalent to registering the `ValidationModule` yourself, i.e.
- * `ModuleRegistry.registerModules([ValidationModule])` (or including it in the `modules` array
- * passed to a framework wrapper).
+ * This is the promoted equivalent of registering the module yourself, i.e.
+ * `ModuleRegistry.registerModules([ValidationModule.with(options)])` (or including
+ * `ValidationModule.with(options)` in the `modules` array passed to a framework wrapper).
  *
  * Call this before any grid is created, and from the same scope (module/bundle) that registers
  * your other modules — registration is global, so it must run before grid initialisation to take
- * effect. Not intended for production builds.
+ * effect. Configuration is global too: calling again (or registering `ValidationModule.with` per
+ * grid) replaces the previous options for all grids, with the last call winning. Not intended for
+ * production builds.
+ *
+ * Pass {@link DevValidationOptions} to configure development-time diagnostics, e.g. `{ throwOn: 'error' }`.
  */
-export function enableDevValidations(): void {
-    _registerModule(ValidationModule, undefined);
+export function enableDevValidations(options?: DevValidationOptions): void {
+    _registerModule(ValidationModule.with(options), undefined);
 }

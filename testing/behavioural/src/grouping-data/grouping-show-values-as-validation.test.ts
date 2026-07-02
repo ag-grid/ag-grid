@@ -45,7 +45,9 @@ describe('showValuesAs row-model validation', () => {
 
         // The accurate row-model message fires (note the value-name → message text in validationService).
         expect(warnSpy).toHaveBeenCalledWith(
-            expect.stringContaining("showValuesAs is not supported with the 'serverSide' row model")
+            expect.stringContaining('warning #309'),
+            expect.stringContaining("showValuesAs is not supported with the 'serverSide' row model"),
+            expect.any(String)
         );
     });
 

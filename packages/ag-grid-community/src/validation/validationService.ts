@@ -11,16 +11,16 @@ import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
 import type { RowNodeEventType } from '../interfaces/iRowNode';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import type { IconName } from '../utils/icon';
-import { _warnOnce } from '../utils/log';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
-import { _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';
+import { _deprecated, _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
-import type { DependentValues, OptionsValidator, RequiredOptions } from './validationTypes';
+import type { DependentValues, OptionsValidator, RequiredOptions, ValidationWarning } from './validationTypes';
+import { _createValidationWarning, _emitValidationWarning } from './validationTypes';
 
 export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validation' as const;
@@ -149,7 +149,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             const deprecation = deprecations[name as keyof T];
             if (deprecation) {
                 const { message, version } = deprecation;
-                _warnOnce(`As of v${version}, ${name} is deprecated. ${message ?? ''}`);
+                _deprecated(306, { version, name, message });
             }
 
             const rules = validations[name as keyof T];
@@ -161,9 +161,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                     // so the check runs again if a real value is provided later
                     continue;
                 }
-                _warnOnce(
-                    `${name} is not supported with the '${rowModel}' row model. It is only valid with: ${rules.supportedRowModels.join(', ')}.`
-                );
+                _warn(309, { name, rowModel, supportedRowModels: rules.supportedRowModels });
                 isValidMap.set(name, false);
                 continue;
             }
@@ -173,12 +171,8 @@ export class ValidationService extends BeanStub implements NamedBean {
                     const suggestions = _fuzzySuggestions({
                         inputValue: name,
                         allSuggestions: allProperties,
-                    }).values;
-                    let message = `invalid ${objectName} property '${name}' did you mean any of these: ${suggestions.slice(0, 8).join(', ')}.`;
-                    if (allValidNames.has('context')) {
-                        message += `\nIf you are trying to annotate ${objectName} with application data, use the '${objectName}.context' property instead.`;
-                    }
-                    _warnOnce(message);
+                    }).values.slice(0, 8);
+                    _warn(307, { objectName, name, suggestions, hasContext: allValidNames.has('context') });
                 }
                 hasInvalidName = true;
                 isValidMap.set(name, false);
@@ -190,11 +184,12 @@ export class ValidationService extends BeanStub implements NamedBean {
 
         if (hasInvalidName && docsUrl && checkPropertyNames) {
             const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
-            _warnOnce(`to see all the valid ${objectName} properties please check: ${url}`);
+            _warn(310, { objectName, url });
         }
 
         // Run value-level validation only for properties marked valid
         const warnings = new Set<string>();
+        const idWarnings: ValidationWarning[] = [];
 
         optionKeys.forEach((key: keyof T) => {
             if (isValidMap.get(key as string) === false) {
@@ -218,32 +213,39 @@ export class ValidationService extends BeanStub implements NamedBean {
             if (expectedType) {
                 const actualType = typeof value;
                 if (actualType !== expectedType) {
-                    warnings.add(
-                        `${String(key)} should be of type '${expectedType}' but received '${actualType}' (${value}).`
+                    idWarnings.push(
+                        _createValidationWarning(314, { key: String(key), expectedType, actualType, value })
                     );
                     return;
                 }
             }
 
             if (dependencies) {
-                const warning = this.checkForRequiredDependencies(key, dependencies, options);
-                if (warning) {
-                    warnings.add(warning);
+                const depWarnings = this.checkForRequiredDependencies(key, dependencies, options);
+                if (depWarnings.length > 0) {
+                    idWarnings.push(...depWarnings);
                     return;
                 }
             }
             if (validate) {
                 const warning = validate(options, this.gridOptions, this.beans);
                 if (warning) {
-                    warnings.add(warning);
+                    if (typeof warning === 'string') {
+                        warnings.add(warning);
+                    } else {
+                        idWarnings.push(warning);
+                    }
                     return;
                 }
             }
         });
         if (warnings.size > 0) {
             for (const warning of warnings) {
-                _warnOnce(warning);
+                _emitValidationWarning(warning);
             }
+        }
+        for (let i = 0, len = idWarnings.length; i < len; ++i) {
+            idWarnings[i].emit();
         }
     }
 
@@ -251,7 +253,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         key: keyof T,
         validator: RequiredOptions<T>,
         options: T
-    ): string | null {
+    ): ValidationWarning[] {
         // eslint-disable-next-line no-restricted-properties
         const optionEntries = Object.entries<DependentValues<T, keyof T>>(validator);
         const failedOptions = optionEntries.filter(([key, value]) => {
@@ -259,25 +261,22 @@ export class ValidationService extends BeanStub implements NamedBean {
             return !value.required.includes(gridOptionValue);
         });
 
-        if (failedOptions.length === 0) {
-            return null;
-        }
-
-        return failedOptions
-            .map(
-                ([failedKey, possibleOptions]: [string, DependentValues<any, any>]) =>
-                    `'${String(key)}' requires '${failedKey}' to be one of [${possibleOptions.required
-                        .map((o: any) => {
-                            if (o === null) {
-                                return 'null';
-                            } else if (o === undefined) {
-                                return 'undefined';
-                            }
-                            return o;
-                        })
-                        .join(', ')}]. ${possibleOptions.reason ?? ''}`
-            )
-            .join('\n           '); // make multiple messages easier to read
+        return failedOptions.map(([failedKey, possibleOptions]: [string, DependentValues<any, any>]) => {
+            const required = possibleOptions.required.map((o: any) => {
+                if (o === null) {
+                    return 'null';
+                } else if (o === undefined) {
+                    return 'undefined';
+                }
+                return String(o);
+            });
+            return _createValidationWarning(315, {
+                key: String(key),
+                failedKey,
+                required,
+                reason: possibleOptions.reason,
+            });
+        });
     }
 }
 
