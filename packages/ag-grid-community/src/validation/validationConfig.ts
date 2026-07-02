@@ -8,19 +8,27 @@ import { _configureDiagnostics } from './logging';
  */
 export interface DevValidationOptions {
     /**
-     * Makes matching diagnostics throw synchronously after logging, so e2e/agent test runs fail
-     * loudly. Inclusive threshold: `'error'` throws on errors only; `'warning'` on warnings and
-     * errors; `'deprecation'` on deprecations, warnings and errors. Default `false`.
+     * Turns matching diagnostics into thrown errors instead of console messages, so problems fail fast
+     * and loudly rather than scrolling past unnoticed. This gives you a tight feedback loop for
+     * automated workflows — e.g. e2e runs or AI-assisted development — where a hard failure is surfaced
+     * and acted on immediately.
      *
-     * A diagnostic raised during grid initialisation throws out of bean wiring, leaving the grid
-     * partially constructed and unusable — intended for test harnesses that recreate the grid on
-     * failure, not for reuse after a throw. Not for production builds.
+     * The threshold is inclusive, from least to most severe:
+     * - `'error'` — throws on errors only
+     * - `'warning'` — throws on warnings and errors
+     * - `'deprecation'` — throws on deprecations, warnings and errors
+     *
+     * Defaults to `false` (never throws).
+     *
+     * Caveat: a diagnostic raised while a grid is still initialising throws part-way through its setup,
+     * leaving that grid partially built and unusable. Use this with harnesses that recreate the grid on
+     * failure — not to carry on with the same instance after a throw — and never in production.
      */
     throwOn?: 'error' | 'warning' | 'deprecation' | false;
     /**
-     * Error ids to ignore, for diagnostics the developer has reviewed and accepted. Suppressed ids are
-     * kept out of the overlay and are never thrown by {@link throwOn}; they are still logged once to the
-     * console. Default none.
+     * Error ids to ignore — for diagnostics you have reviewed and accepted. A suppressed id is kept out
+     * of the overlay and is never thrown by {@link throwOn}, but is still logged to the console once.
+     * Defaults to none.
      */
     suppress?: ErrorId[];
 }

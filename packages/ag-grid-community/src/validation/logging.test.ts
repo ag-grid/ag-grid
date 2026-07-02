@@ -20,15 +20,14 @@ vi.mock('../utils/log', () => ({
 const mockWarnOnce = vi.mocked(_warnOnce);
 const mockErrorOnce = vi.mocked(_errorOnce);
 
-/** Attaches a page-level listener (no grid id) that receives every captured diagnostic. */
+// Attaches a page-level listener (no grid id) that receives every captured diagnostic
 function listenAll(listener: (diagnostic: CapturedDiagnostic) => void): () => void {
     return _addDiagnosticListener(undefined, listener);
 }
 
-/** Resets the module-level diagnostic state between tests (flags off, buffer drained). */
 function resetDiagnostics(): void {
     _configureDiagnostics({ capture: false, throwOn: false, suppress: [] });
-    // Attaching then detaching the only listener drops the buffer (cleared on last detach).
+    // Attaching then detaching the only listener drops the buffer (cleared on last detach)
     listenAll(() => undefined)();
 }
 
@@ -46,7 +45,7 @@ describe('diagnostic capture', () => {
         _warn(11);
 
         expect(listener).not.toHaveBeenCalled();
-        // Logging still happens regardless of capture.
+        // Logging still happens regardless of capture
         expect(mockErrorOnce).toHaveBeenCalledTimes(1);
         expect(mockWarnOnce).toHaveBeenCalledTimes(1);
         off();
@@ -87,13 +86,13 @@ describe('diagnostic capture', () => {
         const off2 = listenAll(() => undefined);
         _error(11);
 
-        // First detach leaves a listener, so the buffer survives for a newcomer.
+        // First detach leaves a listener, so the buffer survives for a newcomer
         off1();
         const afterFirstDetach: CapturedDiagnostic[] = [];
         const off3 = listenAll((e) => afterFirstDetach.push(e));
         expect(afterFirstDetach).toHaveLength(1);
 
-        // Once every listener has gone the buffer is cleared.
+        // Once every listener has gone the buffer is cleared
         off2();
         off3();
         const afterAllDetached: CapturedDiagnostic[] = [];
@@ -183,7 +182,7 @@ describe('grid scoping', () => {
         const off = listenAll((e) => received.push(e));
 
         expect(() => _runWithActiveGrid('grid-a', () => _error(11))).toThrow();
-        // Stack is balanced, so the next untied diagnostic is not attributed to grid-a.
+        // Stack is balanced, so the next untied diagnostic is not attributed to `grid-a`
         _configureDiagnostics({ throwOn: false });
         _warn(11);
 
@@ -245,11 +244,11 @@ describe('suppression', () => {
         const off = listenAll((e) => received.push(e));
 
         _warn(11);
-        _warn(22);
+        _warn(22, { key: 'x' });
 
-        // Suppressed id 11 is not captured; 22 is.
+        // Suppressed id 11 is not captured; 22 is
         expect(received.map((e) => e.id)).toEqual([22]);
-        // The console log fires regardless of suppression.
+        // The console log fires regardless of suppression
         expect(mockWarnOnce).toHaveBeenCalledTimes(2);
         off();
     });
@@ -258,7 +257,7 @@ describe('suppression', () => {
         _configureDiagnostics({ throwOn: 'error', suppress: [11] });
 
         expect(() => _error(11)).not.toThrow();
-        expect(() => _error(22)).toThrow();
+        expect(() => _error(22, { key: 'x' })).toThrow();
     });
 });
 
@@ -267,7 +266,7 @@ describe('dev validation config', () => {
         _applyDevValidationConfig({ throwOn: 'error' });
         expect(() => _error(11)).toThrow();
 
-        // A later registration with no options must not inherit the earlier throwOn.
+        // A later registration with no options must not inherit the earlier `throwOn`
         _applyDevValidationConfig();
         expect(() => _error(11)).not.toThrow();
     });
@@ -280,7 +279,7 @@ describe('dev validation config', () => {
         _warn(11);
         expect(received).toEqual([]);
 
-        // A later registration with no options must not inherit the earlier suppress list.
+        // A later registration with no options must not inherit the earlier suppress list
         _applyDevValidationConfig();
         _warn(11);
         expect(received.map((e) => e.id)).toEqual([11]);

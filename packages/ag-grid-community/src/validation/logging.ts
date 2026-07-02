@@ -56,20 +56,19 @@ interface DiagnosticListenerEntry {
 
 const diagnosticListeners = new Set<DiagnosticListenerEntry>();
 
-// The grid currently executing, so diagnostics it emits are attributed to it. Save/restore rather than
-// a bare set/clear so the rare synchronous nested call (grid code running another grid's code inline)
-// restores its caller instead of clobbering it to undefined.
+// The grid currently executing; diagnostics it emits are attributed to it
 let activeGridId: string | undefined;
 
 /**
- * Runs `fn` with `gridId` marked as the executing grid, so diagnostics it emits are attributed to that
- * grid. The restore is in a finally so a thrown diagnostic (throw mode) still restores the caller.
+ * Runs `fn` with `gridId` marked as the executing grid, so any diagnostics it emits are attributed to
+ * that grid. The restore runs in a `finally`, so a diagnostic that throws (in throw mode) still restores
+ * the previous grid.
  *
- * `fn` MUST be synchronous: the grid is restored when `fn` returns, so any work deferred past an
- * `await` or scheduled callback runs unattributed (its diagnostics fall back to no grid rather than the
- * wrong one). Attribution rides the synchronous call stack, which does not survive async boundaries —
- * which is why a nested grid (e.g. a detail grid, created on a later frame) opens its own scope rather
- * than inheriting its parent's.
+ * `fn` MUST be synchronous. Attribution only lasts until `fn` returns, so any work deferred past an
+ * `await` or a scheduled callback runs unattributed — its diagnostics fall back to "no grid" rather than
+ * being misattributed to whichever grid happens to be active by the time they fire. This is also why a
+ * nested grid (e.g. a detail grid, created on a later frame) gets its own scope instead of inheriting
+ * its parent's.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _runWithActiveGrid<T>(gridId: string, fn: () => T): T {
@@ -90,10 +89,10 @@ function shouldNotify(diagnosticGridId: string | undefined, listenerGridId: stri
 }
 
 /**
- * Diagnostics fired before any listener attached are buffered and replayed to each new listener, so
- * the overlay surfaces them too: a grid's OverlayService listener registers during bean init,
- * after earlier beans (e.g. GridOptionsService) may already have logged. Capped to bound memory on
- * long-lived pages.
+ * Diagnostics fired before any listener attaches are buffered here and replayed to each new listener, so
+ * the overlay still surfaces them. This matters because a grid's OverlayService listener only registers
+ * partway through bean init — earlier beans (e.g. GridOptionsService) may already have logged by then.
+ * The buffer is capped to bound memory on long-lived pages.
  */
 const bufferedDiagnostics: CapturedDiagnostic[] = [];
 const MAX_BUFFERED_DIAGNOSTICS = 100;
@@ -102,14 +101,14 @@ const MAX_BUFFERED_DIAGNOSTICS = 100;
 // checks and no allocation. The ValidationModule turns them on at registration, before any grid exists.
 let captureEnabled = false;
 let throwThreshold: Severity | false = false;
-// Error ids the developer has opted to ignore: kept out of the overlay and exempt from throw mode. The
-// console log still fires — suppression is a knob on the dev-diagnostics surfaces, not the base logger.
+// Error ids the developer has chosen to ignore: kept out of the overlay and never thrown in throw mode.
+// The console log still fires — suppression only affects the dev-diagnostics surfaces, not the base logger.
 let suppressedIds = new Set<ErrorId>();
 
 /**
- * Pushed in by the ValidationModule (which core never imports) to enable diagnostic capture, the throw
- * threshold, and/or the suppressed-id set, mirroring the provideValidationServiceLogger setter idiom to
- * keep the dependency direction one-way.
+ * Called by the ValidationModule to enable diagnostic capture and set the throw threshold and/or the
+ * suppressed ids. Core never imports the ValidationModule, so its config is pushed in through this setter
+ * (the same idiom as `provideValidationServiceLogger`) to keep the dependency direction one-way.
  */
 export function _configureDiagnostics(config: {
     capture?: boolean;
@@ -129,7 +128,7 @@ export function _configureDiagnostics(config: {
 
 /**
  * Whether captured diagnostics are being collected, so hot paths (e.g. API dispatch) can skip the
- * active-grid bookkeeping — and its closure allocation — entirely when no consumer is listening.
+ * active-grid bookkeeping entirely when no consumer is listening.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _isDiagnosticCaptureActive(): boolean {
@@ -138,7 +137,7 @@ export function _isDiagnosticCaptureActive(): boolean {
 
 /**
  * Registers a listener notified of captured diagnostics for `gridId` (plus any not tied to a grid),
- * used by the error overlay; pass `gridId: undefined` for a page-level listener that sees everything.
+ * used by the error overlay. Pass `gridId: undefined` for a page-level listener that sees everything.
  * Diagnostics already buffered before it attached (and matching it) are replayed immediately. Returns
  * a cleanup function that removes the listener and, once the last listener detaches, drops the buffer
  * so a later grid does not inherit stale diagnostics.
@@ -225,8 +224,7 @@ function stringifyValue(value: any) {
     return output;
 }
 /**
- * Correctly formats a string or undefined or null value into a human readable string
- * @param input
+ * Formats a string, or the literal `null`/`undefined`, into a human-readable string.
  */
 export function toStringWithNullUndefined(str: string | null | undefined) {
     return str === undefined ? 'undefined' : str === null ? 'null' : str;

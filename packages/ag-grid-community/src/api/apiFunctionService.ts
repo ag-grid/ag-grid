@@ -75,8 +75,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
                 if (!fn) {
                     return this.apiNotFound(apiName);
                 }
-                // Attribute any diagnostics this call emits to its grid, but only when a diagnostic
-                // consumer is listening — keeps the production dispatch a single boolean check.
+                // Attribute any diagnostics this call emits to its grid when in diagnostic capture mode
                 if (beans && _isDiagnosticCaptureActive()) {
                     return _runWithActiveGrid(beans.context.getId(), () => fn(beans, ...args));
                 }
