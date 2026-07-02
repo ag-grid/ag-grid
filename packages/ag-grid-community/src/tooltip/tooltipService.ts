@@ -96,7 +96,7 @@ const buildCellTooltipDisplayFunctions = (
     const isCellTruncated = getCellTruncationCheck(beans, ctrl);
 
     const shouldDisplayCellTooltip = () => {
-        if (editSvc?.isEditing(ctrl)) {
+        if (editSvc?.isEditing(ctrl, { withOpenEditor: true })) {
             return false;
         }
         if (!isCellTruncated) {

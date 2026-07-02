@@ -1,16 +1,23 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { RenderApiModule, TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    RenderApiModule,
+    TextEditorModule,
+    TooltipModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import type { GridOptions, ICellRendererComp, ICellRendererParams, Module } from 'ag-grid-community';
-import { FormulaModule } from 'ag-grid-enterprise';
+import { BatchEditModule, FormulaModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Tooltips', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [TooltipModule, FormulaModule, RenderApiModule] as Module[],
+        modules: [TooltipModule, FormulaModule, RenderApiModule, TextEditorModule, BatchEditModule] as Module[],
     });
 
     beforeAll(() => setupAgTestIds());
@@ -48,6 +55,34 @@ describe('Tooltips', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 A:"value"
         `);
+    });
+
+    test('AG-17120 keeps the cell tooltip while a batch edit is pending on the cell', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'A', editable: true, tooltipValueGetter: () => 'Base tooltip' }],
+            rowData: [{ A: 'value' }],
+            tooltipShowDelay: 200,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-batch-edit', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+
+        api.startBatchEdit();
+        await asyncSetTimeout(1);
+
+        await userEvent.dblClick(cell);
+        await asyncSetTimeout(1);
+        await userEvent.keyboard('edited{Enter}');
+        await asyncSetTimeout(1);
+
+        // editor is closed, the edit stays pending in the batch
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(hasTooltipText('Base tooltip')).toBe(true);
     });
 
     test('respects tooltipShowDelay and tooltipHideDelay', async () => {
