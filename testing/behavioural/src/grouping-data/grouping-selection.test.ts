@@ -133,6 +133,41 @@ describe('ag-grid grouping selection', () => {
         `);
     });
 
+    // A selected group is destroyed when its last child is removed (removeEmptyGroups); it must drop
+    // out of the selection rather than linger as a destroyed node in getSelectedNodes().
+    test('selected group dropped from selection when emptied (groupSelects: "self")', async () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', country: 'Ireland', athlete: 'John Smith', sport: 'Sailing' },
+            { id: '2', country: 'Italy', athlete: 'Mario Rossi', sport: 'Soccer' },
+            { id: '3', country: 'Italy', athlete: 'Luigi Verdi', sport: 'Football' },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }, { field: 'sport' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            rowSelection: { mode: 'multiRow' },
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        const ireland = api.getRowNode('row-group-country-Ireland')!;
+        api.setNodesSelected({ nodes: [ireland], newValue: true });
+        expect(api.getSelectedNodes().map((n) => n.id)).toEqual(['row-group-country-Ireland']);
+
+        applyTransactionChecked(api, { remove: [{ id: '1' }] });
+
+        expect(ireland.destroyed).toBe(true);
+        expect(api.getSelectedNodes()).toEqual([]);
+        await new GridRows(api, 'after emptying selected Ireland group').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:2 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            · └── LEAF id:3 country:"Italy" athlete:"Luigi Verdi" sport:"Football"
+        `);
+    });
+
     test('group selection checkbox behavior', async () => {
         const rowData = cachedJSONObjects.array([
             { id: '1', country: 'Ireland', athlete: 'John Smith', sport: 'Sailing' },

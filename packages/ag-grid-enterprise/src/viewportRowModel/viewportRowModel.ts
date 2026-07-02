@@ -351,6 +351,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
                 // if we don't have a row, then we create a new one
                 row = this.createBlankRowNode(i);
                 row.setDataAndId(data, rowId ?? i.toString());
+                this.beans.selectionSvc?.updateRowSelectable(row);
             }
             this.rowNodesByIndex[i] = row;
         }

@@ -49,7 +49,6 @@ const doSetRowNodeGroup = (rowNode: RowNode | null | undefined, beans: BeanColle
         rowNode.setAllChildrenCount(null);
     }
 
-    beans.selectionSvc?.updateRowSelectable(rowNode);
     rowNode.dispatchRowEvent('groupChanged');
 };
 

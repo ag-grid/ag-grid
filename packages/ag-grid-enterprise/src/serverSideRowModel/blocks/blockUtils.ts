@@ -215,6 +215,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
             this.setChildCountIntoRowNode(rowNode);
         }
 
+        this.beans.selectionSvc?.updateRowSelectable(rowNode);
+
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
         // getting set, if it's a group node and colDef.autoHeight=true
         if (_exists(data)) {

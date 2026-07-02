@@ -1,14 +1,15 @@
 import type { GridApi } from '../api/gridApi';
+import { _getClientSideRowModel } from '../api/rowModelApiUtils';
+import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import type { NamedBean } from '../context/bean';
 import type { GridOptions, RowSelectionMode, SelectAllMode } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
-import type { RowSelectedEvent, SelectionEventSourceType } from '../events';
+import type { SelectionEventSourceType } from '../events';
 import {
     _getGroupSelection,
     _getGroupSelectsDescendants,
     _getMasterSelects,
     _getRowSelectionMode,
-    _isClientSideRowModel,
     _isMultiRowSelection,
     _isRowSelection,
     _isUsingNewRowSelectionAPI,
@@ -26,7 +27,7 @@ import { BaseSelectionService } from './baseSelectionService';
 export class SelectionService extends BaseSelectionService implements NamedBean, ISelectionService {
     beanName = 'selectionSvc' as const;
 
-    private selectedNodes = new Map<string, RowNode>();
+    private readonly selectedNodes = new Map<string, RowNode>();
     /** Only used to track detail grid selection state when master/detail is enabled */
     private readonly detailSelection = new Map<string, Set<string>>();
 
@@ -34,11 +35,19 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     private groupSelectsFiltered: boolean;
     private mode?: RowSelectionMode;
     private masterSelectsDetail = false;
+    private csrm?: IClientSideRowModel;
+
+    // Selection batch: while depth > 0, `selectionChanged` is coalesced into one pending event (carrying
+    // the first source seen) and flushed when the outermost batch ends.
+    private selectionBatchDepth = 0;
+    private pendingSelectionChanged = false;
+    private pendingSelectionSource: SelectionEventSourceType | null = null;
 
     public override postConstruct(): void {
         super.postConstruct();
         const { gos } = this;
 
+        this.csrm = _getClientSideRowModel(this.beans);
         this.mode = _getRowSelectionMode(gos);
         this.groupSelectsDescendants = _getGroupSelectsDescendants(gos);
         this.groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
@@ -62,8 +71,6 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 this.mode = selectionMode;
             }
         });
-
-        this.addManagedEventListeners({ rowSelected: this.onRowSelected.bind(this) });
     }
 
     public override destroy(): void {
@@ -120,7 +127,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         source,
         keepDescendants = false,
     }: ISetNodesSelectedParams & { keepDescendants?: boolean }): number {
-        if (nodes.length === 0) {
+        const nodesLength = nodes.length;
+        if (nodesLength === 0) {
             return 0;
         }
 
@@ -130,13 +138,14 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return 0;
         }
 
-        if (nodes.length > 1 && !this.isMultiSelect()) {
+        const isMultiSelect = this.isMultiSelect();
+        if (nodesLength > 1 && !isMultiSelect) {
             _warn(130);
             return 0;
         }
 
         let updatedCount = 0;
-        for (let i = 0; i < nodes.length; i++) {
+        for (let i = 0; i < nodesLength; i++) {
             const rowNode = nodes[i];
             // if node is a footer, we don't do selection, just pass the info
             // to the sibling (the parent of the group)
@@ -173,11 +182,11 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         // clear other nodes if not doing multi select
         if (!suppressFinishActions) {
-            if (nodes.length === 1 && source === 'api') {
+            if (nodesLength === 1 && source === 'api') {
                 this.selectionCtx.setRoot(nodes[0].primaryRow);
             }
 
-            const clearOtherNodes = newValue && (clearSelection || !this.isMultiSelect());
+            const clearOtherNodes = newValue && (clearSelection || !isMultiSelect);
             if (clearOtherNodes) {
                 updatedCount += this.clearOtherNodes(nodes[0].primaryRow, keepDescendants, source);
             }
@@ -199,22 +208,20 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     private selectRange(nodesToSelect: readonly RowNode[], value: boolean, source: SelectionEventSourceType): number {
         let updatedCount = 0;
 
-        nodesToSelect.forEach((node) => {
-            const rowNode = node.primaryRow;
+        for (let i = 0, len = nodesToSelect.length; i < len; ++i) {
+            const rowNode = nodesToSelect[i].primaryRow;
 
             if (rowNode.group && this.groupSelectsDescendants) {
-                return;
+                continue;
             }
 
-            const nodeWasSelected = this.selectRowNode(rowNode, value, undefined, source);
-            if (nodeWasSelected) {
+            if (this.selectRowNode(rowNode, value, undefined, source)) {
                 updatedCount++;
             }
-        });
+        }
 
         if (updatedCount > 0) {
             this.updateGroupsFromChildrenSelections(source);
-
             this.dispatchSelectionChanged(source);
         }
 
@@ -223,19 +230,16 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     private selectChildren(node: RowNode, newValue: boolean, source: SelectionEventSourceType, event?: Event): number {
         const children = this.groupSelectsFiltered ? node.childrenAfterAggFilter : node.childrenAfterGroup;
-
-        if (!children) {
-            return 0;
-        }
-
-        return this.setNodesSelected({
-            newValue,
-            clearSelection: false,
-            suppressFinishActions: true,
-            source,
-            event,
-            nodes: children,
-        });
+        return children
+            ? this.setNodesSelected({
+                  newValue,
+                  clearSelection: false,
+                  suppressFinishActions: true,
+                  source,
+                  event,
+                  nodes: children,
+              })
+            : 0;
     }
 
     public getSelectedNodes(): RowNode[] {
@@ -244,7 +248,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     public getSelectedRows(): any[] {
         const selectedRows: any[] = [];
-        this.selectedNodes.forEach((rowNode) => rowNode.data && selectedRows.push(rowNode.data));
+        for (const rowNode of this.selectedNodes.values()) {
+            const data = rowNode.data;
+            if (data) {
+                selectedRows.push(data);
+            }
+        }
         return selectedRows;
     }
 
@@ -253,17 +262,22 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     /**
-     * This method is used by the CSRM to remove groups which are being disposed of,
-     * events do not need fired in this case
+     * Drops a node leaving the model (destroyed, removed or detached) from the selection. Event-free
+     * and allocation-free: only updates the map, so callers can call it inline as they tear nodes down.
+     * The single `selectionChanged` and group roll-up are emitted by `updateSelectableAfterGrouping`.
      */
-    public filterFromSelection(predicate: (node: RowNode) => boolean): void {
-        const newSelectedNodes: Map<string, RowNode> = new Map();
-        this.selectedNodes.forEach((rowNode, key) => {
-            if (predicate(rowNode)) {
-                newSelectedNodes.set(key, rowNode);
-            }
-        });
-        this.selectedNodes = newSelectedNodes;
+    public removeFromSelection(node: RowNode, source: SelectionEventSourceType): void {
+        const id = node.id!;
+        const selectedNodes = this.selectedNodes;
+        // Cheap flag first: a node only registers in the map when selected, so skip the lookup otherwise.
+        // The `=== node` identity check still guards a daemon/stale same-id instance from being evicted.
+        if (node.__selected && selectedNodes.get(id) === node) {
+            selectedNodes.delete(id);
+            this.detailSelection.delete(id);
+            node.__selected = false;
+            this.pendingSelectionChanged = true; // flushed by the pass that follows this refresh phase
+            this.pendingSelectionSource ??= source;
+        }
     }
 
     public override updateGroupsFromChildrenSelections(
@@ -275,13 +289,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         if (!this.groupSelectsDescendants) {
             return false;
         }
-        const { gos, rowModel } = this.beans;
         // also only do it if CSRM (code should never allow this anyway)
-        if (!_isClientSideRowModel(gos, rowModel)) {
+        const csrm = this.csrm;
+        if (!csrm) {
             return false;
         }
 
-        const rootNode = rowModel.rootNode;
+        const rootNode = csrm.rootNode;
         if (!rootNode) {
             return false;
         }
@@ -297,8 +311,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
         };
 
-        _forEachChangedGroupDepthFirst(rootNode, this.beans.rowModel.hierarchical, changedPath, nodeCallback);
-
+        _forEachChangedGroupDepthFirst(rootNode, csrm.hierarchical, changedPath, nodeCallback);
         return selectionChanged;
     }
 
@@ -310,13 +323,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         const groupsToRefresh = new Map<string, RowNode>();
         let updatedCount = 0;
 
-        this.selectedNodes.forEach((otherRowNode) => {
+        for (const otherRowNode of this.selectedNodes.values()) {
             const isNodeToKeep = otherRowNode.id == rowNodeToKeepSelected.id;
             const shouldClearDescendant = keepDescendants ? !isDescendantOf(rowNodeToKeepSelected, otherRowNode) : true;
             if (shouldClearDescendant && !isNodeToKeep) {
-                const rowNode = this.selectedNodes.get(otherRowNode.id!)!;
                 updatedCount += this.setNodesSelected({
-                    nodes: [rowNode],
+                    nodes: [otherRowNode],
                     newValue: false,
                     clearSelection: false,
                     suppressFinishActions: true,
@@ -327,34 +339,53 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                     groupsToRefresh.set(otherRowNode.parent.id!, otherRowNode.parent);
                 }
             }
-        });
+        }
 
-        groupsToRefresh.forEach((group) => {
+        for (const group of groupsToRefresh.values()) {
             const selected = this.calculateSelectedFromChildren(group);
             this.selectRowNode(group, selected === null ? false : selected, undefined, source);
-        });
+        }
 
         return updatedCount;
     }
 
-    private onRowSelected(event: RowSelectedEvent): void {
-        const rowNode = event.node;
-
-        // we do not store the group rows when the groups select children
-        if (this.groupSelectsDescendants && rowNode.group) {
-            return;
+    /** Selection-index chokepoint: mirrors the base's `__selected` flip into `selectedNodes`, so the map is
+     *  a pure derived index. Groups under groupSelectsDescendants are computed, not stored. */
+    public override selectRowNode(
+        rowNode: RowNode,
+        newValue?: boolean,
+        e?: Event,
+        source: SelectionEventSourceType = 'api'
+    ): boolean {
+        const changed = super.selectRowNode(rowNode, newValue, e, source);
+        if (changed && !(this.groupSelectsDescendants && rowNode.group)) {
+            const selectedNodes = this.selectedNodes;
+            if (rowNode.isSelected()) {
+                selectedNodes.set(rowNode.id!, rowNode);
+            } else {
+                selectedNodes.delete(rowNode.id!);
+            }
         }
-
-        if (rowNode.isSelected()) {
-            this.selectedNodes.set(rowNode.id!, rowNode as RowNode);
-        } else {
-            this.selectedNodes.delete(rowNode.id!);
-        }
+        return changed;
     }
 
     public syncInRowNode(rowNode: RowNode, oldNode?: RowNode): void {
-        this.syncInOldRowNode(rowNode, oldNode);
-        this.syncInNewRowNode(rowNode);
+        const selectedNodes = this.selectedNodes;
+
+        // Id changed: this node now holds different data. Swap in the daemon clone (old id + data) so the
+        // old id stays selected and still surfaces in getSelectedNodes(), unrendered, until deselected.
+        const oldId = oldNode?.id;
+        if (oldId != null && oldId !== rowNode.id && selectedNodes.get(oldId) === rowNode) {
+            selectedNodes.set(oldId, oldNode!);
+        }
+
+        // Restore selection for the (re)created node from the persisted entry, rebinding it to this live node.
+        const id = rowNode.id!;
+        const selected = selectedNodes.has(id);
+        rowNode.__selected = selected;
+        if (selected) {
+            selectedNodes.set(id, rowNode);
+        }
     }
 
     public createDaemonNode(rowNode: RowNode): RowNode | undefined {
@@ -373,48 +404,19 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return oldNode;
     }
 
-    // if the id has changed for the node, then this means the rowNode
-    // is getting used for a different data item, which breaks
-    // our selectedNodes, as the node now is mapped by the old id
-    // which is inconsistent. so to keep the old node as selected,
-    // we swap in the clone (with the old id and old data). this means
-    // the oldNode is effectively a daemon we keep a reference to,
-    // so if client calls api.getSelectedNodes(), it gets the daemon
-    // in the result. when the client un-selects, the reference to the
-    // daemon is removed. the daemon, because it's an oldNode, is not
-    // used by the grid for rendering, it's a copy of what the node used
-    // to be like before the id was changed.
-    private syncInOldRowNode(rowNode: RowNode, oldNode?: RowNode): void {
-        if (oldNode && rowNode.id !== oldNode.id) {
-            const oldNodeSelected = this.selectedNodes.get(oldNode.id!) == rowNode;
-            if (oldNodeSelected) {
-                this.selectedNodes.set(oldNode.id!, oldNode);
-            }
-        }
-    }
-
-    private syncInNewRowNode(rowNode: RowNode): void {
-        if (this.selectedNodes.has(rowNode.id!)) {
-            rowNode.__selected = true;
-            this.selectedNodes.set(rowNode.id!, rowNode);
-        } else {
-            rowNode.__selected = false;
-        }
-    }
-
     public reset(source: SelectionEventSourceType): void {
-        const selectionCount = this.getSelectionCount();
-        this.resetNodes();
-        if (selectionCount) {
+        if (this.selectedNodes.size) {
+            this.resetNodes();
             this.dispatchSelectionChanged(source);
         }
     }
 
     private resetNodes(): void {
-        this.selectedNodes.forEach((node) => {
+        const selectedNodes = this.selectedNodes;
+        for (const node of selectedNodes.values()) {
             this.selectRowNode(node, false);
-        });
-        this.selectedNodes.clear();
+        }
+        selectedNodes.clear();
     }
 
     // returns a list of all nodes at 'best cost' - a feature to be used
@@ -423,13 +425,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     // Designed for use with 'children' as the group selection type,
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection(): RowNode[] | undefined {
-        const { gos, rowModel } = this.beans;
-        if (!_isClientSideRowModel(gos, rowModel)) {
+        const csrm = this.csrm;
+        if (!csrm) {
             // Error logged as part of gridApi as that is only call point for this method.
             return;
         }
 
-        const topLevelNodes = rowModel.getTopLevelNodes();
+        const topLevelNodes = csrm.getTopLevelNodes();
         if (topLevelNodes === null) {
             return;
         }
@@ -457,34 +459,38 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     public isEmpty(): boolean {
-        return this.getSelectionCount() === 0;
+        return this.selectedNodes.size === 0;
     }
 
     public deselectAllRowNodes({ source, selectAll }: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
-        const rowModelClientSide = _isClientSideRowModel(this.gos);
+        const csrm = this.csrm;
 
         let updatedNodes = false;
-        const callback = (rowNode: RowNode) => {
-            const updated = this.selectRowNode(rowNode.primaryRow, false, undefined, source);
-            updatedNodes ||= updated;
+        const deselect = (rowNode: RowNode) => {
+            if (this.selectRowNode(rowNode.primaryRow, false, undefined, source)) {
+                updatedNodes = true;
+            }
         };
 
         if (selectAll === 'currentPage' || selectAll === 'filtered') {
-            if (!rowModelClientSide) {
+            if (!csrm) {
                 _error(102);
                 return;
             }
-            this.getNodesToSelect(selectAll).forEach(callback);
+            const nodes = this.getNodesToSelect(selectAll);
+            for (let i = 0, len = nodes.length; i < len; ++i) {
+                deselect(nodes[i]);
+            }
         } else {
-            this.selectedNodes.forEach(callback);
-            // this clears down the map (whereas above only sets the items in map to 'undefined')
-            this.reset(source);
+            // selectRowNode drops each node from the map as it deselects; clear() mops up daemon/stale entries.
+            this.selectedNodes.forEach(deselect);
+            this.selectedNodes.clear();
         }
 
         this.selectionCtx.selectAll = false;
 
         // the above does not clean up the parent rows if they are selected
-        if (rowModelClientSide && this.groupSelectsDescendants) {
+        if (csrm && this.groupSelectsDescendants) {
             const updated = this.updateGroupsFromChildrenSelections(source);
             updatedNodes ||= updated;
         }
@@ -494,16 +500,15 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
     }
 
-    private getSelectedCounts(selectAll?: SelectAllMode): {
-        selectedCount: number;
-        notSelectedCount: number;
-    } {
+    public getSelectAllState(selectAll?: SelectAllMode): boolean | null {
         let selectedCount = 0;
         let notSelectedCount = 0;
 
-        this.getNodesToSelect(selectAll).forEach((node) => {
+        const nodes = this.getNodesToSelect(selectAll);
+        for (let i = 0, len = nodes.length; i < len; ++i) {
+            const node = nodes[i];
             if (this.groupSelectsDescendants && node.group) {
-                return;
+                continue;
             }
 
             if (node.isSelected()) {
@@ -512,18 +517,19 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 // don't count non-selectable nodes!
                 notSelectedCount++;
             }
-        });
+        }
 
-        return { selectedCount, notSelectedCount };
-    }
-
-    public getSelectAllState(selectAll?: SelectAllMode): boolean | null {
-        const { selectedCount, notSelectedCount } = this.getSelectedCounts(selectAll);
         return _calculateSelectAllState(selectedCount, notSelectedCount) ?? null;
     }
 
     public hasNodesToSelect(selectAll: SelectAllMode): boolean {
-        return this.getNodesToSelect(selectAll).filter((node) => node.selectable).length > 0;
+        const nodes = this.getNodesToSelect(selectAll);
+        for (let i = 0, len = nodes.length; i < len; ++i) {
+            if (nodes[i].selectable) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -609,15 +615,15 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         const { source, selectAll } = params;
         let updatedNodes = false;
 
-        this.getNodesToSelect(selectAll).forEach((rowNode) => {
-            const updated = this.selectRowNode(rowNode.primaryRow, true, undefined, source);
-            updatedNodes ||= updated;
-        });
+        const nodes = this.getNodesToSelect(selectAll);
+        for (let i = 0, len = nodes.length; i < len; ++i) {
+            updatedNodes = this.selectRowNode(nodes[i].primaryRow, true, undefined, source) || updatedNodes;
+        }
 
         selectionCtx.selectAll = true;
 
         // the above does not clean up the parent rows if they are selected
-        if (_isClientSideRowModel(gos) && this.groupSelectsDescendants) {
+        if (this.csrm && this.groupSelectsDescendants) {
             const updated = this.updateGroupsFromChildrenSelections(source);
             updatedNodes ||= updated;
         }
@@ -636,101 +642,145 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         source: SelectionEventSourceType,
         clearSelection?: boolean
     ): void {
-        if (!state) {
-            state = [];
-        }
+        state ||= [];
         if (!Array.isArray(state)) {
             _error(103);
             return;
         }
-        const rowIds = new Set(state);
         const nodes: RowNode[] = [];
-        this.beans.rowModel.forEachNode((node) => {
-            if (rowIds.has(node.id!)) {
-                nodes.push(node);
+        const csrm = this.csrm;
+        const rowIds = new Set(state);
+        if (csrm) {
+            // O(ids) id-lookups beat scanning every node when the selected set is smaller than the grid.
+            for (const id of rowIds) {
+                const node = csrm.getRowNode(id);
+                if (node) {
+                    nodes.push(node);
+                }
             }
-        });
+        } else {
+            this.beans.rowModel.forEachNode((node) => {
+                if (rowIds.has(node.id!)) {
+                    nodes.push(node);
+                }
+            });
+        }
         if (clearSelection) {
             this.resetNodes();
         }
-        this.setNodesSelected({
-            newValue: true,
-            nodes,
-            source,
-        });
+        this.setNodesSelected({ newValue: true, nodes, source });
     }
 
     private canSelectAll(): boolean {
-        return _isClientSideRowModel(this.beans.gos);
+        return !!this.csrm;
+    }
+
+    /** Recomputes a node's selectable state. A row that turns non-selectable stays in the grid, so it is
+     *  deselected eventfully (fires rowSelected for the visible row); the batch coalesces these. */
+    private recomputeSelectable(node: RowNode): boolean {
+        const selectable = this.updateRowSelectable(node, true);
+        if (!selectable && node.isSelected() && this.selectRowNode(node, false, undefined, 'selectableChanged')) {
+            this.detailSelection.delete(node.id!);
+            this.dispatchSelectionChanged('selectableChanged');
+        }
+        return selectable;
     }
 
     /**
-     * Updates the selectable state for a node by invoking isRowSelectable callback.
-     * If the node is not selectable, it will be deselected.
-     *
-     * Callers:
-     *  - property isRowSelectable changed
-     *  - after grouping / treeData via `updateSelectableAfterGrouping`
+     * Applies isRowSelectable to the affected nodes and deselects any that are no longer selectable. The
+     * callback runs once, on the fully-formed node. Scope: `changedPath` → changed subtree (hierarchical);
+     * `changedRowNodes` → added/updated rows only (flat); neither → all nodes (e.g. callback changed).
      */
-    protected updateSelectable(changedPath?: ChangedPath) {
+    protected updateSelectable(changedPath?: ChangedPath, changedRowNodes?: ChangedRowNodes) {
         const { gos, rowModel } = this.beans;
 
         if (!_isRowSelection(gos)) {
             return;
         }
 
-        const source: SelectionEventSourceType = 'selectableChanged';
-        const isCSRMGroupSelectsDescendants = _isClientSideRowModel(gos) && this.groupSelectsDescendants;
+        const csrm = this.csrm;
+        const isCSRMGroupSelectsDescendants = !!csrm && this.groupSelectsDescendants;
+        const rootNode = csrm ? csrm.rootNode : null;
+        // Without a delta every leaf may have changed; otherwise only added/updated leaves can have.
+        const adds = changedRowNodes?.adds;
+        const updates = changedRowNodes?.updates;
 
-        const nodesToDeselect: RowNode[] = [];
-
-        // Post-order depth-first: child groups are processed before parents, so selectable state propagates up.
-        if (isCSRMGroupSelectsDescendants) {
-            const rootNode = (rowModel as IClientSideRowModel).rootNode;
-            if (rootNode) {
-                // isRowSelectable changed: update leaf children before checking group.
+        ++this.selectionBatchDepth;
+        try {
+            if (!csrm) {
+                // Non-CSRM models (infinite/viewport) are flat with no delta to narrow to, so recompute
+                // every node — e.g. when the isRowSelectable callback itself changed.
+                rowModel.forEachNode((node) => this.recomputeSelectable(node));
+            } else if (isCSRMGroupSelectsDescendants) {
+                // Post-order: child groups settle before parents, so a group rolls up from already-final children.
                 _forEachChangedGroupDepthFirst(rootNode, rowModel.hierarchical, changedPath, (node) => {
                     let childSelectable = false;
-                    for (const child of node.childrenAfterGroup!) {
-                        childSelectable ||= child.selectable;
-                        if (!child.group && !this.updateRowSelectable(child, true) && child.isSelected()) {
-                            nodesToDeselect.push(child);
-                        }
+                    const children = node.childrenAfterGroup!;
+                    for (let i = 0, len = children.length; i < len; ++i) {
+                        const child = children[i];
+                        // Groups are already rolled up; recompute only changed leaves, keep cached value otherwise.
+                        const selectable =
+                            !child.group && (!adds || adds.has(child) || updates!.has(child))
+                                ? this.recomputeSelectable(child)
+                                : child.selectable;
+                        childSelectable ||= selectable;
                     }
                     this.setRowSelectable(node, childSelectable, true);
                 });
-            }
-        } else {
-            rowModel.forEachNode((node) => {
-                if (!this.updateRowSelectable(node, true) && node.isSelected()) {
-                    nodesToDeselect.push(node);
+            } else if (changedPath || !adds) {
+                // Hierarchical delta, or full recompute when there's no delta: groups/fillers recompute
+                // unconditionally (catches leaf↔group flips), leaves only when their own data changed.
+                _forEachChangedGroupDepthFirst(rootNode, rowModel.hierarchical, changedPath, (node) => {
+                    if (node !== rootNode) {
+                        this.recomputeSelectable(node);
+                    }
+                    const children = node.childrenAfterGroup!;
+                    for (let i = 0, len = children.length; i < len; ++i) {
+                        const child = children[i];
+                        if (!child.group && (!adds || adds.has(child) || updates!.has(child))) {
+                            this.recomputeSelectable(child);
+                        }
+                    }
+                });
+            } else {
+                // Flat delta (changedPath absent): only added/updated rows can have changed selectability.
+                for (const node of adds) {
+                    this.recomputeSelectable(node);
                 }
-            });
-        }
+                for (const node of updates!) {
+                    this.recomputeSelectable(node);
+                }
+            }
 
-        if (nodesToDeselect.length) {
-            this.setNodesSelected({
-                nodes: nodesToDeselect,
-                newValue: false,
-                source,
-            });
-        }
-
-        // if csrm and group selects children, update the groups after deselecting leaf nodes.
-        if (!changedPath && isCSRMGroupSelectsDescendants) {
-            this.updateGroupsFromChildrenSelections?.(source);
+            // if csrm and group selects children, update the groups after deselecting leaf nodes.
+            if (!changedPath && isCSRMGroupSelectsDescendants) {
+                this.updateGroupsFromChildrenSelections?.('selectableChanged');
+            }
+        } finally {
+            this.endSelectionBatch();
         }
     }
 
-    // only called by CSRM
-    public updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void {
-        this.updateSelectable(changedPath);
-
-        if (this.groupSelectsDescendants) {
-            const selectionChanged = this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath);
-            if (selectionChanged) {
+    /** Single post-refresh selectable pass, owned by the CSRM and run for both flat and hierarchical grids. */
+    public updateSelectableAfterGrouping(
+        changedPath: ChangedPath | undefined,
+        changedRowNodes?: ChangedRowNodes
+    ): void {
+        // One batch over the whole pass: removals (already recorded by removeFromSelection), now-unselectable
+        // deselections, and the group roll-up coalesce into a single selectionChanged with the first source.
+        ++this.selectionBatchDepth;
+        try {
+            if (this.isRowSelectable) {
+                this.updateSelectable(changedPath, changedRowNodes);
+            }
+            if (
+                this.groupSelectsDescendants &&
+                this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath)
+            ) {
                 this.dispatchSelectionChanged('rowGroupChanged');
             }
+        } finally {
+            this.endSelectionBatch();
         }
     }
 
@@ -818,12 +868,36 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     private dispatchSelectionChanged(source: SelectionEventSourceType): void {
+        if (this.selectionBatchDepth > 0) {
+            this.pendingSelectionChanged = true;
+            this.pendingSelectionSource ??= source;
+            return;
+        }
+        this.pendingSelectionChanged = false;
+        this.pendingSelectionSource = null;
         this.eventSvc.dispatchEvent({
             type: 'selectionChanged',
             source,
             selectedNodes: this.getSelectedNodes(),
             serverSideState: null,
         });
+    }
+
+    /** Flushes a `selectionChanged` left pending by `removeFromSelection` when its refresh was deferred,
+     *  so an unrelated later batch can't emit it with the wrong source. */
+    public flushPendingSelectionChanged(): void {
+        if (this.selectionBatchDepth === 0 && this.pendingSelectionChanged) {
+            this.dispatchSelectionChanged(this.pendingSelectionSource!);
+        }
+    }
+
+    /** Close the batch; the outermost close flushes the single coalesced `selectionChanged`. Callers MUST
+     *  pair the opening `selectionBatchDepth++` with this in a `finally` so a throwing user callback can't
+     *  leak the depth and freeze future events. */
+    private endSelectionBatch(): void {
+        if (--this.selectionBatchDepth === 0) {
+            this.flushPendingSelectionChanged();
+        }
     }
 }
 
@@ -833,10 +907,10 @@ function _isAllSelected(api: GridApi): boolean | undefined {
 
     api.forEachNode((node) => {
         if (node.isSelected()) {
-            selectedCount++;
+            ++selectedCount;
         } else if (node.selectable) {
             // don't count non-selectable nodes!
-            notSelectedCount++;
+            ++notSelectedCount;
         }
     });
 
@@ -870,7 +944,16 @@ function isDescendantOf(root: RowNode, child: RowNode): boolean {
 }
 
 function recursiveCanNodesBeSelected(root: RowNode): boolean {
-    const rootCanBeSelected = root.isSelected() === false;
-    const childrenCanBeSelected = root.childrenAfterFilter?.some(recursiveCanNodesBeSelected) ?? false;
-    return rootCanBeSelected || childrenCanBeSelected;
+    if (root.isSelected() === false) {
+        return true;
+    }
+    const children = root.childrenAfterFilter;
+    if (children) {
+        for (let i = 0, len = children.length; i < len; ++i) {
+            if (recursiveCanNodesBeSelected(children[i])) {
+                return true;
+            }
+        }
+    }
+    return false;
 }

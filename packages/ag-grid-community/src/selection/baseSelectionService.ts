@@ -47,9 +47,14 @@ export abstract class BaseSelectionService extends BeanStub {
 
         this.isRowSelectable = _getIsRowSelectable(gos);
 
+        const rowModel = beans.rowModel;
         this.addManagedEventListeners({
             cellValueChanged: (e) => this.updateRowSelectable(e.node as RowNode),
-            rowNodeDataChanged: (e) => this.updateRowSelectable(e.node),
+            rowNodeDataChanged: (e) => {
+                if (!rowModel.refreshingData) {
+                    this.updateRowSelectable(e.node);
+                }
+            },
         });
     }
 
@@ -126,10 +131,11 @@ export abstract class BaseSelectionService extends BeanStub {
     }
 
     public updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean {
+        const pinnedSibling = rowNode.pinnedSibling;
         const selectable =
-            rowNode.rowPinned && rowNode.pinnedSibling
+            rowNode.rowPinned && pinnedSibling
                 ? // If row node is pinned sibling, copy selectable status over from sibling row node
-                  rowNode.pinnedSibling.selectable
+                  pinnedSibling.selectable
                 : // otherwise calculate selectable state directly
                   (this.isRowSelectable?.(rowNode) ?? true);
 
@@ -164,12 +170,13 @@ export abstract class BaseSelectionService extends BeanStub {
         let atLeastOneSelected = false;
         let atLeastOneDeSelected = false;
 
-        if (!rowNode.childrenAfterGroup?.length) {
+        const children = rowNode.childrenAfterGroup;
+        if (!children?.length) {
             return rowNode.selectable ? rowNode.__selected : null;
         }
 
-        for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
-            const child = rowNode.childrenAfterGroup[i];
+        for (let i = 0, len = children.length; i < len; i++) {
+            const child = children[i];
 
             let childState = child.isSelected();
             // non-selectable nodes must be calculated from their children, or ignored if no value results.

@@ -1,4 +1,5 @@
 import type { GridApi } from '../api/gridApi';
+import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import type { AgColumn } from '../entities/agColumn';
 import type { GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
@@ -22,7 +23,12 @@ export interface ISelectionService {
     getSelectedRows(): any[];
     getSelectionCount(): number;
     setNodesSelected(params: ISetNodesSelectedParams): number;
-    filterFromSelection?(predicate: (node: RowNode) => boolean): void;
+    /** Drops a node leaving the model from the selection. Event-free; the single `selectionChanged`
+     *  (carrying `source`) is emitted by `updateSelectableAfterGrouping`. CSRM only. */
+    removeFromSelection?(node: RowNode, source: SelectionEventSourceType): void;
+    /** Dispatches the coalesced `selectionChanged` left pending by `removeFromSelection` when the refresh
+     *  that would normally flush it is deferred. CSRM only. */
+    flushPendingSelectionChanged?(): void;
     /** Should only be called if groupSelects = 'descendants' or 'filteredDescendants' in CSRM */
     updateGroupsFromChildrenSelections?(
         source: SelectionEventSourceType,
@@ -45,8 +51,8 @@ export interface ISelectionService {
     createSelectAllFeature(column: AgColumn): SelectAllFeature | undefined;
     onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: () => void): void;
     announceAriaRowSelection(rowNode: RowNode): void;
-    /** Called after grouping / treeData */
-    updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void;
+    /** Single post-refresh selectable pass (flat + hierarchical), invoked by the client-side row model. */
+    updateSelectableAfterGrouping(changedPath: ChangedPath | undefined, changedRowNodes?: ChangedRowNodes): void;
     updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean;
     selectRowNode(rowNode: RowNode, newValue?: boolean, e?: Event, source?: SelectionEventSourceType): boolean;
     createDaemonNode?(rowNode: RowNode): RowNode | undefined;

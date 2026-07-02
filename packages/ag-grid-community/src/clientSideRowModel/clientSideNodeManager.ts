@@ -90,7 +90,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const changedRowNodes = params.changedRowNodes!;
         const { adds, updates } = changedRowNodes;
         const processedNodes = new Set<RowNode<TData>>();
-        const nodesToUnselect: RowNode<TData>[] = [];
         const nestedDataGetter = this.beans.groupStage?.getNestedDataGetter();
         let reorder = gos.get('suppressMaintainUnsortedOrder') ? undefined : false;
         let prevIndex = -1;
@@ -106,9 +105,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 node.updateData(data);
                 if (!adds.has(node)) {
                     updates.add(node);
-                }
-                if (!node.selectable && node.isSelected()) {
-                    nodesToUnselect.push(node);
                 }
             }
         };
@@ -143,9 +139,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         processChildren(rootNode, rowData, 0);
 
         const changed =
-            this.deleteUnusedNodes(processedNodes, changedRowNodes, nodesToUnselect, !!params.animate) ||
-            reorder ||
-            adds.size > 0;
+            this.deleteUnusedNodes(processedNodes, changedRowNodes, !!params.animate) || reorder || adds.size > 0;
 
         if (changed) {
             const allLeafs = (rootNode._leafs ??= []);
@@ -158,24 +152,23 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
         if (changed || treeUpdated || updates.size) {
             params.rowDataUpdated = true;
-            this.deselect(nodesToUnselect);
         }
     }
 
     private deleteUnusedNodes(
         processedNodes: Set<RowNode<TData>>,
         { removals }: ChangedRowNodes<TData>,
-        nodesToUnselect: RowNode<TData>[],
         animate: boolean
     ): boolean {
         const allLeafs = this.rootNode._leafs!;
+        const selectionSvc = this.beans.selectionSvc;
         for (let i = 0, len = allLeafs.length; i < len; i++) {
             const node = allLeafs[i];
             if (!processedNodes.has(node)) {
                 if (this.destroyNode(node, animate)) {
                     removals.push(node);
                     if (node.isSelected()) {
-                        nodesToUnselect.push(node);
+                        selectionSvc?.removeFromSelection?.(node, 'rowDataChanged');
                     }
                 }
             }
@@ -193,12 +186,10 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             _warn(268); // transactions not supported with treeDataChildrenField
             return { remove: [], update: [], add: [] };
         }
-        const nodesToUnselect: RowNode[] = [];
         const getRowIdFunc = _getRowIdCallback(this.gos);
-        const remove = this.executeRemove(getRowIdFunc, rowDataTran, changedRowNodes, nodesToUnselect, animate);
-        const update = this.executeUpdate(getRowIdFunc, rowDataTran, changedRowNodes, nodesToUnselect);
+        const remove = this.executeRemove(getRowIdFunc, rowDataTran, changedRowNodes, animate);
+        const update = this.executeUpdate(getRowIdFunc, rowDataTran, changedRowNodes);
         const add = this.executeAdd(rowDataTran, changedRowNodes);
-        this.deselect(nodesToUnselect);
         return { remove, update, add };
     }
 
@@ -206,7 +197,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         getRowIdFunc: GetRowIdFunc<TData> | undefined,
         { remove }: RowDataTransaction,
         { adds, updates, removals }: ChangedRowNodes<TData>,
-        nodesToUnselect: RowNode<TData>[],
         animate: boolean
     ): RowNode<TData>[] {
         const allLeafs = this.rootNode._leafs;
@@ -215,6 +205,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         if (!removeLen || !allLeafsLen) {
             return [];
         }
+        const selectionSvc = this.beans.selectionSvc;
         let removeCount = 0;
         let filterIdx = allLeafsLen;
         let filterEndIdx = 0;
@@ -236,7 +227,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 continue;
             }
             if (rowNode.isSelected()) {
-                nodesToUnselect.push(rowNode);
+                selectionSvc?.removeFromSelection?.(rowNode, 'rowDataChanged');
             }
             if (!adds.delete(rowNode)) {
                 updates.delete(rowNode);
@@ -253,8 +244,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     private executeUpdate(
         getRowIdFunc: GetRowIdFunc<TData> | undefined,
         { update }: RowDataTransaction,
-        { adds, updates }: ChangedRowNodes<TData>,
-        nodesToUnselect: RowNode<TData>[]
+        { adds, updates }: ChangedRowNodes<TData>
     ): RowNode<TData>[] {
         const updateLen = update?.length;
         if (!updateLen) {
@@ -267,9 +257,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             const rowNode = this.lookupNode(getRowIdFunc, item);
             if (rowNode) {
                 rowNode.updateData(item);
-                if (!rowNode.selectable && rowNode.isSelected()) {
-                    nodesToUnselect.push(rowNode);
-                }
                 updateResult[writeIdx++] = rowNode;
                 if (!adds.has(rowNode)) {
                     updates.add(rowNode);
@@ -313,25 +300,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
     private dispatchRowDataUpdateStarted(data?: TData[] | null): void {
         this.eventSvc.dispatchEvent({ type: 'rowDataUpdateStarted', firstRowData: data?.length ? data[0] : null });
-    }
-
-    private deselect(nodes: RowNode<TData>[]): void {
-        const source = 'rowDataChanged';
-        const selectionSvc = this.beans.selectionSvc;
-        if (nodes.length) {
-            selectionSvc?.setNodesSelected({ newValue: false, nodes, suppressFinishActions: true, source });
-        }
-        // Always update parent group selection from children: a newly inserted child can
-        // change a previously all-selected parent to not fully selected.
-        selectionSvc?.updateGroupsFromChildrenSelections?.(source);
-        if (nodes.length) {
-            this.eventSvc.dispatchEvent({
-                type: 'selectionChanged',
-                source,
-                selectedNodes: selectionSvc?.getSelectedNodes() ?? null,
-                serverSideState: null,
-            });
-        }
     }
 
     private createRowNode(data: TData, level: number, sourceRowIndex?: number): RowNode<TData> {

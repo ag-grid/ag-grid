@@ -414,7 +414,7 @@ describe('Row Selection Grid Options', () => {
                 `);
                 await new GridRows(api, `un-selectable row cannot be selected setup`).check(`
                     ROOT id:<no-id>
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -427,7 +427,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
                 await new GridRows(api, `un-selectable row cannot be selected final state`).check(`
                     ROOT id:<no-id>
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -457,7 +457,7 @@ describe('Row Selection Grid Options', () => {
                 `);
                 await new GridRows(api, `un-selectable row cannot be selected setup`).check(`
                     ROOT id:<no-id>
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -479,7 +479,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
                 await new GridRows(api, `un-selectable row cannot be selected final state`).check(`
                     ROOT id:<no-id>
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -2224,7 +2224,7 @@ describe('Row Selection Grid Options', () => {
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF 🚫 id:4 sport:"golf"
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
@@ -2241,7 +2241,7 @@ describe('Row Selection Grid Options', () => {
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF 🚫 id:4 sport:"golf"
                     ├── LEAF selected id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
@@ -3284,7 +3284,7 @@ describe('Row Selection Grid Options', () => {
                 `);
                 await new GridRows(api, `un-selectable rows are not part of the selection setup`).check(`
                     ROOT id:<no-id>
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -3297,7 +3297,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowElementsById(['1', '2', '3', '4', '5', '6'], api);
                 await new GridRows(api, `un-selectable rows are not part of the selection final state`).check(`
                     ROOT id:<no-id>
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF selected id:1 sport:"rugby"
                     ├── LEAF selected id:2 sport:"tennis"
                     ├── LEAF selected id:3 sport:"cricket"
@@ -3556,14 +3556,14 @@ describe('Row Selection Grid Options', () => {
                     `Cannot select group rows where _isRowSelectable_ returns false and _groupSelects setup`
                 ).check(`
                     ROOT id:<no-id>
-                    ├── GROUP collapsed id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
-                    ├── GROUP collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
-                    ├── GROUP collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
-                    ├── GROUP collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
-                    ├── GROUP collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
-                    ├── GROUP collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
-                    ├── GROUP collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
-                    └── GROUP collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
+                    ├── GROUP 🚫 collapsed id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
+                    ├── GROUP 🚫 collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
+                    └── GROUP 🚫 collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
                 `);
 
                 await actions.expandGroupRowByIndex(0);
@@ -3583,16 +3583,16 @@ describe('Row Selection Grid Options', () => {
                     `Cannot select group rows where _isRowSelectable_ returns false and _groupSelects final state`
                 ).check(`
                     ROOT id:<no-id>
-                    ├─┬ GROUP id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
+                    ├─┬ GROUP 🚫 id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
                     │ ├── GROUP-leafGroup selected collapsed id:'United States:{"sport":"Swimming"}' ag-Grid-AutoColumn:"Swimming" sport:"Swimming"
-                    │ └── GROUP-leafGroup collapsed id:'United States:{"sport":"Gymnastics"}' ag-Grid-AutoColumn:"Gymnastics" sport:"Gymnastics"
-                    ├── GROUP collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
-                    ├── GROUP collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
-                    ├── GROUP collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
-                    ├── GROUP collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
-                    ├── GROUP collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
-                    ├── GROUP collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
-                    └── GROUP collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
+                    │ └── GROUP-leafGroup 🚫 collapsed id:'United States:{"sport":"Gymnastics"}' ag-Grid-AutoColumn:"Gymnastics" sport:"Gymnastics"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
+                    ├── GROUP 🚫 collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
+                    └── GROUP 🚫 collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
                 `);
             });
 
@@ -3621,14 +3621,14 @@ describe('Row Selection Grid Options', () => {
                     `Cannot select group rows where _isRowSelectable_ returns false and _groupSelects setup`
                 ).check(`
                     ROOT id:<no-id>
-                    ├── GROUP collapsed id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
-                    ├── GROUP collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
-                    ├── GROUP collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
-                    ├── GROUP collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
-                    ├── GROUP collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
-                    ├── GROUP collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
-                    ├── GROUP collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
-                    └── GROUP collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
+                    ├── GROUP 🚫 collapsed id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
+                    ├── GROUP 🚫 collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
+                    └── GROUP 🚫 collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
                 `);
 
                 await actions.expandGroupRowByIndex(0);
@@ -3640,16 +3640,16 @@ describe('Row Selection Grid Options', () => {
                     `Cannot select group rows where _isRowSelectable_ returns false and _groupSelects final state`
                 ).check(`
                     ROOT id:<no-id>
-                    ├─┬ GROUP id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
+                    ├─┬ GROUP 🚫 id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
                     │ ├── GROUP-leafGroup collapsed id:'United States:{"sport":"Swimming"}' ag-Grid-AutoColumn:"Swimming" sport:"Swimming"
-                    │ └── GROUP-leafGroup collapsed id:'United States:{"sport":"Gymnastics"}' ag-Grid-AutoColumn:"Gymnastics" sport:"Gymnastics"
-                    ├── GROUP collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
-                    ├── GROUP collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
-                    ├── GROUP collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
-                    ├── GROUP collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
-                    ├── GROUP collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
-                    ├── GROUP collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
-                    └── GROUP collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
+                    │ └── GROUP-leafGroup 🚫 collapsed id:'United States:{"sport":"Gymnastics"}' ag-Grid-AutoColumn:"Gymnastics" sport:"Gymnastics"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
+                    ├── GROUP 🚫 collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
+                    └── GROUP 🚫 collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
                 `);
             });
 
@@ -3674,14 +3674,14 @@ describe('Row Selection Grid Options', () => {
                 await new GridRows(api, `Selection state does not change when _isRowSelectable_ changes setup`).check(
                     `
                         ROOT id:<no-id>
-                        ├── GROUP collapsed id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
-                        ├── GROUP collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
-                        ├── GROUP collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
-                        ├── GROUP collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
-                        ├── GROUP collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
-                        ├── GROUP collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
-                        ├── GROUP collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
-                        └── GROUP collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
+                        ├── GROUP 🚫 collapsed id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
+                        ├── GROUP 🚫 collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
+                        ├── GROUP 🚫 collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
+                        ├── GROUP 🚫 collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
+                        ├── GROUP 🚫 collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
+                        ├── GROUP 🚫 collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
+                        ├── GROUP 🚫 collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
+                        └── GROUP 🚫 collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
                     `
                 );
 
@@ -3716,16 +3716,16 @@ describe('Row Selection Grid Options', () => {
                     `Selection state does not change when _isRowSelectable_ changes after setGridOption rowSelection`
                 ).check(`
                     ROOT id:<no-id>
-                    ├─┬ GROUP indeterminate id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
-                    │ ├── GROUP-leafGroup selected collapsed id:'United States:{"sport":"Swimming"}' ag-Grid-AutoColumn:"Swimming" sport:"Swimming"
+                    ├─┬ GROUP indeterminate 🚫 id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
+                    │ ├── GROUP-leafGroup selected 🚫 collapsed id:'United States:{"sport":"Swimming"}' ag-Grid-AutoColumn:"Swimming" sport:"Swimming"
                     │ └── GROUP-leafGroup collapsed id:'United States:{"sport":"Gymnastics"}' ag-Grid-AutoColumn:"Gymnastics" sport:"Gymnastics"
-                    ├── GROUP collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
-                    ├── GROUP collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
-                    ├── GROUP collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
-                    ├── GROUP collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
-                    ├── GROUP collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
-                    ├── GROUP collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
-                    └── GROUP collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
+                    ├── GROUP 🚫 collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
+                    ├── GROUP 🚫 collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
+                    └── GROUP 🚫 collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
                 `);
 
                 assertSelectedRowElementsById(

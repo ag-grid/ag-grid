@@ -22,6 +22,9 @@ export interface IRowModel {
     /** True when grouping or tree data is active (i.e. there may be group nodes below root). */
     readonly hierarchical: boolean;
 
+    /** True while a CSRM row-data update and its pipeline refresh are in flight; unset on other models. */
+    readonly refreshingData?: boolean;
+
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | undefined;
 
