@@ -1,0 +1,86 @@
+---
+title: "Development Validation"
+description: "Enable the AG Grid ValidationModule for development-time diagnostics: full console messages, an on-grid error overlay, throwing on problems, and suppressing accepted ones."
+---
+
+The `ValidationModule` adds development-time diagnostics that help you catch misconfiguration early. It provides full-text console messages, an overlay that surfaces problems on the grid, and options to fail fast on issues or ignore ones you have accepted.
+
+It is not included in the `AllCommunityModule` / `AllEnterpriseModule` bundles. Opt into it yourself, and only in development builds, to keep production bundles small.
+
+## Enabling Validation
+
+Call `enableDevValidations` once, before any grid is created:
+
+```js
+import { enableDevValidations } from 'ag-grid-community';
+
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+```
+
+This is equivalent to registering the module directly with `ModuleRegistry.registerModules([ValidationModule])`.
+
+Without the module, console messages are reduced to an error code and a documentation link rather than the full text.
+
+## Options
+
+Pass options to `enableDevValidations` to configure:
+
+```js
+import { enableDevValidations } from 'ag-grid-community';
+
+enableDevValidations({
+    overlay: 'all',
+    throwOn: 'warning',
+    suppress: [],
+});
+```
+
+If you register the module explicitly (instead of using `enableDevValidations`), then pass the same options via `ValidationModule.with({ overlay: 'all', throwOn: 'warning', suppress: [] })`
+
+Configuration is global and applies to every grid on the page, with the options from the last call being used.
+
+### Overlay
+
+The overlay lists the diagnostics captured for a grid on top of that grid, with controls to copy them or dismiss the overlay. It is shown by default.
+
+- `'all'` (default) — errors, warnings and deprecations
+- `'errors'` — errors only
+- `false` — no overlay
+
+For example, if a column definition includes a property the grid does not recognise, the resulting warnings surface in the overlay:
+
+{% gridExampleRunner title="Overlay" name="overlay" /%}
+
+Each grid shows only its own diagnostics. A nested grid (such as a detail grid in a [Master / Detail](./master-detail/) grid) surfaces its diagnostics on its own overlay, not the parent's. When grid creation fails before the grid exists (for example, a row model with no row-model module registered) there is no grid to overlay. A standalone panel is shown in its place.
+
+### Throwing on Problems
+
+`throwOn` turns matching diagnostics into thrown errors instead of console messages, so problems fail fast rather than scrolling past unnoticed. This suits automated workflows (for example, end-to-end test runs or AI-assisted development) where a hard failure is surfaced to be acted on immediately.
+
+The threshold is inclusive, from least to most severe:
+
+- `'error'` — throws on errors
+- `'warning'` — throws on warnings and errors
+- `'deprecation'` — throws on deprecations, warnings and errors
+- `false` (default) — never throws
+
+`throwOn` throws synchronously wherever a matching diagnostic is raised. That is not only at start-up, it also happens during API calls, data updates, and rendering. A throw can interrupt an operation part-way and leave the grid in an inconsistent state. Use `throwOn` with harnesses that recreate the grid on failure rather than carrying on with the same instance, and never in production.
+
+### Suppressing Diagnostics
+
+`suppress` takes the error ids to ignore, for diagnostics you have reviewed and accepted. A suppressed id is kept out of the overlay and is never thrown by `throwOn`, but is still logged to the console once. Suppression is by id, so it silences every diagnostic with that number — not one specific occurrence.
+
+For example, a shared wrapper that spreads unrelated props onto your column definitions makes the grid report properties it does not recognise — a per-property warning (`307`) and a summary (`310`). Until the wrapper is fixed, suppress both:
+
+```js
+enableDevValidations({
+    suppress: [
+        307, // "did you mean …" raised for each unrecognised property
+        310, // the "one or more properties are not recognised" summary
+    ],
+});
+```
+
+The id is the number shown in the console message and the overlay, for example `#310`.
