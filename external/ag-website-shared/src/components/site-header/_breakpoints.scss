@@ -26,17 +26,27 @@ $nav-collapse: $breakpoint-site-header-small;
 // Consumed by: SiteHeader.module.scss (.docsNavBtnSearchContainer, .mobileNavButton)
 $docs-search-stack: $breakpoint-site-header-extra-small;
 
-// --- Header goes fully inline (single row) / becomes sticky ---
-// The same shared value governs two related but distinct concerns, kept as separate
-// aliases so they can be decoupled later without archaeology:
-//   - $docs-search-inline: .headerInner drops multi-row wrapping in favour of a single
-//     grid row; the docs/search cluster and switcher take their own place in it.
-//     Consumed by: SiteHeader.module.scss (.headerInner, .docsNavBtnSearchContainer,
-//     .mobileNavButton)
-//   - $sticky-at: .header switches from static to sticky positioning. Stays @media
-//     (viewport), not @container — a container cannot query its own size.
-//     Consumed by: SiteHeader.module.scss (.header)
-$docs-search-inline: $breakpoint-docs-nav-medium;
+// --- Header goes fully inline (single row) ---
+// Owned here (no longer aliased to $breakpoint-docs-nav-medium — see below). Above this
+// width, .headerInner drops multi-row wrapping in favour of a single grid row; the
+// docs/search cluster and switcher take their own place in it.
+// Consumed by: SiteHeader.module.scss (.headerInner, .docsNavBtnSearchContainer,
+// .mobileNavButton)
+//
+// Originally aliased to $breakpoint-docs-nav-medium (1100px), on the theory that "header
+// goes single-row" and "header becomes sticky" were the same concern and could share one
+// number. Deliberately kept as two separate aliases from the start specifically so they
+// could be decoupled later without archaeology (see $sticky-at below) — decoupled here:
+// verified live (2026-07-02) that the single-row layout was getting cramped just before
+// the break, so it now breaks to two lines a bit earlier (1180px) than sticky activation
+// (still 1100px). $sticky-at intentionally still aliases the shared token — only the
+// single-row breakpoint needed to move.
+$docs-search-inline: 1180px !default;
+
+// --- Header becomes sticky ---
+// Alias of $breakpoint-docs-nav-medium — see $docs-search-inline above for why this one
+// stays aliased while that one doesn't. Stays @media (viewport), not @container — a
+// container cannot query its own size. Consumed by: SiteHeader.module.scss (.header)
 $sticky-at: $breakpoint-docs-nav-medium;
 
 // --- Product/site switcher visibility ---
