@@ -15,7 +15,7 @@ import { getApiPaths } from '@utils/apiMenuPath';
 import { SITE_BASE_URL, PUBLIC_GTM_ID, PUBLIC_GTM_AUTH, PUBLIC_GTM_PREVIEW, agGridVersion } from '@constants';
 import GoogleTagManager from '@ag-website-shared/components/google-tag-manager/GoogleTagManager.astro';
 import GoogleTagManagerBody from '@ag-website-shared/components/google-tag-manager/GoogleTagManagerBody.astro';
-import AnnouncementBanner from '@components/announcement-banner/AnnouncementBanner.astro';
+import AnnouncementBanner from '@ag-website-shared/components/announcement-banner/AnnouncementBanner.astro';
 import JsonLd from '@ag-website-shared/components/structured-data/JsonLd.astro';
 import {
     buildOrganization,
@@ -43,6 +43,10 @@ const { data: metadata } = (await getEntry('metadata', 'metadata')) as Collectio
 const { data: apiNavData } = (await getEntry('apiNav', 'nav')) as CollectionEntry<'apiNav'>;
 
 const { data: footerItems } = (await getEntry('footer', 'footer')) as CollectionEntry<'footer'>;
+const { data: announcementBannerContent } = (await getEntry(
+    'announcementBanner',
+    'announcement-banner'
+)) as CollectionEntry<'announcementBanner'>;
 const apiPaths = getApiPaths(apiNavData);
 
 const isProduction = getIsProduction();
@@ -60,7 +64,7 @@ const {
     hideFooter,
     hidePageFromSearchEngines,
     showMicrosoftMessage,
-    showAnnouncementBanner = false,
+    showAnnouncementBanner = announcementBannerContent.enabled,
     overrideSocialImage,
     pageStructuredData,
 } = Astro.props;
@@ -119,13 +123,6 @@ const structuredData: JsonLdObject[] = includeStructuredData
           ...(pageStructuredData ?? []),
       ]
     : [];
-
-const announcementBannerProps = {
-    href: urlWithBaseUrl('/campaigns/beyond-the-prompt/'),
-    title: 'Beyond the Prompt',
-    description: 'A one-day AG Grid & Bryntum conference • 19th May 26',
-    ctaLabel: 'Learn more',
-};
 ---
 
 <!doctype html>
@@ -238,10 +235,11 @@ const announcementBannerProps = {
         {
             !isArchive && showAnnouncementBanner && (
                 <AnnouncementBanner
-                    href={announcementBannerProps.href}
-                    title={announcementBannerProps.title}
-                    description={announcementBannerProps.description}
-                    ctaLabel={announcementBannerProps.ctaLabel}
+                    href={urlWithBaseUrl(announcementBannerContent.href)}
+                    title={announcementBannerContent.title}
+                    description={announcementBannerContent.description}
+                    ctaLabel={announcementBannerContent.ctaLabel}
+                    external={announcementBannerContent.external}
                 />
             )
         }
