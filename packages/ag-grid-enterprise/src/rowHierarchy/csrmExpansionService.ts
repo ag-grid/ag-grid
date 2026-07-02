@@ -69,7 +69,7 @@ export class CsrmExpansionService
         if (rowNode.footer) {
             return !!rowNode._expanded;
         }
-        if (!(rowNode.group || rowNode.master) || (rowNode.leafGroup && this.beans.colModel.pivotMode)) {
+        if (!this.checkExpandable(rowNode, !!rowNode.group)) {
             return false; // Not expandable, so always return false
         }
         let value = rowNode._expanded;
