@@ -148,16 +148,11 @@ function handleWorkerMessage(e: any): void {
     }
 }
 
-// after page is loaded, create the grid
-document.addEventListener('DOMContentLoaded', function () {
-    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(eGridDiv, gridOptions);
-});
+// create the grid, then start streaming updates from the web worker
+const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+gridApi = createGrid(eGridDiv, gridOptions);
 
-// IIFE
-(function () {
-    startWorker();
-})();
+startWorker();
 
 // Worker Commands
 function onStartLoad(): void {

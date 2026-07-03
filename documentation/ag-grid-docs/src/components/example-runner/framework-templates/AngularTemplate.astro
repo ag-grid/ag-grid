@@ -65,6 +65,16 @@ const startFile = pathJoin(appLocation, entryFileName);
     <body>
         <my-app></my-app>
 
+        <script
+            is:inline
+            nonce={nonce}
+            define:vars={{
+                appLocation,
+            }}
+        >
+            window.__basePath = appLocation;
+        </script>
+
         <script is:inline nonce={nonce}>
             document.write('<base href="' + document.location + '" />');
         </script>

@@ -63,6 +63,17 @@ const startFile = pathJoin(appLocation, entryFileName);
     </head>
     <body>
         <div id="root"></div>
+
+        <script
+            is:inline
+            nonce={nonce}
+            define:vars={{
+                appLocation,
+            }}
+        >
+            window.__basePath = appLocation;
+        </script>
+
         {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce} />}
         {
             !ignoreSystemJs && (
