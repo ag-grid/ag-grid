@@ -1,4 +1,13 @@
 @use 'design-system' as *;
+// Both @forward and @use are needed, for two different reasons: @forward re-exports
+// these tokens to files that `@use './breakpoints' as *` (SiteHeader.module.scss,
+// ProductDropdown.module.scss, Search.module.scss) — @use alone wouldn't do that. @use
+// is what makes $nav-collapse etc. resolvable *within this file* — @forward alone
+// doesn't (Sass forwarding re-exports to consumers without adding the names to the
+// forwarding file's own scope), and $switcher-show below needs to reference
+// $nav-collapse directly.
+@forward 'site-header-tokens';
+@use 'site-header-tokens' as *;
 
 // Site header — every threshold that governs header layout or visibility, gathered in
 // one place and named for what it controls (not by size-tier). Two kinds of entries:
@@ -11,16 +20,29 @@
 //      examples) depend on that same shared value. Do not redefine the number here, or
 //      the two will drift apart.
 //
-//   2. Tokens owned exclusively by header-area components — currently the product/site
-//      switcher, whose two thresholds used to be unnamed literals directly in
-//      ProductDropdown.module.scss (one of which accidentally reused an unrelated
-//      landing-page token). Declared here with !default so individual repos can
-//      override them.
+//   2. Tokens owned exclusively by header-area components — the product/site switcher's
+//      two thresholds (previously unnamed literals directly in
+//      ProductDropdown.module.scss, one of which accidentally reused an unrelated
+//      landing-page token), the search box's max-width cap, and — as of this branch —
+//      nav-collapse itself, no longer an alias (see below). Their default values live
+//      in _site-header-tokens.scss (at the src root, resolved as a bare Sass module via
+//      loadPaths) rather than declared inline here — see that file for why (per-repo
+//      overrides need a load-path seam, not `!default`, because each `.module.scss`
+//      compiles independently and never shares a module graph with a repo's "set it
+//      before you @use it" file).
 
 // --- Nav collapse (hamburger <-> full nav) ---
 // Consumed by: SiteHeader.module.scss (.mainNavLarge, .mobileMenuButton, .mainNav,
 // .navItemList, .navItem, .navLink, .buttonItem, .toggleDarkText)
-$nav-collapse: $breakpoint-site-header-small;
+//
+// No longer aliased to $breakpoint-site-header-small. This is the number the original
+// problem was actually about — it needs to differ by product because nav item count
+// differs by product (AG Grid has 9 items including GitHub, AG Studio 8, AG Charts in
+// between) — but as an alias, tuning it per repo would have also moved
+// $breakpoint-site-header-small for every unrelated component that consumes that same
+// shared token (AnnouncementBanner, among others). Decoupled and given its own entry
+// in _site-header-tokens.scss instead, so it can actually be overridden per repo
+// without that side effect. Default value (960px) lives there.
 
 // --- Docs button + search bar stacking ---
 // Consumed by: SiteHeader.module.scss (.docsNavBtnSearchContainer, .mobileNavButton)
@@ -40,8 +62,9 @@ $docs-search-stack: $breakpoint-site-header-extra-small;
 // verified live (2026-07-02) that the single-row layout was getting cramped just before
 // the break, so it now breaks to two lines a bit earlier (1180px) than sticky activation
 // (still 1100px). $sticky-at intentionally still aliases the shared token — only the
-// single-row breakpoint needed to move.
-$docs-search-inline: 1180px !default;
+// single-row breakpoint needed to move. Default value (1180px) lives in
+// _site-header-tokens.scss (at the src root, resolved via loadPaths) — see that file
+// for how per-repo overrides work.
 
 // --- Header becomes sticky ---
 // Alias of $breakpoint-docs-nav-medium — see $docs-search-inline above for why this one
@@ -76,7 +99,8 @@ $switcher-show: $nav-collapse;
 // latent bug risk, since changing hero sizing for a marketing page would have silently
 // moved this too. Decoupled and named here instead.
 // Consumed by: ProductDropdown.module.scss (.customMenu, .customContent)
-$switcher-popup-at: 620px !default;
+// Default value (620px) lives in _site-header-tokens.scss (at the src root, resolved
+// via loadPaths).
 
 // --- Search trigger box max-width ---
 // Owned here. Above this width the search trigger caps at 512px and centres in the
@@ -87,4 +111,5 @@ $switcher-popup-at: 620px !default;
 // it could match, and the 1050px rule was a strict subset of the 1275px rule setting
 // the identical value. Consolidated to the one threshold that actually does anything.
 // Consumed by: Search.module.scss (.headerSearchBox)
-$search-box-cap-at: 1275px !default;
+// Default value (1275px) lives in _site-header-tokens.scss (at the src root, resolved
+// via loadPaths).

@@ -1,0 +1,20 @@
+// Default values for the header tokens that individual repos are expected to tune
+// (see ../components/site-header/_breakpoints.scss for what each one controls).
+//
+// This file is resolved via Sass `loadPaths` as a bare module (`@use
+// 'site-header-tokens'`), not a relative path. Each host repo's build config lists its
+// own override directory *before* this package's own `src/` in `loadPaths` (see
+// astro.config.mjs), so a repo that ships its own `_site-header-tokens.scss` there gets
+// picked up instead of this default — no fork of this file required, and no
+// dependence on Sass module load order across separately-compiled `.module.scss`
+// files (`!default` + "declare before your first @use" does not work across those,
+// since each is its own compilation unit).
+// Hamburger <-> full-nav threshold. Previously aliased to the shared
+// $breakpoint-site-header-small token, which meant it couldn't be tuned per repo
+// without also moving that token's value for the unrelated components that consume it
+// (AnnouncementBanner, among others) — exactly the coupling this file exists to avoid
+// for the other tokens below. Owned here instead, matching the current shared value.
+$nav-collapse: 960px;
+$docs-search-inline: 1180px;
+$switcher-popup-at: 620px;
+$search-box-cap-at: 1275px;
