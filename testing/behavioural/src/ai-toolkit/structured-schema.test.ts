@@ -1180,6 +1180,30 @@ describe('getStructuredSchema - enterprise features', () => {
             expect(api.getColumnState().find((col) => col.colId === 'gold')?.showValuesAs).toBe('percentOfGrandTotal');
         });
 
+        test('grid state clears an existing showValuesAs when the incoming aggregation entry omits it', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'gold', enableValue: true, aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' }],
+                rowData: [{ gold: 1 }],
+            });
+            await new GridColumns(api, `omit clears showValuesAs setup`).checkColumns(`
+                CENTER
+                └── gold "Gold" width:200 aggFunc:sum %:percentOfGrandTotal
+            `);
+            expect(api.getColumnState().find((col) => col.colId === 'gold')?.showValuesAs).toBe('percentOfGrandTotal');
+
+            // The incoming aggregation entry omits showValuesAs entirely (undefined, not null). Replacement
+            // semantics must still clear the active mode: the undefined value falls through to the null
+            // default the aggregation apply path sets, so the stale mode is not preserved.
+            api.setState({
+                aggregation: { aggregationModel: [{ colId: 'gold', aggFunc: 'sum' }] },
+            });
+            await new GridColumns(api, `omit clears showValuesAs result`).checkColumns(`
+                CENTER
+                └── gold "Gold" width:200 aggFunc:sum
+            `);
+            expect(api.getColumnState().find((col) => col.colId === 'gold')?.showValuesAs).toBeNull();
+        });
+
         test('omits aggregation when no columns allow values', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'name' }],
