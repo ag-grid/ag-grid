@@ -351,18 +351,18 @@ describe('htaccessRules', () => {
             return content.slice(start, content.indexOf('</If>', start));
         };
 
-        it("staging: <If> override re-allows 'unsafe-inline' for /ecommerce/ without unsafe-eval", () => {
+        it("staging: <If> override re-allows 'unsafe-inline' and 'unsafe-eval' for /ecommerce/", () => {
             const ifBlock = ecommerceIfBlock(stagingContent);
             expect(ifBlock).toContain('Header always unset Content-Security-Policy\n');
             expect(ifBlock).toContain("'unsafe-inline'");
-            expect(ifBlock).not.toContain("'unsafe-eval'");
+            expect(ifBlock).toContain("'unsafe-eval'");
         });
 
         it('production: emits the /ecommerce/ override in either phase', () => {
             expect(productionContent).toContain(ecommerceIfOpen);
             const ifBlock = ecommerceIfBlock(productionContent);
             expect(ifBlock).toContain("'unsafe-inline'");
-            expect(ifBlock).not.toContain("'unsafe-eval'");
+            expect(ifBlock).toContain("'unsafe-eval'");
         });
 
         if (PRODUCTION_CSP_PHASE === 'report-only') {

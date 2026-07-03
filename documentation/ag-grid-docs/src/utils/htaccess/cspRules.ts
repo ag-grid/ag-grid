@@ -25,9 +25,10 @@ export type CspMode = 'report-only' | 'enforce';
  * - 'campaigns': additionally allows the bryntum.com origin (script/style/font/
  *   connect) for the partnership campaign pages' embedded Gantt demo — without
  *   'unsafe-eval'. See CAMPAIGNS_PATH_CONDITION.
- * - 'ecommerce': additionally allows 'unsafe-inline' in script-src (no 'unsafe-eval')
- *   for the separately-managed checkout SPA served under /ecommerce/, whose index.html
- *   carries inline scripts we do not own — see ECOMMERCE_PATH_CONDITION.
+ * - 'ecommerce': additionally allows 'unsafe-inline' and 'unsafe-eval' in script-src
+ *   for the separately-managed SPA served under /ecommerce/, whose index.html carries
+ *   inline scripts we do not own and part of which evaluates strings as JavaScript
+ *   at runtime — see ECOMMERCE_PATH_CONDITION.
  */
 export type CspScope = 'site' | 'examples' | 'campaigns' | 'ecommerce';
 
@@ -151,16 +152,20 @@ export const EXAMPLES_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(examples|archive)
 // /archive/<version> prefix covers the archived snapshots.
 export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^(?:/archive/[^/]+)?/campaigns/#';
 
-// Apache <If> expression matching the ecommerce checkout SPA (deployed under
-// /ecommerce/ on the production www vhost, but built and owned by a separate team).
-// Its index.html carries inline <script>s — a Google Tag Manager loader and a
-// base-href bootstrap — that the tightened 'site' policy blocks. We do not control
-// that file, so authorising the scripts by hash would silently break the checkout the
-// moment the other team re-generates index.html. Instead this scope re-allows
-// 'unsafe-inline' in script-src for these paths only (no 'unsafe-eval' — the Angular
-// app is AOT-compiled); the strict connect-src/frame-src/form-action that already
-// govern the payment POST, Firebase Auth and Realex HPP iframe stay in force. No JS
-// PATH_REGEXP counterpart because the dev/preview middleware never serves /ecommerce/.
+// Apache <If> expression matching the ecommerce SPA (deployed under /ecommerce/ on
+// the production www vhost, but built and owned by a separate team). Its index.html
+// carries inline <script>s — a Google Tag Manager loader and a base-href bootstrap —
+// that the tightened 'site' policy blocks. We do not control that file, so authorising
+// the scripts by hash would silently break the checkout the moment the other team
+// re-generates index.html. Instead this scope re-allows 'unsafe-inline' in script-src
+// for these paths, plus 'unsafe-eval' because part of the app evaluates strings as
+// JavaScript at runtime (EvalError without it). The SPA uses hash-based routing, so its
+// in-app routes live in the URL fragment, which is never sent to the server — the
+// eval-using routes cannot be path-scoped separately, so the whole /ecommerce/ scope
+// carries 'unsafe-eval'. The strict connect-src/frame-src/form-action
+// that already govern the payment POST, Firebase Auth and Realex HPP iframe stay in
+// force. No JS PATH_REGEXP counterpart because the dev/preview middleware never serves
+// /ecommerce/. AG-17134.
 export const ECOMMERCE_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/ecommerce/#';
 
 // JS equivalents of the *_PATH_CONDITION Apache rules above, for the dev-server
@@ -328,10 +333,13 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
         directives['font-src'].push(BRYNTUM_HOST);
         directives['connect-src'].push(BRYNTUM_HOST);
     } else if (scope === 'ecommerce') {
-        // Separately-managed checkout SPA under /ecommerce/: allow its inline scripts
-        // via 'unsafe-inline' (no 'unsafe-eval', no site hashes — a hash would make the
-        // browser ignore 'unsafe-inline'). See ECOMMERCE_PATH_CONDITION.
-        directives['script-src'].push(UNSAFE_INLINE);
+        // Separately-managed SPA under /ecommerce/: allow its inline scripts via
+        // 'unsafe-inline' (no site hashes — a hash would make the browser ignore
+        // 'unsafe-inline'), plus 'unsafe-eval' because part of the app evaluates
+        // strings as JavaScript at runtime. Hash-based routing means the eval-using
+        // routes never reach the server, so 'unsafe-eval' cannot be path-scoped narrower
+        // than the whole /ecommerce/ scope. See ECOMMERCE_PATH_CONDITION.
+        directives['script-src'].push(UNSAFE_INLINE, UNSAFE_EVAL);
     } else if (env === 'dev') {
         // Dev server (Vite/Astro) injects its own inline scripts for HMR/hydration
         // that the static build does not; keep 'unsafe-inline' locally rather than
@@ -448,18 +456,18 @@ export function getCampaignsCspIfOverride(options: Omit<CspOptions, 'scope'>, mo
 }
 
 /**
- * The `<If>` override re-allowing 'unsafe-inline' in script-src for the separately-
- * managed ecommerce checkout SPA matched by ECOMMERCE_PATH_CONDITION (no extra
- * 'unsafe-eval').
+ * The `<If>` override re-allowing 'unsafe-inline' and 'unsafe-eval' in script-src for
+ * the separately-managed ecommerce SPA matched by ECOMMERCE_PATH_CONDITION.
  */
 export function getEcommerceCspIfOverride(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
     return getCspIfOverride(
         ECOMMERCE_PATH_CONDITION,
         [
-            '# The ecommerce checkout SPA (served under /ecommerce/, built by a separate team) has',
-            '# inline <script>s in its index.html (a GTM loader and a base-href bootstrap) that the',
-            "# site policy blocks. We do not own that file, so re-allow 'unsafe-inline' in script-src",
-            "# for these paths (no 'unsafe-eval' — the app is AOT-compiled).",
+            '# The ecommerce SPA (served under /ecommerce/, built by a separate team) has inline',
+            '# <script>s in its index.html (a GTM loader and a base-href bootstrap) that the site',
+            "# policy blocks. We do not own that file, so re-allow 'unsafe-inline' in script-src for",
+            "# these paths, plus 'unsafe-eval' because part of the app eval-compiles at runtime",
+            '# (hash routing keeps it under this same /ecommerce/ scope).',
         ],
         { ...options, scope: 'ecommerce' },
         mode

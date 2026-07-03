@@ -93,10 +93,11 @@ describe('cspRules', () => {
     });
 
     describe('ecommerce scope (AG-17134: separately-managed checkout SPA)', () => {
-        it("re-allows 'unsafe-inline' in script-src without 'unsafe-eval' or hashes", () => {
+        it("re-allows 'unsafe-inline' and 'unsafe-eval' in script-src without hashes", () => {
             const scriptSrc = getCspDirectives({ env: 'production', scope: 'ecommerce' })['script-src'];
             expect(scriptSrc).toContain("'unsafe-inline'");
-            expect(scriptSrc).not.toContain("'unsafe-eval'");
+            // Part of the app eval-compiles at runtime; hash routing keeps it in this scope.
+            expect(scriptSrc).toContain("'unsafe-eval'");
             // A hash would make the browser ignore 'unsafe-inline', re-blocking the scripts.
             expect(hasHash(scriptSrc)).toBe(false);
         });
@@ -240,13 +241,13 @@ describe('cspRules', () => {
             expect(ifBlock).not.toContain("'unsafe-eval'");
         });
 
-        it("emits an /ecommerce/ <If> override allowing 'unsafe-inline' without unsafe-eval", () => {
+        it("emits an /ecommerce/ <If> override allowing 'unsafe-inline' and 'unsafe-eval'", () => {
             const block = getScopedCspHtaccessBlock({ env: 'production' }, 'enforce');
             const start = block.indexOf(`<If "${ECOMMERCE_PATH_CONDITION}">`);
             expect(start).toBeGreaterThan(-1);
             const ifBlock = block.slice(start, block.indexOf('</If>', start));
             expect(ifBlock).toContain("'unsafe-inline'");
-            expect(ifBlock).not.toContain("'unsafe-eval'");
+            expect(ifBlock).toContain("'unsafe-eval'");
         });
     });
 });
