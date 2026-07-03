@@ -26,7 +26,7 @@ describe('ServerSideExpansionService', () => {
                 forEachNode: (cb: (node: RowNode) => void) => cb(rowNode),
             },
             rowModel: {
-                forEachNode: (cb) => cb(rowNode),
+                forEachNode: (cb: (node: RowNode) => void) => cb(rowNode),
             },
         };
         expansionService = new ServerSideExpansionService();
