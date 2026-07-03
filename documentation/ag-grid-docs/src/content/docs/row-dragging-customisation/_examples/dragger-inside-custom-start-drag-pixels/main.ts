@@ -13,11 +13,16 @@ import {
     NumberFilterModule,
     RowDragModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { CustomCellRenderer } from './customCellRenderer_typescript';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     TextFilterModule,
@@ -25,7 +30,6 @@ ModuleRegistry.registerModules([
     RowDragModule,
     CellStyleModule,
     ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

@@ -20,10 +20,15 @@ import {
     NumberFilterModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { IntegratedChartsModule, RowGroupingModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ColumnApiModule,
@@ -37,7 +42,6 @@ ModuleRegistry.registerModules([
     RowGroupingModule,
     HighlightChangesModule,
     NumberFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 declare let __basePath: string;
@@ -144,16 +148,11 @@ function handleWorkerMessage(e: any): void {
     }
 }
 
-// after page is loaded, create the grid
-document.addEventListener('DOMContentLoaded', function () {
-    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(eGridDiv, gridOptions);
-});
+// create the grid, then start streaming updates from the web worker
+const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+gridApi = createGrid(eGridDiv, gridOptions);
 
-// IIFE
-(function () {
-    startWorker();
-})();
+startWorker();
 
 // Worker Commands
 function onStartLoad(): void {

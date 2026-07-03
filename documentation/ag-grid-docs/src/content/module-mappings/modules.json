@@ -65,6 +65,11 @@
                     "path": "row-pagination"
                 },
                 {
+                    "moduleName": "PaginationPageNumbersModule",
+                    "name": "Page Number Navigation",
+                    "path": "row-pagination/#page-number-navigation"
+                },
+                {
                     "moduleName": "RowDragModule",
                     "name": "Row Dragging",
                     "path": "row-dragging"

@@ -4,8 +4,8 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -17,6 +17,11 @@ import {
 
 import { MenuItem } from './menuItem_typescript';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
@@ -26,7 +31,6 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     CellSelectionModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

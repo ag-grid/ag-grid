@@ -3,12 +3,17 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     RowSelectionModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     RowSelectionModule,
@@ -17,7 +22,6 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     TreeDataModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;

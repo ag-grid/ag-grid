@@ -20,9 +20,14 @@ import {
     RowApiModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     RowApiModule,
@@ -31,7 +36,6 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: (ColDef | ColGroupDef)[] = [

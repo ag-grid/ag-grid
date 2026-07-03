@@ -32,7 +32,6 @@ import type {
     _SetEditingCellsParams,
 } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { IRowStyleFeature } from '../interfaces/iRowStyleFeature';
 import type { CellValueChange } from '../interfaces/iUndoRedo';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
@@ -43,7 +42,7 @@ import type { EditModelService } from './editModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { isCellEditable, isFullRowCellEditable, shouldStartEditing } from './strategy/strategyUtils';
 import { _applyCellEditStyles } from './styles/cellEditStyleFeature';
-import { RowEditStyleFeature } from './styles/rowEditStyleFeature';
+import { _applyRowEditStyles } from './styles/rowEditStyleFeature';
 import { _addStopEditingWhenGridLosesFocus, _getCellCtrl } from './utils/controllers';
 import {
     UNEDITED,
@@ -962,7 +961,7 @@ export class EditService extends BeanStub implements NamedBean {
             cellCtrl.refreshCell(FORCE_REFRESH);
             // refresh the styles directly rather than through refreshRow as that causes the group cell renderer to
             // be recreated and would discard future mouse click events
-            cellCtrl.rowCtrl.rowEditStyleFeature?.applyRowStyles();
+            this.applyRowEditStyles(cellCtrl.rowCtrl);
         }
 
         let invalid = false;
@@ -1504,8 +1503,8 @@ export class EditService extends BeanStub implements NamedBean {
         _applyCellEditStyles(this.beans, cellCtrl);
     }
 
-    public createRowStyleFeature(rowCtrl: RowCtrl): IRowStyleFeature {
-        return new RowEditStyleFeature(rowCtrl, this.beans);
+    public applyRowEditStyles(rowCtrl: RowCtrl): void {
+        _applyRowEditStyles(this.beans, rowCtrl);
     }
 
     public setEditingCells(cells: EditingCellPosition[], params?: _SetEditingCellsParams): void {

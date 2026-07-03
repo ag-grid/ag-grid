@@ -6,11 +6,16 @@ import {
     NumberFilterModule,
     RowDragModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { getData } from './data';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     RowDragModule,
@@ -18,7 +23,6 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     ClientSideRowModelModule,
     ColumnApiModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let immutableStore: any[] = getData();

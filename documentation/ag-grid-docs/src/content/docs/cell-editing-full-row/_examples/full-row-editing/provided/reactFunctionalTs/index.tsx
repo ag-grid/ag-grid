@@ -7,13 +7,18 @@ import {
     CustomEditorModule,
     SelectEditorModule,
     TextEditorModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import NumericCellEditor from './numericCellEditor';
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     SelectEditorModule,
@@ -23,7 +28,6 @@ const modules = [
     ContextMenuModule,
     CustomEditorModule,
     TextEditorModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 function getRowData(): any[] {

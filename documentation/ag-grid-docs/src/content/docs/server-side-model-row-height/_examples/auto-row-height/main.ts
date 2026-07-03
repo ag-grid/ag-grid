@@ -1,16 +1,16 @@
 import type { ColDef, GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
-import { ModuleRegistry, RowAutoHeightModule, ValidationModule, createGrid } from 'ag-grid-community';
+import { ModuleRegistry, RowAutoHeightModule, createGrid, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 import { FakeServer } from './fakeServer';
 
-ModuleRegistry.registerModules([
-    RowAutoHeightModule,
-    RowGroupingModule,
-    ServerSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([RowAutoHeightModule, RowGroupingModule, ServerSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
     {

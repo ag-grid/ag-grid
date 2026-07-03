@@ -9,6 +9,7 @@ import {
     getGitDiffLinks,
     getGitHashFromTest,
     getHeader,
+    getMemoryStats,
     getStats,
     parseCtrfReport,
 } from './_utils.mjs';
@@ -40,8 +41,9 @@ const header = getHeader(
     section
 );
 const statsTemplate = getStats(parsedReport, context);
+const memoryStats = getMemoryStats(parsedReport, context, section);
 const diffLinks = getGitDiffLinks(repoUrl, currentCommitSha, previousCommitSha, context, section, mdLink, parsedReport);
-const content = [header, statsTemplate, diffLinks].join('\n').trim();
+const content = [header, statsTemplate, memoryStats, diffLinks].filter(Boolean).join('\n').trim();
 
 fs.writeFileSync(commentFileName, content + '\n');
 

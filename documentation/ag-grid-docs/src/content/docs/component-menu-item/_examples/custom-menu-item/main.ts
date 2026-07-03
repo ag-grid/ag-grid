@@ -5,7 +5,7 @@ import type {
     GridApi,
     GridOptions,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
     CellSelectionModule,
     ClipboardModule,
@@ -16,6 +16,11 @@ import {
 
 import { MenuItem } from './menuItem_typescript';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ClipboardModule,
@@ -23,7 +28,6 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     CellSelectionModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

@@ -1,7 +1,7 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { BeanCollection } from '../context/context';
 import type { RowModelType } from '../interfaces/iRowModel';
-import { _errorOnce, _warnOnce } from '../utils/log';
+import { _deprecated, _error } from './logging';
 
 const clientSide = 'clientSide';
 const serverSide = 'serverSide';
@@ -98,8 +98,7 @@ export function validateApiFunction<TFunctionName extends ApiFunctionName>(
         const { version, new: replacement, old, message } = deprecation;
         const apiMethod = old ?? functionName;
         return (...args: any[]) => {
-            const replacementMessage = replacement ? `Please use ${replacement} instead. ` : '';
-            _warnOnce(`Since ${version} api.${apiMethod} is deprecated. ${replacementMessage}${message ?? ''}`);
+            _deprecated(308, { version, apiMethod, replacement, message });
             return apiFunction.apply(apiFunction, args);
         };
     }
@@ -108,9 +107,7 @@ export function validateApiFunction<TFunctionName extends ApiFunctionName>(
         return (...args: any[]) => {
             const rowModel = beans.rowModel.getType();
             if (!rowModels.includes(rowModel)) {
-                _errorOnce(
-                    `api.${functionName} can only be called when gridOptions.rowModelType is ${rowModels.join(' or ')}`
-                );
+                _error(311, { functionName, rowModels });
                 return undefined as any;
             }
             return apiFunction.apply(apiFunction, args);

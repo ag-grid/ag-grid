@@ -13,8 +13,8 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     RowDragModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
@@ -31,13 +31,12 @@ interface MyGridContext {
 
 let gridApi: GridApi<IFile>;
 
-ModuleRegistry.registerModules([
-    RowDragModule,
-    ClientSideRowModelApiModule,
-    ClientSideRowModelModule,
-    TreeDataModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([RowDragModule, ClientSideRowModelApiModule, ClientSideRowModelModule, TreeDataModule]);
 
 /** Called when row dragging start */
 function onRowDragEnter(event: RowDragEnterEvent<IFile, MyGridContext>): void {

@@ -1,27 +1,47 @@
 @use 'design-system' as *;
 
 .animatedWordsOuter {
-    --word-height: 1.3em;
-    --word-index: 0;
+    --word-height: 1.2em;
 
-    position: relative;
-    display: inline-flex;
-    align-items: flex-end;
+    display: inline-grid;
     height: var(--word-height);
     margin-bottom: -0.2em;
     text-align: left;
     overflow: hidden;
+    vertical-align: bottom;
+
+    // Stack the sizer and the visible word in the same cell: the grid track sizes to the
+    // widest child (the sizer), so the container width stays fixed as words cycle.
+    > * {
+        grid-area: 1 / 1;
+        align-self: end;
+    }
 }
 
-.animatedWordsInner {
-    display: inline-flex;
-    flex-direction: column;
-    transform: translateY(calc(var(--word-height) * var(--word-index) * 1.5));
-    transition: transform 0.25s cubic-bezier(0.6, 0.3, 0.5, 1.4);
+// Reserves the width of the widest word without being shown or announced (aria-hidden
+// in the markup). Kept in the layout so its width defines the container.
+.sizer {
+    visibility: hidden;
+}
 
-    > span {
-        height: calc(var(--word-height) * 1.5);
-        padding-top: calc(var(--word-height) * 0.5);
+.animatedWord {
+    display: inline-block;
+    animation: framework-word-in 0.25s cubic-bezier(0.6, 0.3, 0.5, 1.4);
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+}
+
+@keyframes framework-word-in {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }
 

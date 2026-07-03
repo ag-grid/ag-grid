@@ -1,25 +1,22 @@
-import type { BenchOptions } from 'vitest';
 import { bench, suite } from 'vitest';
 
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { SimplePRNG, TestGridsManager } from '../test-utils';
+import { BenchGridsManager, SimplePRNG, benchDefaults } from './bench-utils';
 
 suite('treeData with getDataPath', () => {
-    const gridsManager = new TestGridsManager({
-        benchmark: true,
+    const gridsManager = new BenchGridsManager({
         modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, TreeDataModule],
     });
-
     let api!: GridApi<TreeDataPathData>;
 
     const rowData = buildRandomTreeDataPath(15000);
     const rowData1 = buildUpdatedRowData(rowData);
 
-    const benchOptions: BenchOptions = {
-        throws: true,
+    const options = benchDefaults({
+        noiseFactor: 4,
         setup: () => {
             api ??= gridsManager.createGrid('G', {
                 columnDefs: [],
@@ -31,11 +28,11 @@ suite('treeData with getDataPath', () => {
                 getRowId: ({ data }: { data: { id: string } }) => data.id,
             });
         },
-        teardown: () => {
-            gridsManager.reset();
+        teardown: async () => {
             api = undefined!;
+            await gridsManager.reset();
         },
-    };
+    }); // noisy suite (~4% rme @1×)
 
     bench(
         'build from scratch ' + rowData.length + ' rows',
@@ -43,7 +40,7 @@ suite('treeData with getDataPath', () => {
             api.setGridOption('rowData', []);
             api.setGridOption('rowData', rowData);
         },
-        benchOptions
+        options
     );
 
     let updateForward = true;
@@ -53,7 +50,7 @@ suite('treeData with getDataPath', () => {
             api.setGridOption('rowData', updateForward ? rowData1 : rowData);
             updateForward = !updateForward;
         },
-        benchOptions
+        options
     );
 });
 

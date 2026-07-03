@@ -4,18 +4,18 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GridReadyEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-const modules = [
-    FindModule,
-    ToolbarModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [FindModule, ToolbarModule, ClientSideRowModelModule];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);

@@ -2,19 +2,19 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GridReadyEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextFilterModule, enableDevValidations } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
 import './styles.css';
 
-const modules = [
-    TextFilterModule,
-    ClientSideRowModelModule,
-    TreeDataModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [TextFilterModule, ClientSideRowModelModule, TreeDataModule];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);

@@ -3,7 +3,7 @@
         "title": "AG Grid Enterprise: Advanced Data Grid Features for Professional Applications",
         "description": "Unlock AG Grid's full potential with Enterprise features including AI Toolkit, Server-Side Row Model, Row Grouping, Master/Detail, and Integrated Charts. Start your free trial today."
     },
-    "framework": "reactFunctionalTs",
+    "internalFramework": "reactFunctionalTs",
     "packageName": "ag-grid-enterprise",
     "docsPath": "data-grid",
     "analyticsPrefix": "enterprise",
@@ -16,10 +16,6 @@
             "heading": "Enterprise Grade Data Grid for Web Apps",
             "subHeading": "Fast, secure and accessible, AG Grid Enterprise handles millions of rows and comes with advanced features, including an AI Toolkit, Integrated Charts, Grouping, and Pivoting.",
             "showVersionBadge": true,
-            "primaryCta": {
-                "text": "Start Free Trial",
-                "useTrialButton": true
-            },
             "secondaryCta": {
                 "text": "View All Demos",
                 "url": "./example"

@@ -1,6 +1,6 @@
 import type { RowNode } from 'ag-grid-community';
 
-import { optionalEscapeString } from '../../grid-test-utils';
+import { optionalEscapeString } from '../../string-utils';
 import type { GridRows } from '../gridRows';
 
 /** Resolves the best available children array for a row node. */
@@ -67,6 +67,10 @@ export function getRowStateFlags(gridRows: GridRows, row: RowNode): string {
         result += ' selected';
     } else if (selectionState === undefined) {
         result += ' indeterminate';
+    }
+    // detail rows are structurally non-selectable and already labelled 'detail', so don't flag them
+    if (!row.selectable && !row.detail) {
+        result += ' 🚫';
     }
     if (row.level >= 0 && !row.expanded && (row.group || row.master || row.isExpandable())) {
         result += ' collapsed';

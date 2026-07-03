@@ -1,10 +1,9 @@
-import type { BenchOptions } from 'vitest';
 import { bench, suite } from 'vitest';
 
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
 
-import { SimplePRNG, TestGridsManager } from '../test-utils';
+import { BenchGridsManager, SimplePRNG, benchDefaults } from './bench-utils';
 
 /**
  * Benchmarks the delta-sorting example scenario:
@@ -54,8 +53,7 @@ for (let i = 0; i < PREBUILT_COUNT; i++) {
 }
 
 suite(`delta sort transactions (${ROW_COUNT / 1000}k rows, multi-column sort)`, () => {
-    const gridsManager = new TestGridsManager({
-        benchmark: true,
+    const gridsManager = new BenchGridsManager({
         modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, ColumnApiModule],
     });
 
@@ -74,9 +72,10 @@ suite(`delta sort transactions (${ROW_COUNT / 1000}k rows, multi-column sort)`, 
         getRowId: ({ data }: { data: IData }) => String(data.id),
     };
 
-    const benchOptions: BenchOptions = {
-        throws: true,
-        time: 3000,
+    // noiseFactor 2 → time 2000ms; each iteration is a single tiny transaction, so it needs many
+    // iterations and warmupIterations:25 to settle before measuring.
+    const benchOptions = benchDefaults({
+        noiseFactor: 2,
         warmupIterations: 25,
         setup: () => {
             idx = 0;
@@ -91,12 +90,12 @@ suite(`delta sort transactions (${ROW_COUNT / 1000}k rows, multi-column sort)`, 
                 rowData: baseRowData.slice(),
             });
         },
-        teardown: () => {
-            gridsManager.reset();
+        teardown: async () => {
             deltaSortApi = undefined!;
             fullSortApi = undefined!;
+            await gridsManager.reset();
         },
-    };
+    });
 
     bench(
         'applyTransaction (deltaSort: true) - 1 update',

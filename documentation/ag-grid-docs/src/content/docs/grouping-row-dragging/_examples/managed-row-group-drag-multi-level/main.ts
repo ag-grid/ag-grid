@@ -8,8 +8,8 @@ import {
     RowSelectionModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -17,6 +17,11 @@ import { getAthletesData } from './data';
 import type { IAthlete } from './types';
 
 let gridApi: GridApi<IAthlete>;
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -28,7 +33,6 @@ ModuleRegistry.registerModules([
     NumberEditorModule,
     NumberFilterModule,
     BatchEditModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const gridOptions: GridOptions<IAthlete> = {

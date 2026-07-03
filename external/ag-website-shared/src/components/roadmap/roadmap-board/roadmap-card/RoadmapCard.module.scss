@@ -1,0 +1,139 @@
+@use 'design-system' as *;
+
+.roadmapItem {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    margin-bottom: 12px;
+    border: 1px solid var(--color-border-secondary);
+    transition: opacity 0.1s ease-in-out;
+    opacity: 1;
+
+    &.dimmed {
+        opacity: 0.4;
+        pointer-events: none;
+    }
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-gray-800);
+        border-color: var(--color-gray-700);
+    }
+}
+
+.cardDescription {
+    font-size: var(--text-fs-xs);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: all 0.1s ease-in-out;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+
+    .expanded & {
+        -webkit-line-clamp: unset;
+        line-clamp: unset;
+        overflow: visible;
+        text-overflow: unset;
+    }
+}
+
+.cardTitle {
+    margin-bottom: 0;
+}
+
+.itemHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    :global(.expand-icon) {
+        width: var(--text-fs-xs);
+        height: var(--text-fs-xs);
+        transition: transform 0.2s ease-in-out;
+        fill: var(--color-gray-500);
+        transition: all 0.1s ease-in-out;
+
+        #{$selector-darkmode} & {
+            fill: var(--color-gray-400);
+        }
+
+        &:global(.expanded) {
+            transform: rotate(-180deg);
+        }
+    }
+}
+
+.itemId {
+    font-size: var(--text-fs-xs);
+    color: var(--color-gray-500);
+    font-weight: var(--text-regular);
+    margin: 4px 0;
+    display: block;
+
+    #{$selector-darkmode} & {
+        color: var(--color-gray-500);
+    }
+}
+
+.whyText {
+    font-size: var(--text-fs-sm);
+    color: var(--color-text-secondary);
+    transition: all 0.1s ease-in-out;
+}
+
+.why {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.1s ease-in-out;
+
+    .expanded & {
+        grid-template-rows: 1fr;
+        margin-bottom: $spacing-size-4;
+    }
+}
+
+.whyContent {
+    overflow: hidden;
+}
+
+.whyText {
+    font-size: var(--text-fs-xs);
+    color: var(--color-text-secondary);
+    transition: all 0.1s ease-in-out;
+}
+
+.bottomRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.readmoreLink {
+    font-size: var(--text-fs-sm);
+    display: block;
+    position: relative;
+
+    &:after {
+        height: 2px;
+        content: '';
+        background-color: transparent;
+        width: 90%;
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        transition: background-color 0.1s ease-in-out;
+    }
+
+    &:hover {
+        &:after {
+            background-color: var(--color-brand-500);
+        }
+    }
+    & svg {
+        width: 16px;
+        height: 16px;
+    }
+}

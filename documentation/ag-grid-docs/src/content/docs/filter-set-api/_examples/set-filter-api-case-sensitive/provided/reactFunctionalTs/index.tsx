@@ -2,7 +2,7 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, FirstDataRenderedEvent, SetFilterHandler } from 'ag-grid-community';
-import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
@@ -10,13 +10,17 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import { getData } from './data';
 import './styles.css';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 const modules = [
     ClientSideRowModelModule,
     SetFilterModule,
     ColumnMenuModule,
     ContextMenuModule,
     FiltersToolPanelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 const colourCellRenderer = (props: CustomCellRendererProps) => {

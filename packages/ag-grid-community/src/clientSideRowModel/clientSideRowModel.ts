@@ -66,7 +66,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private started: boolean = false;
 
     /** Set to true when row data is being updated. Reset when model is fully refreshed. */
-    private refreshingData: boolean = false;
+    public refreshingData: boolean = false;
 
     /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called. */
     private rowDataUpdatedPending: boolean = false;
@@ -117,7 +117,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             newColumnsLoaded: onColumnsChanged,
             columnRowGroupChanged: onColumnsChanged,
             columnValueChanged: this.onValueChanged.bind(this),
-            columnPivotChanged: () => this.refreshModel({ step: 'pivot' }),
+            columnPivotChanged: this.onPivotChanged.bind(this),
             columnPivotModeChanged: () => this.refreshModel({ step: 'group' }),
             filterChanged: this.onFilterChanged.bind(this),
             sortChanged: this.onSortChanged.bind(this),
@@ -491,6 +491,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
+    private onPivotChanged(): void {
+        // With a filter present, FilterManager's columnPivotChanged handler runs a comprehensive
+        // filter refresh that already rebuilds the pivot stage, so this would be a redundant repeat.
+        if (!this.beans.filterManager?.isAnyFilterPresent()) {
+            this.refreshModel({ step: 'pivot' });
+        }
+    }
+
     private onSortChanged(): void {
         this.refreshModel({
             step: 'sort',
@@ -554,11 +562,22 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
         }
 
-        if (this.deferRefresh(params)) {
+        const suppressUpdateTransaction = this.isSuppressModelUpdateAfterUpdateTransaction(params);
+        if (this.deferRefresh(suppressUpdateTransaction)) {
             // Refresh is deferred. Capture flags to apply when refresh eventually occurs.
             // Flag accumulation is intentional - they persist until the next successful refreshModel().
             this.setPendingRefreshFlags(params);
             this.rowDataUpdatedPending ||= rowDataUpdated;
+            const selectionSvc = this.beans.selectionSvc;
+            if (rowDataUpdated && started && !this.refreshingModel && selectionSvc) {
+                if (suppressUpdateTransaction) {
+                    // Model rebuild is suppressed indefinitely, so reapply isRowSelectable to the updated rows now.
+                    selectionSvc.updateSelectableAfterGrouping(undefined, params.changedRowNodes);
+                } else {
+                    // Flush a removal recorded this turn so an unrelated later change can't emit it with a stale source.
+                    selectionSvc.flushPendingSelectionChanged?.();
+                }
+            }
             return;
         }
 
@@ -621,6 +640,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (params.step === 'group') {
             this.doGrouping(rootNode!, params);
             changedPath ??= params.changedPath;
+            // nodes are fully formed after grouping — apply isRowSelectable to the changed set
+            beans.selectionSvc?.updateSelectableAfterGrouping(changedPath, params.changedRowNodes);
         }
 
         // Flat grids (hierarchical=false) never use changedPath — all pipeline stages have O(n) flat
@@ -661,7 +682,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     /** Checks if the refresh should be deferred. Caller must call setPendingRefreshFlags when this returns true. */
-    private deferRefresh(params: RefreshModelParams): boolean {
+    private deferRefresh(suppressUpdateTransaction: boolean): boolean {
         if (this.refreshingModel) {
             return true; // Nested refresh
         }
@@ -671,7 +692,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return true;
         }
 
-        if (this.isSuppressModelUpdateAfterUpdateTransaction(params)) {
+        if (suppressUpdateTransaction) {
             // Suppressed update-only transaction - clear refreshingData when started
             if (this.started) {
                 this.refreshingData = false;

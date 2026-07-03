@@ -9,11 +9,16 @@ import {
     ColumnAutoSizeModule,
     NumberFilterModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     ColumnApiModule,
@@ -22,7 +27,6 @@ const modules = [
     ColumnAutoSizeModule,
     AlignedGridsModule,
     ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 const GridExample = () => {

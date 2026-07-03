@@ -2,17 +2,18 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GridReadyEvent, SuppressKeyboardEventParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextFilterModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomElements from './customElements';
 import './styles.css';
 
-const modules = [
-    TextFilterModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [TextFilterModule, ClientSideRowModelModule];
 
 const GRID_CELL_CLASSNAME = 'ag-cell';
 

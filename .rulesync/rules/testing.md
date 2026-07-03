@@ -1,6 +1,6 @@
 ---
 targets: ['*']
-description: 'Testing strategies, Jest patterns, and verification for AG Grid'
+description: 'Testing strategies, Vitest patterns, and verification for AG Grid'
 globs: ['**/*.test.ts', '**/*.spec.ts', 'testing/**/*']
 ---
 
@@ -65,28 +65,40 @@ Behavioural tests in `testing/behavioural/` are the primary test suite for verif
 
 ### Benchmarks
 
+Behavioural benchmarks live in `testing/behavioural/` and run via `./benches.sh`. They run in a real headless Chromium (Playwright) by **default**, so layout-dependent work is measured against a real layout engine. Run `./benches.sh --help` for the full usage (it prints vitest's `bench --help` followed by benches.sh's own options).
+
 ```bash
 # Run all benchmarks
 ./benches.sh
 
-# Run specific benchmark file (any positional arg is forwarded to `vitest bench`)
+# Run specific benchmark file (positional arg forwarded to `vitest bench`)
 ./benches.sh "tree-data-path"
+
+# Run a specific benchmark by name within matching files
+./benches.sh "tree-data-path" -t "flattening"
+
+# V8 CPU profile (node-only) — writes a .cpuprofile for method-cost analysis
+./benches.sh --profile "tree-data-path"
 ```
 
-### Unit Tests (Jest)
+For baseline/compare runs, `./benches.sh --bench-compare <base|test|compare|all|backup> [...]` forwards to `bench-compare.mjs` (e.g. `./benches.sh --bench-compare all --runs 3`).
 
-Unit tests in `packages/` use Jest. Use `--testPathPattern` and `--testNamePattern`:
+### Unit Tests (Vitest)
+
+Grid package unit tests in `packages/` run on Vitest. Vitest takes positional file patterns and `-t` for test names — **not** jest's `--testPathPattern`/`--testNamePattern`:
 
 ```bash
 # Run all tests for a package
 yarn nx test ag-grid-community
 
-# Run specific test file
-yarn nx test ag-grid-community --testPathPattern="featureName"
+# Run tests in files matching a pattern (forwarded to `vitest run`)
+yarn nx test ag-grid-community -- "featureName"
 
-# Run specific test by name
-yarn nx test ag-grid-community --testPathPattern="featureName" --testNamePattern="should handle"
+# Run a specific test by name within matching files
+yarn nx test ag-grid-community -- "featureName" -t "should handle"
 ```
+
+(`testing/angular-tests` still uses Jest.)
 
 ### E2E Tests (Playwright)
 
@@ -122,7 +134,7 @@ yarn nx e2e ag-grid-docs
 
 ## Test Patterns
 
-### Jest Unit Tests
+### Package Unit Tests (Vitest)
 
 Follow the AAA pattern (Arrange, Act, Assert):
 
@@ -136,7 +148,7 @@ describe('FeatureName', () => {
 
     afterEach(() => {
         // Cleanup
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     describe('#methodName', () => {
@@ -207,6 +219,7 @@ for (const [name, example] of Object.entries(EXAMPLES)) {
 5. **Merge tests that differ only in assertions** - Same setup → one test with sequential assertions. Avoids test-count bloat.
 6. **Clean up after tests** - Reset mocks and state in `afterEach`
 7. **Review similar tests** - When adding tests, check related tests for consistency
+8. **Register the module before using a grid API** - Tests and benchmarks build their own module lists (not `AllCommunityModule`), so a `GridApi` method or feature whose module isn't registered logs `error #200` (`moduleName=…&reasonOrId=api.<method>`) and **no-ops silently**. Before using a new API, find its providing module (grep the method under `packages/*/src`, or read the `moduleName=` in the error URL) and register it. A passing test/bench prints no `error #200`.
 
 
 ## GridRows and GridColumns Snapshots

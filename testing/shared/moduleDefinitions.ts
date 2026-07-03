@@ -34,6 +34,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'F
     LocaleModule: 0.43,
     NumberEditorModule: 73.6,
     NumberFilterModule: 133.03,
+    PaginationPageNumbersModule: 15,
     PaginationModule: 42.74,
     PinnedRowModule: 19.31,
     QuickFilterModule: 17.3,

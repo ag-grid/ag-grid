@@ -5,17 +5,16 @@ import {
     DateFilterModule,
     ModuleRegistry,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    CellApiModule,
-    TextFilterModule,
-    ClientSideRowModelModule,
-    DateFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([CellApiModule, TextFilterModule, ClientSideRowModelModule, DateFilterModule]);
 
 const originalColumnDefs: ColDef[] = [
     { field: 'athlete' },

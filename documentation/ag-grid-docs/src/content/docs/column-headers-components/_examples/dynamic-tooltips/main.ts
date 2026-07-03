@@ -7,11 +7,16 @@ import {
     TextEditorModule,
     TextFilterModule,
     TooltipModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { CustomHeader } from './customHeader_typescript';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     NumberEditorModule,
@@ -20,7 +25,6 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     ClientSideRowModelModule,
     TooltipModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

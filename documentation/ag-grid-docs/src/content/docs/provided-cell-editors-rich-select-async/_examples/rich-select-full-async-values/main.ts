@@ -9,17 +9,17 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     TextEditorModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([
-    TextEditorModule,
-    ClientSideRowModelModule,
-    RichSelectModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([TextEditorModule, ClientSideRowModelModule, RichSelectModule]);
 
 const languages = ['English', 'Spanish', 'French', 'Portuguese', '(other)'];
 

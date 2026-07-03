@@ -8,8 +8,9 @@ import type {
     UpdateCrossFilterChartParams,
     UpdatePivotChartParams,
     UpdateRangeChartParams,
+    ValidationWarning,
 } from 'ag-grid-community';
-import { _warnOnce } from 'ag-grid-community';
+import { _createValidationWarning, _deprecated, _emitValidationWarning, _warn } from 'ag-grid-community';
 
 import type { CommonCreateChartParams } from '../../chartService';
 import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
@@ -27,9 +28,9 @@ const isString = (value: any): boolean => typeof value === 'string';
 const isBoolean = (value: any): boolean => typeof value === 'boolean';
 const isValidSeriesChartType = (value: any): boolean => typeof value === 'object';
 const createWarnMessage =
-    (property: string, expectedType: string): ((value: any) => string) =>
+    (property: string, expectedType: string): ((value: any) => ValidationWarning) =>
     (value: any) =>
-        `AG Grid - unable to update chart as invalid params supplied:  \`${property}: ${value}\`, expected ${expectedType}.`;
+        _createValidationWarning(316, { property, value, expectedType });
 
 const createEnterpriseMessage = (feature: string) => {
     const url = 'https://www.ag-grid.com/javascript-data-grid/integrated-charts-installation/';
@@ -39,7 +40,7 @@ const createEnterpriseMessage = (feature: string) => {
 interface ValidationFunction<T, K extends keyof T = keyof T, V = T[K]> {
     property: K;
     validationFn: (value: T[K]) => boolean | V;
-    warnMessage: (value: T[K]) => string;
+    warnMessage: (value: T[K]) => string | ValidationWarning;
     warnIfFixed?: boolean;
 }
 
@@ -69,7 +70,7 @@ const validateChartType = validateIfDefined<UpdateChartParams['chartType'], Excl
         }
         if (isLegacyChartType(chartType)) {
             const renamedChartType = getCanonicalChartType(chartType);
-            _warnOnce(`The chart type '${chartType}' has been deprecated. Please use '${renamedChartType}' instead.`);
+            _deprecated(312, { chartType, renamedChartType });
             return renamedChartType;
         }
         return false;
@@ -160,9 +161,11 @@ export function validateUpdateParams(params: UpdateChartParams, isEnterprise: bo
         case 'crossFilterChartUpdate':
             return validateUpdateCrossFilterChartParams(params as UpdateCrossFilterChartParams, isEnterprise);
         default:
-            _warnOnce(
-                `Invalid value supplied for 'type': ${params.type}. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`
-            );
+            _warn(320, {
+                property: "'type'",
+                allowed: ['rangeChartUpdate', 'pivotChartUpdate', 'crossFilterChartUpdate'],
+                value: params.type,
+            });
             return false;
     }
 }
@@ -254,7 +257,7 @@ function validateProperties<T extends object>(
                 continue;
             }
             if (validationResult === false) {
-                _warnOnce(warnMessage(value));
+                _emitValidationWarning(warnMessage(value));
                 return false;
             }
             // If the validation function returned a 'fix' value, we need to return an updated property set.
@@ -263,7 +266,7 @@ function validateProperties<T extends object>(
             /// Then we update the cloned object with the 'fixed' value
             validatedProperties[property] = validationResult;
             if (warnIfFixed) {
-                _warnOnce(warnMessage(value));
+                _emitValidationWarning(warnMessage(value));
             }
         }
     }
@@ -272,7 +275,7 @@ function validateProperties<T extends object>(
         // Check for unexpected properties
         for (const property of Object.keys(params)) {
             if (!validPropertyNames.includes(property as keyof T)) {
-                _warnOnce(`Unexpected property supplied. ${paramsType} does not contain: \`${property}\`.`);
+                _warn(313, { paramsType, property });
                 return false;
             }
         }

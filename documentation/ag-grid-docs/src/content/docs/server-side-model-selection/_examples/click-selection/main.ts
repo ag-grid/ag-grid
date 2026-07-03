@@ -1,16 +1,21 @@
 import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
-import { ModuleRegistry, NumberFilterModule, TextFilterModule, ValidationModule, createGrid } from 'ag-grid-community';
+import {
+    ModuleRegistry,
+    NumberFilterModule,
+    TextFilterModule,
+    createGrid,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { FakeServer } from './fakeServer';
 
-ModuleRegistry.registerModules([
-    RowGroupingModule,
-    ServerSideRowModelModule,
-    TextFilterModule,
-    NumberFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule, TextFilterModule, NumberFilterModule]);
 
 let gridApi: GridApi<IOlympicDataWithId>;
 const gridOptions: GridOptions<IOlympicDataWithId> = {

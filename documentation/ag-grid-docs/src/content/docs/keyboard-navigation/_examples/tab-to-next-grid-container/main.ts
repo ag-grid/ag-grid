@@ -11,16 +11,16 @@ import {
     ModuleRegistry,
     PaginationModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    PaginationModule,
-    TextFilterModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([PaginationModule, TextFilterModule, ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
     { headerName: '#', colId: 'rowNum', valueGetter: 'node.id', maxWidth: 90 },

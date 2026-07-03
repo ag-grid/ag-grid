@@ -1647,6 +1647,13 @@ export interface GridOptions<TData = any> {
     rowGroupPanelSuppressSort?: boolean;
 
     /**
+     * Set to `true` to suppress sort indicators and actions from the pivot panel and the column tool panel pivot pills.
+     * @default false
+     * @agModule `RowGroupingPanelModule`
+     */
+    pivotPanelSuppressSort?: boolean;
+
+    /**
      * Set to `true` prevent Group Rows from sticking to the top of the grid.
      * @default false
      * @initial
@@ -3463,9 +3470,17 @@ export interface RowSummaryPanelParams {
     type: 'rowSummary';
 }
 
-export type PaginationPanelParams = PageSummaryPanelParams | PageSizePanelParams | RowSummaryPanelParams;
+export interface PageNumbersPanelParams {
+    type: 'pageNumbers';
+}
 
-export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary' | PaginationPanelParams;
+export type PaginationPanelParams =
+    | PageSummaryPanelParams
+    | PageSizePanelParams
+    | RowSummaryPanelParams
+    | PageNumbersPanelParams;
+
+export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary' | 'pageNumbers' | PaginationPanelParams;
 
 export type PivotColumnGroupTotals = 'before' | 'after';
 export type PivotRowTotals = 'before' | 'after';

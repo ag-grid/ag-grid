@@ -132,6 +132,7 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
         } else {
             rowNode.setDataAndId(undefined, undefined);
         }
+        this.beans.selectionSvc?.updateRowSelectable(rowNode);
     }
 
     private loadFromDatasource(): void {

@@ -1,0 +1,43 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import styles from './AnnouncementBanner.module.scss';
+
+interface Props {
+    /** Link target for the whole banner (same-origin or absolute). */
+    href: string;
+    /** Primary headline text. */
+    title: string;
+    /** Optional supporting copy after the title. */
+    description?: string;
+    /** Call-to-action label on the right-hand side. */
+    ctaLabel?: string;
+    /** Whether the link should open in a new tab. */
+    external?: boolean;
+}
+
+const { href, title, description, ctaLabel = 'Learn more', external = false } = Astro.props;
+
+const targetAttrs = external ? { target: '_blank', rel: 'noopener' } : {};
+---
+
+<div class={styles.banner} data-announcement-banner>
+    <a class={styles.link} href={href} {...targetAttrs}>
+        <span class={styles.inner}>
+            <span class={styles.text}>
+                <span class={styles.title}>{title}</span>
+                {description && <span class={styles.description}>{description}</span>}
+            </span>
+            <span class={styles.cta}>
+                <span class={styles.ctaLabel}>{ctaLabel}</span>
+                <Icon name="chevronRight" />
+            </span>
+        </span>
+    </a>
+
+    <button type="button" class={styles.close} data-announcement-dismiss aria-label="Dismiss announcement">
+        <Icon name="cross" />
+    </button>
+</div>
+
+<script is:inline defer src={urlWithBaseUrl('/scripts/announcement-banner.js')}></script>

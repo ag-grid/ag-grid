@@ -3,12 +3,17 @@ import {
     ClientSideRowModelModule,
     CsvExportModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, ExcelExportModule } from 'ag-grid-enterprise';
 
 import { logos } from './imageUtils';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -16,7 +21,6 @@ ModuleRegistry.registerModules([
     ExcelExportModule,
     ColumnMenuModule,
     ContextMenuModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

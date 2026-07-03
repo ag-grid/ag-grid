@@ -4,8 +4,6 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IAriaAnnouncementService } from '../interfaces/iAriaAnnouncementService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../utils/aria';
-import { _getDocument } from '../utils/document';
-import { _clearElement } from '../utils/dom';
 import { _debounce } from '../utils/function';
 import { AgBeanStub } from './agBeanStub';
 
@@ -33,17 +31,14 @@ export class BaseAriaAnnouncementService<
         this.updateAnnouncement = _debounce(this, this.updateAnnouncement.bind(this), 200);
     }
 
-    public postConstruct(): void {
-        const beans = this.beans;
-        const eDocument = _getDocument(beans);
-        const div = (this.descriptionContainer = eDocument.createElement('div'));
-        div.classList.add('ag-aria-description-container');
+    public setDescriptionContainer(div: HTMLElement): void {
+        this.descriptionContainer = div;
 
         _setAriaLive(div, 'polite');
         _setAriaRelevant(div, 'additions text');
         _setAriaAtomic(div, true);
 
-        beans.eRootDiv.appendChild(div);
+        this.updateAnnouncement();
     }
 
     /**
@@ -93,12 +88,6 @@ export class BaseAriaAnnouncementService<
     public override destroy(): void {
         super.destroy();
 
-        const { descriptionContainer } = this;
-
-        if (descriptionContainer) {
-            _clearElement(descriptionContainer);
-            descriptionContainer.remove();
-        }
         this.descriptionContainer = null;
         this.pendingAnnouncements.clear();
     }

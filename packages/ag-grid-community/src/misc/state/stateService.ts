@@ -6,6 +6,7 @@ import { _applyColumnState, _getColumnState } from '../../columns/columnStateUti
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
+import type { FilterChangedEventSourceType } from '../../events';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellRange } from '../../interfaces/IRangeService';
 import type {
@@ -346,7 +347,7 @@ export class StateService extends BeanStub implements NamedBean {
         const deferredFilterState = this.deferredFilterState;
         if (deferredFilterState) {
             this.deferredFilterState = undefined;
-            this.setFilterState(deferredFilterState);
+            this.setFilterState(deferredFilterState, source);
         }
 
         const updateCachedState = this.updateCachedState.bind(this);
@@ -635,7 +636,7 @@ export class StateService extends BeanStub implements NamedBean {
             : undefined;
     }
 
-    private setFilterState(filterState?: FilterState): void {
+    private setFilterState(filterState?: FilterState, source: 'gridInitializing' | 'api' = 'api'): void {
         const { filterManager, selectableFilter } = this.beans;
         const { filterModel, columnFilterState, advancedFilterModel, selectableFilters } = filterState ?? {
             filterModel: null,
@@ -646,11 +647,16 @@ export class StateService extends BeanStub implements NamedBean {
         if (selectableFilters !== undefined) {
             selectableFilter?.setState(selectableFilters ?? undefined);
         }
+        // A programmatic `api` restore reports `api`; init-time restore has no public source, so it keeps
+        // reporting the filter's own type (`gridInitializing` cannot be added to the public union without a break).
+        const isApi = source === 'api';
         if (filterModel !== undefined || columnFilterState !== undefined) {
-            filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, 'columnFilter');
+            const columnFilterSource: FilterChangedEventSourceType = isApi ? 'api' : 'columnFilter';
+            filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, columnFilterSource);
         }
         if (advancedFilterModel !== undefined) {
-            filterManager?.setAdvFilterModel(advancedFilterModel ?? null, 'advancedFilter');
+            const advancedFilterSource: FilterChangedEventSourceType = isApi ? 'api' : 'advancedFilter';
+            filterManager?.setAdvFilterModel(advancedFilterModel ?? null, advancedFilterSource);
         }
     }
 
@@ -668,7 +674,7 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             }
         }
-        this.setFilterState(state);
+        this.setFilterState(state, source);
     }
 
     private getRangeSelectionState(): CellSelectionState | undefined {

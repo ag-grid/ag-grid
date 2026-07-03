@@ -673,6 +673,7 @@ export class GridRowsValidator {
         let duplicates = 0;
         for (const row of selectedRows) {
             const rowErrors = this.errors.get(row);
+            rowErrors.add(row.destroyed && 'Destroyed node is in getSelectedNodes()');
             rowErrors.add(
                 !gridRows.isInRowNodes(row) && !gridRows.isRowDisplayed(row) && 'Selected node does not exist'
             );

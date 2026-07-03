@@ -13,17 +13,16 @@ import {
     NumberFilterModule,
     RowDragModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    RowDragModule,
-    TextFilterModule,
-    NumberFilterModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([RowDragModule, TextFilterModule, NumberFilterModule, ClientSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;
 

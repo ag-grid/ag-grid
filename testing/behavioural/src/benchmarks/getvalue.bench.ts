@@ -1,4 +1,4 @@
-import { bench, describe } from 'vitest';
+import { bench, suite } from 'vitest';
 
 import type { AgColumn, ColDef, IRowNode } from 'ag-grid-community';
 import {
@@ -11,14 +11,13 @@ import {
     TooltipModule,
 } from 'ag-grid-community';
 
-import { SimplePRNG, TestGridsManager } from '../test-utils';
+import { BenchGridsManager, SimplePRNG } from './bench-utils';
 
-describe('getValue profiling', () => {
+suite('getValue profiling', () => {
     const rowCount = 2000;
     const colCount = 100;
 
-    const gridsManager = new TestGridsManager({
-        benchmark: true,
+    const gridsManager = new BenchGridsManager({
         modules: [
             ClientSideRowModelModule,
             RowApiModule,
@@ -59,34 +58,46 @@ describe('getValue profiling', () => {
     const firstCol = api.getColumn(firstField)! as AgColumn;
     const lastCol = api.getColumn(lastField)! as AgColumn;
 
+    // Each loop accumulates the read value into `sink` (returned) so V8 can't dead-code-eliminate the
+    // getDataValue call — otherwise the bench would measure nothing and look impossibly fast.
     bench(`getDataValue by string (first col)`, () => {
+        let sink = 0;
         for (let i = 0; i < rowCount; ++i) {
-            rowNodes[i].getDataValue(firstField);
+            sink += rowNodes[i].getDataValue(firstField) ? 1 : 0;
         }
+        return sink as any;
     });
 
     bench(`getDataValue by string (last of ${colCount} cols)`, () => {
+        let sink = 0;
         for (let i = 0; i < rowCount; ++i) {
-            rowNodes[i].getDataValue(lastField);
+            sink += rowNodes[i].getDataValue(lastField) ? 1 : 0;
         }
+        return sink as any;
     });
 
     bench(`getDataValue by Column object (first col)`, () => {
+        let sink = 0;
         for (let i = 0; i < rowCount; ++i) {
-            rowNodes[i].getDataValue(firstCol);
+            sink += rowNodes[i].getDataValue(firstCol) ? 1 : 0;
         }
+        return sink as any;
     });
 
     bench(`getDataValue by Column object (last of ${colCount} cols)`, () => {
+        let sink = 0;
         for (let i = 0; i < rowCount; ++i) {
-            rowNodes[i].getDataValue(lastCol);
+            sink += rowNodes[i].getDataValue(lastCol) ? 1 : 0;
         }
+        return sink as any;
     });
 
     bench(`getCellValue by string (last of ${colCount} cols)`, () => {
+        let sink = 0;
         for (let i = 0; i < rowCount; ++i) {
-            api.getCellValue({ rowNode: rowNodes[i], colKey: lastField, useFormatter: false });
+            sink += api.getCellValue({ rowNode: rowNodes[i], colKey: lastField, useFormatter: false }) ? 1 : 0;
         }
+        return sink as any;
     });
 
     bench(`direct data access`, () => {
@@ -101,7 +112,7 @@ describe('getValue profiling', () => {
     });
 });
 
-describe('getValue profiling (all columns per row)', () => {
+suite('getValue profiling (all columns per row)', () => {
     // The hot grid paths (render, filter, sort, aggregation) read EVERY column per row, so the value
     // read site sees many columns — not one repeated column like the suite above (which keeps the
     // `colDef` read site monomorphic regardless of colDef variety). With varied colDefs (the realistic
@@ -110,8 +121,7 @@ describe('getValue profiling (all columns per row)', () => {
     const rowCount = 1000;
     const colCount = 100;
 
-    const gridsManager = new TestGridsManager({
-        benchmark: true,
+    const gridsManager = new BenchGridsManager({
         modules: [
             ClientSideRowModelModule,
             RowApiModule,
@@ -176,31 +186,34 @@ describe('getValue profiling (all columns per row)', () => {
     const variedCols = variedApi.getColumns()! as AgColumn[];
 
     bench(`getDataValue uniform colDefs (${colCount} cols x ${rowCount} rows)`, () => {
+        let sink = 0;
         for (let i = 0; i < rowCount; ++i) {
             const node = uniformNodes[i];
             for (let c = 0; c < colCount; ++c) {
-                node.getDataValue(uniformCols[c]);
+                sink += node.getDataValue(uniformCols[c]) ? 1 : 0;
             }
         }
+        return sink as any;
     });
 
     bench(`getDataValue varied colDefs (${colCount} cols x ${rowCount} rows)`, () => {
+        let sink = 0;
         for (let i = 0; i < rowCount; ++i) {
             const node = variedNodes[i];
             for (let c = 0; c < colCount; ++c) {
-                node.getDataValue(variedCols[c]);
+                sink += node.getDataValue(variedCols[c]) ? 1 : 0;
             }
         }
+        return sink as any;
     });
 });
 
-describe('getValue profiling (valueGetter columns)', () => {
+suite('getValue profiling (valueGetter columns)', () => {
     // Exercises the executeValueGetter dispatch path (not hit by plain field columns above).
     const rowCount = 1000;
     const colCount = 100;
 
-    const gridsManager = new TestGridsManager({
-        benchmark: true,
+    const gridsManager = new BenchGridsManager({
         modules: [ClientSideRowModelModule, RowApiModule, CellApiModule, ColumnApiModule],
     });
 
@@ -227,11 +240,13 @@ describe('getValue profiling (valueGetter columns)', () => {
     const cols = api.getColumns()! as AgColumn[];
 
     bench(`getDataValue valueGetter cols (${colCount} cols x ${rowCount} rows)`, () => {
+        let sink = 0;
         for (let i = 0; i < rowCount; ++i) {
             const node = nodes[i];
             for (let c = 0; c < colCount; ++c) {
-                node.getDataValue(cols[c]);
+                sink += node.getDataValue(cols[c]) ? 1 : 0;
             }
         }
+        return sink as any;
     });
 });

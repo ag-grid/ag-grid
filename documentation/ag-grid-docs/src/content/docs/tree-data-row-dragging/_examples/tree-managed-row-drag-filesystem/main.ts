@@ -3,20 +3,20 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     RowDragModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 import type { IFile } from './data';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    TreeDataModule,
-    RowDragModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, TreeDataModule, RowDragModule]);
 
 const gridOptions: GridOptions<IFile> = {
     columnDefs: [

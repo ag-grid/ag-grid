@@ -4,8 +4,8 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -14,6 +14,11 @@ import {
     RowGroupingModule,
     ShowValuesAsModule,
 } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -24,7 +29,6 @@ ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     RowGroupingModule,
     ShowValuesAsModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<IOlympicData>;

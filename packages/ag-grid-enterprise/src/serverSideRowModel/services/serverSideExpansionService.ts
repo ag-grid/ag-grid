@@ -96,6 +96,10 @@ export class ServerSideExpansionService
 
     public isExpanded(rowNode: RowNode): boolean {
         let value = rowNode._expanded;
+        // Non-expandable ⇒ collapsed; don't resolve/cache the default so it re-resolves if the node becomes expandable.
+        if (value === false || !rowNode.isExpandable()) {
+            return false;
+        }
         if (value === null) {
             value = this.defaultExpanded(rowNode);
             rowNode._expanded = value;
@@ -108,11 +112,26 @@ export class ServerSideExpansionService
     }
 
     public isNodeExpanded(node: RowNode): boolean {
-        return this.strategy.isRowExpanded(node);
+        return this.strategy.isRowExpanded(node) && node.isExpandable();
     }
 
     public override setExpanded(node: RowNode, expanded: boolean, e?: MouseEvent | KeyboardEvent, _?: boolean): void {
+        const expandable = node.isExpandable();
+
+        // No-op for nodes that can never open (footer / detail / pivot leaf-group / pivot master), keeping state clean.
+        // A group whose children haven't loaded yet still counts, via the structural group flag.
+        if (!expandable && !this.checkExpandable(node, !!node.group)) {
+            return;
+        }
+
+        // Record intent even while not yet expandable, so an unloaded group applies it once its children arrive.
         this.strategy.setRowExpanded(node, expanded);
+
+        // Don't physically open a group whose children aren't loaded yet; checkOpenByDefault applies it on load.
+        if (expanded && !expandable) {
+            this.dispatchStateUpdatedEvent();
+            return;
+        }
         super.setExpanded(node, expanded, e);
         this.dispatchStateUpdatedEvent();
         this.updateExpandedState(node);

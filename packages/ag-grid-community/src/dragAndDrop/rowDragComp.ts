@@ -9,6 +9,7 @@ import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
 import type { GridDragSource } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
+import { getRowDragMultiRowNodes } from './rowDragFeature';
 import type { RowDraggingEvent } from './rowDragTypes';
 
 const RowDragElement: ElementParams = {
@@ -137,15 +138,7 @@ export class RowDragComp extends Component {
     }
 
     private getSelectedNodes(): RowNode[] {
-        const rowNode = this.rowNode;
-        const isRowDragMultiRow = this.gos.get('rowDragMultiRow');
-        if (!isRowDragMultiRow) {
-            return [rowNode];
-        }
-
-        const selection = this.beans.selectionSvc?.getSelectedNodes() ?? [];
-
-        return selection.indexOf(rowNode) !== -1 ? selection : [rowNode];
+        return getRowDragMultiRowNodes(this.rowNode, this.gos, this.beans.selectionSvc);
     }
 
     private getDragItem(): IRowDragItem {

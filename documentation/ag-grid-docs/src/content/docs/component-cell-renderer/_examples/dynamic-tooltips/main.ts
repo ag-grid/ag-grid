@@ -5,19 +5,18 @@ import {
     TextEditorModule,
     TextFilterModule,
     TooltipModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { AthleteCellRenderer } from './athleteCellRenderer_typescript';
 
-ModuleRegistry.registerModules([
-    TextEditorModule,
-    TextFilterModule,
-    ClientSideRowModelModule,
-    TooltipModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([TextEditorModule, TextFilterModule, ClientSideRowModelModule, TooltipModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', width: 120, cellRenderer: AthleteCellRenderer },

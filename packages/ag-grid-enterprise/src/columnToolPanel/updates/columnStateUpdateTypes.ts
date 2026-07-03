@@ -1,4 +1,4 @@
-import type { AgColumn, ColAggFunc, ColumnEventType, ColumnState, SortDef } from 'ag-grid-community';
+import type { AgColumn, ColAggFunc, ColumnEventType, ColumnState, SortDef, SortDirection } from 'ag-grid-community';
 
 export type ColumnStateUpdateParams = { buttons?: Array<'apply' | 'cancel'> };
 
@@ -25,6 +25,8 @@ export interface ColumnStateConcreteUpdateStrategy {
     isColumnSelectedInPivotModeToolPanel(column: AgColumn): boolean;
     progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void;
     getSortDef(column: AgColumn): SortDef | null;
+    progressPivotSortFromEvent(column: AgColumn): void;
+    getPivotSort(column: AgColumn): SortDirection | undefined;
 }
 
 type Seq = { seq: number; eventType: ColumnEventType };

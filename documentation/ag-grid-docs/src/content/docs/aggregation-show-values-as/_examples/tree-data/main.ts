@@ -3,8 +3,8 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -17,6 +17,11 @@ import {
 import type { FileRow } from './data';
 import { getData } from './data';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     TextFilterModule,
@@ -25,7 +30,6 @@ ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     TreeDataModule,
     ShowValuesAsModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const formatSize = (params: ValueFormatterParams) => {

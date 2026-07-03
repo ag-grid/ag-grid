@@ -1,4 +1,4 @@
-importScripts('https://cdn.jsdelivr.net/npm/typescript@5.4.5/lib/typescript.js');
+importScripts('https://cdn.jsdelivr.net/npm/typescript@5.4.5/lib/typescript.min.js');
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));

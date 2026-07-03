@@ -9,7 +9,7 @@ import {
     GridReadyEvent,
     ICellRenderer,
     ModuleRegistry,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
@@ -17,11 +17,12 @@ import { AgGridVue } from 'ag-grid-vue3';
 import CustomGroupCellRenderer from './customGroupCellRenderer';
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    RowGroupingModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const VueExample = defineComponent({
     template: `

@@ -7,9 +7,14 @@ import {
     NumberFilterModule,
     RowStyleModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     TextFilterModule,
@@ -18,7 +23,6 @@ ModuleRegistry.registerModules([
     RowStyleModule,
     AlignedGridsModule,
     ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

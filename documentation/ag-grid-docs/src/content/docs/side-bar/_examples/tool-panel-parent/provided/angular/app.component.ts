@@ -8,12 +8,17 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { ColumnsToolPanelModule, NewFiltersToolPanelModule, PivotModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { IOlympicData } from './interfaces';
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     NumberFilterModule,
@@ -23,7 +28,6 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     PivotModule,
     TextFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 @Component({

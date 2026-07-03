@@ -51,6 +51,8 @@ export interface ColumnStateParams {
     pivot?: boolean | null;
     /** The order of the pivot, if pivoting by many columns */
     pivotIndex?: number | null;
+    /** The sort direction applied to this column's pivot result columns. Isolated from `sort`. */
+    pivotSort?: SortDirection;
     /** Set if column is pinned */
     pinned?: ColumnPinnedType;
     /** True if row group active */
@@ -96,6 +98,7 @@ interface ColumnStateBefore {
     sortType: SortType | undefined;
     sortIndex: number | null;
     aggFunc: ColAggFunc;
+    pivotSort: SortDirection | undefined;
 }
 
 /** Updates hide/sort/sortIndex/pinned/flex. Per field: `null`/empty clears, only `undefined` is skipped. */
@@ -394,6 +397,12 @@ function applyFieldState(
     beans.rowGroupColsSvc?.syncColState(column, stateItem, defaultState, source);
     beans.pivotColsSvc?.syncColState(column, stateItem, defaultState, source);
     beans.showValuesAsSvc?.syncColState(column, stateItem, defaultState, source);
+
+    // Pivot sort is isolated from `sort` - applied directly, never routed through the sort service.
+    const maybePivotSort = orDefault(stateItem?.pivotSort, defaultState?.pivotSort);
+    if (maybePivotSort !== undefined) {
+        column.pivotSort = normalizeSortDirection(maybePivotSort);
+    }
 }
 
 /** Reset all columns to the state declared in their colDefs (`initial*`/explicit), re-apply the colDef
@@ -581,6 +590,7 @@ export function captureColumnStateChanges(beans: BeanCollection): ColumnStateCha
             sortType: direction ? sortDef.type : undefined,
             sortIndex: column.sortIndex ?? null,
             aggFunc: column.aggregationActive ? column.aggFunc : null,
+            pivotSort: column.pivotSort,
         });
     }
     return {
@@ -634,6 +644,7 @@ function dispatchColumnFieldChanges(
     let changedPinned: AgColumn[] | null = null;
     let changedVisible: AgColumn[] | null = null;
     let changedSort: AgColumn[] | null = null;
+    let changedPivotSort: AgColumn[] | null = null;
     for (let i = 0, len = allCols.length; i < len; ++i) {
         const col = allCols[i];
         const cs = before.get(col.colId);
@@ -660,6 +671,10 @@ function dispatchColumnFieldChanges(
             changedSort ??= [];
             changedSort.push(col);
         }
+        if (cs.pivotSort !== col.pivotSort) {
+            changedPivotSort ??= [];
+            changedPivotSort.push(col);
+        }
     }
     if (changedValues) {
         _dispatchColumnChangedEvent(eventSvc, 'columnValueChanged', changedValues, source);
@@ -675,6 +690,10 @@ function dispatchColumnFieldChanges(
     }
     if (changedSort) {
         sortSvc?.dispatchSortChangedEvents(source, changedSort);
+    }
+    // Pivot sort is isolated from sort - a pivotSort change fires columnPivotChanged to rebuild pivot columns.
+    if (changedPivotSort) {
+        _dispatchColumnChangedEvent(eventSvc, 'columnPivotChanged', changedPivotSort, source);
     }
 }
 
@@ -755,12 +774,19 @@ export const _getColumnState = (beans: BeanCollection): ColumnState[] => {
             rowGroupIndex: rowGroupActive ? column.rowGroupActiveIndex : null,
             pivot: pivotActive,
             pivotIndex: pivotActive ? column.pivotActiveIndex : null,
+            pivotSort: column.pivotSort === undefined ? 'asc' : column.pivotSort,
             flex: column.flex ?? null,
             showValuesAs: beans.showValuesAsSvc?.toColState(column) ?? null,
         };
     }
     return res;
 };
+
+// Unset (`undefined`) is left as-is so it resolves to ascending; an explicit `null` ("no sort") is preserved.
+function resolveInitialPivotSort(colDef: AgColumn['colDef']): SortDirection | undefined {
+    const pivotSortLike = colDef.pivotSort !== undefined ? colDef.pivotSort : colDef.initialPivotSort;
+    return pivotSortLike === undefined ? undefined : normalizeSortDirection(pivotSortLike);
+}
 
 export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn): ColumnState {
     const colDef = column.colDef;
@@ -788,6 +814,7 @@ export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn
         rowGroupIndex,
         pivot,
         pivotIndex,
+        pivotSort: resolveInitialPivotSort(colDef),
         aggFunc: colDef.aggFunc ?? colDef.initialAggFunc ?? null,
         showValuesAs: beans.showValuesAsSvc?.colDefSelection(colDef) ?? null,
     };

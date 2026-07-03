@@ -1,4 +1,4 @@
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _getActiveDomElement } from 'ag-stack';
 
 import type { AgInputTextFieldParams } from '../../../agWidgets/agInputTextField';
 import { AgInputTextField } from '../../../agWidgets/agInputTextField';
@@ -31,6 +31,10 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
 
     public setEditable(editable: boolean): void {
         this.eInput.setDisabled(!editable);
+    }
+
+    public isFocused(): boolean {
+        return _getActiveDomElement(this.beans) === this.eInput.getInputElement();
     }
 
     public getValue(): string | null | undefined {

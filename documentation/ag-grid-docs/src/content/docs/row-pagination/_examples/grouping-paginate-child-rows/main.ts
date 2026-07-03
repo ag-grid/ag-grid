@@ -3,17 +3,17 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     PaginationModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([
-    PaginationModule,
-    ClientSideRowModelModule,
-    RowGroupingModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([PaginationModule, ClientSideRowModelModule, RowGroupingModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete' },

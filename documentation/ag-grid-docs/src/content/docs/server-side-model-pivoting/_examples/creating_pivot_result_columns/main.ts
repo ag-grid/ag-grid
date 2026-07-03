@@ -6,7 +6,7 @@ import type {
     IServerSideDatasource,
     IServerSideGetRowsRequest,
 } from 'ag-grid-community';
-import { ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
@@ -17,13 +17,17 @@ import {
 
 import { FakeServer } from './fakeServer';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     ColumnMenuModule,
     ContextMenuModule,
     RowGroupingModule,
     ServerSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<IOlympicData>;

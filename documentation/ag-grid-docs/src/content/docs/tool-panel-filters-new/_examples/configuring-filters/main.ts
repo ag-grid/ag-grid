@@ -5,8 +5,8 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -18,6 +18,11 @@ import {
 
 import { YearFilter } from './yearFilter_typescript';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     NumberFilterModule,
     DateFilterModule,
@@ -28,7 +33,6 @@ ModuleRegistry.registerModules([
     SetFilterModule,
     TextFilterModule,
     MultiFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 function doesFilterPass({ model, node, handlerParams }: DoesFilterPassParams<any, any, boolean>): boolean {

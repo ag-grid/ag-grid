@@ -4,18 +4,18 @@ import {
     ColumnApiModule,
     ModuleRegistry,
     PinnedRowModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript';
 
-ModuleRegistry.registerModules([
-    ColumnApiModule,
-    PinnedRowModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ColumnApiModule, PinnedRowModule, ClientSideRowModelModule]);
 
 const rowData = createData(100, 'body');
 

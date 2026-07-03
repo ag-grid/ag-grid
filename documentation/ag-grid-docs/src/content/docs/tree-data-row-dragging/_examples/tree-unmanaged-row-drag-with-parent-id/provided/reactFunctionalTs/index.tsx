@@ -3,7 +3,7 @@
 import React, { StrictMode, useCallback, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, RowApiModule, RowDragModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowApiModule, RowDragModule, enableDevValidations } from 'ag-grid-community';
 import type {
     GridOptions,
     RowDragEndEvent,
@@ -19,13 +19,12 @@ import type { IFile } from './fileUtils';
 import { getFileDropPosition, moveFiles } from './fileUtils';
 import './style.css';
 
-const modules = [
-    ClientSideRowModelModule,
-    RowApiModule,
-    RowDragModule,
-    TreeDataModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [ClientSideRowModelModule, RowApiModule, RowDragModule, TreeDataModule];
 
 const STATIC_GRID_OPTIONS: GridOptions<IFile> = {
     columnDefs: [

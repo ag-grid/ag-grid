@@ -87,6 +87,58 @@ export function getStats(parsedReport, context) {
         : '';
 }
 
+function formatMemoryBytes(bytes) {
+    const abs = Math.abs(bytes);
+    if (abs < 1024) {
+        return `${bytes} B`;
+    }
+    if (abs < 1024 * 1024) {
+        return `${(bytes / 1024).toFixed(1)} KB`;
+    }
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+// Render any `memory`-type annotations (from informational memory benchmarks, e.g.
+// cell-memory.spec.ts) into the PR comment. Returns '' when there are none, so timing-only
+// runs are unaffected.
+export function getMemoryStats(parsedReport, context, section) {
+    const tests = parsedReport?.results?.tests;
+    if (!tests) {
+        return '';
+    }
+
+    const blocks = [];
+    for (const test of tests) {
+        const annotation = test.extra?.annotations?.find((a) => a && a.type === 'memory');
+        if (!annotation) {
+            continue;
+        }
+
+        let summary;
+        try {
+            summary =
+                typeof annotation.description === 'string'
+                    ? JSON.parse(annotation.description)
+                    : annotation.description;
+        } catch {
+            continue;
+        }
+        if (!summary?.control || !summary?.variant) {
+            continue;
+        }
+
+        const { control, variant } = summary;
+        const lines = [
+            summary.scenario,
+            `allocated/run  ${control.version}: ${formatMemoryBytes(control.allocBytes)}  ${variant.version}: ${formatMemoryBytes(variant.allocBytes)}  Δ ${summary.allocDeltaPct.toFixed(1)}%`,
+            `retained (GC)  ${control.version}: ${formatMemoryBytes(control.retainedBytes)}  ${variant.version}: ${formatMemoryBytes(variant.retainedBytes)}  Δ ${formatMemoryBytes(summary.retainedDeltaBytes)}`,
+        ];
+        blocks.push(section(lines.join('\n')));
+    }
+
+    return blocks.length ? context('Memory benchmarks (informational)') + blocks.join('') : '';
+}
+
 const JIRA_API_URL = 'https://ag-grid.atlassian.net/rest/api/2';
 
 // Transition an issue to a new status

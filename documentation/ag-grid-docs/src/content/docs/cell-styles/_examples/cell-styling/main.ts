@@ -13,17 +13,16 @@ import {
     ModuleRegistry,
     NumberEditorModule,
     TextEditorModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    NumberEditorModule,
-    TextEditorModule,
-    CellStyleModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([NumberEditorModule, TextEditorModule, CellStyleModule, ClientSideRowModelModule]);
 
 const ragCellClassRules: CellClassRules = {
     'rag-green-outer': (params) => params.value === 2008,

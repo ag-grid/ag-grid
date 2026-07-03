@@ -7,7 +7,7 @@ import type {
     IServerSideGetRowsRequest,
     IsServerSideGroupOpenByDefaultParams,
 } from 'ag-grid-community';
-import { ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
@@ -17,6 +17,11 @@ import {
     TreeDataModule,
 } from 'ag-grid-enterprise';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     ColumnMenuModule,
@@ -24,7 +29,6 @@ ModuleRegistry.registerModules([
     TreeDataModule,
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

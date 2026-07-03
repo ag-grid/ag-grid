@@ -2,17 +2,18 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, SizeColumnsToFitGridStrategy } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnAutoSizeModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ColumnAutoSizeModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
 import './styles.css';
 
-const modules = [
-    ColumnAutoSizeModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [ColumnAutoSizeModule, ClientSideRowModelModule];
 
 const columnDefinitions: ColDef[] = [{ field: 'athlete' }, { field: 'age' }, { field: 'country' }, { field: 'sport' }];
 

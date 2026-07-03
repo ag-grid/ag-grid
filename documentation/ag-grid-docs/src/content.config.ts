@@ -161,6 +161,18 @@ const apiNav = defineCollection({
     }),
 });
 
+const announcementBanner = defineCollection({
+    loader: glob({ base: './src/content/announcement-banner', pattern: 'announcement-banner.json' }),
+    schema: z.object({
+        enabled: z.boolean(),
+        href: z.string(),
+        title: z.string(),
+        description: z.string().optional(),
+        ctaLabel: z.string().optional(),
+        external: z.boolean().optional(),
+    }),
+});
+
 const footer = defineCollection({
     loader: glob({ base: './src/content/footer', pattern: 'footer.json' }),
     schema: z.array(
@@ -330,7 +342,7 @@ const landingPages = defineCollection({
             title: z.string(),
             description: z.string(),
         }),
-        framework: internalFramework.optional(),
+        internalFramework,
         packageName: z.string().optional(),
         docsPath: z.string(),
         analyticsPrefix: z.string(),
@@ -346,13 +358,6 @@ const landingPages = defineCollection({
                     subHeading: z.string(),
                     subHeadingHtml: z.string().optional(),
                     showVersionBadge: z.boolean().optional(),
-                    primaryCta: z
-                        .object({
-                            text: z.string(),
-                            url: z.string().optional(),
-                            useTrialButton: z.boolean().optional(),
-                        })
-                        .optional(),
                     secondaryCta: z
                         .object({
                             text: z.string(),
@@ -472,6 +477,7 @@ export const collections = {
     apiNav,
     docsNav,
     footer,
+    announcementBanner,
     versions,
     faqs,
     siteHeader,

@@ -4,16 +4,16 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     RowAutoHeightModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    CellSpanModule,
-    ClientSideRowModelModule,
-    RowAutoHeightModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([CellSpanModule, ClientSideRowModelModule, RowAutoHeightModule]);
 
 const lorem = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`;
 

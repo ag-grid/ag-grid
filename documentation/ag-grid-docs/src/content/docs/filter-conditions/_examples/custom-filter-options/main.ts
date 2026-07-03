@@ -15,11 +15,16 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 declare let window: any;
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     LocaleModule,
@@ -27,7 +32,6 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     NumberFilterModule,
     DateFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const filterParams: INumberFilterParams = {

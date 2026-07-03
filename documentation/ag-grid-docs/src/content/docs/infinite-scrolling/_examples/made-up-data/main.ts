@@ -4,16 +4,16 @@ import {
     InfiniteRowModelModule,
     ModuleRegistry,
     RowSelectionModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    ColumnApiModule,
-    RowSelectionModule,
-    InfiniteRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ColumnApiModule, RowSelectionModule, InfiniteRowModelModule]);
 
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('');
 

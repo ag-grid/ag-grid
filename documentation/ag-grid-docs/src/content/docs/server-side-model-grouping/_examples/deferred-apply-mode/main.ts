@@ -1,5 +1,5 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
@@ -11,6 +11,11 @@ import {
 
 import { createFakeServer, createServerSideDatasource } from './fakeServer';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     ColumnMenuModule,
@@ -18,7 +23,6 @@ ModuleRegistry.registerModules([
     PivotModule,
     RowGroupingPanelModule,
     ServerSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

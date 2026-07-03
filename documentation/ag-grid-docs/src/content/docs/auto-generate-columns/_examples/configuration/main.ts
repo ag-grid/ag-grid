@@ -3,15 +3,16 @@ import {
     AutoGenerateColumnsModule,
     ClientSideRowModelModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    AutoGenerateColumnsModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, AutoGenerateColumnsModule]);
 
 let gridApi: GridApi;
 

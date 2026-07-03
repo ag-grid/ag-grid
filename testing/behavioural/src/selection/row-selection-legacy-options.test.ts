@@ -274,7 +274,7 @@ describe('Row Selection Legacy Grid Options', () => {
                 `);
                 await new GridRows(api, `un-selectable row cannot be selected setup`).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -287,7 +287,7 @@ describe('Row Selection Legacy Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
                 await new GridRows(api, `un-selectable row cannot be selected final state`).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -312,7 +312,7 @@ describe('Row Selection Legacy Grid Options', () => {
                 `);
                 await new GridRows(api, `un-selectable row cannot be selected setup`).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -334,7 +334,7 @@ describe('Row Selection Legacy Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
                 await new GridRows(api, `un-selectable row cannot be selected final state`).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -1126,7 +1126,7 @@ describe('Row Selection Legacy Grid Options', () => {
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF 🚫 id:4 sport:"golf"
                     ├── LEAF id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
@@ -1143,7 +1143,7 @@ describe('Row Selection Legacy Grid Options', () => {
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
-                    ├── LEAF id:4 sport:"golf"
+                    ├── LEAF 🚫 id:4 sport:"golf"
                     ├── LEAF selected id:5 sport:"swimming"
                     └── LEAF id:6 sport:"rowing"
                 `);
@@ -1893,7 +1893,7 @@ describe('Row Selection Legacy Grid Options', () => {
                 `);
                 await new GridRows(api, `un-selectable rows are not part of the selection setup`).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF id:1 sport:"rugby"
                     ├── LEAF id:2 sport:"tennis"
                     ├── LEAF id:3 sport:"cricket"
@@ -1906,7 +1906,7 @@ describe('Row Selection Legacy Grid Options', () => {
                 assertSelectedRowsByIndex([1, 2, 3, 4, 5, 6], api);
                 await new GridRows(api, `un-selectable rows are not part of the selection final state`).check(`
                     ROOT id:ROOT_NODE_ID
-                    ├── LEAF id:0 sport:"football"
+                    ├── LEAF 🚫 id:0 sport:"football"
                     ├── LEAF selected id:1 sport:"rugby"
                     ├── LEAF selected id:2 sport:"tennis"
                     ├── LEAF selected id:3 sport:"cricket"

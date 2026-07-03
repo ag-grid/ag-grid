@@ -29,8 +29,14 @@ export class CellFlashService extends BeanStub implements NamedBean {
         fadeDuration: number = this.beans.gos.get('cellFadeDuration')
     ) {
         const animations = this.animations[cssName];
-        // cancel any pre-existing animation for this cell
+        // cancel any pre-existing animation for this cell (runs even for unmounted cells so a
+        // stale entry is not left behind when the cell has since lost its comp/eGui)
         animations.delete(cellCtrl);
+
+        // getCellCtrls can yield a cell whose comp/eGui is not set (not yet mounted or torn down)
+        if (!cellCtrl.comp) {
+            return;
+        }
 
         const time = Date.now();
         const flashEndTime = time + flashDuration;

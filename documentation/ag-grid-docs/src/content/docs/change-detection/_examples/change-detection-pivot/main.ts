@@ -12,10 +12,15 @@ import {
     ColumnApiModule,
     HighlightChangesModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { PivotModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     ColumnApiModule,
@@ -23,7 +28,6 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     PivotModule,
     HighlightChangesModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 interface Student {

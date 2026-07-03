@@ -14,18 +14,17 @@ import {
     RowApiModule,
     RowStyleModule,
     ScrollApiModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-const modules = [
-    RowApiModule,
-    ScrollApiModule,
-    RowStyleModule,
-    InfiniteRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [RowApiModule, ScrollApiModule, RowStyleModule, InfiniteRowModelModule];
 
 const valueFormatter = function (params: ValueFormatterParams) {
     if (typeof params.value === 'number') {

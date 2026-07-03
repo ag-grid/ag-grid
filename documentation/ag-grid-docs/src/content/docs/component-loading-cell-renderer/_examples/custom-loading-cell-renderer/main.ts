@@ -5,12 +5,17 @@ import {
     NumberFilterModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { CustomLoadingCellRenderer } from './customLoadingCellRenderer_typescript';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     NumberEditorModule,
@@ -18,7 +23,6 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
     ServerSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

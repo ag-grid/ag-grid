@@ -2,7 +2,7 @@ import type { AgColorType } from 'ag-charts-types';
 import { _setAriaLabel } from 'ag-stack';
 
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
-import { Component, KeyCode, _warn } from 'ag-grid-community';
+import { Component, KeyCode, _createElement, _warn } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../../../../agStack/agGroupComponent';
 import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';
@@ -258,10 +258,12 @@ export class MiniChartsContainer extends Component {
 
             for (const menuItem of items) {
                 const { miniChart: MiniClass, chartType } = menuItem.icon;
-                const miniWrapper = document.createElement('div');
-                miniWrapper.classList.add('ag-chart-mini-thumbnail');
-                miniWrapper.setAttribute('tabindex', '0');
-                miniWrapper.setAttribute('role', 'button');
+                const miniWrapper = _createElement({
+                    tag: 'div',
+                    cls: 'ag-chart-mini-thumbnail',
+                    role: 'button',
+                    attrs: { tabindex: '0' },
+                });
 
                 const miniClassChartType: ChartType = chartType;
                 const listener = () => {

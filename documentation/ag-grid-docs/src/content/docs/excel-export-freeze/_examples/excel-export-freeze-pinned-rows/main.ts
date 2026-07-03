@@ -6,10 +6,15 @@ import {
     NumberFilterModule,
     PinnedRowModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, ExcelExportModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     PinnedRowModule,
@@ -20,7 +25,6 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     TextFilterModule,
     NumberFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: (ColDef | ColGroupDef)[] = [

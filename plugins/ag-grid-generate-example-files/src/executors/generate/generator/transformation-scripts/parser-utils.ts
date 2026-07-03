@@ -248,15 +248,20 @@ export function addLicenseManager(imports: any[], exampleConfig: ExampleConfig) 
 }
 
 export function extractModuleRegistration(srcFile: ts.SourceFile): string {
+    let devValidationsGuard: string | undefined;
     for (const statement of srcFile.statements) {
+        if (ts.isIfStatement(statement) && statement.getText().includes('enableDevValidations')) {
+            devValidationsGuard = statement.getText();
+        }
         if (
             ts.isExpressionStatement(statement) &&
             statement.expression?.getText().includes('ModuleRegistry.registerModules')
         ) {
-            return statement.getText();
+            const registration = statement.getText();
+            return devValidationsGuard ? `${devValidationsGuard}\n\n${registration}` : registration;
         }
     }
-    return undefined;
+    return devValidationsGuard;
 }
 
 export function extractTypeDeclarations(srcFile: ts.SourceFile) {
@@ -533,6 +538,12 @@ export function addRelativeImports(bindings: ParsedBindings, imports: string[], 
 }
 
 export function removeModuleRegistration(code: string) {
+    // Strip the dev-only validations guard (the vanilla/UMD generator re-injects a plain
+    // agGrid.enableDevValidations() call — process.env is not defined in the browser bundle).
+    code = code.replace(
+        /(\/\/[^\n]*\n)?if \(process\.env\.NODE_ENV !== 'production'\) \{\s*(agGrid\.)?enableDevValidations\(\);\s*\}\n?/g,
+        ''
+    );
     return code.replace(/\b(agGrid\.)?ModuleRegistry\.registerModules(.|\n)*?]\)(;)/g, '');
 }
 

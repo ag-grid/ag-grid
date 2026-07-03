@@ -311,7 +311,6 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
         this.beans.rowModel.forEachNode((node) => {
             const rowSelectable = this.updateRowSelectable(node, true);
-
             if (!rowSelectable && node.isSelected()) {
                 nodesToDeselect.push(node);
             }

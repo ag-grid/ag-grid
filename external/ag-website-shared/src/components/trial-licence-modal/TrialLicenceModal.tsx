@@ -56,8 +56,7 @@ export const TrialLicenceModal: React.FC<TrialLicenceModalProps> = ({ isOpen, on
                 <div className={styles.content}>
                     <h2 className={styles.title}>Request a Trial Licence</h2>
                     <p className={styles.description}>
-                        Get a free two-week Enterprise Bundle trial licence. This will remove the watermark and console
-                        errors during your evaluation.
+                        Start a free two-week Enterprise Bundle trial to remove the watermark and console errors
                     </p>
                     <div className={styles.formContainer}>
                         <TrialLicenceForm />

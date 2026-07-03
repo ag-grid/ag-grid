@@ -7,7 +7,7 @@ import {
     CustomFilterModule,
     NumberFilterModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
@@ -15,13 +15,12 @@ import type { IOlympicData } from './interfaces';
 import NumberFilterComponent from './numberFilterComponent';
 import NumberFloatingFilterComponent from './numberFloatingFilterComponent';
 
-const modules = [
-    TextFilterModule,
-    CustomFilterModule,
-    NumberFilterModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [TextFilterModule, CustomFilterModule, NumberFilterModule, ClientSideRowModelModule];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);

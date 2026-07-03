@@ -2,16 +2,23 @@ import type { BenchOptions } from 'vitest';
 import { bench, suite } from 'vitest';
 
 import type { GridApi } from 'ag-grid-community';
-import { CellApiModule, ClientSideRowModelApiModule, ClientSideRowModelModule, RowApiModule } from 'ag-grid-community';
+import {
+    CellApiModule,
+    ClientSideRowModelApiModule,
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    RowApiModule,
+} from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { BenchGridsManager, benchDefaults } from './bench-utils';
 
 const FORMULA_MODULES = [
     ClientSideRowModelModule,
     ClientSideRowModelApiModule,
     RowApiModule,
     CellApiModule,
+    ColumnApiModule,
     FormulaModule,
 ];
 
@@ -22,7 +29,7 @@ function resolveColumnForAllRows(api: GridApi, colKey: string): void {
 }
 
 suite('formulas - flat grid evaluation', () => {
-    const gridsManager = new TestGridsManager({ benchmark: true, modules: FORMULA_MODULES });
+    const gridsManager = new BenchGridsManager({ modules: FORMULA_MODULES });
     const rowCount = 3000;
 
     const rowData = Array.from({ length: rowCount }, (_, i) => ({
@@ -52,7 +59,7 @@ suite('formulas - flat grid evaluation', () => {
     let api!: GridApi;
     let toggle = 0;
     const benchOptions: BenchOptions = {
-        throws: true,
+        ...benchDefaults(),
         setup: () => {
             if (!api) {
                 api = createFlatGrid();
@@ -60,9 +67,9 @@ suite('formulas - flat grid evaluation', () => {
                 toggle = 0;
             }
         },
-        teardown: () => {
-            gridsManager.reset();
+        teardown: async () => {
             api = undefined!;
+            await gridsManager.reset();
         },
     };
 
@@ -86,7 +93,7 @@ suite('formulas - flat grid evaluation', () => {
 });
 
 suite('formulas - dependent re-evaluation on update', () => {
-    const gridsManager = new TestGridsManager({ benchmark: true, modules: FORMULA_MODULES });
+    const gridsManager = new BenchGridsManager({ modules: FORMULA_MODULES });
     const dependentCount = 1500;
     const chainLength = 200;
 
@@ -104,7 +111,7 @@ suite('formulas - dependent re-evaluation on update', () => {
     let api!: GridApi;
     let sourceValue = 10;
     const benchOptions: BenchOptions = {
-        throws: true,
+        ...benchDefaults(),
         setup: () => {
             if (!api) {
                 api = gridsManager.createGrid('G', {
@@ -117,9 +124,9 @@ suite('formulas - dependent re-evaluation on update', () => {
                 sourceValue = 10;
             }
         },
-        teardown: () => {
-            gridsManager.reset();
+        teardown: async () => {
             api = undefined!;
+            await gridsManager.reset();
         },
     };
 
@@ -135,7 +142,7 @@ suite('formulas - dependent re-evaluation on update', () => {
 });
 
 suite('formulas - large range aggregate', () => {
-    const gridsManager = new TestGridsManager({ benchmark: true, modules: FORMULA_MODULES });
+    const gridsManager = new BenchGridsManager({ modules: FORMULA_MODULES });
     const rowCount = 5000;
     const colCount = 20;
 
@@ -167,7 +174,7 @@ suite('formulas - large range aggregate', () => {
     let api!: GridApi;
     let toggle = 0;
     const benchOptions: BenchOptions = {
-        throws: true,
+        ...benchDefaults(),
         setup: () => {
             if (!api) {
                 api = createRangeGrid();
@@ -176,9 +183,9 @@ suite('formulas - large range aggregate', () => {
                 toggle = 0;
             }
         },
-        teardown: () => {
-            gridsManager.reset();
+        teardown: async () => {
             api = undefined!;
+            await gridsManager.reset();
         },
     };
 
@@ -204,7 +211,7 @@ suite('formulas - large range aggregate', () => {
 });
 
 suite('formulas - column reorder', () => {
-    const gridsManager = new TestGridsManager({ benchmark: true, modules: FORMULA_MODULES });
+    const gridsManager = new BenchGridsManager({ modules: FORMULA_MODULES });
     const rowCount = 3000;
 
     // Two formula cols: one relative (immune to column order), one absolute (needs re-eval on reorder).
@@ -236,7 +243,7 @@ suite('formulas - column reorder', () => {
     let api!: GridApi;
     let forward = true;
     const benchOptions: BenchOptions = {
-        throws: true,
+        ...benchDefaults(),
         setup: () => {
             if (!api) {
                 api = createGrid();
@@ -244,9 +251,9 @@ suite('formulas - column reorder', () => {
                 forward = true;
             }
         },
-        teardown: () => {
-            gridsManager.reset();
+        teardown: async () => {
             api = undefined!;
+            await gridsManager.reset();
         },
     };
 

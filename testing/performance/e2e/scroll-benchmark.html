@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Typescript Example - Performance Test - Scroll Benchmark</title>
+    </head>
+    <body>
+        <div class="test-container" style="height: 100%; display: flex; flex-direction: column">
+            <div>
+                <button onclick="run()">Run grid</button>
+                <button onclick="onScroll()">Scroll</button>
+                <span id="output">Ready</span>
+            </div>
+            <div id="myGrid" style="flex-grow: 1; height: 100vh"></div>
+        </div>
+
+        <script>
+            let gridApi;
+
+            function repeat(arr, n) {
+                return Array(n).fill(arr).flat();
+            }
+
+            const cols = [
+                { field: 'athlete' },
+                { field: 'gold' },
+                { field: 'silver' },
+                { field: 'bronze' },
+                { field: 'date' },
+            ];
+
+            const ROW_COUNT = 100_000;
+            const columnDefs = repeat(cols, 4); // 20 columns
+
+            // Pre-allocate row data so generation is not part of the measured path
+            const rowData = [];
+            for (let i = 0; i < ROW_COUNT; i++) {
+                rowData.push({
+                    athlete: 'Athlete ' + i,
+                    gold: (i * 7) % 10,
+                    silver: (i * 3) % 8,
+                    bronze: (i * 11) % 6,
+                    date: '2024-01-' + String((i % 28) + 1).padStart(2, '0'),
+                });
+            }
+
+            function run() {
+                const gridOptions = {
+                    columnDefs: columnDefs,
+                    rowData: rowData,
+                    suppressColumnVirtualisation: true,
+                    rowBuffer: 10,
+                };
+                const myGridElement = document.querySelector('#myGrid');
+                gridApi = agGrid.createGrid(myGridElement, gridOptions);
+                window.gridApi = gridApi;
+                document.getElementById('output').textContent = 'Grid ready';
+            }
+
+            // Scroll to a specific row index
+            window.scrollToRow = function (index) {
+                gridApi.ensureIndexVisible(index, 'top');
+            };
+
+            // Scroll in increments, wrapped in performance.measure for timing benchmark
+            window.scrollBurst = function (from, to, step) {
+                return new Promise(function (resolve) {
+                    performance.mark('scroll-burst-start');
+                    let current = from;
+
+                    function nextStep() {
+                        if (current > to) {
+                            performance.measure('scroll-burst', 'scroll-burst-start');
+                            resolve();
+                            return;
+                        }
+                        gridApi.ensureIndexVisible(current, 'top');
+                        current += step;
+                        requestAnimationFrame(nextStep);
+                    }
+
+                    requestAnimationFrame(nextStep);
+                });
+            };
+
+            function onScroll() {
+                window.scrollBurst(0, 500, 20).then(function () {
+                    document.getElementById('output').textContent = 'Scroll complete';
+                });
+            }
+        </script>
+    </body>
+</html>

@@ -5,6 +5,7 @@ import styles from '@pages-styles/example.module.scss';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { HR } from '@components/demos/examples/hr';
 import LogoMark from '@components/logo/LogoMark';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 ---
 
 <DemosLayout title="Demo - HR Management" description="HR data example showing hierarchical employee data.">
@@ -19,7 +20,10 @@ import LogoMark from '@components/logo/LogoMark';
                     href="https://github.com/ag-grid/ag-grid-demos/tree/main/hr"
                 >
                     <Icon name="github" svgClasses={styles.githubIcon} />
-                    <span>See on GitHub</span>
+                    <span>See On GitHub</span>
+                </a>
+                <a class="button-secondary" href={urlWithBaseUrl('/about/#contact-section')}>
+                    <span>Contact Us</span>
                 </a>
             </div>
             <p>Example showing HR hierarchical employee data.</p>

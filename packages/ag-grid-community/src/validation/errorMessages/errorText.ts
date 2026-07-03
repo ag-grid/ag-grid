@@ -11,7 +11,7 @@ import type {
 import type { RowModelType } from '../../interfaces/iRowModel';
 import type { RowNodeEventType, RowPinnedType } from '../../interfaces/iRowNode';
 import { ENTERPRISE_MODULE_NAMES } from '../enterpriseModuleNames';
-import { baseDocLink, getErrorLink } from '../logging';
+import { baseDocLink, getErrorLink, toStringWithNullUndefined } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
 import { USER_COMP_MODULES } from '../rules/userCompValidations';
 
@@ -781,6 +781,99 @@ export const AG_GRID_ERRORS = {
         `Invalid calculatedColumns.dataTypes entry "${dataType}" - it must be a built-in data type or registered via dataTypeDefinitions. It has been ignored.` as const,
     305: () =>
         `The file input overlay is shown but no 'processFileInput' is configured. The overlay will not work without a 'processFileInput'.` as const,
+    306: ({ version, name, message }: { version: string; name: string; message?: string }) =>
+        `As of v${version}, ${name} is deprecated. ${message ?? ''}`,
+    307: ({
+        objectName,
+        name,
+        suggestions,
+        hasContext,
+    }: {
+        objectName: string;
+        name: string;
+        suggestions: string[];
+        hasContext?: boolean;
+    }) => {
+        let message = `invalid ${objectName} property '${name}' did you mean any of these: ${(suggestions ?? []).slice(0, 8).join(', ')}.`;
+        if (hasContext) {
+            message += `\nIf you are trying to annotate ${objectName} with application data, use the '${objectName}.context' property instead.`;
+        }
+        return message;
+    },
+    308: ({
+        version,
+        apiMethod,
+        replacement,
+        message,
+    }: {
+        version: string;
+        apiMethod: string;
+        replacement?: string;
+        message?: string;
+    }) => {
+        const replacementMessage = replacement ? `Please use ${replacement} instead. ` : '';
+        return `Since ${version} api.${apiMethod} is deprecated. ${replacementMessage}${message ?? ''}`;
+    },
+    309: ({ name, rowModel, supportedRowModels }: { name: string; rowModel: string; supportedRowModels?: string[] }) =>
+        `${name} is not supported with the '${rowModel}' row model. It is only valid with: ${(supportedRowModels ?? []).join(', ')}.`,
+    310: ({ objectName, url }: { objectName: string; url: string }) =>
+        `to see all the valid ${objectName} properties please check: ${url}`,
+    311: ({ functionName, rowModels }: { functionName: string; rowModels?: string[] }) =>
+        `api.${functionName} can only be called when gridOptions.rowModelType is ${(rowModels ?? []).join(' or ')}`,
+    312: ({ chartType, renamedChartType }: { chartType: string; renamedChartType: string }) =>
+        `The chart type '${chartType}' has been deprecated. Please use '${renamedChartType}' instead.`,
+    313: ({ paramsType, property }: { paramsType?: string; property: string }) =>
+        `Unexpected property supplied. ${paramsType} does not contain: \`${property}\`.`,
+    314: ({
+        key,
+        expectedType,
+        actualType,
+        value,
+    }: {
+        key: string;
+        expectedType: string;
+        actualType: string;
+        value?: unknown;
+    }) => `${key} should be of type '${expectedType}' but received '${actualType}' (${String(value)}).`,
+    315: ({
+        key,
+        failedKey,
+        required,
+        reason,
+    }: {
+        key: string;
+        failedKey: string;
+        required?: string[];
+        reason?: string;
+    }) => `'${key}' requires '${failedKey}' to be one of [${(required ?? []).join(', ')}]. ${reason ?? ''}`,
+    316: ({ property, value, expectedType }: { property: string; value?: unknown; expectedType: string }) =>
+        `unable to update chart as invalid params supplied: \`${property}: ${String(value)}\`, expected ${expectedType}.`,
+    317: ({ property, min }: { property: string; min: number }) => `${property} should not be lower than ${min}`,
+    318: ({ feature, conflictsWith, advice }: { feature: string; conflictsWith: string; advice?: string }) => {
+        const suffix = advice ? ` ${advice}` : '';
+        return `${feature} is not supported with ${conflictsWith}.${suffix}`;
+    },
+    319: ({ feature, requirement }: { feature: string; requirement: string }) => `${feature} requires ${requirement}.`,
+    320: ({ property, allowed, value }: { property: string; allowed?: string[]; value?: unknown }) => {
+        const current = value !== undefined ? `, currently it's ${String(value)}` : '';
+        return `${property} must be one of [${(allowed ?? []).join(', ')}]${current}.`;
+    },
+    321: ({ property, expected }: { property: string; expected: string }) => `${property} should be ${expected}.`,
+    322: ({ message }: { message?: string }) => message ?? '',
+    323: ({ validNames }: { validNames: string[] }) => {
+        const names = (validNames ?? []).map((n) => `'${n}'`).join(', ');
+        return `'paginationPanels' expects an array of panel names or config objects: [${names}]`;
+    },
+    324: ({ property, invalidItems }: { property: string; invalidItems?: unknown[] }) => {
+        const items = (invalidItems ?? [])
+            .map((item) =>
+                typeof item === 'string' || item == null ? toStringWithNullUndefined(item) : JSON.stringify(item)
+            )
+            .join(', ');
+        return `${property} must be an array of type (SortDirection | SortDef)[], incorrect items are: [${items}]`;
+    },
+    325: ({ property, value }: { property: string; value?: unknown }) =>
+        `${property} must be an array with at least one element, currently it is [${String(value)}]`,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

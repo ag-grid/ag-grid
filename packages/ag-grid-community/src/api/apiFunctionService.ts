@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AllEvents } from '../events';
-import { _warn } from '../validation/logging';
+import { _isDiagnosticCaptureActive, _runWithActiveGrid, _warn } from '../validation/logging';
 import type { GridApi } from './gridApi';
 import { gridApiFunctionsMap } from './gridApiFunctions';
 import type { ApiFunction, ApiFunctionName } from './iApiFunction';
@@ -72,7 +72,14 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
                     beans,
                     fns: { [apiName]: fn },
                 } = this;
-                return fn ? fn(beans, ...args) : this.apiNotFound(apiName);
+                if (!fn) {
+                    return this.apiNotFound(apiName);
+                }
+                // Attribute any diagnostics this call emits to its grid when in diagnostic capture mode
+                if (beans && _isDiagnosticCaptureActive()) {
+                    return _runWithActiveGrid(beans.context.getId(), () => fn(beans, ...args));
+                }
+                return fn(beans, ...args);
             },
         };
     }

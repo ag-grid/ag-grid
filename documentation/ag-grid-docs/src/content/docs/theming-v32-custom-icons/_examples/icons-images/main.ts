@@ -7,8 +7,8 @@ import {
     NumberEditorModule,
     NumberFilterModule,
     TextEditorModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -22,6 +22,11 @@ import {
     SetFilterModule,
 } from 'ag-grid-enterprise';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     NumberEditorModule,
     TextEditorModule,
@@ -34,7 +39,6 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     PivotModule,
     SetFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const columnDefs: ColDef[] = [

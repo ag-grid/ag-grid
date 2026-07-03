@@ -3,8 +3,8 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     RowApiModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -16,6 +16,11 @@ import {
 
 import { FakeServer } from './fakeServer';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     RowApiModule,
     ClientSideRowModelModule,
@@ -24,7 +29,6 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     ServerSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;

@@ -10,11 +10,16 @@ import {
     NumberEditorModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { MySimpleEditor } from './mySimple-editor.component';
 import './style.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     NumberEditorModule,
@@ -22,7 +27,6 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     CustomEditorModule,
     ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 @Component({

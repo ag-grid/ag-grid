@@ -1,0 +1,26 @@
+@use 'design-system' as *;
+
+.card {
+    background: var(--color-bg-primary);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: left;
+    border: 1px solid var(--color-border-secondary);
+    color: var(--color-bg-secondary);
+    transition: all $transition-default-timing ease-in-out;
+    height: auto !important;
+}
+
+a.card {
+    &:hover {
+        background-color: var(--color-bg-secondary);
+    }
+
+    &.hoverLift {
+        &:hover {
+            transform: translateY(-5px);
+            background-color: var(--color-bg-secondary);
+            transition: all 0.3s;
+        }
+    }
+}

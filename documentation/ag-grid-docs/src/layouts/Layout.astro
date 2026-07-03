@@ -15,7 +15,7 @@ import { getApiPaths } from '@utils/apiMenuPath';
 import { SITE_BASE_URL, PUBLIC_GTM_ID, PUBLIC_GTM_AUTH, PUBLIC_GTM_PREVIEW, agGridVersion } from '@constants';
 import GoogleTagManager from '@ag-website-shared/components/google-tag-manager/GoogleTagManager.astro';
 import GoogleTagManagerBody from '@ag-website-shared/components/google-tag-manager/GoogleTagManagerBody.astro';
-import AnnouncementBanner from '@components/announcement-banner/AnnouncementBanner.astro';
+import AnnouncementBanner from '@ag-website-shared/components/announcement-banner/AnnouncementBanner.astro';
 import JsonLd from '@ag-website-shared/components/structured-data/JsonLd.astro';
 import {
     buildOrganization,
@@ -43,6 +43,10 @@ const { data: metadata } = (await getEntry('metadata', 'metadata')) as Collectio
 const { data: apiNavData } = (await getEntry('apiNav', 'nav')) as CollectionEntry<'apiNav'>;
 
 const { data: footerItems } = (await getEntry('footer', 'footer')) as CollectionEntry<'footer'>;
+const { data: announcementBannerContent } = (await getEntry(
+    'announcementBanner',
+    'announcement-banner'
+)) as CollectionEntry<'announcementBanner'>;
 const apiPaths = getApiPaths(apiNavData);
 
 const isProduction = getIsProduction();
@@ -60,13 +64,18 @@ const {
     hideFooter,
     hidePageFromSearchEngines,
     showMicrosoftMessage,
-    showAnnouncementBanner = false,
+    showAnnouncementBanner = announcementBannerContent.enabled,
     overrideSocialImage,
     pageStructuredData,
 } = Astro.props;
 
 const path = Astro.url.pathname;
-const socialImage = urlWithBaseUrl(overrideSocialImage ?? metadata.socialImage);
+const siteRoot = siteRootUrl(metadata.canonicalUrlBase);
+// Open Graph and Twitter crawlers require absolute image URLs, so resolve the social image against the site root.
+const socialImagePathOrUrl = urlWithBaseUrl(overrideSocialImage ?? metadata.socialImage);
+const socialImage = socialImagePathOrUrl.startsWith('http')
+    ? socialImagePathOrUrl
+    : `${siteRoot}${socialImagePathOrUrl.replace(/^\//, '')}`;
 
 const lightModeCSSUrl = `url("${urlWithBaseUrl('/images/sun.svg')}")`;
 const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
@@ -77,7 +86,6 @@ const includeStructuredData = !hidePageFromSearchEngines && !isArchive;
 const sameAsUrls = includeStructuredData
     ? footerItems.flatMap((group) => group.links.filter((link) => link.iconName).map((link) => link.url))
     : [];
-const siteRoot = siteRootUrl(metadata.canonicalUrlBase);
 const organizationLogoUrl = `${siteRoot}images/ag-logos/png-logos/AG-Grid-Logo_Light-Theme_476_140.png`;
 const licensePricingUrl = `${siteRoot}license-pricing/`;
 const structuredData: JsonLdObject[] = includeStructuredData
@@ -115,13 +123,6 @@ const structuredData: JsonLdObject[] = includeStructuredData
           ...(pageStructuredData ?? []),
       ]
     : [];
-
-const announcementBannerProps = {
-    href: urlWithBaseUrl('/campaigns/beyond-the-prompt/'),
-    title: 'Beyond the Prompt',
-    description: 'A one-day AG Grid & Bryntum conference • 19th May 26',
-    ctaLabel: 'Learn more',
-};
 ---
 
 <!doctype html>
@@ -129,7 +130,7 @@ const announcementBannerProps = {
     <head>
         <meta charset="UTF-8" />
         <meta name="description" content={description} />
-        <meta name="viewport" content="width=device-width" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         {
             getFavIconsData().map(({ size, icon }: any) => (
                 <link rel="icon" type="image/png" sizes={`${size}x${size}`} href={icon} />
@@ -234,17 +235,20 @@ const announcementBannerProps = {
         {
             !isArchive && showAnnouncementBanner && (
                 <AnnouncementBanner
-                    href={announcementBannerProps.href}
-                    title={announcementBannerProps.title}
-                    description={announcementBannerProps.description}
-                    ctaLabel={announcementBannerProps.ctaLabel}
+                    href={urlWithBaseUrl(announcementBannerContent.href)}
+                    title={announcementBannerContent.title}
+                    description={announcementBannerContent.description}
+                    ctaLabel={announcementBannerContent.ctaLabel}
+                    external={announcementBannerContent.external}
                 />
             )
         }
 
         <div id="mainContainer" class:list={styles.mainContainer}>
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}
-            <slot />
+            <main class:list={styles.pageMain}>
+                <slot />
+            </main>
         </div>
 
         {
@@ -267,5 +271,12 @@ const announcementBannerProps = {
                 />
             )
         }
+
+        {
+            /* SE-44: strip heading semantics from the GTM-injected OneTrust cookie banner/modal
+        so it doesn't pollute the document heading outline. Externalised to a 'self' script
+        (like gtm-init.js) to stay off the CSP hash list. No-ops when OneTrust is absent. */
+        }
+        <script is:inline src={urlWithBaseUrl('/scripts/neutralise-onetrust-headings.js')} defer></script>
     </body>
 </html>

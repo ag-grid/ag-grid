@@ -9,8 +9,8 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     RowApiModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -25,6 +25,11 @@ import {
 import type { IAccount, ICallRecord } from './data';
 import { accountsData } from './data';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     RowApiModule,
     ClientSideRowModelModule,
@@ -35,7 +40,6 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     SetFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<IAccount>;

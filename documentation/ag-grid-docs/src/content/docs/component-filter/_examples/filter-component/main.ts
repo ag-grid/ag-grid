@@ -5,20 +5,19 @@ import {
     ModuleRegistry,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { getData } from './data';
 import { PartialMatchFilter } from './partialMatchFilter_typescript';
 
-ModuleRegistry.registerModules([
-    TextFilterModule,
-    TextEditorModule,
-    CustomFilterModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([TextFilterModule, TextEditorModule, CustomFilterModule, ClientSideRowModelModule]);
 
 function doesFilterPass({ model, node, handlerParams }: DoesFilterPassParams<any, any, string>): boolean {
     const value = handlerParams.getValue(node).toString().toLowerCase();

@@ -98,7 +98,8 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             mainJs = transformEntryFile({ entryFile: mainJs });
         }
 
-        mainJs = getEnableAGTestIdLogic(true) + '\n\n' + mainJs;
+        const enableDevValidations = '// Development only — remove for production\nagGrid.enableDevValidations();';
+        mainJs = enableDevValidations + '\n\n' + getEnableAGTestIdLogic(true) + '\n\n' + mainJs;
 
         // remove any leading new lines
         mainJs = mainJs.replace(/^\s*[\r\n]/, '');

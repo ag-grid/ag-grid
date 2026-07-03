@@ -1,0 +1,104 @@
+@use 'design-system' as *;
+
+.pill {
+    text-transform: capitalize;
+    font-size: var(--text-fs-xs);
+    font-weight: var(--text-fw-medium);
+    padding: $spacing-size-1 $spacing-size-2;
+    display: inline-block;
+    font-weight: var(--text-semibold);
+    border-radius: var(--radius-4xl);
+
+    #{$selector-darkmode} & {
+        --webkit-text-antialiasing: subpixel-antialiased;
+    }
+
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+
+    &.yellow {
+        color: var(--color-warning-500);
+        background-color: color-mix(in srgb, var(--color-warning-100) 50%, transparent);
+        border: 1px solid var(--color-warning-400);
+
+        &::before {
+            background-color: var(--color-warning-500);
+        }
+
+        #{$selector-darkmode} & {
+            background-color: color-mix(in srgb, var(--color-warning-950) 50%, transparent);
+            border-color: color-mix(in srgb, var(--color-warning-600) 30%, transparent);
+            color: var(--color-warning-300);
+
+            &::before {
+                background-color: var(--color-warning-300);
+            }
+        }
+    }
+
+    &.blue {
+        color: var(--color-brand-500);
+        background-color: color-mix(in srgb, var(--color-brand-100) 50%, transparent);
+        border: 1px solid var(--color-brand-500);
+
+        &::before {
+            background-color: var(--color-brand-500);
+        }
+
+        #{$selector-darkmode} & {
+            background-color: color-mix(in srgb, var(--color-brand-900) 10%, var(--color-negative) 3%);
+            border-color: color-mix(in srgb, var(--color-brand-300) 30%, transparent);
+            color: var(--color-brand-300);
+
+            &::before {
+                background-color: var(--color-brand-300);
+            }
+        }
+    }
+
+    &.green {
+        color: var(--color-success);
+        background-color: color-mix(in srgb, var(--color-green-100) 50%, transparent);
+        border: 1px solid var(--color-success);
+
+        &::before {
+            background-color: var(--color-success);
+        }
+
+        #{$selector-darkmode} & {
+            background-color: color-mix(in srgb, var(--color-green-950) 50%, transparent);
+            border-color: color-mix(in srgb, var(--color-green-600) 30%, transparent);
+            color: var(--color-green-300);
+
+            &::before {
+                background-color: var(--color-green-300);
+            }
+        }
+    }
+
+    &.red {
+        color: var(--color-error);
+        background-color: var(--color-red-100);
+        border: 1px solid var(--color-error);
+
+        &::before {
+            background-color: var(--color-error);
+        }
+
+        #{$selector-darkmode} & {
+            background-color: color-mix(in srgb, var(--color-red-950) 50%, transparent);
+            border-color: color-mix(in srgb, var(--color-red-600) 30%, transparent);
+            color: var(--color-red-300);
+
+            &::before {
+                background-color: var(--color-red-300);
+            }
+        }
+    }
+}

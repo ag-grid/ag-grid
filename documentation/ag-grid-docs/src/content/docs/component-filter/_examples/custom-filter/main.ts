@@ -3,17 +3,18 @@ import {
     ClientSideRowModelModule,
     CustomFilterModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { PersonFilter } from './personFilter_typescript';
 
-ModuleRegistry.registerModules([
-    CustomFilterModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([CustomFilterModule, ClientSideRowModelModule]);
 
 function doesFilterPass({ model, node, handlerParams }: DoesFilterPassParams<any, any, string>): boolean {
     // make sure each word passes separately, ie search for firstname, lastname

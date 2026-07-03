@@ -2,6 +2,7 @@ import {
     buildBreadcrumbList,
     buildJsonLdDocument,
     buildOrganization,
+    buildSiteNavigationElement,
     buildSoftwareApplication,
     buildTechArticle,
     buildWebSite,
@@ -172,6 +173,26 @@ describe('buildBreadcrumbList', () => {
             },
             { '@type': 'ListItem', position: 3, name: 'Getting Started', item: pageUrl },
         ]);
+    });
+});
+
+describe('buildSiteNavigationElement', () => {
+    test('emits parallel name/url arrays and links to the WebSite by @id', () => {
+        const result = buildSiteNavigationElement({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            items: [
+                { name: 'Demos', url: `${CANONICAL_URL_BASE}/example/` },
+                { name: 'Pricing', url: `${CANONICAL_URL_BASE}/license-pricing/` },
+            ],
+        });
+
+        expect(result).toEqual({
+            '@type': 'SiteNavigationElement',
+            '@id': `${CANONICAL_URL_BASE}/#site-navigation`,
+            name: ['Demos', 'Pricing'],
+            url: [`${CANONICAL_URL_BASE}/example/`, `${CANONICAL_URL_BASE}/license-pricing/`],
+            isPartOf: { '@id': `${CANONICAL_URL_BASE}/#website` },
+        });
     });
 });
 

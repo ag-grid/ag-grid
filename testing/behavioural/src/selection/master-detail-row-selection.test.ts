@@ -453,4 +453,56 @@ describe('Row Selection Grid Options', () => {
             └── master collapsed id:6 sport:"rowing"
         `);
     });
+
+    test('removing a fully-selected master row clears its tracked detail selection', async () => {
+        const detailRendered = createDetailRenderedLatch();
+        const [api, actions] = await createGridAndWait({
+            columnDefs,
+            rowData,
+            getRowId: (params) => params.data.sport,
+            rowSelection: { mode: 'multiRow', masterSelects: 'detail' },
+            masterDetail: true,
+            detailCellRendererParams: {
+                detailGridOptions: {
+                    columnDefs: detailColumnDefs,
+                    rowSelection: { mode: 'multiRow' },
+                    onFirstDataRendered: detailRendered.onFirstDataRendered,
+                },
+                getDetailRowData(params: GetDetailRowDataParams) {
+                    params.successCallback(params.data.detail);
+                },
+            },
+        });
+
+        const rendered = detailRendered.next();
+        await actions.expandGroupRowByIndex(1, { count: 1 });
+        await rendered;
+
+        const info = api.getDetailGridInfo('detail_rugby')!;
+        expect(info).not.toBeUndefined();
+        const detailActions = new GridActions(info.api!, '[row-id="detail_rugby"]');
+
+        // Partial detail selection first, so the master's detail selection is tracked...
+        let wait = waitForEvent('rowSelected', info.api!);
+        detailActions.toggleCheckboxByIndex(0);
+        await wait;
+        expect(api.getRowNode('rugby')!.isSelected()).toBeUndefined();
+
+        // ...then select the rest so the master becomes fully selected (the tracked entry is now stale).
+        wait = waitForEvent('rowSelected', info.api!, 2);
+        detailActions.toggleCheckboxByIndex(1);
+        detailActions.toggleCheckboxByIndex(2);
+        await wait;
+        expect(api.getRowNode('rugby')!.isSelected()).toBe(true);
+
+        const selectionSvc = (api.getRowNode('football') as any).beans.selectionSvc;
+        expect(selectionSvc.detailSelection.has('rugby')).toBe(true);
+
+        // Removing the selected master must drop both its selection and its tracked detail state.
+        api.applyTransaction({ remove: [{ sport: 'rugby' }] });
+
+        expect(api.getRowNode('rugby')).toBeUndefined();
+        expect(api.getSelectedNodes()).toEqual([]);
+        expect(selectionSvc.detailSelection.has('rugby')).toBe(false);
+    });
 });

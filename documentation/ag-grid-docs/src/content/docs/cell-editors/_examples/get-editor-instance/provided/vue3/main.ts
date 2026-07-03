@@ -8,12 +8,17 @@ import {
     NumberEditorModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import MySimpleEditor from './mySimpleEditorVue.ts';
 import './style.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     NumberEditorModule,
@@ -21,7 +26,6 @@ ModuleRegistry.registerModules([
     TextEditorModule,
     TextFilterModule,
     ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const VueExample = defineComponent({

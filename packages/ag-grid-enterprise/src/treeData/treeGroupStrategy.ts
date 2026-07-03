@@ -49,7 +49,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     private parentIdGetter: ParentIdGetter<TData> = null;
 
     public nonLeafsById: Map<string, RowNode<TData>> | null = null;
-    private nodesToUnselect: RowNode<TData>[] | null = null;
     private fullReload: boolean = false;
 
     public postConstruct(): void {
@@ -76,14 +75,12 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     public override destroy(): void {
-        this.nodesToUnselect = null;
         this.reset();
         super.destroy();
     }
 
     public reset(): void {
         this.clearNonLeafs();
-        this.deselectHiddenNodes(false);
         this.fullReload = true;
     }
 
@@ -157,8 +154,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
 
         rootNode.treeNodeFlags = 0;
-
-        this.deselectHiddenNodes(parentsChanged || fullReload);
 
         return treeChanged;
     }
@@ -780,29 +775,10 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         return prefix + '-' + level + '-';
     }
 
-    private deselectHiddenNodes(updated: boolean): void {
-        const selectionSvc = this.beans.selectionSvc;
-        const nodes = this.nodesToUnselect;
-        const source = 'rowDataChanged';
-        if (nodes) {
-            this.nodesToUnselect = null; // Reset the array
-            selectionSvc?.setNodesSelected({ newValue: false, nodes, suppressFinishActions: true, source });
-        }
-        if (nodes || updated) {
-            // we do this regardless of nodes to unselect or not, as it's possible a new node was inserted,
-            // so a parent that was previously selected (as all children were selected) should not be tri-state
-            // (as new one unselected against all other selected children).
-            selectionSvc?.updateGroupsFromChildrenSelections?.(source);
-        }
-        if (nodes) {
-            const selectedNodes = selectionSvc?.getSelectedNodes() ?? null;
-            this.eventSvc.dispatchEvent({ type: 'selectionChanged', source, selectedNodes, serverSideState: null });
-        }
-    }
-
     private hideRow(row: RowNode<TData>): void {
+        // detached from the displayed tree — drop any selection; the pass fires the single event.
         if (row.isSelected()) {
-            (this.nodesToUnselect ??= []).push(row); // Collect nodes to unselect
+            this.beans.selectionSvc?.removeFromSelection?.(row, 'rowDataChanged');
         }
         row.parent = null;
         row.group = false;

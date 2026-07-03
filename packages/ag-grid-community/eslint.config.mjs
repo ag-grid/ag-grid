@@ -49,13 +49,18 @@ export default [
                 },
             ],
             'no-restricted-properties': [
-                'warn',
+                'error',
                 { property: 'innerText', message: 'Prefer textContent where possible' },
                 { property: 'innerHTML', message: 'Prefer textContent where possible' },
                 {
                     object: 'Object',
                     property: 'entries',
                     message: 'Prefer Object.keys() to Object.entries() for performance reasons.',
+                },
+                {
+                    object: 'document',
+                    property: 'createElement',
+                    message: 'Prefer the _createElement helper from utils/element over document.createElement.',
                 },
             ],
             'no-restricted-imports': [
@@ -68,6 +73,13 @@ export default [
             'no-console': 'error',
 
             'unicorn/prefer-modern-dom-apis': 'error',
+        },
+    },
+    {
+        // Test files are exempt from the runtime-focused restrictions above.
+        files: ['**/*.test.ts', '**/*.test.tsx'],
+        rules: {
+            'no-restricted-properties': 'off',
         },
     },
     {

@@ -142,6 +142,9 @@ export class AgColumn<TValue = any>
     public filterActive = false;
     public sortDef: SortDef = getSortDefFromInput();
     public sortIndex: number | null | undefined = undefined;
+    /** Sort direction applied to this column's pivot result columns. Isolated from {@link sortDef}.
+     *  `undefined` means unset and resolves to ascending; `null` means an explicit "no sort" (natural order). */
+    public pivotSort: SortDirection | undefined = undefined;
     // measured header height when autoHeaderHeight is enabled
     public autoHeaderHeight: number | null = null;
     public tooltipEnabled = false;
@@ -948,7 +951,9 @@ type SortDefOverride = () => SortDef | null | undefined;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const _getDisplaySortForColumn = (column: AgColumn, beans: BeanCollection, override?: SortDefOverride) => {
     const overrideSortDef = override?.();
-    const sortDef = overrideSortDef ?? beans.sortSvc?.getDisplaySort(column);
+    // An override returning `null` means "no sort, show nothing"; only an absent override (`undefined`)
+    // falls back to the column's own sort.
+    const sortDef = overrideSortDef !== undefined ? overrideSortDef : beans.sortSvc?.getDisplaySort(column);
     const type = _normalizeSortType(sortDef?.type);
     const direction = normalizeSortDirection(sortDef?.direction);
     const allowedSortTypes = getAvailableSortTypes(beans.gos, column);

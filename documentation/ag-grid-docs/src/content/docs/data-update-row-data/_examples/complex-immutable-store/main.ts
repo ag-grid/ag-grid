@@ -16,10 +16,15 @@ import {
     RowSelectionModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     TextEditorModule,
@@ -31,7 +36,6 @@ ModuleRegistry.registerModules([
     HighlightChangesModule,
     TextFilterModule,
     NumberFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const MIN_BOOK_COUNT = 10;

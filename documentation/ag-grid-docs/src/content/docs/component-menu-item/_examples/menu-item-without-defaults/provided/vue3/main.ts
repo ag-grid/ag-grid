@@ -5,7 +5,7 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -19,6 +19,11 @@ import { AgGridVue } from 'ag-grid-vue3';
 import MenuItem from './menuItemVue';
 import './style.css';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     TextFilterModule,
@@ -28,7 +33,6 @@ ModuleRegistry.registerModules([
     ExcelExportModule,
     CellSelectionModule,
     ClipboardModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const VueExample = {

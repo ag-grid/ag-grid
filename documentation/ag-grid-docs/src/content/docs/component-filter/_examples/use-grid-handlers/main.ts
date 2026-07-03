@@ -4,18 +4,18 @@ import {
     CustomFilterModule,
     ModuleRegistry,
     NumberFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { YearFilter } from './yearFilter_typescript';
 
-ModuleRegistry.registerModules([
-    CustomFilterModule,
-    NumberFilterModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([CustomFilterModule, NumberFilterModule, ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
     {

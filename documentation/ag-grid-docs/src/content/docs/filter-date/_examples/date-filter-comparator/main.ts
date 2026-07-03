@@ -3,15 +3,16 @@ import {
     ClientSideRowModelModule,
     DateFilterModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    DateFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, DateFilterModule]);
 
 const filterParams: IDateFilterParams = {
     comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {

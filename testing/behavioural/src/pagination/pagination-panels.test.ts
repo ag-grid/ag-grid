@@ -885,9 +885,11 @@ describe('paginationPanels', () => {
             expect(children[0].classList.contains('ag-paging-page-size')).toBe(true);
             expect(children[1].classList.contains('ag-paging-page-summary-panel')).toBe(true);
 
-            expect(consoleWarnSpy).toHaveBeenCalledWith(
-                expect.stringContaining("'paginationPanels' expects an array of panel names")
-            );
+            expect(
+                consoleWarnSpy.mock.calls.some((c) =>
+                    c.join(' ').includes("'paginationPanels' expects an array of panel names")
+                )
+            ).toBe(true);
         });
 
         test('single component pageSummary renders and functions correctly in isolation', () => {

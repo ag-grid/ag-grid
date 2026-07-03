@@ -1,13 +1,13 @@
 import type { GridApi, GridOptions, IStatusPanelValueFormatterParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    CellSelectionModule,
-    StatusBarModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, CellSelectionModule, StatusBarModule]);
 
 let gridApi: GridApi<IOlympicData>;
 

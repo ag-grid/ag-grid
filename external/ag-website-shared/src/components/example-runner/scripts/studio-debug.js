@@ -1,5 +1,7 @@
 // @ts-check
 /** @typedef {import('ag-charts-enterprise').AgChartOptions} AgChartOptions */
+/** @typedef {import('ag-studio').AgWidgetsConfig} AgWidgetsConfig */
+/** @typedef {import('ag-studio').AgWidgetToolbarItem} AgWidgetToolbarItem */
 
 const html = String;
 
@@ -117,40 +119,119 @@ function exportToPlunker({ widget }) {
     document.body.removeChild(form);
 }
 
+/** @type {AgWidgetToolbarItem} */
 const exportToPlunkerToolbarButton = {
+    id: 'exportToPlunker',
     type: 'button',
-    text: 'Export to Plunker',
+    label: 'Export to Plunker',
     icon: 'linked',
     action: exportToPlunker,
 };
 
+/** @type {AgWidgetToolbarItem} */
 const logStateButton = {
+    id: 'logState',
     type: 'button',
-    text: 'Log State',
+    label: 'Log State',
     icon: 'eye',
     action: ({ api }) => console.log(api.getState()),
+};
+
+/**
+ * @param {any} api
+ * @returns {any}
+ */
+const internalApi = (api) => {
+    const internalsKey = Object.getOwnPropertySymbols(api)[0];
+    return api[internalsKey];
+};
+
+/** @type {AgWidgetToolbarItem} */
+const requeryWithExplainButton = {
+    id: 'requeryWithExplain',
+    type: 'button',
+    label: 'Requery with Explain',
+    icon: 'aiExecuteQuery',
+    action: (params) => {
+        const { api } = params;
+        const widgetId = /** @type {any} */ (params).widgetId;
+        const refresh = internalApi(api)?.refresh;
+        if (typeof refresh !== 'function') {
+            return;
+        }
+        const win = /** @type {{agStudioOpts?: Record<string, unknown>}} */ (window);
+        const savedOpts = win.agStudioOpts;
+        win.agStudioOpts = { ...(savedOpts ?? {}), explain: { mode: 'analyze', samples: true, widgetId } };
+
+        // The widget re-queries asynchronously, and the query engine reads
+        // window.agStudioOpts.explain only when that re-query actually runs — at a point
+        // that differs between the dev and production builds. A fixed requestAnimationFrame
+        // reset races that read, so the explain plan prints on dev but not on a
+        // production/staging build. Instead, hold the explain option until the next user
+        // interaction (which always lands after the re-query has consumed it), with a
+        // timeout backstop so an untouched page does not keep explaining later queries.
+        let restored = false;
+        /** @type {ReturnType<typeof setTimeout>} */
+        let timer;
+        const restore = () => {
+            if (restored) {
+                return;
+            }
+            restored = true;
+            win.agStudioOpts = savedOpts;
+            window.removeEventListener('pointerdown', restore, true);
+            window.removeEventListener('keydown', restore, true);
+            clearTimeout(timer);
+        };
+        window.addEventListener('pointerdown', restore, true);
+        window.addEventListener('keydown', restore, true);
+        timer = setTimeout(restore, 10000);
+
+        refresh(widgetId);
+    },
 };
 
 /** @type {any} */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const debugOverrides = {
     /**
-     * @param {any} widgetConfigs
-     * @return {any} widgetConfigs
+     * @param {AgWidgetsConfig} widgetConfig
+     * @return {AgWidgetsConfig} widgetConfig
      */
-    widgets: (widgetConfigs) => {
-        for (const [widgetId, widgetConfig] of Object.entries(widgetConfigs)) {
-            if (widgetId.includes('chart') && !widgetConfig.toolbar.includes(exportToPlunkerToolbarButton)) {
-                widgetConfig.toolbar.push(exportToPlunkerToolbarButton);
-            }
-            if (!widgetConfig.toolbar?.includes(logStateButton)) {
-                if (widgetConfig.toolbar == null) {
-                    widgetConfig.toolbar = [];
+    widgets: (widgetConfig) => {
+        return {
+            ...widgetConfig,
+            widgets: widgetConfig.widgets.map((widget) => {
+                let { toolbar } = widget;
+
+                /**
+                 * @param {AgWidgetToolbarItem} button
+                 */
+                const addButton = (button) => {
+                    toolbar ??= ['duplicate', 'delete'];
+                    const dupIndex = toolbar.findIndex((item) => item === 'duplicate');
+                    if (dupIndex === -1) {
+                        toolbar.push(button);
+                    } else {
+                        toolbar.splice(dupIndex, 0, button);
+                    }
+                };
+
+                if (widget.id.includes('chart') && !toolbar?.includes(exportToPlunkerToolbarButton)) {
+                    addButton(exportToPlunkerToolbarButton);
                 }
-                widgetConfig.toolbar.push(logStateButton);
-            }
-        }
-        return widgetConfigs;
+
+                if (!toolbar?.includes(logStateButton)) {
+                    addButton(logStateButton);
+                }
+
+                if (!toolbar?.includes(requeryWithExplainButton)) {
+                    addButton(requeryWithExplainButton);
+                }
+
+                return { ...widget, toolbar };
+            }),
+        };
     },
 };
 

@@ -2,19 +2,19 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, DateFilterModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, DateFilterModule, TextFilterModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomDateComponent from './customDateComponent';
 import type { IOlympicData } from './interfaces';
 import './styles.css';
 
-const modules = [
-    DateFilterModule,
-    TextFilterModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [DateFilterModule, TextFilterModule, ClientSideRowModelModule];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);

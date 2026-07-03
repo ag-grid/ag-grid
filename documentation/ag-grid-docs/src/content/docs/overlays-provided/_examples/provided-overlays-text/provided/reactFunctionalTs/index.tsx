@@ -1,18 +1,18 @@
 import React, { StrictMode, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, CsvExportModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, CsvExportModule, TextFilterModule, enableDevValidations } from 'ag-grid-community';
 import type { ColDef, OverlayComponentUserParams } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-const modules = [
-    ClientSideRowModelModule,
-    CsvExportModule,
-    TextFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [ClientSideRowModelModule, CsvExportModule, TextFilterModule];
 
 interface IAthlete {
     athlete: string;

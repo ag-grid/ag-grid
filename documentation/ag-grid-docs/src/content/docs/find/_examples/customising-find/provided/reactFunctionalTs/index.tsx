@@ -4,11 +4,16 @@ import React, { ChangeEvent, StrictMode, useCallback, useMemo, useRef, useState 
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, FindChangedEvent, FindOptions, GridReadyEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule, PaginationModule, PinnedRowModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PaginationModule, PinnedRowModule, enableDevValidations } from 'ag-grid-community';
 import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     FindModule,
@@ -18,7 +23,6 @@ const modules = [
     PinnedRowModule,
     ClientSideRowModelModule,
     PaginationModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 const GridExample = () => {

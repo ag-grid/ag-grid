@@ -3,15 +3,16 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    TextFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, TextFilterModule]);
 
 const athleteFilterParams: ITextFilterParams = {
     textFormatter: (r) => {

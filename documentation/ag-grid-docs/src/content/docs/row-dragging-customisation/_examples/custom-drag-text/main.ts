@@ -5,17 +5,16 @@ import {
     NumberFilterModule,
     RowDragModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([
-    TextFilterModule,
-    NumberFilterModule,
-    RowDragModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([TextFilterModule, NumberFilterModule, RowDragModule, ClientSideRowModelModule]);
 
 const rowDragText = function (params: IRowDragItem) {
     // keep double equals here because data can be a string or number

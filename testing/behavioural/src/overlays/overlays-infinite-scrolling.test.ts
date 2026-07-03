@@ -66,7 +66,9 @@ describe('ag-grid overlays infinite scrolling state', () => {
         setRowDataChecked(api, []);
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            "AG Grid: rowData is not supported with the 'infinite' row model. It is only valid with: clientSide."
+            'AG Grid: warning #309',
+            "rowData is not supported with the 'infinite' row model. It is only valid with: clientSide.",
+            expect.any(String)
         );
 
         expect(hasLoadingOverlay()).toBe(false);

@@ -6,10 +6,15 @@ import {
     NumberEditorModule,
     TextEditorModule,
     TooltipModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     CellSelectionModule,
@@ -19,7 +24,6 @@ ModuleRegistry.registerModules([
     NumberEditorModule,
     TextEditorModule,
     TooltipModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;

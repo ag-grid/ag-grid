@@ -5,10 +5,15 @@ import {
     NumberFilterModule,
     RowSelectionModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     TextFilterModule,
@@ -17,7 +22,6 @@ ModuleRegistry.registerModules([
     CellSelectionModule,
     StatusBarModule,
     NumberFilterModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<IOlympicData>;

@@ -3,17 +3,18 @@ import {
     CellStyleModule,
     ClientSideRowModelModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { getRowData } from './data';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    CellStyleModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, CellStyleModule]);
 
 let gridApi: GridApi;
 

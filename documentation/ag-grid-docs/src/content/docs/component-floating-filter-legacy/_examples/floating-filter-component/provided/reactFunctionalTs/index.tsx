@@ -2,17 +2,22 @@ import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, INumberFilterParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextFilterModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import SliderFloatingFilter from './sliderFloatingFilter';
 
-const modules = [
-    TextFilterModule,
-    NumberFilterModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+const modules = [TextFilterModule, NumberFilterModule, ClientSideRowModelModule];
 
 const filterParams: INumberFilterParams = {
     filterOptions: ['greaterThan'],

@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "36.0.0",
+  "version": "36.0.0-beta.20260628.2115",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
@@ -108,6 +108,7 @@
       "plugins/ag-grid-generate-example-files",
       "plugins/ag-grid-task-autogen",
       "testing/behavioural",
+      "testing/typedoc-links",
       "testing/module-size",
       "testing/module-size-angular",
       "testing/angular-package-tests",
@@ -142,6 +143,7 @@
       "tsx>esbuild#0.27.7": true,
       "vite>esbuild#0.21.5": true,
       "vite>sass>@parcel/watcher#2.5.1": true,
+      "vitest>@vitest/mocker>msw#2.14.6": false,
       "vitest>jsdom>canvas#3.2.3": true
     }
   }

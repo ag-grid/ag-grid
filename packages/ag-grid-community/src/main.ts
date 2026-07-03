@@ -848,6 +848,7 @@ export type {
     LocaleText,
     MasterSelectionMode,
     MultiRowSelectionOptions,
+    PageNumbersPanelParams,
     PageSizePanelParams,
     PageSummaryPanelParams,
     PaginationPanel,
@@ -1075,6 +1076,7 @@ export { LocaleModule } from './misc/locale/localeModule';
 export { GridStateModule } from './misc/state/stateModule';
 export { ModuleRegistry } from './modules/moduleRegistry';
 export { PaginationModule } from './pagination/paginationModule';
+export { PaginationPageNumbersModule } from './pagination/paginationPageNumbersModule';
 export { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
 export { HighlightChangesModule } from './rendering/cell/highlightChangesModule';
 export { RenderApiModule } from './rendering/renderModule';
@@ -1084,6 +1086,7 @@ export { RowSelectionModule } from './selection/rowSelectionModule';
 export { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 export { TooltipModule } from './tooltip/tooltipModule';
 export { enableDevValidations, ValidationModule } from './validation/validationModule';
+export type { DevValidationOptions } from './validation/validationConfig';
 export { CellApiModule, ValueCacheModule } from './valueService/valueModule';
 
 // Events

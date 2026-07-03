@@ -18,7 +18,7 @@ import {
     RowDragModule,
     RowSelectionModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -29,6 +29,11 @@ import {
 
 import './styles.css';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     RowDragModule,
     ClientSideRowModelApiModule,
@@ -38,7 +43,6 @@ ModuleRegistry.registerModules([
     ExcelExportModule,
     ColumnMenuModule,
     ContextMenuModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 @Component({

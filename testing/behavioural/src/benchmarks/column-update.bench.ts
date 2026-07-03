@@ -4,7 +4,7 @@ import type { ColDef, ColGroupDef, ColumnState, GridApi, GridOptions } from 'ag-
 import { ClientSideRowModelModule, ColumnApiModule, RowSelectionModule } from 'ag-grid-community';
 import { GroupFilterModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { BenchGridsManager, benchDefaults } from './bench-utils';
 
 const modules = [
     ClientSideRowModelModule,
@@ -63,9 +63,16 @@ const colIdsOf = (defs: (ColDef | ColGroupDef)[]): string[] => {
 
 suite('column update — applyColumnState / getColumnState paths (tiny rowData)', () => {
     let gridId = 0;
-    const benchUpdate = (name: string, initial: GridOptions, apply: (api: GridApi, iter: number) => void) => {
+    // 1.5: with the GC-stability flags these mutations sit ~1.5–2% in isolation; higher factors mostly
+    // buy CPU-contention noise on a long run, and keep the suite within the per-run time budget.
+    const benchUpdate = (
+        name: string,
+        initial: GridOptions,
+        apply: (api: GridApi, iter: number) => void,
+        noiseFactor = 1.5
+    ) => {
         const id = `CU${++gridId}`;
-        const gridsManager = new TestGridsManager({ benchmark: true, modules });
+        const gridsManager = new BenchGridsManager({ modules });
         let api!: GridApi;
         let iter = 0;
         bench(
@@ -74,9 +81,9 @@ suite('column update — applyColumnState / getColumnState paths (tiny rowData)'
                 apply(api, iter++);
             },
             {
-                throws: true,
-                setup: () => {
-                    gridsManager.reset();
+                ...benchDefaults({ noiseFactor }),
+                setup: async () => {
+                    await gridsManager.reset();
                     iter = 0;
                     api = gridsManager.createGrid(id, { ...initial, rowData: tinyRows });
                 },

@@ -12,15 +12,12 @@ interface MissionCellRendererParams extends ICellRendererParams {
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <span :class="missionSpan">
+        <span class="missionSpan">
             @if (value()) {
-                <img [alt]="value()" [src]="value()" [height]="30" :class="missionIcon" />
+                <img [alt]="value()" [src]="value()" class="missionIcon" />
             }
         </span>
     `,
-    styles: [
-        'img { width: auto; height: auto; } span {display: flex; height: 100%; justify-content: center; align-items: center} ',
-    ],
 })
 export class MissionResultRenderer implements ICellRendererAngularComp {
     value = signal<string>('');

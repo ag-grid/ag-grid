@@ -1,0 +1,18 @@
+---
+import { getEntry, type CollectionEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { Roadmap } from '@ag-website-shared/components/roadmap/Roadmap';
+import roadmapData from '../../public/roadmap/roadmap.json';
+
+const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
+const latestVersion = versionsData[0];
+---
+
+<Layout
+    title="Roadmap | AG Grid"
+    description={'AG Grid Roadmap - see what we are building next, including planned features, items in progress, and recently shipped work.'}
+    showSearchBar={false}
+    showDocsNav={false}
+>
+    <Roadmap roadmapData={roadmapData} versionData={latestVersion} client:load />
+</Layout>

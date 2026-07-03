@@ -5,8 +5,8 @@ import {
     PaginationModule,
     RowApiModule,
     RowSelectionModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -15,6 +15,11 @@ import {
     ContextMenuModule,
     MasterDetailModule,
 } from 'ag-grid-enterprise';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 ModuleRegistry.registerModules([
     RowSelectionModule,
@@ -26,7 +31,6 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     CellSelectionModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<IAccount>;

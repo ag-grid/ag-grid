@@ -131,7 +131,12 @@ export class ExpandStrategy extends BeanStub implements IExpansionStrategy<RowGr
      */
     public expandAll(expanded: boolean): void {
         this.beans.rowModel.forEachNode((node) => {
-            this.setRowExpanded(node, expanded);
+            if (node.isExpandable()) {
+                this.setRowExpanded(node, expanded);
+            } else if (!expanded) {
+                // Drop stale intent without recording a collapse, so no dead id leaks into the state.
+                this.expanded.delete(node.id!);
+            }
         });
     }
 }

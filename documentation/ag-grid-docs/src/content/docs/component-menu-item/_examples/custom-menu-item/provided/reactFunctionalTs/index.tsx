@@ -2,7 +2,7 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GetContextMenuItemsParams, GetMainMenuItemsParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import {
     CellSelectionModule,
     ClipboardModule,
@@ -15,6 +15,11 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import type { IOlympicData } from './interfaces';
 import MenuItem from './menuItem';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 const modules = [
     ClientSideRowModelModule,
     ColumnMenuModule,
@@ -23,7 +28,6 @@ const modules = [
     ExcelExportModule,
     CellSelectionModule,
     ClipboardModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 const GridExample = () => {

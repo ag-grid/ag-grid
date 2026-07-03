@@ -5,8 +5,8 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     ClipboardModule,
@@ -16,16 +16,16 @@ import {
     SetFilterModule,
 } from 'ag-grid-enterprise';
 
-const sharedModules = [
-    ClientSideRowModelModule,
-    ColumnMenuModule,
-    ContextMenuModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+const sharedModules = [ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule];
 const leftModules = [ClipboardModule, CsvExportModule, SetFilterModule];
 const rightModules = [CsvExportModule, ExcelExportModule, NumberFilterModule, TextFilterModule];
 
 // Register shared Modules globally
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules(sharedModules);
 
 const columnDefs: ColDef[] = [{ field: 'id' }, { field: 'color' }, { field: 'value1' }];

@@ -3,8 +3,8 @@ import {
     CellStyleModule,
     ClientSideRowModelModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 
 import { CompanyLogoRenderer } from './companyLogoRenderer_typescript';
@@ -13,11 +13,12 @@ import { CustomButtonComponent } from './customButtonComponent_typescript';
 import { MissionResultRenderer } from './missionResultRenderer_typescript';
 import { PriceRenderer } from './priceRenderer_typescript';
 
-ModuleRegistry.registerModules([
-    CellStyleModule,
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([CellStyleModule, ClientSideRowModelModule]);
 
 // Grid API: Access to Grid API methods
 let gridApi: GridApi;

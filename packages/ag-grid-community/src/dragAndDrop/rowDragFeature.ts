@@ -8,10 +8,12 @@ import type { RowNode } from '../entities/rowNode';
 import { _prevOrNextDisplayedRow } from '../entities/rowNodeUtils';
 import type { RowDragEvent, RowDragEventType } from '../events';
 import { _getNormalisedMousePosition } from '../gridBodyComp/mouseEventUtils';
+import type { GridOptionsService } from '../gridOptionsService';
 import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
+import type { ISelectionService } from '../interfaces/iSelectionService';
 import { _warn } from '../validation/logging';
 import type { DragAndDropIcon, DropTarget } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
@@ -134,17 +136,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private getRowNodes(draggingEvent: RowDraggingEvent): RowNode[] {
-        if (!this.isFromThisGrid(draggingEvent)) {
-            return (draggingEvent.dragItem.rowNodes || []) as RowNode[];
+        const nodes = (draggingEvent.dragItem.rowNodes || []) as RowNode[];
+        if (!this.isFromThisGrid(draggingEvent) || nodes.length <= 1) {
+            return nodes;
         }
-        const currentNode = draggingEvent.dragItem.rowNode! as RowNode;
-        if (this.gos.get('rowDragMultiRow')) {
-            const selectedNodes = this.beans.selectionSvc?.getSelectedNodes();
-            if (selectedNodes && selectedNodes.indexOf(currentNode) >= 0) {
-                return selectedNodes.slice().sort(compareRowIndex);
-            }
-        }
-        return [currentNode];
+        return nodes.slice().sort(compareRowIndex);
     }
 
     public onDragEnter(draggingEvent: RowDraggingEvent): void {
@@ -711,8 +707,29 @@ const rowsDropChanged = (a: RowsDrop | null | undefined, b: RowsDrop): boolean =
         a?.newParent !== b.newParent ||
         !_areEqual(a?.rows, b.rows));
 
-const compareRowIndex = ({ rowIndex: a }: IRowNode, { rowIndex: b }: IRowNode): number =>
-    a !== null && b !== null ? a - b : 0;
+/** Display order, falling back to source (data) order for non-displayed nodes (rowIndex null, e.g. collapsed). */
+const compareRowIndex = (a: IRowNode, b: IRowNode): number =>
+    (a.rowIndex ?? 0x7fffffff) - (b.rowIndex ?? 0x7fffffff) || a.sourceRowIndex - b.sourceRowIndex;
+
+/** Drag payload for a selected row under `rowDragMultiRow`. Tree data drags the top-most selected
+ * nodes so subtrees relocate intact; dragging the raw leaf selection would tear them apart on drop. */
+export const getRowDragMultiRowNodes = (
+    rowNode: RowNode,
+    gos: GridOptionsService,
+    selectionSvc: ISelectionService | undefined
+): RowNode[] => {
+    if (!gos.get('rowDragMultiRow') || !selectionSvc || !rowNode.isSelected()) {
+        return [rowNode];
+    }
+    if (gos.get('treeData') && _isClientSideRowModel(gos)) {
+        const bestCost = selectionSvc.getBestCostNodeSelection();
+        if (bestCost?.length) {
+            return bestCost;
+        }
+    }
+    const selection = selectionSvc.getSelectedNodes();
+    return selection.length ? selection : [rowNode];
+};
 
 const setRowNodesDragging = (rowNodes: IRowNode[] | null | undefined, dragging: boolean): void => {
     for (let i = 0, len = rowNodes?.length || 0; i < len; ++i) {

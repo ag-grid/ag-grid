@@ -25,8 +25,11 @@ export type CspMode = 'report-only' | 'enforce';
  * - 'campaigns': additionally allows the bryntum.com origin (script/style/font/
  *   connect) for the partnership campaign pages' embedded Gantt demo — without
  *   'unsafe-eval'. See CAMPAIGNS_PATH_CONDITION.
+ * - 'ecommerce': additionally allows 'unsafe-inline' in script-src (no 'unsafe-eval')
+ *   for the separately-managed checkout SPA served under /ecommerce/, whose index.html
+ *   carries inline scripts we do not own — see ECOMMERCE_PATH_CONDITION.
  */
-export type CspScope = 'site' | 'examples' | 'campaigns';
+export type CspScope = 'site' | 'examples' | 'campaigns' | 'ecommerce';
 
 export interface CspOptions {
     env: CspEnv;
@@ -147,6 +150,31 @@ export const EXAMPLES_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/(examples|archive)
 // by EXAMPLES_PATH_CONDITION) and lose the bryntum.com allowances. The optional
 // /archive/<version> prefix covers the archived snapshots.
 export const CAMPAIGNS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^(?:/archive/[^/]+)?/campaigns/#';
+
+// Apache <If> expression matching the ecommerce checkout SPA (deployed under
+// /ecommerce/ on the production www vhost, but built and owned by a separate team).
+// Its index.html carries inline <script>s — a Google Tag Manager loader and a
+// base-href bootstrap — that the tightened 'site' policy blocks. We do not control
+// that file, so authorising the scripts by hash would silently break the checkout the
+// moment the other team re-generates index.html. Instead this scope re-allows
+// 'unsafe-inline' in script-src for these paths only (no 'unsafe-eval' — the Angular
+// app is AOT-compiled); the strict connect-src/frame-src/form-action that already
+// govern the payment POST, Firebase Auth and Realex HPP iframe stay in force. No JS
+// PATH_REGEXP counterpart because the dev/preview middleware never serves /ecommerce/.
+export const ECOMMERCE_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/ecommerce/#';
+
+// Apache <If> expression matching the staging-only /branch-builds/ tree: a directory
+// of full per-branch documentation builds, preserved across deployments (backed up
+// and restored by scripts/deployments/*) rather than produced by this build. Each is
+// an arbitrary historical snapshot of the docs at whatever code — and CSP needs —
+// existed when that branch was built: old example HTML carries inline event handlers
+// (onclick=, onchange=, …) and eval that the tightened site policy blocks, and CSP
+// cannot authorise inline event handlers by hash at all. The tree is internal and
+// password-protected, so it is exempted from the CSP entirely (see
+// getBranchBuildsCspIfOverride) rather than force-fitted to a scope. Staging-only:
+// the tree does not exist on production www. No JS PATH_REGEXP counterpart because
+// the dev/preview middleware never serves these paths.
+export const BRANCH_BUILDS_PATH_CONDITION = '%{REQUEST_URI} =~ m#^/branch-builds/#';
 
 // JS equivalents of the *_PATH_CONDITION Apache rules above, for the dev-server
 // (agDevCsp) and preview-server (preview-csp) middleware that scope the served
@@ -312,6 +340,11 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
         directives['style-src'].push(BRYNTUM_HOST);
         directives['font-src'].push(BRYNTUM_HOST);
         directives['connect-src'].push(BRYNTUM_HOST);
+    } else if (scope === 'ecommerce') {
+        // Separately-managed checkout SPA under /ecommerce/: allow its inline scripts
+        // via 'unsafe-inline' (no 'unsafe-eval', no site hashes — a hash would make the
+        // browser ignore 'unsafe-inline'). See ECOMMERCE_PATH_CONDITION.
+        directives['script-src'].push(UNSAFE_INLINE);
     } else if (env === 'dev') {
         // Dev server (Vite/Astro) injects its own inline scripts for HMR/hydration
         // that the static build does not; keep 'unsafe-inline' locally rather than
@@ -428,10 +461,58 @@ export function getCampaignsCspIfOverride(options: Omit<CspOptions, 'scope'>, mo
 }
 
 /**
+ * The `<If>` override re-allowing 'unsafe-inline' in script-src for the separately-
+ * managed ecommerce checkout SPA matched by ECOMMERCE_PATH_CONDITION (no extra
+ * 'unsafe-eval').
+ */
+export function getEcommerceCspIfOverride(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
+    return getCspIfOverride(
+        ECOMMERCE_PATH_CONDITION,
+        [
+            '# The ecommerce checkout SPA (served under /ecommerce/, built by a separate team) has',
+            '# inline <script>s in its index.html (a GTM loader and a base-href bootstrap) that the',
+            "# site policy blocks. We do not own that file, so re-allow 'unsafe-inline' in script-src",
+            "# for these paths (no 'unsafe-eval' — the app is AOT-compiled).",
+        ],
+        { ...options, scope: 'ecommerce' },
+        mode
+    );
+}
+
+/**
+ * The `<If>` override that drops the CSP header entirely for the staging-only
+ * /branch-builds/ tree matched by BRANCH_BUILDS_PATH_CONDITION.
+ *
+ * Unlike the examples/campaigns overrides — which unset the inherited header and
+ * re-set a relaxed-but-still-restrictive policy — this one only unsets it, leaving
+ * no Content-Security-Policy for these paths. Branch builds are arbitrary, internal,
+ * password-protected snapshots of past documentation builds whose pages predate (and
+ * cannot satisfy) the tightened site policy; notably their example HTML uses inline
+ * event handlers, which CSP cannot authorise by hash. `mode` selects which header
+ * form to clear so this drops whichever header the site-wide block set for the page.
+ */
+export function getBranchBuildsCspIfOverride(mode: CspMode): string {
+    const headerName = getCspHeaderName(mode);
+    return [
+        '# /branch-builds/ holds preserved per-branch documentation builds (staging only):',
+        '# arbitrary historical snapshots, internal and password-protected, whose pages predate',
+        "# the tightened policy (e.g. inline event handlers, which CSP can't authorise by hash).",
+        '# Drop the CSP entirely for them rather than force-fit a scope.',
+        `<If "${BRANCH_BUILDS_PATH_CONDITION}">`,
+        `    Header always unset ${headerName}`,
+        '</If>',
+    ].join('\n');
+}
+
+/**
  * Build the full `.htaccess` CSP block with the path-scoped policy split: the
  * 'site' policy (no 'unsafe-eval', no third-party embeds) for ordinary pages,
- * replaced by the 'examples' policy for EXAMPLES_PATH_CONDITION paths and the
- * 'campaigns' policy for CAMPAIGNS_PATH_CONDITION paths.
+ * replaced by the 'examples' policy for EXAMPLES_PATH_CONDITION paths, the
+ * 'campaigns' policy for CAMPAIGNS_PATH_CONDITION paths, and the 'ecommerce' policy
+ * for ECOMMERCE_PATH_CONDITION paths.
+ *
+ * The overrides target non-overlapping path prefixes (/examples|/archive, /campaigns,
+ * /ecommerce), so their relative order does not matter.
  */
 export function getScopedCspHtaccessBlock(options: Omit<CspOptions, 'scope'>, mode: CspMode): string {
     return [
@@ -440,5 +521,7 @@ export function getScopedCspHtaccessBlock(options: Omit<CspOptions, 'scope'>, mo
         getExamplesCspIfOverride(options, mode),
         '',
         getCampaignsCspIfOverride(options, mode),
+        '',
+        getEcommerceCspIfOverride(options, mode),
     ].join('\n');
 }

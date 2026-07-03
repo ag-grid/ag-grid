@@ -5,6 +5,7 @@ import DemoTabs from '@components/demos/DemosTabs.astro';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Finance } from 'src/components/demos/examples/finance';
 import LogoMark from '@components/logo/LogoMark';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 ---
 
 <DemosLayout title="Demo - Finance" description="Financial data example featuring live updates and sparklines.">
@@ -19,7 +20,10 @@ import LogoMark from '@components/logo/LogoMark';
                     href="https://github.com/ag-grid/ag-grid-demos/tree/main/finance"
                 >
                     <Icon name="github" svgClasses={styles.githubIcon} />
-                    <span>See on GitHub</span>
+                    <span>See On GitHub</span>
+                </a>
+                <a class="button-secondary" href={urlWithBaseUrl('/about/#contact-section')}>
+                    <span>Contact Us</span>
                 </a>
             </div>
 

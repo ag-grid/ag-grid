@@ -2,4 +2,5 @@
 export interface IAriaAnnouncementService {
     readonly beanName: 'ariaAnnounce';
     announceValue(value: string, key: string): void;
+    setDescriptionContainer(container: HTMLElement): void;
 }

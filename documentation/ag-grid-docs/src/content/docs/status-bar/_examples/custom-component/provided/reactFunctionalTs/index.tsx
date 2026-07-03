@@ -9,7 +9,7 @@ import {
     RowSelectionModule,
     TextEditorModule,
     TextFilterModule,
-    ValidationModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
@@ -17,6 +17,11 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import ClickableStatusBarComponent from './clickableStatusBarComponent';
 import CountStatusBarComponent from './countStatusBarComponent';
 import './styles.css';
+
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
 
 const modules = [
     EventApiModule,
@@ -27,7 +32,6 @@ const modules = [
     ClientSideRowModelModule,
     StatusBarModule,
     CellSelectionModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
 
 const rowSelection: RowSelectionOptions = {

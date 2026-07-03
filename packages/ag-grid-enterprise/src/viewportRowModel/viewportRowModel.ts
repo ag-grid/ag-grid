@@ -344,6 +344,11 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
             }
 
             if (row) {
+                // a relocated node must vacate its old slot, else it's left referenced at two indexes
+                const previousIndex = row.rowIndex;
+                if (previousIndex != null && previousIndex !== i && this.rowNodesByIndex[previousIndex] === row) {
+                    delete this.rowNodesByIndex[previousIndex];
+                }
                 row.updateData(data);
                 row.setRowIndex(i);
                 row.setRowTop(this.rowHeight * i);
@@ -351,6 +356,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
                 // if we don't have a row, then we create a new one
                 row = this.createBlankRowNode(i);
                 row.setDataAndId(data, rowId ?? i.toString());
+                this.beans.selectionSvc?.updateRowSelectable(row);
             }
             this.rowNodesByIndex[i] = row;
         }

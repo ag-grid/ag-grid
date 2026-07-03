@@ -162,6 +162,7 @@ export type DynamicBeanName =
     | 'headerFilterCellCtrl'
     | 'headerGroupCellCtrl'
     | 'rangeHandle'
+    | 'pageNumbers'
     | 'tooltipFeature'
     | 'highlightTooltipFeature'
     | 'tooltipStateManager'

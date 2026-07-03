@@ -42,6 +42,9 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
     {
         versions.map((version) => {
             const { isMajor, versionType } = parseVersion(version.version);
+            // A version links to a migration guide only when it is a major whose notes are an
+            // upgrade guide. Versions whose notes point at the changelog link to release notes.
+            const showMigrationGuide = isMajor && !version.notesPath?.includes('/changelog');
 
             const guideUrl = isMigration ? urlWithPrefix({ framework, url: version.notesPath }) : null;
             const changelogUrl = !isMigration ? getChangelogUrl({ site: library, version: version.version }) : null;
@@ -62,10 +65,10 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
                     {isMigration && (
                         <td>
                             <a href={guideUrl}>
-                                <span class:list={['text-monospace', !isMajor ? styles.pad : '']}>
+                                <span class:list={['text-monospace', !showMigrationGuide ? styles.pad : '']}>
                                     {version.version}
                                 </span>
-                                {isMajor ? 'Migration Guide' : `Release Notes`}
+                                {showMigrationGuide ? 'Migration Guide' : `Release Notes`}
                                 <Icon name="arrowRight" />
                             </a>
                         </td>

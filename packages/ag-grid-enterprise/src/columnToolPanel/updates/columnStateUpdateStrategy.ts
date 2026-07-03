@@ -5,6 +5,7 @@ import type {
     ColumnState,
     IColumnStateUpdateStrategy,
     SortDef,
+    SortDirection,
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
@@ -110,6 +111,14 @@ export class ColumnStateUpdateStrategy extends BeanStub implements IColumnStateU
 
     public getSortDef(deferMode: boolean, column: AgColumn): SortDef | null {
         return this.delegate('getSortDef', deferMode, column);
+    }
+
+    public progressPivotSortFromEvent(deferMode: boolean, column: AgColumn): void {
+        this.delegate('progressPivotSortFromEvent', deferMode, column);
+    }
+
+    public getPivotSort(deferMode: boolean, column: AgColumn): SortDirection | undefined {
+        return this.delegate('getPivotSort', deferMode, column);
     }
 
     private getUpdateStrategy(): IColumnStateUpdateStrategy {

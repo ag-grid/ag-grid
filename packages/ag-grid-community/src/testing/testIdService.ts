@@ -373,6 +373,10 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                         break;
                 }
             });
+
+            pagingPanel.querySelectorAll('.ag-paging-page-number').forEach((pageNumber) => {
+                setTestId(pageNumber, agTestIdFor.paginationPageNumber(pageNumber.textContent));
+            });
         });
 
         setTestId(root.querySelector('.ag-fill-handle'), agTestIdFor.fillHandle());

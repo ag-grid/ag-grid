@@ -3,8 +3,8 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     ModuleRegistry,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     ColumnsToolPanelModule,
@@ -14,6 +14,11 @@ import {
     SideBarModule,
 } from 'ag-grid-enterprise';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     RowGroupingModule,
@@ -22,7 +27,6 @@ ModuleRegistry.registerModules([
     RowGroupingPanelModule,
     ColumnApiModule,
     PivotModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi<IOlympicData>;

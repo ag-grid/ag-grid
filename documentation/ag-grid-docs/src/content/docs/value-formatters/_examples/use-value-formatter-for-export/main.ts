@@ -3,8 +3,8 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     TextEditorModule,
-    ValidationModule,
     createGrid,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -14,6 +14,11 @@ import {
     ExcelExportModule,
 } from 'ag-grid-enterprise';
 
+// Enable extended validations only for development
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
 ModuleRegistry.registerModules([
     TextEditorModule,
     ClientSideRowModelModule,
@@ -22,7 +27,6 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     CellSelectionModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 let gridApi: GridApi;
