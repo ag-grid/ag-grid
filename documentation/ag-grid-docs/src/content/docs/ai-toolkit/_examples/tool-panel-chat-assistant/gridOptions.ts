@@ -78,6 +78,7 @@ export const gridOptions: GridOptions<ITransaction> = {
     },
     pagination: true,
     enableFilterHandlers: true,
+    calculatedColumns: true,
     sideBar: {
         toolPanels: [
             'columns',

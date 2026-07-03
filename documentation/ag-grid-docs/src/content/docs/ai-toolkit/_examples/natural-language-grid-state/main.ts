@@ -3,6 +3,7 @@ import { ModuleRegistry, createGrid } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { callChatGPT } from './chatgptApi';
+import { applyColumnDefOperations } from './columnDefOperations';
 import { gridOptions } from './gridOptions';
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
@@ -36,6 +37,8 @@ function processRequest(event?: Event) {
 
     callChatGPT(userRequest, currentState, gridApi)
         .then(function (response) {
+            applyColumnDefOperations(gridApi, response.columnDefOperations);
+
             if (response.gridState && Object.keys(response.gridState).length > 0) {
                 gridApi.setState(response.gridState, response.propertiesToIgnore);
             }
