@@ -54,7 +54,9 @@
         const playBtn = frame.querySelector('[data-hero-video-play]');
         playBtn?.addEventListener('click', () => {
             const videoId = frame.dataset.youtubeId;
-            if (!videoId) return;
+            if (!videoId) {
+                return;
+            }
             const iframe = document.createElement('iframe');
             iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
             iframe.title = 'Opening Keynote';
@@ -68,7 +70,9 @@
     // means the webms only download the first time a row is hovered.
     for (const row of document.querySelectorAll('[data-session-row]')) {
         const videos = Array.from(row.querySelectorAll('video'));
-        if (videos.length === 0) continue;
+        if (videos.length === 0) {
+            continue;
+        }
         row.addEventListener('mouseenter', () => {
             for (const video of videos) {
                 void video.play().catch(() => {});
@@ -92,7 +96,9 @@
     let sessionTrigger = null;
 
     const openSession = (videoId) => {
-        if (!sessionModal || !sessionFrame || !videoId) return;
+        if (!sessionModal || !sessionFrame || !videoId) {
+            return;
+        }
         sessionTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
         sessionFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
         sessionModal.hidden = false;
@@ -101,7 +107,9 @@
         sessionModal.querySelector('[data-session-modal-close]')?.focus();
     };
     const closeSession = () => {
-        if (!sessionModal || !sessionFrame) return;
+        if (!sessionModal || !sessionFrame) {
+            return;
+        }
         sessionModal.hidden = true;
         sessionFrame.src = '';
         document.body.style.overflow = '';
@@ -125,7 +133,9 @@
     for (const link of document.querySelectorAll('[data-session-modal]')) {
         link.addEventListener('click', (event) => {
             const videoId = link.dataset.youtubeId;
-            if (!videoId) return;
+            if (!videoId) {
+                return;
+            }
             event.preventDefault();
             openSession(videoId);
             history.pushState({ btpSession: videoId }, '', link.getAttribute('href'));
