@@ -97,6 +97,9 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         for (let i = 0; i < this.dateConditionFromComps.length; i++) {
             this.refreshInputPairValidation(i, false, true);
         }
+        // reportValidity() above steals focus in Chrome/Safari, whose focusin handler schedules a
+        // second debounced report; cancel it so a single stable report survives on (re-)open.
+        this.forEachInput((element) => element.cancelPendingReport());
     }
 
     private refreshInputPairValidation(position: number, isFrom = false, forceImmediate = false): void {
