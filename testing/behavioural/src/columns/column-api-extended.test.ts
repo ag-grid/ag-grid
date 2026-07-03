@@ -302,6 +302,90 @@ describe('Column API — extended coverage', () => {
         });
     });
 
+    describe('setColumnAggFunc', () => {
+        test('activating a value column in pivot mode regenerates the pivot result columns', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', pivot: true, hide: true },
+                    { field: 'gold', enableValue: true },
+                ],
+                pivotMode: true,
+                rowData: [
+                    { country: 'UK', year: 2000, gold: 5 },
+                    { country: 'UK', year: 2004, gold: 3 },
+                ],
+            });
+            // gold has no aggFunc yet → not a value column → pivot result columns carry no measure ("-").
+            await new GridColumns(api, `no value column, no measure in pivot result columns`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2000" GROUP
+                │ └── pivot_year_2000_ "-" width:200
+                └─┬ "2004" GROUP
+                  └── pivot_year_2004_ "-" width:200
+            `);
+
+            api.setColumnAggFunc('gold', 'sum');
+            await new GridColumns(api, `setColumnAggFunc activates gold → pivot result columns rebuild`).checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2000" GROUP
+                │ └── pivot_year_2000_gold "Gold" width:200 columnGroupShow:open
+                └─┬ "2004" GROUP
+                  └── pivot_year_2004_gold "Gold" width:200 columnGroupShow:open
+            `);
+
+            api.setColumnAggFunc('gold', null);
+            await new GridColumns(api, `setColumnAggFunc deactivates gold → pivot result columns lose the measure`)
+                .checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2000" GROUP
+                │ └── pivot_year_2000_ "-" width:200
+                └─┬ "2004" GROUP
+                  └── pivot_year_2004_ "-" width:200
+            `);
+        });
+
+        test('changing the aggFunc of an active value column re-aggregates without a column rebuild', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { country: 'UK', gold: 4 },
+                    { country: 'UK', gold: 2 },
+                ],
+            });
+            await new GridRows(api, `sum setup`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP collapsed id:row-group-country-UK ag-Grid-AutoColumn:"UK" gold:6
+                · ├── LEAF hidden id:0 country:"UK" gold:4
+                · └── LEAF hidden id:1 country:"UK" gold:2
+            `);
+
+            const everythingChanged = vitest.fn();
+            const valueChanged = vitest.fn();
+            api.addEventListener('columnEverythingChanged', everythingChanged);
+            api.addEventListener('columnValueChanged', valueChanged);
+
+            api.setColumnAggFunc('gold', 'avg');
+            await asyncSetTimeout(0);
+
+            // Func-only change: dispatches columnValueChanged (drives re-aggregation) but no column rebuild.
+            expect(valueChanged).toHaveBeenCalled();
+            expect(everythingChanged).not.toHaveBeenCalled();
+            await new GridRows(api, `avg after func-only change`).check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ LEAF_GROUP collapsed id:row-group-country-UK ag-Grid-AutoColumn:"UK" gold:{"count":2,"value":3}
+                · ├── LEAF hidden id:0 country:"UK" gold:4
+                · └── LEAF hidden id:1 country:"UK" gold:2
+            `);
+        });
+    });
+
     describe('setValueColumns', () => {
         test('replaces the value-column set wholesale', async () => {
             const api = gridsManager.createGrid('myGrid', {

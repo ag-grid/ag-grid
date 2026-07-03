@@ -92,10 +92,14 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
     public setColumnAggFunc(key: ColKey | undefined, aggFunc: ColAggFunc, source: ColumnEventType): void {
         if (key) {
             const column = this.colModel.getNonPivotCol(key);
-            if (column && this.applyAggFunc(column, aggFunc, source)) {
-                // aggFunc/activation only — stage + flush without a refresh; re-aggregation is event-driven.
-                this.stageColChange([column]);
-                this.colModel.flushColChanges(source, false);
+            if (column) {
+                const { changed, membershipChanged } = this.applyAggFunc(column, aggFunc, source);
+                if (changed) {
+                    // Membership changes ((de)activation) alter the value-column set, so pivot result columns must
+                    // rebuild; a func-only change on an already-active col re-aggregates event-driven, no refresh.
+                    this.stageColChange([column]);
+                    this.colModel.flushColChanges(source, membershipChanged);
+                }
             }
         }
     }
@@ -175,13 +179,20 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         }
     }
 
-    private applyAggFunc(column: AgColumn, aggFunc: ColAggFunc, source: ColumnEventType): boolean {
+    /** `changed`: any state moved (dispatch a change). `membershipChanged`: the col was (de)activated, so the
+     *  value-column set changed and callers must refresh dependent (pivot result) columns. */
+    private applyAggFunc(
+        column: AgColumn,
+        aggFunc: ColAggFunc,
+        source: ColumnEventType
+    ): { changed: boolean; membershipChanged: boolean } {
         if (aggFunc != null && aggFunc !== '') {
             const aggFuncChanged = this.writeAggFunc(column, aggFunc);
             const activeChanged = this.setColActive(column, true, source);
-            return aggFuncChanged || activeChanged;
+            return { changed: aggFuncChanged || activeChanged, membershipChanged: activeChanged };
         }
-        return this.setColActive(column, false, source);
+        const activeChanged = this.setColActive(column, false, source);
+        return { changed: activeChanged, membershipChanged: activeChanged };
     }
 
     private writeAggFunc(column: AgColumn, aggFunc: ColAggFunc): boolean {

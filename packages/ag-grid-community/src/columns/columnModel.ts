@@ -286,8 +286,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     /** Refresh once (if needed) + dispatch each touched service. Fires immediately, or defers to {@link endColBatch}
-     *  when batched. `refresh` accumulates into {@link pendingRefresh}: membership passes `true`, order/aggFunc-only
-     *  (`moveColumn`/`setColumnAggFunc`) pass `false` to dispatch without a rebuild. */
+     *  when batched. `refresh` accumulates into {@link pendingRefresh}: membership passes `true`, order-only or a
+     *  func change on an already-active col (`moveColumn`, `setColumnAggFunc`) pass `false` to dispatch without a rebuild. */
     public flushColChanges(source: ColumnEventType, refresh: boolean): void {
         if (refresh) {
             this.pendingRefresh = true;
