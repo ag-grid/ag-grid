@@ -35,7 +35,7 @@ describe('dev validation overlay (react)', () => {
     });
 
     test('does not show the overlay for a clean configuration', async () => {
-        render(<AgGridReact columnDefs={[{ field: 'a' }]} rowData={[]} />);
+        render(<AgGridReact<{ a: string }> columnDefs={[{ field: 'a' }]} rowData={[]} />);
 
         // Let the grid settle, then confirm no overlay appeared.
         await waitFor(() => expect(document.querySelector('.ag-root-wrapper')).not.toBeNull());
