@@ -1,4 +1,4 @@
-import { _findNextFocusableElement } from 'ag-stack';
+import { _findNextFocusableElement, _findTabbableParent, _getActiveDomElement, _isNothingFocused } from 'ag-stack';
 
 import type { AgColumn, ColumnChooserParams, HeaderPosition, NamedBean } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams } from 'ag-grid-community';
@@ -78,6 +78,9 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
         const { focusSvc, menuUtils } = beans;
         const columnIndex = column?.allColsIndex ?? -1;
         const headerPosition = column ? (focusSvc.focusedHeader ?? providedHeaderPosition ?? null) : null;
+        // Capture before `afterGuiAttached` moves focus into the panel, so a keyboard close can
+        // restore focus to the opener (the API/toolbar path supplies no `column`/`eventSource`).
+        const openerEl = eventSource ?? _getActiveDomElement(beans);
 
         this.activeColumnChooserDialog = this.createBean(
             new Dialog({
@@ -108,6 +111,11 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
                             event,
                             true
                         );
+                    } else if (event instanceof KeyboardEvent && openerEl instanceof HTMLElement) {
+                        const activeEl = _getActiveDomElement(beans);
+                        if (eComp.contains(activeEl) || _isNothingFocused(beans)) {
+                            (_findTabbableParent(openerEl) ?? openerEl).focus({ preventScroll: true });
+                        }
                     }
                 },
                 postProcessPopupParams: {
