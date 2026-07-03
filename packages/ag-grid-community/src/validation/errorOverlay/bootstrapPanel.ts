@@ -1,6 +1,6 @@
 import { _createElement } from '../../utils/element';
 import type { CapturedDiagnostic } from '../logging';
-import { _diagnosticKey } from '../logging';
+import { _diagnosticKey, _meetsSeverityThreshold } from '../logging';
 import { _getDevOverlayMode } from '../validationConfig';
 import {
     COPY_LABEL,
@@ -136,7 +136,7 @@ function dedupeDiagnostics(diagnostics: CapturedDiagnostic[]): CapturedDiagnosti
  * Renders the bootstrap-failure diagnostics into the grid root for the case where grid creation aborts
  * before any bean exists (e.g. a missing row-model module). Inline-styled and bean-free, reusing
  * {@link renderDiagnostic}. Honours the configured overlay mode, so `overlay: false` shows nothing and
- * `overlay: 'errors'` shows only errors.
+ * `overlay: 'error'` shows only errors.
  */
 export function renderBootstrapPanel(container: HTMLElement, diagnostics: CapturedDiagnostic[]): void {
     // A re-created grid (e.g. React's dev/StrictMode double-invoke) calls this again against the same
@@ -154,7 +154,7 @@ export function renderBootstrapPanel(container: HTMLElement, diagnostics: Captur
 
     // The untied-diagnostics buffer accumulates across re-creates, so dedupe before rendering.
     const deduped = dedupeDiagnostics(diagnostics);
-    const visible = mode === 'errors' ? deduped.filter((d) => d.severity === 'error') : deduped;
+    const visible = deduped.filter((d) => _meetsSeverityThreshold(d.severity, mode));
     if (visible.length === 0) {
         return;
     }

@@ -25,10 +25,19 @@ export function setValidationDocLink(docLink: string) {
     baseDocLink = docLink;
 }
 
-type Severity = 'error' | 'warning' | 'deprecation';
+export type Severity = 'error' | 'warning' | 'deprecation';
 
-// Inclusive throw ordering: throwOn a given level fires on that level and every more-severe one.
+// Inclusive severity ordering: a threshold fires on that level and every more-severe one.
 const SEVERITY_ORDER: Record<Severity, number> = { deprecation: 1, warning: 2, error: 3 };
+
+/**
+ * Whether `severity` meets an inclusive `threshold`: true when it is at least as severe. A `false`
+ * threshold matches nothing. Shared by the throw-on check and the overlay's severity filter so both
+ * honour the same graded model.
+ */
+export function _meetsSeverityThreshold(severity: Severity, threshold: Severity | false): boolean {
+    return threshold !== false && SEVERITY_ORDER[severity] >= SEVERITY_ORDER[threshold];
+}
 
 /**
  * A diagnostic captured for the developer overlay (config errors, runtime errors and warnings).
@@ -50,7 +59,6 @@ export interface CapturedDiagnostic {
  * Stable identity key for deduping captured diagnostics: the same `id` and `params` yield the same key.
  * Non-serialisable params (functions, circular refs) fall back to `${id}:unserialisable:${fallbackSeed}`
  * so distinct entries are never collapsed — callers pass a per-call seed (a counter or index) for this.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _diagnosticKey(diagnostic: CapturedDiagnostic, fallbackSeed: string | number): string {
     const { id, params } = diagnostic;
@@ -86,7 +94,6 @@ let activeGridId: string | undefined;
  * being misattributed to whichever grid happens to be active by the time they fire. This is also why a
  * nested grid (e.g. a detail grid, created on a later frame) gets its own scope instead of inheriting
  * its parent's.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _runWithActiveGrid<T>(gridId: string, fn: () => T): T {
     const previous = activeGridId;
@@ -146,7 +153,6 @@ export function _configureDiagnostics(config: {
 /**
  * Whether captured diagnostics are being collected, so hot paths (e.g. API dispatch) can skip the
  * active-grid bookkeeping entirely when no consumer is listening.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _isDiagnosticCaptureActive(): boolean {
     return captureEnabled;
@@ -183,7 +189,6 @@ let bootstrapPanelRenderer: BootstrapPanelRenderer | null = null;
  * Pushed in by the ValidationModule (which core never imports) to render a standalone panel of
  * bootstrap-failure diagnostics, for when grid creation aborts before any bean — and thus the overlay —
  * exists. Mirrors the provideValidationServiceLogger setter idiom to keep the dependency direction one-way.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _provideBootstrapPanelRenderer(renderer: BootstrapPanelRenderer): void {
     bootstrapPanelRenderer = renderer;
@@ -193,7 +198,6 @@ export function _provideBootstrapPanelRenderer(renderer: BootstrapPanelRenderer)
  * Renders the buffered diagnostics not tied to a grid (e.g. a missing row-model module that aborts grid
  * creation) into `container`, when the ValidationModule has provided a renderer. No-op otherwise, so core
  * stays decoupled and production pays nothing.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _renderBootstrapPanel(container: HTMLElement): void {
     if (!bootstrapPanelRenderer) {
@@ -234,8 +238,7 @@ function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMes
             }
         }
     }
-    const meetsThreshold = throwThreshold !== false && SEVERITY_ORDER[severity] >= SEVERITY_ORDER[throwThreshold];
-    if (meetsThreshold) {
+    if (_meetsSeverityThreshold(severity, throwThreshold)) {
         throw new Error(`${severity} #${id} ` + getErrorParts(id, params, defaultMessage).join(' '));
     }
 }

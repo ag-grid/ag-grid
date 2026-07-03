@@ -1,8 +1,12 @@
 import type { ErrorId } from './errorMessages/errorText';
 import { _configureDiagnostics } from './logging';
+import type { Severity } from './logging';
 
-/** Which captured diagnostics the dev validation overlay surfaces. */
-export type DevOverlayMode = 'all' | 'errors' | false;
+/**
+ * An inclusive severity threshold: the named level plus every more-severe one, or `false` for none.
+ * Shared by `throwOn` and `overlay` so both select diagnostics with the same graded model.
+ */
+export type SeverityThreshold = Severity | false;
 
 /**
  * Development-time configuration for the {@link ValidationModule}. Configuration is global, not
@@ -27,12 +31,18 @@ export interface DevValidationOptions {
      * leaving that grid partially built and unusable. Use this with harnesses that recreate the grid on
      * failure — not to carry on with the same instance after a throw — and never in production.
      */
-    throwOn?: 'error' | 'warning' | 'deprecation' | false;
+    throwOn?: SeverityThreshold;
     /**
-     * Renders captured diagnostics in a development overlay over the grid. `'all'` shows errors,
-     * warnings and deprecations; `'errors'` shows only errors; `false` shows nothing. Default `'all'`.
+     * Renders captured diagnostics in a development overlay over the grid. The threshold is inclusive,
+     * from least to most severe, mirroring {@link throwOn}:
+     * - `'error'` — shows errors only
+     * - `'warning'` — shows warnings and errors
+     * - `'deprecation'` — shows deprecations, warnings and errors
+     * - `false` — shows nothing
+     *
+     * Defaults to `'deprecation'` (shows everything).
      */
-    overlay?: DevOverlayMode;
+    overlay?: SeverityThreshold;
     /**
      * Error ids to ignore — for diagnostics you have reviewed and accepted. A suppressed id is kept out
      * of the overlay and is never thrown by {@link throwOn}, but is still logged to the console once.
@@ -43,17 +53,16 @@ export interface DevValidationOptions {
 
 const DEV_VALIDATION_DEFAULTS: Required<DevValidationOptions> = {
     throwOn: false,
-    overlay: 'all',
+    overlay: 'deprecation',
     suppress: [],
 };
 
 // Read per grid by ErrorOverlayService. Kept here (not in logging.ts) because the logging hot path
 // only needs capture/throwOn; the overlay mode is consumed solely by the dev overlay bean. Global and
 // last-write-wins, mirroring throwOn.
-let overlayMode: DevOverlayMode = DEV_VALIDATION_DEFAULTS.overlay;
+let overlayMode: SeverityThreshold = DEV_VALIDATION_DEFAULTS.overlay;
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getDevOverlayMode(): DevOverlayMode {
+export function _getDevOverlayMode(): SeverityThreshold {
     return overlayMode;
 }
 

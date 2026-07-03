@@ -3,8 +3,8 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { OverlayService } from '../../rendering/overlays/overlayService';
 import type { CapturedDiagnostic } from '../logging';
-import { _addDiagnosticListener, _diagnosticKey } from '../logging';
-import type { DevOverlayMode } from '../validationConfig';
+import { _addDiagnosticListener, _diagnosticKey, _meetsSeverityThreshold } from '../logging';
+import type { SeverityThreshold } from '../validationConfig';
 import { _getDevOverlayMode } from '../validationConfig';
 
 type UpdateListener = () => void;
@@ -13,13 +13,12 @@ type UpdateListener = () => void;
  * Dev-only bean (ValidationModule) that collects captured diagnostics for this grid and drives the
  * core OverlayService to show the validation error overlay. The overlay component reads the
  * accumulated diagnostics back from here and re-renders in place when they change.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export class ErrorOverlayService extends BeanStub implements NamedBean {
     beanName = 'errorOverlay' as const;
 
     private overlays?: OverlayService;
-    private overlayMode: DevOverlayMode = 'all';
+    private overlayMode: SeverityThreshold = false;
 
     private readonly diagnostics: CapturedDiagnostic[] = [];
     private readonly seenKeys = new Set<string>();
@@ -61,7 +60,7 @@ export class ErrorOverlayService extends BeanStub implements NamedBean {
     }
 
     private onDiagnostic(diagnostic: CapturedDiagnostic): void {
-        if (this.overlayMode === 'errors' && diagnostic.severity !== 'error') {
+        if (!_meetsSeverityThreshold(diagnostic.severity, this.overlayMode)) {
             return;
         }
         const key = this.getKey(diagnostic);

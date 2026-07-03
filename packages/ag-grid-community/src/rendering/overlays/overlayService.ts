@@ -218,7 +218,6 @@ export class OverlayService extends BeanStub implements NamedBean {
      * Shows or hides the dev-only validation error overlay. Driven by the ValidationModule's
      * ErrorOverlayService; takes priority over the data-driven overlays while active. Re-evaluates
      * immediately so the overlay appears as soon as the wrapper exists (or once it later mounts).
-     * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
      */
     public setDevErrorOverlay(active: boolean): void {
         if (this.devErrorOverlayActive === active) {

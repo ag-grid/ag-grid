@@ -33,13 +33,13 @@ describe('dev validation overlay', () => {
     });
 
     test('does not show the overlay for a clean configuration', () => {
-        enableDevValidations({ overlay: 'all' });
+        enableDevValidations({ overlay: 'deprecation' });
         gridsManager.createGrid('myGrid', { columnDefs, rowData });
         expect(hasErrorOverlay()).toBe(false);
     });
 
-    test("shows the overlay when a diagnostic is captured (overlay: 'all')", () => {
-        enableDevValidations({ overlay: 'all' });
+    test("shows the overlay when a diagnostic is captured (overlay: 'deprecation')", () => {
+        enableDevValidations({ overlay: 'deprecation' });
         gridsManager.createGrid('myGrid', withUnknownOption());
 
         expect(hasErrorOverlay()).toBe(true);
@@ -54,15 +54,22 @@ describe('dev validation overlay', () => {
         expect(hasErrorOverlay()).toBe(false);
     });
 
-    test("does not show warnings when overlay is 'errors'", () => {
-        enableDevValidations({ overlay: 'errors' });
+    test("does not show warnings when overlay is 'error'", () => {
+        enableDevValidations({ overlay: 'error' });
         gridsManager.createGrid('myGrid', withUnknownOption());
         // The unknown-property diagnostic is a warning, so it is filtered out in errors-only mode.
         expect(hasErrorOverlay()).toBe(false);
     });
 
+    test("shows warnings when overlay is 'warning'", () => {
+        enableDevValidations({ overlay: 'warning' });
+        gridsManager.createGrid('myGrid', withUnknownOption());
+        // The unknown-property diagnostic is a warning, which the inclusive 'warning' threshold surfaces.
+        expect(hasErrorOverlay()).toBe(true);
+    });
+
     test('can be dismissed', () => {
-        enableDevValidations({ overlay: 'all' });
+        enableDevValidations({ overlay: 'deprecation' });
         gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(true);
 
@@ -71,7 +78,7 @@ describe('dev validation overlay', () => {
     });
 
     test('copies diagnostics to the clipboard', () => {
-        enableDevValidations({ overlay: 'all' });
+        enableDevValidations({ overlay: 'deprecation' });
         gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(true);
 
