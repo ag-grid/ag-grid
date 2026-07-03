@@ -15,7 +15,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
     beanName = 'cellFlashSvc' as const;
 
     private nextAnimationTime: number | null = null;
-    private nextAnimationCycle: number | null = null;
+    private nextAnimationCycle: ReturnType<typeof setTimeout> | null = null;
 
     private readonly animations: Record<FlashClassName, Map<CellCtrl, AnimationPhase>> = {
         highlight: new Map(),
@@ -73,7 +73,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
         if (!this.nextAnimationCycle) {
             // then once that is applied, we remove the highlight with animation
             this.beans.frameworkOverrides.wrapIncoming(() => {
-                this.nextAnimationCycle = window.setTimeout(this.advanceAnimations.bind(this), flashDuration);
+                this.nextAnimationCycle = setTimeout(this.advanceAnimations.bind(this), flashDuration);
             });
             this.nextAnimationTime = flashEndTime;
         }
@@ -131,7 +131,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
             this.nextAnimationTime = null;
             this.nextAnimationCycle = null;
         } else if (nextAnimationTime) {
-            this.nextAnimationCycle = window.setTimeout(this.advanceAnimations.bind(this), nextAnimationTime - time);
+            this.nextAnimationCycle = setTimeout(this.advanceAnimations.bind(this), nextAnimationTime - time);
             this.nextAnimationTime = nextAnimationTime;
         }
     }

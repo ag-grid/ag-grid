@@ -60,7 +60,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private asyncTransactions: BatchTransactionItem[] | null = null;
 
     /** Timer handle for batching async transactions. */
-    private asyncTransactionsTimer: number = 0;
+    private asyncTransactionsTimer: ReturnType<typeof setTimeout> | undefined;
 
     /** Has the start() method been called. */
     private started: boolean = false;
@@ -1081,7 +1081,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (!this.asyncTransactionsTimer) {
             this.asyncTransactions = [];
             const waitMilliseconds = this.gos.get('asyncTransactionWaitMillis');
-            this.asyncTransactionsTimer = window.setTimeout(() => this.executeBatchUpdateRowData(), waitMilliseconds);
+            this.asyncTransactionsTimer = setTimeout(() => this.executeBatchUpdateRowData(), waitMilliseconds);
         }
         this.asyncTransactions!.push({ rowDataTransaction: rowDataTransaction, callback });
     }
@@ -1127,7 +1127,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (rowNodeTrans.length > 0) {
             eventSvc.dispatchEvent({ type: 'asyncTransactionsFlushed', results: rowNodeTrans });
         }
-        this.asyncTransactionsTimer = 0;
+        this.asyncTransactionsTimer = undefined;
         this.asyncTransactions = null;
     }
 
