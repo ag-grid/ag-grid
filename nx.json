@@ -111,10 +111,10 @@
       "executor": "nx:run-commands",
       "dependsOn": ["^build:types", "build:types"],
       "inputs": ["default", "buildOutputExcludes", "^production"],
-      "outputs": ["{projectRoot}/dist/test"],
+      "outputs": [],
       "cache": true,
       "options": {
-        "command": "npx tsc -p {projectRoot}/tsconfig.spec.json --outDir {projectRoot}/dist/test"
+        "command": "npx tsc -p {projectRoot}/tsconfig.spec.json --noEmit"
       }
     },
     "build:package": {

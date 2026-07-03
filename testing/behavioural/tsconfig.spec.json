@@ -2,7 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "moduleResolution": "bundler",
-    "noImplicitAny": true,
-    "noEmit": true
+    "noImplicitAny": true
   }
 }
