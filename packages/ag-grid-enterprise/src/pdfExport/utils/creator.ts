@@ -1,6 +1,7 @@
 import { paramToVariableName } from 'ag-stack';
 
 import type { PdfExportParams, PdfExportStyles } from 'ag-grid-community';
+import { _createElement } from 'ag-grid-community';
 
 import { isTransparentColorValue, resolveCssColorValue } from './colors';
 
@@ -193,7 +194,7 @@ function resolveCssColor(value: string, eRootDiv: HTMLElement | undefined): stri
         return value;
     }
 
-    const probe = document.createElement('span');
+    const probe = _createElement({ tag: 'span' });
     const isCssVariable = /\bvar\(/i.test(value);
     probe.style.color = value;
 
