@@ -1201,6 +1201,34 @@ describe('getStructuredSchema - enterprise features', () => {
         });
     });
 
+    describe('aggregation feature without Show Values As', () => {
+        const gridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, AiToolkitModule, AggregationModule, RowGroupingModule],
+        });
+        afterEach(() => gridsManager.reset());
+
+        test('omits showValuesAs from the aggregation schema when ShowValuesAsModule is absent', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'gold', enableValue: true, aggFunc: 'sum' }],
+                rowData: [],
+            });
+            await new GridColumns(api, `omits showValuesAs when module absent setup`).checkColumns(`
+                CENTER
+                └── gold "Gold" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `omits showValuesAs when module absent setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const agg = resolveNullable(schema.properties.aggregation);
+            const aggItem = agg.properties.aggregationModel.items.anyOf[0];
+
+            expect(aggItem.properties.showValuesAs).toBeUndefined();
+            expect(aggItem.required).toEqual(['colId', 'aggFunc']);
+        });
+    });
+
     describe('pivot feature', () => {
         const gridsManager = new TestGridsManager({
             modules: [ClientSideRowModelModule, AiToolkitModule, PivotModule, RowGroupingModule],

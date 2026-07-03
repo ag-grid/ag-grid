@@ -1,14 +1,17 @@
-import type { BeanCollection } from 'ag-grid-community';
+import type { BeanCollection, ShowValuesAsBuiltInType } from 'ag-grid-community';
 
 import { s } from '../schemaBuilder';
 
-const SHOW_VALUES_AS_BUILT_IN_TYPES = [
-    'percentOfGrandTotal',
-    'percentOfColumnTotal',
-    'percentOfRowTotal',
-    'percentOfParentRowTotal',
-    'percentOfParentColumnTotal',
-];
+// Keyed by ShowValuesAsBuiltInType so the compiler enforces the set stays complete and correctly
+// spelled: adding, removing, renaming, or mistyping a built-in mode breaks the build here rather
+// than silently advertising a wrong set to the LLM. `Object.keys` preserves the literal order.
+const SHOW_VALUES_AS_BUILT_IN_TYPES = Object.keys({
+    percentOfGrandTotal: true,
+    percentOfColumnTotal: true,
+    percentOfRowTotal: true,
+    percentOfParentRowTotal: true,
+    percentOfParentColumnTotal: true,
+} satisfies Record<ShowValuesAsBuiltInType, true>) as ShowValuesAsBuiltInType[];
 
 export const buildAggregationFeatureSchema = (beans: BeanCollection) => {
     const { aggFuncSvc } = beans;

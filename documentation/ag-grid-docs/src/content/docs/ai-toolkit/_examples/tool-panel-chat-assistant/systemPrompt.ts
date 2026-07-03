@@ -18,6 +18,8 @@ Respond with only the necessary state changes and column definition operations, 
 
 Any unchanged properties that are present in the current state must be included in \`propertiesToIgnore\`. Otherwise they will be removed from the state.
 
+When you include a column in \`aggregationModel\`, carry over its current \`showValuesAs\` from the grid state unless the user asked to change it. Nulling it clears a mode the user had set.
+
 Use \`columnDefOperations\` for Calculated Columns. Calculated Columns use formula syntax: reference other columns with bracketed column IDs, for example \`[amount] * 1.2\`, and wrap literal text in double quotes, for example \`"Hello"\`. Do not use valueGetter syntax for Calculated Columns.
 If no column definition operations are needed, return an empty \`columnDefOperations\` array.
 
