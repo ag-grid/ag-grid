@@ -117,7 +117,7 @@ To work out which modules are required, select the features of the grid that you
 
 ## Development Validations
 
-The `ValidationModule` provides development-time diagnostics that help identify misconfiguration early: full-text console messages, an on-grid overlay of captured problems (shown by default), and options to throw on problems or suppress ones you have accepted. It is not included in the `AllCommunityModule`/`AllEnterpriseModule` bundles, so opt into it yourself — and we recommend doing so only in development builds to keep production bundles small.
+Development-time validations help identify misconfiguration early: full-text console messages, an on-grid overlay of captured problems (shown by default), and options to throw on problems or suppress ones you have accepted. They are not part of the `AllCommunityModule`/`AllEnterpriseModule` bundles, so enable them yourself — and we recommend doing so only in development builds to keep production bundles small.
 
 Call `enableDevValidations` once, before any grid is created:
 
@@ -129,9 +129,9 @@ if (process.env.NODE_ENV !== 'production') {
 }
 ```
 
-This is equivalent to registering the `ValidationModule` directly, for example `ModuleRegistry.registerModules([ValidationModule])`.
+This is equivalent to registering the underlying module directly, for example `ModuleRegistry.registerModules([ValidationModule])`.
 
-Without the `ValidationModule`, console messages are reduced to an error code and a documentation link instead of the full message text.
+Without development validations enabled, console messages are reduced to an error code and a documentation link instead of the full message text.
 
 See [Development Validation](./dev-validation/) for the overlay, throwing, and suppression options.
 
