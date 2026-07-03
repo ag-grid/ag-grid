@@ -2032,6 +2032,49 @@ describe('deferred column tool panel pivot mode', () => {
         expect(gridApi.getAllDisplayedColumns().some((col) => col.getColId() === 'bronze')).toBe(true);
     });
 
+    test('deferred setColumnAggFunc activating a value column in pivot mode regenerates pivot result columns after Apply', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'gold', enableValue: true },
+            ],
+            rowData: [
+                { country: 'UK', year: 2000, gold: 5 },
+                { country: 'UK', year: 2004, gold: 3 },
+            ],
+            pivotMode: true,
+            sideBar: {
+                toolPanels: [
+                    {
+                        id: 'columns',
+                        labelDefault: 'Columns',
+                        labelKey: 'columns',
+                        iconKey: 'columns',
+                        toolPanel: 'agColumnsToolPanel',
+                        toolPanelParams: { buttons: ['apply', 'cancel'] as const },
+                    },
+                ],
+                defaultToolPanel: 'columns',
+            },
+        });
+        await asyncSetTimeout(50);
+
+        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+        const gold = gridApi.getColumn('gold')! as AgColumn;
+        const strategy = getUpdateStrategy(toolPanel);
+
+        // gold has no aggFunc → not a value column → its pivot result columns carry no measure.
+        expect(getValueColumnIds(gridApi)).toEqual([]);
+        expect(gridApi.getAllDisplayedColumns().some((col) => col.getColId().endsWith('_gold'))).toBe(false);
+
+        strategy.setColumnAggFunc(true, gold, 'sum', 'toolPanelUi');
+        commitChanges(toolPanel);
+
+        expect(getValueColumnIds(gridApi)).toEqual(['gold']);
+        expect(gridApi.getAllDisplayedColumns().some((col) => col.getColId().endsWith('_gold'))).toBe(true);
+    });
+
     // AG-9664: pivotSort from a deferred panel pill stages until Apply, mirroring the synchronous coverage in
     // sorting/pivot-column-sort.test.ts.
     async function createDeferredPivotSortGrid(): Promise<{ gridApi: GridApi; toolPanel: any }> {
