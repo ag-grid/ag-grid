@@ -1,10 +1,12 @@
 import type { GridOptions } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 
-// Register the dev-only ValidationModule (configured to show the overlay) so the bootstrap-failure panel
-// is rendered. Registering it in the modules array (rather than via the enableDevValidations helper) is
-// what lets the framework example generators carry it into the modules prop.
-ModuleRegistry.registerModules([AllCommunityModule, ValidationModule.with({ overlay: 'all' })]);
+// Opt into dev-only validation diagnostics so the standalone bootstrap-failure panel is rendered.
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 const gridOptions: GridOptions = {
     columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }],

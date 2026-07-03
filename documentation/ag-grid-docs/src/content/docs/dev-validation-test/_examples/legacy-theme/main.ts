@@ -1,12 +1,16 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 // As the overlay example, but rendered with a legacy theme (`theme: 'legacy'` + the ag-theme-quartz
 // stylesheet) so the overlay's legacy-theme styling is exercised rather than the Theming API styling
 // the other examples use.
-ModuleRegistry.registerModules([AllCommunityModule, ValidationModule.with({ overlay: 'all' })]);
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 const gridOptions: GridOptions = {
     theme: 'legacy',

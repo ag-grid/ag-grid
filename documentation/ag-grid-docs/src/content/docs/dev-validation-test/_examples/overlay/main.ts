@@ -1,10 +1,12 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 
-// Register the dev-only ValidationModule (configured to show the overlay) so diagnostics surface in an
-// overlay over the grid. Registering it in the modules array (rather than via the enableDevValidations
-// helper) is what lets the framework example generators carry it into the modules prop.
-ModuleRegistry.registerModules([AllCommunityModule, ValidationModule.with({ overlay: 'all' })]);
+// Opt into dev-only validation diagnostics so they surface in an overlay over the grid.
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 const gridOptions: GridOptions = {
     columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }],

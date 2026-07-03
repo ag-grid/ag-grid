@@ -1,11 +1,14 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-// Register the dev-only ValidationModule (configured to show the overlay) alongside RowGroupingModule,
-// which brings aggregation. Registering ValidationModule in the modules array (rather than via the
-// enableDevValidations helper) is what lets the framework example generators carry it into the modules prop.
-ModuleRegistry.registerModules([AllCommunityModule, RowGroupingModule, ValidationModule.with({ overlay: 'all' })]);
+// Opt into dev-only validation diagnostics, surfaced in an overlay over the grid. RowGroupingModule
+// brings the aggregation the invalid aggFunc below is resolved against.
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations();
+}
+
+ModuleRegistry.registerModules([AllCommunityModule, RowGroupingModule]);
 
 const gridOptions: GridOptions = {
     columnDefs: [
