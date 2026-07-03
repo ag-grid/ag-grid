@@ -3349,6 +3349,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/side-data-grid/integrated-charts/', to: '/javascript-data-grid/integrated-charts/' },
     { from: '/core-data-grid/integrated-charts/', to: '/javascript-data-grid/integrated-charts/' },
     { from: '/vuejs-charts/', to: 'https://www.ag-grid.com/charts/' },
+    { from: '/campaigns/beyond-the-prompt/', to: '/community/beyond-the-prompt/' },
     { fromPattern: '^/gallery/(.*)', to: 'https://www.ag-grid.com/charts/gallery/$1' },
     { fromPattern: '^/options(/.*)?', to: 'https://www.ag-grid.com/charts/options/' },
     { fromPattern: '^/vuejs-charts.*', to: 'https://www.ag-grid.com/charts/vue/quick-start/' },
