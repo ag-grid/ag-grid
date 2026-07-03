@@ -9,12 +9,17 @@ const getPageFromPath = (path: string) => {
     return path.replace(`${prefix}`, '');
 };
 
-const CommunityMenu = ({ path, menu }: { path: string; menu: string }) => {
+interface CommunityMenuItem {
+    name: string;
+    path: string;
+}
+
+const CommunityMenu = ({ path, menu }: { path: string; menu: CommunityMenuItem[] }) => {
     const curPage = getPageFromPath(path);
 
     return (
         <ul className={styles.communityMenu}>
-            {menu.map((item: string) => {
+            {menu.map((item) => {
                 const link = addTrailingSlash(urlWithBaseUrl(pathJoin('/community', item.path)));
                 const isCurrentPage = curPage.replaceAll('/', '') === item.path.replaceAll('/', '');
 

@@ -50,6 +50,9 @@ www	/javascript-grid/	301	/javascript-data-grid/
 www	/documentation/angular/grouping/	301	/angular-data-grid/grouping/
 www	/react-grid/rxjs/	301	https://www.ag-grid.com/react-data-grid/data-update/
 
+# --- AG-17694: Beyond the Prompt moved /campaigns/ -> /community/ ---
+www	/campaigns/beyond-the-prompt/	301	/community/beyond-the-prompt/
+
 # --- No-shadow negatives: real live pages must NOT be redirected (expect 200) ---
 www	/angular-data-grid/getting-started/	200
 www	/react-data-grid/cell-editing/	200

@@ -1,0 +1,57 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { SESSIONS, sessionSlug, youtubeId } from '@utils/beyondThePromptSessions';
+import styles from '../../pages-styles/session.module.scss';
+
+// One real, crawlable page per recorded session. On the Beyond the Prompt page
+// the same URL opens the recording in a modal; visited directly (deep link,
+// refresh, search result) it renders this standalone page.
+export function getStaticPaths() {
+    return SESSIONS.filter((session) => session.youtubeUrl).map((session) => ({
+        params: { slug: sessionSlug(session.title) },
+        props: { session },
+    }));
+}
+
+const { session } = Astro.props;
+const videoId = session.youtubeUrl ? youtubeId(session.youtubeUrl) : null;
+const description =
+    session.description ?? `Watch "${session.title}" from Beyond the Prompt, the AG Grid and Bryntum conference.`;
+---
+
+<Layout
+    title={`${session.title} | Beyond the Prompt`}
+    description={description}
+    showDocsNav={false}
+    showSearchBar={false}
+>
+    <div class="layout-max-width-small">
+        <article class={styles.sessionPage}>
+            <a class={styles.sessionBack} href={urlWithBaseUrl('/community/beyond-the-prompt/')}
+                >← Back to Beyond the Prompt</a
+            >
+            <h1>{session.title}</h1>
+            {
+                session.speakers && (
+                    <p class={styles.sessionSpeakers}>
+                        {session.speakers.map((s) => `${s.name} (${s.role})`).join(', ')}
+                    </p>
+                )
+            }
+            {
+                videoId && (
+                    <div class={styles.sessionVideo}>
+                        <iframe
+                            src={`https://www.youtube.com/embed/${videoId}`}
+                            title={session.title}
+                            allow="autoplay; encrypted-media; picture-in-picture; web-share"
+                            allowfullscreen
+                        />
+                    </div>
+                )
+            }
+            {session.description && <p class={styles.sessionDescription}>{session.description}</p>}
+        </article>
+    </div>
+</Layout>
