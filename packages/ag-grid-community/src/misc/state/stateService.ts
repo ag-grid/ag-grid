@@ -462,15 +462,17 @@ export class StateService extends BeanStub implements NamedBean {
         if (shouldSetAggregationState && aggregationState) {
             const aggregationModel = aggregationState.aggregationModel;
             for (let i = 0, len = aggregationModel.length; i < len; ++i) {
-                const { colId, aggFunc } = aggregationModel[i];
+                const { colId, aggFunc, showValuesAs } = aggregationModel[i];
                 const columnState = getColumnState(colId);
                 columnState.aggFunc = aggFunc;
                 columnState.valueIndex = i;
+                columnState.showValuesAs = showValuesAs;
             }
         }
         if (shouldSetAggregationState || !partialColumnState) {
             defaultState.aggFunc = null;
             defaultState.valueIndex = null;
+            defaultState.showValuesAs = null;
         }
 
         const shouldSetPivotState = shouldSetState('pivot', pivotState);
