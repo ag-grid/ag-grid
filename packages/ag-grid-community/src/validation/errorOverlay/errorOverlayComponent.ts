@@ -23,8 +23,19 @@ const ErrorOverlayElement: ElementParams = {
             cls: 'ag-overlay-error-header',
             children: [
                 { tag: 'span', ref: 'eTitle', cls: 'ag-overlay-error-title' },
-                { tag: 'button', ref: 'eCopy', cls: 'ag-overlay-error-button ag-overlay-error-copy' },
-                { tag: 'button', ref: 'eDismiss', cls: 'ag-overlay-error-button ag-overlay-error-dismiss' },
+                {
+                    tag: 'button',
+                    ref: 'eCopy',
+                    cls: 'ag-overlay-error-button ag-overlay-error-copy',
+                    attrs: { type: 'button', title: 'Copy diagnostics to the clipboard' },
+                    children: COPY_LABEL,
+                },
+                {
+                    tag: 'button',
+                    ref: 'eDismiss',
+                    cls: 'ag-overlay-error-button ag-overlay-error-dismiss',
+                    attrs: { type: 'button', title: 'Dismiss', 'aria-label': 'Dismiss' },
+                },
             ],
         },
         { tag: 'div', ref: 'eBody', cls: 'ag-overlay-error-body' },
@@ -49,14 +60,8 @@ export class ErrorOverlayComponent extends OverlayComponent<any, any, IErrorOver
         const { beans } = this;
         this.setTemplate(ErrorOverlayElement);
 
-        this.eCopy.type = 'button';
-        this.eCopy.textContent = COPY_LABEL;
-        this.eCopy.title = 'Copy diagnostics to the clipboard';
         this.addManagedElementListeners(this.eCopy, { click: () => this.copyDiagnostics() });
 
-        this.eDismiss.type = 'button';
-        this.eDismiss.setAttribute('aria-label', 'Dismiss');
-        this.eDismiss.title = 'Dismiss';
         const eIcon = _createIconNoSpan('cancel', beans, null);
         if (eIcon) {
             this.eDismiss.appendChild(eIcon);
