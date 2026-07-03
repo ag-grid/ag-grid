@@ -6,7 +6,8 @@ const isCspIssue = (msg: string) => /Content-Security-Policy|Refused to (load|ex
 // report-only policy that's merely being monitored ahead of enforcement — browsers
 // prefix/suffix report-only violation messages with "report-only" or "[Report Only]"
 // text (Chrome/Chromium use a space, not a hyphen, in the "[Report Only]" prefix).
-const isEnforcedCspViolation = (msg: string) => /Refused to (load|execute|connect)/i.test(msg) && !/report[ -]only/i.test(msg);
+const isEnforcedCspViolation = (msg: string) =>
+    /Refused to (load|execute|connect)/i.test(msg) && !/report[ -]only/i.test(msg);
 
 // Console messages that are known browser/environment noise unrelated to the
 // site under test. Matched by substring so new message formats stay filtered.
