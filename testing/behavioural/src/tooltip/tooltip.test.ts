@@ -171,6 +171,28 @@ describe('Tooltips', () => {
         `);
     });
 
+    test('AG-17120 tooltipField reads the data field, not a matching column value getter', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'A', tooltipField: 'B' },
+                { field: 'B', valueGetter: (params) => `${params.data.B}-computed` },
+            ],
+            rowData: [{ A: 'a-value', B: 'b-value' }],
+            tooltipShowDelay: 200,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-field-value-getter', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+
+        // tooltipField is a data-field lookup: A's tooltip is data.B, never column B's computed value
+        await userEvent.hover(cellA);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('b-value');
+        expect(hasTooltipText('computed')).toBe(false);
+    });
+
     test('AG-17120 tooltipValueGetter cell tooltip reflects the pending value during a batch edit', async () => {
         const gridOptions: GridOptions = {
             columnDefs: [{ field: 'A', editable: true, tooltipValueGetter: (params) => `Tooltip: ${params.value}` }],

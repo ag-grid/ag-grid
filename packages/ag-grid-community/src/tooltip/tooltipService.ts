@@ -116,8 +116,8 @@ const buildCellTooltipDisplayFunctions = (
     };
 };
 
-// The tooltip is a display feature, so resolving via the field's column surfaces pending batch-edit
-// values like cell rendering and copy/paste do; a field with no column falls back to committed data.
+// tooltipField is a data-field lookup: layer a pending batch edit (keyed by the field's column) on
+// top, but never fall through to the column's value resolution, which would change field semantics.
 const resolveTooltipFieldValue = (
     beans: BeanCollection,
     column: AgColumn,
@@ -127,7 +127,10 @@ const resolveTooltipFieldValue = (
 ): any => {
     const tooltipColumn = beans.colModel.getCol(tooltipField);
     if (tooltipColumn) {
-        return beans.valueSvc.getValue(tooltipColumn, rowNode, 'batch');
+        const pending = beans.editSvc?.getPendingEditValue(rowNode, tooltipColumn, 'batch');
+        if (pending !== undefined) {
+            return pending;
+        }
     }
     if (column.tooltipFieldContainsDots) {
         return _getValueUsingDotField(data, tooltipField);
