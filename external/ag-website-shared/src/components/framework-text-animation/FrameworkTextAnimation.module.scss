@@ -1,15 +1,27 @@
 @use 'design-system' as *;
 
 .animatedWordsOuter {
-    --word-height: 1.3em;
+    --word-height: 1.2em;
 
-    position: relative;
-    display: inline-flex;
-    align-items: flex-end;
+    display: inline-grid;
     height: var(--word-height);
     margin-bottom: -0.2em;
     text-align: left;
     overflow: hidden;
+    vertical-align: bottom;
+
+    // Stack the sizer and the visible word in the same cell: the grid track sizes to the
+    // widest child (the sizer), so the container width stays fixed as words cycle.
+    > * {
+        grid-area: 1 / 1;
+        align-self: end;
+    }
+}
+
+// Reserves the width of the widest word without being shown or announced (aria-hidden
+// in the markup). Kept in the layout so its width defines the container.
+.sizer {
+    visibility: hidden;
 }
 
 .animatedWord {
@@ -23,7 +35,7 @@
 
 @keyframes framework-word-in {
     from {
-        transform: translateY(100%);
+        transform: translateY(-100%);
         opacity: 0;
     }
 
