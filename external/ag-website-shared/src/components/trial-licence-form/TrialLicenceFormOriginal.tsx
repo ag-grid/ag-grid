@@ -290,7 +290,7 @@ export const TrialLicenceFormOriginal: FunctionComponent = ({ submitUrl }: Props
 
                 <p className={styles.privacyMessage}>
                     By clicking "Request trial licence" you agree to our <a href={PRIVACY_POLICY_URL}>Privacy Policy</a>
-                    .
+                    , and to be contacted by a member of our team
                 </p>
 
                 {formState === 'success' && (

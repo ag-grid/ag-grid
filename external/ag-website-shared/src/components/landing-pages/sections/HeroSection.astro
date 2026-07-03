@@ -37,6 +37,9 @@ const secondaryCtaAnalytics = `${pageContent.analyticsPrefix}-view-demos`;
 // Product name for version badge (defaults to 'AG Grid' for backwards compatibility)
 const productName = pageContent.productName ?? 'AG Grid';
 
+const getStartedUrl =
+    productName === 'AG Grid' ? `./${pageContent.docsPath}/getting-started/` : `./${pageContent.docsPath}/quick-start/`;
+
 // Whether to show customer logos (defaults to true)
 const showCustomerLogos = section.showCustomerLogos !== false;
 ---
