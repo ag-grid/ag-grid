@@ -252,7 +252,7 @@ describe('ag-grid grouping display types and footers', () => {
         ]);
 
         // Custom priority order: High, Medium, Low
-        const priorityOrder = { High: 1, Medium: 2, Low: 3 };
+        const priorityOrder: Record<string, number> = { High: 1, Medium: 2, Low: 3 };
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [

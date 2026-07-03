@@ -11,7 +11,7 @@ describe('ag-grid parentId tree data reset', () => {
         modules: [RowSelectionModule, ClientSideRowModelModule, TreeDataModule],
     });
 
-    let consoleWarnSpy: MockInstance;
+    let consoleWarnSpy: MockInstance | undefined;
 
     beforeEach(() => {
         vitest.useRealTimers();

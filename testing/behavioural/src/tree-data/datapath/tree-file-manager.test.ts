@@ -121,7 +121,7 @@ describe('ag-grid tree transactions', () => {
             return node.data ? res.concat([node.data]) : res; // ignore nodes that have no data, i.e. 'filler groups'
         }
 
-        function moveSelectedNodeToTarget(targetRowId) {
+        function moveSelectedNodeToTarget(targetRowId: string) {
             const selectedNode = api.getSelectedNodes()[0]; // single selection
             const targetNode = api.getRowNode(targetRowId);
             applyTransactionChecked(api, { update: getRowsToUpdate(selectedNode, targetNode!.data.filePath) });

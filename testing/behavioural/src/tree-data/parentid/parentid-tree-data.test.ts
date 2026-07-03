@@ -19,7 +19,7 @@ describe('ag-grid tree data parent id', () => {
         modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
-    let consoleWarnSpy: MockInstance;
+    let consoleWarnSpy: MockInstance | undefined;
 
     function hasLoadingOverlay() {
         return !!document.querySelector('.ag-overlay-loading-center');

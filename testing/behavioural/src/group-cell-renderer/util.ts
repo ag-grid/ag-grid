@@ -70,7 +70,7 @@ const generateTestsRecursively = (
             if ('setter' in nextTest) {
                 nextTest.setter(gridOptions, value);
             } else {
-                gridOptions[property] = value;
+                gridOptions[nextTest.property] = value;
             }
 
             // use fake timers when creating the grid; as the grid uses a lot of setTimeout
@@ -89,7 +89,7 @@ const generateTestsRecursively = (
         if ('setter' in nextTest) {
             nextTest.setter(gridOptions, value);
         } else {
-            gridOptions[property] = value;
+            gridOptions[nextTest.property] = value;
         }
         // if no more tests after this, we need to make a test instead of describe.
         if (!generateTestsRecursively(gridManager, getSnapshot, tests, gridOptions, idx + 1)) {

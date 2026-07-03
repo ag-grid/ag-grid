@@ -16,7 +16,11 @@ describe('React Suspense', () => {
 
     test('Should suspend with no error', async () => {
         let didSuspend = false;
-        const InnerComponent = (props) => {
+        interface InnerComponentProps {
+            rowData: { item: string }[];
+            setRowData: React.Dispatch<React.SetStateAction<{ item: string }[]>>;
+        }
+        const InnerComponent = (props: InnerComponentProps) => {
             const { rowData, setRowData } = props;
             if (!didSuspend) {
                 didSuspend = true;

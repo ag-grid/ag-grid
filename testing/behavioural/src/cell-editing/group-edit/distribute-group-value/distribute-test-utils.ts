@@ -27,7 +27,7 @@ export async function startEditAndSnapshot(api: GridApi, node: IRowNode, colId: 
     return new GridRows(api, label);
 }
 
-export function createGrid(id: string, extraColProps?: Record<string, any>) {
+export function createGrid(id: string, extraColProps?: ColDef) {
     return gridsManager.createGridAndWait(id, {
         defaultColDef: { cellEditor: 'agTextCellEditor' },
         undoRedoCellEditing: true,
@@ -55,7 +55,7 @@ export function createGrid(id: string, extraColProps?: Record<string, any>) {
 export function createSimpleGrid(
     id: string,
     rowData: any[],
-    extraColProps?: Record<string, any>,
+    extraColProps?: ColDef,
     extraColumnDefs?: ColDef[],
     extraGridOptions?: Record<string, any>
 ) {

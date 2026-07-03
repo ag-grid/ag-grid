@@ -6,10 +6,7 @@ import { AgGridReact } from 'ag-grid-react';
 
 import { asyncSetTimeout } from '../test-utils';
 
-export async function renderNavGrid(opts: {
-    rowData: Record<string, string>[];
-    columnDefs: ColDef[];
-}): Promise<GridApi> {
+export async function renderNavGrid(opts: { rowData: any[]; columnDefs: ColDef[] }): Promise<GridApi> {
     let resolveReady!: (api: GridApi) => void;
     const readyPromise = new Promise<GridApi>((resolve) => {
         resolveReady = resolve;

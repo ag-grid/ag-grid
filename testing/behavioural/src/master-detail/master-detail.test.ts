@@ -1,6 +1,6 @@
 import type { MockInstance } from 'vitest';
 
-import type { GridOptions } from 'ag-grid-community';
+import type { GetDetailRowDataParams, GetRowIdParams, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
@@ -30,7 +30,7 @@ describe('ag-grid master detail', () => {
                 detailGridOptions: {
                     columnDefs: [{ field: 'x' }],
                 },
-                getDetailRowData: (params) => {
+                getDetailRowData: (params: GetDetailRowDataParams) => {
                     params.successCallback(params.data.records);
                 },
             },
@@ -64,7 +64,7 @@ describe('ag-grid master detail', () => {
                 detailGridOptions: {
                     columnDefs: [{ field: 'x' }],
                 },
-                getDetailRowData: (params) => {
+                getDetailRowData: (params: GetDetailRowDataParams) => {
                     params.successCallback(params.data.records);
                 },
             },
@@ -107,7 +107,7 @@ describe('ag-grid master detail', () => {
                 detailGridOptions: {
                     columnDefs: [{ field: 'x' }],
                 },
-                getDetailRowData: (params) => {
+                getDetailRowData: (params: GetDetailRowDataParams) => {
                     params.successCallback(params.data.records);
                 },
             },
@@ -156,7 +156,7 @@ describe('ag-grid master detail', () => {
                 detailGridOptions: {
                     columnDefs: [{ field: 'x' }],
                 },
-                getDetailRowData: (params) => {
+                getDetailRowData: (params: GetDetailRowDataParams) => {
                     params.successCallback(params.data.records);
                 },
             },
@@ -208,9 +208,9 @@ describe('ag-grid master detail', () => {
             detailCellRendererParams: {
                 detailGridOptions: {
                     columnDefs: [{ field: 'x' }],
-                    getRowId: ({ data }) => data.id,
+                    getRowId: ({ data }: GetRowIdParams) => data.id,
                 },
-                getDetailRowData: (params) => {
+                getDetailRowData: (params: GetDetailRowDataParams) => {
                     params.successCallback(params.data.records);
                 },
             },
@@ -277,9 +277,9 @@ describe('ag-grid master detail', () => {
             detailCellRendererParams: {
                 detailGridOptions: {
                     columnDefs: [{ field: 'x' }],
-                    getRowId: ({ data }) => data.id,
+                    getRowId: ({ data }: GetRowIdParams) => data.id,
                 },
-                getDetailRowData: (params) => {
+                getDetailRowData: (params: GetDetailRowDataParams) => {
                     params.successCallback(params.data.records);
                 },
             },
@@ -337,7 +337,7 @@ describe('ag-grid master detail', () => {
                 detailGridOptions: {
                     columnDefs: [{ field: 'x' }],
                 },
-                getDetailRowData: (params) => {
+                getDetailRowData: (params: GetDetailRowDataParams) => {
                     params.successCallback(params.data.records);
                 },
             },

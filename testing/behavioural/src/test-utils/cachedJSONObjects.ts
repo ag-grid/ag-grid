@@ -36,8 +36,9 @@ export const cachedJSONObjects = {
         }
 
         newObj = {};
+        const record = obj as Record<string, unknown>;
         for (const k of Object.keys(obj)) {
-            newObj[k] = cachedJSONObjects.object(obj[k]);
+            newObj[k] = cachedJSONObjects.object(record[k]);
         }
         cachedJSONObjectsMap ??= new Map();
         cachedJSONObjectsMap.set(key, newObj);

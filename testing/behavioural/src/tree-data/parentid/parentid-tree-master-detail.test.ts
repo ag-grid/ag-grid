@@ -1,3 +1,4 @@
+import type { GetDetailRowDataParams, GetRowIdParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule, TreeDataModule } from 'ag-grid-enterprise';
 
@@ -21,9 +22,9 @@ describe('ag-grid parentId tree with master detail', () => {
             detailCellRendererParams: {
                 detailGridOptions: {
                     columnDefs: [{ field: 'name' }],
-                    getRowId: ({ data }) => data.name,
+                    getRowId: ({ data }: GetRowIdParams) => data.name,
                 },
-                getDetailRowData: (params) => {
+                getDetailRowData: (params: GetDetailRowDataParams) => {
                     params.successCallback(params.data.records);
                 },
             },
@@ -103,9 +104,9 @@ describe('ag-grid parentId tree with master detail', () => {
             detailCellRendererParams: {
                 detailGridOptions: {
                     columnDefs: [{ field: 'name' }],
-                    getRowId: ({ data }) => data.name,
+                    getRowId: ({ data }: GetRowIdParams) => data.name,
                 },
-                getDetailRowData: (params) => {
+                getDetailRowData: (params: GetDetailRowDataParams) => {
                     params.successCallback(params.data.records);
                 },
             },
@@ -244,9 +245,9 @@ describe('ag-grid parentId tree with master detail', () => {
             detailCellRendererParams: {
                 detailGridOptions: {
                     columnDefs: [{ field: 'name' }],
-                    getRowId: ({ data }) => data.name,
+                    getRowId: ({ data }: GetRowIdParams) => data.name,
                 },
-                getDetailRowData: (params) => {
+                getDetailRowData: (params: GetDetailRowDataParams) => {
                     params.successCallback(params.data.records);
                 },
             },
@@ -276,9 +277,9 @@ describe('ag-grid parentId tree with master detail', () => {
             detailCellRendererParams: {
                 detailGridOptions: {
                     columnDefs: [{ field: 'name' }],
-                    getRowId: ({ data }) => data.name,
+                    getRowId: ({ data }: GetRowIdParams) => data.name,
                 },
-                getDetailRowData: (params) => {
+                getDetailRowData: (params: GetDetailRowDataParams) => {
                     params.successCallback(params.data.records);
                 },
             },
@@ -309,9 +310,9 @@ describe('ag-grid parentId tree with master detail', () => {
             detailCellRendererParams: {
                 detailGridOptions: {
                     columnDefs: [{ field: 'name' }],
-                    getRowId: ({ data }) => data.name,
+                    getRowId: ({ data }: GetRowIdParams) => data.name,
                 },
-                getDetailRowData: (params) => {
+                getDetailRowData: (params: GetDetailRowDataParams) => {
                     params.successCallback(params.data.records);
                 },
             },

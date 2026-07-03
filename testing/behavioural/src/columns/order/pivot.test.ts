@@ -20,7 +20,7 @@ describe('pivotMode=true', () => {
 
             const gridApi = gridsManager.createGrid('myGrid', { columnDefs, pivotMode: true });
 
-            const expected = [];
+            const expected: string[] = [];
             expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
             expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
 

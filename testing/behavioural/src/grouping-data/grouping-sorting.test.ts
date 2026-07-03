@@ -216,7 +216,7 @@ describe('ag-grid grouping sorting', () => {
             { id: '5', country: 'Italy', priority: 'Low', task: 'Task E', score: 3 },
         ];
 
-        const priorityOrder = { High: 1, Medium: 2, Low: 3 };
+        const priorityOrder: Record<string, number> = { High: 1, Medium: 2, Low: 3 };
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [

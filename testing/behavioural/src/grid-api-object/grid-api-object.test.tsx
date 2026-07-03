@@ -51,7 +51,7 @@ describe('ag-grid overlays state', () => {
         // It has all Object.prototype methods
         for (const key of Object.getOwnPropertyNames(Object.prototype)) {
             if (key !== 'constructor' && key !== '__proto__') {
-                expect((api as any)[key]).toBe(Object.prototype[key]);
+                expect((api as any)[key]).toBe((Object.prototype as Record<string, unknown>)[key]);
             }
         }
         expect(typeof api.constructor).toBe('function');

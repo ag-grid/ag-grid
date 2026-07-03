@@ -60,7 +60,7 @@ describe('ag-grid aggregation call count with aggregateOnlyChangedColumns', () =
         });
 
         // Verify the grid structure is correct
-        await new GridRows(api, 'initial', { columns: ['a', 'b', 'c', 'd'], checkDom: false }).check(`
+        await new GridRows(api, 'initial', { checkDom: false }).check(`
             ROOT id:ROOT_NODE_ID total:NaN
             ├─┬ filler id:row-group-topGroup-Top ag-Grid-AutoColumn:"Top" a:770 b:690 c:770 d:730 total:2960
             │ ├─┬ LEAF_GROUP collapsed id:"row-group-topGroup-Top-group-Group A1" ag-Grid-AutoColumn:"Group A1" a:178 b:66 c:158 d:162 total:564
