@@ -119,6 +119,10 @@ $btp-card: #ffffff;
     // affected; the menu pills are the only descendants using this token.
     --color-util-brand-100: rgba(0, 0, 0, 0.05);
 
+    --color-fg-primary: var(--color-gray-900);
+    --color-bg-primary: var(--color-white);
+    --color-fg-secondary: var(--color-gray-700);
+
     // The page's `ul` reset above strips the community menu's own vertical
     // padding; restore it so the menu matches the standard /community pages.
     ul {
