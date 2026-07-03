@@ -26,20 +26,10 @@ export function applyColumnDefOperations(gridApi: GridApi, operations: ColumnDef
         if (operation.operation !== 'addCalculatedColumn') {
             continue;
         }
-        const { colId, headerName, calculatedExpression, cellDataType, aggFunc, width, hide } = operation;
-        const colDef: ColDef = { colId, headerName, calculatedExpression };
-        if (cellDataType !== undefined) {
-            colDef.cellDataType = cellDataType;
-        }
-        if (aggFunc !== undefined) {
-            colDef.aggFunc = aggFunc;
-        }
-        if (width !== undefined) {
-            colDef.width = width;
-        }
-        if (hide !== undefined) {
-            colDef.hide = hide;
-        }
+        // Everything except the `operation` discriminator is a column-definition field; drop unset values.
+        const colDef = Object.fromEntries(
+            Object.entries(operation).filter(([key, value]) => key !== 'operation' && value !== undefined)
+        ) as ColDef;
         newColumns.push(colDef);
     }
 

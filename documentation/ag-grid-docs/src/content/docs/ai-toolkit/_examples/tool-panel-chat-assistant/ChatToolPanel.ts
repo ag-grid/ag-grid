@@ -129,20 +129,15 @@ export class ChatToolPanel implements IToolPanel {
                 { role: 'assistant', content: response.explanation }
             );
 
-            const hasGridState = response.gridState && Object.keys(response.gridState).length > 0;
-
-            // A column-definition change alone does not recreate the tool panel, so render the
-            // explanation now. When grid state also changes, the panel reloads and replays history.
-            if (!hasGridState) {
-                this.renderMessage('assistant', response.explanation);
-            }
-
             applyColumnDefOperations(this.gridApi, response.columnDefOperations);
 
             // Apply grid state changes if any (this will destroy and recreate the tool panel)
             // Messages will be automatically added when the tool panel reloads
-            if (hasGridState) {
+            if (response.gridState && Object.keys(response.gridState).length > 0) {
                 this.gridApi.setState(response.gridState, response.propertiesToIgnore);
+            } else {
+                // If no state change, manually render the response
+                this.renderMessage('assistant', response.explanation);
             }
         } catch (error) {
             this.removeLoadingMessage(loadingId);
