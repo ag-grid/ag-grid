@@ -60,7 +60,7 @@ export function convertColumnState(
             groupColIds[rowGroupIndex ?? 0] = colId;
         }
         if (typeof aggFunc === 'string') {
-            aggregationColumns.push({ colId, aggFunc, showValuesAs: showValuesAs ?? undefined, valueIndex });
+            aggregationColumns.push({ colId, aggFunc, showValuesAs, valueIndex });
         }
         if (pivot) {
             pivotColIds[pivotIndex ?? 0] = colId;
@@ -109,7 +109,7 @@ function orderAggregationModel(columns: IndexedAggregationColumnState[]): Aggreg
         .sort((a, b) => (a.valueIndex ?? Infinity) - (b.valueIndex ?? Infinity))
         .map((column) => {
             const state: AggregationColumnState = { colId: column.colId, aggFunc: column.aggFunc };
-            if (column.showValuesAs !== undefined) {
+            if (column.showValuesAs != null) {
                 state.showValuesAs = column.showValuesAs;
             }
             return state;
