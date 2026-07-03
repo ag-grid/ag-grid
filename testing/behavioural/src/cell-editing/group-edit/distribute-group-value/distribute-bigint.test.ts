@@ -1,3 +1,5 @@
+import type { ColDef } from 'ag-grid-community';
+
 import { asyncSetTimeout, distributeGroupValue, gridsManager } from './distribute-test-utils';
 
 afterEach(() => {
@@ -14,7 +16,7 @@ const bigintSum = (params: any) => {
     return sum;
 };
 
-const createBigIntGrid = (id: string, rowData: any[], extraColProps?: Record<string, any>) =>
+const createBigIntGrid = (id: string, rowData: any[], extraColProps?: ColDef) =>
     gridsManager.createGridAndWait(id, {
         defaultColDef: { cellEditor: 'agTextCellEditor' },
         groupDisplayType: 'custom',

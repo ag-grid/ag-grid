@@ -1,4 +1,4 @@
-import type { GroupRowValueSetterParams } from 'ag-grid-community';
+import type { GroupRowValueSetterOptions, GroupRowValueSetterParams } from 'ag-grid-community';
 
 import { asyncSetTimeout, createSimpleGrid, distributeGroupValue, gridsManager } from './distribute-test-utils';
 
@@ -127,7 +127,7 @@ describe('numeric-like newValue handling (direct distributeGroupValue calls)', (
         newValue: unknown,
         oldValue: unknown,
         children: MockChild[],
-        opts?: GroupRowValueSetterParams
+        opts?: GroupRowValueSetterOptions
     ) {
         return distributeGroupValue(
             {

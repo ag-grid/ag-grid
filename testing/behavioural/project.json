@@ -10,8 +10,12 @@
         "cwd": "{projectRoot}"
       }
     },
+    "build:test": {
+      "dependsOn": ["^build:types"]
+    },
     "test": {
       "command": "npx vitest run",
+      "dependsOn": ["build:test"],
       "outputs": ["{workspaceRoot}/reports/ag-behavioural-testing.xml"],
       "options": {
         "cwd": "{projectRoot}",

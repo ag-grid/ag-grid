@@ -139,7 +139,7 @@ export class EditEventTracker {
         this.trackUndo('redoEnded');
     }
 
-    private track(event: AgPublicEventType): void {
+    private track(event: keyof EditEventCounts): void {
         const listener = () => {
             this.counts[event] += 1;
         };
@@ -148,7 +148,7 @@ export class EditEventTracker {
         this.api.addEventListener(event, listener);
     }
 
-    private trackUndo(event: AgPublicEventType): void {
+    private trackUndo(event: keyof UndoCounts): void {
         const listener = () => {
             this.undoCounts[event] += 1;
         };

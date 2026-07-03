@@ -1,3 +1,4 @@
+import type { IStatusPanelValueFormatterParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
 
@@ -38,7 +39,7 @@ describe('Status bar aggregation value formatter', () => {
                     {
                         statusPanel: 'agAggregationComponent',
                         statusPanelParams: {
-                            valueFormatter: (params) =>
+                            valueFormatter: (params: IStatusPanelValueFormatterParams) =>
                                 params.bigintValue != null ? `bigint:${params.bigintValue}` : `number:${params.value}`,
                         },
                     },
@@ -86,7 +87,7 @@ describe('Status bar aggregation value formatter', () => {
                     {
                         statusPanel: 'agAggregationComponent',
                         statusPanelParams: {
-                            valueFormatter: (params) => {
+                            valueFormatter: (params: IStatusPanelValueFormatterParams) => {
                                 if (params.bigintValue != null) {
                                     return `bigint:${params.bigintValue}`;
                                 }

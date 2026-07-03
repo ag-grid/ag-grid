@@ -11,7 +11,7 @@ describe('ag-grid parentId immutable tree data', () => {
         modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
-    let consoleWarnSpy: MockInstance;
+    let consoleWarnSpy: MockInstance | undefined;
 
     beforeEach(() => {
         gridsManager.reset();

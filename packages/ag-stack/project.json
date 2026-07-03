@@ -176,8 +176,10 @@
         "cwd": "{projectRoot}"
       }
     },
+    "build:test": {},
     "test": {
       "command": "npx vitest run",
+      "dependsOn": ["build:test"],
       "outputs": ["{workspaceRoot}/reports/ag-stack.xml"],
       "options": {
         "cwd": "{projectRoot}"

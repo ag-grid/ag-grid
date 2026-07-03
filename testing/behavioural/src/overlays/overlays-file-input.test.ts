@@ -75,7 +75,8 @@ describe('ag-grid file input overlay', () => {
 
     function createFileDragEvent(type: string, files?: File[]): DragEvent {
         const dt = new DataTransfer();
-        dt.types.push('Files');
+        // DataTransfer.types/files are readonly in the DOM types but mutable arrays in jsdom, so we cast away readonly to push
+        (dt.types as string[]).push('Files');
         if (files) {
             for (const file of files) {
                 dt.items.add(file);

@@ -25,8 +25,10 @@ describe('viewport stale index + orphaned row ctrl leak (React)', () => {
         });
     });
 
+    type ViewportRow = { id: string; name: string };
+
     function rowDataFromIds(idsByIndex: Record<number, string>) {
-        const rowData: Record<number, { id: string; name: string }> = {};
+        const rowData: Record<number, ViewportRow> = {};
         for (const [index, id] of Object.entries(idsByIndex)) {
             rowData[Number(index)] = { id, name: `name-${id}` };
         }
@@ -39,7 +41,7 @@ describe('viewport stale index + orphaned row ctrl leak (React)', () => {
 
         const rendered = render(
             <div style={{ height: 400, width: 600 }}>
-                <AgGridReact
+                <AgGridReact<ViewportRow>
                     columnDefs={[{ field: 'name' }]}
                     rowModelType="viewport"
                     suppressRowVirtualisation={true}

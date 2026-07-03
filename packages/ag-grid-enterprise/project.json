@@ -277,8 +277,10 @@
         "cwd": "{projectRoot}"
       }
     },
+    "build:test": {},
     "test": {
       "command": "npx vitest run",
+      "dependsOn": ["build:test"],
       "outputs": ["{workspaceRoot}/reports/ag-grid-enterprise.xml"],
       "options": {
         "cwd": "{projectRoot}"

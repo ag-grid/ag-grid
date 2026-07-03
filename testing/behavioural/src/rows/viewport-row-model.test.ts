@@ -239,7 +239,8 @@ describe('viewport row model', () => {
             const { api, getDs } = createViewportGrid('myGrid', {}, {}, /* setRowCountOnInit */ false);
 
             let rowCountReady = 0;
-            api.addEventListener('rowCountReady', () => rowCountReady++);
+            // rowCountReady is an internal event, so it is not on the public addEventListener type
+            api.addEventListener('rowCountReady' as any, () => rowCountReady++);
             getDs().setRowCount(10);
             getDs().setRowCount(20);
             getDs().setRowCount(30);

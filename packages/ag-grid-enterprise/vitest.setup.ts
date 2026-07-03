@@ -7,6 +7,6 @@ import { ReadableStream, TransformStream, WritableStream } from 'web-streams-pol
 globalThis.Blob = Blob;
 globalThis.WritableStream = WritableStream;
 globalThis.ReadableStream = ReadableStream;
-globalThis.CompressionStream = makeCompressionStream(TransformStream);
+globalThis.CompressionStream = makeCompressionStream(TransformStream as typeof globalThis.TransformStream);
 globalThis.TextEncoder = TextEncoder;
 globalThis.OffscreenCanvas = Canvas as any;

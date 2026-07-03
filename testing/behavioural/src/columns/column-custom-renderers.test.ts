@@ -36,6 +36,9 @@ describe('Column Custom Renderers', () => {
                             getGui(): HTMLElement {
                                 return this.eGui;
                             }
+                            refresh(): boolean {
+                                return false;
+                            }
                         },
                     },
                     { colId: 'normal' },
@@ -74,6 +77,9 @@ describe('Column Custom Renderers', () => {
                             }
                             getGui(): HTMLElement {
                                 return this.eGui;
+                            }
+                            refresh(): boolean {
+                                return false;
                             }
                         },
                     },
@@ -263,6 +269,9 @@ describe('Column Custom Renderers', () => {
                             }
                             getGui(): HTMLElement {
                                 return this.eGui;
+                            }
+                            refresh(): boolean {
+                                return false;
                             }
                         },
                     },

@@ -46,7 +46,7 @@ describe('lockPosition Column Order', () => {
                             right: ['a', 'c', 'b'],
                         },
                     };
-                    const expected = expectedResultMatrix[String(enableRtl)][String(lockPosition)];
+                    const expected = expectedResultMatrix[`${enableRtl}`][`${lockPosition}`];
                     expect(getColumnOrderFromState(gridApi)).toEqual(expected);
                     expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
 

@@ -19,14 +19,14 @@ describe('ServerSideExpansionService', () => {
                     return key === 'ssrmExpandAllAffectsAllRows' ? ssrmExpandAllAffectsAllRows : undefined;
                 },
                 getCallback: () => undefined,
-                addCommon: (params) => params,
+                addCommon: (params: any) => params,
             },
             colModel: { pivotMode: false },
             serverSideRowModel: {
-                forEachNode: (cb) => cb(rowNode),
+                forEachNode: (cb: (node: RowNode) => void) => cb(rowNode),
             },
             rowModel: {
-                forEachNode: (cb) => cb(rowNode),
+                forEachNode: (cb: (node: RowNode) => void) => cb(rowNode),
             },
         };
         expansionService = new ServerSideExpansionService();

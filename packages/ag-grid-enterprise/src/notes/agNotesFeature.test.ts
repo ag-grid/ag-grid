@@ -15,7 +15,7 @@ describe('AgNotesFeature', () => {
         CellCtrl,
         'addManagedElementListeners' | 'column' | 'comp' | 'eGui' | 'isNoteHoverSuppressed' | 'rowNode'
     >;
-    let listeners: Record<string, (event: PointerEvent) => void>;
+    let listeners: Record<string, (event: MouseEvent) => void>;
     let popup: { hide: Mock; focusEditor: Mock; hasFocus: Mock };
     let context: { createBean: Mock; destroyBean: Mock };
     let access: INoteAccess;
@@ -47,6 +47,7 @@ describe('AgNotesFeature', () => {
             comp: { toggleCss: vi.fn() } as unknown as CellCtrl['comp'],
             addManagedElementListeners: vi.fn((_element, managedListeners) => {
                 listeners = managedListeners as typeof listeners;
+                return [];
             }),
             isNoteHoverSuppressed: vi.fn(() => false),
         };
@@ -442,18 +443,21 @@ describe('AgFullWidthRowNotesFeature', () => {
         } as unknown as BeanCollection;
 
         notesSvc = {
-            getNoteAccess: vi.fn((params) => ({
-                params,
-                rowNode: params.rowNode,
-                column: { getColId: () => ('column' in params ? params.column.getColId() : 'athlete') },
-                note: { text: `note-${'pinned' in params ? (params.pinned ?? 'center') : 'cell'}` },
-                isReadOnly: false,
-                isSuppressed: false,
-                canView: true,
-                canCreate: false,
-                canEdit: true,
-                canDelete: true,
-            })),
+            getNoteAccess: vi.fn(
+                (params) =>
+                    ({
+                        params,
+                        rowNode: params.rowNode,
+                        column: { getColId: () => ('column' in params ? params.column.getColId() : 'athlete') },
+                        note: { text: `note-${'pinned' in params ? (params.pinned ?? 'center') : 'cell'}` },
+                        isReadOnly: false,
+                        isSuppressed: false,
+                        canView: true,
+                        canCreate: false,
+                        canEdit: true,
+                        canDelete: true,
+                    }) as unknown as INoteAccess
+            ),
             getHoverGeneration: vi.fn(() => 0),
             replaceActivePopupOwner: vi.fn(() => undefined),
             clearActivePopupOwner: vi.fn(),

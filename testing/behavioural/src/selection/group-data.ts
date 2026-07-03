@@ -308,7 +308,7 @@ function group({ rowGroupCols, groupKeys }: IServerSideGetRowsRequest, rows: Row
 }
 
 function groupBy(objs: RowData, key: keyof Row): GroupedRowData {
-    return objs.reduce((acc, obj) => {
+    return objs.reduce<GroupedRowData>((acc, obj) => {
         const value = obj[key];
         acc[value] ||= [];
         acc[value].push(obj);

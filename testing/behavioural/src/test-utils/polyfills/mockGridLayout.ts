@@ -225,9 +225,13 @@ function init(): boolean {
         ) {}
     };
 
-    DOMRect.prototype[Symbol.for('nodejs.util.inspect.custom')] = function inspect(this: DOMRect) {
-        return new DOMRectInspect(this.x, this.y, this.width, this.height);
-    };
+    Object.defineProperty(DOMRect.prototype, Symbol.for('nodejs.util.inspect.custom'), {
+        configurable: true,
+        writable: true,
+        value: function inspect(this: DOMRect) {
+            return new DOMRectInspect(this.x, this.y, this.width, this.height);
+        },
+    });
 
     Object.defineProperty(Element.prototype, 'getBoundingClientRect', {
         configurable: true,

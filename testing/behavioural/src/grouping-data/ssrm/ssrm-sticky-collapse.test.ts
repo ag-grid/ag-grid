@@ -1,4 +1,4 @@
-import type { IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
+import type { IServerSideDatasource, IServerSideGetRowsParams, RowNode } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
@@ -223,7 +223,7 @@ describe('SSRM grouping sticky collapse', () => {
         // The compensated scrollTop for any sticky ancestor is (rowTop − stickyRowTop).
         // For an ancestor chain, this collapses to the outermost ancestor's rowTop
         // regardless of chain position, so the batch outcome is deterministic.
-        const expectedScrollTop = groupA.rowTop! - groupA.stickyRowTop;
+        const expectedScrollTop = groupA.rowTop! - (groupA as RowNode).stickyRowTop;
 
         // Bulk collapse via the public SSRM api. Internally this runs
         // updateAllNodes → super.setExpanded per node; the sticky check in the

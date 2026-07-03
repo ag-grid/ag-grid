@@ -33,7 +33,7 @@ export const groupCellSnapshotter = (container: HTMLDivElement) => {
 };
 
 export const findSnapshotter = (container: HTMLDivElement, api: GridApi) => {
-    const snap = {};
+    const snap: Record<string, number> = {};
     const stringsToFind = [
         'Total',
         'autoColDef.cellRendererParams.totalValueGetter',

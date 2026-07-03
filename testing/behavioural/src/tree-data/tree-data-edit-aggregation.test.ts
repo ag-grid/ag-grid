@@ -94,7 +94,8 @@ describe('ag-grid tree data edit aggregation', () => {
                     }
                     result = result * parsedQty;
                 }
-                params.data[params.colDef.field!] = result;
+                // dynamic write keyed by the aggregation column's field path
+                (params.data as unknown as Record<string, number>)[params.colDef.field!] = result;
             }
 
             return result;

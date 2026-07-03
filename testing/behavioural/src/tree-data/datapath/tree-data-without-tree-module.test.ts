@@ -12,7 +12,7 @@ describe('ag-grid tree data without tree module', () => {
         modules: [ClientSideRowModelModule],
     });
 
-    let consoleWarnSpy: MockInstance;
+    let consoleWarnSpy: MockInstance | undefined;
     let consoleErrorSpy: MockInstance;
 
     beforeEach(() => {

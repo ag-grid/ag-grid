@@ -104,6 +104,8 @@ class PointerEventPolyfill extends MouseEvent implements PointerEvent {
     public tangentialPressure: number;
     public pointerType: string;
     public isPrimary: boolean;
+    public altitudeAngle: number;
+    public azimuthAngle: number;
 
     constructor(type: string, eventInitDict: PointerEventInit = {}) {
         const mouseInit: MouseEventInit = {
@@ -123,6 +125,8 @@ class PointerEventPolyfill extends MouseEvent implements PointerEvent {
         this.tangentialPressure = eventInitDict.tangentialPressure ?? 0;
         this.pointerType = eventInitDict.pointerType ?? 'mouse';
         this.isPrimary = eventInitDict.isPrimary ?? true;
+        this.altitudeAngle = eventInitDict.altitudeAngle ?? Math.PI / 2;
+        this.azimuthAngle = eventInitDict.azimuthAngle ?? 0;
     }
 
     public getCoalescedEvents(): PointerEvent[] {
@@ -191,7 +195,7 @@ class FileListMock extends Array<File> implements FileList {
     }
 
     [Symbol.hasInstance](instance: any): boolean {
-        return instance instanceof FileListMock || super[Symbol.hasInstance](instance);
+        return instance instanceof FileListMock || Function.prototype[Symbol.hasInstance].call(this, instance);
     }
 }
 
