@@ -1,0 +1,37 @@
+@use 'design-system' as *;
+
+// Standalone recording page for a single Beyond the Prompt session
+// (/session/<slug>). The conference page itself owns its styles separately.
+.sessionPage {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 48px 0 96px;
+}
+
+.sessionBack {
+    font-size: 14px;
+}
+
+.sessionSpeakers {
+    color: var(--color-text-secondary);
+}
+
+.sessionVideo {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+
+    iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+}
+
+.sessionDescription {
+    max-width: 640px;
+    line-height: 1.6;
+}

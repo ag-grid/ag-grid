@@ -113,81 +113,24 @@ $btp-card: #ffffff;
     }
 }
 
-// ─── Sticky page nav ─────────────────────────────────────────────────────────
-// Hidden until the hero leaves the viewport, then slides down. The page-bg
-// colour is reused so the bar reads as a continuation of the page rather
-// than chrome — the only visual separator is the hairline brand-tinted
-// bottom border. Visibility is controlled via `data-visible="true"` set by
-// the IntersectionObserver script in the page (no CSS-Modules hash round-trip).
-.stickyNav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 50;
-    background: var(--btp-bg);
-    border-bottom: 1px solid var(--btp-border);
-    transform: translateY(-100%);
-    opacity: 0;
-    pointer-events: none;
-    transition:
-        transform 0.32s ease,
-        opacity 0.32s ease;
+.communityNav {
+    // Tint the active/hover menu pill black at 0.05 instead of the shared brand
+    // blue, to suit this page's palette. Scoped to the nav so nothing else is
+    // affected; the menu pills are the only descendants using this token.
+    --color-util-brand-100: rgba(0, 0, 0, 0.05);
 
-    &[data-visible='true'] {
-        transform: translateY(0);
-        opacity: 1;
-        pointer-events: auto;
+    // The page's `ul` reset above strips the community menu's own vertical
+    // padding; restore it so the menu matches the standard /community pages.
+    ul {
+        padding: 16px 0;
     }
-
-    @media (prefers-reduced-motion: reduce) {
-        transition: opacity 0.2s ease;
-        transform: none;
-    }
-}
-
-.stickyNavInner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-top: 12px;
-    padding-bottom: 12px;
-}
-
-.stickyNavBrand {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    color: var(--btp-ink);
-    min-width: 0;
-}
-
-.stickyNavLogo {
-    display: block;
-    width: 36px;
-    height: auto;
-
-    @media (min-width: 720px) {
-        width: 44px;
-    }
-}
-
-// Size overrides only — the actual primary-button visuals are layered on
-// at the markup level by combining `.btnPrimary` with this class. Avoids
-// composing forward across the file (CSS Modules' `composes` requires
-// the referenced class to be declared earlier in the module).
-.stickyNavCta {
-    padding: 10px 18px;
-    font-size: 14px;
-    text-decoration: none;
 }
 
 // ─── Hero ────────────────────────────────────────────────────────────────────
 .hero {
     position: relative;
     background: var(--btp-bg);
+    border-bottom: 1px solid var(--btp-border);
     padding: 48px 0 64px;
     overflow: hidden;
 
@@ -314,13 +257,104 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     white-space: nowrap;
 }
 
+.heroVideo {
+    padding: 48px 0;
+    background: var(--btp-bg);
+
+    @media (min-width: 900px) {
+        padding: 64px 0;
+    }
+}
+
+.heroVideoFrame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #000;
+
+    iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+}
+
+// Custom thumbnail + play button shown until the keynote is clicked, when the
+// script swaps in the autoplay embed.
+.page .heroVideoPlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    // Backdrop behind the (transparent/letterboxed) PNG thumbnail: a little lighter
+    // than the page bg (#f2f2f2) so the keynote frame lifts off the page slightly.
+    background: #fbfbfb;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.heroVideoThumb {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.heroVideoPlayIcon {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--btp-orange);
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease;
+
+    // White play triangle.
+    &::after {
+        content: '';
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 11px 0 11px 18px;
+        border-color: transparent transparent transparent #fff;
+        margin-left: 4px;
+    }
+}
+
+.page .heroVideoPlay:hover .heroVideoPlayIcon {
+    transform: scale(1.08);
+    background: var(--btp-orange-dark);
+}
+
 .heroMeta {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
     gap: 8px 24px;
     margin-top: 8px;
     font-family: 'Geist Mono', ui-monospace, monospace;
     font-size: 13px;
+    // Tight line-height so the uppercase caps sit on the same optical centre as
+    // the icons (a tall line-box pushes the caps above the icon centre).
+    line-height: 1;
     text-transform: uppercase;
     letter-spacing: 0.08em;
 
@@ -328,6 +362,9 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         display: flex;
         align-items: center;
         gap: 8px;
+        // Reset the global `li:not(:last-child)` bottom margin, which would
+        // otherwise offset the first item and break vertical centring.
+        margin-bottom: 0;
         color: var(--btp-ink);
 
         :global(.icon) {
@@ -335,13 +372,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
             --icon-color: var(--btp-orange);
         }
     }
-}
-
-.heroCtas {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 8px;
 }
 
 // ─── Hero faces (right side) ─────────────────────────────────────────────────
@@ -591,26 +621,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
-.btnGhost {
-    composes: btn;
-    background: transparent;
-    color: var(--btp-orange) !important;
-    border-color: transparent;
-    padding: 8px 0;
-
-    :global(.icon) {
-        --icon-color: var(--btp-orange);
-    }
-
-    &:hover {
-        color: var(--btp-orange-dark) !important;
-
-        :global(.icon) {
-            --icon-color: var(--btp-orange-dark);
-        }
-    }
-}
-
 // ─── Roll-up text animation ──────────────────────────────────────────────────
 // Wraps a button label in two stacked copies of the same text. On hover both
 // layers translate up by exactly one row with a per-character stagger so the
@@ -799,6 +809,33 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     background: var(--btp-bg);
 }
 
+// Two-column intro: copy on the left, event photo on the right (stacks on mobile).
+.introGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+
+    @media (min-width: 720px) {
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+    }
+}
+
+.introText {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+.introImage {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    filter: grayscale(1);
+}
+
 .introBody {
     display: grid;
     gap: 24px;
@@ -811,125 +848,64 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
-// ─── At a glance ─────────────────────────────────────────────────────────────
-.atAGlance {
+// ─── Speakers ────────────────────────────────────────────────────────────────
+.programmeSection {
     composes: section;
 }
 
-.atAGlanceGrid {
-    display: grid;
-    gap: 16px;
-    grid-template-columns: 1fr;
-
-    @media (min-width: 720px) {
-        grid-template-columns: repeat(3, 1fr);
-    }
+.programmeTabs {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
 }
 
-// Default card = white background, orange text. Used by the first two
-// cards (When + Where), which are informational. The third card (Tickets)
-// inherits this base then gets overridden below into an orange knockout
-// to bias attention toward the booking CTA.
-//
-// Border is kept (1px transparent) only so the box dimensions match the
-// orange Tickets card sitting next to it — but never renders any colour
-// in either default or hover state on the informational cards.
-.atAGlanceCard {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 32px;
-    background: var(--btp-card);
-    border: 1px solid transparent;
-    transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease;
+// Tabs read like the section-rule titles elsewhere on the page (centered mono
+// caps), not filled buttons: the active tab carries a subtle orange underline,
+// inactive tabs are muted and brighten on hover.
+.page .programmeTab {
+    appearance: none;
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 4px 0;
+    position: relative;
+    cursor: pointer;
+    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--btp-ink-muted);
+    transition: color 0.2s ease;
 
-    :global(.icon) {
-        --icon-size: 24px;
-        --icon-color: var(--btp-orange);
-    }
-
-    h3 {
-        font-size: 13px;
-        font-family: 'Geist Mono', ui-monospace, monospace;
-        font-weight: 500;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--btp-ink-muted);
-    }
-
-    .atAGlancePrimary {
-        font-size: 22px;
-        font-weight: 600;
-        letter-spacing: -0.02em;
+    &:hover {
         color: var(--btp-ink);
     }
 
-    .atAGlanceDetail {
-        font-size: 15px;
-        line-height: 1.5;
-        color: var(--btp-ink-muted);
+    &[aria-selected='true'] {
+        color: var(--btp-orange);
     }
 
-    a {
-        margin-top: auto;
-        align-self: flex-start;
-    }
-}
-
-// Third card (Tickets) gets the orange knockout treatment so the booking
-// action stands out against its two informational siblings. Hover deepens
-// to `--btp-orange-dark` and the inner `.btnGhost` is re-skinned so its
-// default orange text + icon stay legible on the new orange surface.
-.atAGlanceCard:nth-child(3) {
-    background: var(--btp-orange);
-    border-color: var(--btp-orange);
-
-    &:hover {
-        background: var(--btp-orange-dark);
-        border-color: var(--btp-orange-dark);
+    // Active indicator: a 2px orange bar pinned to the section rule's bottom
+    // hairline. The label stays vertically centred in the bar, so the marker is
+    // offset down past the rule's bottom padding (18px; 22px on desktop) to land
+    // on the border.
+    &[aria-selected='true']::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -18px;
+        height: 2px;
+        background: var(--btp-orange);
     }
 
-    :global(.icon) {
-        --icon-color: var(--btp-bg);
-    }
-
-    h3 {
-        color: var(--btp-bg);
-        opacity: 0.8;
-    }
-
-    .atAGlancePrimary {
-        color: var(--btp-bg);
-    }
-
-    .atAGlanceDetail {
-        color: var(--btp-bg);
-        opacity: 0.85;
-    }
-
-    .btnGhost {
-        color: var(--btp-bg) !important;
-
-        :global(.icon) {
-            --icon-color: var(--btp-bg);
-        }
-
-        &:hover {
-            color: var(--btp-bg) !important;
-            opacity: 0.85;
-
-            :global(.icon) {
-                --icon-color: var(--btp-bg);
-            }
+    @media (min-width: 900px) {
+        &[aria-selected='true']::after {
+            bottom: -22px;
         }
     }
-}
-
-// ─── Speakers ────────────────────────────────────────────────────────────────
-.speakersSection {
-    composes: section;
 }
 
 .speakerGrid {
@@ -1048,114 +1024,12 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 }
 
 // ─── Agenda ──────────────────────────────────────────────────────────────────
-.agendaSection {
-    composes: section;
-}
-
-// Each Morning / Afternoon block is its own white card with hard corners.
-// The section label sits inside the card as a banner, sharing the same hairline
-// border that separates the rows below it, so the whole thing reads as one
-// continuous slab rather than a card with a floating header above it.
+// The schedule table: a white card with hard corners and a hairline border
+// separating its column-header row from the session rows below.
 .agenda {
     border: 1px solid var(--btp-border);
     overflow: hidden;
     background: var(--btp-card);
-
-    // When two agenda cards stack (Morning then Afternoon), give them a small
-    // breathing gap so the borders don't double-up into a heavy 2px line.
-    & + & {
-        margin-top: 24px;
-    }
-}
-
-// "Morning" / "Afternoon" header strip inside each agenda card. We dress
-// it up with a subtle orange wash plus a pixel-art dither: a sparse
-// checker covers the whole strip, and a denser checker fades in from
-// the right edge so the eye lands there as a graphic accent. The label
-// sits above both layers via `isolation: isolate` + `z-index: -1` on the
-// pseudo-elements (no positioning needed on the <p> itself).
-.agendaSectionHeader {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    border-bottom: 1px solid var(--btp-border);
-    padding: 18px 0;
-    background-color: rgba(244, 56, 0, 0.04);
-
-    @media (min-width: 900px) {
-        padding: 22px 0;
-    }
-
-    // Whisper-light checker across the whole strip. The two staggered
-    // 45deg gradients are the classic CSS checkerboard recipe — each
-    // gradient draws opposite triangles, and offsetting the second tile
-    // by half its size aligns them into squares.
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        background-image:
-            linear-gradient(
-                45deg,
-                rgba(244, 56, 0, 0.55) 25%,
-                transparent 25%,
-                transparent 75%,
-                rgba(244, 56, 0, 0.55) 75%
-            ),
-            linear-gradient(
-                45deg,
-                rgba(244, 56, 0, 0.55) 25%,
-                transparent 25%,
-                transparent 75%,
-                rgba(244, 56, 0, 0.55) 75%
-            );
-        background-size: 4px 4px;
-        background-position:
-            0 0,
-            2px 2px;
-        opacity: 0.16;
-        pointer-events: none;
-    }
-
-    // Denser dither cluster anchored to the right edge. A horizontal
-    // mask-image fades the cluster out to the left so it reads as a
-    // pixel-art "fall-off" rather than a hard band.
-    &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: 240px;
-        z-index: -1;
-        background-image:
-            linear-gradient(45deg, var(--btp-orange) 25%, transparent 25%, transparent 75%, var(--btp-orange) 75%),
-            linear-gradient(45deg, var(--btp-orange) 25%, transparent 25%, transparent 75%, var(--btp-orange) 75%);
-        background-size: 5px 5px;
-        background-position:
-            0 0,
-            2.5px 2.5px;
-        opacity: 0.4;
-        mask-image: linear-gradient(to right, transparent, black 75%);
-        -webkit-mask-image: linear-gradient(to right, transparent, black 75%);
-        pointer-events: none;
-
-        @media (min-width: 900px) {
-            width: 320px;
-        }
-    }
-}
-
-.page .agendaSectionLabel {
-    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--btp-ink);
-    text-align: center;
-    margin: 0;
 }
 
 .agendaList {
@@ -1164,34 +1038,18 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     padding: 0;
 }
 
-// Three-column flex layout per row: [time] [title + speakers] [description].
-// On mobile the columns stack in document order. On ≥720px the row becomes a
-// flex row, with the time pinned at 160px and the body / description sharing
-// the remaining width 50/50. When a row has no description (e.g. "Welcome",
-// "Coffee break"), the body simply fills the post-time area.
+// Two-column grid per row: [title + description] [speakers]. On mobile the two
+// columns stack; from 720px they sit side by side, mirroring the `.agendaHead`
+// column headers above the list.
 .agendaRow {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    // Mobile keeps the classic outer padding — the row stacks vertically
-    // and there's no portrait overlay to fight with, so a unified inset
-    // reads as expected. On desktop the vertical padding moves onto the
-    // inner columns (see `.agendaTime` / `.agendaBody` / `.agendaDescription`)
-    // so the speaker portrait overlay can fill the row's full height. If
-    // we kept the padding on the row itself, the orange hover background
-    // would render correctly but the portrait inside `.agendaDescriptionWrap`
-    // would stop short of the row top/bottom, leaving a visible "padding
-    // gap" above and below the speaker on hover.
-    padding: 16px 24px;
-    // Belt-and-braces against any default `<li>` margin (some user agents
-    // / global resets add it) — without this, the hovered row's orange
-    // background would float on a sliver of cream between rows.
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 20px 24px;
     margin-bottom: 0;
     border-bottom: 1px solid var(--btp-border);
-    // `overflow: hidden` lets the speaker portrait scale up past the cell on
-    // hover and bleed into the row's padding without affecting siblings.
-    overflow: hidden;
     transition:
         background-color 0.32s ease,
         border-bottom-color 0.32s ease;
@@ -1201,227 +1059,369 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 
     @media (min-width: 720px) {
-        flex-direction: row;
-        align-items: flex-start;
+        grid-template-columns: 1.6fr 1fr;
+        align-items: start;
         gap: 32px;
-        padding: 0 32px;
-    }
-}
-
-.agendaBreak {
-    .agendaTitle {
-        // Break rows (Registration, Coffee break, Lunch, Networking) read
-        // as labels rather than session titles, so we drop them into an
-        // uppercase mono treatment. Kept at full ink colour (not muted)
-        // so the break still anchors the schedule visually.
-        font-family: 'Geist Mono', ui-monospace, monospace;
-        font-size: 14px;
-        font-weight: 500;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-    }
-}
-
-.agendaTime {
-    font-family: 'Geist Mono', ui-monospace, monospace;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    color: var(--btp-orange);
-    font-variant-numeric: tabular-nums;
-    transition: color 0.32s ease;
-
-    @media (min-width: 720px) {
-        flex: 0 0 160px;
-        // Vertical padding lives on the column (not the row) so the speaker
-        // overlay in `.agendaDescriptionWrap` can stretch the full row height.
-        padding: 18px 0;
+        padding: 20px 32px;
     }
 }
 
 .agendaBody {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+    min-width: 0;
+}
 
-    @media (min-width: 720px) {
-        flex: 1 1 0;
-        min-width: 0;
-        padding: 18px 0;
+// Session thumbnail (16:9) to the left of the title. The whole row is clickable
+// via the title link's stretched ::after, so this is purely decorative.
+.agendaThumbWrap {
+    position: relative;
+    flex: 0 0 auto;
+    width: 160px;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--btp-bg-alt);
+}
+
+.agendaThumb {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+// Play affordance: a semi-transparent black disc with a white triangle.
+.agendaThumbPlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.6);
+    transition: background-color 0.32s ease;
+
+    &::after {
+        content: '';
+        width: 0;
+        height: 0;
+        margin-left: 3px;
+        border-style: solid;
+        border-width: 7px 0 7px 12px;
+        border-color: transparent transparent transparent #ffffff;
     }
 }
 
-.agendaTitle {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: var(--btp-ink);
-    line-height: 1.3;
-    transition: color 0.32s ease;
+.agendaText {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
 }
 
-.agendaSpeakers {
+// Talk runtime above the title, mono caps to match the eyebrows.
+.agendaDuration {
     font-family: 'Geist Mono', ui-monospace, monospace;
     font-size: 12px;
-    font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--btp-ink-muted);
     transition: color 0.32s ease;
 }
 
-// `.agendaDescriptionWrap` is the flex item on desktop (the description
-// itself used to play that role). It exists so we can layer a speaker
-// portrait overlay (`.agendaSpeakerStack`) on top of the description and
-// swap between the two on row hover.
-//
-// `align-self: stretch` is what lets the overlay use the row's full
-// content height — important for short rows like the David Kourshid
-// keynote where there's no description and the wrap would otherwise
-// collapse to nothing.
-.agendaDescriptionWrap {
-    position: relative;
+.agendaTitle {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--btp-ink);
+    line-height: 1.3;
+    transition: color 0.32s ease;
+}
+
+// Session titles with a recording become a link that opens the video modal. The
+// ::after stretches over the whole (position: relative) row so a click anywhere
+// in the row opens it, not just the title text.
+.agendaTitleLink {
+    display: inline-block;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+    }
+}
+
+.agendaSpeakerName {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--btp-ink-muted);
+    line-height: 1.35;
+    transition: color 0.32s ease;
+}
+
+// Column headers above the list (Title | Speakers), mono caps like the section
+// rule titles. Mirrors the `.agendaRow` grid so each label sits over its column.
+// Hidden on mobile where the row collapses to a single column.
+.agendaHead {
+    display: none;
 
     @media (min-width: 720px) {
-        flex: 1 1 0;
-        min-width: 0;
-        align-self: stretch;
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 32px;
+        padding: 14px 32px;
+        border-bottom: 1px solid var(--btp-border);
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--btp-ink-muted);
     }
+}
+
+// One row per speaker (avatar + name/role), stacked vertically.
+.agendaSpeakersCol {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+// Sessions with 3+ speakers (the panel) lay their speakers out in two columns
+// from 720px so the row doesn't get too tall.
+.agendaSpeakersColWide {
+    @media (min-width: 720px) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 20px;
+    }
+}
+
+.agendaSpeaker {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+// Rotating-head video, shown in place of the avatar + name on row hover. For a
+// single speaker it sits at 200px, absolutely positioned so it overflows (and is
+// clipped by) the row rather than growing the cell. Multi-speaker rows override
+// this to a scaled, in-flow row layout below.
+.agendaSpeakerRotating {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 80px;
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+// Hover affordance pinned to the bottom-right of the session row.
+.agendaWatch {
+    position: absolute;
+    right: 24px;
+    bottom: 14px;
+    z-index: 2;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--btp-bg);
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+    pointer-events: none;
+}
+
+// Round avatar: the 30x30 speaker head (beyond-cream), crossfading to the
+// beyond-orange variant when the row turns orange on hover.
+.agendaAvatar {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.agendaAvatarImg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: opacity 0.32s ease;
+}
+
+.agendaAvatarImgOrange {
+    opacity: 0;
 }
 
 .agendaDescription {
     font-size: 15px;
-    line-height: 1.55;
+    line-height: 1.5;
     color: var(--btp-ink-muted);
-    transition:
-        opacity 0.32s ease,
-        color 0.32s ease;
-
-    // Match the vertical inset that used to live on `.agendaRow`. Padding
-    // is on the text, not on `.agendaDescriptionWrap`, so the wrap itself
-    // can stretch the full row height and the speaker overlay (`inset: 0`
-    // of the wrap) covers the whole row top-to-bottom.
-    @media (min-width: 720px) {
-        padding: 18px 0;
-    }
+    max-width: 500px;
+    transition: color 0.32s ease;
 }
 
-// Speaker portrait overlay. Anchored to the right of the wrap and sized
-// taller than the row so the silhouette reads as a knockout that bleeds
-// into the cell padding. The row's `overflow: hidden` clips the bottom
-// edge — the user explicitly opted into this clipping over the previous
-// `object-fit: contain` (which kept portraits prim but tiny).
-//
-// On hover the stack rises 16px and fades in, choreographed with the
-// row's bg colour shift to feel like a single gesture.
-.agendaSpeakerStack {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: stretch;
-    justify-content: flex-end;
-    // 24px feels right at the row scale: enough breathing room between
-    // two heads (e.g. Opening Keynote: John + Mats) that they read as
-    // distinct portraits, but tight enough that they still feel like a
-    // pair sharing the right column.
-    gap: 24px;
-    opacity: 0;
-    transform: translateY(16px);
-    pointer-events: none;
-    transition:
-        opacity 0.32s ease,
-        transform 0.32s ease;
-}
-
-// Multi-speaker rows keep the flex layout — two portraits laid out
-// side-by-side with the 24px gap from `.agendaSpeakerStack`. Scale stays
-// modest here so John+Mats / Johan+Adam / Maggie+Matt P don't overlap
-// or fight each other for space.
-.agendaSpeakerImage {
-    height: 100%;
-    width: auto;
-    object-fit: contain;
-    // `transform-origin: top right` keeps the head pinned at the top of
-    // the cell while the body extends downwards (and gets clipped). If
-    // we anchored bottom-right the head would shift up and out of frame.
-    transform: scale(1.4);
-    transform-origin: top right;
-}
-
-// Solo-speaker rows. Most of these have short or no descriptions, so the
-// row's content height is dictated by the title + speakers column on the
-// left and `height: 100%` ends up tiny. Pop out of the flex layout, scale
-// hard, and lift up so the portrait dominates the right side of the row
-// — the row's `overflow: hidden` then clips whatever overflows.
-.agendaSpeakerImage:only-child {
-    position: absolute;
-    top: -20px;
-    right: 0;
-    transform: scale(2.4);
-    transform-origin: top;
-}
-
-// Per-row opt-out for solo-speaker cells that are already tall (e.g.
-// David Khourshid's row, which has a long description). Reverts the
-// portrait to the default flex layout + 1.4x scale so the heavy 2.4x
-// crop doesn't clip the head off the top and right edges.
-.agendaSpeakerImage:only-child.agendaSpeakerImageDefaultScale {
-    position: static;
-    top: auto;
-    right: auto;
-    transform: scale(1.4);
-    transform-origin: top right;
-}
-
-// Hover state. Gated on:
-//   1. `(hover: hover)` — touch devices would otherwise latch into the
-//      hover state on tap with no obvious way to undo it.
-//   2. `:has(.agendaSpeakerStack)` — rows without a matching speaker
-//      (`Welcome`, `Customer Showcase`) keep their default appearance,
-//      so we never fade copy out into nothing or flip a row to orange
-//      with no payoff.
+// Row hover, only on hover-capable devices so a touch tap doesn't latch the
+// orange state with no easy way to undo it.
 @media (hover: hover) {
-    .agendaRow:has(.agendaSpeakerStack):hover {
+    .agendaRow:hover {
         background-color: var(--btp-orange);
-        // Hide the hairline at the bottom of the hovered row so the
-        // orange block sits flush against the next row with no white-ish
-        // sliver showing through. The pair rule below kills the hairline
-        // above by retroactively dropping the *previous* row's border.
+        // Hide this row's bottom hairline (and the previous row's, below) so the
+        // orange block sits flush against its neighbours with no cream sliver.
         border-bottom-color: transparent;
     }
 
-    // `:has(+ X)` is the closest CSS gets to a "previous sibling" selector.
-    // It matches a row whose immediate next sibling is the hovered orange
-    // row, letting us erase that neighbour's bottom border so the orange
-    // block extends right up to the row above it.
-    .agendaRow:has(+ .agendaRow:has(.agendaSpeakerStack):hover) {
+    // `:has(+ X)` approximates a previous-sibling selector: drop the border of
+    // the row directly above the hovered one so the orange block meets it.
+    .agendaRow:has(+ .agendaRow:hover) {
         border-bottom-color: transparent;
     }
 
-    .agendaRow:has(.agendaSpeakerStack):hover .agendaTime,
-    .agendaRow:has(.agendaSpeakerStack):hover .agendaTitle,
-    .agendaRow:has(.agendaSpeakerStack):hover .agendaSpeakers,
-    .agendaRow:has(.agendaSpeakerStack):hover .agendaDescription {
+    .agendaRow:hover .agendaDuration,
+    .agendaRow:hover .agendaTitle,
+    .agendaRow:hover .agendaSpeakerName,
+    .agendaRow:hover .agendaDescription {
         color: var(--btp-bg);
     }
 
-    .agendaRow:has(.agendaSpeakerStack):hover .agendaDescription {
-        opacity: 0;
+    // Crossfade each avatar to its orange-bg illustration on the orange row.
+    .agendaRow:hover .agendaAvatarImgOrange {
+        opacity: 1;
     }
 
-    .agendaRow:has(.agendaSpeakerStack):hover .agendaSpeakerStack {
+    // On hover, swap each speaker's avatar + name for their rotating-head video.
+    // visibility (not display) so the line keeps its height and the row doesn't
+    // jump as the clipped 200px head appears.
+    .agendaRow:hover .agendaAvatar,
+    .agendaRow:hover .agendaSpeakerName {
+        visibility: hidden;
+    }
+
+    .agendaRow:hover .agendaSpeakerRotating {
+        display: block;
+    }
+
+    // Multi-speaker rows: overlay the heads side by side, absolutely positioned
+    // over the speakers column. The column keeps its (hidden) avatar/name boxes
+    // via the visibility rule above, and the heads are taken out of flow, so the
+    // row height is unchanged on hover.
+    .agendaRow:hover .agendaSpeakersColMulti {
+        position: relative;
+    }
+
+    .agendaRow:hover .agendaSpeakersColMulti .agendaSpeaker {
+        position: static;
+    }
+
+    .agendaRow:hover .agendaSpeakersColMulti .agendaSpeakerRotating {
+        position: absolute;
+        top: 0;
+        width: 200px;
+        height: 200px;
+        max-width: none;
+    }
+
+    // Two speakers (keynote, roadmap): full-size heads with a bit of space. The
+    // 387px column plus the row's right padding fits both 200px heads.
+    .agendaRow:hover
+        .agendaSpeakersColMulti:not(.agendaSpeakersColWide)
+        .agendaSpeaker:first-child
+        .agendaSpeakerRotating {
+        left: 0;
+    }
+    .agendaRow:hover
+        .agendaSpeakersColMulti:not(.agendaSpeakersColWide)
+        .agendaSpeaker:last-child
+        .agendaSpeakerRotating {
+        left: 210px;
+    }
+
+    // Three speakers (the panel): bigger than before but not full size, spread
+    // across the column so they overlap and clip rather than shrink to fit.
+    .agendaRow:hover .agendaSpeakersColWide .agendaSpeakerRotating {
+        width: 150px;
+        height: 150px;
+    }
+    .agendaRow:hover .agendaSpeakersColWide .agendaSpeaker:nth-child(1) .agendaSpeakerRotating {
+        left: 0;
+    }
+    .agendaRow:hover .agendaSpeakersColWide .agendaSpeaker:nth-child(2) .agendaSpeakerRotating {
+        left: 120px;
+    }
+    .agendaRow:hover .agendaSpeakersColWide .agendaSpeaker:nth-child(3) .agendaSpeakerRotating {
+        left: 240px;
+    }
+
+    // Some heads sit low in their frame; nudge them up so the face is centred in
+    // the clipped row. Placed after the size rules so it wins on equal specificity.
+    .agendaRow:hover .agendaSpeakerRotating[data-head='bernie-sumption'],
+    .agendaRow:hover .agendaSpeakerRotating[data-head='david-khourshid'],
+    .agendaRow:hover .agendaSpeakerRotating[data-head='mats-bryntse'],
+    .agendaRow:hover .agendaSpeakerRotating[data-head='adam-wang'],
+    .agendaRow:hover .agendaSpeakerRotating[data-head='johan-isaksson'],
+    .agendaRow:hover .agendaSpeakerRotating[data-head='josh-hobson'],
+    .agendaRow:hover .agendaSpeakerRotating[data-head='john-masterson'] {
+        top: -24px;
+    }
+
+    // John's head fills more of its frame than the others; scale it down so it
+    // sits at a similar size to Mats beside it.
+    .agendaRow:hover .agendaSpeakerRotating[data-head='john-masterson'] {
+        width: 160px;
+        height: 160px;
+    }
+
+    // Johan reads a little small in his frame; size him up next to Adam.
+    .agendaRow:hover .agendaSpeakerRotating[data-head='johan-isaksson'] {
+        width: 230px;
+        height: 230px;
+    }
+
+    // Reveal the "Watch talk" affordance as the row turns orange.
+    .agendaRow:hover .agendaWatch {
         opacity: 1;
         transform: translateY(0);
+    }
+
+    // The play disc picks up the brand orange while the row is hovered.
+    .agendaRow:hover .agendaThumbPlay {
+        background-color: var(--btp-orange);
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .agendaRow,
-    .agendaTime,
     .agendaTitle,
     .agendaSpeakers,
     .agendaDescription,
-    .agendaSpeakerStack {
+    .agendaAvatarImg {
         transition: none;
     }
 }
@@ -1476,40 +1476,165 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
-// ─── Final CTA ───────────────────────────────────────────────────────────────
-.finalCta {
-    padding: 96px 0 128px;
-    text-align: center;
+// ─── Photo gallery (continuous marquee) ──────────────────────────────────────
+.gallerySection {
+    composes: section;
 }
 
-.finalCtaInner {
-    max-width: 640px;
-    margin: 0 auto;
+.galleryViewport {
+    position: relative;
+    overflow: hidden;
+}
+
+// The track holds two copies of the gallery; translating it left by half its
+// width and looping gives a seamless, continuous scroll. Each slide owns its
+// trailing gap (margin-right) so the -50% offset lands exactly one set over.
+.galleryTrack {
     display: flex;
-    flex-direction: column;
+    width: max-content;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    animation: btp-marquee 60s linear infinite;
+}
+
+@keyframes btp-marquee {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .galleryTrack {
+        animation: none;
+    }
+}
+
+.gallerySlide {
+    flex: 0 0 auto;
+    width: min(82vw, 680px);
+    margin-right: 16px;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--btp-card);
+}
+
+// Portrait slide: narrower and a bit taller than the 3:2 landscape frames.
+.gallerySlidePortrait {
+    width: min(70vw, 380px);
+    aspect-ratio: 3 / 4;
+}
+
+.galleryImage {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    // Black-and-white by default; restore colour on hover (the marquee also
+    // pauses on hover, so the photo holds still while it's in colour).
+    filter: grayscale(1);
+    transition: filter 0.3s ease;
+}
+
+.gallerySlide:hover .galleryImage {
+    filter: grayscale(0);
+}
+
+// gallery-02 is a taller frame; anchor the crop to the top so heads aren't cut.
+.galleryImageTop {
+    object-position: top;
+}
+
+// ─── Session recording modal ─────────────────────────────────────────────────
+.sessionModal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
     align-items: center;
-    gap: 24px;
+    justify-content: center;
+    padding: 24px;
 }
 
-.finalCtaTitle {
-    font-size: clamp(32px, 4vw, 48px);
-    line-height: 1.05;
-    letter-spacing: -0.025em;
-    font-weight: 600;
+// `display: flex` above would otherwise beat the browser's `[hidden]` rule and
+// leave the modal permanently on screen, so hide it explicitly when closed.
+.sessionModal[hidden] {
+    display: none;
 }
 
-.finalCtaBody {
-    font-size: 18px;
-    line-height: 1.55;
-    color: var(--btp-ink-muted);
+// White wash over the page (per spec: white background at 0.8 opacity). Scoped
+// with `.page` and with explicit hover/focus states so it never picks up the
+// global button styling's blue highlight.
+.page .sessionModalBackdrop {
+    position: absolute;
+    inset: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
 
-    a {
-        color: var(--btp-orange);
-        text-decoration: underline;
-        text-underline-offset: 2px;
+    &:hover,
+    &:focus,
+    &:focus-visible,
+    &:active {
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: none;
+        outline: none;
+    }
+}
 
-        &:hover {
-            color: var(--btp-orange-dark);
-        }
+.sessionModalDialog {
+    position: relative;
+    z-index: 1;
+    width: min(960px, 100%);
+    background: #fff;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.24);
+}
+
+.page .sessionModalClose {
+    position: absolute;
+    top: -44px;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--btp-ink);
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+
+    @media (max-width: 719px) {
+        top: 6px;
+        right: 6px;
+        z-index: 2;
+        color: #fff;
+    }
+}
+
+.sessionModalVideo {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+
+    iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
     }
 }
