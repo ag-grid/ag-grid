@@ -2,6 +2,7 @@ import {
     ClientSideRowModelModule,
     CustomFilterModule,
     DateFilterModule,
+    GridStateModule,
     NumberFilterModule,
     TextFilterModule,
 } from 'ag-grid-community';
@@ -13,6 +14,7 @@ import {
     PivotModule,
     RowGroupingModule,
     SetFilterModule,
+    ShowValuesAsModule,
 } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
@@ -1027,7 +1029,14 @@ describe('getStructuredSchema - filter feature', () => {
 describe('getStructuredSchema - enterprise features', () => {
     describe('aggregation feature', () => {
         const gridsManager = new TestGridsManager({
-            modules: [ClientSideRowModelModule, AiToolkitModule, AggregationModule, RowGroupingModule],
+            modules: [
+                ClientSideRowModelModule,
+                GridStateModule,
+                AiToolkitModule,
+                AggregationModule,
+                RowGroupingModule,
+                ShowValuesAsModule,
+            ],
         });
         afterEach(() => gridsManager.reset());
 
@@ -1092,6 +1101,83 @@ describe('getStructuredSchema - enterprise features', () => {
             await new GridRows(api, `per-column aggFunc enums reflect available functions final state`).check(`
                 ROOT id:ROOT_NODE_ID
             `);
+        });
+
+        test('aggregation schema includes built-in showValuesAs modes when available', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'gold', enableValue: true, aggFunc: 'sum' }],
+                rowData: [],
+            });
+            await new GridColumns(api, `aggregation schema includes built-in showValuesAs modes setup`).checkColumns(`
+                CENTER
+                └── gold "Gold" width:200 aggFunc:sum
+            `);
+            await new GridRows(api, `aggregation schema includes built-in showValuesAs modes setup`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+
+            const schema = toJSON(api.getStructuredSchema());
+            const agg = resolveNullable(schema.properties.aggregation);
+            const aggItem = agg.properties.aggregationModel.items.anyOf[0];
+            const showValuesAs = aggItem.properties.showValuesAs;
+
+            expect(showValuesAs).toBeDefined();
+            expect(showValuesAs.anyOf[0].enum).toEqual([
+                'percentOfGrandTotal',
+                'percentOfColumnTotal',
+                'percentOfRowTotal',
+                'percentOfParentRowTotal',
+                'percentOfParentColumnTotal',
+            ]);
+            expect(showValuesAs.anyOf[1].type).toBe('null');
+            await new GridRows(api, `aggregation schema includes built-in showValuesAs modes final state`).check(`
+                ROOT id:ROOT_NODE_ID
+            `);
+        });
+
+        test('grid state round-trips aggregation showValuesAs', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'gold',
+                        enableValue: true,
+                        aggFunc: 'sum',
+                        showValuesAs: 'percentOfGrandTotal',
+                    },
+                ],
+                rowData: [{ gold: 1 }],
+            });
+            await new GridColumns(api, `grid state round-trips aggregation showValuesAs setup`).checkColumns(`
+                CENTER
+                └── gold "Gold" width:200 aggFunc:sum %:percentOfGrandTotal
+            `);
+            await new GridRows(api, `grid state round-trips aggregation showValuesAs setup`).check(`
+                ROOT id:ROOT_NODE_ID gold:"100.00%"
+                └── LEAF id:0 gold:"100.00%"
+            `);
+
+            const state = api.getState();
+            expect(state.aggregation?.aggregationModel).toEqual([
+                { colId: 'gold', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal' },
+            ]);
+
+            api.setState({
+                aggregation: {
+                    aggregationModel: [{ colId: 'gold', aggFunc: 'sum', showValuesAs: null }],
+                },
+            });
+            await new GridColumns(api, `grid state clears aggregation showValuesAs`).checkColumns(`
+                CENTER
+                └── gold "Gold" width:200 aggFunc:sum
+            `);
+            expect(api.getColumnState().find((col) => col.colId === 'gold')?.showValuesAs).toBeNull();
+
+            api.setState(state);
+            await new GridColumns(api, `grid state restores aggregation showValuesAs`).checkColumns(`
+                CENTER
+                └── gold "Gold" width:200 aggFunc:sum %:percentOfGrandTotal
+            `);
+            expect(api.getColumnState().find((col) => col.colId === 'gold')?.showValuesAs).toBe('percentOfGrandTotal');
         });
 
         test('omits aggregation when no columns allow values', async () => {
