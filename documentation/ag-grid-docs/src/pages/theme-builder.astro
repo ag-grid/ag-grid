@@ -21,6 +21,27 @@ export async function getStaticPaths() {
 >
     <div class:list={['contentViewport layout-grid']}>
         <ThemeBuilder client:only="react" />
+        <div class="theme-builder-skeleton" aria-hidden="true" />
         <EmptyState />
     </div>
 </Layout>
+
+<style>
+    .theme-builder-skeleton {
+        display: none;
+    }
+
+    astro-island:empty ~ .theme-builder-skeleton {
+        display: block;
+        width: 100%;
+        height: calc(100vh - 120px);
+        min-height: 600px;
+        background: var(--color-bg-primary);
+    }
+
+    @media (min-width: 1052px) {
+        astro-island:empty ~ .theme-builder-skeleton {
+            height: calc(100vh - 64px);
+        }
+    }
+</style>
