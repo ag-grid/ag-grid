@@ -772,7 +772,7 @@ describe('excel styles', () => {
             },
         ]);
 
-        const excelStyles = (session as any).excelStyles as ExcelStyle[];
+        const excelStyles = (session as unknown as { excelStyles: ExcelStyle[] }).excelStyles;
         const merged = excelStyles.find((s) => s.id?.startsWith('mixedStyle'));
 
         expect(merged).toBeDefined();
@@ -808,7 +808,7 @@ describe('excel styles', () => {
             },
         ]);
 
-        const excelStyles = (session as any).excelStyles as ExcelStyle[];
+        const excelStyles = (session as unknown as { excelStyles: ExcelStyle[] }).excelStyles;
         const red = excelStyles.find((s) => s.id === 'redFont');
 
         expect(red).toBeDefined();
@@ -884,7 +884,7 @@ describe('excel styles', () => {
             },
         ]);
 
-        const excelStyles = (session as any).excelStyles as any[];
+        const excelStyles = (session as unknown as { excelStyles: ExcelStyle[] }).excelStyles;
         const quoteStyle = excelStyles.find((s) => s.id === '_quotePrefix');
         expect(quoteStyle).toBeDefined();
     });

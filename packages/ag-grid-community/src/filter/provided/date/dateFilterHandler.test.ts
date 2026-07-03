@@ -64,7 +64,7 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
             }
         }));
 
-    describe.each([
+    describe.each<[PresetKey, string[]]>([
         ['today', [ANSWERS.startOfToday, ANSWERS.startOfTomorrow]],
         ['yesterday', [ANSWERS.startOfYesterday, ANSWERS.startOfToday]],
         ['tomorrow', [ANSWERS.startOfTomorrow, ANSWERS.startOfDayAfterTomorrow]],
@@ -90,12 +90,10 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
     ])('%s', (fnName, expected) =>
         it('returns correct from/to', () =>
             expect(
-                (presetDateFilterTypeRelativeFromToMap[fnName as PresetKey] as RangeFn)(FROM, TO).map((d: Date) =>
-                    d.toString()
-                )
+                (presetDateFilterTypeRelativeFromToMap[fnName] as RangeFn)(FROM, TO).map((d: Date) => d.toString())
             ).toStrictEqual(expected))
     );
-    describe.each([
+    describe.each<[PresetKey, string]>([
         ['setStartOfDay', ANSWERS.startOfToday],
         ['setStartOfWeek', ANSWERS.startOfCurrentWeek],
         ['setStartOfNextDay', ANSWERS.startOfTomorrow],
@@ -112,9 +110,7 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
         ['setPreviousQuarter', ANSWERS.previousQuarter],
     ])('%s', (fnName, expected) =>
         it('works', () =>
-            expect((presetDateFilterTypeRelativeFromToMap[fnName as PresetKey] as DateFn)(FROM).toString()).toContain(
-                expected
-            ))
+            expect((presetDateFilterTypeRelativeFromToMap[fnName] as DateFn)(FROM).toString()).toContain(expected))
     );
 });
 
