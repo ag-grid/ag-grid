@@ -1,12 +1,31 @@
-import { clickAllButtons, ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ page }) => {
-        // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
+    test.eachFramework('Grid loads the Olympic winners dataset', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
-        await clickAllButtons(page);
-        // END PLACEHOLDER
+
+        // First row of olympic-winners.json is Michael Phelps (United States, 8 gold in 2008).
+        await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
+        await expect(agIdFor.cell('0', 'country')).toContainText('United States');
+        await expect(agIdFor.cell('0', 'gold')).toContainText('8');
+        await expect(agIdFor.cell('0', 'total')).toContainText('8');
+    });
+
+    test.eachFramework('Sorting by gold floats the top scorer to the top', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        // Michael Phelps (node id 0) is the unique maximum with 8 gold medals.
+        const phelps = agIdFor.rowNode('0');
+
+        await agIdFor.headerCell('gold').click(); // ascending: 0-gold rows first, Phelps sinks
+        await expect(agIdFor.headerCell('gold')).toHaveAttribute('aria-sort', 'ascending');
+        await page.waitForTimeout(300); // avoid a double-click
+
+        await agIdFor.headerCell('gold').click(); // descending: max gold floats to the top
+        await expect(phelps).toHaveAttribute('row-index', '0');
+        await expect(agIdFor.cell('0', 'gold')).toContainText('8');
     });
 
     test.vanilla('Structured schema snapshot', async ({ page, remoteGrid }) => {

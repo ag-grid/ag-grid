@@ -1,11 +1,17 @@
-import { clickAllButtons, ensureGridReady, test, waitForGridContent } from '@utils/grid/test-utils';
+import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ page }) => {
-        // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
-        await ensureGridReady(page);
-        await waitForGridContent(page);
-        await clickAllButtons(page);
-        // END PLACEHOLDER
+    test.eachFramework('Custom Year floating filter filters to years after 2010', async ({ page, agIdFor }) => {
+        // Row 0 is a 2008 winner, row 2 is a 2012 winner.
+        await expect(agIdFor.cell('0', 'year')).toContainText('2008');
+        await expect(agIdFor.cell('2', 'year')).toContainText('2012');
+
+        const afterRadio = page.locator('#rbFloatingYearAfter2010');
+        await expect(afterRadio).toBeVisible();
+        await afterRadio.check();
+
+        // doesFilterPass keeps only year > 2010: the 2008 row is removed, the 2012 row remains.
+        await expect(agIdFor.cell('0', 'year')).not.toBeVisible();
+        await expect(agIdFor.cell('2', 'year')).toContainText('2012');
     });
 });

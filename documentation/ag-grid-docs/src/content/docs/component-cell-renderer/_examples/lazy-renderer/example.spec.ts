@@ -1,17 +1,14 @@
-import { clickAllButtons, ensureGridReady, test } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.reactFunctionalTs('Example', async ({ page }) => {
-        // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
+    test.reactFunctionalTs('Lazy loaded renderer resolves after its delay', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
-        await clickAllButtons(page);
-        // END PLACEHOLDER
-    });
+        await waitForGridContent(page);
 
-    test.reactFunctionalTs_Dev('Example', async ({ page }) => {
-        // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
-        await ensureGridReady(page);
-        await clickAllButtons(page);
-        // END PLACEHOLDER
+        // Row 0 = Michael Phelps, country United States (olympic-winners.json)
+        await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
+
+        // The lazy component resolves after ~3s and renders "Lazy Cell: {value}"
+        await expect(agIdFor.cell('0', 'country')).toContainText('Lazy Cell: United States', { timeout: 10000 });
     });
 });
