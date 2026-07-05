@@ -1,13 +1,14 @@
 ---
 targets: ['*']
-description: 'Write or update Playwright example.spec.ts tests for documentation examples, then run them to verify'
+name: docs-e2e-tests
+description: 'Write or update Playwright example.spec.ts tests for AG Grid documentation examples, then run them with docs-e2e.sh to verify. Use when asked to write, add, extend, or fix e2e/Playwright tests for a docs page or a specific example, or when a docs example needs meaningful (non-placeholder) test assertions.'
 ---
 
 # Write / Update Example Spec Tests
 
-Write or extend Playwright `example.spec.ts` tests for all examples on a documentation page, based on the user's instructions in `${ARGUMENTS}`.
+Write or extend Playwright `example.spec.ts` tests for the examples on a documentation page.
 
-The argument should be a doc page name (e.g., `aggregation-total-rows`) or path. If the user provides a specific example name, focus on that example only.
+If the user names a doc page (e.g., `aggregation-total-rows`) or a path, work through all its examples. If the user names a specific example, focus on that example only.
 
 ## Prerequisites
 
@@ -18,7 +19,7 @@ The argument should be a doc page name (e.g., `aggregation-total-rows`) or path.
 
 ### 1a. Locate the doc page
 
-Find the doc page directory under `documentation/ag-grid-docs/src/content/docs/`. The argument `${ARGUMENTS}` may be:
+Find the doc page directory under `documentation/ag-grid-docs/src/content/docs/`. The user's argument may be:
 
 - A page name: `aggregation-total-rows`
 - A path fragment: `docs/aggregation-total-rows`
@@ -65,7 +66,7 @@ Create a plan listing each example that needs a test written or updated. For eac
 
 - **Example name** and path
 - **What it demonstrates** (from index.mdoc context + source code analysis)
-- **Key behaviours to verify** — specific assertions to make, interactions to perform
+- **Key behaviours to verify** — specific assertions to make **and interactions to perform**. Do not stop at static cell values: for every example that supports it, plan at least one interaction (expand a group to a leaf/sub-group, sort by the feature's column, toggle a control) that exercises the behaviour the docs describe (see Pitfall 12).
 - **Data expectations** — expected cell values, group names, aggregation results (calculated from source data)
 - **Status** — new test, replacing placeholder, or extending existing test
 
@@ -73,7 +74,7 @@ Present this plan to the user before proceeding. Wait for approval.
 
 ## STEP 2: Write Tests Using Playwright Expert
 
-For each example in the approved plan, use the **playwright-expert** subagent (via the Task tool) to write the `example.spec.ts` file. Provide the subagent with:
+For each example in the approved plan, use the **playwright-expert** subagent (via the Agent tool) to write the `example.spec.ts` file. Provide the subagent with:
 
 1.  The full test utilities reference (from the "Test Reference" section below)
 2.  The example's source code (main.ts, data.ts, etc.)
@@ -85,18 +86,19 @@ The subagent should write the test file and return it. You then write it to disk
 
 ## STEP 3: Run the Tests
 
-Run each spec with Playwright from the `documentation/ag-grid-docs/` directory:
+Run each spec with the `docs-e2e.sh` helper from the **repository root**:
 
 ```bash
-cd documentation/ag-grid-docs && FRAMEWORK=typescript npx playwright test --project=chromium "<example-folder-name>"
+./docs-e2e.sh "<example-folder-name>" --framework typescript
 ```
 
 **Important:**
 
-- Always run from the `documentation/ag-grid-docs/` directory (Playwright config is there).
+- Run from the repo root — `docs-e2e.sh` handles the working directory and Playwright config for you.
 - Use the example folder name as the filter (e.g., `"aggregation-overview"`), NOT a glob pattern with `**/` (Playwright treats `*` as regex).
-- Start with `FRAMEWORK=typescript` for a quick single-framework check.
-- To test all frameworks, remove the `FRAMEWORK` env var.
+- Start with `--framework typescript` for a quick single-framework check.
+- To run a single test by name, append `--grep "<test-name>"`.
+- To test all frameworks, drop the `--framework` flag; to test all browsers, add `--all-browsers`.
 
 ## STEP 4: Iterate
 
@@ -115,9 +117,10 @@ If a test fails, diagnose the failure, fix it, and re-run. Common fixes:
 
 ## Definition of Done
 
-- Every example on the page has an `example.spec.ts` with meaningful assertions (no placeholders).
-- All tests pass with `FRAMEWORK=typescript` against chromium.
+- Every targeted example has an `example.spec.ts` with meaningful assertions (no placeholders).
+- All tests pass with `--framework typescript` against chromium.
 - Assertions cover the behaviours described in the documentation for each example.
+- Where the example supports it, tests exercise at least one interaction (expand/sort/filter/toggle), not just static cell values (see Pitfall 12).
 - Tests follow existing conventions (see nearby `example.spec.ts` files for style).
 
 ---
@@ -229,6 +232,7 @@ await agIdFor.autoGroupContracted('row-group-country-Netherlands').click();
 - **`avg`**: the display may be a long decimal (e.g., `'1.2580645161290323'`). Use `toContainText` with a stable prefix (e.g., `'1.258'`) rather than matching the full number.
 - **`count`**: returns an object whose `toString()` outputs the count.
 - **Custom aggFuncs**: check the implementation in `main.ts` to understand the return value.
+- **Custom `IAggFuncResult` wrappers**: a custom aggFunc may return a wrapper object (a class implementing `IAggFuncResult` with `value`, `toNumber()`, and `toString()`). **The group cell displays the wrapper's numeric `value` (via `toNumber()`), NOT `toString()`.** For example a `RangeResult` whose `toString()` returns `(7).toFixed(2)` still renders as `7`, not `7.00`. Compute expected values as the raw numeric `value` and assert with `toContainText('7')`. Do not trust doc prose that claims `toString`/`toFixed` drives the display — verify against the running grid, and flag the doc/behaviour mismatch to the user.
 
 #### Pitfall 5: Use `toContainText` over `toHaveText` for Robustness
 
@@ -300,6 +304,41 @@ const scrollAfter = await viewport.evaluate((el) => el.scrollTop);
 expect(scrollAfter).toBeGreaterThan(scrollBefore);
 ```
 
+#### Pitfall 11: Sorting Group Rows and the Double-Click Trap
+
+To verify that sorting reorders group (or data) rows by a column's value, click the header cell and assert the target row's **position** via its `row-index` attribute on `agIdFor.rowNode(rowId)`:
+
+```typescript
+const usGroup = agIdFor.rowNode('row-group-country-United States');
+await agIdFor.headerCell('total').click(); // ascending
+await expect(usGroup).not.toHaveAttribute('row-index', '0');
+await agIdFor.headerCell('total').click(); // descending
+await expect(usGroup).toHaveAttribute('row-index', '0'); // the max value floats to the top
+```
+
+Pick a row with a **unique** extreme value (e.g. the single country with the largest aggregate) so its top/bottom position is unambiguous — ties make position assertions flaky.
+
+**Double-click trap:** two `headerCell(...).click()` calls in quick succession are interpreted as a **double-click**, so the second sort direction never registers. Between successive header clicks add a short settle:
+
+```typescript
+await agIdFor.headerCell('total').click();
+await expect(usGroup).not.toHaveAttribute('row-index', '0'); // asserting on the first sort also settles it
+await page.waitForTimeout(300); // ...but still pause so the next click isn't a double-click
+await agIdFor.headerCell('total').click();
+```
+
+Sorting works on aggregated values too, including custom `IAggFuncResult` wrappers (sorted by `toNumber()`).
+
+#### Pitfall 12: Prefer Value + Interaction, Not Value Alone
+
+A test that only reads static cell values is weaker than one that also drives the behaviour the docs describe. When the example supports it, add at least one interaction alongside the value assertions:
+
+- **Expand a group** to reveal its leaf rows or sub-groups, then assert a leaf/child value (proves grouping sits above real data, and that sub-groups recompute independently). Leaf rows use sequential IDs (`'0'`, `'1'`, …) in original data order — assert a leaf becomes visible only after expanding: `await expect(agIdFor.cell('0', 'total')).not.toBeVisible();` then click, then assert.
+- **Sort** by the feature's column and assert the reordering (Pitfall 11).
+- **Filter / toggle a control** and assert the aggregate or row set updates.
+
+Split distinct behaviours into separate `test.eachFramework(...)` blocks with descriptive names rather than one monolithic test.
+
 ### Example Test Patterns
 
 #### Pattern: Row Grouping with Aggregation and Totals
@@ -317,6 +356,43 @@ test.agExample(import.meta, () => {
             { useInnerText: true }
         );
         await expect(agIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'bronze').first()).toContainText('35');
+    });
+});
+```
+
+#### Pattern: Aggregation with Sort and Expand Interactions
+
+Value assertions plus the interactions from Pitfalls 11–12. Expected values are computed from the source dataset (here `olympic-winners.json`).
+
+```typescript
+test.agExample(import.meta, () => {
+    test.eachFramework('Custom aggFunc aggregates the group', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        // range = max(total) - min(total): United States 8-1 => 7.
+        await expect(agIdFor.cell('row-group-country-United States', 'total')).toContainText('7');
+    });
+
+    test.eachFramework('Group rows sort by the aggregated value', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        const usGroup = agIdFor.rowNode('row-group-country-United States'); // unique max range (7)
+        await agIdFor.headerCell('total').click();
+        await expect(usGroup).not.toHaveAttribute('row-index', '0');
+        await page.waitForTimeout(300); // avoid a double-click
+        await agIdFor.headerCell('total').click();
+        await expect(usGroup).toHaveAttribute('row-index', '0');
+    });
+
+    test.eachFramework('Expanding a group reveals its leaves', async ({ agIdFor, page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        await expect(agIdFor.cell('0', 'total')).not.toBeVisible();
+        await agIdFor.autoGroupContracted('row-group-country-United States').click();
+        await expect(agIdFor.cell('0', 'total')).toContainText('8');
     });
 });
 ```
