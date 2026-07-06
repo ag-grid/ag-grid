@@ -9,7 +9,13 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-import type { GridOptions, ICellRendererComp, ICellRendererParams, Module } from 'ag-grid-community';
+import type {
+    CellRendererSelectorResult,
+    GridOptions,
+    ICellRendererComp,
+    ICellRendererParams,
+    Module,
+} from 'ag-grid-community';
 import { BatchEditModule, FormulaModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, mockGridLayout } from '../test-utils';
