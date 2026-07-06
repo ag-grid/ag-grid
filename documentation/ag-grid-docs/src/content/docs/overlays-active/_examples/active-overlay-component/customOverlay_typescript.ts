@@ -6,11 +6,25 @@ export interface CustomParams {
 
 export class CustomOverlay implements IOverlayComp {
     private eGui!: HTMLElement;
+    private eCount!: HTMLElement;
+    private eStatus!: HTMLElement;
 
     public init(params: IOverlayParams & CustomParams): void {
         const eGui = document.createElement('div');
         this.eGui = eGui;
         eGui.className = 'my-custom-overlay';
+
+        const eCount = document.createElement('span');
+        const eStatus = document.createElement('span');
+        eStatus.className = 'visually-hidden';
+        eStatus.setAttribute('role', 'status');
+        eStatus.setAttribute('aria-live', 'polite');
+        eStatus.setAttribute('aria-atomic', 'true');
+
+        eGui.append('Custom Overlay: ', eCount, eStatus);
+        this.eCount = eCount;
+        this.eStatus = eStatus;
+
         this.refresh(params);
     }
 
@@ -18,7 +32,9 @@ export class CustomOverlay implements IOverlayComp {
         return this.eGui;
     }
 
-    public refresh(params: IOverlayParams & CustomParams) {
-        this.eGui.textContent = 'Custom Overlay: ' + params.count;
+    public refresh(params: IOverlayParams & CustomParams): void {
+        const count = String(params.count);
+        this.eCount.textContent = count;
+        this.eStatus.textContent = `Custom overlay shown. Count ${count}.`;
     }
 }

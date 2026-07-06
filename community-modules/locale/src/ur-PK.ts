@@ -294,6 +294,9 @@ export const AG_GRID_LOCALE_PK = {
     fileInputOverlayBrowse: 'فائلیں براؤز کریں',
     fileInputProcessing: '${variable} پر کارروائی ہو رہی ہے',
     fileInputProcessingFailed: '${variable} پر کارروائی میں خرابی',
+    loadingComplete: 'ڈیٹا لوڈ ہو گیا۔',
+    loadingCompleteRow: '${variable} قطار۔',
+    loadingCompleteRows: '${variable} قطاریں۔',
     enabled: 'فعال',
 
     // Menu

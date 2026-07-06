@@ -19,21 +19,26 @@ export interface INoMatchingRowsOverlayComp<TData = any, TContext = any> extends
     INoMatchingRowsOverlayParams<TData, TContext>
 > {}
 
-const NoMatchingRowsOverlayElement: ElementParams = { tag: 'span', cls: 'ag-overlay-no-matching-rows-center' };
+const NoMatchingRowsOverlayElement: ElementParams = {
+    tag: 'span',
+    cls: 'ag-overlay-no-matching-rows-center',
+    role: 'status',
+};
 
 export class NoMatchingRowsOverlayComponent
     extends OverlayComponent<any, any, IOverlayParams & OverlayComponentUserParams>
     implements INoMatchingRowsOverlayComp<any, any>
 {
-    public init(params: INoMatchingRowsOverlayParams & OverlayComponentUserParams): void {
-        const { beans } = this;
+    private statusText: string = '';
 
+    public init(params: INoMatchingRowsOverlayParams & OverlayComponentUserParams): void {
         this.setTemplate(NoMatchingRowsOverlayElement);
 
-        const noRowsText =
+        this.statusText =
             params.noMatchingRows?.overlayText ?? this.getLocaleTextFunc()('noMatchingRows', 'No Matching Rows');
-        this.getGui().textContent = noRowsText;
+    }
 
-        beans.ariaAnnounce.announceValue(noRowsText, 'overlay');
+    public afterGuiAttached(): void {
+        this.setStatusText(this.getGui(), this.statusText);
     }
 }

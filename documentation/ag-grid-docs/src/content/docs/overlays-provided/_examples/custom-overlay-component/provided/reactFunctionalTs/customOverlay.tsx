@@ -2,19 +2,18 @@ import React from 'react';
 
 import type { CustomOverlayProps } from 'ag-grid-react';
 
-export default (props: CustomOverlayProps & { loadingMessage: string; noRowsMessage: string }) => {
+type CustomOverlayParams = {
+    loading: { overlayText: string };
+    noRows: { overlayText: string };
+};
+
+export default (props: CustomOverlayProps & CustomOverlayParams) => {
     let message = 'Default Message';
     if (props.overlayType === 'loading') {
-        message = props.loadingMessage;
+        message = props.loading.overlayText;
     } else if (props.overlayType === 'noRows') {
-        message = props.noRowsMessage;
+        message = props.noRows.overlayText;
     }
 
-    return (
-        <div className="overlay-center" role="presentation">
-            <div aria-live="polite" aria-atomic="true">
-                {message}
-            </div>
-        </div>
-    );
+    return <div className="overlay-center">{message}</div>;
 };

@@ -293,6 +293,9 @@ export const AG_GRID_LOCALE_HK = {
     fileInputOverlayBrowse: '瀏覽檔案',
     fileInputProcessing: '正在處理 ${variable}',
     fileInputProcessingFailed: '處理 ${variable} 時發生錯誤',
+    loadingComplete: '數據已加載。',
+    loadingCompleteRow: '${variable}行。',
+    loadingCompleteRows: '${variable}行。',
     enabled: '已啟用',
 
     // Menu

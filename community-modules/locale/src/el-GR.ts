@@ -299,6 +299,9 @@ export const AG_GRID_LOCALE_GR = {
     fileInputOverlayBrowse: 'Αναζήτηση αρχείων',
     fileInputProcessing: 'Επεξεργασία ${variable}',
     fileInputProcessingFailed: 'Σφάλμα επεξεργασίας ${variable}',
+    loadingComplete: 'Τα δεδομένα φορτώθηκαν.',
+    loadingCompleteRow: '${variable} γραμμή.',
+    loadingCompleteRows: '${variable} γραμμές.',
     enabled: 'Ενεργοποιημένο',
 
     // Menu

@@ -19,6 +19,7 @@ interface IAthlete {
 const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'country' }];
 
 const rowData: IAthlete[] = [];
+const loadingOverlayText = 'Please wait while data is loading...';
 
 let gridApi: GridApi<IAthlete>;
 
@@ -32,12 +33,16 @@ const gridOptions: GridOptions<IAthlete> = {
     columnDefs: columnDefs,
     rowData,
 
+    overlayComponentParams: {
+        loading: { overlayText: loadingOverlayText },
+    },
+
     overlayComponentSelector: (params: IOverlayParams) => {
         if (params.overlayType === 'loading') {
             return {
                 component: CustomLoadingOverlay,
                 params: {
-                    loadingMessage: 'Please wait while data is loading...',
+                    loading: { overlayText: loadingOverlayText },
                 },
             };
         }

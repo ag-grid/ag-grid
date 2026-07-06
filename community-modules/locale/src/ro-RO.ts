@@ -296,6 +296,9 @@ export const AG_GRID_LOCALE_RO = {
     fileInputOverlayBrowse: 'Răsfoiți fișiere',
     fileInputProcessing: 'Se procesează ${variable}',
     fileInputProcessingFailed: 'Eroare la procesarea ${variable}',
+    loadingComplete: 'Date încărcate.',
+    loadingCompleteRow: '${variable} rând.',
+    loadingCompleteRows: '${variable} rânduri.',
     enabled: 'Activat',
 
     // Menu

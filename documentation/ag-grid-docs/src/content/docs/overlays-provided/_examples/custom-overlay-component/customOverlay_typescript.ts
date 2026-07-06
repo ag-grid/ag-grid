@@ -1,6 +1,9 @@
 import type { IOverlayComp, IOverlayParams } from 'ag-grid-community';
 
-type CustomOverlayParams = IOverlayParams & { loadingMessage: string; noRowsMessage: string };
+type CustomOverlayParams = IOverlayParams & {
+    loading: { overlayText: string };
+    noRows: { overlayText: string };
+};
 
 export class CustomOverlay implements IOverlayComp {
     eGui!: HTMLElement;
@@ -32,9 +35,9 @@ export class CustomOverlay implements IOverlayComp {
 
         let message = 'Default Message';
         if (params.overlayType === 'loading') {
-            message = params.loadingMessage;
+            message = params.loading.overlayText;
         } else if (params.overlayType === 'noRows') {
-            message = params.noRowsMessage;
+            message = params.noRows.overlayText;
         }
 
         this.messageEl.textContent = message;

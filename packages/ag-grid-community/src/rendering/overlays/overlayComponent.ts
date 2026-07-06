@@ -93,6 +93,10 @@ export interface IOverlay<
     refresh?(params: TParams): void;
 }
 
+interface OverlayStatusComponent {
+    afterGuiAttached?(): void;
+}
+
 export interface IOverlayComp<
     TData = any,
     TContext = any,
@@ -113,6 +117,14 @@ export abstract class OverlayComponent<
     }
 
     public abstract init(params: IOverlayParams): void;
+
+    protected setStatusText(element: HTMLElement, value: string): void {
+        element.textContent = value;
+    }
+}
+
+export function _notifyOverlayGuiAttached(comp: IOverlayComp): void {
+    (comp as OverlayStatusComponent).afterGuiAttached?.();
 }
 
 export type OverlaySelectorFunc<TData = any, TContext = any> = (

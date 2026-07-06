@@ -31,8 +31,8 @@ const gridOptions: GridOptions<IAthlete> = {
 
     overlayComponent: CustomOverlay,
     overlayComponentParams: {
-        loadingMessage: 'Custom loading message',
-        noRowsMessage: 'Custom no rows message',
+        loading: { overlayText: 'Custom loading message' },
+        noRows: { overlayText: 'Custom no rows message' },
     },
 };
 

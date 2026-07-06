@@ -7,5 +7,14 @@ export interface CustomParams {
 }
 
 export const CustomOverlay = (props: CustomOverlayProps & CustomParams) => {
-    return <div className="my-custom-overlay">Custom Overlay: {props.count}</div>;
+    const statusText = `Custom overlay shown. Count ${props.count}.`;
+
+    return (
+        <div className="my-custom-overlay">
+            <span>Custom Overlay: {props.count}</span>
+            <span className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">
+                {statusText}
+            </span>
+        </div>
+    );
 };

@@ -297,6 +297,9 @@ export const AG_GRID_LOCALE_TR = {
     fileInputOverlayBrowse: 'Dosyalara göz at',
     fileInputProcessing: 'İşleniyor: ${variable}',
     fileInputProcessingFailed: '${variable} işlenirken hata oluştu',
+    loadingComplete: 'Veriler yüklendi.',
+    loadingCompleteRow: '${variable} satır.',
+    loadingCompleteRows: '${variable} satır.',
     enabled: 'Etkin',
 
     // Menu

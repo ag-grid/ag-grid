@@ -294,6 +294,9 @@ export const AG_GRID_LOCALE_IR = {
     fileInputOverlayBrowse: 'مرور فایل‌ها',
     fileInputProcessing: 'در حال پردازش ${variable}',
     fileInputProcessingFailed: 'خطا در پردازش ${variable}',
+    loadingComplete: 'داده‌ها بارگذاری شدند.',
+    loadingCompleteRow: '${variable} ردیف.',
+    loadingCompleteRows: '${variable} ردیف.',
     enabled: 'فعال',
 
     // Menu

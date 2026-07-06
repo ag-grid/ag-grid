@@ -18,6 +18,7 @@ import { _focusNextGridCoreContainer } from '../../utils/gridFocus';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { IOverlayComp } from './overlayComponent';
+import { _notifyOverlayGuiAttached } from './overlayComponent';
 import overlayWrapperComponentCSS from './overlayWrapperComponent.css';
 
 const OverlayWrapperElement: ElementParams = {
@@ -124,6 +125,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.overlayExclusive = exclusive;
 
         if (!overlayComponentPromise) {
+            this.setDisplayed(false, { skipAriaHidden: true });
             this.refreshWrapperPadding();
             return AgPromise.resolve();
         }
@@ -156,12 +158,14 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             this.activePromise = null; // Promise completed, so we can reset this
 
             if (!comp) {
+                this.setDisplayed(false, { skipAriaHidden: true });
                 return; // Error handling
             }
 
             if (this.activeOverlay !== comp) {
                 eOverlayWrapper.appendChild(comp.getGui());
                 this.activeOverlay = comp;
+                _notifyOverlayGuiAttached(comp);
             }
 
             if (exclusive && this.isGridFocused()) {

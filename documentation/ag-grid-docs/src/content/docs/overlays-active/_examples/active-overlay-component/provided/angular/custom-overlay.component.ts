@@ -10,16 +10,21 @@ export interface CustomParams {
 @Component({
     selector: 'app-custom-overlay',
     standalone: true,
-    template: `<div class="my-custom-overlay">Custom Overlay: {{ count() }}</div>`,
+    template: `<div class="my-custom-overlay">
+        <span>Custom Overlay: {{ count() }}</span>
+        <span class="visually-hidden" role="status" aria-live="polite" aria-atomic="true">
+            Custom overlay shown. Count {{ count() }}.
+        </span>
+    </div>`,
 })
 export class CustomOverlayComponent implements IOverlayAngularComp {
-    count = signal(0);
+    public count = signal(0);
 
-    agInit(params: IOverlayParams & CustomParams): void {
+    public agInit(params: IOverlayParams & CustomParams): void {
         this.refresh(params);
     }
 
-    refresh(params: IOverlayParams & CustomParams) {
+    public refresh(params: IOverlayParams & CustomParams): void {
         this.count.set(params.count);
     }
 }

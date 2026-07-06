@@ -22,24 +22,30 @@ export interface INoRowsOverlayComp<TData = any, TContext = any> extends IOverla
     INoRowsOverlayParams<TData, TContext>
 > {}
 
-const NoRowsOverlayElement: ElementParams = { tag: 'span', cls: 'ag-overlay-no-rows-center' };
+const NoRowsOverlayElement: ElementParams = { tag: 'span', cls: 'ag-overlay-no-rows-center', role: 'status' };
 
 export class NoRowsOverlayComponent
     extends OverlayComponent<any, any, IOverlayParams & OverlayComponentUserParams>
     implements INoRowsOverlayComp<any, any>
 {
+    private statusText: string = '';
+    private hasStatusElement: boolean = false;
+
     public init(params: INoRowsOverlayParams & OverlayComponentUserParams): void {
-        const { beans, gos } = this;
+        const { gos } = this;
         const customTemplate = _makeNull(gos.get('overlayNoRowsTemplate')?.trim());
 
         this.setTemplate(customTemplate ?? NoRowsOverlayElement);
+        this.hasStatusElement = !customTemplate;
 
         if (!customTemplate) {
-            const noRowsText =
-                params.noRows?.overlayText ?? this.getLocaleTextFunc()('noRowsToShow', 'No Rows To Show');
-            this.getGui().textContent = noRowsText;
+            this.statusText = params.noRows?.overlayText ?? this.getLocaleTextFunc()('noRowsToShow', 'No Rows To Show');
+        }
+    }
 
-            beans.ariaAnnounce.announceValue(noRowsText, 'overlay');
+    public afterGuiAttached(): void {
+        if (this.hasStatusElement) {
+            this.setStatusText(this.getGui(), this.statusText);
         }
     }
 }

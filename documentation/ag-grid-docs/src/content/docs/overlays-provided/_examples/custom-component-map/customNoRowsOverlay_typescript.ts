@@ -1,10 +1,14 @@
 import type { INoRowsOverlayComp, INoRowsOverlayParams } from 'ag-grid-community';
 
-type CustomNoRowsOverlayParams = INoRowsOverlayParams & { noRowsMessageFunc: () => string };
+type CustomNoRowsOverlayParams = INoRowsOverlayParams & {
+    noRows: { overlayText: string };
+};
 
 export class CustomNoRowsOverlay implements INoRowsOverlayComp {
     eGui!: HTMLElement;
     private messageEl!: HTMLElement;
+    private message = '';
+    private attached = false;
 
     init(params: CustomNoRowsOverlayParams) {
         this.eGui = document.createElement('div');
@@ -15,12 +19,14 @@ export class CustomNoRowsOverlay implements INoRowsOverlayComp {
 
         const icon = document.createElement('i');
         icon.className = 'far fa-frown';
-        icon.setAttribute('aria-live', 'polite');
-        icon.setAttribute('aria-atomic', 'true');
+        icon.setAttribute('aria-hidden', 'true');
 
-        this.messageEl = icon;
+        const message = document.createElement('span');
+        message.setAttribute('role', 'status');
 
-        overlay.appendChild(icon);
+        this.messageEl = message;
+
+        overlay.append(icon, ' ', message);
         this.eGui.appendChild(overlay);
 
         this.refresh(params);
@@ -31,10 +37,14 @@ export class CustomNoRowsOverlay implements INoRowsOverlayComp {
     }
 
     refresh(params: CustomNoRowsOverlayParams): void {
-        if (!this.messageEl) {
-            return;
+        this.message = params.noRows.overlayText;
+        if (this.attached) {
+            this.messageEl.textContent = this.message;
         }
+    }
 
-        this.messageEl.textContent = params.noRowsMessageFunc();
+    afterGuiAttached(): void {
+        this.attached = true;
+        this.messageEl.textContent = this.message;
     }
 }

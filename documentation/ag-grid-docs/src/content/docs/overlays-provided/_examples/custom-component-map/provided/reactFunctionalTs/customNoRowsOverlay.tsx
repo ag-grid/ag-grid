@@ -2,17 +2,15 @@ import React from 'react';
 
 import type { CustomNoRowsOverlayProps } from 'ag-grid-react';
 
-export default (props: CustomNoRowsOverlayProps & { noRowsMessageFunc: () => string }) => {
+type CustomNoRowsOverlayParams = {
+    noRows: { overlayText: string };
+};
+
+export default (props: CustomNoRowsOverlayProps & CustomNoRowsOverlayParams) => {
     return (
-        <div
-            role="presentation"
-            className="overlay-loading-center"
-            style={{ backgroundColor: '#b4bebe', height: '9%' }}
-        >
-            <i className="far fa-frown" aria-live="polite" aria-atomic="true">
-                {' '}
-                {props.noRowsMessageFunc()}
-            </i>
+        <div className="overlay-loading-center" style={{ backgroundColor: '#b4bebe', height: '9%' }}>
+            <span className="far fa-frown" aria-hidden="true"></span>{' '}
+            <span role="status">{props.noRows.overlayText}</span>
         </div>
     );
 };

@@ -23,6 +23,7 @@ interface IAthlete {
 const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'country' }];
 
 const rowData: IAthlete[] = [];
+const loadingOverlayText = 'Please wait while data is loading...';
 
 const defaultColDef: ColDef = {
     flex: 1,
@@ -36,7 +37,7 @@ const GridExample = () => {
             return {
                 component: CustomLoadingOverlay,
                 params: {
-                    loadingMessage: 'Please wait while data is loading...',
+                    loading: { overlayText: loadingOverlayText },
                 },
             };
         }
@@ -60,6 +61,9 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
+                        overlayComponentParams={{
+                            loading: { overlayText: loadingOverlayText },
+                        }}
                         overlayComponentSelector={overlayComponentSelector}
                     />
                 </div>

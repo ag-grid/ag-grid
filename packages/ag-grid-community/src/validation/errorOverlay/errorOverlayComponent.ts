@@ -22,7 +22,7 @@ const ErrorOverlayElement: ElementParams = {
             tag: 'div',
             cls: 'ag-overlay-error-header',
             children: [
-                { tag: 'span', ref: 'eTitle', cls: 'ag-overlay-error-title' },
+                { tag: 'span', ref: 'eTitle', cls: 'ag-overlay-error-title', role: 'status' },
                 {
                     tag: 'button',
                     ref: 'eCopy',
@@ -55,6 +55,8 @@ export class ErrorOverlayComponent extends OverlayComponent<any, any, IErrorOver
     private readonly eBody: HTMLElement = RefPlaceholder;
 
     private copyResetTimeout: number | undefined;
+    private guiAttached: boolean = false;
+    private titleText: string = '';
 
     public init(): void {
         const { beans } = this;
@@ -87,7 +89,10 @@ export class ErrorOverlayComponent extends OverlayComponent<any, any, IErrorOver
 
     private renderBody(): void {
         const diagnostics = this.beans.errorOverlay?.getDiagnostics() ?? [];
-        this.eTitle.textContent = getTitle(diagnostics);
+        this.titleText = getTitle(diagnostics);
+        if (this.guiAttached) {
+            this.setStatusText(this.eTitle, this.titleText);
+        }
 
         this.eBody.replaceChildren();
         for (let i = 0, len = diagnostics.length; i < len; ++i) {
@@ -96,8 +101,11 @@ export class ErrorOverlayComponent extends OverlayComponent<any, any, IErrorOver
             }
             this.eBody.appendChild(renderDiagnostic(diagnostics[i]));
         }
+    }
 
-        this.beans.ariaAnnounce?.announceValue(this.eTitle.textContent ?? '', 'overlay');
+    public afterGuiAttached(): void {
+        this.guiAttached = true;
+        this.setStatusText(this.eTitle, this.titleText);
     }
 
     private copyDiagnostics(): void {

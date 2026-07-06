@@ -294,6 +294,9 @@ export const AG_GRID_LOCALE_SK = {
     fileInputOverlayBrowse: 'Prehľadávať súbory',
     fileInputProcessing: 'Spracovanie ${variable}',
     fileInputProcessingFailed: 'Chyba pri spracovaní ${variable}',
+    loadingComplete: 'Dáta načítané.',
+    loadingCompleteRow: '${variable} riadok.',
+    loadingCompleteRows: '${variable} riadky.',
     enabled: 'Povolené',
 
     // Menu

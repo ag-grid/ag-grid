@@ -294,6 +294,9 @@ export const AG_GRID_LOCALE_CZ = {
     fileInputOverlayBrowse: 'Procházet soubory',
     fileInputProcessing: 'Zpracování ${variable}',
     fileInputProcessingFailed: 'Chyba při zpracování ${variable}',
+    loadingComplete: 'Data načtena.',
+    loadingCompleteRow: '${variable} řádek.',
+    loadingCompleteRows: '${variable} řádky.',
     enabled: 'Povoleno',
 
     // Menu

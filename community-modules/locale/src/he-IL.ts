@@ -293,6 +293,9 @@ export const AG_GRID_LOCALE_IL = {
     fileInputOverlayBrowse: 'עיון בקבצים',
     fileInputProcessing: 'מעבד את ${variable}',
     fileInputProcessingFailed: 'שגיאה בעיבוד ${variable}',
+    loadingComplete: 'הנתונים נטענו.',
+    loadingCompleteRow: '${variable} שורה.',
+    loadingCompleteRows: '${variable} שורות.',
     enabled: 'מופעל',
 
     // Menu

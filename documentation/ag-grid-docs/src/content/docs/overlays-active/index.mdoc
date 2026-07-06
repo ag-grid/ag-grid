@@ -12,6 +12,14 @@ To display an overlay on demand set the `activeOverlay` / `activeOverlayParams` 
 
 {% apiDocumentation source="grid-options/properties.json" section="overlays" names=["activeOverlay", "activeOverlayParams"] /%}
 
+## Status Announcements
+
+Provided overlays shown with `activeOverlay` announce through their own `role="status"` message element; `activeOverlay: 'agLoadingOverlay'` uses the loading overlay's own status element for loading and completion announcements.
+
+A custom active overlay is application-owned. AG Grid mounts the component but does not infer status announcements from its DOM text, because the component can contain arbitrary content. If the overlay represents a status, progress, or blocking state that should be announced, include a live region in the custom overlay component, such as a visually hidden element with `role="status"`, `aria-live="polite"` and `aria-atomic="true"`.
+
+The custom overlay example on this page includes a hidden status element that is updated from the same params as the visible overlay content.
+
 {% if isFramework("javascript", "angular") %}
 Implement the `IOverlayComp` interface to provide a custom overlay the grid will supply `IOverlayParams` whenever the component is created or refreshed.
 {% /if %}

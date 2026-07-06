@@ -29,7 +29,7 @@ const gridOptions: GridOptions<IAthlete> = {
 
     noRowsOverlayComponent: CustomNoRowsOverlay,
     noRowsOverlayComponentParams: {
-        noRowsMessageFunc: () => 'No rows found at: ' + new Date().toLocaleTimeString(),
+        noRows: { overlayText: 'No rows found' },
     },
 };
 

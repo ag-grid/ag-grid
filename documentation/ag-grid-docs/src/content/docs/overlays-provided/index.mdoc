@@ -42,6 +42,16 @@ The file input overlay pairs well with [Auto-Generate Columns](./auto-generate-c
 
 The provided overlays can be customised to change their content or completely replaced with custom components. The grid still manages the timing of when the overlays are displayed based on grid state.
 
+### Status Announcements
+
+Provided overlays announce their status to screen readers through `role="status"` on their own status element. The loading overlay uses an overlay-owned status element for debounced loading and completion announcements. The grid viewport is marked `aria-busy` while loading or exporting.
+
+Custom components that replace provided overlays are not announced automatically — AG Grid does not inspect the component's DOM and no longer announces the configured overlay text on its behalf. Include a `role="status"` element in the component, typically the visible message element, to announce its status. Overlays rendered from the legacy `overlayLoadingTemplate` and `overlayNoRowsTemplate` options are likewise not announced.
+
+Custom loading components own their status announcements as well. If a custom loading component needs loading or completion speech, include its own `role="status"` element and update it from the component lifecycle.
+
+Fully application-owned overlays shown with `activeOverlay` should include their own live region if custom status announcements are required. See [Active Overlay](./overlays-active/#status-announcements) for an example.
+
 ### Text Customisation
 
 Customise the text within the provided overlays via the `overlayComponentParams` grid option using the `OverlayComponentUserParams` interface.
@@ -116,12 +126,15 @@ Returning `undefined` from the selector will fall back to the overlay specified 
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
+    overlayComponentParams: {
+        loading: { overlayText: 'Please wait while data is loading...' }
+    },
     overlayComponentSelector: (params) => {
         if (params.overlayType === 'loading') {
             return {
                 component: CustomLoadingOverlay,
                 params: {
-                    loadingMessage: 'Please wait while data is loading...'
+                    loading: { overlayText: 'Please wait while data is loading...' }
                 }
             };
         }
@@ -147,8 +160,8 @@ Custom parameters can be supplied to the overlay component via the `overlayCompo
 const gridOptions = {
     overlayComponent: CustomOverlay,
     overlayComponentParams: {
-        loadingMessage: 'Custom loading message',
-        noRowsMessage: 'Custom no rows message'
+        loading: { overlayText: 'Custom loading message' },
+        noRows: { overlayText: 'Custom no rows message' }
     },
 };
 ```

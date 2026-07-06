@@ -31,7 +31,7 @@ const GridExample = () => {
 
     const noRowsOverlayComponentParams = useMemo(() => {
         return {
-            noRowsMessageFunc: () => 'No rows found at: ' + new Date().toLocaleTimeString(),
+            noRows: { overlayText: 'No rows found' },
         };
     }, []);
 

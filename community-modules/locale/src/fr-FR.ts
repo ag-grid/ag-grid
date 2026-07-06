@@ -299,6 +299,9 @@ export const AG_GRID_LOCALE_FR = {
     fileInputOverlayBrowse: 'Parcourir les fichiers',
     fileInputProcessing: 'Traitement de ${variable}',
     fileInputProcessingFailed: 'Erreur lors du traitement de ${variable}',
+    loadingComplete: 'Données chargées.',
+    loadingCompleteRow: '${variable} ligne.',
+    loadingCompleteRows: '${variable} lignes.',
     enabled: 'Activé',
 
     // Menu

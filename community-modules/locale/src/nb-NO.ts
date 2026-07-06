@@ -295,6 +295,9 @@ export const AG_GRID_LOCALE_NO = {
     fileInputOverlayBrowse: 'Bla gjennom filer',
     fileInputProcessing: 'Behandler ${variable}',
     fileInputProcessingFailed: 'Feil ved behandling av ${variable}',
+    loadingComplete: 'Data lastet inn.',
+    loadingCompleteRow: '${variable} rad.',
+    loadingCompleteRows: '${variable} rader.',
     enabled: 'Aktivert',
 
     // Menu

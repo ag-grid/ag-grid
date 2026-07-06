@@ -80,6 +80,11 @@ export function _setAriaRelevant(
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _setAriaBusy(element: Element, busy: boolean | null): void {
+    _toggleAriaAttribute(element, 'busy', busy);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setAriaInvalid(element: Element, invalid: boolean) {
     _toggleAriaAttribute(element, 'invalid', invalid);
 }

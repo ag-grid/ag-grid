@@ -3,16 +3,15 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import type { IOverlayAngularComp } from 'ag-grid-angular';
 import type { IOverlayParams } from 'ag-grid-community';
 
-type CustomOverlayParams = IOverlayParams & { loadingMessage: string; noRowsMessage: string };
+type CustomOverlayParams = IOverlayParams & {
+    loading: { overlayText: string };
+    noRows: { overlayText: string };
+};
 
 @Component({
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `
-        <div class="overlay-center" role="presentation">
-            <div aria-live="polite" aria-atomic="true">{{ message() }}</div>
-        </div>
-    `,
+    template: ` <div class="overlay-center">{{ message() }}</div> `,
 })
 export class CustomOverlay implements IOverlayAngularComp {
     params = signal<CustomOverlayParams | null>(null);
@@ -27,9 +26,9 @@ export class CustomOverlay implements IOverlayAngularComp {
 
         let message = '';
         if (params.overlayType === 'loading') {
-            message = params.loadingMessage;
+            message = params.loading.overlayText;
         } else if (params.overlayType === 'noRows') {
-            message = params.noRowsMessage;
+            message = params.noRows.overlayText;
         }
 
         this.message.set(message);

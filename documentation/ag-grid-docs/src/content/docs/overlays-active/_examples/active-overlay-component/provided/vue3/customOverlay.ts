@@ -1,13 +1,14 @@
-import { ref, watch } from 'vue';
-
-import type { IOverlayComp, IOverlayParams } from 'ag-grid-community';
-
 export interface CustomParams {
     count: number;
 }
 
 export const CustomOverlay = {
-    template: `<div class="my-custom-overlay">Custom Overlay: {{ count }}</div>`,
+    template: `<div class="my-custom-overlay">
+        <span>Custom Overlay: {{ count }}</span>
+        <span class="visually-hidden" role="status" aria-live="polite" aria-atomic="true">
+            Custom overlay shown. Count {{ count }}.
+        </span>
+    </div>`,
     data: function () {
         return {
             count: 1,

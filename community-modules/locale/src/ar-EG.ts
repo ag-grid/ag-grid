@@ -293,6 +293,9 @@ export const AG_GRID_LOCALE_EG = {
     fileInputOverlayBrowse: 'تصفح الملفات',
     fileInputProcessing: 'جارٍ معالجة ${variable}',
     fileInputProcessingFailed: 'خطأ في معالجة ${variable}',
+    loadingComplete: 'تم تحميل البيانات.',
+    loadingCompleteRow: '${variable} صف.',
+    loadingCompleteRows: '${variable} صفوف.',
     enabled: 'مُمكّن',
 
     // Menu

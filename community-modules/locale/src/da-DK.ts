@@ -296,6 +296,9 @@ export const AG_GRID_LOCALE_DK = {
     fileInputOverlayBrowse: 'Gennemse filer',
     fileInputProcessing: 'Behandler ${variable}',
     fileInputProcessingFailed: 'Fejl ved behandling af ${variable}',
+    loadingComplete: 'Data indlæst.',
+    loadingCompleteRow: '${variable} række.',
+    loadingCompleteRows: '${variable} rækker.',
     enabled: 'Aktiveret',
 
     // Menu

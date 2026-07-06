@@ -298,6 +298,9 @@ export const AG_GRID_LOCALE_HU = {
     fileInputOverlayBrowse: 'Fájlok tallózása',
     fileInputProcessing: 'Feldolgozás: ${variable}',
     fileInputProcessingFailed: 'Hiba a feldolgozás során: ${variable}',
+    loadingComplete: 'Adatok betöltve.',
+    loadingCompleteRow: '${variable} sor.',
+    loadingCompleteRows: '${variable} sor.',
     enabled: 'Engedélyezve',
 
     // Menu

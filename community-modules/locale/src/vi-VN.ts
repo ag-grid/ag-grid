@@ -294,6 +294,9 @@ export const AG_GRID_LOCALE_VN = {
     fileInputOverlayBrowse: 'Duyệt tệp',
     fileInputProcessing: 'Đang xử lý ${variable}',
     fileInputProcessingFailed: 'Lỗi khi xử lý ${variable}',
+    loadingComplete: 'Dữ liệu đã được tải.',
+    loadingCompleteRow: '${variable} hàng.',
+    loadingCompleteRows: '${variable} hàng.',
     enabled: 'Đã bật',
 
     // Menu

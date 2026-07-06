@@ -47,6 +47,14 @@ However, different screen readers interpret the WCAG standard in different ways.
 
 This is why we recommend testing how different screen readers announce the UI of the application you're using, selecting the best one and recommending that to your users. We believe this is the best way to guide your users how to get the best possible experience at this time until screen readers improve their support for the WCAG standard.
 
+### Overlay Status Messages
+
+Provided overlays carry `role="status"` on their own status element, so screen readers announce the overlay status directly.
+
+While loading or exporting, the grid viewport is marked with `aria-busy="true"`. Loading announcements are debounced: brief loads do not announce loading or completion. If "Loading..." is announced, AG Grid follows it with a completion status such as "Data loaded" with a row or pagination summary where available.
+
+Custom overlay components and the legacy `overlayLoadingTemplate` / `overlayNoRowsTemplate` options are not announced automatically. Include a `role="status"` element in the component (the visible message element is fine) to announce its status; overlays shown with `activeOverlay` follow the same pattern.
+
 ## ARIA Attributes
 
 In order to give screen readers the contextual information they require to interpret and interact with the grid, [ARIA](https://www.w3.org/TR/wai-aria/) attributes are added to the grid DOM elements. These attributes are particularity useful when plain HTML elements such `div` and `span` are used to create complex DOM structures, which is the case with AG Grid.

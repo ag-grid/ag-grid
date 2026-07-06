@@ -293,6 +293,9 @@ export const AG_GRID_LOCALE_JP = {
     fileInputOverlayBrowse: 'ファイルを参照',
     fileInputProcessing: '${variable} を処理中',
     fileInputProcessingFailed: '${variable} の処理中にエラーが発生しました',
+    loadingComplete: 'データが読み込まれました。',
+    loadingCompleteRow: '${variable}行。',
+    loadingCompleteRows: '${variable}行。',
     enabled: '有効',
 
     // Menu

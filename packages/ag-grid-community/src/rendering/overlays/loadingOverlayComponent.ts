@@ -27,8 +27,9 @@ const LoadingOverlayElement: ElementParams = {
     tag: 'div',
     cls: 'ag-overlay-loading-center',
     children: [
-        { tag: 'span', ref: 'eLoadingIcon', cls: 'ag-loading-icon' },
+        { tag: 'span', ref: 'eLoadingIcon', cls: 'ag-loading-icon', attrs: { 'aria-hidden': 'true' } },
         { tag: 'span', ref: 'eLoadingText', cls: 'ag-loading-text' },
+        { tag: 'span', ref: 'eLoadingStatus', cls: 'ag-aria-description-container', role: 'status' },
     ],
 };
 export class LoadingOverlayComponent
@@ -37,12 +38,15 @@ export class LoadingOverlayComponent
 {
     private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eLoadingText: HTMLElement = RefPlaceholder;
+    private readonly eLoadingStatus: HTMLElement = RefPlaceholder;
+    private hasStatusElement: boolean = false;
 
     public init(params: ILoadingOverlayParams & OverlayComponentUserParams): void {
         const { beans, gos } = this;
         const customTemplate = _makeNull(gos.get('overlayLoadingTemplate')?.trim());
 
         this.setTemplate(customTemplate ?? LoadingOverlayElement);
+        this.hasStatusElement = !customTemplate;
 
         if (!customTemplate) {
             const eLoadingIcon = _createIconNoSpan('overlayLoading', beans, null);
@@ -51,7 +55,15 @@ export class LoadingOverlayComponent
             }
             const loadingText = params.loading?.overlayText ?? this.getLocaleTextFunc()('loadingOoo', 'Loading...');
             this.eLoadingText.textContent = loadingText;
-            beans.ariaAnnounce.announceValue(loadingText, 'overlay');
         }
+    }
+
+    public announceOverlayStatus(status: string): boolean {
+        if (!this.hasStatusElement) {
+            return false;
+        }
+
+        this.setStatusText(this.eLoadingStatus, status);
+        return true;
     }
 }

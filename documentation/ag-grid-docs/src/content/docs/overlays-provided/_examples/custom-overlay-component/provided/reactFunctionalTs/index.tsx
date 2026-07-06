@@ -33,8 +33,8 @@ const GridExample = () => {
 
     const overlayComponentParams = useMemo(() => {
         return {
-            loadingMessage: 'Custom loading message',
-            noRowsMessage: 'Custom no rows message',
+            loading: { overlayText: 'Custom loading message' },
+            noRows: { overlayText: 'Custom no rows message' },
         };
     }, []);
 

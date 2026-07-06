@@ -125,6 +125,7 @@ export {
     _setAriaDescribedBy,
     _setAriaDisabled,
     _setAriaAutoComplete,
+    _setAriaBusy,
     _setAriaExpanded,
     _setAriaHasPopup,
     _setAriaHidden,

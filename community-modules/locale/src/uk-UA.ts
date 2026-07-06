@@ -295,6 +295,9 @@ export const AG_GRID_LOCALE_UA = {
     fileInputOverlayBrowse: 'Огляд файлів',
     fileInputProcessing: 'Обробка ${variable}',
     fileInputProcessingFailed: 'Помилка обробки ${variable}',
+    loadingComplete: 'Дані завантажено.',
+    loadingCompleteRow: '${variable} рядок.',
+    loadingCompleteRows: '${variable} ряди.',
     enabled: 'Увімкнено',
 
     // Menu

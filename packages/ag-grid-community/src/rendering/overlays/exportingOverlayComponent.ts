@@ -27,8 +27,8 @@ const ExportingOverlayElement: ElementParams = {
     tag: 'div',
     cls: 'ag-overlay-exporting-center',
     children: [
-        { tag: 'span', ref: 'eExportingIcon', cls: 'ag-loading-icon' },
-        { tag: 'span', ref: 'eExportingText', cls: 'ag-exporting-text' },
+        { tag: 'span', ref: 'eExportingIcon', cls: 'ag-loading-icon', attrs: { 'aria-hidden': 'true' } },
+        { tag: 'span', ref: 'eExportingText', cls: 'ag-exporting-text', role: 'status' },
     ],
 };
 export class ExportingOverlayComponent
@@ -37,6 +37,7 @@ export class ExportingOverlayComponent
 {
     private readonly eExportingIcon: HTMLElement = RefPlaceholder;
     private readonly eExportingText: HTMLElement = RefPlaceholder;
+    private statusText: string = '';
 
     public init(params: IExportingOverlayParams & OverlayComponentUserParams): void {
         const { beans } = this;
@@ -47,8 +48,10 @@ export class ExportingOverlayComponent
         if (eExportingIcon) {
             this.eExportingIcon.appendChild(eExportingIcon);
         }
-        const exportingText = params.exporting?.overlayText ?? this.getLocaleTextFunc()('exportingOoo', 'Exporting...');
-        this.eExportingText.textContent = exportingText;
-        beans.ariaAnnounce.announceValue(exportingText, 'overlay');
+        this.statusText = params.exporting?.overlayText ?? this.getLocaleTextFunc()('exportingOoo', 'Exporting...');
+    }
+
+    public afterGuiAttached(): void {
+        this.setStatusText(this.eExportingText, this.statusText);
     }
 }

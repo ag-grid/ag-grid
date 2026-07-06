@@ -294,6 +294,9 @@ export const AG_GRID_LOCALE_NL = {
     fileInputOverlayBrowse: 'Bestanden bladeren',
     fileInputProcessing: '${variable} verwerken',
     fileInputProcessingFailed: 'Fout bij verwerken van ${variable}',
+    loadingComplete: 'Gegevens geladen.',
+    loadingCompleteRow: '${variable} rij.',
+    loadingCompleteRows: '${variable} rijen.',
     enabled: 'Ingeschakeld',
 
     // Menu

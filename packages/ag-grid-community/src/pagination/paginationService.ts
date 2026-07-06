@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { PaginationSelector } from './paginationComp';
+import { _formatPaginationNumber } from './paginationUtils';
 
 const DEFAULT_PAGE_SIZE = 100;
 
@@ -336,6 +337,58 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     public getMasterRowCount(): number {
         return this.masterRowCount;
+    }
+
+    public getAriaPageSummary(
+        formatNumber: (value: number) => string = this.formatPaginationNumber.bind(this)
+    ): string {
+        const localeTextFunc = this.getLocaleTextFunc();
+        const rowModel = this.beans.rowModel;
+        const lastPageFound = rowModel.isLastRowIndexKnown();
+        if (!lastPageFound) {
+            return '';
+        }
+
+        const rowCount = this.masterRowCount;
+        if (rowCount <= 0) {
+            return '';
+        }
+
+        const currentPage = this.currentPage;
+        const pageSize = this.pageSize;
+        const totalPages = this.totalPages;
+        if (totalPages <= 0) {
+            return '';
+        }
+
+        let startRow: number;
+        let endRow: number;
+
+        if (lastPageFound && totalPages === 0) {
+            startRow = 0;
+            endRow = 0;
+        } else {
+            startRow = pageSize * currentPage + 1;
+            endRow = startRow + pageSize - 1;
+            if (lastPageFound && endRow > rowCount!) {
+                endRow = rowCount!;
+            }
+        }
+
+        const firstRow = formatNumber(startRow);
+        const lastRow = formatNumber(endRow);
+        const recordCount = formatNumber(rowCount);
+        const page = formatNumber(currentPage + 1);
+        const pageCount = formatNumber(totalPages);
+
+        return `${firstRow} ${localeTextFunc('to', 'to')} ${lastRow} ${localeTextFunc(
+            'of',
+            'of'
+        )} ${recordCount}. ${localeTextFunc('page', 'Page')} ${page} ${localeTextFunc('of', 'of')} ${pageCount}.`;
+    }
+
+    private formatPaginationNumber(value: number): string {
+        return _formatPaginationNumber(value, this.gos, this.getLocaleTextFunc.bind(this));
     }
 
     private calculatePagesAllRows(): void {

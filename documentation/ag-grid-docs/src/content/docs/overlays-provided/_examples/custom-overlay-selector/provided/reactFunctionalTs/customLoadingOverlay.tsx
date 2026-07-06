@@ -2,11 +2,15 @@ import React from 'react';
 
 import type { CustomLoadingOverlayProps } from 'ag-grid-react';
 
-export default (props: CustomLoadingOverlayProps & { loadingMessage: string }) => {
+type CustomLoadingOverlayParams = {
+    loading: { overlayText: string };
+};
+
+export default (props: CustomLoadingOverlayProps & CustomLoadingOverlayParams) => {
     return (
-        <div className="overlay-loading-center" role="presentation">
+        <div className="overlay-loading-center">
             <div
-                role="presentation"
+                aria-hidden="true"
                 className="custom-loading-overlay"
                 style={{
                     height: 100,
@@ -16,9 +20,7 @@ export default (props: CustomLoadingOverlayProps & { loadingMessage: string }) =
                     margin: '0 auto',
                 }}
             ></div>
-            <div aria-live="polite" aria-atomic="true">
-                {props.loadingMessage}
-            </div>
+            <div>{props.loading.overlayText}</div>
         </div>
     );
 };

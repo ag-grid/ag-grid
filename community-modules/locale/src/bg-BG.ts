@@ -296,6 +296,9 @@ export const AG_GRID_LOCALE_BG = {
     fileInputOverlayBrowse: 'Преглед на файлове',
     fileInputProcessing: 'Обработка на ${variable}',
     fileInputProcessingFailed: 'Грешка при обработката на ${variable}',
+    loadingComplete: 'Данните са заредени.',
+    loadingCompleteRow: '${variable} ред.',
+    loadingCompleteRows: '${variable} редове.',
     enabled: 'Активиран',
 
     // Menu

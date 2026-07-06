@@ -1,12 +1,33 @@
 import type { ILoadingOverlayComp, ILoadingOverlayParams } from 'ag-grid-community';
 
-type CustomLoadingOverlayParams = ILoadingOverlayParams & { loadingMessage: string };
+type CustomLoadingOverlayParams = ILoadingOverlayParams & {
+    loading: { overlayText: string };
+};
 
 export class CustomLoadingOverlay implements ILoadingOverlayComp {
     eGui!: HTMLElement;
+    messageEl!: HTMLElement;
+    message = '';
+    attached = false;
 
     init(params: CustomLoadingOverlayParams) {
         this.eGui = document.createElement('div');
+
+        const overlay = document.createElement('div');
+        overlay.className = 'overlay-loading-center';
+
+        const spinner = document.createElement('div');
+        spinner.setAttribute('aria-hidden', 'true');
+        spinner.style.cssText =
+            'height:100px; width:100px; background: url(https://www.ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat; margin: 0 auto;';
+
+        const message = document.createElement('div');
+        message.setAttribute('role', 'status');
+        this.messageEl = message;
+
+        overlay.append(spinner, message);
+        this.eGui.appendChild(overlay);
+
         this.refresh(params);
     }
 
@@ -15,9 +36,14 @@ export class CustomLoadingOverlay implements ILoadingOverlayComp {
     }
 
     refresh(params: CustomLoadingOverlayParams): void {
-        this.eGui.innerHTML = `<div class="overlay-loading-center" role="presentation">
-        <div role="presentation" style="height:100px; width:100px; background: url(https://www.ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat; margin: 0 auto;"></div>
-        <div aria-live="polite" aria-atomic="true">${params.loadingMessage}</div>
-     </div>`;
+        this.message = params.loading.overlayText;
+        if (this.attached) {
+            this.messageEl.textContent = this.message;
+        }
+    }
+
+    afterGuiAttached(): void {
+        this.attached = true;
+        this.messageEl.textContent = this.message;
     }
 }

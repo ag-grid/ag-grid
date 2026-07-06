@@ -294,6 +294,9 @@ export const AG_GRID_LOCALE_KR = {
     fileInputOverlayBrowse: '파일 찾아보기',
     fileInputProcessing: '${variable} 처리 중',
     fileInputProcessingFailed: '${variable} 처리 중 오류 발생',
+    loadingComplete: '데이터가 로드되었습니다.',
+    loadingCompleteRow: '${variable}행.',
+    loadingCompleteRows: '${variable}행.',
     enabled: '사용 중',
 
     // Menu

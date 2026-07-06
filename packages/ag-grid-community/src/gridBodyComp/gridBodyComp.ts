@@ -186,6 +186,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
             this.eTopExtraRows,
             this.eBottom
         );
+        overlays?.refreshGridBusy();
 
         this.createManagedBean(new GridHeaderComp(this.eTop, this.eGridViewport));
 

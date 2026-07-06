@@ -293,6 +293,9 @@ export const AG_GRID_LOCALE_CN = {
     fileInputOverlayBrowse: '浏览文件',
     fileInputProcessing: '正在处理 ${variable}',
     fileInputProcessingFailed: '处理 ${variable} 时出错',
+    loadingComplete: '数据已加载。',
+    loadingCompleteRow: '${variable}行。',
+    loadingCompleteRows: '${variable}行。',
     enabled: '启用',
 
     // Menu

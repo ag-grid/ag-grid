@@ -296,6 +296,9 @@ export const AG_GRID_LOCALE_SE = {
     fileInputOverlayBrowse: 'Bläddra bland filer',
     fileInputProcessing: 'Bearbetar ${variable}',
     fileInputProcessingFailed: 'Fel vid bearbetning av ${variable}',
+    loadingComplete: 'Data laddad.',
+    loadingCompleteRow: '${variable} rad.',
+    loadingCompleteRows: '${variable} rader.',
     enabled: 'Aktiverad',
 
     // Menu

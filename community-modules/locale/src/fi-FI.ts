@@ -297,6 +297,9 @@ export const AG_GRID_LOCALE_FI = {
     fileInputOverlayBrowse: 'Selaa tiedostoja',
     fileInputProcessing: 'Käsitellään ${variable}',
     fileInputProcessingFailed: 'Virhe käsiteltäessä ${variable}',
+    loadingComplete: 'Tiedot ladattu.',
+    loadingCompleteRow: '${variable} rivi.',
+    loadingCompleteRows: '${variable} riviä.',
     enabled: 'Käytössä',
 
     // Menu

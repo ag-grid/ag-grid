@@ -295,6 +295,9 @@ export const AG_GRID_LOCALE_HR = {
     fileInputOverlayBrowse: 'Pregledaj datoteke',
     fileInputProcessing: 'Obrada ${variable}',
     fileInputProcessingFailed: 'Pogreška pri obradi ${variable}',
+    loadingComplete: 'Podaci učitani.',
+    loadingCompleteRow: '${variable} redak.',
+    loadingCompleteRows: '${variable} redci.',
     enabled: 'Omogućeno',
 
     // Menu

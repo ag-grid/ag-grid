@@ -293,6 +293,9 @@ export const AG_GRID_LOCALE_TW = {
     fileInputOverlayBrowse: '瀏覽檔案',
     fileInputProcessing: '正在處理 ${variable}',
     fileInputProcessingFailed: '處理 ${variable} 時發生錯誤',
+    loadingComplete: '資料已載入。',
+    loadingCompleteRow: '${variable}列。',
+    loadingCompleteRows: '${variable}列。',
     enabled: '已啟用',
 
     // Menu
