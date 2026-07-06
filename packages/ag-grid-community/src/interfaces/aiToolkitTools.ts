@@ -8,7 +8,7 @@ export type AiToolName =
     | 'update_column_visibility'
     | 'update_column_sizing'
     | 'update_row_group'
-    | 'create_calculated_column';
+    | 'add_calculated_column';
 
 /**
  * Wire-format description of a single tool sent to an LLM. Matches the OpenAI/Anthropic
