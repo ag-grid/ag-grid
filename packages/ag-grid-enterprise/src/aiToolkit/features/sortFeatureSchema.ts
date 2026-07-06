@@ -17,19 +17,17 @@ export const buildSortFeatureSchema = (beans: BeanCollection) => {
 
     const sortableColumnIds = sortableColumns.map((col) => col.colId);
 
-    return s
-        .object(
-            {
-                sortModel: s.array(
-                    s.object({
-                        colId: s.enum(sortableColumnIds, 'Column ID that supports sorting'),
-                        sort: s.enum(['asc', 'desc'], 'Sort direction: ascending or descending'),
-                        type: s.enum(['default', 'absolute'], 'Sort type: default or absolute values'),
-                    }),
-                    'Array of sort configurations'
-                ),
-            },
-            'Sort configuration for the grid'
-        )
-        .nullable();
+    return s.object(
+        {
+            sortModel: s.array(
+                s.object({
+                    colId: s.enum(sortableColumnIds, 'Column ID that supports sorting'),
+                    sort: s.enum(['asc', 'desc'], 'Sort direction: ascending or descending'),
+                    type: s.enum(['default', 'absolute'], 'Sort type: default or absolute values'),
+                }),
+                'Array of sort configurations'
+            ),
+        },
+        'Sort configuration for the grid'
+    );
 };

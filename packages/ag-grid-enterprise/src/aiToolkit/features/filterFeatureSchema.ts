@@ -81,11 +81,9 @@ const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: Structur
         }
     }
 
-    return s
-        .object({
-            filterModel: s.object(filterSchemas),
-        })
-        .nullable();
+    return s.object({
+        filterModel: s.object(filterSchemas),
+    });
 };
 
 function buildColumnFilterSchema(

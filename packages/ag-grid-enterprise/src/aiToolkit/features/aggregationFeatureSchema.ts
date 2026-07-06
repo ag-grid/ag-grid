@@ -15,22 +15,20 @@ export const buildAggregationFeatureSchema = (beans: BeanCollection) => {
         return;
     }
 
-    return s
-        .object(
-            {
-                aggregationModel: s.array(
-                    s.union(
-                        aggregatableColumns.map((col) =>
-                            s.object({
-                                colId: s.literal(col.colId, 'Column identifier'),
-                                aggFunc: s.enum(beans.aggFuncSvc?.getFuncNames(col) || [], 'Aggregation function'),
-                            })
-                        )
-                    ),
-                    'Array of column aggregations'
+    return s.object(
+        {
+            aggregationModel: s.array(
+                s.union(
+                    aggregatableColumns.map((col) =>
+                        s.object({
+                            colId: s.literal(col.colId, 'Column identifier'),
+                            aggFunc: s.enum(beans.aggFuncSvc?.getFuncNames(col) || [], 'Aggregation function'),
+                        })
+                    )
                 ),
-            },
-            'Aggregation configuration for the grid'
-        )
-        .nullable();
+                'Array of column aggregations'
+            ),
+        },
+        'Aggregation configuration for the grid'
+    );
 };

@@ -332,6 +332,7 @@ export type {
     StructuredSchemaFeature,
     StructuredSchemaParams,
 } from './interfaces/structuredSchemaParams';
+export type { AiToolCall, AiToolkitParams, AiToolName, AiToolResult, AiToolSchema } from './interfaces/aiToolkitTools';
 
 // Find
 export type {

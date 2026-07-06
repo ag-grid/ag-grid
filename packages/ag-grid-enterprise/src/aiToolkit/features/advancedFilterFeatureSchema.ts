@@ -52,14 +52,12 @@ export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc }: Bean
         anyOf: [...columnFilterModels, { $ref: '#/$defs/joinAdvancedFilterModel' }],
     };
 
-    const schema = s
-        .object(
-            {
-                advancedFilterModel: s.ref('advancedFilterModel'),
-            },
-            'Advanced filter configuration for the grid'
-        )
-        .nullable();
+    const schema = s.object(
+        {
+            advancedFilterModel: s.ref('advancedFilterModel'),
+        },
+        'Advanced filter configuration for the grid'
+    );
 
     for (const key of Object.keys(defs)) {
         schema.define(key, defs[key]);

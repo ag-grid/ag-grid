@@ -39,6 +39,7 @@ import type {
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import type { AiToolCall, AiToolResult, AiToolSchema, AiToolkitParams } from '../interfaces/aiToolkitTools';
 import type {
     ISizeAllColumnsToContentParams,
     ISizeColumnsToContentParams,
@@ -2007,6 +2008,28 @@ export interface _AiToolkitGridApi {
      * @agModule `AiToolkitModule`
      */
     getStructuredSchema(params?: StructuredSchemaParams): any;
+
+    /**
+     * Returns the set of AI tools available for the current grid, each described in the
+     * `{ name, description, parameters }` function-calling shape. Supply these to an LLM as tools,
+     * then apply the resulting tool calls with `applyToolCall`.
+     * @agModule `AiToolkitModule`
+     */
+    getTools(params?: AiToolkitParams): AiToolSchema[];
+
+    /**
+     * Applies a single tool call (as returned by the LLM) to the grid, returning the outcome.
+     * A failed result's `error` is safe to feed back to the LLM for self-correction.
+     * @agModule `AiToolkitModule`
+     */
+    applyToolCall(name: string, args: unknown): AiToolResult;
+
+    /**
+     * Applies a batch of tool calls in order. Config tools (e.g. creating a calculated column) are
+     * applied before state tools so that later calls can reference newly-created columns.
+     * @agModule `AiToolkitModule`
+     */
+    applyToolCalls(calls: AiToolCall[]): AiToolResult[];
 }
 
 export interface GridApi<TData = any>

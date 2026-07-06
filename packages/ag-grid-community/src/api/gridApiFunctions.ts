@@ -466,5 +466,8 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
 
     ...mod<_AiToolkitGridApi>('AiToolkit', {
         getStructuredSchema: 0,
+        getTools: 0,
+        applyToolCall: 0,
+        applyToolCalls: 0,
     }),
 };
