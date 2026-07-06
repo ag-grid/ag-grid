@@ -82,7 +82,6 @@ function execute(beans: BeanCollection, args: unknown): AiToolResult {
 
 export const createCalculatedColumnTool: AiTool = {
     name: 'add_calculated_column',
-    kind: 'config',
     description: 'Add a new calculated column to the grid, derived from a formula over existing columns.',
     build,
     execute,

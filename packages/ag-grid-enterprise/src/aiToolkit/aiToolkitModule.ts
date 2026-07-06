@@ -4,7 +4,7 @@ import { ColumnApiModule, GridStateModule } from 'ag-grid-community';
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import { getStructuredSchema } from './structuredSchema';
-import { applyToolCall, applyToolCalls, getTools } from './toolRegistry';
+import { applyToolCall, getTools } from './toolRegistry';
 
 /**
  * @feature AI Toolkit
@@ -18,6 +18,5 @@ export const AiToolkitModule: _ModuleWithApi<_AiToolkitGridApi> = {
         getStructuredSchema,
         getTools,
         applyToolCall,
-        applyToolCalls,
     },
 };

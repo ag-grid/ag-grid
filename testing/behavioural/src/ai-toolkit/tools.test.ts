@@ -109,25 +109,4 @@ describe('AI toolkit tools', () => {
             expect(result.error).toContain('does_not_exist');
         });
     });
-
-    describe('applyToolCalls', () => {
-        test('applies a batch and returns a result per call in input order', () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: COLUMN_DEFS,
-                rowData: ROW_DATA,
-                defaultColDef: { sortable: true, enableRowGroup: true },
-            });
-
-            const results = api.applyToolCalls([
-                { name: 'update_sort', args: { sortModel: [{ colId: 'age', sort: 'asc', type: 'default' }] } },
-                { name: 'update_row_group', args: { groupColIds: ['country'] } },
-            ]);
-
-            expect(results.map((result) => result.ok)).toEqual([true, true]);
-
-            const state = api.getState();
-            expect(state.sort?.sortModel[0]).toMatchObject({ colId: 'age', sort: 'asc' });
-            expect(state.rowGroup?.groupColIds).toEqual(['country']);
-        });
-    });
 });

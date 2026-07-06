@@ -83,7 +83,7 @@ describe('AI toolkit add_calculated_column tool', () => {
         expect(missing.ok).toBe(false);
     });
 
-    test('config-before-state ordering lets a batch sort on a newly created column', async () => {
+    test('a newly created column can be referenced by a following tool call', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: COLUMN_DEFS,
             rowData: ROW_DATA,
@@ -91,22 +91,18 @@ describe('AI toolkit add_calculated_column tool', () => {
             defaultColDef: { sortable: true },
         });
 
-        // update_sort is listed first, but it references a column add_calculated_column makes;
-        // the config tool must run first for the sort to stick.
-        const results = api.applyToolCalls([
-            { name: 'update_sort', args: { sortModel: [{ colId: 'total', sort: 'desc', type: 'default' }] } },
-            {
-                name: 'add_calculated_column',
-                args: {
-                    colId: 'total',
-                    headerName: 'Total',
-                    calculatedExpression: '[gold] + [silver]',
-                    cellDataType: 'number',
-                },
-            },
-        ]);
+        expect(
+            api.applyToolCall('add_calculated_column', {
+                colId: 'total',
+                headerName: 'Total',
+                calculatedExpression: '[gold] + [silver]',
+                cellDataType: 'number',
+            }).ok
+        ).toBe(true);
+        expect(
+            api.applyToolCall('update_sort', { sortModel: [{ colId: 'total', sort: 'desc', type: 'default' }] }).ok
+        ).toBe(true);
 
-        expect(results.map((result) => result.ok)).toEqual([true, true]);
         await asyncSetTimeout(1);
 
         expect(api.getColumn('total')).toBeTruthy();

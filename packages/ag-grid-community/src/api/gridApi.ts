@@ -39,7 +39,7 @@ import type {
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
-import type { AiToolCall, AiToolResult, AiToolSchema, AiToolkitParams } from '../interfaces/aiToolkitTools';
+import type { AiToolResult, AiToolSchema, AiToolkitParams } from '../interfaces/aiToolkitTools';
 import type {
     ISizeAllColumnsToContentParams,
     ISizeColumnsToContentParams,
@@ -2023,13 +2023,6 @@ export interface _AiToolkitGridApi {
      * @agModule `AiToolkitModule`
      */
     applyToolCall(name: string, args: unknown): AiToolResult;
-
-    /**
-     * Applies a batch of tool calls in order. Config tools (e.g. creating a calculated column) are
-     * applied before state tools so that later calls can reference newly-created columns.
-     * @agModule `AiToolkitModule`
-     */
-    applyToolCalls(calls: AiToolCall[]): AiToolResult[];
 }
 
 export interface GridApi<TData = any>

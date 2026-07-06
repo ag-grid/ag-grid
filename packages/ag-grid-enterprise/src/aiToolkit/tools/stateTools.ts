@@ -23,7 +23,6 @@ function createStateTool(
 ): AiTool {
     return {
         name,
-        kind: 'state',
         description,
         build: (beans, params) => buildFeatureSchema(beans, params ? { columns: params.columns } : undefined)?.toJSON(),
         execute: (beans, args) => applyPartialState(beans, stateKey, args as object),

@@ -1,4 +1,4 @@
-import type { AiToolCall, AiToolResult, AiToolSchema, AiToolkitParams, BeanCollection } from 'ag-grid-community';
+import type { AiToolResult, AiToolSchema, AiToolkitParams, BeanCollection } from 'ag-grid-community';
 
 import { createCalculatedColumnTool } from './tools/createCalculatedColumnTool';
 import { stateTools } from './tools/stateTools';
@@ -32,23 +32,4 @@ export function applyToolCall(beans: BeanCollection, name: string, args: unknown
         return { ok: false, error: `Unknown tool: ${name}` };
     }
     return tool.execute(beans, args);
-}
-
-export function applyToolCalls(beans: BeanCollection, calls: AiToolCall[]): AiToolResult[] {
-    const results = new Array<AiToolResult>(calls.length);
-
-    // Config tools (e.g. creating a column) run first so state tools can reference new columns.
-    // Two ordered passes over the input preserve each call's index in the returned array.
-    const applyKind = (applyConfig: boolean) => {
-        for (let i = 0, len = calls.length; i < len; ++i) {
-            const isConfig = toolByName.get(calls[i].name)?.kind === 'config';
-            if (isConfig === applyConfig) {
-                results[i] = applyToolCall(beans, calls[i].name, calls[i].args);
-            }
-        }
-    };
-    applyKind(true);
-    applyKind(false);
-
-    return results;
 }

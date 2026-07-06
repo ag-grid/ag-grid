@@ -24,12 +24,6 @@ export interface AiToolSchema {
     parameters: object;
 }
 
-/** A single tool call parsed from an LLM response, ready to apply. */
-export interface AiToolCall {
-    name: string;
-    args: unknown;
-}
-
 /** Outcome of applying a tool call. `error` is safe to feed back to the LLM for self-correction. */
 export interface AiToolResult {
     ok: boolean;

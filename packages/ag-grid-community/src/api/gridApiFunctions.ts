@@ -468,6 +468,5 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getStructuredSchema: 0,
         getTools: 0,
         applyToolCall: 0,
-        applyToolCalls: 0,
     }),
 };
