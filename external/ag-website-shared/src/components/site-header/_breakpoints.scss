@@ -1,48 +1,16 @@
 @use 'design-system' as *;
-// @forward re-exports these tokens to consumers; @use makes them usable in this file
-// too (needed below, since $switcher-show references $nav-collapse directly).
-@forward 'site-header-tokens';
-@use 'site-header-tokens' as *;
+@forward 'site-header-tokens'; // re-export to consumers
+@use 'site-header-tokens' as *; // usable here too — $switcher-show below needs it
 
-// Every threshold that governs header layout/visibility, named by what it controls.
-// Aliases below point at shared, site-wide tokens other components also depend on —
-// don't redefine the number here, or they'll drift apart. Header-exclusive tokens
-// (nav-collapse, switcher popup, search-box cap) default from _site-header-tokens.scss
-// instead, which repos can override via loadPaths without forking this package — see
-// that file.
+// Aliases below point at shared tokens other components also use — don't redefine the
+// number here, or they'll drift apart. $nav-collapse, $docs-search-inline,
+// $switcher-popup-at and $search-box-cap-at are header-exclusive, so they default from
+// _site-header-tokens.scss instead, overridable per repo — see that file.
+//
+// $nav-collapse specifically needs to differ by product (nav item count varies)
+// without moving $breakpoint-site-header-small for unrelated consumers like
+// AnnouncementBanner — why it's owned there rather than aliased like these three.
 
-// --- Nav collapse (hamburger <-> full nav) ---
-// Consumed by: SiteHeader.module.scss (.mainNavLarge, .mobileMenuButton, .mainNav,
-// .navItemList, .navItem, .navLink, .buttonItem, .toggleDarkText)
-// Owned in _site-header-tokens.scss, not aliased — needs to differ by product (nav
-// item count varies) without moving $breakpoint-site-header-small for unrelated
-// consumers like AnnouncementBanner. Default: 960px.
-
-// --- Docs button + search bar stacking ---
-// Consumed by: SiteHeader.module.scss (.docsNavBtnSearchContainer, .mobileNavButton)
-$docs-search-stack: $breakpoint-site-header-extra-small;
-
-// --- Header goes fully inline (single row) ---
-// Consumed by: SiteHeader.module.scss (.headerInner, .docsNavBtnSearchContainer,
-// .mobileNavButton)
-// Owned in _site-header-tokens.scss, decoupled from $sticky-at below — the two don't
-// need to move together. Default: 1180px.
-
-// --- Header becomes sticky ---
-// Consumed by: SiteHeader.module.scss (.header)
-// Stays @media, not @container — a container can't query its own size.
-$sticky-at: $breakpoint-docs-nav-medium;
-
-// --- Product/site switcher visibility ---
-// Consumed by: ProductDropdown.module.scss (.customMenu)
-// Tied to $nav-collapse: below it there's no room for the switcher next to the logo
-// either; above it there's always room, whether .headerInner is wrapped flex or grid.
-$switcher-show: $nav-collapse;
-
-// --- Switcher popup width/position ---
-// Consumed by: ProductDropdown.module.scss (.customMenu, .customContent)
-// Owned in _site-header-tokens.scss. Default: 620px.
-
-// --- Search trigger box max-width ---
-// Consumed by: Search.module.scss (.headerSearchBox)
-// Owned in _site-header-tokens.scss. Default: 1275px.
+$docs-search-stack: $breakpoint-site-header-extra-small; // docs button + search wrap
+$sticky-at: $breakpoint-docs-nav-medium; // @media, not @container — can't query own size
+$switcher-show: $nav-collapse; // switcher needs room exactly when the nav does
