@@ -56,6 +56,11 @@ const getEditErrorsForPosition = (
     return errors?.length ? errors.join(translate('tooltipValidationErrorSeparator', '. ')) : undefined;
 };
 
+const getCellValueOverflowTarget = (ctrl: CellCtrl): HTMLElement | undefined => {
+    const eCell = ctrl.eGui;
+    return eCell.children.length === 0 ? eCell : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
+};
+
 const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => boolean) | undefined => {
     const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(beans.gos);
 
@@ -68,7 +73,12 @@ const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => b
         // create rule for our internal group cell renderer
         const isGroupCellRenderer = !!colDef.showRowGroup || colDef.cellRenderer === 'agGroupCellRenderer';
         if (!isGroupCellRenderer) {
-            return undefined;
+            // A declared cellRendererSelector can return undefined and render plain text; only skip the
+            // overflow gate when a renderer was actually produced, so plain-text cells are still gated.
+            if (ctrl.hasActiveCellRenderer()) {
+                return undefined;
+            }
+            return _isElementOverflowingCallback(() => getCellValueOverflowTarget(ctrl));
         }
 
         return _isElementOverflowingCallback(() => {
@@ -81,10 +91,7 @@ const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => b
         });
     }
 
-    return _isElementOverflowingCallback(() => {
-        const eCell = ctrl.eGui;
-        return eCell.children.length === 0 ? eCell : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
-    });
+    return _isElementOverflowingCallback(() => getCellValueOverflowTarget(ctrl));
 };
 
 const buildCellTooltipDisplayFunctions = (
@@ -94,12 +101,14 @@ const buildCellTooltipDisplayFunctions = (
 ): CellTooltipDisplayFunctions => {
     const { editSvc } = beans;
     const { column } = ctrl;
-    const isCellTruncated = getCellTruncationCheck(beans, ctrl);
 
     const shouldDisplayCellTooltip = () => {
         if (editSvc?.isEditing(ctrl, { withOpenEditor: true })) {
             return false;
         }
+        // resolved lazily: the truncation gate depends on whether the last render produced a renderer,
+        // which is only known once the cell has rendered (after this feature is built).
+        const isCellTruncated = getCellTruncationCheck(beans, ctrl);
         if (!isCellTruncated) {
             return true;
         }

@@ -9,10 +9,16 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-import type { GridOptions, ICellRendererComp, ICellRendererParams, Module } from 'ag-grid-community';
+import type {
+    CellRendererSelectorResult,
+    GridOptions,
+    ICellRendererComp,
+    ICellRendererParams,
+    Module,
+} from 'ag-grid-community';
 import { BatchEditModule, FormulaModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, mockGridLayout } from '../test-utils';
 
 describe('Tooltips', () => {
     const gridMgr = new TestGridsManager({
@@ -634,5 +640,160 @@ describe('Tooltips', () => {
 
         expect(hasTooltipText('Cell renderer tooltip')).toBe(false);
         expect(getTooltips()[0]).toHaveTextContent('ColDef tooltip');
+    });
+
+    describe('whenTruncated with cellRendererSelector', () => {
+        beforeAll(() => {
+            mockGridLayout.useRealOffsetDimensions = true;
+        });
+        afterAll(() => {
+            mockGridLayout.useRealOffsetDimensions = false;
+        });
+
+        test('AG-17691 does not show whenTruncated tooltip for a non-truncated cell whose selector returns undefined', async () => {
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    {
+                        field: 'A',
+                        width: 200,
+                        tooltipValueGetter: () => 'Should not show',
+                        cellRendererSelector: () => undefined,
+                    },
+                ],
+                rowData: [{ A: 'AGE' }],
+                tooltipShowMode: 'whenTruncated',
+                tooltipShowDelay: 200,
+            };
+
+            const api = await gridMgr.createGridAndWait('myGrid-tooltip-whenTruncated-notTruncated', gridOptions);
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+
+            await userEvent.hover(cell);
+            await asyncSetTimeout(250);
+            expect(getTooltips()).toHaveLength(0);
+        });
+
+        test('AG-17691 keeps showing whenTruncated tooltip for a column with a real cell renderer', async () => {
+            class PlainRenderer implements ICellRendererComp {
+                private eGui!: HTMLElement;
+                public init(params: ICellRendererParams): void {
+                    this.eGui = document.createElement('span');
+                    this.eGui.textContent = String(params.value);
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public refresh(): boolean {
+                    return false;
+                }
+            }
+
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    {
+                        field: 'A',
+                        width: 200,
+                        tooltipValueGetter: () => 'Renderer tooltip',
+                        cellRenderer: PlainRenderer,
+                    },
+                ],
+                rowData: [{ A: 'AGE' }],
+                tooltipShowMode: 'whenTruncated',
+                tooltipShowDelay: 200,
+            };
+
+            const api = await gridMgr.createGridAndWait('myGrid-tooltip-whenTruncated-realRenderer', gridOptions);
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+
+            await userEvent.hover(cell);
+            await asyncSetTimeout(250);
+            await waitForTooltips(1);
+            expect(getTooltips()[0]).toHaveTextContent('Renderer tooltip');
+        });
+
+        test('AG-17691 keeps showing whenTruncated tooltip for a renderer that registers one via setTooltip', async () => {
+            class TooltipRenderer implements ICellRendererComp {
+                private eGui!: HTMLElement;
+                public init(params: ICellRendererParams): void {
+                    this.eGui = document.createElement('span');
+                    this.eGui.textContent = String(params.value);
+                    params.setTooltip('Renderer set tooltip');
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public refresh(): boolean {
+                    return false;
+                }
+            }
+
+            const gridOptions: GridOptions = {
+                columnDefs: [{ field: 'A', width: 200, cellRenderer: TooltipRenderer }],
+                rowData: [{ A: 'AGE' }],
+                tooltipShowMode: 'whenTruncated',
+                tooltipShowDelay: 200,
+            };
+
+            const api = await gridMgr.createGridAndWait('myGrid-tooltip-whenTruncated-setTooltip', gridOptions);
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+
+            await userEvent.hover(cell);
+            await asyncSetTimeout(250);
+            await waitForTooltips(1);
+            expect(getTooltips()[0]).toHaveTextContent('Renderer set tooltip');
+        });
+
+        test('AG-17691 gates per-cell when a selector returns a renderer for one row and undefined for another', async () => {
+            class PlainRenderer implements ICellRendererComp {
+                private eGui!: HTMLElement;
+                public init(params: ICellRendererParams): void {
+                    this.eGui = document.createElement('span');
+                    this.eGui.textContent = String(params.value);
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public refresh(): boolean {
+                    return false;
+                }
+            }
+
+            const gridOptions: GridOptions = {
+                columnDefs: [
+                    {
+                        field: 'A',
+                        width: 200,
+                        tooltipValueGetter: () => 'Selector tooltip',
+                        cellRendererSelector: (params): CellRendererSelectorResult | undefined =>
+                            params.data.A === 'AGE' ? { component: PlainRenderer } : undefined,
+                    },
+                ],
+                rowData: [{ A: 'AGE' }, { A: 'BEE' }],
+                tooltipShowMode: 'whenTruncated',
+                tooltipShowDelay: 200,
+            };
+
+            const api = await gridMgr.createGridAndWait('myGrid-tooltip-whenTruncated-mixedSelector', gridOptions);
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            // Row with an active renderer: always shows regardless of truncation.
+            const rendererCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+            await userEvent.hover(rendererCell);
+            await asyncSetTimeout(250);
+            await waitForTooltips(1);
+            expect(getTooltips()[0]).toHaveTextContent('Selector tooltip');
+
+            await userEvent.unhover(rendererCell);
+            await waitForTooltips(0);
+
+            // Row where the selector returned undefined renders plain text: gated on overflow, and not truncated.
+            const plainCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('1', 'A')));
+            await userEvent.hover(plainCell);
+            await asyncSetTimeout(250);
+            expect(getTooltips()).toHaveLength(0);
+        });
     });
 });

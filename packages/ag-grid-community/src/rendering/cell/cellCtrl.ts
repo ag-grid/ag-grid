@@ -131,6 +131,7 @@ export class CellCtrl extends BeanStub {
     private notesFeature: INotesFeature | undefined = undefined;
     private calculatedColumnCssApplied = false;
     private calculatedColumnHighlightedCssApplied = false;
+    private hasActiveRenderer = false;
 
     public cellPosition: CellPosition;
 
@@ -352,6 +353,12 @@ export class CellCtrl extends BeanStub {
         const colDef = this.column.colDef;
         return colDef.cellRenderer != null || colDef.cellRendererSelector != null;
     }
+
+    // Unlike config-based isCellRenderer(), this reflects whether the last render actually produced a
+    // renderer: a cellRendererSelector returning undefined renders plain text yet isCellRenderer() is true.
+    public hasActiveCellRenderer(): boolean {
+        return this.hasActiveRenderer;
+    }
     public getValueToDisplay(): any {
         return this.valueFormatted ?? this.value;
     }
@@ -432,6 +439,7 @@ export class CellCtrl extends BeanStub {
             }
         }
 
+        this.hasActiveRenderer = compDetails != null;
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
 
         this.customRowDragComp?.refreshVisibility();
