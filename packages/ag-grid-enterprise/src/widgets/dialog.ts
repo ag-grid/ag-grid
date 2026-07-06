@@ -23,7 +23,7 @@ interface DialogOptions extends AgDialogOptions<
 export const DIALOG_CALLBACKS: AgDialogCallbacks<BeanCollection, Dialog> = {
     stopPropagationCallbacks: _STOP_PROPAGATION_CALLBACKS,
     focusNextContainer: (beans: BeanCollection, backwards: boolean) => {
-        return _focusNextGridCoreContainer(beans, backwards);
+        return _focusNextGridCoreContainer(beans, backwards, true);
     },
 
     configureFocusableContainer: (beans: BeanCollection, dialog: Dialog) => {
