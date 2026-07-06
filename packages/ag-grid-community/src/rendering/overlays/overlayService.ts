@@ -98,7 +98,6 @@ const CustomOverlayDef: Readonly<OverlayDef> = {
 // driven by ErrorOverlayService via setDevErrorOverlay, never by the user-facing activeOverlay option.
 const ErrorOverlayDef: OverlayDef = {
     id: 'agErrorOverlay',
-    overlayType: 'error',
     comp: overlayCompType('agErrorOverlay'),
     wrapperCls: 'ag-overlay-error-wrapper',
     exclusive: false,
@@ -230,7 +229,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     public showLoadingOverlay(): void {
         this.showInitialOverlay = false;
         const gos = this.gos;
-        if (!this.eWrapper || gos.get('activeOverlay')) {
+        if (!this.eWrapper || gos.get('activeOverlay') || this.devErrorOverlayActive) {
             return;
         }
         if (this.isDisabled(LoadingOverlayDef)) {
@@ -246,7 +245,13 @@ export class OverlayService extends BeanStub implements NamedBean {
     public showNoRowsOverlay(): void {
         this.showInitialOverlay = false;
         const gos = this.gos;
-        if (!this.eWrapper || gos.get('activeOverlay') || gos.get('loading') || this.isDisabled(NoRowsOverlayDef)) {
+        if (
+            !this.eWrapper ||
+            gos.get('activeOverlay') ||
+            gos.get('loading') ||
+            this.isDisabled(NoRowsOverlayDef) ||
+            this.devErrorOverlayActive
+        ) {
             return;
         }
         this.userForcedNoRows = true;
@@ -259,6 +264,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             gos.get('activeOverlay') ||
             gos.get('loading') ||
             this.isDisabled(ExportingOverlayDef) ||
+            this.devErrorOverlayActive ||
             (this.userForcedNoRows && this.currentDef === NoRowsOverlayDef)
         ) {
             heavyOperation();

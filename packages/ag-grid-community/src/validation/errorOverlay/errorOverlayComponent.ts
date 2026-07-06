@@ -1,7 +1,7 @@
 import { RefPlaceholder } from 'ag-stack';
 
 import { OverlayComponent } from '../../rendering/overlays/overlayComponent';
-import type { IErrorOverlayParams, IOverlayComp } from '../../rendering/overlays/overlayComponent';
+import type { IOverlayComp } from '../../rendering/overlays/overlayComponent';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import { _createIconNoSpan } from '../../utils/icon';
@@ -48,7 +48,7 @@ const ErrorOverlayElement: ElementParams = {
  * when they change. Styling comes from `errorOverlay.css` (Theming API) and the mirrored rules in the
  * Legacy Themes' `_common-structural.scss`.
  */
-export class ErrorOverlayComponent extends OverlayComponent<any, any, IErrorOverlayParams> implements IOverlayComp {
+export class ErrorOverlayComponent extends OverlayComponent implements IOverlayComp {
     private readonly eTitle: HTMLElement = RefPlaceholder;
     private readonly eCopy: HTMLButtonElement = RefPlaceholder;
     private readonly eDismiss: HTMLButtonElement = RefPlaceholder;
