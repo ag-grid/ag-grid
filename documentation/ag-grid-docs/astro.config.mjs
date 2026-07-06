@@ -244,6 +244,7 @@ export default defineConfig({
                         // default (see src/styles/header-tokens/README.md).
                         './src/styles/header-tokens',
                         '../../external/ag-website-shared/src',
+                        '../../external/ag-website-shared/src/design-system',
                     ],
                 },
             },
