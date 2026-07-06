@@ -517,8 +517,8 @@
         },
         "defaultPdfExportParams": {
             "more": {
-                "name": "Customising PDF Export",
-                "url": "./pdf-export/#pdf-styling"
+                "name": "PDF Export",
+                "url": "./pdf-export"
             }
         },
         "suppressPdfExport": {
