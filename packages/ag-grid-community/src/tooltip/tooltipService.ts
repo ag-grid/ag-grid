@@ -5,6 +5,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -96,7 +97,7 @@ const buildCellTooltipDisplayFunctions = (
     const isCellTruncated = getCellTruncationCheck(beans, ctrl);
 
     const shouldDisplayCellTooltip = () => {
-        if (editSvc?.isEditing(ctrl)) {
+        if (editSvc?.isEditing(ctrl, { withOpenEditor: true })) {
             return false;
         }
         if (!isCellTruncated) {
@@ -113,6 +114,28 @@ const buildCellTooltipDisplayFunctions = (
         shouldDisplayColumnTooltip: shouldDisplayCellTooltip,
         shouldDisplayCustomTooltip: shouldDisplayTooltip ?? shouldDisplayCellTooltip,
     };
+};
+
+// tooltipField is a data-field lookup: layer a pending batch edit (keyed by the field's column) on
+// top, but never fall through to the column's value resolution, which would change field semantics.
+const resolveTooltipFieldValue = (
+    beans: BeanCollection,
+    column: AgColumn,
+    rowNode: RowNode,
+    data: any,
+    tooltipField: string
+): any => {
+    const tooltipColumn = beans.colModel.getCol(tooltipField);
+    if (tooltipColumn) {
+        const pending = beans.editSvc?.getPendingEditValue(rowNode, tooltipColumn, 'batch');
+        if (pending !== undefined) {
+            return pending;
+        }
+    }
+    if (column.tooltipFieldContainsDots) {
+        return _getValueUsingDotField(data, tooltipField);
+    }
+    return data[tooltipField];
 };
 
 const resolveCellTooltip = ({
@@ -169,9 +192,8 @@ const resolveCellTooltip = ({
 
     // 4) column tooltip field/valueGetter is the final fallback.
     if (colDef.tooltipField && _exists(data)) {
-        const tooltipField = colDef.tooltipField;
         return {
-            value: column.tooltipFieldContainsDots ? _getValueUsingDotField(data, tooltipField) : data[tooltipField],
+            value: resolveTooltipFieldValue(beans, column, rowNode, data, colDef.tooltipField),
             location: 'cell',
             shouldDisplay: shouldDisplayColumnTooltip,
         };
