@@ -93,7 +93,6 @@ export class FileInputOverlayComponent
 
     private updateProcessingState(fileName: string): void {
         const { beans } = this;
-        const localeTextFunc = this.getLocaleTextFunc();
 
         const eIcon = _createIconNoSpan('overlayLoading', beans, null);
         if (eIcon) {
@@ -102,7 +101,7 @@ export class FileInputOverlayComponent
             this.eProcessingState.appendChild(eIcon);
         }
 
-        const text = localeTextFunc('fileInputProcessing', `Processing ${fileName}`, [fileName]);
+        const text = this.getProcessingText(fileName);
         const eText = _createElement({
             tag: 'span',
             cls: 'ag-file-input-text',
@@ -120,8 +119,7 @@ export class FileInputOverlayComponent
 
     private queueProcessingStatusUpdate(fileName: string, token: number): void {
         this.clearProcessingStatusTimeout();
-        const localeTextFunc = this.getLocaleTextFunc();
-        const text = localeTextFunc('fileInputProcessing', `Processing ${fileName}`, [fileName]);
+        const text = this.getProcessingText(fileName);
         this.processingStatusTimeout = setTimeout(() => {
             this.processingStatusTimeout = null;
             if (this.isAlive() && this.state === 'processing' && token === this.processingToken) {
@@ -138,6 +136,12 @@ export class FileInputOverlayComponent
             clearTimeout(this.processingStatusTimeout);
             this.processingStatusTimeout = null;
         }
+    }
+
+    private getProcessingText(fileName: string): string {
+        const localeTextFunc = this.getLocaleTextFunc();
+        const text = localeTextFunc('fileInputProcessing', 'Processing ${variable}', [fileName]);
+        return text.replace('${variable}', fileName);
     }
 
     private showError(message: string): void {
