@@ -21,7 +21,7 @@ test.agExample(import.meta, () => {
         await expect(cell).toHaveClass(/cell-green/);
 
         await cell.dblclick();
-        const input = page.locator('.ag-cell-edit-input, input.ag-input-field-input').first();
+        const input = page.locator('.ag-cell-inline-editing input.ag-input-field-input').first();
         await expect(input).toBeVisible();
         await input.fill('Red now');
         await input.press('Enter');

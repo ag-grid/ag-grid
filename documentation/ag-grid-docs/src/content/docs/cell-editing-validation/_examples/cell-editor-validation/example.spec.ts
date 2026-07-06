@@ -1,6 +1,6 @@
 import { expect, test } from '@utils/grid/test-utils';
 
-const editInput = (page: any) => page.locator('.ag-cell-edit-input, input.ag-input-field-input').first();
+const editInput = (page: any) => page.locator('.ag-cell-inline-editing input.ag-input-field-input').first();
 
 test.agExample(import.meta, () => {
     // Row 0 of olympic-winners.json: Michael Phelps, age 23, date 24/08/2008.

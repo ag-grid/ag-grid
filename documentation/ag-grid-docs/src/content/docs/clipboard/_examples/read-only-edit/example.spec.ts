@@ -13,7 +13,7 @@ test.agExample(import.meta, () => {
         // In readOnlyEdit mode the grid fires cellEditRequest; the app updates rowData,
         // so the committed value is reflected back through the immutable store.
         await cell.dblclick();
-        const input = page.locator('.ag-cell-edit-input, input.ag-input-field-input').first();
+        const input = page.locator('.ag-cell-inline-editing input.ag-input-field-input').first();
         await expect(input).toBeVisible();
         await input.fill('Jane Doe');
         await input.press('Enter');

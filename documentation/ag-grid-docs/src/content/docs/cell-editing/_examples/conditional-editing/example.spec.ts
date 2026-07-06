@@ -1,6 +1,6 @@
 import { expect, test } from '@utils/grid/test-utils';
 
-const editInput = (page: any) => page.locator('.ag-cell-edit-input, input.ag-input-field-input').first();
+const editInput = (page: any) => page.locator('.ag-cell-inline-editing input.ag-input-field-input').first();
 
 test.agExample(import.meta, () => {
     // Row 0: Michael Phelps 2008, Row 1: Michael Phelps 2004, Row 2: Michael Phelps 2012.
