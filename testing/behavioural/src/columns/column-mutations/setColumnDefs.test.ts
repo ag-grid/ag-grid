@@ -1627,7 +1627,7 @@ describe('Column Mutations', () => {
 
                 expect(consoleWarnSpy).toHaveBeenCalledWith(
                     expect.stringContaining('warning #273'),
-                    expect.stringContaining("Provided column id 'g' was already in use"),
+                    expect.stringContaining('Provided column id `g` was already in use'),
                     expect.any(String)
                 );
             } finally {

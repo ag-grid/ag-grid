@@ -43,7 +43,10 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
         if (eChevronIcon) {
             this.eChevron.appendChild(eChevronIcon);
         }
-        this.beans.gos.assertModuleRegistered(['ContextMenu', 'ColumnMenu'], `AG Grid toolbar item: agMenuToolbarItem`);
+        this.beans.gos.assertModuleRegistered(
+            ['ContextMenu', 'ColumnMenu'],
+            `AG Grid toolbar item: \`agMenuToolbarItem\``
+        );
         this.applyParams(params as MenuItemParams);
         this.addManagedElementListeners(this.getGui(), {
             click: () => this.showMenu(),
