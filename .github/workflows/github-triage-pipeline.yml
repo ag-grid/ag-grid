@@ -45,6 +45,11 @@ on:
                 description: 'AITGH key (resume/execute)'
                 type: string
                 required: false
+            channel:
+                description: '@ag-grid/dev-prompts dist-tag'
+                type: choice
+                default: latest
+                options: [latest, canary]
 
 permissions:
     contents: read
@@ -58,11 +63,11 @@ concurrency:
     cancel-in-progress: false
 
 env:
-    # Pinned to canary during rollout/dogfood: the github-triage-pipeline action
-    # lands on the canary dist-tag first and reaches `latest` only on promotion.
-    # Per-workflow — the /fr pipeline (jira-agent-pipeline.yml) stays on latest.
-    # Flip to `latest` once the action has promoted + soaked.
-    DEV_PROMPTS_CHANNEL: canary
+    # Defaults to `latest` (inputs is empty on issues / repository_dispatch).
+    # During rollout/dogfood, test unpromoted action changes by manually
+    # dispatching with channel=canary — the github-triage-pipeline action lands
+    # on the canary dist-tag first and reaches `latest` only on promotion.
+    DEV_PROMPTS_CHANNEL: ${{ inputs.channel || 'latest' }}
 
 jobs:
     # -------------------------------------------------- preflight
