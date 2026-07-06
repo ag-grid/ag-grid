@@ -11,10 +11,12 @@ export default function cellRenderer(props: CustomCellRendererProps) {
     };
     return (
         <span>
-            <button style={{ height: '30px' }} onClick={handleClick}>
+            <button id="theButton" style={{ height: '30px' }} onClick={handleClick}>
                 ✎
             </button>
-            <span style={{ paddingLeft: '4px' }}>{props.value}</span>
+            <span id="theValue" style={{ paddingLeft: '4px' }}>
+                {props.value}
+            </span>
         </span>
     );
 }
