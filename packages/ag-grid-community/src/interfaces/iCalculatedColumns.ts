@@ -70,4 +70,6 @@ export interface ICalculatedColumnsService extends Bean {
     refreshDynamicColumns(source: ColumnEventType): void;
     isEnabled(): boolean;
     isHighlightedColumn(column: AgColumn | null): boolean;
+    /** Cell data types a calculated column may use (configured `dataTypes`, validated, or the defaults). */
+    getAllowedDataTypes(): string[];
 }

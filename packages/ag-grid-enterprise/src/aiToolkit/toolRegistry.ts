@@ -1,9 +1,10 @@
 import type { AiToolCall, AiToolResult, AiToolSchema, AiToolkitParams, BeanCollection } from 'ag-grid-community';
 
+import { createCalculatedColumnTool } from './tools/createCalculatedColumnTool';
 import { stateTools } from './tools/stateTools';
 import type { AiTool } from './tools/toolTypes';
 
-const TOOLS: AiTool[] = [...stateTools];
+const TOOLS: AiTool[] = [...stateTools, createCalculatedColumnTool];
 
 const toolByName: Map<string, AiTool> = new Map(TOOLS.map((tool) => [tool.name, tool]));
 

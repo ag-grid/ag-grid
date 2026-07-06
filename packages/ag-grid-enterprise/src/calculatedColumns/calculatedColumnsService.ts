@@ -796,11 +796,15 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         };
     }
 
-    private getDataTypeOptions(currentDataType?: string): CalculatedColumnDataTypeOption[] {
+    public getAllowedDataTypes(): string[] {
         const configuredDataTypes = this.getOptions()?.dataTypes;
-        const dataTypes = configuredDataTypes
+        return configuredDataTypes
             ? this.getValidConfiguredDataTypes(configuredDataTypes)
             : [...DEFAULT_CALCULATED_COLUMN_DATA_TYPES];
+    }
+
+    private getDataTypeOptions(currentDataType?: string): CalculatedColumnDataTypeOption[] {
+        const dataTypes = this.getAllowedDataTypes();
 
         if (currentDataType != null && dataTypes.indexOf(currentDataType) < 0) {
             dataTypes.push(currentDataType);
