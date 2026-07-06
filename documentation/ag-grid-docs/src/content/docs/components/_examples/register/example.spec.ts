@@ -1,19 +1,27 @@
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Both registration styles render the same custom cell', async ({ agIdFor, page }) => {
+    test.eachFramework('Both registration styles render the same custom cell', async ({ agFramework, agIdFor, page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         // First row of olympic-winners.json is Michael Phelps / United States.
-        // One column registers the renderer by name ('medalRenderer'), the other
-        // by direct reference (MedalRenderer). Both use the same MedalRenderer, so
-        // both cells show the country value plus the "Push For Total" button.
+        // The renderer is registered by name ('medalRenderer'), so the first
+        // 'country' column shows the country value plus the "Push For Total" button.
         const byName = agIdFor.cell('0', 'country');
-        const byReference = agIdFor.cell('0', 'country_1');
 
         await expect(byName).toContainText('United States', { useInnerText: true });
         await expect(byName.locator('button')).toContainText('Push For Total');
+
+        // Direct reference registration (passing the component itself to
+        // cellRenderer) is only a documented pattern for JS/React/Angular. Vue
+        // registers components by name only, so its example omits the second
+        // column and there is no 'country_1' to assert against.
+        if (agFramework === 'vue3') {
+            return;
+        }
+
+        const byReference = agIdFor.cell('0', 'country_1');
 
         await expect(byReference).toContainText('United States', { useInnerText: true });
         await expect(byReference.locator('button')).toContainText('Push For Total');

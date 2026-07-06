@@ -21,6 +21,7 @@ export default {
             </div>
             <div
                 ref="filterWrapper"
+                class="filter-wrapper"
                 :style="{ 'display': expanded ? 'block' : 'none' }"
                 @keydown="onFilterWrapperKeyDown($event)"
             ></div>

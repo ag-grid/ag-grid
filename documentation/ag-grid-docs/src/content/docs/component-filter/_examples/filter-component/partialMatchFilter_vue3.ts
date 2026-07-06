@@ -3,7 +3,7 @@ export default {
       <div class="partial-match-filter">
         <div>Partial Match Filter</div>
         <div>
-            <input type="text" ref="eFilterText" v-model="filterText" v-on:keyup="updateFilter($event)" />
+            <input type="text" ref="eFilterText" v-model="filterText" v-on:input="updateFilter($event)" />
         </div>
       </div>
     `,
