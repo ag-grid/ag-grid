@@ -12,6 +12,11 @@
 #   ./docs-e2e.sh --headed                          # Run in headed mode
 #   ./docs-e2e.sh --ui                              # Open Playwright UI mode
 #   ./docs-e2e.sh --debug                           # Debug mode
+#   ./docs-e2e.sh --last-failed                     # Re-run only the tests that failed last time
+#
+# Iterate-until-green loop (re-run only failures each pass):
+#   ./docs-e2e.sh                                   # initial full run records failures
+#   ./docs-e2e.sh --last-failed                     # repeat after each fix until it passes
 
 set -euo pipefail
 
@@ -37,6 +42,7 @@ Playwright options (forwarded as-is):
   --headed                Run in headed mode
   --ui                    Open Playwright UI mode
   --debug                 Debug mode
+  --last-failed           Re-run only the tests that failed in the previous run
 
 Examples:
   ./docs-e2e.sh
@@ -47,6 +53,11 @@ Examples:
   ./docs-e2e.sh --url https://localhost:4610
   ./docs-e2e.sh --headed
   ./docs-e2e.sh --ui
+
+Iterate-until-green loop (re-run only failures each pass):
+  ./docs-e2e.sh                 # initial run records failures to .last-run.json
+  # ...fix a failing test...
+  ./docs-e2e.sh --last-failed   # re-runs only the failures; repeat until it passes
 EOF
 }
 
