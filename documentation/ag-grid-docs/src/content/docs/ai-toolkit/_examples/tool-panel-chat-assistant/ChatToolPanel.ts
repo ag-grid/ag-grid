@@ -1,7 +1,6 @@
 import type { GridApi, IToolPanel, IToolPanelParams } from 'ag-grid-community';
 
 import { callChatGPT } from './chatgptApi';
-import type { ChatMessage } from './types';
 
 export interface ChatMessage {
     role: 'system' | 'user' | 'assistant';
@@ -108,34 +107,18 @@ export class ChatToolPanel implements IToolPanel {
         const loadingId = this.showLoadingMessage();
 
         try {
-            const response = await callChatGPT(userMessage, this.gridApi, conversationHistory);
+            // callChatGPT runs the tool-calling loop, applying each change to the grid via
+            // gridApi.applyToolCall, and returns the assistant's plain-text summary.
+            const explanation = await callChatGPT(userMessage, this.gridApi, conversationHistory);
 
-            // Log the LLM response
-            console.log('Explanation:', response.explanation);
-            if (response.gridState && Object.keys(response.gridState).length > 0) {
-                console.log('New Grid State: ', response.gridState);
-            }
-            if (response.propertiesToIgnore?.length > 0) {
-                console.log('Properties Ignored:', response.propertiesToIgnore);
-            }
-
-            // Remove loading indicator
             this.removeLoadingMessage(loadingId);
 
-            // Add both messages to history after successful response
             conversationHistory.push(
                 { role: 'user', content: userMessage },
-                { role: 'assistant', content: response.explanation }
+                { role: 'assistant', content: explanation }
             );
 
-            // Apply grid state changes if any (this will destroy and recreate the tool panel)
-            // Messages will be automatically added when the tool panel reloads
-            if (response.gridState && Object.keys(response.gridState).length > 0) {
-                this.gridApi.setState(response.gridState, response.propertiesToIgnore);
-            } else {
-                // If no state change, manually render the response
-                this.renderMessage('assistant', response.explanation);
-            }
+            this.renderMessage('assistant', explanation);
         } catch (error) {
             this.removeLoadingMessage(loadingId);
             const errorMessage = `Error: ${error instanceof Error ? error.message : String(error)}`;

@@ -1,139 +1,91 @@
-import type { GridApi } from 'ag-grid-community';
+import type { AiToolSchema, GridApi } from 'ag-grid-community';
 
 export const BASE_URL = '{{EXAMPLE_ENV:AI_API_URL}}';
 export const AI_API_TOKEN = '{{EXAMPLE_ENV:AI_API_TOKEN}}';
 
-const ajv = new ajv7({
-    validateSchema: true, // Validate schemas against meta-schema
-    strict: true,
-});
+const CHATGPT_MODEL = 'gpt-5-mini';
+const MAX_ITERATIONS = 6;
 
-export async function callChatGPT(userRequest: string, currentState: any, gridApi: GridApi): Promise<any> {
-    const { $defs, ...structuredSchema } = gridApi.getStructuredSchema({
-        columns: {
-            sport: {
-                includeSetValues: true,
-            },
-            country: {
-                includeSetValues: true,
-            },
-        },
-    });
+const SYSTEM_PROMPT = `
+You are an assistant for a table displaying Olympic medal results. Help the user by calling the
+provided tools to change the grid — sorting, filtering, grouping, aggregating, hiding columns, or
+adding a calculated column. Only call the tools needed for the request.
 
-    const { aggregation, rowGroup, columnSizing, columnVisibility, sort, filter, pivot } = currentState;
-    const state = { aggregation, rowGroup, columnSizing, columnVisibility, sort, filter, pivot };
+If a request needs a new calculated column that a later change references (e.g. "add a total medals
+column and sort by it"), call add_calculated_column first, then the tool that uses it.
 
-    const schema = {
-        type: 'object',
-        $defs,
-        properties: {
-            gridState: structuredSchema,
-            propertiesToIgnore: {
-                type: 'array',
-                items: {
-                    type: 'string',
-                    enum: ['aggregation', 'filter', 'sort', 'pivot', 'columnVisibility', 'columnSizing', 'rowGroup'],
-                },
-                description: 'List of grid state properties to ignore when applying the new state',
-            },
-            explanation: {
-                type: 'string',
-                description: 'Human-readable explanation of the changes made to the grid state',
-            },
-        },
-        required: ['gridState', 'explanation', 'propertiesToIgnore'],
-        additionalProperties: false,
-    };
+When you have finished, reply with a short plain-text summary of what you changed.`;
 
-    const systemPrompt = `
-You are an assistant for a table displaying Olympic medal results. You help users modify grid configuration to fit their needs.
-
-The schema provided can be used to manipulate multiple features of the table to help the user with their query.
-
-Current grid state: ${JSON.stringify(state)}
-
-Respond with only the necessary state changes, not the complete state. Provide a clear explanation of what you changed.
-
-Any unchanged properties that are present in the current state must be included in \`propertiesToIgnore\`. Otherwise they will be removed from the state.
-
-Important: Only modify the properties that the user specifically requested. If they ask to "hide the age column", only include columnVisibility in your response, not other unrelated properties.
-Where possible, augment the provided state `;
-
-    let result;
-    try {
-        result = await generateObject({
-            model: 'gpt-5-mini',
-            schema,
-            messages: [
-                {
-                    role: 'system',
-                    content: systemPrompt,
-                },
-                {
-                    role: 'user',
-                    content: userRequest,
-                },
-            ],
-        });
-    } catch (error: any) {
-        throw new Error(`OpenAI API error: ${error.message || 'Unknown error'}`);
-    }
-
-    return result;
+// Map the grid's tools into the OpenAI function-calling format. The grid describes each tool with
+// its live capabilities (available columns, functions, etc.), so nothing here is grid-specific.
+function toOpenAiTools(tools: AiToolSchema[]) {
+    return tools.map((tool) => ({
+        type: 'function',
+        function: { name: tool.name, description: tool.description, parameters: tool.parameters },
+    }));
 }
 
-async function generateObject(options: any): Promise<any> {
-    const { model = 'gpt-4o-mini', schema, messages, maxTokens = 4096, stream = false } = options;
+export async function callChatGPT(userRequest: string, gridApi: GridApi): Promise<string> {
+    const tools = toOpenAiTools(
+        gridApi.getTools({
+            columns: {
+                sport: { includeSetValues: true },
+                country: { includeSetValues: true },
+            },
+        })
+    );
 
-    const requestBody = {
-        model,
-        messages,
-        max_completion_tokens: maxTokens,
-        response_format: schema
-            ? {
-                  type: 'json_schema',
-                  json_schema: {
-                      name: 'grid_state_response',
-                      schema,
-                  },
-              }
-            : { type: 'json_object' },
-        stream,
-    };
+    const messages: any[] = [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: userRequest },
+    ];
 
-    const url = `${BASE_URL}/chat/completions`;
+    for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+        const message = await sendRequest(messages, tools);
+        messages.push(message);
 
-    const response = await fetch(url, {
+        const toolCalls = message.tool_calls ?? [];
+        if (toolCalls.length === 0) {
+            return message.content ?? '';
+        }
+
+        // Apply each requested tool call to the grid and feed the outcome back so the model can
+        // react to failures (an unavailable column, an invalid expression, ...) and self-correct.
+        for (const toolCall of toolCalls) {
+            const args = JSON.parse(toolCall.function.arguments);
+            const result = gridApi.applyToolCall(toolCall.function.name, args);
+            messages.push({ role: 'tool', tool_call_id: toolCall.id, content: JSON.stringify(result) });
+        }
+    }
+
+    return 'Stopped after too many steps — please try a simpler request.';
+}
+
+async function sendRequest(messages: any[], tools: any[]): Promise<any> {
+    const response = await fetch(`${BASE_URL}/chat/completions`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             ...(AI_API_TOKEN ? { Authorization: `Bearer ${AI_API_TOKEN}` } : {}),
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify({
+            model: CHATGPT_MODEL,
+            messages,
+            tools,
+            tool_choice: 'auto',
+            max_completion_tokens: 4096,
+        }),
     });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        const error =
+        const message =
             errorData.error?.code === 'rate_limit_exceeded'
                 ? 'OpenAI Rate Limit Exceeded'
                 : `OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`;
-        throw new Error(error);
+        throw new Error(message);
     }
 
     const data = await response.json();
-    const content = data.choices[0]?.message?.content;
-
-    if (!content) {
-        throw new Error('No content received from OpenAI API');
-    }
-
-    let parsedObject;
-    try {
-        parsedObject = JSON.parse(content);
-    } catch (error) {
-        throw new Error(`Failed to parse JSON response: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-
-    return parsedObject;
+    return data.choices[0].message;
 }

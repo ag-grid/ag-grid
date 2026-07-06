@@ -66,14 +66,8 @@ const GridExample = () => {
             });
             setChatMessage(null);
 
-            const currentGridState = gridRef.current.api.getState();
-
             try {
-                const response = await callChatGPT(userRequest, currentGridState, gridRef.current.api);
-
-                if (response.gridState && Object.keys(response.gridState).length > 0) {
-                    gridRef.current.api.setState(response.gridState, response.propertiesToIgnore);
-                }
+                const explanation = await callChatGPT(userRequest, gridRef.current.api);
 
                 setProcessingState({
                     isProcessing: false,
@@ -83,7 +77,7 @@ const GridExample = () => {
 
                 setChatMessage({
                     prompt: userRequest,
-                    response: response.explanation,
+                    response: explanation,
                 });
 
                 setNaturalLanguageInput('');

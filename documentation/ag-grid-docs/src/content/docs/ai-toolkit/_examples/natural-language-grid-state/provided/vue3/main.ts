@@ -38,21 +38,15 @@ const App = {
             processingStatus.value = '<code class="process">Processing request with ChatGPT <b>⧖</b></code>';
             aiResponse.value = '';
 
-            const currentGridState = gridApi.value.getState();
-
             try {
-                const response = await callChatGPT(userRequest, currentGridState, gridApi.value);
-
-                if (response.gridState && Object.keys(response.gridState).length > 0) {
-                    gridApi.value.setState(response.gridState, response.propertiesToIgnore);
-                }
+                const explanation = await callChatGPT(userRequest, gridApi.value);
 
                 processingStatus.value = '<code class="success">Request processed successfully! <b>✓</b></code>';
                 aiResponse.value = `
                     <i class="prompt">Prompt</i>
                     <p class="msg prompt">${userRequest}</p>
                     <i class="response">Response</i>
-                    <p class="msg response">${response.explanation}</p>
+                    <p class="msg response">${explanation}</p>
                 `;
 
                 naturalLanguageInput.value = '';

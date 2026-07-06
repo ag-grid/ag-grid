@@ -142,14 +142,8 @@ export class AppComponent implements OnInit, OnDestroy {
         });
         this.chatMessage.set(null);
 
-        const currentGridState = this.gridRef.api.getState();
-
         try {
-            const response = await callChatGPT(userRequest, currentGridState, this.gridRef.api);
-
-            if (response.gridState && Object.keys(response.gridState).length > 0) {
-                this.gridRef.api.setState(response.gridState, response.propertiesToIgnore);
-            }
+            const explanation = await callChatGPT(userRequest, this.gridRef.api);
 
             this.processingState.set({
                 isProcessing: false,
@@ -159,7 +153,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
             this.chatMessage.set({
                 prompt: userRequest,
-                response: response.explanation,
+                response: explanation,
             });
 
             this.naturalLanguageInput.set('');

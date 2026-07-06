@@ -4,7 +4,6 @@ import type { IToolPanelParams } from 'ag-grid-community';
 import type { CustomToolPanelProps } from 'ag-grid-react';
 
 import { callChatGPT } from './chatgptApi';
-import type { ChatMessage } from './types';
 
 export interface ChatMessage {
     role: 'system' | 'user' | 'assistant';
@@ -46,30 +45,16 @@ export const ChatToolPanel = (props: CustomToolPanelProps & IToolPanelParams) =>
             setIsLoading(true);
 
             try {
-                const response = await callChatGPT(userMessage, gridApi, conversationHistory);
+                // callChatGPT runs the tool-calling loop, applying each change to the grid via
+                // gridApi.applyToolCall, and returns the assistant's plain-text summary.
+                const explanation = await callChatGPT(userMessage, gridApi, conversationHistory);
 
-                // Log the LLM response
-                console.log('Explanation:', response.explanation);
-                if (response.gridState && Object.keys(response.gridState).length > 0) {
-                    console.log('New Grid State: ', response.gridState);
-                }
-                if (response.propertiesToIgnore?.length > 0) {
-                    console.log('Properties Ignored:', response.propertiesToIgnore);
-                }
-
-                // Add both messages to history after successful response
                 conversationHistory.push(
                     { role: 'user', content: userMessage },
-                    { role: 'assistant', content: response.explanation }
+                    { role: 'assistant', content: explanation }
                 );
 
-                // Always update messages state to render the assistant response
                 setMessages([...conversationHistory]);
-
-                // Apply grid state changes if any
-                if (response.gridState && Object.keys(response.gridState).length > 0) {
-                    gridApi.setState(response.gridState, response.propertiesToIgnore);
-                }
             } catch (error) {
                 const errorMessage = `Error: ${error instanceof Error ? error.message : String(error)}`;
                 setMessages((prev) => [...prev, { role: 'assistant', content: errorMessage }]);
