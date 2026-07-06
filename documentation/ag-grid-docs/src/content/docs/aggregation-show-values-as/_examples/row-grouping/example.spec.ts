@@ -17,15 +17,21 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('Sorting the total column reorders country groups', async ({ agIdFor, page }) => {
-        // United States has the unique largest total aggregate (38).
-        const usGroup = agIdFor.rowNode('row-group-country-United States');
+        // United States has the unique largest total aggregate (38). Assert on the
+        // always-rendered top row (row-index 0) rather than on the US group's own
+        // index, which scrolls out of the DOM (virtualised) when sorted to the bottom.
+        const topRow = page.locator('.ag-grid-scrolling-container .ag-row[row-index="0"]');
+        const usRowId = 'row-group-country-United States';
 
-        await agIdFor.headerCell('total').click(); // ascending
-        await expect(usGroup).not.toHaveAttribute('row-index', '0');
+        // Wait for data to load before sorting so the first click registers.
+        await expect(topRow).toHaveAttribute('row-id', usRowId); // initial data order: US first
+
+        await agIdFor.headerCell('total').click(); // ascending → US to the bottom
+        await expect(topRow).not.toHaveAttribute('row-id', usRowId);
 
         await page.waitForTimeout(300); // avoid a double-click
 
-        await agIdFor.headerCell('total').click(); // descending
-        await expect(usGroup).toHaveAttribute('row-index', '0');
+        await agIdFor.headerCell('total').click(); // descending → US back to the top
+        await expect(topRow).toHaveAttribute('row-id', usRowId);
     });
 });

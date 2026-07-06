@@ -13,8 +13,9 @@ export default {
         };
     },
     methods: {
-        updateFilter() {
-            this.params.onModelChange(this.filterText == null || this.filterText === '' ? null : this.filterText);
+        updateFilter(event) {
+            const value = event?.target?.value;
+            this.params.onModelChange(value == null || value === '' ? null : value);
         },
 
         refresh(newParams): boolean {
