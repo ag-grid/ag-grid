@@ -3,7 +3,7 @@ import type { IComponent } from 'ag-stack';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import { Component } from '../../widgets/component';
 
-export type OverlayType = 'loading' | 'noRows' | 'noMatchingRows' | 'exporting' | 'fileInput' | 'error';
+export type OverlayType = 'loading' | 'noRows' | 'noMatchingRows' | 'exporting' | 'fileInput';
 
 interface ProvidedOverlayUserParams {
     /**
@@ -51,13 +51,6 @@ export interface IFileInputOverlayParams<TData = any, TContext = any> extends Ag
     overlayType: 'fileInput';
 }
 
-export interface IErrorOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /**
-     * The default overlay the grid would show in the given state.
-     */
-    overlayType: 'error';
-}
-
 /**
  * Parameters available to configure the provided overlays.
  */
@@ -79,8 +72,7 @@ export type IOverlayParams<TData = any, TContext = any> =
     | IExportingOverlayParams<TData, TContext>
     | INoRowsOverlayParams<TData, TContext>
     | INoMatchingRowsOverlayParams<TData, TContext>
-    | IFileInputOverlayParams<TData, TContext>
-    | IErrorOverlayParams<TData, TContext>;
+    | IFileInputOverlayParams<TData, TContext>;
 
 export interface IOverlay<
     TData = any,
