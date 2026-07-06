@@ -39,7 +39,7 @@ function onBtPrinterFriendly() {
 
 function onBtNormal() {
     const eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
-    eGridDiv.style.width = '400px';
+    eGridDiv.style.width = '100%';
     eGridDiv.style.height = '200px';
 
     // Same as setting to 'normal' as it is the default
