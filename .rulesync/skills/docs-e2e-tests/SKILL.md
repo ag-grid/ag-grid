@@ -102,7 +102,17 @@ Run each spec with the `docs-e2e.sh` helper from the **repository root**:
 
 ## STEP 4: Iterate
 
-If a test fails, diagnose the failure, fix it, and re-run. Common fixes:
+If a test fails, diagnose the failure, fix it, and re-run. When several tests (or several frameworks/browsers) fail at once, re-run **only the failures** with `--last-failed` instead of the whole suite — this is much faster to loop on:
+
+```bash
+./docs-e2e.sh "<example-folder-name>" --framework typescript   # initial run records failures
+# ...fix a failing test...
+./docs-e2e.sh --last-failed                                    # re-runs only what failed; repeat until green
+```
+
+`--last-failed` reads Playwright's `.last-run.json` from the previous run, so run it after an initial pass. Keep the same `--framework`/browser settings across passes so the failure set stays consistent.
+
+Common fixes:
 
 1.  Add `.first()` for strict mode violations.
 2.  Correct expected values by recalculating from source data.
