@@ -7,8 +7,8 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import { _addGridCommonParams, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
+import { _formatPaginationNumber } from '../../pagination/paginationUtils';
 import { _attemptToRestoreCellFocus } from '../../utils/gridFocus';
-import { _formatNumberCommas } from '../../utils/number';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
 import type { IOverlayComp, OverlayComponentUserParams, OverlayType } from './overlayComponent';
@@ -156,6 +156,9 @@ export class OverlayService extends BeanStub implements NamedBean {
     private loadingAnnouncementTimeout: ReturnType<typeof setTimeout> | null = null;
     private loadingCompletionTimeout: ReturnType<typeof setTimeout> | null = null;
     private loadingAnnouncementSpoken: boolean = false;
+    // Tracks the pending "loading complete" hold: `undefined` = idle, `null` = completing then hiding,
+    // an OverlayDef = completing then showing that overlay. While set, the loading overlay is held open
+    // for LOADING_COMPLETION_HIDE_DELAY so the completion status can be announced before it is removed.
     private loadingCompletionTargetDef: OverlayDef | null | undefined = undefined;
 
     private newColumnsLoadedCleanup: (() => void) | null = null;
@@ -694,7 +697,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         const { gos, beans } = this;
         const { pagination, rowModel } = beans;
         if (gos.get('pagination') && pagination) {
-            return pagination.getAriaPageSummary(this.formatRowCount.bind(this));
+            return pagination.getAriaPageSummary();
         }
 
         if (!rowModel.isLastRowIndexKnown()) {
@@ -702,16 +705,11 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
 
         const rowCount = rowModel.getRowCount();
-        const formattedRowCount = this.formatRowCount(rowCount);
+        const formattedRowCount = _formatPaginationNumber(rowCount, gos, this.getLocaleTextFunc.bind(this));
         const localeTextFunc = this.getLocaleTextFunc();
         return rowCount === 1
             ? localeTextFunc('loadingCompleteRow', `${formattedRowCount} row.`, [formattedRowCount])
             : localeTextFunc('loadingCompleteRows', `${formattedRowCount} rows.`, [formattedRowCount]);
-    }
-
-    private formatRowCount(value: number): string {
-        const userFunc = this.gos.getCallback('paginationNumberFormatter');
-        return userFunc ? userFunc({ value }) : _formatNumberCommas(value, this.getLocaleTextFunc.bind(this));
     }
 
     private makeCompParams(

@@ -339,47 +339,35 @@ export class PaginationService extends BeanStub implements NamedBean {
         return this.masterRowCount;
     }
 
+    /** The 1-based row range shown on the current page. Returns `{ 0, 0 }` when there are no pages. */
+    public getPageRowRange(): { startRow: number; endRow: number } {
+        const lastPageFound = this.beans.rowModel.isLastRowIndexKnown();
+        if (lastPageFound && this.totalPages === 0) {
+            return { startRow: 0, endRow: 0 };
+        }
+
+        const startRow = this.pageSize * this.currentPage + 1;
+        let endRow = startRow + this.pageSize - 1;
+        if (lastPageFound && endRow > this.masterRowCount) {
+            endRow = this.masterRowCount;
+        }
+        return { startRow, endRow };
+    }
+
     public getAriaPageSummary(
         formatNumber: (value: number) => string = this.formatPaginationNumber.bind(this)
     ): string {
         const localeTextFunc = this.getLocaleTextFunc();
-        const rowModel = this.beans.rowModel;
-        const lastPageFound = rowModel.isLastRowIndexKnown();
-        if (!lastPageFound) {
+        if (!this.beans.rowModel.isLastRowIndexKnown() || this.masterRowCount <= 0 || this.totalPages <= 0) {
             return '';
         }
 
-        const rowCount = this.masterRowCount;
-        if (rowCount <= 0) {
-            return '';
-        }
-
-        const currentPage = this.currentPage;
-        const pageSize = this.pageSize;
-        const totalPages = this.totalPages;
-        if (totalPages <= 0) {
-            return '';
-        }
-
-        let startRow: number;
-        let endRow: number;
-
-        if (lastPageFound && totalPages === 0) {
-            startRow = 0;
-            endRow = 0;
-        } else {
-            startRow = pageSize * currentPage + 1;
-            endRow = startRow + pageSize - 1;
-            if (lastPageFound && endRow > rowCount!) {
-                endRow = rowCount!;
-            }
-        }
-
+        const { startRow, endRow } = this.getPageRowRange();
         const firstRow = formatNumber(startRow);
         const lastRow = formatNumber(endRow);
-        const recordCount = formatNumber(rowCount);
-        const page = formatNumber(currentPage + 1);
-        const pageCount = formatNumber(totalPages);
+        const recordCount = formatNumber(this.masterRowCount);
+        const page = formatNumber(this.currentPage + 1);
+        const pageCount = formatNumber(this.totalPages);
 
         return `${firstRow} ${localeTextFunc('to', 'to')} ${lastRow} ${localeTextFunc(
             'of',

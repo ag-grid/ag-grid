@@ -65,10 +65,6 @@ export class RowSummaryComp extends Component {
         this.refresh();
     }
 
-    private isZeroPages(): boolean {
-        return this.beans.rowModel.isLastRowIndexKnown() && this.pagination.getTotalPages() === 0;
-    }
-
     public refresh(): void {
         const {
             pagination,
@@ -78,22 +74,10 @@ export class RowSummaryComp extends Component {
         const lastPageFound = rowModel.isLastRowIndexKnown();
         const masterRowCount = pagination.getMasterRowCount();
         const rowCount = lastPageFound ? masterRowCount : null;
-        const currentPage = pagination.getCurrentPage();
         const pageSize = pagination.getPageSize();
         const localeTextFunc = this.getLocaleTextFunc();
 
-        let startRow: number;
-        let endRow: number;
-
-        if (this.isZeroPages()) {
-            startRow = endRow = 0;
-        } else {
-            startRow = pageSize * currentPage + 1;
-            endRow = startRow + pageSize - 1;
-            if (lastPageFound && endRow > rowCount!) {
-                endRow = rowCount!;
-            }
-        }
+        const { startRow, endRow } = pagination.getPageRowRange();
 
         const theoreticalEndRow = startRow + pageSize - 1;
         const isLoadingPageSize = !lastPageFound && masterRowCount < theoreticalEndRow;
