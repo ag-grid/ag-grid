@@ -1,0 +1,219 @@
+---
+title: "PDF Export"
+enterprise: true
+---
+
+The Grid provides built-in PDF export functionality without the need for any third party libraries. Exporting to PDF can be performed from the [Context Menu](./context-menu/) or programmatically via the [Grid API](./grid-api/).
+
+## Enabling PDF Export
+
+The enterprise version of the grid provides a 'PDF Export' option via the grid's [Context Menu](./context-menu/) by default.
+
+PDF export is also possible via the [Grid API](./grid-api/) using the following method:
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf();
+```
+
+For module-based builds, register the `PdfExportModule`. To show the PDF export item in the right-click menu, also register the `ContextMenuModule`:
+
+```js
+import { ModuleRegistry } from 'ag-grid-community';
+import { ContextMenuModule, PdfExportModule } from 'ag-grid-enterprise';
+
+ModuleRegistry.registerModules([
+    ContextMenuModule,
+    PdfExportModule
+]);
+```
+
+No third party libraries are required for either approach. To disable PDF export, set `suppressPdfExport=true`.
+
+## Default PDF Export
+
+The default PDF export behaviour will export the grid as it is currently rendered. This means the exported PDF will match what is displayed in the grid at the time of export following any sorting, filtering, row grouping, columns visible, grouped columns etc...
+
+Note that the raw values, and not the result from a cell renderer will be used, meaning the results from:
+
+- Value Getters will be used.
+- Cell Renderers will **NOT** be used.
+- Value Formatters will be used by default via the [Use Value Formatter for Export](./value-formatters/#formatting-for-export) feature.
+- Styles applied by Cell Renderers are **NOT** exported.
+
+In the following example reorder some columns and apply some filter and sort operations - then export from the 'PDF Export' option in the context menu, or the 'Export to PDF' button provided. Note the following:
+
+- The current order of the columns is exported and any hidden columns will not be exported.
+- Filtered out rows are not included in the export, and the sort order is maintained.
+
+{% gridExampleRunner title="Default PDF Export" name="pdf-default-export"  exampleHeight=600 /%}
+
+{% note %}
+
+1. Column widths are scaled to fit the available page width based on the column sizes in the grid.
+
+1. Header rows repeat on each page by default. Set `repeatHeader=false` to disable this behaviour.
+
+1. PDF export uses built-in fonts and supports WinAnsi (Latin-1) characters. Characters outside WinAnsi are replaced with `?`.
+
+{% /note %}
+
+## PDF Styling
+
+Use `PdfExportParams` to control page layout, fonts, row sizing, borders, and extra content. The sections below highlight common customisations.
+
+PDF export uses the grid theme colours by default. Use `pdfStyles` to override the key theme colours used in the export (for example `headerBackgroundColor`, `oddRowBackgroundColor`, and `borderColor`). Values accept standard CSS colour strings (hex, rgb, hsl).
+
+{% gridExampleRunner title="PDF Styling" name="pdf-styling" exampleHeight=520 /%}
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    pdfStyles: {
+        headerBackgroundColor: '#e8f1ff',
+        headerTextColor: '#123a5a',
+        borderColor: '#c3d4ea',
+        oddRowBackgroundColor: '#0057af',
+    },
+});
+```
+
+## Rows and Cells Styling
+
+### Automatically
+
+For styling, PDF export resolves the same style hooks used by the grid:
+
+1. `rowStyle` / `getRowStyle` is applied to the exported row.
+1. `colDef.cellStyle` is applied to each exported cell.
+1. `colDef.headerStyle` is applied to exported header cells.
+1. If both row and cell styles are provided, the cell style overrides the row style for that cell.
+
+This means existing grid row/cell styling logic can be reused directly by PDF export.
+
+{% gridExampleRunner title="Rows and Cells" name="pdf-rows-and-cells" exampleHeight=520 /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    getRowStyle: (params) => {
+        if (params.data.athlete === '') {
+            return { backgroundColor: '#da4d4d' };
+        }
+    },
+    columnDefs: [
+        {
+            field: 'total',
+            cellStyle: (params) => {
+                if ((params.value) >= 5) {
+                    return {
+                        backgroundColor: '#e1f3e8',
+                        color: '#1b5e20',
+                        fontWeight: '700',
+                    };
+                }
+            },
+            headerStyle: () => ({
+                backgroundColor: '#dbeafe',
+                color: '#0f172a',
+                fontWeight: '700',
+            }),
+        },
+    ],
+};
+```
+
+To disable grid style resolution and only use theme defaults and `pdfStyles`, use `skipStyleCallbacks`:
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    skipStyleCallbacks: true,
+});
+```
+
+### Override
+
+When you need PDF-specific overrides, use `currentElementStyleCallback` to style any exported element type (`row`, `cell`, `rowgroup`, `header`, `groupheader`) without changing grid styles.
+
+Styles returned by `currentElementStyleCallback` override automatic grid styles for the same exported element:
+
+1. `type: 'row'` overrides styles from `rowStyle` / `getRowStyle` for that row.
+1. `type: 'cell'` and `type: 'rowgroup'` override row-level and `colDef.cellStyle` for that cell.
+1. `type: 'header'` and `type: 'groupheader'` override `colDef.headerStyle` values for that header cell.
+
+If `skipStyleCallbacks=true`, grid style callbacks are skipped, but `currentElementStyleCallback` still runs.
+
+{% gridExampleRunner title="Rows and Cells Override" name="pdf-rows-and-cells-override" exampleHeight=520 /%}
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    currentElementStyleCallback: (params) => {
+        if (params.type === 'header') {
+            return {
+                backgroundColor: '#e0f2fe',
+                color: '#0c4a6e',
+                fontFamily: 'Helvetica-Bold',
+            };
+        }
+    },
+});
+```
+
+## Document Title
+
+Use `documentTitle` to set the PDF metadata title shown by most PDF viewers. When set, a visible title is rendered above the table. To style the title box, pass `documentTitle` as a `PdfCell` and use the `style` property.
+
+{% gridExampleRunner title="Document Title" name="pdf-document-title" exampleHeight=520 /%}
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    documentTitle: {
+        data: { value: 'Quarterly Results' },
+        style: {
+            fontSize: 16,
+            padding: 6,
+            margin: { bottom: 10 },
+            backgroundColor: '#f3f6fb',
+            borderColor: '#c3d4ea',
+            borderWidth: 1,
+            color: '#123a5a',
+            alignment: 'center',
+        },
+    },
+});
+```
+
+## Custom Content
+
+Use `prependContent`, `appendContent`, or `getCustomContentBelowRow` to inject custom PDF content. A string value is split into lines and each line is rendered as a full-width row. To control column spans or styling explicitly, use `PdfCell` definitions with `style`.
+
+{% gridExampleRunner title="Custom Content" name="pdf-custom-content" exampleHeight=520 /%}
+
+```{% frameworkTransform=true %}
+api.exportDataAsPdf({
+    getCustomContentBelowRow: (params) => {
+        const rowIndex = params.node.rowIndex;
+        if ((rowIndex + 1) % 5 !== 0) {
+            return;
+        }
+
+        return [
+            [
+                {
+                    data: { value: 'Section break' },
+                    mergeAcross: 3,
+                    style: {
+                        backgroundColor: '#fff4cc',
+                        borderColor: '#f0c36d',
+                        borderWidth: 1,
+                        color: '#7a5400',
+                        padding: 6,
+                        alignment: 'center',
+                    },
+                },
+            ],
+        ];
+    },
+});
+```
+
+## Next Up
+
+Continue to the next section: [API Reference](./pdf-export-api/).

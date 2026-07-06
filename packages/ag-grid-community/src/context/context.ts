@@ -82,6 +82,7 @@ import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyCol
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IMultiFilterService } from '../interfaces/iMultiFilterService';
 import type { IFilterPanelService, ISelectableFilterService } from '../interfaces/iNewFiltersToolPanel';
+import type { IPdfCreator } from '../interfaces/iPdfCreator';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
@@ -346,6 +347,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     rowNodeBlockLoader?: RowNodeBlockLoader;
     csvCreator?: ICsvCreator;
     excelCreator?: IExcelCreator;
+    pdfCreator?: IPdfCreator;
     clipboardSvc?: IClipboardService;
     cellNavigation?: CellNavigationService;
     scrollVisibleSvc: ScrollVisibleService;

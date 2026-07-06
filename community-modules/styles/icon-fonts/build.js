@@ -84,6 +84,7 @@ const nameToCodepoint = {
     document: 0xf147,
     fx: 0xf148,
     'values-as': 0xf149,
+    pdf: 0xf14a,
 };
 
 function generateFontFile(fontName) {
