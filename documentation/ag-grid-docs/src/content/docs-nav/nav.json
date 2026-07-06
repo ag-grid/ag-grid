@@ -32,6 +32,11 @@
                             "path": "modules"
                         },
                         {
+                            "type": "item",
+                            "title": "Development Validation",
+                            "path": "dev-validation"
+                        },
+                        {
                             "title": "Installing Enterprise Licence",
                             "path": "license-install"
                         },
