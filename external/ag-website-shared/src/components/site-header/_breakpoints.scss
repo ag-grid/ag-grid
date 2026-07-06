@@ -1,115 +1,48 @@
 @use 'design-system' as *;
-// Both @forward and @use are needed, for two different reasons: @forward re-exports
-// these tokens to files that `@use './breakpoints' as *` (SiteHeader.module.scss,
-// ProductDropdown.module.scss, Search.module.scss) — @use alone wouldn't do that. @use
-// is what makes $nav-collapse etc. resolvable *within this file* — @forward alone
-// doesn't (Sass forwarding re-exports to consumers without adding the names to the
-// forwarding file's own scope), and $switcher-show below needs to reference
-// $nav-collapse directly.
+// @forward re-exports these tokens to consumers; @use makes them usable in this file
+// too (needed below, since $switcher-show references $nav-collapse directly).
 @forward 'site-header-tokens';
 @use 'site-header-tokens' as *;
 
-// Site header — every threshold that governs header layout or visibility, gathered in
-// one place and named for what it controls (not by size-tier). Two kinds of entries:
-//
-//   1. Aliases onto shared, site-wide breakpoint tokens ($breakpoint-site-header-*,
-//      $breakpoint-docs-nav-medium — declared in design-system/core/_breakpoints.scss)
-//      that the header happens to consume. The alias documents *why* the header cares;
-//      the underlying pixel value stays owned by the shared token, because other,
-//      unrelated components (the announcement banner, campaign pages, automated
-//      examples) depend on that same shared value. Do not redefine the number here, or
-//      the two will drift apart.
-//
-//   2. Tokens owned exclusively by header-area components — the product/site switcher's
-//      two thresholds (previously unnamed literals directly in
-//      ProductDropdown.module.scss, one of which accidentally reused an unrelated
-//      landing-page token), the search box's max-width cap, and — as of this branch —
-//      nav-collapse itself, no longer an alias (see below). Their default values live
-//      in _site-header-tokens.scss (at the src root, resolved as a bare Sass module via
-//      loadPaths) rather than declared inline here — see that file for why (per-repo
-//      overrides need a load-path seam, not `!default`, because each `.module.scss`
-//      compiles independently and never shares a module graph with a repo's "set it
-//      before you @use it" file).
+// Every threshold that governs header layout/visibility, named by what it controls.
+// Aliases below point at shared, site-wide tokens other components also depend on —
+// don't redefine the number here, or they'll drift apart. Header-exclusive tokens
+// (nav-collapse, switcher popup, search-box cap) default from _site-header-tokens.scss
+// instead, which repos can override via loadPaths without forking this package — see
+// that file.
 
 // --- Nav collapse (hamburger <-> full nav) ---
 // Consumed by: SiteHeader.module.scss (.mainNavLarge, .mobileMenuButton, .mainNav,
 // .navItemList, .navItem, .navLink, .buttonItem, .toggleDarkText)
-//
-// No longer aliased to $breakpoint-site-header-small. This is the number the original
-// problem was actually about — it needs to differ by product because nav item count
-// differs by product (AG Grid has 9 items including GitHub, AG Studio 8, AG Charts in
-// between) — but as an alias, tuning it per repo would have also moved
-// $breakpoint-site-header-small for every unrelated component that consumes that same
-// shared token (AnnouncementBanner, among others). Decoupled and given its own entry
-// in _site-header-tokens.scss instead, so it can actually be overridden per repo
-// without that side effect. Default value (960px) lives there.
+// Owned in _site-header-tokens.scss, not aliased — needs to differ by product (nav
+// item count varies) without moving $breakpoint-site-header-small for unrelated
+// consumers like AnnouncementBanner. Default: 960px.
 
 // --- Docs button + search bar stacking ---
 // Consumed by: SiteHeader.module.scss (.docsNavBtnSearchContainer, .mobileNavButton)
 $docs-search-stack: $breakpoint-site-header-extra-small;
 
 // --- Header goes fully inline (single row) ---
-// Owned here (no longer aliased to $breakpoint-docs-nav-medium — see below). Above this
-// width, .headerInner drops multi-row wrapping in favour of a single grid row; the
-// docs/search cluster and switcher take their own place in it.
 // Consumed by: SiteHeader.module.scss (.headerInner, .docsNavBtnSearchContainer,
 // .mobileNavButton)
-//
-// Originally aliased to $breakpoint-docs-nav-medium (1100px), on the theory that "header
-// goes single-row" and "header becomes sticky" were the same concern and could share one
-// number. Deliberately kept as two separate aliases from the start specifically so they
-// could be decoupled later without archaeology (see $sticky-at below) — decoupled here:
-// verified live (2026-07-02) that the single-row layout was getting cramped just before
-// the break, so it now breaks to two lines a bit earlier (1180px) than sticky activation
-// (still 1100px). $sticky-at intentionally still aliases the shared token — only the
-// single-row breakpoint needed to move. Default value (1180px) lives in
-// _site-header-tokens.scss (at the src root, resolved via loadPaths) — see that file
-// for how per-repo overrides work.
+// Owned in _site-header-tokens.scss, decoupled from $sticky-at below — the two don't
+// need to move together. Default: 1180px.
 
 // --- Header becomes sticky ---
-// Alias of $breakpoint-docs-nav-medium — see $docs-search-inline above for why this one
-// stays aliased while that one doesn't. Stays @media (viewport), not @container — a
-// container cannot query its own size. Consumed by: SiteHeader.module.scss (.header)
+// Consumed by: SiteHeader.module.scss (.header)
+// Stays @media, not @container — a container can't query its own size.
 $sticky-at: $breakpoint-docs-nav-medium;
 
 // --- Product/site switcher visibility ---
 // Consumed by: ProductDropdown.module.scss (.customMenu)
-//
-// Below $nav-collapse there isn't room for the switcher alongside the logo (nav is
-// still a hamburger there, so nothing to compare against). From $nav-collapse onward,
-// two things are both true and cover the entire remaining range with no gap:
-//   - Below $docs-search-inline, .headerInner is still flex-wrapping and
-//     .docsNavBtnSearchContainer is unconditionally width:100% -- the docs/search
-//     cluster is *always* alone on its own line there, so it never competes with
-//     logo/switcher/nav for room on the top line. The only real gate is whether nav
-//     fits alongside the logo, which is exactly what $nav-collapse measures.
-//   - At and above $docs-search-inline, .headerInner is a grid with docs-search on a
-//     1fr track, which absorbs whatever space is left automatically -- there's no
-//     separate "is there room" threshold to tune here either.
-// A previous version of this token (1220px, then split into two bands with a gap
-// between 1100-1220px) was tuned for the pre-Grid flex layout, where the docs/search
-// cluster was unwrapped into individual flex items competing for room via
-// space-between -- that constraint no longer exists now that .headerInner is Grid.
-// Verified live (2026-07-02) that the switcher can simply stay visible for the entire
-// range from $nav-collapse onward.
+// Tied to $nav-collapse: below it there's no room for the switcher next to the logo
+// either; above it there's always room, whether .headerInner is wrapped flex or grid.
 $switcher-show: $nav-collapse;
 
-// Width/position of the switcher's own popup once opened. Previously borrowed
-// $breakpoint-hero-small (a landing-page token) purely by coincidence of value — a
-// latent bug risk, since changing hero sizing for a marketing page would have silently
-// moved this too. Decoupled and named here instead.
+// --- Switcher popup width/position ---
 // Consumed by: ProductDropdown.module.scss (.customMenu, .customContent)
-// Default value (620px) lives in _site-header-tokens.scss (at the src root, resolved
-// via loadPaths).
+// Owned in _site-header-tokens.scss. Default: 620px.
 
 // --- Search trigger box max-width ---
-// Owned here. Above this width the search trigger caps at 512px and centres in the
-// remaining space; below it, it's full width. Previously three separate @media rules
-// ($breakpoint-site-header-medium at 1200px, plus two unnamed literals at 1275px and
-// 1050px) where only 1275px ever had any visible effect — the 1200px rule was always
-// immediately overridden by the (later, equal-specificity) 1275px rule for every width
-// it could match, and the 1050px rule was a strict subset of the 1275px rule setting
-// the identical value. Consolidated to the one threshold that actually does anything.
 // Consumed by: Search.module.scss (.headerSearchBox)
-// Default value (1275px) lives in _site-header-tokens.scss (at the src root, resolved
-// via loadPaths).
+// Owned in _site-header-tokens.scss. Default: 1275px.
