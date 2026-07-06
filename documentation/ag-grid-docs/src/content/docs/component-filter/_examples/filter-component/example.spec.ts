@@ -7,7 +7,7 @@ test.agExample(import.meta, () => {
 
         await agIdFor.headerFilterButton('name').click();
 
-        const filterInput = page.locator('#filterText');
+        const filterInput = page.locator('.partial-match-filter input');
         await expect(filterInput).toBeVisible();
 
         // "Natalie Coughlin" appears at data index 1 (Row 2) and index 7 (Row 8)

@@ -4,9 +4,12 @@ import type {
     AgColumn,
     BeanCollection,
     BodyScrollEvent,
+    CellClickedEvent,
     CellCtrl,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
+    CellFocusedEvent,
+    CellKeyDownEvent,
     CellValueChangedEvent,
     EditStrategyType,
     EditingCellPosition,
@@ -284,9 +287,9 @@ const gridOptions: GridOptions = {
     onCellEditingStopped: (_event: CellEditingStoppedEvent) => {
         console.log('cellEditingStopped');
     },
-    onCellValueChanged: (_event: CellValueChangedEvent) => {
+    onCellValueChanged: (event: CellValueChangedEvent) => {
         console.log('Cell value changed');
-        getEditingCells();
+        getCellsEditing(event.api);
     },
     onBodyScroll(_event: BodyScrollEvent) {
         decorated && decorateCells();
@@ -294,14 +297,14 @@ const gridOptions: GridOptions = {
     onModelUpdated(_event: ModelUpdatedEvent) {
         decorated && decorateCells();
     },
-    onCellClicked: () => {
-        getEditingCells();
+    onCellClicked: (event: CellClickedEvent) => {
+        getCellsEditing(event.api);
     },
-    onCellFocused: (event) => {
-        getEditingCells();
+    onCellFocused: (event: CellFocusedEvent) => {
+        getCellsEditing(event.api);
     },
-    onCellKeyDown: (event) => {
-        getEditingCells();
+    onCellKeyDown: (event: CellKeyDownEvent) => {
+        getCellsEditing(event.api);
     },
 };
 
@@ -366,17 +369,21 @@ function trim(str?: any) {
 
 function commitBatchEdit() {
     gridApi!.commitBatchEdit();
-    getEditingCells();
+    getCellsEditing(gridApi);
 }
 
 function cancelBatchEdit() {
     gridApi!.cancelBatchEdit();
-    getEditingCells();
+    getCellsEditing(gridApi);
 }
 
-function getEditingCells() {
+function onGetPending() {
+    getCellsEditing(gridApi);
+}
+
+function getCellsEditing(api: GridApi) {
     setTimeout(() => {
-        const cells = gridApi!.getEditingCells();
+        const cells = api.getEditingCells();
         console.log(cells);
         document.getElementById('edits-table')!.innerHTML = `
         <thead>
@@ -417,7 +424,7 @@ function pollState() {
         clearInterval(polling);
         polling = undefined;
     } else {
-        polling = setInterval(getEditingCells, 1000);
+        polling = setInterval(() => getCellsEditing(gridApi), 1000);
     }
 
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
@@ -434,7 +441,7 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
         rowPinned: pinned,
         key: key,
     });
-    getEditingCells();
+    getCellsEditing(gridApi);
 }
 
 function toggleBatch() {
@@ -464,17 +471,17 @@ function setEditType(editType: EditStrategyType) {
     gridApi!.updateGridOptions({
         editType,
     });
-    getEditingCells();
+    getCellsEditing(gridApi);
 }
 
 function cancelEdit() {
     gridApi!.stopEditing(true);
-    getEditingCells();
+    getCellsEditing(gridApi);
 }
 
 function stopEdit() {
     gridApi!.stopEditing();
-    getEditingCells();
+    getCellsEditing(gridApi);
 }
 
 function onBtExport(type: 'csv' | 'excel') {
@@ -504,12 +511,12 @@ function onBtRedo() {
 
 function refreshRows() {
     gridApi!.refreshCells({ force: true });
-    getEditingCells();
+    getCellsEditing(gridApi);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-    getEditingCells();
+    getCellsEditing(gridApi);
 });

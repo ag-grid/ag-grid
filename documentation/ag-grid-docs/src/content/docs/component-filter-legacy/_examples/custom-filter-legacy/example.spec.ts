@@ -13,7 +13,7 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.person-filter')).toBeVisible();
 
         // Partial words across the full name still match ("mich phel" => Michael Phelps).
-        const filterInput = page.locator('#filterText');
+        const filterInput = page.locator('.person-filter input');
         await filterInput.fill('mich phel');
 
         // Only the three Michael Phelps rows (data indices 0, 1, 2) remain.
@@ -39,15 +39,15 @@ test.agExample(import.meta, () => {
         await agIdFor.headerFilterButton('year').click();
         await expect(page.locator('.year-filter')).toBeVisible();
 
-        // Select the "Since 2010" preset.
-        await page.locator('#rbSince2010').check();
+        // Select the "Since 2010" preset (second radio in the year filter).
+        await page.locator('.year-filter input[type="radio"]').nth(1).check();
 
         // The 2008 row is filtered out; the first surviving Phelps row is 2012 (data index 2).
         await expect(agIdFor.cell('0', 'year')).not.toBeVisible();
         await expect(agIdFor.cell('2', 'year')).toContainText('2012');
 
-        // Switching back to "All" restores the 2008 row.
-        await page.locator('#rbAllYears').check();
+        // Switching back to "All" (first radio) restores the 2008 row.
+        await page.locator('.year-filter input[type="radio"]').nth(0).check();
         await expect(agIdFor.cell('0', 'year')).toContainText('2008');
     });
 });

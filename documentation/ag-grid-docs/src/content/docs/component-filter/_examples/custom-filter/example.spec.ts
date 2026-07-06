@@ -10,8 +10,8 @@ test.agExample(import.meta, () => {
         await expect(filterButton).toBeVisible();
         await filterButton.click();
 
-        // the custom component renders a plain text input with id="filterText"
-        const filterInput = page.locator('#filterText');
+        // the custom component renders a single plain text input inside its wrapper
+        const filterInput = page.locator('.person-filter input');
         await expect(filterInput).toBeVisible();
 
         // partial words across first and last name should still match, e.g. Aleksey Nemov (data index 4)

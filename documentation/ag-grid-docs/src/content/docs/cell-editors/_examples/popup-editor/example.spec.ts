@@ -20,6 +20,10 @@ test.agExample(import.meta, () => {
         const cell = agIdFor.cell('0', 'mood_1');
         await cell.dblclick();
         await expect(page.locator('.ag-popup .mood').first()).toBeVisible();
+
+        // close the popup editor before the test ends so it is torn down cleanly
+        await page.keyboard.press('Escape');
+        await expect(page.locator('.ag-popup .mood')).toHaveCount(0);
     });
 
     test.eachFramework('selecting a mood in the popup updates the cell', async ({ agIdFor, page }) => {

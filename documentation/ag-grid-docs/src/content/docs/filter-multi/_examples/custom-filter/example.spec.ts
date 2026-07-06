@@ -6,7 +6,8 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('0', 'year')).toContainText('2008');
         await expect(agIdFor.cell('2', 'year')).toContainText('2012');
 
-        const afterRadio = page.locator('#rbFloatingYearAfter2010');
+        // the floating filter renders two radios inside its wrapper: All (0), After 2010 (1)
+        const afterRadio = page.locator('.year-filter input[type="radio"]').nth(1);
         await expect(afterRadio).toBeVisible();
         await afterRadio.check();
 
