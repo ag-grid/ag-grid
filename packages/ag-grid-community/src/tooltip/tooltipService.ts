@@ -56,6 +56,11 @@ const getEditErrorsForPosition = (
     return errors?.length ? errors.join(translate('tooltipValidationErrorSeparator', '. ')) : undefined;
 };
 
+const getCellValueOverflowTarget = (ctrl: CellCtrl): HTMLElement | undefined => {
+    const eCell = ctrl.eGui;
+    return eCell.children.length === 0 ? eCell : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
+};
+
 const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => boolean) | undefined => {
     const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(beans.gos);
 
@@ -73,12 +78,7 @@ const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => b
             if (ctrl.hasActiveCellRenderer()) {
                 return undefined;
             }
-            return _isElementOverflowingCallback(() => {
-                const eCell = ctrl.eGui;
-                return eCell.children.length === 0
-                    ? eCell
-                    : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
-            });
+            return _isElementOverflowingCallback(() => getCellValueOverflowTarget(ctrl));
         }
 
         return _isElementOverflowingCallback(() => {
@@ -91,10 +91,7 @@ const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => b
         });
     }
 
-    return _isElementOverflowingCallback(() => {
-        const eCell = ctrl.eGui;
-        return eCell.children.length === 0 ? eCell : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
-    });
+    return _isElementOverflowingCallback(() => getCellValueOverflowTarget(ctrl));
 };
 
 const buildCellTooltipDisplayFunctions = (
