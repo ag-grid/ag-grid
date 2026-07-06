@@ -90,7 +90,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
             _warn(26, { fnName, preDestroyLink });
         } else {
             const module = gridApiFunctionsMap[fnName];
-            if (gos.assertModuleRegistered(module, `api.${fnName}`)) {
+            if (gos.assertModuleRegistered(module, `\`api.${fnName}\``)) {
                 _warn(27, { fnName, module });
             }
         }

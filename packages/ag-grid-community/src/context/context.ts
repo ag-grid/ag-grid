@@ -143,6 +143,7 @@ import type { RowStyleService } from '../styling/rowStyleService';
 import type { SyncService } from '../syncService';
 import type { TooltipService } from '../tooltip/tooltipService';
 import type { UndoRedoService } from '../undoRedo/undoRedoService';
+import type { ErrorOverlayService } from '../validation/errorOverlay/errorOverlayService';
 import type { ValidationService } from '../validation/validationService';
 import type { ChangeDetectionService } from '../valueService/changeDetectionService';
 import type { ExpressionService } from '../valueService/expressionService';
@@ -209,6 +210,7 @@ export type UserComponentName =
     | 'agNoRowsOverlay'
     | 'agNoMatchingRowsOverlay'
     | 'agFileInputOverlay'
+    | 'agErrorOverlay'
     | 'agTooltipComponent'
     | 'agReadOnlyFloatingFilter'
     | 'agTextColumnFilter'
@@ -336,6 +338,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     globalSyncListener: AgGlobalEventListener;
     stateSvc?: StateService;
     overlays?: OverlayService;
+    errorOverlay?: ErrorOverlayService;
     pinnedRowModel?: IPinnedRowModel;
     menuSvc?: MenuService;
     apiEventSvc?: ApiEventService;

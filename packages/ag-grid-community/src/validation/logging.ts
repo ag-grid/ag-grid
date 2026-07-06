@@ -25,14 +25,22 @@ export function setValidationDocLink(docLink: string) {
     baseDocLink = docLink;
 }
 
-type Severity = 'error' | 'warning' | 'deprecation';
+export type Severity = 'error' | 'warning' | 'deprecation';
 
-// Inclusive throw ordering: throwOn a given level fires on that level and every more-severe one.
+// Inclusive severity ordering: a threshold fires on that level and every more-severe one.
 const SEVERITY_ORDER: Record<Severity, number> = { deprecation: 1, warning: 2, error: 3 };
 
 /**
+ * Whether `severity` meets an inclusive `threshold`: true when it is at least as severe. A `false`
+ * threshold matches nothing. Shared by the throw-on check and the overlay's severity filter so both
+ * honour the same graded model.
+ */
+export function _meetsSeverityThreshold(severity: Severity, threshold: Severity | false): boolean {
+    return threshold !== false && SEVERITY_ORDER[severity] >= SEVERITY_ORDER[threshold];
+}
+
+/**
  * A diagnostic captured for the developer overlay (config errors, runtime errors and warnings).
- * @knipIgnore Used in tests
  */
 export interface CapturedDiagnostic {
     id: ErrorId;
@@ -45,6 +53,23 @@ export interface CapturedDiagnostic {
     gridId?: string;
     /** Fallback message used when the ValidationModule is not registered to supply the full text. */
     defaultMessage?: string;
+}
+
+/**
+ * Stable identity key for deduping captured diagnostics: the same `id` and `params` yield the same key.
+ * Non-serialisable params (functions, circular refs) fall back to `${id}:unserialisable:${fallbackSeed}`
+ * so distinct entries are never collapsed — callers pass a per-call seed (a counter or index) for this.
+ */
+export function _diagnosticKey(diagnostic: CapturedDiagnostic, fallbackSeed: string | number): string {
+    const { id, params } = diagnostic;
+    if (params == null) {
+        return `${id}`;
+    }
+    try {
+        return `${id}:${JSON.stringify(params)}`;
+    } catch {
+        return `${id}:unserialisable:${fallbackSeed}`;
+    }
 }
 
 type DiagnosticListener = (diagnostic: CapturedDiagnostic) => void;
@@ -69,7 +94,6 @@ let activeGridId: string | undefined;
  * being misattributed to whichever grid happens to be active by the time they fire. This is also why a
  * nested grid (e.g. a detail grid, created on a later frame) gets its own scope instead of inheriting
  * its parent's.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _runWithActiveGrid<T>(gridId: string, fn: () => T): T {
     const previous = activeGridId;
@@ -129,7 +153,6 @@ export function _configureDiagnostics(config: {
 /**
  * Whether captured diagnostics are being collected, so hot paths (e.g. API dispatch) can skip the
  * active-grid bookkeeping entirely when no consumer is listening.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _isDiagnosticCaptureActive(): boolean {
     return captureEnabled;
@@ -141,7 +164,6 @@ export function _isDiagnosticCaptureActive(): boolean {
  * Diagnostics already buffered before it attached (and matching it) are replayed immediately. Returns
  * a cleanup function that removes the listener and, once the last listener detaches, drops the buffer
  * so a later grid does not inherit stale diagnostics.
- * @knipIgnore Used in tests
  */
 export function _addDiagnosticListener(gridId: string | undefined, listener: DiagnosticListener): () => void {
     const entry: DiagnosticListenerEntry = { gridId, listener };
@@ -160,6 +182,46 @@ export function _addDiagnosticListener(gridId: string | undefined, listener: Dia
     };
 }
 
+type BootstrapPanelRenderer = (container: HTMLElement, diagnostics: CapturedDiagnostic[]) => void;
+let bootstrapPanelRenderer: BootstrapPanelRenderer | null = null;
+
+/**
+ * Pushed in by the ValidationModule (which core never imports) to render a standalone panel of
+ * bootstrap-failure diagnostics, for when grid creation aborts before any bean — and thus the overlay —
+ * exists. Mirrors the provideValidationServiceLogger setter idiom to keep the dependency direction one-way.
+ */
+export function _provideBootstrapPanelRenderer(renderer: BootstrapPanelRenderer): void {
+    bootstrapPanelRenderer = renderer;
+}
+
+/**
+ * Renders the buffered diagnostics not tied to a grid (e.g. a missing row-model module that aborts grid
+ * creation) into `container`, when the ValidationModule has provided a renderer. No-op otherwise, so core
+ * stays decoupled and production pays nothing.
+ */
+export function _renderBootstrapPanel(container: HTMLElement): void {
+    if (!bootstrapPanelRenderer) {
+        return;
+    }
+    const untied: CapturedDiagnostic[] = [];
+    for (let i = 0, len = bufferedDiagnostics.length; i < len; ++i) {
+        if (bufferedDiagnostics[i].gridId === undefined) {
+            untied.push(bufferedDiagnostics[i]);
+        }
+    }
+    if (untied.length === 0) {
+        return;
+    }
+    // Consume the rendered diagnostics so a re-created grid (e.g. React's dev/StrictMode double-invoke,
+    // which aborts again with a fresh gridId) renders only its own failure rather than stacking them.
+    for (let i = bufferedDiagnostics.length - 1; i >= 0; --i) {
+        if (bufferedDiagnostics[i].gridId === undefined) {
+            bufferedDiagnostics.splice(i, 1);
+        }
+    }
+    bootstrapPanelRenderer(container, untied);
+}
+
 function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string): void {
     // Suppressed ids are omitted from the overlay and never throw; the console log has already fired.
     if (suppressedIds.has(id)) {
@@ -176,8 +238,7 @@ function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMes
             }
         }
     }
-    const meetsThreshold = throwThreshold !== false && SEVERITY_ORDER[severity] >= SEVERITY_ORDER[throwThreshold];
-    if (meetsThreshold) {
+    if (_meetsSeverityThreshold(severity, throwThreshold)) {
         throw new Error(`${severity} #${id} ` + getErrorParts(id, params, defaultMessage).join(' '));
     }
 }
@@ -198,8 +259,13 @@ function logToConsole<TId extends ErrorId>(
     logger(`${isWarning ? 'warning' : 'error'} #${id}`, ...getErrorParts(id, args, defaultMessage));
 }
 
+function isPrimitive(value: any): boolean {
+    return typeof value !== 'object' && typeof value !== 'function';
+}
+
 /**
- * Stringify object, removing any circular dependencies
+ * Stringify object as JSON, keeping only primitive-valued properties so nested objects/functions (and
+ * thus circular references) are never traversed. The reconstructed object is decoded on the error page.
  */
 function stringifyObject(inputObj: any) {
     if (!inputObj) {
@@ -207,17 +273,34 @@ function stringifyObject(inputObj: any) {
     }
     const object: Record<string, any> = {};
     for (const prop of Object.keys(inputObj)) {
-        if (typeof inputObj[prop] !== 'object' && typeof inputObj[prop] !== 'function') {
+        if (isPrimitive(inputObj[prop])) {
             object[prop] = inputObj[prop];
         }
     }
     return JSON.stringify(object);
 }
 
+/**
+ * Stringify array as JSON, keeping only primitive elements (same circular-safety rationale as
+ * {@link stringifyObject}) so it round-trips as a real array rather than a numeric-keyed object.
+ */
+function stringifyArray(inputArr: any[]) {
+    const array: any[] = [];
+    for (let i = 0, len = inputArr.length; i < len; ++i) {
+        const value = inputArr[i];
+        if (isPrimitive(value)) {
+            array.push(value);
+        }
+    }
+    return JSON.stringify(array);
+}
+
 function stringifyValue(value: any) {
     let output = value;
     if (value instanceof Error) {
         output = value.toString();
+    } else if (Array.isArray(value)) {
+        output = stringifyArray(value);
     } else if (typeof value === 'object') {
         output = stringifyObject(value);
     }

@@ -1,7 +1,13 @@
 import { waitFor } from '@testing-library/dom';
 
 import type { AdvancedFilterModel } from 'ag-grid-community';
-import { ClientSideRowModelModule, GridStateModule, QuickFilterModule, TextFilterModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GridStateModule,
+    QuickFilterModule,
+    TextFilterModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
@@ -54,6 +60,9 @@ describe('ag-grid overlays no matching rows', () => {
 
     beforeEach(() => {
         gridsManager.reset();
+        // These tests assert the functional loading/no-rows overlays; disable the dev validation
+        // overlay so a deprecation/warning diagnostic does not mask them.
+        enableDevValidations({ overlay: false });
     });
 
     afterEach(() => {

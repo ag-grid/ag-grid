@@ -1,0 +1,9 @@
+## Unrecognised Properties
+
+AG Grid does not recognise a property on the object shown in the message. Usually this is on your grid options or a column definition. Each unrecognised property is also reported on its own as warning #307 with a suggested correction. This message is the summary.
+
+### Resolving
+
+Check each flagged property against the reference for the object it was set on ([Grid Options](./grid-options/) or [Column Properties](./column-properties/)) and correct any typos or misplaced properties.
+
+If the properties come from a shared wrapper that spreads unrelated props, remove them at the source. To attach your own data deliberately, use the [`context`](./context/) property rather than a top-level property.

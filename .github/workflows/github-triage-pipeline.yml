@@ -1,0 +1,138 @@
+name: GitHub issue AI triage
+
+# ============================================================================
+# GitHub-issue → AITGH triage pipeline (thin per-repo stub).
+#
+# A new issue labelled `triage` runs the /ag-product:github-issues brain
+# headlessly against a 1-1 AITGH mapping ticket; a human reviews on the AITGH
+# board and drags Needs Review → In Progress to approve. The heavy lifting lives
+# in the shared `github-triage-pipeline` composite action in @ag-grid/dev-prompts
+# (pulled via the GitHub Packages tarball, exactly like jira-agent-pipeline.yml).
+# This workflow owns triggers + eligibility gating only.
+#
+# Full design + operator reference:
+#   ag-dev-prompts → docs/github-triage-pipeline.md
+#
+# Triggers:
+#   issues (opened|labeled)            → triage    (the GitHub-native entry point)
+#   repository_dispatch gh-triage-resume → preflight routes execute | resume
+#       (from the single AITGH `→ In Progress` JIRA automation rule:
+#        POST /repos/ag-grid/ag-grid/dispatches
+#        {"event_type":"gh-triage-resume","client_payload":{"issue_key":"AITGH-XXX"}})
+#   workflow_dispatch                  → force a stage (dry-run / debugging)
+# ============================================================================
+
+on:
+    # Auto-triage of new triage-labelled issues — DISABLED for the initial manual
+    # dogfood (run via workflow_dispatch first). Uncomment to go live once the
+    # dispatch + drag paths are validated.
+    # issues:
+    #     types: [opened, labeled]
+    repository_dispatch:
+        types: [gh-triage-resume]
+    workflow_dispatch:
+        inputs:
+            stage:
+                description: 'Pipeline stage'
+                type: choice
+                default: triage
+                options: [triage, resume, execute]
+            gh_issue:
+                description: 'GitHub issue number (triage)'
+                type: string
+                required: false
+            issue_key:
+                description: 'AITGH key (resume/execute)'
+                type: string
+                required: false
+            channel:
+                description: '@ag-grid/dev-prompts dist-tag'
+                type: choice
+                default: latest
+                options: [latest, canary]
+
+permissions:
+    contents: read
+    issues: write # execute posts the reply + closes + labels
+    packages: read # install @ag-grid/dev-prompts from GitHub Packages
+
+concurrency:
+    # Keyed on the GH issue number → a stable per-issue lock (no identity flip
+    # between first-triage and the resume/execute drag).
+    group: gh-triage-${{ github.event.issue.number || github.event.client_payload.gh_issue || inputs.gh_issue || github.event.client_payload.issue_key || inputs.issue_key }}
+    cancel-in-progress: false
+
+env:
+    # Defaults to `latest` (inputs is empty on issues / repository_dispatch).
+    # During rollout/dogfood, test unpromoted action changes by manually
+    # dispatching with channel=canary — the github-triage-pipeline action lands
+    # on the canary dist-tag first and reaches `latest` only on promotion.
+    DEV_PROMPTS_CHANNEL: ${{ inputs.channel || 'latest' }}
+
+jobs:
+    # -------------------------------------------------- preflight
+    # Only on the JIRA `→ In Progress` drag. Mechanical (no agent): reads the
+    # AITGH ticket's SUGGESTED-ACTION-READY marker + comments + bot-actor and
+    # emits `stage` (execute | resume | '' for suppress).
+    preflight:
+        if: github.event_name == 'repository_dispatch' && github.event.action == 'gh-triage-resume'
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            contents: read
+            packages: read
+        outputs:
+            stage: ${{ steps.pf.outputs.stage }}
+            issue_key: ${{ steps.pf.outputs.issue_key }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+            - id: pf
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-resume-preflight
+              with:
+                  issue_key: ${{ github.event.client_payload.issue_key }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}
+
+    # -------------------------------------------------- run
+    # The parameterised stage runner (triage / resume / execute). Runs on the
+    # issue event (triage), a forced dispatch, or a non-empty preflight route.
+    run:
+        needs: [preflight]
+        if: |
+            !cancelled() &&
+            (
+              (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'triage') && github.event.issue.state == 'open')
+              || github.event_name == 'workflow_dispatch'
+              || (github.event_name == 'repository_dispatch' && needs.preflight.outputs.stage != '')
+            )
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            issues: write
+            packages: read
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+            - uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/github-triage-pipeline
+              with:
+                  stage: ${{ needs.preflight.outputs.stage || inputs.stage || 'triage' }}
+                  product: grid
+                  gh_issue: ${{ github.event.issue.number || github.event.client_payload.gh_issue || inputs.gh_issue }}
+                  issue_key: ${{ needs.preflight.outputs.issue_key || github.event.client_payload.issue_key || inputs.issue_key }}
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
+                  jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
+                  jira_site_url: ${{ vars.JIRA_SITE_URL }}

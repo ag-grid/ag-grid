@@ -1,22 +1,23 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { RenderApiModule, TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import type {
-    CellRendererSelectorResult,
-    GridOptions,
-    ICellRendererComp,
-    ICellRendererParams,
-    Module,
+import {
+    RenderApiModule,
+    TextEditorModule,
+    TooltipModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
 } from 'ag-grid-community';
-import { FormulaModule } from 'ag-grid-enterprise';
+import type { GridOptions, ICellRendererComp, ICellRendererParams, Module } from 'ag-grid-community';
+import { BatchEditModule, FormulaModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, mockGridLayout } from '../test-utils';
 
 describe('Tooltips', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [TooltipModule, FormulaModule, RenderApiModule] as Module[],
+        modules: [TooltipModule, FormulaModule, RenderApiModule, TextEditorModule, BatchEditModule] as Module[],
     });
 
     beforeAll(() => setupAgTestIds());
@@ -53,6 +54,242 @@ describe('Tooltips', () => {
         await new GridRows(api, `shows tooltip when configured final state`).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 A:"value"
+        `);
+    });
+
+    test('AG-17120 tooltipField cell tooltip reflects the pending value during a batch edit', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'A', editable: true, tooltipField: 'A' }],
+            rowData: [{ A: 'value' }],
+            tooltipShowDelay: 200,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-batch-edit-field', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+
+        // before any edit, the tooltip reflects the original cell value
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('value');
+
+        await userEvent.unhover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(0);
+
+        api.startBatchEdit();
+        await asyncSetTimeout(1);
+
+        await userEvent.dblClick(cell);
+        await asyncSetTimeout(1);
+        await userEvent.keyboard('edited{Enter}');
+        await asyncSetTimeout(1);
+
+        // editor is closed, the edit stays pending in the batch
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+
+        // tooltip is a display feature, so it surfaces the pending batch value like cell rendering and copy
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('edited');
+
+        await userEvent.unhover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(0);
+
+        api.commitBatchEdit();
+        await asyncSetTimeout(1);
+
+        // once committed, the tooltip reflects the saved value
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('edited');
+        await new GridRows(api, `AG-17120 tooltipField batch edit committed final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 A:"edited"
+        `);
+    });
+
+    test('AG-17120 tooltipField pointing at another column reflects that column pending batch value', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'A', tooltipField: 'B' },
+                { field: 'B', editable: true },
+            ],
+            rowData: [{ A: 'a-value', B: 'b-value' }],
+            tooltipShowDelay: 200,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-batch-edit-foreign', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+        const cellB = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'B')));
+
+        // A's tooltip reads field B, initially the committed value
+        await userEvent.hover(cellA);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('b-value');
+
+        await userEvent.unhover(cellA);
+        await asyncSetTimeout(250);
+        await waitForTooltips(0);
+
+        api.startBatchEdit();
+        await asyncSetTimeout(1);
+
+        // edit column B, leaving a pending batch value on B
+        await userEvent.dblClick(cellB);
+        await asyncSetTimeout(1);
+        await userEvent.keyboard('b-edited{Enter}');
+        await asyncSetTimeout(1);
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+
+        // hovering A surfaces B's pending value, matching how copy resolves foreign fields
+        await userEvent.hover(cellA);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('b-edited');
+
+        await userEvent.unhover(cellA);
+        await asyncSetTimeout(250);
+        await waitForTooltips(0);
+
+        api.commitBatchEdit();
+        await asyncSetTimeout(1);
+
+        await userEvent.hover(cellA);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('b-edited');
+        await new GridRows(api, `AG-17120 tooltipField foreign column committed final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 A:"a-value" B:"b-edited"
+        `);
+    });
+
+    test('AG-17120 tooltipField reads the data field, not a matching column value getter', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'A', tooltipField: 'B' },
+                { field: 'B', valueGetter: (params) => `${params.data.B}-computed` },
+            ],
+            rowData: [{ A: 'a-value', B: 'b-value' }],
+            tooltipShowDelay: 200,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-field-value-getter', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+
+        // tooltipField is a data-field lookup: A's tooltip is data.B, never column B's computed value
+        await userEvent.hover(cellA);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('b-value');
+        expect(hasTooltipText('computed')).toBe(false);
+    });
+
+    test('AG-17120 tooltipField reads the pending data value, not a matching column value getter', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'A', tooltipField: 'B' },
+                { field: 'B', editable: true, valueGetter: (params) => `${params.data.B}-computed` },
+            ],
+            rowData: [{ A: 'a-value', B: 'b-value' }],
+            tooltipShowDelay: 200,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-field-pending-value-getter', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cellA = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+        const cellB = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'B')));
+
+        // baseline: A's tooltip is data.B, never column B's computed value
+        await userEvent.hover(cellA);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('b-value');
+        expect(hasTooltipText('computed')).toBe(false);
+
+        await userEvent.unhover(cellA);
+        await asyncSetTimeout(250);
+        await waitForTooltips(0);
+
+        api.startBatchEdit();
+        await asyncSetTimeout(1);
+
+        // edit column B, leaving a pending batch value on B
+        await userEvent.dblClick(cellB);
+        await asyncSetTimeout(1);
+        await userEvent.keyboard('b-edited{Enter}');
+        await asyncSetTimeout(1);
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+
+        // A's tooltip surfaces B's pending data value, not the valueGetter's computed output
+        await userEvent.hover(cellA);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('b-edited');
+        expect(hasTooltipText('computed')).toBe(false);
+    });
+
+    test('AG-17120 tooltipValueGetter cell tooltip reflects the pending value during a batch edit', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'A', editable: true, tooltipValueGetter: (params) => `Tooltip: ${params.value}` }],
+            rowData: [{ A: 'value' }],
+            tooltipShowDelay: 200,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-batch-edit-getter', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+
+        // before any edit, the tooltip reflects the original cell value
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Tooltip: value');
+
+        await userEvent.unhover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(0);
+
+        api.startBatchEdit();
+        await asyncSetTimeout(1);
+
+        await userEvent.dblClick(cell);
+        await asyncSetTimeout(1);
+        await userEvent.keyboard('edited{Enter}');
+        await asyncSetTimeout(1);
+
+        // editor is closed, the edit stays pending in the batch
+        expect(api.getCellEditorInstances()).toHaveLength(0);
+
+        // params.value is the cell's own display value, which shows the pending batch value
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Tooltip: edited');
+
+        await userEvent.unhover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(0);
+
+        api.commitBatchEdit();
+        await asyncSetTimeout(1);
+
+        // once committed, the tooltip reflects the saved value
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Tooltip: edited');
+        await new GridRows(api, `AG-17120 tooltipValueGetter batch edit committed final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 A:"edited"
         `);
     });
 
