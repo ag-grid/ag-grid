@@ -313,7 +313,6 @@ export class GridBodyCtrl extends BeanStub {
         } = this;
         classList.toggle('ag-body-vertical-content-no-gap', !scrollVisibleSvc.verticalScrollGap);
         classList.toggle('ag-body-horizontal-content-no-gap', !scrollVisibleSvc.horizontalScrollGap);
-        classList.toggle('ag-body-horizontal-scroll', scrollVisibleSvc.horizontalScrollShowing);
         classList.toggle('ag-has-left-pinned-cols', visibleCols.getLeftStickyColumnContainerWidth() > 0);
         classList.toggle('ag-has-right-pinned-cols', visibleCols.getRightStickyColumnContainerWidth() > 0);
     }
