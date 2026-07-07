@@ -493,4 +493,68 @@ describe('Date Range Filter', () => {
             reportSpy.mockRestore();
         }
     });
+
+    test('inRange validation bubble follows focus between the from and to inputs', async () => {
+        const userSession = userEvent.setup();
+
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    filter: 'agDateColumnFilter',
+                    filterParams: {
+                        filterOptions: ['inRange'],
+                    },
+                },
+            ],
+            rowData: [{ date: '2024-01-15' }, { date: '2024-06-15' }, { date: '2024-12-15' }],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        await asyncSetTimeout(0);
+
+        const filterBtn = getByTestId(gridDiv, agTestIdFor.headerFilterButton('date'));
+        await userSession.click(filterBtn);
+
+        await asyncSetTimeout(0);
+
+        const fromDateInput = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 0 })
+        );
+        const toDateInput = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 1 })
+        );
+
+        // Enter an invalid range: from (2020-10-10) is after to (2020-09-09). Typing last touches
+        // the `to` input, so the validity message is initially carried by `to`.
+        fromDateInput.valueAsDate = new Date('2020-10-10');
+        fromDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+        fromDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+        toDateInput.valueAsDate = new Date('2020-09-09');
+        toDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+        toDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        // Let the debounced report from typing land, so the invalid bubble is stably shown on `to`.
+        await asyncSetTimeout(600);
+
+        expect(toDateInput.validity.valid).toBe(false);
+
+        const reportSpy = vi.spyOn(HTMLInputElement.prototype, 'reportValidity');
+
+        try {
+            // Focus the `from` input: the message now targets `from` (interpolating the other date),
+            // so the message changes and the bubble must follow focus by re-reporting on `from`.
+            fromDateInput.dispatchEvent(new Event('focusin', { bubbles: true }));
+
+            await asyncSetTimeout(600);
+
+            expect(reportSpy).toHaveBeenCalled();
+            expect(fromDateInput.validity.valid).toBe(false);
+        } finally {
+            reportSpy.mockRestore();
+        }
+    });
 });
