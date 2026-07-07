@@ -1,8 +1,10 @@
 import type { CellStyle, CellStyleFunc, ColDef, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import {
+    CellStyleModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberFilterModule,
+    RowStyleModule,
     TextFilterModule,
     createGrid,
     enableDevValidations,
@@ -20,6 +22,8 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
+    CellStyleModule,
+    RowStyleModule,
     PdfExportModule,
     ColumnMenuModule,
     ContextMenuModule,
