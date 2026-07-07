@@ -1,4 +1,4 @@
-import { _findNextFocusableElement } from 'ag-stack';
+import { _findNextFocusableElement, _getActiveDomElement } from 'ag-stack';
 
 import type { AgColumn, ColumnChooserParams, HeaderPosition, NamedBean } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams } from 'ag-grid-community';
@@ -76,6 +76,9 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
         const translate = this.getLocaleTextFunc();
         const beans = this.beans;
         const { focusSvc, menuUtils } = beans;
+        const activeElement = _getActiveDomElement(beans);
+        const openerEl = eventSource ?? (activeElement instanceof HTMLElement ? activeElement : undefined);
+        const restoreColumn = column ?? undefined;
         const columnIndex = column?.allColsIndex ?? -1;
         const headerPosition = column ? (focusSvc.focusedHeader ?? providedHeaderPosition ?? null) : null;
 
@@ -101,9 +104,9 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
                     this.activeColumnChooser = undefined;
                     this.activeColumnChooserDialog = undefined;
                     this.dispatchVisibleChangedEvent(false, column);
-                    if (column) {
+                    if (restoreColumn || openerEl) {
                         (menuUtils as MenuUtils).restoreFocusOnClose(
-                            { column, headerPosition, columnIndex, eventSource },
+                            { column: restoreColumn, headerPosition, columnIndex, eventSource: openerEl },
                             eComp,
                             event,
                             true
@@ -113,7 +116,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
                 postProcessPopupParams: {
                     type: 'columnChooser',
                     column,
-                    eventSource,
+                    eventSource: openerEl,
                 },
             })
         );

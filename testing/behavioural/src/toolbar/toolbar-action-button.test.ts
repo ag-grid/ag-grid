@@ -1,7 +1,26 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ToolbarModule } from 'ag-grid-enterprise';
+import { ColumnMenuModule, ToolbarModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
+
+// Column chooser dialog focus management checks visibility via `offsetParent`. jsdom does not
+// compute layout, so expose attached elements as visible for these behavioural tests.
+const originalOffsetParent = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
+beforeAll(() => {
+    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+        configurable: true,
+        get(this: HTMLElement) {
+            return this.parentElement;
+        },
+    });
+});
+afterAll(() => {
+    if (originalOffsetParent) {
+        Object.defineProperty(HTMLElement.prototype, 'offsetParent', originalOffsetParent);
+    } else {
+        delete (HTMLElement.prototype as any).offsetParent;
+    }
+});
 
 describe('Toolbar action button item', () => {
     const gridMgr = new TestGridsManager({
@@ -229,6 +248,66 @@ describe('Toolbar action button item', () => {
         await new GridRows(api, `invokes action with grid api, context and key on click final state`).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice"
+        `);
+    });
+});
+
+describe('Toolbar action button item with column chooser', () => {
+    const gridMgr = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ToolbarModule, ColumnMenuModule],
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+    });
+
+    test('pressing Escape from column chooser returns focus to the toolbar button', async () => {
+        const api = gridMgr.createGrid('action-button-column-chooser-escape', {
+            columnDefs: [{ field: 'name' }, { field: 'country' }],
+            rowData: [{ name: 'Alice', country: 'Ireland' }],
+            toolbar: {
+                items: [
+                    {
+                        key: 'showColumnChooser',
+                        tooltip: 'Open Column Chooser',
+                        icon: 'columns',
+                        action: (params) => params.api.showColumnChooser(),
+                    },
+                ],
+            },
+        });
+        await new GridColumns(api, `pressing Escape from column chooser returns focus to the toolbar button setup`)
+            .checkColumns(`
+            CENTER
+            ├── name "Name" width:200
+            └── country "Country" width:200
+        `);
+        await new GridRows(api, `pressing Escape from column chooser returns focus to the toolbar button setup`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice" country:"Ireland"
+        `);
+
+        await waitForEvent('firstDataRendered', api);
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        const button = gridDiv.querySelector<HTMLButtonElement>('.ag-toolbar-button')!;
+        button.focus();
+        button.click();
+
+        expect(gridDiv.querySelector('.ag-dialog')).not.toBeNull();
+        expect(document.activeElement).not.toBe(button);
+
+        await asyncSetTimeout(0);
+
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+        await asyncSetTimeout(0);
+
+        expect(gridDiv.querySelector('.ag-dialog')).toBeNull();
+        expect(document.activeElement).toBe(button);
+        await new GridRows(api, `pressing Escape from column chooser returns focus to the toolbar button final state`)
+            .check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice" country:"Ireland"
         `);
     });
 });
