@@ -7,8 +7,13 @@
 // $switcher-show and $switcher-popup-at control and why.
 .customMenu {
     display: none;
-    padding-right: $spacing-size-2;
-    margin-right: auto;
+    // While the header is a wrapping flex row (below $docs-search-inline) this auto
+    // margin keeps the switcher hard against the nav on the right — logo left, then
+    // switcher + nav as one right-aligned group — so the switcher can never be
+    // stranded mid-row or on a line of its own. Inert once the header becomes a grid
+    // (the switcher's track is content-sized), where grid-area handles placement.
+    margin-left: auto;
+    margin-right: -$spacing-size-5;
     user-select: none;
     // Direct .headerInner grid child once the header goes fully inline — see
     // SiteHeader.module.scss's .headerInner grid-template-areas.
