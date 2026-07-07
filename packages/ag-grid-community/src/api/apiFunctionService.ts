@@ -87,12 +87,16 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
     private apiNotFound(fnName: ApiFunctionName): void {
         const { beans, gos, preDestroyLink } = this;
         if (!beans) {
+            // No grid context (grid destroyed) — genuinely unattributed.
             _warn(26, { fnName, preDestroyLink });
         } else {
-            const module = gridApiFunctionsMap[fnName];
-            if (gos.assertModuleRegistered(module, `\`api.${fnName}\``)) {
-                _warn(27, { fnName, module });
-            }
+            // apiNotFound runs before the _runWithActiveGrid wrap in the api-call closure, so attribute here.
+            _runWithActiveGrid(beans.context.getId(), () => {
+                const module = gridApiFunctionsMap[fnName];
+                if (gos.assertModuleRegistered(module, `\`api.${fnName}\``)) {
+                    _warn(27, { fnName, module });
+                }
+            });
         }
     }
 

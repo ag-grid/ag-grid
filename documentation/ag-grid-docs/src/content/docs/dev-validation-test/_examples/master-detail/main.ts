@@ -18,7 +18,13 @@ const gridOptions: GridOptions = {
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: {
-            columnDefs: [{ field: 'callId' }, { field: 'duration' }],
+            columnDefs: [
+                { field: 'callId' },
+                // An invalid column def property on the detail grid column. The resulting error shows on
+                // the detail grid's own overlay; diagnostics stay on the grid that emitted them, so the
+                // master grid is unaffected.
+                { field: 'duration', notAValidColumnDefProperty: true },
+            ],
             // An invalid grid option on the detail grid. The resulting error shows on the detail grid's
             // own overlay; diagnostics stay on the grid that emitted them, so the master grid is unaffected.
             notAValidGridOption: true,

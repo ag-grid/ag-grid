@@ -13,7 +13,7 @@ import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import type { IconName } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
-import { _deprecated, _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';
+import { _deprecated, _errMsg, _error, _runWithActiveGrid, _warn, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
@@ -39,9 +39,18 @@ export class ValidationService extends BeanStub implements NamedBean {
         provideValidationServiceLogger(getError);
     }
 
+    /**
+     * Runs `fn` with this bean's grid marked active, so any diagnostic it emits is attributed to this grid.
+     * Validation runs from deferred/async contexts (lazy component + icon creation, row events, the grid's
+     * async column-build event) that fall outside createGrid's synchronous active-grid scope.
+     */
+    private runForGrid<T>(fn: () => T): T {
+        return _runWithActiveGrid(this.beans.context.getId(), fn);
+    }
+
     public warnOnInitialPropertyUpdate(source: AgPropertyChangedSource, key: string): void {
         if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
-            _warn(22, { key });
+            this.runForGrid(() => _warn(22, { key }));
         }
     }
 
@@ -62,30 +71,39 @@ export class ValidationService extends BeanStub implements NamedBean {
         agGridDefaults: { [key in UserComponentName]?: any },
         jsComps: { [key: string]: any }
     ): void {
+        this.runForGrid(() => this.checkUserComponent(propertyName, componentName, agGridDefaults, jsComps));
+    }
+
+    private checkUserComponent(
+        propertyName: string,
+        componentName: string,
+        agGridDefaults: { [key in UserComponentName]?: any },
+        jsComps: { [key: string]: any }
+    ): void {
         const moduleForComponent = USER_COMP_MODULES[componentName as UserComponentName];
         if (moduleForComponent) {
             this.gos.assertModuleRegistered(
                 moduleForComponent,
                 `AG Grid \`${propertyName}\` component: \`${componentName}\``
             );
-        } else {
-            // Resolve the valid component names here (where the maps live) and fuzzy-match them now, so
-            // only the handful of suggestions travels in the error-page URL rather than the full registry.
-            const validComponents = [
-                // Don't include the old names / internals in potential suggestions
-                ...Object.keys(agGridDefaults ?? {}).filter(
-                    (k) => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)
-                ),
-                ...Object.keys(jsComps ?? {}).filter((k) => !!jsComps[k]),
-            ];
-            const suggestions = _fuzzySuggestions({
-                inputValue: componentName,
-                allSuggestions: validComponents,
-                hideIrrelevant: true,
-                maxSuggestions: 4,
-            }).values;
-            _warn(101, { propertyName, componentName, suggestions });
+            return;
         }
+        // Resolve the valid component names here (where the maps live) and fuzzy-match them now, so
+        // only the handful of suggestions travels in the error-page URL rather than the full registry.
+        const validComponents = [
+            // Don't include the old names / internals in potential suggestions
+            ...Object.keys(agGridDefaults ?? {}).filter(
+                (k) => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)
+            ),
+            ...Object.keys(jsComps ?? {}).filter((k) => !!jsComps[k]),
+        ];
+        const suggestions = _fuzzySuggestions({
+            inputValue: componentName,
+            allSuggestions: validComponents,
+            hideIrrelevant: true,
+            maxSuggestions: 4,
+        }).values;
+        _warn(101, { propertyName, componentName, suggestions });
     }
 
     public missingDynamicBean(beanName: DynamicBeanName): string | undefined {
@@ -101,11 +119,15 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public checkRowEvents(eventType: RowNodeEventType): void {
         if (DEPRECATED_ROW_NODE_EVENTS.has(eventType)) {
-            _warn(10, { eventType });
+            this.runForGrid(() => _warn(10, { eventType }));
         }
     }
 
     public validateIcon(iconName: IconName): void {
+        this.runForGrid(() => this.checkIcon(iconName));
+    }
+
+    private checkIcon(iconName: IconName): void {
         if (DEPRECATED_ICONS_V33.has(iconName)) {
             _warn(43, { iconName });
         }
@@ -138,6 +160,10 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 
     private processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {
+        this.runForGrid(() => this.runOptionValidations(options, validator));
+    }
+
+    private runOptionValidations<T extends object>(options: T, validator: OptionsValidator<T>): void {
         const { validations, deprecations, allProperties, allValidNames, objectName, docsUrl } = validator;
 
         const optionKeys = Object.keys(options) as (keyof T & string)[];

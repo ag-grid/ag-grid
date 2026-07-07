@@ -32,6 +32,7 @@ import type {
 import type { RowGroupBulkExpansionState, RowGroupExpansionState } from '../../interfaces/iExpansionService';
 import type { FilterModel } from '../../interfaces/iFilter';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
+import { _runWithActiveGrid } from '../../validation/logging';
 import { migrateGridStateModel } from './stateModelMigration';
 import { _convertColumnGroupState, convertColumnState } from './stateUtils';
 
@@ -985,8 +986,13 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private suppressEventsAndDispatchInitEvent(updateFunc: () => void): void {
-        this.startSuppressEvents();
-        updateFunc();
-        this.stopSuppressEvents('gridInitializing');
+        // State restore runs from deferred managed listeners (rowCountReady / firstDataRendered /
+        // newColumnsLoaded), outside createGrid's synchronous active-grid scope, so attribute any
+        // validation diagnostics (e.g. malformed initialState) to this grid.
+        _runWithActiveGrid(this.beans.context.getId(), () => {
+            this.startSuppressEvents();
+            updateFunc();
+            this.stopSuppressEvents('gridInitializing');
+        });
     }
 }
