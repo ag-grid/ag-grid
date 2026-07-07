@@ -11,6 +11,7 @@ import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import { getNumberOfInputs, removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
+import type { ValidationReportMode } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { mapValuesFromDateFilterModel } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
@@ -33,7 +34,6 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     private maxValidYear: number = DEFAULT_MAX_YEAR;
     private minValidDate: Date | null = null;
     private maxValidDate: Date | null = null;
-    private suppressFocusValidation = false;
 
     public readonly filterType = 'date' as const;
 
@@ -46,7 +46,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
 
         this.dateConditionFromComps[0].afterGuiAttached(params);
 
-        this.applyInitialValidation();
+        this.refreshInputValidation();
     }
 
     protected override shouldKeepInvalidInputState(): boolean {
@@ -94,17 +94,17 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
     }
 
-    private applyInitialValidation(): void {
-        // In Chrome/Safari reportValidity() below steals focus, whose focusin handler would schedule a
-        // debounced re-report. Suppress it so a single stable bubble survives on (re-)open.
-        this.suppressFocusValidation = true;
+    private refreshInputValidation(): void {
         for (let i = 0; i < this.dateConditionFromComps.length; i++) {
-            this.refreshInputPairValidation(i, false, true);
+            this.refreshInputPairValidation(i, false, 'immediate');
         }
-        this.suppressFocusValidation = false;
     }
 
-    private refreshInputPairValidation(position: number, isFrom = false, forceImmediate = false): void {
+    private refreshInputPairValidation(
+        position: number,
+        isFrom = false,
+        reportMode: ValidationReportMode = 'debounce'
+    ): void {
         const { dateConditionFromComps, dateConditionToComps, beans } = this;
         const from = dateConditionFromComps[position];
         const to = dateConditionToComps[position];
@@ -122,10 +122,10 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         // For example, when typing "2000", when we get to "200", that is interpreted as a valid year by Chrome
         // (even though a HTML date should be four digits per the spec), which triggers validation, and the
         // final keystroke of "0" will instead be interpreted as the first keystroke of a new year.
-        const shouldDebounceReport = !_isBrowserFirefox() && !forceImmediate;
+        const effectiveMode: ValidationReportMode = _isBrowserFirefox() ? 'immediate' : reportMode;
 
-        (isFrom ? from : to).setCustomValidity(message, shouldDebounceReport); // Set validity error state for target input
-        (isFrom ? to : from).setCustomValidity('', shouldDebounceReport); // Reset validity error state for other input
+        (isFrom ? from : to).setCustomValidity(message, effectiveMode); // Set validity error state for target input
+        (isFrom ? to : from).setCustomValidity('', effectiveMode); // Reset validity error state for other input
 
         if (message.length > 0) {
             beans.ariaAnnounce.announceValue(message, 'dateFilter');
@@ -144,14 +144,10 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             params.colDef,
             _addGridCommonParams<IDateParams>(gos, {
                 onDateChanged: () => {
-                    this.refreshInputPairValidation(position, isFrom);
+                    this.refreshInputPairValidation(position, isFrom, 'debounce');
                     this.onUiChanged();
                 },
-                onFocusIn: () => {
-                    if (!this.suppressFocusValidation) {
-                        this.refreshInputPairValidation(position, isFrom);
-                    }
-                },
+                onFocusIn: () => this.refreshInputPairValidation(position, isFrom, 'debounce-if-changed'),
                 filterParams: params as any,
                 location: 'filter',
             }),
