@@ -3,15 +3,15 @@ import { RefPlaceholder } from 'ag-stack';
 import { OverlayComponent } from '../../rendering/overlays/overlayComponent';
 import type { IOverlayComp } from '../../rendering/overlays/overlayComponent';
 import type { ElementParams } from '../../utils/element';
-import { _createElement } from '../../utils/element';
 import { _createIconNoSpan } from '../../utils/icon';
 import type { CapturedDiagnostic } from '../logging';
 import {
     COPY_LABEL,
+    SEVERITY_ORDER,
     copyDiagnosticsToClipboard,
     diagnosticToMarkdown,
     flashCopied,
-    renderDiagnostic,
+    renderDiagnosticSections,
 } from './errorOverlayRenderer';
 
 const ErrorOverlayElement: ElementParams = {
@@ -88,15 +88,7 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
     private renderBody(): void {
         const diagnostics = this.beans.errorOverlay?.getDiagnostics() ?? [];
         this.eTitle.textContent = getTitle(diagnostics);
-
-        this.eBody.replaceChildren();
-        for (let i = 0, len = diagnostics.length; i < len; ++i) {
-            if (i > 0) {
-                this.eBody.appendChild(_createElement({ tag: 'div', cls: 'ag-overlay-error-divider' }));
-            }
-            this.eBody.appendChild(renderDiagnostic(diagnostics[i]));
-        }
-
+        this.eBody.replaceChildren(...renderDiagnosticSections(diagnostics));
         this.beans.ariaAnnounce?.announceValue(this.eTitle.textContent ?? '', 'overlay');
     }
 
@@ -126,9 +118,8 @@ function getTitle(diagnostics: readonly CapturedDiagnostic[]): string {
         counts[diagnostics[i].severity]++;
     }
     const parts: string[] = [];
-    const severities: CapturedDiagnostic['severity'][] = ['error', 'warning', 'deprecation'];
-    for (let i = 0, len = severities.length; i < len; ++i) {
-        const severity = severities[i];
+    for (let i = 0, len = SEVERITY_ORDER.length; i < len; ++i) {
+        const severity = SEVERITY_ORDER[i];
         const count = counts[severity];
         if (count > 0) {
             parts.push(`${count} ${SEVERITY_LABELS[severity]}${count > 1 ? 's' : ''}`);
