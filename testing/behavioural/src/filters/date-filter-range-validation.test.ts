@@ -344,4 +344,217 @@ describe('Date Range Filter', () => {
             `
         );
     });
+
+    test('inRange validation tooltip reports once on re-open, with no debounced re-report', async () => {
+        const userSession = userEvent.setup();
+
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    filter: 'agDateColumnFilter',
+                    filterParams: {
+                        filterOptions: ['inRange'],
+                    },
+                },
+            ],
+            rowData: [{ date: '2024-01-15' }, { date: '2024-06-15' }, { date: '2024-12-15' }],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        await asyncSetTimeout(0);
+
+        const filterBtn = getByTestId(gridDiv, agTestIdFor.headerFilterButton('date'));
+        await userSession.click(filterBtn);
+
+        await asyncSetTimeout(0);
+
+        const fromDateInput = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 0 })
+        );
+        const toDateInput = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 1 })
+        );
+
+        // Enter an invalid range: from (2020-10-10) is after to (2020-09-09).
+        fromDateInput.valueAsDate = new Date('2020-10-10');
+        fromDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+        fromDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+        toDateInput.valueAsDate = new Date('2020-09-09');
+        toDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+        toDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        await asyncSetTimeout(0);
+
+        expect(toDateInput.validity.valid).toBe(false);
+
+        // Close the filter. For an invalid inRange filter outside Firefox the invalid
+        // input state is deliberately retained, so it is still invalid on re-open.
+        await userSession.click(getByTestId(gridDiv, agTestIdFor.cell('2', 'date')));
+
+        await asyncSetTimeout(0);
+
+        // Chrome/Safari focus the invalid control when reportValidity() is called, which
+        // fires `focusin` and re-triggers the (debounced) date validation report. jsdom's
+        // reportValidity is a no-op that does not steal focus, so model that focus steal on
+        // the first report to exercise the same re-report path a real browser would take.
+        let stolenFocus = false;
+        const reportSpy = vi
+            .spyOn(HTMLInputElement.prototype, 'reportValidity')
+            .mockImplementation(function reportValidityWithFocusSteal(this: HTMLInputElement) {
+                if (!stolenFocus) {
+                    stolenFocus = true;
+                    this.dispatchEvent(new Event('focusin', { bubbles: true }));
+                }
+                return this.validity.valid;
+            });
+
+        try {
+            // Re-open the filter: afterGuiAttached reports validity immediately (once).
+            await userSession.click(filterBtn);
+
+            await asyncSetTimeout(0);
+
+            const reportsOnOpen = reportSpy.mock.calls.length;
+
+            // Let the 500ms date-report debounce window elapse.
+            await asyncSetTimeout(600);
+
+            // The tooltip must render once and stay stable: the focusin from the focus steal recomputes
+            // the same validity message, so no second, conflicting report is scheduled.
+            expect(reportSpy.mock.calls.length).toBe(reportsOnOpen);
+        } finally {
+            reportSpy.mockRestore();
+        }
+    });
+
+    test('inRange validation tooltip does not re-report when focus returns (e.g. switching browser tabs)', async () => {
+        const userSession = userEvent.setup();
+
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    filter: 'agDateColumnFilter',
+                    filterParams: {
+                        filterOptions: ['inRange'],
+                    },
+                },
+            ],
+            rowData: [{ date: '2024-01-15' }, { date: '2024-06-15' }, { date: '2024-12-15' }],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        await asyncSetTimeout(0);
+
+        const filterBtn = getByTestId(gridDiv, agTestIdFor.headerFilterButton('date'));
+        await userSession.click(filterBtn);
+
+        await asyncSetTimeout(0);
+
+        const fromDateInput = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 0 })
+        );
+        const toDateInput = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 1 })
+        );
+
+        // Enter an invalid range: from (2020-10-10) is after to (2020-09-09).
+        fromDateInput.valueAsDate = new Date('2020-10-10');
+        fromDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+        fromDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+        toDateInput.valueAsDate = new Date('2020-09-09');
+        toDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+        toDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        // Let the debounced report from typing land, so the invalid bubble is stably shown.
+        await asyncSetTimeout(600);
+
+        expect(toDateInput.validity.valid).toBe(false);
+
+        const reportSpy = vi.spyOn(HTMLInputElement.prototype, 'reportValidity');
+
+        try {
+            // Switching browser tabs away and back re-focuses the invalid input, firing `focusin`.
+            // The validity message is unchanged, so no report should be scheduled - otherwise the
+            // native validation bubble blinks (disappears then reappears) on every tab return.
+            toDateInput.dispatchEvent(new Event('focusin', { bubbles: true }));
+
+            await asyncSetTimeout(600);
+
+            expect(reportSpy).not.toHaveBeenCalled();
+        } finally {
+            reportSpy.mockRestore();
+        }
+    });
+
+    test('inRange validation bubble follows focus between the from and to inputs', async () => {
+        const userSession = userEvent.setup();
+
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'date',
+                    filter: 'agDateColumnFilter',
+                    filterParams: {
+                        filterOptions: ['inRange'],
+                    },
+                },
+            ],
+            rowData: [{ date: '2024-01-15' }, { date: '2024-06-15' }, { date: '2024-12-15' }],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        await asyncSetTimeout(0);
+
+        const filterBtn = getByTestId(gridDiv, agTestIdFor.headerFilterButton('date'));
+        await userSession.click(filterBtn);
+
+        await asyncSetTimeout(0);
+
+        const fromDateInput = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 0 })
+        );
+        const toDateInput = getByTestId<HTMLInputElement>(
+            gridDiv,
+            agTestIdFor.dateFilterInstanceInput({ source: 'column-filter', index: 1 })
+        );
+
+        // Enter an invalid range: from (2020-10-10) is after to (2020-09-09). Typing last touches
+        // the `to` input, so the validity message is initially carried by `to`.
+        fromDateInput.valueAsDate = new Date('2020-10-10');
+        fromDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+        fromDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+        toDateInput.valueAsDate = new Date('2020-09-09');
+        toDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+        toDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        // Let the debounced report from typing land, so the invalid bubble is stably shown on `to`.
+        await asyncSetTimeout(600);
+
+        expect(toDateInput.validity.valid).toBe(false);
+
+        const reportSpy = vi.spyOn(HTMLInputElement.prototype, 'reportValidity');
+
+        try {
+            // Focus the `from` input: the message now targets `from` (interpolating the other date),
+            // so the message changes and the bubble must follow focus by re-reporting on `from`.
+            fromDateInput.dispatchEvent(new Event('focusin', { bubbles: true }));
+
+            await asyncSetTimeout(600);
+
+            expect(reportSpy).toHaveBeenCalled();
+            expect(fromDateInput.validity.valid).toBe(false);
+        } finally {
+            reportSpy.mockRestore();
+        }
+    });
 });
