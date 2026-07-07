@@ -64,7 +64,14 @@ function execute(beans: BeanCollection, args: unknown): AiToolResult {
     if (!colId || !headerName || !calculatedExpression) {
         return { ok: false, error: 'colId, headerName and calculatedExpression are all required' };
     }
-    if (colModel.colsById[colId] != null) {
+    const existingColumn = colModel.colsById[colId];
+    if (existingColumn != null) {
+        // The tool-calling loop re-runs the whole plan on retry, so re-adding the identical
+        // calculated column must be a no-op success, not an error — otherwise a column we created
+        // on an earlier turn fails on the retry and the model can spiral (renaming, or looping).
+        if (existingColumn.colDef.calculatedExpression === calculatedExpression) {
+            return { ok: true, summary: `Calculated column "${headerName}" already exists` };
+        }
         return { ok: false, error: `A column with id "${colId}" already exists` };
     }
 

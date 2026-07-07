@@ -83,6 +83,78 @@ describe('AI toolkit add_calculated_column tool', () => {
         expect(missing.ok).toBe(false);
     });
 
+    test('a retry after a sibling failure re-applies the created column as a no-op', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: COLUMN_DEFS,
+            rowData: ROW_DATA,
+            calculatedColumns: true,
+        });
+
+        const scoreArgs = {
+            colId: 'score',
+            headerName: 'Score',
+            calculatedExpression: '[gold] + [silver]',
+            cellDataType: 'number',
+        };
+
+        // Turn 1: one column applies, a sibling with a bad expression fails.
+        expect(api.applyToolCall('add_calculated_column', scoreArgs).ok).toBe(true);
+        expect(
+            api.applyToolCall('add_calculated_column', {
+                colId: 'ratio',
+                headerName: 'Ratio',
+                calculatedExpression: '[gold] /',
+                cellDataType: 'number',
+            }).ok
+        ).toBe(false);
+
+        // Turn 2 (retry): the model re-emits the whole plan. The already-created column must be a
+        // no-op success rather than a collision, and the fixed sibling now applies.
+        expect(api.applyToolCall('add_calculated_column', scoreArgs).ok).toBe(true);
+        expect(
+            api.applyToolCall('add_calculated_column', {
+                colId: 'ratio',
+                headerName: 'Ratio',
+                calculatedExpression: '[gold] / [silver]',
+                cellDataType: 'number',
+            }).ok
+        ).toBe(true);
+
+        await asyncSetTimeout(1);
+
+        const columnDefs = api.getColumnDefs() ?? [];
+        const countById = (id: string) =>
+            columnDefs.filter((colDef) => (colDef as { colId?: string }).colId === id).length;
+        expect(countById('score')).toBe(1);
+        expect(countById('ratio')).toBe(1);
+    });
+
+    test('reusing an existing column id with a different expression still errors', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: COLUMN_DEFS,
+            rowData: ROW_DATA,
+            calculatedColumns: true,
+        });
+
+        expect(
+            api.applyToolCall('add_calculated_column', {
+                colId: 'score',
+                headerName: 'Score',
+                calculatedExpression: '[gold] + [silver]',
+                cellDataType: 'number',
+            }).ok
+        ).toBe(true);
+
+        const clash = api.applyToolCall('add_calculated_column', {
+            colId: 'score',
+            headerName: 'Score',
+            calculatedExpression: '[bronze]',
+            cellDataType: 'number',
+        });
+        expect(clash.ok).toBe(false);
+        expect(clash.error).toContain('score');
+    });
+
     test('a newly created column can be referenced by a following tool call', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: COLUMN_DEFS,
