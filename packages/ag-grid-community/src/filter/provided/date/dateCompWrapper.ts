@@ -14,11 +14,11 @@ const CLASS_INPUT_FIELD = '.ag-input-field-input';
  * - `immediate`: report synchronously (used on (re-)open, and always in Firefox).
  * - `debounce`: schedule a trailing report, resetting the timer on each call (used while typing so the
  *   report lands after the user stops, avoiding a mid-entry cursor reset).
- * - `debounce-if-changed`: schedule a trailing report only when the message actually changed, so a
+ * - `debounceIfChanged`: schedule a trailing report only when the message actually changed, so a
  *   `focusin` fired by tab-switching (or reportValidity's own focus steal) does not re-report and blink
  *   the native validation bubble.
  */
-export type ValidationReportMode = 'immediate' | 'debounce' | 'debounce-if-changed';
+export type ValidationReportMode = 'immediate' | 'debounce' | 'debounceIfChanged';
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */

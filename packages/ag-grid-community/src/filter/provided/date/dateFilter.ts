@@ -147,7 +147,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
                     this.refreshInputPairValidation(position, isFrom, 'debounce');
                     this.onUiChanged();
                 },
-                onFocusIn: () => this.refreshInputPairValidation(position, isFrom, 'debounce-if-changed'),
+                onFocusIn: () => this.refreshInputPairValidation(position, isFrom, 'debounceIfChanged'),
                 filterParams: params as any,
                 location: 'filter',
             }),
