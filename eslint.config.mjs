@@ -68,7 +68,12 @@ export const sonarjsConfig = [
 ];
 
 export default [
-    { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
+    {
+        languageOptions: {
+            globals: { ...globals.browser, ...globals.node },
+            parserOptions: { tsconfigRootDir: import.meta.dirname },
+        },
+    },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
     { plugins: { 'import-x': eslintImportX, unicorn } },
