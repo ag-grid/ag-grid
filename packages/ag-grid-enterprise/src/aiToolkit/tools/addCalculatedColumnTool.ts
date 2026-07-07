@@ -91,7 +91,7 @@ function execute(beans: BeanCollection, args: unknown): AiToolResult {
     return { ok: true, summary: `Created calculated column "${headerName}"` };
 }
 
-export const createCalculatedColumnTool: AiTool = {
+export const addCalculatedColumnTool: AiTool = {
     name: 'add_calculated_column',
     description:
         'Add a new calculated column to the grid, derived from a formula over existing columns. Call this before any tool that references the new column (e.g. sorting, filtering or aggregating on it).',
