@@ -47,13 +47,15 @@
     // this state intentionally stays flex.
     @container site-header (min-width: #{$docs-search-inline}) {
         // Above this width the header is a single row with four named regions: logo,
-        // product/site switcher, the docs+search cluster (flexible — absorbs whatever
-        // space the other three don't need), and the nav. Each region's own CSS rule
-        // declares its `grid-area` below rather than relying on flex order/margin
-        // tricks to land in the right place.
+        // the docs+search cluster (flexible — absorbs whatever space the other three
+        // don't need), the product/site switcher, and the nav. The switcher sits
+        // directly to the left of the nav so the "Products" dropdown reads as the item
+        // immediately before the first nav link. Each region's own CSS rule declares
+        // its `grid-area` below rather than relying on flex order/margin tricks to
+        // land in the right place.
         display: grid;
-        grid-template-columns: auto auto 1fr auto;
-        grid-template-areas: 'logo switcher docs-search nav';
+        grid-template-columns: auto 1fr auto auto;
+        grid-template-areas: 'logo docs-search switcher nav';
         align-items: center;
         column-gap: $spacing-size-4;
     }
