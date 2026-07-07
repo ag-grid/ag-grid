@@ -37,7 +37,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
             // don't return focus to the header
             return;
         }
-        this.focusHeaderCell(restoreFocusParams);
+        this.focusEventSourceOrHeaderCell(restoreFocusParams);
     }
 
     public closePopupAndRestoreFocusOnSelect(
@@ -70,7 +70,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
                     preventScrollOnBrowserFocus: true,
                 });
             } else {
-                this.focusHeaderCell(restoreFocusParams);
+                this.focusEventSourceOrHeaderCell(restoreFocusParams);
             }
         }
     }
@@ -112,7 +112,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
     }
 
     // make this async for react
-    private async focusHeaderCell(restoreFocusParams: MenuRestoreFocusParams): Promise<void> {
+    private async focusEventSourceOrHeaderCell(restoreFocusParams: MenuRestoreFocusParams): Promise<void> {
         const { column, columnIndex, headerPosition, eventSource } = restoreFocusParams;
         const { visibleCols, headerNavigation, focusSvc } = this.beans;
 
@@ -124,11 +124,14 @@ export class MenuUtils extends BeanStub implements NamedBean {
             return;
         }
 
-        if (column?.isAlive() && isColumnStillVisible && eventSource && _isVisible(eventSource)) {
+        if (eventSource && _isVisible(eventSource)) {
             const focusableEl = _findTabbableParent(eventSource);
             if (focusableEl) {
-                headerNavigation?.scrollToColumn(column);
+                if (column?.isAlive() && isColumnStillVisible) {
+                    headerNavigation?.scrollToColumn(column);
+                }
                 focusableEl.focus();
+                return;
             }
         }
         // if the focusEl is no longer in the DOM, we try to focus
