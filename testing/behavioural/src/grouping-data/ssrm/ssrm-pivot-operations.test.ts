@@ -31,6 +31,7 @@ interface RecordedRequest {
     valueCols: string[];
     groupKeys: string[];
     range: [number | undefined, number | undefined];
+    filterModel: any;
 }
 
 // Thin recorder around the shared Olympic pivot/agg fake server: captures the request stream so we
@@ -48,6 +49,7 @@ function createRecordingServer(allData: any[]) {
                 valueCols: (request.valueCols ?? []).map((col) => col.id),
                 groupKeys: [...(request.groupKeys ?? [])],
                 range: [request.startRow, request.endRow],
+                filterModel: request.filterModel,
             });
             if (failNext) {
                 failNext = false;
@@ -252,8 +254,17 @@ describe('SSRM pivot-mode operations (characterization)', () => {
         expect(filterRequest.pivotMode).toBe(true);
         expect(filterRequest.pivotCols).toEqual(['year']);
         expect(filterRequest.valueCols).toEqual(['gold']);
+        // The applied country filter is carried on the post-filter request's filterModel. This is the
+        // pivot-specific guarantee under test: were SSRM to stop sending filterModel on pivot requests,
+        // this assertion would catch it (the metadata-only checks above would not).
+        expect(filterRequest.filterModel).toEqual({
+            country: { filterType: 'text', type: 'equals', filter: 'USA' },
+        });
 
-        // Only USA remains; pivot result columns still present.
+        // Pivot result columns still present. Note: this shared Olympic fake server does NOT honour
+        // filterModel (its getData never reads request.filterModel), so the displayed rows are
+        // unchanged — both Russia and USA remain. The test pins that behaviour and instead asserts,
+        // above, that the filter is SENT on the request; it does not assert server-side filtering.
         expect(pivotCols(api)).toEqual(['2000_gold', '2004_gold']);
         await new GridRows(api, '4. filter in pivot mode').check(`
             ROOT id:<no-id>
