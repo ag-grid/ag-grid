@@ -16,6 +16,7 @@ export type {
     _ContextMenuGridApi,
     _CsvExportGridApi,
     _ExcelExportGridApi,
+    _PdfExportGridApi,
     _FindApi,
     _FormulaGridApi,
     _GridChartsGridApi,

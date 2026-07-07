@@ -416,7 +416,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     if (options.ssrmExpandAllAffectsAllRows && typeof options.getRowId !== 'function') {
                         return _createValidationWarning(319, {
                             feature: 'Server Side Row Model grouping',
-                            requirement: "the 'getRowId' callback",
+                            requirement: 'the `getRowId` callback',
                         });
                     }
                 }
@@ -539,7 +539,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         notesDataSource: {
             validate: ({ getRowId }) => {
                 if (!getRowId) {
-                    return _createValidationWarning(319, { feature: 'Notes', requirement: "the 'getRowId' callback" });
+                    return _createValidationWarning(319, { feature: 'Notes', requirement: 'the `getRowId` callback' });
                 }
                 return null;
             },
@@ -623,22 +623,22 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                         const { treeDataChildrenField, treeDataParentIdField, getDataPath, getRowId } = options;
                         if (!treeDataChildrenField && !treeDataParentIdField && !getDataPath) {
                             return _createValidationWarning(319, {
-                                feature: 'treeData',
+                                feature: '`treeData`',
                                 requirement:
-                                    "either 'treeDataChildrenField' or 'treeDataParentIdField' or 'getDataPath' in the clientSide row model",
+                                    'either `treeDataChildrenField` or `treeDataParentIdField` or `getDataPath` in the `clientSide` row model',
                             });
                         }
                         if (treeDataChildrenField) {
                             if (getDataPath) {
                                 return _createValidationWarning(318, {
-                                    feature: "'treeDataChildrenField'",
-                                    conflictsWith: "'getDataPath'",
+                                    feature: '`treeDataChildrenField`',
+                                    conflictsWith: '`getDataPath`',
                                 });
                             }
                             if (treeDataParentIdField) {
                                 return _createValidationWarning(318, {
-                                    feature: "'treeDataChildrenField'",
-                                    conflictsWith: "'treeDataParentIdField'",
+                                    feature: '`treeDataChildrenField`',
+                                    conflictsWith: '`treeDataParentIdField`',
                                 });
                             }
                         }
@@ -648,8 +648,8 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                             }
                             if (getDataPath) {
                                 return _createValidationWarning(318, {
-                                    feature: "'treeDataParentIdField'",
-                                    conflictsWith: "'getDataPath'",
+                                    feature: '`treeDataParentIdField`',
+                                    conflictsWith: '`getDataPath`',
                                 });
                             }
                         }
@@ -685,14 +685,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             validate({ autoGroupColumnDef, showOpenedGroup }) {
                 if (autoGroupColumnDef?.field && showOpenedGroup) {
                     return _createValidationWarning(318, {
-                        feature: 'autoGroupColumnDef.field',
-                        conflictsWith: 'showOpenedGroup',
+                        feature: '`autoGroupColumnDef.field`',
+                        conflictsWith: '`showOpenedGroup`',
                     });
                 }
                 if (autoGroupColumnDef?.valueGetter && showOpenedGroup) {
                     return _createValidationWarning(318, {
-                        feature: 'autoGroupColumnDef.valueGetter',
-                        conflictsWith: 'showOpenedGroup',
+                        feature: '`autoGroupColumnDef.valueGetter`',
+                        conflictsWith: '`showOpenedGroup`',
                     });
                 }
                 return null;

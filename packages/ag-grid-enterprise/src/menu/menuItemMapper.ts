@@ -116,6 +116,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             menuSvc,
             notesSvc,
             calculatedColsSvc,
+            pdfCreator,
             pinnedCols,
             pinnedRowModel,
             rangeSvc,
@@ -432,6 +433,9 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     if (!gos.get('suppressExcelExport') && excelCreator) {
                         exportSubMenuItems.push('excelExport');
                     }
+                    if (!gos.get('suppressPdfExport') && pdfCreator) {
+                        exportSubMenuItems.push('pdfExport');
+                    }
                     return exportSubMenuItems.length
                         ? {
                               name: localeTextFunc('export', 'Export'),
@@ -454,6 +458,14 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               name: localeTextFunc('excelExport', 'Excel Export'),
                               icon: _createIconNoSpan('excelExport', beans, null),
                               action: () => excelCreator.exportDataAsExcel(),
+                          }
+                        : null;
+                case 'pdfExport':
+                    return pdfCreator
+                        ? {
+                              name: localeTextFunc('pdfExport', 'PDF Export'),
+                              icon: _createIconNoSpan('pdfExport', beans, null),
+                              action: () => pdfCreator.exportDataAsPdf(),
                           }
                         : null;
                 case 'separator':

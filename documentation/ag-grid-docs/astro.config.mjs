@@ -238,7 +238,14 @@ export default defineConfig({
                             return new sass.SassString(urlWithBase);
                         },
                     },
-                    loadPaths: ['../../external/ag-website-shared/src'],
+                    loadPaths: [
+                        // Repo-owned header token overrides — checked first, so a local
+                        // `_site-header-tokens.scss` here wins over the shared package's
+                        // default (see src/styles/header-tokens/README.md).
+                        './src/styles/header-tokens',
+                        '../../external/ag-website-shared/src',
+                        '../../external/ag-website-shared/src/design-system',
+                    ],
                 },
             },
         },

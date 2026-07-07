@@ -2,6 +2,11 @@
     "header": {
         "items": [
             {
+                "title": "AG Grid",
+                "url": "https://www.ag-grid.com",
+                "isCollapsed": true
+            },
+            {
                 "title": "AG Charts",
                 "url": "https://www.ag-grid.com/charts",
                 "isCollapsed": true
@@ -9,6 +14,11 @@
             {
                 "title": "AG Studio",
                 "url": "https://www.ag-grid.com/studio",
+                "isCollapsed": true
+            },
+            {
+                "title": "Bryntum Gantt",
+                "url": "https://www.ag-grid.com/campaigns/bryntum-gantt",
                 "isCollapsed": true
             },
             {
@@ -34,6 +44,10 @@
             {
                 "title": "Pricing",
                 "path": "/license-pricing"
+            },
+            {
+                "title": "Contact Us",
+                "path": "/about/#contact-section"
             },
             {
                 "title": "GitHub",

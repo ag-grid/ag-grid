@@ -172,6 +172,7 @@ import type {
     PaginationPanel,
     PasteEndEvent,
     PasteStartEvent,
+    PdfExportParams,
     PinnedRowDataChangedEvent,
     PinnedRowsChangedEvent,
     PivotColumnGroupTotals,
@@ -766,6 +767,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input({ transform: booleanAttribute }) public suppressExcelExport: boolean | undefined = undefined;
+    /** A default configuration object used to export to PDF.
+     * @agModule `PdfExportModule`
+     */
+    @Input() public defaultPdfExportParams: PdfExportParams | undefined = undefined;
+    /** Prevents the user from exporting the grid to PDF.
+     * @default false
+     */
+    @Input({ transform: booleanAttribute }) public suppressPdfExport: boolean | undefined = undefined;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles.
      * @initial
      * @agModule `ExcelExportModule`

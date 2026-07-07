@@ -8,7 +8,7 @@ import type { CellRendererSelectorResult, ColDef, GridApi } from 'ag-grid-commun
 import { AgGridReact } from 'ag-grid-react';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 
-import { asyncSetTimeout, ignoreConsoleLicenseKeyError } from '../test-utils';
+import { asyncSetTimeout, ignoreConsoleLicenseKeyError, mockGridLayout } from '../test-utils';
 
 describe('Tooltips (React)', () => {
     beforeAll(() => {
@@ -127,5 +127,75 @@ describe('Tooltips (React)', () => {
         expect(hasTooltipText('Cell renderer tooltip')).toBe(false);
         expect(getTooltips().length).toBeLessThanOrEqual(1);
         expect(getTooltips()[0]).toHaveTextContent('ColDef tooltip');
+    });
+
+    describe('whenTruncated (React)', () => {
+        beforeAll(() => {
+            mockGridLayout.init();
+            mockGridLayout.useRealOffsetDimensions = true;
+        });
+        afterAll(() => {
+            mockGridLayout.useRealOffsetDimensions = false;
+        });
+
+        test('AG-17691 does not show whenTruncated tooltip for a non-truncated cell whose selector returns undefined', async () => {
+            const columnDefs: ColDef[] = [
+                {
+                    field: 'A',
+                    width: 200,
+                    tooltipValueGetter: () => 'Should not show',
+                    cellRendererSelector: (): CellRendererSelectorResult | undefined => undefined,
+                },
+            ];
+
+            const rendered = render(
+                <div style={{ height: 400, width: 600 }}>
+                    <AgGridReact
+                        columnDefs={columnDefs}
+                        rowData={[{ id: 'r1', A: 'AGE' }]}
+                        getRowId={(params) => String(params.data.id)}
+                        tooltipShowMode="whenTruncated"
+                        tooltipShowDelay={200}
+                    />
+                </div>
+            );
+
+            const gridDiv = rendered.container;
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
+
+            await userEvent.hover(cell);
+            await asyncSetTimeout(250);
+            expect(getTooltips()).toHaveLength(0);
+        });
+
+        test('AG-17691 keeps showing whenTruncated tooltip for a stateless functional cell renderer', async () => {
+            const columnDefs: ColDef[] = [
+                {
+                    field: 'A',
+                    width: 200,
+                    tooltipValueGetter: () => 'Renderer tooltip',
+                    cellRenderer: PlainRenderer,
+                },
+            ];
+
+            const rendered = render(
+                <div style={{ height: 400, width: 600 }}>
+                    <AgGridReact
+                        columnDefs={columnDefs}
+                        rowData={[{ id: 'r1', A: 'AGE' }]}
+                        getRowId={(params) => String(params.data.id)}
+                        tooltipShowMode="whenTruncated"
+                        tooltipShowDelay={200}
+                    />
+                </div>
+            );
+
+            const gridDiv = rendered.container;
+            const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('r1', 'A')));
+
+            await userEvent.hover(cell);
+            await asyncSetTimeout(250);
+            await waitFor(() => expect(hasTooltipText('Renderer tooltip')).toBe(true));
+        });
     });
 });

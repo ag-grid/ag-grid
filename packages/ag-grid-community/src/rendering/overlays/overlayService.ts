@@ -22,6 +22,7 @@ type OverlayCompType =
     | 'agNoMatchingRowsOverlay'
     | 'agExportingOverlay'
     | 'agFileInputOverlay'
+    | 'agErrorOverlay'
     | 'activeOverlay';
 
 type OverlayDef = Readonly<{
@@ -34,6 +35,8 @@ type OverlayDef = Readonly<{
     paramsKey?: keyof GridOptions;
     isSuppressed?: (gos: GridOptionsService) => boolean;
     overriddenComp?: UserCompDetails<any>;
+    /** Provided overlay that must not be replaced by a user-supplied `overlayComponent`. */
+    noUserOverride?: boolean;
 }>;
 
 const LoadingOverlayDef: OverlayDef = {
@@ -90,6 +93,17 @@ const CustomOverlayDef: Readonly<OverlayDef> = {
     exclusive: true,
 };
 
+// Dev-only overlay surfacing captured validation diagnostics. The component (agErrorOverlay) is
+// supplied by the ValidationModule, so this def resolves only when that module is registered. It is
+// driven by ErrorOverlayService via setDevErrorOverlay, never by the user-facing activeOverlay option.
+const ErrorOverlayDef: OverlayDef = {
+    id: 'agErrorOverlay',
+    comp: overlayCompType('agErrorOverlay'),
+    wrapperCls: 'ag-overlay-error-wrapper',
+    exclusive: false,
+    noUserOverride: true,
+};
+
 const getActiveOverlayDef = (activeOverlay: any): OverlayDef | null => {
     if (!activeOverlay) {
         return null;
@@ -133,6 +147,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     private userForcedNoRows: boolean = false;
     private exportsInProgress: number = 0;
     private focusedCell: CellPosition | null;
+    private devErrorOverlayActive: boolean = false;
 
     private newColumnsLoadedCleanup: (() => void) | null = null;
     public postConstruct(): void {
@@ -198,10 +213,23 @@ export class OverlayService extends BeanStub implements NamedBean {
         return !!this.currentDef;
     }
 
+    /**
+     * Shows or hides the dev-only validation error overlay. Driven by the ValidationModule's
+     * ErrorOverlayService; takes priority over the data-driven overlays while active. Re-evaluates
+     * immediately so the overlay appears as soon as the wrapper exists (or once it later mounts).
+     */
+    public setDevErrorOverlay(active: boolean): void {
+        if (this.devErrorOverlayActive === active) {
+            return;
+        }
+        this.devErrorOverlayActive = active;
+        this.updateOverlay(false);
+    }
+
     public showLoadingOverlay(): void {
         this.showInitialOverlay = false;
         const gos = this.gos;
-        if (!this.eWrapper || gos.get('activeOverlay')) {
+        if (!this.eWrapper || gos.get('activeOverlay') || this.devErrorOverlayActive) {
             return;
         }
         if (this.isDisabled(LoadingOverlayDef)) {
@@ -217,7 +245,13 @@ export class OverlayService extends BeanStub implements NamedBean {
     public showNoRowsOverlay(): void {
         this.showInitialOverlay = false;
         const gos = this.gos;
-        if (!this.eWrapper || gos.get('activeOverlay') || gos.get('loading') || this.isDisabled(NoRowsOverlayDef)) {
+        if (
+            !this.eWrapper ||
+            gos.get('activeOverlay') ||
+            gos.get('loading') ||
+            this.isDisabled(NoRowsOverlayDef) ||
+            this.devErrorOverlayActive
+        ) {
             return;
         }
         this.userForcedNoRows = true;
@@ -230,6 +264,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             gos.get('activeOverlay') ||
             gos.get('loading') ||
             this.isDisabled(ExportingOverlayDef) ||
+            this.devErrorOverlayActive ||
             (this.userForcedNoRows && this.currentDef === NoRowsOverlayDef)
         ) {
             heavyOperation();
@@ -391,6 +426,11 @@ export class OverlayService extends BeanStub implements NamedBean {
         const { gos, beans } = this;
         const { rowModel } = beans;
 
+        // Dev validation errors take priority over the data-driven overlays (loading / no-rows).
+        if (this.devErrorOverlayActive && this.eWrapper) {
+            return ErrorOverlayDef;
+        }
+
         const loading = gos.get('loading');
 
         const loadingDefined = loading !== undefined;
@@ -454,7 +494,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
 
         let compDetails = undefined;
-        if (isProvidedOverlay) {
+        if (isProvidedOverlay && !componentDef.noUserOverride) {
             // For provided overlays check if the user is providing overrides for them
             if (gos.get('overlayComponent') || gos.get('overlayComponentSelector')) {
                 compDetails = userCompFactory.getCompDetailsFromGridOptions(

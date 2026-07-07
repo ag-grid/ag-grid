@@ -5,6 +5,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -55,6 +56,11 @@ const getEditErrorsForPosition = (
     return errors?.length ? errors.join(translate('tooltipValidationErrorSeparator', '. ')) : undefined;
 };
 
+const getCellValueOverflowTarget = (ctrl: CellCtrl): HTMLElement | undefined => {
+    const eCell = ctrl.eGui;
+    return eCell.children.length === 0 ? eCell : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
+};
+
 const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => boolean) | undefined => {
     const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(beans.gos);
 
@@ -67,7 +73,12 @@ const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => b
         // create rule for our internal group cell renderer
         const isGroupCellRenderer = !!colDef.showRowGroup || colDef.cellRenderer === 'agGroupCellRenderer';
         if (!isGroupCellRenderer) {
-            return undefined;
+            // A declared cellRendererSelector can return undefined and render plain text; only skip the
+            // overflow gate when a renderer was actually produced, so plain-text cells are still gated.
+            if (ctrl.hasActiveCellRenderer()) {
+                return undefined;
+            }
+            return _isElementOverflowingCallback(() => getCellValueOverflowTarget(ctrl));
         }
 
         return _isElementOverflowingCallback(() => {
@@ -80,10 +91,7 @@ const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => b
         });
     }
 
-    return _isElementOverflowingCallback(() => {
-        const eCell = ctrl.eGui;
-        return eCell.children.length === 0 ? eCell : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
-    });
+    return _isElementOverflowingCallback(() => getCellValueOverflowTarget(ctrl));
 };
 
 const buildCellTooltipDisplayFunctions = (
@@ -93,12 +101,14 @@ const buildCellTooltipDisplayFunctions = (
 ): CellTooltipDisplayFunctions => {
     const { editSvc } = beans;
     const { column } = ctrl;
-    const isCellTruncated = getCellTruncationCheck(beans, ctrl);
 
     const shouldDisplayCellTooltip = () => {
-        if (editSvc?.isEditing(ctrl)) {
+        if (editSvc?.isEditing(ctrl, { withOpenEditor: true })) {
             return false;
         }
+        // resolved lazily: the truncation gate depends on whether the last render produced a renderer,
+        // which is only known once the cell has rendered (after this feature is built).
+        const isCellTruncated = getCellTruncationCheck(beans, ctrl);
         if (!isCellTruncated) {
             return true;
         }
@@ -113,6 +123,28 @@ const buildCellTooltipDisplayFunctions = (
         shouldDisplayColumnTooltip: shouldDisplayCellTooltip,
         shouldDisplayCustomTooltip: shouldDisplayTooltip ?? shouldDisplayCellTooltip,
     };
+};
+
+// tooltipField is a data-field lookup: layer a pending batch edit (keyed by the field's column) on
+// top, but never fall through to the column's value resolution, which would change field semantics.
+const resolveTooltipFieldValue = (
+    beans: BeanCollection,
+    column: AgColumn,
+    rowNode: RowNode,
+    data: any,
+    tooltipField: string
+): any => {
+    const tooltipColumn = beans.colModel.getCol(tooltipField);
+    if (tooltipColumn) {
+        const pending = beans.editSvc?.getPendingEditValue(rowNode, tooltipColumn, 'batch');
+        if (pending !== undefined) {
+            return pending;
+        }
+    }
+    if (column.tooltipFieldContainsDots) {
+        return _getValueUsingDotField(data, tooltipField);
+    }
+    return data[tooltipField];
 };
 
 const resolveCellTooltip = ({
@@ -169,9 +201,8 @@ const resolveCellTooltip = ({
 
     // 4) column tooltip field/valueGetter is the final fallback.
     if (colDef.tooltipField && _exists(data)) {
-        const tooltipField = colDef.tooltipField;
         return {
-            value: column.tooltipFieldContainsDots ? _getValueUsingDotField(data, tooltipField) : data[tooltipField],
+            value: resolveTooltipFieldValue(beans, column, rowNode, data, colDef.tooltipField),
             location: 'cell',
             shouldDisplay: shouldDisplayColumnTooltip,
         };

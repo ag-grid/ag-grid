@@ -587,7 +587,7 @@ describe('ag-grid calculated columns', () => {
                 expect(consoleWarnSpy).toHaveBeenCalledWith(
                     expect.stringContaining('warning #319'),
                     expect.stringContaining(
-                        'colDef.calculatedExpression requires gridOptions.calculatedColumns to be set to true or an options object.'
+                        '`colDef.calculatedExpression` requires `gridOptions.calculatedColumns` to be set to true or an options object.'
                     ),
                     expect.any(String)
                 );
@@ -3823,7 +3823,7 @@ describe('ag-grid calculated columns', () => {
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #319'),
                 expect.stringContaining(
-                    'colDef.calculatedExpression requires gridOptions.calculatedColumns to be set to true or an options object.'
+                    '`colDef.calculatedExpression` requires `gridOptions.calculatedColumns` to be set to true or an options object.'
                 ),
                 expect.any(String)
             );

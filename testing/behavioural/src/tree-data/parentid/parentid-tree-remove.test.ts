@@ -103,7 +103,7 @@ describe('ag-grid parentId tree remove', () => {
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
             'AG Grid: warning #271',
-            "Parent row not found for row with id='d-xDhjGsdDd' and parent id='c-xDhjGsdDc'. Showing row with id='d-xDhjGsdDd' as a root-level node.",
+            'Parent row not found for row with id=`d-xDhjGsdDd` and parent id=`c-xDhjGsdDc`. Showing row with id=`d-xDhjGsdDd` as a root-level node.',
             expect.anything()
         );
     });

@@ -1,0 +1,35 @@
+---
+title: "Dev Validation Test"
+---
+
+This is an internal page used to validate the development-only validation overlay and bootstrap-failure panel across frameworks. It is intentionally left out of the site navigation.
+
+## Overlay over a live grid
+
+A diagnostic captured while the grid is running is shown in an overlay over the grid. Here `sideBar: true` is set without the enterprise SideBar module, so a missing-module error is surfaced.
+
+{% gridExampleRunner title="Overlay" name="overlay" /%}
+
+## Legacy theme
+
+The same overlay under a legacy theme rather than the Theming API, to check the legacy-theme styling.
+
+{% gridExampleRunner title="Legacy Theme" name="legacy-theme" /%}
+
+## Bootstrap failure panel
+
+When grid creation aborts before the grid exists (here a `serverSide` row model with no row-model module registered), there is no grid to overlay, so a standalone panel is rendered in its place.
+
+{% gridExampleRunner title="Bootstrap" name="bootstrap" /%}
+
+## Nested (master/detail) grids
+
+Each grid surfaces its own diagnostics on its own overlay, so a diagnostic emitted by a detail grid stays on that detail grid and the master grid is unaffected. Here the detail grid sets an invalid option; the first row auto-expands so the error surfaces on load.
+
+{% gridExampleRunner title="Master Detail" name="master-detail" /%}
+
+## Structured error parameters
+
+Some diagnostics carry array or object parameters, which must survive being encoded into the error-page URL and decoded back. This grid emits two: an unregistered `aggFunc` surfaces error #109 (its suggestions are an array), and an unregistered `cellRenderer` surfaces error #101 (its component maps are objects). Open each error page from the overlay to check both round-trip correctly.
+
+{% gridExampleRunner title="Structured Params" name="structured-params" /%}

@@ -490,7 +490,7 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn,
         node: IRowNode | null,
         value: any,
-        suppliedFormatter?: (value: any) => string | null | undefined,
+        suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
     ): string | null {
         let result: string | null = null;
@@ -507,7 +507,7 @@ export class ValueService extends BeanStub implements NamedBean {
                 column,
             };
             if (typeof formatter === 'function') {
-                result = formatter(params) ?? null;
+                result = formatter(params);
             } else {
                 const expressionSvc = this.expressionSvc;
                 result = expressionSvc ? expressionSvc.evaluate(formatter, params) : null;

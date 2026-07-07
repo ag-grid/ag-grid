@@ -346,6 +346,7 @@ export const AG_GRID_LOCALE_PT = {
     export: 'Exportar',
     csvExport: 'Exportação CSV',
     excelExport: 'Exportação Excel',
+    pdfExport: 'Exportação PDF',
     columnFilter: 'Filtro de Coluna',
     columnChooser: 'Escolher Colunas',
     chooseColumns: 'Escolher Colunas',

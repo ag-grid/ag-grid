@@ -23,10 +23,11 @@ const MENU_ITEM_MODULES: Record<DefaultMenuItem, _ValidationModuleName | _Valida
     copyWithGroupHeaders: 'Clipboard',
     cut: 'Clipboard',
     paste: 'Clipboard',
+    export: ['CsvExport', 'ExcelExport', 'PdfExport'],
     note: 'Notes',
-    export: ['CsvExport', 'ExcelExport'],
     csvExport: 'CsvExport',
     excelExport: 'ExcelExport',
+    pdfExport: 'PdfExport',
     separator: 'CommunityCore',
     pivotChart: 'IntegratedCharts',
     chartRange: 'IntegratedCharts',
@@ -45,6 +46,6 @@ const MENU_ITEM_MODULES: Record<DefaultMenuItem, _ValidationModuleName | _Valida
 export function validateMenuItem(gos: GridOptionsService, key: string): void {
     const moduleName = MENU_ITEM_MODULES[key as DefaultMenuItem];
     if (moduleName) {
-        gos.assertModuleRegistered(moduleName, `menu item '${key}'`);
+        gos.assertModuleRegistered(moduleName, `menu item \`${key}\``);
     }
 }
