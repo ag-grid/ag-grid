@@ -8,8 +8,7 @@ const MAX_ITERATIONS = 6;
 
 const SYSTEM_PROMPT = `
 You are an assistant for a table displaying Olympic medal results. Help the user by calling the
-provided tools to change the grid — sorting, filtering, grouping, aggregating, hiding columns, or
-adding a calculated column. Only call the tools needed for the request.
+provided tools to change the grid. Only call the tools needed for the request.
 
 Each tool replaces the whole of its part of the grid, so when a request builds on the current
 settings (e.g. adding another filter or sort), include the existing values as well as the new ones.
