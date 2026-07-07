@@ -17,7 +17,7 @@ You are given: a verbatim excerpt of the upgrade page describing one change topi
 Ground truth, in order of authority:
 
 1. **The implementing commit** — its diff, message, and PR description (motivation and options the page omitted).
-2. **Declarations and runtime code** in `packages/*/src`, read *as of the relevant version* (see below), since HEAD may be several majors past the change.
+2. **Declarations and runtime code** in `packages/*/src`, read _as of the relevant version_ (see below), since HEAD may be several majors past the change.
 3. **Current docs pages** for the affected feature (for checking that mitigation advice is still current).
 
 How to research:
@@ -32,15 +32,15 @@ How to research:
 Three kinds of comment go in your output:
 
 - **Rationale comments** — every judgement-carrying property (`detectWords`, `mitigation`, `oldApi`/`newApi`, and every null) carries a brief `//` comment above it stating the reasoning, citing the commit hash where relevant. Title/description need one only where verification changed them from the page's claim. These support the human review and are usually deleted then.
-- **`// REVIEW:`** — a judgement call or uncertainty about the record itself (including suspected misclassification), addressed to the human reviewer, who resolves and deletes it. Brief, citing the commit hash.
-- **`// FIXME:`** — a defect discovered elsewhere: an upgrade page claim contradicted by source, a stale statement on another docs page, or a suspected bug in grid source. Names the file and cites the evidence. Survives review until the upstream fix is made or ticketed. Example: `// FIXME: row-pagination/index.mdoc still claims the panel height defaults to the row height`.
+- **`// REVIEW:`** — a judgement call or uncertainty about the record itself (including suspected misclassification), addressed to the human reviewer, who resolves and deletes it. Brief, citing the commit hash. If you discovered an inaccuracy in the excerpt of the upgrade page and corrected it, that should always have a REVIEW comment.
+- **`// FIXME:`** — a defect discovered elsewhere: a stale statement on a docs page, or a suspected bug in grid source. Names the file and cites the evidence. Survives review until the upstream fix is made or ticketed. Example: `// FIXME: row-pagination/index.mdoc still claims the panel height defaults to the row height`.
 
 ## Record properties
 
 ### `oldApi` / `newApi` (transitions)
 
 - `oldApi` reads in "As of v30, $oldApi is deprecated"; `newApi` is required and reads in "Instead, use $newApi".
-- **Name the actual API surface, verified against the pre-change declaration — not the page's phrasing.** Worked example: the v35 page said `cellDataType` was "removed from the `columnTypes` type", but `columnTypes` is a grid option; the removal was from `ColTypeDef`, the type of its entries (`colDef.ts`). Right: `` '`cellDataType` in `ColTypeDef` (the type of `columnTypes` entries)' ``.
+- **Name the actual API surface, verified against the pre-change declaration — not the page's phrasing.** Worked example: the v35 page said `cellDataType` was "removed from the `columnTypes` type", but `columnTypes` is a grid option; the removal was from `ColTypeDef`, the type of its entries (`colDef.ts`). Right: ``'`cellDataType` in `ColTypeDef` (the type of `columnTypes` entries)'``.
 - For removals with no true replacement, `mitigation` says why deletion is safe, or `oldDescription` says why the API was inert (e.g. "never had any effect").
 
 ### `title` / `description` (simple changes)
@@ -50,13 +50,28 @@ Three kinds of comment go in your output:
 
 ### `detectWords`
 
-See its own section below.
+- Contract: no match anywhere in an app ⇒ app guaranteed unaffected. False positives cheap; false negatives forbidden. When no sound words exist, set `null` with a rationale comment — do not write plausible-but-leaky words.
+- **The affected-app test**: if you were to construct the minimal application affected by this change; which identifiers _must_ appear in its source? Those are the candidate words. An app can only set a property, call a method or import a module by spelling its name somewhere — but check for routes that need no spelling (below).
+- **Minimality**: every entry must be the sole detector for some affected app — an entry is justified only if an app could be affected while containing none of the other entries. Entries that only widen are dropped. Example: for a change affecting `cellDataType` in the `columnTypes` object, `['cellDataType']` suffices. Do not also add `columnTypes`.
+- Enumerate finite identifier families in full; if a change affects `fooFramework` and `barFramework` they must both match, `Framework` matches neither.
+- Features that activate without configuration defeat option-name detection: inferred cell data types, UMD bundles auto-registering `All*Module`, changed theme/style defaults, default context-menu items. Check source for inference and default values before trusting an option name as a detector.
+- Harvest words from the change's entire surface — mitigation content, class-name mapping tables — not just the page's headline list.
+- An unavoidable import/dependency is often the only sound net for module/package changes. Prefer explicitly listing the package names (`'ag-charts-enterprise', 'ag-charts-community'`) over a prefix entry (`'ag-charts-'`) — prefixes over-match unrelated content such as CSS class names in HTML.
+- Any entry whose relationship to the change is not obvious from the record's title/description carries a rationale comment, especially entries covering a non-obvious usage route, e.g.:
+    ```ts
+    // The package names are the load-bearing entries: apps can use charts via
+    // AllEnterpriseModule + programmatic APIs without any of the other words, but
+    // cannot avoid depending on 'ag-charts-enterprise' or 'ag-charts-community'.
+    // They also match standalone AG Charts apps — an acceptable false positive.
+    detectWords: ['IntegratedChartsModule', /* ... */ 'ag-charts-enterprise', 'ag-charts-community'],
+    ```
 
 ### `mitigation`
 
 - The most straightforward way to restore the behaviour the application had before the change. For removals, the new API to use; for behaviour changes, the APIs that restore the old behaviour.
-- If the advice the page gave has itself been deprecated or changed by a later version, write the *current* correct advice — old pages re-rendering with updated advice is intended behaviour. (Chained-deprecation example: `serverSideStoreType`'s replacement advice changed mid-flight; use the final replacement.)
+- If the advice the page gave has itself been deprecated or changed by a later version, write the _current_ correct advice — old pages re-rendering with updated advice is intended behaviour. (Chained-deprecation example: `serverSideStoreType`'s replacement advice changed mid-flight; use the final replacement.)
 - `null` only after the escape-hatch hunt (Evidence rules) concludes the change is accept-only, with a rationale comment saying why.
+- Remember, the grid is a very flexible product, if you think there's no mitigation, it's more likely you just haven't found it. Mostly the only time we really have no mitigation is when we fix bugs and the old behaviour is deemed undesirable for everybody.
 - Mitigations long enough to need newlines or structure move to a sibling file `v{ver}-{slug}.md`, referenced `(await import('./v36-x.md?raw')).default`.
 
 ### `frameworkMitigation` / `framework`
@@ -68,25 +83,6 @@ See its own section below.
 
 - Only raised minimum versions of the supported dependencies. A newly required dependency or a dropped environment is a `newRequirements` record instead.
 - `reason: null` needs a rationale comment like any other null.
-
-## detectWords
-
-- Contract: no match anywhere in an app ⇒ app guaranteed unaffected. False positives cheap; false negatives forbidden. When no sound words exist, set `null` with a rationale comment — do not write plausible-but-leaky words.
-- **The affected-app test**: construct the minimal application affected by this change; which identifiers *must* appear in its source? Those are the candidate words. An app can only set a property, call a method or import a module by spelling its name somewhere — but check for routes that need no spelling (below).
-- **Minimality**: every entry must be the sole detector for some affected app — an entry is justified only if an app could be affected while containing none of the other entries. Entries that only widen are dropped. Example: for the `cellDataType`-in-`ColTypeDef` removal, `['cellDataType']` suffices — an affected app must spell the property name where it sets it; adding `'columnTypes'` flags every app using column types while catching no additional affected app.
-- Enumerate finite identifier families in full; the boundary rule means `Framework` does not match inside `cellRendererFramework`.
-- Features that activate without configuration defeat option-name detection: inferred cell data types, UMD bundles auto-registering `All*Module`, changed theme/style defaults, default context-menu items. Check source for inference and default values before trusting an option name as a detector.
-- Harvest words from the change's entire surface — mitigation content, class-name mapping tables — not just the page's headline list.
-- An unavoidable import/dependency is often the only sound net for module/package changes. Prefer explicitly listing the package names (`'ag-charts-enterprise', 'ag-charts-community'`) over a prefix entry (`'ag-charts-'`) — prefixes over-match unrelated content such as CSS class names in HTML.
-- Any entry whose relationship to the change is not obvious from the record's title/description carries a rationale comment, especially entries covering a non-obvious usage route, e.g.:
-
-    ```ts
-    // The package names are the load-bearing entries: apps can use charts via
-    // AllEnterpriseModule + programmatic APIs without any of the other words, but
-    // cannot avoid depending on 'ag-charts-enterprise' or 'ag-charts-community'.
-    // They also match standalone AG Charts apps — an acceptable false positive.
-    detectWords: ['IntegratedChartsModule', /* ... */ 'ag-charts-enterprise', 'ag-charts-community'],
-    ```
 
 ## Deprecation → removal joins
 
