@@ -13,7 +13,7 @@
     // stranded mid-row or on a line of its own. Inert once the header becomes a grid
     // (the switcher's track is content-sized), where grid-area handles placement.
     margin-left: auto;
-    padding-right: $spacing-size-2;
+    margin-right: -$spacing-size-5;
     user-select: none;
     // Direct .headerInner grid child once the header goes fully inline — see
     // SiteHeader.module.scss's .headerInner grid-template-areas.
