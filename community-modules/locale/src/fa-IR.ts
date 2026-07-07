@@ -690,6 +690,8 @@ export const AG_GRID_LOCALE_IR = {
     ariaCalculatedColumn: 'ستون محاسبه‌شده',
     ariaColumnShowValuesAs: 'در حال نمایش مقادیر به‌صورت',
     ariaColumnSelectAll: 'تغییر وضعیت نمایش تمام ستون‌ها',
+    ariaDataLoaded: 'داده‌ها بارگذاری شد',
+    ariaDataLoadedRows: '${variable} ردیف',
     ariaDateFilterInput: 'ورودی فیلتر تاریخ',
     ariaDefaultListName: 'لیست',
     ariaFilterColumnsInput: 'ورودی فیلتر ستون‌ها',

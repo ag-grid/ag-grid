@@ -690,6 +690,8 @@ export const AG_GRID_LOCALE_VN = {
     ariaCalculatedColumn: 'Cột được tính toán',
     ariaColumnShowValuesAs: 'Đang hiển thị giá trị dưới dạng',
     ariaColumnSelectAll: 'Chuyển đổi hiển thị tất cả các cột',
+    ariaDataLoaded: 'Dữ liệu đã tải',
+    ariaDataLoadedRows: '${variable} hàng',
     ariaDateFilterInput: 'Đầu vào Bộ lọc Ngày',
     ariaDefaultListName: 'Danh sách',
     ariaFilterColumnsInput: 'Đầu vào Lọc Cột',

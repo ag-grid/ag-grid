@@ -694,6 +694,8 @@ export const AG_GRID_LOCALE_HU = {
     ariaCalculatedColumn: 'Számított oszlop',
     ariaColumnShowValuesAs: 'Értékek megjelenítése mint',
     ariaColumnSelectAll: 'Az összes oszlop láthatóságának váltása',
+    ariaDataLoaded: 'Adatok betöltve',
+    ariaDataLoadedRows: '${variable} sor',
     ariaDateFilterInput: 'Dátum szűrő bevitel',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Oszlopok szűrése bevitel',

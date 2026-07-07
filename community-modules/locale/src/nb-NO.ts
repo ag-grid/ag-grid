@@ -690,6 +690,8 @@ export const AG_GRID_LOCALE_NO = {
     ariaCalculatedColumn: 'Beregnet kolonne',
     ariaColumnShowValuesAs: 'Viser verdier som',
     ariaColumnSelectAll: 'Bytt synlighet for alle kolonner',
+    ariaDataLoaded: 'Data lastet',
+    ariaDataLoadedRows: '${variable} rader',
     ariaDateFilterInput: 'Inndata for datofilter',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Filtrer kolonner inndata',

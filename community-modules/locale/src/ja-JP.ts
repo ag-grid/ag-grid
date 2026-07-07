@@ -689,6 +689,8 @@ export const AG_GRID_LOCALE_JP = {
     ariaCalculatedColumn: '計算列',
     ariaColumnShowValuesAs: '値の表示形式',
     ariaColumnSelectAll: 'すべての列の表示を切り替え',
+    ariaDataLoaded: 'データが読み込まれました',
+    ariaDataLoadedRows: '${variable} 行',
     ariaDateFilterInput: '日付フィルター入力',
     ariaDefaultListName: 'リスト',
     ariaFilterColumnsInput: 'フィルター列入力',

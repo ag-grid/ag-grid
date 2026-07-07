@@ -6,6 +6,7 @@ import {
     _findNextFocusableElement,
     _focusInto,
     _getActiveDomElement,
+    _isFormField,
     _isNothingFocused,
     _isVisibleForAria,
     _last,
@@ -23,11 +24,10 @@ import { _focusNextGridCoreContainer } from '../../utils/gridFocus';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { IOverlayComp, OverlayType } from './overlayComponent';
+import { OVERLAY_ANNOUNCEMENT_ATTRIBUTE } from './overlayComponent';
 import overlayWrapperComponentCSS from './overlayWrapperComponent.css';
 
 const OVERLAY_ANNOUNCEMENT_DELAY = 500;
-const REANNOUNCE_DELAY = 50;
-const OVERLAY_ANNOUNCEMENT_ATTRIBUTE = 'data-ag-overlay-announcement';
 
 const OverlayWrapperElement: ElementParams = {
     tag: 'div',
@@ -58,9 +58,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private oldWrapperPadding: number | null = null;
     private activeOverlayType: OverlayType | null = null;
     private announcementTimeout: number | null = null;
-    private liveRegionTimeout: number | null = null;
     private overlayContentObserver: MutationObserver | null = null;
-    private lastAnnouncement: string = '';
     private loadingAnnounced = false;
 
     constructor() {
@@ -164,7 +162,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.activeOverlayType = overlayType ?? null;
         this.loadingAnnounced = false;
         this.configureOverlayWrapperAria();
-        this.updateLiveRegion('');
+        this.setLiveRegionText('');
 
         if (!overlayComponentPromise) {
             this.setOverlayPanelDisplayed(false);
@@ -208,8 +206,8 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                 this.activeOverlay = comp;
             }
 
-            this.startOverlayContentObserver(overlayType);
-            this.scheduleOverlayAnnouncement(overlayType);
+            this.startOverlayContentObserver();
+            this.scheduleOverlayAnnouncement();
 
             if (exclusive && this.isGridFocused()) {
                 _focusInto(eOverlayWrapper);
@@ -230,61 +228,40 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         _setAriaRelevant(eOverlayWrapper, null);
     }
 
-    private scheduleOverlayAnnouncement(overlayType?: OverlayType): void {
+    private scheduleOverlayAnnouncement(): void {
         this.clearAnnouncementTimeout();
-        if (!this.isLiveOverlayType(overlayType)) {
-            return;
-        }
 
         this.announcementTimeout = window.setTimeout(() => {
             this.announcementTimeout = null;
-            if (this.activeOverlayType !== overlayType) {
-                return;
-            }
 
             const announcement = this.getOverlayAnnouncementText();
             if (!announcement) {
                 return;
             }
 
-            if (overlayType === 'loading') {
+            if (this.activeOverlayType === 'loading') {
                 this.loadingAnnounced = true;
             }
-            this.updateLiveRegion(announcement);
+            this.setLiveRegionText(announcement);
         }, OVERLAY_ANNOUNCEMENT_DELAY);
     }
 
     public refreshOverlayAnnouncement(): void {
-        this.updateLiveRegion('');
-        this.scheduleOverlayAnnouncement(this.activeOverlayType ?? undefined);
+        this.setLiveRegionText('');
+        this.scheduleOverlayAnnouncement();
     }
 
-    private isLiveOverlayType(overlayType?: OverlayType): overlayType is OverlayType {
-        return (
-            overlayType === 'loading' ||
-            overlayType === 'noRows' ||
-            overlayType === 'noMatchingRows' ||
-            overlayType === 'exporting' ||
-            overlayType === 'fileInput'
-        );
-    }
-
-    private startOverlayContentObserver(overlayType?: OverlayType): void {
+    private startOverlayContentObserver(): void {
         this.clearOverlayContentObserver();
-        if (!this.isLiveOverlayType(overlayType) || !this.eOverlayWrapper) {
+        const eOverlayWrapper = this.eOverlayWrapper;
+        if (!eOverlayWrapper) {
             return;
         }
 
-        this.overlayContentObserver = new MutationObserver(() => {
-            if (this.activeOverlayType !== overlayType) {
-                return;
-            }
-            this.updateLiveRegion('');
-            this.scheduleOverlayAnnouncement(overlayType);
-        });
-        this.overlayContentObserver.observe(this.eOverlayWrapper, {
+        this.overlayContentObserver = new MutationObserver(() => this.refreshOverlayAnnouncement());
+        this.overlayContentObserver.observe(eOverlayWrapper, {
             attributes: true,
-            attributeFilter: ['aria-label'],
+            attributeFilter: ['aria-label', OVERLAY_ANNOUNCEMENT_ATTRIBUTE],
             childList: true,
             characterData: true,
             subtree: true,
@@ -328,7 +305,8 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         }
 
         const element = node as HTMLElement;
-        if (!_isVisibleForAria(element)) {
+        // Interactive controls announce themselves when focused, so they are excluded from overlay announcements.
+        if (_isFormField(element) || !_isVisibleForAria(element)) {
             return '';
         }
 
@@ -348,46 +326,18 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         }
     }
 
-    private clearLiveRegionTimeout(): void {
-        if (this.liveRegionTimeout != null) {
-            window.clearTimeout(this.liveRegionTimeout);
-            this.liveRegionTimeout = null;
-        }
-    }
-
     private clearOverlayContentObserver(): void {
         this.overlayContentObserver?.disconnect();
         this.overlayContentObserver = null;
     }
 
-    private updateLiveRegion(value: string): void {
+    private setLiveRegionText(value: string): void {
         const eOverlayLiveRegion = this.eOverlayLiveRegion;
         if (!eOverlayLiveRegion) {
             return;
         }
 
-        this.clearLiveRegionTimeout();
-        eOverlayLiveRegion.textContent = '';
-
-        if (!value.replace(/[ .]/g, '')) {
-            this.lastAnnouncement = '';
-            return;
-        }
-
-        this.liveRegionTimeout = window.setTimeout(() => {
-            this.liveRegionTimeout = null;
-            if (!this.isAlive() || !this.eOverlayLiveRegion) {
-                return;
-            }
-
-            let valueToAnnounce = value;
-            if (this.lastAnnouncement === valueToAnnounce) {
-                valueToAnnounce = `${valueToAnnounce}\u200B`;
-            }
-
-            this.lastAnnouncement = valueToAnnounce;
-            this.eOverlayLiveRegion.textContent = valueToAnnounce;
-        }, REANNOUNCE_DELAY);
+        eOverlayLiveRegion.textContent = value;
     }
 
     public refreshWrapperPadding(): void {
@@ -445,6 +395,11 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     public hideOverlay(): void {
+        if (!this.activeOverlay && !this.activePromise && this.activeOverlayType == null) {
+            // Nothing is showing; bail out so a redundant hide cannot wipe a pending announcement
+            return;
+        }
+
         const shouldAnnounceCompletion =
             this.activeOverlayType === 'loading' &&
             this.loadingAnnounced &&
@@ -458,9 +413,9 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.setOverlayPanelDisplayed(false);
 
         if (completionText) {
-            this.updateLiveRegion(completionText);
+            this.setLiveRegionText(completionText);
         } else {
-            this.updateLiveRegion('');
+            this.setLiveRegionText('');
         }
     }
 
@@ -472,7 +427,6 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     public override destroy(): void {
         this.elToFocusAfter = null;
         this.clearAnnouncementTimeout();
-        this.clearLiveRegionTimeout();
         this.destroyActiveOverlay();
         this.beans.overlays!.setWrapperComp(this, true);
         super.destroy();

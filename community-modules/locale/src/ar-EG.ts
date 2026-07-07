@@ -688,6 +688,8 @@ export const AG_GRID_LOCALE_EG = {
     ariaCalculatedColumn: 'عمود محسوب',
     ariaColumnShowValuesAs: 'إظهار القيم كـ',
     ariaColumnSelectAll: 'تبديل ظهور كل الأعمدة',
+    ariaDataLoaded: 'تم تحميل البيانات',
+    ariaDataLoadedRows: '${variable} صفوف',
     ariaDateFilterInput: 'إدخال فلتر التاريخ',
     ariaDefaultListName: 'قائمة',
     ariaFilterColumnsInput: 'إدخال فلترة الأعمدة',

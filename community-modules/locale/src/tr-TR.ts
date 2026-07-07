@@ -693,6 +693,8 @@ export const AG_GRID_LOCALE_TR = {
     ariaCalculatedColumn: 'Hesaplanan sütun',
     ariaColumnShowValuesAs: 'Değerler Şu Şekilde Gösteriliyor',
     ariaColumnSelectAll: 'Tüm Sütunların Görünürlüğünü Değiştir',
+    ariaDataLoaded: 'Veriler yüklendi',
+    ariaDataLoadedRows: '${variable} satır',
     ariaDateFilterInput: 'Tarih Filtre Girişi',
     ariaDefaultListName: 'Liste',
     ariaFilterColumnsInput: 'Sütunları Filtrele Girişi',

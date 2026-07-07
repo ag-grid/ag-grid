@@ -38,11 +38,6 @@ export function _setAriaRole(element: Element, role?: string | null) {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isVisibleForAria(element: HTMLElement): boolean {
-    const tagName = element.tagName;
-    if (tagName === 'BUTTON' || tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA') {
-        return false;
-    }
-
     if (element.getAttribute('aria-hidden') === 'true' || element.hidden) {
         return false;
     }

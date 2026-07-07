@@ -689,6 +689,8 @@ export const AG_GRID_LOCALE_SK = {
     ariaCalculatedColumn: 'Vypočítaný stĺpec',
     ariaColumnShowValuesAs: 'Zobrazovanie hodnôt ako',
     ariaColumnSelectAll: 'Prepínať viditeľnosť všetkých stĺpcov',
+    ariaDataLoaded: 'Dáta načítané',
+    ariaDataLoadedRows: '${variable} riadkov',
     ariaDateFilterInput: 'Vstup Dátumového Filtra',
     ariaDefaultListName: 'Zoznam',
     ariaFilterColumnsInput: 'Vstup Filtra pre Stĺpce',

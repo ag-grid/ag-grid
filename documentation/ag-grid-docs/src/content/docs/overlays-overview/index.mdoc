@@ -21,7 +21,7 @@ The grid provides the following overlays that will be shown automatically based 
 
 For details about the provided overlays and how to customise them see: [Provided Overlays](./overlays-provided).
 
-Provided overlays are announced to screen readers by the grid using an internal polite live region. Custom components used to replace provided overlays are announced from their rendered text, so keep the message as visible text and avoid adding a second `aria-live` region inside the custom overlay.
+Overlays are announced to screen readers by the grid using an internal polite live region. Custom overlay components are announced from their overlay root `aria-label`, if provided, otherwise from their visible rendered text. Keep the message as visible text and avoid adding a second `aria-live` region inside the custom overlay.
 
 ## Active Overlay
 

@@ -691,6 +691,8 @@ export const AG_GRID_LOCALE_NL = {
     ariaCalculatedColumn: 'Berekende kolom',
     ariaColumnShowValuesAs: 'Waarden worden weergegeven als',
     ariaColumnSelectAll: 'Schakel zichtbaarheid van alle kolommen in/uit',
+    ariaDataLoaded: 'Gegevens geladen',
+    ariaDataLoadedRows: '${variable} rijen',
     ariaDateFilterInput: 'Datum Filter Invoer',
     ariaDefaultListName: 'Lijst',
     ariaFilterColumnsInput: 'Filter Kolommen Invoer',

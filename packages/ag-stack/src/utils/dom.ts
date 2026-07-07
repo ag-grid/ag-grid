@@ -29,12 +29,13 @@ export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, 
 export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _isFormField(element: Element | null): boolean {
+    return element?.matches('input, select, button, textarea') ?? false;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isFocusableFormField(element: Element | null): boolean {
-    if (!element) {
-        return false;
-    }
-    const isFocusable = element.matches('input, select, button, textarea');
-    if (!isFocusable) {
+    if (!element || !_isFormField(element)) {
         return false;
     }
     const isNotFocusable = element.matches(FOCUSABLE_EXCLUDE);

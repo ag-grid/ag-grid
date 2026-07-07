@@ -695,6 +695,8 @@ export const AG_GRID_LOCALE_GR = {
     ariaCalculatedColumn: 'Υπολογιζόμενη στήλη',
     ariaColumnShowValuesAs: 'Εμφάνιση τιμών ως',
     ariaColumnSelectAll: 'Εναλλαγή Όλων των Ορατότητας Στηλών',
+    ariaDataLoaded: 'Τα δεδομένα φορτώθηκαν',
+    ariaDataLoadedRows: '${variable} γραμμές',
     ariaDateFilterInput: 'Εισαγωγή Φίλτρου Ημερομηνίας',
     ariaDefaultListName: 'Λίστα',
     ariaFilterColumnsInput: 'Εισαγωγή Φιλτραρίσματος Στηλών',

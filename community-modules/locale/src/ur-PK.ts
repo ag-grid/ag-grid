@@ -689,6 +689,8 @@ export const AG_GRID_LOCALE_PK = {
     ariaCalculatedColumn: 'حساب شدہ کالم',
     ariaColumnShowValuesAs: 'اقدار کو اس طور دکھایا جا رہا ہے',
     ariaColumnSelectAll: 'تمام کالمز کی مرئیت کو ٹوگل کریں',
+    ariaDataLoaded: 'ڈیٹا لوڈ ہو گیا',
+    ariaDataLoadedRows: '${variable} قطاریں',
     ariaDateFilterInput: 'تاریخ فلٹر انپٹ',
     ariaDefaultListName: 'فہرست',
     ariaFilterColumnsInput: 'کالمز فلٹر انپٹ',

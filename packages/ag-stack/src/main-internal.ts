@@ -205,6 +205,7 @@ export {
     _isElementChildOfClass,
     _isElementOverflowingCallback,
     _isFocusableFormField,
+    _isFormField,
     _isHorizontalScrollShowing,
     _isInDOM,
     _isNodeOrElement,

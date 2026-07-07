@@ -690,6 +690,8 @@ export const AG_GRID_LOCALE_CZ = {
     ariaCalculatedColumn: 'Vypočítaný sloupec',
     ariaColumnShowValuesAs: 'Zobrazování hodnot jako',
     ariaColumnSelectAll: 'Přepnout viditelnost všech sloupců',
+    ariaDataLoaded: 'Data načtena',
+    ariaDataLoadedRows: '${variable} řádků',
     ariaDateFilterInput: 'Vstup datového filtru',
     ariaDefaultListName: 'Seznam',
     ariaFilterColumnsInput: 'Vstup filtru sloupců',

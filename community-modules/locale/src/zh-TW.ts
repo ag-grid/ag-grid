@@ -688,6 +688,8 @@ export const AG_GRID_LOCALE_TW = {
     ariaCalculatedColumn: '計算欄',
     ariaColumnShowValuesAs: '正在以此方式顯示值',
     ariaColumnSelectAll: '切換所有列的可見性',
+    ariaDataLoaded: '資料已加載',
+    ariaDataLoadedRows: '${variable} 列',
     ariaDateFilterInput: '日期篩選輸入',
     ariaDefaultListName: '列表',
     ariaFilterColumnsInput: '篩選欄輸入',

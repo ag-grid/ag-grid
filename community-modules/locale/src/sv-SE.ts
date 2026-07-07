@@ -692,6 +692,8 @@ export const AG_GRID_LOCALE_SE = {
     ariaCalculatedColumn: 'Beräknad kolumn',
     ariaColumnShowValuesAs: 'Visar värden som',
     ariaColumnSelectAll: 'Växla alla kolumners synlighet',
+    ariaDataLoaded: 'Data laddade',
+    ariaDataLoadedRows: '${variable} rader',
     ariaDateFilterInput: 'Datumfilterinmatning',
     ariaDefaultListName: 'Lista',
     ariaFilterColumnsInput: 'Filterkolumnsinmatning',

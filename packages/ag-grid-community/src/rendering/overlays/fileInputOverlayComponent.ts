@@ -14,7 +14,7 @@ import type {
     IOverlayParams,
     OverlayComponentUserParams,
 } from './overlayComponent';
-import { OverlayComponent } from './overlayComponent';
+import { OVERLAY_ANNOUNCEMENT_ATTRIBUTE, OverlayComponent } from './overlayComponent';
 
 export interface IFileInputOverlay<TData = any, TContext = any> extends IOverlay<
     TData,
@@ -29,8 +29,6 @@ export interface IFileInputOverlayComp<TData = any, TContext = any> extends IOve
 > {}
 
 type FileInputState = 'ready' | 'processing' | 'error';
-
-const OVERLAY_ANNOUNCEMENT_ATTRIBUTE = 'data-ag-overlay-announcement';
 
 const FileInputOverlayElement: ElementParams = {
     tag: 'div',

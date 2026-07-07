@@ -124,6 +124,25 @@ describe('ag-grid overlay accessibility', () => {
         expect(getLiveRegion().textContent).toBe('Data loaded. 2 rows');
     });
 
+    test('redundant hideOverlay call does not cancel a pending completion announcement', async () => {
+        const api = clientSideGridsManager.createGrid('myGrid', {
+            columnDefs,
+            loading: true,
+            rowData: [],
+        });
+
+        await flushOverlayAnnouncement();
+        expect(getLiveRegion().textContent).toBe('Loading...');
+
+        api.setGridOption('rowData', [{ athlete: 'Michael Phelps' }, { athlete: 'Usain Bolt' }]);
+        api.setGridOption('loading', false);
+        api.hideOverlay();
+
+        await flushOverlayAnnouncement(50);
+
+        expect(getLiveRegion().textContent).toBe('Data loaded. 2 rows');
+    });
+
     test('pagination completion message includes row and page status', async () => {
         const api = clientSideGridsManager.createGrid('myGrid', {
             columnDefs,
@@ -212,7 +231,7 @@ describe('ag-grid overlay accessibility', () => {
         expect(getLiveRegion().textContent).toBe('Updated empty state');
     });
 
-    test('custom overlay text inside presentational wrappers is announced', async () => {
+    test('custom overlay text inside presentational wrappers is announced, interactive controls are skipped', async () => {
         clientSideGridsManager.createGrid('myGrid', {
             columnDefs,
             rowData: [],
@@ -300,6 +319,24 @@ describe('ag-grid overlay accessibility', () => {
         expect(getLiveRegion().textContent).toBe('Custom error message');
     });
 
+    test('custom active overlay is announced from its rendered text', async () => {
+        const api = clientSideGridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [{ athlete: 'Michael Phelps' }],
+            activeOverlay: CustomActiveOverlay,
+        });
+
+        expect(getLiveRegion().textContent).toBe('');
+
+        await flushOverlayAnnouncement();
+        expect(getLiveRegion().textContent).toBe('Saving your changes');
+
+        api.setGridOption('activeOverlay', undefined);
+
+        await flushOverlayAnnouncement();
+        expect(getLiveRegion().textContent).toBe('');
+    });
+
     test('overlay remains outside the grid role element', () => {
         clientSideGridsManager.createGrid('myGrid', {
             columnDefs,
@@ -367,6 +404,18 @@ class CustomNoRowsOverlay {
     }
 }
 
+class CustomActiveOverlay {
+    private readonly eGui = document.createElement('div');
+
+    public init(): void {
+        this.eGui.textContent = 'Saving your changes';
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+}
+
 class CustomPresentationNoRowsOverlay {
     private readonly eGui = document.createElement('div');
 
@@ -376,6 +425,10 @@ class CustomPresentationNoRowsOverlay {
         eMessage.setAttribute('role', 'none');
         eMessage.textContent = 'No records available';
         this.eGui.appendChild(eMessage);
+
+        const eButton = document.createElement('button');
+        eButton.textContent = 'Retry load';
+        this.eGui.appendChild(eButton);
     }
 
     public getGui(): HTMLElement {

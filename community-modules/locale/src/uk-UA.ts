@@ -692,6 +692,8 @@ export const AG_GRID_LOCALE_UA = {
     ariaCalculatedColumn: 'Обчислювана колонка',
     ariaColumnShowValuesAs: 'Показ значень як',
     ariaColumnSelectAll: 'Перемкнути видимість усіх стовпців',
+    ariaDataLoaded: 'Дані завантажено',
+    ariaDataLoadedRows: '${variable} рядів',
     ariaDateFilterInput: 'Ввід фільтру за датою',
     ariaDefaultListName: 'Список',
     ariaFilterColumnsInput: 'Ввід колонок для фільтрування',

@@ -5,6 +5,9 @@ import { Component } from '../../widgets/component';
 
 export type OverlayType = 'loading' | 'noRows' | 'noMatchingRows' | 'exporting' | 'fileInput';
 
+/** Marks the element inside an overlay whose text is announced via the overlay live region. */
+export const OVERLAY_ANNOUNCEMENT_ATTRIBUTE = 'data-ag-overlay-announcement';
+
 interface ProvidedOverlayUserParams {
     /**
      * Override the default text of the provided overlay.

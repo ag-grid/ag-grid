@@ -1,6 +1,6 @@
 import { RefPlaceholder } from 'ag-stack';
 
-import { OverlayComponent } from '../../rendering/overlays/overlayComponent';
+import { OVERLAY_ANNOUNCEMENT_ATTRIBUTE, OverlayComponent } from '../../rendering/overlays/overlayComponent';
 import type { IOverlayComp } from '../../rendering/overlays/overlayComponent';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
@@ -22,7 +22,12 @@ const ErrorOverlayElement: ElementParams = {
             tag: 'div',
             cls: 'ag-overlay-error-header',
             children: [
-                { tag: 'span', ref: 'eTitle', cls: 'ag-overlay-error-title' },
+                {
+                    tag: 'span',
+                    ref: 'eTitle',
+                    cls: 'ag-overlay-error-title',
+                    attrs: { [OVERLAY_ANNOUNCEMENT_ATTRIBUTE]: 'true' },
+                },
                 {
                     tag: 'button',
                     ref: 'eCopy',
@@ -96,8 +101,6 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
             }
             this.eBody.appendChild(renderDiagnostic(diagnostics[i]));
         }
-
-        this.beans.ariaAnnounce?.announceValue(this.eTitle.textContent ?? '', 'overlay');
     }
 
     private copyDiagnostics(): void {

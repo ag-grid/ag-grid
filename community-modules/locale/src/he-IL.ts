@@ -688,6 +688,8 @@ export const AG_GRID_LOCALE_IL = {
     ariaCalculatedColumn: 'עמודה מחושבת',
     ariaColumnShowValuesAs: 'מציג ערכים בתור',
     ariaColumnSelectAll: 'החלפת נראות כל העמודות',
+    ariaDataLoaded: 'הנתונים נטענו',
+    ariaDataLoadedRows: '${variable} שורות',
     ariaDateFilterInput: 'קלט סינון תאריך',
     ariaDefaultListName: 'רשימה',
     ariaFilterColumnsInput: 'קלט סינון עמודות',
