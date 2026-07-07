@@ -423,8 +423,8 @@ describe('Date Range Filter', () => {
             // Let the 500ms date-report debounce window elapse.
             await asyncSetTimeout(600);
 
-            // The tooltip must render once and stay stable: the debounced report scheduled by
-            // the focus steal must not fire a second, conflicting report after re-open.
+            // The tooltip must render once and stay stable: focus validation is suppressed during
+            // the open sequence, so the focus steal never schedules a second, conflicting report.
             expect(reportSpy.mock.calls.length).toBe(reportsOnOpen);
         } finally {
             reportSpy.mockRestore();

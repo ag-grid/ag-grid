@@ -132,13 +132,6 @@ export class DateCompWrapper {
     public getValidity(): ValidityState | undefined {
         return this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD)?.validity;
     }
-
-    public cancelPendingReport(): void {
-        if (this.timeoutHandle != null) {
-            window.clearTimeout(this.timeoutHandle);
-            this.timeoutHandle = null;
-        }
-    }
 }
 
 function reportValidity(eInput: HTMLInputElement) {

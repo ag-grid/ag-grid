@@ -33,6 +33,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     private maxValidYear: number = DEFAULT_MAX_YEAR;
     private minValidDate: Date | null = null;
     private maxValidDate: Date | null = null;
+    private suppressFocusValidation = false;
 
     public readonly filterType = 'date' as const;
 
@@ -45,7 +46,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
 
         this.dateConditionFromComps[0].afterGuiAttached(params);
 
-        this.refreshInputValidation();
+        this.applyInitialValidation();
     }
 
     protected override shouldKeepInvalidInputState(): boolean {
@@ -93,13 +94,14 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
     }
 
-    private refreshInputValidation(): void {
+    private applyInitialValidation(): void {
+        // In Chrome/Safari reportValidity() below steals focus, whose focusin handler would schedule a
+        // debounced re-report. Suppress it so a single stable bubble survives on (re-)open.
+        this.suppressFocusValidation = true;
         for (let i = 0; i < this.dateConditionFromComps.length; i++) {
             this.refreshInputPairValidation(i, false, true);
         }
-        // reportValidity() above steals focus in Chrome/Safari, whose focusin handler schedules a
-        // second debounced report; cancel it so a single stable report survives on (re-)open.
-        this.forEachInput((element) => element.cancelPendingReport());
+        this.suppressFocusValidation = false;
     }
 
     private refreshInputPairValidation(position: number, isFrom = false, forceImmediate = false): void {
@@ -145,7 +147,11 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
                     this.refreshInputPairValidation(position, isFrom);
                     this.onUiChanged();
                 },
-                onFocusIn: () => this.refreshInputPairValidation(position, isFrom),
+                onFocusIn: () => {
+                    if (!this.suppressFocusValidation) {
+                        this.refreshInputPairValidation(position, isFrom);
+                    }
+                },
                 filterParams: params as any,
                 location: 'filter',
             }),
