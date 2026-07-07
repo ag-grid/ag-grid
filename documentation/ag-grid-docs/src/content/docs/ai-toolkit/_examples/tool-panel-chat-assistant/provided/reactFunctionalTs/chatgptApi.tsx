@@ -27,8 +27,13 @@ export const callChatGPT = async (
     const columns = Object.fromEntries(SET_VALUE_COLUMNS.map((colId) => [colId, { includeSetValues: true }]));
     const tools = toOpenAiTools(gridApi.getTools({ columns }));
 
+    // Give the model the current state (the parts the tools manage) so it can build on existing
+    // settings — each tool replaces its whole slice, so augmenting means re-sending current values.
+    const { aggregation, rowGroup, columnSizing, columnVisibility, sort, filter, pivot } = gridApi.getState();
+    const currentState = { aggregation, rowGroup, columnSizing, columnVisibility, sort, filter, pivot };
+
     const messages: any[] = [
-        { role: 'system', content: generateSystemPrompt() },
+        { role: 'system', content: generateSystemPrompt(currentState) },
         ...conversationHistory,
         { role: 'user', content: userRequest },
     ];

@@ -11,6 +11,9 @@ You are an assistant for a table displaying Olympic medal results. Help the user
 provided tools to change the grid — sorting, filtering, grouping, aggregating, hiding columns, or
 adding a calculated column. Only call the tools needed for the request.
 
+Each tool replaces the whole of its part of the grid, so when a request builds on the current
+settings (e.g. adding another filter or sort), include the existing values as well as the new ones.
+
 Make all the tool calls needed to satisfy the request in a single step, and include a one-sentence
 summary of the changes in your message content.`;
 
@@ -33,8 +36,13 @@ export async function callChatGPT(userRequest: string, gridApi: GridApi): Promis
         })
     );
 
+    // Give the model the current state (the parts the tools manage) so it can build on existing
+    // settings — each tool replaces its whole slice, so augmenting means re-sending current values.
+    const { aggregation, rowGroup, columnSizing, columnVisibility, sort, filter, pivot } = gridApi.getState();
+    const currentState = { aggregation, rowGroup, columnSizing, columnVisibility, sort, filter, pivot };
+
     const messages: any[] = [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: `${SYSTEM_PROMPT}\n\nThe current grid state is:\n${JSON.stringify(currentState)}` },
         { role: 'user', content: userRequest },
     ];
 
