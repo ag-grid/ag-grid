@@ -13,7 +13,7 @@
     // stranded mid-row or on a line of its own. Inert once the header becomes a grid
     // (the switcher's track is content-sized), where grid-area handles placement.
     margin-left: auto;
-    margin-right: -$spacing-size-5;
+    transform: translateY(1px);
     user-select: none;
     // Direct .headerInner grid child once the header goes fully inline — see
     // SiteHeader.module.scss's .headerInner grid-template-areas.
@@ -25,6 +25,10 @@
 
     @container site-header (min-width: #{$switcher-popup-at}) {
         position: relative;
+    }
+
+    @container site-header (min-width: #{$docs-search-inline}) {
+        margin-right: -$spacing-size-5;
     }
 }
 
@@ -43,6 +47,7 @@
     font-size: 17px;
     border: none;
     border-radius: var(--radius-3xl);
+    box-shadow: none;
 
     #{$selector-darkmode}:has([data-is-homepage='false']) &,
     #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
