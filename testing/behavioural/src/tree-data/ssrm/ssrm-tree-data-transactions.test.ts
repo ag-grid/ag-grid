@@ -267,10 +267,11 @@ describe('ag-grid SSRM treeData transactions (characterization)', () => {
             }
         );
 
-        // Async transactions are batched; wait for the flush + any resulting loads.
-        for (let repeat = 0; callbackStatus === undefined && repeat < 500; ++repeat) {
-            await waitForNoLoadingRows(api);
-        }
+        // Async transactions are batched; force the batch to flush synchronously so the
+        // callback runs deterministically rather than depending on the batch timer, then
+        // wait for any resulting loads.
+        api.flushServerSideAsyncTransactions();
+        await waitForNoLoadingRows(api);
 
         // Pin: callback fires with the applied status and the node lands under the parent.
         expect(callbackStatus).toBe('Applied');
