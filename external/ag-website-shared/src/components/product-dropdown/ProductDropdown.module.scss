@@ -89,7 +89,7 @@
     z-index: 2;
     // Closed (resting) state. Opening flips these via the parent `.open`
     // class — opacity, translate and scale animate. The same transitions
-    // also play in reverse on close, so hover-out mirrors hover-in.
+    // also play in reverse on close, so closing mirrors opening.
     // `visibility` is delayed until the fade-out finishes so the dropdown
     // is removed from the accessibility tree without snap-cutting the
     // visual transition.
