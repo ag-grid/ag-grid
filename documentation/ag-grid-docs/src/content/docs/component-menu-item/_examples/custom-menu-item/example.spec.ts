@@ -1,6 +1,24 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
+    test.eachFramework('opening the menu moves keyboard focus into it', async ({ agIdFor, page, agFramework }) => {
+        // React does not focus a menu containing custom framework items, breaking keyboard nav — see AG-17785.
+        test.fixme(
+            agFramework.startsWith('reactFunctionalTs'),
+            'AG-17785: React menu with custom items does not receive initial focus'
+        );
+
+        await agIdFor.headerCell('athlete').hover();
+        await agIdFor.headerCellMenuButton('athlete').click();
+        await expect(agIdFor.menu()).toBeVisible();
+
+        // an open menu should place keyboard focus on one of its items so Escape / arrow keys work
+        await page.waitForFunction(() => {
+            const menu = document.querySelector('[data-testid="ag-menu"]');
+            return !!menu && menu.contains(document.activeElement);
+        });
+    });
+
     test.eachFramework('custom menu items appear in the column menu', async ({ agIdFor, page }) => {
         await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
 
@@ -18,6 +36,8 @@ test.agExample(import.meta, () => {
         // each custom item renders its Alert button
         await expect(page.locator('.ag-menu-option .alert-button')).toHaveCount(2);
 
+        // focus a menu option so Escape is delivered to the open menu
+        await page.locator('.ag-menu-option').first().focus();
         await page.keyboard.press('Escape');
         await expect(agIdFor.menu()).toHaveCount(0);
     });
@@ -49,6 +69,8 @@ test.agExample(import.meta, () => {
             page.locator('.ag-menu-option-text', { hasText: 'Click Alert Button and Keep Menu Open' })
         ).toBeVisible();
 
+        // focus a menu option so Escape is delivered to the open menu
+        await page.locator('.ag-menu-option').first().focus();
         await page.keyboard.press('Escape');
         await expect(agIdFor.menu()).toHaveCount(0);
     });

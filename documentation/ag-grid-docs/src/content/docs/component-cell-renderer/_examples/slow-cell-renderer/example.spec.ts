@@ -22,6 +22,8 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         await expect(agIdFor.cell('0', 'gold')).toContainText('8');
+        // wait for the deferred slow renderer to settle before interacting, so collapse runs on a stable grid
+        await expect(agIdFor.cell('0', 'country')).toContainText('United States', { timeout: 10000 });
 
         await agIdFor.autoGroupExpanded('row-group-athlete-Michael Phelps').click();
         await expect(agIdFor.cell('0', 'gold')).not.toBeVisible();

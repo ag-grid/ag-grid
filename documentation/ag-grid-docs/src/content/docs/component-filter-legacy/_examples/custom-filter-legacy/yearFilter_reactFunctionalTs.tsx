@@ -28,7 +28,8 @@ export default ({ model, onModelChange }: CustomFilterProps) => {
                 <input type="radio" name="year" value="All" checked={model == null} onChange={onYearChange} /> All
             </label>
             <label>
-                <input type="radio" name="year" value="2010" checked={model != null} onChange={onYearChange} /> Since 2010
+                <input type="radio" name="year" value="2010" checked={model != null} onChange={onYearChange} /> Since
+                2010
             </label>
         </div>
     );

@@ -11,6 +11,8 @@ test.agExample(import.meta, () => {
         // the custom "Filter" menu item is present
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Filter' })).toBeVisible();
 
+        // focus a menu option so Escape is delivered to the open menu
+        await page.locator('.ag-menu-option').first().focus();
         await page.keyboard.press('Escape');
         await expect(agIdFor.menu()).toHaveCount(0);
     });

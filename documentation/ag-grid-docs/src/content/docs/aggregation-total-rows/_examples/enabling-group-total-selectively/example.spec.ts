@@ -6,7 +6,10 @@ test.agExample(import.meta, () => {
     const usFooterId = 'rowGroupFooter_row-group-country-United States';
     const usYear2008FooterId = 'rowGroupFooter_row-group-country-United States-year-2008';
 
-    test.eachFramework('United States country group shows a footer, others do not', async ({ agIdFor, page }) => {
+    test.eachFramework('United States country group shows a footer, others do not', async ({ agIdFor, page, agFramework }) => {
+        // React loses the onFirstDataRendered expansion when data loads synchronously — see AG-17785.
+        test.fixme(agFramework.startsWith('reactFunctionalTs'), 'AG-17785: React loses onFirstDataRendered expansion');
+
         // United States (key match) has a country-level footer with its subtotals.
         await expect(agIdFor.autoGroupCell(usFooterId)).toContainText('Total United States', { useInnerText: true });
         await expect(agIdFor.cell(usFooterId, 'gold')).toContainText('51');
@@ -20,7 +23,10 @@ test.agExample(import.meta, () => {
         await expect(australiaFooter).toHaveCount(0);
     });
 
-    test.eachFramework('Year sub-groups get a footer when expanded', async ({ agIdFor }) => {
+    test.eachFramework('Year sub-groups get a footer when expanded', async ({ agIdFor, agFramework }) => {
+        // React loses the onFirstDataRendered expansion when data loads synchronously — see AG-17785.
+        test.fixme(agFramework.startsWith('reactFunctionalTs'), 'AG-17785: React loses onFirstDataRendered expansion');
+
         // United States is expanded on first render; its year sub-groups start collapsed with no footer.
         await expect(agIdFor.cell(usYear2008FooterId, 'gold')).not.toBeVisible();
 
