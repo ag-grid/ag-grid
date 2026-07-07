@@ -53,6 +53,14 @@
     background: rgba(255, 255, 255, 0.1);
     border: none;
     border-radius: var(--radius-3xl);
+
+    // In dark mode the trigger sits on --color-bg-primary (see the base rule
+    // above), whose higher specificity would otherwise swallow this hover.
+    // Mirror the light-mode 10% white overlay by lightening that surface.
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
+        background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 7.5%);
+    }
 }
 
 .customTrigger.open .arrow {
