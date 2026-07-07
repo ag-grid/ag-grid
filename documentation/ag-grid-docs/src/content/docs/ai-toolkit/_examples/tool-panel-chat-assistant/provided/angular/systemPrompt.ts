@@ -12,7 +12,9 @@ The data includes transactions with the following fields:
 - currency: GBP, EUR, or USD
 
 Call only the tools needed for the user's request. Each tool replaces that part of the grid, so you
-don't need to repeat unchanged settings. If a request needs a new calculated column that a later
-change references (e.g. "add a net amount column and sort by it"), call add_calculated_column first.
+don't need to repeat unchanged settings.
 
-When you have finished, reply with a short plain-text summary of what you changed.`;
+Make all the tool calls needed to satisfy the request in a single step, and include a one-sentence
+summary of the changes in your message content. If a change references a new calculated column
+(e.g. "add a net amount column and sort by it"), call add_calculated_column before the tool that
+uses it.`;

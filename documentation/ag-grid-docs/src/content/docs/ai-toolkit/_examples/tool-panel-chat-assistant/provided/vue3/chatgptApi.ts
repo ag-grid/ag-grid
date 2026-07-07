@@ -42,11 +42,20 @@ export const callChatGPT = async (
             return message.content ?? '';
         }
 
-        // Apply each tool call and feed the outcome back so the model can react to failures.
-        for (const toolCall of toolCalls) {
+        // Apply each requested tool call to the grid.
+        const results = toolCalls.map((toolCall) => {
             const args = JSON.parse(toolCall.function.arguments);
-            const result = gridApi.applyToolCall(toolCall.function.name, args);
+            return { toolCall, result: gridApi.applyToolCall(toolCall.function.name, args) };
+        });
+        for (const { toolCall, result } of results) {
             messages.push({ role: 'tool', tool_call_id: toolCall.id, content: JSON.stringify(result) });
+        }
+
+        // Optimistic exit: if everything applied and the model already summarised what it did, show
+        // that now instead of paying for another round-trip. Otherwise loop, so the model can react
+        // to a failure (an invalid expression, ...) and self-correct, or supply an omitted summary.
+        if (message.content && results.every(({ result }) => result.ok)) {
+            return message.content;
         }
     }
 

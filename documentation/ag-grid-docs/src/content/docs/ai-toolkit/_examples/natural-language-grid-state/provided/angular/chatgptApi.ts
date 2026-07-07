@@ -11,10 +11,10 @@ You are an assistant for a table displaying Olympic medal results. Help the user
 provided tools to change the grid — sorting, filtering, grouping, aggregating, hiding columns, or
 adding a calculated column. Only call the tools needed for the request.
 
-If a request needs a new calculated column that a later change references (e.g. "add a total medals
-column and sort by it"), call add_calculated_column first, then the tool that uses it.
-
-When you have finished, reply with a short plain-text summary of what you changed.`;
+Make all the tool calls needed to satisfy the request in a single step, and include a one-sentence
+summary of the changes in your message content. If a change references a new calculated column
+(e.g. "add a total medals column and sort by it"), call add_calculated_column before the tool that
+uses it.`;
 
 // Map the grid's tools into the OpenAI function-calling format. The grid describes each tool with
 // its live capabilities (available columns, functions, etc.), so nothing here is grid-specific.
@@ -49,12 +49,20 @@ export async function callChatGPT(userRequest: string, gridApi: GridApi): Promis
             return message.content ?? '';
         }
 
-        // Apply each requested tool call to the grid and feed the outcome back so the model can
-        // react to failures (an unavailable column, an invalid expression, ...) and self-correct.
-        for (const toolCall of toolCalls) {
+        // Apply each requested tool call to the grid.
+        const results = toolCalls.map((toolCall) => {
             const args = JSON.parse(toolCall.function.arguments);
-            const result = gridApi.applyToolCall(toolCall.function.name, args);
+            return { toolCall, result: gridApi.applyToolCall(toolCall.function.name, args) };
+        });
+        for (const { toolCall, result } of results) {
             messages.push({ role: 'tool', tool_call_id: toolCall.id, content: JSON.stringify(result) });
+        }
+
+        // Optimistic exit: if everything applied and the model already summarised what it did, show
+        // that now instead of paying for another round-trip. Otherwise loop, so the model can react
+        // to a failure (an invalid expression, ...) and self-correct, or supply an omitted summary.
+        if (message.content && results.every(({ result }) => result.ok)) {
+            return message.content;
         }
     }
 
