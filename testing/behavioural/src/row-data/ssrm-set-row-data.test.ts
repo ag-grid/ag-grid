@@ -114,7 +114,7 @@ describe('SSRM bulk row-data setting (characterisation)', () => {
         expect(api.getDisplayedRowAtIndex(2)?.data.value).toBe('Row 2');
     });
 
-    test('applyServerSideRowData with a route sets only that group\'s children', async () => {
+    test("applyServerSideRowData with a route sets only that group's children", async () => {
         const leafRows = [
             { id: 0, group: 'A', value: 'a0' },
             { id: 1, group: 'A', value: 'a1' },
@@ -125,9 +125,8 @@ describe('SSRM bulk row-data setting (characterisation)', () => {
             columnDefs: [{ field: 'group', rowGroup: true, hide: true }, { field: 'value' }],
             autoGroupColumnDef: { field: 'value' },
             rowModelType: 'serverSide',
-            getRowId: (p: any) => (p.data.group !== undefined && p.data.id === undefined
-                ? `group-${p.data.group}`
-                : String(p.data.id)),
+            getRowId: (p: any) =>
+                p.data.group !== undefined && p.data.id === undefined ? `group-${p.data.group}` : String(p.data.id),
             serverSideDatasource: {
                 getRows: (params: any) => {
                     const groupKeys: string[] = params.request.groupKeys;

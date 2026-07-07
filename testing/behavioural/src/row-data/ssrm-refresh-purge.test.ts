@@ -129,11 +129,7 @@ describe('SSRM refreshServerSide purge semantics (characterization)', () => {
         // Records the request groupKeys for every getRows call.
         const groupRequests: string[][] = [];
         const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'id' },
-                { field: 'value' },
-            ],
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'id' }, { field: 'value' }],
             autoGroupColumnDef: { field: 'country' },
             rowModelType: 'serverSide',
             getRowId: (params) => {

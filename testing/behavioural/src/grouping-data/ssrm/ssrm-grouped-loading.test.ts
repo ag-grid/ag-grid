@@ -47,10 +47,7 @@ describe('SSRM grouped block loading (characterization)', () => {
         const requests: RequestRecord[] = [];
 
         const api = gridsManager.createGrid(null, {
-            columnDefs: [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'athlete' },
-            ],
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: { field: 'athlete' },
             rowModelType: 'serverSide',
             getRowId: (p) => p.data.id ?? `group-${p.data.country}`,
@@ -103,10 +100,7 @@ describe('SSRM grouped block loading (characterization)', () => {
         const requests: RequestRecord[] = [];
 
         const api = gridsManager.createGrid(null, {
-            columnDefs: [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'athlete' },
-            ],
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: { field: 'athlete' },
             rowModelType: 'serverSide',
             cacheBlockSize: 2, // child level (UK has 5 children) is requested in blocks of 2
@@ -163,10 +157,7 @@ describe('SSRM grouped block loading (characterization)', () => {
         const requests: RequestRecord[] = [];
 
         const api = gridsManager.createGrid(null, {
-            columnDefs: [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'athlete' },
-            ],
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: { field: 'athlete' },
             rowModelType: 'serverSide',
             cacheBlockSize: 2,
@@ -220,10 +211,7 @@ describe('SSRM grouped block loading (characterization)', () => {
         const requests: RequestRecord[] = [];
 
         const api = gridsManager.createGrid(null, {
-            columnDefs: [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'athlete' },
-            ],
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: { field: 'athlete' },
             rowModelType: 'serverSide',
             cacheBlockSize: 100, // default block size
@@ -274,10 +262,7 @@ describe('SSRM grouped block loading (characterization)', () => {
         const requests: RequestRecord[] = [];
 
         const api = gridsManager.createGrid(null, {
-            columnDefs: [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'athlete' },
-            ],
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: { field: 'athlete' },
             rowModelType: 'serverSide',
             getRowId: (p) => p.data.id ?? `group-${p.data.country}`,

@@ -245,9 +245,8 @@ describe('SSRM Async Transactions (characterization)', () => {
 
         const results: ServerSideTransactionResult[] = [];
         const flushed = waitForEvent('asyncTransactionsFlushed', api);
-        api.applyServerSideTransactionAsync(
-            { route: ['does-not-exist'], add: [{ id: 100, value: 'X' }] },
-            (r) => results.push(r)
+        api.applyServerSideTransactionAsync({ route: ['does-not-exist'], add: [{ id: 100, value: 'X' }] }, (r) =>
+            results.push(r)
         );
         api.flushServerSideAsyncTransactions();
         await flushed;

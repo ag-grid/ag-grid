@@ -158,7 +158,10 @@ describe('SSRM sort/filter refresh-scope characterisation', () => {
 
     test('serverSideSortAllLevels true: applying a sort re-requests all expanded levels', async () => {
         const requests: Request[] = [];
-        const api = gridsManager.createGrid(null, createGroupedGridOptions(requests, { serverSideSortAllLevels: true }));
+        const api = gridsManager.createGrid(
+            null,
+            createGroupedGridOptions(requests, { serverSideSortAllLevels: true })
+        );
         await waitForEvent('firstDataRendered', api);
 
         await expandGroupByKey(api, 'UK');

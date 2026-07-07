@@ -103,7 +103,7 @@ describe('ag-grid SSRM treeData lazy loading (characterization)', () => {
         `);
     });
 
-    test('expanding a group node lazily requests ONLY that node\'s children', async () => {
+    test("expanding a group node lazily requests ONLY that node's children", async () => {
         const { api, requests } = createTreeGrid('ssrmExpandOne');
 
         await asyncSetTimeout(1);
