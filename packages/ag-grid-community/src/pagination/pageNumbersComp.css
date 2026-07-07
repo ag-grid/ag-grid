@@ -15,14 +15,10 @@
     align-items: center;
     justify-content: center;
     min-width: var(--ag-icon-size);
-    padding: var(--ag-spacing) calc(var(--ag-spacing) * 0.5);
+    padding: var(--ag-spacing);
     border-radius: var(--ag-border-radius);
     cursor: pointer;
     font-variant-numeric: tabular-nums;
-}
-
-:where(.ag-paging-page-numbers-truncated) .ag-paging-page-number {
-    padding-inline: var(--ag-spacing);
 }
 
 .ag-paging-page-number:hover {
@@ -45,11 +41,7 @@
     align-items: center;
     justify-content: center;
     min-width: var(--ag-icon-size);
-    padding: var(--ag-spacing) calc(var(--ag-spacing) * 0.5);
+    padding: var(--ag-spacing);
     pointer-events: none;
     font-variant-numeric: tabular-nums;
-}
-
-:where(.ag-paging-page-numbers-truncated) .ag-paging-page-number-ellipsis {
-    padding-inline: var(--ag-spacing);
 }
