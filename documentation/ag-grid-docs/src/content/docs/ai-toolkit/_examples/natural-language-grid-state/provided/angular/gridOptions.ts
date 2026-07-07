@@ -85,6 +85,7 @@ export const gridOptions: GridOptions<IOlympicData> = {
         sortable: true,
         resizable: true,
     },
+    calculatedColumns: true,
     enableFilterHandlers: true,
     sideBar: {
         toolPanels: ['columns', 'filters-new'],

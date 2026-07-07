@@ -641,6 +641,18 @@
                 "name": "AI Toolkit",
                 "url": "./ai-toolkit/"
             }
+        },
+        "getTools": {
+            "more": {
+                "name": "AI Toolkit",
+                "url": "./ai-toolkit/"
+            }
+        },
+        "applyToolCall": {
+            "more": {
+                "name": "AI Toolkit",
+                "url": "./ai-toolkit/"
+            }
         }
     },
     "events": {

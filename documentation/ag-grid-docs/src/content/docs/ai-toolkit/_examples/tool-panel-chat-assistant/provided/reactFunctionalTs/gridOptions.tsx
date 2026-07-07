@@ -77,6 +77,7 @@ export const gridOptions: GridOptions<ITransaction> = {
         resizable: true,
     },
     pagination: true,
+    calculatedColumns: true,
     enableFilterHandlers: true,
     sideBar: {
         toolPanels: [
