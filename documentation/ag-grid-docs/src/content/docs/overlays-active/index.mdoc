@@ -12,6 +12,8 @@ To display an overlay on demand set the `activeOverlay` / `activeOverlayParams` 
 
 {% apiDocumentation source="grid-options/properties.json" section="overlays" names=["activeOverlay", "activeOverlayParams"] /%}
 
+When `activeOverlay` is set to one of the grid provided overlays, it uses the same accessibility announcement behaviour as the provided overlay state. A custom active overlay is fully application-controlled; add any required live-region behaviour in the custom component if it represents a status change that must be announced.
+
 {% if isFramework("javascript", "angular") %}
 Implement the `IOverlayComp` interface to provide a custom overlay the grid will supply `IOverlayParams` whenever the component is created or refreshed.
 {% /if %}

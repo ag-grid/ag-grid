@@ -68,10 +68,17 @@ export function _setAriaLive(element: Element, live?: 'polite' | 'assertive' | '
     _toggleAriaAttribute(element, 'live', live);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setAriaAtomic(element: Element, atomic: boolean | null) {
     _toggleAriaAttribute(element, 'atomic', atomic);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _setAriaBusy(element: Element, busy: boolean | null) {
+    _toggleAriaAttribute(element, 'busy', busy);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setAriaRelevant(
     element: Element,
     relevant: 'additions' | 'additions text' | 'all' | 'removals' | 'text' | null

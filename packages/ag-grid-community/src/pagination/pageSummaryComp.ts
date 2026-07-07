@@ -9,7 +9,6 @@ import type { AgComponentSelectorType } from '../widgets/component';
 import { Component } from '../widgets/component';
 import type { GridInputNumberField } from '../widgets/gridWidgetTypes';
 import type { PaginationService } from './paginationService';
-import { _formatPaginationNumber } from './paginationUtils';
 
 export class PageSummaryComp extends Component {
     private rowModel: IRowModel;
@@ -192,25 +191,18 @@ export class PageSummaryComp extends Component {
     }
 
     private updateLabels(): void {
-        const { rowModel, pagination, lbCurrentInput, lbCurrentStatic, lbTotal } = this;
-        const lastPageFound = rowModel.isLastRowIndexKnown();
+        const { pagination, lbCurrentInput, lbCurrentStatic, lbTotal } = this;
+        const pageSummary = pagination.getPageSummary();
         const totalPages = pagination.getTotalPages();
         const currentPage = pagination.getCurrentPage();
         const localeTextFunc = this.getLocaleTextFunc();
 
-        let lbTotalStr: string;
-        if (lastPageFound) {
-            lbTotalStr = this.formatNumber(totalPages);
-        } else {
-            lbTotalStr = localeTextFunc('more', 'more');
-        }
-        lbTotal.textContent = lbTotalStr;
+        lbTotal.textContent = pageSummary.totalPages;
 
         const pagesExist = totalPages > 0;
         const lbCurrentValue = pagesExist ? currentPage + 1 : 1;
-        const lbCurrent = this.formatNumber(lbCurrentValue);
         if (this.suppressPageInput) {
-            lbCurrentStatic.textContent = lbCurrent;
+            lbCurrentStatic.textContent = pageSummary.currentPage;
         } else {
             // Before data loads totalPages is 0; clamp to 1 to avoid an invalid input while data loads
             const pageCount = Math.max(1, totalPages);
@@ -223,20 +215,14 @@ export class PageSummaryComp extends Component {
             const eInput = lbCurrentInput.getInputElement();
             _setAriaLabel(
                 eInput,
-                `${localeTextFunc('page', 'Page')} ${localeTextFunc('number', 'number')}, ${lbCurrentValue} ${localeTextFunc('of', 'of')} ${lbTotalStr}`
+                `${localeTextFunc('page', 'Page')} ${localeTextFunc('number', 'number')}, ${lbCurrentValue} ${localeTextFunc('of', 'of')} ${pageSummary.totalPages}`
             );
             eInput.setAttribute('aria-valuenow', String(lbCurrentValue));
             eInput.setAttribute('aria-valuemin', '1');
             eInput.setAttribute('aria-valuemax', String(pageCount));
         }
 
-        const strPage = localeTextFunc('page', 'Page');
-        const strOf = localeTextFunc('of', 'of');
-        this.ariaStatus = `${strPage} ${lbCurrent} ${strOf} ${lbTotalStr}`;
-    }
-
-    private formatNumber(value: number): string {
-        return _formatPaginationNumber(value, this.gos, this.getLocaleTextFunc.bind(this));
+        this.ariaStatus = pageSummary.ariaStatus;
     }
 }
 

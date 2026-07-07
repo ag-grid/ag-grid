@@ -3,7 +3,6 @@ import { RefPlaceholder } from 'ag-stack';
 import type { BeanCollection } from '../context/context';
 import { Component } from '../widgets/component';
 import type { PaginationService } from './paginationService';
-import { _formatPaginationNumber } from './paginationUtils';
 
 export class RowSummaryComp extends Component {
     private pagination: PaginationService;
@@ -65,68 +64,24 @@ export class RowSummaryComp extends Component {
         this.refresh();
     }
 
-    private isZeroPages(): boolean {
-        return this.beans.rowModel.isLastRowIndexKnown() && this.pagination.getTotalPages() === 0;
-    }
-
     public refresh(): void {
-        const {
-            pagination,
-            beans: { rowModel },
-            gos,
-        } = this;
-        const lastPageFound = rowModel.isLastRowIndexKnown();
-        const masterRowCount = pagination.getMasterRowCount();
-        const rowCount = lastPageFound ? masterRowCount : null;
-        const currentPage = pagination.getCurrentPage();
-        const pageSize = pagination.getPageSize();
+        const rowSummary = this.pagination.getRowSummary();
         const localeTextFunc = this.getLocaleTextFunc();
 
-        let startRow: number;
-        let endRow: number;
-
-        if (this.isZeroPages()) {
-            startRow = endRow = 0;
-        } else {
-            startRow = pageSize * currentPage + 1;
-            endRow = startRow + pageSize - 1;
-            if (lastPageFound && endRow > rowCount!) {
-                endRow = rowCount!;
-            }
-        }
-
-        const theoreticalEndRow = startRow + pageSize - 1;
-        const isLoadingPageSize = !lastPageFound && masterRowCount < theoreticalEndRow;
-
-        const formatNumber = (value: number) => _formatPaginationNumber(value, gos, this.getLocaleTextFunc.bind(this));
-
-        const lbFirstRowOnPage = formatNumber(startRow);
-        this.lbFirstRowOnPage.textContent = lbFirstRowOnPage;
-
-        let lbLastRowOnPage: string;
-        if (isLoadingPageSize) {
-            lbLastRowOnPage = localeTextFunc('pageLastRowUnknown', '?');
-        } else {
-            lbLastRowOnPage = formatNumber(endRow);
-        }
-        this.lbLastRowOnPage.textContent = lbLastRowOnPage;
-
-        let lbRecordCount: string;
-        if (lastPageFound) {
-            lbRecordCount = formatNumber(rowCount!);
-        } else {
-            lbRecordCount = localeTextFunc('more', 'more');
-        }
-        this.lbRecordCount.textContent = lbRecordCount;
-
+        this.lbFirstRowOnPage.textContent = rowSummary.firstRow;
+        this.lbLastRowOnPage.textContent = rowSummary.lastRow;
+        this.lbRecordCount.textContent = rowSummary.rowCount;
+        this.ariaStatus = rowSummary.ariaStatus;
         const strTo = localeTextFunc('to', 'to');
         const strOf = localeTextFunc('of', 'of');
-        this.ariaStatus = `${lbFirstRowOnPage} ${strTo} ${lbLastRowOnPage} ${strOf} ${lbRecordCount}`;
 
         const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\s+/g, ' ');
         this.getGui().style.setProperty(
             '--ag-internal-pagination-width-string',
-            `'${lbRecordCount} ${esc(strTo)} ${lbRecordCount} ${esc(strOf)} ${lbRecordCount}'`.replaceAll(/\d/g, '0')
+            `'${rowSummary.rowCount} ${esc(strTo)} ${rowSummary.rowCount} ${esc(strOf)} ${rowSummary.rowCount}'`.replaceAll(
+                /\d/g,
+                '0'
+            )
         );
     }
 }

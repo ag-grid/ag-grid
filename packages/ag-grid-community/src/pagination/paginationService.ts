@@ -2,8 +2,22 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { PaginationSelector } from './paginationComp';
+import { _formatPaginationNumber } from './paginationUtils';
 
 const DEFAULT_PAGE_SIZE = 100;
+
+interface PaginationRowSummary {
+    firstRow: string;
+    lastRow: string;
+    rowCount: string;
+    ariaStatus: string;
+}
+
+interface PaginationPageSummary {
+    currentPage: string;
+    totalPages: string;
+    ariaStatus: string;
+}
 
 export class PaginationService extends BeanStub implements NamedBean {
     beanName = 'pagination' as const;
@@ -163,6 +177,65 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     public getTotalPages(): number {
         return this.totalPages;
+    }
+
+    public getRowSummary(): PaginationRowSummary {
+        const { rowModel } = this.beans;
+        const localeTextFunc = this.getLocaleTextFunc();
+        const lastPageFound = rowModel.isLastRowIndexKnown();
+        const masterRowCount = this.masterRowCount;
+        const rowCount = lastPageFound ? masterRowCount : null;
+        const currentPage = this.currentPage;
+        const pageSize = this.pageSize;
+
+        let startRow: number;
+        let endRow: number;
+
+        if (lastPageFound && this.totalPages === 0) {
+            startRow = 0;
+            endRow = 0;
+        } else {
+            startRow = pageSize * currentPage + 1;
+            endRow = startRow + pageSize - 1;
+            if (lastPageFound && endRow > rowCount!) {
+                endRow = rowCount!;
+            }
+        }
+
+        const theoreticalEndRow = startRow + pageSize - 1;
+        const isLoadingPageSize = !lastPageFound && masterRowCount < theoreticalEndRow;
+        const firstRow = this.formatNumber(startRow);
+        const lastRow = isLoadingPageSize ? localeTextFunc('pageLastRowUnknown', '?') : this.formatNumber(endRow);
+        const rowCountText = lastPageFound ? this.formatNumber(rowCount!) : localeTextFunc('more', 'more');
+        const ariaStatus = `${firstRow} ${localeTextFunc('to', 'to')} ${lastRow} ${localeTextFunc('of', 'of')} ${rowCountText}`;
+
+        return {
+            firstRow,
+            lastRow,
+            rowCount: rowCountText,
+            ariaStatus,
+        };
+    }
+
+    public getPageSummary(): PaginationPageSummary {
+        const lastPageFound = this.beans.rowModel.isLastRowIndexKnown();
+        const localeTextFunc = this.getLocaleTextFunc();
+        const totalPages = this.totalPages;
+        const pagesExist = totalPages > 0;
+        const currentPageValue = pagesExist ? this.currentPage + 1 : 1;
+        const currentPage = this.formatNumber(currentPageValue);
+        const totalPagesText = lastPageFound ? this.formatNumber(totalPages) : localeTextFunc('more', 'more');
+        const ariaStatus = `${localeTextFunc('page', 'Page')} ${currentPage} ${localeTextFunc('of', 'of')} ${totalPagesText}`;
+
+        return {
+            currentPage,
+            totalPages: totalPagesText,
+            ariaStatus,
+        };
+    }
+
+    private formatNumber(value: number): string {
+        return _formatPaginationNumber(value, this.gos, this.getLocaleTextFunc.bind(this));
     }
 
     /** This is only for state setting before data has been loaded */

@@ -8,6 +8,10 @@ import {
     _getActiveDomElement,
     _isNothingFocused,
     _last,
+    _setAriaAtomic,
+    _setAriaLive,
+    _setAriaRelevant,
+    _setAriaRole,
 } from 'ag-stack';
 
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
@@ -17,8 +21,12 @@ import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import { _focusNextGridCoreContainer } from '../../utils/gridFocus';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
-import type { IOverlayComp } from './overlayComponent';
+import type { IOverlayComp, OverlayType } from './overlayComponent';
 import overlayWrapperComponentCSS from './overlayWrapperComponent.css';
+
+const OVERLAY_ANNOUNCEMENT_DELAY = 500;
+const REANNOUNCE_DELAY = 50;
+const OVERLAY_ANNOUNCEMENT_ATTRIBUTE = 'data-ag-overlay-announcement';
 
 const OverlayWrapperElement: ElementParams = {
     tag: 'div',
@@ -27,15 +35,19 @@ const OverlayWrapperElement: ElementParams = {
     children: [
         {
             tag: 'div',
+            ref: 'eOverlayPanel',
             cls: 'ag-overlay-panel',
             role: 'presentation',
             children: [{ tag: 'div', ref: 'eOverlayWrapper', cls: 'ag-overlay-wrapper', role: 'presentation' }],
         },
+        { tag: 'div', ref: 'eOverlayLiveRegion', cls: 'ag-overlay-live-region' },
     ],
 };
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
+    private eOverlayPanel: HTMLElement | null = RefPlaceholder;
     private eOverlayWrapper: HTMLElement | null = RefPlaceholder;
+    private eOverlayLiveRegion: HTMLElement | null = RefPlaceholder;
 
     public activeOverlay: IOverlayComp | null = null;
     private activePromise: AgPromise<IOverlayComp> | null = null;
@@ -43,6 +55,12 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private elToFocusAfter: HTMLElement | null = null;
     private overlayExclusive = false;
     private oldWrapperPadding: number | null = null;
+    private activeOverlayType: OverlayType | null = null;
+    private announcementTimeout: number | null = null;
+    private liveRegionTimeout: number | null = null;
+    private overlayContentObserver: MutationObserver | null = null;
+    private lastAnnouncement: string = '';
+    private loadingAnnounced = false;
 
     constructor() {
         // wrapping in outer div, and wrapper, is needed to center the loading icon
@@ -92,11 +110,30 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     public postConstruct(): void {
         this.createManagedBean(new LayoutFeature(this));
-        this.setDisplayed(false, { skipAriaHidden: true });
+        this.setOverlayPanelDisplayed(false);
+        this.configureLiveRegion();
 
         this.beans.overlays!.setWrapperComp(this, false);
         this.addManagedElementListeners(this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
         this.addManagedEventListeners({ gridSizeChanged: this.refreshWrapperPadding.bind(this) });
+    }
+
+    private configureLiveRegion(): void {
+        const eOverlayLiveRegion = this.eOverlayLiveRegion;
+        if (!eOverlayLiveRegion) {
+            return;
+        }
+        _setAriaRole(eOverlayLiveRegion, 'status');
+        _setAriaLive(eOverlayLiveRegion, 'polite');
+        _setAriaAtomic(eOverlayLiveRegion, true);
+        _setAriaRelevant(eOverlayLiveRegion, 'additions text');
+    }
+
+    private setOverlayPanelDisplayed(displayed: boolean): void {
+        const eOverlayPanel = this.eOverlayPanel;
+        if (eOverlayPanel) {
+            eOverlayPanel.style.display = displayed ? '' : 'none';
+        }
     }
 
     private setWrapperTypeClass(overlayWrapperCssClass: string): void {
@@ -115,21 +152,27 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     public showOverlay(
         overlayComponentPromise: AgPromise<IOverlayComp> | null,
         overlayWrapperCssClass: string,
-        exclusive: boolean
+        exclusive: boolean,
+        overlayType?: OverlayType
     ): AgPromise<IOverlayComp | undefined> {
         this.destroyActiveOverlay();
 
         this.elToFocusAfter = null;
         this.activePromise = overlayComponentPromise;
         this.overlayExclusive = exclusive;
+        this.activeOverlayType = overlayType ?? null;
+        this.loadingAnnounced = false;
+        this.configureOverlayWrapperAria();
+        this.updateLiveRegion('');
 
         if (!overlayComponentPromise) {
+            this.setOverlayPanelDisplayed(false);
             this.refreshWrapperPadding();
             return AgPromise.resolve();
         }
 
         this.setWrapperTypeClass(overlayWrapperCssClass);
-        this.setDisplayed(true, { skipAriaHidden: true });
+        this.setOverlayPanelDisplayed(true);
         this.refreshWrapperPadding();
 
         if (exclusive && this.isGridFocused()) {
@@ -164,11 +207,196 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                 this.activeOverlay = comp;
             }
 
+            this.startOverlayContentObserver(overlayType);
+            this.scheduleOverlayAnnouncement(overlayType);
+
             if (exclusive && this.isGridFocused()) {
                 _focusInto(eOverlayWrapper);
             }
         });
         return overlayComponentPromise;
+    }
+
+    private configureOverlayWrapperAria(): void {
+        const eOverlayWrapper = this.eOverlayWrapper;
+        if (!eOverlayWrapper) {
+            return;
+        }
+
+        _setAriaRole(eOverlayWrapper, 'presentation');
+        _setAriaLive(eOverlayWrapper, null);
+        _setAriaAtomic(eOverlayWrapper, null);
+        _setAriaRelevant(eOverlayWrapper, null);
+    }
+
+    private scheduleOverlayAnnouncement(overlayType?: OverlayType): void {
+        this.clearAnnouncementTimeout();
+        if (!this.isLiveOverlayType(overlayType)) {
+            return;
+        }
+
+        this.announcementTimeout = window.setTimeout(() => {
+            this.announcementTimeout = null;
+            if (this.activeOverlayType !== overlayType) {
+                return;
+            }
+
+            const announcement = this.getOverlayAnnouncementText();
+            if (!announcement) {
+                return;
+            }
+
+            if (overlayType === 'loading') {
+                this.loadingAnnounced = true;
+            }
+            this.updateLiveRegion(announcement);
+        }, OVERLAY_ANNOUNCEMENT_DELAY);
+    }
+
+    public refreshOverlayAnnouncement(): void {
+        this.updateLiveRegion('');
+        this.scheduleOverlayAnnouncement(this.activeOverlayType ?? undefined);
+    }
+
+    private isLiveOverlayType(overlayType?: OverlayType): overlayType is OverlayType {
+        return (
+            overlayType === 'loading' ||
+            overlayType === 'noRows' ||
+            overlayType === 'noMatchingRows' ||
+            overlayType === 'exporting' ||
+            overlayType === 'fileInput'
+        );
+    }
+
+    private startOverlayContentObserver(overlayType?: OverlayType): void {
+        this.clearOverlayContentObserver();
+        if (!this.isLiveOverlayType(overlayType) || !this.eOverlayWrapper) {
+            return;
+        }
+
+        this.overlayContentObserver = new MutationObserver(() => {
+            if (this.activeOverlayType !== overlayType) {
+                return;
+            }
+            this.updateLiveRegion('');
+            this.scheduleOverlayAnnouncement(overlayType);
+        });
+        this.overlayContentObserver.observe(this.eOverlayWrapper, {
+            attributes: true,
+            attributeFilter: ['aria-label'],
+            childList: true,
+            characterData: true,
+            subtree: true,
+        });
+    }
+
+    private getOverlayAnnouncementText(): string {
+        const eGui = this.activeOverlay?.getGui();
+        const value =
+            this.getMarkedOverlayAnnouncementText(eGui) ||
+            eGui?.getAttribute('aria-label') ||
+            this.getLiveRegionText(eGui ?? null);
+
+        return value.replace(/\s+/g, ' ').trim();
+    }
+
+    private getMarkedOverlayAnnouncementText(eGui: HTMLElement | undefined): string {
+        if (!eGui) {
+            return '';
+        }
+
+        const eAnnouncement =
+            eGui.getAttribute(OVERLAY_ANNOUNCEMENT_ATTRIBUTE) === 'true'
+                ? eGui
+                : eGui.querySelector<HTMLElement>(`[${OVERLAY_ANNOUNCEMENT_ATTRIBUTE}="true"]`);
+
+        return this.getLiveRegionText(eAnnouncement);
+    }
+
+    private getLiveRegionText(node: Node | null): string {
+        if (!node) {
+            return '';
+        }
+
+        if (node.nodeType === Node.TEXT_NODE) {
+            return node.textContent ?? '';
+        }
+
+        if (node.nodeType !== Node.ELEMENT_NODE) {
+            return '';
+        }
+
+        const element = node as HTMLElement;
+        if (this.shouldSkipLiveRegionText(element)) {
+            return '';
+        }
+
+        let text = '';
+        const childNodes = element.childNodes;
+        for (let i = 0, len = childNodes.length; i < len; ++i) {
+            text += ` ${this.getLiveRegionText(childNodes[i])}`;
+        }
+
+        return text;
+    }
+
+    private shouldSkipLiveRegionText(element: HTMLElement): boolean {
+        const tagName = element.tagName;
+        if (tagName === 'BUTTON' || tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA') {
+            return true;
+        }
+
+        const role = element.getAttribute('role');
+        return element.getAttribute('aria-hidden') === 'true' || role === 'presentation' || role === 'none';
+    }
+
+    private clearAnnouncementTimeout(): void {
+        if (this.announcementTimeout != null) {
+            window.clearTimeout(this.announcementTimeout);
+            this.announcementTimeout = null;
+        }
+    }
+
+    private clearLiveRegionTimeout(): void {
+        if (this.liveRegionTimeout != null) {
+            window.clearTimeout(this.liveRegionTimeout);
+            this.liveRegionTimeout = null;
+        }
+    }
+
+    private clearOverlayContentObserver(): void {
+        this.overlayContentObserver?.disconnect();
+        this.overlayContentObserver = null;
+    }
+
+    private updateLiveRegion(value: string): void {
+        const eOverlayLiveRegion = this.eOverlayLiveRegion;
+        if (!eOverlayLiveRegion) {
+            return;
+        }
+
+        this.clearLiveRegionTimeout();
+        eOverlayLiveRegion.textContent = '';
+
+        if (!value.replace(/[ .]/g, '')) {
+            this.lastAnnouncement = '';
+            return;
+        }
+
+        this.liveRegionTimeout = window.setTimeout(() => {
+            this.liveRegionTimeout = null;
+            if (!this.isAlive() || !this.eOverlayLiveRegion) {
+                return;
+            }
+
+            let valueToAnnounce = value;
+            if (this.lastAnnouncement === valueToAnnounce) {
+                valueToAnnounce = `${valueToAnnounce}\u200B`;
+            }
+
+            this.lastAnnouncement = valueToAnnounce;
+            this.eOverlayLiveRegion.textContent = valueToAnnounce;
+        }, REANNOUNCE_DELAY);
     }
 
     public refreshWrapperPadding(): void {
@@ -192,6 +420,8 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     private destroyActiveOverlay(): void {
         this.activePromise = null;
+        this.clearAnnouncementTimeout();
+        this.clearOverlayContentObserver();
 
         const activeOverlay = this.activeOverlay;
         if (!activeOverlay) {
@@ -224,8 +454,23 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     public hideOverlay(): void {
+        const shouldAnnounceCompletion =
+            this.activeOverlayType === 'loading' &&
+            this.loadingAnnounced &&
+            this.beans.overlays?.getLoadingCompleteText();
+        const completionText = shouldAnnounceCompletion || '';
+
         this.destroyActiveOverlay();
-        this.setDisplayed(false, { skipAriaHidden: true });
+        this.activeOverlayType = null;
+        this.loadingAnnounced = false;
+        this.configureOverlayWrapperAria();
+        this.setOverlayPanelDisplayed(false);
+
+        if (completionText) {
+            this.updateLiveRegion(completionText);
+        } else {
+            this.updateLiveRegion('');
+        }
     }
 
     private isGridFocused(): boolean {
@@ -235,10 +480,14 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     public override destroy(): void {
         this.elToFocusAfter = null;
+        this.clearAnnouncementTimeout();
+        this.clearLiveRegionTimeout();
         this.destroyActiveOverlay();
         this.beans.overlays!.setWrapperComp(this, true);
         super.destroy();
+        this.eOverlayPanel = null;
         this.eOverlayWrapper = null;
+        this.eOverlayLiveRegion = null;
     }
 }
 export const OverlayWrapperSelector: ComponentSelector = {

@@ -49,6 +49,5 @@ export class ExportingOverlayComponent
         }
         const exportingText = params.exporting?.overlayText ?? this.getLocaleTextFunc()('exportingOoo', 'Exporting...');
         this.eExportingText.textContent = exportingText;
-        beans.ariaAnnounce.announceValue(exportingText, 'overlay');
     }
 }

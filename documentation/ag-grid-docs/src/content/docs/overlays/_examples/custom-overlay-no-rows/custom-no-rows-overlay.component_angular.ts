@@ -8,8 +8,8 @@ type CustomNoRowsOverlayParams = INoRowsOverlayParams & { noRowsMessageFunc: () 
 @Component({
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: ` <div class="overlay-loading-center" style="background-color: #b4bebe;" role="presentation">
-        <i class="far fa-frown" aria-live="polite" aria-atomic="true"> {{ noRowsMessage() }} </i>
+    template: ` <div class="overlay-loading-center" style="background-color: #b4bebe;">
+        <i class="far fa-frown"> {{ noRowsMessage() }} </i>
     </div>`,
 })
 export class CustomNoRowsOverlay implements INoRowsOverlayAngularComp {

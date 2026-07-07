@@ -10,11 +10,5 @@ export default (props: CustomOverlayProps & { loadingMessage: string; noRowsMess
         message = props.noRowsMessage;
     }
 
-    return (
-        <div className="overlay-center" role="presentation">
-            <div aria-live="polite" aria-atomic="true">
-                {message}
-            </div>
-        </div>
-    );
+    return <div className="overlay-center">{message}</div>;
 };

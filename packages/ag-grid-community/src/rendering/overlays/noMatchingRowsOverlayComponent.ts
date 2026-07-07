@@ -26,14 +26,10 @@ export class NoMatchingRowsOverlayComponent
     implements INoMatchingRowsOverlayComp<any, any>
 {
     public init(params: INoMatchingRowsOverlayParams & OverlayComponentUserParams): void {
-        const { beans } = this;
-
         this.setTemplate(NoMatchingRowsOverlayElement);
 
         const noRowsText =
             params.noMatchingRows?.overlayText ?? this.getLocaleTextFunc()('noMatchingRows', 'No Matching Rows');
         this.getGui().textContent = noRowsText;
-
-        beans.ariaAnnounce.announceValue(noRowsText, 'overlay');
     }
 }

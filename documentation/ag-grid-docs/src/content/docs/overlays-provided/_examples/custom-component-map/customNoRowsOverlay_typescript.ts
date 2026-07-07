@@ -10,13 +10,10 @@ export class CustomNoRowsOverlay implements INoRowsOverlayComp {
         this.eGui = document.createElement('div');
         const overlay = document.createElement('div');
         overlay.className = 'overlay-loading-center';
-        overlay.setAttribute('role', 'presentation');
         overlay.style.backgroundColor = '#b4bebe';
 
         const icon = document.createElement('i');
         icon.className = 'far fa-frown';
-        icon.setAttribute('aria-live', 'polite');
-        icon.setAttribute('aria-atomic', 'true');
 
         this.messageEl = icon;
 

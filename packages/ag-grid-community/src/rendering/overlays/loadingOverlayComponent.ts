@@ -51,7 +51,6 @@ export class LoadingOverlayComponent
             }
             const loadingText = params.loading?.overlayText ?? this.getLocaleTextFunc()('loadingOoo', 'Loading...');
             this.eLoadingText.textContent = loadingText;
-            beans.ariaAnnounce.announceValue(loadingText, 'overlay');
         }
     }
 }

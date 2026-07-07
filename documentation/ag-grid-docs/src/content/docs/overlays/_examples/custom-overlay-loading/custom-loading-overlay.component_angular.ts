@@ -8,12 +8,12 @@ type CustomLoadingOverlayParams = ILoadingOverlayParams & { loadingMessage: stri
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div class="overlay-loading-center" role="presentation">
+        <div class="overlay-loading-center">
             <div
                 role="presentation"
                 style="width: 100px; height: 100px; background: url(https://www.ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat; margin: 0 auto;"
             ></div>
-            <div aria-live="polite" aria-atomic="true">{{ loadingMessage() }}</div>
+            <div>{{ loadingMessage() }}</div>
         </div>
     `,
 })

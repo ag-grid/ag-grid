@@ -29,7 +29,7 @@ export class NoRowsOverlayComponent
     implements INoRowsOverlayComp<any, any>
 {
     public init(params: INoRowsOverlayParams & OverlayComponentUserParams): void {
-        const { beans, gos } = this;
+        const { gos } = this;
         const customTemplate = _makeNull(gos.get('overlayNoRowsTemplate')?.trim());
 
         this.setTemplate(customTemplate ?? NoRowsOverlayElement);
@@ -38,8 +38,6 @@ export class NoRowsOverlayComponent
             const noRowsText =
                 params.noRows?.overlayText ?? this.getLocaleTextFunc()('noRowsToShow', 'No Rows To Show');
             this.getGui().textContent = noRowsText;
-
-            beans.ariaAnnounce.announceValue(noRowsText, 'overlay');
         }
     }
 }

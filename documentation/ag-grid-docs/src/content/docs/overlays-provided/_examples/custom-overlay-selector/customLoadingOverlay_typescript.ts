@@ -15,9 +15,9 @@ export class CustomLoadingOverlay implements ILoadingOverlayComp {
     }
 
     refresh(params: CustomLoadingOverlayParams): void {
-        this.eGui.innerHTML = `<div class="overlay-loading-center" role="presentation">
+        this.eGui.innerHTML = `<div class="overlay-loading-center">
         <div role="presentation" style="height:100px; width:100px; background: url(https://www.ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat; margin: 0 auto;"></div>
-        <div aria-live="polite" aria-atomic="true">${params.loadingMessage}</div>
+        <div>${params.loadingMessage}</div>
      </div>`;
     }
 }

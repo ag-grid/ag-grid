@@ -1,4 +1,4 @@
-import { AgPromise } from 'ag-stack';
+import { AgPromise, _setAriaBusy } from 'ag-stack';
 
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
@@ -7,6 +7,7 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import { _addGridCommonParams, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
+import { _formatPaginationNumber } from '../../pagination/paginationUtils';
 import { _attemptToRestoreCellFocus } from '../../utils/gridFocus';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
@@ -148,6 +149,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     private exportsInProgress: number = 0;
     private focusedCell: CellPosition | null;
     private devErrorOverlayActive: boolean = false;
+    private gridBusy = false;
 
     private newColumnsLoadedCleanup: (() => void) | null = null;
     public postConstruct(): void {
@@ -174,6 +176,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             modelUpdated: updateOverlayVisibility,
         });
         this.newColumnsLoadedCleanup = newColumnsLoadedCleanup;
+        this.beans.ctrlsSvc.whenReady(this, () => this.applyGridBusy());
 
         this.addManagedPropertyListeners(
             [
@@ -370,6 +373,7 @@ export class OverlayService extends BeanStub implements NamedBean {
                 const paramsKey = currentDef.paramsKey;
                 if (changedProps.has('overlayComponentParams') || (paramsKey && changedProps.has(paramsKey))) {
                     currOverlayComp.refresh?.(this.makeCompParams(false, paramsKey, currentDef.overlayType));
+                    this.eWrapper?.refreshOverlayAnnouncement();
                 }
             }
         }
@@ -514,9 +518,10 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         const promise = compDetails?.newAgStackInstance() ?? null;
         const mountedPromise: AgPromise<IOverlayComp | undefined> = this.eWrapper
-            ? this.eWrapper.showOverlay(promise, componentDef.wrapperCls, exclusive)
+            ? this.eWrapper.showOverlay(promise, componentDef.wrapperCls, exclusive, componentDef.overlayType)
             : AgPromise.resolve();
         this.eWrapper?.refreshWrapperPadding();
+        this.setGridBusy(componentDef.overlayType === 'loading');
         this.setExclusive(exclusive);
 
         return mountedPromise;
@@ -549,11 +554,52 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.exclusive = false;
         const eWrapper = this.eWrapper;
         if (eWrapper) {
+            this.setGridBusy(false);
             eWrapper.hideOverlay();
             eWrapper.refreshWrapperPadding();
             this.setExclusive(false);
         }
         return changed;
+    }
+
+    public getLoadingCompleteText(): string | null {
+        const { gos, beans } = this;
+        const { rowModel, pagination } = beans;
+        const rowCount = rowModel.getRowCount();
+        if (rowCount <= 0) {
+            return null;
+        }
+
+        const translate = this.getLocaleTextFunc();
+        const dataLoaded = translate('ariaDataLoaded', 'Data loaded');
+
+        if (gos.get('pagination') && pagination) {
+            const rowSummary = pagination.getRowSummary();
+            const pageSummary = pagination.getPageSummary();
+            return `${dataLoaded}. ${rowSummary.ariaStatus}. ${pageSummary.ariaStatus}`;
+        }
+
+        const rowCountText = rowModel.isLastRowIndexKnown() ? this.formatNumber(rowCount) : translate('more', 'more');
+        const rowStatus = translate('ariaDataLoadedRows', `${rowCountText} rows`, [rowCountText]);
+        return `${dataLoaded}. ${rowStatus}`;
+    }
+
+    private formatNumber(value: number): string {
+        return _formatPaginationNumber(value, this.gos, this.getLocaleTextFunc.bind(this));
+    }
+
+    private setGridBusy(busy: boolean): void {
+        this.gridBusy = busy;
+        this.applyGridBusy();
+    }
+
+    private applyGridBusy(): void {
+        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+        if (!gridBodyCtrl) {
+            return;
+        }
+
+        _setAriaBusy(gridBodyCtrl.eGridViewport, this.gridBusy ? true : null);
     }
 
     private setExclusive(exclusive: boolean): void {

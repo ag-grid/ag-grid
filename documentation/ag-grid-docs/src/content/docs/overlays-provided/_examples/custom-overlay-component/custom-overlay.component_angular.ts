@@ -8,11 +8,7 @@ type CustomOverlayParams = IOverlayParams & { loadingMessage: string; noRowsMess
 @Component({
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `
-        <div class="overlay-center" role="presentation">
-            <div aria-live="polite" aria-atomic="true">{{ message() }}</div>
-        </div>
-    `,
+    template: ` <div class="overlay-center">{{ message() }}</div> `,
 })
 export class CustomOverlay implements IOverlayAngularComp {
     params = signal<CustomOverlayParams | null>(null);

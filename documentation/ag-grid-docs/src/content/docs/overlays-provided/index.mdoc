@@ -14,6 +14,17 @@ The following example demonstrates most of the provided overlays.
 
 {% gridExampleRunner title="Provided Overlays" name="provided-overlays"  exampleHeight=300 /%}
 
+## Accessibility Announcements
+
+Provided overlays are announced to screen readers by the grid using an internal polite live region. Announcements are debounced so short-lived overlays are not announced unnecessarily.
+
+- Loading overlays are announced after a short delay.
+- When a stable loading overlay is hidden after data loads, the grid announces a single completion message. With pagination enabled this includes the current row and page summary.
+- No rows and no matching rows overlays are announced when shown.
+- Exporting and file input overlays are announced while they are visible.
+
+Custom components used to replace provided overlays are announced from their rendered text content. Do not add `aria-live` to the custom overlay itself, as this can cause duplicate announcements. Keep the message as normal visible text, and only use `aria-hidden`, `role="presentation"` or `role="none"` for decorative content that should not be announced.
+
 ## Loading
 
 The loading overlay is displayed when the grid property `loading` is set to `true` and takes precedence over the other provided overlays.

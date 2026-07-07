@@ -23,6 +23,17 @@
     text-align: center;
 }
 
+.ag-overlay-live-region {
+    border: 0;
+    clip-path: inset(50%);
+    height: 1px;
+    width: 1px;
+    position: absolute;
+    overflow: hidden;
+    padding: 0;
+    white-space: nowrap;
+}
+
 .ag-overlay-loading-wrapper,
 .ag-overlay-exporting-wrapper,
 .ag-overlay-modal-wrapper,

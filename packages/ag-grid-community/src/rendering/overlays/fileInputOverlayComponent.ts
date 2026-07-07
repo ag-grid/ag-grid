@@ -30,6 +30,8 @@ export interface IFileInputOverlayComp<TData = any, TContext = any> extends IOve
 
 type FileInputState = 'ready' | 'processing' | 'error';
 
+const OVERLAY_ANNOUNCEMENT_ATTRIBUTE = 'data-ag-overlay-announcement';
+
 const FileInputOverlayElement: ElementParams = {
     tag: 'div',
     cls: 'ag-overlay-file-input-center',
@@ -51,6 +53,7 @@ export class FileInputOverlayComponent
     private state: FileInputState = 'ready';
     private dragCounter: number = 0;
     private processingToken: number = 0;
+    private eAnnouncementElement: HTMLElement | null = null;
 
     public init(params: IFileInputOverlayParams & OverlayComponentUserParams): void {
         this.setTemplate(FileInputOverlayElement);
@@ -71,17 +74,20 @@ export class FileInputOverlayComponent
             params.fileInput?.overlayText ?? localeTextFunc('fileInputOverlay', 'Drag & Drop file to import data');
 
         const icon = _createIconNoSpan('document', beans, null);
-        const textSpan = { tag: 'span', cls: 'ag-file-input-text', children: text } as const;
+        const eText = _createElement({
+            tag: 'span',
+            cls: 'ag-file-input-text',
+            children: text,
+        });
         const eTextRow = _createElement({
             tag: 'div',
             cls: 'ag-file-input-text-row',
-            children: icon ? [() => icon, textSpan] : [textSpan],
+            children: icon ? [() => icon, () => eText] : [() => eText],
         });
 
         this.eDropZone.appendChild(eTextRow);
         this.appendBrowseButton(this.eDropZone);
-
-        beans.ariaAnnounce.announceValue(text, 'overlay');
+        this.setAnnouncementElement(eText);
     }
 
     private updateProcessingState(fileName: string): void {
@@ -103,14 +109,19 @@ export class FileInputOverlayComponent
             children: text,
         });
         this.eProcessingState.appendChild(eText);
-
-        beans.ariaAnnounce.announceValue(text, 'overlay');
+        this.setAnnouncementElement(eText);
     }
 
     private showError(message: string): void {
         this.eErrorBanner.textContent = message;
+        this.setAnnouncementElement(this.eErrorBanner);
         this.showState('error');
-        this.beans.ariaAnnounce.announceValue(message, 'overlay');
+    }
+
+    private setAnnouncementElement(eElement: HTMLElement): void {
+        this.eAnnouncementElement?.removeAttribute(OVERLAY_ANNOUNCEMENT_ATTRIBUTE);
+        this.eAnnouncementElement = eElement;
+        eElement.setAttribute(OVERLAY_ANNOUNCEMENT_ATTRIBUTE, 'true');
     }
 
     private appendBrowseButton(parent: HTMLElement): void {

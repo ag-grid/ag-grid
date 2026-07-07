@@ -40,6 +40,8 @@ If `loading` is not explicitly defined, the grid will automatically show the loa
 
 Overlays can be customised by providing either a HTML string or custom component via grid properties.
 
+The grid announces loading and no-rows overlays using an internal polite live region. Custom overlay components are announced from their rendered text content, so keep the message as normal visible text and do not add a second `aria-live` region inside the component.
+
 ### Custom Loading Overlay
 
 The loading overlay can be customised via the grid properties `overlayLoadingTemplate` or `loadingOverlayComponent` and `loadingOverlayComponentParams`.
