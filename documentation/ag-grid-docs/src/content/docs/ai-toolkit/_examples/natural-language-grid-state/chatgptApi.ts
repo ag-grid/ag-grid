@@ -19,9 +19,9 @@ summary of the changes in your message content.`;
 // Map the grid's tools into the OpenAI function-calling format. The grid describes each tool with
 // its live capabilities (available columns, functions, etc.), so nothing here is grid-specific.
 function toOpenAiTools(tools: AiToolSchema[]) {
-    return tools.map((tool) => ({
+    return tools.map(({ name, description, parameters }) => ({
         type: 'function',
-        function: { name: tool.name, description: tool.description, parameters: tool.parameters },
+        function: { name, description, parameters },
     }));
 }
 

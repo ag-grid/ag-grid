@@ -13,9 +13,9 @@ const SET_VALUE_COLUMNS = ['category', 'merchant', 'status', 'currency', 'countr
 // Map the grid's tools into the OpenAI function-calling format. Nothing here is grid-specific — the
 // grid describes each tool (name, description, argument schema) from its live capabilities.
 function toOpenAiTools(tools: AiToolSchema[]) {
-    return tools.map((tool) => ({
+    return tools.map(({ name, description, parameters }) => ({
         type: 'function',
-        function: { name: tool.name, description: tool.description, parameters: tool.parameters },
+        function: { name, description, parameters },
     }));
 }
 
