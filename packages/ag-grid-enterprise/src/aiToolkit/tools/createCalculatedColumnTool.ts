@@ -37,10 +37,14 @@ function build(beans: BeanCollection): JSONSchema | undefined {
         ? s.enum(dataTypes, 'Result data type of the column.')
         : s.string('Result data type of the column.');
 
+    const existingColumnIds = beans.colModel.colsList.map((col) => col.colId);
+
     return s
         .object(
             {
-                colId: s.string('Unique identifier for the new column, e.g. "medalTotal".'),
+                colId: s.string(
+                    `Unique identifier for the new column, e.g. "medalTotal". Must not match an existing column id: ${existingColumnIds.join(', ')}.`
+                ),
                 headerName: s.string('Column header text shown to users.'),
                 calculatedExpression: s.string(buildExpressionGuidance(beans)),
                 cellDataType: cellDataType.nullable(),
