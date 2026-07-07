@@ -30,6 +30,12 @@ export interface Module {
      * @returns Whether the module is valid or not. If not, a message explaining why it is not valid
      */
     validate?: () => ModuleValidationResult;
+    /**
+     * Side effect run when the module is registered, before any grid is created, for module-level setup
+     * that must happen at registration time rather than at grid/bean initialisation. Fires on every
+     * registration call for the module (it is not deduplicated), so the implementation must be idempotent.
+     */
+    onRegister?: () => void;
     /** singleton beans which are created once on grid init */
     beans?: SingletonBean[];
     /** beans which can have many instances, and can be created/destroyed at any time */
@@ -205,6 +211,7 @@ export type EnterpriseModuleName =
     | 'Menu'
     | 'MultiFilter'
     | 'NewFiltersToolPanel'
+    | 'PdfExport'
     | 'Pivot'
     | 'RangeSelection'
     | 'RichSelect'
@@ -296,6 +303,7 @@ export type AgModuleName =
     | 'MenuModule'
     | 'MultiFilterModule'
     | 'NewFiltersToolPanelModule'
+    | 'PdfExportModule'
     | 'PivotModule'
     | 'RangeSelectionModule'
     | 'RichSelectModule'

@@ -1,13 +1,22 @@
 @use 'design-system' as *;
+@use './breakpoints' as *;
 
+// Every @container query below queries the "site-header" container defined on .header.
+// See ./_breakpoints.scss for the single source of truth on what each named threshold
+// controls and why.
+//
+// Exception: .header's own sticky behaviour stays @media — a container cannot query
+// its own size.
 .header {
     display: flex;
     align-items: center;
     position: relative;
     background-color: var(--color-bg-site-header);
     transition: background-color 0.5s ease-in-out;
+    container-type: inline-size;
+    container-name: site-header;
 
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+    @media screen and (min-width: $sticky-at) {
         position: sticky;
         top: 0;
         width: 100%;
@@ -32,8 +41,23 @@
     margin-right: auto;
     justify-content: space-between;
 
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        flex-wrap: nowrap;
+    // Below $docs-search-inline the header stays a wrapping flex row (logo on its own
+    // line, then the optional docs/search cluster, then the nav — however many rows
+    // that takes). Flexbox's implicit multi-row wrap has no clean Grid equivalent, so
+    // this state intentionally stays flex.
+    @container site-header (min-width: #{$docs-search-inline}) {
+        // Above this width the header is a single row with four named regions: logo,
+        // the docs+search cluster (flexible — absorbs whatever space the other three
+        // don't need), the product/site switcher, and the nav. The switcher sits
+        // directly to the left of the nav so the "Products" dropdown reads as the item
+        // immediately before the first nav link. Each region's own CSS rule declares
+        // its `grid-area` below rather than relying on flex order/margin tricks to
+        // land in the right place.
+        display: grid;
+        grid-template-columns: auto 1fr auto auto;
+        grid-template-areas: 'logo docs-search switcher nav';
+        align-items: center;
+        column-gap: $spacing-size-4;
     }
 }
 
@@ -43,6 +67,7 @@
     min-height: var(--layout-site-header-height);
     padding: $spacing-size-2 10px;
     margin-left: calc(var(--layout-horizontal-margins) - 16px);
+    grid-area: logo;
 
     :global(.logotype) {
         width: unset;
@@ -61,18 +86,32 @@
     flex-wrap: wrap;
     gap: $spacing-size-2 $spacing-size-4;
     width: 100%;
+    // This margin (particularly the bottom value) exists for the wrapped/mobile layout,
+    // where this cluster sits on its own row below the logo and needs a gap before the
+    // next wrapped row. Previously erased for free by display:contents once inline
+    // (this box generated no box at that width at all); now that it's a real grid cell,
+    // it must be explicitly reset there or the leftover margin-bottom throws this
+    // cluster's vertical centering off within the row (align-items: center on
+    // .headerInner centers the item's full margin box, so an asymmetric margin skews it).
     margin: 0 var(--layout-horizontal-margins) $spacing-size-4 var(--layout-horizontal-margins);
+    grid-area: docs-search;
 
-    @media screen and (min-width: $breakpoint-site-header-extra-small) {
+    @container site-header (min-width: #{$docs-search-stack}) {
         flex-wrap: nowrap;
     }
 
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        display: contents;
+    // Only meaningful while .headerInner is still flex (below $docs-search-inline) —
+    // pushes this cluster after the nav, which sits at the default order (0), once the
+    // nav itself has room to render inline (from $nav-collapse). Once .headerInner
+    // switches to grid at $docs-search-inline, `order` has no effect and grid-area
+    // (above) takes over positioning instead.
+    @container site-header (min-width: #{$nav-collapse}) {
+        order: 4;
     }
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
-        order: 4;
+    @container site-header (min-width: #{$docs-search-inline}) {
+        margin: 0;
+        width: auto;
     }
 }
 
@@ -103,11 +142,11 @@ button.mobileNavButton {
         }
     }
 
-    @media screen and (min-width: $breakpoint-site-header-extra-small) {
+    @container site-header (min-width: #{$docs-search-stack}) {
         max-width: 120px;
     }
 
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+    @container site-header (min-width: #{$docs-search-inline}) {
         display: none;
     }
 
@@ -155,7 +194,7 @@ button.mobileNavButton {
         left: 1px;
     }
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$nav-collapse}) {
         display: none;
     }
 }
@@ -216,15 +255,23 @@ button.mobileNavButton {
 .mainNavLarge {
     display: none;
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$nav-collapse}) {
         display: block;
     }
 }
 
+// Direct .headerInner grid child for the desktop nav (see .headerInner's grid-template
+// above). #mainNavSmall (below) shares the same `nav` area — safe, since only one of
+// the two is ever visually non-empty at a given width.
+.mainNavLargeContainer {
+    grid-area: nav;
+}
+
 #mainNavSmall {
     width: 100%;
+    grid-area: nav;
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$nav-collapse}) {
         display: none;
     }
 }
@@ -235,7 +282,7 @@ button.mobileNavButton {
     background-color: var(--color-bg-mobile-nav);
     transition: background-color 0.5s ease-in-out;
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$nav-collapse}) {
         width: auto;
         margin-right: $spacing-size-2;
         margin-left: $spacing-size-2;
@@ -243,7 +290,7 @@ button.mobileNavButton {
 }
 
 .navItemList {
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$nav-collapse}) {
         display: flex;
         height: var(--layout-site-header-height);
         align-items: center;
@@ -252,11 +299,11 @@ button.mobileNavButton {
 }
 
 .navItem {
-    @media screen and (max-width: $breakpoint-site-header-small) {
+    @container site-header (max-width: #{$nav-collapse}) {
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$nav-collapse}) {
         &:hover a::after {
             opacity: 0.25;
             transform: scaleX(1);
@@ -279,7 +326,7 @@ button.mobileNavButton {
     }
 
     #{$selector-darkmode} & {
-        @media screen and (min-width: $breakpoint-site-header-small) {
+        @container site-header (min-width: #{$nav-collapse}) {
             border-bottom: none;
         }
     }
@@ -287,7 +334,10 @@ button.mobileNavButton {
 
 a.navLink,
 button.navLink {
-    --horizontal-padding: #{$spacing-size-4 - 2px};
+    // clamp() compresses nav link padding gracefully as the header narrows, widening the
+    // zone in which all links still fit before the hamburger kicks in. The fixed 14px
+    // ceiling and 8px floor keep touch targets reasonable at both extremes.
+    --horizontal-padding: clamp(8px, 1vw, 14px);
 
     display: block;
     position: relative;
@@ -312,7 +362,7 @@ button.navLink {
         color: var(--color-white);
     }
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$nav-collapse}) {
         padding-left: var(--horizontal-padding);
         padding-right: var(--horizontal-padding);
 
@@ -362,7 +412,7 @@ button.navLink {
         fill: var(--color-white);
     }
 
-    @media screen and (min-width: $breakpoint-site-header-small) {
+    @container site-header (min-width: #{$nav-collapse}) {
         span:not(.navLink) {
             display: none;
         }
@@ -396,7 +446,7 @@ button.navLink {
 .toggleDarkText {
     display: none;
 
-    @media screen and (max-width: $breakpoint-site-header-small) {
+    @container site-header (max-width: #{$nav-collapse}) {
         display: inline;
     }
 }

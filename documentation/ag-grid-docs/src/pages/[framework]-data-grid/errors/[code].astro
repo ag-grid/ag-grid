@@ -123,7 +123,12 @@ const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH,
                 </div>
                 <div class="full-error-message">
                     <pre id="errorCodeText">{defaultErrorText}</pre>
-                    <Note>To show this error text in the dev console, import the <code>ValidationModule</code>.</Note>
+                    <Note>
+                        To show this error text in the dev console, <a
+                            href={urlWithPrefix({ framework, url: './dev-validation' })}
+                            >enable development validations</a
+                        >.
+                    </Note>
                 </div>
 
                 {

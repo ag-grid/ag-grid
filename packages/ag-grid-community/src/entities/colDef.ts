@@ -439,7 +439,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     suppressMovable?: boolean;
     /**
      * By default, values are formatted using the column's `valueFormatter` when exporting data from the grid.
-     * This applies to CSV and Excel export, as well as clipboard operations and the fill handle.
+     * This applies to CSV, Excel, and PDF export, as well as clipboard operations and the fill handle.
      * Set to `false` to prevent values from being formatted for these operations.
      * Regardless of this option, if custom handling is provided for the export operation, the value formatter will not be used.
      * @default true
@@ -1336,7 +1336,7 @@ export interface ValueFormatterParams<TData = any, TValue = any, TContext = any>
 
 export type ValueFormatterFunc<TData = any, TValue = any, TContext = any> = (
     params: ValueFormatterParams<TData, TValue, TContext>
-) => string | null | undefined;
+) => string;
 
 export type EqualsFunc<TValue = any> = (
     valueA: TValue | null | undefined,

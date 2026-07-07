@@ -509,9 +509,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private refreshPinnedRowComps(recycleRows = true): void {
-        this.refreshPinnedRows(this.topRowCtrls, 'top', recycleRows);
+        this.topRowCtrls = this.refreshPinnedRows(this.topRowCtrls, 'top', recycleRows);
 
-        this.refreshPinnedRows(this.bottomRowCtrls, 'bottom', recycleRows);
+        this.bottomRowCtrls = this.refreshPinnedRows(this.bottomRowCtrls, 'bottom', recycleRows);
     }
 
     /**
@@ -527,9 +527,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * @param rowCtrls The list of existing row controllers
      * @param rowNodes The canonical list of row nodes that should have associated controllers
      */
-    private refreshPinnedRows(rowCtrls: RowCtrl[], pinned: NonNullable<RowPinnedType>, recycleRows: boolean): void {
+    private refreshPinnedRows(
+        rowCtrls: RowCtrl[],
+        pinned: NonNullable<RowPinnedType>,
+        recycleRows: boolean
+    ): RowCtrl[] {
         const { pinnedRowModel, beans, printLayout } = this;
         const rowCtrlMap = Object.fromEntries(rowCtrls.map((ctrl) => [ctrl.rowNode.id!, ctrl]));
+
+        // Build a fresh array rather than mutating in place: the React view layer detects changes by
+        // array reference, so recycling the same instance would suppress re-renders (e.g. added pinned rows).
+        const newRowCtrls: RowCtrl[] = [];
 
         pinnedRowModel?.forEachPinnedRow(pinned, (node, i) => {
             const rowCtrl = rowCtrls[i];
@@ -544,11 +552,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
             if (node.id! in rowCtrlMap && recycleRows) {
                 // ctrl exists already, re-use it
-                rowCtrls[i] = rowCtrlMap[node.id!];
+                newRowCtrls[i] = rowCtrlMap[node.id!];
                 delete rowCtrlMap[node.id!];
             } else {
                 // ctrl doesn't exist, create it
-                rowCtrls[i] = new RowCtrl(node, beans, false, false, printLayout);
+                newRowCtrls[i] = new RowCtrl(node, beans, false, false, printLayout);
             }
         });
 
@@ -556,8 +564,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
             (pinned === 'top' ? pinnedRowModel?.getPinnedTopRowCount() : pinnedRowModel?.getPinnedBottomRowCount()) ??
             0;
 
-        // Truncate array if rowCtrls is longer than rowNodes
-        rowCtrls.length = rowNodeCount;
+        // Truncate array if newRowCtrls is longer than rowNodes
+        newRowCtrls.length = rowNodeCount;
+
+        return newRowCtrls;
     }
 
     private onPinnedRowDataChanged(): void {

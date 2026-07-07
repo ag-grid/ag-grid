@@ -887,7 +887,7 @@ describe('paginationPanels', () => {
 
             expect(
                 consoleWarnSpy.mock.calls.some((c) =>
-                    c.join(' ').includes("'paginationPanels' expects an array of panel names")
+                    c.join(' ').includes('`paginationPanels` expects an array of panel names')
                 )
             ).toBe(true);
         });

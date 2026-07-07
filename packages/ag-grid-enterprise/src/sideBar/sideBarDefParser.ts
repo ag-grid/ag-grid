@@ -53,7 +53,7 @@ export function parseSideBarDef(
         for (const key of toParse) {
             const lookupResult = DEFAULT_BY_KEY[key];
             if (!lookupResult) {
-                _warn(215, { key, defaultByKey: DEFAULT_BY_KEY });
+                _warn(215, { key, validKeys: Object.keys(DEFAULT_BY_KEY) });
                 continue;
             }
 
@@ -104,6 +104,6 @@ function parseOneComponent(it: ToolPanelDef | string): ToolPanelDef | null {
     if (DEFAULT_BY_KEY[it]) {
         return DEFAULT_BY_KEY[it];
     }
-    _warn(215, { key: it, defaultByKey: DEFAULT_BY_KEY });
+    _warn(215, { key: it, validKeys: Object.keys(DEFAULT_BY_KEY) });
     return null;
 }

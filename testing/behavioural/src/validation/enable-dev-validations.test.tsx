@@ -25,7 +25,7 @@ describe('enableDevValidations', () => {
         };
         const hasInvalidPropertyWarning = () =>
             consoleWarnSpy.mock.calls.some((args) =>
-                args.join(' ').includes("invalid gridOptions property 'notARealOption'")
+                args.join(' ').includes('Invalid `gridOptions` property `notARealOption`')
             );
 
         // AllCommunityModule no longer bundles the ValidationModule, so an invalid grid option is

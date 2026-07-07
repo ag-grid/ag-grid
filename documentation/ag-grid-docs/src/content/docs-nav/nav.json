@@ -32,6 +32,11 @@
                             "path": "modules"
                         },
                         {
+                            "type": "item",
+                            "title": "Development Validation",
+                            "path": "dev-validation"
+                        },
+                        {
                             "title": "Installing Enterprise Licence",
                             "path": "license-install"
                         },
@@ -1862,6 +1867,20 @@
                                     "type": "item",
                                     "title": "Data Protection",
                                     "path": "excel-export-data-protection",
+                                    "isEnterprise": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "item",
+                            "title": "PDF Export",
+                            "path": "pdf-export",
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "API Reference",
+                                    "path": "pdf-export-api",
                                     "isEnterprise": true
                                 }
                             ]

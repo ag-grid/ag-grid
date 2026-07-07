@@ -934,7 +934,7 @@ describe('Set Filter Complex Objects', () => {
         // Warning #48: cellDataType 'object' inferred but no valueFormatter provided
         expect(warnSpy).toHaveBeenCalledWith(
             expect.any(String),
-            expect.stringContaining('Cell data type is "object" (inferred) but no Value Formatter has been provided'),
+            expect.stringContaining('Cell data type is `object` (inferred) but no Value `Formatter` has been provided'),
             expect.any(String)
         );
 

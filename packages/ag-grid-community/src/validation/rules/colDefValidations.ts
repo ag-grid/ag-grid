@@ -126,8 +126,8 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             validate: (_colDef, { paginationAutoPageSize }) => {
                 if (paginationAutoPageSize) {
                     return _createValidationWarning(318, {
-                        feature: 'colDef.autoHeight',
-                        conflictsWith: 'paginationAutoPageSize',
+                        feature: '`colDef.autoHeight`',
+                        conflictsWith: '`paginationAutoPageSize`',
                     });
                 }
                 return null;
@@ -155,8 +155,8 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 }
                 if (!_isCalculatedColumnsEnabled(gridOptions.calculatedColumns)) {
                     return _createValidationWarning(319, {
-                        feature: 'colDef.calculatedExpression',
-                        requirement: 'gridOptions.calculatedColumns to be set to true or an options object',
+                        feature: '`colDef.calculatedExpression`',
+                        requirement: '`gridOptions.calculatedColumns` to be set to true or an options object',
                     });
                 }
                 if (colDef.pivotValueColumn) {
@@ -165,8 +165,8 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 }
                 if (!colDef.colId) {
                     return _createValidationWarning(319, {
-                        feature: 'colDef.calculatedExpression',
-                        requirement: 'colId to be set on the calculated column',
+                        feature: '`colDef.calculatedExpression`',
+                        requirement: '`colId` to be set on the calculated column',
                     });
                 }
                 if (colDef.field || colDef.valueGetter || colDef.valueSetter) {
@@ -199,8 +199,8 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             validate: (_options, gridOptions) => {
                 if (gridOptions.autoSizeStrategy) {
                     return _createValidationWarning(318, {
-                        feature: 'colDef.flex',
-                        conflictsWith: 'gridOptions.autoSizeStrategy',
+                        feature: '`colDef.flex`',
+                        conflictsWith: '`gridOptions.autoSizeStrategy`',
                     });
                 }
                 return null;
@@ -304,7 +304,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 }
                 return _createValidationWarning(321, {
                     property: 'colDef.type',
-                    expected: "of type 'string' | 'string[]'",
+                    expected: 'of type `string` | `string[]`',
                 });
             },
         },
@@ -312,8 +312,8 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             validate: (_options, { suppressRowTransform }) => {
                 if (!suppressRowTransform) {
                     return _createValidationWarning(319, {
-                        feature: 'colDef.rowSpan',
-                        requirement: 'suppressRowTransform to be enabled',
+                        feature: '`colDef.rowSpan`',
+                        requirement: '`suppressRowTransform` to be enabled',
                     });
                 }
                 return null;
@@ -341,39 +341,39 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 if (typeof rowSelection === 'object') {
                     if (rowSelection?.mode === 'singleRow' && rowSelection?.enableClickSelection) {
                         return _createValidationWarning(318, {
-                            feature: 'colDef.spanRows',
-                            conflictsWith: 'rowSelection.clickSelection',
+                            feature: '`colDef.spanRows`',
+                            conflictsWith: '`rowSelection.clickSelection`',
                         });
                     }
                 }
                 if (cellSelection) {
                     return _createValidationWarning(318, {
-                        feature: 'colDef.spanRows',
-                        conflictsWith: 'cellSelection',
+                        feature: '`colDef.spanRows`',
+                        conflictsWith: '`cellSelection`',
                     });
                 }
                 if (suppressRowTransform) {
                     return _createValidationWarning(318, {
-                        feature: 'colDef.spanRows',
-                        conflictsWith: 'suppressRowTransform',
+                        feature: '`colDef.spanRows`',
+                        conflictsWith: '`suppressRowTransform`',
                     });
                 }
                 if (!enableCellSpan) {
                     return _createValidationWarning(319, {
-                        feature: 'colDef.spanRows',
-                        requirement: 'enableCellSpan to be enabled',
+                        feature: '`colDef.spanRows`',
+                        requirement: '`enableCellSpan` to be enabled',
                     });
                 }
                 if (rowDragEntireRow) {
                     return _createValidationWarning(318, {
-                        feature: 'colDef.spanRows',
-                        conflictsWith: 'rowDragEntireRow',
+                        feature: '`colDef.spanRows`',
+                        conflictsWith: '`rowDragEntireRow`',
                     });
                 }
                 if (enableCellTextSelection) {
                     return _createValidationWarning(318, {
-                        feature: 'colDef.spanRows',
-                        conflictsWith: 'enableCellTextSelection',
+                        feature: '`colDef.spanRows`',
+                        conflictsWith: '`enableCellTextSelection`',
                     });
                 }
 

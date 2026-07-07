@@ -1,0 +1,18 @@
+## Unrecognised Property
+
+AG Grid does not recognise a property on the object shown in the message. Usually this is on your grid options or a column definition. It is almost always a typo in the property name, a property that belongs on a different object, or a property from a different version of the grid.
+
+### Fix the property
+
+Check the property name against the reference for the object it was set on, and correct any typo or misplaced property. The message lists the closest matching names as suggestions.
+
+- [Grid Options](./grid-options/) for grid-level options
+- [Column Properties](./column-properties/) for column definitions
+
+### Properties added by a wrapper
+
+A shared component that spreads unrelated props onto your grid options or column definitions surfaces every extra property as this warning. Where you can, remove the unrelated properties at the source.
+
+### Storing your own data
+
+To attach your own data to the grid options or a column, do not add it as a top-level property. Use the [`context`](./context/) property, which is provided on both grid options and column definitions for exactly this.

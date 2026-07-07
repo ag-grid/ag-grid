@@ -1,0 +1,16 @@
+@use 'design-system' as *;
+@forward 'site-header-tokens'; // re-export to consumers
+@use 'site-header-tokens' as *; // usable here too — $switcher-show below needs it
+
+// Aliases below point at shared tokens other components also use — don't redefine the
+// number here, or they'll drift apart. $nav-collapse, $docs-search-inline,
+// $switcher-popup-at and $search-box-cap-at are header-exclusive, so they default from
+// _site-header-tokens.scss instead, overridable per repo — see that file.
+//
+// $nav-collapse specifically needs to differ by product (nav item count varies)
+// without moving $breakpoint-site-header-small for unrelated consumers like
+// AnnouncementBanner — why it's owned there rather than aliased like these three.
+
+$docs-search-stack: $breakpoint-site-header-extra-small; // docs button + search wrap
+$sticky-at: $breakpoint-docs-nav-medium; // @media, not @container — can't query own size
+$switcher-show: $nav-collapse; // switcher needs room exactly when the nav does

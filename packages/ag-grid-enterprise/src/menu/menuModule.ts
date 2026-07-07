@@ -49,6 +49,8 @@ const MenuCoreModule: _ModuleWithoutApi = {
         csvExport: 'csv',
         // excel export,
         excelExport: 'excel',
+        // pdf export
+        pdfExport: 'pdf',
         // show on column header when column is sorted ascending
         sortAscending: 'asc',
         // show on column header when column is sorted descending

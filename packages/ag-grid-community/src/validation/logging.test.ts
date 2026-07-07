@@ -7,10 +7,13 @@ import {
     _error,
     _logPreInitErr,
     _logPreInitWarn,
+    _provideBootstrapPanelRenderer,
+    _renderBootstrapPanel,
     _runWithActiveGrid,
     _warn,
+    getErrorLink,
 } from './logging';
-import { _applyDevValidationConfig } from './validationConfig';
+import { _applyDevValidationConfig, _enableDiagnosticCapture } from './validationConfig';
 
 vi.mock('../utils/log', () => ({
     _warnOnce: vi.fn(),
@@ -284,5 +287,87 @@ describe('dev validation config', () => {
         _warn(11);
         expect(received.map((e) => e.id)).toEqual([11]);
         off();
+    });
+
+    test('enabling capture alone buffers diagnostics without a throw threshold', () => {
+        _enableDiagnosticCapture();
+
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+        expect(() => _error(11)).not.toThrow();
+
+        expect(received.map((e) => e.id)).toEqual([11]);
+        off();
+    });
+
+    test('enabling capture does not clobber a throw threshold set by a with call', () => {
+        _applyDevValidationConfig({ throwOn: 'error' });
+        // A bare registration enables capture only, so the earlier throwOn must survive.
+        _enableDiagnosticCapture();
+
+        expect(() => _error(11)).toThrow();
+    });
+});
+
+describe('bootstrap panel', () => {
+    test('renders only the buffered diagnostics not tied to a grid', () => {
+        _configureDiagnostics({ capture: true });
+        _runWithActiveGrid('grid-a', () => _error(11)); // tied to a grid
+        _logPreInitErr(200, {} as any, 'boom'); // a bootstrap failure, not tied to any grid
+
+        const renderer = vi.fn();
+        _provideBootstrapPanelRenderer(renderer);
+        _renderBootstrapPanel(document.createElement('div'));
+
+        expect(renderer).toHaveBeenCalledTimes(1);
+        const passed = renderer.mock.calls[0][1] as CapturedDiagnostic[];
+        expect(passed.map((d) => d.id)).toEqual([200]);
+        expect(passed.every((d) => d.gridId === undefined)).toBe(true);
+    });
+
+    test('does not invoke the renderer when there are no untied diagnostics', () => {
+        _configureDiagnostics({ capture: true });
+        _runWithActiveGrid('grid-a', () => _error(11)); // tied only
+
+        const renderer = vi.fn();
+        _provideBootstrapPanelRenderer(renderer);
+        _renderBootstrapPanel(document.createElement('div'));
+
+        expect(renderer).not.toHaveBeenCalled();
+    });
+
+    test('consumes rendered diagnostics so a re-render does not repeat them', () => {
+        _configureDiagnostics({ capture: true });
+        _logPreInitErr(200, {} as any, 'boom');
+
+        const renderer = vi.fn();
+        _provideBootstrapPanelRenderer(renderer);
+
+        // A re-created grid (e.g. React StrictMode) renders again; the consumed diagnostic must not repeat.
+        _renderBootstrapPanel(document.createElement('div'));
+        _renderBootstrapPanel(document.createElement('div'));
+
+        expect(renderer).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe('getErrorLink serialisation', () => {
+    function queryParams(url: string): URLSearchParams {
+        return new URLSearchParams(url.split('?')[1]);
+    }
+
+    test('serialises an array param as a JSON array so it round-trips on the error page', () => {
+        const url = getErrorLink(109, { inputValue: 'sm', allSuggestions: ['sum', 'avg'] } as any);
+
+        expect(queryParams(url).get('allSuggestions')).toBe('["sum","avg"]');
+    });
+
+    test('keeps only primitive array elements, dropping nested objects/functions', () => {
+        const url = getErrorLink(109, {
+            inputValue: 'x',
+            allSuggestions: ['a', { nested: 1 }, () => undefined, 'b'],
+        } as any);
+
+        expect(queryParams(url).get('allSuggestions')).toBe('["a","b"]');
     });
 });
