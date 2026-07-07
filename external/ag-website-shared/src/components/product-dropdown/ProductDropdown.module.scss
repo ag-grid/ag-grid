@@ -1,20 +1,24 @@
 @use 'design-system' as *;
+@use '../site-header/breakpoints' as *;
 
+// .customMenu is only ever rendered inside the shared site header (see
+// SiteHeader.astro), so it queries the same "site-header" container as the rest of the
+// header rather than the viewport — see ../site-header/_breakpoints.scss for what
+// $switcher-show and $switcher-popup-at control and why.
 .customMenu {
     display: none;
     padding-right: $spacing-size-2;
     margin-right: auto;
     user-select: none;
+    // Direct .headerInner grid child once the header goes fully inline — see
+    // SiteHeader.module.scss's .headerInner grid-template-areas.
+    grid-area: switcher;
 
-    @media screen and (min-width: 440px) {
+    @container site-header (min-width: #{$switcher-show}) {
         display: block;
     }
 
-    @media screen and (max-width: 1180px) {
-        display: none;
-    }
-
-    @media screen and (min-width: $breakpoint-hero-small) {
+    @container site-header (min-width: #{$switcher-popup-at}) {
         position: relative;
     }
 }
@@ -103,7 +107,7 @@
         background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 5%);
     }
 
-    @media screen and (min-width: $breakpoint-hero-small) {
+    @container site-header (min-width: #{$switcher-popup-at}) {
         top: 100%;
         left: 0;
         // Fixed width gives each product row enough room for its title and

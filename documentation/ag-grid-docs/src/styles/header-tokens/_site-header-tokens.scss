@@ -1,0 +1,7 @@
+// No-op — forwards every header token unchanged. To override one or more for this
+// repo, delete the line below and uncomment the example beneath it.
+@forward '../../../../../external/ag-website-shared/src/design-system/site-header-tokens';
+
+// @forward '../../../../../external/ag-website-shared/src/design-system/site-header-tokens' with (
+//     $nav-collapse: 900px
+// );

@@ -1,0 +1,10 @@
+// Default values for the header's per-repo-tunable tokens (see
+// ../components/site-header/_breakpoints.scss for what each one controls, and
+// documentation/ag-grid-docs/src/styles/header-tokens/ for how a repo overrides them).
+//
+// !default so a repo can override just the ones it needs via `@forward ... with (...)`
+// — anything not listed there falls back to the value below.
+$nav-collapse: 960px !default;
+$docs-search-inline: 1180px !default;
+$switcher-popup-at: 620px !default;
+$search-box-cap-at: 1275px !default;
