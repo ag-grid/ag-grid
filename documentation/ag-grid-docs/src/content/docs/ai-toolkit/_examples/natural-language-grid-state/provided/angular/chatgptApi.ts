@@ -12,9 +12,7 @@ provided tools to change the grid — sorting, filtering, grouping, aggregating,
 adding a calculated column. Only call the tools needed for the request.
 
 Make all the tool calls needed to satisfy the request in a single step, and include a one-sentence
-summary of the changes in your message content. If a change references a new calculated column
-(e.g. "add a total medals column and sort by it"), call add_calculated_column before the tool that
-uses it.`;
+summary of the changes in your message content.`;
 
 // Map the grid's tools into the OpenAI function-calling format. The grid describes each tool with
 // its live capabilities (available columns, functions, etc.), so nothing here is grid-specific.
