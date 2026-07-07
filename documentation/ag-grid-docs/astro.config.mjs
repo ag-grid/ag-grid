@@ -166,6 +166,25 @@ const {
      * Escape hatch for the generation collapse; the two strategies produce identical output.
      */
     DISABLE_EXAMPLE_GEN_COLLAPSE,
+
+    /**
+     * Upstream AI Toolkit API, proxied in dev to avoid browser CORS on localhost.
+     * Only used when an example points `AI_API_URL` at the local `/ai-proxy` path.
+     */
+    AG_AI_API_UPSTREAM_URL = 'https://ai-api.ag-grid.com/api/openai/v1',
+
+    /**
+     * Dev token for the AI Toolkit proxy. When set, injected server-side by the dev
+     * proxy so the token is never exposed to example browser code.
+     */
+    AG_AI_API_DEV_TOKEN,
+
+    /**
+     * Origin/Referer the dev proxy presents upstream. The AI proxy's access control is
+     * primarily an origin allow-list, so set this to an allowed origin (e.g. the prod
+     * site) if the upstream rejects the proxied request.
+     */
+    AG_AI_API_DEV_ORIGIN,
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -297,6 +316,30 @@ export default defineConfig({
         },
         server: {
             https: httpsEnabled,
+            /**
+             * Dev-only proxy for the AI Toolkit examples. The public example calls an absolute
+             * `ai-api.ag-grid.com` URL, which browsers block from `localhost` on CORS. Point an
+             * example's `AI_API_URL` at the same-origin `/ai-proxy` path (via `.env.local`) and
+             * this forwards it upstream, adding the dev token server-side if one is configured.
+             */
+            proxy: {
+                '/ai-proxy': {
+                    target: AG_AI_API_UPSTREAM_URL,
+                    changeOrigin: true,
+                    rewrite: (path) => path.replace(/^\/ai-proxy/, ''),
+                    configure: (proxy) => {
+                        proxy.on('proxyReq', (proxyReq) => {
+                            if (AG_AI_API_DEV_TOKEN) {
+                                proxyReq.setHeader('Authorization', `Bearer ${AG_AI_API_DEV_TOKEN}`);
+                            }
+                            if (AG_AI_API_DEV_ORIGIN) {
+                                proxyReq.setHeader('Origin', AG_AI_API_DEV_ORIGIN);
+                                proxyReq.setHeader('Referer', `${AG_AI_API_DEV_ORIGIN}/`);
+                            }
+                        });
+                    },
+                },
+            },
             cors: {
                 /**
                  * CORS allow list for opening examples on external sites
