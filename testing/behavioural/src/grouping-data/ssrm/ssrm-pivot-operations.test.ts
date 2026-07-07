@@ -249,7 +249,7 @@ describe('SSRM pivot-mode operations (characterization)', () => {
 
         // A filter triggers a fresh server request in pivot mode.
         expect(requests.length).toBeGreaterThan(requestsBeforeFilter);
-        // Pivot-specific: the re-request still carries the pivot metadata.
+        // Pivot-specific: the re-request still carries the pivot metadata AND the applied filterModel.
         const filterRequest = requests[requests.length - 1];
         expect(filterRequest.pivotMode).toBe(true);
         expect(filterRequest.pivotCols).toEqual(['year']);
@@ -261,15 +261,12 @@ describe('SSRM pivot-mode operations (characterization)', () => {
             country: { filterType: 'text', type: 'equals', filter: 'USA' },
         });
 
-        // Pivot result columns still present. Note: this shared Olympic fake server does NOT honour
-        // filterModel (its getData never reads request.filterModel), so the displayed rows are
-        // unchanged — both Russia and USA remain. The test pins that behaviour and instead asserts,
-        // above, that the filter is SENT on the request; it does not assert server-side filtering.
+        // The shared fake server applies the equals-USA filter server-side, so only the USA group
+        // remains; the generated pivot result columns are unaffected by the filter.
         expect(pivotCols(api)).toEqual(['2000_gold', '2004_gold']);
         await new GridRows(api, '4. filter in pivot mode').check(`
             ROOT id:<no-id>
-            ├── GROUP-leafGroup collapsed id:2 ag-Grid-AutoColumn:"Russia" 2000_gold:3 2004_gold:4
-            └── GROUP-leafGroup collapsed id:3 ag-Grid-AutoColumn:"USA" 2000_gold:1 2004_gold:2
+            └── GROUP-leafGroup collapsed id:2 ag-Grid-AutoColumn:"USA" 2000_gold:1 2004_gold:2
         `);
     });
 

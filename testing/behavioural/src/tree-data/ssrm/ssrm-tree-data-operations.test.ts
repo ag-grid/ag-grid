@@ -96,7 +96,7 @@ describe('ag-grid SSRM treeData operations (characterization)', () => {
         // Expand the deep path 101 -> 102 to create a nested child block, then collapse 102.
         await expandById(api, '101');
         await expandById(api, '102');
-        const node102 = api.getRowNode('102');
+        const node102 = api.getRowNode('102')!;
         node102.setExpanded(false);
         await asyncSetTimeout(1);
 
