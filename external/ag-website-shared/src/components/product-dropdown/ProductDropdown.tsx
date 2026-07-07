@@ -135,16 +135,7 @@ export const ProductDropdown = ({ items, children }: { items: ProductMenu; child
     };
 
     return (
-        <div
-            ref={dropdownRef}
-            className={`${styles.customMenu} ${isOpen ? styles.open : ''}`}
-            onMouseEnter={() => {
-                setIsOpen(true);
-            }}
-            onMouseLeave={() => {
-                setIsOpen(false);
-            }}
-        >
+        <div ref={dropdownRef} className={`${styles.customMenu} ${isOpen ? styles.open : ''}`}>
             <button className={`${styles.customTrigger} ${isOpen ? styles.open : ''}`} onClick={handleMenuToggle}>
                 Products
                 <span className={styles.arrow}></span>

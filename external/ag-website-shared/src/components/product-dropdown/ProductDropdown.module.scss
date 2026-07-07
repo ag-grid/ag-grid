@@ -53,6 +53,14 @@
     background: rgba(255, 255, 255, 0.1);
     border: none;
     border-radius: var(--radius-3xl);
+
+    // In dark mode the trigger sits on --color-bg-primary (see the base rule
+    // above), whose higher specificity would otherwise swallow this hover.
+    // Mirror the light-mode 10% white overlay by lightening that surface.
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
+        background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 7.5%);
+    }
 }
 
 .customTrigger.open .arrow {
@@ -89,7 +97,7 @@
     z-index: 2;
     // Closed (resting) state. Opening flips these via the parent `.open`
     // class — opacity, translate and scale animate. The same transitions
-    // also play in reverse on close, so hover-out mirrors hover-in.
+    // also play in reverse on close, so closing mirrors opening.
     // `visibility` is delayed until the fade-out finishes so the dropdown
     // is removed from the accessibility tree without snap-cutting the
     // visual transition.
