@@ -212,6 +212,30 @@ describe('ag-grid overlay accessibility', () => {
         expect(getLiveRegion().textContent).toBe('Updated empty state');
     });
 
+    test('custom overlay text inside presentational wrappers is announced', async () => {
+        clientSideGridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [],
+            noRowsOverlayComponent: CustomPresentationNoRowsOverlay,
+        });
+
+        await flushOverlayAnnouncement();
+
+        expect(getLiveRegion().textContent).toBe('No records available');
+    });
+
+    test('custom overlay hidden state text is not announced', async () => {
+        clientSideGridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [],
+            noRowsOverlayComponent: CustomHiddenStateNoRowsOverlay,
+        });
+
+        await flushOverlayAnnouncement();
+
+        expect(getLiveRegion().textContent).toBe('Visible empty state');
+    });
+
     test('exporting overlay announces through the live region', async () => {
         clientSideGridsManager.createGrid('myGrid', {
             columnDefs,
@@ -340,5 +364,51 @@ class CustomNoRowsOverlay {
 
     public refresh(params: { message: string }): void {
         this.eGui.textContent = params.message;
+    }
+}
+
+class CustomPresentationNoRowsOverlay {
+    private readonly eGui = document.createElement('div');
+
+    public init(): void {
+        const eMessage = document.createElement('span');
+        this.eGui.setAttribute('role', 'presentation');
+        eMessage.setAttribute('role', 'none');
+        eMessage.textContent = 'No records available';
+        this.eGui.appendChild(eMessage);
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+}
+
+class CustomHiddenStateNoRowsOverlay {
+    private readonly eGui = document.createElement('div');
+
+    public init(): void {
+        const eHiddenAttributeMessage = document.createElement('span');
+        eHiddenAttributeMessage.hidden = true;
+        eHiddenAttributeMessage.textContent = 'Hidden attribute empty state';
+
+        const eDisplayNoneMessage = document.createElement('span');
+        eDisplayNoneMessage.style.display = 'none';
+        eDisplayNoneMessage.textContent = 'Display none empty state';
+
+        const eVisibilityHiddenMessage = document.createElement('span');
+        eVisibilityHiddenMessage.style.visibility = 'hidden';
+        eVisibilityHiddenMessage.textContent = 'Visibility hidden empty state';
+
+        const eVisibleMessage = document.createElement('span');
+        eVisibleMessage.textContent = 'Visible empty state';
+
+        this.eGui.appendChild(eHiddenAttributeMessage);
+        this.eGui.appendChild(eDisplayNoneMessage);
+        this.eGui.appendChild(eVisibilityHiddenMessage);
+        this.eGui.appendChild(eVisibleMessage);
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
     }
 }

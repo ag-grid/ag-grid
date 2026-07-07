@@ -7,6 +7,7 @@ import {
     _focusInto,
     _getActiveDomElement,
     _isNothingFocused,
+    _isVisibleForAria,
     _last,
     _setAriaAtomic,
     _setAriaLive,
@@ -327,7 +328,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         }
 
         const element = node as HTMLElement;
-        if (this.shouldSkipLiveRegionText(element)) {
+        if (!_isVisibleForAria(element)) {
             return '';
         }
 
@@ -338,16 +339,6 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         }
 
         return text;
-    }
-
-    private shouldSkipLiveRegionText(element: HTMLElement): boolean {
-        const tagName = element.tagName;
-        if (tagName === 'BUTTON' || tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA') {
-            return true;
-        }
-
-        const role = element.getAttribute('role');
-        return element.getAttribute('aria-hidden') === 'true' || role === 'presentation' || role === 'none';
     }
 
     private clearAnnouncementTimeout(): void {

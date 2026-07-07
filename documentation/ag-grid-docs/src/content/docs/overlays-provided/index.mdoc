@@ -23,7 +23,7 @@ Provided overlays are announced to screen readers by the grid using an internal 
 - No rows and no matching rows overlays are announced when shown.
 - Exporting and file input overlays are announced while they are visible.
 
-Custom components used to replace provided overlays are announced from their rendered text content. Do not add `aria-live` to the custom overlay itself, as this can cause duplicate announcements. Keep the message as normal visible text, and only use `aria-hidden`, `role="presentation"` or `role="none"` for decorative content that should not be announced.
+Custom components used to replace provided overlays are announced from their rendered text content. Do not add `aria-live` to the custom overlay itself, as this can cause duplicate announcements. Keep the message as normal visible text, use `aria-hidden="true"` for content that should not be announced, and use `role="presentation"` or `role="none"` only when removing semantics from decorative elements.
 
 ## Loading
 

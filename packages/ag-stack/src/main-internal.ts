@@ -113,6 +113,7 @@ export {
     _getAriaCheckboxStateName,
     _getAriaLabel,
     _getAriaPosInSet,
+    _isVisibleForAria,
     _removeAriaExpanded,
     _removeAriaSort,
     _setAriaActiveDescendant,
