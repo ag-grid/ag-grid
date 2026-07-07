@@ -24,7 +24,7 @@
     font-weight: var(--text-semibold);
 
     @container site-header (min-width: #{$search-box-cap-at}) {
-        max-width: 512px;
+        max-width: 372px;
     }
 
     #{$selector-darkmode} & {
