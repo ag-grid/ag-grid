@@ -268,7 +268,10 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         if (shouldSyncColumnLayoutWithGrid) {
             this.buildTreeFromWhatGridIsDisplaying();
         } else if (this.customColumnLayout && !pivotModeActive) {
-            this.applyColumnLayout(this.customColumnLayout);
+            // A custom layout set via setColumnLayout owns the panel: grid column changes leave it untouched
+            // until the app calls setColumnLayout again to pick up added/removed columns.
+            this.isInitialState = false;
+            return;
         } else {
             this.buildTreeFromProvidedColumnDefs();
         }
@@ -353,7 +356,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     public setColumnLayout(colDefs: AbstractColDef[]): void {
-        // Retain the user-provided layout so it survives grid-driven rebuilds while decoupled from grid order.
+        // Marks the panel as owned by a custom layout so later grid column changes leave it frozen.
         this.customColumnLayout = colDefs;
         this.applyColumnLayout(colDefs);
     }
