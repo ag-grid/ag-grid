@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AllEvents } from '../events';
-import { _warn } from '../validation/logging';
+import { _isDiagnosticCaptureActive, _warn, _withGridScope } from '../validation/logging';
 import type { GridApi } from './gridApi';
 import { gridApiFunctionsMap } from './gridApiFunctions';
 import type { ApiFunction, ApiFunctionName } from './iApiFunction';
@@ -74,6 +74,12 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
                 } = this;
                 if (!fn) {
                     return this.apiNotFound(apiName);
+                }
+                // An API call may run synchronous utilities that report diagnostics through the free
+                // logging functions rather than a grid-scoped bean; wrap it (only while diagnostics are
+                // being captured) so those are attributed to the calling grid.
+                if (beans && _isDiagnosticCaptureActive()) {
+                    return _withGridScope(beans.context.getId(), () => fn(beans, ...args));
                 }
                 return fn(beans, ...args);
             },

@@ -13,6 +13,7 @@ import {
     _renderBootstrapPanel,
     _warn,
     _warnForGrid,
+    _withGridScope,
     getErrorLink,
 } from './logging';
 import { _applyDevValidationConfig, _enableDiagnosticCapture } from './validationConfig';
@@ -183,6 +184,46 @@ describe('grid attribution', () => {
 
         expect(mockWarnOnce).toHaveBeenCalledTimes(1);
         expect(mockErrorOnce).toHaveBeenCalledTimes(1);
+    });
+});
+
+// _withGridScope is the ambient fallback used at the two entry points (grid creation, API dispatch) so
+// that grid-less utilities emitting through the free functions are still attributed to the running grid.
+describe('grid scope fallback', () => {
+    test('attributes a free-function diagnostic to the surrounding grid scope', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        _withGridScope('grid-a', () => _warn(11));
+        _warn(11); // outside any scope — untied
+
+        expect(received.map((e) => e.gridId)).toEqual(['grid-a', undefined]);
+        off();
+    });
+
+    test('an explicit grid id wins over the surrounding scope', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        _withGridScope('scope-grid', () => _warnForGrid('own-grid', 11));
+
+        expect(received.map((e) => e.gridId)).toEqual(['own-grid']);
+        off();
+    });
+
+    test('restores the previous scope even when a diagnostic throws', () => {
+        _configureDiagnostics({ capture: true, throwOn: 'error' });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        expect(() => _withGridScope('grid-a', () => _error(11))).toThrow();
+        _configureDiagnostics({ throwOn: false });
+        _warn(11); // scope unwound, so this is untied rather than attributed to grid-a
+
+        expect(received.map((e) => e.gridId)).toEqual(['grid-a', undefined]);
+        off();
     });
 });
 

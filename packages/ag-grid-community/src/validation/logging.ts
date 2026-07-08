@@ -81,6 +81,30 @@ interface DiagnosticListenerEntry {
 
 const diagnosticListeners = new Set<DiagnosticListenerEntry>();
 
+// The grid whose synchronous work is currently executing, if any. A bean attributes its diagnostics
+// directly through its own log service; this ambient grid only backfills the free logging functions,
+// which are also called from grid-less utilities (see `_withGridScope`).
+let activeGridId: string | undefined;
+
+/**
+ * Runs `fn` with `gridId` marked as the executing grid, so any diagnostic emitted through the free
+ * logging functions during it is attributed to that grid; restored in a `finally` so a throwing
+ * diagnostic still unwinds cleanly. `fn` must be synchronous — attribution ends when it returns.
+ *
+ * Used only at the two entry points that run arbitrary grid work synchronously (grid creation and API
+ * dispatch). Everything else self-attributes through `beans.log`, so this is the fallback for the
+ * grid-less utilities they may reach.
+ */
+export function _withGridScope<T>(gridId: string, fn: () => T): T {
+    const previous = activeGridId;
+    activeGridId = gridId;
+    try {
+        return fn();
+    } finally {
+        activeGridId = previous;
+    }
+}
+
 // Whether a diagnostic from `diagnosticGridId` should be delivered to a listener bound to
 // `listenerGridId`. A listener bound to no grid sees every diagnostic (a page-level panel); a grid's
 // listener sees its own diagnostics plus any not tied to a grid (e.g. bootstrap failures).
@@ -124,6 +148,14 @@ export function _configureDiagnostics(config: {
     if (config.suppress !== undefined) {
         suppressedIds = new Set(config.suppress);
     }
+}
+
+/**
+ * Whether captured diagnostics are being collected, so a hot path (API dispatch) can skip establishing
+ * the ambient grid scope entirely when no consumer is listening.
+ */
+export function _isDiagnosticCaptureActive(): boolean {
+    return captureEnabled;
 }
 
 /**
@@ -365,7 +397,7 @@ export function _warn<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    logDiagnostic(_warnOnce, args[0], args[1] as any, 'warning', true);
+    logDiagnostic(_warnOnce, args[0], args[1] as any, 'warning', true, activeGridId);
 }
 
 /**
@@ -378,7 +410,7 @@ export function _deprecated<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    logDiagnostic(_warnOnce, args[0], args[1] as any, 'deprecation', true);
+    logDiagnostic(_warnOnce, args[0], args[1] as any, 'deprecation', true, activeGridId);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -387,7 +419,7 @@ export function _error<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    logDiagnostic(_errorOnce, args[0], args[1] as any, 'error', false);
+    logDiagnostic(_errorOnce, args[0], args[1] as any, 'error', false, activeGridId);
 }
 
 // Grid-id-first variants used by the grid-scoped LogService to attribute a diagnostic to the emitting

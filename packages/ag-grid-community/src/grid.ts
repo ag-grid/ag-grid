@@ -31,7 +31,7 @@ import {
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
-import { _error, _logPreInitErr, _renderBootstrapPanel } from './validation/logging';
+import { _error, _logPreInitErr, _renderBootstrapPanel, _withGridScope } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -159,22 +159,27 @@ export class GridCoreCreator {
             destroyCallback,
         };
 
-        const context = new AgContext<
-            BeanCollection,
-            GridOptionsWithDefaults,
-            AgEventTypeParams,
-            AgGridCommon<any, any>,
-            GridOptionsService
-        >(contextParams);
-        this.registerModuleFeatures(context, registeredModules);
+        // Grid creation runs synchronous utilities that report diagnostics through the free logging
+        // functions rather than a grid-scoped bean; wrap the work so those are attributed to this grid.
+        const ctx = _withGridScope(gridId, () => {
+            const context = new AgContext<
+                BeanCollection,
+                GridOptionsWithDefaults,
+                AgEventTypeParams,
+                AgGridCommon<any, any>,
+                GridOptionsService
+            >(contextParams);
+            this.registerModuleFeatures(context, registeredModules);
 
-        createUi(context);
+            createUi(context);
 
-        context.getBean('syncSvc').start();
+            context.getBean('syncSvc').start();
 
-        acceptChanges?.(context);
+            acceptChanges?.(context);
+            return context;
+        });
 
-        const api = context.getBean('gridApi');
+        const api = ctx.getBean('gridApi');
 
         _gridApiCache.set(eOutermostGridOwned, api);
         _gridElementCache.set(api, eOutermostGridOwned);
