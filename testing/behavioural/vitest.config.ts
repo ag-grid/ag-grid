@@ -116,7 +116,7 @@ export default defineConfig(({ mode }) => {
             root: repoRoot,
             dir: path.resolve(thisDir, 'src'),
             include: ['**/*.test.ts', '**/*.test.tsx'],
-            benchmark: { include: ['**/*.bench.ts'] },
+            benchmark: { include: ['**/*.bench.ts', '**/*.bench.tsx'] },
             css: browserEnabled,
             browser: {
                 enabled: browserEnabled,
