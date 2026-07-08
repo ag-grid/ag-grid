@@ -1,7 +1,7 @@
 import type { IComponent } from 'ag-stack';
 
 import type { ComponentType } from '../../interfaces/iUserCompDetails';
-import { _warn } from '../../validation/logging';
+import { _warnForGrid } from '../../validation/logging';
 
 /**
  * B the business interface (ie IHeader)
@@ -15,6 +15,12 @@ export interface FrameworkComponentWrapper {
         optionalMethods: string[] | undefined,
         componentType: ComponentType
     ): A;
+    /**
+     * Attributes diagnostics from this wrapper's method proxies to the given grid. Optional because a
+     * delegating wrapper (master/detail) forwards its wrapping to another wrapper and sets nothing of its
+     * own — so a detail grid's framework-component diagnostics are attributed to the master grid.
+     */
+    setGridId?(gridId: string): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -28,6 +34,12 @@ export interface WrappableInterface {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseComponentWrapper<F extends WrappableInterface> implements FrameworkComponentWrapper {
+    protected gridId?: string;
+
+    public setGridId(gridId: string): void {
+        this.gridId = gridId;
+    }
+
     public wrap<A extends IComponent<any>>(
         OriginalConstructor: new () => any,
         mandatoryMethods: string[] | undefined,
@@ -54,6 +66,7 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
     }
 
     protected createMethodProxy(wrapper: F, methodName: string, mandatory: boolean): (...args: any[]) => any {
+        const gridId = this.gridId;
         return function () {
             if (wrapper.hasMethod(methodName)) {
                 // eslint-disable-next-line
@@ -61,7 +74,7 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
             }
 
             if (mandatory) {
-                _warn(49, { methodName });
+                _warnForGrid(gridId, 49, { methodName });
             }
             // multiple features rely on this returning `null` rather than `undefined`,
             // so that they can differentiate whether the underlying component has implemented a void method or not

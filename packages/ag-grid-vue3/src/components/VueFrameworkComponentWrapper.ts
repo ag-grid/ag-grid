@@ -1,5 +1,5 @@
 import type { WrappableInterface } from 'ag-grid-community';
-import { BaseComponentWrapper, _warn } from 'ag-grid-community';
+import { BaseComponentWrapper, _warnForGrid } from 'ag-grid-community';
 
 import { VueComponentFactory } from './VueComponentFactory';
 
@@ -80,7 +80,13 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
     }
 
     public createComponent(component: any, params: any): any {
-        return VueComponentFactory.createAndMountComponent(component, params, this.parent!, this.provides!);
+        return VueComponentFactory.createAndMountComponent(
+            component,
+            params,
+            this.parent!,
+            this.provides!,
+            this.gridId
+        );
     }
 
     protected override createMethodProxy(
@@ -88,6 +94,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
         methodName: string,
         mandatory: boolean
     ): () => any {
+        const gridId = this.gridId;
         return function () {
             if (wrapper.hasMethod(methodName)) {
                 // eslint-disable-next-line prefer-rest-params
@@ -95,7 +102,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
             }
 
             if (mandatory) {
-                _warn(233, { methodName });
+                _warnForGrid(gridId, 233, { methodName });
             }
             return null;
         };

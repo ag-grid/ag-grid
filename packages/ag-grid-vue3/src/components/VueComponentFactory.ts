@@ -1,23 +1,23 @@
 import { createVNode, defineComponent, render } from 'vue';
 
-import { _error } from 'ag-grid-community';
+import { _errorForGrid } from 'ag-grid-community';
 
 export class VueComponentFactory {
     // WeakMap avoids repeat component tree traversals and allows GC of parent components
     private static componentCache = new WeakMap<any, Map<string, any>>();
 
-    private static getComponentDefinition(component: any, parent: any) {
+    private static getComponentDefinition(component: any, parent: any, gridId: string | undefined) {
         let componentDefinition: any;
 
         // when referencing components by name - ie: cellRenderer: 'MyComponent'
         if (typeof component === 'string') {
             // look up the definition in Vue
-            componentDefinition = this.searchForComponentInstance(parent, component);
+            componentDefinition = this.searchForComponentInstance(parent, component, 10, false, gridId);
         } else {
             componentDefinition = { extends: defineComponent({ ...component }) };
         }
         if (!componentDefinition) {
-            _error(114, { component });
+            _errorForGrid(gridId, 114, { component });
         }
 
         if (componentDefinition.extends) {
@@ -46,8 +46,14 @@ export class VueComponentFactory {
         return props;
     }
 
-    public static createAndMountComponent(component: any, params: any, parent: any, provides: any) {
-        const componentDefinition = VueComponentFactory.getComponentDefinition(component, parent);
+    public static createAndMountComponent(
+        component: any,
+        params: any,
+        parent: any,
+        provides: any,
+        gridId: string | undefined
+    ) {
+        const componentDefinition = VueComponentFactory.getComponentDefinition(component, parent, gridId);
         if (!componentDefinition) {
             return;
         }
@@ -87,7 +93,13 @@ export class VueComponentFactory {
         return { vNode, destroy, el };
     }
 
-    public static searchForComponentInstance(parent: any, component: any, maxDepth = 10, suppressError = false) {
+    public static searchForComponentInstance(
+        parent: any,
+        component: any,
+        maxDepth = 10,
+        suppressError = false,
+        gridId?: string
+    ) {
         // Check cache first
         let parentCache = this.componentCache.get(parent);
         if (parentCache) {
@@ -149,7 +161,7 @@ export class VueComponentFactory {
         }
 
         if (!componentInstance && !suppressError) {
-            _error(114, { component });
+            _errorForGrid(gridId, 114, { component });
             return null;
         }
 

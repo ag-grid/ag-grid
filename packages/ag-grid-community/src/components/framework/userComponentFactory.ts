@@ -97,6 +97,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         this.agCompUtils = beans.agCompUtils;
         this.registry = beans.registry;
         this.frameworkCompWrapper = beans.frameworkCompWrapper;
+        this.frameworkCompWrapper?.setGridId?.(beans.context.getId());
         this.gridOptions = beans.gridOptions;
     }
 
