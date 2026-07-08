@@ -1,0 +1,41 @@
+@use 'design-system' as *;
+
+.pageHero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: $spacing-size-20;
+    padding-bottom: $spacing-size-20;
+    background: linear-gradient(to top, color-mix(in srgb, transparent, var(--color-brand-500) 6%), transparent);
+}
+
+.pageHeroEyebrow {
+    margin: 0;
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-bold);
+    color: var(--color-util-brand-600);
+
+    #{$selector-darkmode} & {
+        color: var(--color-link);
+    }
+}
+
+.pageHeroHeadline {
+    margin-top: $spacing-size-1;
+    font-size: var(--text-fs-3xl);
+    font-weight: var(--text-bold);
+    letter-spacing: -1px;
+}
+
+.pageHeroSubhead {
+    max-width: 48ch;
+    margin-top: $spacing-size-2;
+    font-size: var(--text-fs-lg);
+    color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 60%);
+}
+
+.pageHeroContent {
+    width: 100%;
+    margin-top: $spacing-size-12;
+}
