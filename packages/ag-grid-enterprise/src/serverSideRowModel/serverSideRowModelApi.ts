@@ -8,7 +8,7 @@ import type {
     ServerSideTransaction,
     ServerSideTransactionResult,
 } from 'ag-grid-community';
-import { _getServerSideRowModel, _warn } from 'ag-grid-community';
+import { _getServerSideRowModel } from 'ag-grid-community';
 
 export function getServerSideSelectionState(
     beans: BeanCollection
@@ -40,7 +40,7 @@ export function applyServerSideRowData<TData = any>(
     const startRow = params.startRow ?? 0;
     const route = params.route ?? [];
     if (startRow < 0) {
-        _warn(189, { startRow });
+        beans.log.warn(189, { startRow });
         return;
     }
 

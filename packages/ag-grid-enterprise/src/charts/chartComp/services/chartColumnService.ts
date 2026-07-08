@@ -6,7 +6,7 @@ import type {
     ColumnNameService,
     RowNode,
 } from 'ag-grid-community';
-import { BeanStub, _getRowNode, _warn } from 'ag-grid-community';
+import { BeanStub, _getRowNode } from 'ag-grid-community';
 
 export class ChartColumnService extends BeanStub {
     private colModel: ColumnModel;
@@ -82,7 +82,7 @@ export class ChartColumnService extends BeanStub {
                     case 'excluded':
                         continue;
                     default:
-                        _warn(153, { chartDataType });
+                        this.beans.log.warn(153, { chartDataType });
                         break;
                 }
             }
@@ -139,7 +139,7 @@ export class ChartColumnService extends BeanStub {
         if (isNumber) {
             this.valueColsWithoutSeriesType.add(colId);
         } else if (cellValue == null && col.colDef.cellDataType !== 'number') {
-            _warn(265, { colId });
+            this.beans.log.warn(265, { colId });
         }
 
         return isNumber;

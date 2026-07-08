@@ -23,11 +23,9 @@ import {
     FilterComp,
     _createElement,
     _createIconNoSpan,
-    _error,
     _isColumnMenuAnchoringEnabled,
     _isLegacyMenuEnabled,
     _setColMenuVisible,
-    _warn,
 } from 'ag-grid-community';
 
 import type { AgCloseMenuEvent } from '../agStack/agMenuItemComponent';
@@ -435,7 +433,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         isValid = isValid && TABS_DEFAULT.indexOf(menuTabName) > -1;
 
         if (!isValid) {
-            _warn(175, { menuTabName, itemsToConsider });
+            this.beans.log.warn(175, { menuTabName, itemsToConsider });
         }
 
         return isValid;
@@ -530,7 +528,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         const comp = this.column ? this.createBean(new FilterComp(this.column, 'COLUMN_MENU')) : null;
         this.filterComp = comp;
         if (!comp?.hasFilter()) {
-            _error(119);
+            this.beans.log.error(119);
         }
 
         const afterAttachedCallback = (params: IAfterGuiAttachedParams) => comp?.afterGuiAttached(params);

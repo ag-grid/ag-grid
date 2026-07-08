@@ -28,7 +28,6 @@ import {
     _getRowNode,
     _isClientSideRowModel,
     _isSameRow,
-    _warn,
     isColumnSelectionCol,
     isSpecialCol,
 } from 'ag-grid-community';
@@ -167,7 +166,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 .readText()
                 .then(this.processClipboardData.bind(this))
                 .catch((e) => {
-                    _warn(40, { e, method: 'readText' });
+                    this.beans.log.warn(40, { e, method: 'readText' });
                     this.navigatorApiFailed = true;
                     this.pasteFromClipboardLegacy();
                 });
@@ -1188,7 +1187,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const allowNavigator = !this.gos.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
-                _warn(40, { e, method: 'writeText' });
+                this.beans.log.warn(40, { e, method: 'writeText' });
                 this.copyDataToClipboardLegacy(data);
             });
             return;
@@ -1210,7 +1209,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             const result = eDocument.execCommand('copy');
 
             if (!result) {
-                _warn(41);
+                this.beans.log.warn(41);
             }
 
             if (focusedElementBefore?.focus != null) {
@@ -1250,7 +1249,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         try {
             callbackNow(eTempInput);
         } catch {
-            _warn(42);
+            this.beans.log.warn(42);
         }
 
         //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...

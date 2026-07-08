@@ -10,7 +10,6 @@ import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import { _setColMenuVisible } from '../misc/menu/menuService';
 import { _createElement } from '../utils/element';
-import { _error } from '../validation/logging';
 import type { PopupService } from '../widgets/popupService';
 import { FilterComp } from './filterComp';
 
@@ -112,7 +111,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         const comp = column ? this.createBean(new FilterComp(column, 'COLUMN_MENU')) : undefined;
         this.activeMenu = comp;
         if (!comp?.hasFilter() || !column) {
-            _error(57);
+            this.beans.log.error(57);
             return;
         }
 

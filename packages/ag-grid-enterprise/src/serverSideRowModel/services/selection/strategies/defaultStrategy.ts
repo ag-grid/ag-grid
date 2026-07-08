@@ -5,7 +5,7 @@ import type {
     RowNode,
     RowRangeSelectionContext,
 } from 'ag-grid-community';
-import { BeanStub, _error, _isMultiRowSelection, _isUsingNewRowSelectionAPI, _warn } from 'ag-grid-community';
+import { BeanStub, _isMultiRowSelection, _isUsingNewRowSelectionAPI } from 'ag-grid-community';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -42,24 +42,24 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     public setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void {
         if (typeof state !== 'object') {
             // The provided selection state should be an object
-            _error(116);
+            this.beans.log.error(116);
             return;
         }
 
         if (!('selectAll' in state)) {
             //'Invalid selection state. The state must conform to `IServerSideSelectionState`.'
-            _error(116);
+            this.beans.log.error(116);
             return;
         }
 
         if (typeof state.selectAll !== 'boolean') {
             //selectAll must be of boolean type.
-            _error(117);
+            this.beans.log.error(117);
             return;
         }
 
         if (!('toggledNodes' in state) || !Array.isArray(state.toggledNodes)) {
-            return _warn(197);
+            return this.beans.log.warn(197);
         }
 
         const newState: SelectedState = {
@@ -71,13 +71,13 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             if (typeof key === 'string') {
                 newState.toggledNodes.add(key);
             } else {
-                _warn(196, { key });
+                this.beans.log.warn(196, { key });
             }
         });
 
         const isSelectingMultipleRows = newState.selectAll || newState.toggledNodes.size > 1;
         if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos) && isSelectingMultipleRows) {
-            _warn(130);
+            this.beans.log.warn(130);
             return;
         }
 
@@ -109,7 +109,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         const onlyThisNode = clearSelection && newValue;
         if (!_isMultiRowSelection(this.gos) || onlyThisNode) {
             if (nodes.length > 1) {
-                _error(130);
+                this.beans.log.error(130);
                 return 0;
             }
             const rowNode = nodes[0];
@@ -177,7 +177,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         // We warn when select all has ever been used, even if not currently active, to help users avoid this codepath
         // early in their devloop.
         if (warnWhenSelectAll && selectAllUsed) {
-            _warn(199);
+            this.beans.log.warn(199);
         }
 
         return nullWhenSelectAll && selectAll ? null : Object.values(selectedNodes);

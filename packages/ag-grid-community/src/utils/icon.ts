@@ -2,7 +2,6 @@ import { _isNodeOrElement, _loadTemplate } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { _warn } from '../validation/logging';
 import { _createElement } from './element';
 
 //
@@ -172,11 +171,11 @@ export function _createIconNoSpan(
     let userProvidedIcon: ((...args: any[]) => any) | string | null = null;
 
     if (iconName === 'smallDown') {
-        _warn(262);
+        beans.log.warn(262);
     } else if (iconName === 'smallLeft') {
-        _warn(263);
+        beans.log.warn(263);
     } else if (iconName === 'smallRight') {
-        _warn(264);
+        beans.log.warn(264);
     }
 
     // check col for icon first
@@ -203,7 +202,7 @@ export function _createIconNoSpan(
         } else if (typeof userProvidedIcon === 'string') {
             rendererResult = userProvidedIcon;
         } else {
-            _warn(38, { iconName });
+            beans.log.warn(38, { iconName });
             return undefined;
         }
 
@@ -215,7 +214,7 @@ export function _createIconNoSpan(
             return rendererResult as Element;
         }
 
-        _warn(133, { iconName });
+        beans.log.warn(133, { iconName });
         return undefined;
     } else {
         const iconValue = beans.registry.getIcon(iconName);

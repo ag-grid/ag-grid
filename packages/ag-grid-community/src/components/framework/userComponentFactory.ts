@@ -10,7 +10,6 @@ import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _mergeDeep } from '../../utils/mergeDeep';
-import { _error } from '../../validation/logging';
 import type { AgComponentUtils } from './agComponentUtils';
 import type { FrameworkComponentWrapper } from './frameworkComponentWrapper';
 import type { Registry } from './registry';
@@ -159,24 +158,24 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
                     // If we have validation and this is a grid comp without a default (e.g. filters tool panel),
                     // we will have already warned about this
                     if (!validation?.isProvidedUserComp(compName)) {
-                        _error(50, { compName });
+                        this.beans.log.error(50, { compName });
                     }
                 } else if (defaultName) {
                     // validation will have already warned about this
                     if (!validation) {
-                        _error(260, {
+                        this.beans.log.error(260, {
                             ...this.gos.getModuleErrorParams(),
                             propName: name,
                             compName: defaultName,
                         });
                     }
                 } else {
-                    _error(216, { name });
+                    this.beans.log.error(216, { name });
                 }
             } else if (defaultName && !validation) {
                 // Grid should be providing this component.
                 // Validation service will have already warned about this with the correct module name if it was present.
-                _error(146, { comp: defaultName });
+                this.beans.log.error(146, { comp: defaultName });
             }
             return;
         }

@@ -19,7 +19,6 @@ import type {
 } from '../interfaces/autoSize';
 import { MIN_CENTER_VIEWPORT_WIDTH } from '../pinnedColumns/pinnedColumnService';
 import { _clamp } from '../utils/number';
-import { _warn } from '../validation/logging';
 import { TouchListener } from '../widgets/touchListener';
 
 interface AutoSizeColumnParams {
@@ -348,7 +347,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             }, 500);
         } else {
             // Grid coming back with zero width, maybe the grid is not visible yet on the screen?
-            _warn(29);
+            this.beans.log.warn(29);
         }
     }
 

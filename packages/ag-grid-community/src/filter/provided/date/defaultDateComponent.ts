@@ -113,7 +113,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const parsedMaxValidDate = parseOrConstructDate(maxValidDate, maxValidYear, false);
 
         if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
-            _warn(87);
+            this.beans.log.warn(87);
         }
 
         if (parsedMinValidDate) {

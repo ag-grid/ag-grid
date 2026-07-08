@@ -2,7 +2,6 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
 import type { FilterActionParams, FilterHandler, FilterModel, IFilter } from '../interfaces/iFilter';
-import { _error, _warn } from '../validation/logging';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
     const filterManager = beans.filterManager;
@@ -40,7 +39,7 @@ export function getColumnFilterModel<TModel>(
 ): TModel | null {
     const { gos, colModel, colFilter } = beans;
     if (useUnapplied && !gos.get('enableFilterHandlers')) {
-        _warn(288);
+        beans.log.warn(288);
         useUnapplied = false;
     }
     const column = colModel.getCol(key);
@@ -59,7 +58,7 @@ export function showColumnFilter(beans: BeanCollection, colKey: string | Column)
     const column = beans.colModel.getCol(colKey);
     if (!column) {
         // Column not found, can't show filter
-        _error(12, { colKey });
+        beans.log.error(12, { colKey });
         return;
     }
     beans.menuSvc?.showFilterMenu({
@@ -77,7 +76,7 @@ export function getColumnFilterHandler(beans: BeanCollection, colKey: string | C
     const column = beans.colModel.getCol(colKey);
     if (!column) {
         // Column not found, can't show filter
-        _error(12, { colKey });
+        beans.log.error(12, { colKey });
         return undefined;
     }
     return beans.colFilter?.getHandler(column, true);
@@ -86,7 +85,7 @@ export function getColumnFilterHandler(beans: BeanCollection, colKey: string | C
 export function doFilterAction(beans: BeanCollection, params: FilterActionParams): void {
     const { colModel, colFilter, gos } = beans;
     if (!gos.get('enableFilterHandlers')) {
-        _warn(287);
+        beans.log.warn(287);
         return;
     }
     const { colId, action } = params;

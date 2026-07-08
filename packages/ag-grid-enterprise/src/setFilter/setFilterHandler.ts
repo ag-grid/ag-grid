@@ -14,7 +14,7 @@ import type {
     SetFilterModelValue,
     ValueFormatterParams,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _error, _isClientSideRowModel } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _isClientSideRowModel } from 'ag-grid-community';
 
 import { CsrmValuesExtractor } from './csrmValueExtractor';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';
@@ -370,7 +370,7 @@ export class SetFilterHandler<TValue = string>
         treeDataOrGrouping: boolean
     ): (value: TValue | null | undefined, node?: IRowNode | null) => string | null {
         if (treeDataOrGrouping && !keyCreator) {
-            _error(250);
+            this.beans.log.error(250);
             return () => null;
         }
         if (keyCreator) {
@@ -402,7 +402,7 @@ export class SetFilterHandler<TValue = string>
         let valueFormatter = providedValueFormatter;
         if (!valueFormatter) {
             if (keyCreator && !treeList) {
-                _error(249);
+                this.beans.log.error(249);
                 return;
             }
             this.noValueFormatterSupplied = true;

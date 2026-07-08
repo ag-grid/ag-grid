@@ -5,7 +5,7 @@ import type {
     IToolPanelParams,
     NewFiltersToolPanelState,
 } from 'ag-grid-community';
-import { Component, _createElement, _warn } from 'ag-grid-community';
+import { Component, _createElement } from 'ag-grid-community';
 
 import type { FilterPanelRefreshParams } from './filterPanel';
 import { FilterPanel } from './filterPanel';
@@ -24,7 +24,7 @@ export class WrapperToolPanel extends Component implements INewFiltersToolPanel,
 
     public init(params: ToolPanelNewFiltersCompParams): void {
         if (!this.gos.get('enableFilterHandlers')) {
-            _warn(282);
+            this.beans.log.warn(282);
             this.setTemplateFromElement(_createElement({ tag: 'div', cls: 'ag-filter-panel' }));
             return;
         }

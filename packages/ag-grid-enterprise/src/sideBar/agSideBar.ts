@@ -27,7 +27,6 @@ import {
     _addGridCommonParams,
     _focusNextGridCoreContainer,
     _skipFocusableContainerListenerForAgGrid,
-    _warn,
 } from 'ag-grid-community';
 
 import { findFocusableElementBeforeTabGuard, isTargetUnderManagedComponent } from '../misc/enterpriseFocusUtils';
@@ -300,13 +299,13 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
     private validateDef(def: ToolPanelDef): boolean {
         const { id, toolPanel } = def;
         if (id == null) {
-            _warn(212);
+            this.beans.log.warn(212);
             return false;
         }
 
         if (isFilterPanel(toolPanel)) {
             if (this.beans.filterManager?.isAdvFilterEnabled()) {
-                _warn(213);
+                this.beans.log.warn(213);
                 return false;
             }
         }
@@ -410,7 +409,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         const toolPanelWrapper = this.getWrapper(key);
 
         if (!toolPanelWrapper) {
-            _warn(214, { key });
+            this.beans.log.warn(214, { key });
             return;
         }
 

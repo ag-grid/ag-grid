@@ -1,5 +1,5 @@
 import type { BeanCollection, CellCtrl, IRowNumbersRowResizeFeature, RowNode } from 'ag-grid-community';
-import { _isRowNumbers, _warn } from 'ag-grid-community';
+import { _isRowNumbers } from 'ag-grid-community';
 
 import type { AgRowNumbersRowResizer } from './rowNumbersRowResizer';
 
@@ -30,7 +30,7 @@ export class RowNumbersRowResizeFeature implements IRowNumbersRowResizeFeature {
         const rowModelModelHasOnRowHeightChanged = !!(rowModel as any).onRowHeightChanged;
 
         if (visibleCols.autoHeightCols.length) {
-            _warn(276);
+            this.beans.log.warn(276);
             return false;
         }
 

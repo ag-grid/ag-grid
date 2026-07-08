@@ -5,7 +5,6 @@ import { BaseCreator } from '../export/baseCreator';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { CsvCustomContent, CsvExportParams } from '../interfaces/exportParams';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
-import { _warn } from '../validation/logging';
 import { CsvSerializingSession } from './csvSerializingSession';
 
 export class CsvCreator
@@ -22,7 +21,7 @@ export class CsvCreator
     protected export(userParams?: CsvExportParams): void {
         if (this.isExportSuppressed()) {
             // Export cancelled.
-            _warn(51);
+            this.beans.log.warn(51);
             return;
         }
 

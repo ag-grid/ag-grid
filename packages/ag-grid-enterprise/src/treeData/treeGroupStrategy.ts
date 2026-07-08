@@ -7,7 +7,7 @@ import type {
     RefreshModelParams,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _warn } from 'ag-grid-community';
+import { BeanStub, RowNode } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { IRowGroupingStrategy } from '../rowHierarchy/rowHierarchyUtils';
@@ -430,7 +430,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                     parent.childrenAfterGroup = null;
                 }
                 rootChildrenAfterGroup.push(row);
-                _warn(270, { id: row.id!, parentId: parent?.id ?? '' });
+                this.beans.log.warn(270, { id: row.id!, parentId: parent?.id ?? '' });
             } else if (parent === rootNode) {
                 rootChildrenAfterGroup.push(row);
             }
@@ -483,7 +483,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 if (parentId !== null && parentId !== undefined) {
                     newParent = rowModel.getRowNode(parentId);
                     if (!newParent) {
-                        _warn(271, { id: row.id!, parentId });
+                        this.beans.log.warn(271, { id: row.id!, parentId });
                     }
                 }
                 row.treeParent = newParent ?? rootNode;
@@ -534,7 +534,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             const path = getDataPath(node.data);
             const pathLen = path?.length;
             if (!pathLen) {
-                _warn(185, { data: node.data });
+                this.beans.log.warn(185, { data: node.data });
                 continue;
             }
             const key = path[pathLen - 1];
@@ -731,7 +731,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 duplicateRowsData[i - 1] = node.data;
             }
             const first = duplicates[0];
-            _warn(186, { rowId: first.id, rowData: first.data, duplicateRowsData });
+            this.beans.log.warn(186, { rowId: first.id, rowData: first.data, duplicateRowsData });
         }
     }
 

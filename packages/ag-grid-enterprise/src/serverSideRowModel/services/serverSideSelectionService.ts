@@ -13,7 +13,6 @@ import type {
 } from 'ag-grid-community';
 import {
     BaseSelectionService,
-    _error,
     _getGroupSelectsDescendants,
     _getRowSelectionMode,
     _isMultiRowSelection,
@@ -121,7 +120,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     ): void {
         if (!_isRowSelection(this.gos)) {
             if (state) {
-                _warn(132);
+                this.beans.log.warn(132);
             }
             return;
         }
@@ -140,14 +139,14 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
         if (!_isRowSelection(this.gos) && params.newValue) {
-            _warn(132);
+            this.beans.log.warn(132);
             return 0;
         }
 
         const { nodes, ...otherParams } = params;
 
         if (nodes.length > 1 && this.selectionMode !== 'multiRow') {
-            _warn(130);
+            this.beans.log.warn(130);
             return 0;
         }
 
@@ -245,13 +244,13 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     public selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void {
         if (!_isRowSelection(this.gos)) {
-            _warn(132);
+            this.beans.log.warn(132);
             return;
         }
 
         validateSelectionParameters(params);
         if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
-            return _warn(130);
+            return this.beans.log.warn(130);
         }
 
         this.selectionStrategy.selectAllRowNodes(params);
@@ -291,7 +290,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     // used by CSRM
     public getBestCostNodeSelection(): RowNode<any>[] | undefined {
-        return _warn(194, { method: 'getBestCostNodeSelection' }) as undefined;
+        return this.beans.log.warn(194, { method: 'getBestCostNodeSelection' }) as undefined;
     }
 
     /**
@@ -341,7 +340,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     public updateSelectableAfterGrouping(): void {
-        return _error(194, { method: 'updateSelectableAfterGrouping' }) as undefined;
+        return this.beans.log.error(194, { method: 'updateSelectableAfterGrouping' }) as undefined;
     }
 
     public refreshMasterNodeState(): void {

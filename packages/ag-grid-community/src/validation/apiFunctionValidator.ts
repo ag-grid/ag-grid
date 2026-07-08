@@ -1,7 +1,6 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { BeanCollection } from '../context/context';
 import type { RowModelType } from '../interfaces/iRowModel';
-import { _deprecated, _error } from './logging';
 
 const clientSide = 'clientSide';
 const serverSide = 'serverSide';
@@ -98,7 +97,7 @@ export function validateApiFunction<TFunctionName extends ApiFunctionName>(
         const { version, new: replacement, old, message } = deprecation;
         const apiMethod = old ?? functionName;
         return (...args: any[]) => {
-            _deprecated(308, { version, apiMethod, replacement, message });
+            beans.log.deprecated(308, { version, apiMethod, replacement, message });
             return apiFunction.apply(apiFunction, args);
         };
     }
@@ -107,7 +106,7 @@ export function validateApiFunction<TFunctionName extends ApiFunctionName>(
         return (...args: any[]) => {
             const rowModel = beans.rowModel.getType();
             if (!rowModels.includes(rowModel)) {
-                _error(311, { functionName, rowModels });
+                beans.log.error(311, { functionName, rowModels });
                 return undefined as any;
             }
             return apiFunction.apply(apiFunction, args);

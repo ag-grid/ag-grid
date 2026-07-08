@@ -8,7 +8,6 @@ import { _addGridCommonParams, _isClientSideRowModel } from '../../gridOptionsUt
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _attemptToRestoreCellFocus } from '../../utils/gridFocus';
-import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
 import type { IOverlayComp, OverlayType } from './overlayComponent';
 import { OverlayWrapperComponent, OverlayWrapperSelector } from './overlayWrapperComponent';
@@ -320,15 +319,15 @@ export class OverlayService extends BeanStub implements NamedBean {
         const userHadForced = this.userForcedNoRows;
         this.userForcedNoRows = false;
         if (gos.get('loading')) {
-            _warn(99);
+            this.beans.log.warn(99);
             return;
         }
         if (gos.get('activeOverlay')) {
-            _warn(296);
+            this.beans.log.warn(296);
             return;
         }
         if (this.currentDef === NoMatchingRowsOverlayDef) {
-            _warn(297);
+            this.beans.log.warn(297);
             return;
         }
         this.doHideOverlay();

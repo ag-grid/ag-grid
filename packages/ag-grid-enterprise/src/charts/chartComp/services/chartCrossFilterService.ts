@@ -6,7 +6,7 @@ import type {
     SetFilterModel,
     SetFilterModelValue,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import type { MultiFilter } from '../../../multiFilter/multiFilter';
 import type { MultiFilterUi } from '../../../multiFilter/multiFilterUi';
@@ -59,7 +59,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
                 setFilter = filter as any;
             }
             if (!setFilter) {
-                _warn(154, { colId });
+                this.beans.log.warn(154, { colId });
                 return;
             }
 

@@ -118,7 +118,7 @@ export function _getRowHeightForNode(
 
         if (_isFiniteNumber(height)) {
             if (height === 0) {
-                _warn(23);
+                beans.log.warn(23);
             }
             return { height: Math.max(1, height), estimated: false };
         }
@@ -168,7 +168,7 @@ export function _getRowHeightAsNumber(beans: BeanCollection): number {
         return rowHeight;
     }
 
-    _warn(24);
+    beans.log.warn(24);
     return environment.getDefaultRowHeight();
 }
 

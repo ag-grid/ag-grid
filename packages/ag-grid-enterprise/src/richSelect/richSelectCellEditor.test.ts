@@ -32,6 +32,7 @@ function createBaseParams(
 function createEditor(params?: Partial<RichCellEditorParams<any, TestValue>>) {
     const editor = new RichSelectCellEditor<any, TestValue, any>() as any;
     editor.params = createBaseParams(params);
+    editor.beans = { log: { warn: vi.fn(), error: vi.fn(), deprecated: vi.fn() } };
     editor.gos = {
         addCommon: (value: any) => value,
         get: vi.fn(() => undefined),
@@ -300,7 +301,7 @@ describe('RichSelectCellEditor', () => {
         });
 
         expect((editor as any).isFullAsync()).toBe(false);
-        expect(warnSpy).toHaveBeenCalled();
+        expect((editor as any).beans.log.warn).toHaveBeenCalledWith(294);
     });
 
     it('processes event key when one-time async values reject during initialise', async () => {

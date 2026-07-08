@@ -23,7 +23,6 @@ import {
     _isRowBefore,
     _isSameRow,
     _stopPropagationForAgGrid,
-    _warn,
     isRowNumberCol,
 } from 'ag-grid-community';
 
@@ -251,7 +250,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         if (direction !== 'x' && direction !== 'y' && direction !== 'xy') {
-            _warn(177);
+            this.beans.log.warn(177);
             return 'xy';
         }
 

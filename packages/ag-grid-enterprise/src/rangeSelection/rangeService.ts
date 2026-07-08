@@ -55,7 +55,6 @@ import {
     _isRowBefore,
     _isSameRow,
     _isUsingNewCellSelectionAPI,
-    _warn,
 } from 'ag-grid-community';
 
 import { CellRangeFeature } from './cellRangeFeature';
@@ -1350,7 +1349,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         const { suppressMultiRanges } = this.getMultiRangeContext();
         const invalid = _isUsingNewCellSelectionAPI(gos) && suppressMultiRanges && this.cellRanges.length > 1;
         if (invalid) {
-            _warn(93);
+            this.beans.log.warn(93);
         }
 
         return !invalid;
@@ -1514,14 +1513,14 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         const fromIndex = fromColumn.allColsIndex;
 
         if (fromIndex < 0) {
-            _warn(178, { colId: fromColumn.getId() });
+            this.beans.log.warn(178, { colId: fromColumn.getId() });
             return;
         }
 
         const toIndex = isSameColumn ? fromIndex : toColumn.allColsIndex;
 
         if (toIndex < 0) {
-            _warn(178, { colId: toColumn.getId() });
+            this.beans.log.warn(178, { colId: toColumn.getId() });
             return;
         }
 

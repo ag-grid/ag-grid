@@ -87,10 +87,10 @@ function assignColumnTypes(beans: BeanCollection, typeKeys: string[], colDefMerg
         const key = userKeys[i];
         const value = userTypes[key];
         if (key in allColumnTypes) {
-            _warn(34, { key }); // default column types cannot be overridden
+            beans.log.warn(34, { key }); // default column types cannot be overridden
         } else {
             if ((value as any).type) {
-                _warn(35); // type should not be defined in column types
+                beans.log.warn(35); // type should not be defined in column types
             }
             allColumnTypes[key] = value;
         }

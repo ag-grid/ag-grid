@@ -5,7 +5,6 @@ import { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { IGetRowsParams } from '../interfaces/iDatasource';
 import type { LoadSuccessParams } from '../interfaces/iServerSideRowModel';
-import { _warn } from '../validation/logging';
 import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 
 type RowNodeBlockState = 'needsLoading' | 'loading' | 'loaded' | 'failed';
@@ -138,7 +137,7 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
     private loadFromDatasource(): void {
         const params = this.createLoadParams();
         if (_missing(this.params.datasource.getRows)) {
-            _warn(90);
+            this.beans.log.warn(90);
             return;
         }
 

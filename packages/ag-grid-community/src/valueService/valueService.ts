@@ -30,7 +30,6 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { IShowRowGroupColsValueService } from '../interfaces/iShowRowGroupColsValueService';
 import type { IShowValuesAsService } from '../interfaces/iShowValuesAsService';
 import { _getValueUsingDotPath } from '../utils/value';
-import { _warn } from '../validation/logging';
 import type { ChangeDetectionService } from './changeDetectionService';
 import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
@@ -694,12 +693,12 @@ export class ValueService extends BeanStub implements NamedBean {
             if (rowNode.group && (colDef.groupRowValueSetter || colDef.groupRowEditable)) {
                 return true;
             }
-            _warn(17);
+            this.beans.log.warn(17);
             return false;
         }
 
         if (this.dataTypeSvc && !this.dataTypeSvc.checkType(column, newValue)) {
-            _warn(135);
+            this.beans.log.warn(135);
             return false;
         }
 
@@ -897,7 +896,7 @@ export class ValueService extends BeanStub implements NamedBean {
         }
         result = String(result);
         if (result === '[object Object]') {
-            _warn(121);
+            this.beans.log.warn(121);
         }
         return result;
     }

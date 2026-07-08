@@ -1,5 +1,5 @@
 import type { NamedBean, RowNode } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 export class NodeManager extends BeanStub implements NamedBean {
     beanName = 'ssrmNodeManager' as const;
@@ -9,7 +9,7 @@ export class NodeManager extends BeanStub implements NamedBean {
     public addRowNode(rowNode: RowNode): void {
         const id = rowNode.id!;
         if (this.rowNodes.has(id)) {
-            _warn(187, {
+            this.beans.log.warn(187, {
                 rowId: id,
                 firstData: this.rowNodes.get(id)!.data,
                 secondData: rowNode.data,

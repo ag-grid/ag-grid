@@ -11,7 +11,7 @@ import type {
     RowNodeDataChangedEvent,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, _convertColumnEventSourceType, _warn } from 'ag-grid-community';
+import { BeanStub, _convertColumnEventSourceType } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
@@ -147,11 +147,11 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     private checkForBaseIncompatibleServices(): boolean {
         if (this.gos.get('masterDetail')) {
-            _warn(295, { blockedService: 'Master Detail' });
+            this.beans.log.warn(295, { blockedService: 'Master Detail' });
             return false;
         }
         if (this.gos.get('enableCellExpressions')) {
-            _warn(295, { blockedService: 'Cell Expressions' });
+            this.beans.log.warn(295, { blockedService: 'Cell Expressions' });
             return false;
         }
         return true;
@@ -162,21 +162,21 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return false;
         }
         if (this.gos.get('treeData')) {
-            _warn(295, { blockedService: 'Tree Data' });
+            this.beans.log.warn(295, { blockedService: 'Tree Data' });
             return false;
         }
         for (let i = 0, len = columns.length; i < len; ++i) {
             const col = columns[i];
             if (col.isAllowPivot() || col.isPivotActive()) {
-                _warn(295, { blockedService: 'Column Pivoting' });
+                this.beans.log.warn(295, { blockedService: 'Column Pivoting' });
                 return false;
             }
             if (col.isAllowRowGroup() || col.isRowGroupActive()) {
-                _warn(295, { blockedService: 'Row Groups' });
+                this.beans.log.warn(295, { blockedService: 'Row Groups' });
                 return false;
             }
             if (col.isAllowValue() || col.isValueActive() || col.aggFunc) {
-                _warn(295, { blockedService: 'Value Aggregation' });
+                this.beans.log.warn(295, { blockedService: 'Value Aggregation' });
                 return false;
             }
         }

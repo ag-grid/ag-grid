@@ -5,7 +5,6 @@ import { _getRowHeightForNode, _getRowIdCallback } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
-import { _warn } from '../validation/logging';
 
 /**
  * Cache that maintains record of insertion order
@@ -128,7 +127,7 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
             const id = getRowId?.({ data, level: 0, rowPinned: floating }) ?? idPrefix + this.nextId++;
 
             if (dataIds.has(id)) {
-                _warn(96, { id, data });
+                this.beans.log.warn(96, { id, data });
                 continue;
             }
 

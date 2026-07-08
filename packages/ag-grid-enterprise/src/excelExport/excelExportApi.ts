@@ -1,9 +1,8 @@
 import type { BeanCollection, ExcelExportMultipleSheetParams, ExcelExportParams } from 'ag-grid-community';
-import { _warn } from 'ag-grid-community';
 
 function assertNotExcelMultiSheet(beans: BeanCollection): boolean {
     if (beans.excelCreator?.getFactoryMode() === 'MULTI_SHEET') {
-        _warn(161);
+        beans.log.warn(161);
         return false;
     }
     return true;

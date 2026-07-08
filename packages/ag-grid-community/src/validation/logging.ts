@@ -222,18 +222,21 @@ export function _renderBootstrapPanel(container: HTMLElement): void {
     bootstrapPanelRenderer(container, untied);
 }
 
-function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string): void {
+function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string, gridId?: string): void {
     // Suppressed ids are omitted from the overlay and never throw; the console log has already fired.
     if (suppressedIds.has(id)) {
         return;
     }
     if (captureEnabled) {
-        const diagnostic: CapturedDiagnostic = { id, params, severity, gridId: activeGridId, defaultMessage };
+        // An explicit gridId (supplied by the grid-scoped LogService) wins; otherwise fall back to the
+        // synchronous active-grid scope used by the central seams (createGrid init, apiFunctionService).
+        const emitGridId = gridId ?? activeGridId;
+        const diagnostic: CapturedDiagnostic = { id, params, severity, gridId: emitGridId, defaultMessage };
         if (bufferedDiagnostics.length < MAX_BUFFERED_DIAGNOSTICS) {
             bufferedDiagnostics.push(diagnostic);
         }
         for (const entry of diagnosticListeners) {
-            if (shouldNotify(activeGridId, entry.gridId)) {
+            if (shouldNotify(emitGridId, entry.gridId)) {
                 entry.listener(diagnostic);
             }
         }
@@ -241,6 +244,23 @@ function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMes
     if (_meetsSeverityThreshold(severity, throwThreshold)) {
         throw new Error(`${severity} #${id} ` + getErrorParts(id, params, defaultMessage).join(' '));
     }
+}
+
+/**
+ * Shared body for the log functions: fires the console message and captures the diagnostic. `gridId`
+ * attributes the captured diagnostic to a specific grid (passed by the grid-scoped `LogService`);
+ * omitted for the stateless free functions, which fall back to the active-grid scope.
+ */
+function logDiagnostic(
+    logger: LogFn,
+    id: ErrorId,
+    params: any,
+    severity: Severity,
+    isWarning: boolean,
+    gridId?: string
+): void {
+    logToConsole(logger, id, params, isWarning);
+    emitDiagnostic(id, params, severity, undefined, gridId);
 }
 
 type LogFn = (message: string, ...args: any[]) => void;
@@ -378,8 +398,7 @@ export function _warn<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    logToConsole(_warnOnce, args[0], args[1] as any, true);
-    emitDiagnostic(args[0], args[1] as any, 'warning');
+    logDiagnostic(_warnOnce, args[0], args[1] as any, 'warning', true);
 }
 
 /**
@@ -392,8 +411,7 @@ export function _deprecated<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    logToConsole(_warnOnce, args[0], args[1] as any, true);
-    emitDiagnostic(args[0], args[1] as any, 'deprecation');
+    logDiagnostic(_warnOnce, args[0], args[1] as any, 'deprecation', true);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -402,8 +420,24 @@ export function _error<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    logToConsole(_errorOnce, args[0], args[1] as any, false);
-    emitDiagnostic(args[0], args[1] as any, 'error');
+    logDiagnostic(_errorOnce, args[0], args[1] as any, 'error', false);
+}
+
+// Grid-id-first variants used by the grid-scoped LogService to attribute a diagnostic to the emitting
+// grid. Loosely typed on purpose — LogService is the strongly-typed (ErrorId-checked) call surface.
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _warnG(gridId: string | undefined, id: ErrorId, params?: any): void {
+    logDiagnostic(_warnOnce, id, params, 'warning', true, gridId);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _deprecatedG(gridId: string | undefined, id: ErrorId, params?: any): void {
+    logDiagnostic(_warnOnce, id, params, 'deprecation', true, gridId);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _errorG(gridId: string | undefined, id: ErrorId, params?: any): void {
+    logDiagnostic(_errorOnce, id, params, 'error', false, gridId);
 }
 
 /** Used for messages before the ValidationService has been created */

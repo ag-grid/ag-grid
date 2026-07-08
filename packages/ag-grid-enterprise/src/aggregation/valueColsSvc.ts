@@ -10,7 +10,6 @@ import type {
     IValueColsService,
     NamedBean,
 } from 'ag-grid-community';
-import { _warn } from 'ag-grid-community';
 
 import { BaseColsService } from '../columns/baseColsService';
 
@@ -124,7 +123,7 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         }
         if (aggFunc !== undefined) {
             if (typeof aggFunc !== 'string' && aggFunc != null) {
-                _warn(33); // stateItem.aggFunc must be a string — invalid (object / function) values.
+                this.beans.log.warn(33); // stateItem.aggFunc must be a string — invalid (object / function) values.
                 return;
             }
             this.applyAggFunc(column, aggFunc, source);

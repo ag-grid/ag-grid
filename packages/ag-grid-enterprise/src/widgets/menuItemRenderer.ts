@@ -7,7 +7,6 @@ import type {
     GridOptionsWithDefaults,
     IMenuActionParams,
 } from 'ag-grid-community';
-import { _warn } from 'ag-grid-community';
 
 import { AgMenuItemRenderer } from '../agStack/agMenuItemRenderer';
 
@@ -21,6 +20,6 @@ export class MenuItemRenderer extends AgMenuItemRenderer<
     IMenuActionParams
 > {
     constructor() {
-        super({ warnNoIcon: () => _warn(227) });
+        super({ warnNoIcon: () => this.beans.log.warn(227) });
     }
 }

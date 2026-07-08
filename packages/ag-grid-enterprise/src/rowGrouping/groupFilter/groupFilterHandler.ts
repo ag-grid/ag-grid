@@ -5,7 +5,7 @@ import type {
     FilterHandlerParams,
     IFilterParams,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import type { GroupFilterService } from './groupFilterService';
 
@@ -57,12 +57,12 @@ export class GroupFilterHandler
     private getSourceColumns(): AgColumn[] {
         const groupColumn = this.params.column as AgColumn;
         if (this.gos.get('treeData')) {
-            _warn(237);
+            this.beans.log.warn(237);
             return [];
         }
         const sourceColumns = (this.beans.groupFilter as GroupFilterService).getSourceColumns(groupColumn);
         if (!sourceColumns) {
-            _warn(183);
+            this.beans.log.warn(183);
             return [];
         }
         return sourceColumns;

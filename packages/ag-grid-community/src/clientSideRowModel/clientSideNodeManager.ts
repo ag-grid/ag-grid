@@ -6,7 +6,7 @@ import type { RefreshModelParams } from '../interfaces/iClientSideRowModel';
 import { ROOT_NODE_ID } from '../interfaces/iRowNode';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _error, _warn } from '../validation/logging';
+import { _error } from '../validation/logging';
 import type { ChangedRowNodes } from './changedRowNodes';
 
 export class ClientSideNodeManager<TData = any> extends BeanStub {
@@ -183,7 +183,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     ): RowNodeTransaction<TData> {
         this.dispatchRowDataUpdateStarted(rowDataTran.add);
         if (this.beans.groupStage?.getNestedDataGetter()) {
-            _warn(268); // transactions not supported with treeDataChildrenField
+            this.beans.log.warn(268); // transactions not supported with treeDataChildrenField
             return { remove: [], update: [], add: [] };
         }
         const getRowIdFunc = _getRowIdCallback(this.gos);
@@ -314,7 +314,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const id = node.id!;
         const allNodesMap = this.allNodesMap;
         if (allNodesMap[id]) {
-            _warn(2, { nodeId: id });
+            this.beans.log.warn(2, { nodeId: id });
         }
         allNodesMap[id] = node;
         return node;
@@ -340,7 +340,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const id = getRowIdFunc({ data, level: 0 });
         const rowNode = this.allNodesMap[id];
         if (!rowNode) {
-            _error(4, { id });
+            this.beans.log.error(4, { id });
             return null;
         }
         return rowNode;

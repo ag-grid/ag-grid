@@ -13,8 +13,9 @@ import type {
     StatusPanelDef,
     UserCompDetails,
     UserComponentFactory,
+    _warn,
 } from 'ag-grid-community';
-import { AgPromise, Component, _addFocusableContainerListener, _addGridCommonParams, _warn } from 'ag-grid-community';
+import { AgPromise, Component, _addFocusableContainerListener, _addGridCommonParams } from 'ag-grid-community';
 
 import agStatusBarCSS from './agStatusBar.css';
 import type { StatusBarService } from './statusBarService';
@@ -111,7 +112,7 @@ class AgStatusBar extends Component implements FocusableContainer {
             if (rowModels.includes(gos.get('rowModelType'))) {
                 return true;
             }
-            _warn(...(warnArgs as Parameters<typeof _warn>));
+            this.beans.log.warn(...(warnArgs as Parameters<typeof _warn>));
             return false;
         });
     }

@@ -1,4 +1,3 @@
-import { _warn } from '../../validation/logging';
 import type { Comparator, IScalarFilterParams } from './iScalarFilter';
 import type { ISimpleFilterModel, ISimpleFilterModelType, Tuple } from './iSimpleFilter';
 import { SimpleFilterHandler } from './simpleFilterHandler';
@@ -102,7 +101,7 @@ export abstract class ScalarFilterHandler<
                 return !isBlank(cellValue);
 
             default:
-                _warn(76, { filterModelType: type });
+                this.beans.log.warn(76, { filterModelType: type });
                 return true;
         }
     }

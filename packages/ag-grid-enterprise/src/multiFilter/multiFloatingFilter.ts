@@ -16,7 +16,6 @@ import type {
 import {
     AgPromise,
     Component,
-    _error,
     _getDefaultFloatingFilterType,
     _getFloatingFilterCompDetails,
     _mergeDeep,
@@ -224,7 +223,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private parentMultiFilterInstance(cb: (instance: MultiFilter | MultiFilterUi) => void): void {
         this.params.parentFilterInstance((parent) => {
             if (!(parent instanceof MultiFilter || parent instanceof MultiFilterUi)) {
-                _error(120);
+                this.beans.log.error(120);
             }
 
             cb(parent);

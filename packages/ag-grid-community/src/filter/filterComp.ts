@@ -5,7 +5,6 @@ import type { FilterDestroyedEvent } from '../events';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { IFilterComp } from '../interfaces/iFilter';
 import type { ElementParams } from '../utils/element';
-import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
 import type { FilterDisplayWrapper } from './columnFilterService';
 import { FilterWrapperComp } from './filterWrapperComp';
@@ -98,7 +97,7 @@ export class FilterComp extends Component {
                 filterGui = comp.getGui();
 
                 if (!_exists(filterGui)) {
-                    _warn(69, { guiFromFilter: filterGui });
+                    this.beans.log.warn(69, { guiFromFilter: filterGui });
                 }
             }
             this.appendChild(filterGui);

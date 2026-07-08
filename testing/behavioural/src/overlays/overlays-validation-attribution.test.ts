@@ -104,6 +104,21 @@ describe('dev validation diagnostic attribution', () => {
         expect(capturedIds(apiClean)).not.toContain(COLID_COLLISION_WARNING);
     });
 
+    test('attributes a runtime diagnostic self-emitted by a bean with no active-grid scope', () => {
+        enableDevValidations({ overlay: 'warning' });
+        const NON_ARRAY_ROWDATA_WARNING = 1;
+        const apiClean = gridsManager.createGrid('cleanGrid', { columnDefs, rowData } as GridOptions);
+        const apiInvalid = gridsManager.createGrid('invalidGrid', { columnDefs, rowData } as GridOptions);
+
+        // Drive a rowData property change straight through the grid options service (not via the API), so
+        // the row model's deferred property listener runs outside any _runWithActiveGrid scope. The warning
+        // is attributed purely because the emitting bean routes it through its own grid's log service.
+        beansOf(apiInvalid).gos.updateGridOptions({ options: { rowData: 'not-an-array' as any } });
+
+        expect(capturedIds(apiInvalid)).toContain(NON_ARRAY_ROWDATA_WARNING);
+        expect(capturedIds(apiClean)).not.toContain(NON_ARRAY_ROWDATA_WARNING);
+    });
+
     test('attributes a malformed-initialState diagnostic to its own grid', () => {
         enableDevValidations({ overlay: 'warning' });
         const SELECTION_STATE_ERROR = 103;

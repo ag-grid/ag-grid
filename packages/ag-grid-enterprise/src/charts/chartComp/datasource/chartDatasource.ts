@@ -15,7 +15,7 @@ import type {
     SortOption,
     SortService,
 } from 'ag-grid-community';
-import { BeanStub, GROUP_AUTO_COLUMN_ID, _isClientSideRowModel, _isServerSideRowModel, _warn } from 'ag-grid-community';
+import { BeanStub, GROUP_AUTO_COLUMN_ID, _isClientSideRowModel, _isServerSideRowModel } from 'ag-grid-community';
 
 import type { ColState } from '../model/chartDataModel';
 import { DEFAULT_CHART_CATEGORY } from '../model/chartDataModel';
@@ -66,12 +66,12 @@ export class ChartDatasource extends BeanStub {
     public getData(params: ChartDatasourceParams): IData {
         if (params.crossFiltering) {
             if (params.grouping) {
-                _warn(141);
+                this.beans.log.warn(141);
                 return { chartData: [], colNames: {} };
             }
 
             if (!_isClientSideRowModel(this.gos)) {
-                _warn(142);
+                this.beans.log.warn(142);
                 return { chartData: [], colNames: {} };
             }
         }
@@ -343,7 +343,7 @@ export class ChartDatasource extends BeanStub {
                       : null;
 
             if (typeof aggFunc !== 'function') {
-                _warn(109, { inputValue: String(aggFuncOrString), allSuggestions: [] });
+                this.beans.log.warn(109, { inputValue: String(aggFuncOrString), allSuggestions: [] });
                 return dataAggregated;
             }
 

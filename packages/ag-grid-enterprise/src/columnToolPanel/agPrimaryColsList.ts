@@ -13,7 +13,7 @@ import type {
     ColumnToolPanelState,
     ComponentSelector,
 } from 'ag-grid-community';
-import { Component, DragSourceType, _clamp, _warn, isProvidedColumnGroup } from 'ag-grid-community';
+import { Component, DragSourceType, _clamp, isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../agStack/iVirtualList';
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
@@ -565,7 +565,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const unrecognisedGroupIds = groupIds.filter((groupId) => !expandedGroupIds.has(groupId));
         if (unrecognisedGroupIds.length > 0) {
-            _warn(157, { unrecognisedGroupIds });
+            this.beans.log.warn(157, { unrecognisedGroupIds });
         }
     }
 

@@ -13,7 +13,7 @@ import type {
     ValueService,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _csrmFirstLeaf, _forEachChangedGroupDepthFirst, _warn } from 'ag-grid-community';
+import { BeanStub, RowNode, _csrmFirstLeaf, _forEachChangedGroupDepthFirst } from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
@@ -502,7 +502,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             parentGroup = newGroup;
         }
         if (!parentGroup.group) {
-            _warn(184, { parentGroupData: parentGroup.data, childNodeData: childNode.data });
+            this.beans.log.warn(184, { parentGroupData: parentGroup.data, childNodeData: childNode.data });
         }
         childNode.parent = parentGroup;
         childNode.level = parentGroup.level + 1;

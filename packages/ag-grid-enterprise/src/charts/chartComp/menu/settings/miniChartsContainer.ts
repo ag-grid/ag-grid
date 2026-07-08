@@ -2,7 +2,7 @@ import type { AgColorType } from 'ag-charts-types';
 import { _setAriaLabel } from 'ag-stack';
 
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
-import { Component, KeyCode, _createElement, _warn } from 'ag-grid-community';
+import { Component, KeyCode, _createElement } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../../../../agStack/agGroupComponent';
 import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';
@@ -198,7 +198,7 @@ export class MiniChartsContainer extends Component {
                 const menuGroup = group in miniChartMapping ? miniChartMapping[group] : undefined;
                 if (!menuGroup) {
                     // User has specified an invalid chart group in the chartGroupsDef config
-                    _warn(148, { group });
+                    this.beans.log.warn(148, { group });
                     return null;
                 }
 
@@ -213,7 +213,7 @@ export class MiniChartsContainer extends Component {
 
                         if (!menuItem) {
                             // User has specified an invalid chart type in the chartGroupsDef config
-                            _warn(149, { group, chartType });
+                            this.beans.log.warn(149, { group, chartType });
                             return null;
                         }
 

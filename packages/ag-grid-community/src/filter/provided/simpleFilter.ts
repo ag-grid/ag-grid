@@ -16,7 +16,6 @@ import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttached
 import type { FilterDisplayParams } from '../../interfaces/iFilter';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
-import { _warn } from '../../validation/logging';
 import type { Component, ComponentSelector } from '../../widgets/component';
 import type { GridInputTextField, GridRadioButton, GridSelect } from '../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
@@ -242,7 +241,7 @@ export abstract class SimpleFilter<
             let conditions = combinedModel.conditions;
             if (conditions == null) {
                 conditions = [];
-                _warn(77);
+                this.beans.log.warn(77);
             }
 
             const numConditions = validateAndUpdateConditions<M>(conditions, this.maxNumConditions);
@@ -290,18 +289,18 @@ export abstract class SimpleFilter<
     private setNumConditions(params: P): void {
         let maxNumConditions = params.maxNumConditions ?? 2;
         if (maxNumConditions < 1) {
-            _warn(79);
+            this.beans.log.warn(79);
             maxNumConditions = 1;
         }
         this.maxNumConditions = maxNumConditions;
 
         let numAlwaysVisibleConditions = params.numAlwaysVisibleConditions ?? 1;
         if (numAlwaysVisibleConditions < 1) {
-            _warn(80);
+            this.beans.log.warn(80);
             numAlwaysVisibleConditions = 1;
         }
         if (numAlwaysVisibleConditions > maxNumConditions) {
-            _warn(81);
+            this.beans.log.warn(81);
             numAlwaysVisibleConditions = maxNumConditions;
         }
         this.numAlwaysVisibleConditions = numAlwaysVisibleConditions;

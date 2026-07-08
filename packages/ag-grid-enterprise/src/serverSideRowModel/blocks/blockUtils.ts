@@ -14,7 +14,6 @@ import {
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
-    _warn,
 } from 'ag-grid-community';
 
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../aggregation/footerUtils';
@@ -122,7 +121,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
         if (rowNode.key === null || rowNode.key === undefined) {
             _doOnce(() => {
-                _warn(190, { rowGroupId: rowNode.rowGroupColumn?.getId(), data: rowNode.data });
+                this.beans.log.warn(190, { rowGroupId: rowNode.rowGroupColumn?.getId(), data: rowNode.data });
             }, 'SSBlock-BadKey');
         }
 

@@ -14,7 +14,6 @@ import type { ColumnFilterState, FilterModel, IFilter } from '../interfaces/iFil
 import type { IPinnedSectionCompHost } from '../interfaces/iPinnedSectionCompHost';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _mergeDeep } from '../utils/mergeDeep';
-import { _warn } from '../validation/logging';
 import type { ColumnFilterService } from './columnFilterService';
 import type { QuickFilterService } from './quickFilterService';
 
@@ -349,7 +348,7 @@ export class FilterManager extends BeanStub implements NamedBean {
 
     private warnAdvFilters(): void {
         // Column Filter API methods have been disabled as Advanced Filters are enabled
-        _warn(68);
+        this.beans.log.warn(68);
     }
 
     public mountAdvFilterTopSectionComp(host: IPinnedSectionCompHost): void {

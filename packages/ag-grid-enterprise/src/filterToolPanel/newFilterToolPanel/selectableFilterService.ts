@@ -14,7 +14,6 @@ import {
     _getDefaultSimpleFilter,
     _getFilterParamsForDataType,
     _isSetFilterByDefault,
-    _warn,
 } from 'ag-grid-community';
 
 import { translateForFilterPanel } from './filterPanelUtils';
@@ -111,7 +110,7 @@ export class SelectableFilterService
                 if (typeof filterString === 'string') {
                     updatedName = translateForFilterPanel(this, `${filterString as ProvidedFilterType}DisplayName`);
                 } else {
-                    _warn(280, { colId: column.colId });
+                    this.beans.log.warn(280, { colId: column.colId });
                     updatedName = '';
                 }
             }

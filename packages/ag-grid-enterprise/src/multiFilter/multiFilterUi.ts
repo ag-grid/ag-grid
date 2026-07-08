@@ -11,7 +11,7 @@ import type {
     IMultiFilterParams,
     SharedFilterUi,
 } from 'ag-grid-community';
-import { AgPromise, _getFilterDetails, _isUseApplyButton, _refreshFilterUi, _warn } from 'ag-grid-community';
+import { AgPromise, _getFilterDetails, _isUseApplyButton, _refreshFilterUi } from 'ag-grid-community';
 
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
@@ -40,7 +40,7 @@ export class MultiFilterUi
         this.params = params;
         const filterDefs = getMultiFilterDefs(params).map((filterDef) => {
             if (filterDef.filterParams?.buttons) {
-                _warn(292, { colId: params.column.getColId() });
+                this.beans.log.warn(292, { colId: params.column.getColId() });
                 const newParams = { ...filterDef.filterParams };
                 delete newParams.buttons;
                 return {

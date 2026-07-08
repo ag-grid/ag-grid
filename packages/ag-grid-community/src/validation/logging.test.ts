@@ -4,13 +4,16 @@ import {
     _addDiagnosticListener,
     _configureDiagnostics,
     _deprecated,
+    _deprecatedG,
     _error,
+    _errorG,
     _logPreInitErr,
     _logPreInitWarn,
     _provideBootstrapPanelRenderer,
     _renderBootstrapPanel,
     _runWithActiveGrid,
     _warn,
+    _warnG,
     getErrorLink,
 } from './logging';
 import { _applyDevValidationConfig, _enableDiagnosticCapture } from './validationConfig';
@@ -191,6 +194,59 @@ describe('grid scoping', () => {
 
         expect(received.map((e) => e.gridId)).toEqual(['grid-a', undefined]);
         off();
+    });
+});
+
+// The grid-id-first variants are what the grid-scoped LogService delegates to, so a bean attributes its
+// own diagnostics without establishing an active-grid scope — the mechanism that removes the fragile dance.
+describe('explicit grid attribution', () => {
+    test('tags a diagnostic with the supplied grid id, with no active-grid scope', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        _warnG('grid-a', 11);
+        _errorG('grid-b', 11);
+        _deprecatedG('grid-a', 11);
+
+        expect(received.map((e) => [e.gridId, e.severity])).toEqual([
+            ['grid-a', 'warning'],
+            ['grid-b', 'error'],
+            ['grid-a', 'deprecation'],
+        ]);
+        off();
+    });
+
+    test('an explicit grid id wins over the active-grid scope', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        // Even inside another grid's scope, a bean's own id (passed explicitly) is what attributes it.
+        _runWithActiveGrid('scope-grid', () => _warnG('own-grid', 11));
+
+        expect(received.map((e) => e.gridId)).toEqual(['own-grid']);
+        off();
+    });
+
+    test('an undefined grid id falls back to the active-grid scope', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        _runWithActiveGrid('scope-grid', () => _warnG(undefined, 11));
+        _warnG(undefined, 11); // no scope either — untied
+
+        expect(received.map((e) => e.gridId)).toEqual(['scope-grid', undefined]);
+        off();
+    });
+
+    test('logs to the console like the free functions regardless of attribution', () => {
+        _warnG('grid-a', 11);
+        _errorG('grid-a', 11);
+
+        expect(mockWarnOnce).toHaveBeenCalledTimes(1);
+        expect(mockErrorOnce).toHaveBeenCalledTimes(1);
     });
 });
 

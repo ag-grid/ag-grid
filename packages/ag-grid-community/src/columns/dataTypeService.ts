@@ -202,7 +202,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             mergedDataTypeDefinition = mergeDataTypeDefinitions(baseDataTypeDefinition, userDataTypeDef);
         } else {
             if (alreadyProcessedDataTypes.includes(extendsCellDataType)) {
-                _warn(44);
+                this.beans.log.warn(44);
                 return undefined;
             }
             const extendedDataTypeDefinition = userDataTypeDefs[extendsCellDataType];
@@ -252,7 +252,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
         const dataTypeDefinition = this.dataTypeDefinitions[cellDataType];
         if (!dataTypeDefinition) {
-            _warn(47, { cellDataType });
+            this.beans.log.warn(47, { cellDataType });
             return undefined;
         }
 
@@ -500,7 +500,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 return colDef?.cellDataType == null || colDef?.cellDataType === true;
             };
             const inferred = wasInferred(userColDef) && wasInferred(defaultColDef);
-            const warning = (property: 'Formatter' | 'Parser') => _warn(48, { property, inferred, colId });
+            const warning = (property: 'Formatter' | 'Parser') =>
+                this.beans.log.warn(48, { property, inferred, colId });
             const { object } = this.dataTypeDefinitions;
             if (colDef.valueFormatter === object.groupSafeValueFormatter && !this.hasObjectValueFormatter) {
                 warning('Formatter');

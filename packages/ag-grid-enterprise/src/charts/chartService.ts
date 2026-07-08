@@ -27,7 +27,7 @@ import type {
     UpdateChartParams,
     VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import { VERSION as GRID_VERSION } from '../version';
 import type { AgChartsExports } from './agChartsExports';
@@ -84,13 +84,13 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     public updateChart(params: UpdateChartParams): void {
         if (this.activeChartComps.size === 0) {
-            _warn(124);
+            this.beans.log.warn(124);
             return;
         }
 
         const chartComp = [...this.activeChartComps].find((chartComp) => chartComp.getChartId() === params.chartId);
         if (!chartComp) {
-            _warn(125, { chartId: params.chartId });
+            this.beans.log.warn(125, { chartId: params.chartId });
             return;
         }
 
@@ -165,7 +165,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     public restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
         if (!model) {
-            _warn(126);
+            this.beans.log.warn(126);
             return;
         }
 
@@ -431,7 +431,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const cellRange =
             rangeParams && this.rangeSvc?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
         if (!cellRange) {
-            _warn(127, { allRange });
+            this.beans.log.warn(127, { allRange });
         }
         return cellRange;
     }

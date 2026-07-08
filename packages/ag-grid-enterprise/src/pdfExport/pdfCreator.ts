@@ -1,7 +1,7 @@
 import { _downloadFile } from 'ag-stack';
 
 import type { IPdfCreator, NamedBean, PdfCustomContent, PdfExportParams } from 'ag-grid-community';
-import { BaseCreator, _addGridCommonParams, _warn } from 'ag-grid-community';
+import { BaseCreator, _addGridCommonParams } from 'ag-grid-community';
 
 import { PdfSerializingSession } from './pdfSerializingSession';
 import {
@@ -48,7 +48,7 @@ export class PdfCreator
      */
     protected export(userParams?: PdfExportParams): void {
         if (this.isExportSuppressed()) {
-            _warn(160);
+            this.beans.log.warn(160);
             return;
         }
 
@@ -91,7 +91,7 @@ export class PdfCreator
      */
     public getDataAsPdf(params?: PdfExportParams): Blob | undefined {
         if (this.isExportSuppressed()) {
-            _warn(160);
+            this.beans.log.warn(160);
             return undefined;
         }
 
