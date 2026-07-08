@@ -809,6 +809,13 @@ export interface GridOptions<TData = any> {
      */
     enableCharts?: boolean;
     /**
+     * Hidden columns are included in charts by default, and remain in a chart if hidden after being added.
+     * Set to `false` to exclude hidden columns from charts, and to remove a column from a chart when it is hidden.
+     * @default true
+     * @agModule `IntegratedChartsModule`
+     */
+    includeHiddenColumnsInCharts?: boolean;
+    /**
      * The list of chart themes that a user can choose from in the chart panel.
      * @default ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
      * @initial
