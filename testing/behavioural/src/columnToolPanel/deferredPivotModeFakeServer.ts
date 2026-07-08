@@ -153,10 +153,96 @@ export function createFakeServer(allData: IOlympicData[]) {
         return left.localeCompare(right, undefined, { numeric: true, sensitivity: 'base' });
     };
 
+    const matchesTextCondition = (value: unknown, condition: any): boolean => {
+        const filterValue = String(condition.filter ?? '').toLowerCase();
+        const cellValue = value == null ? '' : String(value).toLowerCase();
+        switch (condition.type) {
+            case 'equals':
+                return cellValue === filterValue;
+            case 'notEqual':
+                return cellValue !== filterValue;
+            case 'contains':
+                return cellValue.includes(filterValue);
+            case 'notContains':
+                return !cellValue.includes(filterValue);
+            case 'startsWith':
+                return cellValue.startsWith(filterValue);
+            case 'endsWith':
+                return cellValue.endsWith(filterValue);
+            case 'blank':
+                return cellValue === '';
+            case 'notBlank':
+                return cellValue !== '';
+            default:
+                return true;
+        }
+    };
+
+    const matchesNumberCondition = (value: unknown, condition: any): boolean => {
+        const num = toNumber(value);
+        const filterNum = toNumber(condition.filter);
+        if (num == null || filterNum == null) {
+            return true;
+        }
+        switch (condition.type) {
+            case 'equals':
+                return num === filterNum;
+            case 'notEqual':
+                return num !== filterNum;
+            case 'greaterThan':
+                return num > filterNum;
+            case 'greaterThanOrEqual':
+                return num >= filterNum;
+            case 'lessThan':
+                return num < filterNum;
+            case 'lessThanOrEqual':
+                return num <= filterNum;
+            case 'inRange': {
+                const to = toNumber(condition.filterTo);
+                return to == null ? num >= filterNum : num >= filterNum && num <= to;
+            }
+            default:
+                return true;
+        }
+    };
+
+    const matchesColumnFilter = (row: IOlympicData, colId: string, model: any): boolean => {
+        const value = (row as any)[colId];
+        if (model.filterType === 'set') {
+            const values: unknown[] = model.values ?? [];
+            const cellValue = value == null ? '' : String(value);
+            return values.map((entry) => String(entry)).includes(cellValue);
+        }
+        if (model.filterType === 'number') {
+            return matchesNumberCondition(value, model);
+        }
+        return matchesTextCondition(value, model);
+    };
+
+    const applyFilterModel = (rows: IOlympicData[], filterModel: Record<string, any>): IOlympicData[] => {
+        const colIds = Object.keys(filterModel);
+        if (!colIds.length) {
+            return rows;
+        }
+        return rows.filter((row) => {
+            for (let i = 0, len = colIds.length; i < len; i++) {
+                if (!matchesColumnFilter(row, colIds[i], filterModel[colIds[i]])) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    };
+
     return {
         getData: (request: IServerSideGetRowsRequest): ServerResponse => {
             let rows = allData;
             const { rowGroupCols = [], pivotCols = [], groupKeys = [], valueCols = [], sortModel = [] } = request;
+
+            const filterModel = request.filterModel as Record<string, any> | null | undefined;
+            if (filterModel) {
+                rows = applyFilterModel(rows, filterModel);
+            }
 
             for (let i = 0; i < groupKeys.length; i++) {
                 const key = groupKeys[i];
