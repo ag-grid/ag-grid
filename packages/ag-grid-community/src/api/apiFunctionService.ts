@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AllEvents } from '../events';
-import { _isDiagnosticCaptureActive, _runWithActiveGrid, _warn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import type { GridApi } from './gridApi';
 import { gridApiFunctionsMap } from './gridApiFunctions';
 import type { ApiFunction, ApiFunctionName } from './iApiFunction';
@@ -75,10 +75,6 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
                 if (!fn) {
                     return this.apiNotFound(apiName);
                 }
-                // Attribute any diagnostics this call emits to its grid when in diagnostic capture mode
-                if (beans && _isDiagnosticCaptureActive()) {
-                    return _runWithActiveGrid(beans.context.getId(), () => fn(beans, ...args));
-                }
                 return fn(beans, ...args);
             },
         };
@@ -89,14 +85,11 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         if (!beans) {
             // No grid context (grid destroyed) — genuinely unattributed.
             _warn(26, { fnName, preDestroyLink });
-        } else {
-            // apiNotFound runs before the _runWithActiveGrid wrap in the api-call closure, so attribute here.
-            _runWithActiveGrid(beans.context.getId(), () => {
-                const module = gridApiFunctionsMap[fnName];
-                if (gos.assertModuleRegistered(module, `\`api.${fnName}\``)) {
-                    _warn(27, { fnName, module });
-                }
-            });
+            return;
+        }
+        const module = gridApiFunctionsMap[fnName];
+        if (gos.assertModuleRegistered(module, `\`api.${fnName}\``)) {
+            beans.log.warn(27, { fnName, module });
         }
     }
 

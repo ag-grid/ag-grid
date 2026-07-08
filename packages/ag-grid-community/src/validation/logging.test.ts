@@ -4,16 +4,15 @@ import {
     _addDiagnosticListener,
     _configureDiagnostics,
     _deprecated,
-    _deprecatedG,
+    _deprecatedForGrid,
     _error,
-    _errorG,
+    _errorForGrid,
     _logPreInitErr,
     _logPreInitWarn,
     _provideBootstrapPanelRenderer,
     _renderBootstrapPanel,
-    _runWithActiveGrid,
     _warn,
-    _warnG,
+    _warnForGrid,
     getErrorLink,
 } from './logging';
 import { _applyDevValidationConfig, _enableDiagnosticCapture } from './validationConfig';
@@ -120,30 +119,26 @@ describe('diagnostic capture', () => {
     });
 });
 
-describe('grid scoping', () => {
-    test('tags a diagnostic with the executing grid', () => {
+// The grid-id-first variants are what the grid-scoped LogService delegates to: a bean attributes a
+// diagnostic to its own grid by passing its grid id. A diagnostic emitted through a free function
+// (pre-init, or a util with no grid in scope) carries no grid id and is delivered to every listener.
+describe('grid attribution', () => {
+    test('tags a diagnostic with the supplied grid id; a free function is untied', () => {
         _configureDiagnostics({ capture: true });
         const received: CapturedDiagnostic[] = [];
         const off = listenAll((e) => received.push(e));
 
-        _runWithActiveGrid('grid-a', () => _warn(11));
-        _warn(11); // no active grid
+        _warnForGrid('grid-a', 11);
+        _errorForGrid('grid-b', 11);
+        _deprecatedForGrid('grid-a', 11);
+        _warn(11); // free function — no grid
 
-        expect(received.map((e) => e.gridId)).toEqual(['grid-a', undefined]);
-        off();
-    });
-
-    test('attributes to the innermost grid when grids nest', () => {
-        _configureDiagnostics({ capture: true });
-        const received: CapturedDiagnostic[] = [];
-        const off = listenAll((e) => received.push(e));
-
-        _runWithActiveGrid('outer', () => {
-            _runWithActiveGrid('inner', () => _warn(11));
-            _warn(11); // back to the outer grid
-        });
-
-        expect(received.map((e) => e.gridId)).toEqual(['inner', 'outer']);
+        expect(received.map((e) => [e.gridId, e.severity])).toEqual([
+            ['grid-a', 'warning'],
+            ['grid-b', 'error'],
+            ['grid-a', 'deprecation'],
+            [undefined, 'warning'],
+        ]);
         off();
     });
 
@@ -154,8 +149,8 @@ describe('grid scoping', () => {
         const offA = _addDiagnosticListener('grid-a', (e) => a.push(e));
         const offB = _addDiagnosticListener('grid-b', (e) => b.push(e));
 
-        _runWithActiveGrid('grid-a', () => _warn(11));
-        _runWithActiveGrid('grid-b', () => _error(11));
+        _warnForGrid('grid-a', 11);
+        _errorForGrid('grid-b', 11);
         _warn(11); // untied — both listeners see it
 
         expect(a.map((e) => [e.gridId, e.severity])).toEqual([
@@ -172,8 +167,8 @@ describe('grid scoping', () => {
 
     test('replays only matching buffered diagnostics to a grid listener', () => {
         _configureDiagnostics({ capture: true });
-        _runWithActiveGrid('grid-a', () => _warn(11));
-        _runWithActiveGrid('grid-b', () => _warn(11));
+        _warnForGrid('grid-a', 11);
+        _warnForGrid('grid-b', 11);
 
         const received: CapturedDiagnostic[] = [];
         const off = _addDiagnosticListener('grid-a', (e) => received.push(e));
@@ -182,68 +177,9 @@ describe('grid scoping', () => {
         off();
     });
 
-    test('pops the active grid even when a diagnostic throws', () => {
-        _configureDiagnostics({ capture: true, throwOn: 'error' });
-        const received: CapturedDiagnostic[] = [];
-        const off = listenAll((e) => received.push(e));
-
-        expect(() => _runWithActiveGrid('grid-a', () => _error(11))).toThrow();
-        // Stack is balanced, so the next untied diagnostic is not attributed to `grid-a`
-        _configureDiagnostics({ throwOn: false });
-        _warn(11);
-
-        expect(received.map((e) => e.gridId)).toEqual(['grid-a', undefined]);
-        off();
-    });
-});
-
-// The grid-id-first variants are what the grid-scoped LogService delegates to, so a bean attributes its
-// own diagnostics without establishing an active-grid scope — the mechanism that removes the fragile dance.
-describe('explicit grid attribution', () => {
-    test('tags a diagnostic with the supplied grid id, with no active-grid scope', () => {
-        _configureDiagnostics({ capture: true });
-        const received: CapturedDiagnostic[] = [];
-        const off = listenAll((e) => received.push(e));
-
-        _warnG('grid-a', 11);
-        _errorG('grid-b', 11);
-        _deprecatedG('grid-a', 11);
-
-        expect(received.map((e) => [e.gridId, e.severity])).toEqual([
-            ['grid-a', 'warning'],
-            ['grid-b', 'error'],
-            ['grid-a', 'deprecation'],
-        ]);
-        off();
-    });
-
-    test('an explicit grid id wins over the active-grid scope', () => {
-        _configureDiagnostics({ capture: true });
-        const received: CapturedDiagnostic[] = [];
-        const off = listenAll((e) => received.push(e));
-
-        // Even inside another grid's scope, a bean's own id (passed explicitly) is what attributes it.
-        _runWithActiveGrid('scope-grid', () => _warnG('own-grid', 11));
-
-        expect(received.map((e) => e.gridId)).toEqual(['own-grid']);
-        off();
-    });
-
-    test('an undefined grid id falls back to the active-grid scope', () => {
-        _configureDiagnostics({ capture: true });
-        const received: CapturedDiagnostic[] = [];
-        const off = listenAll((e) => received.push(e));
-
-        _runWithActiveGrid('scope-grid', () => _warnG(undefined, 11));
-        _warnG(undefined, 11); // no scope either — untied
-
-        expect(received.map((e) => e.gridId)).toEqual(['scope-grid', undefined]);
-        off();
-    });
-
     test('logs to the console like the free functions regardless of attribution', () => {
-        _warnG('grid-a', 11);
-        _errorG('grid-a', 11);
+        _warnForGrid('grid-a', 11);
+        _errorForGrid('grid-a', 11);
 
         expect(mockWarnOnce).toHaveBeenCalledTimes(1);
         expect(mockErrorOnce).toHaveBeenCalledTimes(1);
@@ -368,7 +304,7 @@ describe('dev validation config', () => {
 describe('bootstrap panel', () => {
     test('renders only the buffered diagnostics not tied to a grid', () => {
         _configureDiagnostics({ capture: true });
-        _runWithActiveGrid('grid-a', () => _error(11)); // tied to a grid
+        _errorForGrid('grid-a', 11); // tied to a grid
         _logPreInitErr(200, {} as any, 'boom'); // a bootstrap failure, not tied to any grid
 
         const renderer = vi.fn();
@@ -383,7 +319,7 @@ describe('bootstrap panel', () => {
 
     test('does not invoke the renderer when there are no untied diagnostics', () => {
         _configureDiagnostics({ capture: true });
-        _runWithActiveGrid('grid-a', () => _error(11)); // tied only
+        _errorForGrid('grid-a', 11); // tied only
 
         const renderer = vi.fn();
         _provideBootstrapPanelRenderer(renderer);

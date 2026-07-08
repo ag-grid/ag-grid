@@ -3,6 +3,7 @@ import type {
     IServerSideGroupSelectionState,
     IServerSideSelectionState,
     ISetNodesSelectedParams,
+    LogService,
     NamedBean,
     RowNode,
     RowSelectionMode,
@@ -18,7 +19,6 @@ import {
     _isMultiRowSelection,
     _isRowSelection,
     _isUsingNewRowSelectionAPI,
-    _warn,
 } from 'ag-grid-community';
 
 import { DefaultStrategy } from './selection/strategies/defaultStrategy';
@@ -248,7 +248,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             return;
         }
 
-        validateSelectionParameters(params);
+        validateSelectionParameters(this.beans.log, params);
         if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
             return this.beans.log.warn(130);
         }
@@ -268,7 +268,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     public deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void {
-        validateSelectionParameters(params);
+        validateSelectionParameters(this.beans.log, params);
 
         this.selectionStrategy.deselectAllRowNodes(params);
         this.selectionCtx.selectAll = false;
@@ -353,8 +353,11 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 }
 
-function validateSelectionParameters({ selectAll }: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
+function validateSelectionParameters(
+    log: LogService,
+    { selectAll }: { source: SelectionEventSourceType; selectAll?: SelectAllMode }
+) {
     if (selectAll === 'filtered' || selectAll === 'currentPage') {
-        _warn(195, { justCurrentPage: selectAll === 'currentPage' });
+        log.warn(195, { justCurrentPage: selectAll === 'currentPage' });
     }
 }

@@ -3,6 +3,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { ValidationModuleName } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
 import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
+import type { LogService } from './logService';
 import { _deprecated, _warn } from './logging';
 
 /**
@@ -13,7 +14,25 @@ import { _deprecated, _warn } from './logging';
  */
 export interface ValidationWarning {
     errorId: ErrorId;
-    emit: () => void;
+    /** Pass the emitting grid's log service to attribute the diagnostic; omit for an untied emit. */
+    emit: (log?: LogService) => void;
+}
+
+// Routes a validation diagnostic through the grid-scoped log service when one is supplied (so it is
+// attributed to the emitting grid), otherwise through the free function (untied). The cast only erases
+// the variadic-overload conditional, which TS cannot resolve for a still-generic id.
+function emitValidation(log: LogService | undefined, id: ErrorId, params: unknown, deprecation: boolean): void {
+    if (log) {
+        if (deprecation) {
+            (log.deprecated as (id: ErrorId, params: unknown) => void)(id, params);
+        } else {
+            (log.warn as (id: ErrorId, params: unknown) => void)(id, params);
+        }
+    } else if (deprecation) {
+        (_deprecated as (id: ErrorId, params: unknown) => void)(id, params);
+    } else {
+        (_warn as (id: ErrorId, params: unknown) => void)(id, params);
+    }
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -21,9 +40,7 @@ export function _createValidationWarning<TId extends ErrorId>(
     errorId: TId,
     params: GetErrorParams<TId>
 ): ValidationWarning {
-    // params is bound to errorId by this signature; the cast only erases _warn's variadic-overload
-    // conditional, which TS cannot resolve for a still-generic id.
-    return { errorId, emit: () => (_warn as (id: ErrorId, params: unknown) => void)(errorId, params) };
+    return { errorId, emit: (log) => emitValidation(log, errorId, params, false) };
 }
 
 /**
@@ -34,19 +51,20 @@ export function _createDeprecationWarning<TId extends ErrorId>(
     errorId: TId,
     params: GetErrorParams<TId>
 ): ValidationWarning {
-    return { errorId, emit: () => (_deprecated as (id: ErrorId, params: unknown) => void)(errorId, params) };
+    return { errorId, emit: (log) => emitValidation(log, errorId, params, true) };
 }
 
 /**
  * Emits a validation result that may be either a first-class {@link ValidationWarning} or a legacy
- * free-text string (logged under the generic id 322).
+ * free-text string (logged under the generic id 322). Pass the emitting grid's log service to attribute
+ * the diagnostic; omit for an untied emit.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export function _emitValidationWarning(warning: string | ValidationWarning): void {
+export function _emitValidationWarning(warning: string | ValidationWarning, log?: LogService): void {
     if (typeof warning === 'string') {
-        _warn(322, { message: warning });
+        emitValidation(log, 322, { message: warning }, false);
     } else {
-        warning.emit();
+        warning.emit(log);
     }
 }
 

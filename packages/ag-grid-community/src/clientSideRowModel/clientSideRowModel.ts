@@ -23,7 +23,6 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { OverlayType } from '../rendering/overlays/overlayComponent';
 import type { ChangedPath } from '../utils/changedPath';
-import { _runWithActiveGrid } from '../validation/logging';
 import { ChangedRowNodes } from './changedRowNodes';
 import { ClientSideNodeManager } from './clientSideNodeManager';
 
@@ -1095,12 +1094,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private executeBatchUpdateRowData(): void {
-        // Batched async transactions (applyTransactionAsync) flush from a setTimeout, outside createGrid's
-        // synchronous active-grid scope, so attribute any row-data diagnostics to this grid.
-        _runWithActiveGrid(this.beans.context.getId(), () => this.runBatchUpdateRowData());
-    }
-
-    private runBatchUpdateRowData(): void {
         const { nodeManager, beans, eventSvc, asyncTransactions } = this;
         if (!nodeManager) {
             return; // destroyed

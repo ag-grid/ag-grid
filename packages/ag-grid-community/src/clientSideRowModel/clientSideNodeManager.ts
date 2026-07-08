@@ -6,7 +6,7 @@ import type { RefreshModelParams } from '../interfaces/iClientSideRowModel';
 import { ROOT_NODE_ID } from '../interfaces/iRowNode';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _error } from '../validation/logging';
+import type { LogService } from '../validation/logService';
 import type { ChangedRowNodes } from './changedRowNodes';
 
 export class ClientSideNodeManager<TData = any> extends BeanStub {
@@ -335,7 +335,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
     private lookupNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode<TData> | null {
         if (!getRowIdFunc) {
-            return lookupNodeByData(this.rootNode._leafs, data);
+            return lookupNodeByData(this.beans.log, this.rootNode._leafs, data);
         }
         const id = getRowIdFunc({ data, level: 0 });
         const rowNode = this.allNodesMap[id];
@@ -410,7 +410,11 @@ const initRootNode = <TData = any>(rootNode: RowNode<TData>): RowNode<TData> => 
  * Finds a row node in the given array whose data matches the provided data object.
  * Returns the node if found, otherwise undefined.
  */
-const lookupNodeByData = <TData>(nodes: RowNode<TData>[] | null | undefined, data: TData): RowNode<TData> | null => {
+const lookupNodeByData = <TData>(
+    log: LogService,
+    nodes: RowNode<TData>[] | null | undefined,
+    data: TData
+): RowNode<TData> | null => {
     if (nodes) {
         for (let i = 0, len = nodes.length; i < len; i++) {
             const node = nodes[i];
@@ -419,7 +423,7 @@ const lookupNodeByData = <TData>(nodes: RowNode<TData>[] | null | undefined, dat
             }
         }
     }
-    _error(5, { data });
+    log.error(5, { data });
     return null;
 };
 

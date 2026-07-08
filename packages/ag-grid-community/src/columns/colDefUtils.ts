@@ -4,7 +4,6 @@ import type { ColDef } from '../entities/colDef';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import { _mergeDeep } from '../utils/mergeDeep';
-import { _warn } from '../validation/logging';
 import { convertColumnTypes } from './columnUtils';
 
 /** Constructs + registers a primary ('user'-kind) column from a user colDef: merges defaults/types,
@@ -78,7 +77,7 @@ function assignColumnTypes(beans: BeanCollection, typeKeys: string[], colDefMerg
     const userTypes = beans.gos.get('columnTypes');
     // Fast path: no user types — read `DefaultColumnTypes` directly, skipping the merged-map copy and validation walk.
     if (userTypes == null) {
-        mergeTypeKeys(colDefMerged, typeKeys, typeKeysLen, DefaultColumnTypes);
+        mergeTypeKeys(beans, colDefMerged, typeKeys, typeKeysLen, DefaultColumnTypes);
         return;
     }
     const allColumnTypes = { ...DefaultColumnTypes };
@@ -95,10 +94,11 @@ function assignColumnTypes(beans: BeanCollection, typeKeys: string[], colDefMerg
             allColumnTypes[key] = value;
         }
     }
-    mergeTypeKeys(colDefMerged, typeKeys, typeKeysLen, allColumnTypes);
+    mergeTypeKeys(beans, colDefMerged, typeKeys, typeKeysLen, allColumnTypes);
 }
 
 function mergeTypeKeys(
+    beans: BeanCollection,
     colDefMerged: ColDef,
     typeKeys: string[],
     typeKeysLen: number,
@@ -110,7 +110,7 @@ function mergeTypeKeys(
         if (typeColDef) {
             _mergeDeep(colDefMerged, typeColDef, false, true);
         } else {
-            _warn(36, { t });
+            beans.log.warn(36, { t });
         }
     }
 }

@@ -81,30 +81,6 @@ interface DiagnosticListenerEntry {
 
 const diagnosticListeners = new Set<DiagnosticListenerEntry>();
 
-// The grid currently executing; diagnostics it emits are attributed to it
-let activeGridId: string | undefined;
-
-/**
- * Runs `fn` with `gridId` marked as the executing grid, so any diagnostics it emits are attributed to
- * that grid. The restore runs in a `finally`, so a diagnostic that throws (in throw mode) still restores
- * the previous grid.
- *
- * `fn` MUST be synchronous. Attribution only lasts until `fn` returns, so any work deferred past an
- * `await` or a scheduled callback runs unattributed — its diagnostics fall back to "no grid" rather than
- * being misattributed to whichever grid happens to be active by the time they fire. This is also why a
- * nested grid (e.g. a detail grid, created on a later frame) gets its own scope instead of inheriting
- * its parent's.
- */
-export function _runWithActiveGrid<T>(gridId: string, fn: () => T): T {
-    const previous = activeGridId;
-    activeGridId = gridId;
-    try {
-        return fn();
-    } finally {
-        activeGridId = previous;
-    }
-}
-
 // Whether a diagnostic from `diagnosticGridId` should be delivered to a listener bound to
 // `listenerGridId`. A listener bound to no grid sees every diagnostic (a page-level panel); a grid's
 // listener sees its own diagnostics plus any not tied to a grid (e.g. bootstrap failures).
@@ -148,14 +124,6 @@ export function _configureDiagnostics(config: {
     if (config.suppress !== undefined) {
         suppressedIds = new Set(config.suppress);
     }
-}
-
-/**
- * Whether captured diagnostics are being collected, so hot paths (e.g. API dispatch) can skip the
- * active-grid bookkeeping entirely when no consumer is listening.
- */
-export function _isDiagnosticCaptureActive(): boolean {
-    return captureEnabled;
 }
 
 /**
@@ -228,15 +196,14 @@ function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMes
         return;
     }
     if (captureEnabled) {
-        // An explicit gridId (supplied by the grid-scoped LogService) wins; otherwise fall back to the
-        // synchronous active-grid scope used by the central seams (createGrid init, apiFunctionService).
-        const emitGridId = gridId ?? activeGridId;
-        const diagnostic: CapturedDiagnostic = { id, params, severity, gridId: emitGridId, defaultMessage };
+        // gridId is supplied by the grid-scoped LogService; a diagnostic emitted through a free function
+        // (pre-init, or a util with no grid in scope) is undefined here and delivered to every listener.
+        const diagnostic: CapturedDiagnostic = { id, params, severity, gridId, defaultMessage };
         if (bufferedDiagnostics.length < MAX_BUFFERED_DIAGNOSTICS) {
             bufferedDiagnostics.push(diagnostic);
         }
         for (const entry of diagnosticListeners) {
-            if (shouldNotify(emitGridId, entry.gridId)) {
+            if (shouldNotify(gridId, entry.gridId)) {
                 entry.listener(diagnostic);
             }
         }
@@ -249,7 +216,7 @@ function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMes
 /**
  * Shared body for the log functions: fires the console message and captures the diagnostic. `gridId`
  * attributes the captured diagnostic to a specific grid (passed by the grid-scoped `LogService`);
- * omitted for the stateless free functions, which fall back to the active-grid scope.
+ * omitted for the stateless free functions, whose diagnostics are captured untied.
  */
 function logDiagnostic(
     logger: LogFn,
@@ -426,17 +393,17 @@ export function _error<
 // Grid-id-first variants used by the grid-scoped LogService to attribute a diagnostic to the emitting
 // grid. Loosely typed on purpose — LogService is the strongly-typed (ErrorId-checked) call surface.
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _warnG(gridId: string | undefined, id: ErrorId, params?: any): void {
+export function _warnForGrid(gridId: string | undefined, id: ErrorId, params?: any): void {
     logDiagnostic(_warnOnce, id, params, 'warning', true, gridId);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _deprecatedG(gridId: string | undefined, id: ErrorId, params?: any): void {
+export function _deprecatedForGrid(gridId: string | undefined, id: ErrorId, params?: any): void {
     logDiagnostic(_warnOnce, id, params, 'deprecation', true, gridId);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _errorG(gridId: string | undefined, id: ErrorId, params?: any): void {
+export function _errorForGrid(gridId: string | undefined, id: ErrorId, params?: any): void {
     logDiagnostic(_errorOnce, id, params, 'error', false, gridId);
 }
 

@@ -10,7 +10,6 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
 import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
-import { _runWithActiveGrid } from '../validation/logging';
 import { _buildColumnTree, finalizeColumnTree } from './buildColumnTree';
 import { applyPrevColumnsOrder } from './colsApplyPrevOrder';
 import { ColWrapperCache } from './columnGroups/colWrapperCache';
@@ -164,13 +163,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     /** `newColDefs`: true = colDefs changed (order restored only with `maintainColumnOrder`); false =
      *  dynamic refresh with unchanged colDefs (prior order restored). */
     private buildFromColDefs(source: ColumnEventType, newColDefs: boolean): void {
-        // The column tree is (re)built from the grid's async ctrls-ready event and column-def property
-        // changes, both outside createGrid's synchronous active-grid scope, so attribute colDef-validation
-        // diagnostics to this grid.
-        _runWithActiveGrid(this.beans.context.getId(), () => this.buildColumnsFromColDefs(source, newColDefs));
-    }
-
-    private buildColumnsFromColDefs(source: ColumnEventType, newColDefs: boolean): void {
         const beans = this.beans;
         const {
             valueCache,

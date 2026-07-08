@@ -2,13 +2,14 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ErrorId, ErrorMap, GetErrorParams } from './errorMessages/errorText';
-import { _deprecatedG, _errorG, _warnG } from './logging';
+import { _deprecatedForGrid, _errorForGrid, _warnForGrid } from './logging';
 
 /**
  * Grid-scoped façade over the free logging functions. Because a bean intrinsically knows its own grid,
  * routing a diagnostic through `this.beans.log` attributes it to the emitting grid whether it is logged
  * synchronously or from a deferred/async callback — no active-grid scope to establish. Console output is
  * identical to the free `_warn`/`_error`/`_deprecated`; only the captured diagnostic gains attribution.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export class LogService extends BeanStub implements NamedBean {
     beanName = 'log' as const;
@@ -24,7 +25,7 @@ export class LogService extends BeanStub implements NamedBean {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         TShowMessageAtCallLocation = ErrorMap[TId],
     >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-        _warnG(this.gridId, args[0], args[1] as any);
+        _warnForGrid(this.gridId, args[0], args[1] as any);
     }
 
     public deprecated<
@@ -32,7 +33,7 @@ export class LogService extends BeanStub implements NamedBean {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         TShowMessageAtCallLocation = ErrorMap[TId],
     >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-        _deprecatedG(this.gridId, args[0], args[1] as any);
+        _deprecatedForGrid(this.gridId, args[0], args[1] as any);
     }
 
     public error<
@@ -40,6 +41,6 @@ export class LogService extends BeanStub implements NamedBean {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         TShowMessageAtCallLocation = ErrorMap[TId],
     >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-        _errorG(this.gridId, args[0], args[1] as any);
+        _errorForGrid(this.gridId, args[0], args[1] as any);
     }
 }
