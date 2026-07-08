@@ -179,11 +179,15 @@ export class CellComp extends Component {
             const neverRefresh = forceNewCellRendererInstance || controlWrapperChanged;
             const cellRendererRefreshSuccessful = neverRefresh ? false : this.refreshCellRenderer(compDetails);
             if (!cellRendererRefreshSuccessful) {
-                this.destroyRenderer();
+                if (!this.firstRender) {
+                    this.destroyRenderer();
+                }
                 this.createCellRendererInstance(compDetails);
             }
         } else {
-            this.destroyRenderer();
+            if (!this.firstRender) {
+                this.destroyRenderer();
+            }
             this.insertValueWithoutCellRenderer(valueToDisplay);
         }
 
