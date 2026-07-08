@@ -55,7 +55,11 @@ export async function editCell(api: GridApi, rowNode: IRowNode, colId: string, n
 
     // Re-query the cell after startEditingCell — in jsdom, `ensureIndexVisible` can
     // trigger a row redraw that replaces cell DOM elements, making the original reference stale.
-    const input = await waitForInput(gridDiv, gridDiv);
+    // Scope the input lookup to this cell rather than the whole grid: when edits happen in
+    // sequence a previous editor's input can briefly linger in the DOM, and a grid-wide lookup
+    // would grab that stale input instead of the one just opened, silently dropping the edit.
+    const { cell } = locateCellElements(api, rowNode, colId);
+    const input = await waitForInput(gridDiv, cell);
     await userEvent.clear(input);
     await userEvent.type(input, `${newValue}{Enter}`);
     await asyncSetTimeout(0);
