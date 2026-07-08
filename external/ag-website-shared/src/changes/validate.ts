@@ -82,13 +82,20 @@ function validateRecordsOfVersion(
                 addError(version, `${label}: detectWords contains an empty entry`);
             }
         }
-        if (record.framework !== undefined && record.frameworkMitigation !== undefined) {
-            const otherFrameworks = Object.keys(record.frameworkMitigation).filter((key) => key !== record.framework);
-            if (otherFrameworks.length > 0) {
-                addError(
-                    version,
-                    `${label}: frameworkMitigation for [${otherFrameworks.join(', ')}] contradicts framework "${record.framework}"`
-                );
+        if (Array.isArray(record.mitigation)) {
+            for (const advice of record.mitigation) {
+                if (advice.content.trim() === '') {
+                    addError(version, `${label}: mitigation entry with empty content`);
+                }
+                if (record.framework !== undefined && advice.frameworks !== undefined) {
+                    const otherFrameworks = advice.frameworks.filter((framework) => framework !== record.framework);
+                    if (otherFrameworks.length > 0) {
+                        addError(
+                            version,
+                            `${label}: mitigation advice for [${otherFrameworks.join(', ')}] contradicts framework "${record.framework}"`
+                        );
+                    }
+                }
             }
         }
     };

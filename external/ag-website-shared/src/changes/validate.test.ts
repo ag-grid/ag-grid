@@ -62,9 +62,8 @@ describe('validateChangelogs', () => {
                     {
                         title: '',
                         framework: 'react',
-                        frameworkMitigation: { vue: 'Irrelevant advice' },
                         detectWords: null,
-                        mitigation: null,
+                        mitigation: [{ frameworks: ['vue'], content: 'Irrelevant advice' }],
                     },
                 ],
                 dependencyChanges: [{ dependency: 'angular', minVersion: '', reason: null }],
@@ -75,7 +74,7 @@ describe('validateChangelogs', () => {
         expect(allMessages).toContain('deprecation "foo": empty oldApi');
         expect(allMessages).toContain('detectWords contains an empty entry');
         expect(allMessages).toContain('behaviourChanges record with empty title');
-        expect(allMessages).toContain('frameworkMitigation for [vue] contradicts framework "react"');
+        expect(allMessages).toContain('mitigation advice for [vue] contradicts framework "react"');
         expect(allMessages).toContain('dependency "angular": empty minVersion');
         expect(errors).toHaveLength(6);
     });

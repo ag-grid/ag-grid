@@ -107,4 +107,41 @@ describe('compileChangelogs', () => {
         const compiled = compileChangelogs(changelogs);
         expect(JSON.parse(JSON.stringify(compiled))).toEqual(compiled);
     });
+
+    test('mitigation compiles to the array form: string expands to all frameworks, null becomes empty', () => {
+        const { changes } = compileChangelogs(changelogs);
+
+        // a plain string becomes one entry scoped to every framework
+        const columnApiChange = changes.find((change) => change.id === 'columnApi');
+        expect(columnApiChange?.mitigation).toEqual([
+            { frameworks: ['react', 'angular', 'vue', 'javascript'], content: 'Replace `columnApi.x(...)` with `api.x(...)`.' },
+        ]);
+
+        // null mitigation becomes an empty list
+        const legacyThemesChange = changes.find((change) => change.id === 'legacyThemes');
+        expect(legacyThemesChange?.mitigation).toEqual([]);
+    });
+
+    test('per-framework mitigation entries are preserved, with omitted frameworks expanded to all', () => {
+        const { changes } = compileChangelogs({
+            '34': {
+                deprecations: {
+                    filters: {
+                        oldApi: 'the old filter contract',
+                        newApi: 'the new filter contract',
+                        detectWords: null,
+                        mitigation: [
+                            { content: 'Universal advice.' },
+                            { frameworks: ['react'], content: 'React-specific advice.' },
+                        ],
+                    },
+                },
+            },
+        });
+        const filtersChange = changes.find((change) => change.id === 'filters');
+        expect(filtersChange?.mitigation).toEqual([
+            { frameworks: ['react', 'angular', 'vue', 'javascript'], content: 'Universal advice.' },
+            { frameworks: ['react'], content: 'React-specific advice.' },
+        ]);
+    });
 });

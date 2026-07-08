@@ -1,7 +1,9 @@
-import type { ChangeBase, Changelogs, Framework, SimpleChange, TransitionFacts } from './change-types';
+import type { ChangeBase, Changelogs, Framework, MitigationAdvice, SimpleChange, TransitionFacts } from './change-types';
+import { FRAMEWORKS } from './change-types';
 import type {
     CompiledChange,
     CompiledChangelog,
+    CompiledMitigation,
     CompiledSimpleChange,
     CompiledTransition,
     SerialisedRegExp,
@@ -111,17 +113,31 @@ function compileSimpleChange(
 interface CompiledBaseFields {
     framework?: Framework;
     detectPatterns?: SerialisedRegExp[];
-    mitigation?: string;
-    frameworkMitigation?: Partial<Record<Framework, string>>;
+    mitigation: CompiledMitigation[];
 }
 
 function compileBase(record: ChangeBase): CompiledBaseFields {
     return {
         framework: record.framework,
         detectPatterns: compileDetectWords(record.detectWords),
-        mitigation: record.mitigation ?? undefined,
-        frameworkMitigation: record.frameworkMitigation,
+        mitigation: compileMitigation(record.mitigation),
     };
+}
+
+/**
+ * Normalise authored mitigation into the compiled array form: a plain string becomes one
+ * all-framework entry, `null` becomes an empty list, and each entry's `frameworks` is
+ * expanded to the full framework list when the author omitted it.
+ */
+function compileMitigation(mitigation: string | MitigationAdvice[] | null): CompiledMitigation[] {
+    if (mitigation == null) {
+        return [];
+    }
+    const entries = typeof mitigation === 'string' ? [{ content: mitigation }] : mitigation;
+    return entries.map((entry) => ({
+        frameworks: entry.frameworks ?? [...FRAMEWORKS],
+        content: entry.content,
+    }));
 }
 
 const IDENTIFIER_CHAR = /[A-Za-z0-9_$]/;

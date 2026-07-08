@@ -75,11 +75,15 @@ Three kinds of comment go in your output:
 - `null` only after the escape-hatch hunt (Evidence rules) concludes the change is accept-only, with a rationale comment saying why.
 - Remember, the grid is a very flexible product, if you think there's no mitigation, it's more likely you just haven't found it. Mostly the only time we really have no mitigation is when we fix bugs and the old behaviour is deemed undesirable for everybody.
 - Mitigations long enough to need newlines or structure move to a sibling file `v{ver}-{slug}.md`, referenced `(await import('./v36-x.md?raw')).default`.
+- **Per-framework advice.** `mitigation` is `string | MitigationAdvice[] | null`. A plain string is shorthand for one entry that applies to every framework. Use the `{ frameworks?, content }[]` array form only when the advice genuinely differs by framework — the docs page's `isFramework(...)` blocks are the signal. Rules:
+    - `frameworks` omitted ⇒ applies to all frameworks (including vanilla `'javascript'`); otherwise list the exact frameworks (`'react' | 'angular' | 'vue' | 'javascript'`).
+    - Entries are **additive**: a reader on framework X sees every entry whose `frameworks` includes X, plus every unscoped entry. Put shared advice in one unscoped entry and framework-specific extras in their own entries — do not repeat the shared text in each.
+    - Frameworks include **vanilla JavaScript**, and a framework app can use the vanilla `createGrid` API / vanilla components. So advice about the class-style (`IFilterComp`-type) contract typically scopes to `['javascript', 'angular', 'vue']`, while React (hook/prop-based) advice scopes to `['react']`; anything common stays unscoped.
+    - `null` = accept-only, no action (unchanged).
 
-### `frameworkMitigation` / `framework`
+### `framework`
 
-- `framework` only when the change exists solely in one framework wrapper; absent means all frameworks.
-- `frameworkMitigation` is additional per-framework advice on top of `mitigation`, not a replacement for it.
+- `framework` only when the change exists solely in one framework wrapper; absent means all frameworks. (For advice that merely _differs_ by framework, keep the record cross-framework and use the `mitigation` array form above.)
 
 ### `dependency` / `minVersion` / `reason` (dependency changes)
 

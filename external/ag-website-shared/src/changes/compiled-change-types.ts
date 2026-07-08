@@ -19,6 +19,17 @@ export interface SerialisedRegExp {
     flags: string;
 }
 
+/** A piece of mitigation advice scoped to an explicit, always-populated framework list. */
+export interface CompiledMitigation {
+    /**
+     * Frameworks this advice applies to. Always explicit and populated: an authored entry
+     * that omitted `frameworks` ("all") is expanded to the full framework list here.
+     */
+    frameworks: Framework[];
+    /** Markdown advice. */
+    content: string;
+}
+
 interface CompiledChangeBase {
     framework?: Framework;
     /**
@@ -29,8 +40,11 @@ interface CompiledChangeBase {
      * Absent = no code marker can rule applications out.
      */
     detectPatterns?: SerialisedRegExp[];
-    mitigation?: string;
-    frameworkMitigation?: Partial<Record<Framework, string>>;
+    /**
+     * Mitigation advice, always in array form (a plain authored string becomes one
+     * all-framework entry). Empty = accept-only, no action. Entries combine additively.
+     */
+    mitigation: CompiledMitigation[];
 }
 
 /**

@@ -5,13 +5,31 @@
  */
 
 /**
+ * The full set of framework contexts, as a runtime value so the compiler can expand
+ * "applies to all frameworks" to an explicit list. Single source of truth for `Framework`.
+ */
+export const FRAMEWORKS = ['react', 'angular', 'vue', 'javascript'] as const;
+
+/**
  * A docs rendering context, not an app's dependency stack. Includes `'javascript'`
  * (vanilla): the grid's core API is framework-agnostic, so a React, Angular or Vue app can
  * still call the vanilla `createGrid` API and use vanilla grid components — vanilla advice
  * is therefore relevant beyond no-framework apps. A `framework` value marks which framework
  * variant of a docs page an entry applies to.
  */
-export type Framework = 'react' | 'angular' | 'vue' | 'javascript';
+export type Framework = (typeof FRAMEWORKS)[number];
+
+/**
+ * A piece of mitigation advice, optionally scoped to specific frameworks. Multiple entries
+ * combine additively: a consumer shows every entry whose `frameworks` includes the app's
+ * framework (plus every unscoped entry).
+ */
+export interface MitigationAdvice {
+    /** Frameworks this advice applies to. Omit for all frameworks. */
+    frameworks?: Framework[];
+    /** Markdown advice. */
+    content: string;
+}
 
 export interface ChangeBase {
     /**
@@ -47,13 +65,14 @@ export interface ChangeBase {
      * Longer content can live in a .md file imported at the use point:
      *
      *     mitigation: (await import('./v36-dom-structure-migration.md?raw')).default,
+     *
+     * A plain string is shorthand for one all-framework entry. Use the `MitigationAdvice[]`
+     * form to give different advice per framework: entries combine additively (a consumer
+     * shows every entry whose `frameworks` includes the app's framework, plus every unscoped
+     * entry), so shared advice goes in one unscoped entry and per-framework extras alongside.
+     * `null` = accept-only, no action to take.
      */
-    mitigation: string | null;
-
-    /**
-     * Markdown. Framework-specific advice, shown in addition to `mitigation`
-     */
-    frameworkMitigation?: Partial<Record<Framework, string>>;
+    mitigation: string | MitigationAdvice[] | null;
 }
 
 export interface TransitionFacts extends ChangeBase {
