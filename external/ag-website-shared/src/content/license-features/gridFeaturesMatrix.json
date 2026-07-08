@@ -60,6 +60,91 @@
     },
     {
         "group": {
+            "name": "Columns"
+        },
+        "items": [
+            {
+                "name": "Basic Column Operations",
+                "isSubGroup": true,
+                "items": [
+                    {
+                        "label": {
+                            "name": "Headers",
+                            "link": "https://www.ag-grid.com/react-data-grid/column-headers/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Groups",
+                            "link": "https://www.ag-grid.com/react-data-grid/column-groups/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Sizing",
+                            "link": "https://www.ag-grid.com/react-data-grid/column-sizing/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Moving",
+                            "link": "https://www.ag-grid.com/react-data-grid/column-moving/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Pinning",
+                            "link": "https://www.ag-grid.com/react-data-grid/column-pinning/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    },
+                    {
+                        "label": {
+                            "name": "Spanning",
+                            "link": "https://www.ag-grid.com/react-data-grid/column-spanning/"
+                        },
+                        "community": true,
+                        "enterprise": true,
+                        "chartsGrid": true
+                    }
+                ]
+            },
+            {
+                "label": {
+                    "name": "Auto-Generate Columns",
+                    "link": "https://www.ag-grid.com/react-data-grid/auto-generate-columns/"
+                },
+                "community": true,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Calculated Columns",
+                    "link": "https://www.ag-grid.com/react-data-grid/calculated-columns/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            }
+        ]
+    },
+    {
+        "group": {
             "name": "Filtering"
         },
         "items": [
@@ -210,6 +295,15 @@
                 "label": {
                     "name": "Find",
                     "link": "https://www.ag-grid.com/react-data-grid/find"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Cell Notes",
+                    "link": "https://www.ag-grid.com/react-data-grid/notes"
                 },
                 "community": false,
                 "enterprise": true,
