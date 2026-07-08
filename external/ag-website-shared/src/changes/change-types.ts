@@ -4,11 +4,18 @@
  * of an AG product.
  */
 
-export type Framework = 'react' | 'angular' | 'vue';
+/**
+ * A docs rendering context, not an app's dependency stack. Includes `'javascript'`
+ * (vanilla): the grid's core API is framework-agnostic, so a React, Angular or Vue app can
+ * still call the vanilla `createGrid` API and use vanilla grid components — vanilla advice
+ * is therefore relevant beyond no-framework apps. A `framework` value marks which framework
+ * variant of a docs page an entry applies to.
+ */
+export type Framework = 'react' | 'angular' | 'vue' | 'javascript';
 
 export interface ChangeBase {
     /**
-     * If absent, applies to all frameworks
+     * If absent, applies to all frameworks (including vanilla `'javascript'`).
      */
     framework?: Framework;
 
@@ -68,9 +75,22 @@ export interface TransitionFacts extends ChangeBase {
      * - `SomeClass.bar`
      * - equivalent objects on Grid API
      * - someApi([a, b, c])
+     *
+     * Null = the old API has no replacement; `mitigation` or `newDescription` explains
+     * why deletion is safe.
      */
-    newApi: string;
+    newApi: string | null;
     newDescription?: string;
+
+    /**
+     * Soft deprecation: the old API is discouraged in favour of `newApi` — the docs
+     * present the new API as the recommended approach — but it is NOT formally deprecated
+     * in code. There is no `@deprecated` marker, no runtime warning, and no scheduled
+     * removal; the old API remains fully supported for the foreseeable future.
+     *
+     * Applies only to `deprecations` records. Omit (or `false`) for a normal deprecation.
+     */
+    isSoft?: boolean;
 }
 
 /**
@@ -90,7 +110,12 @@ export interface SimpleChange extends ChangeBase {
     description?: string;
 }
 
-export type DependencyName = Framework | 'typescript';
+/**
+ * A dependency whose minimum supported version can be raised: the framework wrapper
+ * packages (React, Angular, Vue) plus TypeScript. Excludes `'javascript'` — vanilla usage
+ * has no framework package to version.
+ */
+export type DependencyName = Exclude<Framework, 'javascript'> | 'typescript';
 
 /**
  * A raised minimum version of a dependency. Prose is generated from the fields, and

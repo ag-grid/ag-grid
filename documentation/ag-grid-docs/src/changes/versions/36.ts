@@ -43,14 +43,13 @@ export const v36 = {
     behaviourChanges: [
         {
             title: 'Aggregation functions are displayed in usage-frequency order (Sum, Average, Max, Min, Count, First, Last) instead of alphabetically',
-            // null: applies to value columns, and there are too many ways of creating these to comfortably list them
-            detectWords: null,
+            detectWords: ['aggFunc', 'enableValue', 'setValueColumns', 'addValueColumns'],
             mitigation: 'The order of functions can be controlled via colDef.allowedAggFuncs',
         },
         {
             title: "When `cellDataType` is `'date'`, the Filter Model returns date-only values",
-            // null: date type can be inferred from data, no good way of detecting date columns
-            detectWords: null,
+            // Only applies in apps that access the filter model, this covers all ways of accessing it
+            detectWords: ['getFilterModel', 'setFilterModel', 'filterModel'],
             mitigation:
                 'Set filterParams: { includeTime: true } on affected date columns to restore the previous format.',
         },
@@ -79,10 +78,10 @@ export const v36 = {
         {
             title: 'The Client-Side Row Model is part of the grid core',
             description:
-                'A grid renders the client-side model without registering `ClientSideRowModelModule` explicitly, so registering no modules no longer reports an error.',
+                'It is no longer necessary to import and register ClientSideRowModelModule because it is included in the core bundle.',
             detectWords: ['ClientSideRowModelModule'],
             mitigation:
-                'Remove `ClientSideRowModelModule` from `ModuleRegistry.registerModules(...)` invocations. This does not affect `ClientSideRowModelApiModule`, which is a separate module and still required for its API functions.',
+                'If `ClientSideRowModelModule` exists in a `ModuleRegistry.registerModules(...)` invocation, remove it and the corresponding import of it. If this would leave an empty array argument, remove the whole `ModuleRegistry.registerModules` call. This does not affect `ClientSideRowModelApiModule`, which is a separate module and still required for its API functions.',
         },
         {
             title: 'The default for the `suppressContentVisibilityAuto` grid option changed from `false` to `true`',
@@ -111,44 +110,28 @@ export const v36 = {
     ],
     styleChanges: [
         {
-            // FIXME: upgrading-to-ag-grid-36 page claims the overlay "moved to be a
-            // sibling of the viewport", unsupported by source — class and position
-            // unchanged in 19f51ff664e
             title: 'The grid renders in a single scrollable container, and layout container class names have changed',
             description:
                 'The grid uses a single container to permit both vertical and horizontal scrolling natively in the browser. Previously the header, body and pinned columns were placed in separate containers. The 9+ previous containers have been replaced with a single container, and the class names relating to high-level layout and scrolling containers have changed. Applications that only style visible grid components (cells, buttons, filters) are unaffected; applications that style containers, target them in CSS selectors or JS APIs like `document.querySelector`, or make assumptions about the DOM structure of pinned containers are likely to need an update. Pre-recorded tests may fail depending on how they are written.',
+            // To keep the list of words down in size, we're searching for common
+            // prefixes of container classes, many of these have multiple suffixes
             detectWords: [
                 'ag-body',
-                'ag-body-viewport',
-                'ag-center-cols-container',
-                'ag-center-cols-viewport',
+                'ag-center-cols',
                 'ag-viewport',
-                'ag-horizontal-left-spacer',
-                'ag-horizontal-right-spacer',
-                'ag-scroller-corner',
-                'ag-pinned-left-cols-container',
-                'ag-pinned-right-cols-container',
-                'ag-pinned-left-header',
-                'ag-pinned-right-header',
-                'ag-pinned-left-sticky-top',
-                'ag-pinned-right-sticky-top',
-                'ag-pinned-left-sticky-bottom',
-                'ag-pinned-right-sticky-bottom',
+                'ag-horizontal-left',
+                'ag-horizontal-right',
+                'ag-scroller',
+                'ag-pinned-left',
+                'ag-pinned-right',
                 'ag-header-container',
                 'ag-header-viewport',
                 'ag-header-root',
                 'ag-floating-top',
                 'ag-floating-bottom',
-                'ag-pinned-left-floating-top',
-                'ag-pinned-right-floating-top',
-                'ag-pinned-left-floating-bottom',
-                'ag-pinned-right-floating-bottom',
                 'ag-sticky-top',
                 'ag-sticky-bottom',
                 'ag-full-width-container',
-                'ag-center-cols-spanned-cells-container',
-                'ag-floating-top-spanned-cells-container',
-                'ag-floating-bottom-spanned-cells-container',
             ],
             mitigation: (await import('./v36-dom-structure-migration.md?raw')).default,
         },
@@ -171,14 +154,11 @@ export const v36 = {
         },
         {
             title: "The `fontWeight` theme parameter defaults to `400` instead of inheriting the page's font weight",
-            // potentially affects any app
             detectWords: null,
             mitigation:
                 "If the grid's font weight has changed, to restore the correct font weight explicitly set the desired font weight using the `fontWeight` theme parameter (recommended) or to restore inheriting the page's font weight, set `fontWeight: 'inherit'`.",
         },
         {
-            // FIXME: row-pagination/index.mdoc still claims the panel height defaults to
-            // the row height — stale after this change
             title: 'The pagination panel default height is based on the height of picker fields, not the row height',
             description: 'This ensures correct padding regardless of the size of your picker fields.',
             detectWords: ['pagination'],

@@ -45,7 +45,7 @@ Three kinds of comment go in your output:
 
 ### `title` / `description` (simple changes)
 
-- `title` is a full clause stating what changed, standing alone as a summary. Facts verified, not copied.
+- `title` is a full clause stating what changed, standing alone as a summary. Balance accuracy with not needlessly changing the wording of the original document. If changes are required, make them. If the original title is accurate and does not mess important details, keep it. If the title is slightly wrong, make a small adjustment. If the title is completely wrong, it is acceptable to wholesale rewrite it, but leave a comment explaining why.
 - `description` describes the change only — actions go in `mitigation`.
 
 ### `detectWords`
@@ -65,6 +65,8 @@ Three kinds of comment go in your output:
     // They also match standalone AG Charts apps — an acceptable false positive.
     detectWords: ['IntegratedChartsModule', /* ... */ 'ag-charts-enterprise', 'ag-charts-community'],
     ```
+- **Old-version compatibility** - A big potential risk of false negatives is detecting a word that only applies to the current version. If `IntegratedChartsModule` is added in v33, searching for it won't flag use of integrated charts from v32. Check git history. If older APIs exist, include them with a comment explaining why. If you are uncertain about old version compatibility, leave a comment detailing the uncertainty.
+- **Widen before using null** - if there is genuinely no way to detect if a feature is in use, null is acceptable, but bear in mind that this means "match every app" with even more false positives than a poor search word. Only use null when there is literally no search term that will safely reduce the number of apps matched. For example you can't check if the date filter is in use because filter type auto-selects based on inferred data type, but you can search for 'filter' which will match ANY app using column filters, but still better than nothing.
 
 ### `mitigation`
 
@@ -84,12 +86,16 @@ Three kinds of comment go in your output:
 - Only raised minimum versions of the supported dependencies. A newly required dependency or a dropped environment is a `newRequirements` record instead.
 - `reason: null` needs a rationale comment like any other null.
 
-## Deprecation → removal joins
+## Deprecations → removal joins
 
 - When a removal names a previously deprecated API, locate the deprecation on an earlier upgrade page / version file and reference the deprecation object by identity: `removalsAfterDeprecation: [v31.deprecations.columnApi]` (tell the version agent which import to add). Deprecation-to-removal gaps of several majors are normal.
 - If the deprecation predates the backfill range (earliest page is v26 — e.g. Set Filter params deprecated in v22, removed in v27), record it as `removalsWithoutDeprecation` with a comment naming the real deprecation version.
 - Expect **chained deprecations**: the recommended replacement itself changed between deprecation and removal. Always write the final, current advice (see `mitigation`).
 - Expect **de-deprecations**: an API deprecated and later reinstated (e.g. `dndSource`, deprecated v31.2, reinstated v32). No record survives — delete/omit the deprecation and flag with `// REVIEW:` so the reviewer knows why the page's entry has no record.
+
+## Soft deprecations
+
+Occasionally we introduce a new API but do not officially deprecate the old one. This will be mentioned in the upgrade docs page as a new feature, not a deprecation. The telltales are: 1) a new API is introduced that does the same thing as an old api, and 2) the docs pages clearly prefer the new API, either not mentioning it or recommending against it. In these cases, put the change in `deprecations` and set `isSoft: true`
 
 ## Source-page defect classes
 
@@ -108,7 +114,7 @@ Known classes of error in the upgrade pages — check for each, resolve against 
 
 ## Prose
 
-- No temporal deixis ("now", "new", "will", "as of this release"); anchor facts to explicit versions ("From v31, ...").
+- Titles should state behaviour or change without using time language, e.g. "`fooBar` grid option removed" not "The `foobar` grid option is no longer present" or "From v30, `foobar` is not available"
 - No status language in transition facts or mitigation ("is deprecated", "has been removed") — the renderer generates it from record position.
 - Do not break strong literals up; have one long literal. Avoid newlines in strings. Long paragraphs are fine.
 - UK/British English in prose; US English for API names.

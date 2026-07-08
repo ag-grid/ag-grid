@@ -47,8 +47,15 @@ export interface CompiledTransition extends CompiledChangeBase {
     id?: string;
     oldApi: string;
     oldDescription?: string;
-    newApi: string;
+    /** Null = the old API has no replacement. */
+    newApi: string | null;
     newDescription?: string;
+    /**
+     * True for a soft deprecation: the old API is discouraged in favour of `newApi` but is
+     * not formally deprecated in code and has no scheduled removal. Always `false` for
+     * removals and normal deprecations.
+     */
+    isSoft: boolean;
     /** The version that deprecated the old API. Absent for removals without deprecation. */
     deprecatedFrom?: string;
     /** The version that removed the old API. Absent while removal is unscheduled. */

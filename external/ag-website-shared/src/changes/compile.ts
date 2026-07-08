@@ -47,6 +47,7 @@ export function compileChangelogs(changelogs: Changelogs): CompiledChangelog {
                 oldDescription: deprecation.oldDescription,
                 newApi: deprecation.newApi,
                 newDescription: deprecation.newDescription,
+                isSoft: deprecation.isSoft ?? false,
                 deprecatedFrom: normalisedVersion,
                 removedFrom: removalVersions.get(deprecation),
                 ...compileBase(deprecation),
@@ -61,6 +62,7 @@ export function compileChangelogs(changelogs: Changelogs): CompiledChangelog {
                 oldDescription: removal.oldDescription,
                 newApi: removal.newApi,
                 newDescription: removal.newDescription,
+                isSoft: false,
                 removedFrom: normalisedVersion,
                 ...compileBase(removal),
             };
