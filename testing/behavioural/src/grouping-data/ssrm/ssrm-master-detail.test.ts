@@ -1,4 +1,10 @@
-import type { GetDetailRowDataParams, GetRowIdParams, GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
+import type {
+    GetDetailRowDataParams,
+    GetRowIdParams,
+    GridOptions,
+    IRowNode,
+    IServerSideGetRowsParams,
+} from 'ag-grid-community';
 import { DETAIL_ROW_ID_PREFIX } from 'ag-grid-community';
 import { MasterDetailModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
@@ -123,10 +129,10 @@ describe('ag-grid SSRM flat master-detail load & refresh (characterization)', ()
         expect(detailNode?.data?.id).toBe('A');
 
         // Detail grid received the master's records (A0, A1) via successCallback.
-        const detailApi = detailNode!.detailGridInfo!.api!;
+        const detailApi = api.getDetailGridInfo(DETAIL_ROW_ID_PREFIX + 'A')!.api!;
         expect(detailApi.getDisplayedRowCount()).toBe(2);
         const detailIds: string[] = [];
-        detailApi.forEachNode((n) => detailIds.push(n.id!));
+        detailApi.forEachNode((n: IRowNode) => detailIds.push(n.id!));
         expect(detailIds.sort()).toEqual(['A0', 'A1']);
     });
 
