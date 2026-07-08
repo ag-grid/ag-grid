@@ -1,16 +1,19 @@
 // React cell-rendering benchmark — the React twin of cell-render.bench.ts. React re-implements the
 // cell view layer (packages/ag-grid-react/src/reactUi), so it runs an entirely different render path
-// (React reconciliation + commit) that the vanilla suite never touches. Each measured iteration fills
-// an empty grid, constructing every visible cell; the previous fill is torn down in an untimed
-// `beforeEach` so the timed window is a clean first render.
+// (React reconciliation + commit) that the vanilla suite never touches. Each measured iteration
+// replaces the grid's row data, constructing every visible cell; `setup` empties the grid once per
+// cycle, so the first measured iteration is an empty→full first render and every subsequent one
+// replaces the previous full row set (no getRowId → every row/cell is torn down and rebuilt).
 //
 // React defers its cell commits: after setGridOption + flushAllAnimationFrames the grid has fired its
 // events but React has NOT yet committed (0 cells in the DOM). Wrapping the fill in ReactDOM.flushSync
-// forces the pending commit synchronously, landing the whole render inside the measured window. The
-// teardown flush in beforeEach must do the same so each timed fill is a true first render from empty.
+// forces the pending commit synchronously, landing the whole render inside the measured window.
 //
+// NB: vitest runs a single measured loop per bench and exposes no untimed per-iteration hook, so the
+// teardown of the previous fill is part of the replace samples by design — it cannot be excluded.
 // NB: numbers here are NOT directly comparable to the vanilla suite (React adds a reconciliation +
 // commit layer); keep the two reports separate.
+import React from 'react';
 import { flushSync } from 'react-dom';
 import type { Root } from 'react-dom/client';
 import { createRoot } from 'react-dom/client';
@@ -131,14 +134,6 @@ const defineReactFillSuite = (suiteName: string, cellRenderer?: unknown): void =
                         await grid.reset();
                         await grid.mount(columnDefs);
                     },
-                    // Untimed: tear down the previous fill's cells so every measured fill is a true
-                    // first render from an empty grid. flushSync so the teardown actually commits.
-                    beforeEach: () => {
-                        flushSync(() => {
-                            grid.api.setGridOption('rowData', []);
-                            grid.api.flushAllAnimationFrames();
-                        });
-                    },
                 }
             );
         };
@@ -148,8 +143,8 @@ const defineReactFillSuite = (suiteName: string, cellRenderer?: unknown): void =
     });
 };
 
-defineReactFillSuite('react cell render — fill only (empty → full, clear untimed)');
+defineReactFillSuite('react cell render — replace all cells (full grid re-render)');
 defineReactFillSuite(
-    'react cell render — fill only, custom cellRenderer (empty → full, clear untimed)',
+    'react cell render — replace all cells, custom cellRenderer (full grid re-render)',
     BenchReactRenderer
 );

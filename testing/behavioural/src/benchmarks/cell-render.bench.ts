@@ -1,8 +1,13 @@
-// Cell-rendering benchmark: fill a wide viewport with freshly-constructed cells from an empty grid.
-// Each measured iteration constructs every visible cell, driving the CellComp first-render path
-// (wrapper + renderer + feature wiring) — the per-cell construction cost that data-pipeline benches
-// only touch as a side effect. The teardown of the previous fill happens in `beforeEach`, which
-// tinybench runs OUTSIDE the timed region, so the clear cost never enters the measurement.
+// Cell-rendering benchmark: measure constructing every visible cell across a wide viewport.
+// Each measured iteration replaces the grid's row data, driving the CellComp render path (wrapper +
+// renderer + feature wiring) for every visible cell — the per-cell construction cost that data-pipeline
+// benches only touch as a side effect. `setup` empties the grid once per cycle, so the first measured
+// iteration is an empty→full first render and every subsequent one replaces the previous full row set;
+// with no getRowId, a replace tears down every old row/cell and rebuilds it, so each timed window is a
+// full construction of all visible cells.
+//
+// NB: vitest runs a single measured loop per bench and exposes no untimed per-iteration hook, so the
+// teardown of the previous fill is part of the replace samples by design — it cannot be excluded.
 //
 // AllEnterpriseModule is registered so the per-cell cost reflects every feature being loaded — the
 // worst case, and the one that matters for keeping rendering efficient regardless of module set.
@@ -64,8 +69,8 @@ const buildWideData = (rowCount: number, colCount: number): WideRow[] => {
 const ROW_COUNT = 500;
 
 // Two suites, identical except for the cell content: the default text-only path, and a custom
-// cellRenderer on every column (createCellRendererInstance + user-component teardown). Comparing
-// them isolates the per-cell cost the user component adds on top of the base render.
+// cellRenderer on every column (createCellRendererInstance + user-component teardown/rebuild).
+// Comparing them isolates the per-cell cost the user component adds on top of the base render.
 const defineFillSuite = (suiteName: string, cellRenderer?: unknown): void => {
     suite(suiteName, () => {
         const gridsManager = new BenchGridsManager({ modules });
@@ -96,12 +101,6 @@ const defineFillSuite = (suiteName: string, cellRenderer?: unknown): void => {
                         await gridsManager.reset();
                         api = gridsManager.createGrid(id, { ...options, rowData: [] });
                     },
-                    // Untimed: tear down the previous fill's cells so every measured fill is a true
-                    // first render from an empty grid.
-                    beforeEach: () => {
-                        api.setGridOption('rowData', []);
-                        api.flushAllAnimationFrames();
-                    },
                 }
             );
         };
@@ -111,5 +110,5 @@ const defineFillSuite = (suiteName: string, cellRenderer?: unknown): void => {
     });
 };
 
-defineFillSuite('cell render — fill only (empty → full, clear untimed)');
-defineFillSuite('cell render — fill only, custom cellRenderer (empty → full, clear untimed)', BenchCellRenderer);
+defineFillSuite('cell render — replace all cells (full grid re-render)');
+defineFillSuite('cell render — replace all cells, custom cellRenderer (full grid re-render)', BenchCellRenderer);
