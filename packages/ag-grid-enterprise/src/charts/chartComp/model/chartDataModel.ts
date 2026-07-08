@@ -344,10 +344,8 @@ export class ChartDataModel extends BeanStub {
 
     private getAllColumnsFromRanges(): Set<AgColumn> {
         if (this.pivotChart) {
-            if (this.gos.get('includeHiddenColumnsInCharts')) {
-                const { dimensionCols, valueCols } = this.chartColSvc.getChartColumns();
-                return new Set([...dimensionCols, ...valueCols]);
-            }
+            // Pivot charts have no manual column selection UI - their columns always mirror the grid's
+            // currently displayed columns 1:1, so `includeHiddenColumnsInCharts` does not apply here.
             return new Set(this.chartColSvc.getAllDisplayedColumns());
         }
 
@@ -415,8 +413,9 @@ export class ChartDataModel extends BeanStub {
 
         // A hidden column's grid range shrinks to exclude it, dropping it from `allCols`. With
         // `includeHiddenColumnsInCharts` on, a selected column must stay selected once hidden despite that -
-        // unless a fresh range was just supplied, in which case that range alone is authoritative.
-        const includeHiddenCols = this.gos.get('includeHiddenColumnsInCharts');
+        // unless a fresh range was just supplied, in which case that range alone is authoritative. Pivot charts
+        // have no manual column selection, so the option doesn't apply to them (see getAllColumnsFromRanges).
+        const includeHiddenCols = !this.pivotChart && this.gos.get('includeHiddenColumnsInCharts');
         const previouslySelectedDimensions = isExplicitRangeChange
             ? new Set<string>()
             : this.getSelectedColIds(this.dimensionColState);

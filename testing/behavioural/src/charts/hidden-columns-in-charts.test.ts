@@ -207,32 +207,23 @@ describe('includeHiddenColumnsInCharts', () => {
             ],
         };
 
-        test('option true (default): a pivot result column hidden before chart creation is charted', async () => {
-            const api = await gridsManager.createGridAndWait('grid1', pivotGridOptions);
+        // Pivot charts have no manual column selection UI - their columns always mirror the grid's
+        // currently displayed columns 1:1, so includeHiddenColumnsInCharts does not apply to them.
+        test.each([{ includeHiddenColumnsInCharts: undefined }, { includeHiddenColumnsInCharts: true }])(
+            'option $includeHiddenColumnsInCharts is ignored: a hidden pivot result column is excluded',
+            async ({ includeHiddenColumnsInCharts }) => {
+                const api = await gridsManager.createGridAndWait('grid1', {
+                    ...pivotGridOptions,
+                    includeHiddenColumnsInCharts,
+                });
 
-            api.setColumnsVisible(['pivot_country_USA_gold'], false);
-            api.createPivotChart({ chartType: 'groupedColumn' });
+                api.setColumnsVisible(['pivot_country_USA_gold'], false);
+                api.createPivotChart({ chartType: 'groupedColumn' });
 
-            const [chartModel] = api.getChartModels()!;
-            expect(chartModel.cellRange.columns).toEqual([
-                'ag-Grid-AutoColumn',
-                'pivot_country_Russia_gold',
-                'pivot_country_USA_gold',
-            ]);
-        });
-
-        test('option false: a pivot result column hidden before chart creation is excluded', async () => {
-            const api = await gridsManager.createGridAndWait('grid1', {
-                ...pivotGridOptions,
-                includeHiddenColumnsInCharts: false,
-            });
-
-            api.setColumnsVisible(['pivot_country_USA_gold'], false);
-            api.createPivotChart({ chartType: 'groupedColumn' });
-
-            const [chartModel] = api.getChartModels()!;
-            expect(chartModel.cellRange.columns).toEqual(['ag-Grid-AutoColumn', 'pivot_country_Russia_gold']);
-        });
+                const [chartModel] = api.getChartModels()!;
+                expect(chartModel.cellRange.columns).toEqual(['ag-Grid-AutoColumn', 'pivot_country_Russia_gold']);
+            }
+        );
     });
 
     describe('cross-filter charts', () => {

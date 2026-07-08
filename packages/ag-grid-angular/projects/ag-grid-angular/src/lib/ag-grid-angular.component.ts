@@ -890,6 +890,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public enableCharts: boolean | undefined = undefined;
     /** Hidden columns are included in charts by default, and remain in a chart if hidden after being added.
      * Set to `false` to exclude hidden columns from charts, and to remove a column from a chart when it is hidden.
+     * Does not apply to Pivot Charts, whose columns always mirror the grid's displayed columns.
      * @default true
      * @agModule `IntegratedChartsModule`
      */
