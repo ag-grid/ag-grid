@@ -737,7 +737,7 @@ export class AgColumn<TValue = any>
     }
 
     /** Returns true if the header height has changed */
-    public setAutoHeaderHeight(height: number): boolean {
+    public setAutoHeaderHeight(height: number | null): boolean {
         if (this.autoHeaderHeight !== height) {
             this.autoHeaderHeight = height;
             return true;
