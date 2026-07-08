@@ -253,7 +253,10 @@ jobs:
         run: |
           ./scripts/assertNoDebugger.sh
       - name: Persist test results
-        if: always() && matrix.shard != 0
+        # All shards upload: shard 0 now runs the package unit tests (community/enterprise
+        # etc.) that emit JUnit XML, while shards 1-3 run the behavioural suite. The artifact
+        # name is keyed by shard, so there is no collision.
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results-${{matrix.shard}}
