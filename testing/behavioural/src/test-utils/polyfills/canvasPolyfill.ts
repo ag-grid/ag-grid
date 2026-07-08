@@ -1,8 +1,16 @@
 import { ConfiguredCanvasMixin, applySkiaPatches } from 'ag-charts-core';
-import { Canvas, CanvasRenderingContext2D, DOMMatrix, Image, Path2D } from 'skia-canvas';
+import * as SkiaCanvas from 'skia-canvas';
+import { Canvas, DOMMatrix, Image, Path2D } from 'skia-canvas';
 
 const NodeCanvas = ConfiguredCanvasMixin(Canvas);
 type NodeCanvasInstance = InstanceType<typeof NodeCanvas>;
+
+// Destructured off the namespace import (rather than a named import, which collides with the DOM lib
+// global of the same name under `isolatedModules`) - skia-canvas exports this as a class but its types
+// don't reflect that on the namespace, hence the cast.
+const { CanvasRenderingContext2D } = SkiaCanvas as typeof SkiaCanvas & {
+    CanvasRenderingContext2D: { prototype: CanvasRenderingContext2D };
+};
 
 applySkiaPatches(CanvasRenderingContext2D, DOMMatrix);
 
