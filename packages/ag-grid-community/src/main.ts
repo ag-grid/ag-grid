@@ -1,3 +1,4 @@
+// Public API surface for ag-grid-community.
 // Columns
 export type { ApplyColumnStateParams, ColumnState, ColumnStateParams } from './columns/columnStateUtils';
 export {
