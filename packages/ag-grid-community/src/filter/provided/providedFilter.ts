@@ -182,7 +182,7 @@ export abstract class ProvidedFilter<
     protected defaultDebounceMs: number = 0;
 
     private setupApplyDebounced(): void {
-        const debounceMs = getDebounceMs(this.params, this.defaultDebounceMs);
+        const debounceMs = getDebounceMs(this.beans.log, this.params, this.defaultDebounceMs);
         const debounceFunc = _debounce(this, this.checkApplyDebounce.bind(this), debounceMs);
         this.applyDebounced = () => {
             this.debouncePending = true;

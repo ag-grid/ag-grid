@@ -1,4 +1,4 @@
-import { _warn } from '../../validation/logging';
+import type { LogService } from '../../validation/logService';
 import type { IFilterOptionDef, ISimpleFilterParams } from './iSimpleFilter';
 
 /* Common logic for options, used by both filters and floating filters. */
@@ -7,23 +7,23 @@ export class OptionsFactory {
     public filterOptions: (IFilterOptionDef | string)[];
     public defaultOption?: string;
 
-    public init(params: ISimpleFilterParams, defaultOptions: string[]): void {
+    public init(log: LogService, params: ISimpleFilterParams, defaultOptions: string[]): void {
         this.filterOptions = params.filterOptions ?? defaultOptions;
-        this.mapCustomOptions();
-        this.defaultOption = this.getDefaultItem(params.defaultOption);
+        this.mapCustomOptions(log);
+        this.defaultOption = this.getDefaultItem(log, params.defaultOption);
     }
 
-    public refresh(params: ISimpleFilterParams, defaultOptions: string[]): void {
+    public refresh(log: LogService, params: ISimpleFilterParams, defaultOptions: string[]): void {
         const filterOptions = params.filterOptions ?? defaultOptions;
         if (this.filterOptions !== filterOptions) {
             this.filterOptions = filterOptions;
             this.customFilterOptions = {};
-            this.mapCustomOptions();
+            this.mapCustomOptions(log);
         }
-        this.defaultOption = this.getDefaultItem(params.defaultOption);
+        this.defaultOption = this.getDefaultItem(log, params.defaultOption);
     }
 
-    private mapCustomOptions(): void {
+    private mapCustomOptions(log: LogService): void {
         const { filterOptions } = this;
         if (!filterOptions) {
             return;
@@ -37,7 +37,7 @@ export class OptionsFactory {
             const requiredProperties = [['displayKey'], ['displayName'], ['predicate', 'test']];
             const propertyCheck = (keys: [keyof IFilterOptionDef]) => {
                 if (!keys.some((key) => filterOption[key] != null)) {
-                    _warn(72, { keys });
+                    log.warn(72, { keys });
                     return false;
                 }
 
@@ -53,7 +53,7 @@ export class OptionsFactory {
         }
     }
 
-    private getDefaultItem(defaultOption?: string): string | undefined {
+    private getDefaultItem(log: LogService, defaultOption?: string): string | undefined {
         const { filterOptions } = this;
         if (defaultOption) {
             return defaultOption;
@@ -66,11 +66,11 @@ export class OptionsFactory {
                 return firstFilterOption.displayKey;
             } else {
                 // invalid FilterOptionDef supplied as it doesn't contain a 'displayKey
-                _warn(73);
+                log.warn(73);
             }
         } else {
             //no filter options for filter
-            _warn(74);
+            log.warn(74);
         }
         return undefined;
     }

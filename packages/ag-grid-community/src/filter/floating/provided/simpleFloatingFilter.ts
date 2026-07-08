@@ -96,7 +96,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     protected setParams(params: TParams): void {
         const optionsFactory = new OptionsFactory();
         this.optionsFactory = optionsFactory;
-        optionsFactory.init(params.filterParams as ISimpleFilterParams, this.defaultOptions);
+        optionsFactory.init(this.beans.log, params.filterParams as ISimpleFilterParams, this.defaultOptions);
 
         this.filterModelFormatter = this.createManagedBean(
             new this.FilterModelFormatterClass(optionsFactory, params.filterParams as ISimpleFilterParams)
@@ -143,7 +143,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
     protected updateParams(params: TParams): void {
         const optionsFactory = this.optionsFactory;
-        optionsFactory.refresh(params.filterParams as ISimpleFilterParams, this.defaultOptions);
+        optionsFactory.refresh(this.beans.log, params.filterParams as ISimpleFilterParams, this.defaultOptions);
 
         this.setSimpleParams(params);
 

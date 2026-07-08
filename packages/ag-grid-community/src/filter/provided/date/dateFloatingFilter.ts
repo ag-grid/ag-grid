@@ -112,7 +112,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
 
     private getDateComponentParams(): IDateParams {
         const { filterParams } = this.params;
-        const debounceMs = getDebounceMs(filterParams as DateFilterParams, this.defaultDebounceMs);
+        const debounceMs = getDebounceMs(this.beans.log, filterParams as DateFilterParams, this.defaultDebounceMs);
         return _addGridCommonParams(this.gos, {
             onDateChanged: _debounce(this, this.onDateChanged.bind(this), debounceMs),
             filterParams,

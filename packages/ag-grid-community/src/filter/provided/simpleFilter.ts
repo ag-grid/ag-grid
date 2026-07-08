@@ -113,7 +113,7 @@ export abstract class SimpleFilter<
 
         const optionsFactory = new OptionsFactory();
         this.optionsFactory = optionsFactory;
-        optionsFactory.init(params, this.defaultOptions);
+        optionsFactory.init(this.beans.log, params, this.defaultOptions);
 
         this.commonUpdateSimpleParams(params);
 
@@ -122,7 +122,7 @@ export abstract class SimpleFilter<
     }
 
     protected override updateParams(newParams: P, oldParams: P): void {
-        this.optionsFactory.refresh(newParams, this.defaultOptions);
+        this.optionsFactory.refresh(this.beans.log, newParams, this.defaultOptions);
 
         super.updateParams(newParams, oldParams);
 
@@ -244,7 +244,7 @@ export abstract class SimpleFilter<
                 this.beans.log.warn(77);
             }
 
-            const numConditions = validateAndUpdateConditions<M>(conditions, this.maxNumConditions);
+            const numConditions = validateAndUpdateConditions<M>(this.beans.log, conditions, this.maxNumConditions);
             const numPrevConditions = this.getNumConditions();
             if (numConditions < numPrevConditions) {
                 this.removeConditionsAndOperators(numConditions);

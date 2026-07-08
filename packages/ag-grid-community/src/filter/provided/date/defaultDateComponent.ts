@@ -4,7 +4,7 @@ import { AgInputTextFieldSelector } from '../../../agWidgets/agInputTextField';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { ElementParams } from '../../../utils/element';
-import { _warn } from '../../../validation/logging';
+import type { LogService } from '../../../validation/logService';
 import { Component } from '../../../widgets/component';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 
@@ -109,8 +109,8 @@ export class DefaultDateComponent extends Component implements IDateComp {
         } else {
             inputElement.type = 'text';
         }
-        const parsedMinValidDate = parseOrConstructDate(minValidDate, minValidYear, true);
-        const parsedMaxValidDate = parseOrConstructDate(maxValidDate, maxValidYear, false);
+        const parsedMinValidDate = parseOrConstructDate(this.beans.log, minValidDate, minValidYear, true);
+        const parsedMaxValidDate = parseOrConstructDate(this.beans.log, maxValidDate, maxValidYear, false);
 
         if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
             this.beans.log.warn(87);
@@ -163,9 +163,14 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 }
 
-function parseOrConstructDate(date: string | Date | undefined, year: number | undefined, isMin: boolean): null | Date {
+function parseOrConstructDate(
+    log: LogService,
+    date: string | Date | undefined,
+    year: number | undefined,
+    isMin: boolean
+): null | Date {
     if (date && year) {
-        _warn(isMin ? 85 : 86);
+        log.warn(isMin ? 85 : 86);
     }
     if (date instanceof Date) {
         return date;

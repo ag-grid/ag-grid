@@ -87,7 +87,7 @@ export abstract class TextInputFloatingFilter<
         this.applyActive = _isUseApplyButton(filterParams as TextFilterParams);
 
         if (!readOnly) {
-            const debounceMs = getDebounceMs(filterParams as TextFilterParams, defaultDebounceMs);
+            const debounceMs = getDebounceMs(this.beans.log, filterParams as TextFilterParams, defaultDebounceMs);
             const debouncedSync = _debounce(this, this.syncUpWithParentFilter.bind(this), debounceMs);
             inputSvc.setValueChangedListener((e) => {
                 this.pendingEdit = true;

@@ -1,4 +1,4 @@
-import { _warn } from '../../validation/logging';
+import type { LogService } from '../../validation/logService';
 import type { IFilterOptionDef, ISimpleFilterModelType, JoinOperator, Tuple } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
@@ -32,12 +32,12 @@ export function evaluateCustomFilter<V>(
     // No custom filter invocation, indicate that to the caller.
 }
 
-export function validateAndUpdateConditions<M>(conditions: M[], maxNumConditions: number): number {
+export function validateAndUpdateConditions<M>(log: LogService, conditions: M[], maxNumConditions: number): number {
     let numConditions = conditions.length;
     if (numConditions > maxNumConditions) {
         conditions.splice(maxNumConditions);
         // 'Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.'
-        _warn(78);
+        log.warn(78);
         numConditions = maxNumConditions;
     }
     return numConditions;

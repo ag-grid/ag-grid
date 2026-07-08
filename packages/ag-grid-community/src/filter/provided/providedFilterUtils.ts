@@ -1,17 +1,17 @@
 import type { LocaleTextFunc } from 'ag-stack';
 
 import type { FilterWrapperParams } from '../../interfaces/iFilter';
-import { _warn } from '../../validation/logging';
+import type { LogService } from '../../validation/logService';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
 import type { IProvidedFilterParams } from './iProvidedFilter';
 import type { FilterPlaceholderFunction, ISimpleFilterModelType } from './iSimpleFilter';
 
-export function getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number {
+export function getDebounceMs(log: LogService, params: IProvidedFilterParams, debounceDefault: number): number {
     const { debounceMs } = params;
     if (_isUseApplyButton(params)) {
         if (debounceMs != null) {
-            _warn(71);
+            log.warn(71);
         }
 
         return 0;
