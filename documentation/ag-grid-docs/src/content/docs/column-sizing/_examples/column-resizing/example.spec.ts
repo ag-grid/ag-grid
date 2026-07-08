@@ -120,6 +120,40 @@ test.agExample(import.meta, () => {
         ).toBeGreaterThan(600);
     });
 
+    test.eachFramework(
+        'fitCellContents on an empty grid sizes headers to content',
+        async ({ page, remoteGrid, agIdFor }) => {
+            const remoteApi = remoteGrid(page, '1');
+            await remoteApi.setGridOption('columnDefs', [
+                { field: 'athlete', minWidth: 40 },
+                { field: 'age', headerName: 'Age of Athlete', minWidth: 40 },
+                { field: 'country', minWidth: 40 },
+                { field: 'year', minWidth: 40 },
+                { field: 'date', minWidth: 40 },
+            ]);
+
+            await waitForGridContent(page);
+
+            // the fetch that populates rowData only fires once on load, so clearing it leaves the grid
+            // empty for the rest of the test
+            await remoteApi.setGridOption('rowData', []);
+
+            await remoteApi.autoSizeAllColumns({});
+            await waitForAnimation(page);
+
+            const headers = getHeaders(agIdFor);
+            const widths = await getHeaderWidths(headers);
+
+            // when a column measures its width against the (display:none) row container it collapses to
+            // minWidth; every column would then share the same floor width. Sizing against the header
+            // content instead gives the longer "Age of Athlete" label a wider column than "Year".
+            expect(widths.age).toBeGreaterThan(widths.year);
+            expect(widths.year).toBeGreaterThan(40);
+            expect(widths.country).toBeGreaterThan(40);
+            expect(widths.date).toBeGreaterThan(40);
+        }
+    );
+
     test.describe('Example modifications', () => {
         test.use({ agModules: ['RowSelectionModule'] });
 
