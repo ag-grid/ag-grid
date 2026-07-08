@@ -604,11 +604,15 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
+      # The report job runs no nx command and needs no workspace dependencies:
+      # JUnit merging uses a globally-installed jrm, the Slack scripts import only
+      # node builtins, and everything else is git/gh or self-contained actions. So
+      # skip the full setup-nx (node_modules restore + yarn install) and just provide
+      # a node runtime — this is the main time sink for what is otherwise a fast job.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          cache_mode: ro
+          node-version-file: package.json
 
       - name: Fetch Refs
         run: |
