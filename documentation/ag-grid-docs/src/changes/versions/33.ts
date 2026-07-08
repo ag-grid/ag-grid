@@ -158,7 +158,7 @@ export const v33 = {
                 'ag-grid.css',
                 'ag-grid-community/styles',
             ],
-            mitigation: (await import('./v33-theming-migration.md?raw')).default,
+            mitigation: (await import('./33-theming-migration.md?raw')).default,
         },
         // ## Deprecations
         //
@@ -369,7 +369,7 @@ export const v33 = {
             // FIXME: runtime warning 262 (errorText.ts) and the page (lines 478, 654) name a
             // non-existent `advancedFilterBuilderSelect`; the real key is `advancedFilterBuilderSelectOpen`
             // (icon.ts:95). The linked file uses the correct key.
-            mitigation: (await import('./v33-custom-icon-scoping.md?raw')).default,
+            mitigation: (await import('./33-custom-icon-scoping.md?raw')).default,
         },
     },
     newRequirements: [
@@ -497,7 +497,7 @@ export const v33 = {
                 'ag-charts-community',
                 'ag-grid-charts-enterprise',
             ],
-            mitigation: (await import('./v33-integrated-charts-sparklines.md?raw')).default,
+            mitigation: (await import('./33-integrated-charts-sparklines.md?raw')).default,
         },
     ],
     removalsWithoutDeprecation: [
@@ -706,7 +706,7 @@ export const v33 = {
             // packages (already-migrated apps). @ag-grid-community/locale matches too - an accepted false
             // positive (it is unchanged). Identical across every version that had these specifiers.
             detectWords: ['@ag-grid-community/', '@ag-grid-enterprise/'],
-            mitigation: (await import('./v33-modules-migration.md?raw')).default,
+            mitigation: (await import('./33-modules-migration.md?raw')).default,
         },
         // REVIEW: page lists "GridChartsModule replaced with IntegratedChartsModule" as a module change
         // and the module carries an @deprecated v33 tag, but source
@@ -803,7 +803,7 @@ export const v33 = {
             // module-registration style. sparklineOptions kept as the marker for option-specific apps.
             // REVIEW: agSparklineCellRenderer alone arguably suffices; sparklineOptions kept defensively.
             detectWords: ['agSparklineCellRenderer', 'sparklineOptions'],
-            mitigation: (await import('./v33-sparklines-migration.md?raw')).default,
+            mitigation: (await import('./33-sparklines-migration.md?raw')).default,
         },
         //
         // Floating filters provided via the `colDef.filter` values `text`, `number`, `date`, `set`, `multi`, and `group` no longer work. Use the values `agTextColumnFilter`, `agNumberColumnFilter`, `agDateColumnFilter`, `agSetColumnFilter`, `agMultiColumnFilter`, and `agGroupColumnFilter` instead.
@@ -1594,7 +1594,7 @@ export const v33 = {
             // FIXME: the upgrade page (lines 478, 654) and runtime warning 262 both name a non-existent
             // `advancedFilterBuilderSelect`; the real key is `advancedFilterBuilderSelectOpen` (icon.ts:95).
             // The linked file uses the correct key.
-            mitigation: (await import('./v33-custom-icon-scoping.md?raw')).default,
+            mitigation: (await import('./33-custom-icon-scoping.md?raw')).default,
         },
     ],
 } satisfies VersionChangelog;
