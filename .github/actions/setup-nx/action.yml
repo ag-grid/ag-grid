@@ -114,6 +114,7 @@ runs:
               plugins/*/node_modules/
               community-modules/*/node_modules/
               testing/*/node_modules/
+              testing/public-recipes/*/node_modules/
               documentation/*/node_modules/
               external/*/node_modules/
             key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, env.NODE_MODULES_HASH) || env.NODE_MODULES_HASH }}
@@ -133,6 +134,7 @@ runs:
                   plugins/*/node_modules/
                   community-modules/*/node_modules/
                   testing/*/node_modules/
+                  testing/public-recipes/*/node_modules/
                   documentation/*/node_modules/
                   external/*/node_modules/
               key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, env.NODE_MODULES_HASH) || env.NODE_MODULES_HASH }}
