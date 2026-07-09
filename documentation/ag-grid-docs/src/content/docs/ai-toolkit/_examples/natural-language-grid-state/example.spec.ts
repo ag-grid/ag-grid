@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Grid loads the Olympic winners dataset', async ({ agIdFor, page }) => {
@@ -24,6 +24,7 @@ test.agExample(import.meta, () => {
         await page.waitForTimeout(300); // avoid a double-click
 
         await agIdFor.headerCell('gold').click(); // descending: max gold floats to the top
+        await waitForRowAnimations(page);
         await expect(phelps).toHaveAttribute('row-index', '0');
         await expect(agIdFor.cell('0', 'gold')).toContainText('8');
     });

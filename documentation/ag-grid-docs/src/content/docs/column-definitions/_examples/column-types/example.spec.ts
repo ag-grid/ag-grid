@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Column types apply currency formatting and shaded class', async ({ agIdFor, page }) => {
@@ -21,9 +21,10 @@ test.agExample(import.meta, () => {
 
         const deskRow = agIdFor.rowNode('2'); // Desk has the max soldPrice (400)
         await agIdFor.headerCell('soldPrice').click(); // ascending -> Desk goes to the bottom
+        await waitForRowAnimations(page);
         await expect(deskRow).not.toHaveAttribute('row-index', '0');
-        await page.waitForTimeout(300); // avoid a double-click
         await agIdFor.headerCell('soldPrice').click(); // descending -> Desk floats to the top
+        await waitForRowAnimations(page);
         await expect(deskRow).toHaveAttribute('row-index', '0');
     });
 });

@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework(
@@ -31,10 +31,11 @@ test.agExample(import.meta, () => {
         await expect(oldest).toHaveAttribute('row-index', '6');
 
         await agIdFor.headerCell('age').click(); // ascending: oldest floats to the bottom
+        await waitForRowAnimations(page);
         await expect(oldest).toHaveAttribute('row-index', '8');
 
-        await page.waitForTimeout(300); // avoid a double-click
         await agIdFor.headerCell('age').click(); // descending: oldest floats to the top
+        await waitForRowAnimations(page);
         await expect(oldest).toHaveAttribute('row-index', '0');
     });
 });

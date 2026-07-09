@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('cellRendererSelector picks a renderer per row', async ({ agIdFor, page }) => {
@@ -24,10 +24,11 @@ test.agExample(import.meta, () => {
 
         // Ascending: age < gender < mood, so the mood rows sink to the bottom
         await agIdFor.headerCell('type').click();
+        await waitForRowAnimations(page);
         await expect(happyMood).toHaveAttribute('row-index', '4');
 
-        await page.waitForTimeout(300); // avoid the second click registering as a double-click
         await agIdFor.headerCell('type').click();
+        await waitForRowAnimations(page);
         await expect(happyMood).toHaveAttribute('row-index', '0');
     });
 });

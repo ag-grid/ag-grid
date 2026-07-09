@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Grid renders the car data across the three columns', async ({ agIdFor, page }) => {
@@ -22,11 +22,12 @@ test.agExample(import.meta, () => {
         await expect(astonRow).toHaveAttribute('row-index', '4');
 
         await agIdFor.headerCell('price').click(); // ascending: max floats to the bottom
+        await waitForRowAnimations(page);
         await expect(agIdFor.headerCell('price')).toHaveAttribute('aria-sort', 'ascending');
         await expect(astonRow).toHaveAttribute('row-index', '4');
 
-        await page.waitForTimeout(300); // avoid a double-click
         await agIdFor.headerCell('price').click(); // descending: max floats to the top
+        await waitForRowAnimations(page);
         await expect(agIdFor.headerCell('price')).toHaveAttribute('aria-sort', 'descending');
         await expect(astonRow).toHaveAttribute('row-index', '0');
     });
@@ -39,7 +40,11 @@ test.agExample(import.meta, () => {
         page.on('console', (msg) => messages.push(msg.text()));
 
         await page.getByRole('button', { name: 'Log All Column IDs' }).click();
-        await page.waitForTimeout(200);
+        // A single click logs all IDs synchronously, so once one appears they all have;
+        // retry until the console message arrives over CDP.
+        await expect(() => {
+            expect(messages.join(' ')).toContain('make');
+        }).toPass();
 
         const joined = messages.join(' ');
         expect(joined).toContain('make');

@@ -30,9 +30,10 @@ test.agExample(import.meta, () => {
 
         // First control logs the string "string".
         await page.locator('#controls button').first().click();
-        await page.waitForTimeout(300);
+        // The log arrives over CDP asynchronously; retry until the captured logs contain it.
+        await expect(() => {
+            expect(logs.some((l) => l.includes('string'))).toBe(true);
+        }).toPass();
         page.off('console', handler);
-
-        expect(logs.some((l) => l.includes('string'))).toBe(true);
     });
 });

@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Row groups aggregate the gold total', async ({ agIdFor, page }) => {
@@ -32,9 +32,10 @@ test.agExample(import.meta, () => {
         // United States has the unique maximum gold sum (16).
         const usGroup = agIdFor.rowNode('row-group-country-United States');
         await agIdFor.headerCell('gold').click();
+        await waitForRowAnimations(page);
         await expect(usGroup).not.toHaveAttribute('row-index', '0');
-        await page.waitForTimeout(300);
         await agIdFor.headerCell('gold').click();
+        await waitForRowAnimations(page);
         await expect(usGroup).toHaveAttribute('row-index', '0');
     });
 });

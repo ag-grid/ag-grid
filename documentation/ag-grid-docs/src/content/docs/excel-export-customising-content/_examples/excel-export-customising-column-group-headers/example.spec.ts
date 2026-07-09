@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Grouped columns render athlete data', async ({ agIdFor, page }) => {
@@ -25,9 +25,10 @@ test.agExample(import.meta, () => {
         // Sort ascending by gold, then descending; the first data row (gold 1)
         // should no longer be at the top of the descending order.
         await agIdFor.headerCell('gold').click();
+        await waitForRowAnimations(page);
         await expect(firstRow).toHaveAttribute('row-index', '0');
-        await page.waitForTimeout(300);
         await agIdFor.headerCell('gold').click();
+        await waitForRowAnimations(page);
         await expect(firstRow).not.toHaveAttribute('row-index', '0');
     });
 });

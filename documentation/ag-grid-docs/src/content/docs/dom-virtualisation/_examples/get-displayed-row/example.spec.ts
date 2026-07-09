@@ -19,10 +19,12 @@ test.agExample(import.meta, () => {
 
         await page.getByRole('button', { name: 'Get Displayed Row 0' }).click();
         await page.getByRole('button', { name: 'Get Displayed Row Count' }).click();
-        await page.waitForTimeout(300);
 
+        // Retry until both button clicks have emitted their console logs over CDP.
         // getDisplayedRowAtIndex(0) => first row is Michael Phelps in 2008.
-        expect(messages.some((m) => m.includes('getDisplayedRowAtIndex(0) => Michael Phelps 2008'))).toBe(true);
-        expect(messages.some((m) => m.includes('getDisplayedRowCount() =>'))).toBe(true);
+        await expect(() => {
+            expect(messages.some((m) => m.includes('getDisplayedRowAtIndex(0) => Michael Phelps 2008'))).toBe(true);
+            expect(messages.some((m) => m.includes('getDisplayedRowCount() =>'))).toBe(true);
+        }).toPass();
     });
 });

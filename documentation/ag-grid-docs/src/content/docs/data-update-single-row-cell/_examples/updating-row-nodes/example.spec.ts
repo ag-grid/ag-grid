@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Renders the initial row data', async ({ agIdFor, page }) => {
@@ -26,11 +26,12 @@ test.agExample(import.meta, () => {
         const mazda = agIdFor.rowNode('ff');
 
         await agIdFor.headerCell('price').click(); // ascending
+        await waitForRowAnimations(page);
         await expect(mazda).toHaveAttribute('row-index', '0');
         await expect(horse).not.toHaveAttribute('row-index', '0');
 
-        await page.waitForTimeout(300); // avoid a double-click
         await agIdFor.headerCell('price').click(); // descending
+        await waitForRowAnimations(page);
         await expect(horse).toHaveAttribute('row-index', '0');
     });
 });

@@ -11,10 +11,8 @@ test.agExample(import.meta, () => {
         // Quick Filter input is owned by the toolbar item, not external markup.
         const input = page.locator('.ag-toolbar-input input').first();
         await input.fill('Michael Phelps');
-        // The toolbar item debounces input by 300ms before applying the filter.
-        await page.waitForTimeout(400);
-        await waitForGridContent(page);
-
+        // The toolbar item debounces input by 300ms before applying the filter; the
+        // retrying toHaveCount polls until the debounced filter has narrowed to 3 rows.
         await expect(rows).toHaveCount(3);
         const athleteCells = page.locator('.ag-row[row-id] [col-id="athlete"]');
         const count = await athleteCells.count();

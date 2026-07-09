@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Each built-in aggFunc computes the group value', async ({ agIdFor, page }) => {
@@ -25,9 +25,10 @@ test.agExample(import.meta, () => {
 
         const usGroup = agIdFor.rowNode('row-group-country-United States'); // unique max sum (1312)
         await agIdFor.headerCell('total').click(); // ascending
+        await waitForRowAnimations(page);
         await expect(usGroup).not.toHaveAttribute('row-index', '0');
-        await page.waitForTimeout(300); // avoid a double-click
         await agIdFor.headerCell('total').click(); // descending
+        await waitForRowAnimations(page);
         await expect(usGroup).toHaveAttribute('row-index', '0');
     });
 

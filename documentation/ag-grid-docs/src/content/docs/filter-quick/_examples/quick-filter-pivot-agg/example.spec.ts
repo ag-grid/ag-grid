@@ -12,15 +12,14 @@ test.agExample(import.meta, () => {
         const input = page.locator('.ag-toolbar-input input').first();
 
         // Default: filter applied AFTER pivot/agg, so 'Swimming' (a non-pivot column) matches nothing.
+        // The input is debounced; the retrying toHaveCount polls until the filtered state settles.
         await input.fill('Swimming');
-        await page.waitForTimeout(400);
-        await waitForGridContent(page);
         await expect(rows).toHaveCount(0);
 
         // Apply the filter BEFORE pivot/agg so the Sport column is considered.
         await page.locator('#applyBeforePivotOrAgg').click();
-        await page.waitForTimeout(400);
-        await waitForGridContent(page);
-        expect(await rows.count()).toBeGreaterThan(0);
+        await expect(async () => {
+            expect(await rows.count()).toBeGreaterThan(0);
+        }).toPass();
     });
 });

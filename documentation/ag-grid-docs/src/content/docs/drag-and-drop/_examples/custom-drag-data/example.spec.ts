@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Data renders with the custom drag source column', async ({ agIdFor, page }) => {
@@ -20,10 +20,11 @@ test.agExample(import.meta, () => {
         await expect(firstRow).toHaveAttribute('row-index', '0');
 
         await agIdFor.headerCell('id').click(); // ascending: 100 stays on top
+        await waitForRowAnimations(page);
         await expect(firstRow).toHaveAttribute('row-index', '0');
-        await page.waitForTimeout(300); // avoid a double-click
 
         await agIdFor.headerCell('id').click(); // descending: 100 sinks to the bottom
+        await waitForRowAnimations(page);
         await expect(firstRow).toHaveAttribute('row-index', '8');
     });
 });

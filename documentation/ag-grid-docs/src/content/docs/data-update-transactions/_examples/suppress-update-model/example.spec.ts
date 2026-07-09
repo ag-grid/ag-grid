@@ -42,9 +42,10 @@ test.agExample(import.meta, () => {
 
             // Refresh Model re-sorts, so the value column is descending again.
             await page.getByRole('button', { name: 'Refresh Model' }).click();
-            await page.waitForTimeout(700); // let the sort + re-render settle
-            const valuesAfterRefresh = await valuesByRowIndex(page);
-            expect(isDescending(valuesAfterRefresh)).toBe(true);
+            // Retry the read-back until the sort + re-render has settled and values are descending again.
+            await expect(async () => {
+                expect(isDescending(await valuesByRowIndex(page))).toBe(true);
+            }).toPass();
         }
     );
 });

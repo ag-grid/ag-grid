@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Full Name valueGetter combines first and last name', async ({ agIdFor, page }) => {
@@ -19,9 +19,10 @@ test.agExample(import.meta, () => {
         // Ferrell Towhey (data index 9) has the unique maximum age of 40.
         const ferrell = agIdFor.rowNode('9');
         await agIdFor.headerCell('age').click();
+        await waitForRowAnimations(page);
         await expect(ferrell).not.toHaveAttribute('row-index', '0');
-        await page.waitForTimeout(300); // avoid a double-click
         await agIdFor.headerCell('age').click();
+        await waitForRowAnimations(page);
         await expect(ferrell).toHaveAttribute('row-index', '0');
     });
 

@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Report rows render as provided', async ({ agIdFor, page }) => {
@@ -21,9 +21,10 @@ test.agExample(import.meta, () => {
         await expect(financeRow).toHaveAttribute('row-index', '1');
 
         await agIdFor.headerCell('cost').click();
+        await waitForRowAnimations(page);
         await expect(financeRow).not.toHaveAttribute('row-index', '0');
-        await page.waitForTimeout(300);
         await agIdFor.headerCell('cost').click();
+        await waitForRowAnimations(page);
         await expect(financeRow).toHaveAttribute('row-index', '0');
     });
 });

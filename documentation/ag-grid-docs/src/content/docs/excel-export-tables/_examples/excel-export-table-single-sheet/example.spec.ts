@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Grouped columns and data render', async ({ agIdFor, page }) => {
@@ -28,11 +28,12 @@ test.agExample(import.meta, () => {
 
         // Ascending sort by age.
         await agIdFor.headerCell('age').click();
+        await waitForRowAnimations(page);
         await expect(daraRow).not.toHaveAttribute('row-index', '0');
 
-        await page.waitForTimeout(300); // avoid a double-click
         // Descending sort brings the oldest athlete to the top.
         await agIdFor.headerCell('age').click();
+        await waitForRowAnimations(page);
         await expect(daraRow).toHaveAttribute('row-index', '0');
     });
 });

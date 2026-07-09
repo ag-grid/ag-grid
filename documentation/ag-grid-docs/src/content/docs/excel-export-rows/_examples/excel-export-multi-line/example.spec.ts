@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Multi-line address and custom cells render their content', async ({ agIdFor, page }) => {
@@ -22,11 +22,12 @@ test.agExample(import.meta, () => {
         // Row '0' (1197...) is the ascending minimum, so it stays on top for ascending sort.
         await expect(agIdFor.rowNode('0')).toHaveAttribute('row-index', '0');
         await agIdFor.headerCell('address').click();
+        await waitForRowAnimations(page);
         await expect(agIdFor.rowNode('0')).toHaveAttribute('row-index', '0');
 
         // Descending sort floats row '1' (3685..., the maximum) to the top.
-        await page.waitForTimeout(300); // avoid a double-click
         await agIdFor.headerCell('address').click();
+        await waitForRowAnimations(page);
         await expect(agIdFor.rowNode('1')).toHaveAttribute('row-index', '0');
         await expect(agIdFor.rowNode('0')).not.toHaveAttribute('row-index', '0');
     });

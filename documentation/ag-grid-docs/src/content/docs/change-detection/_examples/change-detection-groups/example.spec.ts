@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Groups aggregate the summed columns', async ({ agIdFor, page }) => {
@@ -34,9 +34,10 @@ test.agExample(import.meta, () => {
         // Group B has the larger aggregated a (404 vs 364), so it floats to the top when descending.
         const groupB = agIdFor.rowNode('row-group-group-B');
         await agIdFor.headerCell('a').click(); // ascending
+        await waitForRowAnimations(page);
         await expect(groupB).not.toHaveAttribute('row-index', '0');
-        await page.waitForTimeout(300); // avoid a double-click
         await agIdFor.headerCell('a').click(); // descending
+        await waitForRowAnimations(page);
         await expect(groupB).toHaveAttribute('row-index', '0');
     });
 });

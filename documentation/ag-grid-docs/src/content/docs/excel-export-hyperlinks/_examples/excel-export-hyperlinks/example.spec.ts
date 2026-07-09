@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Displays company and url columns with hyperlink values', async ({ agIdFor, page }) => {
@@ -22,10 +22,11 @@ test.agExample(import.meta, () => {
         // Adobe is the alphabetical minimum, so it floats to the top when sorting ascending.
         const adobeRow = agIdFor.rowNode('1');
         await agIdFor.headerCell('company').click();
+        await waitForRowAnimations(page);
         await expect(adobeRow).toHaveAttribute('row-index', '0');
 
-        await page.waitForTimeout(300); // avoid a double-click registering
         await agIdFor.headerCell('company').click();
+        await waitForRowAnimations(page);
         await expect(adobeRow).not.toHaveAttribute('row-index', '0');
     });
 });

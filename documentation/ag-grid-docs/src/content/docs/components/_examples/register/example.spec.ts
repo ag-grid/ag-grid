@@ -41,8 +41,10 @@ test.agExample(import.meta, () => {
         // click handler logs "8 medals won!".
         await agIdFor.cell('0', 'country').locator('button').click();
 
-        await expect(page.locator('body')).toBeVisible();
-        await page.waitForTimeout(300);
-        expect(messages.some((m) => m.includes('8 medals won!'))).toBe(true);
+        // The click handler logs synchronously, but the message arrives over CDP
+        // asynchronously; retry until the captured logs contain it.
+        await expect(() => {
+            expect(messages.some((m) => m.includes('8 medals won!'))).toBe(true);
+        }).toPass();
     });
 });

@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { expect, test, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Groups show gold as % of parent and total as % of grand total', async ({ agIdFor }) => {
@@ -27,11 +27,11 @@ test.agExample(import.meta, () => {
         await expect(topRow).toHaveAttribute('row-id', usRowId); // initial data order: US first
 
         await agIdFor.headerCell('total').click(); // ascending → US to the bottom
+        await waitForRowAnimations(page);
         await expect(topRow).not.toHaveAttribute('row-id', usRowId);
 
-        await page.waitForTimeout(300); // avoid a double-click
-
         await agIdFor.headerCell('total').click(); // descending → US back to the top
+        await waitForRowAnimations(page);
         await expect(topRow).toHaveAttribute('row-id', usRowId);
     });
 });

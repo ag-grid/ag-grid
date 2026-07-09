@@ -14,9 +14,11 @@ test.agExample(import.meta, () => {
         await miniFilter.fill('Michael');
 
         await page.getByRole('button', { name: 'Print Set Filter search text' }).click();
-        await page.waitForTimeout(500);
 
         // getChildFilterInstance(1) returns the Set Filter; getMiniFilter() returns the typed text.
-        expect(consoleMessages.some((m) => m.includes('Michael'))).toBeTruthy();
+        // Retry until the console message arrives over CDP.
+        await expect(() => {
+            expect(consoleMessages.some((m) => m.includes('Michael'))).toBeTruthy();
+        }).toPass();
     });
 });
