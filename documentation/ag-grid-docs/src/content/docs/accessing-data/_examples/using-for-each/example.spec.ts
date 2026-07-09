@@ -23,23 +23,27 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const collectLogs = async (buttonText: string) => {
+        // The callbacks log synchronously on click, so once the expected log has arrived over
+        // CDP the whole batch for that click is present. Poll for it rather than sleeping.
+        const collectLogs = async (buttonText: string, waitForText: string) => {
             const logs: string[] = [];
             const handler = (msg: { text: () => string }) => logs.push(msg.text());
             page.on('console', handler);
             await page.getByText(buttonText, { exact: true }).click();
-            await page.waitForTimeout(300);
+            await expect(() => {
+                expect(logs.some((l) => l.includes(waitForText))).toBe(true);
+            }).toPass();
             page.off('console', handler);
             return logs;
         };
 
         // Leaf nodes are data rows only — no group entries.
-        const leafLogs = await collectLogs('For-Each Leaf Node');
+        const leafLogs = await collectLogs('For-Each Leaf Node', 'data: United States, Michael Phelps');
         expect(leafLogs.some((l) => l.includes('data: United States, Michael Phelps'))).toBe(true);
         expect(leafLogs.some((l) => l.includes('group:'))).toBe(false);
 
         // forEachNode walks every node, including the country group rows.
-        const allLogs = await collectLogs('For-Each Node');
+        const allLogs = await collectLogs('For-Each Node', 'group: United States');
         expect(allLogs.some((l) => l.includes('group: United States'))).toBe(true);
     });
 });
