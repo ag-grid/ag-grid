@@ -28,6 +28,20 @@ Each grid surfaces its own diagnostics on its own overlay, so a diagnostic emitt
 
 {% gridExampleRunner title="Master Detail" name="master-detail" /%}
 
+## Per-grid attribution across grids
+
+Two independent grids share the page, each valid on load. Each grid has its own buttons that trigger a diagnostic on that grid:
+
+- "Trigger warning" updates an initial-only option after creation (warning #22).
+- "Trigger error" applies a theme with an invalid param value (error #107), emitted while the grid regenerates its styles.
+- "Trigger async warning" runs an async transaction whose non-string row id is reported once the grid flushes it on a later frame (warning #25).
+
+The overlay always appears on the grid that emitted the diagnostic, leaving the other grid untouched. The async and theme cases are the ones that previously broadcast to every grid before diagnostics were attributed to their originating grid.
+
+Grid A also has a "Destroy grid, then call API" button. Calling the API of a destroyed grid (warning #26) can't be attributed to any grid, so — unlike the cases above — it surfaces on the other, still-live grid.
+
+{% gridExampleRunner title="Multi Grid Attribution" name="multi-grid-attribution" /%}
+
 ## Structured error parameters
 
 Some diagnostics carry array or object parameters, which must survive being encoded into the error-page URL and decoded back. This grid emits two: an unregistered `aggFunc` surfaces error #109 (its suggestions are an array), and an unregistered `cellRenderer` surfaces error #101 (its component maps are objects). Open each error page from the overlay to check both round-trip correctly.

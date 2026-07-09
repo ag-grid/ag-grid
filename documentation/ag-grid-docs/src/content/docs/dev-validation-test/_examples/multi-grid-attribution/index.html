@@ -1,0 +1,22 @@
+<div class="example-wrapper">
+    <div class="grid-section">
+        <div class="controls">
+            <span class="grid-label">Grid A</span>
+            <button type="button" onclick="triggerWarning('a')">Trigger warning</button>
+            <button type="button" onclick="triggerError('a')">Trigger error</button>
+            <button type="button" onclick="triggerAsyncWarning('a')">Trigger async warning</button>
+            <button type="button" onclick="destroyThenCallApi('a')">Destroy grid, then call API</button>
+        </div>
+        <div id="gridA" class="grid"></div>
+    </div>
+
+    <div class="grid-section">
+        <div class="controls">
+            <span class="grid-label">Grid B</span>
+            <button type="button" onclick="triggerWarning('b')">Trigger warning</button>
+            <button type="button" onclick="triggerError('b')">Trigger error</button>
+            <button type="button" onclick="triggerAsyncWarning('b')">Trigger async warning</button>
+        </div>
+        <div id="gridB" class="grid"></div>
+    </div>
+</div>
