@@ -1,7 +1,7 @@
 import type { IComponent } from 'ag-stack';
 
 import type { ComponentType } from '../../interfaces/iUserCompDetails';
-import { _warnForGrid, _warnWithoutAttribution } from '../../validation/logging';
+import { _warnForGrid } from '../../validation/logging';
 
 /**
  * B the business interface (ie IHeader)
@@ -66,7 +66,8 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
     }
 
     protected createMethodProxy(wrapper: F, methodName: string, mandatory: boolean): (...args: any[]) => any {
-        const gridId = this.gridId;
+        // Grid ID is always set at this point
+        const gridId = this.gridId!;
         return function () {
             if (wrapper.hasMethod(methodName)) {
                 // eslint-disable-next-line
@@ -74,11 +75,7 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
             }
 
             if (mandatory) {
-                if (gridId) {
-                    _warnForGrid(gridId, 49, { methodName });
-                } else {
-                    _warnWithoutAttribution(49, { methodName });
-                }
+                _warnForGrid(gridId, 49, { methodName });
             }
             // multiple features rely on this returning `null` rather than `undefined`,
             // so that they can differentiate whether the underlying component has implemented a void method or not

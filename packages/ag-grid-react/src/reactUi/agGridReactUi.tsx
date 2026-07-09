@@ -362,7 +362,8 @@ class ReactFrameworkComponentWrapper
                 case 'toolPanel':
                 case 'menuItem':
                 case 'cellRenderer':
-                    warnReactiveCustomComponents(this.gridId);
+                    // Grid ID is always set at this point
+                    warnReactiveCustomComponents(this.gridId!);
                     break;
             }
         }

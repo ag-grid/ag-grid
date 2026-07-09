@@ -1,5 +1,5 @@
 import type { WrappableInterface } from 'ag-grid-community';
-import { BaseComponentWrapper, _warnForGrid, _warnWithoutAttribution } from 'ag-grid-community';
+import { BaseComponentWrapper, _warnForGrid } from 'ag-grid-community';
 
 import { VueComponentFactory } from './VueComponentFactory';
 
@@ -94,7 +94,8 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
         methodName: string,
         mandatory: boolean
     ): () => any {
-        const gridId = this.gridId;
+        // Grid ID is always set at this point
+        const gridId = this.gridId!;
         return function () {
             if (wrapper.hasMethod(methodName)) {
                 // eslint-disable-next-line prefer-rest-params
@@ -102,11 +103,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
             }
 
             if (mandatory) {
-                if (gridId) {
-                    _warnForGrid(gridId, 233, { methodName });
-                } else {
-                    _warnWithoutAttribution(233, { methodName });
-                }
+                _warnForGrid(gridId, 233, { methodName });
             }
             return null;
         };
