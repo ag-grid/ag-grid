@@ -1,18 +1,14 @@
 import type { ChartRef } from 'ag-grid-community';
 
 interface AgChartActual {
-    waitForUpdate(timeoutMs: number, skipAnimations: boolean): Promise<void>;
+    skipAnimations(): void;
+    waitForUpdate(timeoutMs: number, failOnTimeout: boolean): Promise<void>;
 }
 
-/** Unwraps ag-grid's internal chart proxy to reach the real AG Charts instance's `waitForUpdate`. */
+/** Unwraps ag-grid's internal chart proxy to reach the real AG Charts instance, matching ag-grid's own `deproxy` pattern. */
 function unwrapChart(chart: ChartRef['chart']): AgChartActual {
     const maybeWrapped = chart as { chart?: AgChartActual };
     return (maybeWrapped.chart ?? chart) as AgChartActual;
-}
-
-/** Resolves on the next animation frame - used to flush jsdom's polyfilled rAF/ResizeObserver queue. */
-function flushPendingAnimationFrame(): Promise<void> {
-    return new Promise((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 /**
@@ -22,13 +18,10 @@ function flushPendingAnimationFrame(): Promise<void> {
  */
 export async function renderChartToBuffer(chartRef: ChartRef): Promise<Buffer> {
     const rawChart = unwrapChart(chartRef.chart);
-    await rawChart.waitForUpdate(5000, true);
-
-    // A second pass is needed: jsdom never fires the ResizeObserver callbacks that would otherwise
-    // let a single waitForUpdate observe the chart's fully-settled, non-animating state. Flushing
-    // the (polyfilled) animation-frame queue first gives any pending rAF-scheduled work a chance to
-    // run before that second wait, rather than guessing at a fixed sleep duration.
-    await flushPendingAnimationFrame();
+    // Without this, series entrance animations (e.g. bars growing from zero height) never complete
+    // under jsdom - nothing drives a continuous requestAnimationFrame loop - so the chart would
+    // otherwise be captured at its initial, pre-animation (invisible series) frame.
+    rawChart.skipAnimations();
     await rawChart.waitForUpdate(5000, true);
 
     const canvases = chartRef.chartElement.querySelectorAll('canvas');
