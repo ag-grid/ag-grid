@@ -1,0 +1,72 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
+import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
+import styles from './ContactPage.module.scss';
+---
+
+<Layout
+    title="Contact AG Grid: Get in Touch with Our Team"
+    description="Have questions or need assistance? Contact the AG Grid team for support, licensing, or any other inquiries."
+    showSearchBar={true}
+    showDocsNav={false}
+>
+    <div class={styles.contactPage}>
+        <PageHero
+            eyebrow="Get in touch"
+            headline="Contact Us"
+            subhead="Get help with pricing, explore use cases, understand how our products can help you, and more."
+        />
+        <div class="layout-max-width-small">
+            <section id="contact-section" class={styles.contactSection}>
+                <div class={styles.formContainer}>
+                    <ContactForm client:load formLocation="Contact page" />
+                </div>
+
+                <div class={styles.socialLinks}>
+                    <a
+                        href="https://github.com/ag-grid/ag-grid"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="GitHub"
+                        class={styles.socialLinkRow}
+                    >
+                        <Icon name="github" />
+                        <span>GitHub</span>
+                    </a>
+                    <a
+                        href="https://x.com/ag_grid"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="X (Twitter)"
+                        class={styles.socialLinkRow}
+                    >
+                        <Icon name="xLogo" />
+                        <span>X</span>
+                    </a>
+                    <a
+                        href="https://youtube.com/c/aggrid"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="YouTube"
+                        class={styles.socialLinkRow}
+                    >
+                        <Icon name="youtube" />
+                        <span>YouTube</span>
+                    </a>
+                    <a
+                        href="https://linkedin.com/company/ag-grid"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="LinkedIn"
+                        class={styles.socialLinkRow}
+                    >
+                        <Icon name="linkedin" />
+                        <span>LinkedIn</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+</Layout>

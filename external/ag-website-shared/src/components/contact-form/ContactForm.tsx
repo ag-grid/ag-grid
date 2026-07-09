@@ -254,7 +254,7 @@ export const ContactForm: FunctionComponent<Props> = ({
             <p className={styles.privacyMessage}>
                 By submitting this form you agree to our <a href={PRIVACY_POLICY_URL}>Privacy Policy</a>.
             </p>
-            <span>
+            <p>
                 For technical support, visit our{' '}
                 <a
                     href="https://ag-grid.zendesk.com/"
@@ -264,7 +264,7 @@ export const ContactForm: FunctionComponent<Props> = ({
                 >
                     Zendesk portal
                 </a>
-            </span>
+            </p>
         </form>
     );
 };
