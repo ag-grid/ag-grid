@@ -35,9 +35,9 @@ describe('new filters tool panel requires enableFilterHandlers', () => {
 
         // grid rendered despite the missing flag
         expect(getGridElement(api)).toBeTruthy();
-        const toolPanel = api.getToolPanelInstance('filters-new');
+        const toolPanel = api.getToolPanelInstance('filters-new') as any;
         expect(toolPanel).toBeTruthy();
-        expect(toolPanel!.getGui()).toBeInstanceOf(HTMLElement);
+        expect(toolPanel.getGui()).toBeInstanceOf(HTMLElement);
     });
 
     test('does not warn #282 when enableFilterHandlers is set', async () => {
