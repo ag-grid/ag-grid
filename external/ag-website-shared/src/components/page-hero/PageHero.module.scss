@@ -7,6 +7,10 @@
     text-align: center;
     padding: $spacing-size-16 $spacing-size-4;
     background: linear-gradient(to top, color-mix(in srgb, transparent, var(--color-brand-500) 6%), transparent);
+
+    #{$selector-darkmode} & {
+        background: linear-gradient(to top, color-mix(in srgb, transparent, var(--color-gray-700) 24%), transparent);
+    }
 }
 
 .pageHeroEyebrow {
