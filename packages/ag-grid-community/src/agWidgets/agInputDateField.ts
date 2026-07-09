@@ -72,10 +72,10 @@ export class AgInputDateField<
         if (includeTime != null) {
             this.setIncludeTime(includeTime);
         }
-        if (typeof min === 'number') {
+        if (typeof min === 'string') {
             this.setMin(min);
         }
-        if (typeof max === 'number') {
+        if (typeof max === 'string') {
             this.setMax(max);
         }
         if (typeof step === 'number') {
