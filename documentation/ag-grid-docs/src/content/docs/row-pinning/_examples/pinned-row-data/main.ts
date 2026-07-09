@@ -5,6 +5,7 @@ import {
     PinnedRowModule,
     createGrid,
     enableDevValidations,
+    themeQuartz,
 } from 'ag-grid-community';
 
 // Enable extended validations only for development
@@ -24,6 +25,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     columnDefs: columnDefs,
     rowData: null,
+    theme: themeQuartz.withParams({
+        pinnedRowBackgroundColor: 'rgb(255, 249, 196)',
+    }),
     // no rows to pin to start with
     pinnedTopRowData: [{ athlete: 'TOP (athlete)', country: 'TOP (country)', sport: 'TOP (sport)' }],
     pinnedBottomRowData: [{ athlete: 'BOTTOM (athlete)', country: 'BOTTOM (country)', sport: 'BOTTOM (sport)' }],
