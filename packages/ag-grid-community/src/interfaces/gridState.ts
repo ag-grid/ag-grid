@@ -217,6 +217,8 @@ export interface GridState {
     sort?: SortState;
     /**
      * When providing a partial `initialState` with some but not all column state properties, set this to `true`.
+     * This controls which top-level sections are supplied, not whether a section may itself be partial:
+     * any section you provide must match its documented shape.
      * Not required if passing the whole state object retrieved from the grid.
      * Not used for `api.setState()`, as that instead takes a second argument of properties to ignore.
      */
