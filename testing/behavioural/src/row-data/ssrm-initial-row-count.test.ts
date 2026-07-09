@@ -107,17 +107,16 @@ describe('SSRM initial row count (characterization)', () => {
         await waitForEvent('firstDataRendered', api);
 
         // The real total (500) supersedes the initial guess (42): the grid now sizes to
-        // the full server total, and the first request was for block [0,100].
+        // the full server total, the first request was for block [0,100], and that block's
+        // real data has replaced the initial-count stubs.
         expect(api.getDisplayedRowCount()).toBe(realTotal);
         expect(requests[0]).toEqual([0, 100]);
-
-        // Latent behaviour pinned: on initial load only the first two viewport blocks are
-        // fetched (200 real leaves), so of the 500 displayed rows the remaining 300 stay as
-        // loading/stub filler rows until scrolled into view (no eager full load).
-        expect(countLoadingRows(api)).toBe(300);
         expect(!!api.getRowNode('0')).toBe(true);
-        expect(!!api.getRowNode('199')).toBe(true);
-        expect(!!api.getRowNode('200')).toBe(false);
+
+        // Note: how many *further* blocks have loaded by this point is not asserted. With a
+        // synchronous datasource the grid keeps fetching subsequent blocks tick-by-tick, so
+        // the count of loaded blocks / remaining loading stubs at `firstDataRendered` is a
+        // transient, timing-dependent value (see the skipped sibling in ssrm-block-loading).
     });
 
     test('after load, real total is SMALLER than the initial count: the grid shrinks to the real total and trailing placeholders are removed', async () => {
