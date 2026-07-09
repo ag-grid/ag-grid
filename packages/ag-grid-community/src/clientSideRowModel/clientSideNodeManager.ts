@@ -86,7 +86,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     public setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
         const { rootNode, gos } = this;
         this.dispatchRowDataUpdateStarted(rowData);
-        const getRowIdFunc = _getRowIdCallback(gos)!;
+        const getRowIdFunc = _getRowIdCallback(this.beans)!;
         const changedRowNodes = params.changedRowNodes!;
         const { adds, updates } = changedRowNodes;
         const processedNodes = new Set<RowNode<TData>>();
@@ -186,7 +186,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             this.beans.log.warn(268); // transactions not supported with treeDataChildrenField
             return { remove: [], update: [], add: [] };
         }
-        const getRowIdFunc = _getRowIdCallback(this.gos);
+        const getRowIdFunc = _getRowIdCallback(this.beans);
         const remove = this.executeRemove(getRowIdFunc, rowDataTran, changedRowNodes, animate);
         const update = this.executeUpdate(getRowIdFunc, rowDataTran, changedRowNodes);
         const add = this.executeAdd(rowDataTran, changedRowNodes);

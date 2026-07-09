@@ -572,7 +572,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private csrmAddRows({ position, target, rows }: RowsDrop): boolean {
-        const getRowIdFunc = _getRowIdCallback(this.gos);
+        const getRowIdFunc = _getRowIdCallback(this.beans);
         const clientSideRowModel = this.beans.rowModel as IClientSideRowModel;
 
         const add = rows

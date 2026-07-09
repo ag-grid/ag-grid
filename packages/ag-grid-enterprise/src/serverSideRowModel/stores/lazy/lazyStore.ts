@@ -148,7 +148,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns an object determining the status of this transaction and effected nodes
      */
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        const idFunc = _getRowIdCallback(this.gos);
+        const idFunc = _getRowIdCallback(this.beans);
         if (!idFunc) {
             this.beans.log.warn(206);
             return {

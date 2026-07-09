@@ -109,7 +109,7 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
             return;
         }
 
-        const getRowId = _getRowIdCallback(this.gos);
+        const getRowId = _getRowIdCallback(this.beans);
         const idPrefix = floating === 'top' ? ROW_ID_PREFIX_TOP_PINNED : ROW_ID_PREFIX_BOTTOM_PINNED;
 
         // We'll want to remove all nodes that aren't matched to data

@@ -38,7 +38,6 @@ import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
 import { _isFiniteNumber } from './utils/number';
-import { _warn } from './validation/logging';
 
 function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
     return gos.get('rowModelType') === rowModelType;
@@ -294,13 +293,13 @@ export function _isFullWidthGroupRow(gos: GridOptionsService, node: RowNode, piv
 // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRowIdCallback<TData = any>(
-    gos: GridOptionsService
+    beans: BeanCollection
 ):
     | ((
           params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
       ) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>)
     | undefined {
-    const getRowId = gos.getCallback('getRowId');
+    const getRowId = beans.gos.getCallback('getRowId');
 
     if (getRowId === undefined) {
         return getRowId;
@@ -311,7 +310,7 @@ export function _getRowIdCallback<TData = any>(
 
         if (typeof id !== 'string') {
             // Avoid logging for every row if the user is returning a non-string value, could be thousands of rows
-            _doOnce(() => _warn(25, { id }), 'getRowIdString');
+            _doOnce(() => beans.log.warn(25, { id }), 'getRowIdString');
             id = String(id);
         }
 

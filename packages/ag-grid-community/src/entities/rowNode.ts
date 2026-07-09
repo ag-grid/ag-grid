@@ -467,7 +467,7 @@ export class RowNode<TData = any>
 
     private setId(id?: string): void {
         // see if user is providing the id's
-        const getRowIdFunc = _getRowIdCallback(this.beans.gos);
+        const getRowIdFunc = _getRowIdCallback(this.beans);
 
         if (getRowIdFunc) {
             // if user is providing the id's, then we set the id only after the data has been set.

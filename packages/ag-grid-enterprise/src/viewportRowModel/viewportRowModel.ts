@@ -311,7 +311,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     private setRowData(rowData: { [key: number]: any }): void {
         // see if user is providing the id's
-        const getRowIdFunc = _getRowIdCallback(this.beans.gos);
+        const getRowIdFunc = _getRowIdCallback(this.beans);
         const existingNodesById = new Map<string, RowNode>();
         if (getRowIdFunc) {
             for (const row of Object.values(this.rowNodesByIndex)) {

@@ -136,7 +136,7 @@ export class LazyCache extends BeanStub {
         const { blockUtils, gos, store } = this;
 
         this.defaultNodeIdPrefix = blockUtils.createNodeIdPrefix(store.getParentNode());
-        this.getRowIdFunc = _getRowIdCallback(gos);
+        this.getRowIdFunc = _getRowIdCallback(this.beans);
         this.isMasterDetail = gos.get('masterDetail');
     }
 
