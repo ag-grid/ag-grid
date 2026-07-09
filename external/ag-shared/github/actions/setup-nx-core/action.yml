@@ -81,15 +81,11 @@ runs:
               # Log starting headroom (before the delete) and the amount reclaimed.
               df -h /
               # Best-effort reclaim of root-partition space to avoid runner ENOSPC by
-              # deleting large preinstalled toolchains this repo never uses. Disjoint
-              # trees are unlinked concurrently to overlap I/O latency; cost is dominated
-              # by the many-small-file android/tool-cache trees.
+              # deleting large preinstalled toolchains this repo never uses. Deleted in a
+              # single rm: parallelising the unlinks showed no reliable speedup on CI
+              # runners (delete time is dominated by runner disk I/O, not by serialisation).
               # ($AGENT_TOOLSDIRECTORY == /opt/hostedtoolcache, so it is not listed twice.)
-              sudo rm -rf /usr/local/lib/android &
-              sudo rm -rf /opt/hostedtoolcache &
-              sudo rm -rf /usr/share/dotnet &
-              sudo rm -rf /opt/ghc /usr/local/share/boost &
-              wait
+              sudo rm -rf /usr/local/lib/android /opt/hostedtoolcache /usr/share/dotnet /opt/ghc /usr/local/share/boost
               df -h /
 
         - name: Dump GitHub context
