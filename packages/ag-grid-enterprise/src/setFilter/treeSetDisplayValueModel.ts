@@ -1,7 +1,6 @@
 import { _getDateParts } from 'ag-stack';
 
-import type { TextFormatter } from 'ag-grid-community';
-import { _warn } from 'ag-grid-community';
+import type { LogService, TextFormatter } from 'ag-grid-community';
 
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
@@ -36,6 +35,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     };
 
     constructor(
+        private readonly log: LogService,
         private readonly formatter: TextFormatter,
         private treeListPathGetter?: (value: V | null) => string[] | null,
         private treeListFormatter?: (
@@ -173,7 +173,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         if (isDate) {
             return (value) => _getDateParts(value as Date, false); // if user wants time, they can provide a treeListPathGetter as mentioned in Docs
         }
-        _warn(211);
+        this.log.warn(211);
         return (value) => [String(value)];
     }
 

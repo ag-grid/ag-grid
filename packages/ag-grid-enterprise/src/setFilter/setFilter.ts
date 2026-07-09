@@ -82,6 +82,7 @@ export class SetFilter<V = string>
 
         this.displayValueModel = treeList
             ? new TreeSetDisplayValueModel(
+                  this.beans.log,
                   this.formatter,
                   treeListPathGetter,
                   treeListFormatter,
