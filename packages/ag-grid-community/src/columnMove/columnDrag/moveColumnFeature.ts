@@ -629,10 +629,12 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                 return;
             }
 
-            dragAndDrop!.setDragImageCompIcon('pinned');
+            const columns = this.lastDraggingEvent?.dragItem.columns as AgColumn[] | undefined;
+            const canPin = (columns ?? []).some((c) => !c.colDef.lockPinned);
 
-            if (!gos.get('suppressMoveWhenColumnDragging')) {
-                const columns = this.lastDraggingEvent?.dragItem.columns as AgColumn[] | undefined;
+            dragAndDrop!.setDragImageCompIcon(canPin ? 'pinned' : this.getIconName());
+
+            if (canPin && !gos.get('suppressMoveWhenColumnDragging')) {
                 this.attemptToPinColumns(columns, undefined, true);
             }
         }
