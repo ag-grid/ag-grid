@@ -1,0 +1,13 @@
+name: tidy-nx-cache
+description: Reset the Nx cache before a build when it grows past a branch-type size threshold, and log the final cache size.
+
+inputs:
+    branch_type:
+        description: 'Type of branch (pr, latest, release)'
+        required: false
+        default: 'pr'
+
+runs:
+    using: 'node20'
+    main: 'main.mjs'
+    post: 'post.mjs'
