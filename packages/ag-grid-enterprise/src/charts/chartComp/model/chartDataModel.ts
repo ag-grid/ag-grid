@@ -151,8 +151,9 @@ export class ChartDataModel extends BeanStub {
 
     public updateModel(params: ChartModelParams): void {
         const { cellRange, seriesChartTypes } = params;
+        const isExplicitRangeChange = cellRange !== this.suppliedCellRange;
 
-        if (cellRange !== this.suppliedCellRange) {
+        if (isExplicitRangeChange) {
             this.dimensionCellRange = undefined;
             this.valueCellRange = undefined;
         }
@@ -160,7 +161,7 @@ export class ChartDataModel extends BeanStub {
         this.setParams(params);
 
         this.updateSelectedDimensions(cellRange?.columns as AgColumn[]);
-        this.updateCellRanges({ setColsFromRange: true });
+        this.updateCellRanges({ setColsFromRange: true, isExplicitRangeChange });
 
         const shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
         if (shouldUpdateComboModel) {
@@ -178,8 +179,12 @@ export class ChartDataModel extends BeanStub {
         maintainColState?: boolean;
         setColsFromRange?: boolean;
         updateOrder?: boolean;
+        // A caller-supplied cellRange, distinct from the range auto-shrinking to drop a hidden column - see
+        // resetColumnState for why this (not setColsFromRange) is what should suppress hidden-column retention.
+        isExplicitRangeChange?: boolean;
     }): void {
-        const { updatedColState, resetOrder, maintainColState, setColsFromRange, updateOrder } = params ?? {};
+        const { updatedColState, resetOrder, maintainColState, setColsFromRange, updateOrder, isExplicitRangeChange } =
+            params ?? {};
         if (this.valueCellRange) {
             this.referenceCellRange = this.valueCellRange;
         }
@@ -195,7 +200,7 @@ export class ChartDataModel extends BeanStub {
         this.setValueCellRange(valueCols, allColsFromRanges, setColsFromRange);
 
         if (!updatedColState && !maintainColState) {
-            this.resetColumnState(updateOrder);
+            this.resetColumnState(updateOrder, isExplicitRangeChange);
             // dimension / category cell range could be out of sync after resetting column state when row grouping
             this.syncDimensionCellRange();
         }
@@ -339,6 +344,8 @@ export class ChartDataModel extends BeanStub {
 
     private getAllColumnsFromRanges(): Set<AgColumn> {
         if (this.pivotChart) {
+            // Pivot charts have no manual column selection UI - their columns always mirror the grid's
+            // currently displayed columns 1:1, so `includeHiddenColumnsInCharts` does not apply here.
             return new Set(this.chartColSvc.getAllDisplayedColumns());
         }
 
@@ -376,14 +383,45 @@ export class ChartDataModel extends BeanStub {
         return { startRow, endRow };
     }
 
+    private getSelectedColIds(colState: ColState[]): Set<string> {
+        return new Set(colState.filter((cs) => cs.selected).map((cs) => cs.colId));
+    }
+
+    private isColumnSelectable(
+        column: AgColumn,
+        allCols: Set<AgColumn>,
+        includeHiddenCols: boolean,
+        previouslySelectedColIds: ReadonlySet<string>
+    ): boolean {
+        if (includeHiddenCols && !column.isVisible() && previouslySelectedColIds.has(column.colId)) {
+            return true;
+        }
+        return allCols.has(column) && (includeHiddenCols || column.isVisible());
+    }
+
     // `updateOrder` re-derives series order from the grid column order (column drag); otherwise the user-defined order is preserved.
-    private resetColumnState(updateOrder?: boolean): void {
+    // `isExplicitRangeChange` means the caller just supplied a fresh, authoritative range (chart creation or an
+    // explicit range/columns update) - selection must be derived strictly from that range, with no carry-over from
+    // before. This is distinct from the range merely auto-shrinking because a charted column became hidden.
+    private resetColumnState(updateOrder?: boolean, isExplicitRangeChange?: boolean): void {
         const { dimensionCols, valueCols } = this.chartColSvc.getChartColumns();
         const allCols = this.getAllColumnsFromRanges();
         const isInitialising = this.valueColState.length < 1;
 
         const savedValueOrder =
             isInitialising || updateOrder ? undefined : new Map(this.valueColState.map((cs) => [cs.colId, cs.order]));
+
+        // A hidden column's grid range shrinks to exclude it, dropping it from `allCols`. With
+        // `includeHiddenColumnsInCharts` on, a selected column must stay selected once hidden despite that -
+        // unless a fresh range was just supplied, in which case that range alone is authoritative. Pivot charts
+        // have no manual column selection, so the option doesn't apply to them (see getAllColumnsFromRanges).
+        const includeHiddenCols = !this.pivotChart && this.gos.get('includeHiddenColumnsInCharts');
+        const previouslySelectedDimensions = isExplicitRangeChange
+            ? new Set<string>()
+            : this.getSelectedColIds(this.dimensionColState);
+        const previouslySelectedValueCols = isExplicitRangeChange
+            ? new Set<string>()
+            : this.getSelectedColIds(this.valueColState);
 
         this.dimensionColState = [];
         this.valueColState = [];
@@ -407,8 +445,7 @@ export class ChartDataModel extends BeanStub {
                     ? aggFuncDimension.getColId() === column.colId
                     : (this.useGroupColumnAsCategory && groupingActive && autoGroup) ||
                       ((!hasSelectedDimension || supportsMultipleDimensions) &&
-                          allCols.has(column) &&
-                          column.isVisible());
+                          this.isColumnSelectable(column, allCols, includeHiddenCols, previouslySelectedDimensions));
 
             this.dimensionColState.push({
                 column,
@@ -446,7 +483,7 @@ export class ChartDataModel extends BeanStub {
                 column,
                 colId: column.colId,
                 displayName: this.getColDisplayName(column),
-                selected: allCols.has(column) && column.isVisible(),
+                selected: this.isColumnSelectable(column, allCols, includeHiddenCols, previouslySelectedValueCols),
                 order: order++,
             });
         });
