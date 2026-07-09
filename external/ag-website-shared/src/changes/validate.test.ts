@@ -34,7 +34,7 @@ describe('validateChangelogs', () => {
 
     test('removals must reference a deprecation from a strictly earlier version, at most once', () => {
         const orphan = messagesOf({ '32': { removalsAfterDeprecation: [transition('`foo`')] } });
-        expect(orphan.join()).toContain('does not reference a deprecation');
+        expect(orphan.join()).toContain('must be a reference to a value defined in an earlier version');
 
         // zero-filled and shorthand version keys refer to the same version
         const sameVersionDeprecation = transition('`foo`');

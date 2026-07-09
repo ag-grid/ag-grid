@@ -48,8 +48,7 @@ export function validateChangelogs(changelogs: Changelogs): ValidationError[] {
             if (deprecationEntry === undefined) {
                 addError(
                     version,
-                    `removal of "${removal.oldApi}" does not reference a deprecation from a version file;` +
-                        ` reference an entry of an earlier version's deprecations object`
+                    `removalAfterDeprecation of "${removal.oldApi}" must be a reference to a value defined in an earlier version`
                 );
             } else if (compareVersions(deprecationEntry.version, version) >= 0) {
                 addError(

@@ -9,7 +9,7 @@ import type {
     SerialisedRegExp,
 } from './compiled-change-types';
 import { validateChangelogs } from './validate';
-import { compareVersions, normaliseVersion } from './version-utils';
+import { compareVersions, normaliseVersion, toReleaseVersion } from './version-utils';
 
 /**
  * Compile the authoring format into the flat consumer format: transitions joined across
@@ -17,7 +17,7 @@ import { compareVersions, normaliseVersion } from './version-utils';
  *
  * Throws if the changelogs fail validation.
  */
-export function compileChangelogs(changelogs: Changelogs): CompiledChangelog {
+export function compileChangelogs(changelogs: Changelogs, mostRecentVersion: string): CompiledChangelog {
     const validationErrors = validateChangelogs(changelogs);
     if (validationErrors.length > 0) {
         const messages = validationErrors.map((error) => `v${error.version}: ${error.message}`);
@@ -93,7 +93,7 @@ export function compileChangelogs(changelogs: Changelogs): CompiledChangelog {
         }
     }
 
-    return { changes };
+    return { mostRecentVersion: toReleaseVersion(mostRecentVersion), changes };
 }
 
 function compileSimpleChange(

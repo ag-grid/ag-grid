@@ -5,16 +5,21 @@ type VersionModuleLoaders = Record<string, () => Promise<unknown>>;
 
 /**
  * Build the GET handler for a product's /update-change-records.json Astro endpoint from
- * the product's version files:
+ * the product's version files and its current released version:
  *
- *     export const GET = createChangeRecordsEndpoint(import.meta.glob('../changes/versions/*.ts'));
+ *     import { VERSION } from '.../version';
+ *     export const GET = createChangeRecordsEndpoint(import.meta.glob('../changes/versions/*.ts'), VERSION);
  *
  * Serves the compiled changes database, consumed by the update AI skill. Compilation
- * validates the authored records, so invalid records fail the build.
+ * validates the authored records, so invalid records fail the build. `mostRecentVersion` is
+ * the product's current version (from its `VERSION` file), emitted on the compiled output.
  */
-export function createChangeRecordsEndpoint(versionModules: VersionModuleLoaders): () => Promise<Response> {
+export function createChangeRecordsEndpoint(
+    versionModules: VersionModuleLoaders,
+    mostRecentVersion: string
+): () => Promise<Response> {
     return async function GET() {
-        const compiled = compileChangelogs(await assembleChangelogs(versionModules));
+        const compiled = compileChangelogs(await assembleChangelogs(versionModules), mostRecentVersion);
 
         return new Response(JSON.stringify(compiled), {
             status: 200,

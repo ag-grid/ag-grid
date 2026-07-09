@@ -68,8 +68,13 @@ describe('compileChangelogs', () => {
         },
     };
 
+    test('emits the most recent version as major.minor.patch, stripping any build suffix', () => {
+        expect(compileChangelogs(changelogs, '36.0.0').mostRecentVersion).toBe('36.0.0');
+        expect(compileChangelogs(changelogs, '36.0.0-beta.20260705.2117').mostRecentVersion).toBe('36.0.0');
+    });
+
     test('joins deprecations to removals by object identity, with explicit zero-filled versions', () => {
-        const { changes } = compileChangelogs(changelogs);
+        const { changes } = compileChangelogs(changelogs, '36.0.0');
 
         expect(changes.find((change) => change.id === 'columnApi')).toMatchObject({
             type: 'transition',
@@ -98,18 +103,18 @@ describe('compileChangelogs', () => {
 
     test('throws on invalid changelogs, reporting the validation messages', () => {
         const orphan: TransitionFacts = { oldApi: '`foo`', newApi: '`bar`', detectWords: null, mitigation: null };
-        expect(() => compileChangelogs({ '32': { removalsAfterDeprecation: [orphan] } })).toThrow(
-            /does not reference a deprecation/
+        expect(() => compileChangelogs({ '32': { removalsAfterDeprecation: [orphan] } }, '36.0.0')).toThrow(
+            /must be a reference to a value defined in an earlier version/
         );
     });
 
     test('output is JSON round-trippable', () => {
-        const compiled = compileChangelogs(changelogs);
+        const compiled = compileChangelogs(changelogs, '36.0.0');
         expect(JSON.parse(JSON.stringify(compiled))).toEqual(compiled);
     });
 
     test('mitigation compiles to the array form: string expands to all frameworks, null becomes empty', () => {
-        const { changes } = compileChangelogs(changelogs);
+        const { changes } = compileChangelogs(changelogs, '36.0.0');
 
         // a plain string becomes one entry scoped to every framework
         const columnApiChange = changes.find((change) => change.id === 'columnApi');
@@ -137,7 +142,7 @@ describe('compileChangelogs', () => {
                     },
                 },
             },
-        });
+        }, '36.0.0');
         const filtersChange = changes.find((change) => change.id === 'filters');
         expect(filtersChange?.mitigation).toEqual([
             { frameworks: ['react', 'angular', 'vue', 'javascript'], content: 'Universal advice.' },

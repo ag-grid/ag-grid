@@ -95,5 +95,7 @@ export type CompiledChange = CompiledTransition | CompiledSimpleChange | Compile
 
 /** The validated, flattened output of a product's changes database. */
 export interface CompiledChangelog {
+    /** The current (most recent) released version of the product, e.g. the value of the package's `VERSION`. */
+    mostRecentVersion: string;
     changes: CompiledChange[];
 }

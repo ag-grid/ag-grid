@@ -8,6 +8,14 @@ export function isValidVersionKey(version: string): boolean {
     return VERSION_KEY_PATTERN.test(version);
 }
 
+/**
+ * Reduce a full version string to its `major.minor.patch` release form, dropping any
+ * pre-release or build suffix, e.g. '36.0.0-beta.20260705.2117' -> '36.0.0'.
+ */
+export function toReleaseVersion(version: string): string {
+    return normaliseVersion(version.split(/[-+]/)[0]);
+}
+
 /** Zero-fill a version key to its full three-segment form, e.g. '32.2' -> '32.2.0'. */
 export function normaliseVersion(version: string): string {
     const segments = version.split('.');
