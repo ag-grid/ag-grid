@@ -8,14 +8,14 @@
   "exports": {
     ".": {
       "import": "./dist/package/main.esm.mjs",
-      "require": "./dist/package/main.cjs.js",
       "types": "./dist/types/src/main.d.ts",
+      "require": "./dist/package/main.cjs.js",
       "default": "./dist/package/main.cjs.js"
     },
     "./*.js": {
       "import": "./dist/package/*.esm.mjs",
-      "require": "./dist/package/*.cjs.js",
       "types": "./dist/types/src/*.d.ts",
+      "require": "./dist/package/*.cjs.js",
       "default": "./dist/package/*.cjs.js"
     }
   },

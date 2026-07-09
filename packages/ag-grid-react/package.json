@@ -7,8 +7,8 @@
   "module": "./dist/package/index.esm.mjs",
   "exports": {
     "import": "./dist/package/index.esm.mjs",
-    "require": "./dist/package/index.cjs.js",
     "types": "./dist/types/src/index.d.ts",
+    "require": "./dist/package/index.cjs.js",
     "default": "./dist/package/index.cjs.js"
   },
   "repository": {
