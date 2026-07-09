@@ -1,0 +1,22 @@
+{
+    "_config_": {},
+    "PdfExportParams": {
+        "documentTitle": {},
+        "pdfStyles": {},
+        "skipStyleCallbacks": {},
+        "currentElementStyleCallback": {},
+        "prependContent": {},
+        "appendContent": {},
+        "fileName": {}
+    },
+    "PdfCell": {
+        "data": {
+            "isRequired": true
+        }
+    },
+    "PdfCellData": {
+        "value": {
+            "isRequired": true
+        }
+    }
+}

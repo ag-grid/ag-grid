@@ -118,7 +118,7 @@ const excludeErrors = [
     'Unsupported style property %s. Did you mean %s? white-space-collapse whiteSpaceCollapse',
 ];
 
-export function setupConsoleExpectations(page: Page) {
+export function setupConsoleExpectations(page: Page, allowedMessages: string[] = []) {
     const errors: string[] = [];
 
     // catch any errors or warnings and fail the test
@@ -126,7 +126,9 @@ export function setupConsoleExpectations(page: Page) {
         if (msg.type() === 'error' || msg.type() === 'warning') {
             const text = msg.text();
             if (!licenseTexts.includes(text)) {
-                if (excludeErrors.some((e) => text.includes(e))) {
+                // `allowedMessages` lets an example opt into expected console output (e.g. a diagnostic it
+                // intentionally demonstrates), scoped to that example rather than the global exclude list.
+                if (excludeErrors.some((e) => text.includes(e)) || allowedMessages.some((e) => text.includes(e))) {
                     test.skip(false, text);
                 } else {
                     errors.push(text);
@@ -254,7 +256,11 @@ const frameworkTest =
      * @param testName Names of this test case. Useful if running multiple tests against the same example.
      * @param testBody The test body function that will be executed for each framework.
      */
-    (testName: string | undefined, testBody: (fixtures: TestFixtures) => Promise<void>): void => {
+    (
+        testName: string | undefined,
+        testBody: (fixtures: TestFixtures) => Promise<void>,
+        opts?: { allowedConsoleMessages?: string[] }
+    ): void => {
         extended.use({ agFramework });
 
         // cachedRoute needs to be destructured in testWrapper for Playwright to initialise it correctly
@@ -305,7 +311,7 @@ const frameworkTest =
             extended.describe(testName, () => {
                 let errors: string[];
                 extended.beforeEach(async ({ page }) => {
-                    errors = setupConsoleExpectations(page);
+                    errors = setupConsoleExpectations(page, opts?.allowedConsoleMessages);
                 });
 
                 extended(`${agFramework} (only)`, testWrapper);
@@ -324,11 +330,15 @@ const frameworkTest =
  * @param testName Names of this test case. Useful if running multiple tests against the same example.
  * @param testBody The test body function that will be executed for each framework.
  */
-const eachFramework = (testName: string, testBody: (fixtures: TestFixtures) => Promise<void>) => {
+const eachFramework = (
+    testName: string,
+    testBody: (fixtures: TestFixtures) => Promise<void>,
+    opts?: { allowedConsoleMessages?: string[] }
+) => {
     extended.describe(testName, () => {
         let errors: string[];
         extended.beforeEach(async ({ page }) => {
-            errors = setupConsoleExpectations(page);
+            errors = setupConsoleExpectations(page, opts?.allowedConsoleMessages);
         });
 
         FILTERED_FRAMEWORKS.forEach((framework) => frameworkTest(framework)(undefined, testBody));

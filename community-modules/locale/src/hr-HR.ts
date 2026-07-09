@@ -344,6 +344,7 @@ export const AG_GRID_LOCALE_HR = {
     export: 'Izvoz',
     csvExport: 'Izvoz u CSV',
     excelExport: 'Izvoz u Excel',
+    pdfExport: 'Izvoz u PDF',
     columnFilter: 'Filter stupca',
     columnChooser: 'Izbor stupaca',
     chooseColumns: 'Odaberi stupce',

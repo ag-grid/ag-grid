@@ -18,6 +18,7 @@ import { MasterDetailModule } from './masterDetail/masterDetailModule';
 import { ColumnMenuModule, ContextMenuModule } from './menu/menuModule';
 import { MultiFilterModule } from './multiFilter/multiFilterModule';
 import { NotesModule } from './notes/notesModule';
+import { PdfExportModule } from './pdfExport/pdfExportModule';
 import { PivotModule } from './pivot/pivotModule';
 import { CellSelectionModule } from './rangeSelection/rangeSelectionModule';
 import { RichSelectModule } from './richSelect/richSelectModule';
@@ -42,6 +43,7 @@ const dependsOn = [
     ClipboardModule,
     ColumnsToolPanelModule,
     ExcelExportModule,
+    PdfExportModule,
     FiltersToolPanelModule,
     NewFiltersToolPanelModule,
     MasterDetailModule,

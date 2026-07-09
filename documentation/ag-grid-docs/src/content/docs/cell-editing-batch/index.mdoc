@@ -31,7 +31,7 @@ Two batch-specific events are also available:
 
 Edits made during a batch are stored as **pending values** — they are not applied to the data until committed.
 
-- **Display features** (cell rendering, copy/paste, fill handle) reflect pending values immediately.
+- **Display features** (cell rendering, tooltips, copy/paste, fill handle) reflect pending values immediately.
 - **Data features** (sorting, filtering, grouping, aggregation) use committed data until the batch is committed.
 - **Clipboard paste** — pasted values during a batch are staged as pending edits rather than being written to data.
 - **On cancel**, all pending values are discarded and the grid reverts to the original data.

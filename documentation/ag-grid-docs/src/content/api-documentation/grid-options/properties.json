@@ -515,6 +515,18 @@
                 "url": "./excel-export"
             }
         },
+        "defaultPdfExportParams": {
+            "more": {
+                "name": "PDF Export",
+                "url": "./pdf-export"
+            }
+        },
+        "suppressPdfExport": {
+            "more": {
+                "name": "Enabling PDF Export",
+                "url": "./pdf-export/#enabling-pdf-export"
+            }
+        },
         "excelStyles": {
             "more": {
                 "name": "Excel Export Styles",
@@ -702,6 +714,7 @@
                 "url": "./integrated-charts-user-created/#enabling-user-created-charts"
             }
         },
+        "includeHiddenColumnsInCharts": {},
         "getChartToolbarItems": {},
         "createChartContainer": {
             "more": {

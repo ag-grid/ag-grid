@@ -151,7 +151,6 @@ export class PageNumbersComp extends Component {
         const restoreFocus = eNumbers.contains(_getActiveDomElement(this.beans));
 
         eNumbers.replaceChildren();
-        eNumbers.classList.toggle('ag-paging-page-numbers-truncated', items.includes('ellipsis'));
 
         const pageLabel = localeTextFunc('page', 'Page');
         let eCurrentPage: HTMLElement | undefined;

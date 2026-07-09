@@ -345,6 +345,7 @@ export const AG_GRID_LOCALE_RO = {
     export: 'Exportă',
     csvExport: 'Exportă CSV',
     excelExport: 'Exportă Excel',
+    pdfExport: 'Exportă PDF',
     columnFilter: 'Filtru de Coloană',
     columnChooser: 'Alege Coloane',
     chooseColumns: 'Alege Coloane',

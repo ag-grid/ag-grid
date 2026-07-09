@@ -137,6 +137,24 @@ export type {
     RowHeightCallbackParams,
 } from './interfaces/iExcelCreator';
 
+// PDF Export
+export type {
+    IPdfCreator,
+    PdfCell,
+    PdfCellData,
+    PdfCellStyle,
+    PdfCustomContent,
+    PdfExportParams,
+    PdfExportStyles,
+    PdfFontFamily,
+    PdfMargin,
+    PdfPageOrientation,
+    PdfPageSize,
+    PdfStyleCallbackParams,
+    PdfStyleCallbackType,
+    PdfTextAlignment,
+} from './interfaces/iPdfCreator';
+
 // Drag and Drop
 export { DragSourceType } from './dragAndDrop/dragAndDropService';
 export type { DragAndDropIcon, DropTarget, GridDraggingEvent, GridDragSource } from './dragAndDrop/dragAndDropService';

@@ -80,6 +80,7 @@ import type {
     OverlayType,
     PaginationNumberFormatter,
     PaginationPanel,
+    PdfExportParams,
     PivotColumnGroupTotals,
     PivotRowTotals,
     PostProcessPopup,
@@ -596,6 +597,14 @@ export interface Props<TData> {
          * @default false
          */
     suppressExcelExport?: boolean,
+    /** A default configuration object used to export to PDF.
+         * @agModule `PdfExportModule`
+         */
+    defaultPdfExportParams?: PdfExportParams,
+    /** Prevents the user from exporting the grid to PDF.
+         * @default false
+         */
+    suppressPdfExport?: boolean,
     /** A list (array) of Excel styles to be used when exporting to Excel with styles.
          * @initial
          * @agModule `ExcelExportModule`
@@ -707,6 +716,13 @@ export interface Props<TData> {
          * @agModule `IntegratedChartsModule`
          */
     enableCharts?: boolean,
+    /** Hidden columns are included in charts by default, and remain in a chart if hidden after being added.
+         * Set to `false` to exclude hidden columns from charts, and to remove a column from a chart when it is hidden.
+         * Does not apply to Pivot Charts, whose columns always mirror the grid's displayed columns.
+         * @default true
+         * @agModule `IntegratedChartsModule`
+         */
+    includeHiddenColumnsInCharts?: boolean,
     /** The list of chart themes that a user can choose from in the chart panel.
          * @default ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
          * @initial
@@ -2197,6 +2213,8 @@ export function getProps() {
         suppressCsvExport: undefined,
         defaultExcelExportParams: undefined,
         suppressExcelExport: undefined,
+        defaultPdfExportParams: undefined,
+        suppressPdfExport: undefined,
         excelStyles: undefined,
         findSearchValue: undefined,
         findOptions: undefined,
@@ -2218,6 +2236,7 @@ export function getProps() {
         enableFilterHandlers: undefined,
         filterHandlers: undefined,
         enableCharts: undefined,
+        includeHiddenColumnsInCharts: undefined,
         chartThemes: undefined,
         customChartThemes: undefined,
         chartThemeOverrides: undefined,

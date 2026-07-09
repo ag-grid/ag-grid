@@ -123,7 +123,7 @@ describe('SSRM suppressServerSideFullWidthLoadingRow with groupDisplayType', () 
 
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #315'),
-                expect.stringContaining("'groupHideOpenParents' requires 'groupDisplayType'"),
+                expect.stringContaining('`groupHideOpenParents` requires `groupDisplayType`'),
                 expect.any(String)
             );
         });
@@ -140,7 +140,7 @@ describe('SSRM suppressServerSideFullWidthLoadingRow with groupDisplayType', () 
 
             expect(consoleWarnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #315'),
-                expect.stringContaining("'groupHideOpenParents' requires 'groupDisplayType'"),
+                expect.stringContaining('`groupHideOpenParents` requires `groupDisplayType`'),
                 expect.any(String)
             );
         });

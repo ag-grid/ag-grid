@@ -4,6 +4,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vitest/config';
 
+// Pin the timezone so date tests behave the same on every machine, matching the packages/* vitest configs.
+process.env.TZ = 'UTC';
+
 const thisDir = path.dirname(fileURLToPath(import.meta.url));
 
 /** Repo root — two levels up from testing/behavioural. Used to locate packages/ for source aliases. */
@@ -113,7 +116,7 @@ export default defineConfig(({ mode }) => {
             root: repoRoot,
             dir: path.resolve(thisDir, 'src'),
             include: ['**/*.test.ts', '**/*.test.tsx'],
-            benchmark: { include: ['**/*.bench.ts'] },
+            benchmark: { include: ['**/*.bench.ts', '**/*.bench.tsx'] },
             css: browserEnabled,
             browser: {
                 enabled: browserEnabled,
