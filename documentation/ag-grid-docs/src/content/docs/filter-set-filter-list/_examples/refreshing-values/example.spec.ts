@@ -23,14 +23,16 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.setFilterInstanceItem(spec, 'Giraffe')).toHaveCount(0);
     });
 
-    test.eachFramework('refreshFilterValues updates the list when the array changes', async ({ page }) => {
+    test.eachFramework('refreshFilterValues updates the list when the array changes', async ({ page, agIdFor }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
         await waitForFilterItems(page, ARRAY_COL);
 
         // The item test ids are only stamped on the initial render, so match the refreshed
-        // list by its rendered text instead.
-        const item = (name: string) => page.locator('.ag-set-filter-item').filter({ hasText: name });
+        // list by its rendered text — scoped to the Values Array group so items from other
+        // filter lists in the tool panel can't satisfy the assertions.
+        const item = (name: string) =>
+            agIdFor.filterToolPanelGroup(ARRAY_COL).locator('.ag-set-filter-item').filter({ hasText: name });
         await expect(item('Lion').first()).toBeVisible();
         await expect(item('Giraffe')).toHaveCount(0);
 

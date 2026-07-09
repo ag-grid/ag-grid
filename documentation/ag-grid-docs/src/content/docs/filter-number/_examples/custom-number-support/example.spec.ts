@@ -40,7 +40,19 @@ test.agExample(import.meta, () => {
         // Row 0 still matches (parser turned the comma-decimal input back into a number).
         await expect(agIdFor.cell('0', 'sale_1')).toHaveText(expectedCustom);
 
-        // Equals on a single value filters the other rows out (row id 1 has a different value).
-        await expect(agIdFor.rowNode('1')).not.toBeVisible();
+        // Equals on a single value leaves only rows sharing that value. The data is random, so
+        // rather than assume a specific row is filtered out, assert every remaining custom cell
+        // shows the filtered value — the invariant that holds however many rows happen to match.
+        const visibleCustomCells = page.locator('[data-testid^="ag-cell:"][data-testid*="colId=sale_1"]');
+        await expect(visibleCustomCells.first()).toBeVisible();
+        // Retry until the row set settles (filtering leaves briefly-lingering rows mid-animation),
+        // then require every remaining custom cell to show the filtered value.
+        await expect(async () => {
+            const texts = await visibleCustomCells.allInnerTexts();
+            expect(texts.length).toBeGreaterThan(0);
+            for (const text of texts) {
+                expect(text.trim()).toBe(expectedCustom);
+            }
+        }).toPass();
     });
 });

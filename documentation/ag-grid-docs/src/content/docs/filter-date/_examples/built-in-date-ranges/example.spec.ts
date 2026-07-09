@@ -17,6 +17,12 @@ test.agExample(import.meta, () => {
         const dateHeader = agIdFor.headerCell('date');
         await expect(dateHeader).not.toHaveClass(/ag-header-cell-filtered/);
 
+        // Total row count before filtering, read from the grid's aria-rowcount (not the
+        // virtualised DOM rows).
+        const grid = page.locator('[aria-rowcount]').first();
+        const rowCount = async () => Number(await grid.getAttribute('aria-rowcount'));
+        const unfilteredCount = await rowCount();
+
         await agIdFor.headerFilterButton('date').click();
 
         const picker = agIdFor.filterInstancePickerDisplay({ source: 'column-filter' });
@@ -26,5 +32,12 @@ test.agExample(import.meta, () => {
         // close the popup and confirm the relative-range filter is now applied
         await agIdFor.cell('0', 'athlete').click();
         await expect(dateHeader).toHaveClass(/ag-header-cell-filtered/);
+
+        // The data spans ~12 months ago to ~6 months ahead; "Last 24 Months" (24 months ago →
+        // tomorrow) always excludes the future-dated rows, so the row set shrinks. Asserting the
+        // reduction keeps the test meaningful without depending on a specific row surviving.
+        await expect(async () => {
+            expect(await rowCount()).toBeLessThan(unfilteredCount);
+        }).toPass();
     });
 });
