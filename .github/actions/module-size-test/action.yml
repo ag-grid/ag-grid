@@ -44,7 +44,9 @@ runs:
       uses: actions/checkout@v4
       with:
         ref: ${{ inputs.actions-ref }}
-        sparse-checkout: .github/actions
+        sparse-checkout: |
+          .github/actions
+          external/ag-shared/github/actions
         path: .actions-temp
 
     - name: Copy actions from actions-ref
@@ -53,6 +55,11 @@ runs:
       run: |
         rm -rf .github/actions
         cp -r .actions-temp/.github/actions .github/actions
+        # setup-nx wraps the shared core under external/ag-shared/github/actions; the
+        # base/release source can predate it, so bring it from the actions-ref too.
+        rm -rf external/ag-shared/github/actions
+        mkdir -p external/ag-shared/github
+        cp -r .actions-temp/external/ag-shared/github/actions external/ag-shared/github/actions
         rm -rf .actions-temp
 
     - name: Setup
