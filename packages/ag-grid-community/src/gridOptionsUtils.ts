@@ -309,8 +309,9 @@ export function _getRowIdCallback<TData = any>(
         let id = getRowId(params);
 
         if (typeof id !== 'string') {
-            // Avoid logging for every row if the user is returning a non-string value, could be thousands of rows
-            _doOnce(() => beans.log.warn(25, { id }), 'getRowIdString');
+            // Throttle to once per grid: avoids logging for every row (could be thousands), while still
+            // letting each grid surface its own occurrence so the diagnostic attributes per grid.
+            _doOnce(() => beans.log.warn(25, { id }), `getRowIdString:${beans.context.getId()}`);
             id = String(id);
         }
 
