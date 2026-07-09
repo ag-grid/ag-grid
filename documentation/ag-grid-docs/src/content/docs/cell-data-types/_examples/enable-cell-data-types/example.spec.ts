@@ -11,10 +11,16 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('0', 'dateObject')).toContainText('2008-08-24');
         // 'dateString' keeps the string in ISO form.
         await expect(agIdFor.cell('0', 'date')).toContainText('2008-08-24');
-        // object column is off-screen initially; scroll horizontally to render it.
-        await page.locator('.ag-body-horizontal-scroll-viewport').evaluate((el) => (el.scrollLeft = el.scrollWidth));
-        // object data type is formatted via the custom value formatter to the country name.
-        await expect(agIdFor.cell('0', 'countryObject')).toContainText('United States');
+        // object column is off-screen initially; scroll horizontally to render it. Retry the
+        // scroll+assert together: the column only virtualises into the DOM once the grid has
+        // laid out wide enough to overflow, which can lag behind the initial content render.
+        await expect(async () => {
+            await page
+                .locator('.ag-body-horizontal-scroll-viewport')
+                .evaluate((el) => (el.scrollLeft = el.scrollWidth));
+            // object data type is formatted via the custom value formatter to the country name.
+            await expect(agIdFor.cell('0', 'countryObject')).toContainText('United States', { timeout: 2000 });
+        }).toPass();
     });
 
     test.eachFramework('Boolean data type renders checkboxes reflecting the value', async ({ agIdFor }) => {

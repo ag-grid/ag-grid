@@ -6,22 +6,30 @@ test.agExample(import.meta, () => {
     const usFooterId = 'rowGroupFooter_row-group-country-United States';
     const usYear2008FooterId = 'rowGroupFooter_row-group-country-United States-year-2008';
 
-    test.eachFramework('United States country group shows a footer, others do not', async ({ agIdFor, page, agFramework }) => {
-        // React loses the onFirstDataRendered expansion when data loads synchronously — see AG-17785.
-        test.fixme(agFramework.startsWith('reactFunctionalTs'), 'AG-17785: React loses onFirstDataRendered expansion');
+    test.eachFramework(
+        'United States country group shows a footer, others do not',
+        async ({ agIdFor, page, agFramework }) => {
+            // React loses the onFirstDataRendered expansion when data loads synchronously — see AG-17785.
+            test.fixme(
+                agFramework.startsWith('reactFunctionalTs'),
+                'AG-17785: React loses onFirstDataRendered expansion'
+            );
 
-        // United States (key match) has a country-level footer with its subtotals.
-        await expect(agIdFor.autoGroupCell(usFooterId)).toContainText('Total United States', { useInnerText: true });
-        await expect(agIdFor.cell(usFooterId, 'gold')).toContainText('51');
-        await expect(agIdFor.cell(usFooterId, 'silver')).toContainText('21');
-        await expect(agIdFor.cell(usFooterId, 'bronze')).toContainText('17');
+            // United States (key match) has a country-level footer with its subtotals.
+            await expect(agIdFor.autoGroupCell(usFooterId)).toContainText('Total United States', {
+                useInnerText: true,
+            });
+            await expect(agIdFor.cell(usFooterId, 'gold')).toContainText('51');
+            await expect(agIdFor.cell(usFooterId, 'silver')).toContainText('21');
+            await expect(agIdFor.cell(usFooterId, 'bronze')).toContainText('17');
 
-        // Australia (no key match, level 0) has no country-level footer.
-        const australiaFooter = page.locator(
-            '[data-testid="ag-row:row-id=rowGroupFooter_row-group-country-Australia"]'
-        );
-        await expect(australiaFooter).toHaveCount(0);
-    });
+            // Australia (no key match, level 0) has no country-level footer.
+            const australiaFooter = page.locator(
+                '[data-testid="ag-row:row-id=rowGroupFooter_row-group-country-Australia"]'
+            );
+            await expect(australiaFooter).toHaveCount(0);
+        }
+    );
 
     test.eachFramework('Year sub-groups get a footer when expanded', async ({ agIdFor, agFramework }) => {
         // React loses the onFirstDataRendered expansion when data loads synchronously — see AG-17785.

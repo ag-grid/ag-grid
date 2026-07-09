@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Directly applied range function aggregates the total column', async ({ agIdFor, page }) => {
@@ -37,10 +37,11 @@ test.agExample(import.meta, () => {
         const usGroup = agIdFor.rowNode('row-group-country-United States');
 
         await agIdFor.headerCell('total').click();
+        await waitForRowAnimations(page);
         await expect(usGroup).not.toHaveAttribute('row-index', '0');
 
-        await page.waitForTimeout(300);
         await agIdFor.headerCell('total').click();
+        await waitForRowAnimations(page);
         await expect(usGroup).toHaveAttribute('row-index', '0');
     });
 });

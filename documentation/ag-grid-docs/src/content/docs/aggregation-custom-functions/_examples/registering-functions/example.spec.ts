@@ -1,4 +1,4 @@
-import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Registered custom range function aggregates the total column', async ({ agIdFor, page }) => {
@@ -25,12 +25,12 @@ test.agExample(import.meta, () => {
 
         // First click sorts ascending: the smallest range (0) sits at the top, US drops away from it.
         await agIdFor.headerCell('total').click();
+        await waitForRowAnimations(page);
         await expect(usGroup).not.toHaveAttribute('row-index', '0');
 
-        // Second click sorts descending: US (range 7) becomes the top group row. The short settle
-        // avoids the two header clicks being interpreted as a double-click.
-        await page.waitForTimeout(300);
+        // Second click sorts descending: US (range 7) becomes the top group row.
         await agIdFor.headerCell('total').click();
+        await waitForRowAnimations(page);
         await expect(usGroup).toHaveAttribute('row-index', '0');
     });
 

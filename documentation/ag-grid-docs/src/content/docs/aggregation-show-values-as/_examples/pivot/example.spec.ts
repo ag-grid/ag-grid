@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { expect, test, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Each pivot column shows gold as a share of that column total', async ({ agIdFor }) => {
@@ -16,11 +16,11 @@ test.agExample(import.meta, () => {
         const usGroup = agIdFor.rowNode('row-group-country-United States');
 
         await agIdFor.headerCell('pivot_year_2000_gold').click(); // ascending
+        await waitForRowAnimations(page);
         await expect(usGroup).not.toHaveAttribute('row-index', '0');
 
-        await page.waitForTimeout(300); // avoid a double-click
-
         await agIdFor.headerCell('pivot_year_2000_gold').click(); // descending
+        await waitForRowAnimations(page);
         await expect(usGroup).toHaveAttribute('row-index', '0');
     });
 });

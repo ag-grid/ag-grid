@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { expect, test, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Raw total sits alongside the same value as % of parent', async ({ agIdFor }) => {
@@ -24,9 +24,10 @@ test.agExample(import.meta, () => {
             // Sorting the raw total column floats the largest country (US, 38) to the top.
             const usGroup = agIdFor.rowNode('row-group-country-United States');
             await agIdFor.headerCell('total').click();
+            await waitForRowAnimations(page);
             await expect(usGroup).not.toHaveAttribute('row-index', '1'); // row-index 0 is the top grand total row
-            await page.waitForTimeout(300);
             await agIdFor.headerCell('total').click();
+            await waitForRowAnimations(page);
             await expect(usGroup).toHaveAttribute('row-index', '1');
         }
     );
