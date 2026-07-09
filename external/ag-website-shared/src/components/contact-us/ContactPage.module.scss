@@ -32,11 +32,6 @@
         background: radial-gradient(circle at 50% 100%, #0e44917d 0%, var(--color-bg-primary) 50%);
         opacity: 0.13;
     }
-
-    @media (max-width: $breakpoint-about-small) {
-        padding-left: 8px;
-        padding-right: 8px;
-    }
 }
 
 .formContainer {
