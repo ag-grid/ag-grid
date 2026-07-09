@@ -23,6 +23,7 @@
     flex-direction: column;
     margin-bottom: $spacing-size-8;
     padding-top: $spacing-size-2;
+    scroll-margin-top: $spacing-size-8;
 
     p {
         text-align: center;
@@ -503,7 +504,6 @@
         flex-direction: row;
         padding-top: $spacing-size-24;
         padding-bottom: $spacing-size-20;
-        border-top: 1px solid var(--color-border-secondary);
     }
 }
 
