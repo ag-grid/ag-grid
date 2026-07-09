@@ -75,6 +75,8 @@ All state properties are optional, so a property can be excluded if you do not w
 
 If applying some but not all of the column state properties, then `initialState.partialColumnState` must be set to `true`.
 
+`partialColumnState` controls _which_ column state sections you supply, not whether those sections may themselves be partial. Any section you include must match its documented shape.
+
 The state also contains the grid version number. When applying state with older version numbers, any old state properties will be automatically migrated to the current format.
 
 The grid state is designed to be serialisable, so any functions will be stripped out. For example, aggregation functions should be [Registered as Custom Functions](./aggregation-custom-functions/#registering-custom-functions) to work with state rather than being set as [Directly Applied Functions](./aggregation-custom-functions/#directly-applied-functions).
