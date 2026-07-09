@@ -407,7 +407,8 @@ export type {
     AgLabelParams,
     LabelAlignment,
 } from './agWidgets/agFieldParams';
-export { AgInputDateField } from './agWidgets/agInputDateField';
+export { AgInputDateField, AgInputDateFieldSelector } from './agWidgets/agInputDateField';
+export type { AgInputDateFieldParams } from './agWidgets/agInputDateField';
 export { AgInputNumberField, AgInputNumberFieldSelector } from './agWidgets/agInputNumberField';
 export type { AgInputNumberFieldParams } from './agWidgets/agInputNumberField';
 export { AgInputTextArea, AgInputTextAreaSelector } from './agWidgets/agInputTextArea';
