@@ -7,7 +7,7 @@ import type {
     AgMultiSeriesHighlightOptions,
 } from 'ag-charts-types';
 
-import { _warn } from 'ag-grid-community';
+import { _warnForGrid } from 'ag-grid-community';
 
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { get } from '../utils/object';
@@ -275,7 +275,7 @@ export function lookupCustomChartTheme(chartProxyParams: ChartProxyParams, name:
     const customChartTheme = customChartThemes?.[name];
 
     if (!customChartTheme) {
-        _warn(140, { name });
+        _warnForGrid(chartProxyParams.gridId, 140, { name });
     }
 
     return customChartTheme as AgChartTheme;

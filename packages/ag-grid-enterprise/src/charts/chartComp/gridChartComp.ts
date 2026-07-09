@@ -184,6 +184,7 @@ export class GridChartComp extends Component {
         const { gos, chartController, beans, params, eChart } = this;
         const chartType = chartController.getChartType();
         const chartProxyParams: ChartProxyParams = {
+            gridId: beans.context.getId(),
             agChartsExports: beans.agChartsExports as AgChartsExports,
             chartType,
             chartInstance,

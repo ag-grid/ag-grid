@@ -20,6 +20,7 @@ import { getSeriesType } from '../utils/seriesTypeMapper';
 import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
 
 export interface ChartProxyParams {
+    gridId: string;
     agChartsExports: AgChartsExports;
     chartInstance?: AgChartInstance<AgChartInstanceOptions>;
     chartType: ChartType;
