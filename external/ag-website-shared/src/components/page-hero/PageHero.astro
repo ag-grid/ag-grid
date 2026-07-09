@@ -1,0 +1,24 @@
+---
+import styles from './PageHero.module.scss';
+
+interface Props {
+    eyebrow: string;
+    headline: string;
+    subhead: string;
+}
+
+const { eyebrow, headline, subhead } = Astro.props as Props;
+---
+
+<section class={styles.pageHero}>
+    <p class={styles.pageHeroEyebrow}>{eyebrow}</p>
+    <h1 class={styles.pageHeroHeadline}>{headline}</h1>
+    <p class={styles.pageHeroSubhead}>{subhead}</p>
+    {
+        Astro.slots.has('default') && (
+            <div class={styles.pageHeroContent}>
+                <slot />
+            </div>
+        )
+    }
+</section>

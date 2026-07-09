@@ -293,6 +293,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressClipboardPaste',
     'suppressLastEmptyLineOnPaste',
     'enableCharts',
+    'includeHiddenColumnsInCharts',
     'suppressMaintainUnsortedOrder',
     'enableCellTextSelection',
     'suppressBrowserResizeObserver',

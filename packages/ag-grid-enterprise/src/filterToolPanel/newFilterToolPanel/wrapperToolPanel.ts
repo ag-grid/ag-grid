@@ -5,7 +5,7 @@ import type {
     IToolPanelParams,
     NewFiltersToolPanelState,
 } from 'ag-grid-community';
-import { Component, _warn } from 'ag-grid-community';
+import { Component, _createElement, _warn } from 'ag-grid-community';
 
 import type { FilterPanelRefreshParams } from './filterPanel';
 import { FilterPanel } from './filterPanel';
@@ -15,7 +15,7 @@ interface ToolPanelNewFiltersCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, NewFiltersToolPanelState>, IToolPanelNewFiltersCompParams {}
 
 export class WrapperToolPanel extends Component implements INewFiltersToolPanel, IToolPanelComp {
-    private filterPanel: FilterPanel;
+    private filterPanel?: FilterPanel;
 
     constructor() {
         super();
@@ -25,6 +25,7 @@ export class WrapperToolPanel extends Component implements INewFiltersToolPanel,
     public init(params: ToolPanelNewFiltersCompParams): void {
         if (!this.gos.get('enableFilterHandlers')) {
             _warn(282);
+            this.setTemplateFromElement(_createElement({ tag: 'div', cls: 'ag-filter-panel' }));
             return;
         }
         const filterPanelSvc = this.beans.filterPanelSvc!;
@@ -47,7 +48,7 @@ export class WrapperToolPanel extends Component implements INewFiltersToolPanel,
     }
 
     public override getGui(): HTMLElement {
-        return this.filterPanel?.getGui();
+        return this.filterPanel?.getGui() ?? super.getGui();
     }
 
     public refresh(params: ToolPanelNewFiltersCompParams): boolean | void {

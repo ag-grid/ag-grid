@@ -59,6 +59,7 @@ export const GRID_OPTION_DEFAULTS = {
     enableAdvancedFilter: false,
     includeHiddenColumnsInAdvancedFilter: false,
     enableCharts: false,
+    includeHiddenColumnsInCharts: true,
     masterDetail: false,
     keepDetailRows: false,
     keepDetailRowsCount: 10,
