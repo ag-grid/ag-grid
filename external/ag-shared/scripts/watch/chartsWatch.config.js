@@ -1,5 +1,5 @@
 // Projects whose file changes are never processed by the watch loop.
-const IGNORED_PROJECTS = ['all', 'ag-charts-website'];
+const IGNORED_PROJECTS = ['all', 'ag-charts-website', 'ag-website-shared'];
 
 // Framework wrappers are only rebuilt when BUILD_FWS=1 (opt-in, slower).
 if ((process.env.BUILD_FWS ?? '0') !== '1') {

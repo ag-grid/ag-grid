@@ -1,7 +1,7 @@
-const { execSync } = require('child_process');
-const { existsSync } = require('fs');
+import { execSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 
-// Find and log large website cache entries
+// Log the final Nx cache size for observability (repo-agnostic; no removal here).
 if (existsSync('.nx/cache')) {
     try {
         const result = execSync('du -sk .nx/cache', { encoding: 'utf8' });
@@ -12,5 +12,3 @@ if (existsSync('.nx/cache')) {
         console.error('Failed to get cache size:', error.message);
     }
 }
-
-console.log('Cleaned .nx/cache.');

@@ -1,5 +1,5 @@
-const { spawnSync, execSync } = require('child_process');
-const { existsSync } = require('fs');
+import { execSync, spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 
 // Get the branch type input (pr, latest, release)
 const branchType = process.env.INPUT_BRANCH_TYPE || 'pr';
