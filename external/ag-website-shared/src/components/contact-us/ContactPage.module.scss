@@ -9,18 +9,14 @@
     }
 }
 
-.contactSection .contactFlex > div > p {
-    font-weight: var(--text-semibold);
-    color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 60%);
-    line-height: 1.6;
-    max-width: 400px;
-    padding-top: $spacing-size-4;
-}
-
 .contactSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: relative;
     width: 100%;
     box-sizing: border-box;
+    padding-top: $spacing-size-16;
     padding-bottom: $spacing-size-32;
 
     &::before {
@@ -43,30 +39,13 @@
     }
 }
 
-.contactFlex {
-    display: flex;
-    flex-direction: row;
-    gap: $spacing-size-24;
-    padding-top: $spacing-size-12;
-    padding-bottom: $spacing-size-12;
-    justify-content: center;
-    align-items: flex-start;
-    margin: 0 auto;
-    box-sizing: border-box;
+.formContainer {
+    width: 100%;
+    max-width: 48ch;
 
-    @media (max-width: $breakpoint-about-large) {
-        flex-direction: column;
-        gap: $spacing-size-12;
-        align-items: stretch;
-        max-width: 100%;
+    p {
+        text-align: center;
     }
-}
-
-.contactFlex > div {
-    min-width: 0;
-    max-width: 100%;
-    flex: 1 1 0;
-    box-sizing: border-box;
 }
 
 .socialLinks {
@@ -74,12 +53,11 @@
     flex-direction: row;
     gap: 24px;
     margin-left: 0;
-    margin-top: 24px;
+    padding-top: $spacing-size-12;
     flex-wrap: wrap;
 
     @media (max-width: $breakpoint-about-small) {
         gap: 12px;
-        margin-top: 16px;
         justify-content: flex-start;
     }
 

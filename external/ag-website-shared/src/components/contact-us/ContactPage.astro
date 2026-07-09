@@ -20,80 +20,51 @@ import styles from './ContactPage.module.scss';
         />
         <div class="layout-max-width-small">
             <section id="contact-section" class={styles.contactSection}>
-                <div class={styles.contactFlex}>
-                    <div>
-                        <h2>Get in touch</h2>
-                        <p>We are here to help with licenses, developer support and any other queries.</p>
+                <div class={styles.formContainer}>
+                    <ContactForm client:load formLocation="Contact page" />
+                </div>
 
-                        <ContactForm client:load formLocation="Contact page" />
-                    </div>
-
-                    <div>
-                        <h2>Where to find us</h2>
-
-                        <div class={styles.contactOffice}>
-                            <p>
-                                AG Grid Ltd<br />
-                                70 Wilson Street<br />
-                                London<br />
-                                EC2A 2DB<br />
-                            </p>
-                            <div class={styles.officeButton}>
-                                <a
-                                    class="button-tertiary"
-                                    href="https://maps.app.goo.gl/LhvkucDnWtZ9z7rB8"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    <Icon name="mapPin" />
-                                    <span>Visit our office</span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class={styles.socialLinks}>
-                            <a
-                                href="https://github.com/ag-grid/ag-grid"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="GitHub"
-                                class={styles.socialLinkRow}
-                            >
-                                <Icon name="github" />
-                                <span>GitHub</span>
-                            </a>
-                            <a
-                                href="https://x.com/ag_grid"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="X (Twitter)"
-                                class={styles.socialLinkRow}
-                            >
-                                <Icon name="xLogo" />
-                                <span>X</span>
-                            </a>
-                            <a
-                                href="https://youtube.com/c/aggrid"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="YouTube"
-                                class={styles.socialLinkRow}
-                            >
-                                <Icon name="youtube" />
-                                <span>YouTube</span>
-                            </a>
-                            <a
-                                href="https://linkedin.com/company/ag-grid"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="LinkedIn"
-                                class={styles.socialLinkRow}
-                            >
-                                <Icon name="linkedin" />
-                                <span>LinkedIn</span>
-                            </a>
-                        </div>
-                    </div>
+                <div class={styles.socialLinks}>
+                    <a
+                        href="https://github.com/ag-grid/ag-grid"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="GitHub"
+                        class={styles.socialLinkRow}
+                    >
+                        <Icon name="github" />
+                        <span>GitHub</span>
+                    </a>
+                    <a
+                        href="https://x.com/ag_grid"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="X (Twitter)"
+                        class={styles.socialLinkRow}
+                    >
+                        <Icon name="xLogo" />
+                        <span>X</span>
+                    </a>
+                    <a
+                        href="https://youtube.com/c/aggrid"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="YouTube"
+                        class={styles.socialLinkRow}
+                    >
+                        <Icon name="youtube" />
+                        <span>YouTube</span>
+                    </a>
+                    <a
+                        href="https://linkedin.com/company/ag-grid"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="LinkedIn"
+                        class={styles.socialLinkRow}
+                    >
+                        <Icon name="linkedin" />
+                        <span>LinkedIn</span>
+                    </a>
                 </div>
             </section>
         </div>
