@@ -63,6 +63,8 @@ Behavioural tests in `testing/behavioural/` are the primary test suite for verif
 ./behave.sh --watch
 ```
 
+> `./behave.sh` does not type-check (Vitest strips types via esbuild). Before committing, run `yarn nx run ag-behavioural-testing:build:test` to type-check.
+
 ### Benchmarks
 
 Behavioural benchmarks live in `testing/behavioural/` and run via `./benches.sh`. They run in a real headless Chromium (Playwright) by **default**, so layout-dependent work is measured against a real layout engine. Run `./benches.sh --help` for the full usage (it prints vitest's `bench --help` followed by benches.sh's own options).
