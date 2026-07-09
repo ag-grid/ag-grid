@@ -19,6 +19,7 @@ import {
     _getHeaderClassesFromColDef,
     _getHeaderRowCount,
     _warnForGrid,
+    _warnWithoutAttribution,
 } from 'ag-grid-community';
 
 import type { ExcelGridSerializingParams, StyleLinkerInterface } from './excelSerializingSession';
@@ -263,7 +264,11 @@ const createExcelFileForExcel = (
     gridId?: string
 ): boolean => {
     if (!data || data.length === 0) {
-        _warnForGrid(gridId, 159);
+        if (gridId) {
+            _warnForGrid(gridId, 159);
+        } else {
+            _warnWithoutAttribution(159);
+        }
         workbook.reset();
         return false;
     }

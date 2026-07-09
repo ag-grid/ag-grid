@@ -62,7 +62,7 @@ describe('diagnostic capture', () => {
 
         _errorWithoutAttribution(11);
         _warnWithoutAttribution(11);
-        _deprecatedForGrid(undefined, 11);
+        _deprecatedForGrid('grid-a', 11);
 
         expect(received.map((e) => ({ id: e.id, severity: e.severity }))).toEqual([
             { id: 11, severity: 'error' },
@@ -227,13 +227,13 @@ describe('throw mode', () => {
         expect(() => _errorWithoutAttribution(11)).toThrow();
         expect(() => _warnWithoutAttribution(11)).toThrow();
         expect(() => _logPreInitWarn(11, undefined as any, 'boom')).toThrow();
-        expect(() => _deprecatedForGrid(undefined, 11)).not.toThrow();
+        expect(() => _deprecatedForGrid('grid-a', 11)).not.toThrow();
     });
 
     test("throwOn 'deprecation' throws on deprecations, warnings and errors", () => {
         _configureDiagnostics({ throwOn: 'deprecation' });
 
-        expect(() => _deprecatedForGrid(undefined, 11)).toThrow();
+        expect(() => _deprecatedForGrid('grid-a', 11)).toThrow();
         expect(() => _warnWithoutAttribution(11)).toThrow();
         expect(() => _errorWithoutAttribution(11)).toThrow();
     });

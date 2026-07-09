@@ -382,19 +382,20 @@ export function _errorWithoutAttribution<
 }
 
 // Grid-id-first variants used by the grid-scoped LogService to attribute a diagnostic to the emitting
-// grid. Loosely typed on purpose — LogService is the strongly-typed (ErrorId-checked) call surface.
+// grid. `gridId` is required — a caller with no grid must choose `_warnWithoutAttribution` explicitly
+// rather than pass undefined. Loosely typed on the id/params — LogService is the ErrorId-checked surface.
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _warnForGrid(gridId: string | undefined, id: ErrorId, params?: any): void {
+export function _warnForGrid(gridId: string, id: ErrorId, params?: any): void {
     logDiagnostic(_warnOnce, id, params, 'warning', true, gridId);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _deprecatedForGrid(gridId: string | undefined, id: ErrorId, params?: any): void {
+export function _deprecatedForGrid(gridId: string, id: ErrorId, params?: any): void {
     logDiagnostic(_warnOnce, id, params, 'deprecation', true, gridId);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _errorForGrid(gridId: string | undefined, id: ErrorId, params?: any): void {
+export function _errorForGrid(gridId: string, id: ErrorId, params?: any): void {
     logDiagnostic(_errorOnce, id, params, 'error', false, gridId);
 }
 

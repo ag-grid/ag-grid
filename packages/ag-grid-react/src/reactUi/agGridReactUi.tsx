@@ -36,6 +36,7 @@ import {
     _isServerSideRowModel,
     _processOnChange,
     _warnForGrid,
+    _warnWithoutAttribution,
 } from 'ag-grid-community';
 
 import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
@@ -282,7 +283,11 @@ function extractGridPropertyChanges(gridId: string | undefined, prevProps: any, 
     for (const propKey of Object.keys(nextProps)) {
         if (excludeReactCompProps.has(propKey)) {
             if (deprecatedReactCompProps.has(propKey)) {
-                _warnForGrid(gridId, 274, { prop: propKey });
+                if (gridId) {
+                    _warnForGrid(gridId, 274, { prop: propKey });
+                } else {
+                    _warnWithoutAttribution(274, { prop: propKey });
+                }
             }
             continue;
         }

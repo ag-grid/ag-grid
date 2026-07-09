@@ -1,7 +1,7 @@
 import type { IComponent } from 'ag-stack';
 
 import type { ComponentType } from '../../interfaces/iUserCompDetails';
-import { _warnForGrid } from '../../validation/logging';
+import { _warnForGrid, _warnWithoutAttribution } from '../../validation/logging';
 
 /**
  * B the business interface (ie IHeader)
@@ -74,7 +74,11 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
             }
 
             if (mandatory) {
-                _warnForGrid(gridId, 49, { methodName });
+                if (gridId) {
+                    _warnForGrid(gridId, 49, { methodName });
+                } else {
+                    _warnWithoutAttribution(49, { methodName });
+                }
             }
             // multiple features rely on this returning `null` rather than `undefined`,
             // so that they can differentiate whether the underlying component has implemented a void method or not

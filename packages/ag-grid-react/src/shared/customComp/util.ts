@@ -1,5 +1,5 @@
 import type { FilterDisplay, ICellEditor, IFilter, IStatusPanel, IToolPanel } from 'ag-grid-community';
-import { AgPromise, _warnForGrid } from 'ag-grid-community';
+import { AgPromise, _warnForGrid, _warnWithoutAttribution } from 'ag-grid-community';
 
 /**
  * Function to retrieve the React component from an instance returned by the grid.
@@ -20,5 +20,9 @@ export function getInstance<
 }
 
 export function warnReactiveCustomComponents(gridId: string | undefined): void {
-    _warnForGrid(gridId, 231);
+    if (gridId) {
+        _warnForGrid(gridId, 231);
+    } else {
+        _warnWithoutAttribution(231);
+    }
 }

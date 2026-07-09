@@ -1,5 +1,5 @@
 import type { WrappableInterface } from 'ag-grid-community';
-import { BaseComponentWrapper, _warnForGrid } from 'ag-grid-community';
+import { BaseComponentWrapper, _warnForGrid, _warnWithoutAttribution } from 'ag-grid-community';
 
 import { VueComponentFactory } from './VueComponentFactory';
 
@@ -102,7 +102,11 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
             }
 
             if (mandatory) {
-                _warnForGrid(gridId, 233, { methodName });
+                if (gridId) {
+                    _warnForGrid(gridId, 233, { methodName });
+                } else {
+                    _warnWithoutAttribution(233, { methodName });
+                }
             }
             return null;
         };

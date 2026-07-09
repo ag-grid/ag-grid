@@ -1,6 +1,6 @@
 import { createVNode, defineComponent, render } from 'vue';
 
-import { _errorForGrid } from 'ag-grid-community';
+import { _errorForGrid, _errorWithoutAttribution } from 'ag-grid-community';
 
 export class VueComponentFactory {
     // WeakMap avoids repeat component tree traversals and allows GC of parent components
@@ -17,7 +17,11 @@ export class VueComponentFactory {
             componentDefinition = { extends: defineComponent({ ...component }) };
         }
         if (!componentDefinition) {
-            _errorForGrid(gridId, 114, { component });
+            if (gridId) {
+                _errorForGrid(gridId, 114, { component });
+            } else {
+                _errorWithoutAttribution(114, { component });
+            }
         }
 
         if (componentDefinition.extends) {
@@ -161,7 +165,11 @@ export class VueComponentFactory {
         }
 
         if (!componentInstance && !suppressError) {
-            _errorForGrid(gridId, 114, { component });
+            if (gridId) {
+                _errorForGrid(gridId, 114, { component });
+            } else {
+                _errorWithoutAttribution(114, { component });
+            }
             return null;
         }
 
