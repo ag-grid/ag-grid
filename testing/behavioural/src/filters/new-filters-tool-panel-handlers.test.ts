@@ -34,10 +34,11 @@ describe('new filters tool panel requires enableFilterHandlers', () => {
         expect(consoleErrorSpy).not.toHaveBeenCalled();
 
         // grid rendered despite the missing flag
-        expect(getGridElement(api)).toBeTruthy();
-        const toolPanel = api.getToolPanelInstance('filters-new') as any;
-        expect(toolPanel).toBeTruthy();
-        expect(toolPanel.getGui()).toBeInstanceOf(HTMLElement);
+        const gridElement = getGridElement(api);
+        expect(gridElement).toBeTruthy();
+        expect(api.getToolPanelInstance('filters-new')).toBeTruthy();
+        // the tool panel wrapper is rendered in the DOM rather than crashing
+        expect(gridElement!.querySelector('.ag-tool-panel-wrapper')).toBeTruthy();
     });
 
     test('does not warn #282 when enableFilterHandlers is set', async () => {
