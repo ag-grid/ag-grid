@@ -22,9 +22,9 @@ describe('includeHiddenColumnsInCharts', () => {
         { country: 'USA', gold: 4, silver: 2 },
     ];
 
-    beforeAll(() => {
+    beforeAll(async () => {
         setupAgTestIds();
-        canvasPolyfill.init();
+        await canvasPolyfill.init();
     });
     afterAll(() => canvasPolyfill.reset());
     afterEach(() => gridsManager.reset());

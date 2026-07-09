@@ -1,18 +1,16 @@
+import type { CanvasLike } from 'ag-charts-core';
 import { ConfiguredCanvasMixin, applySkiaPatches } from 'ag-charts-core';
-import * as SkiaCanvas from 'skia-canvas';
-import { Canvas, DOMMatrix, Image, Path2D } from 'skia-canvas';
 
-const NodeCanvas = ConfiguredCanvasMixin(Canvas);
-type NodeCanvasInstance = InstanceType<typeof NodeCanvas>;
-
-// Destructured off the namespace import (rather than a named import, which collides with the DOM lib
-// global of the same name under `isolatedModules`) - skia-canvas exports this as a class but its types
-// don't reflect that on the namespace, hence the cast.
-const { CanvasRenderingContext2D } = SkiaCanvas as typeof SkiaCanvas & {
-    CanvasRenderingContext2D: { prototype: CanvasRenderingContext2D };
-};
-
-applySkiaPatches(CanvasRenderingContext2D, DOMMatrix);
+// skia-canvas ships a platform-specific native binary and is loaded lazily (inside `init()`, not at
+// module scope) - this module is re-exported from test-utils/index.ts, which almost every behavioural
+// test imports regardless of whether it touches charts, so a top-level import would require every
+// test in the suite to have a working skia-canvas native binary, not just the ones that call `init`.
+// Typed against `ConfiguredCanvasMixin`'s own fixed return shape (not skia-canvas's concrete `Canvas`
+// type) so no skia-canvas type reference - which would need either a runtime import or the banned
+// `import()` type syntax - is needed at module scope.
+type ConfiguredCanvasInstance = CanvasLike & { transferToImageBitmap(): CanvasLike };
+let NodeCanvas: (new (...args: any[]) => ConfiguredCanvasInstance) | undefined;
+type NodeCanvasInstance = ConfiguredCanvasInstance;
 
 let initialized = false;
 let originalCreateElement: typeof document.createElement | undefined;
@@ -32,11 +30,22 @@ export const canvasPolyfill = {
     reset,
 };
 
-function init(): boolean {
+async function init(): Promise<boolean> {
     if (initialized) {
         return false;
     }
     initialized = true;
+
+    const SkiaCanvas = await import('skia-canvas');
+    const { Canvas, DOMMatrix, Image, Path2D } = SkiaCanvas;
+    // Destructured off the namespace import (rather than a named import, which collides with the DOM
+    // lib global of the same name under `isolatedModules`) - skia-canvas exports this as a class but
+    // its types don't reflect that on the namespace, hence the cast.
+    const { CanvasRenderingContext2D } = SkiaCanvas as unknown as {
+        CanvasRenderingContext2D: { prototype: CanvasRenderingContext2D };
+    };
+    applySkiaPatches(CanvasRenderingContext2D, DOMMatrix);
+    NodeCanvas = ConfiguredCanvasMixin(Canvas);
 
     const global = globalThis as unknown as Record<string, unknown>;
     originalGlobals = { Path2D: global.Path2D, DOMMatrix: global.DOMMatrix, Image: global.Image };
@@ -60,7 +69,7 @@ function init(): boolean {
                 }
                 let nodeCanvas = canvases.get(canvasEl);
                 if (!nodeCanvas || nodeCanvas.width !== canvasEl.width || nodeCanvas.height !== canvasEl.height) {
-                    nodeCanvas = new NodeCanvas(canvasEl.width || 1, canvasEl.height || 1);
+                    nodeCanvas = new NodeCanvas!(canvasEl.width || 1, canvasEl.height || 1);
                     canvases.set(canvasEl, nodeCanvas);
                 }
                 return nodeCanvas.getContext('2d');
