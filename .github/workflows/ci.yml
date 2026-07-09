@@ -163,7 +163,6 @@ jobs:
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: 'rw'
-          free_disk_space: false
 
       - name: Prepare Snapshot Branch
         uses: ./.github/actions/snapshot-prepare
@@ -231,7 +230,6 @@ jobs:
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: ro
-          free_disk_space: false
 
       - name: nx test
         if: matrix.shard != 0
@@ -327,7 +325,6 @@ jobs:
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: ro
-          free_disk_space: false
 
       - name: nx format:check
         id: format
