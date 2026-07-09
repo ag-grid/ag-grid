@@ -79,7 +79,9 @@ describe('Set Filter dropdown opened before data arrives (AG-17369)', () => {
     });
 
     test('explicit cellDataType keeps the correct scenario-independent state (workaround guard)', async () => {
-        const columnDefs = [{ field: 'value', filter: 'agSetColumnFilter', cellDataType: 'text' }];
+        const columnDefs: GridOptions<RowData>['columnDefs'] = [
+            { field: 'value', filter: 'agSetColumnFilter', cellDataType: 'text' },
+        ];
         const scenarioA = await runScenario('gridTextA', { openBeforeData: false, columnDefs });
         const scenarioB = await runScenario('gridTextB', { openBeforeData: true, columnDefs });
 
