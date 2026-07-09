@@ -26,7 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     rowData: null,
     theme: themeQuartz.withParams({
-        pinnedRowBackgroundColor: 'rgb(255, 249, 196)',
+        pinnedRowBackgroundColor: 'color-mix(in srgb, var(--ag-background-color), #ffeb3b 18%)',
     }),
     // no rows to pin to start with
     pinnedTopRowData: [{ athlete: 'TOP (athlete)', country: 'TOP (country)', sport: 'TOP (sport)' }],
