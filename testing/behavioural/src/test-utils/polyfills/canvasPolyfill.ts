@@ -16,16 +16,26 @@ applySkiaPatches(CanvasRenderingContext2D, DOMMatrix);
 
 let initialized = false;
 let originalCreateElement: typeof document.createElement | undefined;
-let originalGlobals: { Path2D: unknown; DOMMatrix: unknown; Image: unknown } | undefined;
+let originalGlobals:
+    | {
+          Path2D: unknown;
+          DOMMatrix: unknown;
+          Image: unknown;
+          OffscreenCanvas: unknown;
+          requestAnimationFrame: unknown;
+          cancelAnimationFrame: unknown;
+      }
+    | undefined;
 
 /**
- * Opt-in: patches `document.createElement('canvas')` so each canvas element is backed by
- * `skia-canvas` (via `ag-charts-core`'s `ConfiguredCanvasMixin`/`applySkiaPatches`) and provides
- * globals (`Path2D`, `DOMMatrix`, `Image`) AG Charts' rendering layer expects. Mirrors the setup
- * `ag-charts-server-side` uses for its own SSR and image-snapshot tests — jsdom has no native
- * canvas support, so without this AG Charts can't construct a real chart. Call `init` in
- * `beforeAll` for tests that render real Integrated Charts, and `reset` in `afterAll` to restore
- * jsdom's defaults for other tests sharing the same worker.
+ * Opt-in: makes AG Charts render for real under jsdom, which has no native canvas or animation
+ * frame support. Patches `document.createElement('canvas')` and `globalThis.OffscreenCanvas` (AG
+ * Charts' series layer renders through OffscreenCanvas) to return `skia-canvas`-backed contexts
+ * (via `ag-charts-core`'s `ConfiguredCanvasMixin`/`applySkiaPatches`), provides `Path2D`/`DOMMatrix`/
+ * `Image` globals, and polyfills `requestAnimationFrame`/`cancelAnimationFrame`. Mirrors the setup
+ * `ag-charts-community`'s own test suite uses. Call `init` in `beforeAll` for tests that render
+ * real Integrated Charts, and `reset` in `afterAll` to restore jsdom's defaults for other tests
+ * sharing the same worker.
  */
 export const canvasPolyfill = {
     init,
@@ -39,8 +49,25 @@ function init(): boolean {
     initialized = true;
 
     const global = globalThis as unknown as Record<string, unknown>;
-    originalGlobals = { Path2D: global.Path2D, DOMMatrix: global.DOMMatrix, Image: global.Image };
-    Object.assign(global, { Path2D, DOMMatrix, Image });
+    originalGlobals = {
+        Path2D: global.Path2D,
+        DOMMatrix: global.DOMMatrix,
+        Image: global.Image,
+        OffscreenCanvas: global.OffscreenCanvas,
+        requestAnimationFrame: global.requestAnimationFrame,
+        cancelAnimationFrame: global.cancelAnimationFrame,
+    };
+
+    class PolyfilledOffscreenCanvas extends NodeCanvas {}
+
+    Object.assign(global, {
+        Path2D,
+        DOMMatrix,
+        Image,
+        OffscreenCanvas: PolyfilledOffscreenCanvas,
+        requestAnimationFrame: (cb: FrameRequestCallback) => setTimeout(() => cb(Date.now()), 0),
+        cancelAnimationFrame: (handle: number) => clearTimeout(handle),
+    });
 
     const canvases = new WeakMap<HTMLCanvasElement, NodeCanvasInstance>();
     originalCreateElement = document.createElement.bind(document);

@@ -7407,7 +7407,16 @@
   resolved "https://registry.ag-grid.com/@types/jasmine/-/jasmine-5.1.15.tgz#5a9a8d7c45590089a862fc3e1c0c70d3af811274"
   integrity sha512-ZAC8KjmV2MJxbNTrwXFN+HKeajpXQZp6KpPiR6Aa4XvaEnjP6qh23lL/Rqb7AYzlp3h/rcwDrQ7Gg7q28cQTQg==
 
-"@types/jest@^30.0.0":
+"@types/jest-image-snapshot@^6.4.0":
+  version "6.4.1"
+  resolved "https://registry.yarnpkg.com/@types/jest-image-snapshot/-/jest-image-snapshot-6.4.1.tgz#a64c4faf782ba466193563bda082017ecbaaa0cf"
+  integrity sha512-pj3Sdc7Cx5mMLUttPprazSDQCur2cr512Dm38e9aAHI55LDxEhqdyqzK9myC4EmEy7sPAF2nGJ8zifX4qso7sQ==
+  dependencies:
+    "@types/jest" "*"
+    "@types/pixelmatch" "*"
+    ssim.js "^3.1.1"
+
+"@types/jest@*", "@types/jest@^30.0.0":
   version "30.0.0"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-30.0.0.tgz#5e85ae568006712e4ad66f25433e9bdac8801f1d"
   integrity sha512-XTYugzhuwqWjws0CVz8QpM36+T+Dz5mTEBKhNs/esGLnCIlGdRy+Dq78NRjd7ls7r8BC8ZRMOrKlkO1hU0JOwA==
@@ -7530,6 +7539,13 @@
   version "4.0.2"
   resolved "https://registry.ag-grid.com/@types/parse-json/-/parse-json-4.0.2.tgz#5950e50960793055845e956c427fc2b0d70c5239"
   integrity sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==
+
+"@types/pixelmatch@*":
+  version "5.2.6"
+  resolved "https://registry.yarnpkg.com/@types/pixelmatch/-/pixelmatch-5.2.6.tgz#fba6de304ac958495f27d85989f5c6bb7499a686"
+  integrity sha512-wC83uexE5KGuUODn6zkm9gMzTwdY5L0chiK+VrKcDfEjzxh1uadlWTvOmAbCpnM9zx/Ww3f8uKlYQVnO/TrqVg==
+  dependencies:
+    "@types/node" "*"
 
 "@types/postcss-import@^14.0.3":
   version "14.0.3"
@@ -13563,6 +13579,11 @@ get-proto@^1.0.1:
     dunder-proto "^1.0.1"
     es-object-atoms "^1.0.0"
 
+get-stdin@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/get-stdin/-/get-stdin-5.0.1.tgz#122e161591e21ff4c52530305693f20e6393a398"
+  integrity sha512-jZV7n6jGE3Gt7fgSTJoz91Ak5MuTLwMwkoYdjxuJ/AmjIsE1UC03y/IWkZCQGEvVNS9qoRNwy5BCqxImv0FVeA==
+
 get-stream@^5.1.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/get-stream/-/get-stream-5.2.0.tgz#4966a1795ee5ace65e706c4b7beb71257d6e22d3"
@@ -13843,6 +13864,11 @@ globjoin@^0.1.4:
   version "0.1.4"
   resolved "https://registry.ag-grid.com/globjoin/-/globjoin-0.1.4.tgz#2f4494ac8919e3767c5cbb691e9f463324285d43"
   integrity sha512-xYfnw62CKG8nLkZBfWbhWwDw02CHty86jfPcc2cr3ZfeuK9ysoVPPEUxf21bAD/rWAgk52SuBrLJlefNy8mvFg==
+
+glur@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/glur/-/glur-1.1.2.tgz#f20ea36db103bfc292343921f1f91e83c3467689"
+  integrity sha512-l+8esYHTKOx2G/Aao4lEQ0bnHWg4fWtJbVoZZT9Knxi01pB8C80BR85nONLFwkkQoFRCmXY+BUcGZN3yZ2QsRA==
 
 gopd@^1.0.1, gopd@^1.2.0:
   version "1.2.0"
@@ -15520,6 +15546,19 @@ jest-haste-map@30.3.0:
   optionalDependencies:
     fsevents "^2.3.3"
 
+jest-image-snapshot@^6.0.0:
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/jest-image-snapshot/-/jest-image-snapshot-6.5.2.tgz#5bd4ffd36d14f590a3a6264c35a069fe2bc8395d"
+  integrity sha512-frenWThr5ddnnokcX5N4gwi41hA5TiUOdhv/JoGcJrOaktHjrk4/7XbiHKW52lgKX+vei6QkRlgM7fkYQ15nPg==
+  dependencies:
+    chalk "^4.0.0"
+    get-stdin "^5.0.1"
+    glur "^1.1.2"
+    lodash "^4.17.4"
+    pixelmatch "^5.1.0"
+    pngjs "^3.4.0"
+    ssim.js "^3.1.1"
+
 jest-leak-detector@30.3.0:
   version "30.3.0"
   resolved "https://registry.yarnpkg.com/jest-leak-detector/-/jest-leak-detector-30.3.0.tgz#a695a851e353f517a554a2f5c91c2742fc131c98"
@@ -16452,7 +16491,7 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.ag-grid.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==
 
-lodash@^4.17.10, lodash@^4.17.21:
+lodash@^4.17.10, lodash@^4.17.21, lodash@^4.17.4:
   version "4.18.1"
   resolved "https://registry.ag-grid.com/lodash/-/lodash-4.18.1.tgz#ff2b66c1f6326d59513de2407bf881439812771c"
   integrity sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==
@@ -19056,6 +19095,13 @@ piscina@^5.0.0:
   optionalDependencies:
     "@napi-rs/nice" "^1.0.4"
 
+pixelmatch@^5.1.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/pixelmatch/-/pixelmatch-5.3.0.tgz#5e5321a7abedfb7962d60dbf345deda87cb9560a"
+  integrity sha512-o8mkY4E/+LNUf6LzX96ht6k6CEDi65k9G2rjMtBe9Oo+VPKSvl+0GKHuH/AlG+GA5LPG/i5hrekkxUc3s2HU+Q==
+  dependencies:
+    pngjs "^6.0.0"
+
 pkce-challenge@^5.0.0:
   version "5.0.1"
   resolved "https://registry.ag-grid.com/pkce-challenge/-/pkce-challenge-5.0.1.tgz#3b4446865b17b1745e9ace2016a31f48ddf6230d"
@@ -19132,10 +19178,15 @@ pngjs-nozlib@^1.0.0:
   resolved "https://registry.ag-grid.com/pngjs-nozlib/-/pngjs-nozlib-1.0.0.tgz#9e64d602cfe9cce4d9d5997d0687429a73f0b7d7"
   integrity sha512-N1PggqLp9xDqwAoKvGohmZ3m4/N9xpY0nDZivFqQLcpLHmliHnCp9BuNCsOeqHWMuEEgFjpEaq9dZq6RZyy0fA==
 
-pngjs@^3.3.3:
+pngjs@^3.3.3, pngjs@^3.4.0:
   version "3.4.0"
   resolved "https://registry.ag-grid.com/pngjs/-/pngjs-3.4.0.tgz#99ca7d725965fb655814eaf65f38f12bbdbf555f"
   integrity sha512-NCrCHhWmnQklfH4MtJMRjZ2a8c80qXeMlQMv2uVp9ISJMTt562SbGd6n2oq0PaPgKm7Z6pL9E2UlLIhC+SHL3w==
+
+pngjs@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/pngjs/-/pngjs-6.0.0.tgz#ca9e5d2aa48db0228a52c419c3308e87720da821"
+  integrity sha512-TRzzuFRRmEoSW/p1KVAmiOgPco2Irlah+bGFCeNfJXxxYGwSw7YwAOAcd7X28K/m5bjBWKsC29KyoMfHbypayg==
 
 portfinder@^1.0.28:
   version "1.0.38"
@@ -21955,6 +22006,11 @@ sshpk@^1.7.0:
     jsbn "~0.1.0"
     safer-buffer "^2.0.2"
     tweetnacl "~0.14.0"
+
+ssim.js@^3.1.1:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/ssim.js/-/ssim.js-3.5.0.tgz#d7276b9ee99b57a5ff0db34035f02f35197e62df"
+  integrity sha512-Aj6Jl2z6oDmgYFFbQqK7fght19bXdOxY7Tj03nF+03M9gCBAjeIiO8/PlEGMfKDwYpw4q6iBqVq2YuREorGg/g==
 
 ssri@^13.0.0:
   version "13.0.1"

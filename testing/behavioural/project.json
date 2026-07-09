@@ -37,6 +37,19 @@
         }
       }
     },
+    "test-chart-snapshots": {
+      "command": "npx vitest run",
+      "dependsOn": ["build:test"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "config": "vitest.chart-snapshots.config.ts"
+      },
+      "configurations": {
+        "update": {
+          "update": true
+        }
+      }
+    },
     "benchmark": {
       "command": "vitest bench --run",
       "options": {

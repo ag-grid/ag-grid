@@ -1,5 +1,6 @@
 export * from './polyfills/objectUrls';
 export * from './polyfills/canvasPolyfill';
+export * from './chartSnapshot';
 export * from './polyfills/mockGridLayout';
 export * from './polyfills/pointerEvent';
 export * from './polyfills/clipboard';
