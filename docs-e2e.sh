@@ -7,7 +7,7 @@
 #   ./docs-e2e.sh "file-pattern"                    # Run tests matching pattern
 #   ./docs-e2e.sh "file-pattern" --grep "name"      # Run specific test by name
 #   ./docs-e2e.sh --all-browsers                    # Run all browsers
-#   ./docs-e2e.sh --framework react                 # Run with specific framework
+#   ./docs-e2e.sh --framework reactFunctionalTs      # Run with specific framework
 #   ./docs-e2e.sh --url https://localhost:4610      # Run against specific URL
 #   ./docs-e2e.sh --headed                          # Run in headed mode
 #   ./docs-e2e.sh --ui                              # Open Playwright UI mode
@@ -31,7 +31,8 @@ Any unrecognised arguments are forwarded directly to playwright test.
 
 Options:
   --all-browsers          Run all browsers (chromium, firefox, webkit)
-  --framework <name>      Set FRAMEWORK env var (e.g. react, angular, vue)
+  --framework <name>      Set FRAMEWORK env var. Valid: typescript, vanilla,
+                          reactFunctionalTs, reactFunctionalTs_Dev, angular, vue3
   --url <url>             Set BASE_URL env var (default: https://localhost:4610)
   --help                  Show this help message
 
@@ -49,7 +50,7 @@ Examples:
   ./docs-e2e.sh "toolbar"
   ./docs-e2e.sh "toolbar" --grep "Quick filter"
   ./docs-e2e.sh --all-browsers
-  ./docs-e2e.sh --framework react
+  ./docs-e2e.sh --framework reactFunctionalTs
   ./docs-e2e.sh --url https://localhost:4610
   ./docs-e2e.sh --headed
   ./docs-e2e.sh --ui

@@ -76,11 +76,12 @@ Present this plan to the user before proceeding. Wait for approval.
 
 For each example in the approved plan, use the **playwright-expert** subagent (via the Agent tool) to write the `example.spec.ts` file. Provide the subagent with:
 
-1.  The full test utilities reference (from the "Test Reference" section below)
+1.  The core test reference (the "Test Reference" section below) **and** the situational pitfalls/patterns that apply to this example (from `reference/pitfalls-and-patterns.md` — see the index below)
 2.  The example's source code (main.ts, data.ts, etc.)
 3.  The specific behaviours to test from the plan
 4.  Any existing `example.spec.ts` files from neighbouring examples as style reference
 5.  The doc page context explaining what the example demonstrates
+6.  The deterministic-waits principle below — tests must not be flaky
 
 The subagent should write the test file and return it. You then write it to disk.
 
@@ -89,23 +90,23 @@ The subagent should write the test file and return it. You then write it to disk
 Run each spec with the `docs-e2e.sh` helper from the **repository root**:
 
 ```bash
-./docs-e2e.sh "<example-folder-name>" --framework typescript
+./docs-e2e.sh "<example-folder-name>"
 ```
 
 **Important:**
 
 - Run from the repo root — `docs-e2e.sh` handles the working directory and Playwright config for you.
 - Use the example folder name as the filter (e.g., `"aggregation-overview"`), NOT a glob pattern with `**/` (Playwright treats `*` as regex).
-- Start with `--framework typescript` for a quick single-framework check.
 - To run a single test by name, append `--grep "<test-name>"`.
-- To test all frameworks, drop the `--framework` flag; to test all browsers, add `--all-browsers`.
+- To test a specific framework, use the `--framework angular` flag;
+- To test all browsers, add `--all-browsers`.
 
 ## STEP 4: Iterate
 
 If a test fails, diagnose the failure, fix it, and re-run. When several tests (or several frameworks/browsers) fail at once, re-run **only the failures** with `--last-failed` instead of the whole suite — this is much faster to loop on:
 
 ```bash
-./docs-e2e.sh "<example-folder-name>" --framework typescript   # initial run records failures
+./docs-e2e.sh "<example-folder-name>"   # initial run records failures
 # ...fix a failing test...
 ./docs-e2e.sh --last-failed                                    # re-runs only what failed; repeat until green
 ```
@@ -121,29 +122,47 @@ Common fixes:
 
 ### Interpreting Failures
 
-- **Strict mode violation (resolved to N elements):** Use `.first()` on the locator (see Pitfall 1 in Test Reference).
+- **Strict mode violation (resolved to N elements):** Use `.first()` on the locator (see Pitfall 1 in the pitfalls reference).
 - **Timeout waiting for element:** The row may not be visible — check if it needs expanding, scrolling, or if the row ID is correct.
 - **Expected text not found:** Recalculate expected values from the data source. Check aggFunc logic carefully.
+
+## Writing Deterministic (Non-Flaky) Tests
+
+These tests run across every framework and all browsers, so timing-dependent flakiness is the main failure mode. **Never use a fixed `page.waitForTimeout(...)` to wait for grid state to settle.** A fixed sleep is either too short (flaky) or too long (slow), and it encodes a race rather than removing it. Use a deterministic signal instead:
+
+- **Web-first assertions auto-retry.** `expect(locator).toContainText(...)`, `.toBeVisible()`, `.toHaveAttribute(...)` etc. already poll until they pass or time out. Assert the end state directly rather than sleeping then asserting.
+- **Wait for row re-render / animations** after an action that reorders or re-renders rows (sort, transaction, group expand) with `waitForRowAnimations(page)`. It flushes a frame and waits until no container has duplicate ("zombie") rows. This is also the correct way to open the gap between two header clicks so they aren't read as a double-click (see Pitfall 11) — not a fixed timeout.
+- **Retry a read-and-assert block** for values you pull off the page (console messages, computed ordering, `scrollTop`) with `await expect(callback).toPass()`. The custom `expect` does not expose `expect.poll()`; `.toPass()` is the idiom (see Pitfall 10).
+- **`ensureGridReady` / `waitForGridContent`** gate the initial grid load — call them before interacting.
+
+The only acceptable fixed wait is a deliberate, documented debounce where no observable signal exists — and even then, prefer a deterministic helper first. If you find yourself reaching for `waitForTimeout`, treat it as a smell and find the signal you're actually waiting for.
 
 ## Definition of Done
 
 - Every targeted example has an `example.spec.ts` with meaningful assertions (no placeholders).
-- All tests pass with `--framework typescript` against chromium.
+- All tests pass against chromium.
 - Assertions cover the behaviours described in the documentation for each example.
 - Where the example supports it, tests exercise at least one interaction (expand/sort/filter/toggle), not just static cell values (see Pitfall 12).
+- No fixed `page.waitForTimeout(...)` is used to wait for grid state — waits are deterministic (see "Writing Deterministic (Non-Flaky) Tests").
 - Tests follow existing conventions (see nearby `example.spec.ts` files for style).
 
 ---
 
 ## Test Reference
 
-This section provides the full reference for writing tests. Include this when delegating to the playwright-expert subagent.
+The core conventions below apply to almost every test — include them when delegating to the playwright-expert subagent. Situational guidance (12 pitfalls + worked patterns) lives in `reference/pitfalls-and-patterns.md`; use the index at the end of this section to pull in only the parts relevant to your example.
 
 ### Imports
 
 ```typescript
 import { expect, test } from '@utils/grid/test-utils';
 ```
+
+Common helpers exported from the same module:
+
+- `ensureGridReady(page)` / `waitForGridContent(page)` — gate the initial grid load before interacting.
+- `waitForRowAnimations(page)` — deterministic wait after actions that reorder/re-render rows (sort, transaction, expand); also the correct gap between two header clicks (see the deterministic-waits principle). Prefer this over any fixed `waitForTimeout`.
+- `expectConsistentFrameworkDom(page, options?)` — opt-in snapshot assertion that the grid DOM subtree is structurally consistent across frameworks, catching wrapper drift. Use it on examples where framework-specific DOM differences would be a real regression; disable text comparison for volatile data.
 
 ### Test Structure
 
@@ -194,246 +213,23 @@ AG Grid assigns row IDs based on row type:
 
 Avoid the use of `remoteGrid(page)`. Prefer using `agIdFor` locators and Playwright page interactions instead.
 
-### Common Pitfalls
-
-#### Pitfall 1: Strict Mode Violations (Multiple Matching Elements)
-
-AG Grid renders rows in multiple viewport containers (pinned left, centre, pinned right, plus sticky rows). Some rows — especially **grand total rows** and **pinned rows** — can appear in multiple containers, causing the same test ID to match 2+ elements.
-
-**Fix:** Use `.first()` on locators for rows that may be duplicated across containers:
-
-```typescript
-// BAD - may match 2 elements for grand total / pinned rows
-await expect(agIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'bronze')).toContainText('35');
-
-// GOOD - disambiguates
-await expect(agIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'bronze').first()).toContainText('35');
-```
-
-**When to use `.first()`:** Always use it for grand total rows (`rowGroupFooter_ROOT_NODE_ID`) and any pinned rows. Regular group rows and data rows typically don't need it.
-
-#### Pitfall 2: Footer Row Text
-
-Group footer rows display `"Total {groupName}"` in the auto group column. Grand total rows display just `"Total"` (with no group name).
-
-```typescript
-// Group footer
-await expect(agIdFor.autoGroupCell('rowGroupFooter_row-group-country-Netherlands')).toContainText('Total Netherlands', {
-    useInnerText: true,
-});
-
-// Grand total footer
-await expect(agIdFor.autoGroupCell('rowGroupFooter_ROOT_NODE_ID').first()).toContainText('Total', {
-    useInnerText: true,
-});
-```
-
-#### Pitfall 3: Expanding Group Rows
-
-To expand a collapsed group, click the contracted icon:
-
-```typescript
-await agIdFor.autoGroupContracted('row-group-country-Netherlands').click();
-```
-
-#### Pitfall 4: Aggregation Display Values
-
-- **`sum`**: displays the raw number (e.g., `'35'`).
-- **`avg`**: the display may be a long decimal (e.g., `'1.2580645161290323'`). Use `toContainText` with a stable prefix (e.g., `'1.258'`) rather than matching the full number.
-- **`count`**: returns an object whose `toString()` outputs the count.
-- **Custom aggFuncs**: check the implementation in `main.ts` to understand the return value.
-- **Custom `IAggFuncResult` wrappers**: a custom aggFunc may return a wrapper object (a class implementing `IAggFuncResult` with `value`, `toNumber()`, and `toString()`). **The group cell displays the wrapper's numeric `value` (via `toNumber()`), NOT `toString()`.** For example a `RangeResult` whose `toString()` returns `(7).toFixed(2)` still renders as `7`, not `7.00`. Compute expected values as the raw numeric `value` and assert with `toContainText('7')`. Do not trust doc prose that claims `toString`/`toFixed` drives the display — verify against the running grid, and flag the doc/behaviour mismatch to the user.
-
-#### Pitfall 5: Use `toContainText` over `toHaveText` for Robustness
-
-Prefer `toContainText` for cell value assertions — it handles partial matching and is more resilient to formatting changes. Use `{ useInnerText: true }` for auto group cells that contain nested elements.
-
-#### Pitfall 6: Blank Cells
-
-When group rows have blank/empty aggregation cells (e.g., when `groupSuppressBlankHeader` is not set and a footer row is showing), assert with `toHaveText('')` for truly empty cells.
-
-#### Pitfall 7: Tree Data Filler Nodes Have Unknown Row IDs
-
-Path-based tree data (`getDataPath`) creates **filler nodes** for intermediate path segments that have no data entry (e.g., `Desktop` when only `['Desktop', 'file.txt']` exists in data). These filler nodes have auto-generated row IDs that are not predictable — you **cannot** use `agIdFor` helpers for them.
-
-**Fix:** Use page-level locators to find filler group rows by their displayed group value text:
-
-```typescript
-const findGroupRow = (name: string) =>
-    page
-        .locator('.ag-row')
-        .filter({ has: page.locator('.ag-group-value', { hasText: name }) })
-        .first();
-
-// Expand/collapse filler nodes via DOM class selectors
-await findGroupRow('Desktop').locator('.ag-group-contracted').click(); // expand
-await findGroupRow('Desktop').locator('.ag-group-expanded').click(); // collapse
-```
-
-**When `agIdFor` DOES work for tree data:** Data rows (leaf nodes) still get sequential IDs (`'0'`, `'1'`, etc.) based on their index in the original data array. Provided group nodes (explicit entries with a path but no leaf data) also get IDs. Self-referential tree data rows use their provided ID field values.
-
-**Duplicate group names:** Some datasets have the same folder name at multiple paths (e.g., `ProjectAlpha` under both `Desktop` and `Documents/Work`). Always use `.first()` on the locator or pick uniquely-named groups for assertions.
-
-#### Pitfall 8: Virtual Scrolling Hides Off-Screen Rows
-
-AG Grid uses virtual scrolling — rows not in the viewport are **not in the DOM**. Locators will timeout if the target row is off-screen.
-
-**Fix:** Scroll `.ag-body-viewport` before asserting. Group assertions by scroll position.
-
-```typescript
-const viewport = page.locator('.ag-body-viewport');
-await viewport.evaluate((el) => (el.scrollTop = 600)); // specific position
-await viewport.evaluate((el) => (el.scrollTop = el.scrollHeight)); // bottom
-```
-
-When testing scroll-related behaviour (e.g., `ensureIndexVisible`), the default viewport (1280x720) may be too tall. Shrink it: `await page.setViewportSize({ width: 1280, height: 300 });`
-
-#### Pitfall 9: Selection State and Checkbox Classes
-
-To verify row selection, check the `.ag-row-selected` class on the row element. To verify checkbox indeterminate state (partial selection), check `.ag-indeterminate` on the checkbox wrapper:
-
-```typescript
-// Row selection
-await expect(agIdFor.rowNode('0')).toHaveClass(/ag-row-selected/);
-await expect(agIdFor.rowNode('1')).not.toHaveClass(/ag-row-selected/);
-
-// Checkbox click on a group row (filler node)
-await findGroupRow('Desktop').locator('.ag-checkbox-input').click();
-
-// Indeterminate checkbox (some but not all descendants selected)
-const checkbox = findGroupRow('Desktop').locator('.ag-checkbox-input-wrapper');
-await expect(checkbox).toHaveClass(/ag-indeterminate/);
-```
-
-#### Pitfall 10: Custom `expect` Does Not Have `.poll()`
-
-The custom `expect` from `@utils/grid/test-utils` does **not** support `expect.poll()`. Read values after the action settles and assert synchronously:
-
-```typescript
-const scrollAfter = await viewport.evaluate((el) => el.scrollTop);
-expect(scrollAfter).toBeGreaterThan(scrollBefore);
-```
-
-#### Pitfall 11: Sorting Group Rows and the Double-Click Trap
-
-To verify that sorting reorders group (or data) rows by a column's value, click the header cell and assert the target row's **position** via its `row-index` attribute on `agIdFor.rowNode(rowId)`:
-
-```typescript
-const usGroup = agIdFor.rowNode('row-group-country-United States');
-await agIdFor.headerCell('total').click(); // ascending
-await expect(usGroup).not.toHaveAttribute('row-index', '0');
-await agIdFor.headerCell('total').click(); // descending
-await expect(usGroup).toHaveAttribute('row-index', '0'); // the max value floats to the top
-```
-
-Pick a row with a **unique** extreme value (e.g. the single country with the largest aggregate) so its top/bottom position is unambiguous — ties make position assertions flaky.
-
-**Double-click trap:** two `headerCell(...).click()` calls in quick succession are interpreted as a **double-click**, so the second sort direction never registers. Between successive header clicks add a short settle:
-
-```typescript
-await agIdFor.headerCell('total').click();
-await expect(usGroup).not.toHaveAttribute('row-index', '0'); // asserting on the first sort also settles it
-await page.waitForTimeout(300); // ...but still pause so the next click isn't a double-click
-await agIdFor.headerCell('total').click();
-```
-
-Sorting works on aggregated values too, including custom `IAggFuncResult` wrappers (sorted by `toNumber()`).
-
-#### Pitfall 12: Prefer Value + Interaction, Not Value Alone
-
-A test that only reads static cell values is weaker than one that also drives the behaviour the docs describe. When the example supports it, add at least one interaction alongside the value assertions:
-
-- **Expand a group** to reveal its leaf rows or sub-groups, then assert a leaf/child value (proves grouping sits above real data, and that sub-groups recompute independently). Leaf rows use sequential IDs (`'0'`, `'1'`, …) in original data order — assert a leaf becomes visible only after expanding: `await expect(agIdFor.cell('0', 'total')).not.toBeVisible();` then click, then assert.
-- **Sort** by the feature's column and assert the reordering (Pitfall 11).
-- **Filter / toggle a control** and assert the aggregate or row set updates.
-
-Split distinct behaviours into separate `test.eachFramework(...)` blocks with descriptive names rather than one monolithic test.
-
-### Example Test Patterns
-
-#### Pattern: Row Grouping with Aggregation and Totals
-
-```typescript
-test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ agIdFor }) => {
-        await expect(agIdFor.autoGroupCell('row-group-country-Netherlands')).toContainText('Netherlands (4)', {
-            useInnerText: true,
-        });
-        await expect(agIdFor.cell('row-group-country-Netherlands', 'bronze')).toContainText('4');
-        await agIdFor.autoGroupContracted('row-group-country-Netherlands').click();
-        await expect(agIdFor.autoGroupCell('rowGroupFooter_row-group-country-Netherlands')).toContainText(
-            'Total Netherlands',
-            { useInnerText: true }
-        );
-        await expect(agIdFor.cell('rowGroupFooter_ROOT_NODE_ID', 'bronze').first()).toContainText('35');
-    });
-});
-```
-
-#### Pattern: Aggregation with Sort and Expand Interactions
-
-Value assertions plus the interactions from Pitfalls 11–12. Expected values are computed from the source dataset (here `olympic-winners.json`).
-
-```typescript
-test.agExample(import.meta, () => {
-    test.eachFramework('Custom aggFunc aggregates the group', async ({ agIdFor, page }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
-
-        // range = max(total) - min(total): United States 8-1 => 7.
-        await expect(agIdFor.cell('row-group-country-United States', 'total')).toContainText('7');
-    });
-
-    test.eachFramework('Group rows sort by the aggregated value', async ({ agIdFor, page }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
-
-        const usGroup = agIdFor.rowNode('row-group-country-United States'); // unique max range (7)
-        await agIdFor.headerCell('total').click();
-        await expect(usGroup).not.toHaveAttribute('row-index', '0');
-        await page.waitForTimeout(300); // avoid a double-click
-        await agIdFor.headerCell('total').click();
-        await expect(usGroup).toHaveAttribute('row-index', '0');
-    });
-
-    test.eachFramework('Expanding a group reveals its leaves', async ({ agIdFor, page }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
-
-        await expect(agIdFor.cell('0', 'total')).not.toBeVisible();
-        await agIdFor.autoGroupContracted('row-group-country-United States').click();
-        await expect(agIdFor.cell('0', 'total')).toContainText('8');
-    });
-});
-```
-
-#### Pattern: Tree Data with Filler Nodes
-
-Combines filler node locators (Pitfall 7), scrolling (Pitfall 8), and cell value assertions on group rows.
-
-```typescript
-test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ agIdFor, page }) => {
-        const findGroupRow = (name: string) =>
-            page
-                .locator('.ag-row')
-                .filter({ has: page.locator('.ag-group-value', { hasText: name }) })
-                .first();
-
-        // Leaf data rows use agIdFor with data array index
-        await expect(agIdFor.autoGroupCell('0')).toContainText('Proposal.docx', { useInnerText: true });
-
-        // Aggregated values on filler group rows via col-id locator
-        await expect(findGroupRow('Desktop').locator('[col-id="size"]')).toContainText('1.98 MB');
-
-        // Scroll to reach off-screen groups, then assert
-        const viewport = page.locator('.ag-body-viewport');
-        await viewport.evaluate((el) => (el.scrollTop = el.scrollHeight));
-        await expect(findGroupRow('Downloads').locator('[col-id="size"]')).toContainText('4 MB');
-
-        // Collapse/expand filler nodes and verify children hide/show
-        await findGroupRow('Desktop').locator('.ag-group-expanded').click();
-        await expect(agIdFor.autoGroupCell('0')).not.toBeVisible();
-    });
-});
-```
+### Pitfalls & Patterns Index
+
+Read the relevant entries from `reference/pitfalls-and-patterns.md` based on what your example does — don't load the whole file if only a couple apply. When delegating to the playwright-expert subagent, pass through just the entries that match.
+
+| # | Pitfall | Read when the example… |
+| - | ------- | ---------------------- |
+| 1 | Strict mode violations (`.first()`) | has grand-total or pinned rows |
+| 2 | Footer row text (`Total {group}`) | shows group/grand-total footers |
+| 3 | Expanding group rows | has collapsible groups |
+| 4 | Aggregation display values (incl. `IAggFuncResult`) | uses `aggFunc` / custom aggregation |
+| 5 | `toContainText` over `toHaveText` | asserts any cell text (general) |
+| 6 | Blank cells | has empty aggregation/footer cells |
+| 7 | Tree data filler nodes (unknown row IDs) | uses `getDataPath` tree data |
+| 8 | Virtual scrolling hides off-screen rows | has more rows than fit the viewport |
+| 9 | Selection state / checkbox classes | uses row selection or checkboxes |
+| 10 | Retrying assertions — `.toPass()`, not `expect.poll()` | reads console messages / computed values off the page |
+| 11 | Sorting group rows & the double-click trap | asserts sort ordering via clicks |
+| 12 | Prefer value + interaction, not value alone | supports any interaction (nearly all) |
+
+**Worked patterns** (also in the reference file): row grouping with aggregation & totals; aggregation with sort + expand interactions; tree data with filler nodes.

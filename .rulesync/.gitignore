@@ -30,6 +30,7 @@ mcp.json
 /rules/*.md
 !/rules/ag-grid.md
 !/rules/benchmarks.md
+!/rules/docs-example-specs.md
 !/rules/docs-pages.md
 !/rules/examples.md
 !/rules/framework-view-layers.md
