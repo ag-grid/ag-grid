@@ -150,7 +150,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
         const idFunc = _getRowIdCallback(this.beans);
         if (!idFunc) {
-            this.beans.log.warn(206);
+            this.warn(206);
             return {
                 status: ServerSideTransactionResultStatus.Cancelled,
             };

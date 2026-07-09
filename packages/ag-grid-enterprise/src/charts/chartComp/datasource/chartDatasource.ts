@@ -66,12 +66,12 @@ export class ChartDatasource extends BeanStub {
     public getData(params: ChartDatasourceParams): IData {
         if (params.crossFiltering) {
             if (params.grouping) {
-                this.beans.log.warn(141);
+                this.warn(141);
                 return { chartData: [], colNames: {} };
             }
 
             if (!_isClientSideRowModel(this.gos)) {
-                this.beans.log.warn(142);
+                this.warn(142);
                 return { chartData: [], colNames: {} };
             }
         }
@@ -343,7 +343,7 @@ export class ChartDatasource extends BeanStub {
                       : null;
 
             if (typeof aggFunc !== 'function') {
-                this.beans.log.warn(109, { inputValue: String(aggFuncOrString), allSuggestions: [] });
+                this.warn(109, { inputValue: String(aggFuncOrString), allSuggestions: [] });
                 return dataAggregated;
             }
 

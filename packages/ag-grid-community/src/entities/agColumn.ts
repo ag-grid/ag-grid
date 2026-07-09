@@ -604,7 +604,7 @@ export class AgColumn<TValue = any>
 
     /** @deprecated v33 Use `api.isColumnHovered(column)` instead. */
     public isHovered(): boolean {
-        this.beans.log.warn(261);
+        this.warn(261);
         return !!this.beans.colHover?.isHovered(this);
     }
 

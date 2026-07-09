@@ -332,7 +332,7 @@ export class GridOptionsService
             ? moduleName.some((modName) => this.isModuleRegistered(modName))
             : this.isModuleRegistered(moduleName);
         if (!registered) {
-            this.beans.log.error(200, {
+            this.error(200, {
                 ...this.getModuleErrorParams(),
                 moduleName,
                 reasonOrId,

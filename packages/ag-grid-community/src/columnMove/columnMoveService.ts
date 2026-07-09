@@ -42,7 +42,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
         if (toIndex > gridColumns.length - columnsToMoveKeys.length) {
             // Trying to insert in invalid position
-            this.beans.log.warn(30, { toIndex });
+            this.warn(30, { toIndex });
             return;
         }
 

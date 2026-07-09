@@ -41,7 +41,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public warnOnInitialPropertyUpdate(source: AgPropertyChangedSource, key: string): void {
         if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
-            this.beans.log.warn(22, { key });
+            this.warn(22, { key });
         }
     }
 
@@ -94,7 +94,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             hideIrrelevant: true,
             maxSuggestions: 4,
         }).values;
-        this.beans.log.warn(101, { propertyName, componentName, suggestions });
+        this.warn(101, { propertyName, componentName, suggestions });
     }
 
     public missingDynamicBean(beanName: DynamicBeanName): string | undefined {
@@ -110,7 +110,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public checkRowEvents(eventType: RowNodeEventType): void {
         if (DEPRECATED_ROW_NODE_EVENTS.has(eventType)) {
-            this.beans.log.warn(10, { eventType });
+            this.warn(10, { eventType });
         }
     }
 
@@ -120,7 +120,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     private checkIcon(iconName: IconName): void {
         if (DEPRECATED_ICONS_V33.has(iconName)) {
-            this.beans.log.warn(43, { iconName });
+            this.warn(43, { iconName });
         }
         if (ICON_VALUES[iconName as IconValue]) {
             // directly referencing icon
@@ -128,7 +128,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
         const moduleName = ICON_MODULES[iconName];
         if (moduleName) {
-            this.beans.log.error(200, {
+            this.error(200, {
                 reasonOrId: `icon \`${iconName}\``,
                 moduleName,
                 gridScoped: _areModulesGridScoped(),
@@ -138,7 +138,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             });
             return;
         }
-        this.beans.log.warn(134, { iconName });
+        this.warn(134, { iconName });
     }
 
     public isProvidedUserComp(compName: string): boolean {

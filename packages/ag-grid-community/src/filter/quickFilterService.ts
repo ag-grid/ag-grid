@@ -113,7 +113,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
 
     private setFilter(newFilter: string | undefined): void {
         if (newFilter != null && typeof newFilter !== 'string') {
-            this.beans.log.warn(70, { newFilter });
+            this.warn(70, { newFilter });
             return;
         }
 

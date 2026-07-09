@@ -853,7 +853,7 @@ export class LazyCache extends BeanStub {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
                 const duplicateIdText = duplicates.join(', ');
-                this.beans.log.warn(205, { duplicateIdText });
+                this.warn(205, { duplicateIdText });
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
             }

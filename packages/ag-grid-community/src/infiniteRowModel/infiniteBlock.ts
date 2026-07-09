@@ -137,7 +137,7 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
     private loadFromDatasource(): void {
         const params = this.createLoadParams();
         if (_missing(this.params.datasource.getRows)) {
-            this.beans.log.warn(90);
+            this.warn(90);
             return;
         }
 

@@ -374,7 +374,7 @@ export class ExcelCreator
 
     protected export(userParams?: ExcelExportParams): void {
         if (this.isExportSuppressed()) {
-            this.beans.log.warn(160);
+            this.warn(160);
             return;
         }
 

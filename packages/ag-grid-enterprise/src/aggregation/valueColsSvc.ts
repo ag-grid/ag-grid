@@ -123,7 +123,7 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
         }
         if (aggFunc !== undefined) {
             if (typeof aggFunc !== 'string' && aggFunc != null) {
-                this.beans.log.warn(33); // stateItem.aggFunc must be a string — invalid (object / function) values.
+                this.warn(33); // stateItem.aggFunc must be a string — invalid (object / function) values.
                 return;
             }
             this.applyAggFunc(column, aggFunc, source);

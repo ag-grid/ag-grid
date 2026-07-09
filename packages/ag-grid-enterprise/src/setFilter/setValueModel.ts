@@ -256,7 +256,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         removeUnavailableValues: boolean
     ): Map<string | null, TValue | null> | undefined {
         if (!this.csrmValuesExtractor) {
-            this.beans.log.error(113);
+            this.error(113);
             return undefined;
         }
 
@@ -313,9 +313,9 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             if (firstValue && typeof firstValue !== 'object' && typeof firstValue !== 'function') {
                 const firstKey = this.createKey(firstValue);
                 if (firstKey == null) {
-                    this.beans.log.warn(209);
+                    this.warn(209);
                 } else {
-                    this.beans.log.warn(210);
+                    this.warn(210);
                 }
             }
         }

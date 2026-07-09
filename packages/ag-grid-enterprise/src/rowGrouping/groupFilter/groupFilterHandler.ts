@@ -57,12 +57,12 @@ export class GroupFilterHandler
     private getSourceColumns(): AgColumn[] {
         const groupColumn = this.params.column as AgColumn;
         if (this.gos.get('treeData')) {
-            this.beans.log.warn(237);
+            this.warn(237);
             return [];
         }
         const sourceColumns = (this.beans.groupFilter as GroupFilterService).getSourceColumns(groupColumn);
         if (!sourceColumns) {
-            this.beans.log.warn(183);
+            this.warn(183);
             return [];
         }
         return sourceColumns;

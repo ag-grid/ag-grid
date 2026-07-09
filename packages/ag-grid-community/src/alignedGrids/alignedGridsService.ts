@@ -35,9 +35,9 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         const apis = alignedGrids
             .map((alignedGrid) => {
                 if (!alignedGrid) {
-                    this.beans.log.error(18);
+                    this.error(18);
                     if (!isCallbackConfig) {
-                        this.beans.log.error(20);
+                        this.error(20);
                     }
                     return;
                 }
@@ -51,7 +51,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 }
 
                 if (!refOrComp.api) {
-                    this.beans.log.error(19);
+                    this.error(19);
                 }
                 return refOrComp.api;
             })
@@ -162,7 +162,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 case 'columnPivotChanged':
                     // we cannot support pivoting with aligned grids as the columns will be out of sync as the
                     // grids will have columns created based on the row data of the grid.
-                    this.beans.log.warn(21);
+                    this.warn(21);
                     break;
             }
         });

@@ -573,7 +573,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const rowCount = rowModel.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
-            this.beans.log.warn(88, { index });
+            this.warn(88, { index });
             return;
         }
 

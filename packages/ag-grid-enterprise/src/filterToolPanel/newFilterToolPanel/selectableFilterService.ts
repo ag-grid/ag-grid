@@ -110,7 +110,7 @@ export class SelectableFilterService
                 if (typeof filterString === 'string') {
                     updatedName = translateForFilterPanel(this, `${filterString as ProvidedFilterType}DisplayName`);
                 } else {
-                    this.beans.log.warn(280, { colId: column.colId });
+                    this.warn(280, { colId: column.colId });
                     updatedName = '';
                 }
             }

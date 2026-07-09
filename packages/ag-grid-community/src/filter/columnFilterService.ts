@@ -243,18 +243,18 @@ export class ColumnFilterService
                 const column = colModel.colsById[colId];
 
                 if (!column) {
-                    this.beans.log.warn(62, { colId });
+                    this.warn(62, { colId });
                     return;
                 }
 
                 if (!column.isFilterAllowed()) {
-                    this.beans.log.warn(63, { colId });
+                    this.warn(63, { colId });
                     return;
                 }
 
                 const filterWrapper = this.getOrCreateFilterWrapper(column, true);
                 if (!filterWrapper) {
-                    this.beans.log.warn(64, { colId });
+                    this.warn(64, { colId });
                     return;
                 }
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper, model[colId], true));
@@ -360,7 +360,7 @@ export class ColumnFilterService
         const filter = filterWrapper.filter;
         if (filter) {
             if (typeof filter.getModel !== 'function') {
-                this.beans.log.warn(66);
+                this.warn(66);
                 return null;
             }
 
@@ -396,7 +396,7 @@ export class ColumnFilterService
                 return false;
             } // this never happens, including to avoid compile error
             if (!filter.isFilterActive) {
-                this.beans.log.warn(67);
+                this.warn(67);
                 return false;
             }
             return filter.isFilterActive();
@@ -522,7 +522,7 @@ export class ColumnFilterService
                 const comp = filter.comp;
                 if (typeof comp.doesFilterPass !== 'function') {
                     // because users can do custom filters, give nice error message
-                    this.beans.log.error(91);
+                    this.error(91);
                     continue;
                 }
 
@@ -803,7 +803,7 @@ export class ColumnFilterService
         if (this.isGlobalButtons) {
             const hasLocalButtons = !!(compDetails.params as FilterWrapperParams)?.buttons?.length;
             if (!hasLocalButtons) {
-                this.beans.log.warn(281, { colId: column.getColId() });
+                this.warn(281, { colId: column.getColId() });
             }
         }
 
@@ -1031,7 +1031,7 @@ export class ColumnFilterService
                 return undefined;
             }
             if (_isClientSideRowModel(gos)) {
-                this.beans.log.warn(277, { colId: column.getColId() });
+                this.warn(277, { colId: column.getColId() });
             }
             // create dummy handler for server side,
             // or to prevent blowing up for CSRM custom with missing props
@@ -1670,7 +1670,7 @@ export class ColumnFilterService
             if (uiPromise) {
                 uiPromise.then((filter) => {
                     if (typeof filter?.setModel !== 'function') {
-                        this.beans.log.warn(65);
+                        this.warn(65);
                         resolve();
                         return;
                     }

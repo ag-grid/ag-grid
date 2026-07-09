@@ -84,13 +84,13 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     public updateChart(params: UpdateChartParams): void {
         if (this.activeChartComps.size === 0) {
-            this.beans.log.warn(124);
+            this.warn(124);
             return;
         }
 
         const chartComp = [...this.activeChartComps].find((chartComp) => chartComp.getChartId() === params.chartId);
         if (!chartComp) {
-            this.beans.log.warn(125, { chartId: params.chartId });
+            this.warn(125, { chartId: params.chartId });
             return;
         }
 
@@ -165,7 +165,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     public restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
         if (!model) {
-            this.beans.log.warn(126);
+            this.warn(126);
             return;
         }
 
@@ -431,7 +431,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const cellRange =
             rangeParams && this.rangeSvc?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
         if (!cellRange) {
-            this.beans.log.warn(127, { allRange });
+            this.warn(127, { allRange });
         }
         return cellRange;
     }

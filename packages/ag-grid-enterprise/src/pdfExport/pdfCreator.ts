@@ -48,7 +48,7 @@ export class PdfCreator
      */
     protected export(userParams?: PdfExportParams): void {
         if (this.isExportSuppressed()) {
-            this.beans.log.warn(160);
+            this.warn(160);
             return;
         }
 
@@ -91,7 +91,7 @@ export class PdfCreator
      */
     public getDataAsPdf(params?: PdfExportParams): Blob | undefined {
         if (this.isExportSuppressed()) {
-            this.beans.log.warn(160);
+            this.warn(160);
             return undefined;
         }
 

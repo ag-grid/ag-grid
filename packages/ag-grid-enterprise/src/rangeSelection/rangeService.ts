@@ -1349,7 +1349,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         const { suppressMultiRanges } = this.getMultiRangeContext();
         const invalid = _isUsingNewCellSelectionAPI(gos) && suppressMultiRanges && this.cellRanges.length > 1;
         if (invalid) {
-            this.beans.log.warn(93);
+            this.warn(93);
         }
 
         return !invalid;
@@ -1513,14 +1513,14 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         const fromIndex = fromColumn.allColsIndex;
 
         if (fromIndex < 0) {
-            this.beans.log.warn(178, { colId: fromColumn.getId() });
+            this.warn(178, { colId: fromColumn.getId() });
             return;
         }
 
         const toIndex = isSameColumn ? fromIndex : toColumn.allColsIndex;
 
         if (toIndex < 0) {
-            this.beans.log.warn(178, { colId: toColumn.getId() });
+            this.warn(178, { colId: toColumn.getId() });
             return;
         }
 

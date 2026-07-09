@@ -433,7 +433,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         isValid = isValid && TABS_DEFAULT.indexOf(menuTabName) > -1;
 
         if (!isValid) {
-            this.beans.log.warn(175, { menuTabName, itemsToConsider });
+            this.warn(175, { menuTabName, itemsToConsider });
         }
 
         return isValid;
@@ -528,7 +528,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         const comp = this.column ? this.createBean(new FilterComp(this.column, 'COLUMN_MENU')) : null;
         this.filterComp = comp;
         if (!comp?.hasFilter()) {
-            this.beans.log.error(119);
+            this.error(119);
         }
 
         const afterAttachedCallback = (params: IAfterGuiAttachedParams) => comp?.afterGuiAttached(params);

@@ -348,7 +348,7 @@ export class FilterManager extends BeanStub implements NamedBean {
 
     private warnAdvFilters(): void {
         // Column Filter API methods have been disabled as Advanced Filters are enabled
-        this.beans.log.warn(68);
+        this.warn(68);
     }
 
     public mountAdvFilterTopSectionComp(host: IPinnedSectionCompHost): void {

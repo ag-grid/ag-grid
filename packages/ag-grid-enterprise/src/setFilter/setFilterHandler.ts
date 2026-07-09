@@ -370,7 +370,7 @@ export class SetFilterHandler<TValue = string>
         treeDataOrGrouping: boolean
     ): (value: TValue | null | undefined, node?: IRowNode | null) => string | null {
         if (treeDataOrGrouping && !keyCreator) {
-            this.beans.log.error(250);
+            this.error(250);
             return () => null;
         }
         if (keyCreator) {
@@ -402,7 +402,7 @@ export class SetFilterHandler<TValue = string>
         let valueFormatter = providedValueFormatter;
         if (!valueFormatter) {
             if (keyCreator && !treeList) {
-                this.beans.log.error(249);
+                this.error(249);
                 return;
             }
             this.noValueFormatterSupplied = true;

@@ -168,7 +168,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         const previousValue = this.enabled;
         const isValidRowModel = _isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos);
         if (enabled && !isValidRowModel) {
-            this.beans.log.warn(123);
+            this.warn(123);
         }
         this.enabled = enabled && isValidRowModel;
         if (!silent && this.enabled !== previousValue) {

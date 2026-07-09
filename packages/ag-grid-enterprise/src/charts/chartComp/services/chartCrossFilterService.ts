@@ -59,7 +59,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
                 setFilter = filter as any;
             }
             if (!setFilter) {
-                this.beans.log.warn(154, { colId });
+                this.warn(154, { colId });
                 return;
             }
 

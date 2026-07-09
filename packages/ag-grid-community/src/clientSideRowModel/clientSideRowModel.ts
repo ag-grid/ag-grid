@@ -265,7 +265,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
         if (newRowData && !Array.isArray(newRowData)) {
             newRowData = null;
-            this.beans.log.warn(1); // `rowData` must be an array
+            this.warn(1); // `rowData` must be an array
         }
 
         const params: RefreshModelParams = { step: 'nothing', changedProps };

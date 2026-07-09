@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { ErrorId, ErrorMap, GetErrorParams } from './errorMessages/errorText';
+import type { ErrorId, LogArgs } from './errorMessages/errorText';
 import { _deprecatedForGrid, _errorForGrid, _warnForGrid } from './logging';
 
 /**
@@ -20,27 +20,15 @@ export class LogService extends BeanStub implements NamedBean {
         this.gridId = beans.context.getId();
     }
 
-    public warn<
-        TId extends ErrorId,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        TShowMessageAtCallLocation = ErrorMap[TId],
-    >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
+    public override warn<TId extends ErrorId>(...args: LogArgs<TId>): void {
         _warnForGrid(this.gridId, args[0], args[1] as any);
     }
 
-    public deprecated<
-        TId extends ErrorId,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        TShowMessageAtCallLocation = ErrorMap[TId],
-    >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
+    public override deprecated<TId extends ErrorId>(...args: LogArgs<TId>): void {
         _deprecatedForGrid(this.gridId, args[0], args[1] as any);
     }
 
-    public error<
-        TId extends ErrorId,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        TShowMessageAtCallLocation = ErrorMap[TId],
-    >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
+    public override error<TId extends ErrorId>(...args: LogArgs<TId>): void {
         _errorForGrid(this.gridId, args[0], args[1] as any);
     }
 }

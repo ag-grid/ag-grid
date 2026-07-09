@@ -693,12 +693,12 @@ export class ValueService extends BeanStub implements NamedBean {
             if (rowNode.group && (colDef.groupRowValueSetter || colDef.groupRowEditable)) {
                 return true;
             }
-            this.beans.log.warn(17);
+            this.warn(17);
             return false;
         }
 
         if (this.dataTypeSvc && !this.dataTypeSvc.checkType(column, newValue)) {
-            this.beans.log.warn(135);
+            this.warn(135);
             return false;
         }
 
@@ -896,7 +896,7 @@ export class ValueService extends BeanStub implements NamedBean {
         }
         result = String(result);
         if (result === '[object Object]') {
-            this.beans.log.warn(121);
+            this.warn(121);
         }
         return result;
     }

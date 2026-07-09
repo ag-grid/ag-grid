@@ -12,7 +12,7 @@ export class ExpressionService extends BeanStub implements NamedBean {
             // valueGetter is an expression, so execute the expression
             return this.evaluateExpression(expression, params);
         } else {
-            this.beans.log.error(15, { expression });
+            this.error(15, { expression });
         }
     }
 
@@ -40,7 +40,7 @@ export class ExpressionService extends BeanStub implements NamedBean {
         } catch (e) {
             // the expression failed, which can happen, as it's the client that
             // provides the expression. so print a nice message
-            this.beans.log.error(16, { expression, params, e });
+            this.error(16, { expression, params, e });
             return null;
         }
     }

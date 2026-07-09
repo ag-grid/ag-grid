@@ -175,7 +175,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         this.rowCount = -1;
 
         if (!viewportDatasource.init) {
-            this.beans.log.warn(226);
+            this.warn(226);
         } else {
             viewportDatasource.init(
                 _addGridCommonParams(this.gos, {

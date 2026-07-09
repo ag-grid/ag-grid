@@ -9,7 +9,7 @@ export class NodeManager extends BeanStub implements NamedBean {
     public addRowNode(rowNode: RowNode): void {
         const id = rowNode.id!;
         if (this.rowNodes.has(id)) {
-            this.beans.log.warn(187, {
+            this.warn(187, {
                 rowId: id,
                 firstData: this.rowNodes.get(id)!.data,
                 secondData: rowNode.data,

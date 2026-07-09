@@ -66,7 +66,7 @@ export class ChartMenuService extends BeanStub implements NamedBean {
         return toolbarItemsFunc
             ? toolbarItemsFunc(params).filter((option) => {
                   if (!CHART_TOOLBAR_ALLOW_LIST.includes(option)) {
-                      this.beans.log.warn(155, { option });
+                      this.warn(155, { option });
                       return false;
                   }
                   return true;
@@ -84,7 +84,7 @@ export class ChartMenuService extends BeanStub implements NamedBean {
             ?.map((panel) => {
                 const menuOption = CHART_TOOL_PANEL_MENU_OPTIONS[panel];
                 if (!menuOption) {
-                    this.beans.log.warn(156, { panel });
+                    this.warn(156, { panel });
                 }
                 return menuOption;
             })

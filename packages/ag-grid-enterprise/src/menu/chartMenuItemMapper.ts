@@ -103,7 +103,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
             }
 
             if (chartConfigGroup == undefined) {
-                this.beans.log.warn(173, { group });
+                this.warn(173, { group });
                 continue;
             }
 
@@ -114,7 +114,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
                         .map((chartType) => {
                             const itemKey = (chartConfigGroup as any)[chartType];
                             if (itemKey == undefined) {
-                                this.beans.log.warn(174, { group, chartType });
+                                this.warn(174, { group, chartType });
                                 return undefined;
                             }
                             return menuItemLookup[itemKey];

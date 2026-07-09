@@ -64,7 +64,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     // when it should not.
     private verify(): void {
         if (this.active === false) {
-            this.beans.log.warn(92);
+            this.warn(92);
         }
     }
 

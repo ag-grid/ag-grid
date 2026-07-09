@@ -101,7 +101,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                 default:
                     pointer = null;
                     // unknown key, do nothing
-                    this.beans.log.warn(8, { key });
+                    this.warn(8, { key });
                     break;
             }
 

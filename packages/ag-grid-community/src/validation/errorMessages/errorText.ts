@@ -874,6 +874,10 @@ type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId
 export type GetErrorParams<TId extends ErrorId> =
     ErrorValue<TId> extends (params: infer P) => any ? (P extends Record<string, any> ? P : undefined) : never;
 
+/** Diagnostic call arguments: just the id, or the id plus params when the error declares them. */
+export type LogArgs<TId extends ErrorId> =
+    GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>];
+
 export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId>>(errorId: TId, args: TParams): any[] {
     const msgOrFunc: ErrorMap[TId] = AG_GRID_ERRORS[errorId];
 

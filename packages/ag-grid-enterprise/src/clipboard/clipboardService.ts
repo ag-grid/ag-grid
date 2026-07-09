@@ -166,7 +166,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 .readText()
                 .then(this.processClipboardData.bind(this))
                 .catch((e) => {
-                    this.beans.log.warn(40, { e, method: 'readText' });
+                    this.warn(40, { e, method: 'readText' });
                     this.navigatorApiFailed = true;
                     this.pasteFromClipboardLegacy();
                 });
@@ -1187,7 +1187,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const allowNavigator = !this.gos.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
-                this.beans.log.warn(40, { e, method: 'writeText' });
+                this.warn(40, { e, method: 'writeText' });
                 this.copyDataToClipboardLegacy(data);
             });
             return;
@@ -1209,7 +1209,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             const result = eDocument.execCommand('copy');
 
             if (!result) {
-                this.beans.log.warn(41);
+                this.warn(41);
             }
 
             if (focusedElementBefore?.focus != null) {
@@ -1249,7 +1249,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         try {
             callbackNow(eTempInput);
         } catch {
-            this.beans.log.warn(42);
+            this.warn(42);
         }
 
         //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...

@@ -127,7 +127,7 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
             const id = getRowId?.({ data, level: 0, rowPinned: floating }) ?? idPrefix + this.nextId++;
 
             if (dataIds.has(id)) {
-                this.beans.log.warn(96, { id, data });
+                this.warn(96, { id, data });
                 continue;
             }
 

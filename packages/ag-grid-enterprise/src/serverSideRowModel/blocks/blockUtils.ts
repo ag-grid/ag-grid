@@ -121,7 +121,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
         if (rowNode.key === null || rowNode.key === undefined) {
             _doOnce(() => {
-                this.beans.log.warn(190, { rowGroupId: rowNode.rowGroupColumn?.getId(), data: rowNode.data });
+                this.warn(190, { rowGroupId: rowNode.rowGroupColumn?.getId(), data: rowNode.data });
             }, 'SSBlock-BadKey');
         }
 

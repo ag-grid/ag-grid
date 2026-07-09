@@ -424,13 +424,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     public addRowDropZone(params: RowDropZoneParams & { fromGrid?: boolean }): void {
         if (!params.getContainer()) {
-            this.beans.log.warn(55);
+            this.warn(55);
             return;
         }
 
         const dragAndDrop = this.beans.dragAndDrop!;
         if (dragAndDrop.findExternalZone(params.getContainer())) {
-            this.beans.log.warn(56);
+            this.warn(56);
             return;
         }
 

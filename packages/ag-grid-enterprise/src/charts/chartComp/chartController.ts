@@ -585,7 +585,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
 
     private validUpdateType(params: UpdateChartParams): boolean {
         if (!params.type) {
-            this.beans.log.warn(136);
+            this.warn(136);
             return false;
         }
 
@@ -601,7 +601,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             params.type === `${currentChartType[0].toLowerCase()}${currentChartType.slice(1).replace(/ /g, '')}Update`;
 
         if (!valid) {
-            this.beans.log.warn(137, { currentChartType, type: params.type });
+            this.warn(137, { currentChartType, type: params.type });
         }
         return valid;
     }

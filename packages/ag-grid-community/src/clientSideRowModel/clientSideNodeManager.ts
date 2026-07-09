@@ -183,7 +183,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     ): RowNodeTransaction<TData> {
         this.dispatchRowDataUpdateStarted(rowDataTran.add);
         if (this.beans.groupStage?.getNestedDataGetter()) {
-            this.beans.log.warn(268); // transactions not supported with treeDataChildrenField
+            this.warn(268); // transactions not supported with treeDataChildrenField
             return { remove: [], update: [], add: [] };
         }
         const getRowIdFunc = _getRowIdCallback(this.beans);
@@ -314,7 +314,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const id = node.id!;
         const allNodesMap = this.allNodesMap;
         if (allNodesMap[id]) {
-            this.beans.log.warn(2, { nodeId: id });
+            this.warn(2, { nodeId: id });
         }
         allNodesMap[id] = node;
         return node;
@@ -340,7 +340,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const id = getRowIdFunc({ data, level: 0 });
         const rowNode = this.allNodesMap[id];
         if (!rowNode) {
-            this.beans.log.error(4, { id });
+            this.error(4, { id });
             return null;
         }
         return rowNode;

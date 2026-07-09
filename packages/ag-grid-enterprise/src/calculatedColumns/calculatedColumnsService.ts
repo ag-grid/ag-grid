@@ -822,7 +822,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             if (dataTypeSvc.isDataTypeRegistered(dataType)) {
                 validDataTypes.push(dataType);
             } else {
-                this.beans.log.warn(304, { dataType });
+                this.warn(304, { dataType });
             }
         }
         return validDataTypes;

@@ -335,7 +335,7 @@ export class ChartOptionsService extends BeanStub {
         chart
             .waitForUpdate()
             .then(() => func())
-            .catch((e) => this.beans.log.error(108, { e }));
+            .catch((e) => this.error(108, { e }));
     }
 
     private getAxisProperty<T = string>(expression: string): T {

@@ -87,7 +87,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         }
 
         if (providedStrategy != null) {
-            this.beans.log.warn(170, { providedStrategy });
+            this.warn(170, { providedStrategy });
         }
 
         this.refreshStrategy = 'rows';
@@ -96,14 +96,14 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     private createDetailGrid(): void {
         const { params, gos } = this;
         if (_missing(params.detailGridOptions)) {
-            this.beans.log.warn(171);
+            this.warn(171);
             return;
         }
 
         const masterTheme = gos.get('theme');
         const detailTheme = params.detailGridOptions.theme;
         if (detailTheme && detailTheme !== masterTheme) {
-            this.beans.log.warn(267);
+            this.warn(267);
         }
 
         const gridOptions: GridOptions = {
@@ -238,7 +238,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         const userFunc = params.getDetailRowData;
         if (!userFunc) {
-            this.beans.log.warn(172);
+            this.warn(172);
             return;
         }
 

@@ -101,7 +101,7 @@ export abstract class ScalarFilterHandler<
                 return !isBlank(cellValue);
 
             default:
-                this.beans.log.warn(76, { filterModelType: type });
+                this.warn(76, { filterModelType: type });
                 return true;
         }
     }

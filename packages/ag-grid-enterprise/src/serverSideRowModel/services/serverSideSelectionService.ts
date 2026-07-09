@@ -120,7 +120,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     ): void {
         if (!_isRowSelection(this.gos)) {
             if (state) {
-                this.beans.log.warn(132);
+                this.warn(132);
             }
             return;
         }
@@ -139,14 +139,14 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
         if (!_isRowSelection(this.gos) && params.newValue) {
-            this.beans.log.warn(132);
+            this.warn(132);
             return 0;
         }
 
         const { nodes, ...otherParams } = params;
 
         if (nodes.length > 1 && this.selectionMode !== 'multiRow') {
-            this.beans.log.warn(130);
+            this.warn(130);
             return 0;
         }
 
@@ -244,13 +244,13 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     public selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void {
         if (!_isRowSelection(this.gos)) {
-            this.beans.log.warn(132);
+            this.warn(132);
             return;
         }
 
         validateSelectionParameters(this.beans.log, params);
         if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
-            return this.beans.log.warn(130);
+            return this.warn(130);
         }
 
         this.selectionStrategy.selectAllRowNodes(params);
@@ -290,7 +290,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     // used by CSRM
     public getBestCostNodeSelection(): RowNode<any>[] | undefined {
-        return this.beans.log.warn(194, { method: 'getBestCostNodeSelection' }) as undefined;
+        return this.warn(194, { method: 'getBestCostNodeSelection' }) as undefined;
     }
 
     /**
@@ -340,7 +340,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     public updateSelectableAfterGrouping(): void {
-        return this.beans.log.error(194, { method: 'updateSelectableAfterGrouping' }) as undefined;
+        return this.error(194, { method: 'updateSelectableAfterGrouping' }) as undefined;
     }
 
     public refreshMasterNodeState(): void {

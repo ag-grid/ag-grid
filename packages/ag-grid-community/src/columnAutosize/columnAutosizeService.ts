@@ -347,7 +347,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             }, 500);
         } else {
             // Grid coming back with zero width, maybe the grid is not visible yet on the screen?
-            this.beans.log.warn(29);
+            this.warn(29);
         }
     }
 

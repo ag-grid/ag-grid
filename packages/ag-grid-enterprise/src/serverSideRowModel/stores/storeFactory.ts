@@ -66,12 +66,12 @@ export class StoreFactory extends BeanStub implements NamedBean {
         }
 
         if (ssrmParams.dynamicRowHeight) {
-            this.beans.log.warn(203);
+            this.warn(203);
             return;
         }
 
         if (this.rowAutoHeight?.active) {
-            this.beans.log.warn(204);
+            this.warn(204);
             return undefined;
         }
 

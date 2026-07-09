@@ -111,7 +111,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         const comp = column ? this.createBean(new FilterComp(column, 'COLUMN_MENU')) : undefined;
         this.activeMenu = comp;
         if (!comp?.hasFilter() || !column) {
-            this.beans.log.error(57);
+            this.error(57);
             return;
         }
 

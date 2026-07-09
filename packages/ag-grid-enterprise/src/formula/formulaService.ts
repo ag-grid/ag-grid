@@ -147,11 +147,11 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     private checkForBaseIncompatibleServices(): boolean {
         if (this.gos.get('masterDetail')) {
-            this.beans.log.warn(295, { blockedService: 'Master Detail' });
+            this.warn(295, { blockedService: 'Master Detail' });
             return false;
         }
         if (this.gos.get('enableCellExpressions')) {
-            this.beans.log.warn(295, { blockedService: 'Cell Expressions' });
+            this.warn(295, { blockedService: 'Cell Expressions' });
             return false;
         }
         return true;
@@ -162,21 +162,21 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return false;
         }
         if (this.gos.get('treeData')) {
-            this.beans.log.warn(295, { blockedService: 'Tree Data' });
+            this.warn(295, { blockedService: 'Tree Data' });
             return false;
         }
         for (let i = 0, len = columns.length; i < len; ++i) {
             const col = columns[i];
             if (col.isAllowPivot() || col.isPivotActive()) {
-                this.beans.log.warn(295, { blockedService: 'Column Pivoting' });
+                this.warn(295, { blockedService: 'Column Pivoting' });
                 return false;
             }
             if (col.isAllowRowGroup() || col.isRowGroupActive()) {
-                this.beans.log.warn(295, { blockedService: 'Row Groups' });
+                this.warn(295, { blockedService: 'Row Groups' });
                 return false;
             }
             if (col.isAllowValue() || col.isValueActive() || col.aggFunc) {
-                this.beans.log.warn(295, { blockedService: 'Value Aggregation' });
+                this.warn(295, { blockedService: 'Value Aggregation' });
                 return false;
             }
         }

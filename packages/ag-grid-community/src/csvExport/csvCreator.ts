@@ -21,7 +21,7 @@ export class CsvCreator
     protected export(userParams?: CsvExportParams): void {
         if (this.isExportSuppressed()) {
             // Export cancelled.
-            this.beans.log.warn(51);
+            this.warn(51);
             return;
         }
 

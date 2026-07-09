@@ -98,7 +98,7 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
             if (typeof totalValueGetter === 'string') {
                 return this.beans.expressionSvc?.evaluate(totalValueGetter, valueGetterParams);
             }
-            this.beans.log.warn(179);
+            this.warn(179);
         }
 
         // grand total row only displays the 'Total' value

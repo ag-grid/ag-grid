@@ -502,7 +502,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             parentGroup = newGroup;
         }
         if (!parentGroup.group) {
-            this.beans.log.warn(184, { parentGroupData: parentGroup.data, childNodeData: childNode.data });
+            this.warn(184, { parentGroupData: parentGroup.data, childNodeData: childNode.data });
         }
         childNode.parent = parentGroup;
         childNode.level = parentGroup.level + 1;

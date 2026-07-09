@@ -138,7 +138,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         const doingTreeData = gos.get('treeData');
         let doingMultiAutoColumn = _isGroupMultiAutoColumn(gos);
         if (doingTreeData && doingMultiAutoColumn) {
-            this.beans.log.warn(182);
+            this.warn(182);
             doingMultiAutoColumn = false;
         }
 

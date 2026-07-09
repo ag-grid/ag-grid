@@ -319,15 +319,15 @@ export class OverlayService extends BeanStub implements NamedBean {
         const userHadForced = this.userForcedNoRows;
         this.userForcedNoRows = false;
         if (gos.get('loading')) {
-            this.beans.log.warn(99);
+            this.warn(99);
             return;
         }
         if (gos.get('activeOverlay')) {
-            this.beans.log.warn(296);
+            this.warn(296);
             return;
         }
         if (this.currentDef === NoMatchingRowsOverlayDef) {
-            this.beans.log.warn(297);
+            this.warn(297);
             return;
         }
         this.doHideOverlay();

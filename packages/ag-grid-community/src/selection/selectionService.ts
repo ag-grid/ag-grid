@@ -133,13 +133,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         const { gos } = this;
         if (!_isRowSelection(gos) && newValue) {
-            this.beans.log.warn(132);
+            this.warn(132);
             return 0;
         }
 
         const isMultiSelect = this.isMultiSelect();
         if (nodesLength > 1 && !isMultiSelect) {
-            this.beans.log.warn(130);
+            this.warn(130);
             return 0;
         }
 
@@ -151,12 +151,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             const node = rowNode.primaryRow;
 
             if (node.rowPinned && !_isManualPinnedRow(node)) {
-                this.beans.log.warn(59);
+                this.warn(59);
                 continue;
             }
 
             if (node.id === undefined) {
-                this.beans.log.warn(60);
+                this.warn(60);
                 continue;
             }
 
@@ -473,7 +473,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         if (selectAll === 'currentPage' || selectAll === 'filtered') {
             if (!csrm) {
-                this.beans.log.error(102);
+                this.error(102);
                 return;
             }
             const nodes = this.getNodesToSelect(selectAll);
@@ -599,12 +599,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     public selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
         const { gos, selectionCtx } = this;
         if (!_isRowSelection(gos)) {
-            this.beans.log.warn(132);
+            this.warn(132);
             return;
         }
 
         if (_isUsingNewRowSelectionAPI(gos) && !_isMultiRowSelection(gos)) {
-            this.beans.log.warn(130);
+            this.warn(130);
             return;
         }
         if (!this.canSelectAll()) {
@@ -643,7 +643,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     ): void {
         state ||= [];
         if (!Array.isArray(state)) {
-            this.beans.log.error(103);
+            this.error(103);
             return;
         }
         const nodes: RowNode[] = [];
@@ -821,7 +821,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         if (!_isMultiRowSelection(detailGridOptions)) {
-            this.beans.log.warn(269);
+            this.warn(269);
             return;
         }
 

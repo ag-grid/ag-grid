@@ -108,7 +108,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         }
 
         if (_isDomLayout(gos, 'print')) {
-            this.beans.log.warn(37);
+            this.warn(37);
             return;
         }
 

@@ -557,7 +557,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 }
 
                 default: {
-                    this.beans.log.warn(176, { key });
+                    this.warn(176, { key });
                     return null;
                 }
             }

@@ -82,7 +82,7 @@ export class ChartColumnService extends BeanStub {
                     case 'excluded':
                         continue;
                     default:
-                        this.beans.log.warn(153, { chartDataType });
+                        this.warn(153, { chartDataType });
                         break;
                 }
             }
@@ -139,7 +139,7 @@ export class ChartColumnService extends BeanStub {
         if (isNumber) {
             this.valueColsWithoutSeriesType.add(colId);
         } else if (cellValue == null && col.colDef.cellDataType !== 'number') {
-            this.beans.log.warn(265, { colId });
+            this.warn(265, { colId });
         }
 
         return isNumber;

@@ -159,24 +159,24 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
                     // If we have validation and this is a grid comp without a default (e.g. filters tool panel),
                     // we will have already warned about this
                     if (!validation?.isProvidedUserComp(compName)) {
-                        this.beans.log.error(50, { compName });
+                        this.error(50, { compName });
                     }
                 } else if (defaultName) {
                     // validation will have already warned about this
                     if (!validation) {
-                        this.beans.log.error(260, {
+                        this.error(260, {
                             ...this.gos.getModuleErrorParams(),
                             propName: name,
                             compName: defaultName,
                         });
                     }
                 } else {
-                    this.beans.log.error(216, { name });
+                    this.error(216, { name });
                 }
             } else if (defaultName && !validation) {
                 // Grid should be providing this component.
                 // Validation service will have already warned about this with the correct module name if it was present.
-                this.beans.log.error(146, { comp: defaultName });
+                this.error(146, { comp: defaultName });
             }
             return;
         }
