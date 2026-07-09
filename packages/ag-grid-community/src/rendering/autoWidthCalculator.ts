@@ -57,16 +57,17 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
 
-        // we put the dummy into the body container, so it will inherit all the
-        // css styles that the real cells are inheriting
-        const eBodyContainer = this.scrollingRowContainerCtrl.eContainer;
+        // we put the dummy into the body viewport, so it inherits all the css styles the real
+        // cells inherit. we use the viewport rather than the row container because the container
+        // is set to display:none while the grid has no rows, which would measure every clone at 0.
+        const eBodyViewport = this.scrollingRowContainerCtrl.eViewport;
 
         for (const el of elements) {
             this.cloneItemIntoDummy(el, eDummyContainer);
         }
 
         // only append the dummyContainer to the DOM after it contains all the necessary items
-        eBodyContainer.appendChild(eDummyContainer);
+        eBodyViewport.appendChild(eDummyContainer);
 
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.
