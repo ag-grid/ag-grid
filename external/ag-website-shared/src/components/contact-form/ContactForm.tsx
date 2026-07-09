@@ -172,6 +172,10 @@ export const ContactForm: FunctionComponent<Props> = ({
                     </div>
                 </div>
             </div>
+            <div className="input-field">
+                <label htmlFor="company">Company</label>
+                <input id="company" type="text" placeholder="Company" {...register('company', { maxLength: 40 })} />
+            </div>
             <div className={classnames('input-field', { 'input-error': errors.email })}>
                 <label htmlFor="email">Work email</label>
                 <span className={styles.emailInputOuter}>
@@ -197,8 +201,11 @@ export const ContactForm: FunctionComponent<Props> = ({
             {enquiryTypeId && (
                 <div className={classnames('input-field', { 'input-error': errors[enquiryTypeId] })}>
                     <label htmlFor={enquiryTypeId}>Enquiry Type</label>
-                    <select id={enquiryTypeId} {...register(enquiryTypeId, { required: 'Enquiry type is required' })}>
-                        <option value="">--None--</option>
+                    <select
+                        id={enquiryTypeId}
+                        defaultValue="Sales"
+                        {...register(enquiryTypeId, { required: 'Enquiry type is required' })}
+                    >
                         {ENQUIRY_TYPE_OPTIONS.map((option) => (
                             <option key={option} value={option}>
                                 {option}
