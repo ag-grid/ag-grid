@@ -85,7 +85,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         if (!this.validUpdateType(params)) {
             return false;
         }
-        const validationResult = validateUpdateParams(params, this.agChartsExports.isEnterprise);
+        const validationResult = validateUpdateParams(params, this.agChartsExports.isEnterprise, this.beans.log);
         if (!validationResult) {
             return false;
         }

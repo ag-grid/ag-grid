@@ -62,7 +62,7 @@ export class CsvCreator
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const { colModel, colNames, rowGroupColsSvc, valueSvc, gos } = this.beans;
+        const { colModel, colNames, rowGroupColsSvc, valueSvc, gos, log } = this.beans;
         const {
             processCellCallback,
             processHeaderCallback,
@@ -79,6 +79,7 @@ export class CsvCreator
             colNames,
             valueSvc,
             gos,
+            log,
             processCellCallback: processCellCallback || undefined,
             processHeaderCallback: processHeaderCallback || undefined,
             processGroupHeaderCallback: processGroupHeaderCallback || undefined,

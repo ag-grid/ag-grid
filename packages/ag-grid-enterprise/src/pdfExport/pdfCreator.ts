@@ -116,7 +116,7 @@ export class PdfCreator
      * @returns A configured serialising session instance.
      */
     public createSerializingSession(params?: PdfExportParams): PdfSerializingSession {
-        const { colModel, colNames, rowGroupColsSvc, valueSvc, gos } = this.beans;
+        const { colModel, colNames, rowGroupColsSvc, valueSvc, gos, log } = this.beans;
         const { processCellCallback, processHeaderCallback, processGroupHeaderCallback, processRowGroupCallback } =
             params ?? {};
         const resolveColor = this.getResolveColorValueFn();
@@ -128,6 +128,7 @@ export class PdfCreator
             rowGroupColsSvc,
             valueSvc,
             gos,
+            log,
             resolveColor,
             processCellCallback: processCellCallback || undefined,
             processHeaderCallback: processHeaderCallback || undefined,

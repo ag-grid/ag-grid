@@ -6,6 +6,7 @@ import {
     ValidationModule,
     enableDevValidations,
 } from 'ag-grid-community';
+import { ExcelExportModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
 
@@ -14,7 +15,7 @@ const INVALID_PROPERTY_ID = 307;
 
 describe('dev validation diagnostic attribution', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, GridStateModule, RowSelectionModule, ValidationModule],
+        modules: [ClientSideRowModelModule, GridStateModule, RowSelectionModule, ValidationModule, ExcelExportModule],
     });
     const columnDefs = [{ field: 'athlete' }];
     const rowData = [{ athlete: 'Michael Phelps' }];
@@ -38,9 +39,9 @@ describe('dev validation diagnostic attribution', () => {
         const apiClean = gridsManager.createGrid('cleanGrid', { columnDefs, rowData } as GridOptions);
         const apiInvalid = gridsManager.createGrid('invalidGrid', { columnDefs, rowData } as GridOptions);
 
-        // colDef validation is dispatched via the grid's async event queue, so it runs after createGrid's
-        // synchronous _runWithActiveGrid scope has closed. Calling it directly here reproduces that
-        // out-of-scope timing (activeGridId is undefined) without depending on the async event flush.
+        // colDef validation is dispatched via the grid's async event queue, so it runs well after
+        // createGrid returns. Calling it directly here reproduces that deferred timing; attribution comes
+        // purely from the emitting bean routing through its own grid's log service.
         beansOf(apiInvalid).validation.validateColDef({ field: 'x', notARealColDefProperty: true });
 
         // The offending grid captures it; the other grid must not — an unattributed diagnostic would
@@ -111,8 +112,8 @@ describe('dev validation diagnostic attribution', () => {
         const apiInvalid = gridsManager.createGrid('invalidGrid', { columnDefs, rowData } as GridOptions);
 
         // Drive a rowData property change straight through the grid options service (not via the API), so
-        // the row model's deferred property listener runs outside any _runWithActiveGrid scope. The warning
-        // is attributed purely because the emitting bean routes it through its own grid's log service.
+        // the row model's deferred property listener runs after creation. The warning is attributed purely
+        // because the emitting bean routes it through its own grid's log service.
         beansOf(apiInvalid).gos.updateGridOptions({ options: { rowData: 'not-an-array' as any } });
 
         expect(capturedIds(apiInvalid)).toContain(NON_ARRAY_ROWDATA_WARNING);
@@ -136,5 +137,35 @@ describe('dev validation diagnostic attribution', () => {
 
         expect(capturedIds(apiBadState)).toContain(SELECTION_STATE_ERROR);
         expect(capturedIds(apiClean)).not.toContain(SELECTION_STATE_ERROR);
+    });
+
+    // The empty-sheet-data warning (#159) is emitted deep in the free excel-export functions, which the
+    // grid path now self-attributes via a threaded gridId. The standalone `getMultipleSheetsAsExcel`
+    // export (no grid) still emits it untied — correct, as no grid owns that call.
+    const EMPTY_EXCEL_DATA_WARNING = 159;
+
+    test('attributes an excel-export diagnostic to its own grid via the grid API', () => {
+        enableDevValidations({ overlay: 'warning' });
+        const apiClean = gridsManager.createGrid('cleanGrid', { columnDefs, rowData } as GridOptions);
+        const apiExport = gridsManager.createGrid('exportGrid', { columnDefs, rowData } as GridOptions);
+
+        // Empty sheet data trips #159 inside createExcelFileForExcel, reached via the grid API.
+        apiExport.getMultipleSheetsAsExcel({ data: [] });
+
+        expect(capturedIds(apiExport)).toContain(EMPTY_EXCEL_DATA_WARNING);
+        expect(capturedIds(apiClean)).not.toContain(EMPTY_EXCEL_DATA_WARNING);
+    });
+
+    test('attributes an excel-export diagnostic triggered directly on the creator bean', () => {
+        enableDevValidations({ overlay: 'warning' });
+        const apiClean = gridsManager.createGrid('cleanGrid', { columnDefs, rowData } as GridOptions);
+        const apiExport = gridsManager.createGrid('exportGrid', { columnDefs, rowData } as GridOptions);
+
+        // Call the ExcelCreator bean directly, as the context menu does — bypassing the API dispatch that
+        // the retired ambient scope used to guard. Attribution now comes purely from the threaded gridId.
+        beansOf(apiExport).excelCreator.getMultipleSheetsAsExcel({ data: [] });
+
+        expect(capturedIds(apiExport)).toContain(EMPTY_EXCEL_DATA_WARNING);
+        expect(capturedIds(apiClean)).not.toContain(EMPTY_EXCEL_DATA_WARNING);
     });
 });

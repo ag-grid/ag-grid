@@ -18,7 +18,7 @@ import {
     _clamp,
     _getHeaderClassesFromColDef,
     _getHeaderRowCount,
-    _warn,
+    _warnForGrid,
 } from 'ag-grid-community';
 
 import type { ExcelGridSerializingParams, StyleLinkerInterface } from './excelSerializingSession';
@@ -259,10 +259,11 @@ const createExcelFileForExcel = (
         customMetadata?: ExcelCustomMetadata;
         suppressPrependAuthorToNotes?: boolean;
     } = {},
-    workbook: Workbook
+    workbook: Workbook,
+    gridId?: string
 ): boolean => {
     if (!data || data.length === 0) {
-        _warn(159);
+        _warnForGrid(gridId, 159);
         workbook.reset();
         return false;
     }
@@ -286,7 +287,8 @@ const createExcelFileForExcel = (
 
 const getMultipleSheetsAsExcelCompressed = (
     params: ExcelExportMultipleSheetParams,
-    workbook: Workbook = new Workbook()
+    workbook: Workbook = new Workbook(),
+    gridId?: string
 ): Promise<Blob | undefined> => {
     const { data, fontSize, author, activeSheetIndex, customMetadata, suppressPrependAuthorToNotes } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -303,7 +305,8 @@ const getMultipleSheetsAsExcelCompressed = (
                 customMetadata,
                 suppressPrependAuthorToNotes,
             },
-            workbook
+            workbook,
+            gridId
         )
     ) {
         return Promise.resolve(undefined);
@@ -314,7 +317,8 @@ const getMultipleSheetsAsExcelCompressed = (
 
 export const getMultipleSheetsAsExcel = (
     params: ExcelExportMultipleSheetParams,
-    workbook: Workbook = new Workbook()
+    workbook: Workbook = new Workbook(),
+    gridId?: string
 ): Blob | undefined => {
     const {
         data,
@@ -338,7 +342,8 @@ export const getMultipleSheetsAsExcel = (
                 customMetadata,
                 suppressPrependAuthorToNotes,
             },
-            workbook
+            workbook,
+            gridId
         )
     ) {
         return;
@@ -447,11 +452,11 @@ export class ExcelCreator
     }
 
     public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
-        return getMultipleSheetsAsExcel(params, this.workbook);
+        return getMultipleSheetsAsExcel(params, this.workbook, this.beans.context.getId());
     }
 
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
-        getMultipleSheetsAsExcelCompressed(params, this.workbook).then((contents) => {
+        getMultipleSheetsAsExcelCompressed(params, this.workbook, this.beans.context.getId()).then((contents) => {
             const { fileName = 'export.xlsx' } = params;
             if (contents) {
                 const downloadFileName = typeof fileName === 'function' ? fileName() : fileName;
@@ -466,7 +471,7 @@ export class ExcelCreator
     }
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
-        const { colModel, colNames, rowGroupColsSvc, valueSvc, formula, gos, notesSvc } = this.beans;
+        const { colModel, colNames, rowGroupColsSvc, valueSvc, formula, gos, notesSvc, log } = this.beans;
         const baseExcelStyles = gos.get('excelStyles') || [];
         const styleLinker = this.createStyleLinker(baseExcelStyles);
 
@@ -478,6 +483,7 @@ export class ExcelCreator
             valueSvc,
             formulaSvc: formula,
             gos,
+            log,
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             baseExcelStyles,
@@ -569,10 +575,10 @@ export class ExcelCreator
     }
 
     private packageCompressedFile(params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> {
-        return getMultipleSheetsAsExcelCompressed(params, this.workbook);
+        return getMultipleSheetsAsExcelCompressed(params, this.workbook, this.beans.context.getId());
     }
 
     private packageFile(params: ExcelExportMultipleSheetParams): Blob | undefined {
-        return getMultipleSheetsAsExcel(params, this.workbook);
+        return getMultipleSheetsAsExcel(params, this.workbook, this.beans.context.getId());
     }
 }

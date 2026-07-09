@@ -261,7 +261,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     }
 
     private createChart(params: CommonCreateChartParams): ChartRef | undefined {
-        const validationResult = validateCreateParams(params, this.agChartsExports.isEnterprise);
+        const validationResult = validateCreateParams(params, this.agChartsExports.isEnterprise, this.beans.log);
         if (!validationResult) {
             return undefined;
         }

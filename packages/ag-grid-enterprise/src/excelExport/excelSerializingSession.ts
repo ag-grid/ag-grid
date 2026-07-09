@@ -25,7 +25,7 @@ import type {
     RowNode,
     RowSpanningAccumulator,
 } from 'ag-grid-community';
-import { BaseGridSerializingSession, _addGridCommonParams, _mergeDeep, _warn } from 'ag-grid-community';
+import { BaseGridSerializingSession, _addGridCommonParams, _mergeDeep } from 'ag-grid-community';
 
 import { getHeightFromProperty } from './assets/excelUtils';
 import type { Workbook } from './excelXlsxFactory';
@@ -553,7 +553,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 case 'boolean':
                     return 'b';
                 default:
-                    _warn(162, { id: style.id, dataType: style.dataType });
+                    this.log.warn(162, { id: style.id, dataType: style.dataType });
             }
         }
 

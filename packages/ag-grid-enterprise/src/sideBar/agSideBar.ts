@@ -63,7 +63,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         const { beans, gos } = this;
         const { sideBar: sideBarState } = gos.get('initialState') ?? {};
         this.setSideBarDef({
-            sideBarDef: parseSideBarDef(gos.get('sideBar')),
+            sideBarDef: parseSideBarDef(gos.get('sideBar'), beans.log),
             sideBarState,
         });
 
@@ -462,7 +462,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
     }
 
     public setState(sideBarState?: SideBarState): void {
-        const sideBarDef = parseSideBarDef(this.gos.get('sideBar'));
+        const sideBarDef = parseSideBarDef(this.gos.get('sideBar'), this.beans.log);
 
         const existingToolPanelWrappers: { [id: string]: ToolPanelWrapper } = {};
         if (sideBarDef && this.sideBar) {
