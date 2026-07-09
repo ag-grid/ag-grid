@@ -1,214 +1,88 @@
 name: setup-nx
 
+# Thin, config-only wrapper over the shared ./external/ag-shared/github/actions/setup-nx-core.
+# It declares ONLY this repo's layout literals (cache paths, node_modules clean globs, and the
+# two hashFiles() keys — which must be literal here because hashFiles() cannot take a runtime
+# input) and forwards every behavioural input to the shared core. Keep behaviour changes in the
+# core so they percolate to ag-charts / ag-studio via the ag-shared subrepo.
+
 inputs:
-  yarn_postinstall:
-    description: 'Always ensure yarn postinstall is run.'
-    required: false
-    default: 'true'
-  fetch_base:
-    description: 'Shallow fetch latest branch.'
-    required: false
-    default: 'shallow'
-    options:
-      - 'shallow'
-      - 'full'
-      - 'skip'
-  nx_restore:
-    description: 'Restore Nx Cache.'
-    required: false
-    default: 'true'
-  base_ref:
-    description: 'Base branch/SHA for diff detection'
-    default: 'latest'
-    required: false
-  cache_mode:
-    description: 'Read/write mode for caches'
-    require: false
-    default: 'rw'
-    options:
-      - 'rw'
-      - 'ro'
-      - 'off'
-  free_disk_space:
-    description: 'Delete large preinstalled toolchains to reclaim root-partition space (avoids runner ENOSPC). Off by default: the delete is slow (~3 min) and unpredictable. Only set true on a job that actually exhausts disk.'
-    required: false
-    default: 'false'
-    options:
-      - 'true'
-      - 'false'
+    yarn_postinstall:
+        description: 'Always ensure yarn postinstall is run.'
+        required: false
+        default: 'true'
+        options:
+            - 'true'
+            - 'false'
+            - 'no-install'
+    fetch_base:
+        description: 'Shallow fetch latest branch.'
+        required: false
+        default: 'shallow'
+        options:
+            - 'shallow'
+            - 'full'
+            - 'skip'
+    nx_restore:
+        description: 'Restore Nx Cache.'
+        required: false
+        default: 'true'
+    base_ref:
+        description: 'Base branch/SHA for diff detection'
+        default: 'latest'
+        required: false
+    cache_mode:
+        description: 'Read/write mode for caches'
+        required: false
+        default: 'rw'
+        options:
+            - 'rw'
+            - 'ro'
+            - 'off'
+    free_disk_space:
+        description: 'Delete large preinstalled toolchains to reclaim root-partition space (avoids runner ENOSPC). Set false on jobs that do not exhaust disk to skip the slow delete.'
+        required: false
+        default: 'true'
+        options:
+            - 'true'
+            - 'false'
+    tidy_nx_cache:
+        description: 'Reset the Nx cache before a build when it exceeds a branch-type size threshold. Set false to skip the tidy step.'
+        required: false
+        default: 'true'
+        options:
+            - 'true'
+            - 'false'
+
 outputs:
-  base:
-    description: 'Base branch/SHA for diff detection'
-    value: ${{ steps.nx_config.outputs.base }}
-  type:
-    description: 'Type of job execution detected'
-    value: ${{ steps.nx_config.outputs.type }}
+    base:
+        description: 'Base branch/SHA for diff detection'
+        value: ${{ steps.core.outputs.base }}
+    type:
+        description: 'Type of job execution detected'
+        value: ${{ steps.core.outputs.type }}
 
 runs:
     using: 'composite'
     steps:
-        - name: Free disk space
-          if: runner.os == 'Linux' && inputs.free_disk_space == 'true'
-          shell: bash
-          run: |
-              sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache /usr/local/share/boost "$AGENT_TOOLSDIRECTORY"
-
-        - name: Set Nx parallelization
-          shell: bash
-          run: |
-              if [ -z "${NX_PARALLEL}" ]; then
-                # Get CPU count in a cross-platform way
-                if command -v nproc >/dev/null 2>&1; then
-                  CPUS=$(nproc)
-                else
-                  # macOS fallback
-                  CPUS=$(sysctl -n hw.logicalcpu)
-                fi
-                echo "NX_PARALLEL=${CPUS}" >> $GITHUB_ENV
-                echo "Setting NX_PARALLEL to ${CPUS}"
-              else
-                echo "NX_PARALLEL already set to ${NX_PARALLEL}, skipping"
-              fi
-
-        - name: Nx Affected SHA Setup
-          id: nx_config
-          shell: bash
-          run: |
-            set -x
-
-            branch=$(git branch --show-current)
-            if [[ ${branch} == 'latest' ]] ; then
-              # Latest
-              echo "base=latest-success" >> $GITHUB_OUTPUT
-              echo "NX_BASE=latest-success" >> $GITHUB_ENV
-              echo "type=latest" >> $GITHUB_OUTPUT
-              git fetch origin --depth 1 tag latest-success
-            elif [[ ${branch} =~ b[0-9][0-9]\..+ ]] ; then
-              # Release
-              echo "base=${branch}" >> $GITHUB_OUTPUT
-              echo "NX_BASE=${branch}" >> $GITHUB_ENV
-              echo "type=release" >> $GITHUB_OUTPUT
-              echo "release_branch=${branch}" >> $GITHUB_OUTPUT
-            else
-              # PR
-              echo "base=origin/${{ inputs.base_ref }}" >> $GITHUB_OUTPUT
-              echo "NX_BASE=origin/${{ inputs.base_ref }}" >> $GITHUB_ENV
-              echo "type=pr" >> $GITHUB_OUTPUT
-              if [[ ${{ inputs.fetch_base }} == 'shallow' ]] ; then
-                git fetch origin --depth 1 ${{ inputs.base_ref }}
-              elif [[ ${{ inputs.fetch_base }} == 'full' ]] ; then
-                git fetch origin ${{ inputs.base_ref }}
-              fi
-
-              if [[ "${{inputs.base_ref}}" =~ b[0-9][0-9]\..+ ]] ; then
-                echo "release_branch=${{ inputs.base_ref }}" >> $GITHUB_OUTPUT
-              fi
-            fi
-
-            cat $GITHUB_OUTPUT
-            cat $GITHUB_ENV
-
-        - name: Restore node_modules
-          if: inputs.cache_mode == 'ro'
-          id: cache_ro
-          uses: actions/cache/restore@v4
-          env:
-            NODE_MODULES_HASH: ${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json') }}
+        - name: Setup Nx (shared core)
+          id: core
+          uses: ./external/ag-shared/github/actions/setup-nx-core
           with:
-            path: |
-              node_modules/
-              packages/*/node_modules/
-              plugins/*/node_modules/
-              community-modules/*/node_modules/
-              testing/*/node_modules/
-              testing/public-recipes/*/node_modules/
-              documentation/*/node_modules/
-              external/*/node_modules/
-            key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, env.NODE_MODULES_HASH) || env.NODE_MODULES_HASH }}
-            restore-keys: ${{ steps.nx_config.outputs.release_branch && format('node_modules-{0}-release-{1}-', runner.os, steps.nx_config.outputs.release_branch) || format('node_modules-{0}-', runner.os) }}
-            # For releases add release branch to key, otherwise take any latest cache if failed to find it for current yarn.lock
-
-        - name: Cache node_modules
-          if: inputs.cache_mode == 'rw'
-          id: cache_rw
-          uses: actions/cache@v4
-          env:
-            NODE_MODULES_HASH: ${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json') }}
-          with:
-              path: |
+              yarn_postinstall: ${{ inputs.yarn_postinstall }}
+              fetch_base: ${{ inputs.fetch_base }}
+              nx_restore: ${{ inputs.nx_restore }}
+              base_ref: ${{ inputs.base_ref }}
+              cache_mode: ${{ inputs.cache_mode }}
+              free_disk_space: ${{ inputs.free_disk_space }}
+              tidy_nx_cache: ${{ inputs.tidy_nx_cache }}
+              node_modules_paths: |
                   node_modules/
                   packages/*/node_modules/
                   plugins/*/node_modules/
                   community-modules/*/node_modules/
                   testing/*/node_modules/
-                  testing/public-recipes/*/node_modules/
                   documentation/*/node_modules/
                   external/*/node_modules/
-              key: node_modules-${{ runner.os }}-${{ steps.nx_config.outputs.release_branch && format('release-{0}-{1}', steps.nx_config.outputs.release_branch, env.NODE_MODULES_HASH) || env.NODE_MODULES_HASH }}
-              restore-keys: ${{ steps.nx_config.outputs.release_branch && format('node_modules-{0}-release-{1}-', runner.os, steps.nx_config.outputs.release_branch) || format('node_modules-{0}-', runner.os) }}
-              # For releases add release branch to key, otherwise take any latest cache if failed to find it for current yarn.lock
-
-        - name: Cache Nx
-          if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false'
-          uses: actions/cache@v4
-          with:
-              path: |
-                .nx/cache
-                .nx/workspace-data
-              key: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-${{ github.sha }}
-              restore-keys: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-
-
-        - name: Restore Nx
-          if: inputs.cache_mode == 'ro' && inputs.nx_restore != 'false'
-          uses: actions/cache/restore@v4
-          with:
-            path: |
-              .nx/cache
-              .nx/workspace-data
-            key: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-${{ github.sha }}
-            restore-keys: cache-nx-v20-${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}-
-
-        - name: Tidy Nx Cache
-          uses: ./.github/actions/tidy-nx-cache
-          if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false'
-          with:
-              branch_type: ${{ steps.nx_config.outputs.type }}
-
-        - name: Setup Node.js
-          id: setup_node
-          uses: actions/setup-node@v4
-          with:
-              node-version-file: package.json
-
-        # Not gated on cache_mode: yarn_postinstall is documented as "always", and gating
-        # on rw skipped postinstall (e.g. setup-prompts.sh) on read-only cache hits.
-        - name: yarn install
-          if: inputs.yarn_postinstall == 'true'
-          id: yarn_install_slow
-          shell: bash
-          env:
-              # Exact key hit only — a restore-key fallback reports the string 'false' and the inactive
-              # step (rw xor ro) yields '', so compare each explicitly against 'true' rather than truthiness.
-              EXACT_CACHE_HIT: ${{ steps.cache_rw.outputs.cache-hit == 'true' || steps.cache_ro.outputs.cache-hit == 'true' }}
-          run: |
-              if [[ "${EXACT_CACHE_HIT}" != "true" ]] ; then
-                # Fallback restore: wipe node_modules so install rebuilds hoisting from this lockfile, avoiding stale-layout cache poisoning.
-                rm -rf node_modules packages/*/node_modules plugins/*/node_modules community-modules/*/node_modules testing/*/node_modules documentation/*/node_modules external/*/node_modules
-                yarn install --ci
-                yarn check --integrity
-              elif (yarn check --integrity) ; then
-                yarn postinstall
-              else
-                yarn install --ci
-
-                # Ensure that the integrity check passes after install to avoid
-                # cache polution with entries that will fail future integrity checks.
-                yarn check --integrity
-              fi
-
-        - name: yarn install (skipping postinstall)
-          if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall != 'true'
-          id: yarn_install_fast
-          shell: bash
-          run: |
-              yarn check --integrity || yarn install --ci
+              node_modules_hash: ${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json') }}
+              nx_cache_hash: ${{ hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'community-modules/*/package.json') }}
