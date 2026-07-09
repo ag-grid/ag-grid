@@ -163,15 +163,17 @@ await agIdFor.headerCell('total').click();
 
 Sorting works on aggregated values too, including custom `IAggFuncResult` wrappers (sorted by `toNumber()`).
 
-### Pitfall 12: Prefer Value + Interaction, Not Value Alone
+### Pitfall 12: Cover Every Behaviour the Example Demonstrates, With Interactions
 
-A test that only reads static cell values is weaker than one that also drives the behaviour the docs describe. When the example supports it, add at least one interaction alongside the value assertions:
+Cover **each** distinct behaviour the example is there to show — not just one. Use the example's doc prose plus the controls/features in `main.ts` as the coverage checklist: every button, every configured feature, every interaction the page calls out earns its own test. A multi-feature example (e.g. a filter with a mini-filter, select-all, and a value formatter) needs multiple interactions; a single-feature example needs the one. Tie the count to what the docs teach for that example, so rich examples get thorough coverage without gold-plating trivial ones.
+
+A test that only reads static cell values is the weakest form — always drive the behaviour where an interaction is possible:
 
 - **Expand a group** to reveal its leaf rows or sub-groups, then assert a leaf/child value (proves grouping sits above real data, and that sub-groups recompute independently). Leaf rows use sequential IDs (`'0'`, `'1'`, …) in original data order — assert a leaf becomes visible only after expanding: `await expect(agIdFor.cell('0', 'total')).not.toBeVisible();` then click, then assert.
 - **Sort** by the feature's column and assert the reordering (Pitfall 11).
-- **Filter / toggle a control** and assert the aggregate or row set updates.
+- **Filter / toggle each control** and assert the aggregate or row set updates.
 
-Split distinct behaviours into separate `test.eachFramework(...)` blocks with descriptive names rather than one monolithic test.
+Give each behaviour its own `test.eachFramework(...)` block with a descriptive name rather than piling everything into one monolithic test — separate blocks read as a coverage list and fail independently.
 
 ## Example Test Patterns
 

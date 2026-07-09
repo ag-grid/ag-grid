@@ -66,7 +66,7 @@ Create a plan listing each example that needs a test written or updated. For eac
 
 - **Example name** and path
 - **What it demonstrates** (from index.mdoc context + source code analysis)
-- **Key behaviours to verify** — specific assertions to make **and interactions to perform**. Do not stop at static cell values: for every example that supports it, plan at least one interaction (expand a group to a leaf/sub-group, sort by the feature's column, toggle a control) that exercises the behaviour the docs describe (see Pitfall 12).
+- **Key behaviours to verify** — specific assertions to make **and interactions to perform**. Do not stop at static cell values, and do not stop at a single interaction. Enumerate every distinct behaviour the example is there to demonstrate — work through the doc prose that references it plus the controls/features in `main.ts` (each button, each configured feature, each interaction the page calls out) — and plan one test block per behaviour (expand a group to a leaf/sub-group, sort by the feature's column, toggle each control, apply each filter mode). The doc prose for that example is your coverage checklist: a multi-feature example needs multiple interactions, not one (see Pitfall 12).
 - **Data expectations** — expected cell values, group names, aggregation results (calculated from source data)
 - **Status** — new test, replacing placeholder, or extending existing test
 
@@ -87,6 +87,8 @@ The subagent should write the test file and return it. You then write it to disk
 
 ## STEP 3: Run the Tests
 
+**First, confirm the dev server is serving.** The tests run against `https://localhost:4610`, so a stopped server makes every spec fail for environmental reasons that look like the example is broken. Read `node_modules/.cache/ag-watch-status.json`; if it is not serving, start it with `yarn nx dev` and wait for it to come up before running.
+
 Run each spec with the `docs-e2e.sh` helper from the **repository root**:
 
 ```bash
@@ -96,10 +98,11 @@ Run each spec with the `docs-e2e.sh` helper from the **repository root**:
 **Important:**
 
 - Run from the repo root — `docs-e2e.sh` handles the working directory and Playwright config for you.
+- **The default run already validates every framework.** With no `--framework` flag, `eachFramework` runs the spec against all frameworks (typescript, vanilla, reactFunctionalTs, angular, vue3) in chromium — one command is the full cross-framework check. You do **not** need a separate run per framework.
 - Use the example folder name as the filter (e.g., `"aggregation-overview"`), NOT a glob pattern with `**/` (Playwright treats `*` as regex).
 - To run a single test by name, append `--grep "<test-name>"`.
-- To test a specific framework, use the `--framework angular` flag;
-- To test all browsers, add `--all-browsers`.
+- To narrow to one framework while debugging a failure, use `--framework <name>` (valid: `typescript`, `vanilla`, `reactFunctionalTs`, `reactFunctionalTs_Dev`, `angular`, `vue3`).
+- To test all browsers (not just chromium), add `--all-browsers`.
 
 ## STEP 4: Iterate
 
@@ -140,9 +143,9 @@ The only acceptable fixed wait is a deliberate, documented debounce where no obs
 ## Definition of Done
 
 - Every targeted example has an `example.spec.ts` with meaningful assertions (no placeholders).
-- All tests pass against chromium.
+- All tests pass across every framework (typescript, vanilla, reactFunctionalTs, angular, vue3) in chromium — i.e. a default `./docs-e2e.sh "<example-name>"` run is green.
 - Assertions cover the behaviours described in the documentation for each example.
-- Where the example supports it, tests exercise at least one interaction (expand/sort/filter/toggle), not just static cell values (see Pitfall 12).
+- Every distinct behaviour the example's doc prose calls out has its own test block — not just one interaction (expand/sort/filter/toggle each behaviour the example demonstrates), and never value-only where an interaction is possible (see Pitfall 12).
 - No fixed `page.waitForTimeout(...)` is used to wait for grid state — waits are deterministic (see "Writing Deterministic (Non-Flaky) Tests").
 - Tests follow existing conventions (see nearby `example.spec.ts` files for style).
 
