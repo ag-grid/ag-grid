@@ -10,7 +10,7 @@
  * - defaultColDef and defaultColGroupDef
  * - Column types
  */
-import type { ColDef } from 'ag-grid-community';
+import type { ColDef, GridApi } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     CellStyleModule,
@@ -23,6 +23,13 @@ import {
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, mockGridLayout } from '../test-utils';
+
+/** Reads the rendered height of the (single) column header row from the grid DOM. */
+function getHeaderRowHeight(api: GridApi): number {
+    const gridElement = TestGridsManager.getHTMLElement(api)!;
+    const headerRow = gridElement.querySelector('.ag-header-row-column') as HTMLElement | null;
+    return parseFloat(headerRow!.style.height);
+}
 
 describe('Column Features', () => {
     const gridsManager = new TestGridsManager({
@@ -911,6 +918,76 @@ describe('Column Features', () => {
                 expect(autoCol.getAutoHeaderHeight()).not.toBeNull();
                 // Non-auto col is never measured.
                 expect(normalCol.getAutoHeaderHeight()).toBeNull();
+            } finally {
+                mockGridLayout.useRealOffsetDimensions = false;
+            }
+        });
+
+        test('autoHeaderHeight: measured height is cleared when autoHeaderHeight is toggled off', async () => {
+            mockGridLayout.useRealOffsetDimensions = true;
+            try {
+                // headerHeight below the measured auto height so the auto column widens the header row,
+                // making the contraction observable in the rendered header-row height.
+                const api = gridsManager.createGrid('autoHeaderHeight', {
+                    headerHeight: 10,
+                    columnDefs: [{ colId: 'auto', autoHeaderHeight: true, headerName: 'Auto' }, { colId: 'normal' }],
+                    rowData: [{ auto: 1, normal: 2 }],
+                });
+
+                const autoCol = api.getColumn('auto')!;
+                expect(autoCol.isAutoHeaderHeight()).toBe(true);
+
+                // Drain rAFs so the measurement callback can run.
+                for (let i = 0; i < 8; ++i) {
+                    await asyncSetTimeout(20);
+                }
+                const measured = autoCol.getAutoHeaderHeight();
+                expect(measured).not.toBeNull();
+                // Auto measurement has widened the rendered header beyond the configured headerHeight.
+                expect(getHeaderRowHeight(api)).toBe(measured);
+
+                // Toggle autoHeaderHeight off via columnDefs.
+                api.setGridOption('columnDefs', [{ colId: 'auto', headerName: 'Auto' }, { colId: 'normal' }]);
+                for (let i = 0; i < 8; ++i) {
+                    await asyncSetTimeout(20);
+                }
+
+                expect(autoCol.isAutoHeaderHeight()).toBe(false);
+                // Stale measured height is cleared and the rendered header contracts to headerHeight.
+                expect(autoCol.getAutoHeaderHeight()).toBeNull();
+                expect(getHeaderRowHeight(api)).toBe(10);
+            } finally {
+                mockGridLayout.useRealOffsetDimensions = false;
+            }
+        });
+
+        test('autoHeaderHeight: measured height is retained when the still-auto column is hidden', async () => {
+            mockGridLayout.useRealOffsetDimensions = true;
+            try {
+                const api = gridsManager.createGrid('autoHeaderHeight', {
+                    headerHeight: 10,
+                    columnDefs: [{ colId: 'auto', autoHeaderHeight: true, headerName: 'Auto' }, { colId: 'normal' }],
+                    rowData: [{ auto: 1, normal: 2 }],
+                });
+
+                const autoCol = api.getColumn('auto')!;
+                for (let i = 0; i < 8; ++i) {
+                    await asyncSetTimeout(20);
+                }
+                const measured = autoCol.getAutoHeaderHeight();
+                expect(measured).not.toBeNull();
+                expect(getHeaderRowHeight(api)).toBe(measured);
+
+                // Hiding tears down the header cell but the column is still auto-height, so
+                // the measured height must be kept and the rendered header must not contract.
+                api.setColumnsVisible(['auto'], false);
+                for (let i = 0; i < 8; ++i) {
+                    await asyncSetTimeout(20);
+                }
+
+                expect(autoCol.isAutoHeaderHeight()).toBe(true);
+                expect(autoCol.getAutoHeaderHeight()).toBe(measured);
+                expect(getHeaderRowHeight(api)).toBe(measured);
             } finally {
                 mockGridLayout.useRealOffsetDimensions = false;
             }

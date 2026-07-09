@@ -245,6 +245,12 @@ export abstract class AbstractHeaderCellCtrl<
             }
             this.comp.toggleCss('ag-header-cell-auto-height', false);
             stopResizeObserver = undefined;
+            // Only clear the stored height when auto-height is genuinely off. A displayed
+            // header cell can stop measuring on teardown (e.g. column hidden) while still
+            // being auto-height, and must retain its height for when it is shown again.
+            if (!this.column.isAutoHeaderHeight()) {
+                this.setColHeaderHeight(this.column, null);
+            }
         };
 
         checkMeasuring();
@@ -459,7 +465,7 @@ export abstract class AbstractHeaderCellCtrl<
         });
     }
 
-    private setColHeaderHeight(col: AgColumn | AgColumnGroup, height: number): void {
+    private setColHeaderHeight(col: AgColumn | AgColumnGroup, height: number | null): void {
         if (!col.setAutoHeaderHeight(height)) {
             return;
         }

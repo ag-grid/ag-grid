@@ -213,7 +213,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     }
 
     /** Returns true if the header height has changed */
-    public setAutoHeaderHeight(height: number): boolean {
+    public setAutoHeaderHeight(height: number | null): boolean {
         if (height === this.autoHeaderHeight) {
             return false;
         }
