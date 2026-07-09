@@ -362,7 +362,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     private applyColumnLayout(colDefs: AbstractColDef[]): void {
-        const columnTree = toolPanelCreateColumnTree(this.colModel, colDefs);
+        const columnTree = toolPanelCreateColumnTree(this.beans, colDefs);
         this.buildListModel(columnTree);
 
         // using col defs to check if groups exist as it could be a custom layout

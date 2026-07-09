@@ -272,7 +272,7 @@ export function isComponentMetaFunc(
 
 export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFunc;
 
-export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
+export type ProcessParamsFunc<TParams = any> = (params: TParams, beans: BeanCollection) => TParams;
 
 interface CoreBeanCollection extends AgCoreBeanCollection<
     GridOptionsWithDefaults,

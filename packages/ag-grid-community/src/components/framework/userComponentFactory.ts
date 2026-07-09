@@ -263,6 +263,6 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         _mergeDeep(params, paramsFromSelector);
 
-        return defaultCompProcessParams ? defaultCompProcessParams(params) : params;
+        return defaultCompProcessParams ? defaultCompProcessParams(params, this.beans) : params;
     }
 }
