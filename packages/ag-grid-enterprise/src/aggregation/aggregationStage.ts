@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    BeanCollection,
     ChangedCellsPath,
     ChangedPath,
     ClientSideRowModelStage,
@@ -15,13 +16,7 @@ import type {
     ValueService,
     _IRowNodeAggregationStage,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _forEachChangedGroupDepthFirst,
-    _getGrandTotalRow,
-    _getGroupAggFiltering,
-    _warn,
-} from 'ag-grid-community';
+import { BeanStub, _forEachChangedGroupDepthFirst, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
 
 import { getNodesFromMappedSet, setAggData, setAggDataWithSiblings } from './aggDataUtils';
 
@@ -131,13 +126,13 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 column: col,
                 colId: col.colId,
                 colDef: col.colDef,
-                aggFunc: resolveAggFunc(col.aggFunc, aggFuncSvc!, col),
+                aggFunc: resolveAggFunc(col.aggFunc, aggFuncSvc!, col, beans),
                 colSlot,
             };
         }
 
         // Resolve pivot columns — null when pivot is inactive or has no result columns.
-        const pivotData = resolvePivotColumns(colModel, beans.pivotResultCols, aggFuncSvc!);
+        const pivotData = resolvePivotColumns(colModel, beans.pivotResultCols, aggFuncSvc!, beans);
 
         // Pre-allocate reusable values2d outer array — reused across groups to avoid
         // per-group allocation. Inner arrays are still fresh per group (user-facing via aggFunc params).
@@ -364,7 +359,12 @@ const aggregateValuesAndPivot = (
 };
 
 /** Resolves aggFunc from a string name or returns the function directly. Returns null with a warning for invalid names. */
-const resolveAggFunc = (colAggFunc: ColAggFunc, aggFuncSvc: IAggFuncService, column: AgColumn): IAggFunc | null => {
+const resolveAggFunc = (
+    colAggFunc: ColAggFunc,
+    aggFuncSvc: IAggFuncService,
+    column: AgColumn,
+    beans: BeanCollection
+): IAggFunc | null => {
     if (typeof colAggFunc === 'function') {
         return colAggFunc;
     }
@@ -373,7 +373,7 @@ const resolveAggFunc = (colAggFunc: ColAggFunc, aggFuncSvc: IAggFuncService, col
     }
     const aggFunc = aggFuncSvc.getAggFunc(colAggFunc);
     if (typeof aggFunc !== 'function') {
-        _warn(109, { inputValue: colAggFunc.toString(), allSuggestions: aggFuncSvc.getFuncNames(column) });
+        beans.log.warn(109, { inputValue: colAggFunc.toString(), allSuggestions: aggFuncSvc.getFuncNames(column) });
         return null;
     }
     return aggFunc;
@@ -385,7 +385,8 @@ const resolveAggFunc = (colAggFunc: ColAggFunc, aggFuncSvc: IAggFuncService, col
 const resolvePivotColumns = (
     colModel: ColumnModel,
     pivotResultCols: IPivotResultColsService | undefined,
-    aggFuncSvc: IAggFuncService
+    aggFuncSvc: IAggFuncService,
+    beans: BeanCollection
 ): ResolvedPivotData | null => {
     if (!colModel.isPivotActive()) {
         return null;
@@ -410,7 +411,7 @@ const resolvePivotColumns = (
             column: valueCol,
             colId: pivotResultCol.colId,
             colDef: valueCol.colDef,
-            aggFunc: resolveAggFunc(valueCol.aggFunc, aggFuncSvc, valueCol),
+            aggFunc: resolveAggFunc(valueCol.aggFunc, aggFuncSvc, valueCol, beans),
             pivotResultCol: pivotResultCol,
             pivotKeys: resultColDef.pivotKeys,
             totalColIds: resultColDef.pivotTotalColumnIds,
