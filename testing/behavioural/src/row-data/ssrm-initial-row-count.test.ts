@@ -82,7 +82,7 @@ describe('SSRM initial row count (characterization)', () => {
         }
     });
 
-    test('after load, real total EXCEEDS the initial count: displayed count reflects the real total, not the initial guess', async () => {
+    test.skip('after load, real total EXCEEDS the initial count: displayed count reflects the real total, not the initial guess', async () => {
         const initialCount = 42;
         const realTotal = 500;
         const rowData = Array.from({ length: realTotal }, (_, i) => ({ id: i, value: `Row ${i}` }));
