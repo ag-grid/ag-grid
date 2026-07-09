@@ -29,6 +29,13 @@ inputs:
       - 'rw'
       - 'ro'
       - 'off'
+  free_disk_space:
+    description: 'Delete large preinstalled toolchains to reclaim root-partition space (avoids runner ENOSPC). Set false on jobs that do not exhaust disk to skip the slow delete.'
+    required: false
+    default: 'true'
+    options:
+      - 'true'
+      - 'false'
 outputs:
   base:
     description: 'Base branch/SHA for diff detection'
@@ -41,7 +48,7 @@ runs:
     using: 'composite'
     steps:
         - name: Free disk space
-          if: runner.os == 'Linux'
+          if: runner.os == 'Linux' && inputs.free_disk_space == 'true'
           shell: bash
           run: |
               sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache /usr/local/share/boost "$AGENT_TOOLSDIRECTORY"
