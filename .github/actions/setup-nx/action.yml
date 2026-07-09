@@ -30,9 +30,9 @@ inputs:
       - 'ro'
       - 'off'
   free_disk_space:
-    description: 'Delete large preinstalled toolchains to reclaim root-partition space (avoids runner ENOSPC). Set false on jobs that do not exhaust disk to skip the slow delete.'
+    description: 'Delete large preinstalled toolchains to reclaim root-partition space (avoids runner ENOSPC). Off by default: the delete is slow (~3 min) and unpredictable. Only set true on a job that actually exhausts disk.'
     required: false
-    default: 'true'
+    default: 'false'
     options:
       - 'true'
       - 'false'
