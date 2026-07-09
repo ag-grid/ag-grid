@@ -105,6 +105,16 @@ export default defineConfig(({ mode }) => {
             setupFiles: [path.resolve(thisDir, 'vitest.setup.ts')],
             reporters: ['basic'],
             watch: false,
+            // jsdom's CSS parser rejects the modern CSS (nested rules, @layer, color-mix) that the Theming
+            // API and ag-charts inject at runtime, emitting "Could not parse CSS stylesheet" on every <style>
+            // attach. Real browsers accept it; the errors are harmless but flood CI (charts tests especially).
+            // Drop only those lines — every other console message still comes through. A local counterpart in
+            // theming/style-injection.test.ts swallows the same string where it needs to count occurrences.
+            onConsoleLog(log) {
+                if (log.includes('Could not parse CSS stylesheet')) {
+                    return false;
+                }
+            },
             // Benchmarks run in a single forked child (clean process isolation, no file parallelism)
             // so runs don't contend for cores or pay worker-migration noise. `--expose-gc` lives here
             // (not in the shell wrappers) so `./benches.sh`, raw `vitest bench` and `bench-compare`
