@@ -63,6 +63,33 @@ describe('column header drag reorder', () => {
         }
     }
 
+    // Drives a real header drag then holds at the far-left edge (the "hold to pin" affordance): the grid
+    // cannot scroll further, so the hold-to-pin interval keeps failing to move. It fires every 100ms and
+    // needs to fail ~9 times before it crosses the threshold that decides the drag-ghost icon. Returns
+    // whether the pin indicator is showing on the drag ghost the user actually sees.
+    async function holdAtLeftEdgeShowsPinIcon(api: GridApi, sourceSelector: string): Promise<boolean> {
+        const source = el(api, sourceSelector);
+        const viewport = el(api, '.ag-grid-viewport');
+        const ownerDocument = source.ownerDocument;
+        const original = ownerDocument.elementsFromPoint?.bind(ownerDocument);
+        ownerDocument.elementsFromPoint = () => [viewport];
+        const dispatcher = new DragEventDispatcher('mouse', null, false);
+        const y = 100;
+        try {
+            await dispatcher.startDrag(source, 200, y);
+            await dispatcher.movePointer(viewport, 200, y);
+            await dispatcher.movePointer(viewport, 5, y);
+            await asyncSetTimeout(1200);
+
+            const ghostIcon = ownerDocument.querySelector('.ag-dnd-ghost-icon');
+            expect(ghostIcon).not.toBeNull();
+            return ghostIcon!.querySelector('.ag-icon-pin') != null;
+        } finally {
+            await dispatcher.finishDrag(viewport);
+            ownerDocument.elementsFromPoint = original as typeof ownerDocument.elementsFromPoint;
+        }
+    }
+
     function createGrid(): Promise<GridApi> {
         return gridsManager.createGridAndWait('myGrid', {
             columnDefs: [
@@ -139,8 +166,7 @@ describe('column header drag reorder', () => {
     });
 
     // Regression: holding a lockPinned column at the grid edge (the "hold to pin" affordance) must not
-    // show the pin indicator, since the column cannot be pinned there. Drives the real drag through the
-    // MoveColumnFeature scroll interval and asserts on the drag ghost the user actually sees.
+    // show the pin indicator, since the column cannot be pinned there.
     test('holding a lockPinned column at the grid edge does not show the pin icon, nor pin it', async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [
@@ -153,31 +179,61 @@ describe('column header drag reorder', () => {
         });
         expect(api.getColumn('b')!.getPinned()).toBeNull();
 
-        const source = el(api, '.ag-header-cell[col-id="b"]');
-        const viewport = el(api, '.ag-grid-viewport');
-        const ownerDocument = source.ownerDocument;
-        const original = ownerDocument.elementsFromPoint?.bind(ownerDocument);
-        ownerDocument.elementsFromPoint = () => [viewport];
-        const dispatcher = new DragEventDispatcher('mouse', null, false);
-        const y = 100;
-        try {
-            await dispatcher.startDrag(source, 200, y);
-            await dispatcher.movePointer(viewport, 200, y);
-            // Hold at the far-left edge: the grid cannot scroll further, so the hold-to-pin interval keeps
-            // failing to move and eventually crosses the threshold that decides the drag-ghost icon.
-            await dispatcher.movePointer(viewport, 5, y);
-            // The interval fires every 100ms and needs to fail ~9 times before it sets the icon.
-            await asyncSetTimeout(1200);
+        const showsPinIcon = await holdAtLeftEdgeShowsPinIcon(api, '.ag-header-cell[col-id="b"]');
 
-            const ghostIcon = ownerDocument.querySelector('.ag-dnd-ghost-icon');
-            expect(ghostIcon).not.toBeNull();
-            expect(ghostIcon!.querySelector('.ag-icon-pin')).toBeNull();
-        } finally {
-            await dispatcher.finishDrag(viewport);
-            ownerDocument.elementsFromPoint = original as typeof ownerDocument.elementsFromPoint;
-        }
-
+        expect(showsPinIcon).toBe(false);
         expect(api.getColumn('b')!.getPinned()).toBeNull();
+    });
+
+    // A group whose leaves are all lockPinned cannot pin at the edge, so the ghost must not show the pin icon.
+    test('holding a group of only lockPinned columns at the edge does not show the pin icon, nor pin them', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a', width: 100 },
+                {
+                    headerName: 'G',
+                    children: [
+                        { field: 'b', width: 100, lockPinned: true },
+                        { field: 'c', width: 100, lockPinned: true },
+                    ],
+                },
+                { field: 'd', width: 100 },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+            suppressDragLeaveHidesColumns: true,
+        });
+
+        const showsPinIcon = await holdAtLeftEdgeShowsPinIcon(api, '.ag-header-group-cell');
+
+        expect(showsPinIcon).toBe(false);
+        expect(api.getColumn('b')!.getPinned()).toBeNull();
+        expect(api.getColumn('c')!.getPinned()).toBeNull();
+    });
+
+    // A group with a mix of locked and pinnable leaves can pin the unlocked leaves, so the ghost shows the
+    // pin icon and only the pinnable leaf gets pinned; the lockPinned leaf is left where it is.
+    test('holding a mixed group at the edge shows the pin icon and pins only the pinnable columns', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a', width: 100 },
+                {
+                    headerName: 'G',
+                    children: [
+                        { field: 'b', width: 100, lockPinned: true },
+                        { field: 'c', width: 100 },
+                    ],
+                },
+                { field: 'd', width: 100 },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+            suppressDragLeaveHidesColumns: true,
+        });
+
+        const showsPinIcon = await holdAtLeftEdgeShowsPinIcon(api, '.ag-header-group-cell');
+
+        expect(showsPinIcon).toBe(true);
+        expect(api.getColumn('b')!.getPinned()).toBeNull();
+        expect(api.getColumn('c')!.getPinned()).toBe('left');
     });
 
     test('dragging a marryChildren group header moves all its leaves together, including hidden ones', async () => {
