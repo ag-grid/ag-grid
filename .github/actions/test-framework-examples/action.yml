@@ -27,18 +27,61 @@ runs:
       with:
         fetch-depth: 1
 
+    # These tests run Playwright against a remote deployed site (base_url), so they need
+    # node_modules for Playwright + the test specs, but NOT the example generators or
+    # setup-prompts. The `initialise` job warms the node_modules cache (rw); here we consume
+    # it read-only and skip postinstall. nx_restore stays on so the ag-grid-community build
+    # below is served from the Nx cache. The test harness (src/utils/grid/test-utils.ts)
+    # imports ag-grid-community at runtime, so its package output must exist.
     - name: Setup
       id: setup
       uses: ./.github/actions/setup-nx
       with:
         cache_mode: ro
+        yarn_postinstall: 'false'
+        nx_restore: 'true'
+        tidy_nx_cache: 'false'
 
+    - name: Build ag-grid-community (for the test harness import)
+      shell: bash
+      run: yarn nx run-many -p ag-grid-community -t build:package build:types
+
+    # Restore the Playwright browser binaries warmed by the `initialise` job (all three
+    # browsers, so the key matches regardless of this job's browser set). OS libraries are not
+    # part of the cache, so on a hit we only run install-deps; on a miss (e.g. the warm cache
+    # was evicted) fall back to a full install so the job is still self-sufficient.
+    - name: Resolve Playwright version
+      id: pw
+      shell: bash
+      run: echo "version=$(node -e "console.log(require('@playwright/test/package.json').version)")" >> "$GITHUB_OUTPUT"
+
+    - name: Restore Playwright browsers
+      id: pw-cache
+      uses: actions/cache/restore@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+    - name: Install Playwright browsers
+      shell: bash
+      working-directory: documentation/ag-grid-docs
+      env:
+        PW_BROWSERS: ${{ inputs.browsers == 'all' && 'chromium firefox webkit' || 'chromium' }}
+      run: |
+        if [ "${{ steps.pw-cache.outputs.cache-hit }}" = "true" ]; then
+          npx playwright install-deps ${PW_BROWSERS}
+        else
+          npx playwright install --with-deps ${PW_BROWSERS}
+        fi
+
+    # Run Playwright directly via ./docs-e2e.sh (bypasses Nx) so we avoid the Nx target's
+    # dependsOn on ag-grid-community:build:types/build:package, which is unnecessary for
+    # tests that hit a remote deployed site.
     - name: Run ${{ inputs.framework }} Examples
       env:
-        FRAMEWORK: ${{ inputs.framework }}
-        BASE_URL: ${{ inputs.base_url || 'https://grid-staging.ag-grid.com/' }}
+        CI: 'true'
       shell: bash
-      run: yarn nx run ag-grid-docs:test:interactive:${{ inputs.browsers }} ${{inputs.test_pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      run: ./docs-e2e.sh ${{ inputs.test_pattern }} --framework ${{ inputs.framework }} --url "${{ inputs.base_url || 'https://grid-staging.ag-grid.com/' }}" ${{ inputs.browsers == 'all' && '--all-browsers' || '' }} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
     
     - name: Upload Test Report
       id: upload-recipes-report
