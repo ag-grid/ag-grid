@@ -261,6 +261,14 @@ const frameworkTest =
         testBody: (fixtures: TestFixtures) => Promise<void>,
         opts?: { allowedConsoleMessages?: string[] }
     ): void => {
+        // A single-framework test (test.typescript(...), etc.) hardcodes its framework, bypassing the
+        // FRAMEWORK filter that eachFramework applies via FILTERED_FRAMEWORKS. Declaring a test only to
+        // skip it at runtime when the CI job targets another framework produces a fake "skipped" result
+        // and still spins up a browser fixture, so don't declare it at all for a filtered-out framework.
+        if (!FILTERED_FRAMEWORKS.includes(agFramework)) {
+            return;
+        }
+
         extended.use({ agFramework });
 
         // cachedRoute needs to be destructured in testWrapper for Playwright to initialise it correctly
@@ -284,11 +292,6 @@ const frameworkTest =
                 throw new Error(
                     `Missing 'setAgExampleUrl(import.meta)' in the test file. This is required to set the example URL for the test.`
                 );
-            }
-
-            // Would be nice if this logic could be done so that the test is not even created rather than skipped
-            if (process.env.FRAMEWORK && process.env.FRAMEWORK !== agFramework) {
-                test.skip(true, `Skipping ${agFramework} as not the selected framework ${process.env.FRAMEWORK}.`);
             }
 
             await loadPage(page, agExampleUrl, agFramework, loadPageOptions, agModules);
