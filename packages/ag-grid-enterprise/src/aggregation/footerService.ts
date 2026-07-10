@@ -7,7 +7,7 @@ import type {
     RowNode,
     VerticalSection,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _getGrandTotalRow, _getGroupTotalRowCallback, _warn } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _getGrandTotalRow, _getGroupTotalRowCallback } from 'ag-grid-community';
 
 import { _createRowNodeFooter } from './footerUtils';
 
@@ -98,7 +98,7 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
             if (typeof totalValueGetter === 'string') {
                 return this.beans.expressionSvc?.evaluate(totalValueGetter, valueGetterParams);
             }
-            _warn(179);
+            this.warn(179);
         }
 
         // grand total row only displays the 'Total' value

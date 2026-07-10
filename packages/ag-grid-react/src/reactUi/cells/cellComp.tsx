@@ -347,7 +347,7 @@ const CellComp = ({
                                 setRenderKey((prev) => prev + 1)
                             );
                         } else {
-                            warnReactiveCustomComponents();
+                            warnReactiveCustomComponents(beans.context.getId());
                         }
                     }
                     // start editing

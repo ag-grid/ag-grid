@@ -12,6 +12,7 @@ import type {
 } from '../interfaces/exportParams';
 import type { IRowGroupColsService } from '../interfaces/iColsService';
 import type { CellValueResolveFrom } from '../interfaces/iEditService';
+import type { LogService } from '../validation/logService';
 import type { ValueService } from '../valueService/valueService';
 import type {
     GridSerializingParams,
@@ -27,6 +28,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public rowGroupColsSvc?: IRowGroupColsService;
     public valueSvc: ValueService;
     public gos: GridOptionsService;
+    public readonly log: LogService;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
     public processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
@@ -42,6 +44,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             colNames,
             valueSvc,
             gos,
+            log,
             processCellCallback,
             processHeaderCallback,
             processGroupHeaderCallback,
@@ -55,6 +58,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         this.colNames = colNames;
         this.valueSvc = valueSvc;
         this.gos = gos;
+        this.log = log;
         this.processCellCallback = processCellCallback;
         this.processHeaderCallback = processHeaderCallback;
         this.processGroupHeaderCallback = processGroupHeaderCallback;

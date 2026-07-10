@@ -5,7 +5,6 @@ import type { FilterAction } from '../interfaces/iFilter';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
 import type { ElementParams } from '../utils/element';
 import { _createElement } from '../utils/element';
-import { _warn } from '../validation/logging';
 import type { ComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
 
@@ -74,7 +73,7 @@ export class FilterButtonComp extends Component<FilterAction> {
                 });
             };
             if (!['apply', 'clear', 'reset', 'cancel'].includes(type)) {
-                _warn(75);
+                this.beans.log.warn(75);
             }
 
             const isApply = type === 'apply';

@@ -76,13 +76,33 @@
 .ag-overlay-error-body {
     display: flex;
     flex-direction: column;
-    gap: calc(var(--ag-spacing) * 1.5);
+
+    /* wider gap between the severity sections than between items within a section. */
+    gap: calc(var(--ag-spacing) * 2);
     padding: calc(var(--ag-spacing) * 1.5);
 
     /* take the remaining height and scroll internally when there are many diagnostics. */
     flex: 1 1 auto;
     min-height: 0;
     overflow: auto;
+}
+
+.ag-overlay-error-section {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--ag-spacing) * 2);
+}
+
+.ag-overlay-error-section-header {
+    margin: 0;
+    font-weight: 700;
+}
+
+.ag-overlay-error-divider {
+    /* separates the severity sections; the body gap provides the space either side. */
+    margin: 0;
+    border: none;
+    border-top: solid var(--ag-border-width) var(--ag-border-color);
 }
 
 .ag-overlay-error-item {
@@ -98,13 +118,12 @@
 }
 
 .ag-overlay-error-item-warning {
-    border-inline-start-color: color-mix(in srgb, var(--ag-invalid-color) 45%, #d98300);
+    /* no theme variable exists for a warning/amber colour, so this is a fixed literal. */
+    border-inline-start-color: #d98300;
 }
 
-.ag-overlay-error-divider {
-    /* separates stacked diagnostics; the margin scales the gap with the theme's spacing. */
-    margin: var(--ag-spacing) 0;
-    border-top: solid var(--ag-border-width) var(--ag-border-color);
+.ag-overlay-error-item-deprecation {
+    border-inline-start-color: var(--ag-subtle-text-color);
 }
 
 .ag-overlay-error-message,

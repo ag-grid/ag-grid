@@ -38,7 +38,6 @@ import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
 import { _isFiniteNumber } from './utils/number';
-import { _warn } from './validation/logging';
 
 function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
     return gos.get('rowModelType') === rowModelType;
@@ -118,7 +117,7 @@ export function _getRowHeightForNode(
 
         if (_isFiniteNumber(height)) {
             if (height === 0) {
-                _warn(23);
+                beans.log.warn(23);
             }
             return { height: Math.max(1, height), estimated: false };
         }
@@ -168,7 +167,7 @@ export function _getRowHeightAsNumber(beans: BeanCollection): number {
         return rowHeight;
     }
 
-    _warn(24);
+    beans.log.warn(24);
     return environment.getDefaultRowHeight();
 }
 
@@ -294,13 +293,13 @@ export function _isFullWidthGroupRow(gos: GridOptionsService, node: RowNode, piv
 // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRowIdCallback<TData = any>(
-    gos: GridOptionsService
+    beans: BeanCollection
 ):
     | ((
           params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
       ) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>)
     | undefined {
-    const getRowId = gos.getCallback('getRowId');
+    const getRowId = beans.gos.getCallback('getRowId');
 
     if (getRowId === undefined) {
         return getRowId;
@@ -310,8 +309,9 @@ export function _getRowIdCallback<TData = any>(
         let id = getRowId(params);
 
         if (typeof id !== 'string') {
-            // Avoid logging for every row if the user is returning a non-string value, could be thousands of rows
-            _doOnce(() => _warn(25, { id }), 'getRowIdString');
+            // Throttle to once per grid: avoids logging for every row (could be thousands), while still
+            // letting each grid surface its own occurrence so the diagnostic attributes per grid.
+            _doOnce(() => beans.log.warn(25, { id }), `getRowIdString:${beans.context.getId()}`);
             id = String(id);
         }
 

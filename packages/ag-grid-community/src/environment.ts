@@ -11,7 +11,6 @@ import type { Module } from './interfaces/iModule';
 import { _getAllRegisteredModules } from './modules/moduleRegistry';
 import coreCSS from './theming/core/core.css';
 import { themeQuartz } from './theming/parts/theme/themes';
-import { _error, _warn } from './validation/logging';
 
 const cssVariable = <K extends keyof CssChangeKeys>(
     changeKey: K,
@@ -153,9 +152,9 @@ export class Environment
             getComputedStyle(this.getMeasurementContainer()).getPropertyValue('--ag-legacy-styles-loaded')
         ) {
             if (themeGridOption) {
-                _error(106);
+                this.beans.log.error(106);
             } else {
-                _error(239);
+                this.beans.log.error(239);
             }
         }
     }
@@ -172,15 +171,15 @@ export class Environment
     }
 
     protected override varError(cssName: string, defaultValue: number): void {
-        _warn(9, { variable: { cssName, defaultValue } });
+        this.beans.log.warn(9, { variable: { cssName, defaultValue } });
     }
 
     protected override themeError(theme: Theme | 'legacy'): void {
-        _error(240, { theme });
+        this.beans.log.error(240, { theme });
     }
 
     protected override shadowRootError(): void {
-        _error(293);
+        this.beans.log.error(293);
     }
 }
 

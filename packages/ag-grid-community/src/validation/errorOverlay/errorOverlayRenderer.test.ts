@@ -5,6 +5,7 @@ import {
     parseDiagnosticText,
     renderDiagnostic,
     renderDiagnosticElement,
+    renderDiagnosticSections,
 } from './errorOverlayRenderer';
 
 describe('parseDiagnosticText', () => {
@@ -173,5 +174,53 @@ describe('against real error definitions', () => {
         const el = renderDiagnostic({ id: 5, params: { data: { make: 'Tesla' } }, severity: 'warning' });
         const codes = Array.from(el.querySelectorAll('code.ag-overlay-error-inline-code')).map((c) => c.textContent);
         expect(codes).toContain('{"make":"Tesla"}');
+    });
+});
+
+describe('renderDiagnosticSections', () => {
+    const error: CapturedDiagnostic = {
+        id: 200,
+        params: { moduleName: 'ClientSideRowModel', rowModelType: 'clientSide' },
+        severity: 'error',
+    };
+    const warning: CapturedDiagnostic = { id: 22, params: { key: 'rowData' }, severity: 'warning' };
+    const deprecation: CapturedDiagnostic = { id: 23, params: { key: 'rowData' }, severity: 'deprecation' };
+
+    const sectionsOf = (nodes: HTMLElement[]): HTMLElement[] =>
+        nodes.filter((node) => node.classList.contains('ag-overlay-error-section'));
+
+    test('groups diagnostics into severity-ordered sections with pluralised counts', () => {
+        const nodes = renderDiagnosticSections([warning, deprecation, error, warning]);
+        const headers = sectionsOf(nodes).map((s) => s.querySelector('.ag-overlay-error-section-header')!.textContent);
+        expect(headers).toEqual(['Errors (1)', 'Warnings (2)', 'Deprecations (1)']);
+    });
+
+    test('omits sections for severities with no diagnostics', () => {
+        const nodes = renderDiagnosticSections([warning]);
+        const headers = sectionsOf(nodes).map((s) => s.querySelector('.ag-overlay-error-section-header')!.textContent);
+        expect(headers).toEqual(['Warnings (1)']);
+    });
+
+    test('inserts an <hr> divider between sections but not within a section', () => {
+        const nodes = renderDiagnosticSections([error, warning, warning]);
+        const dividers = nodes.filter((node) => node.tagName === 'HR');
+        expect(dividers).toHaveLength(1);
+        expect(dividers[0].classList.contains('ag-overlay-error-divider')).toBe(true);
+
+        const warningSection = nodes.find((node) => node.classList.contains('ag-overlay-error-section-warning'))!;
+        expect(warningSection.querySelectorAll('hr')).toHaveLength(0);
+        expect(warningSection.querySelectorAll('.ag-overlay-error-item')).toHaveLength(2);
+    });
+
+    test('renders no divider for a single section', () => {
+        const nodes = renderDiagnosticSections([deprecation, deprecation]);
+        expect(nodes.filter((node) => node.tagName === 'HR')).toHaveLength(0);
+    });
+
+    test('applies the per-severity accent class to each section', () => {
+        const sections = sectionsOf(renderDiagnosticSections([error, warning, deprecation]));
+        expect(sections[0].querySelector('.ag-overlay-error-item-error')).not.toBeNull();
+        expect(sections[1].querySelector('.ag-overlay-error-item-warning')).not.toBeNull();
+        expect(sections[2].querySelector('.ag-overlay-error-item-deprecation')).not.toBeNull();
     });
 });

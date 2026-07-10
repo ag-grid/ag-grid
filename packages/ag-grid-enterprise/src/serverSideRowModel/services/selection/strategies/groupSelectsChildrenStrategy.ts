@@ -11,7 +11,7 @@ import type {
     RowNode,
     RowRangeSelectionContext,
 } from 'ag-grid-community';
-import { BeanStub, _error, _isMultiRowSelection, _warn } from 'ag-grid-community';
+import { BeanStub, _isMultiRowSelection } from 'ag-grid-community';
 
 import type { LazyStore } from '../../../stores/lazy/lazyStore';
 import type { ISelectionStrategy } from './iSelectionStrategy';
@@ -79,7 +79,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     public setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void {
         if ('selectAll' in state) {
             // 'Invalid selection state. When `groupSelectsChildren` is enabled, the state must conform to `IServerSideGroupSelectionState`.'
-            _error(111);
+            this.error(111);
             return;
         }
 
@@ -88,16 +88,16 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             parentSelected: boolean
         ): SelectionState => {
             if (typeof normalisedState !== 'object') {
-                _error(243);
+                this.error(243);
                 throw new Error();
             }
             if ('selectAllChildren' in normalisedState && typeof normalisedState.selectAllChildren !== 'boolean') {
-                _error(244);
+                this.error(244);
                 throw new Error();
             }
             if ('toggledNodes' in normalisedState) {
                 if (!Array.isArray(normalisedState.toggledNodes)) {
-                    _error(245);
+                    this.error(245);
                     throw new Error();
                 }
                 const allHaveIds = normalisedState.toggledNodes.every(
@@ -107,7 +107,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                         typeof innerState.nodeId === 'string'
                 );
                 if (!allHaveIds) {
-                    _error(246);
+                    this.error(246);
                     throw new Error();
                 }
             }
@@ -121,7 +121,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                     isThisNodeSelected === innerState.selectAllChildren && innerState.toggledNodes.size === 0
             );
             if (doesRedundantStateExist) {
-                _error(247);
+                this.error(247);
                 throw new Error();
             }
             return {
@@ -170,7 +170,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         const onlyThisNode = clearSelection && newValue;
         if (!_isMultiRowSelection(this.gos) || onlyThisNode) {
             if (nodes.length > 1) {
-                _error(130);
+                this.error(130);
                 return 0;
             }
             this.deselectAllRowNodes();
@@ -328,7 +328,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public getSelectedNodes(nullWhenSelectAll = false): RowNode<any>[] | null {
-        _warn(202);
+        this.warn(202);
         if (this.selectedState.selectAllChildren && nullWhenSelectAll) {
             return null;
         }

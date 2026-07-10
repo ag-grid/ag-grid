@@ -2,7 +2,6 @@ import { _requestAnimationFrame } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { _warn } from '../validation/logging';
 
 interface TaskItem {
     task: () => void;
@@ -65,7 +64,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     // when it should not.
     private verify(): void {
         if (this.active === false) {
-            _warn(92);
+            this.warn(92);
         }
     }
 

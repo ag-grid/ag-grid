@@ -46,6 +46,7 @@ import { RowContainerHeightService } from './rendering/rowContainerHeightService
 import { RowRenderer } from './rendering/rowRenderer';
 import { SortModule } from './sort/sortModule';
 import { SyncService } from './syncService';
+import { LogService } from './validation/logService';
 import { ChangeDetectionModule, ExpressionModule } from './valueService/valueModule';
 import { ValueService } from './valueService/valueService';
 import { VERSION } from './version';
@@ -57,6 +58,7 @@ export const CommunityCoreModule: _ModuleWithApi<_CoreGridApi> = {
     moduleName: 'CommunityCore',
     version: VERSION,
     beans: [
+        LogService,
         GridDestroyService,
         ApiFunctionService,
         Registry,

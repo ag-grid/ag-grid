@@ -19,6 +19,7 @@ describe('PdfCreator', () => {
         const creator = new PdfCreator() as unknown as {
             getDataAsPdf: (params?: PdfExportParams) => Blob | undefined;
             gos: { get: (key: string) => unknown };
+            beans: { log: { warn: ReturnType<typeof vi.fn> } };
             getData: (params: PdfExportParams) => string;
         };
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
@@ -27,6 +28,7 @@ describe('PdfCreator', () => {
         creator.gos = {
             get: (key: string) => key === 'suppressPdfExport',
         };
+        creator.beans = { log: { warn: vi.fn() } };
         creator.getData = () => {
             getDataCalled = true;
             return '';

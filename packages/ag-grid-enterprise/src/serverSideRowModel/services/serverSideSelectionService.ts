@@ -3,6 +3,7 @@ import type {
     IServerSideGroupSelectionState,
     IServerSideSelectionState,
     ISetNodesSelectedParams,
+    LogService,
     NamedBean,
     RowNode,
     RowSelectionMode,
@@ -13,13 +14,11 @@ import type {
 } from 'ag-grid-community';
 import {
     BaseSelectionService,
-    _error,
     _getGroupSelectsDescendants,
     _getRowSelectionMode,
     _isMultiRowSelection,
     _isRowSelection,
     _isUsingNewRowSelectionAPI,
-    _warn,
 } from 'ag-grid-community';
 
 import { DefaultStrategy } from './selection/strategies/defaultStrategy';
@@ -121,7 +120,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     ): void {
         if (!_isRowSelection(this.gos)) {
             if (state) {
-                _warn(132);
+                this.warn(132);
             }
             return;
         }
@@ -140,14 +139,14 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
         if (!_isRowSelection(this.gos) && params.newValue) {
-            _warn(132);
+            this.warn(132);
             return 0;
         }
 
         const { nodes, ...otherParams } = params;
 
         if (nodes.length > 1 && this.selectionMode !== 'multiRow') {
-            _warn(130);
+            this.warn(130);
             return 0;
         }
 
@@ -245,13 +244,13 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     public selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void {
         if (!_isRowSelection(this.gos)) {
-            _warn(132);
+            this.warn(132);
             return;
         }
 
-        validateSelectionParameters(params);
+        validateSelectionParameters(this.beans.log, params);
         if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
-            return _warn(130);
+            return this.warn(130);
         }
 
         this.selectionStrategy.selectAllRowNodes(params);
@@ -269,7 +268,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     public deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void {
-        validateSelectionParameters(params);
+        validateSelectionParameters(this.beans.log, params);
 
         this.selectionStrategy.deselectAllRowNodes(params);
         this.selectionCtx.selectAll = false;
@@ -291,7 +290,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     // used by CSRM
     public getBestCostNodeSelection(): RowNode<any>[] | undefined {
-        return _warn(194, { method: 'getBestCostNodeSelection' }) as undefined;
+        return this.warn(194, { method: 'getBestCostNodeSelection' }) as undefined;
     }
 
     /**
@@ -341,7 +340,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     public updateSelectableAfterGrouping(): void {
-        return _error(194, { method: 'updateSelectableAfterGrouping' }) as undefined;
+        return this.error(194, { method: 'updateSelectableAfterGrouping' }) as undefined;
     }
 
     public refreshMasterNodeState(): void {
@@ -354,8 +353,11 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 }
 
-function validateSelectionParameters({ selectAll }: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
+function validateSelectionParameters(
+    log: LogService,
+    { selectAll }: { source: SelectionEventSourceType; selectAll?: SelectAllMode }
+) {
     if (selectAll === 'filtered' || selectAll === 'currentPage') {
-        _warn(195, { justCurrentPage: selectAll === 'currentPage' });
+        log.warn(195, { justCurrentPage: selectAll === 'currentPage' });
     }
 }

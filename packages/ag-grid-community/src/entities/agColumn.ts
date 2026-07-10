@@ -25,7 +25,6 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import { _mergedEqual } from '../utils/mergeDeep';
 import { _clamp } from '../utils/number';
-import { _warn } from '../validation/logging';
 import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type {
@@ -605,7 +604,7 @@ export class AgColumn<TValue = any>
 
     /** @deprecated v33 Use `api.isColumnHovered(column)` instead. */
     public isHovered(): boolean {
-        _warn(261);
+        this.warn(261);
         return !!this.beans.colHover?.isHovered(this);
     }
 

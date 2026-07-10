@@ -12,6 +12,9 @@ import type { BeanCollection, BeanName } from './context';
  * We have not included beans from modules as they will be registered after the core beans in the order they are provided.
  */
 const orderedCoreBeans: BeanName[] = [
+    // Wire the logging bean first so its grid id is captured before any other bean can emit a diagnostic
+    // (e.g. from wireBeans), ensuring the diagnostic is attributed rather than falling back to untied.
+    'log',
     // Validate license first
     'licenseManager',
     // core beans only

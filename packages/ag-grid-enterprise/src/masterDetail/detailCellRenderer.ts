@@ -11,7 +11,7 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererParams,
 } from 'ag-grid-community';
-import { Component, _getGridRegisteredModules, _warn, createGrid } from 'ag-grid-community';
+import { Component, _getGridRegisteredModules, createGrid } from 'ag-grid-community';
 
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailFrameworkComponentWrapper } from './detailFrameworkComponentWrapper';
@@ -78,12 +78,12 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             const template = templateFunc(params);
             this.setTemplate(template, []);
         } else {
-            _warn(168);
+            this.beans.log.warn(168);
             setDefaultTemplate();
         }
 
         if (this.eDetailGrid == null) {
-            _warn(169);
+            this.beans.log.warn(169);
         }
     }
 

@@ -17,7 +17,6 @@ import type {
     RowPinnedType,
 } from '../interfaces/iRowNode';
 import type { DetailGridInfo } from '../interfaces/masterDetail';
-import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
 import { _resolvePivotColumnForRow } from './agColumn';
 import type { ColKey, IAggFuncResult } from './colDef';
@@ -434,7 +433,7 @@ export class RowNode<TData = any>
     public getRowIndexString(): string | null {
         if (this.rowIndex == null) {
             // Row has been removed so no index
-            _error(13);
+            this.beans.log.error(13);
             return null;
         }
 
@@ -468,7 +467,7 @@ export class RowNode<TData = any>
 
     private setId(id?: string): void {
         // see if user is providing the id's
-        const getRowIdFunc = _getRowIdCallback(this.beans.gos);
+        const getRowIdFunc = _getRowIdCallback(this.beans);
 
         if (getRowIdFunc) {
             // if user is providing the id's, then we set the id only after the data has been set.
@@ -488,7 +487,7 @@ export class RowNode<TData = any>
 
                 // make sure id provided doesn't start with 'row-group-' as this is reserved.
                 if (this.id.startsWith(ROW_ID_PREFIX_ROW_GROUP)) {
-                    _error(14, {
+                    this.beans.log.error(14, {
                         groupPrefix: ROW_ID_PREFIX_ROW_GROUP,
                     });
                 }
@@ -883,7 +882,7 @@ export class RowNode<TData = any>
      */
     public isFullWidthCell(): boolean {
         // log deprecation
-        _warn(61);
+        this.beans.log.warn(61);
 
         if (this.detail) {
             return true;

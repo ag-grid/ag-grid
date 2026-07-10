@@ -1,7 +1,7 @@
 import type { Group, Scene } from 'ag-charts-types/scene';
 
 import type { BeanCollection } from 'ag-grid-community';
-import { Component, _error } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import type { AgChartsExports } from '../../../../agChartsExports';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
@@ -53,7 +53,7 @@ export abstract class MiniChart extends Component {
         try {
             this.scene.render();
         } catch (e) {
-            _error(108, { e });
+            this.beans.log.error(108, { e });
         }
     }
 

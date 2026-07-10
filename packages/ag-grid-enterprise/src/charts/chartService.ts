@@ -27,7 +27,7 @@ import type {
     UpdateChartParams,
     VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import { VERSION as GRID_VERSION } from '../version';
 import type { AgChartsExports } from './agChartsExports';
@@ -84,13 +84,13 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     public updateChart(params: UpdateChartParams): void {
         if (this.activeChartComps.size === 0) {
-            _warn(124);
+            this.warn(124);
             return;
         }
 
         const chartComp = [...this.activeChartComps].find((chartComp) => chartComp.getChartId() === params.chartId);
         if (!chartComp) {
-            _warn(125, { chartId: params.chartId });
+            this.warn(125, { chartId: params.chartId });
             return;
         }
 
@@ -165,7 +165,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     public restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
         if (!model) {
-            _warn(126);
+            this.warn(126);
             return;
         }
 
@@ -261,7 +261,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     }
 
     private createChart(params: CommonCreateChartParams): ChartRef | undefined {
-        const validationResult = validateCreateParams(params, this.agChartsExports.isEnterprise);
+        const validationResult = validateCreateParams(params, this.agChartsExports.isEnterprise, this.beans.log);
         if (!validationResult) {
             return undefined;
         }
@@ -431,7 +431,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const cellRange =
             rangeParams && this.rangeSvc?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
         if (!cellRange) {
-            _warn(127, { allRange });
+            this.warn(127, { allRange });
         }
         return cellRange;
     }

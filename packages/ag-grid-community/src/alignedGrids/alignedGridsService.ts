@@ -17,7 +17,6 @@ import type {
 } from '../events';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import { _error, _warn } from '../validation/logging';
 
 export class AlignedGridsService extends BeanStub implements NamedBean {
     beanName = 'alignedGridsSvc' as const;
@@ -36,9 +35,9 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         const apis = alignedGrids
             .map((alignedGrid) => {
                 if (!alignedGrid) {
-                    _error(18);
+                    this.error(18);
                     if (!isCallbackConfig) {
-                        _error(20);
+                        this.error(20);
                     }
                     return;
                 }
@@ -52,7 +51,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 }
 
                 if (!refOrComp.api) {
-                    _error(19);
+                    this.error(19);
                 }
                 return refOrComp.api;
             })
@@ -163,7 +162,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 case 'columnPivotChanged':
                     // we cannot support pivoting with aligned grids as the columns will be out of sync as the
                     // grids will have columns created based on the row data of the grid.
-                    _warn(21);
+                    this.warn(21);
                     break;
             }
         });

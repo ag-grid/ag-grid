@@ -5,7 +5,6 @@ import { BaseCreator } from '../export/baseCreator';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { CsvCustomContent, CsvExportParams } from '../interfaces/exportParams';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
-import { _warn } from '../validation/logging';
 import { CsvSerializingSession } from './csvSerializingSession';
 
 export class CsvCreator
@@ -22,7 +21,7 @@ export class CsvCreator
     protected export(userParams?: CsvExportParams): void {
         if (this.isExportSuppressed()) {
             // Export cancelled.
-            _warn(51);
+            this.warn(51);
             return;
         }
 
@@ -63,7 +62,7 @@ export class CsvCreator
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const { colModel, colNames, rowGroupColsSvc, valueSvc, gos } = this.beans;
+        const { colModel, colNames, rowGroupColsSvc, valueSvc, gos, log } = this.beans;
         const {
             processCellCallback,
             processHeaderCallback,
@@ -80,6 +79,7 @@ export class CsvCreator
             colNames,
             valueSvc,
             gos,
+            log,
             processCellCallback: processCellCallback || undefined,
             processHeaderCallback: processHeaderCallback || undefined,
             processGroupHeaderCallback: processGroupHeaderCallback || undefined,

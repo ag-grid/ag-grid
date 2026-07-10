@@ -23,7 +23,6 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { OverlayType } from '../rendering/overlays/overlayComponent';
 import type { ChangedPath } from '../utils/changedPath';
-import { _warn } from '../validation/logging';
 import { ChangedRowNodes } from './changedRowNodes';
 import { ClientSideNodeManager } from './clientSideNodeManager';
 
@@ -266,7 +265,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
         if (newRowData && !Array.isArray(newRowData)) {
             newRowData = null;
-            _warn(1); // `rowData` must be an array
+            this.warn(1); // `rowData` must be an array
         }
 
         const params: RefreshModelParams = { step: 'nothing', changedProps };

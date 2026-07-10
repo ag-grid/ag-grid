@@ -165,7 +165,7 @@ export class AgMenuList<
                 if (menuItemOrString === 'separator') {
                     return AgPromise.resolve({ eGui: this.createSeparator() });
                 } else if (typeof menuItemOrString === 'string') {
-                    this.callbacks.warnNoItem?.(menuItemOrString);
+                    this.callbacks.warnNoItem?.(this.beans, menuItemOrString);
                     return AgPromise.resolve({ eGui: null });
                 } else {
                     return this.addItem(menuItemOrString);

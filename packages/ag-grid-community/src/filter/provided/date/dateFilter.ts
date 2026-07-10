@@ -5,7 +5,6 @@ import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
-import { _warn } from '../../../validation/logging';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
@@ -65,7 +64,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
                 if (!isNaN(value)) {
                     return value == null ? fallback : Number(value);
                 } else {
-                    _warn(82, { param });
+                    this.beans.log.warn(82, { param });
                 }
             }
 
@@ -78,7 +77,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         this.maxValidYear = maxValidYear;
 
         if (minValidYear > maxValidYear) {
-            _warn(83);
+            this.beans.log.warn(83);
         }
 
         const { minValidDate, maxValidDate } = params;
@@ -90,7 +89,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         this.maxValidDate = parsedMaxValidDate;
 
         if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate > parsedMaxValidDate) {
-            _warn(84);
+            this.beans.log.warn(84);
         }
     }
 

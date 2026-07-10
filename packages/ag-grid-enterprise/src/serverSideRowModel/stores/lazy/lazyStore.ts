@@ -24,7 +24,6 @@ import {
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowIdCallback,
-    _warn,
 } from 'ag-grid-community';
 
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../../aggregation/footerUtils';
@@ -149,9 +148,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns an object determining the status of this transaction and effected nodes
      */
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        const idFunc = _getRowIdCallback(this.gos);
+        const idFunc = _getRowIdCallback(this.beans);
         if (!idFunc) {
-            _warn(206);
+            this.warn(206);
             return {
                 status: ServerSideTransactionResultStatus.Cancelled,
             };

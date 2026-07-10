@@ -1,7 +1,7 @@
 import { _debounce, _setDisabled } from 'ag-stack';
 
 import type { FindChangedEvent, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _createElement, _error } from 'ag-grid-community';
+import { Component, _createElement } from 'ag-grid-community';
 
 import { createToolbarIconButton, createToolbarInput } from './toolbarItemUtils';
 
@@ -29,7 +29,11 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
 
     public init(_params: IToolbarItemParams): void {
         if (!this.gos.isModuleRegistered('Find')) {
-            _error(302, { itemName: 'agFindToolbarItem', moduleName: 'Find', ...this.gos.getModuleErrorParams() });
+            this.beans.log.error(302, {
+                itemName: 'agFindToolbarItem',
+                moduleName: 'Find',
+                ...this.gos.getModuleErrorParams(),
+            });
             this.setDisplayed(false);
             return;
         }

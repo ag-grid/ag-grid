@@ -12,7 +12,7 @@ import type {
     IToolPanelComp,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, FilterButtonComp, _addGridCommonParams, _warn } from 'ag-grid-community';
+import { Component, FilterButtonComp, _addGridCommonParams } from 'ag-grid-community';
 
 import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
@@ -167,7 +167,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         if (mergedParams.buttons) {
             if (!mergedParams.buttons.includes('apply')) {
-                _warn(298);
+                this.beans.log.warn(298);
             }
             if (mergedParams.buttons.length) {
                 this.initDeferredButtons(mergedParams.buttons);

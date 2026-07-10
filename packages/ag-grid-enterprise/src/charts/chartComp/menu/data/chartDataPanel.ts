@@ -7,7 +7,7 @@ import type {
     GridToggleButton,
     IChartService,
 } from 'ag-grid-community';
-import { AgToggleButton, Component, _warn } from 'ag-grid-community';
+import { AgToggleButton, Component } from 'ag-grid-community';
 
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
@@ -171,7 +171,7 @@ export class ChartDataPanel extends Component {
                 this.chartSpecificPanel = this.createBean(new ChartSpecificDataPanel(this.chartMenuContext, isOpen));
                 this.panels.push(this.chartSpecificPanel);
             } else {
-                _warn(144, { type });
+                this.beans.log.warn(144, { type });
             }
         });
 

@@ -20,7 +20,6 @@ import type { PopupPositionParams } from '../../interfaces/iPopupPositionParams'
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _createElement } from '../../utils/element';
-import { _warn } from '../../validation/logging';
 import { Component } from '../../widgets/component';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from './../dndSourceComp';
@@ -476,7 +475,7 @@ export class CellComp extends Component {
         }
 
         if (!cellEditor.getGui) {
-            _warn(97, { colId: this.column.getId() });
+            this.beans.log.warn(97, { colId: this.column.getId() });
             context.destroyBean(cellEditor);
             return;
         }
@@ -528,7 +527,7 @@ export class CellComp extends Component {
         const { gos, context, popupSvc, editSvc } = this.beans;
         if (gos.get('editType') === 'fullRow') {
             //popup cellEditor does not work with fullRowEdit
-            _warn(98);
+            this.beans.log.warn(98);
         }
 
         // if a popup, then we wrap in a popup editor and return the popup

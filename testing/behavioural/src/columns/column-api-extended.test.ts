@@ -810,7 +810,7 @@ describe('Column API — extended coverage', () => {
                 · └── LEAF hidden id:0 country:"UK" gold:5
             `);
 
-            // Object/function aggFuncs in state are rejected per `_warn(33)`.
+            // Object/function aggFuncs in state are rejected -- see error #33
             const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
             api.applyColumnState({
                 state: [{ colId: 'gold', aggFunc: { name: 'bad' } as any }],

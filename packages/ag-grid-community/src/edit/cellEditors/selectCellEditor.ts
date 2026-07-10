@@ -6,7 +6,6 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { ElementParams } from '../../utils/element';
-import { _warn } from '../../validation/logging';
 import type { ValueService } from '../../valueService/valueService';
 import type { GridSelect } from '../../widgets/gridWidgetTypes';
 import { AgAbstractCellEditor } from './agAbstractCellEditor';
@@ -48,7 +47,7 @@ export class SelectCellEditor<TValue = any> extends AgAbstractCellEditor<SelectC
         const { values, value, eventKey } = params;
 
         if (_missing(values)) {
-            _warn(58);
+            this.beans.log.warn(58);
             return;
         }
 

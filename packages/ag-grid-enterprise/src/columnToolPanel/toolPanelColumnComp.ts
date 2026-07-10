@@ -19,7 +19,6 @@ import {
     _createIconNoSpan,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
-    _warn,
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
@@ -360,6 +359,6 @@ export class ToolPanelColumnComp extends Component {
     }
 
     public setExpanded(_value: boolean): void {
-        _warn(158);
+        this.beans.log.warn(158);
     }
 }

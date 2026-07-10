@@ -58,7 +58,7 @@ export abstract class SimpleFilterHandler<
         const filterParams = params.filterParams;
         const optionsFactory = new OptionsFactory();
         this.optionsFactory = optionsFactory;
-        optionsFactory.init(filterParams, this.defaultOptions);
+        optionsFactory.init(this.beans.log, filterParams, this.defaultOptions);
 
         this.filterModelFormatter = this.createManagedBean(
             new this.FilterModelFormatterClass(optionsFactory, filterParams)
@@ -73,7 +73,7 @@ export abstract class SimpleFilterHandler<
         if (params.source === 'colDef') {
             const filterParams = params.filterParams;
             const optionsFactory = this.optionsFactory;
-            optionsFactory.refresh(filterParams, this.defaultOptions);
+            optionsFactory.refresh(this.beans.log, filterParams, this.defaultOptions);
             this.filterModelFormatter.updateParams({ optionsFactory, filterParams });
 
             this.updateParams(params);

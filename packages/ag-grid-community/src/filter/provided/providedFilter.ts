@@ -11,7 +11,6 @@ import type {
 } from '../../interfaces/iFilter';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import type { ElementParams } from '../../utils/element';
-import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
@@ -158,7 +157,7 @@ export abstract class ProvidedFilter<
      * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        _warn(283);
+        this.beans.log.warn(283);
         const { getHandler, model, column } = this.params;
         return getHandler().doesFilterPass({
             ...params,
@@ -175,7 +174,7 @@ export abstract class ProvidedFilter<
      * @deprecated v34 Filters are active when they have a model. Use `api.getColumnFilterModel()` instead.
      */
     public isFilterActive(): boolean {
-        _warn(284);
+        this.beans.log.warn(284);
         return this.params.model != null;
     }
 
@@ -183,7 +182,7 @@ export abstract class ProvidedFilter<
     protected defaultDebounceMs: number = 0;
 
     private setupApplyDebounced(): void {
-        const debounceMs = getDebounceMs(this.params, this.defaultDebounceMs);
+        const debounceMs = getDebounceMs(this.beans.log, this.params, this.defaultDebounceMs);
         const debounceFunc = _debounce(this, this.checkApplyDebounce.bind(this), debounceMs);
         this.applyDebounced = () => {
             this.debouncePending = true;
@@ -203,7 +202,7 @@ export abstract class ProvidedFilter<
      * @deprecated v34 Use (`api.getColumnFilterModel()`) instead.
      */
     public getModel(): M | null {
-        _warn(285);
+        this.beans.log.warn(285);
         return this.params.model;
     }
 
@@ -211,7 +210,7 @@ export abstract class ProvidedFilter<
      * @deprecated v34 Use (`api.setColumnFilterModel()`) instead.
      */
     public setModel(model: M | null): AgPromise<void> {
-        _warn(286);
+        this.beans.log.warn(286);
         const { beans, params } = this;
         return beans.colFilter!.setModelForColumnLegacy(params.column as AgColumn, model);
     }

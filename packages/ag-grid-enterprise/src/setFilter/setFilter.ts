@@ -17,7 +17,7 @@ import type {
     SetFilterUi,
     TextFormatter,
 } from 'ag-grid-community';
-import { AgInputTextFieldSelector, KeyCode, ProvidedFilter, _createIconNoSpan, _warn } from 'ag-grid-community';
+import { AgInputTextFieldSelector, KeyCode, ProvidedFilter, _createIconNoSpan } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../agStack/iVirtualList';
 import { VirtualList } from '../widgets/virtualList';
@@ -82,6 +82,7 @@ export class SetFilter<V = string>
 
         this.displayValueModel = treeList
             ? new TreeSetDisplayValueModel(
+                  this.beans.log,
                   this.formatter,
                   treeListPathGetter,
                   treeListFormatter,
@@ -656,7 +657,7 @@ export class SetFilter<V = string>
      * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public setFilterValues(values: (V | null)[]): void {
-        _warn(283);
+        this.beans.log.warn(283);
         this.handler.setFilterValues(values);
     }
 
@@ -664,7 +665,7 @@ export class SetFilter<V = string>
      * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public resetFilterValues(): void {
-        _warn(283);
+        this.beans.log.warn(283);
         this.handler.resetFilterValues();
     }
 
@@ -672,7 +673,7 @@ export class SetFilter<V = string>
      * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public refreshFilterValues(): void {
-        _warn(283);
+        this.beans.log.warn(283);
         this.doRefreshFilterValues();
     }
 
@@ -881,7 +882,7 @@ export class SetFilter<V = string>
      * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public getFilterKeys(): SetFilterModelValue {
-        _warn(283);
+        this.beans.log.warn(283);
         return this.handler.getFilterKeys();
     }
 
@@ -889,7 +890,7 @@ export class SetFilter<V = string>
      * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public getFilterValues(): (V | null)[] {
-        _warn(283);
+        this.beans.log.warn(283);
         return this.handler.getFilterValues();
     }
 

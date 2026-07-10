@@ -8,7 +8,6 @@ import { _getRowAbove, _getRowBelow } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _warn } from '../validation/logging';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CellNavigationService extends BeanStub implements NamedBean {
@@ -102,7 +101,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                 default:
                     pointer = null;
                     // unknown key, do nothing
-                    _warn(8, { key });
+                    this.warn(8, { key });
                     break;
             }
 

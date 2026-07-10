@@ -12,7 +12,6 @@ import { _isDomLayout } from '../gridOptionsUtils';
 import type { ProcessUnpinnedColumnsParams } from '../interfaces/iCallbackParams';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import { _warn } from '../validation/logging';
 
 /** Minimum center viewport width (in px) reserved when pinned columns are present. */
 export const MIN_CENTER_VIEWPORT_WIDTH = 50;
@@ -109,7 +108,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         }
 
         if (_isDomLayout(gos, 'print')) {
-            _warn(37);
+            this.warn(37);
             return;
         }
 

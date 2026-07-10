@@ -225,7 +225,10 @@ export function renderDiagnosticElement(
     return eItem;
 }
 
-/** Builds the rich DOM for a single captured diagnostic. */
+/**
+ * Builds the rich DOM for a single captured diagnostic.
+ * @knipIgnore Used in tests
+ */
 export function renderDiagnostic(diagnostic: CapturedDiagnostic): HTMLElement {
     return renderDiagnosticElement(
         diagnostic.severity,
@@ -233,6 +236,51 @@ export function renderDiagnostic(diagnostic: CapturedDiagnostic): HTMLElement {
         getErrorLink(diagnostic.id, diagnostic.params),
         `AG Grid #${diagnostic.id}`
     );
+}
+
+/** Severity display order, most-to-least severe. Shared by the overlay title and the grouped sections. */
+export const SEVERITY_ORDER: CapturedDiagnostic['severity'][] = ['error', 'warning', 'deprecation'];
+
+/** Title-case, pluralised section headings keyed by severity. */
+const SECTION_LABELS: Record<CapturedDiagnostic['severity'], string> = {
+    error: 'Errors',
+    warning: 'Warnings',
+    deprecation: 'Deprecations',
+};
+
+function renderSection(severity: CapturedDiagnostic['severity'], items: CapturedDiagnostic[]): HTMLElement {
+    const eSection = _createElement({
+        tag: 'div',
+        cls: `ag-overlay-error-section ag-overlay-error-section-${severity}`,
+    });
+    const eHeader = _createElement({ tag: 'div', cls: 'ag-overlay-error-section-header' });
+    eHeader.textContent = `${SECTION_LABELS[severity]} (${items.length})`;
+    eSection.appendChild(eHeader);
+    for (let i = 0, len = items.length; i < len; ++i) {
+        eSection.appendChild(renderDiagnostic(items[i]));
+    }
+    return eSection;
+}
+
+/**
+ * Groups diagnostics by severity (errors, then warnings, then deprecations) and renders each non-empty
+ * group as a titled section with a per-severity count. Sections are separated by an `<hr>` divider; items
+ * within a section are not. Returns the ordered nodes to append to the overlay body.
+ */
+export function renderDiagnosticSections(diagnostics: readonly CapturedDiagnostic[]): HTMLElement[] {
+    const nodes: HTMLElement[] = [];
+    for (let i = 0, len = SEVERITY_ORDER.length; i < len; ++i) {
+        const severity = SEVERITY_ORDER[i];
+        const items = diagnostics.filter((diagnostic) => diagnostic.severity === severity);
+        if (items.length === 0) {
+            continue;
+        }
+        if (nodes.length > 0) {
+            nodes.push(_createElement({ tag: 'hr', cls: 'ag-overlay-error-divider' }));
+        }
+        nodes.push(renderSection(severity, items));
+    }
+    return nodes;
 }
 
 /**

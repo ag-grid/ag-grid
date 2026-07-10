@@ -35,7 +35,8 @@ import {
     _isClientSideRowModel,
     _isServerSideRowModel,
     _processOnChange,
-    _warn,
+    _warnForGrid,
+    _warnWithoutAttribution,
 } from 'ag-grid-community';
 
 import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
@@ -245,7 +246,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     }, []);
 
     useEffect(() => {
-        const changes = extractGridPropertyChanges(prevProps.current, props);
+        const changes = extractGridPropertyChanges(gridIdRef.current, prevProps.current, props);
         prevProps.current = props;
         processWhenReady(() => {
             if (apiRef.current) {
@@ -277,12 +278,16 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     );
 };
 
-function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: string]: any } {
+function extractGridPropertyChanges(gridId: string | undefined, prevProps: any, nextProps: any): { [p: string]: any } {
     const changes: { [p: string]: any } = {};
     for (const propKey of Object.keys(nextProps)) {
         if (excludeReactCompProps.has(propKey)) {
             if (deprecatedReactCompProps.has(propKey)) {
-                _warn(274, { prop: propKey });
+                if (gridId) {
+                    _warnForGrid(gridId, 274, { prop: propKey });
+                } else {
+                    _warnWithoutAttribution(274, { prop: propKey });
+                }
             }
             continue;
         }
@@ -357,7 +362,8 @@ class ReactFrameworkComponentWrapper
                 case 'toolPanel':
                 case 'menuItem':
                 case 'cellRenderer':
-                    warnReactiveCustomComponents();
+                    // Grid ID is always set at this point
+                    warnReactiveCustomComponents(this.gridId!);
                     break;
             }
         }
@@ -398,7 +404,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
     }
 
     if (props.template) {
-        _warn(230);
+        beans.log.warn(230);
     }
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {

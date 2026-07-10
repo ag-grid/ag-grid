@@ -22,7 +22,6 @@ import {
     _isGroupMultiAutoColumn,
     _isGroupUseEntireRow,
     _mergeDeep,
-    _warn,
 } from 'ag-grid-community';
 
 export class AutoColService extends BeanStub implements NamedBean, IAutoColService {
@@ -139,7 +138,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         const doingTreeData = gos.get('treeData');
         let doingMultiAutoColumn = _isGroupMultiAutoColumn(gos);
         if (doingTreeData && doingMultiAutoColumn) {
-            _warn(182);
+            this.warn(182);
             doingMultiAutoColumn = false;
         }
 

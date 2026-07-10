@@ -47,8 +47,9 @@ export interface CapturedDiagnostic {
     params: any;
     severity: Severity;
     /**
-     * The grid whose synchronous work emitted this, so a listener surfaces only its own grid's
-     * diagnostics. Undefined when emitted outside any grid (e.g. a bootstrap failure).
+     * The grid that emitted this, so a listener surfaces only its own grid's diagnostics. Set when the
+     * emitting bean routes through its grid-scoped log service (or an explicit grid id is threaded in),
+     * and undefined when emitted outside any grid (e.g. a bootstrap failure, or a standalone export).
      */
     gridId?: string;
     /** Fallback message used when the ValidationModule is not registered to supply the full text. */
@@ -80,30 +81,6 @@ interface DiagnosticListenerEntry {
 }
 
 const diagnosticListeners = new Set<DiagnosticListenerEntry>();
-
-// The grid currently executing; diagnostics it emits are attributed to it
-let activeGridId: string | undefined;
-
-/**
- * Runs `fn` with `gridId` marked as the executing grid, so any diagnostics it emits are attributed to
- * that grid. The restore runs in a `finally`, so a diagnostic that throws (in throw mode) still restores
- * the previous grid.
- *
- * `fn` MUST be synchronous. Attribution only lasts until `fn` returns, so any work deferred past an
- * `await` or a scheduled callback runs unattributed — its diagnostics fall back to "no grid" rather than
- * being misattributed to whichever grid happens to be active by the time they fire. This is also why a
- * nested grid (e.g. a detail grid, created on a later frame) gets its own scope instead of inheriting
- * its parent's.
- */
-export function _runWithActiveGrid<T>(gridId: string, fn: () => T): T {
-    const previous = activeGridId;
-    activeGridId = gridId;
-    try {
-        return fn();
-    } finally {
-        activeGridId = previous;
-    }
-}
 
 // Whether a diagnostic from `diagnosticGridId` should be delivered to a listener bound to
 // `listenerGridId`. A listener bound to no grid sees every diagnostic (a page-level panel); a grid's
@@ -148,14 +125,6 @@ export function _configureDiagnostics(config: {
     if (config.suppress !== undefined) {
         suppressedIds = new Set(config.suppress);
     }
-}
-
-/**
- * Whether captured diagnostics are being collected, so hot paths (e.g. API dispatch) can skip the
- * active-grid bookkeeping entirely when no consumer is listening.
- */
-export function _isDiagnosticCaptureActive(): boolean {
-    return captureEnabled;
 }
 
 /**
@@ -222,18 +191,20 @@ export function _renderBootstrapPanel(container: HTMLElement): void {
     bootstrapPanelRenderer(container, untied);
 }
 
-function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string): void {
+function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMessage?: string, gridId?: string): void {
     // Suppressed ids are omitted from the overlay and never throw; the console log has already fired.
     if (suppressedIds.has(id)) {
         return;
     }
     if (captureEnabled) {
-        const diagnostic: CapturedDiagnostic = { id, params, severity, gridId: activeGridId, defaultMessage };
+        // gridId is supplied by the grid-scoped LogService; a diagnostic emitted through a free function
+        // (pre-init, or a grid-less util) is undefined here and delivered to every listener.
+        const diagnostic: CapturedDiagnostic = { id, params, severity, gridId, defaultMessage };
         if (bufferedDiagnostics.length < MAX_BUFFERED_DIAGNOSTICS) {
             bufferedDiagnostics.push(diagnostic);
         }
         for (const entry of diagnosticListeners) {
-            if (shouldNotify(activeGridId, entry.gridId)) {
+            if (shouldNotify(gridId, entry.gridId)) {
                 entry.listener(diagnostic);
             }
         }
@@ -241,6 +212,23 @@ function emitDiagnostic(id: ErrorId, params: any, severity: Severity, defaultMes
     if (_meetsSeverityThreshold(severity, throwThreshold)) {
         throw new Error(`${severity} #${id} ` + getErrorParts(id, params, defaultMessage).join(' '));
     }
+}
+
+/**
+ * Shared body for the log functions: fires the console message and captures the diagnostic. `gridId`
+ * attributes the captured diagnostic to a specific grid (passed by the grid-scoped `LogService`);
+ * omitted for the stateless free functions, whose diagnostics are captured untied.
+ */
+function logDiagnostic(
+    logger: LogFn,
+    id: ErrorId,
+    params: any,
+    severity: Severity,
+    isWarning: boolean,
+    gridId?: string
+): void {
+    logToConsole(logger, id, params, isWarning);
+    emitDiagnostic(id, params, severity, undefined, gridId);
 }
 
 type LogFn = (message: string, ...args: any[]) => void;
@@ -372,38 +360,43 @@ const minifiedLog = (errorNum: ErrorId, args: GetErrorParams<any>, defaultMessag
     return `${prefix}${defaultMessage ? '' : ' \n  Alternatively register the ValidationModule to see the full message in the console.'}`;
 };
 
+// The captured diagnostic is untied — delivered to every listener rather than one grid's overlay. Reach
+// for these only where no grid exists (pre-bean bootstrap failures, a destroyed grid, grid-agnostic
+// utilities). Grid code must attribute instead, via `this.warn`/`beans.log` on a bean or `_warnForGrid`.
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _warn<
+export function _warnWithoutAttribution<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    logToConsole(_warnOnce, args[0], args[1] as any, true);
-    emitDiagnostic(args[0], args[1] as any, 'warning');
-}
-
-/**
- * Logs at warning level (console) but captures the diagnostic as a deprecation, so the overlay can
- * group it and `throwOn: 'deprecation'` can target it.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _deprecated<
-    TId extends ErrorId,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    TShowMessageAtCallLocation = ErrorMap[TId],
->(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    logToConsole(_warnOnce, args[0], args[1] as any, true);
-    emitDiagnostic(args[0], args[1] as any, 'deprecation');
+    logDiagnostic(_warnOnce, args[0], args[1] as any, 'warning', true);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _error<
+export function _errorWithoutAttribution<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    logToConsole(_errorOnce, args[0], args[1] as any, false);
-    emitDiagnostic(args[0], args[1] as any, 'error');
+    logDiagnostic(_errorOnce, args[0], args[1] as any, 'error', false);
+}
+
+// Grid-id-first variants used by the grid-scoped LogService to attribute a diagnostic to the emitting
+// grid. `gridId` is required — a caller with no grid must choose `_warnWithoutAttribution` explicitly
+// rather than pass undefined. Loosely typed on the id/params — LogService is the ErrorId-checked surface.
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _warnForGrid(gridId: string, id: ErrorId, params?: any): void {
+    logDiagnostic(_warnOnce, id, params, 'warning', true, gridId);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _deprecatedForGrid(gridId: string, id: ErrorId, params?: any): void {
+    logDiagnostic(_warnOnce, id, params, 'deprecation', true, gridId);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _errorForGrid(gridId: string, id: ErrorId, params?: any): void {
+    logDiagnostic(_errorOnce, id, params, 'error', false, gridId);
 }
 
 /** Used for messages before the ValidationService has been created */

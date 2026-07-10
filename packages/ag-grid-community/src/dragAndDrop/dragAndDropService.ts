@@ -10,7 +10,6 @@ import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { DragItem } from '../interfaces/iDragItem';
-import { _warn } from '../validation/logging';
 
 export enum DragSourceType {
     ToolPanel,
@@ -93,7 +92,7 @@ export class DragAndDropService extends BaseDragAndDropService<
     }
 
     protected override warnNoBody(): void {
-        _warn(54);
+        this.beans.log.warn(54);
     }
 
     public isDropZoneWithinThisGrid(

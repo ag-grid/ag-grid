@@ -119,7 +119,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
                 userCompRef(compProxy as IFloatingFilter);
                 setFloatingFilterCompProxy(compProxy);
             } else {
-                warnReactiveCustomComponents();
+                warnReactiveCustomComponents(context.getId());
             }
         }
     }, [userCompDetails]);

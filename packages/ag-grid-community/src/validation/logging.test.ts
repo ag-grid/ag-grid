@@ -3,14 +3,15 @@ import type { CapturedDiagnostic } from './logging';
 import {
     _addDiagnosticListener,
     _configureDiagnostics,
-    _deprecated,
-    _error,
+    _deprecatedForGrid,
+    _errorForGrid,
+    _errorWithoutAttribution,
     _logPreInitErr,
     _logPreInitWarn,
     _provideBootstrapPanelRenderer,
     _renderBootstrapPanel,
-    _runWithActiveGrid,
-    _warn,
+    _warnForGrid,
+    _warnWithoutAttribution,
     getErrorLink,
 } from './logging';
 import { _applyDevValidationConfig, _enableDiagnosticCapture } from './validationConfig';
@@ -44,8 +45,8 @@ describe('diagnostic capture', () => {
         const listener = vi.fn();
         const off = listenAll(listener);
 
-        _error(11);
-        _warn(11);
+        _errorWithoutAttribution(11);
+        _warnWithoutAttribution(11);
 
         expect(listener).not.toHaveBeenCalled();
         // Logging still happens regardless of capture
@@ -59,9 +60,9 @@ describe('diagnostic capture', () => {
         const received: CapturedDiagnostic[] = [];
         const off = listenAll((e) => received.push(e));
 
-        _error(11);
-        _warn(11);
-        _deprecated(11);
+        _errorWithoutAttribution(11);
+        _warnWithoutAttribution(11);
+        _deprecatedForGrid('grid-a', 11);
 
         expect(received.map((e) => ({ id: e.id, severity: e.severity }))).toEqual([
             { id: 11, severity: 'error' },
@@ -73,8 +74,8 @@ describe('diagnostic capture', () => {
 
     test('replays buffered diagnostics to a listener that attaches later', () => {
         _configureDiagnostics({ capture: true });
-        _error(11);
-        _warn(11);
+        _errorWithoutAttribution(11);
+        _warnWithoutAttribution(11);
 
         const received: CapturedDiagnostic[] = [];
         const off = listenAll((e) => received.push(e));
@@ -87,7 +88,7 @@ describe('diagnostic capture', () => {
         _configureDiagnostics({ capture: true });
         const off1 = listenAll(() => undefined);
         const off2 = listenAll(() => undefined);
-        _error(11);
+        _errorWithoutAttribution(11);
 
         // First detach leaves a listener, so the buffer survives for a newcomer
         off1();
@@ -107,7 +108,7 @@ describe('diagnostic capture', () => {
     test('caps the buffer to bound memory', () => {
         _configureDiagnostics({ capture: true });
         for (let i = 0; i < 105; i++) {
-            _error(11);
+            _errorWithoutAttribution(11);
         }
 
         const received: CapturedDiagnostic[] = [];
@@ -117,30 +118,26 @@ describe('diagnostic capture', () => {
     });
 });
 
-describe('grid scoping', () => {
-    test('tags a diagnostic with the executing grid', () => {
+// The grid-id-first variants are what the grid-scoped LogService delegates to: a bean attributes a
+// diagnostic to its own grid by passing its grid id. A diagnostic emitted through a free function
+// (pre-init, or a util with no grid in scope) carries no grid id and is delivered to every listener.
+describe('grid attribution', () => {
+    test('tags a diagnostic with the supplied grid id; a free function is untied', () => {
         _configureDiagnostics({ capture: true });
         const received: CapturedDiagnostic[] = [];
         const off = listenAll((e) => received.push(e));
 
-        _runWithActiveGrid('grid-a', () => _warn(11));
-        _warn(11); // no active grid
+        _warnForGrid('grid-a', 11);
+        _errorForGrid('grid-b', 11);
+        _deprecatedForGrid('grid-a', 11);
+        _warnWithoutAttribution(11); // free function — no grid
 
-        expect(received.map((e) => e.gridId)).toEqual(['grid-a', undefined]);
-        off();
-    });
-
-    test('attributes to the innermost grid when grids nest', () => {
-        _configureDiagnostics({ capture: true });
-        const received: CapturedDiagnostic[] = [];
-        const off = listenAll((e) => received.push(e));
-
-        _runWithActiveGrid('outer', () => {
-            _runWithActiveGrid('inner', () => _warn(11));
-            _warn(11); // back to the outer grid
-        });
-
-        expect(received.map((e) => e.gridId)).toEqual(['inner', 'outer']);
+        expect(received.map((e) => [e.gridId, e.severity])).toEqual([
+            ['grid-a', 'warning'],
+            ['grid-b', 'error'],
+            ['grid-a', 'deprecation'],
+            [undefined, 'warning'],
+        ]);
         off();
     });
 
@@ -151,9 +148,9 @@ describe('grid scoping', () => {
         const offA = _addDiagnosticListener('grid-a', (e) => a.push(e));
         const offB = _addDiagnosticListener('grid-b', (e) => b.push(e));
 
-        _runWithActiveGrid('grid-a', () => _warn(11));
-        _runWithActiveGrid('grid-b', () => _error(11));
-        _warn(11); // untied — both listeners see it
+        _warnForGrid('grid-a', 11);
+        _errorForGrid('grid-b', 11);
+        _warnWithoutAttribution(11); // untied — both listeners see it
 
         expect(a.map((e) => [e.gridId, e.severity])).toEqual([
             ['grid-a', 'warning'],
@@ -169,8 +166,8 @@ describe('grid scoping', () => {
 
     test('replays only matching buffered diagnostics to a grid listener', () => {
         _configureDiagnostics({ capture: true });
-        _runWithActiveGrid('grid-a', () => _warn(11));
-        _runWithActiveGrid('grid-b', () => _warn(11));
+        _warnForGrid('grid-a', 11);
+        _warnForGrid('grid-b', 11);
 
         const received: CapturedDiagnostic[] = [];
         const off = _addDiagnosticListener('grid-a', (e) => received.push(e));
@@ -179,17 +176,37 @@ describe('grid scoping', () => {
         off();
     });
 
-    test('pops the active grid even when a diagnostic throws', () => {
-        _configureDiagnostics({ capture: true, throwOn: 'error' });
+    test('logs to the console like the free functions regardless of attribution', () => {
+        _warnForGrid('grid-a', 11);
+        _errorForGrid('grid-a', 11);
+
+        expect(mockWarnOnce).toHaveBeenCalledTimes(1);
+        expect(mockErrorOnce).toHaveBeenCalledTimes(1);
+    });
+});
+
+// A bare free-function diagnostic is untied (no grid); attribution comes only from the grid-id-first
+// variants that the grid-scoped LogService routes through.
+describe('grid attribution', () => {
+    test('a free-function diagnostic is captured untied', () => {
+        _configureDiagnostics({ capture: true });
         const received: CapturedDiagnostic[] = [];
         const off = listenAll((e) => received.push(e));
 
-        expect(() => _runWithActiveGrid('grid-a', () => _error(11))).toThrow();
-        // Stack is balanced, so the next untied diagnostic is not attributed to `grid-a`
-        _configureDiagnostics({ throwOn: false });
-        _warn(11);
+        _warnWithoutAttribution(11);
 
-        expect(received.map((e) => e.gridId)).toEqual(['grid-a', undefined]);
+        expect(received.map((e) => e.gridId)).toEqual([undefined]);
+        off();
+    });
+
+    test('an explicit grid id attributes the diagnostic to that grid', () => {
+        _configureDiagnostics({ capture: true });
+        const received: CapturedDiagnostic[] = [];
+        const off = listenAll((e) => received.push(e));
+
+        _warnForGrid('own-grid', 11);
+
+        expect(received.map((e) => e.gridId)).toEqual(['own-grid']);
         off();
     });
 });
@@ -198,8 +215,8 @@ describe('throw mode', () => {
     test("throwOn 'error' throws on errors but not warnings", () => {
         _configureDiagnostics({ throwOn: 'error' });
 
-        expect(() => _error(11)).toThrow();
-        expect(() => _warn(11)).not.toThrow();
+        expect(() => _errorWithoutAttribution(11)).toThrow();
+        expect(() => _warnWithoutAttribution(11)).not.toThrow();
         expect(() => _logPreInitErr(11, undefined as any, 'boom')).toThrow();
         expect(() => _logPreInitWarn(11, undefined as any, 'boom')).not.toThrow();
     });
@@ -207,24 +224,24 @@ describe('throw mode', () => {
     test("throwOn 'warning' throws on errors and warnings but not deprecations", () => {
         _configureDiagnostics({ throwOn: 'warning' });
 
-        expect(() => _error(11)).toThrow();
-        expect(() => _warn(11)).toThrow();
+        expect(() => _errorWithoutAttribution(11)).toThrow();
+        expect(() => _warnWithoutAttribution(11)).toThrow();
         expect(() => _logPreInitWarn(11, undefined as any, 'boom')).toThrow();
-        expect(() => _deprecated(11)).not.toThrow();
+        expect(() => _deprecatedForGrid('grid-a', 11)).not.toThrow();
     });
 
     test("throwOn 'deprecation' throws on deprecations, warnings and errors", () => {
         _configureDiagnostics({ throwOn: 'deprecation' });
 
-        expect(() => _deprecated(11)).toThrow();
-        expect(() => _warn(11)).toThrow();
-        expect(() => _error(11)).toThrow();
+        expect(() => _deprecatedForGrid('grid-a', 11)).toThrow();
+        expect(() => _warnWithoutAttribution(11)).toThrow();
+        expect(() => _errorWithoutAttribution(11)).toThrow();
     });
 
     test('logs to the console before throwing', () => {
         _configureDiagnostics({ throwOn: 'error' });
 
-        expect(() => _error(11)).toThrow();
+        expect(() => _errorWithoutAttribution(11)).toThrow();
         expect(mockErrorOnce).toHaveBeenCalledTimes(1);
     });
 
@@ -235,8 +252,8 @@ describe('throw mode', () => {
     });
 
     test('does not throw when no threshold is configured', () => {
-        expect(() => _error(11)).not.toThrow();
-        expect(() => _warn(11)).not.toThrow();
+        expect(() => _errorWithoutAttribution(11)).not.toThrow();
+        expect(() => _warnWithoutAttribution(11)).not.toThrow();
     });
 });
 
@@ -246,8 +263,8 @@ describe('suppression', () => {
         const received: CapturedDiagnostic[] = [];
         const off = listenAll((e) => received.push(e));
 
-        _warn(11);
-        _warn(22, { key: 'x' });
+        _warnWithoutAttribution(11);
+        _warnWithoutAttribution(22, { key: 'x' });
 
         // Suppressed id 11 is not captured; 22 is
         expect(received.map((e) => e.id)).toEqual([22]);
@@ -259,19 +276,19 @@ describe('suppression', () => {
     test('does not throw a suppressed id even when it meets the throw threshold', () => {
         _configureDiagnostics({ throwOn: 'error', suppress: [11] });
 
-        expect(() => _error(11)).not.toThrow();
-        expect(() => _error(22, { key: 'x' })).toThrow();
+        expect(() => _errorWithoutAttribution(11)).not.toThrow();
+        expect(() => _errorWithoutAttribution(22, { key: 'x' })).toThrow();
     });
 });
 
 describe('dev validation config', () => {
     test('registering without options resets a previously-configured throw threshold', () => {
         _applyDevValidationConfig({ throwOn: 'error' });
-        expect(() => _error(11)).toThrow();
+        expect(() => _errorWithoutAttribution(11)).toThrow();
 
         // A later registration with no options must not inherit the earlier `throwOn`
         _applyDevValidationConfig();
-        expect(() => _error(11)).not.toThrow();
+        expect(() => _errorWithoutAttribution(11)).not.toThrow();
     });
 
     test('registering without options clears a previously-configured suppress list', () => {
@@ -279,12 +296,12 @@ describe('dev validation config', () => {
         const off = listenAll((e) => received.push(e));
 
         _applyDevValidationConfig({ suppress: [11] });
-        _warn(11);
+        _warnWithoutAttribution(11);
         expect(received).toEqual([]);
 
         // A later registration with no options must not inherit the earlier suppress list
         _applyDevValidationConfig();
-        _warn(11);
+        _warnWithoutAttribution(11);
         expect(received.map((e) => e.id)).toEqual([11]);
         off();
     });
@@ -294,7 +311,7 @@ describe('dev validation config', () => {
 
         const received: CapturedDiagnostic[] = [];
         const off = listenAll((e) => received.push(e));
-        expect(() => _error(11)).not.toThrow();
+        expect(() => _errorWithoutAttribution(11)).not.toThrow();
 
         expect(received.map((e) => e.id)).toEqual([11]);
         off();
@@ -305,14 +322,14 @@ describe('dev validation config', () => {
         // A bare registration enables capture only, so the earlier throwOn must survive.
         _enableDiagnosticCapture();
 
-        expect(() => _error(11)).toThrow();
+        expect(() => _errorWithoutAttribution(11)).toThrow();
     });
 });
 
 describe('bootstrap panel', () => {
     test('renders only the buffered diagnostics not tied to a grid', () => {
         _configureDiagnostics({ capture: true });
-        _runWithActiveGrid('grid-a', () => _error(11)); // tied to a grid
+        _errorForGrid('grid-a', 11); // tied to a grid
         _logPreInitErr(200, {} as any, 'boom'); // a bootstrap failure, not tied to any grid
 
         const renderer = vi.fn();
@@ -327,7 +344,7 @@ describe('bootstrap panel', () => {
 
     test('does not invoke the renderer when there are no untied diagnostics', () => {
         _configureDiagnostics({ capture: true });
-        _runWithActiveGrid('grid-a', () => _error(11)); // tied only
+        _errorForGrid('grid-a', 11); // tied only
 
         const renderer = vi.fn();
         _provideBootstrapPanelRenderer(renderer);

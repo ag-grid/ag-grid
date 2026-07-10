@@ -145,6 +145,7 @@ import type { SyncService } from '../syncService';
 import type { TooltipService } from '../tooltip/tooltipService';
 import type { UndoRedoService } from '../undoRedo/undoRedoService';
 import type { ErrorOverlayService } from '../validation/errorOverlay/errorOverlayService';
+import type { LogService } from '../validation/logService';
 import type { ValidationService } from '../validation/validationService';
 import type { ChangeDetectionService } from '../valueService/changeDetectionService';
 import type { ExpressionService } from '../valueService/expressionService';
@@ -271,7 +272,7 @@ export function isComponentMetaFunc(
 
 export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFunc;
 
-export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
+export type ProcessParamsFunc<TParams = any> = (params: TParams, beans: BeanCollection) => TParams;
 
 interface CoreBeanCollection extends AgCoreBeanCollection<
     GridOptionsWithDefaults,
@@ -316,6 +317,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     ariaAnnounce: IAriaAnnouncementService;
     rangeSvc?: IRangeService;
     validation?: ValidationService;
+    log: LogService;
     gridApi: GridApi;
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;

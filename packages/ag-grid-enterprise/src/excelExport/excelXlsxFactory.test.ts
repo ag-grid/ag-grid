@@ -29,6 +29,7 @@ const stubParams = (
     } as any,
     formulaSvc: {} as any,
     gos: { get: () => undefined, addCommon: (p: any) => p } as any,
+    log: { warn: () => {}, error: () => {}, deprecated: () => {} } as any,
     rowGroupColsSvc: {} as any,
     processCellCallback: undefined,
     processHeaderCallback: undefined,
@@ -891,16 +892,23 @@ describe('excel styles', () => {
 
     it('skips Excel table when exportAsExcelTable is true but pivot mode is active', () => {
         const workbook = new Workbook();
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const warnSpy = vi.fn();
         const worksheetXml = workbook.addWorksheet(
             [],
             basicWorksheet('TableSkip'),
-            stubParams({ exportAsExcelTable: true, headerRowCount: 1, pivotModeActive: true }, workbook)
+            stubParams(
+                {
+                    exportAsExcelTable: true,
+                    headerRowCount: 1,
+                    pivotModeActive: true,
+                    log: { warn: warnSpy } as any,
+                },
+                workbook
+            )
         );
 
         // When table is skipped, there should be no tableParts rel
         expect(worksheetXml).not.toContain('tableParts');
         expect(warnSpy).toHaveBeenCalled();
-        warnSpy.mockRestore();
     });
 });

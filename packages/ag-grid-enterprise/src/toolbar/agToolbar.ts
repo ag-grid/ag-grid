@@ -30,9 +30,7 @@ import {
     _addGridCommonParams,
     _clamp,
     _createElement,
-    _error,
     _unwrapUserComp,
-    _warn,
 } from 'ag-grid-community';
 
 import agToolbarCSS from './agToolbar.css';
@@ -298,7 +296,7 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
             const { key } = itemConfig;
 
             if (itemConfig.toolbarItem == null) {
-                _error(301, { key });
+                this.beans.log.error(301, { key });
                 continue;
             }
 
@@ -351,7 +349,7 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
             _removeFromParent(placeholder);
             this.destroyBean(component);
             if (isDuplicate) {
-                _warn(303, { key });
+                this.beans.log.warn(303, { key });
             }
             return;
         }

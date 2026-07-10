@@ -14,7 +14,6 @@ import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { ISelectionService } from '../interfaces/iSelectionService';
-import { _warn } from '../validation/logging';
 import type { DragAndDropIcon, DropTarget } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
 import type {
@@ -425,13 +424,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     public addRowDropZone(params: RowDropZoneParams & { fromGrid?: boolean }): void {
         if (!params.getContainer()) {
-            _warn(55);
+            this.warn(55);
             return;
         }
 
         const dragAndDrop = this.beans.dragAndDrop!;
         if (dragAndDrop.findExternalZone(params.getContainer())) {
-            _warn(56);
+            this.warn(56);
             return;
         }
 
@@ -573,7 +572,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private csrmAddRows({ position, target, rows }: RowsDrop): boolean {
-        const getRowIdFunc = _getRowIdCallback(this.gos);
+        const getRowIdFunc = _getRowIdCallback(this.beans);
         const clientSideRowModel = this.beans.rowModel as IClientSideRowModel;
 
         const add = rows
