@@ -141,7 +141,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             }
         );
 
-        root.querySelectorAll('.ag-panel[aria-lable="Advanced Filter"] .ag-advanced-filter-builder-pill').forEach(
+        root.querySelectorAll('.ag-panel[aria-label="Advanced Filter"] .ag-advanced-filter-builder-pill').forEach(
             (pill) => {
                 setTestId(
                     pill,
