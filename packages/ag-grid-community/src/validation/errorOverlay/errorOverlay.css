@@ -136,8 +136,7 @@
 }
 
 .ag-overlay-error-unattributed {
-    /* a pill that hugs its text (the item is a flex column, so align-self sets the cross-axis width),
-       following the column-drop-cell pill language so it reads as a distinct tag, not body text. */
+    /* pill/tag styling; align-self keeps it hugging its text within the flex-column item. */
     align-self: start;
     border-radius: 500px;
     padding: calc(var(--ag-spacing) * 0.25) var(--ag-spacing);

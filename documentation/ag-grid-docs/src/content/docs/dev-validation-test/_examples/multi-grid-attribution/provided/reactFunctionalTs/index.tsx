@@ -34,10 +34,8 @@ const GridExample = () => {
     // Updating an initial-only option after creation emits warning #22 on the targeted grid.
     const triggerWarning = (grid: 'a' | 'b') => apiFor(grid).setGridOption('tooltipInteraction', true);
 
-    // Calling an API method whose module isn't registered emits error #200 on the targeted grid.
-    // `getServerSideGroupLevelState` needs the (unregistered) enterprise server-side module, so the
-    // check runs in that grid's scope and self-attributes to it instead of showing on every grid, and
-    // the call no-ops rather than affecting the layout.
+    // `getServerSideGroupLevelState` needs the unregistered enterprise server-side module, so calling it
+    // on a client-side grid emits error #200, attributed to that grid, and no-ops without affecting layout.
     const triggerError = (grid: 'a' | 'b') => apiFor(grid).getServerSideGroupLevelState();
 
     // An async transaction is flushed by the grid on a later frame, so the non-string row-id warning

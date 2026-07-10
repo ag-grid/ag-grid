@@ -15,11 +15,7 @@ const URL_TRAILING_PUNCTUATION_REGEX = /[.,;:)\]]+$/;
 /** Delimiter the error messages use to mark inline code (reasons, module names). See `asCode` in errorText.ts. */
 const CODE_DELIMITER = '`';
 
-/**
- * Note shown on a diagnostic that reached a grid's overlay without being attributed to any grid (e.g. a
- * theme error, or an API call on a destroyed grid). Such diagnostics are broadcast to every live grid, so
- * this warns the reader not to assume the grid showing it is the one that emitted it.
- */
+/** Note warning that an untied diagnostic, broadcast to every grid, may not be from the one showing it. */
 function unattributedNote(severity: CapturedDiagnostic['severity']): string {
     return `This ${severity} may not have originated from this grid`;
 }
@@ -243,12 +239,7 @@ export function renderDiagnosticElement(
 
 /** Options shared by the diagnostic render entry points, describing the surface being rendered into. */
 interface RenderDiagnosticOptions {
-    /**
-     * Whether this surface shows unattributed diagnostics as such. A live grid's overlay sets it, since a
-     * diagnostic not tied to a grid is broadcast to every grid and may not originate from the one showing
-     * it. The bootstrap panel leaves it unset: it has no grid to contrast against, so every item there is
-     * untied by definition and the note would be noise.
-     */
+    /** When set, flags untied diagnostics as possibly not from this grid. Off for the grid-less bootstrap panel. */
     showsUnattributedOrigin?: boolean;
 }
 
@@ -262,8 +253,7 @@ export function renderDiagnostic(diagnostic: CapturedDiagnostic, options: Render
         getDiagnosticContent(diagnostic),
         getErrorLink(diagnostic.id, diagnostic.params),
         `AG Grid #${diagnostic.id}`,
-        // A diagnostic delivered to a grid overlay is either that grid's own or unattributed — one tied to
-        // another grid is never delivered here — so an absent gridId is exactly the unattributed case.
+        // Only this grid's own and untied diagnostics reach here, so an absent gridId means unattributed.
         !!options.showsUnattributedOrigin && diagnostic.gridId === undefined
     );
 }

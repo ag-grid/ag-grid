@@ -16,8 +16,7 @@ test.agExample(import.meta, () => {
             // Both grids start valid, so neither shows a diagnostic overlay.
             await expect(page.locator(overlay)).toHaveCount(0);
 
-            // An error on Grid A surfaces on Grid A only, and as it is attributed to that grid it is not
-            // flagged as unattributed.
+            // An error on Grid A surfaces on Grid A only, attributed to it (so not flagged as unattributed).
             await page.getByRole('button', { name: 'Trigger error', exact: true }).nth(0).click();
             await expect(gridA.locator(overlay)).toBeVisible();
             await expect(page.locator(overlay)).toHaveCount(1);
@@ -28,8 +27,7 @@ test.agExample(import.meta, () => {
             await expect(gridB.locator(overlay)).toBeVisible();
             await expect(page.locator(overlay)).toHaveCount(2);
         },
-        // Grid A calls an API method whose module isn't registered (error #200) and Grid B updates an
-        // initial-only option after creation (warning #22).
+        // Grid A's error #200 (unregistered module) and Grid B's warning #22 (initial-only option changed).
         { allowedConsoleMessages: ['error #200', 'warning #22'] }
     );
 

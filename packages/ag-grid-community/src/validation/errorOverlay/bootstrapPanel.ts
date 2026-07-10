@@ -200,8 +200,7 @@ export function renderBootstrapPanel(container: HTMLElement, diagnostics: Captur
 
     const eBody = _createElement({ tag: 'div' });
     eBody.style.cssText = BODY_STYLE;
-    // No `showsUnattributedOrigin`: this panel appears when grid creation aborts, so there is no grid to
-    // contrast against — every diagnostic here is untied and flagging each as such would be noise.
+    // No `showsUnattributedOrigin`: there is no grid here to contrast against, so the flag would be noise.
     eBody.append(...renderDiagnosticSections(visible));
     ePanel.appendChild(eBody);
 
