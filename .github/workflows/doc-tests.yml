@@ -71,15 +71,44 @@ permissions:
 
 jobs:
 
+  # Warms the node_modules cache once (rw) so the framework test jobs below can consume it
+  # read-only in parallel — avoids 7 concurrent full installs and cache-write races on a cold
+  # cache. Runs whenever at least one framework is not skipped (always true on schedule).
+  initialise:
+    if: >-
+      ${{ github.event.inputs.skip_vanilla != 'true'
+        || github.event.inputs.skip_typescript != 'true'
+        || github.event.inputs.skip_reactFunctionalTs != 'true'
+        || github.event.inputs.skip_angular != 'true'
+        || github.event.inputs.skip_vue3 != 'true' }}
+    name: Initialise dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Warm node_modules and Nx caches
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: rw
+          yarn_postinstall: 'false'
+          nx_restore: 'true'
+          tidy_nx_cache: 'false'
+      # Pre-build the package the test harness imports at runtime, so the seven test jobs
+      # restore it from the Nx cache instead of each rebuilding it.
+      - name: Pre-build ag-grid-community
+        run: yarn nx run-many -p ag-grid-community -t build:package build:types
+
   test-vanilla:
+    needs: initialise
     if: ${{ github.event.inputs.skip_vanilla != 'true' }}
     name: Test vanilla Examples
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1]
-        shardTotal: [1]
+        shardIndex: [1, 2]
+        shardTotal: [2]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/test-framework-examples
@@ -90,6 +119,7 @@ jobs:
           test_pattern: ${{github.event.inputs.test_pattern}}
 
   test-typescript:
+    needs: initialise
     if: ${{ github.event.inputs.skip_typescript != 'true' }}
     name: Test typescript Examples
     runs-on: ubuntu-latest
@@ -108,14 +138,15 @@ jobs:
           test_pattern: ${{github.event.inputs.test_pattern}}
 
   test-reactFunctionalTs:
+    needs: initialise
     if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
     name: Test reactFunctionalTs Examples
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2]
-        shardTotal: [2]
+        shardIndex: [1, 2, 3]
+        shardTotal: [3]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/test-framework-examples
@@ -126,6 +157,7 @@ jobs:
           test_pattern: ${{github.event.inputs.test_pattern}}
 
   test-vue3:
+    needs: initialise
     if: ${{ github.event.inputs.skip_vue3 != 'true' }}
     name: Test vue3 Examples
     runs-on: ubuntu-latest
@@ -144,6 +176,7 @@ jobs:
           test_pattern: ${{github.event.inputs.test_pattern}}
 
   test-angular:
+    needs: initialise
     if: ${{ github.event.inputs.skip_angular != 'true' }}
     name: Test angular Examples
     runs-on: ubuntu-latest
@@ -222,7 +255,6 @@ jobs:
           report-path: 'combined-reports/**/*.json'
           summary-report: true
           failed-folded-report: true
-          failed-report: true
           flaky-report: true
           skipped-report: false
           group-by: filePath
