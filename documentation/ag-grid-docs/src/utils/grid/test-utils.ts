@@ -543,6 +543,166 @@ export async function clickAllButtons(page: Page) {
     }
 }
 
+export type ConsistentDomOptions = {
+    /** Root element to serialise. Defaults to `.ag-root-wrapper` (the framework-independent grid subtree). */
+    rootSelector?: string;
+    /** Snapshot file name (shared across all frameworks). Defaults to `grid-dom.html`. */
+    snapshotName?: string;
+    /** Include trimmed text content of elements. Defaults to `true`. Disable for examples with volatile text (timestamps, random data). */
+    includeText?: boolean;
+    /** Extra attribute names to drop before comparing (in addition to the volatile defaults). */
+    ignoreAttributes?: string[];
+};
+
+// Attributes dropped before comparing:
+// - runtime-generated ids / id references (`id`, `aria-*`, `for`) which are not structural
+// - `data-ref`: the grid core sets these on internal elements in the vanilla/Angular/Vue wrappers, but the
+//   React wrapper renders equivalent elements without them. This is a known, systematic wrapper difference
+//   (present on almost every element), so ignoring it keeps the guard focused on genuine class/structure drift.
+//   Pass a spec-specific `ignoreAttributes` if you need to relax further.
+const DEFAULT_VOLATILE_ATTRIBUTES = [
+    'id',
+    'aria-labelledby',
+    'aria-describedby',
+    'aria-activedescendant',
+    'aria-controls',
+    'aria-owns',
+    'for',
+    'data-ref',
+    // Monotonic component-instance counter — value depends on creation order, not structure.
+    'comp-id',
+];
+
+/**
+ * Opt-in assertion that the grid DOM is structurally identical across framework variants.
+ *
+ * Call this from inside a `test.eachFramework(...)` block. Because the Playwright
+ * `snapshotPathTemplate` contains no framework/project token, every framework compares against
+ * the same committed baseline file — so any divergence in the grid's classes / DOM structure
+ * (typically from a hand-written `provided/` variant drifting from the generated ones) fails the test.
+ *
+ * Only the subtree rooted at `.ag-root-wrapper` is compared: that is produced by the grid core and
+ * is expected to be identical, whereas the outer host element (`ag-grid-angular`, `ag-grid-vue`,
+ * React provider div, vanilla `#myGrid`) legitimately differs and is excluded.
+ *
+ * The serialised markup is normalised to remove non-structural noise: measured pixel values and
+ * transforms are collapsed, generated ids are dropped, and class lists are sorted.
+ *
+ * The first framework to run writes the shared baseline snapshot (`<spec>-snapshots/grid-dom.html`);
+ * commit it alongside the spec. On the initial run Playwright reports the baseline-writing test as
+ * failed — re-run and it passes.
+ *
+ * @example
+ * // Simplest usage — compare the grid DOM across every framework variant.
+ * import { expectConsistentFrameworkDom, test } from '@utils/grid/test-utils';
+ *
+ * test.agExample(import.meta, () => {
+ *     test.eachFramework('renders a consistent grid DOM across frameworks', async ({ page }) => {
+ *         await expectConsistentFrameworkDom(page);
+ *     });
+ * });
+ *
+ * @example
+ * // Example with volatile text (timestamps, random data) or extra runtime attributes to ignore.
+ * test.eachFramework('renders a consistent grid DOM across frameworks', async ({ page }) => {
+ *     await expectConsistentFrameworkDom(page, {
+ *         includeText: false,
+ *         ignoreAttributes: ['data-generated-timestamp'],
+ *     });
+ * });
+ *
+ * @example
+ * // Compare a sub-section of the grid, with a distinct snapshot name if called more than once per spec.
+ * test.eachFramework('header is consistent across frameworks', async ({ page }) => {
+ *     await expectConsistentFrameworkDom(page, {
+ *         rootSelector: '.ag-header',
+ *         snapshotName: 'header-dom.html',
+ *     });
+ * });
+ */
+export async function expectConsistentFrameworkDom(page: Page, options?: ConsistentDomOptions) {
+    const rootSelector = options?.rootSelector ?? '.ag-root-wrapper';
+    const snapshotName = options?.snapshotName ?? 'grid-dom.html';
+    const includeText = options?.includeText ?? true;
+    const volatileAttributes = [...DEFAULT_VOLATILE_ATTRIBUTES, ...(options?.ignoreAttributes ?? [])];
+
+    // Wait for the grid to render before serialising — the raw page.evaluate does not auto-wait like a locator.
+    await page.locator(rootSelector).first().waitFor({ state: 'attached' });
+
+    const serialised = await page.evaluate(
+        ({ rootSelector, includeText, volatileAttributes }) => {
+            const root = document.querySelector(rootSelector);
+            if (!root) {
+                return null;
+            }
+
+            const normaliseStyle = (value: string): string => {
+                const collapsed = value
+                    // Collapse measured pixel values (widths, offsets) that depend on runtime layout.
+                    .replace(/-?\d+(\.\d+)?px/g, 'Npx')
+                    // Collapse virtualisation transforms.
+                    .replace(/translate[XY3d]*\([^)]*\)/g, 'translate(_)')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+                // Sort declarations — property order is not structurally significant and varies by framework.
+                return collapsed
+                    .split(';')
+                    .map((d) => d.trim())
+                    .filter(Boolean)
+                    .sort()
+                    .join('; ');
+            };
+
+            const lines: string[] = [];
+
+            const walk = (el: Element, depth: number): void => {
+                const indent = '  '.repeat(depth);
+                const tag = el.tagName.toLowerCase();
+
+                const attrs = Array.from(el.attributes)
+                    .filter((a) => !volatileAttributes.includes(a.name))
+                    .map((a): [string, string] => {
+                        if (a.name === 'style') {
+                            return [a.name, normaliseStyle(a.value)];
+                        }
+                        if (a.name === 'class') {
+                            return [a.name, a.value.split(/\s+/).filter(Boolean).sort().join(' ')];
+                        }
+                        return [a.name, a.value];
+                    })
+                    .filter(([, v]) => v !== '')
+                    .sort((x, y) => (x[0] < y[0] ? -1 : 1))
+                    .map(([n, v]) => `${n}="${v}"`);
+
+                const openTag = `<${tag}${attrs.length ? ' ' + attrs.join(' ') : ''}>`;
+
+                const elementChildren = Array.from(el.children);
+                if (elementChildren.length === 0) {
+                    const text = includeText ? (el.textContent ?? '').replace(/\s+/g, ' ').trim() : '';
+                    lines.push(`${indent}${openTag}${text}</${tag}>`);
+                    return;
+                }
+
+                lines.push(`${indent}${openTag}`);
+                for (let i = 0, len = elementChildren.length; i < len; ++i) {
+                    walk(elementChildren[i], depth + 1);
+                }
+                lines.push(`${indent}</${tag}>`);
+            };
+
+            walk(root, 0);
+            return lines.join('\n');
+        },
+        { rootSelector, includeText, volatileAttributes }
+    );
+
+    playwrightExpect(
+        serialised,
+        `No element matching '${rootSelector}' found to compare across frameworks`
+    ).not.toBeNull();
+    playwrightExpect(serialised).toMatchSnapshot(snapshotName);
+}
+
 export { ensureGridReady, waitForGridContent } from './test/remoteGridapi';
 export { repeat } from './test/repeat';
 export { scrollGridRelative } from './test/scrollGridRelative';

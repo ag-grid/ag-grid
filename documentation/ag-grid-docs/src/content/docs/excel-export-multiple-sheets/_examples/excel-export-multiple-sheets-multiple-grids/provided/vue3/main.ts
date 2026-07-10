@@ -63,6 +63,7 @@ const VueExample = defineComponent({
                     <div class="panel-heading">Athletes</div>
                     <div class="panel-body">
                         <ag-grid-vue
+                                id="eLeftGrid"
                                 style="height: 100%;"
                                 :defaultColDef="defaultColDef"
                                 :rowSelection="rowSelection"
@@ -81,6 +82,7 @@ const VueExample = defineComponent({
                     <div class="panel-heading">Selected Athletes</div>
                     <div class="panel-body">
                         <ag-grid-vue
+                                id="eRightGrid"
                                 style="height: 100%;"
                                 :defaultColDef="defaultColDef"
                                 :getRowId="getRowId"

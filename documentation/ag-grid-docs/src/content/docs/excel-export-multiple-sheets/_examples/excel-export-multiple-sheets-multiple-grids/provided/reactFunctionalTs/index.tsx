@@ -205,7 +205,7 @@ const GridExample = () => {
     const getGridWrapper = (id: number) => (
         <div className="panel panel-primary" style={{ marginRight: '10px' }}>
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
-            <div className="panel-body" style={{ height: '100%' }}>
+            <div id={id === 0 ? 'eLeftGrid' : 'eRightGrid'} className="panel-body" style={{ height: '100%' }}>
                 <AgGridReact
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}

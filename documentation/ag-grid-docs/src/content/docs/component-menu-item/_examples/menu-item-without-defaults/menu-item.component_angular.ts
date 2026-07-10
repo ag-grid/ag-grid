@@ -39,6 +39,7 @@ export interface CustomMenuItemParams extends IMenuItemParams {
             </div>
             <div
                 #filterWrapper
+                class="filter-wrapper"
                 [ngStyle]="{ display: expanded ? 'block' : 'none' }"
                 (keydown)="onFilterWrapperKeyDown($event)"
             ></div>

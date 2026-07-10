@@ -8,6 +8,7 @@ mcp.json
 # Plugin-delivered skills — allowlist local-only skills
 /skills/*
 !/skills/technology-stack/
+!/skills/docs-e2e-tests/
 
 # Plugin-delivered agents — all agents live in plugins
 /subagents/*.md
@@ -29,6 +30,7 @@ mcp.json
 /rules/*.md
 !/rules/ag-grid.md
 !/rules/benchmarks.md
+!/rules/docs-example-specs.md
 !/rules/docs-pages.md
 !/rules/examples.md
 !/rules/framework-view-layers.md

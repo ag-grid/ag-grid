@@ -1,7 +1,7 @@
 export default {
     template: `<span>
-        <button style="height: 30px;" @click="onClick">✎</button>
-        <span style="padding-left: 4px;">{{displayValue}}</span>
+        <button id="theButton" style="height: 30px;" @click="onClick">✎</button>
+        <span id="theValue" style="padding-left: 4px;">{{displayValue}}</span>
     </span>`,
 
     data() {

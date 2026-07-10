@@ -37,47 +37,24 @@ export default memo(({ value, onValueChange, stopEditing }: CustomCellEditorProp
         stopEditing();
     };
 
-    const mood = {
-        borderRadius: 15,
-        border: '1px solid grey',
-        backgroundColor: '#e6e6e6',
-        padding: 15,
-        textAlign: 'center' as const,
-        display: 'inline-block',
-    };
-
-    const unselected = {
-        paddingLeft: 10,
-        paddingRight: 10,
-        border: '1px solid transparent',
-        padding: 4,
-    };
-
-    const selected = {
-        paddingLeft: 10,
-        paddingRight: 10,
-        border: '1px solid lightgreen',
-        padding: 4,
-    };
-
-    const happyStyle = isHappy(value) ? selected : unselected;
-    const sadStyle = !isHappy(value) ? selected : unselected;
+    const happyClass = isHappy(value) ? 'selected' : 'default';
+    const sadClass = !isHappy(value) ? 'selected' : 'default';
 
     return (
         <div
             ref={refContainer}
-            style={mood}
+            className="mood"
             tabIndex={1} // important - without this the key presses wont be caught
         >
             <img
                 src="https://www.ag-grid.com/example-assets/smileys/happy.png"
                 onClick={() => onClick(true)}
-                style={happyStyle}
+                className={happyClass}
             />
             <img
                 src="https://www.ag-grid.com/example-assets/smileys/sad.png"
                 onClick={() => onClick(false)}
-                style={sadStyle}
+                className={sadClass}
             />
         </div>
     );
