@@ -212,15 +212,20 @@ jobs:
         with:
           path: combined-reports
 
+      - name: Normalise example test reports
+        run: node documentation/ag-grid-docs/scripts/normalise-ctrf-reports.mjs combined-reports
+
       - name: Publish Combined Test Report
         id: ctrf
         uses: ctrf-io/github-test-reporter@v1.0.17
         with:
           report-path: 'combined-reports/**/*.json'
           summary-report: true
+          failed-folded-report: true
           failed-report: true
           flaky-report: true
           skipped-report: false
+          group-by: filePath
           write-ctrf-to-file: ${{ env.CTRF_FILE }}
 
       - name: Get previous run commit SHA
