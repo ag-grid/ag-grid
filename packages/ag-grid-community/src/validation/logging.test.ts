@@ -30,7 +30,7 @@ function listenAll(listener: (diagnostic: CapturedDiagnostic) => void): () => vo
 }
 
 function resetDiagnostics(): void {
-    _configureDiagnostics({ capture: false, throwOn: false, suppress: [] });
+    _configureDiagnostics({ capture: false, throwOn: 'none', suppress: [] });
     // Attaching then detaching the only listener drops the buffer (cleared on last detach)
     listenAll(() => undefined)();
 }

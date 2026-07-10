@@ -148,7 +148,7 @@ function dedupeDiagnostics(diagnostics: CapturedDiagnostic[]): CapturedDiagnosti
 /**
  * Renders the bootstrap-failure diagnostics into the grid root for the case where grid creation aborts
  * before any bean exists (e.g. a missing row-model module). Inline-styled and bean-free, reusing
- * {@link renderDiagnostic}. Honours the configured overlay mode, so `overlay: false` shows nothing and
+ * {@link renderDiagnostic}. Honours the configured overlay mode, so `overlay: 'none'` shows nothing and
  * `overlay: 'error'` shows only errors.
  */
 export function renderBootstrapPanel(container: HTMLElement, diagnostics: CapturedDiagnostic[]): void {
@@ -161,7 +161,7 @@ export function renderBootstrapPanel(container: HTMLElement, diagnostics: Captur
     }
 
     const mode = _getDevOverlayMode();
-    if (mode === false) {
+    if (mode === 'none') {
         return;
     }
 

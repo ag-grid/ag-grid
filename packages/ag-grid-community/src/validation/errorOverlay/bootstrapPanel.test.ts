@@ -23,7 +23,7 @@ describe('renderBootstrapPanel', () => {
     });
 
     test('renders nothing when the overlay is disabled', () => {
-        _applyDevValidationConfig({ overlay: false });
+        _applyDevValidationConfig({ overlay: 'none' });
         const container = document.createElement('div');
 
         renderBootstrapPanel(container, [errorDiagnostic]);
@@ -98,7 +98,7 @@ describe('renderBootstrapPanel', () => {
         renderBootstrapPanel(container, [errorDiagnostic]);
 
         // Overlay config is global and last-write-wins, so it can be turned off between grid re-creations.
-        _applyDevValidationConfig({ overlay: false });
+        _applyDevValidationConfig({ overlay: 'none' });
         renderBootstrapPanel(container, [errorDiagnostic]);
 
         expect(container.childElementCount).toBe(0);

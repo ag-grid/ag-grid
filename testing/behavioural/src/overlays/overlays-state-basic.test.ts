@@ -57,7 +57,7 @@ describe('ag-grid overlays state', () => {
         gridsManager.reset();
         // These tests assert the functional loading/no-rows overlays; disable the dev validation
         // overlay so a deprecation/warning diagnostic does not mask them.
-        enableDevValidations({ overlay: false });
+        enableDevValidations({ overlay: 'none' });
     });
 
     afterEach(() => {

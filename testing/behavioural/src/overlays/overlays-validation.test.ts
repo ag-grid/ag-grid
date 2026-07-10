@@ -51,8 +51,8 @@ describe('dev validation overlay', () => {
         expect(panel!.querySelector('.ag-overlay-error-body')?.childElementCount).toBeGreaterThan(0);
     });
 
-    test('does not show the overlay when overlay is false', () => {
-        enableDevValidations({ overlay: false });
+    test("does not show the overlay when overlay is 'none'", () => {
+        enableDevValidations({ overlay: 'none' });
         gridsManager.createGrid('myGrid', withUnknownOption());
         expect(hasErrorOverlay()).toBe(false);
     });
