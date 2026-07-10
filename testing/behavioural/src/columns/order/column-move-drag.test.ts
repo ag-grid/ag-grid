@@ -138,6 +138,48 @@ describe('column header drag reorder', () => {
         expect(colOrder(api)).toEqual(['a', 'b', 'd']);
     });
 
+    // Regression: holding a lockPinned column at the grid edge (the "hold to pin" affordance) must not
+    // show the pin indicator, since the column cannot be pinned there. Drives the real drag through the
+    // MoveColumnFeature scroll interval and asserts on the drag ghost the user actually sees.
+    test('holding a lockPinned column at the grid edge does not show the pin icon, nor pin it', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a', width: 100 },
+                { field: 'b', width: 100, lockPinned: true },
+                { field: 'd', width: 100 },
+            ],
+            rowData: [{ a: 1, b: 2, d: 4 }],
+            suppressDragLeaveHidesColumns: true,
+        });
+        expect(api.getColumn('b')!.getPinned()).toBeNull();
+
+        const source = el(api, '.ag-header-cell[col-id="b"]');
+        const viewport = el(api, '.ag-grid-viewport');
+        const ownerDocument = source.ownerDocument;
+        const original = ownerDocument.elementsFromPoint?.bind(ownerDocument);
+        ownerDocument.elementsFromPoint = () => [viewport];
+        const dispatcher = new DragEventDispatcher('mouse', null, false);
+        const y = 100;
+        try {
+            await dispatcher.startDrag(source, 200, y);
+            await dispatcher.movePointer(viewport, 200, y);
+            // Hold at the far-left edge: the grid cannot scroll further, so the hold-to-pin interval keeps
+            // failing to move and eventually crosses the threshold that decides the drag-ghost icon.
+            await dispatcher.movePointer(viewport, 5, y);
+            // The interval fires every 100ms and needs to fail ~9 times before it sets the icon.
+            await asyncSetTimeout(1200);
+
+            const ghostIcon = ownerDocument.querySelector('.ag-dnd-ghost-icon');
+            expect(ghostIcon).not.toBeNull();
+            expect(ghostIcon!.querySelector('.ag-icon-pin')).toBeNull();
+        } finally {
+            await dispatcher.finishDrag(viewport);
+            ownerDocument.elementsFromPoint = original as typeof ownerDocument.elementsFromPoint;
+        }
+
+        expect(api.getColumn('b')!.getPinned()).toBeNull();
+    });
+
     test('dragging a marryChildren group header moves all its leaves together, including hidden ones', async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [

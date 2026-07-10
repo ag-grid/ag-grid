@@ -144,41 +144,6 @@ describe('MoveColumnFeature', () => {
         );
     });
 
-    test('does not show the pin icon while a lockPinned column is held at the grid edge', () => {
-        const feature = createFeature(null);
-
-        const setDragImageCompIcon = vi.fn();
-        feature.beans.gos = {
-            get: (key: string) => (key === 'enableRtl' ? false : undefined),
-        } as GridOptionsService;
-        feature.gos = feature.beans.gos;
-        feature.beans.dragAndDrop = { setDragImageCompIcon, nudge: vi.fn() };
-        feature.beans.pinnedCols = { setColsPinned: vi.fn() };
-        feature.gridBodyCon.scrollFeature = { scrollHorizontally: () => 0 };
-
-        const lockPinnedColumn = {
-            colDef: { lockPinned: true },
-            getColDef: () => ({ lockPinned: true }),
-            getPinned: () => null,
-        };
-        feature.lastDraggingEvent = {
-            dragItem: { columns: [lockPinnedColumn] },
-            event: { clientX: 0 },
-        } as unknown as GridDraggingEvent;
-
-        feature.needToMoveLeft = true;
-        feature.intervalCount = 0;
-        feature.failedMoveAttempts = 0;
-
-        // scroll can't move (returns 0), so each tick counts as a failed move; once past the
-        // MOVE_FAIL_THRESHOLD the "hold at edge to pin" branch runs.
-        for (let i = 0; i < 10; i++) {
-            feature.moveInterval();
-        }
-
-        expect(setDragImageCompIcon).not.toHaveBeenCalledWith('pinned');
-    });
-
     describe('RTL mode', () => {
         test('rtl center sectionX flips within scrolling section width', () => {
             const feature = createFeature(null, true);
