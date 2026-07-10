@@ -15,6 +15,15 @@ const URL_TRAILING_PUNCTUATION_REGEX = /[.,;:)\]]+$/;
 /** Delimiter the error messages use to mark inline code (reasons, module names). See `asCode` in errorText.ts. */
 const CODE_DELIMITER = '`';
 
+/**
+ * Note shown on a diagnostic that reached a grid's overlay without being attributed to any grid (e.g. a
+ * theme error, or an API call on a destroyed grid). Such diagnostics are broadcast to every live grid, so
+ * this warns the reader not to assume the grid showing it is the one that emitted it.
+ */
+function unattributedNote(severity: CapturedDiagnostic['severity']): string {
+    return `This ${severity} may not have originated from this grid`;
+}
+
 /** Message and documentation links for a captured diagnostic, split out for separate rendering. */
 interface DiagnosticContent {
     /** Human-readable explanation, rendered as prose above the code snippet. */
@@ -198,10 +207,17 @@ export function renderDiagnosticElement(
     severity: CapturedDiagnostic['severity'],
     content: DiagnosticContent,
     errorLink: string,
-    errorLinkText: string
+    errorLinkText: string,
+    unattributed = false
 ): HTMLElement {
     const eItem = _createElement({ tag: 'div', cls: `ag-overlay-error-item ag-overlay-error-item-${severity}` });
     const { message, code, note, docLink } = content;
+
+    if (unattributed) {
+        const eUnattributed = _createElement({ tag: 'div', cls: 'ag-overlay-error-unattributed' });
+        eUnattributed.textContent = unattributedNote(severity);
+        eItem.appendChild(eUnattributed);
+    }
 
     if (message) {
         eItem.appendChild(createTextEl(capitaliseLeadingProse(message)));
@@ -225,16 +241,30 @@ export function renderDiagnosticElement(
     return eItem;
 }
 
+/** Options shared by the diagnostic render entry points, describing the surface being rendered into. */
+interface RenderDiagnosticOptions {
+    /**
+     * Whether this surface shows unattributed diagnostics as such. A live grid's overlay sets it, since a
+     * diagnostic not tied to a grid is broadcast to every grid and may not originate from the one showing
+     * it. The bootstrap panel leaves it unset: it has no grid to contrast against, so every item there is
+     * untied by definition and the note would be noise.
+     */
+    showsUnattributedOrigin?: boolean;
+}
+
 /**
  * Builds the rich DOM for a single captured diagnostic.
  * @knipIgnore Used in tests
  */
-export function renderDiagnostic(diagnostic: CapturedDiagnostic): HTMLElement {
+export function renderDiagnostic(diagnostic: CapturedDiagnostic, options: RenderDiagnosticOptions = {}): HTMLElement {
     return renderDiagnosticElement(
         diagnostic.severity,
         getDiagnosticContent(diagnostic),
         getErrorLink(diagnostic.id, diagnostic.params),
-        `AG Grid #${diagnostic.id}`
+        `AG Grid #${diagnostic.id}`,
+        // A diagnostic delivered to a grid overlay is either that grid's own or unattributed — one tied to
+        // another grid is never delivered here — so an absent gridId is exactly the unattributed case.
+        !!options.showsUnattributedOrigin && diagnostic.gridId === undefined
     );
 }
 
@@ -248,7 +278,11 @@ const SECTION_LABELS: Record<CapturedDiagnostic['severity'], string> = {
     deprecation: 'Deprecations',
 };
 
-function renderSection(severity: CapturedDiagnostic['severity'], items: CapturedDiagnostic[]): HTMLElement {
+function renderSection(
+    severity: CapturedDiagnostic['severity'],
+    items: CapturedDiagnostic[],
+    options: RenderDiagnosticOptions
+): HTMLElement {
     const eSection = _createElement({
         tag: 'div',
         cls: `ag-overlay-error-section ag-overlay-error-section-${severity}`,
@@ -257,7 +291,7 @@ function renderSection(severity: CapturedDiagnostic['severity'], items: Captured
     eHeader.textContent = `${SECTION_LABELS[severity]} (${items.length})`;
     eSection.appendChild(eHeader);
     for (let i = 0, len = items.length; i < len; ++i) {
-        eSection.appendChild(renderDiagnostic(items[i]));
+        eSection.appendChild(renderDiagnostic(items[i], options));
     }
     return eSection;
 }
@@ -267,7 +301,10 @@ function renderSection(severity: CapturedDiagnostic['severity'], items: Captured
  * group as a titled section with a per-severity count. Sections are separated by an `<hr>` divider; items
  * within a section are not. Returns the ordered nodes to append to the overlay body.
  */
-export function renderDiagnosticSections(diagnostics: readonly CapturedDiagnostic[]): HTMLElement[] {
+export function renderDiagnosticSections(
+    diagnostics: readonly CapturedDiagnostic[],
+    options: RenderDiagnosticOptions = {}
+): HTMLElement[] {
     const nodes: HTMLElement[] = [];
     for (let i = 0, len = SEVERITY_ORDER.length; i < len; ++i) {
         const severity = SEVERITY_ORDER[i];
@@ -278,7 +315,7 @@ export function renderDiagnosticSections(diagnostics: readonly CapturedDiagnosti
         if (nodes.length > 0) {
             nodes.push(_createElement({ tag: 'hr', cls: 'ag-overlay-error-divider' }));
         }
-        nodes.push(renderSection(severity, items));
+        nodes.push(renderSection(severity, items, options));
     }
     return nodes;
 }

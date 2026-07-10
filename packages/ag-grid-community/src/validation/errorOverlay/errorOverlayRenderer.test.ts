@@ -103,6 +103,43 @@ describe('renderDiagnosticElement', () => {
         expect(message.querySelector('a')!.getAttribute('href')).toBe('https://ag-grid.com/x');
         expect(message.textContent).toBe('See https://ag-grid.com/x.');
     });
+
+    test('renders the unattributed note only when flagged', () => {
+        const plain = renderDiagnosticElement('error', { message: 'm' }, 'https://x/e/1', '#1');
+        expect(plain.querySelector('.ag-overlay-error-unattributed')).toBeNull();
+
+        const marked = renderDiagnosticElement('error', { message: 'm' }, 'https://x/e/1', '#1', true);
+        const note = marked.querySelector('.ag-overlay-error-unattributed');
+        expect(note).not.toBeNull();
+        expect(note!.textContent).toBe('This error may not have originated from this grid');
+    });
+});
+
+describe('unattributed marking', () => {
+    const owned: CapturedDiagnostic = { id: 22, params: { key: 'rowData' }, severity: 'warning', gridId: '1' };
+    const untied: CapturedDiagnostic = { id: 22, params: { key: 'rowData' }, severity: 'warning' };
+
+    test('renderDiagnostic marks a diagnostic with no gridId when asked', () => {
+        const el = renderDiagnostic(untied, { showsUnattributedOrigin: true });
+        expect(el.querySelector('.ag-overlay-error-unattributed')).not.toBeNull();
+    });
+
+    test('renderDiagnostic leaves an attributed diagnostic unmarked even when asked', () => {
+        const el = renderDiagnostic(owned, { showsUnattributedOrigin: true });
+        expect(el.querySelector('.ag-overlay-error-unattributed')).toBeNull();
+    });
+
+    test('renderDiagnostic never marks when marking is off', () => {
+        expect(renderDiagnostic(untied).querySelector('.ag-overlay-error-unattributed')).toBeNull();
+    });
+
+    test('renderDiagnosticSections marks only the untied items', () => {
+        const nodes = renderDiagnosticSections([owned, untied], { showsUnattributedOrigin: true });
+        const items = nodes.flatMap((node) => Array.from(node.querySelectorAll('.ag-overlay-error-item')));
+        const marked = items.filter((item) => item.querySelector('.ag-overlay-error-unattributed'));
+        expect(items).toHaveLength(2);
+        expect(marked).toHaveLength(1);
+    });
 });
 
 describe('diagnosticContentToMarkdown', () => {

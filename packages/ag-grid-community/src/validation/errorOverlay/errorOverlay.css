@@ -135,6 +135,18 @@
     user-select: text;
 }
 
+.ag-overlay-error-unattributed {
+    /* a pill that hugs its text (the item is a flex column, so align-self sets the cross-axis width),
+       following the column-drop-cell pill language so it reads as a distinct tag, not body text. */
+    align-self: start;
+    border-radius: 500px;
+    padding: calc(var(--ag-spacing) * 0.25) var(--ag-spacing);
+    font-size: 0.85em;
+    font-weight: 600;
+    background: color-mix(in srgb, var(--ag-border-color) 35%, transparent);
+    color: var(--ag-subtle-text-color);
+}
+
 .ag-overlay-error-inline-code {
     font-family: var(--ag-internal-overlay-mono);
     background: color-mix(in srgb, var(--ag-border-color) 35%, transparent);
