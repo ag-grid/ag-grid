@@ -104,39 +104,115 @@ test.agExample(import.meta, () => {
         expect(orderAfterFilter[2]).toBe('Weight');
     });
 
-    // AG-13924: TC4 — hiding a column must preserve the relative order of the remaining series.
-    test.vanilla('TC4 - column hide preserves order of remaining series', async ({ page, remoteGrid }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
-
-        await openChartDataPanel(page);
-
-        // Reorder to [Fat, Sugar, Weight].
-        await reorderSeriesPill(page, 1, 0);
-        const orderAfterDrag = await getSeriesOrder(page);
-        expect(orderAfterDrag).toEqual(['Fat', 'Sugar', 'Weight']);
-
-        // Hide 'weight' — fires columnVisible on the grid.
-        const remoteApi = remoteGrid(page);
-        await remoteApi.applyColumnState({ state: [{ colId: 'weight', hide: true }] });
-
-        // Weight is gone; Fat and Sugar must stay in their user-defined order.
-        const orderAfterHide = await getSeriesOrder(page);
-        expect(orderAfterHide).toEqual(['Fat', 'Sugar']);
-    });
-
-    // AG-13924: TC5 — restoring a saved chart model after hiding a column must preserve the
-    // relative series order of the surviving (visible) columns.
-    //
-    // restoreChart() creates a brand-new ChartDataModel. During initialisation the reference
-    // cell range is derived from the saved model and includes all columns, even hidden ones.
-    // The fix ensures hidden columns are excluded from the "selected" set so the panel only
-    // shows the visible series in their user-defined relative order.
+    // AG-13924 / AG-17690: TC4 — hiding a column must preserve the relative order of the other
+    // series. By default (includeHiddenColumnsInCharts: true), a hidden column stays charted, so
+    // it must stay in its user-defined position rather than being dropped or moved to the end.
     test.vanilla(
-        'TC5 - restore chart preserves relative series order after column hide',
+        'TC4 - column hide keeps series charted in its user-defined position',
         async ({ page, remoteGrid }) => {
             await ensureGridReady(page);
             await waitForGridContent(page);
+
+            await openChartDataPanel(page);
+
+            // Reorder to [Fat, Sugar, Weight].
+            await reorderSeriesPill(page, 1, 0);
+            const orderAfterDrag = await getSeriesOrder(page);
+            expect(orderAfterDrag).toEqual(['Fat', 'Sugar', 'Weight']);
+
+            // Hide 'weight' — fires columnVisible on the grid.
+            const remoteApi = remoteGrid(page);
+            await remoteApi.applyColumnState({ state: [{ colId: 'weight', hide: true }] });
+
+            // Weight stays charted (default includeHiddenColumnsInCharts: true) and keeps its
+            // user-defined position; Fat and Sugar are unaffected.
+            const orderAfterHide = await getSeriesOrder(page);
+            expect(orderAfterHide).toEqual(['Fat', 'Sugar', 'Weight']);
+        }
+    );
+
+    // AG-17690: TC4b — with includeHiddenColumnsInCharts explicitly disabled, hiding a column must
+    // remove it from the chart, and the remaining series must keep their relative order (the
+    // behaviour TC4 covered before hidden columns were included in charts by default).
+    test.vanilla(
+        'TC4b - column hide removes series when includeHiddenColumnsInCharts is false',
+        async ({ page, remoteGrid }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
+
+            const remoteApi = remoteGrid(page);
+            await remoteApi.setGridOption('includeHiddenColumnsInCharts', false);
+
+            await openChartDataPanel(page);
+
+            // Reorder to [Fat, Sugar, Weight].
+            await reorderSeriesPill(page, 1, 0);
+            const orderAfterDrag = await getSeriesOrder(page);
+            expect(orderAfterDrag).toEqual(['Fat', 'Sugar', 'Weight']);
+
+            // Hide 'weight' — fires columnVisible on the grid.
+            await remoteApi.applyColumnState({ state: [{ colId: 'weight', hide: true }] });
+
+            // Weight is gone; Fat and Sugar must stay in their user-defined order.
+            const orderAfterHide = await getSeriesOrder(page);
+            expect(orderAfterHide).toEqual(['Fat', 'Sugar']);
+        }
+    );
+
+    // AG-13924 / AG-17690: TC5 — restoring a saved chart model after hiding a column must preserve
+    // the relative series order of all saved columns. By default (includeHiddenColumnsInCharts:
+    // true) a hidden column is still charted after restore, so it must remain in the restored
+    // series list rather than being dropped.
+    test.vanilla(
+        'TC5 - restore chart keeps a hidden column charted in its saved order',
+        async ({ page, remoteGrid }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
+
+            await openChartDataPanel(page);
+
+            // Reorder to [Weight, Sugar, Fat] — Weight moved before Sugar and Fat.
+            // Grid column order is [Sugar, Fat, Weight], so the grid order would give
+            // [Fat, Sugar, Weight], but the saved user order should give [Weight, Sugar, Fat].
+            // The two differ, which lets this test catch an ordering regression.
+            await reorderSeriesPill(page, 2, 0);
+            const orderAfterDrag = await getSeriesOrder(page);
+            expect(orderAfterDrag).toEqual(['Weight', 'Sugar', 'Fat']);
+
+            // Save the chart via the example's Save button, then clear it.
+            await page.getByRole('button', { name: 'Save chart' }).click();
+            await page.getByRole('button', { name: 'Clear chart' }).click();
+
+            // Hide 'sugar'. With the default includeHiddenColumnsInCharts: true, it stays charted.
+            const remoteApi = remoteGrid(page);
+            await remoteApi.applyColumnState({ state: [{ colId: 'sugar', hide: true }] });
+
+            // Restore from the saved model (which had weight before sugar before fat).
+            await page.getByRole('button', { name: 'Restore chart' }).click();
+
+            await openChartDataPanel(page);
+
+            // Sugar is hidden but still charted (default) — it must remain in the panel, and all
+            // three columns must retain their saved relative order [Weight, Sugar, Fat], not the
+            // grid column order [Sugar, Fat, Weight] that would result if restore ignored the
+            // saved series ordering.
+            const orderAfterRestore = await getSeriesOrder(page);
+            expect(orderAfterRestore).toEqual(['Weight', 'Sugar', 'Fat']);
+        }
+    );
+
+    // AG-17690: TC5b — with includeHiddenColumnsInCharts explicitly disabled, restoring a saved
+    // chart model must drop columns that are hidden at restore time, while the surviving columns
+    // keep their saved relative order (the behaviour TC5 covered before hidden columns were
+    // included in charts by default).
+    test.vanilla(
+        'TC5b - restore chart drops a hidden column when includeHiddenColumnsInCharts is false',
+        async ({ page, remoteGrid }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
+
+            const remoteApi = remoteGrid(page);
+            await remoteApi.setGridOption('includeHiddenColumnsInCharts', false);
 
             await openChartDataPanel(page);
 
@@ -153,7 +229,6 @@ test.agExample(import.meta, () => {
             await page.getByRole('button', { name: 'Clear chart' }).click();
 
             // Hide 'sugar' so only Weight and Fat remain visible.
-            const remoteApi = remoteGrid(page);
             await remoteApi.applyColumnState({ state: [{ colId: 'sugar', hide: true }] });
 
             // Restore from the saved model (which had weight before fat).
