@@ -155,8 +155,10 @@ describe('SSRM cache config', () => {
         const requestsDuringWindow = requests.length - requestsAfterInitial;
         expect(requestsDuringWindow).toBe(0);
 
-        // After the debounce window elapses the (final) block load fires.
-        await asyncSetTimeout(400);
+        // After the debounce window elapses the (final) block load fires. Wait for
+        // the load to actually complete (modelUpdated) rather than a fixed sleep, so
+        // a congested CI box cannot sample before the debounced fetch has fired.
+        await waitForEvent('modelUpdated', api);
         const requestsAfterWindow = requests.length - requestsAfterInitial;
         expect(requestsAfterWindow).toBeGreaterThan(0);
         // The debounce coalesced the three rapid hops into far fewer than three
