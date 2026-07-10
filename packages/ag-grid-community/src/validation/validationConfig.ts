@@ -1,12 +1,6 @@
 import type { ErrorId } from './errorMessages/errorText';
 import { _configureDiagnostics } from './logging';
-import type { Severity } from './logging';
-
-/**
- * An inclusive severity threshold: the named level plus every more-severe one, or `false` for none.
- * Shared by `throwOn` and `overlay` so both select diagnostics with the same graded model.
- */
-export type SeverityThreshold = Severity | false;
+import type { SeverityThreshold } from './logging';
 
 /**
  * Development-time configuration for the {@link ValidationModule}. Configuration is global, not
@@ -24,8 +18,9 @@ export interface DevValidationOptions {
      * - `'error'` — throws on errors only
      * - `'warning'` — throws on warnings and errors
      * - `'deprecation'` — throws on deprecations, warnings and errors
+     * - `'none'` — never throws
      *
-     * Defaults to `false` (never throws).
+     * Defaults to `'none'`.
      *
      * Caveat: a diagnostic raised while a grid is still initialising throws part-way through its setup,
      * leaving that grid partially built and unusable. Use this with harnesses that recreate the grid on
@@ -38,7 +33,7 @@ export interface DevValidationOptions {
      * - `'error'` — shows errors only
      * - `'warning'` — shows warnings and errors
      * - `'deprecation'` — shows deprecations, warnings and errors
-     * - `false` — shows nothing
+     * - `'none'` — shows nothing
      *
      * Defaults to `'deprecation'` (shows everything).
      */
@@ -52,7 +47,7 @@ export interface DevValidationOptions {
 }
 
 const DEV_VALIDATION_DEFAULTS: Required<DevValidationOptions> = {
-    throwOn: false,
+    throwOn: 'none',
     overlay: 'deprecation',
     suppress: [],
 };
