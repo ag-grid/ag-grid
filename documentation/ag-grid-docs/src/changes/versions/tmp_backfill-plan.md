@@ -11,10 +11,10 @@ This file is the orchestration plan: it describes the flow and the **version age
 
 ## File format
 
-- One file per release in this directory, named by version key: `35.ts`, `34.1.ts` ('34.1' means version 34.1.0). Files are auto-discovered by glob (in the `/update-change-records.json` endpoint) — there is no registry to update.
+- One file per release in this directory, named by version key: `35.ts`, `34.1.ts` ('34.1' means version 34.1.0). Files are auto-discovered by glob (in the `/version-change-records.json` endpoint) — there is no registry to update.
 - Each file has EXACTLY ONE export: `export const v{name} = {...} satisfies VersionChangelog`, where `{name}` is the file name with dots replaced by underscores (`34.1.ts` exports `v34_1`). No default export. Use `satisfies`, not a `: VersionChangelog` annotation — an annotation widens `deprecations` to `Record<string, TransitionFacts>`, breaking `v34.deprecations.myDepId` references from later files. The endpoint validates the export name, count and type at build.
 - Deprecation records are plain (non-exported) consts referenced from the `deprecations` object; a later release removes one by importing the changelog and referencing through it: `removalsAfterDeprecation: [v34.deprecations.myDepId]`.
-- Validation runs at build via the endpoint (compilation throws on invalid records). To check records while authoring, request `/update-change-records.json` from the dev server or run the docs build.
+- Validation runs at build via the endpoint (compilation throws on invalid records). To check records while authoring, request `/version-change-records.json` from the dev server or run the docs build.
 
 ## Flow
 
@@ -26,7 +26,7 @@ One **version agent** per release page. It builds the file template, delegates o
 2. **Build the template.** Correct file name and export per File format. Prefix every line of the source page with `// ` and distribute the comments through the file: each comment block sits directly above where its topic's records will go. Content relating to no topic (frontmatter, What's New, empty sections, changelog tags) forms a preamble at the start of the file. The ENTIRE source page must be present VERBATIM as comments (including blank lines as `//`). Comment blocks may be moved out of source order ONLY where the authoring format's grouping requires it (e.g. all behaviourChanges in one array). Pages with no changes produce an empty changelog (`export const vX_Y = {} satisfies VersionChangelog;`) with the full page as preamble — no change agents needed.
 3. **Delegate one change agent per topic**, in parallel, giving each: its topic's verbatim source excerpt; the release version and release window (dates from `git log -1 --format=%ci <tag>` for this tag and the previous release's tag); and the instruction to follow `tmp_authoring-guide.md` in this directory. Investigations are potentially deep and unbounded — one agent per change, never per version.
 4. **Collate.** Insert each returned record under its topic's comment block, in the section the change agent targeted (a topic may return multiple records for different sections). Add any imports the change agents request (`removalsAfterDeprecation` identity references to earlier version files). Preserve the agents' comments (rationale, `// REVIEW:`, `// FIXME:`) verbatim.
-5. **Verify.** Run the line-completeness check: `node tmp_check-source-comments.mjs <version-file.ts> <source-page.mdoc>` (every source-page line present as a `//` comment, any order/indentation). Build the docs site or fetch `/update-change-records.json` from the dev server so compilation validates the records. Fix mechanical errors (imports, syntax); do not alter record content — content problems go back to the responsible change agent.
+5. **Verify.** Run the line-completeness check: `node tmp_check-source-comments.mjs <version-file.ts> <source-page.mdoc>` (every source-page line present as a `//` comment, any order/indentation). Build the docs site or fetch `/version-change-records.json` from the dev server so compilation validates the records. Fix mechanical errors (imports, syntax); do not alter record content — content problems go back to the responsible change agent.
 
 ## Human review workflow
 

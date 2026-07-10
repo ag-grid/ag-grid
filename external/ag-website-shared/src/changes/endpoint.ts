@@ -4,7 +4,7 @@ import { compileChangelogs } from './compile';
 type VersionModuleLoaders = Record<string, () => Promise<unknown>>;
 
 /**
- * Build the GET handler for a product's /update-change-records.json Astro endpoint from
+ * Build the GET handler for a product's /version-change-records.json Astro endpoint from
  * the product's version files and its current released version:
  *
  *     import { VERSION } from '.../version';
