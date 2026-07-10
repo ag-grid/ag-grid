@@ -15,7 +15,7 @@ test.agExample(import.meta, () => {
             // Both grids start valid, so neither shows a diagnostic overlay.
             await expect(page.locator(overlay)).toHaveCount(0);
 
-            // A theme error on Grid A surfaces on Grid A only.
+            // An error on Grid A surfaces on Grid A only.
             await page.getByRole('button', { name: 'Trigger error', exact: true }).nth(0).click();
             await expect(gridA.locator(overlay)).toBeVisible();
             await expect(page.locator(overlay)).toHaveCount(1);
@@ -25,9 +25,9 @@ test.agExample(import.meta, () => {
             await expect(gridB.locator(overlay)).toBeVisible();
             await expect(page.locator(overlay)).toHaveCount(2);
         },
-        // Grid A applies an invalid theme param (error #107) and Grid B updates an initial-only option
-        // after creation (warning #22).
-        { allowedConsoleMessages: ['error #107', 'warning #22'] }
+        // Grid A calls an API method whose module isn't registered (error #200) and Grid B updates an
+        // initial-only option after creation (warning #22).
+        { allowedConsoleMessages: ['error #200', 'warning #22'] }
     );
 
     test.eachFramework(

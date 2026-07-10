@@ -2,12 +2,7 @@ import React, { StrictMode, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef } from 'ag-grid-community';
-import {
-    ClientSideRowModelApiModule,
-    ClientSideRowModelModule,
-    enableDevValidations,
-    themeQuartz,
-} from 'ag-grid-community';
+import { ClientSideRowModelApiModule, ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
@@ -39,12 +34,11 @@ const GridExample = () => {
     // Updating an initial-only option after creation emits warning #22 on the targeted grid.
     const triggerWarning = (grid: 'a' | 'b') => apiFor(grid).setGridOption('tooltipInteraction', true);
 
-    // A theme param given a value of the wrong type can't be converted to CSS, emitting error #107
-    // while the grid regenerates its styles. `accentColor` is used so the skipped value falls back to
-    // the theme default rather than breaking the layout. The error is reported from theme code that
-    // runs inside the grid's scope, so it self-attributes to that grid instead of showing on every grid.
-    const triggerError = (grid: 'a' | 'b') =>
-        apiFor(grid).setGridOption('theme', themeQuartz.withParams({ accentColor: true as any }));
+    // Calling an API method whose module isn't registered emits error #200 on the targeted grid.
+    // `getServerSideGroupLevelState` needs the (unregistered) enterprise server-side module, so the
+    // check runs in that grid's scope and self-attributes to it instead of showing on every grid, and
+    // the call no-ops rather than affecting the layout.
+    const triggerError = (grid: 'a' | 'b') => apiFor(grid).getServerSideGroupLevelState();
 
     // An async transaction is flushed by the grid on a later frame, so the non-string row-id warning
     // (#25) it produces is emitted from the grid's own async work rather than a synchronous call. It

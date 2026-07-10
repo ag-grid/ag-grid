@@ -5,7 +5,6 @@ import {
     ModuleRegistry,
     createGrid,
     enableDevValidations,
-    themeQuartz,
 } from 'ag-grid-community';
 
 // Opt into dev-only validation diagnostics, surfaced in an overlay over each grid.
@@ -37,12 +36,12 @@ function triggerWarning(grid: string) {
     apiFor(grid).setGridOption('tooltipInteraction', true);
 }
 
-// A theme param given a value of the wrong type can't be converted to CSS, emitting error #107 while
-// the grid regenerates its styles. `accentColor` is used so the skipped value falls back to the theme
-// default rather than breaking the layout. The error is reported from theme code that runs inside the
-// grid's scope, so it self-attributes to that grid instead of showing on every grid.
+// Calling an API method whose module isn't registered emits error #200 on the targeted grid.
+// `getServerSideGroupLevelState` needs the (unregistered) enterprise server-side module, so the check
+// runs in that grid's scope and self-attributes to it instead of showing on every grid, and the call
+// no-ops rather than affecting the layout.
 function triggerError(grid: string) {
-    apiFor(grid).setGridOption('theme', themeQuartz.withParams({ accentColor: true as any }));
+    apiFor(grid).getServerSideGroupLevelState();
 }
 
 // An async transaction is flushed by the grid on a later frame, so the non-string row-id warning
