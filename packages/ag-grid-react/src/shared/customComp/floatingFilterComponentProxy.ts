@@ -1,12 +1,20 @@
 import type { IFloatingFilter, IFloatingFilterParams } from 'ag-grid-community';
-import { AgPromise } from 'ag-grid-community';
+import { AgPromise, ProvidedFilter } from 'ag-grid-community';
 
 import { addOptionalMethods } from './customComponentWrapper';
 import type { CustomFloatingFilterCallbacks, CustomFloatingFilterProps } from './interfaces';
 
 export function updateFloatingFilterParent(params: IFloatingFilterParams, model: any): void {
     params.parentFilterInstance((instance) => {
-        (instance.setModel(model) || AgPromise.resolve()).then(() => {
+        // A provided filter's setModel() is deprecated for user code; route through the public
+        // api to reach the same terminal method without emitting the deprecation warning.
+        const modelSet =
+            instance instanceof ProvidedFilter
+                ? new AgPromise<void>((resolve) => {
+                      params.api.setColumnFilterModel(params.column, model).then(() => resolve());
+                  })
+                : instance.setModel(model) || AgPromise.resolve();
+        modelSet.then(() => {
             params.filterParams.filterChangedCallback();
         });
     });
