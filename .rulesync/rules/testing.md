@@ -18,6 +18,21 @@ Behavioural tests in `testing/behavioural/` are the primary test suite for AG Gr
 - **Avoid mocking** — prefer fakes instead (e.g., fake DOM)
 - Test at the edges of the system to ensure real integration using public APIs
 
+## Choosing a Test Layer
+
+**Default to a behavioural test.** A package-level `*.test.ts` that instantiates a feature class directly is only appropriate for genuinely pure, self-contained logic — a formatter, comparator, parser, or maths helper — that has no grid-integration surface. Anything that only manifests through the running grid (drag interactions, rendering, focus, selection, drag-image icons, event dispatch) belongs in `testing/behavioural/`, driven through the public `GridApi` and real DOM.
+
+**Red flags that mean you are testing internals — stop and write a behavioural test instead:**
+
+- Casting the unit to `as any` to read or set private fields.
+- Hand-building `beans`, `gos`, `ctrlsSvc`, `gridBodyCon`, or other collaborators by hand.
+- Calling a private method directly (e.g. `moveInterval()`) to reach a branch.
+- Spying on an internal method (e.g. `setDragImageCompIcon`) and asserting it was/wasn't called, in place of observing the grid's actual output.
+
+These tests pass even when the real code path never reaches the branch under test, so they prove nothing about the behaviour a user sees.
+
+**Before concluding a behaviour "can't be tested as a black box", grep `testing/behavioural` for an existing harness.** Interactions usually already have one — e.g. `DragEventDispatcher` and `testing/behavioural/src/columns/order/column-move-drag.test.ts` drive a real header drag through `DragService → dragAndDropService → MoveColumnFeature`, and drag-image icons are observable in the drag-ghost DOM. If the harness does not yet cover your scenario, **extend the harness** (see the note under GridRows snapshots: our test framework and `mockGridLayout.ts` are written as we go and must be updated when a new scenario needs them) rather than dropping down to a white-box unit test.
+
 ## Test Structure
 
 ### Directory Layout
