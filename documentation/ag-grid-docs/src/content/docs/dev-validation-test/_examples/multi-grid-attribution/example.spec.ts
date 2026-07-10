@@ -1,6 +1,7 @@
 import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
 
 const overlay = '.ag-overlay-error-wrapper';
+const unattributed = '.ag-overlay-error-unattributed';
 
 test.agExample(import.meta, () => {
     test.eachFramework(
@@ -15,19 +16,19 @@ test.agExample(import.meta, () => {
             // Both grids start valid, so neither shows a diagnostic overlay.
             await expect(page.locator(overlay)).toHaveCount(0);
 
-            // A theme error on Grid A surfaces on Grid A only.
+            // An error on Grid A surfaces on Grid A only, attributed to it (so not flagged as unattributed).
             await page.getByRole('button', { name: 'Trigger error', exact: true }).nth(0).click();
             await expect(gridA.locator(overlay)).toBeVisible();
             await expect(page.locator(overlay)).toHaveCount(1);
+            await expect(gridA.locator(unattributed)).toHaveCount(0);
 
             // A warning on Grid B surfaces on Grid B, independent of Grid A.
             await page.getByRole('button', { name: 'Trigger warning', exact: true }).nth(1).click();
             await expect(gridB.locator(overlay)).toBeVisible();
             await expect(page.locator(overlay)).toHaveCount(2);
         },
-        // Grid A applies an invalid theme param (error #107) and Grid B updates an initial-only option
-        // after creation (warning #22).
-        { allowedConsoleMessages: ['error #107', 'warning #22'] }
+        // Grid A's error #200 (unregistered module) and Grid B's warning #22 (initial-only option changed).
+        { allowedConsoleMessages: ['error #200', 'warning #22'] }
     );
 
     test.eachFramework(
@@ -55,10 +56,11 @@ test.agExample(import.meta, () => {
 
             // Destroying Grid A and then calling its API produces a diagnostic no grid can own. Grid A
             // no longer has an overlay listener, so it surfaces on the remaining live grid (Grid B)
-            // rather than being lost.
+            // rather than being lost. Because Grid B did not emit it, the overlay flags it as unattributed.
             await page.getByRole('button', { name: 'Destroy grid, then call API', exact: true }).click();
             await expect(page.locator(overlay)).toBeVisible();
             await expect(page.locator(overlay)).toHaveCount(1);
+            await expect(page.locator(unattributed)).toBeVisible();
         },
         // Calling the API of a destroyed grid surfaces warning #26.
         { allowedConsoleMessages: ['warning #26'] }

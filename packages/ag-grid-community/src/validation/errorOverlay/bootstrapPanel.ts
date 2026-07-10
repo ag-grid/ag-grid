@@ -200,6 +200,7 @@ export function renderBootstrapPanel(container: HTMLElement, diagnostics: Captur
 
     const eBody = _createElement({ tag: 'div' });
     eBody.style.cssText = BODY_STYLE;
+    // No `showsUnattributedOrigin`: there is no grid here to contrast against, so the flag would be noise.
     eBody.append(...renderDiagnosticSections(visible));
     ePanel.appendChild(eBody);
 
