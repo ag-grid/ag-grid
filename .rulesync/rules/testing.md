@@ -31,6 +31,8 @@ Behavioural tests in `testing/behavioural/` are the primary test suite for AG Gr
 
 These tests pass even when the real code path never reaches the branch under test, so they prove nothing about the behaviour a user sees.
 
+**Behavioural tests are a separate nx project (`ag-behavioural-testing`) — remember to run them.** `yarn nx test <package>` (e.g. `yarn nx test ag-grid-community`) only runs that package's own `src/**/*.test.ts`; it does **not** execute anything under `testing/behavioural/`. Run behavioural tests with `./behave.sh` (or the affected gate, `yarn nx affected -t test`, which includes the behavioural project). A green `yarn nx test ag-grid-community` says nothing about your behavioural tests.
+
 **Before concluding a behaviour "can't be tested as a black box", grep `testing/behavioural` for an existing harness.** Interactions usually already have one — e.g. `DragEventDispatcher` and `testing/behavioural/src/columns/order/column-move-drag.test.ts` drive a real header drag through `DragService → dragAndDropService → MoveColumnFeature`, and drag-image icons are observable in the drag-ghost DOM. If the harness does not yet cover your scenario, **extend the harness** (see the note under GridRows snapshots: our test framework and `mockGridLayout.ts` are written as we go and must be updated when a new scenario needs them) rather than dropping down to a white-box unit test.
 
 ## Test Structure
