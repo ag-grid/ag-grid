@@ -155,8 +155,13 @@ describe('SSRM cache config', () => {
         const requestsDuringWindow = requests.length - requestsAfterInitial;
         expect(requestsDuringWindow).toBe(0);
 
-        // After the debounce window elapses the (final) block load fires.
-        await asyncSetTimeout(400);
+        // After the debounce window elapses the (final) block load fires. Poll the
+        // recorded request stream directly rather than a fixed sleep or a modelUpdated
+        // event — the event can race with viewport rendering on a congested CI box,
+        // whereas a new request is exactly the observable this test asserts on.
+        while (requests.length === requestsAfterInitial) {
+            await asyncSetTimeout(5);
+        }
         const requestsAfterWindow = requests.length - requestsAfterInitial;
         expect(requestsAfterWindow).toBeGreaterThan(0);
         // The debounce coalesced the three rapid hops into far fewer than three
