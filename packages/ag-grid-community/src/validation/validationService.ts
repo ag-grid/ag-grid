@@ -13,7 +13,7 @@ import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import type { IconName } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
-import { _deprecated, _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';
+import { _errMsg, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
@@ -41,7 +41,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public warnOnInitialPropertyUpdate(source: AgPropertyChangedSource, key: string): void {
         if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
-            _warn(22, { key });
+            this.warn(22, { key });
         }
     }
 
@@ -62,30 +62,39 @@ export class ValidationService extends BeanStub implements NamedBean {
         agGridDefaults: { [key in UserComponentName]?: any },
         jsComps: { [key: string]: any }
     ): void {
+        this.checkUserComponent(propertyName, componentName, agGridDefaults, jsComps);
+    }
+
+    private checkUserComponent(
+        propertyName: string,
+        componentName: string,
+        agGridDefaults: { [key in UserComponentName]?: any },
+        jsComps: { [key: string]: any }
+    ): void {
         const moduleForComponent = USER_COMP_MODULES[componentName as UserComponentName];
         if (moduleForComponent) {
             this.gos.assertModuleRegistered(
                 moduleForComponent,
                 `AG Grid \`${propertyName}\` component: \`${componentName}\``
             );
-        } else {
-            // Resolve the valid component names here (where the maps live) and fuzzy-match them now, so
-            // only the handful of suggestions travels in the error-page URL rather than the full registry.
-            const validComponents = [
-                // Don't include the old names / internals in potential suggestions
-                ...Object.keys(agGridDefaults ?? {}).filter(
-                    (k) => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)
-                ),
-                ...Object.keys(jsComps ?? {}).filter((k) => !!jsComps[k]),
-            ];
-            const suggestions = _fuzzySuggestions({
-                inputValue: componentName,
-                allSuggestions: validComponents,
-                hideIrrelevant: true,
-                maxSuggestions: 4,
-            }).values;
-            _warn(101, { propertyName, componentName, suggestions });
+            return;
         }
+        // Resolve the valid component names here (where the maps live) and fuzzy-match them now, so
+        // only the handful of suggestions travels in the error-page URL rather than the full registry.
+        const validComponents = [
+            // Don't include the old names / internals in potential suggestions
+            ...Object.keys(agGridDefaults ?? {}).filter(
+                (k) => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)
+            ),
+            ...Object.keys(jsComps ?? {}).filter((k) => !!jsComps[k]),
+        ];
+        const suggestions = _fuzzySuggestions({
+            inputValue: componentName,
+            allSuggestions: validComponents,
+            hideIrrelevant: true,
+            maxSuggestions: 4,
+        }).values;
+        this.warn(101, { propertyName, componentName, suggestions });
     }
 
     public missingDynamicBean(beanName: DynamicBeanName): string | undefined {
@@ -101,13 +110,17 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public checkRowEvents(eventType: RowNodeEventType): void {
         if (DEPRECATED_ROW_NODE_EVENTS.has(eventType)) {
-            _warn(10, { eventType });
+            this.warn(10, { eventType });
         }
     }
 
     public validateIcon(iconName: IconName): void {
+        this.checkIcon(iconName);
+    }
+
+    private checkIcon(iconName: IconName): void {
         if (DEPRECATED_ICONS_V33.has(iconName)) {
-            _warn(43, { iconName });
+            this.warn(43, { iconName });
         }
         if (ICON_VALUES[iconName as IconValue]) {
             // directly referencing icon
@@ -115,7 +128,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
         const moduleName = ICON_MODULES[iconName];
         if (moduleName) {
-            _error(200, {
+            this.error(200, {
                 reasonOrId: `icon \`${iconName}\``,
                 moduleName,
                 gridScoped: _areModulesGridScoped(),
@@ -125,7 +138,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             });
             return;
         }
-        _warn(134, { iconName });
+        this.warn(134, { iconName });
     }
 
     public isProvidedUserComp(compName: string): boolean {
@@ -139,6 +152,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     private processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {
         const { validations, deprecations, allProperties, allValidNames, objectName, docsUrl } = validator;
+        const log = this.beans.log;
 
         const optionKeys = Object.keys(options) as (keyof T & string)[];
         let isValidMap = this.propertyNameCache.get(objectName);
@@ -159,7 +173,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             const deprecation = deprecations[name as keyof T];
             if (deprecation) {
                 const { message, version } = deprecation;
-                _deprecated(306, { version, name, message });
+                log.deprecated(306, { version, name, message });
             }
 
             const rules = validations[name as keyof T];
@@ -171,7 +185,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                     // so the check runs again if a real value is provided later
                     continue;
                 }
-                _warn(309, { name, rowModel, supportedRowModels: rules.supportedRowModels });
+                log.warn(309, { name, rowModel, supportedRowModels: rules.supportedRowModels });
                 isValidMap.set(name, false);
                 continue;
             }
@@ -182,7 +196,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                         inputValue: name,
                         allSuggestions: allProperties,
                     }).values.slice(0, 8);
-                    _warn(307, { objectName, name, suggestions, hasContext: allValidNames.has('context') });
+                    log.warn(307, { objectName, name, suggestions, hasContext: allValidNames.has('context') });
                 }
                 hasInvalidName = true;
                 isValidMap.set(name, false);
@@ -194,7 +208,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
         if (hasInvalidName && docsUrl && checkPropertyNames) {
             const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
-            _warn(310, { objectName, url });
+            log.warn(310, { objectName, url });
         }
 
         // Run value-level validation only for properties marked valid
@@ -251,11 +265,11 @@ export class ValidationService extends BeanStub implements NamedBean {
         });
         if (warnings.size > 0) {
             for (const warning of warnings) {
-                _emitValidationWarning(warning);
+                _emitValidationWarning(warning, log);
             }
         }
         for (let i = 0, len = idWarnings.length; i < len; ++i) {
-            idWarnings[i].emit();
+            idWarnings[i].emit(log);
         }
     }
 

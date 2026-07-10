@@ -1,9 +1,9 @@
 import type { BeanCollection } from 'ag-grid-community';
-import { _isClientSideRowModel, _warn } from 'ag-grid-community';
+import { _isClientSideRowModel } from 'ag-grid-community';
 
-export function startBatchEdit({ editSvc, gos, rowModel }: BeanCollection): void {
+export function startBatchEdit({ editSvc, gos, rowModel, log }: BeanCollection): void {
     if (!_isClientSideRowModel(gos, rowModel)) {
-        _warn(289, { rowModelType: gos.get('rowModelType') });
+        log.warn(289, { rowModelType: gos.get('rowModelType') });
         return;
     }
 

@@ -11,7 +11,7 @@ import type {
     IMultiFilterModel,
     IMultiFilterParams,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import {
     forEachReverse,
@@ -48,7 +48,7 @@ export class MultiFilterHandler
             const wrapper = this.beans.colFilter!.createHandler(params.column as AgColumn, def, 'agTextColumnFilter');
             this.handlerWrappers.push(wrapper);
             if (!wrapper) {
-                _warn(278, { colId: params.column.getColId() });
+                this.warn(278, { colId: params.column.getColId() });
                 return;
             }
             const { handler, handlerParams } = wrapper;
@@ -114,7 +114,7 @@ export class MultiFilterHandler
     private updateFilterParams(params: FilterHandlerBaseParams, isInit: boolean, providedFilterParams?: any): any {
         const originalFilterParams = params.filterParams;
         if (providedFilterParams?.buttons && isInit) {
-            _warn(292, { colId: params.column.getColId() });
+            this.warn(292, { colId: params.column.getColId() });
         }
         const filterParamsForFilter = providedFilterParams
             ? { ...originalFilterParams, ...providedFilterParams }

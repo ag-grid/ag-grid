@@ -17,7 +17,6 @@ import {
     _GET_SHALLOW_GRID_OPTIONS,
     _combineAttributesAndGridOptions,
     _processOnChange,
-    _warn,
     createGrid,
 } from 'ag-grid-community';
 
@@ -96,12 +95,6 @@ const updateModelIfUsed = (eventType: string) => {
     }
 };
 // v-model code end
-
-const checkForBindingConflicts = () => {
-    if ((props.rowData || props.gridOptions.rowData) && rowDataModel.value) {
-        _warn(232);
-    }
-};
 
 const getRowDataBasedOnBindings = () => {
     return rowDataModel.value || props.rowData || props.gridOptions.rowData;

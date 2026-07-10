@@ -17,7 +17,6 @@ import type { ColumnEventType, ColumnsResetEvent } from '../events';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
-import { _warn } from '../validation/logging';
 import {
     _dispatchColumnChangedEvent,
     dispatchColumnPinnedEvent,
@@ -177,7 +176,7 @@ export function _applyColumnState(
     const { colModel, colAnimation, calculatedColsSvc } = beans;
     const state = params.state;
     if (state && !Array.isArray(state)) {
-        _warn(32); // state is not an array
+        beans.log.warn(32); // state is not an array
         return false;
     }
 
@@ -563,7 +562,7 @@ function orderLiveColsLikeState(beans: BeanCollection, params: ApplyColumnStateP
         return;
     }
     if (colModel.hasMarryChildren && !doesMovePassMarryChildren(finalOrder, colModel.colsTree)) {
-        _warn(39);
+        beans.log.warn(39);
         return;
     }
     colModel.colsList = finalOrder;

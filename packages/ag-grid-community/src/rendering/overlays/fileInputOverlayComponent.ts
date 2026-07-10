@@ -6,7 +6,6 @@ import type { ProcessFileInputParams } from '../../interfaces/iFileProcessor';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import { _createIconNoSpan } from '../../utils/icon';
-import { _warn } from '../../validation/logging';
 import type {
     IFileInputOverlayParams,
     IOverlay,
@@ -58,7 +57,7 @@ export class FileInputOverlayComponent
         this.showState('ready');
         this.setupDragListeners();
         if (!this.gos.get('processFileInput')) {
-            _warn(305);
+            this.beans.log.warn(305);
             this.showError('gridOptions.processFileInput is missing');
         }
     }

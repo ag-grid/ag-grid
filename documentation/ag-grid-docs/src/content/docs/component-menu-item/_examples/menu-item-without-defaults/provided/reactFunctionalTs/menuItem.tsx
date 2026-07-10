@@ -64,6 +64,7 @@ export default ({ column, api, active, onActiveChange }: ButtonCustomMenuItemPro
             </div>
             <div
                 ref={filterWrapperRef}
+                className="filter-wrapper"
                 style={{ display: expanded ? 'block' : 'none' }}
                 onKeyDownCapture={onFilterWrapperKeyDown}
             ></div>

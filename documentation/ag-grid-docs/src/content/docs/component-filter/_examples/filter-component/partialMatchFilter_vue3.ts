@@ -3,7 +3,7 @@ export default {
       <div class="partial-match-filter">
         <div>Partial Match Filter</div>
         <div>
-            <input type="text" ref="eFilterText" v-model="filterText" v-on:keyup="updateFilter($event)" />
+            <input type="text" ref="eFilterText" v-model="filterText" v-on:input="updateFilter($event)" />
         </div>
       </div>
     `,
@@ -13,8 +13,9 @@ export default {
         };
     },
     methods: {
-        updateFilter() {
-            this.params.onModelChange(this.filterText == null || this.filterText === '' ? null : this.filterText);
+        updateFilter(event) {
+            const value = event?.target?.value;
+            this.params.onModelChange(value == null || value === '' ? null : value);
         },
 
         refresh(newParams): boolean {

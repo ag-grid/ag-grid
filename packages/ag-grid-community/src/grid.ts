@@ -31,7 +31,7 @@ import {
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
-import { _error, _logPreInitErr, _renderBootstrapPanel, _runWithActiveGrid } from './validation/logging';
+import { _errorWithoutAttribution, _logPreInitErr, _renderBootstrapPanel } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -78,7 +78,7 @@ export function createGrid<TData>(
 ): GridApi<TData> {
     if (!gridOptions) {
         // No gridOptions provided, abort creating the grid
-        _error(11);
+        _errorWithoutAttribution(11);
         return {} as GridApi;
     }
     const [outer, inner] = _createStyledRootElements();
@@ -159,25 +159,22 @@ export class GridCoreCreator {
             destroyCallback,
         };
 
-        const ctx = _runWithActiveGrid(gridId, () => {
-            const context = new AgContext<
-                BeanCollection,
-                GridOptionsWithDefaults,
-                AgEventTypeParams,
-                AgGridCommon<any, any>,
-                GridOptionsService
-            >(contextParams);
-            this.registerModuleFeatures(context, registeredModules);
+        const context = new AgContext<
+            BeanCollection,
+            GridOptionsWithDefaults,
+            AgEventTypeParams,
+            AgGridCommon<any, any>,
+            GridOptionsService
+        >(contextParams);
+        this.registerModuleFeatures(context, registeredModules);
 
-            createUi(context);
+        createUi(context);
 
-            context.getBean('syncSvc').start();
+        context.getBean('syncSvc').start();
 
-            acceptChanges?.(context);
-            return context;
-        });
+        acceptChanges?.(context);
 
-        const api = ctx.getBean('gridApi');
+        const api = context.getBean('gridApi');
 
         _gridApiCache.set(eOutermostGridOwned, api);
         _gridElementCache.set(api, eOutermostGridOwned);

@@ -18,7 +18,6 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import { _clamp } from '../utils/number';
-import { _warn } from '../validation/logging';
 
 const VIEWPORT = 'Viewport';
 const FAKE_V_SCROLLBAR = 'fakeVScrollComp';
@@ -574,7 +573,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const rowCount = rowModel.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
-            _warn(88, { index });
+            this.warn(88, { index });
             return;
         }
 

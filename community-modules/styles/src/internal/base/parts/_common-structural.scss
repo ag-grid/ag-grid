@@ -1172,11 +1172,28 @@
     .ag-overlay-error-body {
         display: flex;
         flex-direction: column;
-        gap: calc(var(--ag-grid-size) * 1.5);
+        gap: calc(var(--ag-grid-size) * 2);
         padding: calc(var(--ag-grid-size) * 1.5);
         flex: 1 1 auto;
         min-height: 0;
         overflow: auto;
+    }
+
+    .ag-overlay-error-section {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--ag-grid-size) * 2);
+    }
+
+    .ag-overlay-error-section-header {
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .ag-overlay-error-divider {
+        margin: 0;
+        border: none;
+        border-top: solid 1px var(--ag-border-color);
     }
 
     .ag-overlay-error-item {
@@ -1192,12 +1209,11 @@
     }
 
     .ag-overlay-error-item-warning {
-        border-inline-start-color: color-mix(in srgb, var(--ag-invalid-color) 45%, #d98300);
+        border-inline-start-color: #d98300;
     }
 
-    .ag-overlay-error-divider {
-        margin: var(--ag-grid-size) 0;
-        border-top: solid 1px var(--ag-border-color);
+    .ag-overlay-error-item-deprecation {
+        border-inline-start-color: var(--ag-subtle-text-color);
     }
 
     .ag-overlay-error-message,
@@ -1207,6 +1223,16 @@
         white-space: pre-wrap;
         overflow-wrap: anywhere;
         user-select: text;
+    }
+
+    .ag-overlay-error-unattributed {
+        align-self: start;
+        border-radius: 500px;
+        padding: calc(var(--ag-grid-size) * 0.25) var(--ag-grid-size);
+        font-size: 0.85em;
+        font-weight: 600;
+        background: color-mix(in srgb, var(--ag-border-color) 35%, transparent);
+        color: var(--ag-subtle-text-color);
     }
 
     .ag-overlay-error-inline-code {

@@ -11,7 +11,6 @@ import type { ElementParams } from '../../../utils/element';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../../utils/gridEvent';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
-import { _warn } from '../../../validation/logging';
 import { Component } from '../../../widgets/component';
 import { GroupStickyLabelFeature } from './groupStickyLabelFeature';
 
@@ -113,7 +112,7 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
         const paramsAny = this.params as any;
 
         if (paramsAny.template) {
-            _warn(89);
+            this.beans.log.warn(89);
         }
     }
 

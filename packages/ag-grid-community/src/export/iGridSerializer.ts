@@ -12,6 +12,7 @@ import type {
 import type { IRowGroupColsService } from '../interfaces/iColsService';
 import type { ColumnGroup } from '../interfaces/iColumn';
 import type { CellValueResolveFrom } from '../interfaces/iEditService';
+import type { LogService } from '../validation/logService';
 import type { ValueService } from '../valueService/valueService';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -37,6 +38,8 @@ export interface GridSerializingParams {
     colNames: ColumnNameService;
     valueSvc: ValueService;
     gos: GridOptionsService;
+    /** Grid-scoped log service, so serializing diagnostics are attributed to the emitting grid. */
+    log: LogService;
     valueFrom?: CellValueResolveFrom;
     /** Apply the Show Values As transform on top of the `valueFrom` base. */
     transformValues?: boolean;

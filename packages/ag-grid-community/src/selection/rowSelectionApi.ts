@@ -4,7 +4,6 @@ import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _isManualPinnedRow } from '../pinnedRowModel/pinnedRowUtils';
-import { _warn } from '../validation/logging';
 
 export function setNodesSelected(
     beans: BeanCollection,
@@ -17,12 +16,12 @@ export function setNodesSelected(
 
     const allNodesValid = nodes.every((node) => {
         if (node.rowPinned && !_isManualPinnedRow(node as RowNode)) {
-            _warn(59);
+            beans.log.warn(59);
             return false;
         }
 
         if (node.id === undefined) {
-            _warn(60);
+            beans.log.warn(60);
             return false;
         }
         return true;

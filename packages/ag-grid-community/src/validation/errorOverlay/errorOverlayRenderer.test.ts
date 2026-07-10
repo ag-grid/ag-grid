@@ -5,6 +5,7 @@ import {
     parseDiagnosticText,
     renderDiagnostic,
     renderDiagnosticElement,
+    renderDiagnosticSections,
 } from './errorOverlayRenderer';
 
 describe('parseDiagnosticText', () => {
@@ -102,6 +103,43 @@ describe('renderDiagnosticElement', () => {
         expect(message.querySelector('a')!.getAttribute('href')).toBe('https://ag-grid.com/x');
         expect(message.textContent).toBe('See https://ag-grid.com/x.');
     });
+
+    test('renders the unattributed note only when flagged', () => {
+        const plain = renderDiagnosticElement('error', { message: 'm' }, 'https://x/e/1', '#1');
+        expect(plain.querySelector('.ag-overlay-error-unattributed')).toBeNull();
+
+        const marked = renderDiagnosticElement('error', { message: 'm' }, 'https://x/e/1', '#1', true);
+        const note = marked.querySelector('.ag-overlay-error-unattributed');
+        expect(note).not.toBeNull();
+        expect(note!.textContent).toBe('This error may not have originated from this grid');
+    });
+});
+
+describe('unattributed marking', () => {
+    const owned: CapturedDiagnostic = { id: 22, params: { key: 'rowData' }, severity: 'warning', gridId: '1' };
+    const untied: CapturedDiagnostic = { id: 22, params: { key: 'rowData' }, severity: 'warning' };
+
+    test('renderDiagnostic marks a diagnostic with no gridId when asked', () => {
+        const el = renderDiagnostic(untied, { showsUnattributedOrigin: true });
+        expect(el.querySelector('.ag-overlay-error-unattributed')).not.toBeNull();
+    });
+
+    test('renderDiagnostic leaves an attributed diagnostic unmarked even when asked', () => {
+        const el = renderDiagnostic(owned, { showsUnattributedOrigin: true });
+        expect(el.querySelector('.ag-overlay-error-unattributed')).toBeNull();
+    });
+
+    test('renderDiagnostic never marks when marking is off', () => {
+        expect(renderDiagnostic(untied).querySelector('.ag-overlay-error-unattributed')).toBeNull();
+    });
+
+    test('renderDiagnosticSections marks only the untied items', () => {
+        const nodes = renderDiagnosticSections([owned, untied], { showsUnattributedOrigin: true });
+        const items = nodes.flatMap((node) => Array.from(node.querySelectorAll('.ag-overlay-error-item')));
+        const marked = items.filter((item) => item.querySelector('.ag-overlay-error-unattributed'));
+        expect(items).toHaveLength(2);
+        expect(marked).toHaveLength(1);
+    });
 });
 
 describe('diagnosticContentToMarkdown', () => {
@@ -173,5 +211,53 @@ describe('against real error definitions', () => {
         const el = renderDiagnostic({ id: 5, params: { data: { make: 'Tesla' } }, severity: 'warning' });
         const codes = Array.from(el.querySelectorAll('code.ag-overlay-error-inline-code')).map((c) => c.textContent);
         expect(codes).toContain('{"make":"Tesla"}');
+    });
+});
+
+describe('renderDiagnosticSections', () => {
+    const error: CapturedDiagnostic = {
+        id: 200,
+        params: { moduleName: 'ClientSideRowModel', rowModelType: 'clientSide' },
+        severity: 'error',
+    };
+    const warning: CapturedDiagnostic = { id: 22, params: { key: 'rowData' }, severity: 'warning' };
+    const deprecation: CapturedDiagnostic = { id: 23, params: { key: 'rowData' }, severity: 'deprecation' };
+
+    const sectionsOf = (nodes: HTMLElement[]): HTMLElement[] =>
+        nodes.filter((node) => node.classList.contains('ag-overlay-error-section'));
+
+    test('groups diagnostics into severity-ordered sections with pluralised counts', () => {
+        const nodes = renderDiagnosticSections([warning, deprecation, error, warning]);
+        const headers = sectionsOf(nodes).map((s) => s.querySelector('.ag-overlay-error-section-header')!.textContent);
+        expect(headers).toEqual(['Errors (1)', 'Warnings (2)', 'Deprecations (1)']);
+    });
+
+    test('omits sections for severities with no diagnostics', () => {
+        const nodes = renderDiagnosticSections([warning]);
+        const headers = sectionsOf(nodes).map((s) => s.querySelector('.ag-overlay-error-section-header')!.textContent);
+        expect(headers).toEqual(['Warnings (1)']);
+    });
+
+    test('inserts an <hr> divider between sections but not within a section', () => {
+        const nodes = renderDiagnosticSections([error, warning, warning]);
+        const dividers = nodes.filter((node) => node.tagName === 'HR');
+        expect(dividers).toHaveLength(1);
+        expect(dividers[0].classList.contains('ag-overlay-error-divider')).toBe(true);
+
+        const warningSection = nodes.find((node) => node.classList.contains('ag-overlay-error-section-warning'))!;
+        expect(warningSection.querySelectorAll('hr')).toHaveLength(0);
+        expect(warningSection.querySelectorAll('.ag-overlay-error-item')).toHaveLength(2);
+    });
+
+    test('renders no divider for a single section', () => {
+        const nodes = renderDiagnosticSections([deprecation, deprecation]);
+        expect(nodes.filter((node) => node.tagName === 'HR')).toHaveLength(0);
+    });
+
+    test('applies the per-severity accent class to each section', () => {
+        const sections = sectionsOf(renderDiagnosticSections([error, warning, deprecation]));
+        expect(sections[0].querySelector('.ag-overlay-error-item-error')).not.toBeNull();
+        expect(sections[1].querySelector('.ag-overlay-error-item-warning')).not.toBeNull();
+        expect(sections[2].querySelector('.ag-overlay-error-item-deprecation')).not.toBeNull();
     });
 });

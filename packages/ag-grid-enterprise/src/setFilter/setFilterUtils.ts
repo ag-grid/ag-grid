@@ -1,8 +1,7 @@
 import type { LocaleTextFunc } from 'ag-stack';
 import { _defaultComparator, _last, _makeNull, _toStringOrNull, _translate } from 'ag-stack';
 
-import type { ISetFilterParams } from 'ag-grid-community';
-import { _warn } from 'ag-grid-community';
+import type { BeanCollection, ISetFilterParams } from 'ag-grid-community';
 
 import type { SetFilterLocaleTextKey } from './localeText';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
@@ -37,7 +36,7 @@ export function translateForSetFilter(
     return _translate(bean, DEFAULT_LOCALE_TEXT, key, variableValues);
 }
 
-export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>): void {
+export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>, beans: BeanCollection): void {
     // apply default options to match Excel behaviour, unless they have already been specified
     if (params.excelMode === 'windows') {
         if (!params.buttons) {
@@ -62,7 +61,7 @@ export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>): void
     }
     if (params.excelMode && params.defaultToNothingSelected) {
         params.defaultToNothingSelected = false;
-        _warn(207);
+        beans.log.warn(207);
     }
 }
 

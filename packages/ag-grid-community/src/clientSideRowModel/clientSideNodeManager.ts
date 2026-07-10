@@ -6,7 +6,7 @@ import type { RefreshModelParams } from '../interfaces/iClientSideRowModel';
 import { ROOT_NODE_ID } from '../interfaces/iRowNode';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _error, _warn } from '../validation/logging';
+import type { LogService } from '../validation/logService';
 import type { ChangedRowNodes } from './changedRowNodes';
 
 export class ClientSideNodeManager<TData = any> extends BeanStub {
@@ -86,7 +86,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     public setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
         const { rootNode, gos } = this;
         this.dispatchRowDataUpdateStarted(rowData);
-        const getRowIdFunc = _getRowIdCallback(gos)!;
+        const getRowIdFunc = _getRowIdCallback(this.beans)!;
         const changedRowNodes = params.changedRowNodes!;
         const { adds, updates } = changedRowNodes;
         const processedNodes = new Set<RowNode<TData>>();
@@ -183,10 +183,10 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     ): RowNodeTransaction<TData> {
         this.dispatchRowDataUpdateStarted(rowDataTran.add);
         if (this.beans.groupStage?.getNestedDataGetter()) {
-            _warn(268); // transactions not supported with treeDataChildrenField
+            this.warn(268); // transactions not supported with treeDataChildrenField
             return { remove: [], update: [], add: [] };
         }
-        const getRowIdFunc = _getRowIdCallback(this.gos);
+        const getRowIdFunc = _getRowIdCallback(this.beans);
         const remove = this.executeRemove(getRowIdFunc, rowDataTran, changedRowNodes, animate);
         const update = this.executeUpdate(getRowIdFunc, rowDataTran, changedRowNodes);
         const add = this.executeAdd(rowDataTran, changedRowNodes);
@@ -314,7 +314,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const id = node.id!;
         const allNodesMap = this.allNodesMap;
         if (allNodesMap[id]) {
-            _warn(2, { nodeId: id });
+            this.warn(2, { nodeId: id });
         }
         allNodesMap[id] = node;
         return node;
@@ -335,12 +335,12 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
     private lookupNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode<TData> | null {
         if (!getRowIdFunc) {
-            return lookupNodeByData(this.rootNode._leafs, data);
+            return lookupNodeByData(this.beans.log, this.rootNode._leafs, data);
         }
         const id = getRowIdFunc({ data, level: 0 });
         const rowNode = this.allNodesMap[id];
         if (!rowNode) {
-            _error(4, { id });
+            this.error(4, { id });
             return null;
         }
         return rowNode;
@@ -410,7 +410,11 @@ const initRootNode = <TData = any>(rootNode: RowNode<TData>): RowNode<TData> => 
  * Finds a row node in the given array whose data matches the provided data object.
  * Returns the node if found, otherwise undefined.
  */
-const lookupNodeByData = <TData>(nodes: RowNode<TData>[] | null | undefined, data: TData): RowNode<TData> | null => {
+const lookupNodeByData = <TData>(
+    log: LogService,
+    nodes: RowNode<TData>[] | null | undefined,
+    data: TData
+): RowNode<TData> | null => {
     if (nodes) {
         for (let i = 0, len = nodes.length; i < len; i++) {
             const node = nodes[i];
@@ -419,7 +423,7 @@ const lookupNodeByData = <TData>(nodes: RowNode<TData>[] | null | undefined, dat
             }
         }
     }
-    _error(5, { data });
+    log.error(5, { data });
     return null;
 };
 

@@ -375,7 +375,16 @@ export { _isProtoPollutionKey, _mergeDeep, _mergedEqual } from './utils/mergeDee
 export { _clamp, _formatNumberCommas, _isFiniteNumber, _toFiniteNumber } from './utils/number';
 export { _selectAllCells } from './utils/selection';
 export { _getValueUsingDotPath } from './utils/value';
-export { _deprecated, _errMsg, _error, _logPreInitWarn, _preInitErrMsg, _warn } from './validation/logging';
+export type { LogService } from './validation/logService';
+export {
+    _errMsg,
+    _errorForGrid,
+    _errorWithoutAttribution,
+    _logPreInitWarn,
+    _preInitErrMsg,
+    _warnForGrid,
+    _warnWithoutAttribution,
+} from './validation/logging';
 export { _emitValidationWarning, _createValidationWarning } from './validation/validationTypes';
 export type { ValidationWarning } from './validation/validationTypes';
 export type { ExpressionService } from './valueService/expressionService';
@@ -407,7 +416,8 @@ export type {
     AgLabelParams,
     LabelAlignment,
 } from './agWidgets/agFieldParams';
-export { AgInputDateField } from './agWidgets/agInputDateField';
+export { AgInputDateField, AgInputDateFieldSelector } from './agWidgets/agInputDateField';
+export type { AgInputDateFieldParams } from './agWidgets/agInputDateField';
 export { AgInputNumberField, AgInputNumberFieldSelector } from './agWidgets/agInputNumberField';
 export type { AgInputNumberFieldParams } from './agWidgets/agInputNumberField';
 export { AgInputTextArea, AgInputTextAreaSelector } from './agWidgets/agInputTextArea';

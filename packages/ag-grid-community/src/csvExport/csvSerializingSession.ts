@@ -4,7 +4,6 @@ import type { RowNode } from '../entities/rowNode';
 import { BaseGridSerializingSession } from '../export/baseGridSerializingSession';
 import type { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from '../export/iGridSerializer';
 import type { CsvCustomContent } from '../interfaces/exportParams';
-import { _warn } from '../validation/logging';
 
 const LINE_SEPARATOR = '\r\n';
 
@@ -132,7 +131,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         } else if (typeof value.toString === 'function') {
             stringValue = value.toString();
         } else {
-            _warn(53);
+            this.log.warn(53);
             stringValue = '';
         }
 

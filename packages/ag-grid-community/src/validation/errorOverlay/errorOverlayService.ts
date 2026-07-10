@@ -2,9 +2,8 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { OverlayService } from '../../rendering/overlays/overlayService';
-import type { CapturedDiagnostic } from '../logging';
+import type { CapturedDiagnostic, SeverityThreshold } from '../logging';
 import { _addDiagnosticListener, _diagnosticKey, _meetsSeverityThreshold } from '../logging';
-import type { SeverityThreshold } from '../validationConfig';
 import { _getDevOverlayMode } from '../validationConfig';
 
 type UpdateListener = () => void;
@@ -18,7 +17,7 @@ export class ErrorOverlayService extends BeanStub implements NamedBean {
     beanName = 'errorOverlay' as const;
 
     private overlays?: OverlayService;
-    private overlayMode: SeverityThreshold = false;
+    private overlayMode: SeverityThreshold = 'none';
 
     private readonly diagnostics: CapturedDiagnostic[] = [];
     private readonly seenKeys = new Set<string>();
@@ -31,8 +30,8 @@ export class ErrorOverlayService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         const mode = _getDevOverlayMode();
-        // `false` means the developer opted out of the overlay; attach no listener so there is no work.
-        if (mode === false) {
+        // 'none' means the developer opted out of the overlay; attach no listener so there is no work.
+        if (mode === 'none') {
             return;
         }
         this.overlayMode = mode;

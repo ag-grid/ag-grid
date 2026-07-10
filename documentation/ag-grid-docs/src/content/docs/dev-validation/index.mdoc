@@ -48,7 +48,7 @@ The threshold is inclusive, from least to most severe, mirroring `throwOn`:
 - `'error'` — errors only
 - `'warning'` — warnings and errors
 - `'deprecation'` (default) — deprecations, warnings and errors
-- `false` — no overlay
+- `'none'` — no overlay
 
 For example, if a column definition includes a property the grid does not recognise, the resulting warnings surface in the overlay:
 
@@ -65,7 +65,7 @@ The threshold is inclusive, from least to most severe:
 - `'error'` — throws on errors
 - `'warning'` — throws on warnings and errors
 - `'deprecation'` — throws on deprecations, warnings and errors
-- `false` (default) — never throws
+- `'none'` (default) — never throws
 
 `throwOn` throws synchronously wherever a matching diagnostic is raised. That is not only at start-up, it also happens during API calls, data updates, and rendering. A throw can interrupt an operation part-way and leave the grid in an inconsistent state. Use `throwOn` with harnesses that recreate the grid on failure rather than carrying on with the same instance, and never in production.
 

@@ -1,7 +1,7 @@
 import { _debounce } from 'ag-stack';
 
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _error } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import { createToolbarInput } from './toolbarItemUtils';
 
@@ -16,7 +16,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
 
     public init(_params: IToolbarItemParams): void {
         if (!this.gos.isModuleRegistered('QuickFilter')) {
-            _error(302, {
+            this.beans.log.error(302, {
                 itemName: 'agQuickFilterToolbarItem',
                 moduleName: 'QuickFilter',
                 ...this.gos.getModuleErrorParams(),

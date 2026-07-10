@@ -4,7 +4,7 @@ import type {
     ChartToolbarMenuItemOptions,
     IconName,
 } from 'ag-grid-community';
-import { AgPromise, Component, _warn } from 'ag-grid-community';
+import { AgPromise, Component } from 'ag-grid-community';
 
 import { AgPanel } from '../../../agStack/agPanel';
 import type { GridPanel } from '../../../widgets/gridEnterpriseWidgetTypes';
@@ -184,7 +184,7 @@ export class ChartMenu extends Component {
             const menuPanel = panel || this.defaultPanel;
             let tab = this.panels.indexOf(menuPanel);
             if (tab < 0) {
-                _warn(143, { panel });
+                this.beans.log.warn(143, { panel });
                 tab = this.panels.indexOf(this.defaultPanel);
             }
 

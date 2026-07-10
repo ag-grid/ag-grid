@@ -16,14 +16,7 @@ import type {
     RowNode,
     SortDef,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _createIconNoSpan,
-    _getRowNode,
-    _normalizeSortType,
-    _resetColumnState,
-    _warn,
-} from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan, _getRowNode, _normalizeSortType, _resetColumnState } from 'ag-grid-community';
 
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
@@ -564,7 +557,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 }
 
                 default: {
-                    _warn(176, { key });
+                    this.warn(176, { key });
                     return null;
                 }
             }

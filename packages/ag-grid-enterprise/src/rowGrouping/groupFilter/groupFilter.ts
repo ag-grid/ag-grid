@@ -11,7 +11,7 @@ import type {
     IFilterComp,
     IFilterParams,
 } from 'ag-grid-community';
-import { AgPromise, AgSelect, FilterComp, TabGuardComp, _createElement, _warn } from 'ag-grid-community';
+import { AgPromise, AgSelect, FilterComp, TabGuardComp, _createElement } from 'ag-grid-community';
 
 import type { GroupFilterHandler } from './groupFilterHandler';
 import type { GroupFilterService } from './groupFilterService';
@@ -93,13 +93,13 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     private validateParams(): void {
         const { colDef } = this.params;
         if (colDef.field) {
-            _warn(234);
+            this.beans.log.warn(234);
         }
         if (colDef.filterValueGetter) {
-            _warn(235);
+            this.beans.log.warn(235);
         }
         if (colDef.filterParams) {
-            _warn(236);
+            this.beans.log.warn(236);
         }
     }
 

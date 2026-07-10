@@ -1,7 +1,7 @@
 import { _addOrRemoveAttribute, _clearElement, _setAriaLabel, _setDisabled, _setDisplayed } from 'ag-stack';
 
 import type { BeanCollection, IconName } from 'ag-grid-community';
-import { _createElement, _createIconNoSpan, _error } from 'ag-grid-community';
+import { _createElement, _createIconNoSpan } from 'ag-grid-community';
 
 interface CreateToolbarInputParams {
     label: string;
@@ -104,7 +104,7 @@ export function renderToolbarButtonContents(
 export function getRowGroupPanelBuilder(beans: BeanCollection, itemName: string) {
     const builder = beans.rowGroupPanelBuilder;
     if (!builder) {
-        _error(302, { itemName, moduleName: 'RowGroupingPanel', ...beans.gos.getModuleErrorParams() });
+        beans.log.error(302, { itemName, moduleName: 'RowGroupingPanel', ...beans.gos.getModuleErrorParams() });
     }
     return builder;
 }

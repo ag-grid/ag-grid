@@ -14,7 +14,7 @@ export interface CustomMenuItemParams extends IMenuItemParams {
             <span class="ag-menu-option-part ag-menu-option-icon" role="presentation"></span>
             <span class="ag-menu-option-part ag-menu-option-text">{{ name }}</span>
             <span class="ag-menu-option-part ag-menu-option-shortcut"
-                ><button (click)="onClick()">{{ buttonValue }}</button></span
+                ><button class="alert-button" (click)="onClick()">{{ buttonValue }}</button></span
             >
             <span class="ag-menu-option-part ag-menu-option-popup-pointer">
                 @if (showSubMenu) {

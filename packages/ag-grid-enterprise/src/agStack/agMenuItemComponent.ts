@@ -143,7 +143,7 @@ export interface AgMenuItemCallbacks<TBeanCollection, TMenuActionParams extends 
     getPostProcessPopupParams: (contextParams: WithoutCommon<TCommon, TMenuActionParams>) => any;
     preserveRangesWhile: (beans: TBeanCollection, fn: () => void) => void;
     stopPropagationCallbacks: StopPropagationCallbacks;
-    warnNoItem?: (menuItem: string) => void;
+    warnNoItem?: (beans: TBeanCollection, menuItem: string) => void;
 }
 
 export class AgMenuItemComponent<

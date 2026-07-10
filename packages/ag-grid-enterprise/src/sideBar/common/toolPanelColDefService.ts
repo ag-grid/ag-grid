@@ -1,12 +1,13 @@
-import type { AbstractColDef, AgColumn, ColDef, ColumnModel } from 'ag-grid-community';
-import { AgProvidedColumnGroup, _warn, isProvidedColumnGroup } from 'ag-grid-community';
+import type { AbstractColDef, AgColumn, BeanCollection, ColDef, ColumnModel } from 'ag-grid-community';
+import { AgProvidedColumnGroup, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { isColGroupDef, mergeLeafPathTrees } from './sideBarUtils';
 
 export function toolPanelCreateColumnTree(
-    colModel: ColumnModel,
+    beans: BeanCollection,
     colDefs: AbstractColDef[]
 ): (AgColumn | AgProvidedColumnGroup)[] {
+    const { colModel } = beans;
     const invalidColIds: AbstractColDef[] = [];
 
     const createDummyColGroup = (abstractColDef: AbstractColDef, depth: number): AgColumn | AgProvidedColumnGroup => {
@@ -49,7 +50,7 @@ export function toolPanelCreateColumnTree(
     }
 
     if (invalidColIds.length > 0) {
-        _warn(217, { invalidColIds });
+        beans.log.warn(217, { invalidColIds });
     }
 
     return mappedResults;

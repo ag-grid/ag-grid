@@ -4,7 +4,6 @@ import { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import { _mergedEqual } from '../utils/mergeDeep';
-import { _warn } from '../validation/logging';
 import { _createUserColumn } from './colDefUtils';
 import type { ColWrapperCache } from './columnGroups/colWrapperCache';
 
@@ -134,7 +133,7 @@ export function _buildColumnTree(
         do {
             id = `${groupId}_${count++}`;
         } while (isReserved(id));
-        _warn(273, { providedId: groupId, usedId: id });
+        beans.log.warn(273, { providedId: groupId, usedId: id });
         allocatedKeys.add(id);
         return id;
     };
@@ -200,7 +199,7 @@ export function _buildColumnTree(
             }
             allocatedKeys.add(id);
             if (colId != null && id !== colId) {
-                _warn(273, { providedId: colId, usedId: id }); // colId collided; suffixed
+                beans.log.warn(273, { providedId: colId, usedId: id }); // colId collided; suffixed
             }
             if (existing !== undefined) {
                 existing.buildToken = buildToken;

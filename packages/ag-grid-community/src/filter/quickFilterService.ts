@@ -6,7 +6,6 @@ import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
-import { _warn } from '../validation/logging';
 
 type QuickFilterServiceEvent = 'quickFilterChanged';
 export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implements NamedBean {
@@ -114,7 +113,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
 
     private setFilter(newFilter: string | undefined): void {
         if (newFilter != null && typeof newFilter !== 'string') {
-            _warn(70, { newFilter });
+            this.warn(70, { newFilter });
             return;
         }
 

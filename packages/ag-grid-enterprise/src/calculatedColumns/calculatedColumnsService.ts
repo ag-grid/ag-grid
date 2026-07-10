@@ -30,7 +30,6 @@ import {
     _isCalculatedColumnsEnabled,
     _mergedEqual,
     _normaliseCalculatedExpression,
-    _warn,
     _warnOnce,
 } from 'ag-grid-community';
 
@@ -823,7 +822,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             if (dataTypeSvc.isDataTypeRegistered(dataType)) {
                 validDataTypes.push(dataType);
             } else {
-                _warn(304, { dataType });
+                this.warn(304, { dataType });
             }
         }
         return validDataTypes;

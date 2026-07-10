@@ -141,7 +141,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             }
         );
 
-        root.querySelectorAll('.ag-panel[aria-lable="Advanced Filter"] .ag-advanced-filter-builder-pill').forEach(
+        root.querySelectorAll('.ag-panel[aria-label="Advanced Filter"] .ag-advanced-filter-builder-pill').forEach(
             (pill) => {
                 setTestId(
                     pill,
@@ -467,7 +467,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         setTestId(setMiniFilterInput, agTestIdFor.setFilterInstanceMiniFilterInput(spec));
 
         filterRoot.querySelectorAll('.ag-set-filter-list .ag-set-filter-item').forEach((item) => {
-            const label = item.querySelector('.ag-checkbox-label')?.textContent;
+            const label = item.querySelector('.ag-checkbox-label')?.textContent?.trim();
             const checkbox = item.querySelector('input[type="checkbox"]');
             setTestId(checkbox, agTestIdFor.setFilterInstanceItem(spec, label));
         });

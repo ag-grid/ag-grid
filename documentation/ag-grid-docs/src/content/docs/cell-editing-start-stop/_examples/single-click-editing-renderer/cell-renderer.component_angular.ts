@@ -7,7 +7,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `<span>
-        <button style="height: 30px;" (click)="onClick()">✎</button>
+        <button id="theButton" style="height: 30px;" (click)="onClick()">✎</button>
         <span style="padding-left: 4px;">{{ displayValue() }}</span>
     </span>`,
 })

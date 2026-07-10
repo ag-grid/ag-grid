@@ -9,7 +9,7 @@ import type {
     ServerSideGroupLevelParams,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import type { SSRMParams } from '../serverSideRowModel';
 import { LazyStore } from './lazy/lazyStore';
@@ -66,12 +66,12 @@ export class StoreFactory extends BeanStub implements NamedBean {
         }
 
         if (ssrmParams.dynamicRowHeight) {
-            _warn(203);
+            this.warn(203);
             return;
         }
 
         if (this.rowAutoHeight?.active) {
-            _warn(204);
+            this.warn(204);
             return undefined;
         }
 

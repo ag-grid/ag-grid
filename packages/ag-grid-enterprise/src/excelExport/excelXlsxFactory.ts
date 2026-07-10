@@ -11,9 +11,9 @@ import type {
     ExcelStyle,
     ExcelTableConfig,
     ExcelWorksheet,
+    LogService,
     RowHeightCallbackParams,
 } from 'ag-grid-community';
-import { _warn } from 'ag-grid-community';
 
 import type {
     ExcelCalculatedImage,
@@ -94,7 +94,7 @@ export function createXlsxExcel(
 
     // Table export is not compatible with pivot mode nor master/detail features
     if (config.exportAsExcelTable && config.pivotModeActive) {
-        _warn(163, { featureName: 'pivot mode' });
+        config.log.warn(163, { featureName: 'pivot mode' });
         newConfig.exportAsExcelTable = false;
     }
 
@@ -113,9 +113,9 @@ function getXlsxSanitizedTableName(name: string) {
         .replace(/[^a-zA-Z0-9_]/g, '_');
 }
 
-function addXlsxTableToSheet(sheetIndex: number, table: ExcelDataTable): void {
+function addXlsxTableToSheet(sheetIndex: number, table: ExcelDataTable, log: LogService): void {
     if (XLSX_WORKSHEET_DATA_TABLES.has(sheetIndex)) {
-        _warn(164);
+        log.warn(164);
         return;
     }
 
@@ -157,21 +157,28 @@ function processTableConfig(worksheet: ExcelWorksheet, config: ExcelGridSerializ
     }
 
     if (!tableColumns?.length || !tableRowCount || !tableName) {
-        _warn(165);
+        config.log.warn(165);
         return;
     }
 
-    addXlsxTableToSheet(sheetIndex, {
-        name: `table${XLSX_WORKSHEET_DATA_TABLES.size + 1}`,
-        displayName: tableName,
-        columns: tableColumns,
-        showFilterButtons: showFilterButtons,
-        rowRange: [headerRowCount + skipTopRows, headerRowCount + (tableRowCount - headerRowCount) - removeFromBottom],
-        showRowStripes: showRowStripes ?? true,
-        showColumnStripes: showColumnStripes ?? false,
-        highlightFirstColumn: highlightFirstColumn ?? false,
-        highlightLastColumn: highlightLastColumn ?? false,
-    });
+    addXlsxTableToSheet(
+        sheetIndex,
+        {
+            name: `table${XLSX_WORKSHEET_DATA_TABLES.size + 1}`,
+            displayName: tableName,
+            columns: tableColumns,
+            showFilterButtons: showFilterButtons,
+            rowRange: [
+                headerRowCount + skipTopRows,
+                headerRowCount + (tableRowCount - headerRowCount) - removeFromBottom,
+            ],
+            showRowStripes: showRowStripes ?? true,
+            showColumnStripes: showColumnStripes ?? false,
+            highlightFirstColumn: highlightFirstColumn ?? false,
+            highlightLastColumn: highlightLastColumn ?? false,
+        },
+        config.log
+    );
 }
 
 export function addXlsxHeaderFooterImageToMap(

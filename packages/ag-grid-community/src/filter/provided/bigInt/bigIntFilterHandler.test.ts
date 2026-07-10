@@ -5,6 +5,7 @@ describe('BigIntFilterHandler', () => {
 
     beforeEach(() => {
         handler = new BigIntFilterHandler();
+        (handler as any).beans = { log: { warn: () => {}, error: () => {}, deprecated: () => {} } };
         (handler as any).createManagedBean = (bean: any) => bean;
         (handler as any).addDestroyFunc = () => {};
     });

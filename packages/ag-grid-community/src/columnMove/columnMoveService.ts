@@ -13,7 +13,6 @@ import type { ColDef, ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { DragItem } from '../interfaces/iDragItem';
-import { _warn } from '../validation/logging';
 import { BodyDropTarget } from './columnDrag/bodyDropTarget';
 import { doesMovePassMarryChildren } from './columnMoveUtils';
 import { attemptMoveColumns, clientXToSectionX, normaliseX, setColumnsMoving } from './internalColumnMoveUtils';
@@ -43,7 +42,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
         if (toIndex > gridColumns.length - columnsToMoveKeys.length) {
             // Trying to insert in invalid position
-            _warn(30, { toIndex });
+            this.warn(30, { toIndex });
             return;
         }
 

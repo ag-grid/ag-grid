@@ -8,7 +8,7 @@ import type {
     RichCellEditorValuesCallbackParams,
     RichSelectParams,
 } from 'ag-grid-community';
-import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _consoleError, _warn } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _consoleError } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 import type { RichSelectAsyncValuesSource } from './richSelectAsyncRequestsFeature';
@@ -42,7 +42,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         this.initialEventKeyProcessed = false;
 
         if (_missing(values) && _missing(valuesPage)) {
-            _warn(180);
+            this.beans.log.warn(180);
         }
 
         const asyncMode = this.resolveAsyncMode();
@@ -59,7 +59,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 source: asyncValuesSource,
                 thresholdRows: this.params.valuesPageLoadThreshold ?? DEFAULT_VALUES_PAGE_LOAD_THRESHOLD,
                 useAsyncSearch: asyncMode.isFullAsync,
-                onMisconfiguredSearchSource: asyncMode.isFullAsync ? () => _warn(294) : undefined,
+                onMisconfiguredSearchSource: asyncMode.isFullAsync ? () => this.beans.log.warn(294) : undefined,
                 onFirstValuesPageLoaded: () => {
                     if (this.pendingInitialEventKey != null) {
                         this.consumeInitialEventKey(this.pendingInitialEventKey);
@@ -127,12 +127,12 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         const hasAsyncValueSource = typeof values === 'function' || typeof valuesPage === 'function';
 
         if (filterListAsync && !allowTyping) {
-            _warn(294);
+            this.beans.log.warn(294);
             return false;
         }
 
         if (!hasAsyncValueSource && filterListAsync) {
-            _warn(294);
+            this.beans.log.warn(294);
             return false;
         }
 
@@ -342,7 +342,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
         const { keyCreator } = colDef;
         if (keyCreator) {
-            _warn(266);
+            this.beans.log.warn(266);
             const { column, node, data } = params;
             return (values: TValue[]) =>
                 values.map((value: TValue) => {

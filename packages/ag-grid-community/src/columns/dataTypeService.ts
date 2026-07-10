@@ -29,7 +29,7 @@ import type { GridOptionsService } from '../gridOptionsService';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { ColumnEventName } from '../interfaces/iColumn';
-import { _warn } from '../validation/logging';
+import type { LogService } from '../validation/logService';
 import { _addColumnDefaultAndTypes } from './colDefUtils';
 import type { ColumnModel } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
@@ -196,17 +196,31 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 // only if it's valid do we override with a provided one
                 baseDataTypeDefinition = overriddenBaseDataTypeDefinition;
             }
-            if (!validateDataTypeDefinition(userDataTypeDef, baseDataTypeDefinition, extendsCellDataType)) {
+            if (
+                !validateDataTypeDefinition(
+                    this.beans.log,
+                    userDataTypeDef,
+                    baseDataTypeDefinition,
+                    extendsCellDataType
+                )
+            ) {
                 return undefined;
             }
             mergedDataTypeDefinition = mergeDataTypeDefinitions(baseDataTypeDefinition, userDataTypeDef);
         } else {
             if (alreadyProcessedDataTypes.includes(extendsCellDataType)) {
-                _warn(44);
+                this.warn(44);
                 return undefined;
             }
             const extendedDataTypeDefinition = userDataTypeDefs[extendsCellDataType];
-            if (!validateDataTypeDefinition(userDataTypeDef, extendedDataTypeDefinition, extendsCellDataType)) {
+            if (
+                !validateDataTypeDefinition(
+                    this.beans.log,
+                    userDataTypeDef,
+                    extendedDataTypeDefinition,
+                    extendsCellDataType
+                )
+            ) {
                 return undefined;
             }
             const mergedExtendedDataTypeDefinition = this.processDataTypeDefinition(
@@ -252,7 +266,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
         const dataTypeDefinition = this.dataTypeDefinitions[cellDataType];
         if (!dataTypeDefinition) {
-            _warn(47, { cellDataType });
+            this.warn(47, { cellDataType });
             return undefined;
         }
 
@@ -500,7 +514,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 return colDef?.cellDataType == null || colDef?.cellDataType === true;
             };
             const inferred = wasInferred(userColDef) && wasInferred(defaultColDef);
-            const warning = (property: 'Formatter' | 'Parser') => _warn(48, { property, inferred, colId });
+            const warning = (property: 'Formatter' | 'Parser') => this.warn(48, { property, inferred, colId });
             const { object } = this.dataTypeDefinitions;
             if (colDef.valueFormatter === object.groupSafeValueFormatter && !this.hasObjectValueFormatter) {
                 warning('Formatter');
@@ -790,16 +804,17 @@ function mergeDataTypeDefinitions(
 }
 
 function validateDataTypeDefinition(
+    log: LogService,
     dataTypeDefinition: DataTypeDefinition,
     parentDataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition,
     parentCellDataType: string
 ): boolean {
     if (!parentDataTypeDefinition) {
-        _warn(45, { parentCellDataType });
+        log.warn(45, { parentCellDataType });
         return false;
     }
     if (parentDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType) {
-        _warn(46);
+        log.warn(46);
         return false;
     }
     return true;

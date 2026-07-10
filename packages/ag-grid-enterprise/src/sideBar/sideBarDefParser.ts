@@ -1,5 +1,4 @@
-import type { SideBarDef, ToolPanelDef } from 'ag-grid-community';
-import { _warn } from 'ag-grid-community';
+import type { LogService, SideBarDef, ToolPanelDef } from 'ag-grid-community';
 
 const DEFAULT_COLUMN_COMP: ToolPanelDef = {
     id: 'columns',
@@ -32,7 +31,8 @@ const DEFAULT_BY_KEY: { [p: string]: ToolPanelDef } = {
 };
 
 export function parseSideBarDef(
-    toParse: SideBarDef | string | string[] | boolean | null | undefined
+    toParse: SideBarDef | string | string[] | boolean | null | undefined,
+    log: LogService
 ): SideBarDef | undefined {
     if (!toParse) {
         return undefined;
@@ -45,7 +45,7 @@ export function parseSideBarDef(
     }
 
     if (typeof toParse === 'string') {
-        return parseSideBarDef([toParse]);
+        return parseSideBarDef([toParse], log);
     }
 
     if (Array.isArray(toParse)) {
@@ -53,7 +53,7 @@ export function parseSideBarDef(
         for (const key of toParse) {
             const lookupResult = DEFAULT_BY_KEY[key];
             if (!lookupResult) {
-                _warn(215, { key, validKeys: Object.keys(DEFAULT_BY_KEY) });
+                log.warn(215, { key, validKeys: Object.keys(DEFAULT_BY_KEY) });
                 continue;
             }
 
@@ -71,7 +71,7 @@ export function parseSideBarDef(
     }
 
     return {
-        toolPanels: parseComponents(toParse.toolPanels),
+        toolPanels: parseComponents(toParse.toolPanels, log),
         defaultToolPanel: toParse.defaultToolPanel,
         hiddenByDefault: toParse.hiddenByDefault,
         position: toParse.position,
@@ -79,7 +79,7 @@ export function parseSideBarDef(
     };
 }
 
-function parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[] {
+function parseComponents(from: (ToolPanelDef | string)[] | undefined, log: LogService): ToolPanelDef[] {
     const result: ToolPanelDef[] = [];
 
     if (!from) {
@@ -87,7 +87,7 @@ function parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[] {
     }
 
     from.forEach((it: ToolPanelDef | string) => {
-        const parsed = parseOneComponent(it);
+        const parsed = parseOneComponent(it, log);
         if (!parsed) {
             return;
         }
@@ -97,13 +97,13 @@ function parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[] {
     return result;
 }
 
-function parseOneComponent(it: ToolPanelDef | string): ToolPanelDef | null {
+function parseOneComponent(it: ToolPanelDef | string, log: LogService): ToolPanelDef | null {
     if (typeof it !== 'string') {
         return it;
     }
     if (DEFAULT_BY_KEY[it]) {
         return DEFAULT_BY_KEY[it];
     }
-    _warn(215, { key: it, validKeys: Object.keys(DEFAULT_BY_KEY) });
+    log.warn(215, { key: it, validKeys: Object.keys(DEFAULT_BY_KEY) });
     return null;
 }

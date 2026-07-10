@@ -9,7 +9,6 @@ import type {
 } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _warn } from '../validation/logging';
 import { _getCellCtrl } from './utils/controllers';
 import { UNEDITED, _destroyEditors, _sourceAndPendingDiffer, _syncFromEditors } from './utils/editors';
 
@@ -91,7 +90,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
     const column = colModel.getCol(colKey);
     if (!column) {
-        _warn(12, { colKey });
+        beans.log.warn(12, { colKey });
         return;
     }
 
@@ -103,7 +102,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
     const rowNode = _getRowNode(beans, cellPosition);
     if (!rowNode) {
-        _warn(290, { rowIndex, rowPinned });
+        beans.log.warn(290, { rowIndex, rowPinned });
         return;
     }
 

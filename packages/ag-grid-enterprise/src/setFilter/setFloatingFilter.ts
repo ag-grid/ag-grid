@@ -9,7 +9,7 @@ import type {
     IFloatingFilterParams,
     SetFilterModel,
 } from 'ag-grid-community';
-import { AgInputTextFieldSelector, Component, _error } from 'ag-grid-community';
+import { AgInputTextFieldSelector, Component } from 'ag-grid-community';
 
 import { SetFilter } from './setFilter';
 
@@ -66,7 +66,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     private parentSetFilterInstance(cb: (instance: SetFilter<V>) => void): void {
         this.params.parentFilterInstance((filter) => {
             if (!(filter instanceof SetFilter)) {
-                _error(248);
+                this.beans.log.error(248);
                 return;
             }
 

@@ -3,7 +3,7 @@ export default {
       <div class="person-filter">
         <div>Custom Athlete Filter</div>
         <div>
-            <input type="text" ref="eFilterText" v-model="filterText" v-on:keyup="updateFilter($event)" placeholder="Full name search..."/>
+            <input type="text" ref="eFilterText" v-model="filterText" v-on:input="updateFilter($event)" placeholder="Full name search..."/>
         </div>
         <div>This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>
       </div>

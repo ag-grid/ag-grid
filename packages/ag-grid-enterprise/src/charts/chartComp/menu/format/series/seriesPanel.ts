@@ -2,7 +2,7 @@ import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-types';
 import { RefPlaceholder, _removeFromParent } from 'ag-stack';
 
 import type { BeanCollection, GridSelect, ListOption } from 'ag-grid-community';
-import { AgSelect, Component, _error } from 'ag-grid-community';
+import { AgSelect, Component } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSlider } from '../../../../../agStack/agSlider';
@@ -182,7 +182,7 @@ export class SeriesPanel extends Component {
                     this.activePanels.push(widget);
                 }
             })
-            .catch((e) => _error(105, { e }));
+            .catch((e) => this.beans.log.error(105, { e }));
     }
 
     private initSeriesSelect() {

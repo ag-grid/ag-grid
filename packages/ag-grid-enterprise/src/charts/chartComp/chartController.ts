@@ -16,7 +16,7 @@ import type {
     UpdateCrossFilterChartParams,
     UpdateRangeChartParams,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import type { AgChartsExports } from '../agChartsExports';
 import type { ChartProxy, FieldDefinition, UpdateParams } from './chartProxies/chartProxy';
@@ -85,7 +85,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         if (!this.validUpdateType(params)) {
             return false;
         }
-        const validationResult = validateUpdateParams(params, this.agChartsExports.isEnterprise);
+        const validationResult = validateUpdateParams(params, this.agChartsExports.isEnterprise, this.beans.log);
         if (!validationResult) {
             return false;
         }
@@ -585,7 +585,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
 
     private validUpdateType(params: UpdateChartParams): boolean {
         if (!params.type) {
-            _warn(136);
+            this.warn(136);
             return false;
         }
 
@@ -601,7 +601,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             params.type === `${currentChartType[0].toLowerCase()}${currentChartType.slice(1).replace(/ /g, '')}Update`;
 
         if (!valid) {
-            _warn(137, { currentChartType, type: params.type });
+            this.warn(137, { currentChartType, type: params.type });
         }
         return valid;
     }

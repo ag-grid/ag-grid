@@ -4,13 +4,14 @@ import type {
     ChartParamsCellRange,
     ChartType,
     IAggFunc,
+    LogService,
     UpdateChartParams,
     UpdateCrossFilterChartParams,
     UpdatePivotChartParams,
     UpdateRangeChartParams,
     ValidationWarning,
 } from 'ag-grid-community';
-import { _createValidationWarning, _deprecated, _emitValidationWarning, _warn } from 'ag-grid-community';
+import { _createValidationWarning, _emitValidationWarning } from 'ag-grid-community';
 
 import type { CommonCreateChartParams } from '../../chartService';
 import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
@@ -63,19 +64,18 @@ function isLegacyChartType(value: string): value is ChartType {
     return legacyChartTypes.includes(value as ChartType);
 }
 
-const validateChartType = validateIfDefined<UpdateChartParams['chartType'], Exclude<ChartType, 'doughnut'>>(
-    (chartType) => {
+const makeValidateChartType = (log: LogService) =>
+    validateIfDefined<UpdateChartParams['chartType'], Exclude<ChartType, 'doughnut'>>((chartType) => {
         if (isValidChartType(chartType)) {
             return true;
         }
         if (isLegacyChartType(chartType)) {
             const renamedChartType = getCanonicalChartType(chartType);
-            _deprecated(312, { chartType, renamedChartType });
+            log.deprecated(312, { chartType, renamedChartType });
             return renamedChartType;
         }
         return false;
-    }
-);
+    });
 
 const validateAgChartThemeOverrides = validateIfDefined<AgChartThemeOverrides>((themeOverrides) => {
     // ensure supplied AgChartThemeOverrides is an object - can be improved if necessary?
@@ -112,11 +112,11 @@ const switchCategorySeriesValidation: (isEnterprise: boolean) => ValidationFunct
     warnIfFixed: true,
 });
 
-const commonUpdateValidations: () => ValidationFunction<any>[] = () => [
+const commonUpdateValidations: (log: LogService) => ValidationFunction<any>[] = (log) => [
     { property: 'chartId', validationFn: isString, warnMessage: createWarnMessage('chartId', 'string') },
     {
         property: 'chartType',
-        validationFn: validateChartType,
+        validationFn: makeValidateChartType(log),
         warnMessage: createWarnMessage('chartType', 'ChartType'),
     },
     {
@@ -151,17 +151,21 @@ const cellRangeValidations: (isEnterprise: boolean) => ValidationFunction<any>[]
     switchCategorySeriesValidation(isEnterprise),
 ];
 
-export function validateUpdateParams(params: UpdateChartParams, isEnterprise: boolean): boolean | UpdateChartParams {
+export function validateUpdateParams(
+    params: UpdateChartParams,
+    isEnterprise: boolean,
+    log: LogService
+): boolean | UpdateChartParams {
     const paramsToValidate = params;
     switch (paramsToValidate.type) {
         case 'rangeChartUpdate':
-            return validateUpdateRangeChartParams(params as UpdateRangeChartParams, isEnterprise);
+            return validateUpdateRangeChartParams(params as UpdateRangeChartParams, isEnterprise, log);
         case 'pivotChartUpdate':
-            return validateUpdatePivotChartParams(params as UpdatePivotChartParams);
+            return validateUpdatePivotChartParams(params as UpdatePivotChartParams, log);
         case 'crossFilterChartUpdate':
-            return validateUpdateCrossFilterChartParams(params as UpdateCrossFilterChartParams, isEnterprise);
+            return validateUpdateCrossFilterChartParams(params as UpdateCrossFilterChartParams, isEnterprise, log);
         default:
-            _warn(320, {
+            log.warn(320, {
                 property: "'type'",
                 allowed: ['rangeChartUpdate', 'pivotChartUpdate', 'crossFilterChartUpdate'],
                 value: params.type,
@@ -172,20 +176,23 @@ export function validateUpdateParams(params: UpdateChartParams, isEnterprise: bo
 
 export function validateCreateParams(
     params: CommonCreateChartParams,
-    isEnterprise: boolean
+    isEnterprise: boolean,
+    log: LogService
 ): boolean | CommonCreateChartParams {
-    return validateProperties(params, [
-        enterpriseChartTypeValidation(isEnterprise),
-        switchCategorySeriesValidation(isEnterprise),
-    ]);
+    return validateProperties(
+        params,
+        [enterpriseChartTypeValidation(isEnterprise), switchCategorySeriesValidation(isEnterprise)],
+        log
+    );
 }
 
 function validateUpdateRangeChartParams(
     params: UpdateRangeChartParams,
-    isEnterprise: boolean
+    isEnterprise: boolean,
+    log: LogService
 ): boolean | UpdateRangeChartParams {
     const validations: ValidationFunction<any>[] = [
-        ...commonUpdateValidations(),
+        ...commonUpdateValidations(log),
         enterpriseChartTypeValidation(isEnterprise),
         ...cellRangeValidations(isEnterprise),
         {
@@ -204,6 +211,7 @@ function validateUpdateRangeChartParams(
     return validateProperties(
         params,
         validations,
+        log,
         [
             ...baseUpdateChartParams,
             'cellRange',
@@ -218,24 +226,29 @@ function validateUpdateRangeChartParams(
     );
 }
 
-function validateUpdatePivotChartParams(params: UpdatePivotChartParams): boolean | UpdatePivotChartParams {
-    const validations: ValidationFunction<any>[] = [...commonUpdateValidations()];
+function validateUpdatePivotChartParams(
+    params: UpdatePivotChartParams,
+    log: LogService
+): boolean | UpdatePivotChartParams {
+    const validations: ValidationFunction<any>[] = [...commonUpdateValidations(log)];
 
-    return validateProperties(params, validations, [...baseUpdateChartParams], 'UpdatePivotChartParams');
+    return validateProperties(params, validations, log, [...baseUpdateChartParams], 'UpdatePivotChartParams');
 }
 
 function validateUpdateCrossFilterChartParams(
     params: UpdateCrossFilterChartParams,
-    isEnterprise: boolean
+    isEnterprise: boolean,
+    log: LogService
 ): boolean | UpdateCrossFilterChartParams {
     const validations: ValidationFunction<any>[] = [
-        ...commonUpdateValidations(),
+        ...commonUpdateValidations(log),
         ...cellRangeValidations(isEnterprise),
     ];
 
     return validateProperties(
         params,
         validations,
+        log,
         [...baseUpdateChartParams, 'cellRange', 'suppressChartRanges', 'aggFunc'],
         'UpdateCrossFilterChartParams'
     );
@@ -244,6 +257,7 @@ function validateUpdateCrossFilterChartParams(
 function validateProperties<T extends object>(
     params: T,
     validations: ValidationFunction<T>[],
+    log: LogService,
     validPropertyNames?: (keyof T)[],
     paramsType?: string
 ): boolean | T {
@@ -257,7 +271,7 @@ function validateProperties<T extends object>(
                 continue;
             }
             if (validationResult === false) {
-                _emitValidationWarning(warnMessage(value));
+                _emitValidationWarning(warnMessage(value), log);
                 return false;
             }
             // If the validation function returned a 'fix' value, we need to return an updated property set.
@@ -266,7 +280,7 @@ function validateProperties<T extends object>(
             /// Then we update the cloned object with the 'fixed' value
             validatedProperties[property] = validationResult;
             if (warnIfFixed) {
-                _emitValidationWarning(warnMessage(value));
+                _emitValidationWarning(warnMessage(value), log);
             }
         }
     }
@@ -275,7 +289,7 @@ function validateProperties<T extends object>(
         // Check for unexpected properties
         for (const property of Object.keys(params)) {
             if (!validPropertyNames.includes(property as keyof T)) {
-                _warn(313, { paramsType, property });
+                log.warn(313, { paramsType, property });
                 return false;
             }
         }

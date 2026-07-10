@@ -8,7 +8,6 @@ import type { PaginationChangedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ElementParams } from '../utils/element';
 import { _toFiniteNumber } from '../utils/number';
-import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
 import type { GridSelect } from '../widgets/gridWidgetTypes';
 import type { PaginationService } from './paginationService';
@@ -144,9 +143,9 @@ export class PageSizeSelectorComp extends Component {
             const pageSizeSet = this.panelParams?.paginationPageSize != null || this.gos.exists('paginationPageSize');
             const pageSizesSet = this.getPageSizeSelectorOption() !== true;
 
-            _warn(94, { pageSizeSet, pageSizesSet, pageSizeOptions, paginationPageSizeOption });
+            this.beans.log.warn(94, { pageSizeSet, pageSizesSet, pageSizeOptions, paginationPageSizeOption });
             if (!pageSizesSet) {
-                _warn(95, { paginationPageSizeOption, paginationPageSizeSelector });
+                this.beans.log.warn(95, { paginationPageSizeOption, paginationPageSizeSelector });
             }
             // When the paginationPageSize option is set to a value that is
             // not in the list of page size options.

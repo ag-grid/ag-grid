@@ -121,7 +121,7 @@ export default memo(({ value, onValueChange, eventKey, stopEditing }: CustomCell
             value={value}
             onChange={(event: any) => updateValue(event.target.value)}
             onKeyDown={(event: any) => onKeyDown(event)}
-            className="numeric-input"
+            className="simple-input-editor"
         />
     );
 });

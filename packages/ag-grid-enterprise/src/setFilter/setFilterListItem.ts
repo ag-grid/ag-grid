@@ -34,7 +34,6 @@ import {
     _getCellRendererDetails,
     _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
-    _warn,
 } from 'ag-grid-community';
 
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
@@ -441,7 +440,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         const { valueFormatted, value } = this.cellRendererParams;
         let valueToRender = (valueFormatted == null ? value : valueFormatted) ?? this.translate('blanks');
         if (typeof valueToRender !== 'string') {
-            _warn(208);
+            this.beans.log.warn(208);
             valueToRender = '';
         }
 

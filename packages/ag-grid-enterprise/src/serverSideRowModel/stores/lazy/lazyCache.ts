@@ -18,7 +18,6 @@ import {
     _getRowHeightAsNumber,
     _getRowHeightForNode,
     _getRowIdCallback,
-    _warn,
 } from 'ag-grid-community';
 
 import { _createRowNodeFooter } from '../../../aggregation/footerUtils';
@@ -137,7 +136,7 @@ export class LazyCache extends BeanStub {
         const { blockUtils, gos, store } = this;
 
         this.defaultNodeIdPrefix = blockUtils.createNodeIdPrefix(store.getParentNode());
-        this.getRowIdFunc = _getRowIdCallback(gos);
+        this.getRowIdFunc = _getRowIdCallback(this.beans);
         this.isMasterDetail = gos.get('masterDetail');
     }
 
@@ -854,7 +853,7 @@ export class LazyCache extends BeanStub {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
                 const duplicateIdText = duplicates.join(', ');
-                _warn(205, { duplicateIdText });
+                this.warn(205, { duplicateIdText });
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
             }

@@ -7,7 +7,7 @@ import {
     copyDiagnosticsToClipboard,
     diagnosticToMarkdown,
     flashCopied,
-    renderDiagnostic,
+    renderDiagnosticSections,
 } from './errorOverlayRenderer';
 
 // Grid creation aborts before the Environment bean runs, so no theme or module CSS is injected. The
@@ -40,7 +40,7 @@ const HEADER_STYLE = [
     'border-bottom: 1px solid #babfc7',
 ].join(';');
 
-const BODY_STYLE = ['display: flex', 'flex-direction: column', 'gap: 12px', 'padding: 12px 16px'].join(';');
+const BODY_STYLE = ['display: flex', 'flex-direction: column', 'gap: 16px', 'padding: 12px 16px'].join(';');
 
 const TITLE_STYLE = ['font-weight: 600', 'font-size: 14px', 'color: #cc222f'].join(';');
 
@@ -56,18 +56,30 @@ const COPY_STYLE = [
     'font-size: 12px',
 ].join(';');
 
-const DIVIDER_STYLE = ['height: 1px', 'background: #e2e2e2', 'margin: 4px 0'].join(';');
-
 const MONO = "ui-monospace, sfmono-regular, menlo, consolas, 'Liberation Mono', monospace";
 
 // `renderDiagnostic` emits `ag-overlay-error-*` elements styled by the module's errorOverlay.css, but
 // that CSS resolves theme variables scoped to a grid root — which the bootstrap panel does not have (the
 // abort happens before any theme is applied), and which are absent entirely in a pure bootstrap failure.
 // Provide concrete, theme-free rules scoped to the panel so the content renders consistently either way.
-// These are a third copy of the `.ag-overlay-error-item`/`-message`/`-inline-code`/`-code`/`-links`
+// These are a third copy of the `.ag-overlay-error-section`/`-item`/`-message`/`-inline-code`/`-code`/`-links`
 // styling: keep them in sync with errorOverlay.css (Theming API) and _common-structural.scss (Legacy).
 const STYLE_ID = 'ag-overlay-error-bootstrap-styles';
 const CONTENT_STYLES = `
+.ag-overlay-error-bootstrap-panel .ag-overlay-error-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.ag-overlay-error-bootstrap-panel .ag-overlay-error-section-header {
+    margin: 0;
+    font-weight: 700;
+}
+.ag-overlay-error-bootstrap-panel .ag-overlay-error-divider {
+    margin: 0;
+    border: none;
+    border-top: 1px solid #babfc7;
+}
 .ag-overlay-error-bootstrap-panel .ag-overlay-error-item {
     display: flex;
     flex-direction: column;
@@ -77,6 +89,7 @@ const CONTENT_STYLES = `
 }
 .ag-overlay-error-bootstrap-panel .ag-overlay-error-item-error { border-inline-start-color: #cc222f; }
 .ag-overlay-error-bootstrap-panel .ag-overlay-error-item-warning { border-inline-start-color: #d98300; }
+.ag-overlay-error-bootstrap-panel .ag-overlay-error-item-deprecation { border-inline-start-color: #81878b; }
 .ag-overlay-error-bootstrap-panel .ag-overlay-error-message {
     margin: 0;
     line-height: 1.5;
@@ -135,7 +148,7 @@ function dedupeDiagnostics(diagnostics: CapturedDiagnostic[]): CapturedDiagnosti
 /**
  * Renders the bootstrap-failure diagnostics into the grid root for the case where grid creation aborts
  * before any bean exists (e.g. a missing row-model module). Inline-styled and bean-free, reusing
- * {@link renderDiagnostic}. Honours the configured overlay mode, so `overlay: false` shows nothing and
+ * {@link renderDiagnostic}. Honours the configured overlay mode, so `overlay: 'none'` shows nothing and
  * `overlay: 'error'` shows only errors.
  */
 export function renderBootstrapPanel(container: HTMLElement, diagnostics: CapturedDiagnostic[]): void {
@@ -148,7 +161,7 @@ export function renderBootstrapPanel(container: HTMLElement, diagnostics: Captur
     }
 
     const mode = _getDevOverlayMode();
-    if (mode === false) {
+    if (mode === 'none') {
         return;
     }
 
@@ -187,14 +200,8 @@ export function renderBootstrapPanel(container: HTMLElement, diagnostics: Captur
 
     const eBody = _createElement({ tag: 'div' });
     eBody.style.cssText = BODY_STYLE;
-    for (let i = 0, len = visible.length; i < len; ++i) {
-        if (i > 0) {
-            const eDivider = _createElement({ tag: 'div' });
-            eDivider.style.cssText = DIVIDER_STYLE;
-            eBody.appendChild(eDivider);
-        }
-        eBody.appendChild(renderDiagnostic(visible[i]));
-    }
+    // No `showsUnattributedOrigin`: there is no grid here to contrast against, so the flag would be noise.
+    eBody.append(...renderDiagnosticSections(visible));
     ePanel.appendChild(eBody);
 
     container.appendChild(ePanel);

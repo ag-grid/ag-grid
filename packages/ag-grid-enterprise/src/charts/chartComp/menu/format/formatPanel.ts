@@ -1,5 +1,5 @@
 import type { ChartFormatPanel, ChartFormatPanelGroup } from 'ag-grid-community';
-import { Component, _warn } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartSeriesType } from '../../utils/seriesTypeMapper';
@@ -56,7 +56,7 @@ export class FormatPanel extends Component {
 
             if (isExpandedOnInit) {
                 if (panelExpandedOnInit) {
-                    _warn(145, { group });
+                    this.beans.log.warn(145, { group });
                 }
                 panelExpandedOnInit = true;
             }
@@ -100,7 +100,7 @@ export class FormatPanel extends Component {
                     this.chartPanelFeature.addComponent(new SeriesPanel(opts));
                     break;
                 default:
-                    _warn(147, { group });
+                    this.beans.log.warn(147, { group });
             }
         });
     }

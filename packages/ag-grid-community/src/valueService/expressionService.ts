@@ -1,6 +1,5 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { _error } from '../validation/logging';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ExpressionService extends BeanStub implements NamedBean {
@@ -13,7 +12,7 @@ export class ExpressionService extends BeanStub implements NamedBean {
             // valueGetter is an expression, so execute the expression
             return this.evaluateExpression(expression, params);
         } else {
-            _error(15, { expression });
+            this.error(15, { expression });
         }
     }
 
@@ -41,7 +40,7 @@ export class ExpressionService extends BeanStub implements NamedBean {
         } catch (e) {
             // the expression failed, which can happen, as it's the client that
             // provides the expression. so print a nice message
-            _error(16, { expression, params, e });
+            this.error(16, { expression, params, e });
             return null;
         }
     }

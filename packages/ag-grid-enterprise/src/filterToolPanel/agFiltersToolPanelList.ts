@@ -9,7 +9,7 @@ import type {
     ComponentSelector,
     FiltersToolPanelState,
 } from 'ag-grid-community';
-import { Component, _addGridCommonParams, _mergeDeep, _warn, isProvidedColumnGroup } from 'ag-grid-community';
+import { Component, _addGridCommonParams, _mergeDeep, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common/toolPanelColDefService';
 import { EXPAND_STATE } from './agFiltersToolPanelHeader';
@@ -109,7 +109,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     public setFiltersLayout(colDefs: AbstractColDef[]): void {
-        const columnTree = toolPanelCreateColumnTree(this.colModel, colDefs);
+        const columnTree = toolPanelCreateColumnTree(this.beans, colDefs);
         this.recreateFilters(columnTree);
     }
 
@@ -350,7 +350,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         if (groupIds) {
             const unrecognisedGroupIds = groupIds.filter((groupId) => updatedGroupIds.indexOf(groupId) < 0);
             if (unrecognisedGroupIds.length > 0) {
-                _warn(166, { unrecognisedGroupIds });
+                this.beans.log.warn(166, { unrecognisedGroupIds });
             }
         }
     }
@@ -399,7 +399,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         if (colIds) {
             const unrecognisedColIds = colIds.filter((colId) => updatedColIds.indexOf(colId) < 0);
             if (unrecognisedColIds.length > 0) {
-                _warn(167, { unrecognisedColIds });
+                this.beans.log.warn(167, { unrecognisedColIds });
             }
         }
     }

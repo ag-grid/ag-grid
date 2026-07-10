@@ -602,7 +602,6 @@ export const AG_GRID_ERRORS = {
         '`detailCellRendererParams.template` is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://www.ag-grid.com/react-data-grid/master-detail-custom-detail/' as const,
     // @deprecated v32 mark for removal as part of v32 deprecated features
     231: () => 'As of v32, using custom components with `reactiveCustomComponents = false` is deprecated.' as const,
-    232: () => 'Using both rowData and v-model. `rowData` will be ignored.' as const,
     233: ({ methodName }: { methodName: string }) =>
         `Framework component is missing the method \`${methodName}()\`` as const,
     234: () =>
@@ -874,6 +873,10 @@ export type ErrorId = keyof ErrorMap;
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =
     ErrorValue<TId> extends (params: infer P) => any ? (P extends Record<string, any> ? P : undefined) : never;
+
+/** Diagnostic call arguments: just the id, or the id plus params when the error declares them. */
+export type LogArgs<TId extends ErrorId> =
+    GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>];
 
 export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId>>(errorId: TId, args: TParams): any[] {
     const msgOrFunc: ErrorMap[TId] = AG_GRID_ERRORS[errorId];

@@ -10,7 +10,6 @@ import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _mergeDeep } from '../../utils/mergeDeep';
-import { _error } from '../../validation/logging';
 import type { AgComponentUtils } from './agComponentUtils';
 import type { FrameworkComponentWrapper } from './frameworkComponentWrapper';
 import type { Registry } from './registry';
@@ -98,6 +97,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         this.agCompUtils = beans.agCompUtils;
         this.registry = beans.registry;
         this.frameworkCompWrapper = beans.frameworkCompWrapper;
+        this.frameworkCompWrapper?.setGridId?.(beans.context.getId());
         this.gridOptions = beans.gridOptions;
     }
 
@@ -159,24 +159,24 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
                     // If we have validation and this is a grid comp without a default (e.g. filters tool panel),
                     // we will have already warned about this
                     if (!validation?.isProvidedUserComp(compName)) {
-                        _error(50, { compName });
+                        this.error(50, { compName });
                     }
                 } else if (defaultName) {
                     // validation will have already warned about this
                     if (!validation) {
-                        _error(260, {
+                        this.error(260, {
                             ...this.gos.getModuleErrorParams(),
                             propName: name,
                             compName: defaultName,
                         });
                     }
                 } else {
-                    _error(216, { name });
+                    this.error(216, { name });
                 }
             } else if (defaultName && !validation) {
                 // Grid should be providing this component.
                 // Validation service will have already warned about this with the correct module name if it was present.
-                _error(146, { comp: defaultName });
+                this.error(146, { comp: defaultName });
             }
             return;
         }
@@ -263,6 +263,6 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         _mergeDeep(params, paramsFromSelector);
 
-        return defaultCompProcessParams ? defaultCompProcessParams(params) : params;
+        return defaultCompProcessParams ? defaultCompProcessParams(params, this.beans) : params;
     }
 }

@@ -18,6 +18,16 @@ import { AgInputTextField } from './agInputTextField';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface AgInputDateFieldParams<
+    TComponentSelectorType extends string,
+> extends AgInputTextFieldParams<TComponentSelectorType> {
+    min?: string;
+    max?: string;
+    step?: number;
+    includeTime?: boolean;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgInputDateField<
     TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
@@ -31,14 +41,15 @@ export class AgInputDateField<
     TGlobalEvents,
     TCommon,
     TPropertiesService,
-    TComponentSelectorType
+    TComponentSelectorType,
+    AgInputDateFieldParams<TComponentSelectorType>
 > {
     private min?: string;
     private max?: string;
     private step?: number;
-    private includeTime?: boolean;
+    private includeTime: boolean = false;
 
-    constructor(config?: AgInputTextFieldParams<TComponentSelectorType>) {
+    constructor(config?: AgInputDateFieldParams<TComponentSelectorType>) {
         super(config, 'ag-date-field', 'date');
     }
 
@@ -57,7 +68,21 @@ export class AgInputDateField<
                 this.eInput.focus();
             },
         });
-        this.eInput.step = 'any';
+        const { includeTime, min, max, step } = this.config;
+        if (includeTime != null) {
+            this.setIncludeTime(includeTime);
+        }
+        if (typeof min === 'string') {
+            this.setMin(min);
+        }
+        if (typeof max === 'string') {
+            this.setMax(max);
+        }
+        if (typeof step === 'number') {
+            this.setStep(step);
+        } else {
+            this.eInput.step = 'any';
+        }
     }
 
     private onWheel(e: WheelEvent) {
@@ -107,7 +132,7 @@ export class AgInputDateField<
         return this;
     }
 
-    public setIncludeTime(includeTime?: boolean): this {
+    public setIncludeTime(includeTime: boolean): this {
         if (this.includeTime === includeTime) {
             return this;
         }
@@ -134,6 +159,7 @@ export class AgInputDateField<
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const AgInputDateFieldSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-INPUT-DATE-FIELD',
     component: AgInputDateField,

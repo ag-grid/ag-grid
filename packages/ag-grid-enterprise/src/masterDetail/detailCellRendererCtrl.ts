@@ -18,7 +18,7 @@ import type {
     RowSelectedEvent,
     SelectionChangedEvent,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _isSameRow, _warn } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _isSameRow } from 'ag-grid-community';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
     private params: IDetailCellRendererParams;
@@ -87,7 +87,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         }
 
         if (providedStrategy != null) {
-            _warn(170, { providedStrategy });
+            this.warn(170, { providedStrategy });
         }
 
         this.refreshStrategy = 'rows';
@@ -96,14 +96,14 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     private createDetailGrid(): void {
         const { params, gos } = this;
         if (_missing(params.detailGridOptions)) {
-            _warn(171);
+            this.warn(171);
             return;
         }
 
         const masterTheme = gos.get('theme');
         const detailTheme = params.detailGridOptions.theme;
         if (detailTheme && detailTheme !== masterTheme) {
-            _warn(267);
+            this.warn(267);
         }
 
         const gridOptions: GridOptions = {
@@ -238,7 +238,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         const userFunc = params.getDetailRowData;
         if (!userFunc) {
-            _warn(172);
+            this.warn(172);
             return;
         }
 

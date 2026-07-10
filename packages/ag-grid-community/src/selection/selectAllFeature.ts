@@ -17,7 +17,6 @@ import {
     _isServerSideRowModel,
 } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
-import { _warn } from '../validation/logging';
 import type { GridCheckbox } from '../widgets/gridWidgetTypes';
 
 export class SelectAllFeature extends BeanStub {
@@ -146,7 +145,7 @@ export class SelectAllFeature extends BeanStub {
         const isMultiSelect = _isMultiRowSelection(this.gos);
 
         if (!isMultiSelect) {
-            _warn(128, { feature });
+            this.warn(128, { feature });
             return false;
         }
         return true;
@@ -157,7 +156,7 @@ export class SelectAllFeature extends BeanStub {
         const rowModelMatches = _isClientSideRowModel(gos) || _isServerSideRowModel(gos);
 
         if (!rowModelMatches) {
-            _warn(129, { feature, rowModel: rowModel.getType() });
+            this.warn(129, { feature, rowModel: rowModel.getType() });
             return false;
         }
         return true;

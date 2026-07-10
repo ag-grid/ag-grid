@@ -1,5 +1,5 @@
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _error } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import { getRowGroupPanelBuilder } from './toolbarItemUtils';
 
@@ -10,7 +10,7 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
 
     public init(_params: IToolbarItemParams): void {
         if (!this.gos.isModuleRegistered('Pivot')) {
-            _error(302, {
+            this.beans.log.error(302, {
                 itemName: 'agPivotPanelToolbarItem',
                 moduleName: 'Pivot',
                 ...this.gos.getModuleErrorParams(),

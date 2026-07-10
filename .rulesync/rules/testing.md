@@ -18,6 +18,16 @@ Behavioural tests in `testing/behavioural/` are the primary test suite for AG Gr
 - **Avoid mocking** — prefer fakes instead (e.g., fake DOM)
 - Test at the edges of the system to ensure real integration using public APIs
 
+## Choosing a Test Layer
+
+**Default to a behavioural test.** A package `*.test.ts` that instantiates a feature class directly is only for pure logic (formatter, comparator, parser) with no grid-integration surface. Anything that manifests through the running grid belongs in `testing/behavioural/`, driven via the public `GridApi`.
+
+**These are signs you're testing internals — write a behavioural test instead:** casting to `as any` for private state, hand-building `beans`/`gos`/`ctrlsSvc`, calling a private method to reach a branch, or spying on an internal method as the assertion. Such tests pass even when the real code path never runs.
+
+Search `testing/behavioural` for an existing harness before assuming a behaviour can't be black-box tested (e.g. `DragEventDispatcher` drives real header drags); extend the harness rather than dropping to a unit test.
+
+Behavioural tests are a separate nx project — `yarn nx test <package>` does **not** run them. Use `./behave.sh` or the affected gate (`yarn nx affected -t test`).
+
 ## Test Structure
 
 ### Directory Layout

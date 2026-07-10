@@ -21,11 +21,12 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        // Before filtering: verify non-Phelps athletes are visible
+        // Before filtering: wait for a non-Phelps athlete to be rendered. The data
+        // starts with several Michael Phelps rows, so a one-shot snapshot can catch a
+        // moment where only Phelps rows are virtualised in — use an auto-retrying
+        // locator instead of allTextContents() to avoid that race.
         const athleteCells = page.locator('.ag-row [col-id="athlete"]');
-        const athletesBefore = await athleteCells.allTextContents();
-        const hasNonPhelps = athletesBefore.some((name) => !name.toLowerCase().includes('phelps'));
-        expect(hasNonPhelps).toBe(true);
+        await expect(athleteCells.filter({ hasNotText: /phelps/i }).first()).toBeVisible();
 
         // Type expression into the filter input
         const filterInput = page.locator('.ag-advanced-filter input[type=text]');
