@@ -88,7 +88,7 @@ export class ErrorOverlayComponent extends OverlayComponent implements IOverlayC
     private renderBody(): void {
         const diagnostics = this.beans.errorOverlay?.getDiagnostics() ?? [];
         this.eTitle.textContent = getTitle(diagnostics);
-        this.eBody.replaceChildren(...renderDiagnosticSections(diagnostics));
+        this.eBody.replaceChildren(...renderDiagnosticSections(diagnostics, { showsUnattributedOrigin: true }));
         this.beans.ariaAnnounce?.announceValue(this.eTitle.textContent ?? '', 'overlay');
     }
 

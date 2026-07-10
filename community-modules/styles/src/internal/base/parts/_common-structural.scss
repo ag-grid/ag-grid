@@ -1225,6 +1225,16 @@
         user-select: text;
     }
 
+    .ag-overlay-error-unattributed {
+        align-self: start;
+        border-radius: 500px;
+        padding: calc(var(--ag-grid-size) * 0.25) var(--ag-grid-size);
+        font-size: 0.85em;
+        font-weight: 600;
+        background: color-mix(in srgb, var(--ag-border-color) 35%, transparent);
+        color: var(--ag-subtle-text-color);
+    }
+
     .ag-overlay-error-inline-code {
         font-family: var(--ag-internal-overlay-mono);
         background: color-mix(in srgb, var(--ag-border-color) 35%, transparent);

@@ -7,7 +7,6 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     enableDevValidations,
-    themeQuartz,
 } from 'ag-grid-community';
 
 import './styles.css';
@@ -81,12 +80,10 @@ export class AppComponent {
         this.apiFor(grid).setGridOption('tooltipInteraction', true);
     }
 
-    // A theme param given a value of the wrong type can't be converted to CSS, emitting error #107
-    // while the grid regenerates its styles. `accentColor` is used so the skipped value falls back to
-    // the theme default rather than breaking the layout. The error is reported from theme code that
-    // runs inside the grid's scope, so it self-attributes to that grid instead of showing on every grid.
+    // `getServerSideGroupLevelState` needs the unregistered enterprise server-side module, so calling it
+    // on a client-side grid emits error #200, attributed to that grid, and no-ops without affecting layout.
     triggerError(grid: string) {
-        this.apiFor(grid).setGridOption('theme', themeQuartz.withParams({ accentColor: true as any }));
+        this.apiFor(grid).getServerSideGroupLevelState();
     }
 
     // An async transaction is flushed by the grid on a later frame, so the non-string row-id warning
