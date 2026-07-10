@@ -23,15 +23,28 @@ test.agExample(import.meta, () => {
             await expect(groupRow('Aggressive')).toBeVisible();
 
             // Capture the rendered grid text, then start the transaction stream.
-            const gridText = () => page.locator('.ag-row').allInnerTexts();
-            const gridBefore = (await gridText()).join('|');
+            const snapshot = () =>
+                page.evaluate(() =>
+                    Array.from(document.querySelectorAll('.ag-row'))
+                        .map((r) => (r as HTMLElement).innerText)
+                        .join('|')
+                );
+            const gridBefore = await snapshot();
             await page.getByRole('button', { name: 'Start Updates' }).click();
 
-            // The stream applies async update/add/remove transactions once per second;
-            // wait a few ticks and confirm the rendered values changed.
-            await page.waitForTimeout(3000);
-            const gridAfter = (await gridText()).join('|');
-            expect(gridAfter).not.toBe(gridBefore);
+            // Poll (with a bounded timeout) until a streamed transaction has been processed and
+            // rendered — i.e. the grid text differs from the captured baseline — rather than
+            // assuming a fixed sleep is long enough for the timers to fire under a busy worker.
+            await page.waitForFunction(
+                (before) => {
+                    const now = Array.from(document.querySelectorAll('.ag-row'))
+                        .map((r) => (r as HTMLElement).innerText)
+                        .join('|');
+                    return now.length > 0 && now !== before;
+                },
+                gridBefore,
+                { timeout: 15000 }
+            );
 
             await page.getByRole('button', { name: 'Stop Updates' }).click();
         }

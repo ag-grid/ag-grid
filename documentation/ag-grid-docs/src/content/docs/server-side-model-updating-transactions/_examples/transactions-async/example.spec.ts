@@ -20,8 +20,17 @@ test.agExample(import.meta, () => {
             // Start the stream of async update/add/remove transactions.
             await page.getByRole('button', { name: 'Start Updates' }).click();
 
-            // After batches of async transactions land, visible rows have been updated.
-            await page.waitForTimeout(1500);
+            // Poll (with a bounded timeout) until batched async transactions have landed and the
+            // summed updateCount becomes positive — no reliance on a fixed sleep matching the timers.
+            await page.waitForFunction(
+                () =>
+                    Array.from(document.querySelectorAll('.ag-cell[col-id="updateCount"]')).reduce(
+                        (total, cell) => total + (parseInt(cell.textContent?.trim() || '0', 10) || 0),
+                        0
+                    ) > 0,
+                undefined,
+                { timeout: 15000 }
+            );
             expect(await sumUpdateCount()).toBeGreaterThan(0);
 
             await page.getByRole('button', { name: 'Stop Updates' }).click();

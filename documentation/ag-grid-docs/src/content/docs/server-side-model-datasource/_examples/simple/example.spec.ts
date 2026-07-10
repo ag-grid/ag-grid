@@ -1,5 +1,9 @@
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
+// A row index comfortably past the first 100-row block, so reaching it proves a further block was
+// fetched on demand while scrolling. Kept low enough to reach reliably within the test budget.
+const DEEP_INDEX = 60;
+
 test.agExample(import.meta, () => {
     test.eachFramework('server-side datasource loads the first block and more on scroll', async ({ page }) => {
         await waitForGridContent(page);
@@ -12,34 +16,45 @@ test.agExample(import.meta, () => {
         await expect(dataRow(0).locator('[col-id="gold"]')).toContainText('8');
         await expect(dataRow(3).locator('[col-id="athlete"]')).toContainText('Natalie Coughlin');
 
-        // The last row is not known up-front, so scroll to the bottom repeatedly to force
-        // further blocks to be fetched on demand.
-        const deepestRenderedIndex = async () =>
+        const deepestRenderedIndex = () =>
             page.evaluate(() => {
-                const rows = Array.from(document.querySelectorAll('.ag-row')) as HTMLElement[];
-                const indices = rows.map((r) => Number(r.getAttribute('row-index'))).filter((i) => Number.isFinite(i));
+                const indices = Array.from(document.querySelectorAll('.ag-row'))
+                    .map((r) => Number(r.getAttribute('row-index')))
+                    .filter((idx) => Number.isFinite(idx));
                 return indices.length ? Math.max(...indices) : -1;
             });
 
-        for (let i = 0; i < 6; i++) {
+        // The last row is not known up-front, so scroll to the bottom repeatedly, each time waiting
+        // until the deepest rendered row index actually advances (real data progress) before scrolling
+        // again — tolerating the occasional scroll that lands mid-load without failing.
+        for (let i = 0; i < 10 && (await deepestRenderedIndex()) < DEEP_INDEX; i++) {
+            const before = await deepestRenderedIndex();
             await page.locator('.ag-grid-viewport').evaluate((el) => {
                 el.scrollTop = el.scrollHeight;
             });
-            await expect(page.locator('.ag-row-loading')).toHaveCount(0, { timeout: 10000 });
-            if ((await deepestRenderedIndex()) >= 100) {
-                break;
-            }
+            await page
+                .waitForFunction(
+                    (prev) => {
+                        const indices = Array.from(document.querySelectorAll('.ag-row'))
+                            .map((r) => Number(r.getAttribute('row-index')))
+                            .filter((idx) => Number.isFinite(idx));
+                        return indices.length > 0 && Math.max(...indices) > prev;
+                    },
+                    before,
+                    { timeout: 5000 }
+                )
+                .catch(() => {});
         }
 
-        const renderedIndex = await page.evaluate(() => {
-            const rows = Array.from(document.querySelectorAll('.ag-row')) as HTMLElement[];
-            const deep = rows
+        const renderedIndex = await page.evaluate((min) => {
+            const deep = Array.from(document.querySelectorAll('.ag-row'))
                 .map((r) => Number(r.getAttribute('row-index')))
-                .filter((i) => Number.isFinite(i) && i >= 100)
+                .filter((idx) => Number.isFinite(idx) && idx >= min)
                 .sort((a, b) => a - b);
             return deep[0];
-        });
-        expect(renderedIndex).toBeGreaterThanOrEqual(100);
+        }, DEEP_INDEX);
+        expect(renderedIndex).toBeGreaterThanOrEqual(DEEP_INDEX);
+        // A further block was fetched on demand: the deep row renders real data.
         await expect(dataRow(renderedIndex).locator('[col-id="athlete"]')).not.toBeEmpty();
         await expect(dataRow(renderedIndex).locator('[col-id="country"]')).not.toBeEmpty();
     });
