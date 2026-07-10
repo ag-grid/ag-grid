@@ -6,14 +6,12 @@ import type { CustomFloatingFilterCallbacks, CustomFloatingFilterProps } from '.
 
 export function updateFloatingFilterParent(params: IFloatingFilterParams, model: any): void {
     params.parentFilterInstance((instance) => {
-        // A provided filter's setModel() is deprecated for user code; route through the public
-        // api to reach the same terminal method without emitting the deprecation warning.
+        // A provided filter's setModel() is deprecated for user code, but is the correct path here
+        // (onModelChange is not deprecated), so suppress its deprecation warning rather than routing
+        // through the public api, which would defer the update while data-type inference is pending.
         const modelSet =
-            instance instanceof ProvidedFilter
-                ? new AgPromise<void>((resolve) => {
-                      params.api.setColumnFilterModel(params.column, model).then(() => resolve());
-                  })
-                : instance.setModel(model) || AgPromise.resolve();
+            (instance instanceof ProvidedFilter ? instance.setModel(model, true) : instance.setModel(model)) ||
+            AgPromise.resolve();
         modelSet.then(() => {
             params.filterParams.filterChangedCallback();
         });

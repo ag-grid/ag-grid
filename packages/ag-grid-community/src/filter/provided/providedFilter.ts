@@ -209,9 +209,12 @@ export abstract class ProvidedFilter<
 
     /**
      * @deprecated v34 Use (`api.setColumnFilterModel()`) instead.
+     * @param suppressDeprecationWarning internal flag for grid code calling this on the user's behalf (e.g. the React custom floating filter wrapper); not for public use.
      */
-    public setModel(model: M | null): AgPromise<void> {
-        _warn(286);
+    public setModel(model: M | null, suppressDeprecationWarning?: boolean): AgPromise<void> {
+        if (!suppressDeprecationWarning) {
+            _warn(286);
+        }
         const { beans, params } = this;
         return beans.colFilter!.setModelForColumnLegacy(params.column as AgColumn, model);
     }
