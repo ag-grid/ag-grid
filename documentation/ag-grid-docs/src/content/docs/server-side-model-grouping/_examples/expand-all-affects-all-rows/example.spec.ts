@@ -1,4 +1,4 @@
-import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('ssrmExpandAllAffectsAllRows enables Expand All to expand every level', async ({ page }) => {
@@ -19,6 +19,9 @@ test.agExample(import.meta, () => {
         // deepest Year level never appears.
         await page.getByRole('button', { name: 'Expand rows' }).click();
         await expect(sportGroups).not.toHaveCount(0);
+        // Let the Sport children finish loading/animating so that, if a regression made expandAll
+        // recurse into them, their Year rows would have appeared — then assert they did not.
+        await waitForRowAnimations(page);
         await expect(yearGroups).toHaveCount(0);
 
         // Enabling ssrmExpandAllAffectsAllRows makes expandAll() expand every level, including groups

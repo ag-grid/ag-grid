@@ -8,34 +8,36 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-row').nth(6)).toBeVisible();
 
         // The autoA / autoB columns use wrapText + autoHeight, so each row is sized to fit its
-        // (randomly generated, variable-length) wrapped text. Measure, per rendered row, whether
-        // each cell's full content fits within its rendered height, plus the row height.
-        const rows = await page.evaluate(() => {
-            const result: { clipped: boolean; height: number }[] = [];
-            for (const row of document.querySelectorAll('.ag-row')) {
-                const cells = [row.querySelector('[col-id="autoA"]'), row.querySelector('[col-id="autoB"]')].filter(
-                    (c): c is HTMLElement => c instanceof HTMLElement
-                );
-                if (cells.length === 0) {
-                    continue;
+        // (randomly generated, variable-length) wrapped text. Wait until the autoHeight pass has
+        // settled: more than 5 rows are measured and no autoA/autoB cell's wrapped content overflows
+        // its box (scrollHeight > clientHeight) — clipping is exactly what autoHeight prevents. This
+        // auto-retries, so it can't sample mid-reflow.
+        await page.waitForFunction(
+            () => {
+                const measuredRows = Array.from(document.querySelectorAll('.ag-row'))
+                    .map((row) =>
+                        [row.querySelector('[col-id="autoA"]'), row.querySelector('[col-id="autoB"]')].filter(
+                            (c): c is HTMLElement => c instanceof HTMLElement
+                        )
+                    )
+                    .filter((cells) => cells.length > 0);
+                if (measuredRows.length <= 5) {
+                    return false;
                 }
-                // A cell whose wrapped content overflows its box (scrollHeight > clientHeight) is
-                // clipped — which is exactly what autoHeight prevents by sizing the row to the content.
-                const clipped = cells.some((c) => c.scrollHeight > c.clientHeight + 2);
-                result.push({ clipped, height: row.getBoundingClientRect().height });
-            }
-            return result;
-        });
+                return measuredRows.every((cells) => cells.every((c) => c.scrollHeight <= c.clientHeight + 2));
+            },
+            undefined,
+            { timeout: 15000 }
+        );
 
-        // Enough rows rendered to make the measurement meaningful.
-        expect(rows.length).toBeGreaterThan(5);
-
-        // autoHeight sizes every row to fit its content: no cell's wrapped text is clipped.
-        expect(rows.every((r) => !r.clipped)).toBe(true);
-
-        // Heights genuinely vary across rows (auto-height is doing per-row measurement of the
-        // variable-length content, not applying a single fixed height).
-        const heights = rows.map((r) => r.height);
+        // Heights genuinely vary across rows (auto-height did per-row measurement of the
+        // variable-length content, not a single fixed height).
+        const heights = await page.evaluate(() =>
+            Array.from(document.querySelectorAll('.ag-row'))
+                .filter((row) => row.querySelector('[col-id="autoA"]'))
+                .map((row) => row.getBoundingClientRect().height)
+        );
+        expect(heights.length).toBeGreaterThan(5);
         expect(Math.max(...heights)).toBeGreaterThan(Math.min(...heights));
     });
 });

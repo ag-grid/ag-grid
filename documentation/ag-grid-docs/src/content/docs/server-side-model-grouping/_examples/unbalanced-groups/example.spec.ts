@@ -14,12 +14,9 @@ test.agExample(import.meta, () => {
         await expect(groupRow('United States')).toBeVisible();
         await expect(groupRow('Australia')).toBeVisible();
 
-        // groupAllowUnbalanced: true means rows with an empty ('') country key are not
-        // put into a group — they render as leaf rows at the top level. Those rows have
-        // no group toggle but do show their (non-grouped) sport value.
-        // groupAllowUnbalanced: true means rows whose country key is empty ('') are not
-        // wrapped in a group. They render at the top level as plain leaf rows, keyed with
-        // the grid's "missing key" id, showing their (non-grouped) sport value.
+        // groupAllowUnbalanced: true means rows whose country key is empty ('') are not wrapped in a
+        // group. They render at the top level as plain leaf rows, keyed with the grid's "missing key"
+        // id, showing their (non-grouped) sport value.
         const unbalancedLeafRow = page.locator('.ag-row[row-id^="ag-Grid-MissingKey"]');
         await expect(unbalancedLeafRow.first()).toBeVisible();
         await expect(unbalancedLeafRow.first()).not.toHaveClass(/ag-row-group/);

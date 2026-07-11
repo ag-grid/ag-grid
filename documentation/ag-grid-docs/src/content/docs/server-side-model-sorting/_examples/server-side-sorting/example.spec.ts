@@ -17,7 +17,7 @@ test.agExample(import.meta, () => {
         await expect(topCountry()).toContainText('Afghanistan');
 
         // Clicking again requests a descending sort; the first row becomes the last country.
-        await page.waitForTimeout(400); // avoid the two clicks registering as a double-click
+        await page.waitForTimeout(600); // exceed the OS double-click threshold so the two clicks are separate sorts
         await countryHeader().click();
         await expect(topCountry()).toContainText('Zimbabwe');
     });

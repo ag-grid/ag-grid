@@ -19,7 +19,7 @@ test.agExample(import.meta, () => {
             await expect(topGroup()).not.toContainText('United States');
 
             // Descending reloads with the highest gold total (United States) at the top.
-            await page.waitForTimeout(400); // avoid the two clicks registering as a double-click
+            await page.waitForTimeout(600); // exceed the OS double-click threshold so the two clicks are separate sorts
             await goldHeader().click();
             await expect(topGroup()).toContainText('United States');
         }
