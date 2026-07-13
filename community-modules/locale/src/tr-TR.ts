@@ -845,6 +845,10 @@ export const AG_GRID_LOCALE_TR = {
     timeFormatHHMMSS: 'SS:DD:SN',
     timeFormatHHMMSSAmPm: 'SS:DD:SN ÖÖ/ÖS',
 
+    // Editable Column Header Name
+    editColumnName: 'Sütun adını düzenle',
+    ariaColumnHeaderNameEditor: 'Sütun adı düzenleyici',
+
     // Calculated Columns
     calculatedColumn: 'Hesaplanan sütun',
     calculatedColumnAdd: 'Hesaplanan sütun ekle',

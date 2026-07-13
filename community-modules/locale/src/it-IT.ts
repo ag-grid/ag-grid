@@ -848,6 +848,10 @@ export const AG_GRID_LOCALE_IT = {
     timeFormatHHMMSS: 'OO:MM:SS',
     timeFormatHHMMSSAmPm: 'OO:MM:SS AM/PM',
 
+    // Editable Column Header Name
+    editColumnName: 'Modifica nome colonna',
+    ariaColumnHeaderNameEditor: 'Editor nome colonna',
+
     // Calculated Columns
     calculatedColumn: 'Colonna calcolata',
     calculatedColumnAdd: 'Aggiungi colonna calcolata',

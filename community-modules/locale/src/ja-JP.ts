@@ -840,6 +840,10 @@ export const AG_GRID_LOCALE_JP = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 午前/午後',
 
+    // Editable Column Header Name
+    editColumnName: '列名を編集',
+    ariaColumnHeaderNameEditor: '列名エディター',
+
     // Calculated Columns
     calculatedColumn: '計算列',
     calculatedColumnAdd: '計算列を追加',

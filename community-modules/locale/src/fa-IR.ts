@@ -842,6 +842,10 @@ export const AG_GRID_LOCALE_IR = {
     timeFormatHHMMSS: 'ساعت:دقیقه:ثانیه',
     timeFormatHHMMSSAmPm: 'ساعت:دقیقه:ثانیه ق.ظ/ب.ظ',
 
+    // Editable Column Header Name
+    editColumnName: 'ویرایش نام ستون',
+    ariaColumnHeaderNameEditor: 'ویرایشگر نام ستون',
+
     // Calculated Columns
     calculatedColumn: 'ستون محاسبه‌شده',
     calculatedColumnAdd: 'افزودن ستون محاسبه‌شده',

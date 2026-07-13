@@ -27,6 +27,7 @@ export class ToolPanelContextMenu extends Component {
     private allowGrouping: boolean;
     private allowValues: boolean;
     private allowPivoting: boolean;
+    private allowEditHeaderName: boolean;
     private menuItemMap: Map<MenuItemName, MenuItemProperty>;
     private displayName: string | null = null;
 
@@ -86,6 +87,8 @@ export class ToolPanelContextMenu extends Component {
         this.allowGrouping = columns.some((col) => col.primary && col.isAllowRowGroup());
         this.allowValues = columns.some((col) => col.primary && col.isAllowValue());
         this.allowPivoting = isPivotMode && columns.some((col) => col.isPrimary() && col.isAllowPivot());
+        this.allowEditHeaderName =
+            !isProvidedColumnGroup(column) && !!this.beans.colHeaderEditSvc && !!column.colDef.editableHeaderName;
     }
 
     private buildMenuItemMap(): void {
@@ -262,12 +265,29 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private isActive(): boolean {
-        return this.allowScrollIntoView || this.allowGrouping || this.allowValues || this.allowPivoting;
+        return (
+            this.allowScrollIntoView ||
+            this.allowGrouping ||
+            this.allowValues ||
+            this.allowPivoting ||
+            this.allowEditHeaderName
+        );
     }
 
     private getMappedMenuItems(): MenuItemDef[] {
         const ret: MenuItemDef[] = [];
         const { menuItemMap, columns, displayName, beans } = this;
+
+        if (this.allowEditHeaderName) {
+            const localeTextFunc = this.getLocaleTextFunc();
+            const column = this.column as AgColumn;
+            ret.push({
+                name: localeTextFunc('editColumnName', 'Edit Column Name'),
+                icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
+                action: () => beans.colHeaderEditSvc!.showHeaderNameEditor(column),
+            });
+        }
+
         for (const val of menuItemMap.values()) {
             const isInactive = columns.some((col) => val.allowedFunction(col) && !val.activeFunction(col));
             const isActive = columns.some((col) => val.allowedFunction(col) && val.activeFunction(col));

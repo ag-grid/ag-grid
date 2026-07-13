@@ -848,6 +848,10 @@ export const AG_GRID_LOCALE_DE = {
     timeFormatHHMMSS: 'SS:MM:SS',
     timeFormatHHMMSSAmPm: 'SS:MM:SS AM/PM',
 
+    // Editable Column Header Name
+    editColumnName: 'Spaltenname bearbeiten',
+    ariaColumnHeaderNameEditor: 'Spaltennamen-Editor',
+
     // Calculated Columns
     calculatedColumn: 'Berechnete Spalte',
     calculatedColumnAdd: 'Berechnete Spalte hinzufügen',

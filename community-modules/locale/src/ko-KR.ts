@@ -840,6 +840,10 @@ export const AG_GRID_LOCALE_KR = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 오전/오후',
 
+    // Editable Column Header Name
+    editColumnName: '열 이름 편집',
+    ariaColumnHeaderNameEditor: '열 이름 편집기',
+
     // Calculated Columns
     calculatedColumn: '계산된 열',
     calculatedColumnAdd: '계산된 열 추가',

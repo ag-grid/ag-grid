@@ -839,6 +839,10 @@ export const AG_GRID_LOCALE_TW = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
 
+    // Editable Column Header Name
+    editColumnName: '編輯欄位名稱',
+    ariaColumnHeaderNameEditor: '欄位名稱編輯器',
+
     // Calculated Columns
     calculatedColumn: '計算欄位',
     calculatedColumnAdd: '新增計算欄位',

@@ -847,6 +847,10 @@ export const AG_GRID_LOCALE_HU = {
     timeFormatHHMMSS: 'ÓÓ:PP:MP',
     timeFormatHHMMSSAmPm: 'ÓÓ:PP:MP DE/DU',
 
+    // Editable Column Header Name
+    editColumnName: 'Oszlopnév szerkesztése',
+    ariaColumnHeaderNameEditor: 'Oszlopnév-szerkesztő',
+
     // Calculated Columns
     calculatedColumn: 'Számított oszlop',
     calculatedColumnAdd: 'Számított oszlop hozzáadása',

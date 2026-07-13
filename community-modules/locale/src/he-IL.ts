@@ -839,6 +839,10 @@ export const AG_GRID_LOCALE_IL = {
     timeFormatHHMMSS: 'שש:דד:שש',
     timeFormatHHMMSSAmPm: 'שש:דד:שש לפנה״צ/אחה״צ',
 
+    // Editable Column Header Name
+    editColumnName: 'ערוך שם עמודה',
+    ariaColumnHeaderNameEditor: 'עורך שם עמודה',
+
     // Calculated Columns
     calculatedColumn: 'עמודה מחושבת',
     calculatedColumnAdd: 'הוספת עמודה מחושבת',

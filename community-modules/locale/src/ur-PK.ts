@@ -840,6 +840,10 @@ export const AG_GRID_LOCALE_PK = {
     timeFormatHHMMSS: 'گگ:مم:سس',
     timeFormatHHMMSSAmPm: 'گگ:مم:سس ص/ش',
 
+    // Editable Column Header Name
+    editColumnName: 'کالم کا نام ترمیم کریں',
+    ariaColumnHeaderNameEditor: 'کالم نام ایڈیٹر',
+
     // Calculated Columns
     calculatedColumn: 'محسوب کالم',
     calculatedColumnAdd: 'محسوب کالم شامل کریں',

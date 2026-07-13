@@ -843,6 +843,10 @@ export const AG_GRID_LOCALE_HR = {
     timeFormatHHMMSS: 'SS:MM:VV',
     timeFormatHHMMSSAmPm: 'SS:MM:VV AM/PM',
 
+    // Editable Column Header Name
+    editColumnName: 'Uredi naziv stupca',
+    ariaColumnHeaderNameEditor: 'Uređivač naziva stupca',
+
     // Calculated Columns
     calculatedColumn: 'Izračunati stupac',
     calculatedColumnAdd: 'Dodaj izračunati stupac',

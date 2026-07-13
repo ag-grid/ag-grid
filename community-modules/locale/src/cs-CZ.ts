@@ -841,6 +841,10 @@ export const AG_GRID_LOCALE_CZ = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
 
+    // Editable Column Header Name
+    editColumnName: 'Upravit název sloupce',
+    ariaColumnHeaderNameEditor: 'Editor názvu sloupce',
+
     // Calculated Columns
     calculatedColumn: 'Vypočítaný sloupec',
     calculatedColumnAdd: 'Přidat vypočítaný sloupec',

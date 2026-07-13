@@ -845,6 +845,10 @@ export const AG_GRID_LOCALE_RO = {
     timeFormatHHMMSS: 'OO:MM:SS',
     timeFormatHHMMSSAmPm: 'OO:MM:SS AM/PM',
 
+    // Editable Column Header Name
+    editColumnName: 'Editează numele coloanei',
+    ariaColumnHeaderNameEditor: 'Editor nume coloană',
+
     // Calculated Columns
     calculatedColumn: 'Coloană calculată',
     calculatedColumnAdd: 'Adăugare coloană calculată',
