@@ -229,4 +229,53 @@ describe('ServerSideExpansionService', () => {
             expect(expansionService.isNodeExpanded(rowNode)).toBe(false);
         });
     });
+
+    // Regression for the pivot-expansion fix (commit b6d5d78): a pivot column or pivot-mode change reshapes the
+    // rows entirely, so any bulk "expand all" state left over from before the change is stale and must be discarded.
+    // Row-group changes already reset it; the fix extends the same reset to pivot changes. The default unit-test
+    // harness stubs `addManagedEventListeners` out, so here we capture the registered handler map and drive it.
+    describe('resets the expansion strategy when grouping or pivot changes', () => {
+        let listeners: Record<string, () => void>;
+
+        beforeEach(() => {
+            listeners = {};
+            expansionService = new ServerSideExpansionService();
+            expansionService['gos'] = beans.gos as any;
+            expansionService['serverSideRowModel'] = beans.serverSideRowModel as any;
+            expansionService['eventSvc'] = beans.eventSvc;
+            expansionService['beans'] = beans;
+            expansionService['createBean'] = (bean: any) => bean;
+            expansionService['createManagedBean'] = (bean: any) => {
+                bean['beans'] = beans;
+                bean['gos'] = beans.gos;
+                return bean;
+            };
+            expansionService['destroyBean'] = () => undefined;
+            expansionService['addManagedPropertyListener'] = () => () => null;
+            expansionService['addManagedEventListeners'] = (map: any) => {
+                listeners = map;
+                return [];
+            };
+            expansionService.postConstruct();
+        });
+
+        it('starts on the default per-node expand strategy', () => {
+            expect(expansionService['strategy'].name).toBe('expand');
+        });
+
+        it.each(['columnRowGroupChanged', 'columnPivotChanged', 'columnPivotModeChanged'])(
+            'registers a "%s" listener that resets the bulk expand-all strategy back to the default',
+            (eventType) => {
+                expect(listeners[eventType]).toBeInstanceOf(Function);
+
+                // move onto the bulk expand-all strategy (allowed because ssrmExpandAllAffectsAllRows is true)
+                expansionService.expandAll(true);
+                expect(expansionService['strategy'].name).toBe('expandAll');
+
+                // firing the event must reset to the default per-node strategy, discarding the stale bulk state
+                listeners[eventType]();
+                expect(expansionService['strategy'].name).toBe('expand');
+            }
+        );
+    });
 });
