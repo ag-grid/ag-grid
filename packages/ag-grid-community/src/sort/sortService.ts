@@ -69,12 +69,17 @@ export class SortService extends BeanStub implements NamedBean {
         // (chip/API) leaves the display group col's own sortDef stale, so recompute it from the sources.
         const displayCol = coupled ? column.showRowGroupCol : null;
         if (displayCol) {
-            this.setColSort(displayCol, this.getCoupledGroupSortDef(displayCol), source);
             columnsToUpdate.push(displayCol);
         }
 
         const doingMultiSort = (multiSort || gos.get('alwaysMultiSort')) && !gos.get('suppressMultiSort');
         const updatedColumns = doingMultiSort ? [] : this.clearSortBarTheseColumns(columnsToUpdate, source);
+
+        // Recompute after clearSortBarTheseColumns so a sibling source it just cleared (single-sort mode)
+        // can't leave the display col reading an about-to-be-cleared sort.
+        if (displayCol) {
+            this.setColSort(displayCol, this.getCoupledGroupSortDef(displayCol), source);
+        }
 
         this.updateSortIndex(column);
         for (let i = 0, len = columnsToUpdate.length; i < len; ++i) {

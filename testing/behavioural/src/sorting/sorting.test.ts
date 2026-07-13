@@ -551,5 +551,61 @@ describe('Sorting', () => {
             expect(groupArrowShown()).toBe(false);
             expect(yearSort()).toBe('asc');
         });
+
+        test('single-sort clearing one source chip leaves no stale group sort when a sibling source was still sorted', async () => {
+            const api = await groupGridMgr.createGridAndWait('coupled-multi-source-chip-clear', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true, sortable: true },
+                    { field: 'sport', rowGroup: true, hide: true, sortable: true },
+                    { field: 'year', sortable: true },
+                ],
+                autoGroupColumnDef: { headerName: 'Group' },
+                rowGroupPanelShow: 'always',
+                rowData: [
+                    { country: 'Ireland', sport: 'Rowing', year: 2000 },
+                    { country: 'Spain', sport: 'Swimming', year: 2004 },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const groupHeaderLabel = () =>
+                gridDiv.querySelector(
+                    '.ag-header-cell[col-id="ag-Grid-AutoColumn"] .ag-header-cell-label'
+                ) as HTMLElement;
+            const chipByText = (re: RegExp) => {
+                const chips = Array.from(
+                    gridDiv.querySelectorAll('.ag-column-drop-horizontal-rowgroup .ag-column-drop-cell')
+                ) as HTMLElement[];
+                const chip = chips.find((c) => re.test(c.textContent ?? ''));
+                if (!chip) {
+                    throw new Error(`row group panel chip matching ${re} not found`);
+                }
+                return chip;
+            };
+            const click = (el: HTMLElement) =>
+                el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+            const groupCol = () => api.getColumn('ag-Grid-AutoColumn')!;
+
+            // Single-sort the coupled group column to 'desc' via its header (two clicks). Both source
+            // columns (country, sport) and the display column end up sorted 'desc'.
+            click(groupHeaderLabel());
+            await asyncSetTimeout(1);
+            click(groupHeaderLabel());
+            await asyncSetTimeout(1);
+            expect(groupCol().getSort()).toBe('desc');
+            expect(api.getColumn('country')!.getSort()).toBe('desc');
+            expect(api.getColumn('sport')!.getSort()).toBe('desc');
+
+            // Single-click the country chip: cycles country 'desc' → none. In single-sort mode this also
+            // clears the still-sorted sibling 'sport'. With every source now unsorted, the group column
+            // must not read the about-to-be-cleared 'sport' sort — its own sort/index must clear too.
+            click(chipByText(/country/i));
+            await asyncSetTimeout(1);
+            expect(api.getColumn('country')!.getSort()).toBeFalsy();
+            expect(api.getColumn('sport')!.getSort()).toBeFalsy();
+            expect(groupCol().getSort()).toBeFalsy();
+            expect(groupCol().getSortIndex()).toBeFalsy();
+        });
     });
 });
