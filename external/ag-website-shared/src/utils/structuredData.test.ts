@@ -1,5 +1,6 @@
 import {
     buildBreadcrumbList,
+    buildContactPage,
     buildJsonLdDocument,
     buildOrganization,
     buildSiteNavigationElement,
@@ -30,6 +31,39 @@ describe('buildOrganization', () => {
             sameAs: ['https://github.com/ag-grid/ag-grid', 'https://twitter.com/ag_grid'],
         });
         expect(result['@context']).toBeUndefined();
+        expect(result.contactPoint).toBeUndefined();
+    });
+
+    test('emits a typed contactPoint array when contactPoints are provided', () => {
+        const result = buildOrganization({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            name: 'AG Grid',
+            logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
+            sameAs: [],
+            contactPoints: [
+                { contactType: 'sales', url: `${CANONICAL_URL_BASE}/contact/`, availableLanguage: 'English' },
+                {
+                    contactType: 'technical support',
+                    url: 'https://ag-grid.zendesk.com/',
+                    availableLanguage: 'English',
+                },
+            ],
+        });
+
+        expect(result.contactPoint).toEqual([
+            {
+                '@type': 'ContactPoint',
+                contactType: 'sales',
+                url: `${CANONICAL_URL_BASE}/contact/`,
+                availableLanguage: 'English',
+            },
+            {
+                '@type': 'ContactPoint',
+                contactType: 'technical support',
+                url: 'https://ag-grid.zendesk.com/',
+                availableLanguage: 'English',
+            },
+        ]);
     });
 });
 
@@ -192,6 +226,26 @@ describe('buildSiteNavigationElement', () => {
             name: ['Demos', 'Pricing'],
             url: [`${CANONICAL_URL_BASE}/example/`, `${CANONICAL_URL_BASE}/license-pricing/`],
             isPartOf: { '@id': `${CANONICAL_URL_BASE}/#website` },
+        });
+    });
+});
+
+describe('buildContactPage', () => {
+    test('references the Organization and WebSite by @id rather than duplicating them', () => {
+        const pageUrl = `${CANONICAL_URL_BASE}/contact/`;
+        const result = buildContactPage({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            pageUrl,
+            name: 'Contact AG Grid',
+        });
+
+        expect(result).toEqual({
+            '@type': 'ContactPage',
+            '@id': `${pageUrl}#contact-page`,
+            url: pageUrl,
+            name: 'Contact AG Grid',
+            isPartOf: { '@id': `${CANONICAL_URL_BASE}/#website` },
+            mainEntity: { '@id': `${CANONICAL_URL_BASE}/#organization` },
         });
     });
 });
