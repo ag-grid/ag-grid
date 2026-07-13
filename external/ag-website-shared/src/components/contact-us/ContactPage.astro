@@ -3,7 +3,19 @@ import Layout from '@layouts/Layout.astro';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
 import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
+import { getEntry, type CollectionEntry } from 'astro:content';
+import { buildContactPage } from '@ag-website-shared/utils/structuredData';
+import { LIBRARY } from '@constants';
 import styles from './ContactPage.module.scss';
+
+const githubUrl = LIBRARY === 'charts' ? 'https://github.com/ag-grid/ag-charts' : 'https://github.com/ag-grid/ag-grid';
+
+const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
+const contactPageStructuredData = buildContactPage({
+    canonicalUrlBase: metadata.canonicalUrlBase,
+    pageUrl: new URL(Astro.url.pathname, metadata.canonicalUrlBase).href,
+    name: 'Contact AG Grid',
+});
 ---
 
 <Layout
@@ -11,6 +23,7 @@ import styles from './ContactPage.module.scss';
     description="Have questions or need assistance? Contact the AG Grid team for support, licensing, or any other inquiries."
     showSearchBar={true}
     showDocsNav={false}
+    pageStructuredData={[contactPageStructuredData]}
 >
     <div class={styles.contactPage}>
         <PageHero
@@ -26,7 +39,7 @@ import styles from './ContactPage.module.scss';
 
                 <div class={styles.socialLinks}>
                     <a
-                        href="https://github.com/ag-grid/ag-grid"
+                        href={githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label="GitHub"
