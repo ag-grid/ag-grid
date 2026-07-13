@@ -41,6 +41,10 @@ class ColumnHeaderEditContent extends Component {
     public getValue(): string {
         return this.eEditor.getValue() ?? '';
     }
+
+    public setValue(value: string): void {
+        this.eEditor.setValue(value, true);
+    }
 }
 
 export class ColumnHeaderEditPopup extends BeanStub {
@@ -97,6 +101,10 @@ export class ColumnHeaderEditPopup extends BeanStub {
     public hide(save: boolean): void {
         this.saveOnClose = save;
         this.dialog?.close();
+    }
+
+    public setValue(value: string): void {
+        this.contentComp?.setValue(value);
     }
 
     private onDialogClosed(): void {

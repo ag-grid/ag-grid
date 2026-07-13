@@ -8,9 +8,10 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /**
- * Editable header name (UI): opening the editor is a read-only action — it must not dispatch
- * `colDefChanged` and must not invoke `headerValueGetter`. The event fires exactly once, and only
- * when the committed name actually differs from what the editor opened with.
+ * Editable header name (UI): opening the editor prefills with the `headerValueGetter` output (called
+ * with the `columnHeaderEdit` location) but dispatches no `colDefChanged`. The event fires exactly
+ * once, and only when the committed name differs from what the editor opened with. While the editor
+ * is open, a colDef change underneath it (e.g. a programmatic rename) refreshes the input.
  */
 describe('Editable header name', () => {
     const gridMgr = new TestGridsManager({
@@ -123,29 +124,23 @@ describe('Editable header name', () => {
         expect(events.length).toBe(0);
     });
 
-    test('opening the editor does not invoke headerValueGetter', async () => {
-        let getterCalls = 0;
+    test('opening the editor prefills with the headerValueGetter output, called with the columnHeaderEdit location', async () => {
+        const locations: (string | null)[] = [];
         const { gridDiv, toolPanel } = await createGrid([
             {
                 field: 'athlete',
                 editableHeaderName: true,
                 headerValueGetter: (p) => {
-                    getterCalls++;
-                    return p.headerNameOverride ?? 'Athlete';
+                    locations.push(p.location);
+                    return p.headerNameOverride ?? 'Athlete (custom)';
                 },
             },
         ]);
 
-        await openContextMenu(toolPanel, gridDiv, 'Athlete');
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete (custom)');
 
-        // Measure around the editor launch only — opening the context menu itself renders the entry via the getter.
-        const callsBeforeOpen = getterCalls;
-        const menuItem = await findByText(gridDiv, 'Edit Column Name');
-        await userEvent.click(menuItem);
-        await asyncSetTimeout(1);
-        expect(document.querySelector('.ag-column-header-edit-popup-editor input')).toBeTruthy();
-
-        expect(getterCalls).toBe(callsBeforeOpen);
+        expect(input.value).toBe('Athlete (custom)');
+        expect(locations).toContain('columnHeaderEdit');
     });
 
     test('committing an unchanged name dispatches no colDefChanged event', async () => {
@@ -174,5 +169,16 @@ describe('Editable header name', () => {
 
         expect(events.length).toBe(1);
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Competitor');
+    });
+
+    test('a colDef change while the editor is open refreshes the input', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', editableHeaderName: true }]);
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        expect(input.value).toBe('Athlete');
+
+        api.setColumnHeaderName('athlete', 'Renamed');
+        await asyncSetTimeout(1);
+
+        expect(input.value).toBe('Renamed');
     });
 });
