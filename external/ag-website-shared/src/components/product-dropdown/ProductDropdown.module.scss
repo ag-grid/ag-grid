@@ -1,21 +1,34 @@
 @use 'design-system' as *;
+@use '../site-header/breakpoints' as *;
 
+// .customMenu is only ever rendered inside the shared site header (see
+// SiteHeader.astro), so it queries the same "site-header" container as the rest of the
+// header rather than the viewport — see ../site-header/_breakpoints.scss for what
+// $switcher-show and $switcher-popup-at control and why.
 .customMenu {
     display: none;
-    padding-right: $spacing-size-2;
-    margin-right: auto;
+    // While the header is a wrapping flex row (below $docs-search-inline) this auto
+    // margin keeps the switcher hard against the nav on the right — logo left, then
+    // switcher + nav as one right-aligned group — so the switcher can never be
+    // stranded mid-row or on a line of its own. Inert once the header becomes a grid
+    // (the switcher's track is content-sized), where grid-area handles placement.
+    margin-left: auto;
+    transform: translateY(1px);
     user-select: none;
+    // Direct .headerInner grid child once the header goes fully inline — see
+    // SiteHeader.module.scss's .headerInner grid-template-areas.
+    grid-area: switcher;
 
-    @media screen and (min-width: 440px) {
+    @container site-header (min-width: #{$switcher-show}) {
         display: block;
     }
 
-    @media screen and (max-width: 1180px) {
-        display: none;
+    @container site-header (min-width: #{$switcher-popup-at}) {
+        position: relative;
     }
 
-    @media screen and (min-width: $breakpoint-hero-small) {
-        position: relative;
+    @container site-header (min-width: #{$docs-search-inline}) {
+        margin-right: -$spacing-size-5;
     }
 }
 
@@ -34,6 +47,7 @@
     font-size: 17px;
     border: none;
     border-radius: var(--radius-3xl);
+    box-shadow: none;
 
     #{$selector-darkmode}:has([data-is-homepage='false']) &,
     #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
@@ -49,6 +63,14 @@
     background: rgba(255, 255, 255, 0.1);
     border: none;
     border-radius: var(--radius-3xl);
+
+    // In dark mode the trigger sits on --color-bg-primary (see the base rule
+    // above), whose higher specificity would otherwise swallow this hover.
+    // Mirror the light-mode 10% white overlay by lightening that surface.
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
+        background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 7.5%);
+    }
 }
 
 .customTrigger.open .arrow {
@@ -85,7 +107,7 @@
     z-index: 2;
     // Closed (resting) state. Opening flips these via the parent `.open`
     // class — opacity, translate and scale animate. The same transitions
-    // also play in reverse on close, so hover-out mirrors hover-in.
+    // also play in reverse on close, so closing mirrors opening.
     // `visibility` is delayed until the fade-out finishes so the dropdown
     // is removed from the accessibility tree without snap-cutting the
     // visual transition.
@@ -103,7 +125,7 @@
         background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 5%);
     }
 
-    @media screen and (min-width: $breakpoint-hero-small) {
+    @container site-header (min-width: #{$switcher-popup-at}) {
         top: 100%;
         left: 0;
         // Fixed width gives each product row enough room for its title and

@@ -1,5 +1,13 @@
 // All breakpoints have $breakpoint prefix
-// E.g. @media screen and (min-width: $breakpoint-site-header-small) {}
+// E.g. @container site-header (min-width: $breakpoint-site-header-small) {}
+//
+// Despite the name, $site-header-small no longer controls the header's own
+// hamburger/full-nav collapse — that's $nav-collapse, owned in
+// ../../_site-header-tokens.scss specifically so it can be tuned per repo without
+// moving this value for the other, unrelated things that still consume it directly
+// (the announcement banner, campaign pages, automated examples). These four don't need
+// their own per-repo override — nothing here varies by product the way nav-collapse
+// does — so no `!default`/loadPaths seam for them.
 $site-header-extra-small: 520px;
 $site-header-small: 900px;
 $site-header-medium: 1200px;

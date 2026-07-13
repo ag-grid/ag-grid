@@ -1,0 +1,15 @@
+// AG Grid overrides for the header's per-repo-tunable breakpoints (see
+// external/ag-website-shared/src/components/site-header/_breakpoints.scss for what each
+// token controls). The Grid top nav carries more items than the shared defaults were
+// tuned for (Products switcher + 7 links), so both thresholds are raised:
+//
+// - $nav-collapse: the full inline nav + Products switcher only fit on a single row
+//   above this width; below it the header collapses to the mobile hamburger. Kept high
+//   enough that the Products switcher is never stranded on its own wrapped line.
+// - $docs-search-inline: the header only goes fully inline (search in the same row as
+//   the nav) once there is room for the search box at a usable width; below it the
+//   search box wraps to its own full-width row instead of being squeezed.
+@forward '../../../../../external/ag-website-shared/src/design-system/site-header-tokens' with (
+    $nav-collapse: 1120px,
+    $docs-search-inline: 1300px
+);
