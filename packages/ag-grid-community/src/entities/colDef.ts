@@ -7,7 +7,7 @@ import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRende
 import type { RowDragTextFunc } from '../interfaces/iRowDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
-import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
+import type { DefaultMenuItem, DefaultToolPanelItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { Icons } from '../utils/icon';
@@ -23,7 +23,7 @@ import type {
     GroupRowValueSetterOptions,
 } from './colDef-groupRowValueSetter';
 import type { ShowValuesAs, ShowValuesAsDef, ShowValuesAsType } from './colDef-showValuesAs';
-import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
+import type { GetColumnMenuItems, GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
 
 export type { BaseColDefParams, ColumnFunctionCallbackParams } from './colDef-base';
 
@@ -153,6 +153,13 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
      * @agModule `ColumnMenuModule`
      */
     mainMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
+    /**
+     * Customise the menu items shown for this column group across the column menu, the Columns Tool Panel
+     * right-click menu, and the Column Chooser. The `source` param indicates which surface the menu is for.
+     * Takes precedence over `mainMenuItems`.
+     * @agModule `ColumnMenuModule`
+     */
+    columnMenuItems?: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef<TData>)[] | GetColumnMenuItems<TData>;
 }
 
 /** Select a column via:
@@ -630,6 +637,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `ColumnMenuModule`
      */
     mainMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
+    /**
+     * Customise the menu items shown for this column across the column menu, the Columns Tool Panel
+     * right-click menu, and the Column Chooser. The `source` param indicates which surface the menu is for.
+     * Takes precedence over `mainMenuItems`.
+     * @agModule `ColumnMenuModule`
+     */
+    columnMenuItems?: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef<TData>)[] | GetColumnMenuItems<TData>;
     /**
      * Customise the list of menu items available in the context menu.
      * @agModule `ContextMenuModule`

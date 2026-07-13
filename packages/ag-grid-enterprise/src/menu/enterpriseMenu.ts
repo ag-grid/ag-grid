@@ -9,6 +9,7 @@ import type {
     ComponentEvent,
     ContainerType,
     DefaultMenuItem,
+    DefaultToolPanelItem,
     IAfterGuiAttachedParams,
     IEventEmitter,
     IMenuFactory,
@@ -605,7 +606,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     private mainMenuList: MenuList;
 
     constructor(
-        private readonly menuItems: (DefaultMenuItem | MenuItemDef)[],
+        private readonly menuItems: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef)[],
         private readonly column: AgColumn | undefined,
         private readonly restoreFocusParams: MenuRestoreFocusParams,
         private readonly sourceElement?: HTMLElement

@@ -317,6 +317,7 @@ export type { IRenderStatusService } from './interfaces/renderStatusService';
 export type { IRowNumbersService } from './interfaces/rowNumbers';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { LocaleService } from './misc/locale/localeService';
+export { _hasColumnMenuItems, _resolveColumnMenuItems } from './misc/menu/columnMenuItemsResolver';
 export { _setColMenuVisible } from './misc/menu/menuService';
 export type { MenuService } from './misc/menu/menuService';
 export {

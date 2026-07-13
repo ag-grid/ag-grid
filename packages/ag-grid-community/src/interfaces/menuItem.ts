@@ -190,3 +190,10 @@ export type DefaultMenuItem =
     | 'sortAbsoluteAscending'
     | 'sortAbsoluteDescending'
     | 'sortUnSort';
+
+/**
+ * Built-in menu items for the Columns Tool Panel and Column Chooser right-click menu.
+ * The concrete item shown for a token depends on the column's current state (e.g. `rowGroup`
+ * renders "Group by" or "Un-Group by").
+ */
+export type DefaultToolPanelItem = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';

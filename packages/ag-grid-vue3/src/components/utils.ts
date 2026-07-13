@@ -35,6 +35,7 @@ import type {
     GetChartMenuItems,
     GetChartToolbarItems,
     GetChildCount,
+    GetColumnMenuItems,
     GetContextMenuItems,
     GetDataPath,
     GetDocument,
@@ -1820,6 +1821,13 @@ export interface Props<TData> {
          * @agModule `ColumnMenuModule`
          */
     getMainMenuItems?: GetMainMenuItems<TData>,
+    /** For customising the menu items shown for a column across the column menu, the Columns Tool Panel
+         * right-click menu, and the Column Chooser. The `source` param indicates which surface the menu is for.
+         * Takes precedence over `getMainMenuItems` for the column menu.
+         * @initial
+         * @agModule `ColumnMenuModule`
+         */
+    getColumnMenuItems?: GetColumnMenuItems<TData>,
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
          */
     postProcessPopup?: PostProcessPopup<TData>,
@@ -2467,6 +2475,7 @@ export function getProps() {
         themeStyleContainer: undefined,
         getContextMenuItems: undefined,
         getMainMenuItems: undefined,
+        getColumnMenuItems: undefined,
         postProcessPopup: undefined,
         processUnpinnedColumns: undefined,
         processCellForClipboard: undefined,

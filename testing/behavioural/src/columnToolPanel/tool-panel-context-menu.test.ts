@@ -1,7 +1,7 @@
-import { findByText } from '@testing-library/dom';
+import { findByText, queryByText } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
+import type { ColDef, GetColumnMenuItemsParams, GridApi, GridOptions } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -340,6 +340,130 @@ describe('ToolPanelContextMenu', () => {
 
             expect(gridApi.getPivotColumns().map((col) => col.getColId())).toEqual(['year']);
             expect(getToolPanelDropZoneText(toolPanel.pivotDropZonePanel)).not.toContain('Country');
+        });
+    });
+
+    describe('customisation via columnMenuItems / getColumnMenuItems', () => {
+        async function createGrid(
+            cols: ColDef[],
+            gridOptions: Partial<GridOptions>
+        ): Promise<{ gridApi: GridApi; gridDiv: HTMLElement; toolPanel: any }> {
+            const gridApi = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: cols,
+                rowData,
+                defaultColDef: { flex: 1, minWidth: 100, enableValue: true, enableRowGroup: true },
+                sideBar: {
+                    toolPanels: [
+                        {
+                            id: 'columns',
+                            labelDefault: 'Columns',
+                            labelKey: 'columns',
+                            iconKey: 'columns',
+                            toolPanel: 'agColumnsToolPanel',
+                        },
+                    ],
+                    defaultToolPanel: 'columns',
+                },
+                ...gridOptions,
+            });
+            await asyncSetTimeout(1);
+            return {
+                gridApi,
+                gridDiv: getGridElement(gridApi)! as HTMLElement,
+                toolPanel: gridApi.getToolPanelInstance('columns') as any,
+            };
+        }
+
+        test('col-level columnMenuItems adds a custom item to the tool panel menu and runs its action', async () => {
+            const action = vi.fn();
+            const { gridDiv, toolPanel } = await createGrid(
+                [
+                    { field: 'athlete', minWidth: 200, columnMenuItems: [{ name: 'Highlight column', action }] },
+                    { field: 'age' },
+                ],
+                {}
+            );
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+            await clickMenuItem(gridDiv, 'Highlight column');
+
+            expect(action).toHaveBeenCalled();
+        });
+
+        test('getColumnMenuItems fires with source "columnsToolPanel" and the built-in default items', async () => {
+            const getColumnMenuItems = vi.fn((params: GetColumnMenuItemsParams) => [
+                ...params.defaultItems,
+                { name: 'Custom' },
+            ]);
+            const { gridDiv, toolPanel } = await createGrid(columnDefs, { getColumnMenuItems });
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            // built-in item is still present, and the custom item is appended
+            await findByText(gridDiv, 'Group by Athlete');
+            await findByText(gridDiv, 'Custom');
+
+            expect(getColumnMenuItems).toHaveBeenCalledWith(expect.objectContaining({ source: 'columnsToolPanel' }));
+            const { defaultItems } = getColumnMenuItems.mock.calls[0][0];
+            expect(defaultItems).toContain('rowGroup');
+            expect(defaultItems.every((item) => typeof item === 'string')).toBe(true);
+        });
+
+        test('col-level columnMenuItems takes precedence over grid getColumnMenuItems', async () => {
+            const getColumnMenuItems = vi.fn(() => [{ name: 'FromGrid' }]);
+            const { gridDiv, toolPanel } = await createGrid(
+                [{ field: 'athlete', minWidth: 200, columnMenuItems: [{ name: 'FromColumn' }] }, { field: 'age' }],
+                { getColumnMenuItems }
+            );
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            await findByText(gridDiv, 'FromColumn');
+            expect(queryByText(gridDiv, 'FromGrid')).toBeNull();
+            expect(getColumnMenuItems).not.toHaveBeenCalled();
+        });
+
+        test("returning 'pinSubMenu' renders the pin item in the tool panel menu", async () => {
+            const { gridDiv, toolPanel } = await createGrid(
+                [
+                    {
+                        field: 'athlete',
+                        minWidth: 200,
+                        columnMenuItems: (params) => [...params.defaultItems, 'pinSubMenu'],
+                    },
+                    { field: 'age' },
+                ],
+                {}
+            );
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            await findByText(gridDiv, 'Pin Column');
+        });
+
+        test('under functionsReadOnly a callback still opens the menu without the state-changing defaults', async () => {
+            const getColumnMenuItems = vi.fn((params: GetColumnMenuItemsParams) => [
+                ...params.defaultItems,
+                { name: 'Read-only custom' },
+            ]);
+            const { gridDiv, toolPanel } = await createGrid(columnDefs, {
+                functionsReadOnly: true,
+                getColumnMenuItems,
+            });
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            await findByText(gridDiv, 'Read-only custom');
+            expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
+            expect(getColumnMenuItems.mock.calls[0][0].defaultItems).toEqual([]);
+        });
+
+        test('under functionsReadOnly with no callback the tool panel menu does not open', async () => {
+            const { gridDiv, toolPanel } = await createGrid(columnDefs, { functionsReadOnly: true });
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
         });
     });
 });

@@ -5,6 +5,7 @@ import type {
     AgColumn,
     ColumnEventType,
     DefaultMenuItem,
+    DefaultToolPanelItem,
     GetNoteParams,
     IAggFuncService,
     IMenuActionParams,
@@ -78,7 +79,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
 
     public mapWithStockItems(
-        originalList: (MenuItemDef | DefaultMenuItem)[],
+        originalList: (MenuItemDef | DefaultMenuItem | DefaultToolPanelItem)[],
         column: AgColumn | null,
         node: RowNode | null,
         noteParams: GetNoteParams | undefined,
@@ -138,7 +139,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             };
 
         const getStockMenuItem = (
-            key: DefaultMenuItem,
+            key: DefaultMenuItem | DefaultToolPanelItem,
             column: AgColumn | null,
             sourceElement: () => HTMLElement,
             source: ColumnEventType

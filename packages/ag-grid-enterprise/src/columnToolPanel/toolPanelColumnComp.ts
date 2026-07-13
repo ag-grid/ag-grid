@@ -2,6 +2,7 @@ import { RefPlaceholder, _setAriaDescribedBy, _setAriaLabel, _setDisplayed } fro
 
 import type {
     AgColumn,
+    ColumnMenuItemsSource,
     DragItem,
     ElementParams,
     GridCheckbox,
@@ -19,6 +20,7 @@ import {
     _createIconNoSpan,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
+    _hasColumnMenuItems,
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
@@ -51,7 +53,8 @@ export class ToolPanelColumnComp extends Component {
         private readonly allowDragging: boolean,
         private readonly groupsExist: boolean,
         private readonly focusWrapper: HTMLElement,
-        private readonly params: ToolPanelColumnCompParams
+        private readonly params: ToolPanelColumnCompParams,
+        private readonly source: ColumnMenuItemsSource
     ) {
         super();
         const { column, depth, displayName } = modelItem;
@@ -155,11 +158,13 @@ export class ToolPanelColumnComp extends Component {
     private onContextMenu(e: MouseEvent | Touch): void {
         const { column, gos } = this;
 
-        if (gos.get('functionsReadOnly')) {
+        if (gos.get('functionsReadOnly') && !_hasColumnMenuItems(gos, column, null)) {
             return;
         }
 
-        const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper, this.params));
+        const contextMenu = this.createBean(
+            new ToolPanelContextMenu(column, e, this.focusWrapper, this.params, this.source)
+        );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);

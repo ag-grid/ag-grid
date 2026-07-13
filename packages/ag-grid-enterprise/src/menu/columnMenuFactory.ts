@@ -1,12 +1,19 @@
-import type { AgColumn, AgProvidedColumnGroup, DefaultMenuItem, MenuItemDef, NamedBean } from 'ag-grid-community';
+import type {
+    AgColumn,
+    AgProvidedColumnGroup,
+    DefaultMenuItem,
+    DefaultToolPanelItem,
+    MenuItemDef,
+    NamedBean,
+} from 'ag-grid-community';
 import {
     BeanStub,
-    _addGridCommonParams,
     _getAvailableSortTypes,
     _getDisplaySortForColumn,
     _getGrandTotalRow,
     _isClientSideRowModel,
     _isLegacyMenuEnabled,
+    _resolveColumnMenuItems,
 } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
@@ -19,7 +26,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
     public createMenu(
         parent: { createManagedBean(bean: MenuList): MenuList },
-        menuItems: (DefaultMenuItem | MenuItemDef)[],
+        menuItems: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef)[],
         column: AgColumn | undefined,
         sourceElement: () => HTMLElement
     ): MenuList {
@@ -48,33 +55,9 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
     public getMenuItems(
         column: AgColumn | null = null,
         columnGroup: AgProvidedColumnGroup | null = null
-    ): (DefaultMenuItem | MenuItemDef)[] {
+    ): (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef)[] {
         const defaultItems = this.getDefaultMenuOptions(column);
-        let result: (DefaultMenuItem | MenuItemDef)[];
-
-        const columnMainMenuItems = (column?.colDef ?? columnGroup?.getColGroupDef())?.mainMenuItems;
-        if (Array.isArray(columnMainMenuItems)) {
-            result = columnMainMenuItems;
-        } else if (typeof columnMainMenuItems === 'function') {
-            result = columnMainMenuItems(
-                _addGridCommonParams(this.gos, {
-                    column,
-                    columnGroup,
-                    defaultItems,
-                })
-            );
-        } else {
-            const userFunc = this.gos.getCallback('getMainMenuItems');
-            if (userFunc) {
-                result = userFunc({
-                    column,
-                    columnGroup,
-                    defaultItems,
-                });
-            } else {
-                result = defaultItems;
-            }
-        }
+        const result = _resolveColumnMenuItems(this.gos, column, columnGroup, 'columnMenu', defaultItems);
 
         // normalise separators after item removal so we don't leave duplicates,
         // or separators stranded at the start or end of the menu.

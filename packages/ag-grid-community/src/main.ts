@@ -839,6 +839,7 @@ export type {
     FillHandleOptions,
     GetChartMenuItems,
     GetChartToolbarItems,
+    GetColumnMenuItems,
     GetContextMenuItems,
     GetDataPath,
     GetDocument,
@@ -893,6 +894,7 @@ export type {
 export type { GridOptionsWithDefaults } from './gridOptionsDefault';
 export type { ManagedGridOptionKey, ManagedGridOptions } from './gridOptionsInitial';
 export type {
+    ColumnMenuItemsSource,
     DoesExternalFilterPass,
     FillOperation,
     FillOperationParams,
@@ -903,6 +905,7 @@ export type {
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetChildCount,
+    GetColumnMenuItemsParams,
     GetContextMenuItemsParams,
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,
@@ -988,6 +991,7 @@ export type {
     BaseMenuItem,
     BaseMenuItemParams,
     DefaultMenuItem,
+    DefaultToolPanelItem,
     IMenuConfigParams,
     IMenuItem,
     IMenuItemComp,

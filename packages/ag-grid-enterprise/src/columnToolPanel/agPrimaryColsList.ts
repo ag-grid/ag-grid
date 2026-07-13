@@ -7,6 +7,7 @@ import type {
     BeanCollection,
     ColGroupDef,
     ColumnEventType,
+    ColumnMenuItemsSource,
     ColumnModel,
     ColumnPanelItemDragEndEvent,
     ColumnPanelItemDragStartEvent,
@@ -60,6 +61,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private expandGroupsByDefault: boolean;
     private params: ToolPanelColumnCompParams;
     private eventType: ColumnEventType;
+    private source: ColumnMenuItemsSource;
 
     private groupsExist: boolean;
 
@@ -90,13 +92,19 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         this.destroyColumnItemFuncs = [];
     }
 
-    public init(params: ToolPanelColumnCompParams, allowDragging: boolean, eventType: ColumnEventType): void {
+    public init(
+        params: ToolPanelColumnCompParams,
+        allowDragging: boolean,
+        eventType: ColumnEventType,
+        source: ColumnMenuItemsSource
+    ): void {
         this.params = params;
         const { suppressSyncLayoutWithGrid, contractColumnSelection, suppressColumnMove } = params;
         // Drag drives drag-to-zone/hide only (in-panel reorder is blocked via `isPreventMove`), so
         // `suppressColumnMove` must not disable it; only deferred mode's decoupled layout suppresses it.
         this.allowDragging = allowDragging && !(suppressSyncLayoutWithGrid && isDeferredMode(params));
         this.eventType = eventType;
+        this.source = source;
 
         if (!suppressSyncLayoutWithGrid) {
             this.addManagedEventListeners({ columnMoved: this.onColumnsChanged.bind(this) });
@@ -236,14 +244,22 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 allowDragging,
                 this.eventType,
                 listItemElement,
-                this.params
+                this.params,
+                this.source
             );
             this.createBean(renderedGroup);
 
             return renderedGroup;
         }
 
-        const columnComp = new ToolPanelColumnComp(item, allowDragging, this.groupsExist, listItemElement, this.params);
+        const columnComp = new ToolPanelColumnComp(
+            item,
+            allowDragging,
+            this.groupsExist,
+            listItemElement,
+            this.params,
+            this.source
+        );
         this.createBean(columnComp);
 
         return columnComp;

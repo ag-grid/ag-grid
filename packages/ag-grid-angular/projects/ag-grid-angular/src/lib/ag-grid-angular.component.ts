@@ -118,6 +118,7 @@ import type {
     GetChartMenuItems,
     GetChartToolbarItems,
     GetChildCount,
+    GetColumnMenuItems,
     GetContextMenuItems,
     GetDataPath,
     GetDocument,
@@ -1998,6 +1999,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ColumnMenuModule`
      */
     @Input() public getMainMenuItems: GetMainMenuItems<TData> | undefined = undefined;
+    /** For customising the menu items shown for a column across the column menu, the Columns Tool Panel
+     * right-click menu, and the Column Chooser. The `source` param indicates which surface the menu is for.
+     * Takes precedence over `getMainMenuItems` for the column menu.
+     * @initial
+     * @agModule `ColumnMenuModule`
+     */
+    @Input() public getColumnMenuItems: GetColumnMenuItems<TData> | undefined = undefined;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
      */
     @Input() public postProcessPopup: PostProcessPopup<TData> | undefined = undefined;

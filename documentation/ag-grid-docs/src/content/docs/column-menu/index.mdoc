@@ -54,6 +54,16 @@ The menu item list should be a list with each item either a) a string or b) a `M
 
 {% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getMainMenuItems"] /%}
 
+### Customising Across Menus
+
+The `mainMenuItems` and `getMainMenuItems()` properties customise the column menu only. To customise the menu items across the column menu, the [Columns Tool Panel](./tool-panel-columns/#customising-the-right-click-menu) right-click menu, and the [Column Chooser](#customising-the-column-chooser) from a single place, use `colDef.columnMenuItems` and the grid option `getColumnMenuItems()` instead.
+
+These mirror `mainMenuItems` / `getMainMenuItems()`, but their callback params include a `source` (`'columnMenu'`, `'columnsToolPanel'` or `'columnChooser'`) so you can tailor the items per menu. When set, they take priority over `mainMenuItems` / `getMainMenuItems()`.
+
+{% apiDocumentation source="column-properties/properties.json" section="header" names=["columnMenuItems"] /%}
+
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getColumnMenuItems"] /%}
+
 ### Built-In Menu Items
 
 The following is a list of all the default built-in menu items with the rules about when they are shown.

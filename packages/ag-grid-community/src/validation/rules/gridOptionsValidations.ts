@@ -136,6 +136,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     getContextMenuItems: 'ContextMenu',
     getLocaleText: 'Locale',
     getMainMenuItems: 'ColumnMenu',
+    getColumnMenuItems: 'ColumnMenu',
     getRowClass: 'RowStyle',
     getRowStyle: 'RowStyle',
     groupTotalRow: (_options, gridOptions) =>

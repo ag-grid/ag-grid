@@ -1,14 +1,21 @@
 import { _focusInto } from 'ag-stack';
 
-import type { AgColumn, AgProvidedColumnGroup, IconName, MenuItemDef } from 'ag-grid-community';
-import { Component, _createIconNoSpan, isProvidedColumnGroup } from 'ag-grid-community';
+import type {
+    AgColumn,
+    AgProvidedColumnGroup,
+    ColumnMenuItemsSource,
+    DefaultMenuItem,
+    DefaultToolPanelItem,
+    IconName,
+    MenuItemDef,
+} from 'ag-grid-community';
+import { Component, _createIconNoSpan, _resolveColumnMenuItems, isProvidedColumnGroup } from 'ag-grid-community';
 
+import type { MenuItemMapper } from '../menu/menuItemMapper';
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
 import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
-
-type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
 
 type MenuItemProperty = {
     allowedFunction: (col: AgColumn) => boolean;
@@ -27,14 +34,15 @@ export class ToolPanelContextMenu extends Component {
     private allowGrouping: boolean;
     private allowValues: boolean;
     private allowPivoting: boolean;
-    private menuItemMap: Map<MenuItemName, MenuItemProperty>;
+    private menuItemMap: Map<DefaultToolPanelItem, MenuItemProperty>;
     private displayName: string | null = null;
 
     constructor(
         private readonly column: AgColumn | AgProvidedColumnGroup,
         private readonly mouseEventOrTouch: MouseEvent | Touch,
         private readonly parentEl: HTMLElement,
-        private readonly params: ColumnStateUpdateParams = {}
+        private readonly params: ColumnStateUpdateParams = {},
+        private readonly source: ColumnMenuItemsSource = 'columnsToolPanel'
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
     }
@@ -42,6 +50,8 @@ export class ToolPanelContextMenu extends Component {
     public postConstruct(): void {
         const {
             column,
+            gos,
+            source,
             beans: { colNames },
         } = this;
         this.initializeProperties(column);
@@ -56,18 +66,68 @@ export class ToolPanelContextMenu extends Component {
 
         this.buildMenuItemMap();
 
-        if (this.isActive()) {
-            const mouseEventOrTouch = this.mouseEventOrTouch;
-            if ('preventDefault' in mouseEventOrTouch) {
-                mouseEventOrTouch.preventDefault();
-            }
-            const menuItemsMapped: MenuItemDef[] = this.getMappedMenuItems();
-            if (menuItemsMapped.length === 0) {
-                return;
-            }
+        const isGroup = isProvidedColumnGroup(column);
+        const col = isGroup ? null : (column as AgColumn);
+        const columnGroup = isGroup ? (column as AgProvidedColumnGroup) : null;
 
-            this.displayContextMenu(menuItemsMapped);
+        // The built-in items all mutate column state, so they are suppressed under functionsReadOnly.
+        // A user callback can still contribute items, which is why the menu may still open.
+        const suppressDefaults = gos.get('functionsReadOnly') || !this.isActive();
+        const defaultItems: DefaultToolPanelItem[] = suppressDefaults ? [] : this.getDefaultTokens();
+
+        const resolvedItems = _resolveColumnMenuItems(gos, col, columnGroup, source, defaultItems);
+        const menuItemsMapped = this.mapMenuItems(resolvedItems, col);
+        if (menuItemsMapped.length === 0) {
+            return;
         }
+
+        const mouseEventOrTouch = this.mouseEventOrTouch;
+        if ('preventDefault' in mouseEventOrTouch) {
+            mouseEventOrTouch.preventDefault();
+        }
+
+        this.displayContextMenu(menuItemsMapped);
+    }
+
+    private mapMenuItems(
+        items: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef)[],
+        column: AgColumn | null
+    ): (MenuItemDef | 'separator')[] {
+        // Resolve our own tool panel tokens locally (they carry tool-panel-specific actions), preserving
+        // order. Everything else (custom items, cross-surface stock tokens such as pin) is left for the mapper.
+        const { menuItemMap } = this;
+        const expanded: (DefaultMenuItem | MenuItemDef | 'separator')[] = [];
+        for (let i = 0, len = items.length; i < len; ++i) {
+            const item = items[i];
+            if (typeof item === 'string' && menuItemMap.has(item as DefaultToolPanelItem)) {
+                expanded.push(...this.resolveToolPanelToken(item as DefaultToolPanelItem));
+            } else {
+                expanded.push(item as DefaultMenuItem | MenuItemDef);
+            }
+        }
+
+        const menuItemMapper = this.beans.menuItemMapper as MenuItemMapper | undefined;
+        if (menuItemMapper) {
+            return menuItemMapper.mapWithStockItems(
+                expanded,
+                column,
+                null,
+                undefined,
+                () => this.getGui(),
+                'toolPanelUi'
+            );
+        }
+
+        // The menu module (which provides the mapper) is not registered, so any remaining stock string
+        // tokens (e.g. pin) cannot be resolved. Keep the built definitions and drop the tokens.
+        const result: MenuItemDef[] = [];
+        for (let i = 0, len = expanded.length; i < len; ++i) {
+            const item = expanded[i];
+            if (typeof item !== 'string') {
+                result.push(item);
+            }
+        }
+        return result;
     }
 
     private initializeProperties(column: AgColumn | AgProvidedColumnGroup): void {
@@ -93,7 +153,7 @@ export class ToolPanelContextMenu extends Component {
         const { beans, displayName } = this;
         const updateStrategy = this.beans.columnStateUpdateStrategy;
 
-        const menuItemMap = new Map<MenuItemName, MenuItemProperty>();
+        const menuItemMap = new Map<DefaultToolPanelItem, MenuItemProperty>();
         this.menuItemMap = menuItemMap;
 
         const deferMode = isDeferredMode(this.params);
@@ -219,7 +279,7 @@ export class ToolPanelContextMenu extends Component {
         return columnList.filter((col) => !predicate(col) || !toRemove.has(col));
     }
 
-    private displayContextMenu(menuItemsMapped: MenuItemDef[]): void {
+    private displayContextMenu(menuItemsMapped: (MenuItemDef | 'separator')[]): void {
         const eGui = this.getGui();
         const menuList = this.createBean(new MenuList());
         const localeTextFunc = this.getLocaleTextFunc();
@@ -265,28 +325,42 @@ export class ToolPanelContextMenu extends Component {
         return this.allowScrollIntoView || this.allowGrouping || this.allowValues || this.allowPivoting;
     }
 
-    private getMappedMenuItems(): MenuItemDef[] {
-        const ret: MenuItemDef[] = [];
+    private getDefaultTokens(): DefaultToolPanelItem[] {
+        const tokens: DefaultToolPanelItem[] = [];
+        const { menuItemMap, columns } = this;
+        for (const [key, val] of menuItemMap) {
+            if (columns.some((col) => val.allowedFunction(col))) {
+                tokens.push(key);
+            }
+        }
+        return tokens;
+    }
+
+    private resolveToolPanelToken(key: DefaultToolPanelItem): MenuItemDef[] {
         const { menuItemMap, columns, displayName, beans } = this;
-        for (const val of menuItemMap.values()) {
-            const isInactive = columns.some((col) => val.allowedFunction(col) && !val.activeFunction(col));
-            const isActive = columns.some((col) => val.allowedFunction(col) && val.activeFunction(col));
+        const val = menuItemMap.get(key);
+        if (!val) {
+            return [];
+        }
 
-            if (isInactive) {
-                ret.push({
-                    name: val.activateLabel(displayName!),
-                    icon: _createIconNoSpan(val.addIcon, beans, null),
-                    action: () => val.activateFunction(),
-                });
-            }
+        const ret: MenuItemDef[] = [];
+        const isInactive = columns.some((col) => val.allowedFunction(col) && !val.activeFunction(col));
+        const isActive = columns.some((col) => val.allowedFunction(col) && val.activeFunction(col));
 
-            if (isActive && val.removeIcon && val.deactivateLabel) {
-                ret.push({
-                    name: val.deactivateLabel(displayName!),
-                    icon: _createIconNoSpan(val.removeIcon, beans, null),
-                    action: () => val.deActivateFunction?.(),
-                });
-            }
+        if (isInactive) {
+            ret.push({
+                name: val.activateLabel(displayName!),
+                icon: _createIconNoSpan(val.addIcon, beans, null),
+                action: () => val.activateFunction(),
+            });
+        }
+
+        if (isActive && val.removeIcon && val.deactivateLabel) {
+            ret.push({
+                name: val.deactivateLabel(displayName!),
+                icon: _createIconNoSpan(val.removeIcon, beans, null),
+                action: () => val.deActivateFunction?.(),
+            });
         }
 
         return ret;
