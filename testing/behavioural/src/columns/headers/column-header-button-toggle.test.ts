@@ -89,4 +89,53 @@ describe('column header button toggles its popup closed on second click (AG-1635
         await asyncSetTimeout(10);
         expect(document.querySelectorAll('.ag-popup').length).toBe(0);
     });
+
+    test('floating filter funnel button: a second click closes the filter popup and it stays closed', async () => {
+        enableOffsetParentPolyfill();
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'athlete', filter: true, floatingFilter: true }],
+            rowData: [{ athlete: 'Michael Phelps' }],
+        };
+
+        const api: GridApi = await gridsManager.createGridAndWait('floating-filter-toggle-grid', gridOptions);
+        const eGridDiv = TestGridsManager.getHTMLElement(api)!;
+        const funnelButton = eGridDiv.querySelector<HTMLElement>('.ag-floating-filter-button-button')!;
+        expect(funnelButton).toBeTruthy();
+
+        // First click: opens the filter popup.
+        press(funnelButton);
+        await asyncSetTimeout(10);
+        expect(document.querySelectorAll('.ag-popup').length).toBe(1);
+
+        // Second click on the same button: should simply close the filter popup, not close-and-reopen.
+        press(funnelButton);
+        await asyncSetTimeout(10);
+        expect(document.querySelectorAll('.ag-popup').length).toBe(0);
+    });
+
+    test('floating filter funnel button: keyboard activation (click without mousedown) closes an open popup', async () => {
+        enableOffsetParentPolyfill();
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'athlete', filter: true, floatingFilter: true }],
+            rowData: [{ athlete: 'Michael Phelps' }],
+        };
+
+        const api: GridApi = await gridsManager.createGridAndWait('floating-filter-keyboard-grid', gridOptions);
+        const eGridDiv = TestGridsManager.getHTMLElement(api)!;
+        const funnelButton = eGridDiv.querySelector<HTMLElement>('.ag-floating-filter-button-button')!;
+        expect(funnelButton).toBeTruthy();
+
+        // Open via mouse.
+        press(funnelButton);
+        await asyncSetTimeout(10);
+        expect(document.querySelectorAll('.ag-popup').length).toBe(1);
+
+        // Keyboard activation of a focused button dispatches a `click` with no preceding `mousedown`,
+        // so nothing closes the popup via the document listener — the button handler must close it itself.
+        funnelButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await asyncSetTimeout(10);
+        expect(document.querySelectorAll('.ag-popup').length).toBe(0);
+    });
 });

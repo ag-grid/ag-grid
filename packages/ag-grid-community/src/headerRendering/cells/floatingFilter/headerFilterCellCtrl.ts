@@ -22,6 +22,7 @@ import { _createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _refreshCssClasses } from '../cssClassApplier';
+import { _addPopupToggleButtonListeners } from '../popupToggleButton';
 import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -32,6 +33,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private suppressFilterButton: boolean;
     private highlightFilterButtonWhenActive: boolean;
     private active: boolean;
+    private filterPopupShowing: boolean = false;
 
     private userCompDetails?: UserCompDetails | null;
     private destroySyncListener: () => null;
@@ -65,7 +67,12 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.setupSyncWithFilter(compBean);
         this.setupUi();
 
-        compBean.addManagedElementListeners(this.eButtonShowMainFilter, { click: this.showParentFilter.bind(this) });
+        _addPopupToggleButtonListeners(
+            (mousedown, click) => compBean.addManagedElementListeners(this.eButtonShowMainFilter, { mousedown, click }),
+            () => this.filterPopupShowing,
+            () => this.showParentFilter(),
+            () => this.beans.menuSvc?.hideFilterMenu()
+        );
         this.setupFilterChangedListener(compBean);
         const colDefChanged = () => this.onColDefChanged(compBean);
         compBean.addManagedListeners(this.column, { colDefChanged });
@@ -301,11 +308,15 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private showParentFilter() {
         const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
+        this.filterPopupShowing = true;
         this.beans.menuSvc?.showFilterMenu({
             column: this.column,
             buttonElement: eventSource,
             containerType: 'floatingFilter',
             positionBy: 'button',
+            onClosedCallback: () => {
+                this.filterPopupShowing = false;
+            },
         });
     }
 

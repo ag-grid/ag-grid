@@ -11,6 +11,7 @@ import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _mergeDeep } from '../../../utils/mergeDeep';
 import { Component } from '../../../widgets/component';
+import { _addPopupToggleButtonListeners } from '../popupToggleButton';
 import { HeaderCellMouseListenerFeature } from './headerCellMouseListenerFeature';
 
 function getHeaderCompElementParams(
@@ -267,30 +268,13 @@ export class AgColumnHeader extends Component implements IHeaderComp {
 
         const currentSuppressMenuHide = this.shouldSuppressMenuHide();
         this.currentSuppressMenuHide = currentSuppressMenuHide;
-        this.addToggleButtonListeners(
-            eMenu,
+        _addPopupToggleButtonListeners(
+            (mousedown, click) => this.addManagedElementListeners(eMenu, { mousedown, click }),
             () => this.menuPopupShowing,
-            () => this.showColumnMenu(this.eMenu!)
+            () => this.showColumnMenu(this.eMenu!),
+            () => this.beans.menuSvc?.hidePopupMenu()
         );
         this.toggleMenuAlwaysShow(currentSuppressMenuHide);
-    }
-
-    // The open popup closes on a document `mousedown` that precedes the button's `click`. The button's own
-    // `mousedown` fires first, so capturing the open state here lets the trailing click be swallowed, not reopened.
-    private addToggleButtonListeners(button: HTMLElement, isShowing: () => boolean, open: () => void): void {
-        let wasShowingOnMouseDown = false;
-        this.addManagedElementListeners(button, {
-            mousedown: () => {
-                wasShowingOnMouseDown = isShowing();
-            },
-            click: () => {
-                if (wasShowingOnMouseDown) {
-                    wasShowingOnMouseDown = false;
-                    return;
-                }
-                open();
-            },
-        });
     }
 
     private toggleMenuAlwaysShow(alwaysShow: boolean): void {
@@ -468,10 +452,11 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             'filter'
         );
         if (configured) {
-            this.addToggleButtonListeners(
-                eFilterButton,
+            _addPopupToggleButtonListeners(
+                (mousedown, click) => this.addManagedElementListeners(eFilterButton, { mousedown, click }),
                 () => this.filterPopupShowing,
-                () => this.showFilterMenu(eFilterButton)
+                () => this.showFilterMenu(eFilterButton),
+                () => this.beans.menuSvc?.hideFilterMenu()
             );
         } else {
             this.eFilterButton = undefined;
