@@ -1,8 +1,8 @@
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
-// A row index comfortably past the first 100-row block, so reaching it proves a further block was
-// fetched on demand while scrolling. Kept low enough to reach reliably within the test budget.
-const DEEP_INDEX = 60;
+// A row index past the first 100-row block, so reaching it proves a further block was fetched on
+// demand while scrolling. Kept just past the boundary to reach reliably within the test budget.
+const DEEP_INDEX = 120;
 
 test.agExample(import.meta, () => {
     test.eachFramework('server-side datasource loads the first block and more on scroll', async ({ page }) => {
