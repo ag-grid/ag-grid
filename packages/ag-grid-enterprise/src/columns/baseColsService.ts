@@ -31,6 +31,18 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     private extractColsWithIndex: { col: AgColumn; key: number }[] | null = null;
     private extractColsWithValue: Set<AgColumn> | null = null;
 
+    /** Cols changed since the last flush; non-null = dirty. Dispatched once by {@link dispatchColChange}. */
+    public pendingChanged: Set<AgColumn> | null = null;
+
+    /** A staged change moved the active set/order → re-stamp indexes once at flush ({@link flushReindex}). */
+    private reindexPending = false;
+
+    /** Order index recorded per active col during the current state-apply pass; consumed by {@link sortByPendingState}. */
+    protected pendingStateOrder: Map<AgColumn, number> | null = null;
+
+    /** Set when the current state-apply pass changed membership/order → re-sort + re-stamp at {@link sortByPendingState}. */
+    protected pendingStateChanged = false;
+
     /** Bucket an indexed col, opening {@link extractColsWithIndex} lazily. */
     protected extractAddColWithIndex(col: AgColumn, key: number): void {
         let bucket = this.extractColsWithIndex;
@@ -51,8 +63,14 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         bucket.add(col);
     }
 
-    /** Cols changed since the last flush; non-null = dirty. Dispatched once by {@link dispatchColChange}. */
-    public pendingChanged: Set<AgColumn> | null = null;
+    /** Bucket `col` by its resolved order `key`: indexed (non-null) cols sort in `commitExtract`, the rest keep order. */
+    protected bucketByKey(col: AgColumn, key: number | null | undefined): void {
+        if (key != null) {
+            this.extractAddColWithIndex(col, key);
+        } else {
+            this.extractAddColWithValue(col);
+        }
+    }
 
     /** Active columns, in order. Ref-stable until the next edit. */
     public get columns(): AgColumn[] {
@@ -130,25 +148,33 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     /** React to a `this.columns` order/content change; `rowGroupColsSvc` stamps `rowGroupActiveIndex`. Default no-op. */
     protected onColumnsChanged(): void {}
 
-    /** Cols differing in membership or position between `before` and `after` (the change-event payload). */
-    private changedColsBetween(before: AgColumn[], after: AgColumn[]): AgColumn[] {
+    /** Stage cols differing in membership or position between `before` and `after` (removed/moved/added) and
+     *  mark a reindex; returns whether any differed, so the caller can skip an unchanged apply. Records straight
+     *  into `pendingChanged` — no intermediate array — leaving it untouched (and null) when nothing changed. */
+    private stageChangedColsBetween(before: AgColumn[], after: AgColumn[]): boolean {
         const afterIndex = _indexMap(after);
-        const changed: AgColumn[] = [];
+        const beforeSet = before.length > 0 ? new Set(before) : null;
+        let pending: Set<AgColumn> | null = null;
         for (let i = 0, len = before.length; i < len; ++i) {
             const col = before[i];
             const newIndex = afterIndex.get(col);
             if (newIndex === undefined || newIndex !== i) {
-                changed.push(col); // removed or moved
+                pending ??= this.pendingColChangeSet(); // removed or moved
+                pending.add(col);
             }
         }
-        const beforeSet = before.length > 0 ? new Set(before) : null;
         for (let i = 0, len = after.length; i < len; ++i) {
             const col = after[i];
             if (!beforeSet?.has(col)) {
-                changed.push(col); // added
+                pending ??= this.pendingColChangeSet(); // added
+                pending.add(col);
             }
         }
-        return changed;
+        if (pending === null) {
+            return false;
+        }
+        this.reindexPending = true;
+        return true;
     }
 
     public setColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void {
@@ -171,12 +197,10 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         // Provided keys, hierarchy virtuals expanded before each source.
         const orderedSet = this.expandActiveCols(newCols);
         const orderedArr = Array.from(orderedSet);
-        const changed = this.changedColsBetween(before, orderedArr);
-        if (changed.length === 0) {
+        if (!this.stageChangedColsBetween(before, orderedArr)) {
             return; // identical membership + order — nothing to refresh or dispatch
         }
         this.applyActiveCols(before, orderedSet, orderedArr, source, true);
-        this.stageColChange(changed);
         colModel.flushColChanges(source, true); // membership change → refresh; defers when batched
     }
 
@@ -194,16 +218,42 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         return res;
     }
 
-    /** Record changed cols for the next {@link ColumnModel.flushColChanges}; a `Set` dedupes the payload. */
-    protected stageColChange(changedCols: AgColumn[]): void {
-        this.onColumnsChanged();
+    /** Stage a membership/order change of one col: mark the set for re-index at flush + record for dispatch. */
+    protected stageColChange(col: AgColumn): void {
+        this.reindexPending = true;
+        this.pendingColChangeSet().add(col);
+    }
+
+    /** {@link stageColChange} for several cols at once. */
+    protected stageColChanges(changedCols: Iterable<AgColumn>): void {
+        this.reindexPending = true;
+        const pending = this.pendingColChangeSet();
+        for (const col of changedCols) {
+            pending.add(col);
+        }
+    }
+
+    /** Record a col for the next {@link dispatchColChange} WITHOUT a re-index — for value-only changes that
+     *  keep the active set/order unchanged (a `Set` dedupes the payload). */
+    protected recordColChange(col: AgColumn): void {
+        this.pendingColChangeSet().add(col);
+    }
+
+    private pendingColChangeSet(): Set<AgColumn> {
         let pending = this.pendingChanged;
         if (pending === null) {
             pending = new Set();
             this.pendingChanged = pending;
         }
-        for (let i = 0, len = changedCols.length; i < len; ++i) {
-            pending.add(changedCols[i]);
+        return pending;
+    }
+
+    /** Re-stamp active-col indexes once if a staged change moved the set; called by
+     *  {@link ColumnModel.flushColChanges} before refresh/dispatch read the stamped positions. */
+    public flushReindex(): void {
+        if (this.reindexPending) {
+            this.reindexPending = false;
+            this.onColumnsChanged();
         }
     }
 
@@ -262,7 +312,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             return;
         }
 
-        this.stageColChange(Array.from(updatedCols));
+        this.stageColChanges(updatedCols);
         colModel.flushColChanges(src, true); // membership change → refresh; defers when batched
     }
 
@@ -271,7 +321,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
     /** Finalise the pass: order the buckets, diff vs the previous active cols (flagging changes), re-seat,
      *  then release the buckets. */
-    public commitExtract(source: ColumnEventType): AgColumn[] {
+    public commitExtract(source: ColumnEventType): void {
         const extractColsWithIndex = this.extractColsWithIndex;
         const extractColsWithValue = this.extractColsWithValue;
         const activeColSet = this.activeColSet;
@@ -309,8 +359,53 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.onColumnsChanged();
         this.extractColsWithIndex = null;
         this.extractColsWithValue = null;
-        return this.columns;
     }
+
+    /** Record a col's target order index for {@link sortByPendingState} and mark the pass dirty. */
+    protected recordPendingStateOrder(col: AgColumn, index: number): void {
+        let idxMap = this.pendingStateOrder;
+        if (idxMap === null) {
+            idxMap = new Map();
+            this.pendingStateOrder = idxMap;
+        }
+        idxMap.set(col, index);
+        this.pendingStateChanged = true;
+    }
+
+    /** Re-order + re-stamp active cols when this apply changed membership/order; else keep insertion order. */
+    public sortByPendingState(): void {
+        if (!this.pendingStateChanged) {
+            return;
+        }
+        this.pendingStateChanged = false;
+        const cols = this.columns;
+        if (cols.length > 0 && this.sortPendingCols(cols)) {
+            this.resetActiveCols(cols);
+        }
+        this.onColumnsChanged();
+        this.pendingStateOrder = null;
+    }
+
+    protected sortPendingCols(cols: AgColumn[]): boolean {
+        if (this.pendingStateOrder) {
+            cols.sort(this.compareByStateIndex);
+            return true;
+        }
+        return false;
+    }
+
+    protected readonly compareByStateIndex = (a: AgColumn, b: AgColumn): number => {
+        const indexes = this.pendingStateOrder;
+        if (!indexes) {
+            return 0;
+        }
+        const aIdx = indexes.get(a);
+        const bIdx = indexes.get(b);
+        if (aIdx == null) {
+            return bIdx == null ? 0 : 1;
+        }
+        return bIdx == null ? -1 : aIdx - bIdx;
+    };
 
     /** Apply one `ColumnState` entry to this service; ordered services share the impl, `valueColsSvc` overrides. */
     public abstract syncColState(
