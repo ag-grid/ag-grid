@@ -263,7 +263,7 @@ AddType application/x-gzip .gz .tgz
     RewriteRule "^/?charts/react/financial-charts$" "https://www.ag-grid.com/charts/react/financial-charts/" [R=301,L]
     RewriteRule "^/?javascript-data-grid/packages/$" "https://www.ag-grid.com/javascript-data-grid/modules/" [R=301,L]
     RewriteRule "^/?charts/react/radial-gauge$" "https://www.ag-grid.com/charts/react/radial-gauge/" [R=301,L]
-    RewriteRule "^/?charts/react/bullet-series/$" "https://www.ag-grid.com/charts/react/bullet-series/" [R=301,L]
+    RewriteRule "^/?charts/react/bullet-series/$" "https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series/" [R=301,NE,L]
     RewriteRule "^/?charts/react/range-bar-series$" "https://www.ag-grid.com/charts/react/range-bar-series/" [R=301,L]
     RewriteRule "^/?vue-data-grid/$" "https://www.ag-grid.com/vue-data-grid/getting-started/" [R=301,L]
     RewriteRule "^/?charts/react/pyramid-series$" "https://www.ag-grid.com/charts/react/pyramid-series/" [R=301,L]
