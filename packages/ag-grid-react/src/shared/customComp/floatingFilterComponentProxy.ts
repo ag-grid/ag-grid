@@ -1,18 +1,13 @@
 import type { IFloatingFilter, IFloatingFilterParams } from 'ag-grid-community';
-import { AgPromise, ProvidedFilter } from 'ag-grid-community';
+import { AgPromise } from 'ag-grid-community';
 
 import { addOptionalMethods } from './customComponentWrapper';
 import type { CustomFloatingFilterCallbacks, CustomFloatingFilterProps } from './interfaces';
 
 export function updateFloatingFilterParent(params: IFloatingFilterParams, model: any): void {
     params.parentFilterInstance((instance) => {
-        // A provided filter's setModel() is deprecated for user code, but is the correct path here
-        // (onModelChange is not deprecated), so suppress its deprecation warning rather than routing
-        // through the public api, which would defer the update while data-type inference is pending.
-        const modelSet =
-            (instance instanceof ProvidedFilter ? instance.setModel(model, true) : instance.setModel(model)) ||
-            AgPromise.resolve();
-        modelSet.then(() => {
+        // Pass suppressDeprecationWarning: the grid calls setModel() on the user's behalf here, not user code.
+        (instance.setModel(model, true) || AgPromise.resolve()).then(() => {
             params.filterParams.filterChangedCallback();
         });
     });
