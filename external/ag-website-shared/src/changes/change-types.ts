@@ -1,187 +1,103 @@
 /**
- * Types for the changes database: a machine-readable record of the API transitions,
- * requirements, behaviour changes, dependency changes and style changes in each release
- * of an AG product.
+ * Authoring format for the changes database: one `VersionChangelog` per release, compiled to
+ * the flat consumer format in `compiled-change-types.ts`.
  */
 
-/**
- * The full set of framework contexts, as a runtime value so the compiler can expand
- * "applies to all frameworks" to an explicit list. Single source of truth for `Framework`.
- */
+/** All framework contexts, as a runtime value so the compiler can expand "all frameworks" to a list. */
 export const FRAMEWORKS = ['react', 'angular', 'vue', 'javascript'] as const;
 
 /**
- * A docs rendering context, not an app's dependency stack. Includes `'javascript'`
- * (vanilla): the grid's core API is framework-agnostic, so a React, Angular or Vue app can
- * still call the vanilla `createGrid` API and use vanilla grid components — vanilla advice
- * is therefore relevant beyond no-framework apps. A `framework` value marks which framework
- * variant of a docs page an entry applies to.
+ * A docs rendering context, not an app's dependency stack. Includes `'javascript'` (vanilla):
+ * the framework-agnostic core API is relevant to React/Angular/Vue apps too.
  */
 export type Framework = (typeof FRAMEWORKS)[number];
 
-/**
- * A piece of mitigation advice, optionally scoped to specific frameworks. Multiple entries
- * combine additively: a consumer shows every entry whose `frameworks` includes the app's
- * framework (plus every unscoped entry).
- */
+/** A piece of mitigation advice, optionally scoped to frameworks. Multiple entries are additive. */
 export interface MitigationAdvice {
-    /** Frameworks this advice applies to. Omit for all frameworks. */
+    /** Frameworks this applies to; omit for all. */
     frameworks?: Framework[];
-    /** Markdown advice. */
+    /** Markdown. */
     content: string;
 }
 
 export interface ChangeBase {
-    /**
-     * If absent, applies to all frameworks (including vanilla `'javascript'`).
-     */
+    /** Framework this entry is scoped to; omit for all (including vanilla `'javascript'`). */
     framework?: Framework;
 
     /**
-     * Words or phrases to search for in a customer application codebase.
-     * Matches are case-sensitive, and partial words do not match, so "Bar"
-     * does not match "bar" or "FooBar" but does match "Foo-Bar-Baz".
-     *
-     * No match must GUARANTEE that the application is NOT affected by the change. A
-     * match means that the application MIGHT be affected.
-     *
-     * High false-positive rates are acceptable e.g. if a change affects column
-     * groups, an appropriate entry is 'children' which will also match any use of
-     * the unrelated Element.children DOM API.
-     *
-     * Null = no code marker can rule applications out; a comment must justify why.
+     * Case-sensitive words to search for in an app's source. Partial words don't match, so `Bar`
+     * matches `Foo-Bar-Baz` but not `bar` or `FooBar`. No match must GUARANTEE the app is
+     * unaffected; a match means it might be (high false-positive rates are fine, e.g. `children`
+     * for a column-groups change). `null` = nothing can rule the app out — justify with a comment.
      */
     detectWords: string | string[] | null;
 
     /**
-     * Markdown. How to update an application affected by this change.
-     *
-     * This should be the most straightforward way of restoring the behaviour
-     * that an application had before this change happened.
-     *
-     * For removals, it's the new API to use. For behaviour changes, it's the
-     * APIs to use to restore the old behaviour.
-     *
-     * Longer content can live in a .md file imported at the use point:
-     *
-     *     mitigation: (await import('./v36-dom-structure-migration.md?raw')).default,
-     *
-     * A plain string is shorthand for one all-framework entry. Use the `MitigationAdvice[]`
-     * form to give different advice per framework: entries combine additively (a consumer
-     * shows every entry whose `frameworks` includes the app's framework, plus every unscoped
-     * entry), so shared advice goes in one unscoped entry and per-framework extras alongside.
-     * `null` = accept-only, no action to take.
+     * Markdown: the most direct way to restore pre-change behaviour (for removals, the replacement
+     * API; for behaviour changes, the APIs that reinstate the old behaviour). `null` = accept-only.
+     * A plain string is one all-framework entry; use `MitigationAdvice[]` for per-framework advice.
+     * Long content can be imported: `mitigation: (await import('./v36-migration.md?raw')).default`.
      */
     mitigation: string | MitigationAdvice[] | null;
 }
 
 export interface TransitionFacts extends ChangeBase {
-    /**
-     * The old API name as a phrase that can be inserted into "As of v30, $oldApi is deprecated".
-     *
-     * Examples are:
-     * - `SomeClass.foo`
-     * - Column API
-     * - Multiple arguments to someApi(a, b, c)
-     */
+    /** Old API as a phrase for "As of v30, $oldApi is deprecated", e.g. `SomeClass.foo`, Column API. */
     oldApi: string;
     oldDescription?: string;
 
-    /**
-     * The replacement API to use, as a phrase that can be inserted into "Instead, use $newApi".
-     *
-     * Examples are:
-     * - `SomeClass.bar`
-     * - equivalent objects on Grid API
-     * - someApi([a, b, c])
-     *
-     * Null = the old API has no replacement; `mitigation` or `newDescription` explains
-     * why deletion is safe.
-     */
+    /** Replacement as a phrase for "Instead, use $newApi". `null` = no replacement (explain in mitigation/newDescription). */
     newApi: string | null;
     newDescription?: string;
 
     /**
-     * Soft deprecation: the old API is discouraged in favour of `newApi` — the docs
-     * present the new API as the recommended approach — but it is NOT formally deprecated
-     * in code. There is no `@deprecated` marker, no runtime warning, and no scheduled
-     * removal; the old API remains fully supported for the foreseeable future.
-     *
-     * Applies only to `deprecations` records. Omit (or `false`) for a normal deprecation.
+     * Soft deprecation: `newApi` is recommended but the old API is not `@deprecated` in code, emits
+     * no warning and has no scheduled removal. Only meaningful in `deprecations`; omit otherwise.
      */
     isSoft?: boolean;
 }
 
-/**
- * A change with no old-API/new-API structure. Which `VersionChangelog` list it appears in
- * determines its meaning and how urgently an upgrading application must respond.
- */
+/** A change with no old/new API. Which `VersionChangelog` list it sits in gives its meaning and urgency. */
 export interface SimpleChange extends ChangeBase {
-    /**
-     * A full clause stating what changed — informative enough to stand alone as a summary
-     */
+    /** A full clause stating what changed, able to stand alone as a summary. */
     title: string;
-
-    /**
-     * Optional further detail on the change. Should only describe the change,
-     * steps required to mitigate the change go in mitigation advice.
-     */
+    /** Optional further detail on the change itself (mitigation steps go in `mitigation`). */
     description?: string;
 }
 
-/**
- * A dependency whose minimum supported version can be raised: the framework wrapper
- * packages (React, Angular, Vue) plus TypeScript. Excludes `'javascript'` — vanilla usage
- * has no framework package to version.
- */
+/** Dependencies whose minimum version can be raised: the framework wrappers plus TypeScript. */
 export type DependencyName = Exclude<Framework, 'javascript'> | 'typescript';
 
 /**
- * A raised minimum version of a dependency. Prose is generated from the fields, and
- * detection is an exact version check against the application's configuration, so unlike
- * other changes there is no title or `detectPattern`. Dependency changes that are not
- * version bumps (a newly required dependency, a dropped environment) belong in
- * `newRequirements` instead.
+ * A raised minimum dependency version. Prose is generated from the fields and detection is an exact
+ * version check, so there is no title/detectWords. Non-bump dependency changes (a newly required
+ * dependency, a dropped environment) belong in `newRequirements`.
  */
 export interface DependencyChange {
     dependency: DependencyName;
-    /** The new minimum supported version, e.g. "5.8.3". */
+    /** New minimum supported version, e.g. "5.8.3". */
     minVersion: string;
-    /** Markdown. The rationale, e.g. the reason support was dropped. */
+    /** Markdown rationale, or `null`. */
     reason: string | null;
 }
 
-/** All changes in a single release. All lists are optional; many releases have none. */
+/** All changes in a single release. Every list is optional. */
 export interface VersionChangelog {
     /**
-     * Old APIs deprecated in this release, keyed by a stable camelCase identifier. Code
-     * using them still works. The removing release references the deprecation object:
-     *
-     *     removalsAfterDeprecation: [v31.deprecations.columnApi],
+     * APIs deprecated in this release, keyed by a stable camelCase id. The removing release
+     * references the object by identity: `removalsAfterDeprecation: [v31.deprecations.columnApi]`.
      */
     deprecations?: Record<string, TransitionFacts>;
-    /**
-     * Old API forms that stopped working in this release with no deprecation period:
-     * removals, signature changes, renames.
-     */
+    /** APIs removed, renamed or signature-changed in this release with no prior deprecation. */
     removalsWithoutDeprecation?: TransitionFacts[];
-    /**
-     * Previously deprecated APIs removed in this release, referencing deprecation objects
-     * from earlier version files by identity.
-     */
+    /** Previously-deprecated APIs removed here; each a by-identity reference to an earlier version's deprecation. */
     removalsAfterDeprecation?: TransitionFacts[];
-    /**
-     * New requirements: the application is broken until it acts, but no old API is being
-     * replaced (e.g. a callback or template element that is now required).
-     */
+    /** App is broken until it acts, but no old API is being replaced (e.g. a now-required callback). */
     newRequirements?: SimpleChange[];
-    /** Default behaviour changes: old code runs but behaves differently; accept or mitigate. */
+    /** Old code runs but behaves differently; accept or mitigate. */
     behaviourChanges?: SimpleChange[];
-    /** Raised minimum versions of frameworks and toolchain dependencies. */
+    /** Raised minimum versions of framework and toolchain dependencies. */
     dependencyChanges?: DependencyChange[];
     /** Visual/CSS changes. */
     styleChanges?: SimpleChange[];
 }
-
-/** A product's full changes database: one `VersionChangelog` per release, keyed by version. */
-export type Changelogs = Record<string, VersionChangelog>;

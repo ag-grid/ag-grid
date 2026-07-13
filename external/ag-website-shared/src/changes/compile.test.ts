@@ -1,30 +1,12 @@
 import type { Changelogs, TransitionFacts } from './change-types';
-import { compileChangelogs, compileDetectWords } from './compile';
+import { compileChangelogs, normaliseDetectWords } from './compile';
 
-describe('compileDetectWords', () => {
-    function patternOf(word: string): RegExp {
-        return new RegExp(compileDetectWords(word)![0].source);
-    }
-
-    test('word boundaries are required only at identifier-character edges', () => {
-        expect(patternOf('createGrid').test('agGrid.createGrid(options)')).toBe(true);
-        expect(patternOf('createGrid').test('recreateGridX')).toBe(false);
-        // hyphens are boundaries, so entries match within larger hyphenated class names
-        expect(patternOf('ag-body').test('.ag-body-viewport {')).toBe(true);
-        expect(patternOf('ag-body').test('drag-body')).toBe(false);
-        // non-identifier edges make prefix and phrase entries work
-        expect(patternOf('ag-theme-').test('class="ag-theme-quartz"')).toBe(true);
-        expect(patternOf('new Grid(').test('new Grid(element, options)')).toBe(true);
-        // regex metacharacters in words are escaped
-        expect(patternOf('foo.bar()').test('fooXbarYZ')).toBe(false);
-    });
-
-    test('multiple words compile to a single alternation; no words compile to undefined', () => {
-        const compiled = compileDetectWords(['columnApi', 'getColumnApi']);
-        expect(compiled).toHaveLength(1);
-        expect(new RegExp(compiled![0].source).test('getColumnApi()')).toBe(true);
-        expect(compileDetectWords(null)).toBeUndefined();
-        expect(compileDetectWords([])).toBeUndefined();
+describe('normaliseDetectWords', () => {
+    test('a single string wraps to an array; a list passes through; null/empty become null', () => {
+        expect(normaliseDetectWords('columnApi')).toEqual(['columnApi']);
+        expect(normaliseDetectWords(['columnApi', 'getColumnApi'])).toEqual(['columnApi', 'getColumnApi']);
+        expect(normaliseDetectWords(null)).toBeNull();
+        expect(normaliseDetectWords([])).toBeNull();
     });
 });
 
@@ -80,18 +62,16 @@ describe('compileChangelogs', () => {
             type: 'transition',
             deprecatedFrom: '31.0.0',
             removedFrom: '32.2.0',
-            detectPatterns: [{ source: '\\bcolumnApi\\b', flags: '' }],
+            detectWords: ['columnApi'],
         });
 
-        // a pending deprecation has no removedFrom
+        // a pending deprecation has a null removedFrom
         const pending = changes.find((change) => change.id === 'legacyThemes');
-        expect((pending as { removedFrom?: string }).removedFrom).toBeUndefined();
+        expect((pending as { removedFrom: string | null }).removedFrom).toBeNull();
 
-        // a removal without deprecation has neither deprecatedFrom nor id
+        // a removal without deprecation has null deprecatedFrom and id
         const cold = changes.find((change) => change.type === 'transition' && change.oldApi.includes('ChartType'));
-        expect(cold).toMatchObject({ removedFrom: '32.2.0' });
-        expect((cold as { deprecatedFrom?: string; id?: string }).deprecatedFrom).toBeUndefined();
-        expect((cold as { id?: string }).id).toBeUndefined();
+        expect(cold).toMatchObject({ removedFrom: '32.2.0', deprecatedFrom: null, id: null });
 
         // simple and dependency changes carry a single version and no id
         expect(changes.find((change) => change.type === 'behaviour')).toMatchObject({ version: '31.0.0' });

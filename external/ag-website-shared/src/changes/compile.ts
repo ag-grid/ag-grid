@@ -6,7 +6,6 @@ import type {
     CompiledMitigation,
     CompiledSimpleChange,
     CompiledTransition,
-    SerialisedRegExp,
 } from './compiled-change-types';
 import { validateChangelogs } from './validate';
 import { compareVersions, normaliseVersion, toReleaseVersion } from './version-utils';
@@ -17,6 +16,9 @@ import { compareVersions, normaliseVersion, toReleaseVersion } from './version-u
  *
  * Throws if the changelogs fail validation.
  */
+/** Bumped when the compiled format changes in a way the consuming upgrade skill must handle. */
+const MINIMUM_SKILL_VERSION = '1.1.0';
+
 export function compileChangelogs(changelogs: Changelogs, mostRecentVersion: string): CompiledChangelog {
     const validationErrors = validateChangelogs(changelogs);
     if (validationErrors.length > 0) {
@@ -46,12 +48,12 @@ export function compileChangelogs(changelogs: Changelogs, mostRecentVersion: str
                 id: key,
                 type: 'transition',
                 oldApi: deprecation.oldApi,
-                oldDescription: deprecation.oldDescription,
+                oldDescription: deprecation.oldDescription ?? null,
                 newApi: deprecation.newApi,
-                newDescription: deprecation.newDescription,
+                newDescription: deprecation.newDescription ?? null,
                 isSoft: deprecation.isSoft ?? false,
                 deprecatedFrom: normalisedVersion,
-                removedFrom: removalVersions.get(deprecation),
+                removedFrom: removalVersions.get(deprecation) ?? null,
                 ...compileBase(deprecation),
             };
             changes.push(transition);
@@ -59,12 +61,14 @@ export function compileChangelogs(changelogs: Changelogs, mostRecentVersion: str
 
         for (const removal of changelog.removalsWithoutDeprecation ?? []) {
             const transition: CompiledTransition = {
+                id: null,
                 type: 'transition',
                 oldApi: removal.oldApi,
-                oldDescription: removal.oldDescription,
+                oldDescription: removal.oldDescription ?? null,
                 newApi: removal.newApi,
-                newDescription: removal.newDescription,
+                newDescription: removal.newDescription ?? null,
                 isSoft: false,
+                deprecatedFrom: null,
                 removedFrom: normalisedVersion,
                 ...compileBase(removal),
             };
@@ -88,12 +92,12 @@ export function compileChangelogs(changelogs: Changelogs, mostRecentVersion: str
                 version: normalisedVersion,
                 dependency: dependency.dependency,
                 minVersion: dependency.minVersion,
-                reason: dependency.reason ?? undefined,
+                reason: dependency.reason,
             });
         }
     }
 
-    return { mostRecentVersion: toReleaseVersion(mostRecentVersion), changes };
+    return { mostRecentVersion: toReleaseVersion(mostRecentVersion), minimumSkillVersion: MINIMUM_SKILL_VERSION, changes };
 }
 
 function compileSimpleChange(
@@ -105,21 +109,21 @@ function compileSimpleChange(
         type,
         version,
         title: record.title,
-        description: record.description,
+        description: record.description ?? null,
         ...compileBase(record),
     };
 }
 
 interface CompiledBaseFields {
-    framework?: Framework;
-    detectPatterns?: SerialisedRegExp[];
+    framework: Framework | null;
+    detectWords: string[] | null;
     mitigation: CompiledMitigation[];
 }
 
 function compileBase(record: ChangeBase): CompiledBaseFields {
     return {
-        framework: record.framework,
-        detectPatterns: compileDetectWords(record.detectWords),
+        framework: record.framework ?? null,
+        detectWords: normaliseDetectWords(record.detectWords),
         mitigation: compileMitigation(record.mitigation),
     };
 }
@@ -140,25 +144,8 @@ function compileMitigation(mitigation: string | MitigationAdvice[] | null): Comp
     }));
 }
 
-const IDENTIFIER_CHAR = /[A-Za-z0-9_$]/;
-const REGEXP_SPECIAL_CHARS = /[.*+?^${}()|[\]\\]/g;
-
-/**
- * Compile detection words into regexes: each word matches literally, with a word
- * boundary required at each end only where the word's edge character is an identifier
- * character. All words currently share the same (empty) flags, so they compile to a
- * single alternation.
- */
-export function compileDetectWords(detectWords: string | string[] | null | undefined): SerialisedRegExp[] | undefined {
+/** Normalise authored detectWords to an array; a single string wraps, `null`/empty becomes `null`. */
+export function normaliseDetectWords(detectWords: string | string[] | null | undefined): string[] | null {
     const words = typeof detectWords === 'string' ? [detectWords] : detectWords;
-    if (words == null || words.length === 0) {
-        return undefined;
-    }
-    const alternatives = words.map((word) => {
-        const escaped = word.replace(REGEXP_SPECIAL_CHARS, '\\$&');
-        const start = IDENTIFIER_CHAR.test(word.charAt(0)) ? '\\b' : '';
-        const end = IDENTIFIER_CHAR.test(word.charAt(word.length - 1)) ? '\\b' : '';
-        return start + escaped + end;
-    });
-    return [{ source: alternatives.join('|'), flags: '' }];
+    return words == null || words.length === 0 ? null : words;
 }

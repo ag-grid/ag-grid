@@ -1,101 +1,77 @@
 /**
- * Types for the compiled output of the changes database.
- *
- * Where the authoring format (`change-types.ts`) is optimised for humans writing
- * TypeScript files — one file per release, versions implied by position, transitions
- * split across a deprecation record and a removal reference — the compiled format is a
- * flat list of self-contained changes with explicit versions, produced by validating and
- * joining the authored files.
- *
- * The compiled format is JSON-serialisable: it is the shape published to the website
- * build output for consumption by the upgrade AI skill, and the shape the documentation
- * pages render from.
+ * Compiled output of the changes database: a flat, JSON-serialisable list of self-contained
+ * changes with explicit versions, produced by validating and joining the authored per-release
+ * files (`change-types.ts`). This is the shape published for the upgrade AI skill and rendered
+ * by the docs. Every field is always present; absent values are `null` (never omitted).
  */
 import type { DependencyName, Framework } from './change-types';
 
-/** A `RegExp` in JSON-serialisable form; reconstruct with `new RegExp(source, flags)`. */
-export interface SerialisedRegExp {
-    source: string;
-    flags: string;
-}
-
-/** A piece of mitigation advice scoped to an explicit, always-populated framework list. */
+/** Mitigation advice for a specific set of frameworks. */
 export interface CompiledMitigation {
-    /**
-     * Frameworks this advice applies to. Always explicit and populated: an authored entry
-     * that omitted `frameworks` ("all") is expanded to the full framework list here.
-     */
+    /** Frameworks this advice applies to; always populated (an authored "all" is expanded to every framework). */
     frameworks: Framework[];
-    /** Markdown advice. */
+    /** Markdown. */
     content: string;
 }
 
 interface CompiledChangeBase {
-    framework?: Framework;
+    /** Framework variant this entry is scoped to; null = all frameworks. */
+    framework: Framework | null;
     /**
-     * Detection regexes compiled from the authored `detectWords`. The build combines
-     * entries into as few patterns as possible (entries with differing flags cannot
-     * share a pattern). If no pattern matches anything in an application codebase, the
-     * application is guaranteed unaffected by this change; a match means it might be.
-     * Absent = no code marker can rule applications out.
+     * Case-sensitive words to search for in an app's source. Partial identifiers don't match
+     * (`Bar` matches `Foo-Bar` but not `FooBar`). No word matching anywhere = app guaranteed
+     * unaffected; a match = app may be affected (false positives expected). Null = the change
+     * cannot be ruled out by searching.
      */
-    detectPatterns?: SerialisedRegExp[];
-    /**
-     * Mitigation advice, always in array form (a plain authored string becomes one
-     * all-framework entry). Empty = accept-only, no action. Entries combine additively.
-     */
+    detectWords: string[] | null;
+    /** Show every entry whose `frameworks` includes the app's framework. Empty = no action needed (accept-only). */
     mitigation: CompiledMitigation[];
 }
 
 /**
- * An API transition, joined into a single change from its authored deprecation and
- * removal records. At least one of `deprecatedFrom`/`removedFrom` is present (enforced
- * by validation; not expressible in the type).
+ * An API changing from `oldApi` to `newApi`. The version fields say where it is in its
+ * lifecycle: only `deprecatedFrom` set = deprecated, not yet removed; both set = deprecated
+ * then removed; only `removedFrom` set = removed with no prior deprecation.
  */
 export interface CompiledTransition extends CompiledChangeBase {
     type: 'transition';
-    /**
-     * The key of the deprecation in its version file's deprecations object. Absent for
-     * removals without deprecation.
-     */
-    id?: string;
+    /** Stable identifier; null for removals with no prior deprecation. */
+    id: string | null;
     oldApi: string;
-    oldDescription?: string;
-    /** Null = the old API has no replacement. */
+    oldDescription: string | null;
+    /** Null = removed with no replacement. */
     newApi: string | null;
-    newDescription?: string;
-    /**
-     * True for a soft deprecation: the old API is discouraged in favour of `newApi` but is
-     * not formally deprecated in code and has no scheduled removal. Always `false` for
-     * removals and normal deprecations.
-     */
+    newDescription: string | null;
+    /** Discouraged but not formally deprecated, with no scheduled removal; `false` for normal deprecations and removals. */
     isSoft: boolean;
-    /** The version that deprecated the old API. Absent for removals without deprecation. */
-    deprecatedFrom?: string;
-    /** The version that removed the old API. Absent while removal is unscheduled. */
-    removedFrom?: string;
+    deprecatedFrom: string | null;
+    removedFrom: string | null;
 }
 
 export interface CompiledSimpleChange extends CompiledChangeBase {
+    /** requirement: app breaks until it acts. behaviour: runs but behaves differently. style: visual/CSS only. */
     type: 'requirement' | 'behaviour' | 'style';
     version: string;
     title: string;
-    description?: string;
+    description: string | null;
 }
 
 export interface CompiledDependencyChange {
     type: 'dependency';
     version: string;
     dependency: DependencyName;
+    /** New minimum supported version. */
     minVersion: string;
-    reason?: string;
+    /** Markdown; why the minimum was raised. */
+    reason: string | null;
 }
 
 export type CompiledChange = CompiledTransition | CompiledSimpleChange | CompiledDependencyChange;
 
-/** The validated, flattened output of a product's changes database. */
 export interface CompiledChangelog {
-    /** The current (most recent) released version of the product, e.g. the value of the package's `VERSION`. */
+    /** Current released version, as `major.minor.patch`. */
     mostRecentVersion: string;
+    /** Minimum version of the consuming upgrade skill able to read this compiled format. */
+    minimumSkillVersion: string;
     changes: CompiledChange[];
 }
