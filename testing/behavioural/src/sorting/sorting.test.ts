@@ -2,6 +2,7 @@ import { getByTestId } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
@@ -472,5 +473,83 @@ describe('Sorting', () => {
             ├── LEAF id:c-b amount:5
             └── LEAF id:c-c amount:-3
         `);
+    });
+
+    describe('coupled group sort via row group panel chip', () => {
+        const groupGridMgr = new TestGridsManager({
+            modules: [ClientSideRowModelModule, RowGroupingModule, RowGroupingPanelModule],
+        });
+
+        afterEach(() => groupGridMgr.reset());
+
+        test('clearing the group column sort via the country chip clears its sort-order badge', async () => {
+            const api = await groupGridMgr.createGridAndWait('coupled-group-chip-sort', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true, sortable: true },
+                    { field: 'year', sortable: true },
+                ],
+                autoGroupColumnDef: { headerName: 'Group' },
+                rowGroupPanelShow: 'always',
+                rowData: [
+                    { country: 'Ireland', year: 2000 },
+                    { country: 'Ireland', year: 2004 },
+                    { country: 'Spain', year: 2008 },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const groupSortOrderEl = () =>
+                gridDiv.querySelector('.ag-header-cell[col-id="ag-Grid-AutoColumn"] .ag-sort-order');
+            const groupHeaderLabel = () =>
+                gridDiv.querySelector(
+                    '.ag-header-cell[col-id="ag-Grid-AutoColumn"] .ag-header-cell-label'
+                ) as HTMLElement;
+            const countryChip = () => {
+                const chip = gridDiv.querySelector(
+                    '.ag-column-drop-horizontal-rowgroup .ag-column-drop-cell'
+                ) as HTMLElement | null;
+                if (!chip) {
+                    throw new Error('country chip not found in the row group panel');
+                }
+                return chip;
+            };
+            const shiftClick = (el: HTMLElement) =>
+                el.dispatchEvent(new MouseEvent('click', { shiftKey: true, bubbles: true, cancelable: true }));
+            const shown = (el: Element | null | undefined) => !!el && !el.classList.contains('ag-hidden');
+            const groupArrowShown = () => {
+                const header = gridDiv.querySelector('.ag-header-cell[col-id="ag-Grid-AutoColumn"]');
+                return (
+                    shown(header?.querySelector('.ag-sort-ascending-icon')) ||
+                    shown(header?.querySelector('.ag-sort-descending-icon')) ||
+                    shown(header?.querySelector('.ag-sort-mixed-icon'))
+                );
+            };
+            const yearSort = () => api.getColumnState().find((s) => s.colId === 'year')?.sort ?? null;
+
+            // Sort year (single), then shift-add the group column via its header → multi-sort; the group
+            // column joins the sort and shows an ordinal badge + a sort arrow.
+            api.applyColumnState({ state: [{ colId: 'year', sort: 'asc' }], defaultState: { sort: null } });
+            await asyncSetTimeout(1);
+            shiftClick(groupHeaderLabel());
+            await asyncSetTimeout(1);
+            expect(shown(groupSortOrderEl())).toBe(true);
+            expect(groupSortOrderEl()?.textContent).toMatch(/^\d+$/);
+            expect(groupArrowShown()).toBe(true);
+
+            // Shift-click the country chip once: cycles the group column's sort asc → desc; still sorted, still badged.
+            shiftClick(countryChip());
+            await asyncSetTimeout(1);
+            expect(shown(groupSortOrderEl())).toBe(true);
+            expect(groupSortOrderEl()?.textContent).toMatch(/^\d+$/);
+
+            // Shift-click again: cycles desc → none. With the group column's sort cleared, its header must show
+            // neither the sort-order index badge (AC1) nor a sort arrow (AC2), while year stays sorted.
+            shiftClick(countryChip());
+            await asyncSetTimeout(1);
+            expect(shown(groupSortOrderEl())).toBe(false);
+            expect(groupArrowShown()).toBe(false);
+            expect(yearSort()).toBe('asc');
+        });
     });
 });
