@@ -36,6 +36,7 @@ const MENU_ITEM_MODULES: Record<DefaultMenuItem, _ValidationModuleName | _Valida
     calculatedColumn: 'CalculatedColumns',
     editCalculatedColumn: 'CalculatedColumns',
     removeCalculatedColumn: 'CalculatedColumns',
+    editColumnName: 'ColumnHeaderEdit',
     sortAscending: 'Sort',
     sortDescending: 'Sort',
     sortAbsoluteAscending: 'Sort',

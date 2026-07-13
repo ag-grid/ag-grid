@@ -1,5 +1,7 @@
+import { RefPlaceholder } from 'ag-stack';
+
 import type { ElementParams, GridInputTextField } from 'ag-grid-community';
-import { AgInputTextFieldSelector, BeanStub, Component, KeyCode, RefPlaceholder } from 'ag-grid-community';
+import { AgInputTextFieldSelector, BeanStub, Component, KeyCode } from 'ag-grid-community';
 
 import { Dialog } from '../widgets/dialog';
 

@@ -33,6 +33,7 @@ export type {
     _ToolbarGridApi,
 } from './api/gridApi';
 export type { INoteAccess, INotesFeature, INotesDataService, INotesService } from './interfaces/notes';
+export type { IColumnHeaderEditService } from './interfaces/columnHeaderEdit';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';

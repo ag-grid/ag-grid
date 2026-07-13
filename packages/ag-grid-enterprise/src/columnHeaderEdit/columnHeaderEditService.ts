@@ -1,10 +1,4 @@
-import type {
-    AgColumn,
-    ColKey,
-    ColumnEventType,
-    IColumnHeaderEditService,
-    NamedBean,
-} from 'ag-grid-community';
+import type { AgColumn, ColKey, ColumnEventType, IColumnHeaderEditService, NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 import { ColumnHeaderEditPopup } from './columnHeaderEditPopup';
