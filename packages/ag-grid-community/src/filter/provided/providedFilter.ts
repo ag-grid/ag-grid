@@ -209,8 +209,10 @@ export abstract class ProvidedFilter<
     /**
      * @deprecated v34 Use (`api.setColumnFilterModel()`) instead.
      */
-    public setModel(model: M | null): AgPromise<void> {
-        this.beans.log.warn(286);
+    public setModel(model: M | null, suppressDeprecationWarning?: boolean): AgPromise<void> {
+        if (!suppressDeprecationWarning) {
+            this.beans.log.warn(286);
+        }
         const { beans, params } = this;
         return beans.colFilter!.setModelForColumnLegacy(params.column as AgColumn, model);
     }
