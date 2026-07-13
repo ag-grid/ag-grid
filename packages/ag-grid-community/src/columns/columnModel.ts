@@ -174,7 +174,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
             eventSvc,
             groupHierarchyColSvc,
             calculatedColsSvc,
-            sortSvc,
         } = beans;
 
         // only dispatch before/after events when updating an existing column model, not on first set.
@@ -224,10 +223,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             _destroyColumnTreeUnused(oldCols, oldAllGroups, builder.buildToken);
         }
 
-        this.cachedColsByDef = null;
-        this.cachedAllCols = null;
-        this.cachedColsInStateOrder = null;
-        sortSvc?.invalidate();
+        this.invalidateColsDerivedState();
 
         // Single shared scan: each service classifies independently, bucketing lazily until commit.
         const oldProvidedSet = oldCols.length > 0 ? new Set(oldCols) : null;
@@ -274,14 +270,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    /** Open a column-change batch; mutations until the {@link endColBatch} share one flush. */
+    /** Open a column-change batch; mutations until the {@link endColBatch} share one flush. Active-col indexes
+     *  (`*ActiveIndex`) are re-stamped only at the flush, so they read stale inside an open batch. */
     public beginColBatch(): void {
         this.colBatchDepth++;
     }
 
     /** Close a {@link beginColBatch}; the outermost close flushes once (one source for the whole action). */
     public endColBatch(source: ColumnEventType): void {
-        this.colBatchDepth--;
+        this.colBatchDepth = Math.max(0, this.colBatchDepth - 1);
         this.flushColChanges(source, false); // refresh only if a staged op accumulated one
     }
 
@@ -305,6 +302,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (nothingStaged && !pendingRefresh) {
             return; // no staged dispatch and no deferred refresh
         }
+        // Re-stamp active-col indexes once, before refresh/dispatch (and their listeners) read them.
+        rowGroupColsSvc?.flushReindex();
+        pivotColsSvc?.flushReindex();
+        valueColsSvc?.flushReindex();
         if (pendingRefresh) {
             this.performRefresh(source); // clears pendingRefresh
             // Legacy compat: a role membership change (rowGroup/pivot/value add/remove/set) raised this.
@@ -453,10 +454,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.colsList = colsListChanged ? finalColsList : oldColsList;
         this.colsTree = _areEqual(colsTree, prevColTree) ? prevColTree : colsTree;
         this.colsById = colsById;
-        this.cachedColsByDef = null;
-        this.cachedAllCols = null;
-        this.cachedColsInStateOrder = null;
-        beans.sortSvc?.invalidate();
+        this.invalidateColsDerivedState();
         this.refreshColsDerivedState();
         if (colsListChanged) {
             beans.rowSpanSvc?.refreshCols();
@@ -575,7 +573,18 @@ export class ColumnModel extends BeanStub implements NamedBean {
      *  (`moveColumns`, `applyColumnState` with `applyOrder`); next `ensureColsListIndex` re-stamps. */
     public markColsListIndexDirty(): void {
         this.colsListIndexDirty = true;
+        // Both order-derived views snapshot `colsList` order while pivoting (parked-primary concat) — drop both.
         this.cachedColsInStateOrder = null;
+        this.cachedAllCols = null;
+    }
+
+    /** Drop all col-set/order-derived state after a structural (`colsList`) rebuild — this model's caches plus
+     *  the sort service's column-derived cache. (An order-only move uses {@link markColsListIndexDirty} instead.) */
+    private invalidateColsDerivedState(): void {
+        this.cachedColsByDef = null;
+        this.cachedAllCols = null;
+        this.cachedColsInStateOrder = null;
+        this.beans.sortSvc?.invalidate();
     }
 
     /** Lazily stamp each col's index in `colsList` onto `AgColumn.colsListIndex`, once per order change.

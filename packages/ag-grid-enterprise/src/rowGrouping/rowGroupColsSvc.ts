@@ -28,7 +28,7 @@ export class RowGroupColsSvc extends OrderedColsService implements NamedBean, IR
         reordered.splice(toIndex, 0, reordered.splice(fromIndex, 1)[0]);
         this.resetActiveCols(reordered);
         // Reorder only (event-driven regroup): report the moved column.
-        this.stageColChange([movedColumn]);
+        this.stageColChange(movedColumn);
         this.colModel.flushColChanges(source, false);
     }
 

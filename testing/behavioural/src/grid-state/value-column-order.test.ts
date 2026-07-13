@@ -132,3 +132,75 @@ describe('Value Column Order (valueIndex)', () => {
         ]);
     });
 });
+
+// rowGroupIndex/pivotIndex in column state derive from the active-col index re-stamped at flush. An
+// imperative reorder must re-stamp so the saved state reflects the new order — the rowGroup/pivot
+// counterpart of the valueIndex coverage above (both fail if the flush-time re-index is skipped).
+describe('Role Column Order (rowGroupIndex / pivotIndex)', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [AllEnterpriseModule],
+    });
+
+    const rowData = [{ a: 'x', b: 'y', c: 'z' }];
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const orderFromState = (state: ColumnState[], key: 'rowGroupIndex' | 'pivotIndex'): string[] =>
+        state
+            .filter((s) => s[key] != null)
+            .sort((a, b) => (a[key] as number) - (b[key] as number))
+            .map((s) => s.colId!);
+
+    test('row-group column order is captured in and restored from column state', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
+            rowData,
+        });
+
+        api.setRowGroupColumns(['a', 'b']);
+        await asyncSetTimeout(1);
+        expect(orderFromState(api.getColumnState(), 'rowGroupIndex')).toEqual(['a', 'b']);
+
+        // Reorder imperatively — the saved state must follow the new order, not the original.
+        api.setRowGroupColumns(['b', 'a']);
+        await asyncSetTimeout(1);
+        const savedState = api.getColumnState();
+        expect(orderFromState(savedState, 'rowGroupIndex')).toEqual(['b', 'a']);
+
+        // Reorder away, then restore the saved order.
+        api.setRowGroupColumns(['a', 'b']);
+        await asyncSetTimeout(1);
+        expect(orderFromState(api.getColumnState(), 'rowGroupIndex')).toEqual(['a', 'b']);
+
+        api.applyColumnState({ state: savedState, applyOrder: true });
+        await asyncSetTimeout(1);
+        expect(orderFromState(api.getColumnState(), 'rowGroupIndex')).toEqual(['b', 'a']);
+    });
+
+    test('pivot column order is captured in and restored from column state', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
+            pivotMode: true,
+            rowData,
+        });
+
+        api.setPivotColumns(['a', 'b']);
+        await asyncSetTimeout(1);
+        expect(orderFromState(api.getColumnState(), 'pivotIndex')).toEqual(['a', 'b']);
+
+        api.setPivotColumns(['b', 'a']);
+        await asyncSetTimeout(1);
+        const savedState = api.getColumnState();
+        expect(orderFromState(savedState, 'pivotIndex')).toEqual(['b', 'a']);
+
+        api.setPivotColumns(['a', 'b']);
+        await asyncSetTimeout(1);
+        expect(orderFromState(api.getColumnState(), 'pivotIndex')).toEqual(['a', 'b']);
+
+        api.applyColumnState({ state: savedState, applyOrder: true });
+        await asyncSetTimeout(1);
+        expect(orderFromState(api.getColumnState(), 'pivotIndex')).toEqual(['b', 'a']);
+    });
+});
