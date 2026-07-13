@@ -105,6 +105,9 @@ const excludeErrors = [
     'Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content.',
     'Request to access cookie or storage on “<URL>” was blocked because it came from a tracker and Enhanced Tracking Protection is enabled.',
     'This site appears to use a scroll-linked positioning effect.',
+    // Timing-dependent browser warning: a preloaded font occasionally isn't consumed within the
+    // browser's few-second window (e.g. under CI load), emitting a benign warning unrelated to the grid.
+    'preloaded with link preload was not used within a few seconds',
     // AG-17134: staging serves a Content-Security-Policy-Report-Only header with no report endpoint
     // (violations are captured via the securitypolicyviolation JS listener, not report-uri/report-to).
     // Browsers warn that such a policy can't report — benign for our validation window.
