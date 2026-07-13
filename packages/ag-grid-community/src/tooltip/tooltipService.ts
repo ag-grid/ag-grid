@@ -147,6 +147,19 @@ const resolveTooltipFieldValue = (
     return data[tooltipField];
 };
 
+// A group row showing an aggregated/derived cell value (or a group node with no data) must tooltip
+// that displayed value — mirrors fullWidthRowFeature.setupGroupRowsTooltip / autoColService.
+const usesGroupRowDisplayValue = (beans: BeanCollection, ctrl: CellCtrl): boolean => {
+    const { rowNode, column } = ctrl;
+    if (!rowNode.group) {
+        return false;
+    }
+    if (!rowNode.data) {
+        return true;
+    }
+    return !beans.valueSvc.displayIgnoresAggData(rowNode) && rowNode.aggData?.[column.colId] !== undefined;
+};
+
 const resolveCellTooltip = ({
     beans,
     ctrl,
@@ -200,12 +213,17 @@ const resolveCellTooltip = ({
     const data = rowNode.data;
 
     // 4) column tooltip field/valueGetter is the final fallback.
-    if (colDef.tooltipField && _exists(data)) {
-        return {
-            value: resolveTooltipFieldValue(beans, column, rowNode, data, colDef.tooltipField),
-            location: 'cell',
-            shouldDisplay: shouldDisplayColumnTooltip,
-        };
+    if (colDef.tooltipField) {
+        if (usesGroupRowDisplayValue(beans, ctrl)) {
+            return { value: ctrl.value, location: 'cell', shouldDisplay: shouldDisplayColumnTooltip };
+        }
+        if (_exists(data)) {
+            return {
+                value: resolveTooltipFieldValue(beans, column, rowNode, data, colDef.tooltipField),
+                location: 'cell',
+                shouldDisplay: shouldDisplayColumnTooltip,
+            };
+        }
     }
 
     const valueGetter = colDef.tooltipValueGetter;
