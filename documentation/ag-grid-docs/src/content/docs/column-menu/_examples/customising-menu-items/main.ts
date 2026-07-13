@@ -1,7 +1,8 @@
 import type {
     ColDef,
     DefaultMenuItem,
-    GetMainMenuItemsParams,
+    DefaultToolPanelItem,
+    GetColumnMenuItemsParams,
     GridApi,
     GridOptions,
     MenuItemDef,
@@ -20,8 +21,9 @@ const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 200 },
     {
         field: 'age',
-        mainMenuItems: (params: GetMainMenuItemsParams) => {
-            const athleteMenuItems: (MenuItemDef | DefaultMenuItem)[] = params.defaultItems.slice(0);
+        columnMenuItems: (params: GetColumnMenuItemsParams) => {
+            const athleteMenuItems: (MenuItemDef | DefaultMenuItem | DefaultToolPanelItem)[] =
+                params.defaultItems.slice(0);
             athleteMenuItems.push({
                 name: 'A Custom Item',
                 action: () => {
@@ -63,7 +65,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'country',
         minWidth: 200,
-        mainMenuItems: [
+        columnMenuItems: [
             {
                 // our own item with an icon
                 name: 'A Custom Item',
@@ -85,8 +87,8 @@ const columnDefs: ColDef[] = [
     },
     {
         field: 'year',
-        mainMenuItems: (params: GetMainMenuItemsParams) => {
-            const menuItems: (MenuItemDef | DefaultMenuItem)[] = [];
+        columnMenuItems: (params: GetColumnMenuItemsParams) => {
+            const menuItems: (MenuItemDef | DefaultMenuItem | DefaultToolPanelItem)[] = [];
             const itemsToExclude = ['separator', 'pinSubMenu', 'valueAggSubMenu'];
             params.defaultItems.forEach((item) => {
                 if (itemsToExclude.indexOf(item) < 0) {

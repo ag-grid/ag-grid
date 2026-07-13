@@ -41,8 +41,9 @@ export interface GetColumnMenuItemsParams<TData = any, TContext = any> extends A
     /** The column group the menu is for. Will be `null` for a single column or empty header space. */
     columnGroup: ProvidedColumnGroup | null;
     /**
-     * List of the items that would be displayed by default, as string tokens. `source: 'columnMenu'`
-     * yields `DefaultMenuItem` tokens; `'columnsToolPanel'` / `'columnChooser'` yield `DefaultToolPanelItem` tokens.
+     * The items shown by default, as string tokens. The column menu (`source: 'columnMenu'`) provides
+     * `DefaultMenuItem` tokens; the Columns Tool Panel and Column Chooser
+     * (`source: 'columnsToolPanel'` or `'columnChooser'`) provide `DefaultToolPanelItem` tokens.
      */
     defaultItems: (DefaultMenuItem | DefaultToolPanelItem)[];
     /** The surface the menu is being shown on. */

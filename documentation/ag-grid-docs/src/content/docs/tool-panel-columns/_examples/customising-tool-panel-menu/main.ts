@@ -27,6 +27,8 @@ const columnDefs: ColDef[] = [
     { field: 'bronze', enableValue: true },
 ];
 
+const highlightedColumns = new Set<string>();
+
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
@@ -34,24 +36,36 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 150,
+        cellClassRules: {
+            'highlight-column': (params) => highlightedColumns.has(params.column.getColId()),
+        },
     },
     sideBar: 'columns',
     getColumnMenuItems: (params) => {
-        // Only customise the Columns Tool Panel menu; other menus keep their default items.
-        if (params.source === 'columnsToolPanel') {
-            const highlightColumn: MenuItemDef = {
-                name: 'Highlight Column',
-                action: () => {
-                    const colId = params.column?.getColId();
-                    console.log(`Highlight column: ${colId}`);
-                },
-            };
-
-            // Append an optional pinning sub-menu and a custom item to the built-in tool panel items.
-            return [...params.defaultItems, 'separator', 'pinSubMenu', highlightColumn];
+        // Leave the column header menu with its default items; only customise the Columns Tool Panel menu.
+        if (params.source !== 'columnsToolPanel') {
+            return params.defaultItems;
         }
 
-        return params.defaultItems;
+        const colId = params.column?.getColId();
+        const highlightColumn: MenuItemDef = {
+            name: 'Highlight Column',
+            checked: colId ? highlightedColumns.has(colId) : false,
+            action: () => {
+                if (!colId) {
+                    return;
+                }
+                if (highlightedColumns.has(colId)) {
+                    highlightedColumns.delete(colId);
+                } else {
+                    highlightedColumns.add(colId);
+                }
+                gridApi.refreshCells({ force: true });
+            },
+        };
+
+        // Append an optional pinning sub-menu and a custom item to the built-in tool panel items.
+        return [...params.defaultItems, 'separator', 'pinSubMenu', highlightColumn];
     },
 };
 

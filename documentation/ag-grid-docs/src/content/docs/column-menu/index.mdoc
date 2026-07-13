@@ -41,28 +41,28 @@ The following example demonstrates different ways of customising the column menu
 
 ## Customising the Menu Items
 
-The main menu list, by default, will show a set of items. You can adjust which of these items get displayed, or you can start from scratch and provide your own items. There are two ways to customise the menu items:
+The menu shows a default set of items. You can add your own items, or change which defaults are shown, in two ways:
 
-1. Set `colDef.mainMenuItems`. This can either be a list of menu items, or a callback which is passed the list of default menu items.
-1. Set the grid option `getMainMenuItems()`. This callback will be passed the list of default menu items as well as the column.
+1. Set `colDef.columnMenuItems` - either a list of menu items, or a callback which is passed the list of default items.
+1. Set the grid option `getColumnMenuItems()` - a callback which is passed the list of default items, the column, and the `source` of the menu.
 
-Note that `colDef.mainMenuItems` will take priority over `getMainMenuItems()`.
+Note that `colDef.columnMenuItems` will take priority over `getColumnMenuItems()`.
 
-The menu item list should be a list with each item either a) a string or b) a `MenuItemDef` description. Use 'string' to pick from built-in menu items (listed below) and use `MenuItemDef` descriptions for your own menu items.
+The `source` param is one of `'columnMenu'`, `'columnsToolPanel'` or `'columnChooser'`, so a single callback can tailor the items for the column menu, the [Columns Tool Panel](./tool-panel-columns/#customising-the-right-click-menu) right-click menu, and the [Column Chooser](#customising-the-column-chooser).
 
-{% apiDocumentation source="column-properties/properties.json" section="header" names=["mainMenuItems"] /%}
-
-{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getMainMenuItems"] /%}
-
-### Customising Across Menus
-
-The `mainMenuItems` and `getMainMenuItems()` properties customise the column menu only. To customise the menu items across the column menu, the [Columns Tool Panel](./tool-panel-columns/#customising-the-right-click-menu) right-click menu, and the [Column Chooser](#customising-the-column-chooser) from a single place, use `colDef.columnMenuItems` and the grid option `getColumnMenuItems()` instead.
-
-These mirror `mainMenuItems` / `getMainMenuItems()`, but their callback params include a `source` (`'columnMenu'`, `'columnsToolPanel'` or `'columnChooser'`) so you can tailor the items per menu. When set, they take priority over `mainMenuItems` / `getMainMenuItems()`.
+Each item is either a string or a `MenuItemDef`. Use a string to pick a built-in item (the column menu's [built-in items](#built-in-menu-items) are listed below; the tool panel and chooser have their own set) and a `MenuItemDef` for your own items.
 
 {% apiDocumentation source="column-properties/properties.json" section="header" names=["columnMenuItems"] /%}
 
 {% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getColumnMenuItems"] /%}
+
+### Legacy Column Menu Properties
+
+`colDef.mainMenuItems` and the grid option `getMainMenuItems()` are the original way to customise the menu. They behave the same way, but apply to the column menu only - not the Columns Tool Panel or Column Chooser - and their callbacks do not receive a `source`. Prefer `columnMenuItems` / `getColumnMenuItems()`; these older properties remain supported and take effect when the newer ones are not set.
+
+{% apiDocumentation source="column-properties/properties.json" section="header" names=["mainMenuItems"] /%}
+
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getMainMenuItems"] /%}
 
 ### Built-In Menu Items
 
@@ -104,7 +104,7 @@ For more details, refer to the section: [Custom Menu Item Components](./componen
 
 ### Example: Customising the Menu Items
 
-The following example demonstrates the `colDef.mainMenuItems` property:
+The following example demonstrates the `colDef.columnMenuItems` property:
 
 - The **Athlete** column shows the list of built-in items.
 - The **Age** column appends custom items to the list of built-in items.
