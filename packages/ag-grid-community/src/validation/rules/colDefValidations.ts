@@ -422,6 +422,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
 type ColOrGroupKey = keyof ColDef | keyof ColGroupDef;
 const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     headerName: undefined,
+    editableHeaderName: undefined,
     columnGroupShow: undefined,
     headerStyle: undefined,
     headerClass: undefined,

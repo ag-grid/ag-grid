@@ -207,6 +207,9 @@ export class AgColumn<TValue = any>
     /** Public so the free `getAvailableSortTypes` sort helper can cache on the column; nulled in {@link setColDef}. */
     public cachedSortTypes: Set<SortType> | null = null;
 
+    /** User-edited header name that takes precedence over `colDef.headerName`. Persisted in column state. */
+    public headerNameOverride: string | null = null;
+
     constructor(
         public colDef: ColDef<any, TValue>,
         // kept only for object-identity checks in ColumnFactory (matching an updated col list to an
@@ -836,6 +839,15 @@ export class AgColumn<TValue = any>
 
     public isAllowFormula(): boolean {
         return this.allowFormula;
+    }
+
+    /** Override the displayed header name. Pass `null` to revert to the `colDef` value. */
+    public setHeaderNameOverride(headerName: string | null, source: ColumnEventType): void {
+        if (this.headerNameOverride === headerName) {
+            return;
+        }
+        this.headerNameOverride = headerName;
+        this.dispatchColEvent('colDefChanged', source);
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {

@@ -32,6 +32,7 @@ import type {
     _HighlightChangesGridApi,
     _InfiniteRowModelGridApi,
     _KeyboardNavigationGridApi,
+    _ColumnHeaderEditGridApi,
     _MasterDetailGridApi,
     _NotesGridApi,
     _OverlayGridApi,
@@ -269,6 +270,9 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getNote: 0,
         setNote: 0,
         refreshNotes: 0,
+    }),
+    ...mod<_ColumnHeaderEditGridApi>('ColumnHeaderEdit', {
+        setColumnHeaderName: 0,
     }),
     ...mod<_FindApi<any>>('Find', {
         findGetActiveMatch: 0,

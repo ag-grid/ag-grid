@@ -7,6 +7,7 @@ import { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
 import { AiToolkitModule } from './aiToolkit/aiToolkitModule';
 import { BatchEditModule } from './batch-edit/batchEditModule';
 import { CalculatedColumnsModule } from './calculatedColumns/calculatedColumnsModule';
+import { ColumnHeaderEditModule } from './columnHeaderEdit/columnHeaderEditModule';
 import { IntegratedChartsModule } from './charts/integratedChartsModule';
 import { ClipboardModule } from './clipboard/clipboardModule';
 import { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
@@ -59,6 +60,7 @@ const dependsOn = [
     ServerSideRowModelApiModule,
     FormulaModule,
     NotesModule,
+    ColumnHeaderEditModule,
     SetFilterModule,
     MultiFilterModule,
     AdvancedFilterModule,

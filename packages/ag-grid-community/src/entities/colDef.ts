@@ -31,6 +31,13 @@ export type { BaseColDefParams, ColumnFunctionCallbackParams } from './colDef-ba
 export interface AbstractColDef<TData = any, TValue = any> {
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */
     headerName?: string;
+    /**
+     * Set to `true` to allow the user to edit this column's header name from the UI.
+     * The edited value is persisted as part of column state.
+     * @default false
+     * @agModule `ColumnHeaderEditModule`
+     */
+    editableHeaderName?: boolean;
     /** Function or expression. Gets the value for display in the header. */
     headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
     /**

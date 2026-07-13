@@ -1042,7 +1042,8 @@ export type ColumnEventType =
     | 'cellDataTypeInferred'
     | 'rowNumbersService'
     | 'viewportSizeFeature'
-    | 'calculatedColumn';
+    | 'calculatedColumn'
+    | 'uiColumnHeaderEdit';
 
 export interface ColumnEvent<
     T extends AgEventType | ColumnEventName = any,

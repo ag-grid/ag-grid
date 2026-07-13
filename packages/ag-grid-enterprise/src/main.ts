@@ -77,6 +77,7 @@ export { CellSelectionModule, RangeSelectionModule } from './rangeSelection/rang
 export { ServerSideRowModelModule, ServerSideRowModelApiModule } from './serverSideRowModel/serverSideRowModelModule';
 export { FormulaModule } from './formula/formulaModule';
 export { NotesModule } from './notes/notesModule';
+export { ColumnHeaderEditModule } from './columnHeaderEdit/columnHeaderEditModule';
 export { SparklinesModule } from './sparkline/sparklinesModule';
 export { TreeDataModule } from './treeData/treeDataModule';
 export { AggregationModule } from './aggregation/aggregationModule';

@@ -54,6 +54,10 @@ export class ColumnNameService extends BeanStub implements NamedBean {
         providedColumnGroup: AgProvidedColumnGroup | null,
         location: HeaderLocation
     ): string | null {
+        if (column?.headerNameOverride != null) {
+            return column.headerNameOverride;
+        }
+
         const headerValueGetter = colDef.headerValueGetter;
 
         if (headerValueGetter) {

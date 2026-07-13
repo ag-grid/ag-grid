@@ -110,6 +110,7 @@ import type { ITestIdService } from '../interfaces/iTestIdService';
 import type { IToolbarService } from '../interfaces/iToolbar';
 import type { IWatermark } from '../interfaces/iWatermark';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
+import type { IColumnHeaderEditService } from '../interfaces/columnHeaderEdit';
 import type { INotesDataService, INotesService } from '../interfaces/notes';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { IRowNumbersService } from '../interfaces/rowNumbers';
@@ -427,6 +428,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     calculatedColsSvc?: ICalculatedColumnsService;
     notesDataSvc?: INotesDataService;
     notesSvc?: INotesService;
+    colHeaderEditSvc?: IColumnHeaderEditService;
     columnStateUpdateStrategy: IColumnStateUpdateStrategy;
 }
 

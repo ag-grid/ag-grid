@@ -850,6 +850,10 @@ export const AG_GRID_LOCALE_EN = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
 
+    // Editable Column Header Name
+    editColumnName: 'Edit Column Name',
+    ariaColumnHeaderNameEditor: 'Column Name Editor',
+
     // Calculated Columns
     calculatedColumn: 'Calculated Column',
     calculatedColumnAdd: 'Add Calculated Column',

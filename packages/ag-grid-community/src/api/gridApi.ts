@@ -1201,6 +1201,15 @@ export interface _NotesGridApi {
     refreshNotes(params?: RefreshNotesParams): void;
 }
 
+export interface _ColumnHeaderEditGridApi {
+    /**
+     * Set (or clear, by passing `null`) the edited header name for a column.
+     * The value is persisted as part of column state.
+     * @agModule `ColumnHeaderEditModule`
+     */
+    setColumnHeaderName(key: string | Column, headerName: string | null): void;
+}
+
 export interface _StateGridApi {
     /**
      * Get the current state of the grid.
@@ -2040,6 +2049,7 @@ export interface GridApi<TData = any>
         _QuickFilterGridApi,
         _FindApi<TData>,
         _NotesGridApi,
+        _ColumnHeaderEditGridApi,
         _PaginationGridApi,
         _RowModelSharedApi,
         _CsrmSsrmSharedGridApi,

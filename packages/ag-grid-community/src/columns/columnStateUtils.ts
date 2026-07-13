@@ -61,6 +61,8 @@ export interface ColumnStateParams {
     /** The active "Show Values As" selection: the mode name, or the object form (with `params` / `precision`)
      *  for modes that take input. `null` clears it. */
     showValuesAs?: ShowValuesAsStateValue;
+    /** User-edited header name overriding `colDef.headerName`. `null` reverts to the colDef value. */
+    headerName?: string | null;
 }
 
 export interface ColumnState extends ColumnStateParams {
@@ -374,6 +376,11 @@ function applyFieldState(
         flex,
         source
     );
+
+    const headerName = orDefault(stateItem?.headerName, defaultState?.headerName);
+    if (headerName !== undefined) {
+        column.setHeaderNameOverride(headerName, source);
+    }
 
     // No flex → fall back to width.
     if (flex == null) {
@@ -776,6 +783,7 @@ export const _getColumnState = (beans: BeanCollection): ColumnState[] => {
             pivotSort: column.pivotSort === undefined ? 'asc' : column.pivotSort,
             flex: column.flex ?? null,
             showValuesAs: beans.showValuesAsSvc?.toColState(column) ?? null,
+            headerName: column.headerNameOverride,
         };
     }
     return res;
@@ -816,6 +824,7 @@ export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn
         pivotSort: resolveInitialPivotSort(colDef),
         aggFunc: colDef.aggFunc ?? colDef.initialAggFunc ?? null,
         showValuesAs: beans.showValuesAsSvc?.colDefSelection(colDef) ?? null,
+        headerName: null,
     };
 }
 

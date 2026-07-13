@@ -100,6 +100,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             clipboardSvc,
             colAutosize,
             colChooserFactory,
+            colHeaderEditSvc,
             colModel,
             colNames,
             csvCreator,
@@ -538,6 +539,16 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               action: () => calculatedColsSvc.removeCalculatedColumn(column),
                           }
                         : null;
+                case 'editColumnName': {
+                    if (!colHeaderEditSvc || !column?.colDef.editableHeaderName) {
+                        return null;
+                    }
+                    return {
+                        name: localeTextFunc('editColumnName', 'Edit Column Name'),
+                        icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
+                        action: () => colHeaderEditSvc.showHeaderNameEditor(column),
+                    };
+                }
                 case 'sortUnSort':
                 case 'sortAscending':
                 case 'sortDescending':
