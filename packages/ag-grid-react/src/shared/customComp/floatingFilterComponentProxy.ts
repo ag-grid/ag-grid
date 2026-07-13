@@ -1,13 +1,16 @@
 import type { IFloatingFilter, IFloatingFilterParams } from 'ag-grid-community';
-import { AgPromise } from 'ag-grid-community';
+import { AgPromise, ProvidedFilter } from 'ag-grid-community';
 
 import { addOptionalMethods } from './customComponentWrapper';
 import type { CustomFloatingFilterCallbacks, CustomFloatingFilterProps } from './interfaces';
 
 export function updateFloatingFilterParent(params: IFloatingFilterParams, model: any): void {
     params.parentFilterInstance((instance) => {
-        // Pass suppressDeprecationWarning: the grid calls setModel() on the user's behalf here, not user code.
-        (instance.setModel(model, true) || AgPromise.resolve()).then(() => {
+        // Pass suppressDeprecationWarning to providedFilters as the grid calls setModel() on the user's behalf here, not user code.
+        (
+            (instance instanceof ProvidedFilter ? instance.setModel(model, true) : instance.setModel(model)) ||
+            AgPromise.resolve()
+        ).then(() => {
             params.filterParams.filterChangedCallback();
         });
     });

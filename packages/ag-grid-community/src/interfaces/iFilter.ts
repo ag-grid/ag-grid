@@ -222,7 +222,7 @@ export interface IFilter extends BaseFilter {
      * Sets the state of the filter using the supplied model. Providing `null` as the model will
      * de-activate the filter.
      */
-    setModel(model: any, suppressDeprecationWarning?: boolean): void | AgPromise<void>;
+    setModel(model: any): void | AgPromise<void>;
 
     /**
      * This method is called when the filter parameters change.
