@@ -1,6 +1,6 @@
 {
   "name": "ag-stack",
-  "version": "36.0.1",
+  "version": "36.0.1-beta.20260713.1520",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/package/main.cjs.js",
   "types": "./dist/types/src/main.d.ts",
