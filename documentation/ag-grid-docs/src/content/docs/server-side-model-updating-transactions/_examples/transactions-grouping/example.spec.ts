@@ -18,7 +18,7 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-row[row-id="0"]')).toBeVisible();
 
         // "Add new 'Aggressive'" applies a routed add to the Aggressive group,
-        // creating leaf tradeId 11 (one past the 10 seeded rows) with book GL-1.
+        // creating leaf tradeId 11 (the server pre-increments its counter from the seed count of 10) with book GL-1.
         await page.getByRole('button', { name: "Add new 'Aggressive'" }).click();
         const newLeaf = page.locator('.ag-row[row-id="11"]');
         await expect(newLeaf).toBeVisible();
