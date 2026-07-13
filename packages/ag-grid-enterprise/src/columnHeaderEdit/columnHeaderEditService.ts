@@ -1,7 +1,16 @@
+import { _camelCaseToHumanText } from 'ag-stack';
+
 import type { AgColumn, ColKey, ColumnEventType, IColumnHeaderEditService, NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 import { ColumnHeaderEditPopup } from './columnHeaderEditPopup';
+
+// Prefill with the raw editable name rather than getDisplayNameForColumn, so opening the editor does not invoke headerValueGetter.
+function getEditableHeaderName(column: AgColumn): string {
+    const { colDef } = column;
+    const name = column.headerNameOverride ?? colDef.headerName ?? (colDef.field ? _camelCaseToHumanText(colDef.field) : null);
+    return name != null ? String(name) : '';
+}
 
 export class ColumnHeaderEditService extends BeanStub implements NamedBean, IColumnHeaderEditService {
     beanName = 'colHeaderEditSvc' as const;
@@ -27,13 +36,13 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
     public showHeaderNameEditor(column: AgColumn): void {
         this.destroyActivePopup();
 
-        const initialValue = this.beans.colNames.getDisplayNameForColumn(column, 'header') ?? '';
+        const initialValue = getEditableHeaderName(column);
 
         this.activePopup = this.createBean(
             new ColumnHeaderEditPopup({
                 initialValue,
                 onClosed: (committed, value) => {
-                    if (committed) {
+                    if (committed && value.trim() !== initialValue.trim()) {
                         const trimmed = value.trim();
                         column.setHeaderNameOverride(trimmed.length ? trimmed : null, 'uiColumnHeaderEdit');
                     }
