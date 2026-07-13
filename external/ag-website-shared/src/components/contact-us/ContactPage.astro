@@ -5,7 +5,10 @@ import { ContactForm } from '@ag-website-shared/components/contact-form/ContactF
 import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
 import { getEntry, type CollectionEntry } from 'astro:content';
 import { buildContactPage } from '@ag-website-shared/utils/structuredData';
+import { LIBRARY } from '@constants';
 import styles from './ContactPage.module.scss';
+
+const githubUrl = LIBRARY === 'charts' ? 'https://github.com/ag-grid/ag-charts' : 'https://github.com/ag-grid/ag-grid';
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
 const contactPageStructuredData = buildContactPage({
@@ -36,7 +39,7 @@ const contactPageStructuredData = buildContactPage({
 
                 <div class={styles.socialLinks}>
                     <a
-                        href="https://github.com/ag-grid/ag-grid"
+                        href={githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label="GitHub"
