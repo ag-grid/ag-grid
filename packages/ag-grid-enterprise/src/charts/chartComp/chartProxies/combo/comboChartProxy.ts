@@ -100,7 +100,10 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
             chartTypes.add(seriesChartType.chartType);
         }
         for (const chartType of chartTypes) {
-            overrides[getSeriesType(chartType) as 'line' | 'bar' | 'area'] = seriesOverrides;
+            const seriesType = getSeriesType(chartType) as 'line' | 'bar' | 'area';
+            // The per-series theme-override types are not mutually assignable (line/area vs bar have
+            // divergent label.placement domains); widen to a record so the union-keyed write compiles.
+            (overrides as Record<'line' | 'bar' | 'area', typeof seriesOverrides>)[seriesType] = seriesOverrides;
         }
     }
 }
