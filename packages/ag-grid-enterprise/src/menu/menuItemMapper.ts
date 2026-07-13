@@ -545,7 +545,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     }
                     return {
                         name: localeTextFunc('editColumnName', 'Edit Column Name'),
-                        icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
+                        icon: _createIconNoSpan('columnHeaderEdit', beans, null),
                         action: () => colHeaderEditSvc.showHeaderNameEditor(column),
                     };
                 }

@@ -19,5 +19,8 @@ export const ColumnHeaderEditModule: _ModuleWithApi<_ColumnHeaderEditGridApi> = 
         setColumnHeaderName,
     },
     dependsOn: [EnterpriseCoreModule, _PopupModule],
+    icons: {
+        columnHeaderEdit: 'edit',
+    },
     css: [columnHeaderEditCSS],
 };

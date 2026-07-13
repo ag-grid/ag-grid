@@ -283,7 +283,7 @@ export class ToolPanelContextMenu extends Component {
             const column = this.column as AgColumn;
             ret.push({
                 name: localeTextFunc('editColumnName', 'Edit Column Name'),
-                icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
+                icon: _createIconNoSpan('columnHeaderEdit', beans, null),
                 action: () => beans.colHeaderEditSvc!.showHeaderNameEditor(column),
             });
         }

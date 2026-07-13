@@ -139,6 +139,12 @@
             }
         },
         "headerName": {},
+        "editableHeaderName": {
+            "more": {
+                "name": "Editable Header Name",
+                "url": "./column-headers/#editable-header-name"
+            }
+        },
         "headerValueGetter": {
             "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Gets the value for display in the header."
         },
