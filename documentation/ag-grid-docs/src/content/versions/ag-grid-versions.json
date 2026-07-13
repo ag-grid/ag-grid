@@ -1,5 +1,8 @@
 [
     {
+        "version": "36.0.1"
+    },
+    {
         "version": "36.0.0",
         "date": "June 24th 2026",
         "landingPageHighlight": "Calculated Columns, Show Values As, Automatic Column Generation, Accessibility Improvements, Theming Improvements",
