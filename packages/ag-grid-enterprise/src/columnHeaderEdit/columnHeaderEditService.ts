@@ -8,6 +8,17 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
 
     private activePopup: ColumnHeaderEditPopup | null = null;
 
+    public postConstruct(): void {
+        // Editing can be launched from the column chooser context menu, so tie the popup's lifetime to it.
+        this.addManagedEventListeners({
+            columnMenuVisibleChanged: (event) => {
+                if (!event.visible && event.key === 'columnChooser') {
+                    this.destroyActivePopup();
+                }
+            },
+        });
+    }
+
     public setColumnHeaderName(key: ColKey, headerName: string | null, source: ColumnEventType = 'api'): void {
         const column = this.beans.colModel.getCol(key);
         column?.setHeaderNameOverride(headerName, source);

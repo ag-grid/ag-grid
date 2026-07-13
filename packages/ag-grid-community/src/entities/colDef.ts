@@ -1289,6 +1289,8 @@ export interface HeaderValueGetterParams<TData = any, TValue = any, TContext = a
     providedColumnGroup: ProvidedColumnGroup | null;
     /** Where the column is going to appear */
     location: HeaderLocation;
+    /** The header name set by the user via the UI, or `null` if not edited. */
+    headerNameOverride?: string | null;
 }
 export type HeaderValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: HeaderValueGetterParams<TData, TValue, TContext>

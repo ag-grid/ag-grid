@@ -50,6 +50,12 @@ Editable columns can be renamed via:
 
 Both open the same editor. Press `Enter` to commit or `Escape` to cancel; clearing the value reverts the header to its `headerName` (or field-derived) default. Edited names are persisted as part of [Column State](./column-state/), so they survive save and restore.
 
+When a column also defines a `headerValueGetter`, that callback takes priority over the edited name. The edit is passed to it as `params.headerNameOverride`, so the getter must return that value for the rename to appear:
+
+```js
+headerValueGetter: (params) => params.headerNameOverride ?? params.colDef.headerName,
+```
+
 {% gridExampleRunner title="Editable Header Name" name="editable-header-name" /%}
 
 ## Tooltips

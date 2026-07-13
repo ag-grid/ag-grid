@@ -54,13 +54,10 @@ export class ColumnNameService extends BeanStub implements NamedBean {
         providedColumnGroup: AgProvidedColumnGroup | null,
         location: HeaderLocation
     ): string | null {
-        // A UI rename is an explicit user action, so it wins over the colDef-driven headerValueGetter below.
-        if (column?.headerNameOverride != null) {
-            return column.headerNameOverride;
-        }
-
+        const headerNameOverride = column?.headerNameOverride ?? null;
         const headerValueGetter = colDef.headerValueGetter;
 
+        // Prefer the getter when defined, passing it the UI edit so it can decide how to apply it.
         if (headerValueGetter) {
             const params: HeaderValueGetterParams = _addGridCommonParams(this.gos, {
                 colDef: colDef,
@@ -68,6 +65,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
                 columnGroup: columnGroup,
                 providedColumnGroup: providedColumnGroup,
                 location: location,
+                headerNameOverride: headerNameOverride,
             });
 
             if (typeof headerValueGetter === 'function') {
@@ -78,6 +76,8 @@ export class ColumnNameService extends BeanStub implements NamedBean {
                 return this.beans.expressionSvc?.evaluate(headerValueGetter, params) ?? null;
             }
             return '';
+        } else if (headerNameOverride != null) {
+            return headerNameOverride;
         } else if (colDef.headerName != null) {
             return colDef.headerName;
         } else if ((colDef as ColDef).field) {

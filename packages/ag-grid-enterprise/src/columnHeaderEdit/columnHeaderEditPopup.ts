@@ -67,17 +67,18 @@ export class ColumnHeaderEditPopup extends BeanStub {
             new Dialog({
                 ...DEFAULT_SIZE,
                 title: translate('editColumnName', 'Edit Column Name'),
-                modal: true,
+                component: contentComp,
                 closable: true,
                 centered: true,
                 movable: true,
                 resizable: false,
+                modal: false,
+                alwaysOnTop: true,
                 cssIdentifier: 'column-header-edit',
                 closedCallback: () => this.onDialogClosed(),
             })
         );
         this.dialog = dialog;
-        dialog.setBodyComponent(contentComp);
 
         this.addManagedElementListeners(dialog.getGui(), {
             keydown: (event: KeyboardEvent) => {
