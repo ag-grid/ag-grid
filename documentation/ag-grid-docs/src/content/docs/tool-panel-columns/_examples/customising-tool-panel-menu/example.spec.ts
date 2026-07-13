@@ -12,10 +12,10 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Pin Column' })).toBeVisible();
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Highlight Column' })).toBeVisible();
 
-        // the custom item highlights the column's cells
-        await expect(agIdFor.cell('0', 'athlete')).not.toHaveClass(/highlight-column/);
+        // the custom item highlights the column's cells (applied via cellStyle)
+        await expect(agIdFor.cell('0', 'athlete')).not.toHaveAttribute('style', /background-color/);
         await page.locator('.ag-menu-option-text', { hasText: 'Highlight Column' }).click();
-        await expect(agIdFor.cell('0', 'athlete')).toHaveClass(/highlight-column/);
+        await expect(agIdFor.cell('0', 'athlete')).toHaveAttribute('style', /background-color/);
     });
 
     test.eachFramework('column header menu keeps its defaults (branches on source)', async ({ agIdFor, page }) => {
@@ -25,6 +25,5 @@ test.agExample(import.meta, () => {
 
         // the tool-panel-only custom item is not added to the column header menu
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Highlight Column' })).toHaveCount(0);
-        await page.keyboard.press('Escape');
     });
 });

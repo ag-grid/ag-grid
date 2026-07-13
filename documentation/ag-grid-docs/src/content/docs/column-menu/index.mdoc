@@ -41,12 +41,12 @@ The following example demonstrates different ways of customising the column menu
 
 ## Customising the Menu Items
 
-The menu shows a default set of items. You can add your own items, or change which defaults are shown, in two ways:
+The menu shows a default set of items. You can add your own items, or change which defaults are shown, via two independent properties - use whichever suits, or both:
 
-1. Set `colDef.columnMenuItems` - either a list of menu items, or a callback which is passed the list of default items.
-1. Set the grid option `getColumnMenuItems()` - a callback which is passed the list of default items, the column, and the `source` of the menu.
+- `colDef.columnMenuItems` - set per column. Either a list of menu items, or a callback which is passed the list of default items.
+- `getColumnMenuItems()` - a grid option callback which is passed the list of default items, the column, and the `source` of the menu.
 
-Note that `colDef.columnMenuItems` will take priority over `getColumnMenuItems()`.
+When both are set, `colDef.columnMenuItems` takes priority over `getColumnMenuItems()`.
 
 The `source` param is one of `'columnMenu'`, `'columnsToolPanel'` or `'columnChooser'`, so a single callback can tailor the items for the column menu, the [Columns Tool Panel](./tool-panel-columns/#customising-the-right-click-menu) right-click menu, and the [Column Chooser](#customising-the-column-chooser).
 

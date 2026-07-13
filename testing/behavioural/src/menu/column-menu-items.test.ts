@@ -1,42 +1,9 @@
-import { waitFor } from '@testing-library/dom';
-
 import type { ColumnMenuItemsSource, GetColumnMenuItemsParams, GridApi } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout, menuOption, openMenuOption, polyfillOffsetParent } from '../test-utils';
 
 let restoreOffsetParent: (() => void) | undefined;
-
-function enableOffsetParentPolyfill(): void {
-    if (restoreOffsetParent) {
-        return;
-    }
-    const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
-    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-        configurable: true,
-        get(this: HTMLElement) {
-            return this.closest('.ag-measurement-container') ? null : this.parentElement;
-        },
-    });
-    restoreOffsetParent = () => {
-        if (original) {
-            Object.defineProperty(HTMLElement.prototype, 'offsetParent', original);
-        }
-        restoreOffsetParent = undefined;
-    };
-}
-
-function menuOptionText(name: string): HTMLElement | null {
-    return (
-        Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option-text')).find(
-            (el) => el.textContent?.trim() === name
-        ) ?? null
-    );
-}
-
-async function waitForMenuOption(name: string): Promise<void> {
-    await waitFor(() => expect(menuOptionText(name)).toBeTruthy());
-}
 
 describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
     const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
@@ -49,6 +16,7 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
     afterEach(() => {
         gridMgr.reset();
         restoreOffsetParent?.();
+        restoreOffsetParent = undefined;
         vi.resetAllMocks();
     });
 
@@ -63,9 +31,9 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
             },
         });
 
-        enableOffsetParentPolyfill();
+        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
-        await waitForMenuOption('Custom');
+        await openMenuOption('Custom');
 
         expect(captured!.source).toBe<ColumnMenuItemsSource>('columnMenu');
         expect(captured!.column?.getColId()).toBe('athlete');
@@ -81,11 +49,11 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
             getMainMenuItems,
         });
 
-        enableOffsetParentPolyfill();
+        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
-        await waitForMenuOption('FromNewGrid');
+        await openMenuOption('FromNewGrid');
 
-        expect(menuOptionText('FromLegacyGrid')).toBeNull();
+        expect(menuOption('FromLegacyGrid')).toBeNull();
         expect(getMainMenuItems).not.toHaveBeenCalled();
     });
 
@@ -102,11 +70,11 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
             rowData,
         });
 
-        enableOffsetParentPolyfill();
+        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
-        await waitForMenuOption('FromNewCol');
+        await openMenuOption('FromNewCol');
 
-        expect(menuOptionText('FromLegacyCol')).toBeNull();
+        expect(menuOption('FromLegacyCol')).toBeNull();
     });
 
     test('legacy getMainMenuItems still drives the column menu when no new props are set', async () => {
@@ -116,9 +84,9 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
             getMainMenuItems: (params) => [...params.defaultItems, { name: 'LegacyStillWorks' }],
         });
 
-        enableOffsetParentPolyfill();
+        restoreOffsetParent = polyfillOffsetParent();
         api.showColumnMenu('athlete');
-        await waitForMenuOption('LegacyStillWorks');
+        await openMenuOption('LegacyStillWorks');
     });
 });
 

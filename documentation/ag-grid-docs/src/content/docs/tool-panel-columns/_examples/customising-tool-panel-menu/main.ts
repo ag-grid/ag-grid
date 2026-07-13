@@ -36,9 +36,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 150,
-        cellClassRules: {
-            'highlight-column': (params) => highlightedColumns.has(params.column.getColId()),
-        },
+        cellStyle: (params) =>
+            highlightedColumns.has(params.column.getColId()) ? { backgroundColor: 'rgba(255, 193, 7, 0.25)' } : null,
     },
     sideBar: 'columns',
     getColumnMenuItems: (params) => {
