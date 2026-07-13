@@ -47,8 +47,9 @@ export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon
      * Callback to request the grid to show the filter.
      * Pass in the html element of the filter button to have the
      * grid position the menu over the button.
+     * If provided, the grid will call `onClosedCallback` when the filter is closed.
      */
-    showFilter: (source: HTMLElement) => void;
+    showFilter: (source: HTMLElement, onClosedCallback?: () => void) => void;
     /**
      * Callback to progress the sort for this column.
      * The grid will decide the next sort direction eg ascending, descending or 'no sort'.

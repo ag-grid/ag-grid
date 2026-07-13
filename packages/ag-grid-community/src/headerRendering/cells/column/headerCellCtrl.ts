@@ -229,12 +229,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
                     onClosedCallback,
                 });
             },
-            showFilter: (buttonElement: HTMLElement) => {
+            showFilter: (buttonElement: HTMLElement, onClosedCallback?: () => void) => {
                 menuSvc?.showFilterMenu({
                     column: this.column,
                     buttonElement: buttonElement,
                     containerType: 'columnFilter',
                     positionBy: 'button',
+                    onClosedCallback,
                 });
             },
             progressSort: (multiSort?: boolean) => {

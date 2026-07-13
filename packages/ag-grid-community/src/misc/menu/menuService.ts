@@ -20,6 +20,7 @@ interface BaseShowColumnMenuParams {
 interface BaseShowFilterMenuParams {
     column: Column;
     containerType: ContainerType;
+    onClosedCallback?: () => void;
 }
 
 interface MouseShowMenuParams {

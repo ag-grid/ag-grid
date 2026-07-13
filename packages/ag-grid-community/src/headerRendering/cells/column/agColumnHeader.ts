@@ -112,6 +112,9 @@ export class AgColumnHeader extends Component implements IHeaderComp {
 
     private mouseListener?: HeaderCellMouseListenerFeature;
 
+    private menuPopupShowing: boolean = false;
+    private filterPopupShowing: boolean = false;
+
     public refresh(params: IHeaderParams): boolean {
         const oldParams = this.params;
         this.params = params;
@@ -264,8 +267,30 @@ export class AgColumnHeader extends Component implements IHeaderComp {
 
         const currentSuppressMenuHide = this.shouldSuppressMenuHide();
         this.currentSuppressMenuHide = currentSuppressMenuHide;
-        this.addManagedElementListeners(eMenu, { click: () => this.showColumnMenu(this.eMenu!) });
+        this.addToggleButtonListeners(
+            eMenu,
+            () => this.menuPopupShowing,
+            () => this.showColumnMenu(this.eMenu!)
+        );
         this.toggleMenuAlwaysShow(currentSuppressMenuHide);
+    }
+
+    // The open popup closes on a document `mousedown` that precedes the button's `click`. The button's own
+    // `mousedown` fires first, so capturing the open state here lets the trailing click be swallowed, not reopened.
+    private addToggleButtonListeners(button: HTMLElement, isShowing: () => boolean, open: () => void): void {
+        let wasShowingOnMouseDown = false;
+        this.addManagedElementListeners(button, {
+            mousedown: () => {
+                wasShowingOnMouseDown = isShowing();
+            },
+            click: () => {
+                if (wasShowingOnMouseDown) {
+                    wasShowingOnMouseDown = false;
+                    return;
+                }
+                open();
+            },
+        });
     }
 
     private toggleMenuAlwaysShow(alwaysShow: boolean): void {
@@ -277,10 +302,19 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         if (!currentSuppressMenuHide) {
             this.toggleMenuAlwaysShow(true);
         }
+        this.menuPopupShowing = true;
         params.showColumnMenu(element, () => {
+            this.menuPopupShowing = false;
             if (!currentSuppressMenuHide) {
                 this.toggleMenuAlwaysShow(false);
             }
+        });
+    }
+
+    private showFilterMenu(element: HTMLElement): void {
+        this.filterPopupShowing = true;
+        this.params.showFilter(element, () => {
+            this.filterPopupShowing = false;
         });
     }
 
@@ -290,7 +324,7 @@ export class AgColumnHeader extends Component implements IHeaderComp {
         const isLegacyMenuEnabled = _isLegacyMenuEnabled(gos);
         if (isFilterShortcut && !isLegacyMenuEnabled) {
             if (beans.menuSvc?.isFilterMenuInHeaderEnabled(column)) {
-                params.showFilter(eFilterButton ?? eMenu ?? this.getGui());
+                this.showFilterMenu(eFilterButton ?? eMenu ?? this.getGui());
                 return true;
             }
         } else if (params.enableMenu) {
@@ -434,9 +468,11 @@ export class AgColumnHeader extends Component implements IHeaderComp {
             'filter'
         );
         if (configured) {
-            this.addManagedElementListeners(eFilterButton, {
-                click: () => params.showFilter(eFilterButton),
-            });
+            this.addToggleButtonListeners(
+                eFilterButton,
+                () => this.filterPopupShowing,
+                () => this.showFilterMenu(eFilterButton)
+            );
         } else {
             this.eFilterButton = undefined;
         }
