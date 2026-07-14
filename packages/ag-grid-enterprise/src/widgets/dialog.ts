@@ -7,7 +7,7 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { _STOP_PROPAGATION_CALLBACKS, _focusNextGridCoreContainer } from 'ag-grid-community';
+import { _STOP_PROPAGATION_CALLBACKS } from 'ag-grid-community';
 
 import type { AgDialogCallbacks, AgDialogOptions } from '../agStack/agDialog';
 import { AgDialog } from '../agStack/agDialog';
@@ -22,10 +22,6 @@ interface DialogOptions extends AgDialogOptions<
 
 export const DIALOG_CALLBACKS: AgDialogCallbacks<BeanCollection, Dialog> = {
     stopPropagationCallbacks: _STOP_PROPAGATION_CALLBACKS,
-    focusNextContainer: (beans: BeanCollection, backwards: boolean) => {
-        return _focusNextGridCoreContainer(beans, backwards);
-    },
-
     configureFocusableContainer: (beans: BeanCollection, dialog: Dialog) => {
         const gridCtrl = beans.ctrlsSvc.get('gridCtrl');
         gridCtrl.addFocusableContainer(dialog);

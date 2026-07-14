@@ -8,7 +8,7 @@ import type {
     ResizableStructure,
     StopPropagationCallbacks,
 } from 'ag-stack';
-import { AgComponentStub, AgTabGuardFeature, _findNextFocusableElement, _setDisplayed } from 'ag-stack';
+import { AgComponentStub, AgTabGuardFeature, _findNextFocusableElement, _focusInto, _setDisplayed } from 'ag-stack';
 
 import type { AgPanelOptions, AgPanelPostProcessPopupParams } from './agPanel';
 import { AgPanel } from './agPanel';
@@ -30,8 +30,6 @@ export interface AgDialogOptions<
 
 export interface AgDialogCallbacks<TBeanCollection, TDialog> {
     stopPropagationCallbacks: StopPropagationCallbacks;
-
-    focusNextContainer(beans: TBeanCollection, backwards: boolean): boolean;
 
     configureFocusableContainer(beans: TBeanCollection, dialog: TDialog): void;
 }
@@ -122,8 +120,11 @@ export class AgDialog<
                 }
                 const backwards = e.shiftKey;
                 const nextFocusableElement = _findNextFocusableElement(this.beans, eGui, false, backwards);
-                if (!nextFocusableElement || this.tabGuardFeature.getTabGuardCtrl().isTabGuard(nextFocusableElement)) {
-                    if (this.callbacks?.focusNextContainer(this.beans, backwards)) {
+                // Trap keyboard focus within a non-modal dialog: when a Tab would leave the dialog
+                // content (onto a tab guard or out of it), wrap to the opposite end. A custom
+                // popupParent means the DOM tab order need not match the dialog's logical position.
+                if (!nextFocusableElement || nextFocusableElement.classList.contains('ag-tab-guard')) {
+                    if (_focusInto(eGui, backwards, false, true)) {
                         e.preventDefault();
                     }
                 }
