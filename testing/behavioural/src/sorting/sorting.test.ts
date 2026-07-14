@@ -607,5 +607,58 @@ describe('Sorting', () => {
             expect(groupCol().getSort()).toBeFalsy();
             expect(groupCol().getSortIndex()).toBeFalsy();
         });
+
+        test('multi-sort clearing one source chip leaves the group column sorted while a sibling source stays sorted', async () => {
+            const api = await groupGridMgr.createGridAndWait('coupled-multi-source-chip-multi-sort', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true, sortable: true },
+                    { field: 'sport', rowGroup: true, hide: true, sortable: true },
+                    { field: 'year', sortable: true },
+                ],
+                autoGroupColumnDef: { headerName: 'Group' },
+                rowGroupPanelShow: 'always',
+                rowData: [
+                    { country: 'Ireland', sport: 'Rowing', year: 2000 },
+                    { country: 'Spain', sport: 'Swimming', year: 2004 },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const chipByText = (re: RegExp) => {
+                const chips = Array.from(
+                    gridDiv.querySelectorAll('.ag-column-drop-horizontal-rowgroup .ag-column-drop-cell')
+                ) as HTMLElement[];
+                const chip = chips.find((c) => re.test(c.textContent ?? ''));
+                if (!chip) {
+                    throw new Error(`row group panel chip matching ${re} not found`);
+                }
+                return chip;
+            };
+            const shiftClick = (el: HTMLElement) =>
+                el.dispatchEvent(new MouseEvent('click', { shiftKey: true, bubbles: true, cancelable: true }));
+            const groupCol = () => api.getColumn('ag-Grid-AutoColumn')!;
+
+            // Multi-sort both group sources via their chips: country asc, then sport asc (shift-add). Both
+            // sources and the coupled display column are sorted.
+            shiftClick(chipByText(/country/i));
+            await asyncSetTimeout(1);
+            shiftClick(chipByText(/sport/i));
+            await asyncSetTimeout(1);
+            expect(api.getColumn('country')!.getSort()).toBe('asc');
+            expect(api.getColumn('sport')!.getSort()).toBe('asc');
+            expect(groupCol().getSort()).toBe('asc');
+
+            // Shift-click the country chip twice: cycles country asc → desc → none, clearing only that source
+            // (multi-sort leaves siblings alone). country is the FIRST source, so the display column must skip
+            // it and read the still-sorted sport sibling — staying sorted rather than clearing.
+            shiftClick(chipByText(/country/i));
+            await asyncSetTimeout(1);
+            shiftClick(chipByText(/country/i));
+            await asyncSetTimeout(1);
+            expect(api.getColumn('country')!.getSort()).toBeFalsy();
+            expect(api.getColumn('sport')!.getSort()).toBe('asc');
+            expect(groupCol().getSort()).toBe('asc');
+        });
     });
 });
