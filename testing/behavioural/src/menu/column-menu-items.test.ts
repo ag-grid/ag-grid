@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 
-import type { ColumnMenuItemsSource, GetColumnMenuItemsParams } from 'ag-grid-community';
+import type { ColumnEventType, ColumnMenuItemsSource, GetColumnMenuItemsParams } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, menuOption, openMenuOption, polyfillOffsetParent } from '../test-utils';
@@ -146,6 +147,46 @@ describe('getColumnMenuItems on the Column Chooser', () => {
         await waitFor(() => expect(captured).toBeTruthy());
         expect(captured?.source).toBe<ColumnMenuItemsSource>('columnChooser');
         expect(captured?.column?.getColId()).toBe('athlete');
+
+        api.hideColumnChooser();
+    });
+
+    test('stock actions invoked from the Column Chooser emit column events with source "columnMenu"', async () => {
+        const rowGroupSources: ColumnEventType[] = [];
+        const api = await gridMgr.createGridAndWait('chooser-event-source', {
+            columnDefs: [{ field: 'athlete', enableRowGroup: true }, { field: 'age' }, { field: 'country' }],
+            rowData,
+        });
+        api.addEventListener('columnRowGroupChanged', (e) => rowGroupSources.push(e.source));
+
+        api.showColumnChooser();
+
+        const viewport = await waitFor(() => {
+            const el = document.querySelector('.ag-column-select-virtual-list-viewport') as HTMLElement | null;
+            expect(el).toBeTruthy();
+            return el!;
+        });
+
+        // jsdom has no layout engine, so force the virtual list to render its items.
+        Object.defineProperty(viewport, 'offsetHeight', { value: 200, configurable: true });
+        viewport.dispatchEvent(new Event('scroll'));
+
+        const entry = await waitFor(() => {
+            const el = Array.from(document.querySelectorAll<HTMLElement>('.ag-column-select-column')).find((e) =>
+                e.textContent?.includes('Athlete')
+            );
+            expect(el).toBeTruthy();
+            return el!;
+        });
+
+        openContextMenu(entry);
+        await userEvent.click(await openMenuOption('Group by Athlete'));
+
+        expect(api.getRowGroupColumns().map((c) => c.getColId())).toStrictEqual(['athlete']);
+        // The chooser is launched from the column menu, so its stock actions report the column-menu
+        // source, not the tool panel's 'toolPanelUi'.
+        expect(rowGroupSources).toContain<ColumnEventType>('columnMenu');
+        expect(rowGroupSources).not.toContain<ColumnEventType>('toolPanelUi');
 
         api.hideColumnChooser();
     });

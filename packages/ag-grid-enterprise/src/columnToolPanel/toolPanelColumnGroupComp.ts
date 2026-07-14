@@ -189,7 +189,7 @@ export class ToolPanelColumnGroupComp extends Component {
         }
 
         const contextMenu = this.createBean(
-            new ToolPanelContextMenu(columnGroup, e, this.focusWrapper, this.params, this.source)
+            new ToolPanelContextMenu(columnGroup, e, this.focusWrapper, this.params, this.eventType, this.source)
         );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {

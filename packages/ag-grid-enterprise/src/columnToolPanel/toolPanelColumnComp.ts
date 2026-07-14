@@ -2,6 +2,7 @@ import { RefPlaceholder, _setAriaDescribedBy, _setAriaLabel, _setDisplayed } fro
 
 import type {
     AgColumn,
+    ColumnEventType,
     ColumnMenuItemsSource,
     DragItem,
     ElementParams,
@@ -54,6 +55,7 @@ export class ToolPanelColumnComp extends Component {
         private readonly groupsExist: boolean,
         private readonly focusWrapper: HTMLElement,
         private readonly params: ToolPanelColumnCompParams,
+        private readonly eventType: ColumnEventType,
         private readonly source: ColumnMenuItemsSource
     ) {
         super();
@@ -163,7 +165,7 @@ export class ToolPanelColumnComp extends Component {
         }
 
         const contextMenu = this.createBean(
-            new ToolPanelContextMenu(column, e, this.focusWrapper, this.params, this.source)
+            new ToolPanelContextMenu(column, e, this.focusWrapper, this.params, this.eventType, this.source)
         );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
@@ -208,7 +210,7 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        setAllColumns(this.beans, [this.column], nextState, 'toolPanelUi', this.params);
+        setAllColumns(this.beans, [this.column], nextState, this.eventType, this.params);
     }
 
     private refreshAriaLabel(): void {
@@ -263,7 +265,7 @@ export class ToolPanelColumnComp extends Component {
                         columns: [this.column],
                         visibleState: dragItem?.visibleState,
                         pivotState: dragItem?.pivotState,
-                        eventType: 'toolPanelUi',
+                        eventType: this.eventType,
                         buttons: this.params.buttons,
                     });
                 }

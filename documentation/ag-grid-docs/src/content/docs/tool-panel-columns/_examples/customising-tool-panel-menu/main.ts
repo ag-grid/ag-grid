@@ -67,7 +67,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                     }
 
                     // Redraw rows so cellStyle re-evaluates on fresh cells
-                    gridApi.redrawRows();
+                    params.api.redrawRows();
                 },
             };
 

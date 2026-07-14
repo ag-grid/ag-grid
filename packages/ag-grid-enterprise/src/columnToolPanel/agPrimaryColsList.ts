@@ -186,7 +186,14 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 moveItem: (
                     currentDragValue: AgColumn | AgProvidedColumnGroup | null,
                     lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
-                ) => moveItem(beans, getCurrentColumnsBeingMoved(currentDragValue), lastHoveredListItem, this.params),
+                ) =>
+                    moveItem(
+                        beans,
+                        getCurrentColumnsBeingMoved(currentDragValue),
+                        lastHoveredListItem,
+                        this.params,
+                        this.eventType
+                    ),
             })
         );
     }
@@ -225,7 +232,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 position: isUp ? 'top' : 'bottom',
                 component: this.virtualList.getComponentAt(nextItem) as ToolPanelColumnComp | ToolPanelColumnGroupComp,
             },
-            this.params
+            this.params,
+            this.eventType
         );
 
         this.focusRowIfAlive(nextItem - movePadding).then(() => {
@@ -258,6 +266,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             this.groupsExist,
             listItemElement,
             this.params,
+            this.eventType,
             this.source
         );
         this.createBean(columnComp);

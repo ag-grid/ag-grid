@@ -3,13 +3,20 @@ import { _focusInto } from 'ag-stack';
 import type {
     AgColumn,
     AgProvidedColumnGroup,
+    ColumnEventType,
     ColumnMenuItemsSource,
     DefaultMenuItem,
     DefaultToolPanelItem,
     IconName,
     MenuItemDef,
 } from 'ag-grid-community';
-import { Component, _createIconNoSpan, _resolveColumnMenuItems, isProvidedColumnGroup } from 'ag-grid-community';
+import {
+    Component,
+    _createIconNoSpan,
+    _hasColumnMenuItems,
+    _resolveColumnMenuItems,
+    isProvidedColumnGroup,
+} from 'ag-grid-community';
 
 import type { MenuItemMapper } from '../menu/menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../menu/menuSeparators';
@@ -43,6 +50,7 @@ export class ToolPanelContextMenu extends Component {
         private readonly mouseEventOrTouch: MouseEvent | Touch,
         private readonly parentEl: HTMLElement,
         private readonly params: ColumnStateUpdateParams,
+        private readonly eventType: ColumnEventType,
         private readonly source: ColumnMenuItemsSource
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
@@ -82,13 +90,21 @@ export class ToolPanelContextMenu extends Component {
 
         const resolvedItems = _resolveColumnMenuItems(gos, col, columnGroup, source, defaultItems);
         const menuItemsMapped = this.mapMenuItems(resolvedItems, col);
-        if (menuItemsMapped.length === 0) {
-            return;
+
+        // Suppress the native browser context menu whenever AG Grid handles the gesture: either it shows a
+        // menu, or customisation is configured but resolved to nothing (e.g. an empty array, or a callback
+        // returning nothing under functionsReadOnly). A right-click with no items and no customisation falls
+        // through to the browser menu.
+        const handled = menuItemsMapped.length > 0 || _hasColumnMenuItems(gos, col, columnGroup);
+        if (handled) {
+            const mouseEventOrTouch = this.mouseEventOrTouch;
+            if ('preventDefault' in mouseEventOrTouch) {
+                mouseEventOrTouch.preventDefault();
+            }
         }
 
-        const mouseEventOrTouch = this.mouseEventOrTouch;
-        if ('preventDefault' in mouseEventOrTouch) {
-            mouseEventOrTouch.preventDefault();
+        if (menuItemsMapped.length === 0) {
+            return;
         }
 
         this.displayContextMenu(menuItemsMapped);
@@ -115,7 +131,7 @@ export class ToolPanelContextMenu extends Component {
         // Without the menu module (which provides the mapper) any remaining stock string tokens (e.g. pin)
         // cannot be resolved, so keep the built definitions and drop the tokens.
         const mapped: (MenuItemDef | 'separator')[] = menuItemMapper
-            ? menuItemMapper.mapWithStockItems(expanded, column, null, undefined, () => this.getGui(), 'toolPanelUi')
+            ? menuItemMapper.mapWithStockItems(expanded, column, null, undefined, () => this.getGui(), this.eventType)
             : expanded.filter((item): item is MenuItemDef => typeof item !== 'string');
 
         // Collapse duplicate/stranded separators, matching the column menu (ColumnMenuFactory.getMenuItems).
@@ -182,7 +198,7 @@ export class ToolPanelContextMenu extends Component {
             deactivateLabel: () => getGroupingLocaleText(localeTextFunc, 'ungroupBy', displayName!),
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getRowGroupColumns(deferMode), rowGroupAllowed);
-                updateStrategy.setRowGroupColumns(deferMode, columns, 'toolPanelUi');
+                updateStrategy.setRowGroupColumns(deferMode, columns, this.eventType);
                 refreshDeferredToolPanelUi(this.beans, this.params);
             },
             deActivateFunction: () => {
@@ -190,7 +206,7 @@ export class ToolPanelContextMenu extends Component {
                     updateStrategy.getRowGroupColumns(deferMode),
                     rowGroupAllowed
                 );
-                updateStrategy.setRowGroupColumns(deferMode, columns, 'toolPanelUi');
+                updateStrategy.setRowGroupColumns(deferMode, columns, this.eventType);
                 refreshDeferredToolPanelUi(this.beans, this.params);
             },
             addIcon: 'menuAddRowGroup',
@@ -206,12 +222,12 @@ export class ToolPanelContextMenu extends Component {
                 localeTextFunc('removeFromValues', `Remove ${displayName} from values`, [displayName!]),
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getValueColumns(deferMode), valueAllowed);
-                updateStrategy.setValueColumns(deferMode, columns, 'toolPanelUi');
+                updateStrategy.setValueColumns(deferMode, columns, this.eventType);
                 refreshDeferredToolPanelUi(this.beans, this.params);
             },
             deActivateFunction: () => {
                 const columns = this.removeColumnsFromList(updateStrategy.getValueColumns(deferMode), valueAllowed);
-                updateStrategy.setValueColumns(deferMode, columns, 'toolPanelUi');
+                updateStrategy.setValueColumns(deferMode, columns, this.eventType);
                 refreshDeferredToolPanelUi(this.beans, this.params);
             },
             addIcon: 'valuePanel',
@@ -227,12 +243,12 @@ export class ToolPanelContextMenu extends Component {
                 localeTextFunc('removeFromLabels', `Remove ${displayName} from labels`, [displayName!]),
             activateFunction: () => {
                 const columns = this.addColumnsToList(updateStrategy.getPivotColumns(deferMode), pivotAllowed);
-                updateStrategy.setPivotColumns(deferMode, columns, 'toolPanelUi');
+                updateStrategy.setPivotColumns(deferMode, columns, this.eventType);
                 refreshDeferredToolPanelUi(this.beans, this.params);
             },
             deActivateFunction: () => {
                 const columns = this.removeColumnsFromList(updateStrategy.getPivotColumns(deferMode), pivotAllowed);
-                updateStrategy.setPivotColumns(deferMode, columns, 'toolPanelUi');
+                updateStrategy.setPivotColumns(deferMode, columns, this.eventType);
                 refreshDeferredToolPanelUi(this.beans, this.params);
             },
             addIcon: 'pivotPanel',

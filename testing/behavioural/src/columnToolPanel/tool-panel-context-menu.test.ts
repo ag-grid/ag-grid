@@ -1,7 +1,7 @@
 import { findByText, queryByText } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 
-import type { ColDef, GetColumnMenuItemsParams, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, ColumnEventType, GetColumnMenuItemsParams, GridApi, GridOptions } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -137,6 +137,18 @@ describe('ToolPanelContextMenu', () => {
             await clickMenuItem(gridDiv, 'Group by Athlete');
 
             expect(getGroupedRowIds()).toStrictEqual(['athlete']);
+        });
+
+        test("stock actions invoked from the tool panel emit column events with source 'toolPanelUi'", async () => {
+            const rowGroupSources: ColumnEventType[] = [];
+            gridApi.addEventListener('columnRowGroupChanged', (e) => rowGroupSources.push(e.source));
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+            await clickMenuItem(gridDiv, 'Group by Athlete');
+
+            expect(getGroupedRowIds()).toStrictEqual(['athlete']);
+            expect(rowGroupSources).toContain<ColumnEventType>('toolPanelUi');
+            expect(rowGroupSources).not.toContain<ColumnEventType>('columnMenu');
         });
 
         test('user can remove a row group by clicking the tool panel context menu item', async () => {
@@ -482,6 +494,23 @@ describe('ToolPanelContextMenu', () => {
 
             await findByText(gridDiv, 'Lonely Item');
             expect(gridDiv.querySelectorAll('.ag-menu-separator')).toHaveLength(0);
+        });
+
+        test('suppresses the native context menu when a configured menu resolves to empty', async () => {
+            const { gridDiv, toolPanel } = await createGrid(
+                [{ field: 'athlete', minWidth: 200, columnMenuItems: [] }, { field: 'age' }],
+                {}
+            );
+
+            const entry = await getColumnEntry(toolPanel, gridDiv, 'Athlete');
+            const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 });
+            entry.dispatchEvent(event);
+            await asyncSetTimeout(1);
+
+            // AG Grid handled the gesture (columnMenuItems is configured) so the browser menu is suppressed,
+            // even though the resolved menu is empty and nothing opens.
+            expect(event.defaultPrevented).toBe(true);
+            expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
         });
     });
 });
