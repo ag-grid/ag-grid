@@ -255,12 +255,6 @@
         background-image: var(--ag-internal-row-overlay-image);
     }
 
-    // Default the content position to relative so that it doesn't
-    // appear under the background
-    .ag-row.ag-full-width-row > * {
-        position: relative;
-    }
-
     .ag-row-hover.ag-row-selected {
         --ag-internal-row-overlay-color: var(--ag-row-hover-color);
         // overlay the background color on the hover color when hovering over a selected row,
