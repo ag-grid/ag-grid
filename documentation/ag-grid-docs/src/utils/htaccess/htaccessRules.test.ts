@@ -1,6 +1,6 @@
 import { CAMPAIGNS_PATH_CONDITION, ECOMMERCE_PATH_CONDITION, EXAMPLES_PATH_CONDITION } from './cspRules';
 import { PRODUCTION_CSP_PHASE, getHtaccessContent } from './htaccessRules';
-import { SITE_301_REDIRECTS } from './redirects';
+import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 describe('htaccessRules', () => {
     let productionContent: string;
@@ -376,6 +376,38 @@ describe('htaccessRules', () => {
                 expect(ifBlock).not.toContain('Header always set Content-Security-Policy "');
             });
         }
+    });
+
+    describe('SE-66: single-hop rewrites must not redirect a path to itself', () => {
+        const SITE_HOST = 'www.ag-grid.com';
+
+        // A single-hop rewrite runs before the host-swap, so it fires for a request on either the
+        // apex (ag-grid.com) or the www host. The RewriteRule regex is anchored (`^/?<from>$`), so it
+        // only re-fires on its own output when the target is the EXACT same path on www — then the
+        // browser is sent straight back to the URL it just requested and the request loops forever,
+        // never reaching a 200. (A target that merely adds the www host or a trailing slash does not
+        // re-match, so it is a legitimate single hop, not a loop.) This is the bug reported for
+        // /charts/react/bullet-series/ (SE-66): it targeted its own www URL verbatim and looped.
+        it('no rule targets its own path on the site host', () => {
+            const loops = SITE_SINGLE_HOP_REWRITES.filter((rule) => {
+                const target = new URL(rule.to);
+                return target.host === SITE_HOST && target.pathname === rule.from;
+            }).map((rule) => `${rule.from} -> ${rule.to}`);
+
+            expect(loops).toEqual([]);
+        });
+
+        it('/charts/react/bullet-series/ points at the linear-gauge anchor, not itself', () => {
+            const rule = SITE_SINGLE_HOP_REWRITES.find((r) => r.from === '/charts/react/bullet-series/');
+            expect(rule).toBeDefined();
+            expect(rule!.to).toBe('https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series/');
+        });
+
+        it('emits the react bullet-series single-hop RewriteRule with [NE] so the # anchor is not escaped', () => {
+            expect(productionContent).toContain(
+                'RewriteRule "^/?charts/react/bullet-series/$" "https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series/" [R=301,NE,L]'
+            );
+        });
     });
 
     describe('basic structure', () => {
