@@ -1,5 +1,12 @@
 import type { ColDef, GridApi, GridOptions, MenuItemDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, createGrid, enableDevValidations } from 'ag-grid-community';
+import {
+    CellStyleModule,
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    RowApiModule,
+    createGrid,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 // Enable extended validations only for development
@@ -14,6 +21,9 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     RowGroupingModule,
+    // CellStyleModule powers the cellStyle highlight; RowApiModule powers api.redrawRows to re-apply it
+    CellStyleModule,
+    RowApiModule,
 ]);
 
 const columnDefs: ColDef[] = [
@@ -41,30 +51,32 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     sideBar: 'columns',
     getColumnMenuItems: (params) => {
-        // Leave the column header menu with its default items; only customise the Columns Tool Panel menu.
-        if (params.source !== 'columnsToolPanel') {
-            return params.defaultItems;
+        // Customise the Columns Tool Panel menu
+        if (params.source === 'columnsToolPanel') {
+            const colId = params.column?.getColId();
+            const highlightColumn: MenuItemDef = {
+                name: 'Highlight Column',
+                checked: colId ? highlightedColumns.has(colId) : false,
+                action: () => {
+                    if (!colId) return;
+
+                    if (highlightedColumns.has(colId)) {
+                        highlightedColumns.delete(colId);
+                    } else {
+                        highlightedColumns.add(colId);
+                    }
+
+                    // Redraw rows so cellStyle re-evaluates on fresh cells
+                    gridApi.redrawRows();
+                },
+            };
+
+            // Append an optional pinning sub-menu and a custom item to the built-in tool panel items
+            return [...params.defaultItems, 'separator', 'pinSubMenu', highlightColumn];
         }
 
-        const colId = params.column?.getColId();
-        const highlightColumn: MenuItemDef = {
-            name: 'Highlight Column',
-            checked: colId ? highlightedColumns.has(colId) : false,
-            action: () => {
-                if (!colId) {
-                    return;
-                }
-                if (highlightedColumns.has(colId)) {
-                    highlightedColumns.delete(colId);
-                } else {
-                    highlightedColumns.add(colId);
-                }
-                gridApi.refreshCells({ force: true });
-            },
-        };
-
-        // Append an optional pinning sub-menu and a custom item to the built-in tool panel items.
-        return [...params.defaultItems, 'separator', 'pinSubMenu', highlightColumn];
+        // Return default for column header menu and column picker
+        return params.defaultItems;
     },
 };
 

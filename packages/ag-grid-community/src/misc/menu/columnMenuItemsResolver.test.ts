@@ -29,13 +29,13 @@ const CUSTOM: MenuItemDef = { name: 'Custom' };
 const DEFAULTS = ['sortAscending', 'sortDescending'] as any;
 
 describe('_resolveColumnMenuItems', () => {
-    it('returns a col-level columnMenuItems array verbatim', () => {
+    it('returns the columnMenuItems list when the column provides one', () => {
         const column = makeColumn({ columnMenuItems: [CUSTOM] });
         const result = _resolveColumnMenuItems(makeGos({}), column, null, 'columnsToolPanel', DEFAULTS);
         expect(result).toEqual([CUSTOM]);
     });
 
-    it('calls a col-level columnMenuItems function with the source and defaultItems', () => {
+    it('calls the columnMenuItems callback with the source and default items, and returns its result', () => {
         const spy = vi.fn((params: GetColumnMenuItemsParams) => [...params.defaultItems, CUSTOM]);
         const column = makeColumn({ columnMenuItems: spy });
         const result = _resolveColumnMenuItems(makeGos({}), column, null, 'columnsToolPanel', DEFAULTS);
@@ -45,7 +45,7 @@ describe('_resolveColumnMenuItems', () => {
         expect(result).toEqual([...DEFAULTS, CUSTOM]);
     });
 
-    it('uses the grid getColumnMenuItems callback when no col-level prop is set, passing the source', () => {
+    it('falls back to the grid getColumnMenuItems callback when the column has no columnMenuItems', () => {
         const spy = vi.fn((_params: GetColumnMenuItemsParams) => [CUSTOM]);
         const result = _resolveColumnMenuItems(
             makeGos({ getColumnMenuItems: spy }),
@@ -58,7 +58,7 @@ describe('_resolveColumnMenuItems', () => {
         expect(result).toEqual([CUSTOM]);
     });
 
-    it('prefers the col-level prop over the grid callback', () => {
+    it('prefers the column columnMenuItems over the grid getColumnMenuItems callback', () => {
         const gridSpy = vi.fn(() => [CUSTOM]);
         const column = makeColumn({ columnMenuItems: [{ name: 'FromColumn' }] });
         const result = _resolveColumnMenuItems(
@@ -72,20 +72,20 @@ describe('_resolveColumnMenuItems', () => {
         expect(result).toEqual([{ name: 'FromColumn' }]);
     });
 
-    it('resolves group-level columnMenuItems via getColGroupDef', () => {
+    it('reads columnMenuItems from a column group definition', () => {
         const columnGroup = makeColumnGroup({ children: [], columnMenuItems: [CUSTOM] });
         const result = _resolveColumnMenuItems(makeGos({}), null, columnGroup, 'columnsToolPanel', DEFAULTS);
         expect(result).toEqual([CUSTOM]);
     });
 
     describe('legacy fallback', () => {
-        it('falls back to mainMenuItems for the columnMenu source', () => {
+        it('uses the legacy mainMenuItems on the column menu when no columnMenuItems are set', () => {
             const column = makeColumn({ mainMenuItems: [CUSTOM] });
             const result = _resolveColumnMenuItems(makeGos({}), column, null, 'columnMenu', DEFAULTS);
             expect(result).toEqual([CUSTOM]);
         });
 
-        it('falls back to getMainMenuItems for the columnMenu source', () => {
+        it('uses the legacy getMainMenuItems on the column menu when no new callbacks are set', () => {
             const legacy = vi.fn(() => [CUSTOM]);
             const result = _resolveColumnMenuItems(
                 makeGos({ getMainMenuItems: legacy }),
@@ -98,7 +98,7 @@ describe('_resolveColumnMenuItems', () => {
             expect(result).toEqual([CUSTOM]);
         });
 
-        it('ignores legacy props for non-columnMenu sources and returns the defaults', () => {
+        it('ignores the legacy properties on the tool panel and chooser, returning the default items', () => {
             const legacy = vi.fn(() => [CUSTOM]);
             const column = makeColumn({ mainMenuItems: [{ name: 'legacyArray' }] });
             const result = _resolveColumnMenuItems(
@@ -113,7 +113,7 @@ describe('_resolveColumnMenuItems', () => {
         });
     });
 
-    it('returns defaultItems when nothing is configured', () => {
+    it('returns the default items when nothing is configured', () => {
         const result = _resolveColumnMenuItems(makeGos({}), makeColumn({}), null, 'columnMenu', DEFAULTS);
         expect(result).toBe(DEFAULTS);
     });

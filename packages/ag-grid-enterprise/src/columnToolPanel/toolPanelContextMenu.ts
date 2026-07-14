@@ -42,7 +42,7 @@ export class ToolPanelContextMenu extends Component {
         private readonly mouseEventOrTouch: MouseEvent | Touch,
         private readonly parentEl: HTMLElement,
         private readonly params: ColumnStateUpdateParams = {},
-        private readonly source: ColumnMenuItemsSource = 'columnsToolPanel'
+        private readonly source: ColumnMenuItemsSource
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
     }

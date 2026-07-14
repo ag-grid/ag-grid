@@ -1,9 +1,20 @@
-import type { ColumnMenuItemsSource, GetColumnMenuItemsParams, GridApi } from 'ag-grid-community';
+import { waitFor } from '@testing-library/dom';
+
+import type { ColumnMenuItemsSource, GetColumnMenuItemsParams } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, menuOption, openMenuOption, polyfillOffsetParent } from '../test-utils';
+import { TestGridsManager, menuOption, openMenuOption, polyfillOffsetParent } from '../test-utils';
 
 let restoreOffsetParent: (() => void) | undefined;
+
+/**
+ * Fire a real `contextmenu` MouseEvent on the column entry's focus wrapper — the same path
+ * AG Grid uses in production to open the context menu.
+ */
+function openContextMenu(entry: HTMLElement): void {
+    const row = (entry.closest('.ag-virtual-list-item') as HTMLElement | null) ?? entry;
+    row.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
+}
 
 describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
     const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
@@ -111,23 +122,28 @@ describe('getColumnMenuItems on the Column Chooser', () => {
         });
 
         api.showColumnChooser();
-        await asyncSetTimeout(10);
 
-        const viewport = document.querySelector('.ag-column-select-virtual-list-viewport') as HTMLElement | null;
-        expect(viewport).toBeTruthy();
+        const viewport = await waitFor(() => {
+            const el = document.querySelector('.ag-column-select-virtual-list-viewport') as HTMLElement | null;
+            expect(el).toBeTruthy();
+            return el!;
+        });
+
         // jsdom has no layout engine, so force the virtual list to render its items.
-        Object.defineProperty(viewport!, 'offsetHeight', { value: 200, configurable: true });
-        viewport!.dispatchEvent(new Event('scroll'));
-        await asyncSetTimeout(50);
+        Object.defineProperty(viewport, 'offsetHeight', { value: 200, configurable: true });
+        viewport.dispatchEvent(new Event('scroll'));
 
-        const entry = Array.from(document.querySelectorAll<HTMLElement>('.ag-column-select-column')).find((el) =>
-            el.textContent?.includes('Athlete')
-        );
-        expect(entry).toBeTruthy();
-        const row = (entry!.closest('.ag-virtual-list-item') as HTMLElement | null) ?? entry!;
-        row.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
-        await asyncSetTimeout(10);
+        const entry = await waitFor(() => {
+            const el = Array.from(document.querySelectorAll<HTMLElement>('.ag-column-select-column')).find((e) =>
+                e.textContent?.includes('Athlete')
+            );
+            expect(el).toBeTruthy();
+            return el!;
+        });
 
+        openContextMenu(entry);
+
+        await waitFor(() => expect(captured).toBeTruthy());
         expect(captured?.source).toBe<ColumnMenuItemsSource>('columnChooser');
         expect(captured?.column?.getColId()).toBe('athlete');
 
