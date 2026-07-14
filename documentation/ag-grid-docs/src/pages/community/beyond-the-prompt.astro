@@ -208,17 +208,6 @@ const GALLERY_IMAGES = [
     }
 
     /*
-        In-page CTAs (the hero "Get notified" button jumps to #notify) scroll
-        smoothly. Scoped to this route via is:global, and disabled when the
-        viewer prefers reduced motion.
-    */
-    @media (prefers-reduced-motion: no-preference) {
-        html {
-            scroll-behavior: smooth;
-        }
-    }
-
-    /*
         Brand-coloured text selection. `::selection` is a pseudo-element and
         can't be hashed by CSS Modules, so we route it through `is:global`,
         but because this <style> block lives in a page component, it's
