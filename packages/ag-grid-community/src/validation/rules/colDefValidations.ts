@@ -98,7 +98,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     headerTooltip: 'Tooltip',
     headerTooltipValueGetter: 'Tooltip',
     mainMenuItems: 'ColumnMenu',
-    columnMenuItems: 'ColumnMenu',
+    columnMenuItems: ['ColumnMenu', 'ColumnsToolPanel'],
     menuTabs: (options: ColDef) => {
         const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
         if (options.menuTabs?.some((tab) => enterpriseMenuTabs.includes(tab))) {

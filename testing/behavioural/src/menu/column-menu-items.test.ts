@@ -2,7 +2,8 @@ import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 
 import type { ColumnEventType, ColumnMenuItemsSource, GetColumnMenuItemsParams } from 'ag-grid-community';
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
+import { AllEnterpriseModule, ColumnMenuModule, ColumnsToolPanelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, menuOption, openMenuOption, polyfillOffsetParent } from '../test-utils';
 
@@ -189,5 +190,61 @@ describe('getColumnMenuItems on the Column Chooser', () => {
         expect(rowGroupSources).not.toContain<ColumnEventType>('toolPanelUi');
 
         api.hideColumnChooser();
+    });
+});
+
+describe('getColumnMenuItems module requirement', () => {
+    const rowData = [{ athlete: 'Michael Phelps' }];
+    const columnDefs = [{ field: 'athlete' }];
+
+    // getColumnMenuItems drives the column menu (ColumnMenuModule) and the Columns Tool Panel /
+    // Column Chooser (ColumnsToolPanelModule), so either surface module satisfies it. With
+    // throwOn:'error' a missing-module warning (#200) becomes a thrown error, so grid creation
+    // throwing is a direct proxy for the validation firing.
+    afterEach(() => {
+        // throwOn is global; reset it so it does not leak into later tests.
+        enableDevValidations({ throwOn: 'none' });
+    });
+
+    test('is satisfied by ColumnMenuModule alone, without ColumnsToolPanelModule', () => {
+        const gridMgr = new TestGridsManager({
+            modules: [ClientSideRowModelModule, ColumnMenuModule, ValidationModule.with({ throwOn: 'error' })],
+        });
+        expect(() =>
+            gridMgr.createGrid('column-menu-only', {
+                columnDefs,
+                rowData,
+                getColumnMenuItems: (params) => params.defaultItems,
+            })
+        ).not.toThrow();
+        gridMgr.reset();
+    });
+
+    test('is satisfied by ColumnsToolPanelModule alone, without ColumnMenuModule', () => {
+        const gridMgr = new TestGridsManager({
+            modules: [ClientSideRowModelModule, ColumnsToolPanelModule, ValidationModule.with({ throwOn: 'error' })],
+        });
+        expect(() =>
+            gridMgr.createGrid('tool-panel-only', {
+                columnDefs,
+                rowData,
+                getColumnMenuItems: (params) => params.defaultItems,
+            })
+        ).not.toThrow();
+        gridMgr.reset();
+    });
+
+    test('still warns when neither the column menu nor the tool panel module is registered', () => {
+        const gridMgr = new TestGridsManager({
+            modules: [ClientSideRowModelModule, ValidationModule.with({ throwOn: 'error' })],
+        });
+        expect(() =>
+            gridMgr.createGrid('no-surface', {
+                columnDefs,
+                rowData,
+                getColumnMenuItems: (params) => params.defaultItems,
+            })
+        ).toThrow(/getColumnMenuItems/);
+        gridMgr.reset();
     });
 });
