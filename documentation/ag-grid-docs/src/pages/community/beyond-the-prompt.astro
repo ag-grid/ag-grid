@@ -14,7 +14,6 @@ import {
 import CommunityMenu from '@ag-website-shared/components/community/components/CommunityMenu';
 import communityMenu from '@ag-website-shared/content/community/community-menu.json';
 
-const VENUE_MAP_HREF = 'https://maps.app.goo.gl/GRcWV6LPBoXJwDLu6';
 const SOCIAL_IMAGE_URL = 'images/campaigns/beyond-the-prompt/social-card.png';
 
 type Speaker = {
@@ -33,16 +32,6 @@ type Speaker = {
     // Setting `imageFit: 'contain'` switches just those cards to fit-the-whole
     // SVG while staying anchored to the bottom of the frame.
     imageFit?: 'contain';
-};
-
-type VenueImage = {
-    src: string;
-    // Optional narrow-viewport variant. When present we render a `<picture>`
-    // with a mobile `<source>` so portrait phones get a re-cropped/re-stacked
-    // version of the same illustration. Falls through to `src` on desktop.
-    srcMobile?: string;
-    alt: string;
-    caption?: string;
 };
 
 const SPEAKERS: Speaker[] = [
@@ -172,16 +161,8 @@ const HERO_FACES = [
     { name: 'Matt Pocock', src: 'images/campaigns/beyond-the-prompt/svg/matt-pocock.svg' },
 ];
 
-const VENUE_IMAGES: VenueImage[] = [
-    {
-        src: 'images/campaigns/beyond-the-prompt/venue/savoy.webp',
-        srcMobile: 'images/campaigns/beyond-the-prompt/venue/savoy-mobile.webp',
-        alt: 'Line drawing of IET London at 2 Savoy Place',
-    },
-];
-
-// Photos from the day, shown as a black-and-white carousel before the venue
-// section (webp conversions of the event photography).
+// Photos from the day, shown as a black-and-white carousel (webp conversions
+// of the event photography).
 const GALLERY_IMAGES = [
     'images/campaigns/beyond-the-prompt/gallery/gallery-01.webp',
     'images/campaigns/beyond-the-prompt/gallery/gallery-02.webp',
@@ -273,6 +254,8 @@ const GALLERY_IMAGES = [
                             />
                         </div>
 
+                        <p class={styles.eyebrow}>AG Grid × Bryntum Event Series</p>
+
                         <h1 class={styles.heroTitle}>
                             <img
                                 src={urlWithBaseUrl('images/campaigns/beyond-the-prompt/logo-btp.svg')}
@@ -291,13 +274,14 @@ const GALLERY_IMAGES = [
                         <ul class={styles.heroMeta}>
                             <li>
                                 <Icon name="alarm" />
-                                <span>Tuesday 19 May 2026</span>
-                            </li>
-                            <li>
+                                <span>October 2026</span>
                                 <Icon name="mapPin" />
-                                <span>IET London, 2 Savoy Place</span>
+                                <span>New York City</span>
+                                <span class={styles.heroMetaNewBadge}>New!</span>
                             </li>
                         </ul>
+
+                        <a href="#notify" class={styles.heroNotifyBtn}>Get notified</a>
                     </div>
 
                     <div class={styles.heroFaces} aria-hidden="true">
@@ -311,18 +295,19 @@ const GALLERY_IMAGES = [
             </div>
         </section>
 
-        <section class={styles.heroVideo} aria-label="Beyond the Prompt">
+        <section class={styles.heroVideo} aria-label="Beyond the Prompt recap">
             <div class={styles.container}>
-                <div class={styles.heroVideoFrame} data-hero-video data-youtube-id="XY30-iUTB3E">
+                <div class={styles.heroVideoFrame}>
                     <button
                         type="button"
                         class={styles.heroVideoPlay}
-                        data-hero-video-play
-                        aria-label="Play the opening keynote"
+                        data-session-modal
+                        data-youtube-id="LvGRBbTuAnM"
+                        aria-label="Play the conference recap"
                     >
                         <img
-                            src={urlWithBaseUrl('images/campaigns/beyond-the-prompt/opening-keynote.png')}
-                            alt="Opening Keynote"
+                            src={urlWithBaseUrl('images/campaigns/beyond-the-prompt/recap.webp')}
+                            alt="Beyond the Prompt recap"
                             class={styles.heroVideoThumb}
                             loading="lazy"
                         />
@@ -343,15 +328,16 @@ const GALLERY_IMAGES = [
                         </div>
                         <div class={styles.introBody}>
                             <p>
-                                Beyond the Prompt was built around a simple observation: getting to a working prototype
-                                with AI is easy. But when real data arrives, everything changes. Performance degrades,
-                                edge cases multiply, and the application you built is not the one you need. That is the
-                                point where AI helps less, and where the real engineering begins.
+                                Beyond the Prompt is a series of events exploring the tension between how easy it is to
+                                prototype with AI and how hard it is to make that work hold up in production.
+                                Performance degrades, edge cases multiply, and the application you built is not the one
+                                you need. That is the point where AI helps less, and where the real engineering begins.
                             </p>
                             <p>
-                                The day brought together engineers and experts to talk honestly about what it takes to
-                                build applications that hold up in production, with time to connect with our teams over
-                                lunch, coffee, and drinks.
+                                London was the first stop. The day brought together engineers and experts to talk
+                                honestly about what it takes to build applications that hold up in production, with time
+                                to connect with our teams over lunch, coffee, and drinks. The series continues later
+                                this year in New York.
                             </p>
                         </div>
                     </div>
@@ -367,6 +353,7 @@ const GALLERY_IMAGES = [
 
         <section id="programme" class={styles.programmeSection}>
             <div class={styles.sectionRule}>
+                <p class={styles.programmeLocation}>London, May 2026</p>
                 <div class={styles.programmeTabs} role="tablist" aria-label="Programme">
                     <button
                         type="button"
@@ -516,7 +503,7 @@ const GALLERY_IMAGES = [
                                                         <span class={styles.agendaAvatar} aria-hidden="true">
                                                             <img
                                                                 src={urlWithBaseUrl(
-                                                                    `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-cream.png`
+                                                                    `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-cream.webp`
                                                                 )}
                                                                 alt=""
                                                                 loading="lazy"
@@ -524,7 +511,7 @@ const GALLERY_IMAGES = [
                                                             />
                                                             <img
                                                                 src={urlWithBaseUrl(
-                                                                    `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-orange.png`
+                                                                    `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-orange.webp`
                                                                 )}
                                                                 alt=""
                                                                 aria-hidden="true"
@@ -538,17 +525,15 @@ const GALLERY_IMAGES = [
                                                         <span class={styles.agendaSpeakerName}>
                                                             {sp.name} ({sp.role})
                                                         </span>
-                                                        <video
+                                                        <img
                                                             class={styles.agendaSpeakerRotating}
                                                             data-head={headSlug(sp.name)}
                                                             src={urlWithBaseUrl(
-                                                                `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-rotating.webm`
+                                                                `images/campaigns/beyond-the-prompt/heads/${headSlug(sp.name)}-orange.webp`
                                                             )}
-                                                            muted
-                                                            loop
-                                                            playsinline
-                                                            preload="none"
+                                                            alt=""
                                                             aria-hidden="true"
+                                                            loading="lazy"
                                                         />
                                                     </div>
                                                 ))}
@@ -568,7 +553,7 @@ const GALLERY_IMAGES = [
             </div>
         </section>
 
-        <section class={styles.gallerySection} aria-label="Photos from the day">
+        <section class={styles.gallerySection} aria-label="Photos from the day" data-gallery>
             <div class={styles.galleryViewport}>
                 {/* Slides are rendered twice so the marquee loops seamlessly. */}
                 <ol class={styles.galleryTrack} aria-hidden="true">
@@ -597,53 +582,84 @@ const GALLERY_IMAGES = [
             </div>
         </section>
 
-        <section id="venue" class={styles.venueSection} aria-labelledby="venue-heading">
-            <div class={styles.sectionRule}>
-                <h2 id="venue-heading" class={styles.sectionRuleTitle}>The venue</h2>
-            </div>
+        <section id="notify" class={styles.notify}>
             <div class={styles.container}>
-                <p class={styles.sectionLead}>
-                    We were delighted to be hosted by IET London at 2 Savoy Place, a historical, Grade II listed
-                    building on the Thames, home to the Institution of Engineering and Technology.
-                </p>
+                <div class={styles.notifyInner}>
+                    <div class={styles.sectionHeader}>
+                        <p class={styles.eyebrowAccent}>
+                            <Icon name="mapPin" />
+                            New York · October 2026
+                        </p>
+                        <h2 class={styles.sectionTitle}>Get notified</h2>
+                        <p class={styles.notifyLead}>
+                            The series continues in New York this October. Leave your email and we'll let you know as
+                            soon as registration opens.
+                        </p>
+                    </div>
 
-                <div class={styles.venueGrid}>
-                    {
-                        VENUE_IMAGES.map((img) => (
-                            <figure class={styles.venueSlide}>
-                                {/*
-                                    `<picture>` lets the browser pick the
-                                    narrow-viewport asset before the `<img>`
-                                    fires a request, so phones never download
-                                    the full-width desktop WebP. We use the
-                                    same 720px breakpoint that switches the
-                                    rest of the page into desktop layout.
-                                */}
-                                <picture>
-                                    {img.srcMobile && (
-                                        <source media="(max-width: 719px)" srcset={urlWithBaseUrl(img.srcMobile)} />
-                                    )}
-                                    <img
-                                        src={urlWithBaseUrl(img.src)}
-                                        alt={img.alt}
-                                        class={styles.venueImage}
-                                        loading="lazy"
-                                    />
-                                </picture>
-                                {img.caption && <figcaption class={styles.venueCaption}>{img.caption}</figcaption>}
-                            </figure>
-                        ))
-                    }
-                </div>
+                    <div id="mc_embed_signup">
+                        <form
+                            action="https://ag-grid.us11.list-manage.com/subscribe/post?u=9b44b788c97fa5b498fbbc9b5&id=a95f562d37&f_id=007ad5e3f0"
+                            method="post"
+                            id="mc-embedded-subscribe-form"
+                            name="mc-embedded-subscribe-form"
+                            target="_self"
+                            class={styles.notifyForm}
+                        >
+                            <div class={styles.notifyField}>
+                                <label class={styles.notifyLabel} for="mce-EMAIL">
+                                    Email address <span aria-hidden="true">*</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    name="EMAIL"
+                                    id="mce-EMAIL"
+                                    class={styles.notifyInput}
+                                    placeholder="you@example.com"
+                                    required
+                                />
+                            </div>
 
-                <div class={styles.venueCta}>
-                    <a href={VENUE_MAP_HREF} class={styles.btnSecondary} target="_blank" rel="noopener noreferrer">
-                        <Icon name="mapPin" />
-                        IET London
-                    </a>
+                            <div class={styles.notifyGdpr}>
+                                <label class={styles.notifyCheckbox} for="gdpr_47554">
+                                    <input type="checkbox" id="gdpr_47554" name="gdpr[47554]" value="Y" />
+                                    <span>I am happy to receive emails from AG Grid</span>
+                                </label>
+                                <p class={styles.notifyGdprText}>
+                                    You can unsubscribe at any time using the links available in our emails. By
+                                    submitting this form you acknowledge that AG Grid will process your data in
+                                    accordance with our
+                                    <a href="https://www.ag-grid.com/privacy/" target="_blank" rel="noopener noreferrer"
+                                        >privacy policy</a
+                                    >.
+                                </p>
+                            </div>
+
+                            {/* Hidden Mailchimp fields: audience tag + anti-bot honeypot (kept from the embed). */}
+                            <div hidden><input type="hidden" name="tags" value="10282800" /></div>
+                            <div aria-hidden="true" style="position: absolute; left: -5000px;">
+                                <input
+                                    type="text"
+                                    name="b_9b44b788c97fa5b498fbbc9b5_a95f562d37"
+                                    tabindex="-1"
+                                    value=""
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                name="subscribe"
+                                id="mc-embedded-subscribe"
+                                class={styles.notifySubmit}
+                            >
+                                Notify me
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </section>
+
         <div class={styles.sessionModal} data-session-modal-root hidden>
             <button
                 type="button"

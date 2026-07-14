@@ -86,6 +86,28 @@
         });
     }
 
+    // Photo gallery marquee: the slides are loading="lazy" and the strip scrolls
+    // horizontally, so images off to the right only fetch as they scroll into
+    // view and visibly pop in. Eagerly load the whole set once the section is
+    // approaching the viewport (600px early), so every slide is ready by the
+    // time it scrolls across.
+    const gallery = document.querySelector('[data-gallery]');
+    if (gallery && 'IntersectionObserver' in window) {
+        const galleryObserver = new IntersectionObserver(
+            (entries) => {
+                if (!entries.some((entry) => entry.isIntersecting)) {
+                    return;
+                }
+                for (const img of gallery.querySelectorAll('img[loading="lazy"]')) {
+                    img.loading = 'eager';
+                }
+                galleryObserver.disconnect();
+            },
+            { rootMargin: '600px 0px' }
+        );
+        galleryObserver.observe(gallery);
+    }
+
     // Session recording modal. Session titles with a recording link to a real
     // /session/<slug> page; here we intercept the click, play the video in a
     // modal, and sync the URL so it stays shareable and back-button friendly.
@@ -118,17 +140,45 @@
         sessionTrigger = null;
     };
 
+    // Guards the popstate that our own history.back() fires on close, so the act
+    // of closing the modal can never re-open it.
+    let closingModal = false;
+
     const closeAndReturn = () => {
-        // We pushed the /session/<slug> entry when opening, so go back: that pops
-        // exactly our entry (keeping it shareable in forward history) and lands on
-        // this page, where popstate runs closeSession. Falling back to a plain
-        // close covers the case where no entry was pushed.
+        // Hide the modal immediately so closing always works, whatever the entry
+        // we land on carries. We still call history.back() to restore the previous
+        // URL (keeping the /session/<slug> entry in forward history), but
+        // `closingModal` stops the resulting popstate from re-opening the modal —
+        // otherwise backing onto another session entry re-opens it with a blank
+        // iframe and the modal appears stuck open.
+        closeSession();
         if (history.state && history.state.btpSession) {
+            closingModal = true;
             history.back();
-        } else {
-            closeSession();
         }
     };
+
+    // The recording plays in a cross-origin YouTube iframe. Once that iframe
+    // takes keyboard focus (autoplay, or the viewer clicking the video), the
+    // page stops receiving keydown — so the first Escape is swallowed by the
+    // player — and the next click on the page is spent handing focus back to the
+    // window rather than activating the close button. Either way it takes two
+    // presses to close. While the modal is open, pull focus back out of the
+    // iframe so a single Escape or click always closes it. We leave focus alone
+    // while the video is fullscreen, where the browser's own Escape exits
+    // fullscreen and focus should stay with the player.
+    const guardModalFocus = () => {
+        if (!sessionModal || sessionModal.hidden || document.fullscreenElement) {
+            return;
+        }
+        if (document.activeElement === sessionFrame) {
+            sessionModal.querySelector('[data-session-modal-close]')?.focus();
+        }
+    };
+    window.addEventListener('blur', () => {
+        // Defer so document.activeElement has settled on the iframe before we check.
+        setTimeout(guardModalFocus, 0);
+    });
 
     for (const link of document.querySelectorAll('[data-session-modal]')) {
         link.addEventListener('click', (event) => {
@@ -138,7 +188,12 @@
             }
             event.preventDefault();
             openSession(videoId);
-            history.pushState({ btpSession: videoId }, '', link.getAttribute('href'));
+            // Agenda session links carry a shareable /session/<slug> URL to push
+            // into history. The hero recap trigger is a plain <button> with no
+            // href, so fall back to the current URL rather than pushing null
+            // (which would corrupt the address bar and back/forward behaviour).
+            const sessionUrl = link.getAttribute('href') || location.href;
+            history.pushState({ btpSession: videoId }, '', sessionUrl);
         });
     }
     for (const closer of document.querySelectorAll('[data-session-modal-close]')) {
@@ -151,6 +206,13 @@
     });
     // Browser back/forward has already moved the URL, so just sync the modal.
     window.addEventListener('popstate', (event) => {
+        // If this popstate came from closing the modal, keep it closed rather than
+        // re-opening whatever session the landed-on entry points at.
+        if (closingModal) {
+            closingModal = false;
+            closeSession();
+            return;
+        }
         const state = event.state;
         if (state && state.btpSession) {
             openSession(state.btpSession);

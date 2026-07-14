@@ -320,6 +320,7 @@ export function getCspDirectives(options: CspOptions): CspDirectives {
             realexHppOrigin, // ecommerce checkout: payment form POST to Realex HPP
             'https://codesandbox.io', // example-runner "Open in CodeSandbox" form POST
             'https://plnkr.co', // example-runner "Open in Plunker" form POST
+            'https://ag-grid.us11.list-manage.com', // Beyond the Prompt "notify me" Mailchimp signup POST
         ],
         'frame-ancestors': [SELF, AG_GRID_HOSTS], // allow *.ag-grid.com (e.g. blog) to embed examples
     };
