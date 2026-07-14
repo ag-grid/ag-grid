@@ -1822,8 +1822,12 @@ export interface Props<TData> {
          */
     getMainMenuItems?: GetMainMenuItems<TData>,
     /** For customising the menu items shown for a column across the column menu, the Columns Tool Panel
-         * right-click menu, and the Column Chooser. The `source` param indicates which surface the menu is for.
-         * Takes precedence over `getMainMenuItems` for the column menu.
+         * right-click menu, and the Column Chooser. The `source` param indicates which surface the menu is for;
+         * branch on it to target a single surface. Takes precedence over `getMainMenuItems` for the column menu.
+         *
+         * Note: when this is set, the Columns Tool Panel / Column Chooser right-click menu opens even under
+         * `functionsReadOnly` (where it is otherwise suppressed). The built-in state-changing items are hidden,
+         * but items returned from this callback are still shown.
          * @initial
          * @agModule `ColumnMenuModule`
          */

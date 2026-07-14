@@ -188,7 +188,9 @@ The concrete item shown for a token depends on the column's current state (e.g. 
 Resolving column menu tokens (such as `'pinSubMenu'`) in the tool panel menu requires the `ColumnMenuModule` to be registered. Pin items are only available for individual columns, not column groups.
 {% /note %}
 
-The following example demonstrates customising the tool panel menu. Right-click a column in the Columns Tool Panel to see an optional pinning sub-menu and a custom **Highlight Column** item, which logs to the developer console:
+When `columnMenuItems` or `getColumnMenuItems()` is configured, the tool panel and Column Chooser menu opens even when [`functionsReadOnly`](#read-only-functions) is enabled - where it is otherwise suppressed. The built-in group / value / pivot items are hidden in this case, but the items you return are still shown. Branch on `source` if you only want to customise the column menu.
+
+The following example demonstrates customising the tool panel menu. Right-click a column in the Columns Tool Panel to see an optional pinning sub-menu and a custom **Highlight Column** item, which toggles a highlight style on the column:
 
 {% gridExampleRunner title="Customising the Tool Panel Menu" name="customising-tool-panel-menu" exampleHeight=670 /%}
 

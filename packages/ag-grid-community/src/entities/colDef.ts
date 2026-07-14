@@ -157,6 +157,9 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
      * Customise the menu items shown for this column group across the column menu, the Columns Tool Panel
      * right-click menu, and the Column Chooser. The `source` param indicates which surface the menu is for.
      * Takes precedence over `mainMenuItems`.
+     *
+     * Note: when this is set, the Columns Tool Panel / Column Chooser right-click menu opens even under
+     * `functionsReadOnly` (where it is otherwise suppressed), showing the items you provide.
      * @agModule `ColumnMenuModule`
      */
     columnMenuItems?: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef<TData>)[] | GetColumnMenuItems<TData>;
@@ -641,6 +644,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Customise the menu items shown for this column across the column menu, the Columns Tool Panel
      * right-click menu, and the Column Chooser. The `source` param indicates which surface the menu is for.
      * Takes precedence over `mainMenuItems`.
+     *
+     * Note: when this is set, the Columns Tool Panel / Column Chooser right-click menu opens even under
+     * `functionsReadOnly` (where it is otherwise suppressed), showing the items you provide.
      * @agModule `ColumnMenuModule`
      */
     columnMenuItems?: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef<TData>)[] | GetColumnMenuItems<TData>;

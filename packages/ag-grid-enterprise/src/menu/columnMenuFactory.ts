@@ -19,7 +19,7 @@ import {
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
 import type { MenuItemMapper } from './menuItemMapper';
-import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuItemMapper';
+import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuSeparators';
 
 export class ColumnMenuFactory extends BeanStub implements NamedBean {
     beanName = 'colMenuFactory' as const;
@@ -57,7 +57,8 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         columnGroup: AgProvidedColumnGroup | null = null
     ): (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef)[] {
         const defaultItems = this.getDefaultMenuOptions(column);
-        const result = _resolveColumnMenuItems(this.gos, column, columnGroup, 'columnMenu', defaultItems);
+        // Copy so normalising never mutates a user-provided columnMenuItems/mainMenuItems array in place.
+        const result = [..._resolveColumnMenuItems(this.gos, column, columnGroup, 'columnMenu', defaultItems)];
 
         // normalise separators after item removal so we don't leave duplicates,
         // or separators stranded at the start or end of the menu.

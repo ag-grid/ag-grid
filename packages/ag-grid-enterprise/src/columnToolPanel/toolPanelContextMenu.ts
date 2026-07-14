@@ -12,6 +12,7 @@ import type {
 import { Component, _createIconNoSpan, _resolveColumnMenuItems, isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { MenuItemMapper } from '../menu/menuItemMapper';
+import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../menu/menuSeparators';
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
 import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
@@ -41,7 +42,7 @@ export class ToolPanelContextMenu extends Component {
         private readonly column: AgColumn | AgProvidedColumnGroup,
         private readonly mouseEventOrTouch: MouseEvent | Touch,
         private readonly parentEl: HTMLElement,
-        private readonly params: ColumnStateUpdateParams = {},
+        private readonly params: ColumnStateUpdateParams,
         private readonly source: ColumnMenuItemsSource
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
@@ -66,9 +67,13 @@ export class ToolPanelContextMenu extends Component {
 
         this.buildMenuItemMap();
 
-        const isGroup = isProvidedColumnGroup(column);
-        const col = isGroup ? null : (column as AgColumn);
-        const columnGroup = isGroup ? (column as AgProvidedColumnGroup) : null;
+        let col: AgColumn | null = null;
+        let columnGroup: AgProvidedColumnGroup | null = null;
+        if (isProvidedColumnGroup(column)) {
+            columnGroup = column;
+        } else {
+            col = column;
+        }
 
         // The built-in items all mutate column state, so they are suppressed under functionsReadOnly.
         // A user callback can still contribute items, which is why the menu may still open.
@@ -107,27 +112,15 @@ export class ToolPanelContextMenu extends Component {
         }
 
         const menuItemMapper = this.beans.menuItemMapper as MenuItemMapper | undefined;
-        if (menuItemMapper) {
-            return menuItemMapper.mapWithStockItems(
-                expanded,
-                column,
-                null,
-                undefined,
-                () => this.getGui(),
-                'toolPanelUi'
-            );
-        }
+        // Without the menu module (which provides the mapper) any remaining stock string tokens (e.g. pin)
+        // cannot be resolved, so keep the built definitions and drop the tokens.
+        const mapped: (MenuItemDef | 'separator')[] = menuItemMapper
+            ? menuItemMapper.mapWithStockItems(expanded, column, null, undefined, () => this.getGui(), 'toolPanelUi')
+            : expanded.filter((item): item is MenuItemDef => typeof item !== 'string');
 
-        // The menu module (which provides the mapper) is not registered, so any remaining stock string
-        // tokens (e.g. pin) cannot be resolved. Keep the built definitions and drop the tokens.
-        const result: MenuItemDef[] = [];
-        for (let i = 0, len = expanded.length; i < len; ++i) {
-            const item = expanded[i];
-            if (typeof item !== 'string') {
-                result.push(item);
-            }
-        }
-        return result;
+        // Collapse duplicate/stranded separators, matching the column menu (ColumnMenuFactory.getMenuItems).
+        _normaliseSeparators(mapped, MENU_ITEM_SEPARATOR);
+        return mapped;
     }
 
     private initializeProperties(column: AgColumn | AgProvidedColumnGroup): void {

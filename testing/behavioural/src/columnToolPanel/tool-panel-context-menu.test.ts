@@ -465,5 +465,23 @@ describe('ToolPanelContextMenu', () => {
 
             expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
         });
+
+        test('a separator stranded by empty default items is collapsed (matches the column menu)', async () => {
+            const getColumnMenuItems = vi.fn((params: GetColumnMenuItemsParams) => [
+                ...params.defaultItems,
+                'separator' as const,
+                { name: 'Lonely Item' },
+            ]);
+            // functionsReadOnly forces defaultItems to [], leaving the returned list starting with a separator.
+            const { gridDiv, toolPanel } = await createGrid(columnDefs, {
+                functionsReadOnly: true,
+                getColumnMenuItems,
+            });
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete');
+
+            await findByText(gridDiv, 'Lonely Item');
+            expect(gridDiv.querySelectorAll('.ag-menu-separator')).toHaveLength(0);
+        });
     });
 });

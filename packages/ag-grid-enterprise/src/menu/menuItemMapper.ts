@@ -23,34 +23,7 @@ import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGr
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
 import { validateMenuItem } from './menuItemValidations';
-
-export const MENU_ITEM_SEPARATOR = 'separator';
-
-export function _normaliseSeparators<T>(array: T[], separator: T) {
-    if (!array?.length) {
-        return;
-    }
-
-    let writeIndex = 0;
-    let lastItemWasSeparator = true;
-
-    for (const item of array) {
-        const isSeparator = item === separator;
-
-        if (isSeparator && lastItemWasSeparator) {
-            continue;
-        }
-
-        array[writeIndex++] = item;
-        lastItemWasSeparator = isSeparator;
-    }
-
-    if (writeIndex > 0 && array[writeIndex - 1] === separator) {
-        writeIndex--;
-    }
-
-    array.length = writeIndex;
-}
+import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuSeparators';
 
 const SORT_MENU_ITEM_TO_MENU_ACTION_PARAMS: Record<
     string,
