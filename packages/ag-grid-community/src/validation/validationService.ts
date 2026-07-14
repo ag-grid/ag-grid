@@ -13,7 +13,7 @@ import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import type { IconName } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
-import { _errMsg, provideValidationServiceLogger } from './logging';
+import { _errMsg, _reportMissingModule, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
@@ -128,7 +128,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
         const moduleName = ICON_MODULES[iconName];
         if (moduleName) {
-            this.error(200, {
+            _reportMissingModule({
                 reasonOrId: `icon \`${iconName}\``,
                 moduleName,
                 gridScoped: _areModulesGridScoped(),

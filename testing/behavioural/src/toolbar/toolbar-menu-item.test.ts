@@ -1,7 +1,15 @@
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, ToolbarModule } from 'ag-grid-enterprise';
 
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForEvent,
+    waitForMissingModuleReports,
+} from '../test-utils';
 
 // `_focusInto` (used to focus the menu list on open and the button on close) relies on
 // `_isVisible`, which checks `offsetParent`. jsdom does not compute layout, so
@@ -390,6 +398,7 @@ describe('Toolbar menu item (agMenuToolbarItem) without a menu module', () => {
         `);
 
         await waitForEvent('firstDataRendered', api);
+        await waitForMissingModuleReports();
 
         expect(errorSpy).toHaveBeenCalled();
 

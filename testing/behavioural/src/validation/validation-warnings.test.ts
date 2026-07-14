@@ -4,7 +4,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, waitForMissingModuleReports } from '../test-utils';
 
 describe('ag-grid validation warnings', () => {
     const gridsManager = new TestGridsManager({
@@ -216,7 +216,7 @@ describe('ag-grid validation warnings', () => {
             consoleErrorSpy.mockRestore();
         });
 
-        test('errors when rowSelection is used on client-side grid but RowSelectionModule is not registered, even when ServerSideRowModelModule is registered', () => {
+        test('errors when rowSelection is used on client-side grid but RowSelectionModule is not registered, even when ServerSideRowModelModule is registered', async () => {
             // Regression: ServerSideRowModelModule internally depends on SharedRowSelectionModule.
             // Before the fix, registering SSRM caused SharedRowSelectionModule to be stored under
             // 'all' row models, suppressing the validation error for client-side grids.
@@ -225,6 +225,7 @@ describe('ag-grid validation warnings', () => {
                 rowData: [],
                 rowSelection: { mode: 'multiRow' },
             });
+            await waitForMissingModuleReports();
 
             expect(consoleErrorSpy).toHaveBeenCalledWith(
                 expect.stringContaining('error #200'),
