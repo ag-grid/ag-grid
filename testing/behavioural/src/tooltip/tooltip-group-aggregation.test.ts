@@ -3,14 +3,14 @@ import { userEvent } from '@testing-library/user-event';
 
 import { TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import type { GridApi, GridOptions, ITooltipComp, ITooltipParams, Module } from 'ag-grid-community';
-import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ShowValuesAsModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('AG-5004: tooltip on aggregated group-row cells', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [TooltipModule, RowGroupingModule, TreeDataModule] as Module[],
+        modules: [TooltipModule, RowGroupingModule, TreeDataModule, ShowValuesAsModule] as Module[],
     });
 
     beforeAll(() => setupAgTestIds());
@@ -278,5 +278,26 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
         const api = await gridMgr.createGridAndWait('ag5004-grouping-value-getter-comp', gridOptions);
         const groupRowId = findGroupRowId(api, 'AU');
         await hoverCellAndExpectTooltip(api, groupRowId, 'value', 'getter:6');
+    });
+
+    // showValuesAs transforms the displayed aggregate; the tooltip must mirror the formatted cell text
+    // ("60.00%"), not the raw transform ratio (0.6) or the untransformed aggregate (6).
+    test('row grouping: showValuesAs aggregated cell tooltips the formatted displayed value', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'value', aggFunc: 'sum', showValuesAs: 'percentOfGrandTotal', tooltipField: 'value' },
+            ],
+            rowData: [
+                { country: 'AU', value: 2 },
+                { country: 'AU', value: 4 },
+                { country: 'US', value: 4 },
+            ],
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+        };
+
+        const api = await gridMgr.createGridAndWait('ag5004-grouping-show-values-as', gridOptions);
+        const groupRowId = findGroupRowId(api, 'AU');
+        await hoverCellAndExpectTooltip(api, groupRowId, 'value', '60.00%');
     });
 });

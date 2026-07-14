@@ -215,7 +215,13 @@ const resolveCellTooltip = ({
     // 4) column tooltip field/valueGetter is the final fallback.
     if (colDef.tooltipField) {
         if (usesGroupRowDisplayValue(beans, ctrl)) {
-            return { value: ctrl.value, location: 'cell', shouldDisplay: shouldDisplayColumnTooltip };
+            // Mirror the displayed cell text: `valueFormatted` carries valueFormatter output and the
+            // showValuesAs transform (e.g. "60.00%"), falling back to the raw value when unformatted.
+            return {
+                value: ctrl.valueFormatted ?? ctrl.value,
+                location: 'cell',
+                shouldDisplay: shouldDisplayColumnTooltip,
+            };
         }
         if (_exists(data)) {
             return {
