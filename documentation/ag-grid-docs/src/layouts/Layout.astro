@@ -95,6 +95,16 @@ const structuredData: JsonLdObject[] = includeStructuredData
               name: 'AG Grid',
               logoUrl: organizationLogoUrl,
               sameAs: sameAsUrls,
+              // Line up with the enquiry-type options on the contact page. Sales enquiries go
+              // through the contact form; technical support is handled via the Zendesk portal.
+              contactPoints: [
+                  { contactType: 'sales', url: `${siteRoot}contact/`, availableLanguage: 'English' },
+                  {
+                      contactType: 'technical support',
+                      url: 'https://ag-grid.zendesk.com/',
+                      availableLanguage: 'English',
+                  },
+              ],
           }),
           buildWebSite({
               canonicalUrlBase: metadata.canonicalUrlBase,
