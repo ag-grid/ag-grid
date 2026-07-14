@@ -118,15 +118,21 @@
         sessionTrigger = null;
     };
 
+    // Guards the popstate that our own history.back() fires on close, so the act
+    // of closing the modal can never re-open it.
+    let closingModal = false;
+
     const closeAndReturn = () => {
-        // We pushed the /session/<slug> entry when opening, so go back: that pops
-        // exactly our entry (keeping it shareable in forward history) and lands on
-        // this page, where popstate runs closeSession. Falling back to a plain
-        // close covers the case where no entry was pushed.
+        // Hide the modal immediately so closing always works, whatever the entry
+        // we land on carries. We still call history.back() to restore the previous
+        // URL (keeping the /session/<slug> entry in forward history), but
+        // `closingModal` stops the resulting popstate from re-opening the modal —
+        // otherwise backing onto another session entry re-opens it with a blank
+        // iframe and the modal appears stuck open.
+        closeSession();
         if (history.state && history.state.btpSession) {
+            closingModal = true;
             history.back();
-        } else {
-            closeSession();
         }
     };
 
@@ -173,6 +179,13 @@
     });
     // Browser back/forward has already moved the URL, so just sync the modal.
     window.addEventListener('popstate', (event) => {
+        // If this popstate came from closing the modal, keep it closed rather than
+        // re-opening whatever session the landed-on entry points at.
+        if (closingModal) {
+            closingModal = false;
+            closeSession();
+            return;
+        }
         const state = event.state;
         if (state && state.btpSession) {
             openSession(state.btpSession);
