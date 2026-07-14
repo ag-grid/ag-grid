@@ -272,15 +272,9 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     aspect-ratio: 16 / 9;
     overflow: hidden;
     border-radius: 8px;
-    background: #000;
-
-    iframe {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-    }
+    // Light card backdrop behind the transparent recap PNG — a little lighter
+    // than the page bg (#f2f2f2) so the recap frame lifts off the page slightly.
+    background: #fbfbfb;
 }
 
 // Custom thumbnail + play button shown until the keynote is clicked, when the
