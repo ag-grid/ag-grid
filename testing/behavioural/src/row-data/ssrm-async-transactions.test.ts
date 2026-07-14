@@ -257,4 +257,85 @@ describe('SSRM Async Transactions (characterization)', () => {
         expect(results.length).toBe(1);
         expect(results[0].status).toBe('StoreNotFound');
     });
+
+    test('flush emits asyncTransactionsFlushed even when nothing applies, without a data change', async () => {
+        const rowData = Array.from({ length: 5 }, (_, i) => ({ id: i, value: `Row ${i}` }));
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide' as const,
+            getRowId: (params: any) => String(params.data.id),
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    const rowDataS = rowData.slice(params.request.startRow, params.request.endRow);
+                    params.success({ rowData: rowDataS, rowCount: rowData.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitForEvent('firstDataRendered', api);
+        expect(api.getDisplayedRowCount()).toBe(5);
+
+        // storeUpdated fires only when a transaction actually applied; pin that it does NOT
+        // fire here, while asyncTransactionsFlushed still does.
+        let storeUpdatedCount = 0;
+        api.addEventListener('storeUpdated', () => {
+            ++storeUpdatedCount;
+        });
+
+        const results: ServerSideTransactionResult[] = [];
+        const flushed = waitForEvent('asyncTransactionsFlushed', api);
+        // Unknown route: the transaction resolves to StoreNotFound, so nothing applies.
+        api.applyServerSideTransactionAsync({ route: ['does-not-exist'], add: [{ id: 100, value: 'X' }] }, (r) =>
+            results.push(r)
+        );
+        api.flushServerSideAsyncTransactions();
+        await flushed;
+
+        expect(results.length).toBe(1);
+        expect(results[0].status).toBe('StoreNotFound');
+        // Nothing applied: no data change and the displayed rows are untouched.
+        expect(storeUpdatedCount).toBe(0);
+        expect(api.getDisplayedRowCount()).toBe(5);
+        expect(!!api.getRowNode('100')).toBe(false);
+    });
+
+    test('the result callback is deferred to a later task, not invoked synchronously during flush', async () => {
+        const rowData = Array.from({ length: 5 }, (_, i) => ({ id: i, value: `Row ${i}` }));
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide' as const,
+            getRowId: (params: any) => String(params.data.id),
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    const rowDataS = rowData.slice(params.request.startRow, params.request.endRow);
+                    params.success({ rowData: rowDataS, rowCount: rowData.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitForEvent('firstDataRendered', api);
+        expect(api.getDisplayedRowCount()).toBe(5);
+
+        const results: ServerSideTransactionResult[] = [];
+        const called = new Promise<void>((resolve) => {
+            api.applyServerSideTransactionAsync({ add: [{ id: 100, value: 'Added' }] }, (r) => {
+                results.push(r);
+                resolve();
+            });
+        });
+        api.flushServerSideAsyncTransactions();
+
+        // The transaction has already been applied synchronously by the flush (the row is present),
+        // but the user callback is intentionally deferred to a later task.
+        expect(!!api.getRowNode('100')).toBe(true);
+        expect(results.length).toBe(0);
+
+        await called;
+        expect(results.length).toBe(1);
+        expect(results[0].status).toBe('Applied');
+    });
 });
