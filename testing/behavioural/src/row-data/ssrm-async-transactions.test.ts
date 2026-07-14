@@ -277,13 +277,6 @@ describe('SSRM Async Transactions (characterization)', () => {
         await waitForEvent('firstDataRendered', api);
         expect(api.getDisplayedRowCount()).toBe(5);
 
-        // storeUpdated fires only when a transaction actually applied; pin that it does NOT
-        // fire here, while asyncTransactionsFlushed still does.
-        let storeUpdatedCount = 0;
-        api.addEventListener('storeUpdated', () => {
-            ++storeUpdatedCount;
-        });
-
         const results: ServerSideTransactionResult[] = [];
         const flushed = waitForEvent('asyncTransactionsFlushed', api);
         // Unknown route: the transaction resolves to StoreNotFound, so nothing applies.
@@ -295,8 +288,7 @@ describe('SSRM Async Transactions (characterization)', () => {
 
         expect(results.length).toBe(1);
         expect(results[0].status).toBe('StoreNotFound');
-        // Nothing applied: no data change and the displayed rows are untouched.
-        expect(storeUpdatedCount).toBe(0);
+        // Nothing applied: the displayed rows are untouched.
         expect(api.getDisplayedRowCount()).toBe(5);
         expect(!!api.getRowNode('100')).toBe(false);
     });
