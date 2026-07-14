@@ -2,7 +2,7 @@ import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import type { GridApi, GridOptions, Module } from 'ag-grid-community';
+import type { GridApi, GridOptions, ITooltipComp, ITooltipParams, Module } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -169,5 +169,114 @@ describe('AG-5004: tooltip on aggregated group-row cells', () => {
         });
         expect(leafRowId).toBeDefined();
         await hoverCellAndExpectTooltip(api, leafRowId!, 'value', '2');
+    });
+
+    // An expanded group with a footer sibling blanks its agg value in the header (displayIgnoresAggData),
+    // so the changed branch must NOT hijack the tooltip — it falls back to the underlying tooltipField.
+    test('tree data: expanded group with a footer keeps the underlying tooltipField (displayIgnoresAggData)', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'value', aggFunc: 'sum', tooltipField: 'label' }],
+            treeData: true,
+            getDataPath: (data) => data.path,
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            rowData: [
+                { path: ['Parent'], value: 3, label: 'parent-label' },
+                { path: ['Parent', 'Child'], value: 4, label: 'child-label' },
+            ],
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+        };
+
+        const api = await gridMgr.createGridAndWait('ag5004-tree-footer-ignore-agg', gridOptions);
+        const groupRowId = findGroupRowId(api, 'Parent');
+        await hoverCellAndExpectTooltip(api, groupRowId, 'value', 'parent-label');
+    });
+
+    // Footer rows show the aggregate and never ignore agg data — they tooltip the displayed aggregate.
+    test('row grouping: group footer aggregated cell tooltips the aggregate', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'value', aggFunc: 'sum', tooltipField: 'value' },
+            ],
+            rowData: [
+                { country: 'AU', value: 2 },
+                { country: 'AU', value: 4 },
+            ],
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+        };
+
+        const api = await gridMgr.createGridAndWait('ag5004-grouping-footer', gridOptions);
+        let footerRowId: string | undefined;
+        for (let i = 0, len = api.getDisplayedRowCount(); i < len; ++i) {
+            const node = api.getDisplayedRowAtIndex(i);
+            if (node?.footer && !node.rowPinned) {
+                footerRowId = node.id ?? undefined;
+            }
+        }
+        expect(footerRowId).toBeDefined();
+        await hoverCellAndExpectTooltip(api, footerRowId!, 'value', '6');
+    });
+
+    // A custom tooltipComponent on an aggregated group-row cell receives the displayed aggregate value.
+    test('row grouping: custom tooltipComponent renders with the aggregated value', async () => {
+        class CustomTooltip implements ITooltipComp {
+            private eGui!: HTMLElement;
+            public init(params: ITooltipParams): void {
+                this.eGui = document.createElement('div');
+                this.eGui.className = 'ag-tooltip-custom custom-agg-tooltip';
+                this.eGui.textContent = `agg:${params.value}`;
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+        }
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'value', aggFunc: 'sum', tooltipField: 'value', tooltipComponent: CustomTooltip },
+            ],
+            rowData: [
+                { country: 'AU', value: 2 },
+                { country: 'AU', value: 4 },
+            ],
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+        };
+
+        const api = await gridMgr.createGridAndWait('ag5004-grouping-custom-comp', gridOptions);
+        const groupRowId = findGroupRowId(api, 'AU');
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell(groupRowId, 'value')));
+        await userEvent.hover(cell);
+        await asyncSetTimeout(TOOLTIP_SHOW_DELAY + 50);
+        await waitForTooltips(1);
+        expect(document.querySelector('.custom-agg-tooltip')).not.toBeNull();
+        expect(getTooltips()[0]).toHaveTextContent('agg:6');
+    });
+
+    // The changed branch only guards `tooltipField`; a group-row cell's `tooltipValueGetter` still wins.
+    test('row grouping: tooltipValueGetter still resolves on an aggregated group-row cell', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                {
+                    field: 'value',
+                    aggFunc: 'sum',
+                    tooltipValueGetter: (params) => `getter:${params.value}`,
+                },
+            ],
+            rowData: [
+                { country: 'AU', value: 2 },
+                { country: 'AU', value: 4 },
+            ],
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+        };
+
+        const api = await gridMgr.createGridAndWait('ag5004-grouping-value-getter-comp', gridOptions);
+        const groupRowId = findGroupRowId(api, 'AU');
+        await hoverCellAndExpectTooltip(api, groupRowId, 'value', 'getter:6');
     });
 });
