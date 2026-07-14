@@ -188,7 +188,12 @@
             }
             event.preventDefault();
             openSession(videoId);
-            history.pushState({ btpSession: videoId }, '', link.getAttribute('href'));
+            // Agenda session links carry a shareable /session/<slug> URL to push
+            // into history. The hero recap trigger is a plain <button> with no
+            // href, so fall back to the current URL rather than pushing null
+            // (which would corrupt the address bar and back/forward behaviour).
+            const sessionUrl = link.getAttribute('href') || location.href;
+            history.pushState({ btpSession: videoId }, '', sessionUrl);
         });
     }
     for (const closer of document.querySelectorAll('[data-session-modal-close]')) {
