@@ -130,6 +130,28 @@
         }
     };
 
+    // The recording plays in a cross-origin YouTube iframe. Once that iframe
+    // takes keyboard focus (autoplay, or the viewer clicking the video), the
+    // page stops receiving keydown — so the first Escape is swallowed by the
+    // player — and the next click on the page is spent handing focus back to the
+    // window rather than activating the close button. Either way it takes two
+    // presses to close. While the modal is open, pull focus back out of the
+    // iframe so a single Escape or click always closes it. We leave focus alone
+    // while the video is fullscreen, where the browser's own Escape exits
+    // fullscreen and focus should stay with the player.
+    const guardModalFocus = () => {
+        if (!sessionModal || sessionModal.hidden || document.fullscreenElement) {
+            return;
+        }
+        if (document.activeElement === sessionFrame) {
+            sessionModal.querySelector('[data-session-modal-close]')?.focus();
+        }
+    };
+    window.addEventListener('blur', () => {
+        // Defer so document.activeElement has settled on the iframe before we check.
+        setTimeout(guardModalFocus, 0);
+    });
+
     for (const link of document.querySelectorAll('[data-session-modal]')) {
         link.addEventListener('click', (event) => {
             const videoId = link.dataset.youtubeId;
