@@ -86,6 +86,28 @@
         });
     }
 
+    // Photo gallery marquee: the slides are loading="lazy" and the strip scrolls
+    // horizontally, so images off to the right only fetch as they scroll into
+    // view and visibly pop in. Eagerly load the whole set once the section is
+    // approaching the viewport (600px early), so every slide is ready by the
+    // time it scrolls across.
+    const gallery = document.querySelector('[data-gallery]');
+    if (gallery && 'IntersectionObserver' in window) {
+        const galleryObserver = new IntersectionObserver(
+            (entries) => {
+                if (!entries.some((entry) => entry.isIntersecting)) {
+                    return;
+                }
+                for (const img of gallery.querySelectorAll('img[loading="lazy"]')) {
+                    img.loading = 'eager';
+                }
+                galleryObserver.disconnect();
+            },
+            { rootMargin: '600px 0px' }
+        );
+        galleryObserver.observe(gallery);
+    }
+
     // Session recording modal. Session titles with a recording link to a real
     // /session/<slug> page; here we intercept the click, play the video in a
     // modal, and sync the URL so it stays shareable and back-button friendly.

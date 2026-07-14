@@ -104,7 +104,13 @@ $btp-card: #ffffff;
 
 .eyebrowAccent {
     composes: eyebrow;
+    gap: 6px;
     color: var(--btp-orange);
+
+    :global(.icon) {
+        --icon-size: 14px;
+        --icon-color: var(--btp-orange);
+    }
 }
 
 // ─── Layout primitives ───────────────────────────────────────────────────────
@@ -195,6 +201,9 @@ $btp-card: #ffffff;
     align-items: center;
     gap: 12px;
     margin-bottom: 8px;
+    // The AG Grid logo SVG carries a little internal left padding, so the lockup
+    // reads as offset from the copy below. Nudge the row left to compensate.
+    margin-left: -4px;
 }
 
 // Recolour brand logos to match the page's brand orange (#f43800).
@@ -1672,6 +1681,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 // override the radius, border, and padding with the generic site input look.
 .page .notifyInput {
     width: 100%;
+    margin: 0;
     padding: 14px 18px;
     border-radius: 999px;
     border: 1.5px solid var(--btp-border);

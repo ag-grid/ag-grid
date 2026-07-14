@@ -565,7 +565,7 @@ const GALLERY_IMAGES = [
             </div>
         </section>
 
-        <section class={styles.gallerySection} aria-label="Photos from the day">
+        <section class={styles.gallerySection} aria-label="Photos from the day" data-gallery>
             <div class={styles.galleryViewport}>
                 {/* Slides are rendered twice so the marquee loops seamlessly. */}
                 <ol class={styles.galleryTrack} aria-hidden="true">
@@ -598,7 +598,10 @@ const GALLERY_IMAGES = [
             <div class={styles.container}>
                 <div class={styles.notifyInner}>
                     <div class={styles.sectionHeader}>
-                        <p class={styles.eyebrowAccent}>New York · October 2026</p>
+                        <p class={styles.eyebrowAccent}>
+                            <Icon name="mapPin" />
+                            New York · October 2026
+                        </p>
                         <h2 class={styles.sectionTitle}>Get notified</h2>
                         <p class={styles.notifyLead}>
                             The series continues in New York this October. Leave your email and we'll let you know as
