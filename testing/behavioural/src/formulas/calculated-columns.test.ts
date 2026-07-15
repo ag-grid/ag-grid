@@ -3707,6 +3707,12 @@ describe('ag-grid calculated columns', () => {
                 expect.stringContaining('CalculatedColumnsModule'),
                 expect.any(String)
             );
+            // A colDef-level option is qualified with `colDef.` so it is clear where the option lives.
+            expect(consoleErrorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('error #200'),
+                expect.stringContaining('`colDef.calculatedExpression`'),
+                expect.any(String)
+            );
 
             validationGridsManager.createGrid('calculated-option-validation', {
                 calculatedColumns: {
@@ -3720,6 +3726,12 @@ describe('ag-grid calculated columns', () => {
             expect(consoleErrorSpy).toHaveBeenCalledWith(
                 expect.stringContaining('error #200'),
                 expect.stringContaining('CalculatedColumnsModule'),
+                expect.any(String)
+            );
+            // A grid-level option stays unqualified (no `colDef.` prefix).
+            expect(consoleErrorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('error #200'),
+                expect.stringContaining('`calculatedColumns`'),
                 expect.any(String)
             );
 

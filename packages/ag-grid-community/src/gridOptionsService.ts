@@ -294,7 +294,8 @@ export class GridOptionsService
         return params as T;
     }
 
-    private validateOptions<T extends object>(options: T, modValidations: ModuleValidation<T>): void {
+    /** `prefix` qualifies the error's option name (e.g. `colDef.`) so it is clear where the option lives. */
+    private validateOptions<T extends object>(options: T, modValidations: ModuleValidation<T>, prefix = ''): void {
         for (const key of Object.keys(options)) {
             const value = options[key as keyof T];
             if (value == null || value === false) {
@@ -307,7 +308,7 @@ export class GridOptionsService
                 moduleToCheck = moduleToCheck(options, this.gridOptions, this.beans);
             }
             if (moduleToCheck) {
-                this.assertModuleRegistered(moduleToCheck, `\`${key}\``);
+                this.assertModuleRegistered(moduleToCheck, `\`${prefix}${key}\``);
             }
         }
     }
@@ -319,7 +320,7 @@ export class GridOptionsService
 
     public validateColDef(colDef: ColDef | ColGroupDef, colId: string, skipInferenceCheck?: boolean): void {
         if (skipInferenceCheck || !this.beans.dataTypeSvc?.isColPendingInference(colId)) {
-            this.validateOptions(colDef, COLUMN_DEFINITION_MOD_VALIDATIONS);
+            this.validateOptions(colDef, COLUMN_DEFINITION_MOD_VALIDATIONS, 'colDef.');
             this.validation?.validateColDef(colDef);
         }
     }
