@@ -178,9 +178,12 @@ const missingModule = ({
 }) => {
     // Normalise the single-report form (top-level reasonOrId + moduleName) and the batched form (reports[],
     // decoding any that arrived JSON-encoded via the URL) to one list, so both share the path below.
-    const allReports: MissingModuleReport[] = reports?.length
-        ? reports.map(decodeReport).filter((report): report is MissingModuleReport => report != null)
-        : [{ reasonOrId, moduleName, additionalText }];
+    // `Array.isArray` guards the docs page: a large batch can truncate the reports URL param to a corrupt
+    // string, which arrives here as a non-array — fall back to the single form rather than throwing.
+    const allReports: MissingModuleReport[] =
+        Array.isArray(reports) && reports.length
+            ? reports.map(decodeReport).filter((report): report is MissingModuleReport => report != null)
+            : [{ reasonOrId, moduleName, additionalText }];
 
     const resolvedReports = allReports.map((report) => ({
         reason: typeof report.reasonOrId === 'string' ? report.reasonOrId : MISSING_MODULE_REASONS[report.reasonOrId],

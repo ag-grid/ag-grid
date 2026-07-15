@@ -108,4 +108,24 @@ describe('getErrorText param reconstruction', () => {
             getErrorText({ errorCode: 307, params: { objectName: 'x', name: 'y', suggestions: '[not json' } })
         ).not.toThrow();
     });
+
+    it('renders the single-report fallback when a batched #200 reports param is truncated to a corrupt string', () => {
+        // A large batch can push the URL past MAX_URL_LENGTH; truncation corrupts the JSON reports array,
+        // so `cleanParams` hands back a raw string. The message must not throw and should use the top-level
+        // reason/module that also survive the URL.
+        let text = '';
+        expect(() => {
+            text = getErrorText({
+                errorCode: 200,
+                params: {
+                    reports: '["{\\"reasonOrId\\":\\"`rowSelection`\\",\\"modu',
+                    reasonOrId: '`rowSelection`',
+                    moduleName: 'RowSelection',
+                    rowModelType: 'clientSide',
+                },
+            });
+        }).not.toThrow();
+
+        expect(text).toContain('Unable to use `rowSelection` as `RowSelectionModule` is not registered.');
+    });
 });

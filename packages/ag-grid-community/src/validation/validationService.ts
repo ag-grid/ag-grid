@@ -9,7 +9,6 @@ import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
 import type { RowNodeEventType } from '../interfaces/iRowNode';
-import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import type { IconName } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
@@ -129,11 +128,11 @@ export class ValidationService extends BeanStub implements NamedBean {
         const moduleName = ICON_MODULES[iconName];
         if (moduleName) {
             _reportMissingModule({
+                // Same context source as GridOptionsService so a batch's combined message keeps the right
+                // registration form (AgGridProvider / UMD) regardless of which report leads the batch.
+                ...this.gos.getModuleErrorParams(),
                 reasonOrId: `icon \`${iconName}\``,
                 moduleName,
-                gridScoped: _areModulesGridScoped(),
-                gridId: this.beans.context.getId(),
-                rowModelType: this.gos.get('rowModelType'),
                 additionalText: 'Alternatively, use the CSS icon name directly.',
             });
             return;
