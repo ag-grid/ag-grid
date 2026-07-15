@@ -171,6 +171,26 @@ describe('Editable header name', () => {
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Competitor');
     });
 
+    test('closing the editor via the close button cancels the edit', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', editableHeaderName: true }]);
+        const column = api.getColumn('athlete') as unknown as AgColumn;
+        const events = captureColDefChanged(column);
+
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Competitor');
+
+        const closeButton = document.querySelector(
+            '.ag-column-header-edit-panel .ag-panel-title-bar-button'
+        ) as HTMLElement | null;
+        expect(closeButton).toBeTruthy();
+        await userEvent.click(closeButton!);
+        await asyncSetTimeout(1);
+
+        expect(events.length).toBe(0);
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
+    });
+
     test('a colDef change while the editor is open refreshes the input', async () => {
         const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', editableHeaderName: true }]);
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');

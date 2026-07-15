@@ -27,6 +27,7 @@
 @use './parts/batch-edit';
 @use './parts/toolbar';
 @use './parts/calculated-columns';
+@use './parts/column-header-edit';
 
 @mixin general-styles() {
     .ag-measurement-container {
@@ -55,6 +56,7 @@
     @include batch-edit.output();
     @include toolbar.output();
     @include calculated-columns.output();
+    @include column-header-edit.output();
 }
 
 @mixin native-input-styles() {

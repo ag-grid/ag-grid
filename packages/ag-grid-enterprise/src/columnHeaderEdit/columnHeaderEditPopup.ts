@@ -1,4 +1,4 @@
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _getActiveDomElement } from 'ag-stack';
 
 import type { ElementParams, GridInputTextField } from 'ag-grid-community';
 import { AgInputTextFieldSelector, BeanStub, Component, KeyCode } from 'ag-grid-community';
@@ -50,8 +50,10 @@ class ColumnHeaderEditContent extends Component {
 export class ColumnHeaderEditPopup extends BeanStub {
     private dialog?: Dialog;
     private contentComp?: ColumnHeaderEditContent;
-    private saveOnClose = true;
+    private saveOnClose = false;
     private closed = false;
+    private restoreFocusEl: HTMLElement | null = null;
+    private focusEditorTimeout?: number;
 
     constructor(
         private readonly params: {
@@ -95,7 +97,13 @@ export class ColumnHeaderEditPopup extends BeanStub {
             },
         });
 
-        contentComp.focusEditor();
+        // The launching menu refocuses its owner (chooser/tool-panel row) as it closes, after this action runs.
+        // Defer so the editor wins that race, and capture the refocused element to restore on close.
+        this.focusEditorTimeout = window.setTimeout(() => {
+            this.focusEditorTimeout = undefined;
+            this.restoreFocusEl = _getActiveDomElement(this.beans) as HTMLElement | null;
+            contentComp.focusEditor();
+        });
     }
 
     public hide(save: boolean): void {
@@ -112,12 +120,32 @@ export class ColumnHeaderEditPopup extends BeanStub {
             return;
         }
         this.closed = true;
+        this.restoreFocus();
         this.params.onClosed(this.saveOnClose, this.contentComp?.getValue() ?? '');
     }
 
+    // Return focus to the element that launched the editor (chooser/tool-panel row), unless the user has since
+    // moved focus elsewhere, in which case leave it be.
+    private restoreFocus(): void {
+        const el = this.restoreFocusEl;
+        this.restoreFocusEl = null;
+        if (!el?.isConnected) {
+            return;
+        }
+        const activeEl = _getActiveDomElement(this.beans);
+        if (!activeEl || activeEl === activeEl.ownerDocument.body || this.dialog?.getGui().contains(activeEl)) {
+            el.focus();
+        }
+    }
+
     public override destroy(): void {
+        if (this.focusEditorTimeout != null) {
+            window.clearTimeout(this.focusEditorTimeout);
+            this.focusEditorTimeout = undefined;
+        }
         if (!this.closed) {
             this.closed = true;
+            this.restoreFocus();
             this.params.onClosed(false, this.contentComp?.getValue() ?? '');
         }
         super.destroy();
