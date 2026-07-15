@@ -5,7 +5,6 @@ import { _isUmd } from '../modules/moduleRegistry';
 import { _errorOnce, _warnOnce } from '../utils/log';
 import { VERSION } from '../version';
 import type { ErrorId, ErrorMap, GetErrorParams, MissingModuleErrors } from './errorMessages/errorText';
-import { resolveModuleNames } from './resolvableModuleNames';
 
 const MAX_URL_LENGTH = 2000;
 const MIN_PARAM_LENGTH = 100;
@@ -258,8 +257,10 @@ const reportedMissingModuleKeys = new Set<string>();
 let missingModuleFlushHandle: ReturnType<typeof setTimeout> | undefined;
 
 function missingModuleKey(params: MissingModuleReportParams): string {
-    const resolved = resolveModuleNames(params.moduleName, params.rowModelType);
-    return `${[...resolved].sort().join('|')}::${String(params.reasonOrId)}`;
+    // Key off the raw report, not the resolved module list — resolving would pull the resolvableModuleNames
+    // tables into the base bundle, and the same moduleName + rowModelType always resolves identically anyway.
+    const names = Array.isArray(params.moduleName) ? [...params.moduleName].sort() : [params.moduleName];
+    return `${names.join('|')}::${params.rowModelType}::${String(params.reasonOrId)}`;
 }
 
 function combineMissingModuleParams(reports: MissingModuleReportParams[]): GetErrorParams<200> {
