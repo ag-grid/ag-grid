@@ -147,9 +147,10 @@ const resolveTooltipFieldValue = (
     return data[tooltipField];
 };
 
-// A group row showing an aggregated/derived cell value (or a group node with no data) must tooltip
-// that displayed value — mirrors fullWidthRowFeature.setupGroupRowsTooltip / autoColService.
-const usesGroupRowDisplayValue = (beans: BeanCollection, ctrl: CellCtrl): boolean => {
+// A group row whose cell value comes from aggregation (or a derived value on a data-less group node)
+// tooltips that aggregated value rather than the underlying tooltipField — mirrors
+// fullWidthRowFeature.setupGroupRowsTooltip / autoColService.
+const usesGroupRowAggregatedValue = (beans: BeanCollection, ctrl: CellCtrl): boolean => {
     const { rowNode, column } = ctrl;
     if (!rowNode.group) {
         return false;
@@ -214,11 +215,12 @@ const resolveCellTooltip = ({
 
     // 4) column tooltip field/valueGetter is the final fallback.
     if (colDef.tooltipField) {
-        if (usesGroupRowDisplayValue(beans, ctrl)) {
-            // Mirror the displayed cell text: `valueFormatted` carries valueFormatter output and the
-            // showValuesAs transform (e.g. "60.00%"), falling back to the raw value when unformatted.
+        if (usesGroupRowAggregatedValue(beans, ctrl)) {
+            // The aggregated value unformatted and before any showValuesAs transform, so it stays consistent
+            // with a leaf-row tooltipField, which shows the underlying data value rather than the cell text.
             return {
-                value: ctrl.valueFormatted ?? ctrl.value,
+                value: beans.valueSvc.getValueForDisplay({ column, node: rowNode, from: 'edit', transformValues: false })
+                    .value,
                 location: 'cell',
                 shouldDisplay: shouldDisplayColumnTooltip,
             };
