@@ -50,6 +50,24 @@ kbd#{$selector-exclude-grid} {
     border: 1px solid var(--color-border-primary);
     box-shadow: inset 0 -2px 0 var(--color-util-gray-200);
 
+    // Only one of these has platform-specific text (e.g. "^ Ctrl" vs "⌘ Command");
+    // both are rendered at build time and toggled by the html[data-os] attribute
+    // that KBD_PLATFORM_INIT_SCRIPT sets client-side. Defaults to the non-Mac label
+    // so the page still reads correctly with JS disabled.
+    .kbd-mac {
+        display: none;
+    }
+
+    html[data-os='mac'] & {
+        .kbd-default {
+            display: none;
+        }
+
+        .kbd-mac {
+            display: inline;
+        }
+    }
+
     #{$selector-darkmode} & {
         color: var(--color-fg-primary);
         background-color: color-mix(in srgb, var(--color-util-gray-200), var(--color-util-gray-300));
