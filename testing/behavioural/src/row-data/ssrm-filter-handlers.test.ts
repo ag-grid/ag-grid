@@ -1,5 +1,5 @@
 import type { GridOptions, IServerSideGetRowsParams, IServerSideGetRowsRequest } from 'ag-grid-community';
-import { TextFilterModule } from 'ag-grid-community';
+import { GridStateModule, TextFilterModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, waitForEvent } from '../test-utils';
@@ -71,7 +71,7 @@ const CATEGORY_X_FILTER = { filterType: 'text', type: 'equals', filter: 'X' } as
 
 describe('SSRM filter handlers', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ServerSideRowModelApiModule, ServerSideRowModelModule, TextFilterModule],
+        modules: [ServerSideRowModelApiModule, ServerSideRowModelModule, TextFilterModule, GridStateModule],
     });
 
     afterEach(() => {

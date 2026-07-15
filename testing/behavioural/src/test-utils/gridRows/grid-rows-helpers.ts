@@ -42,9 +42,11 @@ export function addDiagramToError(
 
 /** Shared snapshot-check protocol that GridRows.check() and GridColumns.checkColumns() implement.
  *  Standardises retry, validator-error throwing, and snapshot-mismatch recording across the two. */
+export type SnapshotCheckMethodName = 'check' | 'checkColumns' | 'checkFilterDom';
+
 export interface SnapshotCheckTarget {
     readonly label: string;
-    readonly methodName: 'check' | 'checkColumns';
+    readonly methodName: SnapshotCheckMethodName;
     /** Identity of the source-code method, used for stack-trace capture by the snapshot updater. */
     readonly methodRef: (...args: any[]) => any;
     rebuild(): SnapshotCheckTarget;
@@ -58,9 +60,13 @@ export interface SnapshotCheckTarget {
 }
 
 const RETRY_DELAYS_MS = [10, 50, 100] as const;
-const UNDEFINED_SNAPSHOT_NOTICE = (method: 'check' | 'checkColumns', label: string): string => {
-    const className = method === 'check' ? 'GridRows' : 'GridColumns';
-    return `\n❌ ${className}.${method}() called without a snapshot for "${label}". Run \`./behave.sh --update-grid-rows\` to generate one.\n`;
+const CLASS_NAME_BY_METHOD: Record<SnapshotCheckMethodName, string> = {
+    check: 'GridRows',
+    checkColumns: 'GridColumns',
+    checkFilterDom: 'FilterDom',
+};
+const UNDEFINED_SNAPSHOT_NOTICE = (method: SnapshotCheckMethodName, label: string): string => {
+    return `\n❌ ${CLASS_NAME_BY_METHOD[method]}.${method}() called without a snapshot for "${label}". Run \`./behave.sh --update-grid-rows\` to generate one.\n`;
 };
 
 /** Common shape required from a GridRows/GridColumns owner; the rest of the SnapshotCheckTarget
@@ -78,7 +84,7 @@ export interface SnapshotCheckOwner {
 export function makeSnapshotTarget<TOwner extends SnapshotCheckOwner>(
     owner: TOwner,
     spec: {
-        methodName: 'check' | 'checkColumns';
+        methodName: SnapshotCheckMethodName;
         methodRef: (...args: any[]) => any;
         rebuild: () => SnapshotCheckTarget;
         makeError: () => any;
@@ -99,10 +105,9 @@ export function makeSnapshotTarget<TOwner extends SnapshotCheckOwner>(
     };
 }
 
-/** Performs the standard snapshot-check protocol: handles `undefined`/`true`/`'skip-snapshot'`/
- *  `'empty'`/string variants, retries transient validator errors and snapshot mismatches with the
- *  same delay schedule, and records mismatches for the snapshot updater. Throws after retries are
- *  exhausted, attaching the latest diagram to the error. */
+/** Standard snapshot-check protocol: handles the snapshot-arg variants, retries transient validator
+ *  errors and mismatches, records mismatches for the updater, and throws (with the latest diagram
+ *  attached) once retries are exhausted. */
 export async function runSnapshotCheck(
     target: SnapshotCheckTarget,
     diagramSnapshot: string | 'empty' | 'skip-snapshot' | true | undefined,
@@ -136,9 +141,8 @@ export async function runSnapshotCheck(
     }
 
     if (updateMode) {
-        // Retry briefly so transient mid-render state doesn't bake broken snapshots. Even when
-        // retries exhaust and validator errors remain, record the snapshot mismatch first so an
-        // empty placeholder still gets filled in before the validator error rethrows.
+        // Retry so transient mid-render state doesn't bake broken snapshots. On exhaustion, record
+        // the mismatch first so an empty placeholder still gets filled before the validator rethrows.
         let attempt = target;
         for (let i = 0; i <= RETRY_DELAYS_MS.length; i++) {
             attempt.loadErrors();
@@ -177,7 +181,7 @@ export async function runSnapshotCheck(
         if (!lastError) {
             if (i > 0) {
                 process.stderr.write(
-                    `Grid${target.methodName === 'check' ? 'Rows' : 'Columns'} flaky ${target.methodName} detected for "${target.label}" — passed only after retrying with delays. ` +
+                    `${CLASS_NAME_BY_METHOD[target.methodName]} flaky ${target.methodName} detected for "${target.label}" — passed only after retrying with delays. ` +
                         `Add \`await asyncSetTimeout(N)\` before this check to avoid intermittent failures.\n`
                 );
             }

@@ -1,7 +1,6 @@
 let initialized = false;
 
-// Stores per-element scroll positions, since jsdom does not persist scrollTop/scrollLeft
-// when those properties are set, and does not fire 'scroll' events on assignment.
+// jsdom neither persists scrollTop/scrollLeft on assignment nor fires 'scroll' events.
 const scrollPositions = new WeakMap<Element, { top: number; left: number }>();
 
 function getScrollPos(el: Element): { top: number; left: number } {
@@ -23,13 +22,13 @@ export const mockGridLayout = {
     columnWidth: 150,
     dragHandleWidth: 20,
 
-    /**
-     * Opt-in: when true, `offsetHeight`/`clientHeight`/`offsetWidth`/`clientWidth` return the
-     * mocked dimensions from `getBoundingClientRect()`. Default `false` preserves jsdom's
-     * built-in behaviour of returning 0, which matches what most behavioural-test snapshots
-     * were captured against. Set this in `beforeAll` (and restore in `afterAll`) for tests
-     * that depend on viewport-aware production code such as page-key navigation.
-     */
+    /** Must match the widget's `LIST_ITEM_HEIGHT` default: the virtual list hit-tests clicks by
+     * clientY, so a mismatch drifts row selection past the first couple of rows. */
+    listItemHeight: 24,
+
+    /** When true, `offset*`/`client*` dimensions come from `getBoundingClientRect()`. Default
+     * `false` returns jsdom's 0, matching most captured snapshots; opt in for viewport-aware code
+     * such as page-key navigation. */
     useRealOffsetDimensions: false,
 
     init,
@@ -87,11 +86,14 @@ const getElementType = (el: HTMLElement) => {
     if (classList.contains('ag-drag-handle')) {
         return 'drag-handle';
     }
+    if (classList.contains('ag-rich-select-row')) {
+        return 'rich-select-row';
+    }
     return 'default';
 };
 
 function getBoundingClientRect(this: HTMLElement): DOMRect {
-    const { gridWidth, gridHeight, rowHeight, headerHeight, columnWidth } = mockGridLayout;
+    const { gridWidth, gridHeight, rowHeight, headerHeight, columnWidth, listItemHeight } = mockGridLayout;
 
     const type = getElementType(this);
 
@@ -167,14 +169,18 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
             return new DOMRect(cellRect.left, cellRect.top, mockGridLayout.dragHandleWidth, cellRect.height);
         }
 
+        case 'rich-select-row': {
+            height = listItemHeight;
+            break;
+        }
+
         case 'body':
             width = gridWidth;
             height = gridHeight;
             break;
 
         case 'default': {
-            // For position:fixed elements (auto-width measurement containers),
-            // return 0 so auto-sizing falls back to minWidth. Otherwise, return a default.
+            // position:fixed = auto-width measurement container; return 0 so auto-sizing falls back to minWidth.
             if (this.style?.position === 'fixed') {
                 width = 0;
                 height = 0;
@@ -186,9 +192,7 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
         }
     }
 
-    // If the element has an explicit style.width or style.height set by the grid,
-    // use those values instead of the mock defaults. This ensures that auto-sizing
-    // code reads the actual column/row dimensions rather than generic mock values.
+    // Prefer explicit grid-set style dimensions so auto-sizing reads real column/row sizes.
     const styleWidth = parseFloat(this.style?.width);
     if (!isNaN(styleWidth) && styleWidth > 0) {
         width = styleWidth;
@@ -238,9 +242,8 @@ function init(): boolean {
         value: getBoundingClientRect,
     });
 
-    // Patch window.getComputedStyle so that _getElementSize / _getInnerWidth return values
-    // consistent with getBoundingClientRect. Without this, getComputedStyle returns '0' for
-    // width/height in jsdom, which causes column virtualisation to be suppressed (viewportRight === 0).
+    // Keep getComputedStyle width/height consistent with getBoundingClientRect; jsdom's '0'
+    // otherwise suppresses column virtualisation (viewportRight === 0).
     const origGetComputedStyle = window.getComputedStyle;
     window.getComputedStyle = function patchedGetComputedStyle(
         el: Element,
@@ -249,7 +252,7 @@ function init(): boolean {
         const style = origGetComputedStyle.call(window, el, pseudoElement);
         if (!pseudoElement && el instanceof HTMLElement) {
             const rect = el.getBoundingClientRect();
-            // Only override width/height if they are still the jsdom default of '' or '0px'
+            // Only override when still at the jsdom default ('' or '0px').
             const origWidth = style.width;
             const origHeight = style.height;
             if (rect.width > 0 && (!origWidth || origWidth === '' || origWidth === '0px' || origWidth === '0')) {
@@ -266,15 +269,21 @@ function init(): boolean {
                     configurable: true,
                 });
             }
+            // jsdom returns '' for unset padding; browsers return '0px'. Code that does
+            // `parseFloat(getComputedStyle(el).paddingTop)` (e.g. virtual-list drag hit-testing) then
+            // gets NaN, so default the paddings to a numeric-parseable value like a real browser.
+            for (const prop of ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'] as const) {
+                if (style[prop] === '') {
+                    Object.defineProperty(style, prop, { value: '0px', writable: true, configurable: true });
+                }
+            }
         }
         return style;
     };
 
-    // jsdom defines offsetHeight/clientHeight/offsetWidth/clientWidth on HTMLElement.prototype
-    // (more specific than Element.prototype) and returns 0. A patch on Element.prototype is
-    // therefore shadowed. We install on HTMLElement.prototype directly, behind a feature flag
-    // so the default behaviour matches jsdom (returns 0) — preserving existing snapshots —
-    // and only opt-in tests see real mocked dimensions.
+    // jsdom defines these on HTMLElement.prototype (shadowing any Element.prototype patch) returning
+    // 0. Install on HTMLElement.prototype, behind a flag so the default keeps jsdom's 0 (preserving
+    // snapshots) and only opt-in tests see mocked dimensions.
     const installOffsetDimensionPatch = (prop: 'offsetHeight' | 'clientHeight' | 'offsetWidth' | 'clientWidth') => {
         const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, prop);
         const axis = prop === 'offsetWidth' || prop === 'clientWidth' ? 'width' : 'height';
@@ -311,10 +320,8 @@ function init(): boolean {
         },
     });
 
-    // scrollHeight must account for the virtual scroll container height set by the grid (e.g.
-    // ag-center-cols-container gets style.height = rowCount * rowHeight). This is nested 2 levels
-    // below the scroll root (ag-body-viewport → ag-center-cols-clipper → ag-center-cols-viewport),
-    // so we recurse into children's scrollHeight to propagate the value upwards.
+    // scrollHeight must reflect the grid's virtual container height (style.height on a nested child),
+    // so recurse into children to propagate the max upwards.
     Object.defineProperty(Element.prototype, 'scrollHeight', {
         get(this: HTMLElement) {
             let max = this.getBoundingClientRect().height;
@@ -332,9 +339,8 @@ function init(): boolean {
         },
     });
 
-    // scrollWidth must account for the total columns width (style.width on ag-center-cols-container).
-    // ag-center-cols-container is a direct child of ag-center-cols-viewport, so one level suffices,
-    // but we recurse for consistency in case the structure changes.
+    // scrollWidth must reflect total columns width (style.width on the container); recurse for parity
+    // with scrollHeight and resilience to structure changes.
     Object.defineProperty(Element.prototype, 'scrollWidth', {
         get(this: HTMLElement) {
             let max = this.getBoundingClientRect().width;
@@ -352,9 +358,8 @@ function init(): boolean {
         },
     });
 
-    // jsdom does not fire 'scroll' events when scrollTop/scrollLeft are set programmatically.
-    // The grid's virtualisation is driven by these scroll events, so we patch the setters to
-    // dispatch them. Values are stored in a WeakMap since jsdom resets them on read.
+    // jsdom fires no 'scroll' on programmatic scrollTop/scrollLeft, which drives grid virtualisation;
+    // patch the setters to dispatch it. Values live in a WeakMap since jsdom resets them on read.
     Object.defineProperty(Element.prototype, 'scrollTop', {
         get(this: Element) {
             return getScrollPos(this).top;
@@ -421,8 +426,7 @@ function getPaginationOffset(el: HTMLElement): number {
 }
 
 export function innerTextPolyfill() {
-    // for snapshots, the grid uses innerText which is not supported by JSDOM; so we need to polyfill it
-    // with innerText instead
+    // The grid sets innerText (used in snapshots) but jsdom lacks it; alias to textContent.
     if (!('innerText' in Element.prototype)) {
         Object.defineProperty(Element.prototype, 'innerText', {
             set(value) {

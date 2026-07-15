@@ -20,6 +20,7 @@ describe('SSRM Selection (behavioural)', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        vi.restoreAllMocks();
     });
 
     // AG-16019: repeating the same row-remove transaction must be idempotent — the selection state
@@ -91,9 +92,14 @@ describe('SSRM Selection (behavioural)', () => {
             },
         };
 
+        // Returning a numeric id warns (#25) that getRowId must return a string and the id is cast —
+        // that cast is exactly the behaviour under test, so assert the warning fires.
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
         const api = gridsManager.createGrid(null, gridOptions);
         await waitForEvent('firstDataRendered', api);
         expect(api.getDisplayedRowCount()).toBe(5);
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('#25');
 
         const node0 = api.getRowNode('0')!;
         const node2 = api.getRowNode('2')!;

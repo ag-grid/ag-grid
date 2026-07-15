@@ -79,10 +79,21 @@ function getEntries<ConvertedTValue, TValue = ConvertedTValue>(
     activeOperatorKeys?: string[]
 ): AutocompleteEntry[] {
     const keys = activeOperatorKeys ?? Object.keys(operators);
-    return keys.map((key) => ({
-        key,
-        displayValue: operators[key].displayValue,
-    }));
+    const len = keys.length;
+    const entries: AutocompleteEntry[] = new Array(len);
+    let count = 0;
+    const hasOwnProperty = Object.prototype.hasOwnProperty;
+    for (let i = 0; i < len; ++i) {
+        const key = keys[i];
+        const operator = hasOwnProperty.call(operators, key) ? operators[key] : undefined;
+        if (operator) {
+            entries[count++] = { key, displayValue: operator.displayValue };
+        }
+    }
+    if (count < len) {
+        entries.length = count;
+    }
+    return entries;
 }
 
 interface FilterExpressionOperatorsParams {
