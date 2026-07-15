@@ -1,6 +1,12 @@
 import { _setAriaExpanded } from 'ag-stack';
 
-import type { IsGroupOpenByDefaultParams, RowCtrl, RowGroupOpenedEvent, RowNode } from 'ag-grid-community';
+import type {
+    IsGroupOpenByDefaultParams,
+    IsMasterOpenByDefaultParams,
+    RowCtrl,
+    RowGroupOpenedEvent,
+    RowNode,
+} from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _createGlobalRowEvent } from 'ag-grid-community';
 
 export abstract class BaseExpansionService extends BeanStub {
@@ -50,7 +56,23 @@ export abstract class BaseExpansionService extends BeanStub {
         const beans = this.beans;
         const gos = beans.gos;
         const level = rowNode.level ?? 0;
-        // see AG-11476 isGroupOpenByDefault callback doesn't apply to master/detail grid
+
+        // see AG-11476. Master rows that are not groups (e.g. master/detail leaf rows) use the
+        // master-specific callbacks, falling back to the group settings for backwards compatibility.
+        if (rowNode.master && !rowNode.group) {
+            const isMasterOpenByDefault = gos.get('isMasterOpenByDefault');
+            if (isMasterOpenByDefault) {
+                const params = _addGridCommonParams<IsMasterOpenByDefaultParams>(gos, {
+                    rowNode,
+                    data: rowNode.data,
+                    level,
+                });
+                return !!isMasterOpenByDefault(params);
+            }
+            const masterDefaultExpanded = gos.get('masterDefaultExpanded') ?? gos.get('groupDefaultExpanded');
+            return masterDefaultExpanded === -1 || level < masterDefaultExpanded;
+        }
+
         // We call isGroupOpenByDefault only for group nodes and not for master/detail leafs
         const isGroupOpenByDefault = rowNode.group && gos.get('isGroupOpenByDefault');
         if (!isGroupOpenByDefault) {

@@ -74,3 +74,33 @@ The example below extends the previous example. It demonstrates a common scenari
     - If no detail rows exist, ensure Master Row is not expandable
 
 {% gridExampleRunner title="Dynamically Changing Master Rows" name="changing-dynamic-2"  exampleHeight=510 /%}
+
+## Opening Master Rows by Default
+
+Master Rows can be expanded by default using either `masterDefaultExpanded` or `isMasterOpenByDefault`.
+
+{% apiDocumentation source="grid-options/properties.json" section="masterDetail" names=["masterDefaultExpanded", "isMasterOpenByDefault"] /%}
+
+Set `masterDefaultExpanded` to the number of levels of Master Rows to expand by default, or `-1` to expand all Master Rows. If not set, it falls back to `groupDefaultExpanded`.
+
+```js
+const gridOptions = {
+    // expand all master rows by default
+    masterDefaultExpanded: -1,
+};
+```
+
+For finer control, provide the `isMasterOpenByDefault` callback. It is called once for each Master Row; return `true` to expand that row by default.
+
+```js
+const gridOptions = {
+    // expand specific master rows by default
+    isMasterOpenByDefault: (params) => {
+        return params.data.shouldExpand;
+    },
+};
+```
+
+{% note %}
+`isMasterOpenByDefault` applies to Master Rows, whereas `isGroupOpenByDefault` applies to group rows. When combining Master Detail with row grouping, each callback controls only its own row type.
+{% /note %}

@@ -912,6 +912,8 @@ export type {
     IsFullWidthRowParams,
     IsGroupOpenByDefault,
     IsGroupOpenByDefaultParams,
+    IsMasterOpenByDefault,
+    IsMasterOpenByDefaultParams,
     IsServerSideGroupOpenByDefault,
     IsServerSideGroupOpenByDefaultParams,
     NavigateToNextCell,

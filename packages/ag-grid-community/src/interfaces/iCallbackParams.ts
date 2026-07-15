@@ -197,6 +197,18 @@ export interface IsGroupOpenByDefaultParams<TData = any, TContext = any> extends
     key: string;
 }
 
+export type IsMasterOpenByDefault<TData = any, TContext = any> = (
+    params: IsMasterOpenByDefaultParams<TData, TContext>
+) => boolean;
+export interface IsMasterOpenByDefaultParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The master row node being considered. */
+    rowNode: IRowNode<TData>;
+    /** Same as `rowNode.data` - the data for this master row. */
+    data: TData | undefined;
+    /** Same as `rowNode.level` - what level the master row is at, e.g. 0 for top level, 1 for second etc */
+    level: number;
+}
+
 export type GetChildCount = (dataItem: any) => number;
 
 export interface ServerSideGroupLevelParams {

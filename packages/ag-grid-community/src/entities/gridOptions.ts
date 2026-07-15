@@ -161,6 +161,7 @@ import type {
     IsExternalFilterPresent,
     IsFullWidthRow,
     IsGroupOpenByDefault,
+    IsMasterOpenByDefault,
     IsServerSideGroupOpenByDefault,
     NavigateToNextCell,
     NavigateToNextHeader,
@@ -1484,6 +1485,11 @@ export interface GridOptions<TData = any> {
      */
     groupDefaultExpanded?: number;
     /**
+     * Master Detail: set to the number of levels of master rows to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. If not set, falls back to `groupDefaultExpanded`.
+     * @agModule `MasterDetailModule`
+     */
+    masterDefaultExpanded?: number;
+    /**
      * Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
      * Cell tooltip properties set here (`tooltipField`, `tooltipValueGetter`, `tooltipComponent`) apply to leaf rows only; group rows inherit cell tooltips from their underlying column `colDef`. `headerTooltip` continues to apply to the group column header.
      * @agModule `RowGroupingModule` / `TreeDataModule`
@@ -2358,10 +2364,15 @@ export interface GridOptions<TData = any> {
      */
     getGroupRowAgg?: GetGroupRowAgg<TData>;
     /**
-     * (Client-side Row Model only) Allows groups to be open by default.
+     * (Client-side Row Model only) Allows group rows to be open by default. For master rows use `isMasterOpenByDefault`.
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     isGroupOpenByDefault?: IsGroupOpenByDefault<TData>;
+    /**
+     * (Client-side Row Model only) Master Detail: allows master rows to be open by default.
+     * @agModule `MasterDetailModule`
+     */
+    isMasterOpenByDefault?: IsMasterOpenByDefault<TData>;
     /**
      * Controls how expand/collapse operations affect all rows and group interactions.
      * If `true`, expandAll / collapseAll applies to all rows (not just loaded ones),
