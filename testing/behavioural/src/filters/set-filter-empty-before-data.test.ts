@@ -78,6 +78,93 @@ describe('Set Filter dropdown opened before data arrives (AG-17369)', () => {
         expect(scenarioA.displayedRowCount).toBe(1);
     });
 
+    // Migrates the reporter's three-grid repro (plnkr rDnZ7Rlxl6dLqcY5, "Grid 1": default cellDataType with
+    // inference enabled, no filterParams.values) as a behavioural test. Sequence: apply a set model to the empty
+    // grid, add rows, remove the sole matching row, then re-apply the identical model.
+    async function runSequence(options: { openBeforeData: boolean; startWithData: boolean }) {
+        const { openBeforeData, startWithData } = options;
+        const one: RowData = { value: 'one' };
+        const two: RowData = { value: 'two' };
+
+        const api = gridsManager.createGrid<RowData>(`seq-${startWithData}-${openBeforeData}`, {
+            columnDefs: [{ field: 'value', filter: 'agSetColumnFilter' }],
+            rowData: startWithData ? [one, two] : [],
+        });
+        await asyncSetTimeout(0);
+
+        const modelNow = () => ({
+            model: api.getColumnFilterModel<{ values: string[] }>('value')?.values ?? null,
+            rows: api.getDisplayedRowCount(),
+        });
+
+        // Step 1: apply the model while the grid may still be empty (pre-inference).
+        void api.setColumnFilterModel('value', { filterType: 'set', values: ['one'] });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        // The observational interaction under test: open the dropdown before any data has arrived.
+        if (openBeforeData) {
+            await openDropdown(api);
+            api.hideColumnFilter();
+            await asyncSetTimeout(0);
+        }
+
+        // Step 2: data arrives (a no-op when the grid already had it).
+        if (!startWithData) {
+            api.applyTransaction({ add: [one, two] });
+            await asyncSetTimeout(0);
+        }
+        const afterData = modelNow();
+
+        // Step 3: remove the only row matching the applied model.
+        api.applyTransaction({ remove: [one] });
+        await asyncSetTimeout(0);
+        const afterRemove = modelNow();
+
+        // Step 4: re-apply the identical model, now that 'one' is no longer a grid value.
+        void api.setColumnFilterModel('value', { filterType: 'set', values: ['one'] });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        const afterReapply = modelNow();
+
+        await openDropdown(api);
+        const setFilter = await getSetFilter(api);
+        const available = (await setFilter.handler.valueModel.allKeys) ?? [];
+
+        return {
+            afterData,
+            afterRemove,
+            afterReapply,
+            finalUi: { ticked: setFilter.getModelFromUi()?.values ?? null, available: [...available] },
+        };
+    }
+
+    test('multi-step transaction sequence is unaffected by opening the dropdown before data', async () => {
+        const openedEarly = await runSequence({ openBeforeData: true, startWithData: false });
+        const notOpenedEarly = await runSequence({ openBeforeData: false, startWithData: false });
+
+        // AG-17369: opening the dropdown while the grid is empty is observational, so every later checkpoint
+        // must match the run that never opened it early.
+        expect(openedEarly).toEqual(notOpenedEarly);
+
+        // Absolute anchor: once the matching row exists, the applied model holds and the one row renders.
+        expect(notOpenedEarly.afterData).toEqual({ model: ['one'], rows: 1 });
+    });
+
+    test('empty-before-data reconciles to the same state as a grid that always had data', async () => {
+        const emptyStart = await runSequence({ openBeforeData: false, startWithData: false });
+        const dataStart = await runSequence({ openBeforeData: false, startWithData: true });
+
+        // The empty-before-inference lifecycle must converge to the normal lifecycle once data is present.
+        // This also demonstrates that the step-3/step-4 model reset — removing the sole 'one' row, then
+        // re-applying a value no longer in the grid — is standard grid-derived refresh-values reconciliation,
+        // identical to a grid that always had data, and not the AG-17369 defect.
+        expect(emptyStart.afterData).toEqual(dataStart.afterData);
+        expect(emptyStart.afterRemove).toEqual(dataStart.afterRemove);
+        expect(emptyStart.afterReapply).toEqual(dataStart.afterReapply);
+        expect(emptyStart.finalUi).toEqual(dataStart.finalUi);
+    });
+
     test('explicit cellDataType keeps the correct scenario-independent state (workaround guard)', async () => {
         const columnDefs: GridOptions<RowData>['columnDefs'] = [
             { field: 'value', filter: 'agSetColumnFilter', cellDataType: 'text' },
