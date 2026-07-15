@@ -1,6 +1,17 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-ESBUILD-17750822:
+    - vite@5.4.21 > esbuild@0.21.5:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:47:55.977Z
+    - tsx@4.21.0 > esbuild@0.27.7:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-09-06T00:00:00.000Z
+        created: 2026-07-15T10:47:49.472Z
   SNYK-JS-SHELLQUOTE-17457810:
     - npm-run-all@4.1.5 > shell-quote@1.8.3:
         reason: >-

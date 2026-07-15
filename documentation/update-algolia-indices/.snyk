@@ -2,6 +2,12 @@
 version: v1.25.1
 
 ignore:
+    SNYK-JS-ESBUILD-17750822:
+        - tsx@4.21.0 > esbuild@0.27.7:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-09-06T00:00:00.000Z
+              created: 2026-07-15T10:47:49.467Z
     SNYK-JS-WS-17344547:
         - jsdom@24.1.3 > ws@8.18.3:
               reason: >-
