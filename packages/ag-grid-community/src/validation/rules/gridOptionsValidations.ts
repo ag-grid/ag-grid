@@ -141,9 +141,11 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     grandTotalRow: ['CsrmHierarchy', 'ServerSideRowModel'],
     initialState: 'GridState',
     isExternalFilterPresent: 'ExternalFilter',
+    isMasterOpenByDefault: 'MasterDetail',
     isRowPinnable: 'PinnedRow',
     isRowPinned: 'PinnedRow',
     localeText: 'Locale',
+    masterDefaultExpanded: 'MasterDetail',
     masterDetail: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'MasterDetail',
     notesDataSource: 'Notes',
@@ -328,6 +330,12 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
 
         groupDefaultExpanded: {
+            supportedRowModels: ['clientSide'],
+        },
+        masterDefaultExpanded: {
+            supportedRowModels: ['clientSide'],
+        },
+        isMasterOpenByDefault: {
             supportedRowModels: ['clientSide'],
         },
         groupHideColumnsUntilExpanded: {
