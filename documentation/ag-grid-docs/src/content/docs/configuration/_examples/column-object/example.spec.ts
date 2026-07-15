@@ -37,7 +37,14 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         const messages: string[] = [];
-        page.on('console', (msg) => messages.push(msg.text()));
+        // Resolve each logged argument to its JSON value rather than reading msg.text().
+        // Firefox renders a logged array as the literal "Array" via msg.text(), so the
+        // column ids never appear; reading the args gives the contents on every browser.
+        page.on('console', (msg) => {
+            Promise.all(msg.args().map((arg) => arg.jsonValue().catch(() => undefined)))
+                .then((values) => messages.push(JSON.stringify(values)))
+                .catch(() => messages.push(msg.text()));
+        });
 
         await page.getByRole('button', { name: 'Log All Column IDs' }).click();
         // A single click logs all IDs synchronously, so once one appears they all have;
