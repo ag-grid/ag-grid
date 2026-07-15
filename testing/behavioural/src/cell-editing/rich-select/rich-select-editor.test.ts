@@ -232,10 +232,14 @@ describe('Rich Select cell editor', () => {
     // 6. Paged/lazy loading: valuesPage loads the initial page and renders its rows.
     test('paged values load the initial page and render its rows', async () => {
         const dataset = Array.from({ length: 30 }, (_, i) => `Item-${i}`);
-        const valuesPage = ({ startRow, endRow }: { startRow: number; endRow: number }) => ({
-            values: dataset.slice(startRow, endRow),
-            lastRow: dataset.length,
-        });
+        const pageRequests: { startRow: number; endRow: number }[] = [];
+        const valuesPage = ({ startRow, endRow }: { startRow: number; endRow: number }) => {
+            pageRequests.push({ startRow, endRow });
+            return {
+                values: dataset.slice(startRow, endRow),
+                lastRow: dataset.length,
+            };
+        };
         const api = await createGrid({
             columnDefs: [
                 {
@@ -252,7 +256,13 @@ describe('Rich Select cell editor', () => {
         const popup = await openEditor(api, gridDiv, 0, 'a');
 
         await waitFor(() => expect(getRows(popup).length).toBeGreaterThan(0));
-        expect(getRowLabels(popup)[0]).toBe('Item-0');
+
+        // The initial page requests the first block (startRow 0) sized to valuesPageSize.
+        expect(pageRequests[0]).toEqual({ startRow: 0, endRow: 10 });
+        // Rendered rows are the leading, in-order slice of the loaded first page.
+        const rendered = getRowLabels(popup);
+        expect(rendered).toEqual(dataset.slice(0, rendered.length));
+        expect(rendered[0]).toBe('Item-0');
 
         await commitByClick(popup, 'Item-0');
         expect(getAllRows(api)[0].data.a).toBe('Item-0');
@@ -283,7 +293,7 @@ describe('Rich Select cell editor', () => {
         await asyncSetTimeout(1);
 
         const committed = getAllRows(api)[0].data.a as string[];
-        expect(committed).toEqual(expect.arrayContaining(['Beta', 'Gamma']));
+        expect([...committed].sort()).toEqual(['Alpha', 'Beta', 'Gamma']);
     });
 
     // 8. filterList + searchType 'match' filters on a leading-substring match.
@@ -319,8 +329,10 @@ describe('Rich Select cell editor', () => {
         const gridDiv = getGridElement(api)! as HTMLElement;
         const popup = await openEditor(api, gridDiv, 0, 'a');
 
-        const input = gridDiv.querySelector<HTMLInputElement>('.ag-rich-select-field-input input');
-        expect(input?.offsetParent === null || input === null || (input && !input.offsetHeight)).toBeTruthy();
+        // With allowTyping:false the editor hides the text input via `setDisplayed(false)`,
+        // which adds `ag-hidden` to the input field element (jsdom has no layout to assert on).
+        const inputField = gridDiv.querySelector<HTMLElement>('.ag-rich-select-field-input');
+        expect(inputField?.classList.contains('ag-hidden')).toBe(true);
 
         await commitByClick(popup, 'Beta');
         expect(getAllRows(api)[0].data.a).toBe('Beta');
