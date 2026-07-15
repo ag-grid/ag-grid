@@ -1,10 +1,9 @@
-import { paramValueToCss } from './api';
-
 import type { Part } from 'ag-grid-community';
 
-import { RGBAColor } from './RGBAColor';
 import { allParamModels } from './ParamModel';
 import { allFeatureModels } from './PartModel';
+import { RGBAColor } from './RGBAColor';
+import { paramValueToCss } from './api';
 import { unescapeStringLiteral } from './utils';
 
 export type ParseThemeSuccess = {

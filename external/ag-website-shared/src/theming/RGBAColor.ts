@@ -1,5 +1,5 @@
-import { logErrorMessageOnce, reinterpretCSSValue } from './utils';
 import { int, proportionToHex2 } from './color-editor-utils';
+import { logErrorMessageOnce, reinterpretCSSValue } from './utils';
 
 export class RGBAColor {
     constructor(

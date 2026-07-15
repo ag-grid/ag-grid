@@ -2,9 +2,9 @@ import { useAtom, useAtomValue } from 'jotai';
 
 import { themeQuartz } from 'ag-grid-community';
 
-import { type ParamType, getParamType } from './api';
 import type { PersistentAtom } from './JSONStorage';
 import { atomWithJSONStorage } from './JSONStorage';
+import { type ParamType, getParamType } from './api';
 import type { Store } from './store';
 import { type ThemeParam, getThemeDefaultParams, memoize, titleCase } from './utils';
 

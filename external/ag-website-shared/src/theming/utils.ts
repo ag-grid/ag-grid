@@ -1,8 +1,8 @@
-import { type ParamType } from './api';
-
 import { _asThemeImpl } from 'ag-stack';
 
 import type { Theme, themeQuartz } from 'ag-grid-community';
+
+import { type ParamType } from './api';
 
 type InferThemeParams<T> = T extends Theme<infer P> ? P : never;
 
@@ -30,10 +30,8 @@ export const titleCase = (variableName: string, prefix?: string) => {
 
 export const logErrorMessage = (message: string, error?: unknown) => {
     if (error) {
-        // eslint-disable-next-line no-console
         console.error(message, error);
     } else {
-        // eslint-disable-next-line no-console
         console.error(message);
     }
 };
