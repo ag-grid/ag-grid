@@ -75,6 +75,7 @@ export function buildLlmsTxt(input: AgentReadinessInput): string {
 - [Charts docs](${l.chartsDocs}): AG Charts quick start
 - [Examples](${l.examples}): live, runnable demos
 - [MCP server](${l.mcpServer}): ag-mcp - version-aware docs, examples and API for AI coding assistants
+- Markdown versions: append \`.md\` to any Data Grid docs page URL for a clean, framework-specific Markdown copy (e.g. ${l.dataGridDocs.replace(/\/$/, '')}.md)
 
 ## Optional
 - [Pricing](${l.pricing}): Community (free) vs Enterprise

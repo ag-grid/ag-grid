@@ -1,0 +1,233 @@
+import { describe, expect, it, vi } from 'vitest';
+
+import {
+    type MarkdownResolvers,
+    type RenderMarkdocToMarkdownOptions,
+    renderMarkdocToMarkdown,
+} from './renderMarkdocToMarkdown';
+
+const markdocConfig = {
+    variables: { agGridVersion: '33.1.0' },
+    functions: {
+        isFramework: {
+            transform: (params: Record<string, unknown>, ctx: { variables: Record<string, unknown> }) =>
+                Object.values(params).includes(ctx.variables?.framework),
+        },
+        isNotJavascriptFramework: {
+            transform: (_params: Record<string, unknown>, ctx: { variables: Record<string, unknown> }) =>
+                ctx.variables?.framework !== 'javascript',
+        },
+        gridVersion: {
+            transform: (_params: Record<string, unknown>, ctx: { variables: Record<string, unknown> }) =>
+                ctx.variables?.agGridVersion,
+        },
+        getFrameworkCapitalised: {
+            transform: (_params: Record<string, unknown>, ctx: { variables: Record<string, unknown> }) => {
+                const framework = ctx.variables?.framework as string | undefined;
+                return framework ? framework[0].toUpperCase() + framework.slice(1) : '';
+            },
+        },
+    },
+};
+
+function render(body: string, overrides: Partial<RenderMarkdocToMarkdownOptions> = {}): Promise<string> {
+    return renderMarkdocToMarkdown({
+        body,
+        framework: 'react',
+        pageName: 'test-page',
+        markdocConfig,
+        ...overrides,
+    });
+}
+
+describe('renderMarkdocToMarkdown', () => {
+    it('emits YAML frontmatter with title, framework and version, then the H1 and description', async () => {
+        const output = await render('Body paragraph.', {
+            framework: 'angular',
+            version: '33.1.0',
+            frontmatter: { title: 'Cell Editing', description: 'How to edit cells.' },
+        });
+
+        expect(output.startsWith('---\n')).toBe(true);
+        expect(output).toContain('title: "Cell Editing"');
+        expect(output).toContain('framework: angular');
+        expect(output).toContain('version: "33.1.0"');
+        expect(output).toContain('\n# Cell Editing\n');
+        expect(output).toContain('How to edit cells.');
+    });
+
+    it('passes through standard markdown (headings, emphasis, links, lists, tables)', async () => {
+        const body = [
+            '## Heading Two',
+            '',
+            'Text with **bold**, *em* and `code`.',
+            '',
+            '- one',
+            '- two',
+            '  - nested',
+            '',
+            '1. first',
+            '2. second',
+            '',
+            '| A | B |',
+            '|---|--:|',
+            '| a | b |',
+        ].join('\n');
+
+        const output = await render(body);
+
+        expect(output).toContain('## Heading Two');
+        expect(output).toContain('Text with **bold**, *em* and `code`.');
+        expect(output).toContain('- one\n- two\n  - nested');
+        expect(output).toContain('1. first\n2. second');
+        expect(output).toContain('| A | B |\n| --- | ---: |\n| a | b |');
+    });
+
+    it('resolves isFramework conditionals for the target framework', async () => {
+        const body = '{% if isFramework("react") %}REACT_ONLY{% else /%}OTHER{% /if %}';
+
+        expect(await render(body, { framework: 'react' })).toContain('REACT_ONLY');
+        expect(await render(body, { framework: 'react' })).not.toContain('OTHER');
+        expect(await render(body, { framework: 'angular' })).toContain('OTHER');
+        expect(await render(body, { framework: 'angular' })).not.toContain('REACT_ONLY');
+    });
+
+    it('resolves isNotJavascriptFramework and nested conditionals', async () => {
+        const body = [
+            '{% if isNotJavascriptFramework() %}',
+            'FRAMEWORK',
+            '{% if isFramework("vue") %}VUE_INNER{% /if %}',
+            '{% else /%}',
+            'PLAIN_JS',
+            '{% /if %}',
+        ].join('\n');
+
+        const vue = await render(body, { framework: 'vue' });
+        expect(vue).toContain('FRAMEWORK');
+        expect(vue).toContain('VUE_INNER');
+        expect(vue).not.toContain('PLAIN_JS');
+
+        const js = await render(body, { framework: 'javascript' });
+        expect(js).toContain('PLAIN_JS');
+        expect(js).not.toContain('FRAMEWORK');
+        expect(js).not.toContain('VUE_INNER');
+    });
+
+    it('resolves variable and function interpolation', async () => {
+        const body = 'Version {% $agGridVersion %} / {% gridVersion() %} / {% getFrameworkCapitalised() %}.';
+        expect(await render(body, { framework: 'react' })).toContain('Version 33.1.0 / 33.1.0 / React.');
+    });
+
+    it('renders note/warning/idea callouts as blockquotes with a bold label', async () => {
+        const output = await render('{% note %}\nBe careful here.\n{% /note %}');
+        expect(output).toContain('> **Note**');
+        expect(output).toContain('> Be careful here.');
+    });
+
+    it('renders tab items as sequential sections in order', async () => {
+        const body = [
+            '{% tabs %}',
+            '{% tabItem id="a" label="First" %}',
+            'First body.',
+            '{% /tabItem %}',
+            '{% tabItem id="b" label="Second" %}',
+            'Second body.',
+            '{% /tabItem %}',
+            '{% /tabs %}',
+        ].join('\n');
+
+        const output = await render(body);
+        expect(output.indexOf('#### First')).toBeLessThan(output.indexOf('#### Second'));
+        expect(output).toContain('First body.');
+        expect(output).toContain('Second body.');
+    });
+
+    it('invokes transformFence for frameworkTransform fences and passes plain fences through', async () => {
+        const transformFence = vi.fn(({ code, framework }: { code: string; framework: string }) => ({
+            code: `/* ${framework} */\n${code}`,
+            language: 'jsx',
+        }));
+        const resolvers: MarkdownResolvers = { transformFence };
+
+        const body = [
+            '```{% frameworkTransform=true language="ts" %}',
+            'const gridOptions = {};',
+            '```',
+            '',
+            '```js',
+            'const plain = 1;',
+            '```',
+        ].join('\n');
+
+        const output = await render(body, { resolvers });
+
+        expect(transformFence).toHaveBeenCalledTimes(1);
+        expect(transformFence).toHaveBeenCalledWith(expect.objectContaining({ framework: 'react', language: 'ts' }));
+        expect(output).toContain('```jsx\n/* react */\nconst gridOptions = {};\n```');
+        expect(output).toContain('```js\nconst plain = 1;\n```');
+    });
+
+    it('embeds example source and a live-example link', async () => {
+        const resolvers: MarkdownResolvers = {
+            loadExampleSource: async ({ name, framework }) => ({
+                code: `// ${framework} ${name}`,
+                language: 'jsx',
+                liveUrl: `https://example.test/${name}/${framework}`,
+            }),
+        };
+        const output = await render('{% gridExampleRunner title="Basic" name="basic-grid" /%}', { resolvers });
+
+        expect(output).toContain('#### Basic');
+        expect(output).toContain('```jsx\n// react basic-grid\n```');
+        expect(output).toContain('[Live example: Basic](https://example.test/basic-grid/react)');
+    });
+
+    it('delegates apiDocumentation/interfaceDocumentation to renderApiTable', async () => {
+        const renderApiTable = vi.fn(({ kind }: { kind: string }) => `TABLE_FOR_${kind}`);
+        const resolvers: MarkdownResolvers = { renderApiTable };
+
+        const output = await render(
+            [
+                '{% apiDocumentation source="grid-options/properties" names=["editable"] /%}',
+                '',
+                '{% interfaceDocumentation interfaceName="ICellRendererParams" /%}',
+            ].join('\n'),
+            { resolvers }
+        );
+
+        expect(output).toContain('TABLE_FOR_api');
+        expect(output).toContain('TABLE_FOR_interface');
+        expect(renderApiTable).toHaveBeenCalledTimes(2);
+    });
+
+    it('drops interactive/marketing tags without leaving blank-line gaps', async () => {
+        const body = ['Before.', '', '{% trialLicenceForm /%}', '', '{% learningVideos /%}', '', 'After.'].join('\n');
+        const output = await render(body);
+
+        expect(output).toContain('Before.');
+        expect(output).toContain('After.');
+        expect(output).not.toContain('trialLicenceForm');
+        expect(output).not.toMatch(/\n{3,}/);
+    });
+
+    it('preserves indentation for conditional content inside a list item', async () => {
+        const body = ['- item', '', '  {% if isFramework("react") %}', '  nested react line', '  {% /if %}'].join('\n');
+        const output = await render(body, { framework: 'react' });
+        expect(output).toContain('nested react line');
+    });
+
+    it('resolves partials via the readPartial resolver', async () => {
+        const resolvers: MarkdownResolvers = {
+            readPartial: ({ file }) => (file === '_partial.mdoc' ? 'Partial **content**.' : null),
+        };
+        const output = await render('{% partial file="_partial.mdoc" /%}', { resolvers });
+        expect(output).toContain('Partial **content**.');
+    });
+
+    it('normalises output to a single trailing newline and no triple newlines', async () => {
+        const output = await render('# A\n\n\n\nParagraph.\n\n\n');
+        expect(output.endsWith('\n')).toBe(true);
+        expect(output.endsWith('\n\n')).toBe(false);
+        expect(output).not.toMatch(/\n{3,}/);
+    });
+});

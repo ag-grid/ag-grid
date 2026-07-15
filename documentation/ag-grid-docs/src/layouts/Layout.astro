@@ -37,6 +37,8 @@ interface Props {
     showAnnouncementBanner?: boolean;
     overrideSocialImage?: string;
     pageStructuredData?: JsonLdObject[];
+    /** URL of a markdown (`.md`) alternate for this page, advertised to LLMs/crawlers. */
+    markdownUrl?: string;
 }
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
@@ -67,6 +69,7 @@ const {
     showAnnouncementBanner = announcementBannerContent.enabled,
     overrideSocialImage,
     pageStructuredData,
+    markdownUrl,
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -162,6 +165,7 @@ const announcementBannerProps = {
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
         {!isStaging && <link rel="canonical" href={canonicalUrl} />}
+        {markdownUrl && <link rel="alternate" type="text/markdown" href={markdownUrl} />}
         {
             !isDev && (
                 <link

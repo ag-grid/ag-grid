@@ -26,6 +26,11 @@ describe('buildLlmsTxt', () => {
         expect(txt).toContain('(https://www.ag-grid.com/sitemap-index.xml)');
     });
 
+    test('advertises the per-page markdown (.md) convention', () => {
+        expect(txt).toContain('.md');
+        expect(txt).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
+    });
+
     test('derives every link from the canonical base (no other host)', () => {
         const urls = txt.match(/\(https?:\/\/[^)]+\)/g) ?? [];
         expect(urls.length).toBeGreaterThan(0);

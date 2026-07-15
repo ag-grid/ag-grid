@@ -32,6 +32,7 @@ const modExpiresRules = `
 
     ExpiresByType application/json "access plus 1 hour"
     ExpiresByType text/html "access plus 1 hour"
+    ExpiresByType text/markdown "access plus 1 hour"
     ExpiresByType text/plain "access plus 1 hour"
     ExpiresByType text/richtext "access plus 1 hour"
     ExpiresByType text/xml "access plus 1 hour"
@@ -66,6 +67,7 @@ const modDeflateRules = `
     AddOutputFilterByType DEFLATE text/css
     AddOutputFilterByType DEFLATE text/html
     AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/markdown
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/xml
 
@@ -183,6 +185,9 @@ ErrorDocument 404 /404.html
 AddType text/javascript jsx
 AddType application/typescript ts tsx
 AddType application/x-gzip .gz .tgz
+
+# serve the per-page LLM markdown files as markdown
+AddType text/markdown md
 `;
 
 function getStagingHtaccessContent(): string {

@@ -9,6 +9,9 @@ AddType text/javascript jsx
 AddType application/typescript ts tsx
 AddType application/x-gzip .gz .tgz
 
+# serve the per-page LLM markdown files as markdown
+AddType text/markdown md
+
 
 <IfModule mod_expires.c>
     # Adds caching headers
@@ -19,6 +22,7 @@ AddType application/x-gzip .gz .tgz
 
     ExpiresByType application/json "access plus 1 hour"
     ExpiresByType text/html "access plus 1 hour"
+    ExpiresByType text/markdown "access plus 1 hour"
     ExpiresByType text/plain "access plus 1 hour"
     ExpiresByType text/richtext "access plus 1 hour"
     ExpiresByType text/xml "access plus 1 hour"
@@ -52,6 +56,7 @@ AddType application/x-gzip .gz .tgz
     AddOutputFilterByType DEFLATE text/css
     AddOutputFilterByType DEFLATE text/html
     AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/markdown
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/xml
 
@@ -2742,6 +2747,9 @@ ErrorDocument 404 /404.html
 AddType text/javascript jsx
 AddType application/typescript ts tsx
 AddType application/x-gzip .gz .tgz
+
+# serve the per-page LLM markdown files as markdown
+AddType text/markdown md
 
 
 # Content-Security-Policy — enforced, path-scoped. Unsets the legacy wildcard CSP on
