@@ -470,6 +470,14 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
     // Apply field state; the structural pass (re)creates auto/service cols. No dispatch yet.
     applyStateToCols(beans, columnStates, colModel.colDefList, {}, source, true);
 
+    // Force `pivotSort` back to its colDef default: `applyFieldState` skips an `undefined` target (so an
+    // omitted `pivotSort` in `applyColumnState` leaves it alone), but a reset must clear a user-applied sort.
+    const primaryCols = colModel.colDefList;
+    for (let i = 0, len = primaryCols.length; i < len; ++i) {
+        const col = primaryCols[i];
+        col.pivotSort = resolveInitialPivotSort(col.colDef);
+    }
+
     // Order from the now-current service cols: auto cols may have been recreated above (their colIds change
     // with the row-group set), so use the post-apply instances, not the pre-apply ids in `columnStates`.
     const autoCols = autoColSvc?.columns;
