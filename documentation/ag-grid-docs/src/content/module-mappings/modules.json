@@ -38,6 +38,12 @@
                     "name": "Calculated Columns",
                     "path": "calculated-columns",
                     "isEnterprise": true
+                },
+                {
+                    "moduleName": "ColumnHeaderEditModule",
+                    "name": "Editable Header Name",
+                    "path": "column-headers/#editable-header-name",
+                    "isEnterprise": true
                 }
             ]
         },
