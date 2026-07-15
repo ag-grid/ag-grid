@@ -1,7 +1,7 @@
 import astroPackageJson from 'astro/package.json';
 import { createHash } from 'node:crypto';
 
-import { DARK_MODE_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
+import { DARK_MODE_INIT_SCRIPT, KBD_PLATFORM_INIT_SCRIPT, PLAUSIBLE_INIT_SCRIPT } from '../csp/inlineScripts';
 import {
     ASTRO_HYDRATION_HASHES_VERIFIED_FOR,
     BRANCH_BUILDS_PATH_CONDITION,
@@ -159,6 +159,7 @@ describe('cspRules', () => {
             expect(scriptSrc).not.toContain("'unsafe-inline'");
             expect(scriptSrc).toContain(sha256Source(DARK_MODE_INIT_SCRIPT));
             expect(scriptSrc).toContain(sha256Source(PLAUSIBLE_INIT_SCRIPT));
+            expect(scriptSrc).toContain(sha256Source(KBD_PLATFORM_INIT_SCRIPT));
         });
 
         it('site scope authorises the (non-externalisable) Astro hydration scripts by hash', () => {

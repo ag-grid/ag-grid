@@ -61,6 +61,19 @@ export const DARK_MODE_INIT_SCRIPT = `
     }
 `;
 
+// Sets html[data-os="mac"] so the CSS in _inline.scss can show "⌘ Command" instead of
+// "^ Ctrl" in {% kbd %} tags for Mac visitors. There's no build-time (nor pure-CSS) way
+// to know the visitor's OS, so this runs render-blocking at the top of <body> — same
+// spot as the dark-mode script — to avoid a flash of the wrong label. Feature-detects
+// the Chromium-only User-Agent Client Hints API first, then falls back to the older
+// (deprecated but universally supported) navigator.platform.
+export const KBD_PLATFORM_INIT_SCRIPT = `
+    const platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+    if (/mac/i.test(platform)) {
+        document.documentElement.dataset.os = 'mac';
+    }
+`;
+
 // Plausible analytics queue stub. The tagged-events script itself loads externally
 // (plausible.io, allow-listed); this only sets up window.plausible before it arrives.
 export const PLAUSIBLE_INIT_SCRIPT = `
