@@ -1,8 +1,6 @@
+import { CollapsibleSection } from '@ag-website-shared/components/theme-builder/CollapsibleSection';
 import { useApplicationConfigAtom } from '@ag-website-shared/theming/application-config';
 import styled from '@emotion/styled';
-import * as Accordion from '@radix-ui/react-accordion';
-import { ChevronDown } from 'lucide-react';
-import { type ReactNode } from 'react';
 
 import { AdvancedParamSelector } from './AdvancedParamSelector';
 import { BordersEditor } from './BordersEditor';
@@ -10,18 +8,30 @@ import { ParamEditor } from './ParamEditor';
 import { PartEditor } from './PartEditor';
 import { horizontalSpacingIcon, radiusIcon, verticalSpacingIcon } from './icons';
 
+const DEFAULT_OPEN_SECTIONS = ['General', 'All Parameters'];
+
 export const EditorPanel = () => {
     const [expanded, setExpanded] = useApplicationConfigAtom('expandedEditors');
+    const openSections = expanded || DEFAULT_OPEN_SECTIONS;
+
+    const toggleSection = (heading: string) => {
+        setExpanded(
+            openSections.includes(heading) ? openSections.filter((h) => h !== heading) : [...openSections, heading]
+        );
+    };
+
+    const sectionProps = (heading: string) => ({
+        heading,
+        isOpen: openSections.includes(heading),
+        onToggle: () => toggleSection(heading),
+    });
+
     return (
-        <AccordionRoot
-            type="multiple"
-            defaultValue={expanded || ['General', 'All Parameters']}
-            onValueChange={setExpanded}
-        >
+        <PanelWrapper>
             <div className="pageHeading">
                 <h1 className="pageTitle">Theme Builder </h1>
             </div>
-            <Section heading="General">
+            <CollapsibleSection {...sectionProps('General')}>
                 <LeftBiasRow>
                     <ParamEditor param="fontFamily" />
                     <ParamEditor param="fontSize" />
@@ -29,8 +39,8 @@ export const EditorPanel = () => {
                 <ParamEditor param="backgroundColor" />
                 <ParamEditor param="foregroundColor" />
                 <ParamEditor param="accentColor" showDocs />
-            </Section>
-            <Section heading="Borders & spacing">
+            </CollapsibleSection>
+            <CollapsibleSection {...sectionProps('Borders & spacing')}>
                 <ParamEditor param="borderColor" />
                 <BordersEditor />
                 <ParamEditor param="spacing" showDocs icon={verticalSpacingIcon} />
@@ -50,8 +60,8 @@ export const EditorPanel = () => {
                         swipeAdjustmentDivisor={20}
                     />
                 </EvenSplitRow>
-            </Section>
-            <Section heading="Header">
+            </CollapsibleSection>
+            <CollapsibleSection {...sectionProps('Header')}>
                 <ParamEditor param="headerBackgroundColor" label="Background color" />
                 <ParamEditor param="headerTextColor" label="Text color" />
                 <LeftBiasRow>
@@ -64,8 +74,8 @@ export const EditorPanel = () => {
                     label="Adjust vertical padding"
                     icon={verticalSpacingIcon}
                 />
-            </Section>
-            <Section heading="Cells">
+            </CollapsibleSection>
+            <CollapsibleSection {...sectionProps('Cells')}>
                 <ParamEditor param="cellTextColor" label="Text color" />
                 <ParamEditor param="oddRowBackgroundColor" label="Odd row background" />
                 <ParamEditor
@@ -78,42 +88,19 @@ export const EditorPanel = () => {
                     label="Adjust horizontal padding"
                     icon={horizontalSpacingIcon}
                 />
-            </Section>
-            <Section heading="Icons">
+            </CollapsibleSection>
+            <CollapsibleSection {...sectionProps('Icons')}>
                 <PartEditor featureName="iconSet" />
                 <ParamEditor param="iconSize" label="Size" />
-            </Section>
-            <Section heading="All Parameters">
+            </CollapsibleSection>
+            <CollapsibleSection {...sectionProps('All Parameters')}>
                 <AdvancedParamSelector />
-            </Section>
-        </AccordionRoot>
+            </CollapsibleSection>
+        </PanelWrapper>
     );
 };
 
-const Section = (props: { heading: string; children: ReactNode }) => (
-    <AccordionItem value={props.heading}>
-        <AccordionHeader>
-            <Trigger>
-                {props.heading} <OpenCloseChevron size={16} />
-            </Trigger>
-        </AccordionHeader>
-        <AccordionContent>
-            <SectionContent>{props.children}</SectionContent>
-        </AccordionContent>
-    </AccordionItem>
-);
-
-const SectionContent = styled('div')`
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-    margin-bottom: 20px;
-    padding-top: 6px;
-    padding-bottom: 6px;
-`;
-
-const AccordionRoot = styled(Accordion.Root)`
+const PanelWrapper = styled('div')`
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -158,76 +145,6 @@ const AccordionRoot = styled(Accordion.Root)`
     }
 `;
 
-const AccordionItem = styled(Accordion.Item)`
-    margin: 0;
-`;
-
-const AccordionHeader = styled(Accordion.Header)`
-    margin-bottom: 10px;
-    margin-top: 6px;
-    padding-left: 6px;
-    padding-right: 10px;
-`;
-
-const AccordionContent = styled(Accordion.Content)`
-    overflow: hidden;
-    margin: 0;
-    padding-left: 6px;
-    padding-right: 10px;
-
-    &[data-state='open'] {
-        animation: slideDown 300ms cubic-bezier(0.87, 0, 0.13, 1);
-    }
-
-    &[data-state='closed'] {
-        animation: slideUp 300ms cubic-bezier(0.87, 0, 0.13, 1);
-    }
-
-    @keyframes slideDown {
-        from {
-            height: 0;
-        }
-        to {
-            height: var(--radix-accordion-content-height);
-        }
-    }
-
-    @keyframes slideUp {
-        from {
-            height: var(--radix-accordion-content-height);
-        }
-        to {
-            height: 0;
-        }
-    }
-`;
-
-const Trigger = styled(Accordion.Trigger)`
-    all: unset;
-    color: var(--color-fg-secondary);
-    background: none !important;
-    font-size: 15px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    cursor: pointer;
-    transition:
-        opacity 0.25s ease-in-out,
-        color 0.25s ease-in-out;
-    opacity: 0.85;
-
-    &:hover {
-        opacity: 1;
-        color: var(--color-brand-500);
-
-        [data-dark-mode='true'] & {
-            color: var(--color-brand-300);
-        }
-    }
-`;
-
 const EvenSplitRow = styled('div')`
     display: flex;
     gap: 12px;
@@ -244,13 +161,5 @@ const LeftBiasRow = styled('div')`
     }
     > :nth-of-type(2) {
         flex: 1;
-    }
-`;
-
-const OpenCloseChevron = styled(ChevronDown)`
-    opacity: 0.6;
-    transition: transform 300ms cubic-bezier(0.87, 0, 0.13, 1);
-    [data-state='open'] & {
-        transform: rotate(180deg);
     }
 `;

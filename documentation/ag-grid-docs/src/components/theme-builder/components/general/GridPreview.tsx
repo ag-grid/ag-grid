@@ -1,3 +1,4 @@
+import { ColorPicker } from '@ag-website-shared/components/theme-builder/ColorPicker';
 import { useApplicationConfigAtom } from '@ag-website-shared/theming/application-config';
 import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
 import { ShadowDom } from '@components/ShadowDom';
@@ -25,7 +26,6 @@ import {
 } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-import { ColorEditor } from '../editors/ColorValueEditor';
 import { LoadFontFamilyMenuFonts } from '../editors/FontFamilyValueEditor';
 import { GridConfigDropdownButton } from '../grid-config/GridConfigDropdown';
 import { useGridOptions } from '../grid-config/grid-config-atom';
@@ -70,7 +70,7 @@ const GridPreview = () => {
             <LoadFontFamilyMenuFonts />
             <GridConfigDropdownButton />
             <ColorPickerWrapper>
-                <ColorEditor value={backgroundColor} onChange={setBackground} preventTransparency />
+                <ColorPicker value={backgroundColor} onChange={setBackground} preventTransparency />
                 <StyledInfoTooltip title="Page background color - this is not part of your theme" />
             </ColorPickerWrapper>
             <GridSizer>
