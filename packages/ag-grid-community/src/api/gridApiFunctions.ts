@@ -13,7 +13,6 @@ import type {
     _ColumnFilterGridApi,
     _ColumnGridApi,
     _ColumnGroupGridApi,
-    _ColumnHeaderEditGridApi,
     _ColumnHoverApi,
     _ColumnMoveApi,
     _ColumnResizeApi,
@@ -270,9 +269,6 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getNote: 0,
         setNote: 0,
         refreshNotes: 0,
-    }),
-    ...mod<_ColumnHeaderEditGridApi>('ColumnHeaderEdit', {
-        setColumnHeaderName: 0,
     }),
     ...mod<_FindApi<any>>('Find', {
         findGetActiveMatch: 0,

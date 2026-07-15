@@ -23,7 +23,6 @@ export type {
     _InfiniteRowModelGridApi,
     _MasterDetailGridApi,
     _NotesGridApi,
-    _ColumnHeaderEditGridApi,
     _PinnedRowGridApi,
     _PivotGridApi,
     _RowGroupingGridApi,

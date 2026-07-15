@@ -50,13 +50,7 @@
         },
         "getColumn": {},
         "getColumns": {},
-        "getAllGridColumns": {},
-        "setColumnHeaderName": {
-            "more": {
-                "name": "Editable Header Name",
-                "url": "./column-headers/#editable-header-name"
-            }
-        }
+        "getAllGridColumns": {}
     },
     "columnSizing": {
         "meta": {

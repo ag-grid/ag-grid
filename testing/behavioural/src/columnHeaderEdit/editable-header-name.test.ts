@@ -196,7 +196,7 @@ describe('Editable header name', () => {
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');
         expect(input.value).toBe('Athlete');
 
-        api.setColumnHeaderName('athlete', 'Renamed');
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
         await asyncSetTimeout(1);
 
         expect(input.value).toBe('Renamed');

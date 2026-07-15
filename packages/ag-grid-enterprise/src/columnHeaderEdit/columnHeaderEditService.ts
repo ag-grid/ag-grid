@@ -1,4 +1,4 @@
-import type { AgColumn, ColKey, ColumnEventType, IColumnHeaderEditService, NamedBean } from 'ag-grid-community';
+import type { AgColumn, IColumnHeaderEditService, NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 import { ColumnHeaderEditPopup } from './columnHeaderEditPopup';
@@ -23,11 +23,6 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
                 }
             },
         });
-    }
-
-    public setColumnHeaderName(key: ColKey, headerName: string | null, source: ColumnEventType = 'api'): void {
-        const column = this.beans.colModel.getCol(key);
-        column?.setHeaderNameOverride(headerName, source);
     }
 
     public showHeaderNameEditor(column: AgColumn): void {
