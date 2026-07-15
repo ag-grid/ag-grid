@@ -1,7 +1,5 @@
 import type { Part } from 'ag-grid-community';
 
-import { allParamModels } from './ParamModel';
-import { allFeatureModels } from './PartModel';
 import { RGBAColor } from './RGBAColor';
 import { paramValueToCss } from './api';
 import { unescapeStringLiteral } from './utils';
@@ -23,9 +21,21 @@ export type ParseThemeFailure = {
 
 export type ParseThemeResult = ParseThemeSuccess | ParseThemeFailure;
 
-export function parseThemeCode(code: string): ParseThemeResult {
+export type ParseThemeCodeOptions = {
+    /** Whether a bare identifier followed by `:` should be treated as a param name. */
+    isRecognizedParam: (key: string) => boolean;
+    /**
+     * Scan the identifier tokens found anywhere in the code (in source order)
+     * for other declarations, e.g. grid's swappable theme parts
+     * (iconSetAlpine, tabStyleMaterial, ...). Hosts without such a concept
+     * can omit this - parts will always be empty.
+     */
+    extractParts?: (identifiers: string[]) => Part<any>[];
+};
+
+export function parseThemeCode(code: string, options: ParseThemeCodeOptions): ParseThemeResult {
     const tokens = tokenizeThemeCode(code);
-    const validParams = new Set<string>(allParamModels().map((m) => m.property));
+    const { isRecognizedParam, extractParts } = options;
     const params: Record<string, unknown> = {};
     const variableWarnings: string[] = [];
     let i = 0;
@@ -33,7 +43,7 @@ export function parseThemeCode(code: string): ParseThemeResult {
     while (i < tokens.length) {
         const token = tokens[i];
 
-        if (validParams.has(token.value) && tokens[i + 1]?.value === ':') {
+        if (isRecognizedParam(token.value) && tokens[i + 1]?.value === ':') {
             const paramName = token.value;
             i += 2; // skip param name and colon
             const result = consumeValue();
@@ -50,7 +60,9 @@ export function parseThemeCode(code: string): ParseThemeResult {
         }
     }
 
-    const parts = extractParts();
+    const parts = extractParts
+        ? extractParts(tokens.filter((token) => token.type === 'identifier').map((token) => token.value))
+        : [];
 
     if (Object.keys(params).length + parts.length === 0) {
         return {
@@ -111,29 +123,6 @@ export function parseThemeCode(code: string): ParseThemeResult {
     function tokensToDebugString(start: number, end: number): string {
         const code = tokensToJSON(start, end).replaceAll(/\s+/g, ' ').trim();
         return code.length > 50 ? `${code.slice(0, 50)}...` : code;
-    }
-
-    function extractParts(): Part<any>[] {
-        const features = allFeatureModels();
-
-        const partByExportName = new Map<string, Part<any>>();
-        for (const feature of features) {
-            for (const partModel of feature.parts) {
-                partByExportName.set(partModel.exportName, partModel.part);
-            }
-        }
-
-        const selectedPartByFeature = new Map<string, Part<any>>();
-        for (const token of tokens) {
-            if (token.type === 'identifier' && partByExportName.has(token.value)) {
-                const feature = features.find((f) => token.value.startsWith(f.featureName));
-                if (feature) {
-                    selectedPartByFeature.set(feature.featureName, partByExportName.get(token.value)!);
-                }
-            }
-        }
-
-        return Array.from(selectedPartByFeature.values());
     }
 }
 

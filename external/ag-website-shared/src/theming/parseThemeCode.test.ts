@@ -1,12 +1,46 @@
 import { expect, test } from 'vitest';
 
+import type { Part } from 'ag-grid-community';
 import { iconSetAlpine, iconSetMaterial, tabStyleMaterial } from 'ag-grid-community';
 
-import { parseThemeCode, validateAndConvertToPreset } from './parseThemeCode';
+import { type ParseThemeResult, parseThemeCode, validateAndConvertToPreset } from './parseThemeCode';
+
+// parseThemeCode is host-agnostic, so tests supply their own recognised-param
+// set and part extractor rather than depending on grid's real ParamModel/
+// PartModel (which is what production callers use instead).
+const TEST_PARAM_KEYS = new Set([
+    'accentColor',
+    'chromeBackgroundColor',
+    'fontSize',
+    'backgroundColor',
+    'wrapperBorder',
+    'fontFamily',
+]);
+
+const TEST_PARTS_BY_EXPORT_NAME: Record<string, Part<any>> = { iconSetAlpine, iconSetMaterial, tabStyleMaterial };
+
+function testExtractParts(identifiers: string[]): Part<any>[] {
+    const selectedByFeature = new Map<string, Part<any>>();
+    for (const identifier of identifiers) {
+        const part = TEST_PARTS_BY_EXPORT_NAME[identifier];
+        if (part) {
+            const featureName = identifier.startsWith('iconSet') ? 'iconSet' : 'tabStyle';
+            selectedByFeature.set(featureName, part);
+        }
+    }
+    return Array.from(selectedByFeature.values());
+}
+
+function parse(code: string): ParseThemeResult {
+    return parseThemeCode(code, {
+        isRecognizedParam: (key) => TEST_PARAM_KEYS.has(key),
+        extractParts: testExtractParts,
+    });
+}
 
 test('parses params, parts and nested objects from typical theme code', () => {
     expect(
-        parseThemeCode(`
+        parse(`
             import { themeQuartz, iconSetAlpine } from 'ag-grid-community';
 
             // to use myTheme in an application, pass it to the theme grid option
@@ -38,47 +72,47 @@ test('parses params, parts and nested objects from typical theme code', () => {
 
 test('parses various param value types and formats', () => {
     // Plain object without .withParams()
-    expect(parseThemeCode(`{ fontSize: 14, backgroundColor: "#fff" }`).params).toEqual({
+    expect(parse(`{ fontSize: 14, backgroundColor: "#fff" }`).params).toEqual({
         fontSize: 14,
         backgroundColor: '#fff',
     });
 
     // Boolean values
-    expect(parseThemeCode(`{ wrapperBorder: true }`).params).toEqual({ wrapperBorder: true });
-    expect(parseThemeCode(`{ wrapperBorder: false }`).params).toEqual({ wrapperBorder: false });
+    expect(parse(`{ wrapperBorder: true }`).params).toEqual({ wrapperBorder: true });
+    expect(parse(`{ wrapperBorder: false }`).params).toEqual({ wrapperBorder: false });
 
     // Null value
-    expect(parseThemeCode(`{ wrapperBorder: null }`).params).toEqual({ wrapperBorder: null });
+    expect(parse(`{ wrapperBorder: null }`).params).toEqual({ wrapperBorder: null });
 
     // Integer and float numbers
-    expect(parseThemeCode(`{ fontSize: 14 }`).params).toEqual({ fontSize: 14 });
-    expect(parseThemeCode(`{ fontSize: 14.5 }`).params).toEqual({ fontSize: 14.5 });
-    expect(parseThemeCode(`{ fontSize: -3.14 }`).params).toEqual({ fontSize: -3.14 });
+    expect(parse(`{ fontSize: 14 }`).params).toEqual({ fontSize: 14 });
+    expect(parse(`{ fontSize: 14.5 }`).params).toEqual({ fontSize: 14.5 });
+    expect(parse(`{ fontSize: -3.14 }`).params).toEqual({ fontSize: -3.14 });
 
     // Array values
-    expect(parseThemeCode(`{ fontFamily: ["Arial", "sans-serif"] }`).params).toEqual({
+    expect(parse(`{ fontFamily: ["Arial", "sans-serif"] }`).params).toEqual({
         fontFamily: ['Arial', 'sans-serif'],
     });
 
     // Nested object with identifier keys
-    expect(parseThemeCode(`{ chromeBackgroundColor: { ref: "foo", mix: 0.5 } }`).params).toEqual({
+    expect(parse(`{ chromeBackgroundColor: { ref: "foo", mix: 0.5 } }`).params).toEqual({
         chromeBackgroundColor: { ref: 'foo', mix: 0.5 },
     });
 
     // Single quoted key at top level
-    expect(parseThemeCode(`{ 'fontSize': 14 }`).params).toEqual({ fontSize: 14 });
+    expect(parse(`{ 'fontSize': 14 }`).params).toEqual({ fontSize: 14 });
 
     // Double quoted key at top level
-    expect(parseThemeCode(`{ "fontSize": 14 }`).params).toEqual({ fontSize: 14 });
+    expect(parse(`{ "fontSize": 14 }`).params).toEqual({ fontSize: 14 });
 
     // Single quoted key in nested object
-    expect(parseThemeCode(`{ chromeBackgroundColor: { 'ref': "foo" } }`).params).toEqual({
+    expect(parse(`{ chromeBackgroundColor: { 'ref': "foo" } }`).params).toEqual({
         chromeBackgroundColor: { ref: 'foo' },
     });
 
     // Tolerates line comments in code
     expect(
-        parseThemeCode(`{
+        parse(`{
         // comment
         chromeBackgroundColor
         // comment
@@ -99,7 +133,7 @@ test('parses various param value types and formats', () => {
 
     // Tolerates line comments in code
     expect(
-        parseThemeCode(`{
+        parse(`{
         /* comment */
         chromeBackgroundColor
         /* comment */
@@ -119,47 +153,45 @@ test('parses various param value types and formats', () => {
     });
 
     // Double quoted key in nested object
-    expect(parseThemeCode(`{ chromeBackgroundColor: { "ref": "foo" } }`).params).toEqual({
+    expect(parse(`{ chromeBackgroundColor: { "ref": "foo" } }`).params).toEqual({
         chromeBackgroundColor: { ref: 'foo' },
     });
 
     // Escape sequences in string values are unescaped
-    expect(parseThemeCode(String.raw`{ fontFamily: "Foo \"Bar\" é\n", accentColor: '#4EF222' }`).params).toEqual({
+    expect(parse(String.raw`{ fontFamily: "Foo \"Bar\" é\n", accentColor: '#4EF222' }`).params).toEqual({
         fontFamily: 'Foo "Bar" é\n',
         accentColor: '#4EF222',
     });
 
     // Array as property of object within value
-    expect(parseThemeCode(`{ chromeBackgroundColor: { items: [1, 2, 3] } }`).params).toEqual({
+    expect(parse(`{ chromeBackgroundColor: { items: [1, 2, 3] } }`).params).toEqual({
         chromeBackgroundColor: { items: [1, 2, 3] },
     });
 
     // Object within array
-    expect(parseThemeCode(`{ fontFamily: [{ name: "Arial" }, { name: "Helvetica" }] }`).params).toEqual({
+    expect(parse(`{ fontFamily: [{ name: "Arial" }, { name: "Helvetica" }] }`).params).toEqual({
         fontFamily: [{ name: 'Arial' }, { name: 'Helvetica' }],
     });
 
     // Unknown keys are silently filtered
-    expect(parseThemeCode(`{ fontSize: 14, unknownKey: "value" }`).params).toEqual({ fontSize: 14 });
+    expect(parse(`{ fontSize: 14, unknownKey: "value" }`).params).toEqual({ fontSize: 14 });
 
     // Variable references generate warnings but don't fail
-    expect(parseThemeCode(`{ fontSize: myVar, backgroundColor: "#fff" }`)).toMatchObject({
+    expect(parse(`{ fontSize: myVar, backgroundColor: "#fff" }`)).toMatchObject({
         success: true,
         params: { backgroundColor: '#fff' },
         variableWarnings: ['Parsing error at fontSize: `myVar` looks like JS code, not a value'],
     });
 
     // Function calls generate warnings with full expression (no spaces)
-    expect(parseThemeCode(`{ fontSize: myFunction(), backgroundColor: "#fff" }`)).toMatchObject({
+    expect(parse(`{ fontSize: myFunction(), backgroundColor: "#fff" }`)).toMatchObject({
         success: true,
         params: { backgroundColor: '#fff' },
         variableWarnings: ['Parsing error at fontSize: `myFunction()` looks like JS code, not a value'],
     });
 
     // Complex code preserves whitespace
-    expect(
-        parseThemeCode('{ fontSize: calculate(a, b, [`template ${foo()} `, d]) , backgroundColor: "#fff" }')
-    ).toMatchObject({
+    expect(parse('{ fontSize: calculate(a, b, [`template ${foo()} `, d]) , backgroundColor: "#fff" }')).toMatchObject({
         success: true,
         params: { backgroundColor: '#fff' },
         variableWarnings: [
@@ -169,7 +201,7 @@ test('parses various param value types and formats', () => {
 
     // Long code is truncated
     expect(
-        parseThemeCode(
+        parse(
             '{ fontSize: this is an\nextremely long string\nover several lines\nthat will be truncated, backgroundColor: "#fff" }'
         )
     ).toMatchObject({
@@ -183,18 +215,18 @@ test('parses various param value types and formats', () => {
 
 test('detects parts anywhere in code with last-wins for same feature', () => {
     // Parts-only code (no params) is valid
-    expect(parseThemeCode(`const theme = themeQuartz.withPart(iconSetAlpine);`)).toMatchObject({
+    expect(parse(`const theme = themeQuartz.withPart(iconSetAlpine);`)).toMatchObject({
         success: true,
         params: {},
         parts: [iconSetAlpine],
     });
 
     // Part in import statement
-    expect(parseThemeCode(`import { iconSetAlpine } from 'ag-grid-community';`).parts).toEqual([iconSetAlpine]);
+    expect(parse(`import { iconSetAlpine } from 'ag-grid-community';`).parts).toEqual([iconSetAlpine]);
 
     // Multiple parts of same feature - last wins
     expect(
-        parseThemeCode(`
+        parse(`
             import { iconSetAlpine, iconSetMaterial } from 'ag-grid-community';
             const theme = themeQuartz.withPart(iconSetAlpine).withPart(iconSetMaterial);
         `).parts
@@ -202,11 +234,20 @@ test('detects parts anywhere in code with last-wins for same feature', () => {
 
     // Multiple parts from different features - all detected
     expect(
-        parseThemeCode(`
+        parse(`
             import { iconSetAlpine, tabStyleMaterial } from 'ag-grid-community';
             const theme = themeQuartz.withPart(iconSetAlpine).withPart(tabStyleMaterial);
         `).parts
     ).toEqual(expect.arrayContaining([iconSetAlpine, tabStyleMaterial]));
+});
+
+test('parseThemeCode with no extractParts option never returns parts', () => {
+    expect(parseThemeCode(`{ fontSize: 14 }`, { isRecognizedParam: (key) => TEST_PARAM_KEYS.has(key) })).toEqual({
+        success: true,
+        params: { fontSize: 14 },
+        parts: [],
+        variableWarnings: [],
+    });
 });
 
 test('validateAndConvertToPreset creates preset with warnings for invalid param values', () => {
