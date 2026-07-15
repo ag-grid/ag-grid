@@ -100,6 +100,29 @@ describe('pivot: interactive pivot column sorting (pivotSort)', () => {
         expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBeNull();
     });
 
+    test('resetColumnState restores pivotSort to the colDef default', async () => {
+        const api = createPivotGrid();
+        await asyncSetTimeout(10);
+
+        api.applyColumnState({ state: [{ colId: 'year', pivotSort: 'desc' }] });
+        await asyncSetTimeout(10);
+        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('desc');
+        expect(getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'))).toEqual([
+            'pivot_year_2022_sales',
+            'pivot_year_2021_sales',
+            'pivot_year_2020_sales',
+        ]);
+
+        api.resetColumnState();
+        await asyncSetTimeout(10);
+        expect(api.getColumnState().find((s) => s.colId === 'year')!.pivotSort).toBe('asc');
+        expect(getColumnOrder(api, 'all').filter((id) => id.startsWith('pivot_'))).toEqual([
+            'pivot_year_2020_sales',
+            'pivot_year_2021_sales',
+            'pivot_year_2022_sales',
+        ]);
+    });
+
     test('desc reverses correctly when data insertion order differs from sorted order', async () => {
         const gridOptions: GridOptions = {
             columnDefs: [
