@@ -153,11 +153,13 @@ describe('ag-grid custom overlay react unmount', () => {
 
             rerender(<AgGridReact {...defaultProps} ref={setRef} loading={loading} />);
             if (!loading) {
-                ref.api.showNoRowsOverlay();
-                ref.api.showNoRowsOverlay();
-                ref.api.hideOverlay();
-                ref.api.showNoRowsOverlay();
-                ref.api.showNoRowsOverlay();
+                act(() => {
+                    ref.api.showNoRowsOverlay();
+                    ref.api.showNoRowsOverlay();
+                    ref.api.hideOverlay();
+                    ref.api.showNoRowsOverlay();
+                    ref.api.showNoRowsOverlay();
+                });
             }
 
             setTimeoutSpy.mockRestore();
@@ -166,7 +168,9 @@ describe('ag-grid custom overlay react unmount', () => {
         }
 
         rerender(<AgGridReact {...defaultProps} ref={setRef} loading={false} />);
-        ref.api.hideOverlay();
+        act(() => {
+            ref.api.hideOverlay();
+        });
 
         await waitFor(() => expect(screen.queryByText('Custom Overlay')).not.toBeInTheDocument());
 

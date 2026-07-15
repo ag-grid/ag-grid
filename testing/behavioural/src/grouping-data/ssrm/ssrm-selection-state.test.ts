@@ -51,6 +51,7 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        vi.restoreAllMocks();
     });
 
     function createFlatGridOptions(extra: Partial<GridOptions> = {}): GridOptions {
@@ -119,12 +120,17 @@ describe('ag-grid SSRM selection-state API (characterization)', () => {
     test('selectAll then deselect one -> {selectAll:true, toggledNodes:[thatId]}; round-trips', async () => {
         const api = await createAndLoad('ssrmSelStateSelectAll');
 
+        // Reading getSelectedNodes() after selectAll under SSRM warns (#199) that it is unreliable —
+        // the warning is expected; the empty result it produces is exactly what this test pins.
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
         api.selectAll();
         api.getRowNode('c')!.setSelected(false);
 
         // Surprising pin: under selectAll the strategy tracks only toggled (deselected) nodes, so
         // getSelectedNodes() is empty; conceptual selection is read via isSelected()/state.
         expect(selectedIds(api)).toEqual([]);
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('#199');
         expect(api.getRowNode('a')!.isSelected()).toBe(true);
         expect(api.getRowNode('c')!.isSelected()).toBe(false);
 

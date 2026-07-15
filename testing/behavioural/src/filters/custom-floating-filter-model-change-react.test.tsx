@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import React, { useCallback } from 'react';
 
 import type { GridApi, IDoesFilterPassParams } from 'ag-grid-community';
@@ -154,11 +154,14 @@ describe('Custom floating filter onModelChange (React)', () => {
         await rendered.findByText('Michael Phelps');
         const input = await rendered.findByTestId('string-floating-filter-input');
 
-        fireEvent.change(input, { target: { value: 'Phelps' } });
-        await asyncSetTimeout(50);
+        // Custom React parent re-registers its filter asynchronously on the model change; act()+waitFor
+        // awaits the grid's async re-filter without leaking "not wrapped in act" noise.
+        await act(async () => {
+            fireEvent.change(input, { target: { value: 'Phelps' } });
+        });
+        await waitFor(() => expect(api!.getDisplayedRowCount()).toBe(1));
 
         expect(emitted286(warnSpy)).toBe(false);
         expect(api!.getColumnFilterModel('athlete')).toBe('Phelps');
-        expect(api!.getDisplayedRowCount()).toBe(1);
     });
 });

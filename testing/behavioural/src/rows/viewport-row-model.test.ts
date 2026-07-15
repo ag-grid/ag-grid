@@ -314,7 +314,9 @@ describe('viewport row model', () => {
     describe('range selection', () => {
         test('shift-click selects the contiguous rows between the anchor and the target', async () => {
             const { api } = createViewportGrid('myGrid', {
-                rowSelection: { mode: 'multiRow', enableClickSelection: true },
+                // headerCheckbox is unsupported under the viewport row model (warns #129); the header
+                // checkbox is irrelevant to this shift-click range-selection test, so disable it.
+                rowSelection: { mode: 'multiRow', enableClickSelection: true, headerCheckbox: false },
             });
             await asyncSetTimeout(0);
 

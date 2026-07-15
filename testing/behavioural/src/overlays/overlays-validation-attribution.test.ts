@@ -20,12 +20,21 @@ describe('dev validation diagnostic attribution', () => {
     const columnDefs = [{ field: 'athlete' }];
     const rowData = [{ athlete: 'Michael Phelps' }];
 
+    // Each test deliberately triggers a dev-validation diagnostic; emission is asserted via the
+    // overlay's captured diagnostics (`capturedIds`), so the duplicate console output is suppressed.
+    let warnSpy: ReturnType<typeof vi.spyOn>;
+    let errorSpy: ReturnType<typeof vi.spyOn>;
+
     beforeEach(() => {
         gridsManager.reset();
+        warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     });
 
     afterEach(() => {
         gridsManager.reset();
+        warnSpy.mockRestore();
+        errorSpy.mockRestore();
     });
 
     const beansOf = (api: GridApi): any => (api.getAllGridColumns()?.[0] as any)?.beans;

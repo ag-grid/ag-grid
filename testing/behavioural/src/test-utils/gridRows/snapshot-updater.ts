@@ -1,11 +1,7 @@
 /**
- * GridRows inline snapshot updater.
- *
- * When `UPDATE_GRID_ROWS_SNAPSHOTS` is set (via env var or `./behave.sh --update-grid-rows`),
- * this module records diagram mismatches during test execution and rewrites the source
- * files after each test suite completes.
- *
- * Uses TypeScript's parser for precise AST-based template literal replacement.
+ * GridRows inline snapshot updater. When update mode is active (`./behave.sh --update-grid-rows`),
+ * records diagram mismatches during tests and rewrites the source files after each suite, using
+ * the TypeScript parser for precise AST-based template-literal replacement.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
@@ -26,6 +22,9 @@ export interface SnapshotMismatch {
     methodName?: string;
 }
 
+/** Snapshot-assertion method names whose template-literal argument the updater rewrites. */
+const SNAPSHOT_CHECK_METHODS = new Set(['check', 'checkColumns', 'checkFilterDom']);
+
 interface Replacement {
     start: number;
     end: number;
@@ -35,20 +34,15 @@ interface Replacement {
     indentFixed: boolean;
 }
 
-/** Returns the update mode if active, or undefined if not. */
 export function getSnapshotUpdateMode(): 'update' | 'dry' | undefined {
     return (globalThis as any).__gridRowsSnapshotUpdateMode as 'update' | 'dry' | undefined;
 }
 
-/** Returns the mutable updates array if snapshot update mode is active. */
 function getUpdatesArray(): SnapshotMismatch[] | undefined {
     return (globalThis as any).__gridRowsSnapshotUpdates as SnapshotMismatch[] | undefined;
 }
 
-/**
- * Records a snapshot mismatch for later rewriting.
- * Called from GridRows.check() when update mode is active.
- */
+/** Records a snapshot mismatch for later rewriting; called from the check methods in update mode. */
 export function recordSnapshotMismatch(
     callerFn: (...args: any[]) => any,
     actualDiagram: string,
@@ -76,9 +70,9 @@ export function recordSnapshotMismatch(
     });
 }
 
-/** Directory path prefix used to filter out internal frames from stack traces.
- * Matches both `test-utils/gridRows/` and `test-utils/gridColumns/`. */
-const GRID_TEST_UTILS_DIR = path.join('test-utils', 'grid');
+/** Path fragments used to filter out internal snapshot-helper frames from stack traces.
+ * Matches `test-utils/gridRows/`, `test-utils/gridColumns/`, and `test-utils/filters/filterDom`. */
+const INTERNAL_FRAME_FRAGMENTS = [path.join('test-utils', 'grid'), path.join('test-utils', 'filters', 'filterDom')];
 
 function captureCallSite(callerFn: (...args: any[]) => any): { file: string; line: number; column: number } | null {
     const err: { stack?: string } = {};
@@ -98,12 +92,11 @@ function captureCallSite(callerFn: (...args: any[]) => any): { file: string; lin
                 try {
                     file = fileURLToPath(file);
                 } catch {
-                    // If conversion fails, try stripping the prefix manually
                     file = file.slice(7);
                 }
             }
-            // Skip frames from node_modules or the grid test utilities directories
-            if (file.includes('node_modules') || file.includes(GRID_TEST_UTILS_DIR)) {
+            // Skip frames from node_modules or the internal snapshot-helper directories
+            if (file.includes('node_modules') || INTERNAL_FRAME_FRAGMENTS.some((frag) => file.includes(frag))) {
                 continue;
             }
             return { file, line: parseInt(match[2], 10), column: parseInt(match[3], 10) };
@@ -122,10 +115,7 @@ function logWarning(message: string): void {
 
 // ─── Main entry point ────────────────────────────────────────────────────────
 
-/**
- * Processes all recorded snapshot mismatches for the current test suite.
- * Called from afterAll in vitest.setup.ts.
- */
+/** Processes all recorded mismatches for the current suite; called from afterAll in vitest.setup.ts. */
 export async function processSnapshotUpdates(currentTestFile?: string): Promise<void> {
     const updates = getUpdatesArray();
     const mode = getSnapshotUpdateMode()!;
@@ -139,7 +129,6 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
 
     const ts = await import('typescript');
 
-    // Group mismatches by file
     const byFile = new Map<string, SnapshotMismatch[]>();
     for (const m of mismatches) {
         let arr = byFile.get(m.file);
@@ -257,7 +246,6 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
         }
     }
 
-    // Summary
     if (totalUpdated > 0 || totalSkipped > 0 || totalIndentFixed > 0) {
         const fileCount = mode === 'dry' ? byFile.size : updatedFiles.size;
         if (mode === 'dry') {
@@ -276,11 +264,8 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
 
 // ─── AST-based replacement finder ────────────────────────────────────────────
 
-/** Information about a .check() or .checkColumns() call found in the AST. */
-/** Walks the receiver chain of a `.check()` / `.checkColumns()` call and extracts the second
- *  argument of the underlying `new GridRows(api, LABEL, ...)` / `new GridColumns(api, LABEL, ...)`
- *  constructor when it's a statically-resolvable string/template literal. Returns undefined when
- *  the label is built dynamically (variable interpolation, computed expression, etc.). */
+/** Walks the receiver chain of a check call to the underlying `new GridRows/GridColumns(api, LABEL)`
+ *  and returns LABEL when it's a static string/template literal, else undefined (dynamic label). */
 function extractGridInstanceLabel(ts: Typescript, expr: any): string | undefined {
     let cursor: any = expr;
     while (cursor && ts.isParenthesizedExpression(cursor)) {
@@ -341,16 +326,15 @@ function findReplacements(
     }
     collectVarDeclarations(sourceFile);
 
-    // Collect all .check() and .checkColumns() calls from the AST
     const checkCalls: CheckCallInfo[] = [];
 
     function visit(node: any): void {
         if (ts.isCallExpression(node)) {
             const expr = node.expression;
-            // Match .check(...) or .checkColumns(...) — PropertyAccessExpression
+            // Match .check(...) / .checkColumns(...) / .checkFilterDom(...) — PropertyAccessExpression
             if (
                 ts.isPropertyAccessExpression(expr) &&
-                (expr.name.text === 'check' || expr.name.text === 'checkColumns') &&
+                SNAPSHOT_CHECK_METHODS.has(expr.name.text) &&
                 node.arguments.length >= 1
             ) {
                 const callLine = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1; // 1-based
@@ -362,11 +346,9 @@ function findReplacements(
     }
     visit(sourceFile);
 
-    // Pre-pass: collapse mismatches that share the same `(line, methodName)` tuple. When a
-    // `test.each` / `describe.each` block runs multiple iterations, each one records a mismatch at
-    // the same source line but with different `actualDiagram` content. Keeping only one of those
-    // would silently freeze the snapshot to whichever iteration ran first; instead we drop ALL of
-    // them so the conflict is surfaced (the user must expand `.each` or use `'skip-snapshot'`).
+    // Pre-pass: collapse mismatches sharing the same `(line, methodName)`. A `.each` block records
+    // several at one line with differing content; keeping one would silently freeze the snapshot to
+    // the first iteration, so drop ALL to surface the conflict (expand `.each` or use 'skip-snapshot').
     const byLine = new Map<string, SnapshotMismatch[]>();
     for (const m of mismatches) {
         const key = `${m.line}|${m.methodName ?? ''}`;
@@ -486,7 +468,7 @@ function findIndentationFixes(ts: Typescript, source: string, file: string): Rep
             const expr = node.expression;
             if (
                 ts.isPropertyAccessExpression(expr) &&
-                (expr.name.text === 'check' || expr.name.text === 'checkColumns') &&
+                SNAPSHOT_CHECK_METHODS.has(expr.name.text) &&
                 node.arguments.length >= 1
             ) {
                 const arg = node.arguments[0];
@@ -626,16 +608,9 @@ function resolveTemplateLiteral(
 }
 
 /**
- * Builds the replacement text for a .check() argument.
- * Indentation is always derived from the line containing `start` — content gets +4 spaces,
- * the closing backtick sits at the line's base indent. This also corrects any pre-existing
- * wrong indentation in the original template.
- *
- * @param source Full source file content
- * @param start Start position of the argument (opening quote/backtick)
- * @param end End position of the argument (after closing quote/backtick)
- * @param actualDiagram The new diagram content from makeDiagram(false)
- * @returns `{ text, indentFixed }` — indentFixed is true when the original indentation was wrong
+ * Builds the replacement text for a check() argument. Indentation is derived from the line at
+ * `start` (content +4 spaces, closing backtick at base indent), also correcting any pre-existing
+ * wrong indent. `indentFixed` in the result is true when the original indentation was wrong.
  */
 function buildReplacementText(
     source: string,
@@ -669,15 +644,8 @@ function buildReplacementText(
     }
     const indentFixed = originalLines.length > 1 && existingContentIndent !== contentIndent;
 
-    // Build the new diagram with correct indentation. Escape every character that a template
-    // literal interprets so the file bytes round-trip back to the same runtime string:
-    //   - `\` → `\\`  (escape backslash itself FIRST — otherwise the next two passes
-    //                  would add backslashes that get re-interpreted)
-    //   - `` ` `` → `` \` ``  (close-template character)
-    //   - `${` → `\${`         (interpolation prefix)
-    // The diagram generator (`optionalEscapeString`) avoids emitting raw `\` in the common case
-    // by picking single-quote vs double-quote wrapping, so the backslash branch should be a
-    // safety-net rather than a hot path.
+    // Escape the template-literal metacharacters so the file bytes round-trip to the same runtime
+    // string. Backslash MUST come first, else the next two passes' added backslashes get re-escaped.
     const escapeForTemplate = (s: string): string =>
         s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
     const diagramLines = unindentText(actualDiagram).split('\n');
