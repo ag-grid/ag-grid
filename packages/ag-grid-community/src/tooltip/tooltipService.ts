@@ -219,8 +219,12 @@ const resolveCellTooltip = ({
             // The aggregated value unformatted and before any showValuesAs transform, so it stays consistent
             // with a leaf-row tooltipField, which shows the underlying data value rather than the cell text.
             return {
-                value: beans.valueSvc.getValueForDisplay({ column, node: rowNode, from: 'edit', transformValues: false })
-                    .value,
+                value: beans.valueSvc.getValueForDisplay({
+                    column,
+                    node: rowNode,
+                    from: 'edit',
+                    transformValues: false,
+                }).value,
                 location: 'cell',
                 shouldDisplay: shouldDisplayColumnTooltip,
             };
