@@ -1,4 +1,4 @@
-import type { ColDef, FirstDataRenderedEvent, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, FirstDataRenderedEvent, GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -25,7 +25,8 @@ const columnDefs: ColDef[] = [
     { field: 'color', width: 100 },
     {
         field: 'price',
-        valueFormatter: "'$' + value.toLocaleString()",
+        valueFormatter: ({ value }: ValueFormatterParams) =>
+            typeof value === 'number' && !Number.isNaN(value) ? `$${value.toLocaleString()}` : '',
         width: 100,
     },
     { field: 'year', width: 100 },
