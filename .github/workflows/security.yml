@@ -14,8 +14,7 @@ on:
           default: false
           required: true
     schedule:
-        - cron: '0 0 * * *' # Run daily at midnight UTC
-
+        - cron: '0 0 * * 0' # Weekly at 0
 permissions:
   contents: read
 
