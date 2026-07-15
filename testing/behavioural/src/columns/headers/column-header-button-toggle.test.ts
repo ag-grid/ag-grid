@@ -20,6 +20,8 @@ function enableOffsetParentPolyfill(): void {
     restoreOffsetParent = () => {
         if (original) {
             Object.defineProperty(HTMLElement.prototype, 'offsetParent', original);
+        } else {
+            delete (HTMLElement.prototype as { offsetParent?: unknown }).offsetParent;
         }
         restoreOffsetParent = undefined;
     };
@@ -28,7 +30,8 @@ function enableOffsetParentPolyfill(): void {
 function press(el: HTMLElement): void {
     el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
     el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-    el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    // A real mouse click reports a click count via `detail`; keyboard/programmatic clicks report 0.
+    el.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
 }
 
 describe('column header button toggles its popup closed on second click (AG-16350)', () => {
@@ -137,5 +140,35 @@ describe('column header button toggles its popup closed on second click (AG-1635
         funnelButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         await asyncSetTimeout(10);
         expect(document.querySelectorAll('.ag-popup').length).toBe(0);
+    });
+
+    test('floating filter funnel button: a cancelled mouse press does not swallow a later keyboard activation', async () => {
+        enableOffsetParentPolyfill();
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'athlete', filter: true, floatingFilter: true }],
+            rowData: [{ athlete: 'Michael Phelps' }],
+        };
+
+        const api: GridApi = await gridsManager.createGridAndWait('floating-filter-cancelled-press-grid', gridOptions);
+        const eGridDiv = TestGridsManager.getHTMLElement(api)!;
+        const funnelButton = eGridDiv.querySelector<HTMLElement>('.ag-floating-filter-button-button')!;
+        expect(funnelButton).toBeTruthy();
+
+        // Open via mouse.
+        press(funnelButton);
+        await asyncSetTimeout(10);
+        expect(document.querySelectorAll('.ag-popup').length).toBe(1);
+
+        // Press down on the button (closing the popup via the document listener) but release off it: the `click`
+        // never arrives, so the captured open-state must not linger and swallow the next activation.
+        funnelButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        await asyncSetTimeout(10);
+        expect(document.querySelectorAll('.ag-popup').length).toBe(0);
+
+        // A subsequent keyboard activation must reopen the popup, not be swallowed by the stale mousedown.
+        funnelButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await asyncSetTimeout(10);
+        expect(document.querySelectorAll('.ag-popup').length).toBe(1);
     });
 });

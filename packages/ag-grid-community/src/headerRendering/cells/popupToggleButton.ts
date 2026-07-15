@@ -1,9 +1,9 @@
-type ButtonListenerRegistrar = (mousedown: () => void, click: () => void) => void;
+type ButtonListenerRegistrar = (mousedown: () => void, click: (event: MouseEvent) => void) => void;
 
-// A trigger button whose open popup closes on the document `mousedown` that precedes the button's `click`.
-// The button's own `mousedown` fires first, so the open state captured there survives the close and lets the
-// trailing mouse click be swallowed instead of reopening. Keyboard activation produces a `click` with no
-// `mousedown` and no document-close, so that path is toggled closed explicitly here.
+// A trigger button whose open popup is closed by the document `mousedown` that precedes its `click`. Its own
+// `mousedown` runs first and records that the popup was open, so the trailing mouse click is swallowed rather than
+// reopening. Only genuine mouse clicks (`detail > 0`) are swallowed: a keyboard/programmatic click (or a stale
+// `mousedown` whose click never arrived) has no matching close to swallow, so it toggles the popup directly here.
 export function _addPopupToggleButtonListeners(
     registerListeners: ButtonListenerRegistrar,
     isShowing: () => boolean,
@@ -15,9 +15,10 @@ export function _addPopupToggleButtonListeners(
         () => {
             wasShowingOnMouseDown = isShowing();
         },
-        () => {
-            if (wasShowingOnMouseDown) {
-                wasShowingOnMouseDown = false;
+        (event) => {
+            const swallowMouseClose = wasShowingOnMouseDown && event.detail > 0;
+            wasShowingOnMouseDown = false;
+            if (swallowMouseClose) {
                 return;
             }
             if (isShowing()) {

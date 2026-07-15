@@ -23,6 +23,8 @@ function enableOffsetParentPolyfill(): void {
     restoreOffsetParent = () => {
         if (original) {
             Object.defineProperty(HTMLElement.prototype, 'offsetParent', original);
+        } else {
+            delete (HTMLElement.prototype as { offsetParent?: unknown }).offsetParent;
         }
         restoreOffsetParent = undefined;
     };
@@ -32,7 +34,8 @@ async function press(el: HTMLElement): Promise<void> {
     await act(async () => {
         el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
         el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-        el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        // A real mouse click reports a click count via `detail`; keyboard/programmatic clicks report 0.
+        el.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 }));
         await new Promise((resolve) => setTimeout(resolve, 10));
     });
 }
