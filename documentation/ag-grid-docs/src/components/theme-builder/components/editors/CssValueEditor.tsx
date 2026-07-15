@@ -1,4 +1,5 @@
 import type { ParamModel } from '@ag-website-shared/theming/ParamModel';
+import { RGBAColor } from '@ag-website-shared/theming/RGBAColor';
 import { paramValueToCss } from '@ag-website-shared/theming/api';
 import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
 import {
@@ -10,7 +11,6 @@ import {
 import { useEffect, useRef, useState } from 'react';
 
 import { Input } from './Input';
-import { RGBAColor } from './RGBAColor';
 import { type ValueEditorProps } from './ValueEditorProps';
 
 export const CssValueEditor = ({ param, value, onChange }: ValueEditorProps<unknown>) => {

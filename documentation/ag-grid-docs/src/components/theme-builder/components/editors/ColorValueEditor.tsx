@@ -1,3 +1,4 @@
+import { RGBAColor } from '@ag-website-shared/theming/RGBAColor';
 import { type ColorValue, paramValueToCss } from '@ag-website-shared/theming/api';
 import styled from '@emotion/styled';
 import { FloatingPortal, autoPlacement, autoUpdate, offset, useFloating } from '@floating-ui/react';
@@ -7,7 +8,6 @@ import { HexAlphaColorPicker, HexColorPicker } from 'react-colorful';
 import { useClickAwayListener } from '../component-utils';
 import { Card } from '../general/Card';
 import { Input } from './Input';
-import { RGBAColor } from './RGBAColor';
 import { type ValueEditorProps } from './ValueEditorProps';
 
 export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps<ColorValue>) => (
