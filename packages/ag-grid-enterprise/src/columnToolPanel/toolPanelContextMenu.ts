@@ -88,7 +88,7 @@ export class ToolPanelContextMenu extends Component {
         this.allowValues = columns.some((col) => col.primary && col.isAllowValue());
         this.allowPivoting = isPivotMode && columns.some((col) => col.isPrimary() && col.isAllowPivot());
         this.allowEditHeaderName =
-            !isProvidedColumnGroup(column) && !!this.beans.colHeaderEditSvc && !!column.colDef.editableHeaderName;
+            !isProvidedColumnGroup(column) && !!this.beans.colHeaderEditSvc && !!column.colDef.headerNameEditable;
     }
 
     private buildMenuItemMap(): void {

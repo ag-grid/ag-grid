@@ -139,7 +139,7 @@
             }
         },
         "headerName": {},
-        "editableHeaderName": {
+        "headerNameEditable": {
             "more": {
                 "name": "Editable Header Name",
                 "url": "./column-headers/#editable-header-name"

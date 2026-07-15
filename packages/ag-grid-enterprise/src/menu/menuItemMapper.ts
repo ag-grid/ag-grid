@@ -540,7 +540,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'editColumnName': {
-                    if (!colHeaderEditSvc || !column?.colDef.editableHeaderName) {
+                    if (!colHeaderEditSvc || !column?.colDef.headerNameEditable) {
                         return null;
                     }
                     return {

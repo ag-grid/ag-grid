@@ -15,9 +15,9 @@ ModuleRegistry.registerModules([
 ]);
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', editableHeaderName: true },
-    { field: 'age', editableHeaderName: true },
-    { field: 'country', editableHeaderName: true },
+    { field: 'athlete', headerNameEditable: true },
+    { field: 'age', headerNameEditable: true },
+    { field: 'country', headerNameEditable: true },
     { field: 'sport' },
     { field: 'gold' },
     { field: 'silver' },

@@ -185,7 +185,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             result.push(MENU_ITEM_SEPARATOR);
         }
 
-        if (beans.colHeaderEditSvc && colDef.editableHeaderName) {
+        if (beans.colHeaderEditSvc && colDef.headerNameEditable) {
             result.push(MENU_ITEM_SEPARATOR);
             result.push('editColumnName');
             result.push(MENU_ITEM_SEPARATOR);

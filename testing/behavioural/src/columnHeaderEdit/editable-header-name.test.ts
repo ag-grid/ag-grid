@@ -111,7 +111,7 @@ describe('Editable header name', () => {
     }
 
     test('opening the editor dispatches no colDefChanged event', async () => {
-        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', editableHeaderName: true }]);
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const column = api.getColumn('athlete') as unknown as AgColumn;
         const events = captureColDefChanged(column);
 
@@ -129,7 +129,7 @@ describe('Editable header name', () => {
         const { gridDiv, toolPanel } = await createGrid([
             {
                 field: 'athlete',
-                editableHeaderName: true,
+                headerNameEditable: true,
                 headerValueGetter: (p) => {
                     locations.push(p.location);
                     return p.headerNameOverride ?? 'Athlete (custom)';
@@ -144,7 +144,7 @@ describe('Editable header name', () => {
     });
 
     test('committing an unchanged name dispatches no colDefChanged event', async () => {
-        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', editableHeaderName: true }]);
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const column = api.getColumn('athlete') as unknown as AgColumn;
         const events = captureColDefChanged(column);
 
@@ -157,7 +157,7 @@ describe('Editable header name', () => {
     });
 
     test('committing a changed name dispatches colDefChanged once and updates the display name', async () => {
-        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', editableHeaderName: true }]);
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const column = api.getColumn('athlete') as unknown as AgColumn;
         const events = captureColDefChanged(column);
 
@@ -172,7 +172,7 @@ describe('Editable header name', () => {
     });
 
     test('closing the editor via the close button cancels the edit', async () => {
-        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', editableHeaderName: true }]);
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const column = api.getColumn('athlete') as unknown as AgColumn;
         const events = captureColDefChanged(column);
 
@@ -192,7 +192,7 @@ describe('Editable header name', () => {
     });
 
     test('a colDef change while the editor is open refreshes the input', async () => {
-        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', editableHeaderName: true }]);
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
         const input = await openEditor(toolPanel, gridDiv, 'Athlete');
         expect(input.value).toBe('Athlete');
 

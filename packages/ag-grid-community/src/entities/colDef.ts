@@ -600,7 +600,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default false
      * @agModule `ColumnHeaderEditModule`
      */
-    editableHeaderName?: boolean;
+    headerNameEditable?: boolean;
 
     /**
      * Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.

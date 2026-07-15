@@ -8,7 +8,7 @@ import { ColumnHeaderEditService } from './columnHeaderEditService';
 
 /**
  * @feature Columns -> Editable Header Name
- * @colDef editableHeaderName
+ * @colDef headerNameEditable
  */
 export const ColumnHeaderEditModule: _Module = {
     moduleName: 'ColumnHeaderEdit',
