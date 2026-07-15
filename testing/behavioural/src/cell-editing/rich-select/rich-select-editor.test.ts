@@ -51,7 +51,6 @@ async function commitByClick(popup: HTMLElement, label: string): Promise<void> {
     const rowHeight = target.getBoundingClientRect().height || 20;
     const clientY = rowHeight * index + rowHeight / 2;
     fireEvent(target, new MouseEvent('click', { bubbles: true, clientY }));
-    await userEvent.click(target);
     await asyncSetTimeout(1);
 }
 
@@ -151,6 +150,8 @@ describe('Rich Select cell editor', () => {
         await asyncSetTimeout(1);
 
         expect(getAllRows(api)[0].data.a).toBe('Alpha');
+        expect(gridDiv.querySelector('.ag-rich-select-list')).toBeNull();
+        expect(gridDiv.querySelector('.ag-popup')).toBeNull();
     });
 
     // 3. allowTyping: true filters via the typed text using formatValue.
@@ -361,12 +362,16 @@ describe('Rich Select cell editor', () => {
         await openEditor(api, gridDiv, 0, 'a');
         expect(gridDiv.querySelector('.ag-rich-select-list')).not.toBeNull();
 
-        // Focus leaving the picker to an outside element collapses it.
-        const wrapper = gridDiv.querySelector<HTMLElement>('.ag-picker-field-wrapper')!;
-        fireEvent.focusOut(wrapper, { relatedTarget: document.body });
-        await asyncSetTimeout(1);
-
-        await waitFor(() => expect(gridDiv.querySelector('.ag-rich-select-list')).toBeNull());
+        // A real click on an element outside the picker collapses it.
+        const outside = document.createElement('button');
+        document.body.appendChild(outside);
+        try {
+            await userEvent.click(outside);
+            await asyncSetTimeout(1);
+            await waitFor(() => expect(gridDiv.querySelector('.ag-rich-select-list')).toBeNull());
+        } finally {
+            outside.remove();
+        }
     });
 
     // 12. Empty/null initial value opens with no highlight; committing from empty works.
