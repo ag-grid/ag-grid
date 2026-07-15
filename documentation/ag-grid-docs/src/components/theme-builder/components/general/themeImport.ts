@@ -1,8 +1,8 @@
+import { parseThemeCode, validateAndConvertToPreset } from '@ag-website-shared/theming/parseThemeCode';
+import type { Store } from '@ag-website-shared/theming/store';
 import type { RefObject } from 'react';
 import { useEffect, useRef } from 'react';
 
-import { parseThemeCode, validateAndConvertToPreset } from '../../model/parseThemeCode';
-import type { Store } from '../../model/store';
 import { type Preset, applyPreset } from '../presets/presets';
 
 export type ValidationResult =
@@ -21,8 +21,8 @@ export function validateThemeCode(code: string): ValidationResult {
         return { status: 'error', validParamCount: 0, error: parseResult.error };
     }
 
-    const { preset, warnings } = validateAndConvertToPreset(parseResult);
-    const validParamCount = Object.keys(preset.params || {}).length + (preset.parts?.length || 0);
+    const { preset: parsedPreset, warnings } = validateAndConvertToPreset(parseResult);
+    const validParamCount = Object.keys(parsedPreset.params || {}).length + (parsedPreset.parts?.length || 0);
 
     if (validParamCount === 0) {
         return {
@@ -34,6 +34,11 @@ export function validateThemeCode(code: string): ValidationResult {
                     : 'Could not find any theme parameters. Expected code like: themeQuartz.withParams({ backgroundColor: "#fff" })',
         };
     }
+
+    // validateAndConvertToPreset only validates each param value against the
+    // theming engine, so its params bag is a plain Record rather than grid's
+    // stricter Partial<ThemeParams> - safe to widen here.
+    const preset = parsedPreset as Preset;
 
     if (warnings.length === 0) {
         return { status: 'success', validParamCount, preset };

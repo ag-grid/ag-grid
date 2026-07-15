@@ -1,7 +1,7 @@
+import { atomWithJSONStorage } from '@ag-website-shared/theming/JSONStorage';
 import { useAtom, useAtomValue } from 'jotai';
 import { useMemo, useRef } from 'react';
 
-import { atomWithJSONStorage } from '../../model/JSONStorage';
 import { type GridConfig, buildGridOptions, defaultConfigFields } from './grid-options';
 
 const gridConfigAtom = atomWithJSONStorage<GridConfig>(

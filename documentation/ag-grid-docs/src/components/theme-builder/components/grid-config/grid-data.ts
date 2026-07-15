@@ -1,4 +1,4 @@
-import { memoize } from '@components/theme-builder/model/utils';
+import { memoize } from '@ag-website-shared/theming/utils';
 
 const sports = [
     '🏀 Basketball',

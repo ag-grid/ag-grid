@@ -1,4 +1,4 @@
-import { stripFloatingPointErrors } from '@components/theme-builder/model/utils';
+import { stripFloatingPointErrors } from '@ag-website-shared/theming/utils';
 import styled from '@emotion/styled';
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';

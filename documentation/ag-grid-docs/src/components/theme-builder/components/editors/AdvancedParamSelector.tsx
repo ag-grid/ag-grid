@@ -1,5 +1,5 @@
-import { allParamModels } from '@components/theme-builder/model/ParamModel';
-import { useAdvancedParamIsEnabled, useSetAdvancedParamEnabled } from '@components/theme-builder/model/advanced-params';
+import { allParamModels } from '@ag-website-shared/theming/ParamModel';
+import { useAdvancedParamIsEnabled, useSetAdvancedParamEnabled } from '@ag-website-shared/theming/advanced-params';
 import styled from '@emotion/styled';
 import { FloatingPortal, autoUpdate, offset, shift, useFloating } from '@floating-ui/react';
 import { useCombobox } from 'downshift';

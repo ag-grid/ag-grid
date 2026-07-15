@@ -1,5 +1,5 @@
 import { Select } from '@ag-website-shared/components/select/Select';
-import { type ColorSchemeValue } from '@components/theme-builder/api';
+import { type ColorSchemeValue } from '@ag-website-shared/theming/api';
 
 import type { ValueEditorProps } from './ValueEditorProps';
 

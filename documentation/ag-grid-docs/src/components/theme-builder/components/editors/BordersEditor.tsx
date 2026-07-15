@@ -1,12 +1,11 @@
+import { getThemeDefaultParams } from '@ag-website-shared/theming/utils';
+import { paramValueToCss } from '@ag-website-shared/theming/api';
+import { ParamModel, useParamAtom } from '@ag-website-shared/theming/ParamModel';
+import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
+import type { ThemeParam } from '@ag-website-shared/theming/utils';
 import { Checkmark, ChevronDown } from '@carbon/icons-react';
-import { paramValueToCss } from '@components/theme-builder/api';
-import { ParamModel, useParamAtom } from '@components/theme-builder/model/ParamModel';
-import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme';
-import type { ThemeParam } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
-
-import { getThemeDefaultParams } from '../component-utils';
 import { withErrorBoundary } from '../general/ErrorBoundary';
 import { FormField } from './FormField';
 import { SharedContent, SharedIndicator, SharedItem, SharedTrigger } from './dropdown-shared';

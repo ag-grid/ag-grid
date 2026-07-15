@@ -1,4 +1,4 @@
-import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
+import { useApplicationConfigAtom } from '@ag-website-shared/theming/application-config';
 import styled from '@emotion/styled';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDown } from 'lucide-react';

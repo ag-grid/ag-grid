@@ -1,7 +1,7 @@
+import { titleCase } from '@ag-website-shared/theming/utils';
 import { WarningAltFilled } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 
-import { titleCase } from '../../model/utils';
 import { Checkbox } from '../general/Checkbox';
 import { Tooltip } from '../general/Tooltip';
 import { UIPopupButton } from '../general/UIPopupButton';

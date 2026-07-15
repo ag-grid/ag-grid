@@ -1,5 +1,5 @@
 import { Select } from '@ag-website-shared/components/select/Select';
-import { type FontFamilyValue, paramValueToCss } from '@components/theme-builder/api';
+import { type FontFamilyValue, paramValueToCss } from '@ag-website-shared/theming/api';
 import styled from '@emotion/styled';
 
 import type { ValueEditorProps } from './ValueEditorProps';

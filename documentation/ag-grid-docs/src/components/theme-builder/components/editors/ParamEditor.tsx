@@ -1,11 +1,10 @@
-import { type ColorValue, type ParamType } from '@components/theme-builder/api';
-import { useSetAdvancedParamEnabled } from '@components/theme-builder/model/advanced-params';
-import { type ThemeParam, clamp } from '@components/theme-builder/model/utils';
+import { type ColorValue, type ParamType } from '@ag-website-shared/theming/api';
+import { ParamModel, useParamAtom } from '@ag-website-shared/theming/ParamModel';
+import { useSetAdvancedParamEnabled } from '@ag-website-shared/theming/advanced-params';
+import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
+import { type ThemeParam, clamp, getThemeDefaultParams } from '@ag-website-shared/theming/utils';
 import type { FC, ReactNode } from 'react';
 
-import { ParamModel, useParamAtom } from '../../model/ParamModel';
-import { useRenderedTheme } from '../../model/rendered-theme';
-import { getThemeDefaultParams } from '../component-utils';
 import { withErrorBoundary } from '../general/ErrorBoundary';
 import { BorderStyleValueEditor } from './BorderStyleValueEditor';
 import { BorderValueEditor } from './BorderValueEditor';

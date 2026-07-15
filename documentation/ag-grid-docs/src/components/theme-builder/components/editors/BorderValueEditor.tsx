@@ -1,4 +1,4 @@
-import { type BorderValue } from '@components/theme-builder/api';
+import { type BorderValue } from '@ag-website-shared/theming/api';
 
 import { Checkbox } from '../general/Checkbox';
 import type { ValueEditorProps } from './ValueEditorProps';

@@ -1,6 +1,7 @@
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import Code from '@ag-website-shared/components/code/Code';
 import { Tabs } from '@ag-website-shared/components/tabs/Tabs';
+import { type RenderedThemeInfo, useRenderedThemeInfo } from '@ag-website-shared/theming/rendered-theme';
 import { Checkmark, Copy, Upload } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
@@ -8,7 +9,6 @@ import { useStore } from 'jotai';
 import type { ChangeEvent, KeyboardEvent, RefObject } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { type RenderedThemeInfo, useRenderedThemeInfo } from '../../model/rendered-theme';
 import {
     type ValidationResult,
     applyValidatedTheme,

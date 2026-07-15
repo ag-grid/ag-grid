@@ -1,4 +1,4 @@
-import { stripFloatingPointErrors } from '@components/theme-builder/model/utils';
+import { stripFloatingPointErrors } from '@ag-website-shared/theming/utils';
 
 import type { ScaleValue } from 'ag-grid-community';
 

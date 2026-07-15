@@ -1,6 +1,6 @@
+import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
 import styled from '@emotion/styled';
 
-import { useRenderedTheme } from '../../model/rendered-theme';
 import { EditorPanel } from '../editors/EditorPanel';
 import { PresetSelector } from '../presets/PresetSelector';
 import { GetThemeButton } from './GetTheme';

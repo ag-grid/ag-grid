@@ -1,10 +1,14 @@
-import { paramValueToCss } from '@components/theme-builder/api';
-import type { ParamModel } from '@components/theme-builder/model/ParamModel';
-import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme';
-import { type ThemeImpl, cssValueIsValid, reinterpretCSSValue } from '@components/theme-builder/model/utils';
+import { paramValueToCss } from '@ag-website-shared/theming/api';
+import type { ParamModel } from '@ag-website-shared/theming/ParamModel';
+import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
+import {
+    type ThemeImpl,
+    cssValueIsValid,
+    getThemeDefaultParams,
+    reinterpretCSSValue,
+} from '@ag-website-shared/theming/utils';
 import { useEffect, useRef, useState } from 'react';
 
-import { getThemeDefaultParams } from '../component-utils';
 import { Input } from './Input';
 import { RGBAColor } from './RGBAColor';
 import { type ValueEditorProps } from './ValueEditorProps';

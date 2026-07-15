@@ -1,6 +1,6 @@
+import { useApplicationConfigAtom } from '@ag-website-shared/theming/application-config';
+import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
 import { ShadowDom } from '@components/ShadowDom';
-import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
-import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme';
 import styled from '@emotion/styled';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { memo, useRef, useState } from 'react';

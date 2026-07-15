@@ -1,6 +1,5 @@
+import type { ParamModel } from '@ag-website-shared/theming/ParamModel';
 import type { ReactNode } from 'react';
-
-import type { ParamModel } from '../../model/ParamModel';
 
 export type ValueEditorProps<T> = {
     param: ParamModel<T>;

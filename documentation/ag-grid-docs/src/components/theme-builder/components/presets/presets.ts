@@ -1,13 +1,12 @@
-import { allParamModels } from '@components/theme-builder/model/ParamModel';
-import { allFeatureModels } from '@components/theme-builder/model/PartModel';
-import { enabledAdvancedParamsAtom } from '@components/theme-builder/model/advanced-params';
-import { getApplicationConfigAtom } from '@components/theme-builder/model/application-config';
-import { resetChangedModelItems } from '@components/theme-builder/model/changed-model-items';
-import type { ThemeParams } from '@components/theme-builder/model/utils';
+import { allParamModels } from '@ag-website-shared/theming/ParamModel';
+import { allFeatureModels } from '@ag-website-shared/theming/PartModel';
+import { enabledAdvancedParamsAtom } from '@ag-website-shared/theming/advanced-params';
+import { getApplicationConfigAtom } from '@ag-website-shared/theming/application-config';
+import { resetChangedModelItems } from '@ag-website-shared/theming/changed-model-items';
+import type { Store } from '@ag-website-shared/theming/store';
+import type { ThemeParams } from '@ag-website-shared/theming/utils';
 
 import { type Part, iconSetAlpine, iconSetQuartzLight } from 'ag-grid-community';
-
-import type { Store } from '../../model/store';
 
 export type Preset = {
     pageBackgroundColor: string;

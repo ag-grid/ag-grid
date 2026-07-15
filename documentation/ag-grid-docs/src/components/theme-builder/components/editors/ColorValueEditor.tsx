@@ -1,4 +1,4 @@
-import { type ColorValue, paramValueToCss } from '@components/theme-builder/api';
+import { type ColorValue, paramValueToCss } from '@ag-website-shared/theming/api';
 import styled from '@emotion/styled';
 import { FloatingPortal, autoPlacement, autoUpdate, offset, useFloating } from '@floating-ui/react';
 import { useEffect, useRef, useState } from 'react';

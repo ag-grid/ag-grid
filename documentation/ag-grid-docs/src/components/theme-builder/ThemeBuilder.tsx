@@ -1,13 +1,14 @@
+import { allParamModels } from '@ag-website-shared/theming/ParamModel';
+import { allFeatureModels } from '@ag-website-shared/theming/PartModel';
+import { addChangedModelItem, getChangedModelItemCount } from '@ag-website-shared/theming/changed-model-items';
+import { initialiseStore } from '@ag-website-shared/theming/store';
 import { Provider } from 'jotai';
 import { useLayoutEffect, useMemo, useState } from 'react';
 
 import { LoadFontFamilyMenuFonts } from './components/editors/FontFamilyValueEditor';
 import { RootContainer } from './components/general/RootContainer';
 import { applyPreset, darkModePreset, lightModePreset } from './components/presets/presets';
-import { allParamModels } from './model/ParamModel';
-import { allFeatureModels } from './model/PartModel';
-import { addChangedModelItem, getChangedModelItemCount } from './model/changed-model-items';
-import { initialiseStore } from './model/store';
+import './model/registerParamDocs';
 
 export const ThemeBuilder = () => {
     const store = useMemo(() => initialiseStore(), []);

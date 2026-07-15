@@ -1,5 +1,5 @@
-import { type LengthValue, paramValueToCss } from '@components/theme-builder/api';
-import { reinterpretCSSValue, stripFloatingPointErrors } from '@components/theme-builder/model/utils';
+import { type LengthValue, paramValueToCss } from '@ag-website-shared/theming/api';
+import { reinterpretCSSValue, stripFloatingPointErrors } from '@ag-website-shared/theming/utils';
 
 import { FormattedInput } from './FormattedInput';
 import { type ValueEditorProps } from './ValueEditorProps';

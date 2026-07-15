@@ -1,7 +1,7 @@
 import { Select } from '@ag-website-shared/components/select/Select';
+import type { PartModel } from '@ag-website-shared/theming/PartModel';
+import { FeatureModel, useSelectedPart } from '@ag-website-shared/theming/PartModel';
 
-import type { PartModel } from '../../model/PartModel';
-import { FeatureModel, useSelectedPart } from '../../model/PartModel';
 import { withErrorBoundary } from '../general/ErrorBoundary';
 import { FormField } from './FormField';
 
