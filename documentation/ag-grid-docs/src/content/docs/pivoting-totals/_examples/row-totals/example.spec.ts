@@ -11,14 +11,21 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerGroupCell('PivotRowTotal__pivotGroup_silver_0')).toBeVisible();
         await expect(agIdFor.headerGroupCell('PivotRowTotal__pivotGroup_bronze_0')).toBeVisible();
 
-        // Verify the total columns come *before* the year pivot columns ('before' positioning).
-        const order = await page.evaluate(() =>
-            Array.from(document.querySelectorAll('.ag-header-cell[col-id]')).map((e) => e.getAttribute('col-id'))
-        );
-        const totalGoldIdx = order.indexOf('PivotRowTotal_pivot_year__gold');
-        const firstYearIdx = order.findIndex((id) => id?.startsWith('pivot_year_'));
-        expect(totalGoldIdx).toBeGreaterThanOrEqual(0);
-        expect(firstYearIdx).toBeGreaterThan(totalGoldIdx);
+        // Verify the total columns render visually *before* (to the LEFT of) the year pivot columns.
+        // Header cells are absolutely positioned, so compare their `left` offsets rather than DOM order.
+        const positions = await page.evaluate(() => {
+            const totalGoldEl = document.querySelector('.ag-header-cell[col-id="PivotRowTotal_pivot_year__gold"]');
+            const yearLefts = Array.from(document.querySelectorAll('.ag-header-cell[col-id^="pivot_year_"]')).map(
+                (e) => e.getBoundingClientRect().left
+            );
+            return {
+                totalGold: totalGoldEl ? totalGoldEl.getBoundingClientRect().left : null,
+                firstYear: yearLefts.length ? Math.min(...yearLefts) : null,
+            };
+        });
+        expect(positions.totalGold).not.toBeNull();
+        expect(positions.firstYear).not.toBeNull();
+        expect(positions.totalGold!).toBeLessThan(positions.firstYear!);
     });
 
     test.eachFramework('Row total columns show the aggregated total across all years', async ({ agIdFor, page }) => {
