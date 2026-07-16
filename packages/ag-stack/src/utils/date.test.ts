@@ -93,6 +93,19 @@ describe('_parseDateTimeFromString', () => {
         }
     );
 
+    it('parses the leap day of a leap year before 100AD (year 0 is a leap year)', () => {
+        const result = _parseDateTimeFromString('0000-02-29');
+
+        expect(result).not.toBeNull();
+        expect(result!.getFullYear()).toBe(0);
+        expect(result!.getMonth()).toBe(1);
+        expect(result!.getDate()).toBe(29);
+    });
+
+    it('returns null for a February 29th in a non-leap year before 100AD', () => {
+        expect(_parseDateTimeFromString('0001-02-29')).toBeNull();
+    });
+
     it('round-trips a year before 100AD through serialise and parse', () => {
         const date = new Date(2000, 0, 1);
         date.setFullYear(87);

@@ -200,8 +200,8 @@ export function _parseDateTimeFromString(
     const date = new Date(year, month - 1, day);
 
     if (year >= 0 && year < 100) {
-        // new Date(0..99, ...) maps to 1900-1999; restore the intended early-AD year
-        date.setFullYear(year);
+        // new Date(0..99, ...) maps the year into the 1900s; re-set the whole date so early-AD leap days (e.g. year 0) survive
+        date.setFullYear(year, month - 1, day);
     }
 
     if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
