@@ -591,7 +591,7 @@ describe('Set Filter — list rendering', () => {
         expect(label).toBeTruthy();
 
         await userEvent.hover(label);
-        await asyncSetTimeout(250);
+        // The waitFor below polls up to 2s for the tooltip, so no fixed pre-delay is needed.
         await waitFor(
             () => expect(document.querySelectorAll('.ag-tooltip, .ag-tooltip-custom').length).toBeGreaterThan(0),
             { timeout: 2000 }

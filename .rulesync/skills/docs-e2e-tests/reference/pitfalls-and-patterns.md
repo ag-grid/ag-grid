@@ -6,7 +6,7 @@ Situational reference for writing `example.spec.ts` tests. Read the pitfalls rel
 
 ### Pitfall 1: Strict Mode Violations (Multiple Matching Elements)
 
-AG Grid renders rows in multiple viewport containers (pinned left, centre, pinned right, plus sticky rows). Some rows — especially **grand total rows** and **pinned rows** — can appear in multiple containers, causing the same test ID to match 2+ elements.
+Since the single-container DOM refactor, all of a row's cells (including pinned columns) render inside one `.ag-row` element in the `.ag-grid-scrolling-container` — there are **no** separate pinned-left/centre/pinned-right row fragments. However, rows are still split across *vertical* containers (the main scrolling container plus `stickyTop`/`stickyBottom`, `pinnedTop`/`pinnedBottom`). Some rows — especially **grand total rows** and **pinned rows** — appear in both a pinned/sticky container and the main container, so the same test ID matches 2+ elements. A row can also transiently duplicate mid-animation (e.g. during a sort that moves it a long distance) until the grid settles.
 
 **Fix:** Use `.first()` on locators for rows that may be duplicated across containers:
 
