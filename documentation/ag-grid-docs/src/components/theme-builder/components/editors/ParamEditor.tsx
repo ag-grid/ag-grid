@@ -1,3 +1,11 @@
+import { BorderStyleValueEditor } from '@ag-website-shared/components/theme-builder/BorderStyleValueEditor';
+import { BorderValueEditor } from '@ag-website-shared/components/theme-builder/BorderValueEditor';
+import { ColorSchemeValueEditor } from '@ag-website-shared/components/theme-builder/ColorSchemeValueEditor';
+import { CssValueEditor } from '@ag-website-shared/components/theme-builder/CssValueEditor';
+import { withErrorBoundary } from '@ag-website-shared/components/theme-builder/ErrorBoundary';
+import { FontWeightValueEditor } from '@ag-website-shared/components/theme-builder/FontWeightValueEditor';
+import { FormField } from '@ag-website-shared/components/theme-builder/FormField';
+import type { ValueEditorProps } from '@ag-website-shared/components/theme-builder/ValueEditorProps';
 import { ParamModel, useParamAtom } from '@ag-website-shared/theming/ParamModel';
 import { useSetAdvancedParamEnabled } from '@ag-website-shared/theming/advanced-params';
 import { type ColorValue, type ParamType } from '@ag-website-shared/theming/api';
@@ -5,19 +13,11 @@ import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
 import { type ThemeParam, clamp, getThemeDefaultParams } from '@ag-website-shared/theming/utils';
 import type { FC, ReactNode } from 'react';
 
-import { withErrorBoundary } from '../general/ErrorBoundary';
-import { BorderStyleValueEditor } from './BorderStyleValueEditor';
-import { BorderValueEditor } from './BorderValueEditor';
-import { ColorSchemeValueEditor } from './ColorSchemeValueEditor';
 import { ColorValueEditor } from './ColorValueEditor';
-import { CssValueEditor } from './CssValueEditor';
 import { FontFamilyValueEditor } from './FontFamilyValueEditor';
-import { FontWeightValueEditor } from './FontWeightValueEditor';
-import { FormField } from './FormField';
 import { ImageValueEditor } from './ImageValueEditor';
 import { LengthValueEditor } from './LengthValueEditor';
 import { ScaleValueEditor } from './ScaleValueEditor';
-import type { ValueEditorProps } from './ValueEditorProps';
 
 export type ParamEditorProps = {
     param: ThemeParam | ParamModel<unknown>;

@@ -1,6 +1,6 @@
 import { Select } from '@ag-website-shared/components/select/Select';
-import { type BorderStyleValue } from '@ag-website-shared/theming/api';
 
+import { type BorderStyleValue } from '../../theming/api';
 import type { ValueEditorProps } from './ValueEditorProps';
 
 export const BorderStyleValueEditor = ({ value, onChange }: ValueEditorProps<BorderStyleValue>) => {

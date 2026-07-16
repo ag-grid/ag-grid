@@ -1,9 +1,9 @@
+import { Checkbox } from '@ag-website-shared/components/theme-builder/Checkbox';
+import { Tooltip } from '@ag-website-shared/components/theme-builder/Tooltip';
 import { titleCase } from '@ag-website-shared/theming/utils';
 import { WarningAltFilled } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 
-import { Checkbox } from '../general/Checkbox';
-import { Tooltip } from '../general/Tooltip';
 import { UIPopupButton } from '../general/UIPopupButton';
 import { useGridConfigAtom } from './grid-config-atom';
 import { allConfigFields, incompatibleGridConfigProperties, productionConfigFields } from './grid-options';

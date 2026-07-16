@@ -1,12 +1,16 @@
 import { CollapsibleSection } from '@ag-website-shared/components/theme-builder/CollapsibleSection';
+import { PartEditor } from '@ag-website-shared/components/theme-builder/PartEditor';
+import {
+    horizontalSpacingIcon,
+    radiusIcon,
+    verticalSpacingIcon,
+} from '@ag-website-shared/components/theme-builder/icons';
 import { useApplicationConfigAtom } from '@ag-website-shared/theming/application-config';
 import styled from '@emotion/styled';
 
 import { AdvancedParamSelector } from './AdvancedParamSelector';
 import { BordersEditor } from './BordersEditor';
 import { ParamEditor } from './ParamEditor';
-import { PartEditor } from './PartEditor';
-import { horizontalSpacingIcon, radiusIcon, verticalSpacingIcon } from './icons';
 
 const DEFAULT_OPEN_SECTIONS = ['General', 'All Parameters'];
 

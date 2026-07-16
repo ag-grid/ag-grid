@@ -1,7 +1,6 @@
+import type { ValueEditorProps } from '@ag-website-shared/components/theme-builder/ValueEditorProps';
 import styled from '@emotion/styled';
 import { Info } from 'lucide-react';
-
-import { type ValueEditorProps } from './ValueEditorProps';
 
 export const ImageValueEditor = (_: ValueEditorProps<unknown>) => {
     return (

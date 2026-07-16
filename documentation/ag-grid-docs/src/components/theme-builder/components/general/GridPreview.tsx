@@ -1,4 +1,6 @@
 import { ColorPicker } from '@ag-website-shared/components/theme-builder/ColorPicker';
+import { withErrorBoundary } from '@ag-website-shared/components/theme-builder/ErrorBoundary';
+import { InfoTooltip } from '@ag-website-shared/components/theme-builder/Tooltip';
 import { useApplicationConfigAtom } from '@ag-website-shared/theming/application-config';
 import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
 import { ShadowDom } from '@components/ShadowDom';
@@ -30,8 +32,6 @@ import { LoadFontFamilyMenuFonts } from '../editors/FontFamilyValueEditor';
 import { GridConfigDropdownButton } from '../grid-config/GridConfigDropdown';
 import { useGridOptions } from '../grid-config/grid-config-atom';
 import { allPresets } from '../presets/presets';
-import { withErrorBoundary } from './ErrorBoundary';
-import { InfoTooltip } from './Tooltip';
 
 ModuleRegistry.registerModules([
     AllCommunityModule,

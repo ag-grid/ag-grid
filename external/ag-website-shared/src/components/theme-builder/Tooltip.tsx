@@ -24,7 +24,6 @@ const TooltipImpl = ({ title, children, suppressPortal }: TooltipProps) => {
             offset(8),
             shift({ padding: 8 }),
             flip({ crossAxis: true, mainAxis: true }),
-            // eslint-disable-next-line react-hooks/refs -- passing ref to floating-ui middleware
             arrow({
                 element: arrowRef,
             }),
@@ -43,7 +42,6 @@ const TooltipImpl = ({ title, children, suppressPortal }: TooltipProps) => {
 
     return (
         <>
-            {/* eslint-disable-next-line react-hooks/refs -- floating-ui pattern for ref forwarding */}
             {cloneElement(children, { ref: refs.setReference, ...getReferenceProps() })}
             {isOpen && (suppressPortal ? content : <FloatingPortal>{content}</FloatingPortal>)}
         </>

@@ -1,6 +1,6 @@
 import { Select } from '@ag-website-shared/components/select/Select';
-import { type FontWeightValue } from '@ag-website-shared/theming/api';
 
+import { type FontWeightValue } from '../../theming/api';
 import type { ValueEditorProps } from './ValueEditorProps';
 
 export const FontWeightValueEditor = ({ value, onChange }: ValueEditorProps<FontWeightValue>) => {

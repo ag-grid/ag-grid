@@ -1,15 +1,10 @@
-import type { ParamModel } from '@ag-website-shared/theming/ParamModel';
-import { RGBAColor } from '@ag-website-shared/theming/RGBAColor';
-import { paramValueToCss } from '@ag-website-shared/theming/api';
-import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
-import {
-    type ThemeImpl,
-    cssValueIsValid,
-    getThemeDefaultParams,
-    reinterpretCSSValue,
-} from '@ag-website-shared/theming/utils';
 import { useEffect, useRef, useState } from 'react';
 
+import type { ParamModel } from '../../theming/ParamModel';
+import { RGBAColor } from '../../theming/RGBAColor';
+import { paramValueToCss } from '../../theming/api';
+import { useRenderedTheme } from '../../theming/rendered-theme';
+import { type ThemeImpl, cssValueIsValid, getThemeDefaultParams, reinterpretCSSValue } from '../../theming/utils';
 import { Input } from './Input';
 import { type ValueEditorProps } from './ValueEditorProps';
 
@@ -26,7 +21,6 @@ export const CssValueEditor = ({ param, value, onChange }: ValueEditorProps<unkn
             }
         },
         // intentionally run this when `value` changes even though the function uses different dependencies
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         [value]
     );
 

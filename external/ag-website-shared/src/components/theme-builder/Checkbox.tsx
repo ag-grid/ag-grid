@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
+import classnames from 'classnames';
 import { forwardRef } from 'react';
 import type { ReactNode } from 'react';
-
-import { combineClassNames } from '../component-utils';
 
 export type CheckboxProps = {
     checked: boolean;
@@ -15,7 +14,7 @@ export type CheckboxProps = {
 
 export const Checkbox = forwardRef<HTMLLabelElement, CheckboxProps>(
     ({ checked, onChange, children, disabled, className, useSwitch }, ref) => (
-        <Container ref={ref} className={combineClassNames(className, disabled && 'is-disabled')}>
+        <Container ref={ref} className={classnames(className, { 'is-disabled': disabled })}>
             {useSwitch && <span className="text-tertiary">off</span>}
             <input
                 type="checkbox"

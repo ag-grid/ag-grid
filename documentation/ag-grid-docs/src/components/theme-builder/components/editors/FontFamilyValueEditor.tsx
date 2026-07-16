@@ -1,8 +1,7 @@
 import { Select } from '@ag-website-shared/components/select/Select';
+import type { ValueEditorProps } from '@ag-website-shared/components/theme-builder/ValueEditorProps';
 import { type FontFamilyValue, paramValueToCss } from '@ag-website-shared/theming/api';
 import styled from '@emotion/styled';
-
-import type { ValueEditorProps } from './ValueEditorProps';
 
 export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorProps<FontFamilyValue>) => {
     const options = param.property === 'fontFamily' ? topLevelOptions : subLevelOptions;

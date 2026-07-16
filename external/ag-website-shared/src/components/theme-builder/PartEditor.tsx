@@ -1,8 +1,8 @@
 import { Select } from '@ag-website-shared/components/select/Select';
-import type { PartModel } from '@ag-website-shared/theming/PartModel';
-import { FeatureModel, useSelectedPart } from '@ag-website-shared/theming/PartModel';
 
-import { withErrorBoundary } from '../general/ErrorBoundary';
+import type { PartModel } from '../../theming/PartModel';
+import { FeatureModel, useSelectedPart } from '../../theming/PartModel';
+import { withErrorBoundary } from './ErrorBoundary';
 import { FormField } from './FormField';
 
 export type VariantSelectorProps = {

@@ -1,9 +1,8 @@
 import { FormattedInput } from '@ag-website-shared/components/theme-builder/FormattedInput';
+import type { ValueEditorProps } from '@ag-website-shared/components/theme-builder/ValueEditorProps';
 import { stripFloatingPointErrors } from '@ag-website-shared/theming/utils';
 
 import type { ScaleValue } from 'ag-grid-community';
-
-import { type ValueEditorProps } from './ValueEditorProps';
 
 export const ScaleValueEditor = ({
     value,
