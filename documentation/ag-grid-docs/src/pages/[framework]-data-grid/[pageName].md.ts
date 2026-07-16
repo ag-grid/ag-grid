@@ -40,6 +40,9 @@ export async function GET({
         pageName,
         frontmatter: { title: page.data.title, description: page.data.description },
         version: agGridVersion,
+        // Per-page Markdoc variables the site injects via <Content> props, so tags like
+        // migrationVersion()/$migrationVersion resolve as they do on the HTML page.
+        variables: { migrationVersion: page.data.migrationVersion },
         markdocConfig,
         resolvers,
     });

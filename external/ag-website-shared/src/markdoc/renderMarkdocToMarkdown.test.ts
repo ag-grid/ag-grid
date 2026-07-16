@@ -201,13 +201,52 @@ describe('renderMarkdocToMarkdown', () => {
     });
 
     it('drops interactive/marketing tags without leaving blank-line gaps', async () => {
-        const body = ['Before.', '', '{% trialLicenceForm /%}', '', '{% learningVideos /%}', '', 'After.'].join('\n');
+        const body = ['Before.', '', '{% trialLicenceForm /%}', '', '{% oneTrustCookies /%}', '', 'After.'].join('\n');
         const output = await render(body);
 
         expect(output).toContain('Before.');
         expect(output).toContain('After.');
         expect(output).not.toContain('trialLicenceForm');
+        expect(output).not.toContain('oneTrustCookies');
         expect(output).not.toMatch(/\n{3,}/);
+    });
+
+    it('delegates unhandled tags to renderTag and embeds the resolved result', async () => {
+        const renderTag = vi.fn(
+            ({ tag, attributes }: { tag: string; attributes: Record<string, unknown> }) =>
+                `RENDERED:${tag}:${attributes.name ?? ''}`
+        );
+        const output = await render('{% matrixTable dataFileName="row-models" name="x" /%}', {
+            resolvers: { renderTag },
+        });
+
+        expect(renderTag).toHaveBeenCalledWith(
+            expect.objectContaining({ tag: 'matrixTable', framework: 'react', pageName: 'test-page' })
+        );
+        expect(renderTag).toHaveBeenCalledWith(
+            expect.objectContaining({ attributes: expect.objectContaining({ dataFileName: 'row-models', name: 'x' }) })
+        );
+        expect(output).toContain('RENDERED:matrixTable:x');
+    });
+
+    it('falls back to rendering children when renderTag returns null', async () => {
+        const renderTag = vi.fn(() => null);
+        const output = await render('{% customWrapper %}\nInner **content**.\n{% /customWrapper %}', {
+            resolvers: { renderTag },
+        });
+
+        expect(renderTag).toHaveBeenCalledWith(expect.objectContaining({ tag: 'customWrapper' }));
+        expect(output).toContain('Inner **content**.');
+    });
+
+    it('never offers hard-dropped tags to renderTag', async () => {
+        const renderTag = vi.fn(() => 'SHOULD_NOT_APPEAR');
+        const output = await render('Before.\n\n{% trialLicenceForm /%}\n\nAfter.', { resolvers: { renderTag } });
+
+        expect(renderTag).not.toHaveBeenCalled();
+        expect(output).not.toContain('SHOULD_NOT_APPEAR');
+        expect(output).toContain('Before.');
+        expect(output).toContain('After.');
     });
 
     it('preserves indentation for conditional content inside a list item', async () => {

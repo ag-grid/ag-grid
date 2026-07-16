@@ -1,6 +1,5 @@
 import type { Framework } from '@ag-grid-types';
 import type { MarkdownFramework, MarkdownResolvers } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
-import { isExternalLink } from '@ag-website-shared/utils/isExternalLink';
 import { getPagePath } from '@components/docs/utils/filesData';
 import { getExampleUrl } from '@components/docs/utils/urlPaths';
 import { getGeneratedContents } from '@components/example-generator';
@@ -14,6 +13,8 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import { renderApiReferenceTable } from './renderApiReferenceTable';
+import { renderMarkdocTag } from './renderMarkdocTag';
+import { toAbsoluteUrl } from './toAbsoluteUrl';
 
 // Shiki-style language per framework, matching Snippet.astro's `frameworkLanguages`.
 const FRAMEWORK_LANGUAGES: Record<MarkdownFramework, string> = {
@@ -40,19 +41,6 @@ function languageForFile(fileName: string): string {
         return 'html';
     }
     return 'ts';
-}
-
-function toAbsoluteUrl(url: string, siteRoot?: string): string {
-    if (!url || !siteRoot) {
-        return url;
-    }
-    if (url.startsWith('#') || isExternalLink(url) || /^[a-z]+:/i.test(url)) {
-        return url;
-    }
-    if (url.startsWith('/')) {
-        return siteRoot.replace(/\/$/, '') + url;
-    }
-    return url;
 }
 
 /**
@@ -105,6 +93,9 @@ export function createGridMarkdownResolvers({ siteRoot }: { siteRoot?: string } 
 
         renderApiTable: ({ attributes, framework, kind }) =>
             renderApiReferenceTable({ attributes, framework: framework as Framework, kind }),
+
+        renderTag: ({ tag, attributes, framework, pageName }) =>
+            renderMarkdocTag({ tag, attributes, framework, pageName, siteRoot }),
 
         readPartial: ({ file, pageName }) => {
             try {

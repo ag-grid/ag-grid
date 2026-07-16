@@ -46,6 +46,18 @@ export interface MarkdownResolvers {
         framework: MarkdownFramework;
         kind: 'api' | 'interface';
     }) => Promise<string> | string;
+    /**
+     * Render a product-specific tag (data tables, resource links, content lists) to
+     * markdown. Return `null` when the tag is not handled, so the serializer falls
+     * back to rendering the tag's children; return a string (possibly empty) when it
+     * is handled.
+     */
+    renderTag?: (params: {
+        tag: string;
+        attributes: Record<string, any>;
+        framework: MarkdownFramework;
+        pageName: string;
+    }) => Promise<string | null> | string | null;
     /** Read a `{% partial %}` file's raw Markdoc contents (or null if missing). */
     readPartial?: (params: { file: string; pageName: string }) => string | null;
     /** Transform a `frameworkTransform` code fence into the framework's idiomatic code. */
@@ -68,6 +80,12 @@ export interface RenderMarkdocToMarkdownOptions {
     frontmatter?: { title?: string; description?: string };
     /** Current product version, emitted in the frontmatter so it is machine-readable. */
     version?: string;
+    /**
+     * Per-page Markdoc variables the site injects at render time (e.g. `migrationVersion`
+     * from the page frontmatter). Merged over the config variables so functions like
+     * `migrationVersion()` resolve exactly as they do on the HTML page.
+     */
+    variables?: Record<string, unknown>;
     /** The product's Markdoc config, so functions/variables resolve exactly as on the site. */
     markdocConfig: MarkdocConfigLike;
     resolvers?: MarkdownResolvers;
@@ -81,36 +99,20 @@ interface RenderContext {
     resolvers: MarkdownResolvers;
 }
 
-// Tags with no meaningful Markdown representation (interactive, marketing or
-// layout-only). They are dropped; their children are not rendered.
-const DROPPED_TAGS = new Set([
-    'licenseSetup',
-    'learningVideos',
-    'trialLicenceForm',
-    'oneTrustCookies',
-    'figmaCommunityButton',
-    'seedProjectsTable',
-    'iconsPanel',
-    'iframe',
-    'featuresSection',
-    'gettingStarted',
-    'openInCTA',
-    'documentationArchiveSection',
-    'changelogSection',
-    'embedSnippet',
-    // Data-driven tables — not yet serialised (phase 2).
-    'matrixTable',
-    'moduleMappings',
-    'majorTable',
-]);
+// Tags with no meaningful Markdown representation (interactive form / cookie
+// widget / a framework picker whose page already carries the prose). They are
+// dropped outright; their children are not rendered. Every other unhandled tag is
+// offered to the product's `renderTag` resolver, and only rendered as a
+// transparent wrapper (children) if the resolver declines it.
+const DROPPED_TAGS = new Set(['licenseSetup', 'trialLicenceForm', 'oneTrustCookies', 'gettingStarted']);
 
 export async function renderMarkdocToMarkdown(opts: RenderMarkdocToMarkdownOptions): Promise<string> {
-    const { body, framework, pageName, frontmatter = {}, version, markdocConfig, resolvers = {} } = opts;
+    const { body, framework, pageName, frontmatter = {}, version, variables, markdocConfig, resolvers = {} } = opts;
 
     const ctx: RenderContext = {
         framework,
         pageName,
-        variables: { ...(markdocConfig.variables ?? {}), framework },
+        variables: { ...(markdocConfig.variables ?? {}), ...(variables ?? {}), framework },
         functions: markdocConfig.functions ?? {},
         resolvers,
     };
@@ -273,8 +275,38 @@ async function renderTagBlock(node: Node, ctx: RenderContext): Promise<string> {
         case 'enterpriseIcon':
             return renderTagInline(node, ctx);
         default:
-            return node.children ? renderBlocks(node.children, ctx) : '';
+            return renderDelegatedTag(node, ctx);
     }
+}
+
+/**
+ * A tag with no built-in handler: offer it to the product's `renderTag` resolver
+ * (data tables, resource links, content lists). If the resolver declines (returns
+ * null), fall back to the transparent-wrapper default of rendering its children.
+ */
+async function renderDelegatedTag(node: Node, ctx: RenderContext): Promise<string> {
+    if (node.tag && ctx.resolvers.renderTag) {
+        const rendered = await ctx.resolvers.renderTag({
+            tag: node.tag,
+            attributes: resolveAttributes(node.attributes ?? {}, ctx),
+            framework: ctx.framework,
+            pageName: ctx.pageName,
+        });
+        if (rendered != null) {
+            return rendered;
+        }
+    }
+    return node.children ? renderBlocks(node.children, ctx) : '';
+}
+
+/** Resolve each tag attribute (framework conditionals / variable interpolation) before handing off. */
+function resolveAttributes(attrs: Record<string, unknown>, ctx: RenderContext): Record<string, any> {
+    const out: Record<string, any> = {};
+    const keys = Object.keys(attrs);
+    for (let i = 0, len = keys.length; i < len; ++i) {
+        out[keys[i]] = resolveValue(attrs[keys[i]], ctx);
+    }
+    return out;
 }
 
 /* -------------------------------------------------------------------------- */
