@@ -4,6 +4,7 @@ import { isExternalLink } from '@ag-website-shared/utils/isExternalLink';
 import { getPagePath } from '@components/docs/utils/filesData';
 import { getExampleUrl } from '@components/docs/utils/urlPaths';
 import { getGeneratedContents } from '@components/example-generator';
+import { stripOutExampleGeneratorCode } from '@components/example-runner/components/stripOutExampleGeneratorCode';
 import * as snippetTransformer from '@components/snippet/snippetTransformer';
 import { SITE_BASE_URL, agGridVersion } from '@constants';
 import { getInternalFramework } from '@utils/framework';
@@ -78,18 +79,15 @@ export function createGridMarkdownResolvers({ siteRoot }: { siteRoot?: string } 
                     return null;
                 }
                 const fileName = contents.mainFileName ?? contents.entryFileName;
-                const code = fileName ? contents.files?.[fileName] : undefined;
-                if (!code) {
+                if (!fileName || !contents.files?.[fileName]) {
                     return null;
                 }
-                // Strip the test-id harness the example generator injects — it is inert
-                // (URL-param gated) and just noise for a reader/LLM.
-                const cleanCode = code
-                    .replace(
-                        /[ \t]*\/\*\* ENABLE AG-TEST-ID START \*\*\/[\s\S]*?\/\*\* ENABLE AG-TEST-ID END \*\*\/[ \t]*\n?/g,
-                        ''
-                    )
-                    .trim();
+                // Strip the harness the example generator injects (test-id setup,
+                // console logging, teardown, theme switcher, redacted AI tokens) so the
+                // reader/LLM sees the same clean source as the on-page code viewer.
+                const files = { ...contents.files };
+                stripOutExampleGeneratorCode(files);
+                const cleanCode = files[fileName].trim();
                 const liveUrl = toAbsoluteUrl(
                     getExampleUrl({ internalFramework, pageName, exampleName: name }),
                     siteRoot
