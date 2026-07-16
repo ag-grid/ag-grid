@@ -1,5 +1,4 @@
 import type {
-    CellRendererSelectorResult,
     ColDef,
     ColumnEventType,
     IAutoColService,
@@ -7,6 +6,7 @@ import type {
     NamedBean,
     PropertyValueChangedEvent,
     RowNode,
+    TooltipComponentSelectorResult,
 } from 'ag-grid-community';
 import {
     AgColumn,
@@ -304,14 +304,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             return;
         }
 
-        // tooltipComponentSelector is typed for cell params but called with ITooltipParams at runtime
-        const callSelector = (
-            sel: ColDef['tooltipComponentSelector'],
-            params: ITooltipParams
-        ): CellRendererSelectorResult | undefined =>
-            (sel as unknown as (p: ITooltipParams) => CellRendererSelectorResult | undefined)(params);
-
-        const selector = (params: ITooltipParams): CellRendererSelectorResult | undefined => {
+        const selector = (params: ITooltipParams): TooltipComponentSelectorResult | undefined => {
             if (params.node?.group) {
                 const groupedCol = params.node.rowGroupColumn as AgColumn | undefined;
                 const colDef = groupedCol?.colDef;
@@ -319,7 +312,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
                     return undefined;
                 }
                 if (colDef.tooltipComponentSelector) {
-                    return callSelector(colDef.tooltipComponentSelector, params);
+                    return colDef.tooltipComponentSelector(params);
                 }
                 if (!colDef.tooltipComponent) {
                     return undefined;
@@ -327,14 +320,14 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
                 return { component: colDef.tooltipComponent, params: colDef.tooltipComponentParams };
             }
             if (leafTooltipComponentSelector) {
-                return callSelector(leafTooltipComponentSelector, params);
+                return leafTooltipComponentSelector(params);
             }
             if (leafTooltipComponent == null) {
                 return undefined;
             }
             return { component: leafTooltipComponent, params: leafTooltipComponentParams };
         };
-        res.tooltipComponentSelector = selector as unknown as ColDef['tooltipComponentSelector'];
+        res.tooltipComponentSelector = selector;
     }
 
     private createBaseColDef(rowGroupCol?: AgColumn): ColDef {

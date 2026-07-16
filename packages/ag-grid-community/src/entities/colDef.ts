@@ -365,7 +365,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Callback to select which tooltip component to be used for a given row within the same column.
      * @agModule `TooltipModule`
      */
-    tooltipComponentSelector?: CellEditorSelectorFunc | CellRendererSelectorFunc;
+    tooltipComponentSelector?: TooltipComponentSelectorFunc<TData, TValue>;
 
     /**
      * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
@@ -1293,6 +1293,17 @@ export type HeaderTooltipValueGetterFunc<TData = any, TValue = any, TContext = a
 export type TooltipValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: ITooltipParams<TData, TValue, TContext>
 ) => string | any;
+
+export type TooltipComponentSelectorFunc<TData = any, TValue = any, TContext = any> = (
+    params: ITooltipParams<TData, TValue, TContext>
+) => TooltipComponentSelectorResult | undefined;
+
+export interface TooltipComponentSelectorResult {
+    /** Equivalent of setting `colDef.tooltipComponent` */
+    component?: any;
+    /** Equivalent of setting `colDef.tooltipComponentParams` */
+    params?: any;
+}
 
 export interface NewValueParams<TData = any, TValue = any, TContext = any> extends ChangedValueParams<
     TData,

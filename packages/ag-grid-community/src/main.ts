@@ -759,6 +759,8 @@ export type {
     SuppressPasteCallbackParams,
     ToolPanelClass,
     ToolPanelClassParams,
+    TooltipComponentSelectorFunc,
+    TooltipComponentSelectorResult,
     TooltipValueGetterFunc,
     ValueFormatterFunc,
     ValueFormatterParams,
