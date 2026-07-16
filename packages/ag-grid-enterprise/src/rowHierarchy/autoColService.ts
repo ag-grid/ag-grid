@@ -1,5 +1,4 @@
 import type {
-    CellRendererSelectorResult,
     ColDef,
     ColumnEventType,
     IAutoColService,
@@ -7,6 +6,7 @@ import type {
     NamedBean,
     PropertyValueChangedEvent,
     RowNode,
+    TooltipComponentSelectorResult,
 } from 'ag-grid-community';
 import {
     AgColumn,
@@ -304,7 +304,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             return;
         }
 
-        const selector = (params: ITooltipParams): CellRendererSelectorResult | undefined => {
+        const selector = (params: ITooltipParams): TooltipComponentSelectorResult | undefined => {
             if (params.node?.group) {
                 const groupedCol = params.node.rowGroupColumn as AgColumn | undefined;
                 const colDef = groupedCol?.colDef;

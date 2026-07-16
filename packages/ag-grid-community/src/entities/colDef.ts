@@ -1296,7 +1296,14 @@ export type TooltipValueGetterFunc<TData = any, TValue = any, TContext = any> = 
 
 export type TooltipComponentSelectorFunc<TData = any, TValue = any, TContext = any> = (
     params: ITooltipParams<TData, TValue, TContext>
-) => CellRendererSelectorResult | undefined;
+) => TooltipComponentSelectorResult | undefined;
+
+export interface TooltipComponentSelectorResult {
+    /** Equivalent of setting `colDef.tooltipComponent` */
+    component?: any;
+    /** Equivalent of setting `colDef.tooltipComponentParams` */
+    params?: any;
+}
 
 export interface NewValueParams<TData = any, TValue = any, TContext = any> extends ChangedValueParams<
     TData,

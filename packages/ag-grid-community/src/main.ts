@@ -760,6 +760,7 @@ export type {
     ToolPanelClass,
     ToolPanelClassParams,
     TooltipComponentSelectorFunc,
+    TooltipComponentSelectorResult,
     TooltipValueGetterFunc,
     ValueFormatterFunc,
     ValueFormatterParams,
