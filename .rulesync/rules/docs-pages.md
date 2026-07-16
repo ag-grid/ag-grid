@@ -56,11 +56,11 @@ description: Brief description of the feature
 
 ## Reference Component Descriptions
 
-The `interfaceDocumentation` and `apiDocumentation` components generate a default heading from the interface name (e.g. *"Properties available on the `X` interface."*). Do not write a `config.description` that merely restates the interface name — such as *"The X interface has the following methods:"* — as it adds no information over the default and the interface name is already the section heading.
+The `interfaceDocumentation` and `apiDocumentation` components generate a default intro line from the interface name (e.g. *"Properties available on the `X` interface."*). This is a text string rendered above the interface table, **not** a heading — it does not create a section title or a navigable entry in the page's table of contents.
 
-- Use `config={"description": ""}` to suppress the heading (the house default across docs pages).
-- Omit `config` to accept the generated default.
+- Omit `config` to accept the generated default intro line.
 - Write a `description` **only** when it adds real context beyond the interface name.
+- Add an explicit `###` subheading with the interface name above each component when an API Reference section documents more than one interface.
 
 ## Image Conventions
 
