@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import type { ElementRef } from '@angular/core';
-import { Component, NgZone, ViewChild } from '@angular/core';
+import { Component, ViewChild, signal } from '@angular/core';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 import { AgGridAngular } from 'ag-grid-angular';
@@ -40,9 +40,9 @@ ModuleRegistry.registerModules([
             (gridReady)="onGridReady($event)"
         />
         <div #chartParent class="chart-wrapper">
-            @if (chartRef) {
+            @if (chartRef()) {
                 <div class="chart-wrapper-top">
-                    <h2 class="chart-wrapper-title">Chart created at {{ createdTime }}</h2>
+                    <h2 class="chart-wrapper-title">Chart created at {{ createdTime() }}</h2>
                     <button (click)="updateChart()">Destroy Chart</button>
                 </div>
             } @else {
@@ -62,15 +62,14 @@ export class AppComponent {
     defaultColDef: ColDef = { flex: 1 };
     popupParent: HTMLElement | null = document.body;
     rowData!: any[];
-    chartRef?: ChartRef;
-    createdTime?: string;
+    // Signals so the template updates even though the grid invokes createChartContainer
+    // outside Angular's zone (signal writes schedule change detection independently of zone.js).
+    chartRef = signal<ChartRef | undefined>(undefined);
+    createdTime = signal<string | undefined>(undefined);
 
     @ViewChild('chartParent') chartParent?: ElementRef;
 
-    constructor(
-        private http: HttpClient,
-        private ngZone: NgZone
-    ) {}
+    constructor(private http: HttpClient) {}
 
     onGridReady(params: GridReadyEvent) {
         this.http
@@ -82,21 +81,17 @@ export class AppComponent {
     }
 
     updateChart(chartRef: ChartRef | undefined) {
-        if (this.chartRef !== chartRef) {
+        if (this.chartRef() !== chartRef) {
             // Destroy previous chart if it exists
-            this.chartRef?.destroyChart();
+            this.chartRef()?.destroyChart();
         }
-        this.chartRef = chartRef;
-        this.createdTime = new Date().toLocaleString();
+        this.chartRef.set(chartRef);
+        this.createdTime.set(new Date().toLocaleString());
     }
 
-    // Arrow function used to correctly bind this to the component.
-    // The grid invokes this outside Angular's zone, so run the state update inside
-    // it to trigger change detection (otherwise the chart-wrapper template never updates).
+    // Arrow function used to correctly bind this to the component
     createChartContainer = (chartRef: ChartRef) => {
-        this.ngZone.run(() => {
-            this.updateChart(chartRef);
-            this.chartParent?.nativeElement.appendChild(chartRef.chartElement);
-        });
+        this.updateChart(chartRef);
+        this.chartParent?.nativeElement.appendChild(chartRef.chartElement);
     };
 }
