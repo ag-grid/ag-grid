@@ -7,20 +7,21 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         const autoGroupCells = page.locator(`.ag-cell[col-id="${GROUP_AUTO_COLUMN_ID}"]`);
+        const firstCell = autoGroupCells.first();
+        // The custom renderer replaces agGroupCellRenderer with its own arrow (a div with a
+        // rotate transform) plus the group value text — the selector is framework-agnostic
+        // because the arrow is identified by its inline rotate style, not by a class name.
+        const firstArrow = firstCell.locator('div[style*="rotate"]');
 
-        // The custom renderer entirely replaces agGroupCellRenderer: it renders its own
-        // .eGroupStatus arrow and .eValueContainer value span, and does NOT emit the default
-        // group cell renderer chevron test-ids.
-        await expect(page.locator('.eValueContainer').first()).toBeVisible();
-        await expect(page.locator('.eGroupStatus').first()).toBeVisible();
+        // Custom arrow is rendered, and the default group cell chevron test-ids are NOT emitted.
+        await expect(firstArrow).toBeVisible();
         await expect(agIdFor.autoGroupExpanded(null)).toHaveCount(0);
         await expect(agIdFor.autoGroupContracted(null)).toHaveCount(0);
 
-        // The custom renderer shows the group value text in the group column
-        await expect(autoGroupCells.first().locator('.eValueContainer')).not.toBeEmpty();
+        // The custom renderer shows the group value text (a country name) in the group column.
+        await expect(firstCell).toHaveText(/[A-Za-z]/, { useInnerText: true });
 
         // groupDefaultExpanded: 1 => top-level groups start expanded (arrow rotated 90deg)
-        const firstArrow = page.locator('.eGroupStatus').first();
         await expect(firstArrow).toHaveAttribute('style', /rotate\(90deg\)/);
 
         // Clicking the custom arrow collapses the group (documented expand/collapse behaviour),

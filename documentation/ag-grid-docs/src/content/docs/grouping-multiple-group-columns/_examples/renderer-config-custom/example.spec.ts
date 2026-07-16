@@ -9,10 +9,11 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         // autoGroupColumnDef.cellRenderer fully replaces the group cell with the custom component,
-        // which renders its own expand arrow (.eGroupStatus) and value span (.eValueContainer)
+        // which renders its own expand arrow (a div with a rotate transform) and the value text.
+        // The arrow is matched by its inline rotate style so the selector works across frameworks.
         const usCell = agIdFor.cell('row-group-country-United States', countryColId).first();
-        await expect(usCell.locator('.eGroupStatus')).toBeVisible();
-        await expect(usCell.locator('.eValueContainer')).toContainText('United States');
+        await expect(usCell.locator('div[style*="rotate"]')).toBeVisible();
+        await expect(usCell).toContainText('United States', { useInnerText: true });
 
         // Top level expanded by default (groupDefaultExpanded: 1): child year group rows visible
         await expect(agIdFor.cell('row-group-country-United States-year-2008', yearColId).first()).toBeVisible();

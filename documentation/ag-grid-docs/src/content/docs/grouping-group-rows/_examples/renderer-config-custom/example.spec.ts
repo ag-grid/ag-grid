@@ -8,10 +8,12 @@ test.agExample(import.meta, () => {
         const usGroup = agIdFor.rowNode('row-group-country-United States').first();
         await expect(usGroup).toHaveClass(/ag-full-width-row/);
 
-        // The fully custom groupRowRenderer replaces the default group cell renderer.
-        await expect(usGroup.locator('.eValueContainer')).toHaveText('United States');
-        const status = usGroup.locator('.eGroupStatus');
-        await expect(status).toHaveText('→');
+        // The fully custom groupRowRenderer replaces the default group cell renderer. It renders
+        // the group value text plus an arrow (a div with a rotate transform); the arrow is matched
+        // by its inline rotate style so the selector works across frameworks.
+        await expect(usGroup).toContainText('United States', { useInnerText: true });
+        const status = usGroup.locator('div[style*="rotate"]');
+        await expect(status).toBeVisible();
         // Default group cell renderer parts are not present.
         await expect(usGroup.locator('.ag-group-value')).toHaveCount(0);
 
