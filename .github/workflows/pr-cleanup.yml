@@ -35,3 +35,21 @@ jobs:
         with:
           pr_number: ${{ env.PR_NUMBER }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  cache_cleanup:
+    runs-on: ubuntu-latest
+    name: Remove PR Actions caches
+    # Same-repo PRs only (fork PRs can't hold the write token) — see pr-review.yml.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      # Deleting caches requires actions: write.
+      actions: write
+    env:
+      # merge-ref caches (node_modules + Nx) persist after merge and are never read
+      # again, so they only consume the repo's 10GB cache budget. See AG-17857 CI notes.
+      PR_REF: refs/pull/${{ github.event.pull_request.number }}/merge
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Delete this PR's caches
+        run: gh cache delete --all --ref "$PR_REF" --succeed-on-no-caches
