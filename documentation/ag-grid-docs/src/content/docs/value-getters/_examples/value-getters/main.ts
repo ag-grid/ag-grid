@@ -22,9 +22,6 @@ function a1000ValueGetter(params: ValueGetterParams) {
 function b137ValueGetter(params: ValueGetterParams) {
     return params.data.b * 137;
 }
-function randomValueGetter() {
-    return Math.floor(Math.random() * 1000);
-}
 function chainValueGetter(params: ValueGetterParams) {
     return params.getValue('a&b') * 1000;
 }
@@ -55,11 +52,6 @@ const gridOptions: GridOptions = {
             headerName: 'B * 137',
             minWidth: 90,
             valueGetter: b137ValueGetter,
-        },
-        {
-            headerName: 'Random',
-            minWidth: 90,
-            valueGetter: randomValueGetter,
         },
         {
             headerName: 'Chain',
