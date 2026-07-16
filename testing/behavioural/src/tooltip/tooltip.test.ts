@@ -14,6 +14,8 @@ import type {
     GridOptions,
     ICellRendererComp,
     ICellRendererParams,
+    ITooltipComp,
+    ITooltipParams,
     Module,
 } from 'ag-grid-community';
 import { BatchEditModule, FormulaModule } from 'ag-grid-enterprise';
@@ -640,6 +642,49 @@ describe('Tooltips', () => {
 
         expect(hasTooltipText('Cell renderer tooltip')).toBe(false);
         expect(getTooltips()[0]).toHaveTextContent('ColDef tooltip');
+    });
+
+    test('AG-17872 tooltipComponentSelector receives ITooltipParams and selects a component', async () => {
+        // reading params.location — a field that exists only on ITooltipParams — is the compile-time
+        // guard that the selector param is typed as ITooltipParams rather than cell params.
+        const seenLocations: string[] = [];
+
+        class CustomTooltip implements ITooltipComp {
+            private eGui!: HTMLElement;
+            public init(params: ITooltipParams): void {
+                this.eGui = document.createElement('div');
+                this.eGui.classList.add('ag-tooltip-custom');
+                this.eGui.textContent = `Tooltip at ${params.location}`;
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+        }
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    field: 'A',
+                    tooltipValueGetter: () => 'value tooltip',
+                    tooltipComponentSelector: (params) => {
+                        seenLocations.push(params.location);
+                        return { component: CustomTooltip };
+                    },
+                },
+            ],
+            rowData: [{ A: 'value' }],
+            tooltipShowDelay: 200,
+        };
+
+        const api = await gridMgr.createGridAndWait('myGrid-tooltip-selector-params', gridOptions);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const cell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'A')));
+
+        await userEvent.hover(cell);
+        await asyncSetTimeout(250);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Tooltip at cell');
+        expect(seenLocations).toContain('cell');
     });
 
     describe('whenTruncated with cellRendererSelector', () => {
