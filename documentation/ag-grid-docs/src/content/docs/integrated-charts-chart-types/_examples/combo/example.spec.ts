@@ -1,24 +1,29 @@
 import type { Page } from '@playwright/test';
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
-// Opens the chart's settings tool panel so the selected chart-type thumbnail is visible.
-async function openChartSettings(page: Page): Promise<void> {
-    await page.locator('.ag-chart-menu-toolbar-button').first().click();
-    await page.locator('.ag-chart-mini-thumbnail.ag-selected').first().waitFor();
-}
-
-async function selectedChartType(page: Page): Promise<string | null> {
-    return page.locator('.ag-chart-mini-thumbnail.ag-selected').first().getAttribute('aria-label');
-}
-
 async function switchChartType(page: Page, buttonText: string): Promise<void> {
     await page.locator('.button-container button', { hasText: buttonText }).click();
 }
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ agIdFor, page }) => {
+    test.eachFramework('Example', async ({ agIdFor, page, remoteGrid }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
+
+        const gridApi = remoteGrid(page);
+
+        // Reads the per-series chart types from the grid's chart model as a colId -> chartType map.
+        // This is the framework-independent signal for a combination chart: the top-level chartType
+        // label of a combo varies by framework (columnLineCombo vs customCombo), but the per-series
+        // composition is identical everywhere.
+        const seriesTypes = async (): Promise<Record<string, string>> => {
+            const model = (await gridApi.getChartModels())![0] as any;
+            const map: Record<string, string> = {};
+            for (let i = 0, types = model.seriesChartTypes, len = types.length; i < len; ++i) {
+                map[types[i].colId] = types[i].chartType;
+            }
+            return map;
+        };
 
         // Grid renders the documented category + series columns.
         await expect(agIdFor.headerCell('period')).toContainText('Financial Period');
@@ -30,24 +35,22 @@ test.agExample(import.meta, () => {
         const legend = page.locator('#myChart .ag-charts-proxy-legend-toolbar [role="listitem"]');
         await expect(legend).toHaveCount(2);
 
-        // The chart is initially the built-in Column & Line combination.
-        await openChartSettings(page);
-        expect(await selectedChartType(page)).toContain('Column & Line');
+        // The chart is initially the Column & Line combination: recurring drawn as columns, individual
+        // drawn as a line.
+        await expect(async () => {
+            expect(await seriesTypes()).toEqual({ recurring: 'groupedColumn', individual: 'line' });
+        }).toPass({ timeout: 5000 });
 
-        // Both toolbar buttons apply a combination chart type. Applying a named combo via the API
-        // lands on the gallery's "Custom Combination" entry (there is no dedicated thumbnail per
-        // named combo), so the selected type is asserted at that granularity — this still verifies
-        // the update took effect and moved the chart off its initial built-in combination.
-        await switchChartType(page, 'Column Line Combo');
-        await expect(page.locator('.ag-chart-mini-thumbnail.ag-selected').first()).toHaveAttribute(
-            'aria-label',
-            /Custom Combination/
-        );
-
+        // The Area Column Combo button recomposes the series: recurring becomes an area, individual a column.
         await switchChartType(page, 'Area Column Combo');
-        await expect(page.locator('.ag-chart-mini-thumbnail.ag-selected').first()).toHaveAttribute(
-            'aria-label',
-            /Custom Combination/
-        );
+        await expect(async () => {
+            expect(await seriesTypes()).toEqual({ recurring: 'stackedArea', individual: 'groupedColumn' });
+        }).toPass({ timeout: 5000 });
+
+        // The Column Line Combo button restores the column + line composition.
+        await switchChartType(page, 'Column Line Combo');
+        await expect(async () => {
+            expect(await seriesTypes()).toEqual({ recurring: 'groupedColumn', individual: 'line' });
+        }).toPass({ timeout: 5000 });
     });
 });

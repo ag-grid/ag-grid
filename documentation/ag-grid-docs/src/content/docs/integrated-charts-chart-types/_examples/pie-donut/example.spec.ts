@@ -33,15 +33,19 @@ test.agExample(import.meta, () => {
         const buttons = page.locator('.button-container button');
         await expect(buttons).toHaveCount(2);
         await buttons.nth(1).click();
-        await page.waitForTimeout(300);
-        expect((await gridApi.getChartModels())![0].chartType).toBe('donut');
+        // Poll the chart model until the switch has been applied rather than waiting a fixed delay.
+        await expect(async () => {
+            expect((await gridApi.getChartModels())![0].chartType).toBe('donut');
+        }).toPass({ timeout: 5000 });
         await expect(legend).toHaveCount(8);
         await expect(legend.nth(0)).toContainText('Recurring revenue');
         await expect(legend.nth(4)).toContainText('Individual sales');
 
         // Pie button switches the chart type back to a pie.
         await buttons.nth(0).click();
-        await page.waitForTimeout(300);
-        expect((await gridApi.getChartModels())![0].chartType).toBe('pie');
+        // Poll the chart model until the switch has been applied rather than waiting a fixed delay.
+        await expect(async () => {
+            expect((await gridApi.getChartModels())![0].chartType).toBe('pie');
+        }).toPass({ timeout: 5000 });
     });
 });

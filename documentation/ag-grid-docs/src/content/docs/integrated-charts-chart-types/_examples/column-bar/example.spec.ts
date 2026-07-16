@@ -42,9 +42,11 @@ test.agExample(import.meta, () => {
         await expect(buttons).toHaveCount(expectedTypes.length);
         for (let i = 0, len = expectedTypes.length; i < len; ++i) {
             await buttons.nth(i).click();
-            await page.waitForTimeout(300);
-            const models = await gridApi.getChartModels();
-            expect(models![0].chartType).toBe(expectedTypes[i]);
+            // Poll the chart model until the switch has been applied rather than waiting a fixed delay.
+            await expect(async () => {
+                const models = await gridApi.getChartModels();
+                expect(models![0].chartType).toBe(expectedTypes[i]);
+            }).toPass({ timeout: 5000 });
         }
     });
 });

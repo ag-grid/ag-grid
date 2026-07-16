@@ -16,38 +16,28 @@ test.agExample(import.meta, () => {
             }
         });
 
-        const box = (await canvas.boundingBox())!;
-        expect(box).toBeTruthy();
-
-        const clickAt = async (fx: number, fy: number) => {
-            await page.mouse.click(box.x + box.width * fx, box.y + box.height * fy);
-        };
         const seen = (needle: string) => logs.some((l) => l.includes(needle));
+        const waitForLog = async (needle: string) => {
+            await expect(async () => {
+                expect(seen(needle)).toBe(true);
+            }).toPass({ timeout: 5000 });
+        };
 
-        // Columns are drawn on a canvas, so we scan across the plot area's x-axis clicking at a
-        // few heights until we land on a bar and the standalone seriesNodeClick listener fires.
-        for (let i = 0; i < 12 && !seen('seriesNodeClick'); i++) {
-            const fx = 0.1 + (i / 12) * 0.8;
-            for (const fy of [0.75, 0.6, 0.85]) {
-                await clickAt(fx, fy);
-                if (seen('seriesNodeClick')) {
-                    break;
-                }
-            }
-        }
-        expect(seen('seriesNodeClick')).toBe(true);
+        // seriesNodeClick: the chart's accessible series-area (the focusable swapchain element)
+        // provides a deterministic keyboard path to a series node. Focus it, move to the first
+        // datum with ArrowRight, then submit with Enter — this fires the standalone
+        // seriesNodeClick listener registered via chartThemeOverrides.
+        await page.locator('#myChart .ag-charts-swapchain[tabindex="0"]').focus();
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('Enter');
+        await waitForLog('seriesNodeClick');
 
-        // The legend renders along the bottom of the chart. Scan across it to hit a legend item
-        // and fire the standalone legendItemClick listener.
-        for (let i = 0; i < 16 && !seen('legendItemClick'); i++) {
-            const fx = 0.15 + (i / 16) * 0.7;
-            for (const fy of [0.93, 0.9, 0.96, 0.88, 0.98, 0.85]) {
-                await clickAt(fx, fy);
-                if (seen('legendItemClick')) {
-                    break;
-                }
-            }
-        }
-        expect(seen('legendItemClick')).toBe(true);
+        // legendItemClick: the legend renders accessible proxy switch buttons, one per series.
+        // Clicking the first is a deterministic hit that fires the standalone legendItemClick
+        // listener registered via chartThemeOverrides.legend.
+        const legendSwitches = page.locator('#myChart [role="switch"]');
+        await expect(legendSwitches).toHaveCount(2);
+        await legendSwitches.first().click();
+        await waitForLog('legendItemClick');
     });
 });
