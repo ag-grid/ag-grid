@@ -55,7 +55,17 @@ const gridOptions = {
             filter: 'agBigIntColumnFilter',
             filterParams: {
                 allowedCharPattern: '[\\dxXa-fA-F]',
-                bigintParser: (text) => (text == null || text.trim() === '' ? null : BigInt(text)),
+                bigintParser: (text) => {
+                    if (text == null || text.trim() === '') {
+                        return null;
+                    }
+                    try {
+                        return BigInt(text);
+                    } catch {
+                        // incomplete or invalid input (e.g. '0x') while typing
+                        return null;
+                    }
+                },
             },
         },
     ],
