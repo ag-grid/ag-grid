@@ -1,4 +1,5 @@
 import { CollapsibleSection } from '@ag-website-shared/components/theme-builder/CollapsibleSection';
+import { ParamEditor } from '@ag-website-shared/components/theme-builder/ParamEditor';
 import { PartEditor } from '@ag-website-shared/components/theme-builder/PartEditor';
 import {
     horizontalSpacingIcon,
@@ -10,7 +11,6 @@ import styled from '@emotion/styled';
 
 import { AdvancedParamSelector } from './AdvancedParamSelector';
 import { BordersEditor } from './BordersEditor';
-import { ParamEditor } from './ParamEditor';
 
 const DEFAULT_OPEN_SECTIONS = ['General', 'All Parameters'];
 

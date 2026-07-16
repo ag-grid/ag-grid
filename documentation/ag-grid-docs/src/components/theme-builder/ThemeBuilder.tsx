@@ -1,3 +1,4 @@
+import { LoadFontFamilyMenuFonts } from '@ag-website-shared/components/theme-builder/FontFamilyValueEditor';
 import { allParamModels } from '@ag-website-shared/theming/ParamModel';
 import { allFeatureModels } from '@ag-website-shared/theming/PartModel';
 import { addChangedModelItem, getChangedModelItemCount } from '@ag-website-shared/theming/changed-model-items';
@@ -5,10 +6,10 @@ import { initialiseStore } from '@ag-website-shared/theming/store';
 import { Provider } from 'jotai';
 import { useLayoutEffect, useMemo, useState } from 'react';
 
-import { LoadFontFamilyMenuFonts } from './components/editors/FontFamilyValueEditor';
 import { RootContainer } from './components/general/RootContainer';
 import { applyPreset, darkModePreset, lightModePreset } from './components/presets/presets';
 import './model/registerParamDocs';
+import './registerEditorConfig';
 
 export const ThemeBuilder = () => {
     const store = useMemo(() => initialiseStore(), []);

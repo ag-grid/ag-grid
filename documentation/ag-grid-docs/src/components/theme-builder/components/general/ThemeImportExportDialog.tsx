@@ -1,6 +1,7 @@
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import Code from '@ag-website-shared/components/code/Code';
 import { Tabs } from '@ag-website-shared/components/tabs/Tabs';
+import { loadFile, useFileDropZone } from '@ag-website-shared/components/theme-builder/fileImport';
 import { type RenderedThemeInfo, useRenderedThemeInfo } from '@ag-website-shared/theming/rendered-theme';
 import { Checkmark, Copy, Upload } from '@carbon/icons-react';
 import styled from '@emotion/styled';
@@ -9,13 +10,7 @@ import { useStore } from 'jotai';
 import type { ChangeEvent, KeyboardEvent, RefObject } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import {
-    type ValidationResult,
-    applyValidatedTheme,
-    loadFile,
-    useFileDropZone,
-    validateThemeCode,
-} from './themeImport';
+import { type ValidationResult, applyValidatedTheme, validateThemeCode } from './themeImport';
 
 export type ThemeImportExportDialogProps = {
     close: () => void;

@@ -1,13 +1,23 @@
-import type { ValueEditorProps } from '@ag-website-shared/components/theme-builder/ValueEditorProps';
 import styled from '@emotion/styled';
 import { Info } from 'lucide-react';
+
+import type { ValueEditorProps } from './ValueEditorProps';
+
+let imageValuesDocsUrl = '#';
+
+/**
+ * Hosts must call this once with a link to their own theming-parameters docs
+ * page - mirrors ParamModel's setParamDocsProvider.
+ */
+export const setImageValuesDocsUrl = (url: string) => {
+    imageValuesDocsUrl = url;
+};
 
 export const ImageValueEditor = (_: ValueEditorProps<unknown>) => {
     return (
         <NotSupported>
             <InfoIcon data-lucide="align-center" width={14} /> Image values can't be edited in the theme builder, export
-            the theme and use <a href="/react-data-grid/theming-parameters/#image-values">theme parameters</a> to embed
-            an SVG image.
+            the theme and use <a href={imageValuesDocsUrl}>theme parameters</a> to embed an SVG image.
         </NotSupported>
     );
 };

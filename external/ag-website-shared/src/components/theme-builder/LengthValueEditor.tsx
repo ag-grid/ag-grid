@@ -1,6 +1,6 @@
-import { LengthInput } from '@ag-website-shared/components/theme-builder/LengthInput';
-import type { ValueEditorProps } from '@ag-website-shared/components/theme-builder/ValueEditorProps';
-import { type LengthValue, paramValueToCss } from '@ag-website-shared/theming/api';
+import { type LengthValue, paramValueToCss } from '../../theming/api';
+import { LengthInput } from './LengthInput';
+import type { ValueEditorProps } from './ValueEditorProps';
 
 export const LengthValueEditor = ({
     param,

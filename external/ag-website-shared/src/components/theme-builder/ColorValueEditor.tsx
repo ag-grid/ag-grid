@@ -1,6 +1,6 @@
-import { ColorPicker } from '@ag-website-shared/components/theme-builder/ColorPicker';
-import type { ValueEditorProps } from '@ag-website-shared/components/theme-builder/ValueEditorProps';
-import { type ColorValue, paramValueToCss } from '@ag-website-shared/theming/api';
+import { type ColorValue, paramValueToCss } from '../../theming/api';
+import { ColorPicker } from './ColorPicker';
+import type { ValueEditorProps } from './ValueEditorProps';
 
 export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps<ColorValue>) => (
     <ColorPicker

@@ -1,8 +1,7 @@
+import { ParamEditor } from '@ag-website-shared/components/theme-builder/ParamEditor';
 import { ParamSearchSelector } from '@ag-website-shared/components/theme-builder/ParamSearchSelector';
 import { allParamModels } from '@ag-website-shared/theming/ParamModel';
 import { useAdvancedParamIsEnabled, useSetAdvancedParamEnabled } from '@ag-website-shared/theming/advanced-params';
-
-import { ParamEditor } from './ParamEditor';
 
 export const AdvancedParamSelector = () => {
     const advancedParamIsEnabled = useAdvancedParamIsEnabled();
