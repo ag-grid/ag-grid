@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { GridApi, SideBarDef } from 'ag-grid-community';
 
 import {
@@ -76,8 +78,12 @@ export class ToolPanelHarness {
             await firePointerLikeClick(
                 wrapper.querySelector<HTMLElement>('.ag-filter-toolpanel-group-level-0-header')!
             );
-            // Let the (async) filter comp resolve and attach its body.
-            await asyncSetTimeout(10);
+            // Wait for the (async) filter comp to resolve and attach its body, rather than a fixed delay.
+            await waitFor(() => {
+                if (!wrapper.querySelector('.ag-filter-toolpanel-instance-body')) {
+                    throw new Error(`Filter body for "${title}" has not attached yet`);
+                }
+            });
         }
         return this;
     }
