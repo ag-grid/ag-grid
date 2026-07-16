@@ -1,8 +1,10 @@
 {
-    "enabled": false,
-    "href": "",
-    "title": "",
-    "description": "",
-    "ctaLabel": "",
-    "external": true
+    "enabled": true,
+    "href": "https://app.livestorm.co/ag-grid/ag-studio-build-dashboards-using-native-components-in-web-apps-webinar?utm_source=ag-grid-website&utm_medium=banner&utm_campaign=webinar_AMA_AG_STUDIO_28_jul2026&utm_content=homepage_banner",
+    "title": "AG Studio: Build dashboards using native components in web apps.",
+    "description": "Join us for a webinar on 28th July at 2pm UTC+1",
+    "ctaLabel": "Register",
+    "external": true,
+    "untilDate": "2026-07-29",
+    "showDate": null
 }
