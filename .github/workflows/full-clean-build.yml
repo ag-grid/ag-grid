@@ -179,7 +179,8 @@ jobs:
 #
 #      - name: SonarQube Analysis Community
 #        uses: SonarSource/sonarqube-scan-action@v5.2.0
-#        if: ${{ !inputs.fast_build }}
+#        # Set org-scoped GHA variable SONARCLOUD_ENABLED=false to skip when re-enabled.
+#        if: ${{ !inputs.fast_build && vars.SONARCLOUD_ENABLED != 'false' }}
 #        env:
 #          SONAR_HOST_URL: https://sonarcloud.io
 #          SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
@@ -197,7 +198,8 @@ jobs:
 #
 #      - name: SonarQube Analysis Enterprise
 #        uses: SonarSource/sonarqube-scan-action@v5.2.0
-#        if: ${{ !inputs.fast_build }}
+#        # Set org-scoped GHA variable SONARCLOUD_ENABLED=false to skip when re-enabled.
+#        if: ${{ !inputs.fast_build && vars.SONARCLOUD_ENABLED != 'false' }}
 #        env:
 #          SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
 #          SONAR_HOST_URL: https://sonarcloud.io
