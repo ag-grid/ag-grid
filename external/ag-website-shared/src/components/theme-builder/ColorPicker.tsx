@@ -5,6 +5,7 @@ import { HexAlphaColorPicker, HexColorPicker } from 'react-colorful';
 
 import { RGBAColor } from '../../theming/RGBAColor';
 import { Input } from './Input';
+import { useClickAwayListener } from './useClickAwayListener';
 
 export type ColorPickerProps = {
     preventTransparency: boolean;
@@ -113,40 +114,6 @@ const coerceToValidValue = (input: string, preventTransparency: boolean) => {
 };
 
 const colorIsValid = (value: string) => RGBAColor.reinterpretCss(value) != null;
-
-/**
- * Hides the picker when the user interacts outside both the reference
- * element (input/swatch) and the portalled floating popover.
- */
-const useClickAwayListener = (onHide: () => void, ignoreElements: Array<Element | null | undefined>) => {
-    const ignoreElementsRef = useRef(ignoreElements);
-    ignoreElementsRef.current = ignoreElements;
-
-    const ignore = useRef(false);
-
-    useEffect(() => {
-        const handleStart = (event: Event) => {
-            ignore.current = ignoreElementsRef.current.some((el) => el?.contains(event.target as Node));
-        };
-        const handleEnd = () => {
-            if (!ignore.current) {
-                onHide();
-            }
-        };
-
-        document.addEventListener('mousedown', handleStart);
-        document.addEventListener('touchstart', handleStart);
-        document.addEventListener('mouseup', handleEnd);
-        document.addEventListener('touchend', handleEnd);
-
-        return () => {
-            document.removeEventListener('mousedown', handleStart);
-            document.removeEventListener('touchstart', handleStart);
-            document.removeEventListener('mouseup', handleEnd);
-            document.removeEventListener('touchend', handleEnd);
-        };
-    }, [onHide]);
-};
 
 const Wrapper = styled('div')`
     position: relative;

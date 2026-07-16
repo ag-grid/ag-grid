@@ -1,11 +1,11 @@
 import { PresetButton, PresetScroller } from '@ag-website-shared/components/theme-builder/PresetScroller';
+import { ResetChangesModal } from '@ag-website-shared/components/theme-builder/ResetChangesModal';
 import { getChangedModelItemCount } from '@ag-website-shared/theming/changed-model-items';
 import { useStore } from 'jotai';
 import { type CSSProperties, useMemo, useState } from 'react';
 
 import { type Theme, colorSchemeLight, themeQuartz } from 'ag-grid-community';
 
-import { ResetChangesModal } from '../general/ResetChangesModal';
 import { PresetRender } from './PresetRender';
 import { type Preset, allPresets, applyPreset } from './presets';
 

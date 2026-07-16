@@ -1,7 +1,7 @@
+import { UIPopupButton } from '@ag-website-shared/components/theme-builder/UIPopupButton';
 import styled from '@emotion/styled';
 
 import { ThemeImportExportDialog } from './ThemeImportExportDialog';
-import { UIPopupButton } from './UIPopupButton';
 
 const hasImportHash = () => typeof window !== 'undefined' && window.location.hash === '#import';
 
