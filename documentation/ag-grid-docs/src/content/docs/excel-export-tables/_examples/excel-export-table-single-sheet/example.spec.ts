@@ -1,4 +1,11 @@
-import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
+import {
+    ensureGridReady,
+    expect,
+    expectRowIdAtIndex,
+    test,
+    waitForGridContent,
+    waitForRowAnimations,
+} from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Grouped columns and data render', async ({ agIdFor, page }) => {
@@ -23,17 +30,16 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         // Dara Torres holds the unique maximum age (33) at data index 7.
-        const daraRow = agIdFor.rowNode('7').first();
-        await expect(daraRow).not.toHaveAttribute('row-index', '0');
+        await expectRowIdAtIndex(page, 0, '7', { not: true });
 
         // Ascending sort by age.
         await agIdFor.headerCell('age').click();
         await waitForRowAnimations(page);
-        await expect(daraRow).not.toHaveAttribute('row-index', '0');
+        await expectRowIdAtIndex(page, 0, '7', { not: true });
 
         // Descending sort brings the oldest athlete to the top.
         await agIdFor.headerCell('age').click();
         await waitForRowAnimations(page);
-        await expect(daraRow).toHaveAttribute('row-index', '0');
+        await expectRowIdAtIndex(page, 0, '7');
     });
 });

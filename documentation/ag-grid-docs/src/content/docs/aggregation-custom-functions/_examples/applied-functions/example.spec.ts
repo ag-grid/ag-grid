@@ -1,4 +1,11 @@
-import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
+import {
+    ensureGridReady,
+    expect,
+    expectRowIdAtIndex,
+    test,
+    waitForGridContent,
+    waitForRowAnimations,
+} from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Directly applied range function aggregates the total column', async ({ agIdFor, page }) => {
@@ -32,16 +39,14 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        // United States has the largest range (7), so a descending sort of the total column brings
-        // its group to the top row.
-        const usGroup = agIdFor.rowNode('row-group-country-United States');
+        // United States has the largest range, so an ascending sort of the total column sends its
+        // group to the bottom and a descending sort brings it back to the top row.
+        await agIdFor.headerCell('total').click();
+        await waitForRowAnimations(page);
+        await expectRowIdAtIndex(page, 0, 'row-group-country-United States', { not: true });
 
         await agIdFor.headerCell('total').click();
         await waitForRowAnimations(page);
-        await expect(usGroup).not.toHaveAttribute('row-index', '0');
-
-        await agIdFor.headerCell('total').click();
-        await waitForRowAnimations(page);
-        await expect(usGroup).toHaveAttribute('row-index', '0');
+        await expectRowIdAtIndex(page, 0, 'row-group-country-United States');
     });
 });

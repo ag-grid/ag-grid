@@ -538,6 +538,28 @@ export async function waitForRowAnimations(page: Page) {
     });
 }
 
+/**
+ * Assert which row-id occupies a given `row-index` once the grid has settled after a sort.
+ *
+ * A sort that moves a row a long distance animates the outgoing row out over one animation
+ * cycle, during which the DOM briefly holds a second element sharing the moved row's
+ * row-id/row-index, and the moved row may leave the viewport (virtualised out) entirely.
+ * Asserting a specific row's `row-index` is therefore fragile — a strict-mode duplicate while
+ * the animation runs, or element-not-found once the row scrolls out. Reading the row-id at a
+ * fixed, always-rendered index inside a retry rides out that transient.
+ */
+export async function expectRowIdAtIndex(page: Page, rowIndex: number, rowId: string, options: { not?: boolean } = {}) {
+    const row = page.locator(`.ag-grid-scrolling-container .ag-row[row-index="${rowIndex}"]`);
+    await expect(async () => {
+        const actual = await row.getAttribute('row-id');
+        if (options.not) {
+            expect(actual).not.toBe(rowId);
+        } else {
+            expect(actual).toBe(rowId);
+        }
+    }).toPass();
+}
+
 export async function clickAllButtons(page: Page) {
     // Click all visible buttons in the grid example
     // Don't use buttons within the ag-root-wrapper as these are not part of the example

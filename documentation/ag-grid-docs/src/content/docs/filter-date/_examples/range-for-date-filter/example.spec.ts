@@ -21,7 +21,10 @@ test.agExample(import.meta, () => {
         await filterInput.fill('2019-12-31');
         await filterInput.dispatchEvent('input');
 
-        await agIdFor.cell('0', 'startDate').click();
+        // Close the filter popup and confirm the filter is applied. Press Escape rather than
+        // clicking a data cell: the After filter re-filters the rows, so the cell at index 0 is
+        // mid-re-render and the click can race it (the row is removed entirely once applied).
+        await page.keyboard.press('Escape');
 
         await expect(startHeader).toHaveClass(/ag-header-cell-filtered/);
 
