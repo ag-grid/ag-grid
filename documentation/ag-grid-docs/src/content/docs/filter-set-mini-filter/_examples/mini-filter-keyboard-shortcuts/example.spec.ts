@@ -30,11 +30,14 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-row [col-id="athlete"]').filter({ hasText: 'Natalie Coughlin' })).toHaveCount(0);
 
         await page.keyboard.press('Escape');
-        const athleteTexts = await page.locator('.ag-row [col-id="athlete"]').allInnerTexts();
-        expect(athleteTexts.length).toBeGreaterThan(0);
-        for (const text of athleteTexts) {
-            expect(text).toContain('Michael Phelps');
-        }
+        // The filter applies asynchronously, so retry until the displayed rows have settled.
+        await expect(async () => {
+            const athleteTexts = await page.locator('.ag-row [col-id="athlete"]').allInnerTexts();
+            expect(athleteTexts.length).toBeGreaterThan(0);
+            for (const text of athleteTexts) {
+                expect(text).toContain('Michael Phelps');
+            }
+        }).toPass();
     });
 
     test.eachFramework('Country Mini Filter applies while typing', async ({ agIdFor, page }) => {
@@ -54,10 +57,13 @@ test.agExample(import.meta, () => {
 
         await page.keyboard.press('Escape');
 
-        const countryTexts = await page.locator('.ag-row [col-id="country"]').allInnerTexts();
-        expect(countryTexts.length).toBeGreaterThan(0);
-        for (const text of countryTexts) {
-            expect(text).toContain('United States');
-        }
+        // applyMiniFilterWhileTyping filters asynchronously, so retry until rows have settled.
+        await expect(async () => {
+            const countryTexts = await page.locator('.ag-row [col-id="country"]').allInnerTexts();
+            expect(countryTexts.length).toBeGreaterThan(0);
+            for (const text of countryTexts) {
+                expect(text).toContain('United States');
+            }
+        }).toPass();
     });
 });

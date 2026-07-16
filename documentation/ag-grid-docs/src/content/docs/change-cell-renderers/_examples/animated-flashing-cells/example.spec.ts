@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Renders the six change-highlight columns', async ({ agIdFor }) => {
@@ -11,9 +11,13 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('Data changes highlight cells automatically', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
         // A timer updates two random cells every 250ms; flashed cells get the
-        // ag-cell-data-changed class (then the fade animation class).
+        // ag-cell-data-changed class (then the fade animation class). Allow several update
+        // cycles so a slow mount doesn't consume the whole window before the first flash.
         const flashed = page.locator('.ag-cell-data-changed, .ag-cell-data-changed-animation');
-        await expect(flashed.first()).toBeVisible({ timeout: 5000 });
+        await expect(flashed.first()).toBeVisible({ timeout: 15000 });
     });
 });

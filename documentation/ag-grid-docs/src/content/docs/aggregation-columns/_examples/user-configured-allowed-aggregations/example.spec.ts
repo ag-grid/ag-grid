@@ -25,8 +25,9 @@ test.agExample(import.meta, () => {
         await expect(firstOptions).toHaveCount(2);
         await expect(firstOptions.nth(0)).toHaveText('first');
         await expect(firstOptions.nth(1)).toHaveText('last');
-        // Close popup by pressing Escape
-        await page.keyboard.press('Escape');
+        // Close the popup with an outside click. Escape depends on the popup holding focus,
+        // which is unreliable across browsers; an outside pointer-down always dismisses it.
+        await agIdFor.cell(usRowId, 'total').click();
         await expect(firstPopup).not.toBeVisible();
 
         // Click the "min(Min or Max)" pill and verify allowed agg funcs: min, max

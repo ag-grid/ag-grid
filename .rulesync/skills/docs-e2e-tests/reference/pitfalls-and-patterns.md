@@ -136,30 +136,27 @@ const scrollAfter = await viewport.evaluate((el) => el.scrollTop);
 expect(scrollAfter).toBeGreaterThan(scrollBefore);
 ```
 
-### Pitfall 11: Sorting Group Rows and the Double-Click Trap
+### Pitfall 11: Sorting Rows — Assert Which Row-Id Is at an Index, Not a Row's Row-Index
 
-To verify that sorting reorders group (or data) rows by a column's value, click the header cell and assert the target row's **position** via its `row-index` attribute on `agIdFor.rowNode(rowId)`:
+To verify that sorting reorders group (or data) rows by a column's value, assert **which row-id occupies a fixed index** with `expectRowIdAtIndex(page, index, rowId, { not? })` — do **not** track a specific row and assert its `row-index`:
 
 ```typescript
-const usGroup = agIdFor.rowNode('row-group-country-United States');
-await agIdFor.headerCell('total').click(); // ascending
-await expect(usGroup).not.toHaveAttribute('row-index', '0');
-await agIdFor.headerCell('total').click(); // descending
-await expect(usGroup).toHaveAttribute('row-index', '0'); // the max value floats to the top
+import { expectRowIdAtIndex, waitForRowAnimations } from '@utils/grid/test-utils';
+
+await agIdFor.headerCell('total').click(); // ascending: largest value drops to the bottom
+await waitForRowAnimations(page);
+await expectRowIdAtIndex(page, 0, 'row-group-country-United States', { not: true });
+
+await agIdFor.headerCell('total').click(); // descending: largest value floats to the top
+await waitForRowAnimations(page);
+await expectRowIdAtIndex(page, 0, 'row-group-country-United States');
 ```
 
 Pick a row with a **unique** extreme value (e.g. the single country with the largest aggregate) so its top/bottom position is unambiguous — ties make position assertions flaky.
 
-**Double-click trap:** two `headerCell(...).click()` calls in quick succession are interpreted as a **double-click**, so the second sort direction never registers. Between successive header clicks wait for the row re-render to settle with `waitForRowAnimations(page)` — do **not** use a fixed `waitForTimeout` (see the deterministic-waits principle in `SKILL.md`):
+**Why not `expect(agIdFor.rowNode(rowId)).toHaveAttribute('row-index', '0')`?** When a sort moves a row a long way (large dataset), AG Grid animates the outgoing row out over ~one animation cycle. During that window the DOM briefly holds **two** elements sharing that row-id/row-index (→ strict-mode violation, worse under React/Angular wrappers and slow CI), and the moved row can leave the viewport entirely (virtualised out → element-not-found on a `.not.toHaveAttribute`). Reading the row-id at a fixed, always-rendered index inside a retry — which is what `expectRowIdAtIndex` does — is immune to both. Small examples where the row barely moves rarely trip this, but the helper is the safe default.
 
-```typescript
-import { waitForRowAnimations } from '@utils/grid/test-utils';
-
-await agIdFor.headerCell('total').click();
-await expect(usGroup).not.toHaveAttribute('row-index', '0'); // asserting on the first sort also settles it
-await waitForRowAnimations(page); // deterministic gap so the next click isn't a double-click
-await agIdFor.headerCell('total').click();
-```
+**Double-click trap:** two `headerCell(...).click()` calls in quick succession are interpreted as a **double-click**, so the second sort direction never registers. Between successive header clicks wait for the row re-render to settle with `waitForRowAnimations(page)` — do **not** use a fixed `waitForTimeout` (see the deterministic-waits principle in `SKILL.md`).
 
 Sorting works on aggregated values too, including custom `IAggFuncResult` wrappers (sorted by `toNumber()`).
 
@@ -198,10 +195,10 @@ test.agExample(import.meta, () => {
 
 ### Pattern: Aggregation with Sort and Expand Interactions
 
-Value assertions plus the interactions from Pitfalls 11–12. Expected values are computed from the source dataset (here `olympic-winners.json`). Note the deterministic `waitForRowAnimations` between successive header clicks instead of a fixed timeout.
+Value assertions plus the interactions from Pitfalls 11–12. Expected values are computed from the source dataset (here `olympic-winners.json`). Note the deterministic `waitForRowAnimations` between successive header clicks instead of a fixed timeout, and `expectRowIdAtIndex` for the sort assertions (Pitfall 11).
 
 ```typescript
-import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, expectRowIdAtIndex, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Custom aggFunc aggregates the group', async ({ agIdFor, page }) => {
@@ -216,12 +213,14 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        const usGroup = agIdFor.rowNode('row-group-country-United States'); // unique max range (7)
+        // United States has the unique max range, so it drops to the bottom on ascending and
+        // floats to the top on descending.
         await agIdFor.headerCell('total').click();
-        await expect(usGroup).not.toHaveAttribute('row-index', '0');
-        await waitForRowAnimations(page); // deterministic gap so the next click isn't a double-click
+        await waitForRowAnimations(page);
+        await expectRowIdAtIndex(page, 0, 'row-group-country-United States', { not: true });
         await agIdFor.headerCell('total').click();
-        await expect(usGroup).toHaveAttribute('row-index', '0');
+        await waitForRowAnimations(page);
+        await expectRowIdAtIndex(page, 0, 'row-group-country-United States');
     });
 
     test.eachFramework('Expanding a group reveals its leaves', async ({ agIdFor, page }) => {

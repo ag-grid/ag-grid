@@ -232,7 +232,7 @@ Read the relevant entries from `reference/pitfalls-and-patterns.md` based on wha
 | 8 | Virtual scrolling hides off-screen rows | has more rows than fit the viewport |
 | 9 | Selection state / checkbox classes | uses row selection or checkboxes |
 | 10 | Retrying assertions — `.toPass()`, not `expect.poll()` | reads console messages / computed values off the page |
-| 11 | Sorting group rows & the double-click trap | asserts sort ordering via clicks |
+| 11 | Sorting rows — `expectRowIdAtIndex`, not a row's row-index; & the double-click trap | asserts sort ordering via clicks |
 | 12 | Prefer value + interaction, not value alone | supports any interaction (nearly all) |
 
 **Worked patterns** (also in the reference file): row grouping with aggregation & totals; aggregation with sort + expand interactions; tree data with filler nodes.

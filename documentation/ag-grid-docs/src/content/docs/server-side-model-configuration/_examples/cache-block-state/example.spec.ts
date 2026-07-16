@@ -19,15 +19,22 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-row-loading').first()).toBeVisible({ timeout: 3000 });
         await expect(page.locator('.ag-row-loading')).toHaveCount(0, { timeout: 10000 });
 
-        const renderedIndex = await page.evaluate(() => {
-            const rows = Array.from(document.querySelectorAll('.ag-row')) as HTMLElement[];
-            const deep = rows
-                .map((r) => Number(r.getAttribute('row-index')))
-                .filter((i) => Number.isFinite(i) && i >= 100)
-                .sort((a, b) => a - b);
-            return deep[0];
-        });
-        expect(renderedIndex).toBeGreaterThanOrEqual(100);
+        const readDeepRowIndex = () =>
+            page.evaluate(() => {
+                const rows = Array.from(document.querySelectorAll('.ag-row')) as HTMLElement[];
+                const deep = rows
+                    .map((r) => Number(r.getAttribute('row-index')))
+                    .filter((i) => Number.isFinite(i) && i >= 100)
+                    .sort((a, b) => a - b);
+                return deep[0];
+            });
+
+        // The scrolled-to block resolves asynchronously, so retry until a deep row is rendered.
+        let renderedIndex = await readDeepRowIndex();
+        await expect(async () => {
+            renderedIndex = await readDeepRowIndex();
+            expect(renderedIndex).toBeGreaterThanOrEqual(100);
+        }).toPass();
         await expect(dataRow(renderedIndex).locator('[col-id="id"]')).toContainText(String(renderedIndex));
         await expect(dataRow(renderedIndex).locator('[col-id="athlete"]')).not.toBeEmpty();
     });
