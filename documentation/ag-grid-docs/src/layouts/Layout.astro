@@ -58,11 +58,13 @@ const canonicalUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase);
 
 const { showDate: bannerShowDate, untilDate: bannerUntilDate } = announcementBannerContent;
 
-// Per-banner id so a dismissal only hides THIS banner. A new title/date combination yields a
-// new id, so future banners reappear even for visitors who dismissed a previous one. Consumed
-// by the inline show-script and the dismiss script to build the localStorage key.
+// Per-banner id so a dismissal only hides THIS banner. A new title/description/date combination
+// yields a new id, so future banners reappear even for visitors who dismissed a previous one.
+// Consumed by the inline show-script and the dismiss script to build the localStorage key.
 const bannerId = createHash('sha256')
-    .update(`${announcementBannerContent.title}|${bannerShowDate ?? ''}|${bannerUntilDate ?? ''}`)
+    .update(
+        `${announcementBannerContent.title}|${announcementBannerContent.description ?? ''}|${bannerShowDate ?? ''}|${bannerUntilDate ?? ''}`
+    )
     .digest('hex')
     .slice(0, 12);
 
