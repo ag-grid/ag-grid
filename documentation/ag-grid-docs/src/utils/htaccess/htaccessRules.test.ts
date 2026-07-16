@@ -190,9 +190,11 @@ describe('htaccessRules', () => {
     });
 
     describe('production vs staging', () => {
-        it('should include mod_rewrite rules in production only', () => {
-            expect(productionContent).toContain('mod_rewrite.c');
-            expect(stagingContent).not.toContain('mod_rewrite.c');
+        it('should include the redirect/canonicalization rewrites in production only', () => {
+            // Both envs carry a small mod_rewrite block for SE-80 markdown negotiation,
+            // but the host/https redirect rules are production-only.
+            expect(productionContent).toContain('RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]');
+            expect(stagingContent).not.toContain('https://www.ag-grid.com/$1 [R=301,L]');
         });
 
         it('should include mod_expires rules in production only', () => {
@@ -439,6 +441,51 @@ describe('htaccessRules', () => {
             expect(productionContent).toContain(
                 'RewriteRule "^/?charts/react/bullet-series/$" "https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series/" [R=301,NE,L]'
             );
+        });
+    });
+
+    describe('SE-80: Accept: text/markdown content negotiation', () => {
+        const negotiationRules = [
+            'RewriteCond %{HTTP_ACCEPT} text/markdown',
+            // Captures the docs path, reused (%1) in the -f test and the rewrite target.
+            'RewriteCond %{REQUEST_URI} ^/((?:react|angular|vue|javascript)-data-grid/[^/]+?)/?$',
+            'RewriteCond %{DOCUMENT_ROOT}/%1.md -f',
+            'RewriteRule ^ /%1.md [L]',
+        ];
+
+        it('serves the per-page .md variant when Accept: text/markdown, gated by an on-disk check', () => {
+            for (const rule of negotiationRules) {
+                expect(productionContent).toContain(rule);
+            }
+        });
+
+        it('applies the same negotiation rules on staging, in its own mod_rewrite block', () => {
+            // Staging has no redirect rewrites, so negotiation gets a dedicated block.
+            expect(stagingContent).toContain('mod_rewrite.c');
+            expect(stagingContent).toContain('RewriteEngine On');
+            for (const rule of negotiationRules) {
+                expect(stagingContent).toContain(rule);
+            }
+        });
+
+        it('runs the negotiation before the trailing-slash 301 so the canonical URL negotiates in one hop', () => {
+            const negotiationIndex = productionContent.indexOf('RewriteRule ^ /%1.md [L]');
+            const trailingSlashIndex = productionContent.indexOf('# Add trailing slash for directories');
+            expect(negotiationIndex).toBeGreaterThan(-1);
+            expect(trailingSlashIndex).toBeGreaterThan(-1);
+            expect(negotiationIndex).toBeLessThan(trailingSlashIndex);
+        });
+
+        it('adds Vary: Accept for docs paths (both envs) so shared caches key on the negotiated representation', () => {
+            for (const content of [productionContent, stagingContent]) {
+                expect(content).toContain('<If "%{REQUEST_URI} =~ m#^/(react|angular|vue|javascript)-data-grid/#">');
+                expect(content).toContain('Header append Vary Accept');
+            }
+        });
+
+        it('registers the markdown MIME type so the .md files are served as text/markdown', () => {
+            expect(productionContent).toContain('AddType text/markdown md');
+            expect(stagingContent).toContain('AddType text/markdown md');
         });
     });
 

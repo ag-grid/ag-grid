@@ -79,6 +79,36 @@ const modDeflateRules = `
 </IfModule>
 `;
 
+// SE-80: the RewriteCond/RewriteRule lines that serve the per-page markdown variant
+// on `Accept: text/markdown`, shared by the production and staging .htaccess so the
+// rule can't drift between them. Indented 4 spaces for use inside a mod_rewrite block.
+// The negotiation is an internal rewrite (no redirect, URL unchanged), gated by an
+// on-disk check so a path without a .md is left untouched. %1 is the docs path
+// captured below, reused in both the -f test and the rewrite target.
+const markdownNegotiationRules = `    RewriteCond %{HTTP_ACCEPT} text/markdown
+    RewriteCond %{REQUEST_URI} ^/((?:react|angular|vue|javascript)-data-grid/[^/]+?)/?$
+    RewriteCond %{DOCUMENT_ROOT}/%1.md -f
+    RewriteRule ^ /%1.md [L]`;
+
+// Staging has no redirect rewrites, so negotiation gets its own minimal mod_rewrite
+// block. Production embeds the same rules inside its existing block instead.
+const markdownNegotiationBlock = `<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # SE-80: content-negotiate docs pages to their markdown variant on Accept: text/markdown.
+${markdownNegotiationRules}
+</IfModule>`;
+
+// SE-80: docs pages content-negotiate on the Accept header (see the markdown rewrite
+// above), so shared caches must key on it — otherwise they could serve the markdown
+// variant to a browser, or HTML to an agent. Scoped to the docs paths so the rest of
+// the site keeps its default (URL-only) cache key.
+const markdownVaryHeader = `# SE-80: docs pages content-negotiate on Accept (see the markdown rewrite), so shared
+# caches must key on it. Scoped to docs paths so the rest of the site keeps its default.
+<If "%{REQUEST_URI} =~ m#^/(react|angular|vue|javascript)-data-grid/#">
+    Header append Vary Accept
+</If>`;
+
 // Lazily built: the redirect generation resolves urlWithBaseUrl (which needs the
 // build-time base URL), so it must not run at module import — only when the
 // production .htaccess is actually generated.
@@ -127,6 +157,15 @@ ${SITE_SINGLE_HOP_REWRITES.map((r) => {
     RewriteCond %{HTTP_HOST} ^angulargrid\\.com$ [OR]
     RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
     RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
+
+    # SE-80: content-negotiate docs pages to their per-page markdown variant when a
+    # client asks for it via Accept: text/markdown (typically an AI agent — browsers
+    # never send this, so HTML stays the default). The .md files are generated at
+    # build time next to the HTML (see [pageName].md.ts). This is an internal rewrite
+    # (no redirect, URL unchanged), gated by an on-disk check so a path without a .md
+    # is left untouched. Placed after host/https canonicalization but before the
+    # trailing-slash 301 so the canonical (slashed) docs URL negotiates in one hop.
+${markdownNegotiationRules}
 
     # Remove "index.php" from URLs
     RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
@@ -193,6 +232,10 @@ AddType text/markdown md
 function getStagingHtaccessContent(): string {
     return `${baseRules}
 
+${markdownNegotiationBlock}
+
+${markdownVaryHeader}
+
 # Content-Security-Policy — enforced, path-scoped. Unsets the legacy wildcard CSP on
 # the staging vhost so this tightened policy is the only one in effect.
 ${getScopedCspHtaccessBlock({ env: 'staging' }, 'enforce')}
@@ -214,6 +257,8 @@ ${getModRewriteRules()}
 # protection is handled by the CSP frame-ancestors directive instead (see cspRules.ts).
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+${markdownVaryHeader}
 
 ${getProductionCspContent()}
 
