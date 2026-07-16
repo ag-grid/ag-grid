@@ -125,8 +125,11 @@ export class SortIndicatorComp extends Component {
     private updateIcons(): void {
         const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
 
-        const displaySort = _getDisplaySortForColumn(column, beans, this.getSortDefOverride);
-        const { isAbsoluteSort, isDefaultSort, isAscending, isDescending, direction } = displaySort;
+        const { isAbsoluteSort, isDefaultSort, isAscending, isDescending, direction } = _getDisplaySortForColumn(
+            column,
+            beans,
+            this.getSortDefOverride
+        );
 
         if (eSortAsc) {
             _setDisplayed(eSortAsc, isAscending && isDefaultSort, { skipAriaHidden: true });
