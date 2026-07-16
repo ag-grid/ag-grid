@@ -224,6 +224,12 @@ describe('renderMarkdocToMarkdown', () => {
         expect(output).toContain('Partial **content**.');
     });
 
+    it('preserves blank lines inside fenced code (normalisation is fence-aware)', async () => {
+        const body = ['```js', 'const a = 1;', '', '', 'const b = 2;', '```'].join('\n');
+        const output = await render(body);
+        expect(output).toContain('```js\nconst a = 1;\n\n\nconst b = 2;\n```');
+    });
+
     it('normalises output to a single trailing newline and no triple newlines', async () => {
         const output = await render('# A\n\n\n\nParagraph.\n\n\n');
         expect(output.endsWith('\n')).toBe(true);

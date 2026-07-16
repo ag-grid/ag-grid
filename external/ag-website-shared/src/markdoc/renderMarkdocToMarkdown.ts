@@ -150,14 +150,32 @@ function buildFrontmatter({
 }
 
 function normalise(text: string): string {
-    return (
-        text
-            // Collapse 3+ newlines to a single blank line (dropped tags leave gaps).
-            .replace(/\n{3,}/g, '\n\n')
-            // Strip trailing whitespace on each line.
-            .replace(/[ \t]+\n/g, '\n')
-            .trimEnd() + '\n'
-    );
+    // Collapse runs of blank lines left by dropped tags to a single blank line,
+    // but only OUTSIDE fenced code blocks — code (and its blank lines, trailing
+    // whitespace and Markdown hard breaks) is preserved verbatim.
+    const lines = text.split('\n');
+    const out: string[] = [];
+    let inFence = false;
+    let blankRun = 0;
+    for (let i = 0, len = lines.length; i < len; ++i) {
+        const line = lines[i];
+        if (/^\s*```/.test(line)) {
+            inFence = !inFence;
+            blankRun = 0;
+            out.push(line);
+        } else if (inFence) {
+            out.push(line);
+        } else if (line.trim() === '') {
+            blankRun++;
+            if (blankRun <= 1) {
+                out.push('');
+            }
+        } else {
+            blankRun = 0;
+            out.push(line);
+        }
+    }
+    return out.join('\n').trimEnd() + '\n';
 }
 
 /** Render a list of block-level nodes, separated by a single blank line. */

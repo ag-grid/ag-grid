@@ -31,6 +31,12 @@ describe('buildLlmsTxt', () => {
         expect(txt).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
     });
 
+    test('omits the markdown convention when markdown docs are disabled', () => {
+        const disabled = buildLlmsTxt({ ...INPUT, includeMarkdownDocs: false });
+        expect(disabled).not.toContain('.md');
+        expect(disabled).not.toContain('Markdown versions');
+    });
+
     test('derives every link from the canonical base (no other host)', () => {
         const urls = txt.match(/\(https?:\/\/[^)]+\)/g) ?? [];
         expect(urls.length).toBeGreaterThan(0);

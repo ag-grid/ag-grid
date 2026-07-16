@@ -37,7 +37,16 @@ export async function renderApiReferenceTable({
         return kind === 'interface'
             ? await renderInterfaceTable(attributes, framework)
             : await renderApiTable(attributes, framework);
-    } catch {
+    } catch (error) {
+        // The .md is a supplementary artifact, so one bad reference tag must not
+        // fail the whole build — but the failure is reported with context so a
+        // systemic regression surfaces in build/test logs rather than silently
+        // shipping a page with an entire API section missing.
+        const id = attributes?.interfaceName ?? attributes?.source ?? attributes?.sources ?? '(unknown)';
+        // eslint-disable-next-line no-console
+        console.warn(
+            `renderApiReferenceTable: failed to render ${kind} reference for ${JSON.stringify(id)} — ${(error as Error)?.message ?? error}`
+        );
         return '';
     }
 }

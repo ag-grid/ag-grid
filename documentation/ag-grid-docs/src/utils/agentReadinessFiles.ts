@@ -20,6 +20,12 @@ interface AgentReadinessInput {
      * entry point for an LLM-facing guide.
      */
     gridDocsPrefix: string;
+    /**
+     * Whether per-page `.md` routes are generated. When false (the
+     * `DISABLE_MARKDOWN_DOCS` build flag), the llms.txt must not advertise the
+     * `.md` convention or it would point agents at 404s. Defaults to true.
+     */
+    includeMarkdownDocs?: boolean;
 }
 
 interface AgentReadinessLinks {
@@ -61,6 +67,11 @@ function buildLinks({ siteRoot, gridDocsPrefix }: AgentReadinessInput): AgentRea
  */
 export function buildLlmsTxt(input: AgentReadinessInput): string {
     const l = buildLinks(input);
+    // Only advertise the `.md` convention when those routes are actually built.
+    const markdownLine =
+        input.includeMarkdownDocs === false
+            ? ''
+            : `\n- Markdown versions: append \`.md\` to any Data Grid docs page URL for a clean, framework-specific Markdown copy (e.g. ${l.dataGridDocs.replace(/\/$/, '')}.md)`;
     return `# AG Grid
 > High-performance JavaScript Data Grid, plus AG Charts and AG Studio. Framework-agnostic, with React, Angular and Vue support. Free Community and paid Enterprise editions. Current major version: v${input.majorVersion}.
 
@@ -74,8 +85,7 @@ export function buildLlmsTxt(input: AgentReadinessInput): string {
 - [Data Grid API reference](${l.dataGridReference}): complete grid options and API
 - [Charts docs](${l.chartsDocs}): AG Charts quick start
 - [Examples](${l.examples}): live, runnable demos
-- [MCP server](${l.mcpServer}): ag-mcp - version-aware docs, examples and API for AI coding assistants
-- Markdown versions: append \`.md\` to any Data Grid docs page URL for a clean, framework-specific Markdown copy (e.g. ${l.dataGridDocs.replace(/\/$/, '')}.md)
+- [MCP server](${l.mcpServer}): ag-mcp - version-aware docs, examples and API for AI coding assistants${markdownLine}
 
 ## Optional
 - [Pricing](${l.pricing}): Community (free) vs Enterprise
