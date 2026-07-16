@@ -1562,6 +1562,25 @@ describe('SortService', () => {
             `);
         });
 
+        test('absolute sort applied via applyColumnState that is not in the provided sortingOrder orders by magnitude and shows the absolute icon', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'n', field: 'n', sortingOrder: ['asc', 'desc', null] }],
+                rowData: signedRowData,
+                getRowId: (p) => p.data.id,
+            });
+
+            // The provided sortingOrder declares only the default asc/desc entries; the applied
+            // absolute sort matches no item in it, yet the icon still reflects the applied sort.
+            api.applyColumnState({ state: [{ colId: 'n', sort: 'asc', sortType: 'absolute' }] });
+            await asyncSetTimeout(0);
+            expect(rowOrder(api)).toEqual(['3', '2', '1']);
+            expect(visibleSortIcons(api, 'n')).toEqual(['ag-sort-absolute-ascending-icon']);
+            await new GridColumns(api).checkColumns(`
+                CENTER
+                └── n "N" width:200 sort:asc
+            `);
+        });
+
         test('absolute sort declared via initialSort: applied on init, orders by magnitude and shows the absolute icon', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [{ colId: 'n', field: 'n', initialSort: { type: 'absolute', direction: 'asc' } as any }],
