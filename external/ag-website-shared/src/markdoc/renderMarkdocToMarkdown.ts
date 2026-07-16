@@ -326,7 +326,10 @@ function renderInline(node: Node, ctx: RenderContext): string {
         case 'inline':
             return renderInlineChildren(node, ctx);
         case 'text':
-            return stringifyValue(resolveValue(node.attributes.content, ctx));
+            // HTML comments (e.g. authoring markers like `<!-- Install React -->`) arrive as
+            // literal text; strip them from prose. Code fences are rendered separately and keep
+            // their content verbatim, so genuine `<!--` in code examples is untouched.
+            return stripHtmlComments(stringifyValue(resolveValue(node.attributes.content, ctx)));
         case 'strong':
             return `**${renderInlineChildren(node, ctx)}**`;
         case 'em':
@@ -749,4 +752,9 @@ function stringifyValue(value: unknown): string {
         return String(value);
     }
     return '';
+}
+
+/** Remove HTML comments (`<!-- … -->`, including multi-line) from prose text. */
+function stripHtmlComments(text: string): string {
+    return text.replace(/<!--[\s\S]*?-->/g, '');
 }

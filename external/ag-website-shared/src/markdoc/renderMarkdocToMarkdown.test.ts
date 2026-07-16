@@ -311,6 +311,27 @@ describe('renderMarkdocToMarkdown', () => {
         expect(output).toContain('npm install ag-grid-community');
     });
 
+    it('strips HTML comments from prose but keeps them inside code fences', async () => {
+        const body = [
+            'Before.',
+            '',
+            '<!-- authoring marker -->',
+            '',
+            'Text with <!-- inline --> comment.',
+            '',
+            '```html',
+            '<!-- real html example -->',
+            '```',
+        ].join('\n');
+        const output = await render(body);
+
+        expect(output).toContain('Before.');
+        expect(output).not.toContain('authoring marker');
+        expect(output).not.toContain('inline');
+        // A comment inside a code fence is legitimate content and is preserved.
+        expect(output).toContain('<!-- real html example -->');
+    });
+
     it('normalises output to a single trailing newline and no triple newlines', async () => {
         const output = await render('# A\n\n\n\nParagraph.\n\n\n');
         expect(output.endsWith('\n')).toBe(true);
