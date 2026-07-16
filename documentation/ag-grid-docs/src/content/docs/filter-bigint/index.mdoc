@@ -42,6 +42,36 @@ The BigInt Filter accepts decimal integer syntax only:
 - Hex, binary, decimals and scientific notation are rejected.
 - Invalid input is handled via standard validation and does not crash the grid.
 
+## Custom Parsing
+
+To accept other formats, such as hexadecimal, provide a `bigintParser` that converts the entered text to a `bigint` (return `null` for values it cannot parse). Pair it with `allowedCharPattern` so the extra characters can be typed into the filter input. The parsed value is what gets applied to filtering, and the same parser is used by the [Advanced Filter](./filter-advanced/) for `bigint` operands.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'ledgerId',
+            cellDataType: 'bigint',
+            filter: 'agBigIntColumnFilter',
+            filterParams: {
+                allowedCharPattern: '[\\dxXa-fA-F]',
+                bigintParser: (text) => {
+                    if (text == null || text.trim() === '') {
+                        return null;
+                    }
+                    try {
+                        return BigInt(text);
+                    } catch {
+                        // incomplete or invalid input (e.g. '0x') while typing
+                        return null;
+                    }
+                },
+            },
+        },
+    ],
+};
+```
+
 ## BigInt Filter Model
 
 The Filter Model describes the current state of the applied BigInt Filter:

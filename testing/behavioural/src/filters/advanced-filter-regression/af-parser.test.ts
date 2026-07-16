@@ -456,6 +456,43 @@ describe('Advanced Filter — parser edge cases', () => {
             expect(af.input.validationMessage).toContain('Value is not a big integer');
             expect(api.getAdvancedFilterModel()).toBeNull();
         });
+
+        test('a hex operand is parsed via the column bigintParser and applied', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [
+                    { field: 'athlete', filter: true },
+                    { field: 'age', filter: true },
+                    {
+                        field: 'big',
+                        cellDataType: 'bigint',
+                        filter: true,
+                        filterParams: {
+                            bigintParser: (text: string | null) =>
+                                text == null || text.trim() === '' ? null : BigInt(text),
+                        },
+                    },
+                ],
+                rowData: [
+                    { athlete: 'Bolt', age: 25, big: 255n },
+                    { athlete: 'Ng', age: 40, big: 16n },
+                    { athlete: 'Wei', age: 28, big: 1n },
+                ],
+                enableAdvancedFilter: true,
+            });
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.type('[Big] = 0xff');
+            await asyncSetTimeout(0);
+            expect(af.input.validationMessage).toBe('');
+
+            await af.apply();
+            await asyncSetTimeout(0);
+
+            await new GridRows(api, 'hex advanced-filter operand parsed via bigintParser').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 athlete:"Bolt" age:25 big:"255n"
+            `);
+        });
     });
 
     describe('operands and validation', () => {

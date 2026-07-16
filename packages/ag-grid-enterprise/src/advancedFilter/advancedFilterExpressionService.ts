@@ -29,6 +29,7 @@ import {
     ScalarFilterExpressionOperators,
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
+import { getBigIntParser } from './filterExpressionUtils';
 
 export class AdvancedFilterExpressionService extends BeanStub implements NamedBean {
     beanName = 'advFilterExpSvc' as const;
@@ -80,7 +81,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | null
     > = {
         number: (operand) => (_exists(operand) ? Number(operand) : null),
-        bigint: (operand) => operand,
+        bigint: (operand, column) => {
+            const parsed = getBigIntParser(column)(operand);
+            return parsed == null ? null : String(parsed);
+        },
         date: (operand, column, baseCellDataType) =>
             _serialiseDate(
                 this.valueSvc.parseValue(column, null, operand, undefined) as Date,

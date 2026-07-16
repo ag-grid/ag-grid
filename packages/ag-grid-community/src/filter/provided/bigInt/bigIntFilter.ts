@@ -170,10 +170,11 @@ export class BigIntFilter extends SimpleFilter<
     }
 
     protected getValues(position: number): Tuple<bigint> {
+        const { bigintParser } = this.params;
         const result: Tuple<bigint> = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
             if (index < numberOfInputs) {
-                result.push(_parseBigIntOrNull(element.getValue() ?? null));
+                result.push(this.getParsedValue(element, bigintParser));
             }
         });
 
