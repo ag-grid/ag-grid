@@ -43,11 +43,7 @@ test.agExample(import.meta, () => {
         // Custom Group Layout applies setColumnLayout introducing groups that don't exist in the grid.
         await page.getByRole('button', { name: 'Custom Group Layout' }).click();
         await expect(
-            toolPanel
-                .locator('.ag-column-select-column-group-label, .ag-column-select-column-label', {
-                    hasText: 'Dummy Group 1',
-                })
-                .first()
+            toolPanel.locator('.ag-column-select-column-label', { hasText: 'Dummy Group 1' }).first()
         ).toBeVisible();
         await expect(
             toolPanel.locator('.ag-column-select-column-label', { hasText: 'Dummy Group 2' }).first()

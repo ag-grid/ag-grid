@@ -23,7 +23,7 @@ test.agExample(import.meta, () => {
         await expect(page.getByTestId('ag-column-panel-select-header-filter')).toBeHidden();
 
         // The 'date' column is removed from the tool panel via colDef.suppressColumnsToolPanel=true.
-        await expect(panel.locator('.ag-column-select-column-label', { hasText: 'date' })).toHaveCount(0);
+        await expect(panel.locator('.ag-column-select-column-label', { hasText: 'Date' })).toHaveCount(0);
 
         // Each button invokes the corresponding IColumnToolPanel section-visibility method.
         await page.getByRole('button', { name: 'Show Pivot Mode Section' }).click();
