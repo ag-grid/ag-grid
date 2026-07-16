@@ -113,6 +113,11 @@ const {
      */
     DISABLE_EXAMPLE_RUNNER,
 
+    /*
+     * Disable markdown doc generation
+     */
+    DISABLE_MARKDOWN_DOCS,
+
     /**
      * Charts sitemap index to merge
      */
@@ -150,6 +155,7 @@ console.log(
             CHECK_REDIRECTS,
             QUICK_BUILD_PAGES,
             DISABLE_EXAMPLE_RUNNER,
+            DISABLE_MARKDOWN_DOCS,
             CHARTS_SITEMAP_INDEX_URL,
             CHARTS_ROBOTS_DISALLOW_JSON_URL,
             STUDIO_SITEMAP_INDEX_URL,
