@@ -9,7 +9,8 @@
     }
     window.__agAnnouncementBannerInit = true;
 
-    var STORAGE_KEY = 'documentation:announcement-banner-dismissed';
+    var announcementId = document.documentElement.dataset.announcementId || '';
+    var STORAGE_KEY = 'documentation:announcement-banner-dismissed:' + announcementId;
     var banner = document.querySelector('[data-announcement-banner]');
     var button = banner && banner.querySelector('[data-announcement-dismiss]');
 
