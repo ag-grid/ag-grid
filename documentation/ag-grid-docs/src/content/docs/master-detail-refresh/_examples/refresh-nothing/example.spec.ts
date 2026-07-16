@@ -6,7 +6,7 @@ test.agExample(import.meta, () => {
     // Master Grid row (calls count) still updates every two seconds.
     test.eachFramework(
         'Refresh Nothing leaves the detail grid unchanged while the master updates',
-        async ({ agIdFor, page }) => {
+        async ({ agIdFor, agFramework, page }) => {
             await ensureGridReady(page);
             await waitForGridContent(page);
 
@@ -22,8 +22,12 @@ test.agExample(import.meta, () => {
                 'Switch Code',
             ]);
 
-            // Title is 'Nora Thomas 24 calls' on load.
-            await expect(detailRow).toContainText('Nora Thomas 24 calls');
+            // Only the non-React variants use the custom string template that renders a title.
+            const usesTemplate = !agFramework.includes('react');
+            if (usesTemplate) {
+                // Title is 'Nora Thomas 24 calls' on load.
+                await expect(detailRow).toContainText('Nora Thomas 24 calls');
+            }
 
             // Capture the second detail row's duration (the master refresh would change odd rows).
             const durationCell = detailRow.locator('.ag-cell[col-id="duration"]').nth(1);
@@ -34,7 +38,9 @@ test.agExample(import.meta, () => {
             await expect(masterCalls).not.toHaveText('24');
 
             // No detail refresh happened: title still shows the initial count and the data is untouched.
-            await expect(detailRow).toContainText('Nora Thomas 24 calls');
+            if (usesTemplate) {
+                await expect(detailRow).toContainText('Nora Thomas 24 calls');
+            }
             const durationAfter = (await durationCell.textContent())?.trim();
             expect(durationAfter).toBe(durationBefore);
         }

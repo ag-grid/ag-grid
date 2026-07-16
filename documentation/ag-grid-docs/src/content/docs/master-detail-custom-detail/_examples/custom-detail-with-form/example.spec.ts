@@ -7,7 +7,9 @@ test.agExample(import.meta, () => {
 
         // The custom detail renders a form (not a grid) populated from the master
         // row's first call record (callId 579, number "(02) 47485405", direction "Out").
-        const detail = page.locator('.ag-full-width-row');
+        // Some frameworks pre-render every detail row (all but the expanded one are hidden),
+        // so scope to the expanded master row '1' detail row explicitly.
+        const detail = page.getByTestId('ag-row:row-id=detail_1');
         await expect(detail).toContainText('Call Id:');
         await expect(detail).toContainText('Number:');
         await expect(detail).toContainText('Direction:');
