@@ -15,6 +15,7 @@ import {
     checkAndUpdateExpression,
     findEndPosition,
     findStartPosition,
+    getBigIntParser,
     getSearchString,
     updateExpression,
 } from './filterExpressionUtils';
@@ -318,7 +319,7 @@ export class ColFilterExpressionParser {
         text: (a: string) => string;
     } = {
         number: Number,
-        bigint: (operand) => _parseBigIntOrNull(operand)!,
+        bigint: (operand) => getBigIntParser(this.columnParser!.column)(operand)!,
         date: (operand) =>
             this.params.valueSvc.parseValue(this.columnParser!.column!, null, operand, undefined) as Date,
         dateString: (operand) => this.operandValueGetters.date(operand),
