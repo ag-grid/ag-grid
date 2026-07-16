@@ -49,7 +49,7 @@ const isSlashRewritten = (p) => {
 // ONE hop on EITHER host (www or apex) — that single-hop-regardless-of-host property is SE-66.
 const singleHopFroms = new Set();
 const singleHopPairs = []; // { from, to }
-const reRewrite = /^\s*RewriteRule\s+"\^\/\?(.+?)\$"\s+"([^"]+)"\s+\[R=301,L\]/;
+const reRewrite = /^\s*RewriteRule\s+"\^\/\?(.+?)\$"\s+"([^"]+)"\s+\[R=301(?:,NE)?,L\]/;
 for (const line of lines) {
     const m = line.match(reRewrite);
     if (m) {
