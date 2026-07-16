@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 
 import type { GridApi, SideBarDef } from 'ag-grid-community';
+import { getGridElement } from 'ag-grid-community';
 
 import {
     asyncSetTimeout,
@@ -38,7 +39,10 @@ export class ToolPanelHarness {
     public constructor(public readonly api: GridApi) {}
 
     private get panel(): HTMLElement {
-        const panel = document.querySelector<HTMLElement>(PANEL_SELECTOR);
+        // Scope to this grid's DOM: the state round-trip tests keep the source grid alive while
+        // asserting on the restored grid, so a document-wide query would match the wrong panel.
+        const root: ParentNode = (getGridElement(this.api) as HTMLElement | undefined) ?? document;
+        const panel = root.querySelector<HTMLElement>(PANEL_SELECTOR);
         if (!panel) {
             throw new Error('Filters tool panel is not open');
         }
@@ -155,6 +159,29 @@ export class ToolPanelHarness {
         await firePointerLikeClick(item.querySelector<HTMLElement>('input[type="checkbox"]') ?? item);
         await asyncSetTimeout(0);
         return this;
+    }
+
+    /** Types into a set-filter column's mini-filter search box within its panel body. */
+    public async setMiniFilter(title: string, value: string): Promise<this> {
+        const input = this.body(title).querySelector<HTMLInputElement>('.ag-mini-filter input[type="text"]');
+        if (!input) {
+            throw new Error(`No set-filter mini-filter for "${title}"`);
+        }
+        setNativeInputValue(input, value);
+        await asyncSetTimeout(0);
+        return this;
+    }
+
+    /** True when the "No matches" indicator is shown for a set-filter column (list hidden). */
+    public isNoMatchesShown(title: string): boolean {
+        const el = this.body(title).querySelector('.ag-filter-no-matches');
+        return !!el && !el.classList.contains('ag-hidden');
+    }
+
+    /** True when the set-filter value list is shown for a column. */
+    public isSetListShown(title: string): boolean {
+        const el = this.body(title).querySelector('.ag-set-filter-list');
+        return !!el && !el.classList.contains('ag-hidden');
     }
 
     /** True when the top-level column/group is expanded. */
