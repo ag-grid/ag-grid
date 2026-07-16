@@ -339,3 +339,21 @@ export default {
 The example below illustrates how a custom filter component can be accessed and methods on it invoked. If you click on the `Invoke Filter Instance Method` button, it will invoke the instance `componentMethod`, which logs to the developer console.
 
 {% gridExampleRunner title="Filter Component Instance" name="filter-component"  exampleHeight=445 /%}
+
+{% if isFramework("javascript", "angular", "vue") %}
+
+## API Reference
+
+{% /if %}
+
+{% if isFramework("javascript") %}
+{% interfaceDocumentation interfaceName="FilterDisplayComp" config={"description": "The FilterDisplayComp interface has the following methods:"} /%}
+{% /if %}
+
+{% if isFramework("angular") %}
+{% interfaceDocumentation interfaceName="IFilterDisplayAngularComp" config={"description": "The IFilterDisplayAngularComp interface has the following methods:"} /%}
+{% /if %}
+
+{% if isFramework("vue") %}
+{% interfaceDocumentation interfaceName="FilterDisplay" config={"description": "The FilterDisplay interface has the following methods:"} /%}
+{% /if %}
