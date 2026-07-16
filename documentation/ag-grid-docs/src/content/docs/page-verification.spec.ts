@@ -202,12 +202,17 @@ test.describe('Page Verification', () => {
         await page.goto('/react-data-grid/row-sorting/');
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
-        // The iframe uses IntersectionObserver to lazy-load its src.
-        // scrollIntoViewIfNeeded() alone doesn't reliably trigger the observer in headless Chrome —
-        // mouse.wheel() simulates a real scroll event and fires it more reliably.
+        // The iframe lazy-loads its src only once an IntersectionObserver (threshold 0.2)
+        // reports it at least 20% visible. The example is 500px tall in a 720px viewport, so
+        // a minimal reveal (scrollIntoViewIfNeeded + a fixed 100px wheel) leaves its visible
+        // ratio sensitive to late layout shifts and scroll/observer timing — occasionally
+        // landing at ratio 0 (not intersecting), so the src is never set and the test times
+        // out. That intermittent miss was the source of this test's flakiness. Centring the
+        // iframe in the viewport (a deterministic native DOM scroll) makes it ~100% visible,
+        // comfortably clearing the threshold on every run.
         const iframeLocator = page.locator('iframe.exampleRunner').first();
         await iframeLocator.scrollIntoViewIfNeeded();
-        await page.mouse.wheel(0, 100);
+        await iframeLocator.evaluate((el) => el.scrollIntoView({ block: 'center' }));
         await expect(iframeLocator).toHaveAttribute('src', /example-runner/, { timeout: 30_000 });
 
         const exampleFrame = page.locator('iframe.exampleRunner').first().contentFrame();
