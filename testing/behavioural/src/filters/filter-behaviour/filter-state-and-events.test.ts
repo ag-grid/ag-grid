@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import type { FilterChangedEvent, FilterModifiedEvent, GridApi, GridState } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -414,12 +416,13 @@ describe('Filter State & Events', () => {
             initialState: state,
         });
         const panel2 = await openFiltersPanel(api2);
-        await asyncSetTimeout(50);
 
-        // The restored open filter must show the same 3 options — not the stale "No matches".
+        // The set filter loads its display values asynchronously after the panel attaches, so wait for
+        // the matching options to appear rather than guessing a fixed delay. The restored open filter
+        // must show the same 3 options — not the stale "No matches".
+        await waitFor(() => expect(panel2.setFilterItemLabels('Athlete')).toEqual(LI_MATCHES));
         expect(panel2.isNoMatchesShown('Athlete')).toBe(false);
         expect(panel2.isSetListShown('Athlete')).toBe(true);
-        expect(panel2.setFilterItemLabels('Athlete')).toEqual(LI_MATCHES);
     });
 
     test('data change re-filters an open set filter mini-filter list, not stale "No matches"', async () => {
@@ -439,13 +442,13 @@ describe('Filter State & Events', () => {
         expect(panel.isNoMatchesShown('Athlete')).toBe(true);
         expect(panel.isSetListShown('Athlete')).toBe(false);
 
-        // Row data now includes matching athletes; the open filter must re-show the list.
+        // Row data now includes matching athletes; the open filter must re-show the list. The reload
+        // is async, so wait for the matching options to appear rather than a fixed delay.
         api.setGridOption('rowData', ATHLETES);
-        await asyncSetTimeout(50);
 
+        await waitFor(() => expect(panel.setFilterItemLabels('Athlete')).toEqual(LI_MATCHES));
         expect(panel.isNoMatchesShown('Athlete')).toBe(false);
         expect(panel.isSetListShown('Athlete')).toBe(true);
-        expect(panel.setFilterItemLabels('Athlete')).toEqual(LI_MATCHES);
     });
 
     test('set filter closed at state-restore still filters correctly when later opened', async () => {
@@ -459,11 +462,11 @@ describe('Filter State & Events', () => {
             initialState: state,
         });
 
-        // Filter was closed at restore; open it now via the column menu.
+        // Filter was closed at restore; open it now via the column menu. Values load asynchronously,
+        // so wait for the matching options rather than a fixed delay.
         const filter = await ColumnFilterHarness.open(api, 'athlete');
-        await asyncSetTimeout(50);
 
-        expect(filter.setFilterItemLabels()).toEqual(LI_MATCHES);
+        await waitFor(() => expect(filter.setFilterItemLabels()).toEqual(LI_MATCHES));
         const noMatches = document.querySelector('.ag-filter-menu .ag-filter-no-matches');
         expect(noMatches?.classList.contains('ag-hidden')).toBe(true);
     });

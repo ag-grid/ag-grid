@@ -37,7 +37,8 @@ export class ToolPanelHarness {
     public constructor(public readonly api: GridApi) {}
 
     private get panel(): HTMLElement {
-        // Scope to this grid's DOM so the harness works when several grids are alive at once.
+        // Scope to this grid's DOM: the state round-trip tests keep the source grid alive while
+        // asserting on the restored grid, so a document-wide query would match the wrong panel.
         const root: ParentNode = (getGridElement(this.api) as HTMLElement | undefined) ?? document;
         const panel = root.querySelector<HTMLElement>(PANEL_SELECTOR);
         if (!panel) {
