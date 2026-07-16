@@ -204,7 +204,7 @@ export class AgColumn<TValue = any>
     public parent: AgColumnGroup | null = null;
     public originalParent: AgProvidedColumnGroup | null = null;
 
-    /** Public so the free `getAvailableSortTypes` sort helper can cache on the column; nulled in {@link setColDef}. */
+    /** Public so the free `_getAvailableSortTypes` sort helper can cache on the column; nulled in {@link setColDef}. */
     public cachedSortTypes: Set<SortType> | null = null;
 
     constructor(
@@ -896,7 +896,8 @@ export const getSortingOrder = (gos: GridOptionsService, column: AgColumn): Sort
     return res;
 };
 
-const getAvailableSortTypes = (gos: GridOptionsService, column: AgColumn): Set<SortType> => {
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _getAvailableSortTypes = (gos: GridOptionsService, column: AgColumn): Set<SortType> => {
     const cacheable = gos.get('sortingOrder') == null; // deprecated `sortingOrder` disables the cache
     const cached = column.cachedSortTypes;
     if (cacheable && cached) {
@@ -955,10 +956,7 @@ export const _getDisplaySortForColumn = (column: AgColumn, beans: BeanCollection
     const sortDef = overrideSortDef !== undefined ? overrideSortDef : beans.sortSvc?.getDisplaySort(column);
     const type = _normalizeSortType(sortDef?.type);
     const direction = normalizeSortDirection(sortDef?.direction);
-    const allowedSortTypes = getAvailableSortTypes(beans.gos, column);
     return {
-        isDefaultSortAllowed: allowedSortTypes.has('default'),
-        isAbsoluteSortAllowed: allowedSortTypes.has('absolute'),
         isAbsoluteSort: type === 'absolute',
         isDefaultSort: type === 'default',
         isAscending: direction === 'asc',

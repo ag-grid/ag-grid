@@ -2,6 +2,7 @@ import type { AgColumn, AgProvidedColumnGroup, DefaultMenuItem, MenuItemDef, Nam
 import {
     BeanStub,
     _addGridCommonParams,
+    _getAvailableSortTypes,
     _getDisplaySortForColumn,
     _getGrandTotalRow,
     _isClientSideRowModel,
@@ -127,27 +128,27 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             !isPrimary || (aggFuncSvc && column.isAllowValue() && (doingGrouping || grandTotalRow || treeData));
 
         if (sortSvc && !isLegacyMenuEnabled && column.isSortable()) {
-            const {
-                isDefaultSortAllowed,
-                isAbsoluteSortAllowed,
-                isAbsoluteSort,
-                isDefaultSort,
-                isAscending,
-                isDescending,
-                direction,
-            } = _getDisplaySortForColumn(column, beans);
+            const { isAbsoluteSort, isDefaultSort, isAscending, isDescending, direction } = _getDisplaySortForColumn(
+                column,
+                beans
+            );
+            const allowedSortTypes = _getAvailableSortTypes(gos, column);
 
-            if (isDefaultSortAllowed && !(isAscending && isDefaultSort)) {
-                result.push('sortAscending');
+            if (allowedSortTypes.has('default')) {
+                if (!(isAscending && isDefaultSort)) {
+                    result.push('sortAscending');
+                }
+                if (!(isDescending && isDefaultSort)) {
+                    result.push('sortDescending');
+                }
             }
-            if (isDefaultSortAllowed && !(isDescending && isDefaultSort)) {
-                result.push('sortDescending');
-            }
-            if (isAbsoluteSortAllowed && !(isAscending && isAbsoluteSort)) {
-                result.push('sortAbsoluteAscending');
-            }
-            if (isAbsoluteSortAllowed && !(isDescending && isAbsoluteSort)) {
-                result.push('sortAbsoluteDescending');
+            if (allowedSortTypes.has('absolute')) {
+                if (!(isAscending && isAbsoluteSort)) {
+                    result.push('sortAbsoluteAscending');
+                }
+                if (!(isDescending && isAbsoluteSort)) {
+                    result.push('sortAbsoluteDescending');
+                }
             }
             if (direction) {
                 result.push('sortUnSort');
