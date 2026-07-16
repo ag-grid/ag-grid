@@ -170,6 +170,10 @@ const announcementBanner = defineCollection({
         description: z.string().optional(),
         ctaLabel: z.string().optional(),
         external: z.boolean().optional(),
+        /** Show the banner from this date onwards (format: YYYY-MM-DD). */
+        showDate: z.string().nullable().optional(),
+        /** Hide the banner once this date has passed (format: YYYY-MM-DD). */
+        untilDate: z.string().nullable().optional(),
     }),
 });
 
