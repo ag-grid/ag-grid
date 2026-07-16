@@ -15,7 +15,7 @@ publishModules()
 
     if [ $? -ne 0 ]; then
         echo "Error publishing $modulePath"
-        exit 1;
+        exit 1
     else
         echo "$modulePath published to npm"
     fi

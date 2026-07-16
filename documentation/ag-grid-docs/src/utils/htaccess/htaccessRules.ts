@@ -1,11 +1,6 @@
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
 import type { CspEnv } from './cspRules';
-import {
-    getBranchBuildsCspIfOverride,
-    getCampaignsCspIfOverride,
-    getCspHtaccessBlock,
-    getScopedCspHtaccessBlock,
-} from './cspRules';
+import { getCampaignsCspIfOverride, getCspHtaccessBlock, getScopedCspHtaccessBlock } from './cspRules';
 import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 export type HtaccessEnv = Extract<CspEnv, 'staging' | 'production'>;
@@ -88,9 +83,14 @@ const getModRewriteRules = (): string => `
     # host-swap so a matching legacy path on either www.ag-grid.com or ag-grid.com (any
     # scheme) lands on its final www URL in ONE 301. Inbound query strings are preserved
     # (targets carry none). See SITE_SINGLE_HOP_REWRITES in redirects.ts.
-${SITE_SINGLE_HOP_REWRITES.map(
-    (r) => `    RewriteRule "^/?${r.from.replace(/^\//, '').replace(/\./g, '\\.')}$" "${r.to}" [R=301,L]`
-).join('\n')}
+${SITE_SINGLE_HOP_REWRITES.map((r) => {
+    const from = r.from.replace(/^\//, '').replace(/\./g, '\\.');
+    // Targets carrying a URL fragment need [NE] (noescape) so mod_rewrite emits the '#' verbatim in
+    // the Location header. Without it mod_rewrite escapes '#' to %23, turning the anchor into a
+    // literal path segment (a broken URL).
+    const flags = r.to.includes('#') ? 'R=301,NE,L' : 'R=301,L';
+    return `    RewriteRule "^/?${from}$" "${r.to}" [${flags}]`;
+}).join('\n')}
 
     # Always use https for secure connections (scoped to www/bare domain only
     # so that charts.ag-grid.com and studio.ag-grid.com are not affected)
@@ -186,8 +186,6 @@ function getStagingHtaccessContent(): string {
 # Content-Security-Policy — enforced, path-scoped. Unsets the legacy wildcard CSP on
 # the staging vhost so this tightened policy is the only one in effect.
 ${getScopedCspHtaccessBlock({ env: 'staging' }, 'enforce')}
-
-${getBranchBuildsCspIfOverride('enforce')}
 
 Options -Indexes
 `;

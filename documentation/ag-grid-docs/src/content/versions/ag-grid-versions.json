@@ -1,5 +1,9 @@
 [
     {
+        "version": "36.0.1",
+        "date": "15th July 2026"
+    },
+    {
         "version": "36.0.0",
         "date": "June 24th 2026",
         "landingPageHighlight": "Calculated Columns, Show Values As, Automatic Column Generation, Accessibility Improvements, Theming Improvements",
@@ -25,6 +29,10 @@
         ],
         "notesPath": "./upgrading-to-ag-grid-36",
         "hideBlogPostLink": false
+    },
+    {
+        "version": "35.3.1",
+        "date": "2nd June 2026"
     },
     {
         "version": "35.3.0",
