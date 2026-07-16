@@ -125,17 +125,18 @@ export class SortIndicatorComp extends Component {
     private updateIcons(): void {
         const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
 
-        const displaySort = _getDisplaySortForColumn(column, beans, this.getSortDefOverride);
-        const isDefaultSortAllowed = displaySort.isDefaultSortAllowed;
-        const isAbsoluteSortAllowed = displaySort.isAbsoluteSortAllowed;
-        const { isAbsoluteSort, isDefaultSort, isAscending, isDescending, direction } = displaySort;
+        const { isAbsoluteSort, isDefaultSort, isAscending, isDescending, direction } = _getDisplaySortForColumn(
+            column,
+            beans,
+            this.getSortDefOverride
+        );
 
         if (eSortAsc) {
-            _setDisplayed(eSortAsc, isAscending && isDefaultSort && isDefaultSortAllowed, { skipAriaHidden: true });
+            _setDisplayed(eSortAsc, isAscending && isDefaultSort, { skipAriaHidden: true });
         }
 
         if (eSortDesc) {
-            _setDisplayed(eSortDesc, isDescending && isDefaultSort && isDefaultSortAllowed, { skipAriaHidden: true });
+            _setDisplayed(eSortDesc, isDescending && isDefaultSort, { skipAriaHidden: true });
         }
 
         if (eSortNone) {
@@ -144,15 +145,11 @@ export class SortIndicatorComp extends Component {
         }
 
         if (eSortAbsoluteAsc) {
-            _setDisplayed(eSortAbsoluteAsc, isAscending && isAbsoluteSort && isAbsoluteSortAllowed, {
-                skipAriaHidden: true,
-            });
+            _setDisplayed(eSortAbsoluteAsc, isAscending && isAbsoluteSort, { skipAriaHidden: true });
         }
 
         if (eSortAbsoluteDesc) {
-            _setDisplayed(eSortAbsoluteDesc, isDescending && isAbsoluteSort && isAbsoluteSortAllowed, {
-                skipAriaHidden: true,
-            });
+            _setDisplayed(eSortAbsoluteDesc, isDescending && isAbsoluteSort, { skipAriaHidden: true });
         }
     }
 
