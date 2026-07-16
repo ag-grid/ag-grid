@@ -6,7 +6,7 @@ import {
     TextFilterModule,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { SetFilterModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import {
     ColumnFilterHarness,
@@ -17,6 +17,7 @@ import {
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
 } from '../../test-utils';
+import { FILTERS_SIDEBAR, openFiltersPanel } from './toolPanelHarness';
 
 interface Athlete {
     athlete: string;
@@ -47,7 +48,14 @@ const filterCols = [
  */
 describe('Filter State & Events', () => {
     const gridsManager = new TestGridsManager({
-        modules: [TextFilterModule, NumberFilterModule, SetFilterModule, GridStateModule, ClientSideRowModelModule],
+        modules: [
+            TextFilterModule,
+            NumberFilterModule,
+            SetFilterModule,
+            FiltersToolPanelModule,
+            GridStateModule,
+            ClientSideRowModelModule,
+        ],
     });
 
     beforeAll(() => {
@@ -371,5 +379,92 @@ describe('Filter State & Events', () => {
             ├── LEAF id:4 age:17 athlete:"Missy Franklin"
             └── LEAF id:5 age:17 athlete:"Ian Thorpe"
         `);
+    });
+
+    // ===== SET FILTER: mini-filter list visibility after a reload (state restore / data change) =====
+    // "li" matches exactly Natalie Coughlin, Alicia Coutts, Missy Franklin.
+    const LI_MATCHES = ['(Select All)', 'Alicia Coutts', 'Missy Franklin', 'Natalie Coughlin'];
+
+    test('set filter open at state-restore re-filters the list, not "No matches"', async () => {
+        const setCols = [{ field: 'athlete', filter: 'agSetColumnFilter' }];
+
+        const api1: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: setCols,
+            rowData: ATHLETES,
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel1 = await openFiltersPanel(api1);
+        await panel1.expandGroup('Athlete');
+        await panel1.setMiniFilter('Athlete', 'li');
+
+        // Baseline: the open filter shows the 3 matching athletes, no "No matches".
+        expect(panel1.setFilterItemLabels('Athlete')).toEqual(LI_MATCHES);
+        expect(panel1.isNoMatchesShown('Athlete')).toBe(false);
+
+        // The captured state carries the mini-filter text and the expanded (open) athlete filter.
+        const state = api1.getState();
+        expect(state.filter?.columnFilterState?.athlete).toEqual({ miniFilterValue: 'li' });
+        expect(state.sideBar?.toolPanels?.filters?.expandedColIds).toContain('athlete');
+
+        // Recreate a fresh grid seeded with the state: the athlete filter is open at restore time.
+        const api2: GridApi = await gridsManager.createGridAndWait('grid2', {
+            columnDefs: setCols,
+            rowData: ATHLETES,
+            sideBar: FILTERS_SIDEBAR,
+            initialState: state,
+        });
+        const panel2 = await openFiltersPanel(api2);
+        await asyncSetTimeout(50);
+
+        // The restored open filter must show the same 3 options — not the stale "No matches".
+        expect(panel2.isNoMatchesShown('Athlete')).toBe(false);
+        expect(panel2.isSetListShown('Athlete')).toBe(true);
+        expect(panel2.setFilterItemLabels('Athlete')).toEqual(LI_MATCHES);
+    });
+
+    test('data change re-filters an open set filter mini-filter list, not stale "No matches"', async () => {
+        const setCols = [{ field: 'athlete', filter: 'agSetColumnFilter' }];
+        const noMatchData = [{ athlete: 'Michael Phelps' }, { athlete: 'Ian Thorpe' }, { athlete: 'Aleksey Nemov' }];
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: setCols,
+            rowData: noMatchData,
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.expandGroup('Athlete');
+        await panel.setMiniFilter('Athlete', 'li');
+
+        // No current athlete matches "li" ⇒ the open filter correctly shows "No matches".
+        expect(panel.isNoMatchesShown('Athlete')).toBe(true);
+        expect(panel.isSetListShown('Athlete')).toBe(false);
+
+        // Row data now includes matching athletes; the open filter must re-show the list.
+        api.setGridOption('rowData', ATHLETES);
+        await asyncSetTimeout(50);
+
+        expect(panel.isNoMatchesShown('Athlete')).toBe(false);
+        expect(panel.isSetListShown('Athlete')).toBe(true);
+        expect(panel.setFilterItemLabels('Athlete')).toEqual(LI_MATCHES);
+    });
+
+    test('set filter closed at state-restore still filters correctly when later opened', async () => {
+        const setCols = [{ field: 'athlete', filter: 'agSetColumnFilter' }];
+        // The columnFilterState shape verified against real getState() above; here the filter is closed at restore.
+        const state = { filter: { columnFilterState: { athlete: { miniFilterValue: 'li' } } } } as GridState;
+
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: setCols,
+            rowData: ATHLETES,
+            initialState: state,
+        });
+
+        // Filter was closed at restore; open it now via the column menu.
+        const filter = await ColumnFilterHarness.open(api, 'athlete');
+        await asyncSetTimeout(50);
+
+        expect(filter.setFilterItemLabels()).toEqual(LI_MATCHES);
+        const noMatches = document.querySelector('.ag-filter-menu .ag-filter-no-matches');
+        expect(noMatches?.classList.contains('ag-hidden')).toBe(true);
     });
 });

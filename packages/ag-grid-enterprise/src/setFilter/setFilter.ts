@@ -173,6 +173,7 @@ export class SetFilter<V = string>
                                     this.hardRefreshVirtualList = true;
                                 }
                                 this.checkAndRefreshVirtualList();
+                                this.showOrHideResults();
                             }
                         });
                     },
@@ -290,6 +291,7 @@ export class SetFilter<V = string>
             if (this.isAlive()) {
                 // Async values could arrive after the grid has been destroyed
                 this.checkAndRefreshVirtualList();
+                this.showOrHideResults();
             }
         });
     }
