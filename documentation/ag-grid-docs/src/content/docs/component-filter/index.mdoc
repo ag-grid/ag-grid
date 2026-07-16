@@ -72,11 +72,7 @@ will be additionally added to the params object, overriding items of the same na
 
 ### Filter Props
 
-The following props are passed to the custom filter components (`CustomFilterDisplayProps` interface). If custom props are provided via the `colDef.filterParams` property, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
-{% /if %}
-
-{% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomFilterDisplayProps" config={ "description": "" } /%}
+The custom filter component receives props following the `CustomFilterDisplayProps` interface, listed below under [API Reference](#api-reference). If custom props are provided via the `colDef.filterParams` property, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
 {% /if %}
 
 {% if isFramework("react") %}
@@ -340,11 +336,7 @@ The example below illustrates how a custom filter component can be accessed and 
 
 {% gridExampleRunner title="Filter Component Instance" name="filter-component"  exampleHeight=445 /%}
 
-{% if isFramework("javascript", "angular", "vue") %}
-
 ## API Reference
-
-{% /if %}
 
 {% if isFramework("javascript") %}
 {% interfaceDocumentation interfaceName="FilterDisplayComp" config={"description": "The FilterDisplayComp interface has the following methods:"} /%}
@@ -356,4 +348,8 @@ The example below illustrates how a custom filter component can be accessed and 
 
 {% if isFramework("vue") %}
 {% interfaceDocumentation interfaceName="FilterDisplay" config={"description": "The FilterDisplay interface has the following methods:"} /%}
+{% /if %}
+
+{% if isFramework("react") %}
+{% interfaceDocumentation interfaceName="CustomFilterDisplayProps" config={"description": "The CustomFilterDisplayProps interface has the following properties:"} /%}
 {% /if %}

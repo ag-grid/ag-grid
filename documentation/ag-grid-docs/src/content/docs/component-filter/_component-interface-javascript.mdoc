@@ -1,6 +1,6 @@
 {% if isFramework("javascript") %}
 
-Custom filter components implement the `FilterDisplayComp` interface. The `getGui()` method returns the filter's DOM element, and `refresh(params)` is called whenever the filter params change.
+Custom filter components implement the `FilterDisplayComp` interface. The `getGui()` method returns the filter's DOM element, and `refresh(params)` is called when the filter parameters change. Return `false` from `refresh` to have the grid destroy and recreate the filter; otherwise the existing filter is reused.
 
 Full details of the `FilterDisplayComp` interface are listed below under [API Reference](#api-reference).
 
