@@ -1,7 +1,13 @@
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Detail rows use a dynamic template showing the master row name', async ({ agIdFor, page }) => {
+    test.eachFramework('Detail rows use a dynamic template showing the master row name', async ({
+        agIdFor,
+        agFramework,
+        page,
+    }) => {
+        test.skip(agFramework.includes('react'), 'Example not for React.');
+
         await ensureGridReady(page);
         await waitForGridContent(page);
 
