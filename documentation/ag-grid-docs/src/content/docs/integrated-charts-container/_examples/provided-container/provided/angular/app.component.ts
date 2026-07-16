@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import type { ElementRef } from '@angular/core';
-import { Component, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild } from '@angular/core';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 import { AgGridAngular } from 'ag-grid-angular';
@@ -67,7 +67,10 @@ export class AppComponent {
 
     @ViewChild('chartParent') chartParent?: ElementRef;
 
-    constructor(private http: HttpClient) {}
+    constructor(
+        private http: HttpClient,
+        private ngZone: NgZone
+    ) {}
 
     onGridReady(params: GridReadyEvent) {
         this.http
@@ -87,9 +90,13 @@ export class AppComponent {
         this.createdTime = new Date().toLocaleString();
     }
 
-    // Arrow function used to correctly bind this to the component
+    // Arrow function used to correctly bind this to the component.
+    // The grid invokes this outside Angular's zone, so run the state update inside
+    // it to trigger change detection (otherwise the chart-wrapper template never updates).
     createChartContainer = (chartRef: ChartRef) => {
-        this.updateChart(chartRef);
-        this.chartParent?.nativeElement.appendChild(chartRef.chartElement);
+        this.ngZone.run(() => {
+            this.updateChart(chartRef);
+            this.chartParent?.nativeElement.appendChild(chartRef.chartElement);
+        });
     };
 }
