@@ -41,7 +41,7 @@ function render(body: string, overrides: Partial<RenderMarkdocToMarkdownOptions>
 }
 
 describe('renderMarkdocToMarkdown', () => {
-    it('emits YAML frontmatter with title, framework and version, then the H1 and description', async () => {
+    it('emits YAML frontmatter with title, framework and version, then the H1 (description omitted)', async () => {
         const output = await render('Body paragraph.', {
             framework: 'angular',
             version: '33.1.0',
@@ -53,7 +53,9 @@ describe('renderMarkdocToMarkdown', () => {
         expect(output).toContain('framework: angular');
         expect(output).toContain('version: "33.1.0"');
         expect(output).toContain('\n# Cell Editing\n');
-        expect(output).toContain('How to edit cells.');
+        expect(output).toContain('Body paragraph.');
+        // The description is deliberately not repeated in the body.
+        expect(output).not.toContain('How to edit cells.');
     });
 
     it('passes through standard markdown (headings, emphasis, links, lists, tables)', async () => {
@@ -267,6 +269,46 @@ describe('renderMarkdocToMarkdown', () => {
         const body = ['```js', 'const a = 1;', '', '', 'const b = 2;', '```'].join('\n');
         const output = await render(body);
         expect(output).toContain('```js\nconst a = 1;\n\n\nconst b = 2;\n```');
+    });
+
+    it('resolves framework conditionals inside a code fence', async () => {
+        const body = [
+            '```js',
+            'const a = 1;',
+            '{% if isFramework("react") %}',
+            'const framework = "react";',
+            '{% /if %}',
+            '{% if isFramework("angular") %}',
+            'const framework = "angular";',
+            '{% /if %}',
+            '```',
+        ].join('\n');
+
+        const react = await render(body, { framework: 'react' });
+        expect(react).toContain('const framework = "react";');
+        expect(react).not.toContain('const framework = "angular";');
+        expect(react).not.toContain('{% if');
+
+        const angular = await render(body, { framework: 'angular' });
+        expect(angular).toContain('const framework = "angular";');
+        expect(angular).not.toContain('const framework = "react";');
+    });
+
+    it('renders numberHeading with its heading and inner content', async () => {
+        const body = [
+            '{% numberHeading number="1" title="Install" level="h3" %}',
+            'Run the install:',
+            '',
+            '```bash',
+            'npm install ag-grid-community',
+            '```',
+            '{% /numberHeading %}',
+        ].join('\n');
+        const output = await render(body);
+
+        expect(output).toContain('### 1. Install');
+        expect(output).toContain('Run the install:');
+        expect(output).toContain('npm install ag-grid-community');
     });
 
     it('normalises output to a single trailing newline and no triple newlines', async () => {

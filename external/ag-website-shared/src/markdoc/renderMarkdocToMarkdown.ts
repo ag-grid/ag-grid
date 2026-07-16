@@ -121,9 +121,8 @@ export async function renderMarkdocToMarkdown(opts: RenderMarkdocToMarkdownOptio
     const bodyMarkdown = await renderBlocks(ast.children, ctx);
 
     const frontmatterBlock = buildFrontmatter({ title: frontmatter.title, framework, version });
-    const opener = [frontmatter.title ? `# ${frontmatter.title}` : '', frontmatter.description ?? '']
-        .filter(Boolean)
-        .join('\n\n');
+    // Just the H1 — the description is intentionally omitted; the page body is the content.
+    const opener = frontmatter.title ? `# ${frontmatter.title}` : '';
 
     const document = [frontmatterBlock, opener, bodyMarkdown].filter((part) => part && part.length).join('\n\n');
 
@@ -397,8 +396,11 @@ function renderImageNode(node: Node): string {
 /* -------------------------------------------------------------------------- */
 
 function renderFence(node: Node, ctx: RenderContext): string {
-    const raw = String(node.attributes.content ?? '');
-    let code = raw.replace(/\n$/, '');
+    // Fence content can contain `{% if isFramework %}` guards; Markdoc parses those as
+    // child tag nodes (while `attributes.content` stays the literal string). Render the
+    // children as raw code so conditionals/interpolation resolve for this framework —
+    // exactly what the site's Snippet component does via its default slot.
+    let code = renderFenceCode(node, ctx).replace(/\n$/, '');
     let language = node.attributes.language ? String(node.attributes.language) : '';
 
     if (node.attributes.frameworkTransform && ctx.resolvers.transformFence) {
@@ -408,6 +410,43 @@ function renderFence(node: Node, ctx: RenderContext): string {
     }
 
     return `\`\`\`${language}\n${code}\n\`\`\``;
+}
+
+/** The fence's code, resolving `{% if %}` guards and interpolation to raw text (no markdown escaping). */
+function renderFenceCode(node: Node, ctx: RenderContext): string {
+    const children = node.children ?? [];
+    if (children.length === 0) {
+        return String(node.attributes.content ?? '');
+    }
+    let out = '';
+    for (let i = 0, len = children.length; i < len; ++i) {
+        out += renderRawNode(children[i], ctx);
+    }
+    return out;
+}
+
+/** Emit a node subtree as raw text (used inside fenced code, where markdown must not be escaped). */
+function renderRawNode(node: Node, ctx: RenderContext): string {
+    if (node.type === 'text') {
+        return stringifyValue(resolveValue(node.attributes.content, ctx));
+    }
+    if (node.type === 'tag' && node.tag === 'if') {
+        const branch = selectBranch(node, ctx);
+        let out = '';
+        for (let i = 0, len = branch.length; i < len; ++i) {
+            out += renderRawNode(branch[i], ctx);
+        }
+        return out;
+    }
+    const children = node.children ?? [];
+    if (children.length) {
+        let out = '';
+        for (let i = 0, len = children.length; i < len; ++i) {
+            out += renderRawNode(children[i], ctx);
+        }
+        return out;
+    }
+    return stringifyValue(resolveValue(node.attributes?.content, ctx));
 }
 
 async function renderList(node: Node, ctx: RenderContext): Promise<string> {
@@ -524,13 +563,16 @@ async function renderTabs(node: Node, ctx: RenderContext): Promise<string> {
     return parts.join('\n\n');
 }
 
-function renderNumberHeading(node: Node, ctx: RenderContext): string {
+async function renderNumberHeading(node: Node, ctx: RenderContext): Promise<string> {
     const levelText = String(node.attributes.level ?? 'h2');
     const level = Number.parseInt(levelText.replace(/\D/g, ''), 10) || 2;
     const number = stringifyAttr(node.attributes.number, ctx);
     const title = stringifyAttr(node.attributes.title, ctx);
     const prefix = number ? `${number}. ` : '';
-    return `${'#'.repeat(level)} ${prefix}${title}`;
+    const heading = `${'#'.repeat(level)} ${prefix}${title}`;
+    // numberHeading wraps the step's content (code, notes, framework conditionals); render it.
+    const inner = (await renderBlocks(node.children ?? [], ctx)).trim();
+    return inner.length ? `${heading}\n\n${inner}` : heading;
 }
 
 function resolveImagePath(node: Node, ctx: RenderContext): string {
