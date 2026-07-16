@@ -740,6 +740,58 @@ describe('Auto Group Column Order', () => {
             `);
         });
 
+        test('appends auto group column for a row group added at runtime', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            expect(getColumnOrder(gridApi, 'center')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`, 'a', 'b', 'c']);
+
+            gridApi.addRowGroupColumns(['b']);
+
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+            // b is auto-hidden on grouping via the API (default suppressGroupChangesColumnVisibility), so it drops out of the displayed cols.
+            expect(gridApi.getColumn('b')?.isVisible()).toBe(false);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                `${GROUP_AUTO_COLUMN_ID}-a`,
+                `${GROUP_AUTO_COLUMN_ID}-b`,
+                'a',
+                'c',
+            ]);
+        });
+
+        test('appends auto group column in place when a row group is added via applyColumnState', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            expect(getColumnOrder(gridApi, 'center')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`, 'a', 'b', 'c']);
+
+            gridApi.applyColumnState({
+                state: [
+                    { colId: 'c' },
+                    { colId: `${GROUP_AUTO_COLUMN_ID}-a` },
+                    { colId: 'a', rowGroupIndex: 0 },
+                    { colId: 'b', rowGroupIndex: 1 },
+                ],
+                applyOrder: true,
+            });
+
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                'c',
+                `${GROUP_AUTO_COLUMN_ID}-a`,
+                `${GROUP_AUTO_COLUMN_ID}-b`,
+                'a',
+                'b',
+            ]);
+        });
+
         test('lockPosition columns appear before auto column', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 { colId: 'a', lockPosition: 'right' },

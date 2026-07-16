@@ -542,7 +542,8 @@ function orderLiveColsLikeState(beans: BeanCollection, params: ApplyColumnStateP
         }
     }
 
-    // Pass 2: remaining displayed cols in `colsList` order. Auto-group cols collect separately to be prepended.
+    // Pass 2: remaining displayed cols in `colsList` order. Auto-group cols collect separately: they seat
+    // contiguous with any state-ordered auto-group col, falling back to the head when state names none.
     let autoGroupMissed: AgColumn[] | null = null;
     for (let i = 0, len = currentList.length; i < len; ++i) {
         const col = currentList[i];
@@ -557,12 +558,7 @@ function orderLiveColsLikeState(beans: BeanCollection, params: ApplyColumnStateP
         }
     }
 
-    const ordered = autoGroupMissed ?? newOrder;
-    if (autoGroupMissed !== null) {
-        for (let i = 0, len = newOrder.length; i < len; ++i) {
-            ordered.push(newOrder[i]);
-        }
-    }
+    const ordered = mergeMissedAutoGroupCols(newOrder, autoGroupMissed);
 
     // The reorder above ignored lockPosition, so re-place locked cols here.
     const finalOrder = placeLockedColumns(ordered, beans.gos);
@@ -575,6 +571,37 @@ function orderLiveColsLikeState(beans: BeanCollection, params: ApplyColumnStateP
     }
     colModel.colsList = finalOrder;
     colModel.markColsListIndexDirty();
+}
+
+/** Seat missed auto-group cols (displayed but not named in state) contiguous with the last state-ordered
+ *  auto-group col; when state names none, keep them at the head (their `colsList` order is already correct). */
+function mergeMissedAutoGroupCols(newOrder: AgColumn[], autoGroupMissed: AgColumn[] | null): AgColumn[] {
+    if (autoGroupMissed === null) {
+        return newOrder;
+    }
+    let lastAutoIdx = -1;
+    for (let i = 0, len = newOrder.length; i < len; ++i) {
+        if (newOrder[i].colKind === 'auto-group') {
+            lastAutoIdx = i;
+        }
+    }
+    if (lastAutoIdx === -1) {
+        for (let i = 0, len = newOrder.length; i < len; ++i) {
+            autoGroupMissed.push(newOrder[i]);
+        }
+        return autoGroupMissed;
+    }
+    const ordered: AgColumn[] = [];
+    for (let i = 0; i <= lastAutoIdx; ++i) {
+        ordered.push(newOrder[i]);
+    }
+    for (let i = 0, len = autoGroupMissed.length; i < len; ++i) {
+        ordered.push(autoGroupMissed[i]);
+    }
+    for (let i = lastAutoIdx + 1, len = newOrder.length; i < len; ++i) {
+        ordered.push(newOrder[i]);
+    }
+    return ordered;
 }
 
 /** Snapshot column state before a mutation. Pair with {@link dispatchColStateChanges} after the

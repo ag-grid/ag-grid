@@ -47,13 +47,17 @@ export const applyPrevColumnsOrder = (
         return colsList; // no preserved anchors; keep current order (service cols already at head)
     }
 
-    // Phase 2: bucket new cols. Service -> head; new calc col -> right after its (preserved) anchor,
-    // so same-anchor adds stack newest-first; anchor not yet preserved (chained on a sibling added this
-    // build) -> after `lastPreserved` (else front); unanchored calc -> tail (`endCalc`); rest -> `additionalCols`.
-    const servicePrepend: AgColumn[] = [];
+    // Phase 2: bucket new cols. New service col -> right after the preserved service col it trails in
+    // `colsList` (which `refreshCols` built in canonical service order), keeping the head service block
+    // contiguous; front only when no preserved service col precedes it. New calc col -> right after its
+    // (preserved) anchor, so same-anchor adds stack newest-first; anchor not yet preserved (chained on a
+    // sibling added this build) -> after `lastPreserved` (else front); unanchored calc -> tail (`endCalc`);
+    // rest -> `additionalCols`.
+    const serviceFront: AgColumn[] = [];
     const additionalCols: AgColumn[] = [];
     const frontCalc: AgColumn[] = [];
     const endCalc: AgColumn[] = [];
+    let serviceFollowers: Map<AgColumn, AgColumn[]> | null = null;
     let calcFollowers: Map<AgColumn, AgColumn[]> | null = null;
     let lastPreserved: AgColumn | null = null;
     for (let i = 0; i < colsListLen; ++i) {
@@ -64,7 +68,12 @@ export const applyPrevColumnsOrder = (
         }
         const colKind = col.colKind;
         if (colKind === 'auto-group' || colKind === 'selection' || colKind === 'row-number') {
-            servicePrepend.push(col);
+            if (lastPreserved === null) {
+                serviceFront.push(col);
+            } else {
+                serviceFollowers ??= new Map<AgColumn, AgColumn[]>();
+                _pushToMapArray(serviceFollowers, lastPreserved, col);
+            }
         } else if (col.isCalculatedCol) {
             // Gated on `isCalculatedCol` for perf: only calc cols carry `anchoredToColId` today, so we
             // skip the field read for every other column (the field itself is column-kind agnostic).
@@ -95,12 +104,12 @@ export const applyPrevColumnsOrder = (
         noSiblings = partitioned.orphans;
     }
 
-    // Phase 4: emit forward — service head, front calc, each preserved col with its calc then
-    // group-sibling followers, then non-calc orphans, then end calc cols.
+    // Phase 4: emit forward — front service cols, front calc, each preserved col with its trailing service
+    // cols then calc then group-sibling followers, then non-calc orphans, then end calc cols.
     const result = new Array<AgColumn>(colsListLen);
     let pos = 0;
-    for (let i = 0, len = servicePrepend.length; i < len; ++i) {
-        result[pos++] = servicePrepend[i];
+    for (let i = 0, len = serviceFront.length; i < len; ++i) {
+        result[pos++] = serviceFront[i];
     }
     for (let i = 0, len = frontCalc.length; i < len; ++i) {
         result[pos++] = frontCalc[i];
@@ -108,6 +117,12 @@ export const applyPrevColumnsOrder = (
     for (let i = 0, len = preservedOrder.length; i < len; ++i) {
         const col = preservedOrder[i];
         result[pos++] = col;
+        const serviceBucket = serviceFollowers?.get(col);
+        if (serviceBucket !== undefined) {
+            for (let j = 0, m = serviceBucket.length; j < m; ++j) {
+                result[pos++] = serviceBucket[j];
+            }
+        }
         const calcBucket = calcFollowers?.get(col);
         if (calcBucket !== undefined) {
             for (let j = 0, m = calcBucket.length; j < m; ++j) {
