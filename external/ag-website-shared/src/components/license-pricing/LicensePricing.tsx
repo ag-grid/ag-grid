@@ -30,7 +30,8 @@ interface Props {
 export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) => {
     const [showFullWidthBar, setShowFullWidthBar] = useState(false);
 
-    const contactSalesRef = useRef(null);
+    const licensesOuterRef = useRef(null);
+    const stickyBarAnchorRef = useRef(null);
     const framework = useFrameworkFromStore();
 
     const gridLicenseData = DEV_LICENSE_DATA.filter(
@@ -42,11 +43,17 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
     useEffect(() => {
         const handleScroll = () => {
-            const contactSalesPosition = contactSalesRef.current
-                ? contactSalesRef.current.getBoundingClientRect().top
+            // Only show the bar once the pricing cards have been scrolled past.
+            const scrolledPastLicenses = licensesOuterRef.current
+                ? licensesOuterRef.current.getBoundingClientRect().bottom < 200
+                : false;
+
+            // ...and hide it again as the trial/contact section comes into view.
+            const stickyBarAnchorPosition = stickyBarAnchorRef.current
+                ? stickyBarAnchorRef.current.getBoundingClientRect().top
                 : 0;
 
-            if (window.scrollY > 300 && contactSalesPosition > 200) {
+            if (scrolledPastLicenses && stickyBarAnchorPosition > 200) {
                 setShowFullWidthBar(true);
             } else {
                 setShowFullWidthBar(false);
@@ -75,6 +82,33 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
     return (
         <>
+            <div className={classnames('layout-max-width-small', styles.container)}>
+                <div className={styles.salesForm}>
+                    <div className={styles.salesFormCopy}>
+                        <h3 className="text-2xl">
+                            <span>Contact Our Sales Team</span>
+                        </h3>
+
+                        <p className={styles.salesContactsubHeading}>
+                            Get help with pricing, explore use-cases for your team, and more
+                        </p>
+
+                        <div className={styles.testimonialContainer}>
+                            <p className={styles.testimonalHeading}>Millions use AG Grid every day:</p>
+                            <div className={styles.customerLogosWrapper}>
+                                <CustomerLogos />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className={classnames(styles.salesFormForm, 'trial-licence-form')}>
+                        <ContactForm
+                            formLocation={defaultSelection === 'grid' ? 'Grid pricing page' : 'Charts pricing page'}
+                        />
+                    </div>
+                </div>
+            </div>
+
             <div className={classnames(styles.fullWidthBar, { [styles.active]: showFullWidthBar })}>
                 <div className={classnames('layout-max-width-small', styles.fullWidthBarContainer)}>
                     {licenseData.map((license, i) => {
@@ -119,7 +153,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 </div>
             </div>
 
-            <div className={styles.introSection}>
+            <div id="pricing" className={styles.introSection}>
                 <div className={styles.gradient}></div>
                 <div className={styles.switchContainer}>
                     <div className={styles.toggleWrapper}>
@@ -149,7 +183,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
             <div className={classnames('layout-max-width-small', styles.container)}>
                 <div className={styles.topSection}>
                     <div className={styles.intro}>
-                        <div className={styles.licensesOuter}>
+                        <div ref={licensesOuterRef} className={styles.licensesOuter}>
                             <Licenses className={styles.licensesInfo} isChecked={chartsIsSelected} />
                         </div>
 
@@ -178,34 +212,8 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 );
                             })}
                         </div>
-                        <div ref={contactSalesRef} className={styles.salesForm}>
-                            <div className={styles.salesFormCopy}>
-                                <h3 className="text-2xl">
-                                    <span>Contact Our Sales Team</span>
-                                </h3>
 
-                                <p className={styles.salesContactsubHeading}>
-                                    Get help with pricing, explore use-cases for your team, and more
-                                </p>
-
-                                <div className={styles.testimonialContainer}>
-                                    <p className={styles.testimonalHeading}>Millions use AG Grid every day:</p>
-                                    <div className={styles.customerLogosWrapper}>
-                                        <CustomerLogos />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className={classnames(styles.salesFormForm, 'trial-licence-form')}>
-                                <ContactForm
-                                    formLocation={
-                                        defaultSelection === 'grid' ? 'Grid pricing page' : 'Charts pricing page'
-                                    }
-                                />
-                            </div>
-                        </div>
-
-                        <div className={styles.trialLicence}>
+                        <div ref={stickyBarAnchorRef} className={styles.trialLicence}>
                             <div className={styles.trialLicenceCopy}>
                                 <h3
                                     className={classnames(styles.trialLicenceHeader, 'text-2xl')}

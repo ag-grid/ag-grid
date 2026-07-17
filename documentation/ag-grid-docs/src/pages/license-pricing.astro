@@ -1,6 +1,8 @@
 ---
 import { LicensePricing } from '@ag-website-shared/components/license-pricing/LicensePricing';
+import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
 import Layout from '@layouts/Layout.astro';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 ---
 
 <Layout
@@ -10,5 +12,14 @@ import Layout from '@layouts/Layout.astro';
     showDocsNav={false}
     showMicrosoftMessage={true}
 >
+    <PageHero
+        eyebrow="Licensing and Sales"
+        headline="Pricing"
+        subhead="Whether you are a startup, global enterprise or somewhere in between, AG Grid & AG Charts deliver best in class value."
+    >
+        <a class="button" href="#pricing">See our pricing</a>
+    </PageHero>
     <LicensePricing client:load defaultSelection="grid" />
 </Layout>
+
+<script is:inline defer src={urlWithBaseUrl('/scripts/license-pricing.js')}></script>
