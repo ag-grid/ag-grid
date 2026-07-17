@@ -89,14 +89,10 @@ const HeaderRowComp = ({
 
             compBean.current = context.createBean(new _EmptyBean());
 
-            const updateCellCtrls = (afterScroll: boolean) => {
+            const updateCellCtrls = (useFlushSync: boolean) => {
                 const isPrint = gos.get('domLayout') === 'print';
                 const nextSectionSignature = getCellSectionSignature(cellCtrlsRef.current, isPrint);
-                // Forcing the raw array orders structural changes (show/hide, reorder, pin) correctly,
-                // but must be skipped after a scroll: there the order-preserving reconcile keeps a
-                // kept-alive focused cell in its DOM slot, so focus is not dropped nor the viewport snapped.
-                const shouldRefreshForSectionChange =
-                    !afterScroll && sectionSignatureRef.current !== nextSectionSignature;
+                const shouldRefreshForSectionChange = sectionSignatureRef.current !== nextSectionSignature;
                 const next = shouldRefreshForSectionChange
                     ? cellCtrlsRef.current
                     : getNextValueIfDifferent(prevCellCtrlsRef.current, cellCtrlsRef.current, domOrderRef.current)!;
@@ -104,7 +100,7 @@ const HeaderRowComp = ({
                 if (next !== prevCellCtrlsRef.current) {
                     prevCellCtrlsRef.current = next;
                     sectionSignatureRef.current = nextSectionSignature;
-                    agFlushSync(afterScroll, () => setCellCtrls(next));
+                    agFlushSync(useFlushSync, () => setCellCtrls(next));
                 }
             };
 

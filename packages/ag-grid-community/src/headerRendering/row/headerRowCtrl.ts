@@ -9,7 +9,12 @@ import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeade
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
-import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from '../headerUtils';
+import {
+    getColumnHeaderRowHeight,
+    getFloatingFiltersHeight,
+    getGroupRowsHeight,
+    sortCtrlsByPinnedThenLeft,
+} from '../headerUtils';
 import type { HeaderRowType } from './headerRowComp';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -219,11 +224,13 @@ export class HeaderRowCtrl extends BeanStub {
             return ctrl.column.displayed && this.beans.focusSvc.isHeaderWrapperFocused(ctrl);
         };
 
+        let keptCtrlOutOfOrder = false;
         if (oldCtrls) {
             for (const [id, oldCtrl] of oldCtrls) {
                 const keepCtrl = isFocusedAndDisplayed(oldCtrl as HeaderCellCtrl);
                 if (keepCtrl) {
                     this.ctrlsById.set(id, oldCtrl);
+                    keptCtrlOutOfOrder = true;
                 } else {
                     this.destroyBean(oldCtrl);
                 }
@@ -231,6 +238,11 @@ export class HeaderRowCtrl extends BeanStub {
         }
 
         this.allCtrls = Array.from(this.ctrlsById.values());
+        if (keptCtrlOutOfOrder) {
+            // a kept-alive focused ctrl was appended after the in-order viewport ctrls; restore column
+            // order so consumers (e.g. React, which derives DOM order from this array) can rely on it.
+            this.allCtrls = sortCtrlsByPinnedThenLeft(this.allCtrls);
+        }
         return this.allCtrls;
     }
 
