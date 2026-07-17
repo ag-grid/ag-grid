@@ -227,6 +227,9 @@ AddType application/x-gzip .gz .tgz
 
 # serve the per-page LLM markdown files as markdown
 AddType text/markdown md
+# ...as UTF-8, so glyphs like ✓/✗ in generated tables aren't mojibaked by a
+# Latin-1 fallback (the .md endpoint sets this charset; static hosting must too).
+AddCharset utf-8 .md
 `;
 
 function getStagingHtaccessContent(): string {

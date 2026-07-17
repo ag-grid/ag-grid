@@ -487,6 +487,11 @@ describe('htaccessRules', () => {
             expect(productionContent).toContain('AddType text/markdown md');
             expect(stagingContent).toContain('AddType text/markdown md');
         });
+
+        it('serves .md as UTF-8 so table glyphs (✓/✗) are not mojibaked', () => {
+            expect(productionContent).toContain('AddCharset utf-8 .md');
+            expect(stagingContent).toContain('AddCharset utf-8 .md');
+        });
     });
 
     describe('basic structure', () => {
