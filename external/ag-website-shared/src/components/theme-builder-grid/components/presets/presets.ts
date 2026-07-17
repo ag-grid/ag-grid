@@ -1,18 +1,9 @@
-import { allParamModels } from '@ag-website-shared/theming/ParamModel';
-import { allFeatureModels } from '@ag-website-shared/theming/PartModel';
-import { enabledAdvancedParamsAtom } from '@ag-website-shared/theming/advanced-params';
-import { getApplicationConfigAtom } from '@ag-website-shared/theming/application-config';
-import { resetChangedModelItems } from '@ag-website-shared/theming/changed-model-items';
-import type { Store } from '@ag-website-shared/theming/store';
-import type { ThemeParams } from '@ag-website-shared/theming/utils';
+import { type Preset, applyPreset } from '@ag-website-shared/theming/preset';
 
-import { type Part, iconSetAlpine, iconSetQuartzLight } from 'ag-grid-community';
+import { iconSetAlpine, iconSetQuartzLight } from 'ag-grid-community';
 
-export type Preset = {
-    pageBackgroundColor: string;
-    params?: Partial<ThemeParams>;
-    parts?: Part<any>[];
-};
+export type { Preset };
+export { applyPreset };
 
 export const lightModePreset: Preset = {
     pageBackgroundColor: '#FAFAFA',
@@ -205,24 +196,3 @@ export const allPresets: Preset[] = [
         parts: [iconSetAlpine],
     },
 ];
-
-export const applyPreset = (store: Store, preset: Preset) => {
-    const presetParams: any = preset.params || {};
-    const advancedParams = new Set<string>();
-    for (const { property, valueAtom, onlyEditableAsAdvancedParam } of allParamModels()) {
-        if (store.get(valueAtom) != null || presetParams[property] != null) {
-            store.set(valueAtom, presetParams[property] ?? undefined);
-        }
-        if (presetParams[property] != null && onlyEditableAsAdvancedParam) {
-            advancedParams.add(property);
-        }
-    }
-    store.set(enabledAdvancedParamsAtom, advancedParams);
-
-    for (const feature of allFeatureModels()) {
-        const part = feature.parts.find((partModel) => preset.parts?.includes(partModel.part)) || feature.defaultPart;
-        store.set(feature.selectedPartAtom, part);
-    }
-    store.set(getApplicationConfigAtom('previewPaneBackgroundColor'), preset.pageBackgroundColor || null);
-    resetChangedModelItems(store);
-};

@@ -1,10 +1,10 @@
+import { ShadowDom } from '@ag-website-shared/components/ShadowDom';
 import { ColorPicker } from '@ag-website-shared/components/theme-builder/ColorPicker';
 import { withErrorBoundary } from '@ag-website-shared/components/theme-builder/ErrorBoundary';
 import { LoadFontFamilyMenuFonts } from '@ag-website-shared/components/theme-builder/FontFamilyValueEditor';
 import { InfoTooltip } from '@ag-website-shared/components/theme-builder/Tooltip';
 import { useApplicationConfigAtom } from '@ag-website-shared/theming/application-config';
 import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
-import { ShadowDom } from '@components/ShadowDom';
 import styled from '@emotion/styled';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { memo, useRef, useState } from 'react';
@@ -114,14 +114,12 @@ const GridPreview = () => {
                                         api.setGridOption('loading', config.loadingOverlay);
                                     }
                                 }}
-                                /* eslint-disable react-hooks/refs -- reading ref for initial grid state */
                                 initialState={{
                                     rowSelection: config.rowSelection
                                         ? stateRef.current.rowSelection || ['5', '3']
                                         : undefined,
                                     cellSelection: stateRef.current.cellSelection,
                                 }}
-                                /* eslint-enable react-hooks/refs */
                                 onSelectionChanged={({ api }) => {
                                     stateRef.current.rowSelection = api.getState().rowSelection || [];
                                 }}

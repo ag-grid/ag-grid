@@ -5,7 +5,6 @@ import { loadFile, useFileDropZone } from '@ag-website-shared/components/theme-b
 import { type RenderedThemeInfo, useRenderedThemeInfo } from '@ag-website-shared/theming/rendered-theme';
 import { Checkmark, Copy, Upload } from '@carbon/icons-react';
 import styled from '@emotion/styled';
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useStore } from 'jotai';
 import type { ChangeEvent, KeyboardEvent, RefObject } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -15,6 +14,15 @@ import { type ValidationResult, applyValidatedTheme, validateThemeCode } from '.
 export type ThemeImportExportDialogProps = {
     close: () => void;
     initialTab?: string;
+};
+
+let themeBuilderDocsUrl = '#';
+
+/**
+ * Hosts must call this once with a link to their own Theme Builder docs page.
+ */
+export const setThemeBuilderDocsUrl = (url: string) => {
+    themeBuilderDocsUrl = url;
 };
 
 export const ThemeImportExportDialog = ({ close, initialTab = 'Export' }: ThemeImportExportDialogProps) => {
@@ -71,7 +79,7 @@ export const ThemeImportExportDialog = ({ close, initialTab = 'Export' }: ThemeI
 const HelpText = () => (
     <Paragraph>
         View our{' '}
-        <a href={urlWithBaseUrl('/data-grid/theming-theme-builder/')} target="_blank">
+        <a href={themeBuilderDocsUrl} target="_blank">
             <strong>Theme Builder Documentation</strong>
         </a>{' '}
         to learn about exporting and importing AG Grid themes directly from Theme Builder.
