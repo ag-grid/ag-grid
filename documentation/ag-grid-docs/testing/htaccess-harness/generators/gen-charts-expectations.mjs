@@ -1,21 +1,23 @@
 #!/usr/bin/env node
 /* eslint-disable no-console -- standalone CLI generator: writes rows to stdout / status to stderr */
-// Generate behavioural expectation rows for the CHARTS /charts redirect rules.
+// Generate behavioural expectation rows for the CHARTS /charts redirects, modelling the DOCROOT MIRROR.
 //
-// Parses the rendered charts redirect block (Redirect 301 / RedirectMatch 301 / RedirectMatch 410,
-// all base-aware so they already carry the /charts prefix) and, for each rule, emits a concrete
-// matching request path + expected status + expected Location substring.
+// SE-66: the MAIN docroot .htaccess now MIRRORS the charts-subdir semantic redirects (see the
+// "charts-subdir semantic redirects mirrored into the docroot" block in
+// ../../src/utils/htaccess/htaccessRules.ts). That mirror runs BEFORE the apex->www host-swap and the
+// generic "add trailing slash" rule, so every charts legacy URL resolves in a SINGLE 301 straight to
+// its final www target, for BOTH slash forms (no-slash and trailing-slash). This generator therefore
+// predicts, per charts rule, ONE hop to the final target for both slash forms.
 //
-// Apache nuance encoded here (the charts .htaccess is mod_alias-only and lives in the /charts subdir;
-// the MAIN docroot .htaccess owns mod_rewrite, including the parent "add trailing slash" rule):
-//   - A trailing-slashed request (e.g. /charts/core/bar-series/) is matched DIRECTLY by the charts
-//     mod_alias rule → single hop to the target. We assert that.
-//   - A slash-less, dot-less request (e.g. /charts/privacy) is first 301'd by the parent
-//     trailing-slash rule to add "/", THEN the charts rule fires on the next request. So the SINGLE
-//     response we observe is a 301 whose Location just adds the slash (NOT the final target).
-//     We assert that first hop for no-slash variants.
-//   - mod_alias is FIRST-match (config order). For the broad family rules we pick a path that no
-//     earlier rule in the file matches, so the row proves the intended rule.
+// The ONE exception is /charts/privacy: it is intentionally NOT mirrored (its target is the apex
+// /privacy page — see the note in htaccessRules.ts). For a non-mirrored rule we keep the two-layer
+// prediction: the slash-less form takes the docroot trailing-slash hop first; the slashed form hits
+// the charts mod_alias directly.
+//
+// Predictions are INDEPENDENT of the mirror's own regex — they are derived from the CHARTS rules'
+// final targets. The harness then curls each row against real Apache running BOTH layers, so a
+// mismatch between the charts rules (this repo's source of truth) and the hand-written docroot mirror
+// (grid repo) surfaces as a failure — that cross-repo agreement is exactly what we want to guard.
 //
 // Usage: node gen-charts-expectations.mjs <charts_redirect_rules.txt> > charts_generated.tsv
 import { readFileSync } from 'node:fs';
@@ -27,13 +29,34 @@ if (!rulesFile) {
 }
 const lines = readFileSync(rulesFile, 'utf8').split('\n').filter(Boolean);
 
-// Parent-docroot interceptions: the MAIN .htaccess (mod_rewrite, runs at docroot level BEFORE the
-// charts subdir mod_alias) carries SE-64/SE-66 single-hop rules for a few specific /charts/* paths.
-// Where one exists, it wins over the charts rule, so the observed response is the parent's host-swap.
-// Keyed by exact request path → { status, loc }. (Verified against the rendered main_full.htaccess.)
-const PARENT_OVERRIDES = {
-    '/charts/react/bullet-series/': { status: '301', loc: 'https://www.ag-grid.com/charts/react/bullet-series/' },
-};
+const SITE = 'https://www.ag-grid.com';
+
+// The docroot mirror rewrites to an ABSOLUTE www URL with a canonical trailing slash — UNLESS the
+// target carries a URL fragment (e.g. linear-gauge/#bullet-series), which is emitted verbatim.
+function normalizeMirrorTarget(to) {
+    let abs = to.startsWith('http') ? to : `${SITE}${to}`;
+    if (!abs.includes('#') && !abs.endsWith('/')) {
+        abs += '/';
+    }
+    return abs;
+}
+
+// The path portion of a target, to decide who owns it: the docroot mirror owns everything under
+// /charts/; anything else (e.g. the apex /privacy page) stays with the charts subdir.
+function targetPath(to) {
+    return to.startsWith('http') ? to.replace(/^https?:\/\/[^/]+/, '') : to;
+}
+function isMirrored(to) {
+    return targetPath(to).startsWith('/charts/');
+}
+
+// Both slash forms of a request path (no-slash first, then trailing-slash). A bare "/charts/" root
+// collapses to just the slashed form.
+function bothSlashForms(p) {
+    const noSlash = p.replace(/\/+$/, '');
+    const slashed = `${noSlash}/`;
+    return noSlash === '' || noSlash === '/charts' ? [slashed] : [noSlash, slashed];
+}
 
 const rows = [];
 const seenPaths = new Set();
@@ -42,76 +65,92 @@ const add = (path, status, loc = '', note = '') => {
         return; // first rule that matches a path wins in Apache; don't emit conflicting rows
     }
     seenPaths.add(path);
-    const override = PARENT_OVERRIDES[path];
-    if (override) {
-        rows.push({ path, status: override.status, loc: override.loc, note: `${note} (parent .htaccess intercepts)` });
-        return;
-    }
     rows.push({ path, status, loc, note });
 };
 
-// Build a concrete request path that matches a given fromPattern. We craft realistic paths from the
-// actual legacy-URL corpus rather than mechanically appending a slug, so the rows read like real
-// requests and the chosen slugs resolve on the live charts site.
+// A mirrored rule: both slash forms of the request land on the final target in ONE hop.
+function emitMirrored(reqForms, finalTarget, note) {
+    const loc = normalizeMirrorTarget(finalTarget);
+    for (const req of reqForms) {
+        add(req, '301', loc, note);
+    }
+}
+
+// A NOT-mirrored rule (only /charts/privacy today): charts-subdir behaviour. The slashed form hits
+// mod_alias directly -> external target; the slash-less form first takes the docroot trailing-slash
+// hop (its observed single response just adds the slash).
+function emitNotMirrored(reqForms, finalTarget, note) {
+    for (const req of reqForms) {
+        if (req.endsWith('/')) {
+            add(req, '301', finalTarget, `${note} (slashed -> subdir target)`);
+        } else {
+            add(req, '301', `${SITE}${req}/`, `${note} (no-slash -> trailing-slash hop first)`);
+        }
+    }
+}
+
+// Build a concrete request path that matches a given fromPattern. Realistic slugs from the docs corpus
+// so the chosen page resolves on the live charts site.
 const SLUG = 'bar-series'; // a real docs slug present for every framework
 
-// Realistic concrete suffixes per legacy family, keyed by a substring of the pattern.
-// Each maps the captured remainder to something that exists, so $1 targets resolve.
 function concreteForPattern(pattern) {
     let p = pattern.replace(/^\^/, '');
     // Resolve framework alternations / char-classes to a concrete framework first.
-    p = p.replace(/\((?:[a-z]+\|)+[a-z]+\)/g, (m) => m.slice(1, -1).split('|')[0]); // (a|b|c) → a
-    p = p.replace(/\[a-z\]\+/g, 'javascript'); // [a-z]+ → javascript
+    p = p.replace(/\((?:[a-z]+\|)+[a-z]+\)/g, (m) => m.slice(1, -1).split('|')[0]); // (a|b|c) -> a
+    p = p.replace(/\[a-z\]\+/g, 'javascript'); // [a-z]+ -> javascript
 
     // Family-specific realistic completions (most specific first).
-    // Archive index: the rule is bare-only (`^/charts/archive/?$`) — it redirects the archive
-    // landing to /documentation-archive and must NOT match versioned paths (`/archive/<v>/…`),
-    // which stay live. Synthesise the bare path so the rule fires.
     if (p.startsWith('/charts/archive')) {
         return '/charts/archive/';
     }
-    // 410 privacy: bare page.
     if (p.startsWith('/charts/privacy')) {
         return '/charts/privacy/';
     }
-    // server-side-rendering: bare framework-agnostic page.
     if (p.startsWith('/charts/server-side-rendering')) {
         return '/charts/server-side-rendering/';
     }
-    // {fw}-charts/gallery|options/...  → a real legacy gallery/options page.
     if (/\/charts\/javascript-charts\/(gallery|options)/.test(p)) {
         return p.includes('gallery') ? '/charts/javascript-charts/gallery/' : '/charts/javascript-charts/options/';
     }
-    // {fw}-charts/{fw}/(.*) → a real legacy framework-docs page.
+    // {fw}-charts/{fw}/(.+|.*) -> a real legacy framework-docs page.
     let mm;
-    if ((mm = p.match(/^\/charts\/([a-z]+)-charts\/([a-z]+)\/\(\.\*\)$/))) {
+    if ((mm = p.match(/^\/charts\/([a-z]+)-charts\/([a-z]+)\/\(\.[+*]\)\$?$/))) {
         return `/charts/${mm[1]}-charts/${mm[2]}/${SLUG}/`;
     }
-    // enterprise-charts.* / {fw}-charts.* catch-alls → a real legacy page under that prefix.
-    if ((mm = p.match(/^\/charts\/([a-z-]+-charts)\.\*$/))) {
+    // enterprise-charts.* / {fw}-charts.* catch-alls -> a real legacy page under that prefix.
+    if ((mm = p.match(/^\/charts\/([a-z-]+-charts)\.[+*]\$?$/))) {
         return `/charts/${mm[1]}/license-pricing/`;
     }
-    // core/(.*) and side/(.*) → a real legacy framework-agnostic doc page.
-    if ((mm = p.match(/^\/charts\/(core|side)\/\(\.\*\)$/))) {
+    // enterprise-charts negative-lookahead catch-all: ^/charts/enterprise-charts/(?!index\.html$).+$
+    if (p.startsWith('/charts/enterprise-charts/(?!')) {
+        return '/charts/enterprise-charts/license-pricing/';
+    }
+    // core/(.*) and side/(.*) -> a real legacy framework-agnostic doc page.
+    if ((mm = p.match(/^\/charts\/(core|side)\/\(\.[+*]\)\$?$/))) {
         return `/charts/${mm[1]}/${SLUG}/`;
     }
-    // {fw}/series(/.*)? and {fw}/axes(/.*)? → the bare aggregate index page.
-    if ((mm = p.match(/^\/charts\/([a-z]+)\/(series|axes)\(\/\.\*\)\?$/))) {
+    // {fw}/series(/.*)? and {fw}/axes(/.*)? -> the bare aggregate index page.
+    if ((mm = p.match(/^\/charts\/([a-z]+)\/(series|axes)\(\/\.\*\)\?\$?$/))) {
         return `/charts/${mm[1]}/${mm[2]}/`;
     }
     // Bare framework landing "/?$".
     p = p.replace(/\/\?\$$/, '/');
     // Generic fallbacks.
-    p = p.replace(/\(\/\.\*\)\?$/, '/');
-    p = p.replace(/\(\.\*\)$/, `${SLUG}/`);
-    p = p.replace(/\.\*$/, `${SLUG}/`);
+    p = p.replace(/\(\/\.\*\)\?\$?$/, '/');
+    p = p.replace(/\(\.[+*]\)\$?$/, `${SLUG}/`);
+    p = p.replace(/\.[+*]\$?$/, `${SLUG}/`);
     p = p.replace(/\$$/, '');
     return p;
 }
 
-// Resolve the concrete Location target for a RedirectMatch 301 given the concrete request path.
+// Resolve the concrete final target for a RedirectMatch given the concrete request path.
 function targetFor(pattern, to, reqPath) {
-    const re = new RegExp(pattern);
+    let re;
+    try {
+        re = new RegExp(pattern);
+    } catch {
+        return to;
+    }
     const m = reqPath.match(re);
     if (!m) {
         return to; // shouldn't happen; fall back to literal target
@@ -122,38 +161,33 @@ function targetFor(pattern, to, reqPath) {
 for (const line of lines) {
     let mm;
     if ((mm = line.match(/^Redirect 301 (\S+) (\S+)$/))) {
-        // mod_alias `Redirect` is a PREFIX match. `from` already carries the /charts base.
+        // mod_alias `Redirect` is a PREFIX match; `from` already carries the /charts base.
         const [, from, to] = mm;
-        const fromIsDotless = !from.split('/').pop().includes('.');
-        if (from.endsWith('/')) {
-            // Already trailing-slashed (e.g. SE-60 /charts/javascript/toolbar/): direct prefix hit.
-            add(from, '301', to, 'SE-60 simple (trailing slash)');
-        } else if (fromIsDotless) {
-            // Dot-less, slash-less prefix (e.g. /charts/javascript/bullet-series): the parent
-            // trailing-slash rule adds "/" FIRST (observed single hop), then on the slashed form the
-            // charts prefix rule fires and the matched trailing "/" is appended to the target.
-            add(`${from}/`, '301', `${to}/`, 'simple prefix: trailing-slash form hits charts rule');
-            add(from, '301', `${from}/`, 'simple prefix: no-slash first hop adds trailing slash');
+        const forms = bothSlashForms(from);
+        if (isMirrored(to)) {
+            emitMirrored(forms, to, 'docroot mirror: single hop');
         } else {
-            add(from, '301', to, 'SE-60 simple');
+            emitNotMirrored(forms, to, 'not mirrored (charts subdir)');
         }
     } else if ((mm = line.match(/^RedirectMatch 410 "([^"]+)"$/))) {
         const [, pattern] = mm;
-        const reqSlash = concreteForPattern(pattern);
-        add(reqSlash, '410', '', '410 direct (trailing-slash form)');
-        // no-slash variant: parent trailing-slash rule adds "/" first (single observed hop = 301 add-slash)
-        if (reqSlash.endsWith('/')) {
-            const noSlash = reqSlash.replace(/\/$/, '');
-            add(noSlash, '301', `${noSlash}/`, '410 family: no-slash first hop adds trailing slash');
+        const req = concreteForPattern(pattern);
+        for (const form of bothSlashForms(req)) {
+            if (form.endsWith('/')) {
+                add(form, '410', '', '410 (slashed form hits mod_alias)');
+            } else {
+                add(form, '301', `${SITE}${form}/`, '410 family: no-slash trailing-slash hop first');
+            }
         }
     } else if ((mm = line.match(/^RedirectMatch 301 "([^"]+)" "([^"]+)"$/))) {
         const [, pattern, to] = mm;
-        const reqSlash = concreteForPattern(pattern);
-        const target = targetFor(pattern, to, reqSlash);
-        add(reqSlash, '301', target, 'RedirectMatch direct');
-        if (reqSlash.endsWith('/')) {
-            const noSlash = reqSlash.replace(/\/$/, '');
-            add(noSlash, '301', `${noSlash}/`, 'no-slash first hop adds trailing slash');
+        const req = concreteForPattern(pattern);
+        const target = targetFor(pattern, to, req);
+        const forms = bothSlashForms(req);
+        if (isMirrored(to)) {
+            emitMirrored(forms, target, `docroot mirror: single hop (pattern ${pattern})`);
+        } else {
+            emitNotMirrored(forms, target, `not mirrored (pattern ${pattern})`);
         }
     }
 }
@@ -175,8 +209,8 @@ for (const p of noShadow) {
 const out = [];
 out.push('# host\tpath\texpect_status\texpect_location_substring');
 out.push('# GENERATED by gen-charts-expectations.mjs from the rendered charts redirect rules.');
-out.push('# host=www for all; charts is served from the /charts subdir .htaccess (mod_alias, first-match).');
-out.push('# Trailing-slash form = direct charts-rule hit; no-slash form = parent trailing-slash 301 first.');
+out.push('# host=www for all; charts legacy URLs are collapsed to a SINGLE hop by the docroot mirror');
+out.push('# (grid repo htaccessRules.ts), except /charts/privacy which stays with the charts subdir.');
 for (const r of rows) {
     out.push(`www\t${r.path}\t${r.status}\t${r.loc}`);
 }

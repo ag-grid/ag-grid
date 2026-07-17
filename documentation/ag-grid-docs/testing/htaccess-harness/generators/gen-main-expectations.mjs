@@ -12,9 +12,10 @@
 //     paths (.php) are NOT slash-rewritten.
 //   * The SE-* single-hop RewriteRules run BEFORE the trailing-slash rule and host-swap, so a
 //     dot-less no-slash path that is itself a single-hop `from` jumps straight to its target.
-//   * The https-upgrade RewriteRule only fires on :80; the local httpd listens on a high port,
-//     so relative `Redirect` targets stay relative (Location keeps the localhost origin). The
-//     host-swap only fires for `Host: ag-grid.com` (apex rows).
+//   * The https-upgrade RewriteRule only fires on :80; the local httpd listens on a high port, so it
+//     never triggers. "www" rows are curled with `Host: www.ag-grid.com` (so the host-scoped
+//     chain-shortening guard fires for them); assertions are path substrings, so the origin is
+//     immaterial. The host-swap only fires for `Host: ag-grid.com` (apex rows).
 //
 // Output: tab-separated rows `host \t path \t expect_status \t expect_location_substring`.
 // We emit a PREDICTED expectation per row; the companion validate step curls each against real
@@ -53,6 +54,14 @@ const reRewrite = /^\s*RewriteRule\s+"\^\/\?(.+?)\$"\s+"([^"]+)"\s+\[R=301(?:,NE
 for (const line of lines) {
     const m = line.match(reRewrite);
     if (m) {
+        // Skip the SE-66 charts mirror block + the general charts add-slash rule: those RewriteRules
+        // are regex PATTERNS (alternations, character classes, quantifiers, lookahead), not literal
+        // single-hop `from` paths. They collapse the charts-subdir semantic redirects, and are
+        // predicted independently by gen-charts-expectations.mjs. A genuine single-hop `from` is a
+        // literal path with no unescaped regex metacharacters.
+        if (/[()|[\]{}+*?]/.test(m[1])) {
+            continue;
+        }
         // unescape the \. that the generator inserts
         const from = '/' + m[1].replace(/\\\./g, '.');
         singleHopFroms.add(from);
