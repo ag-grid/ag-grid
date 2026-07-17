@@ -278,7 +278,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     ): void {
         const source = 'clipboard';
 
-        const { eventSvc, focusSvc, rowRenderer, gos } = this.beans;
+        const { eventSvc, focusSvc, rowRenderer, gos, editSvc } = this.beans;
 
         eventSvc.dispatchEvent({
             type: 'pasteStart',
@@ -293,7 +293,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const updatedRowNodes: RowNode[] = [];
         const focusedCell = focusSvc.getFocusedCell();
 
-        pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
+        editSvc?.beginBulkWrite();
+        try {
+            pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
+        } finally {
+            editSvc?.endBulkWrite();
+        }
 
         const nodesToRefresh: RowNode[] = updatedRowNodes.slice();
         if (changedPath) {

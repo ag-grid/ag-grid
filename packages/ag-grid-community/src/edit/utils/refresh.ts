@@ -31,8 +31,8 @@ const purgeCells = ({ editModelSvc }: BeanCollection, rowNodes: Set<IRowNode>, c
 
 export const _refreshEditCells = (beans: BeanCollection) => () => {
     const columns = new Set<Column>(beans.colModel.getCols());
-    const updates = beans.editModelSvc!.getEditMap(true);
-    const rowNodes = new Set(updates.keys());
+    // Only the row keys are read here — no need to deep-copy the whole edit map.
+    const rowNodes = new Set(beans.editModelSvc!.getEditMap()?.keys());
 
     purgeCells(beans, purgeRows(beans, rowNodes), columns);
 };

@@ -1,5 +1,6 @@
 import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
 import { _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type {
@@ -21,40 +22,32 @@ export function redoCellEditing(beans: BeanCollection): void {
 }
 
 export function getEditRowValues(beans: BeanCollection, rowNode: IRowNode): Record<string, any> | undefined {
-    return beans.editModelSvc?.getEditRowDataValue(rowNode, { checkSiblings: true });
+    return beans.editModelSvc?.getEditRowDataValue(rowNode);
 }
 
 export function getEditingCells(beans: BeanCollection): EditingCellPosition[] {
     const edits = beans.editModelSvc?.getEditMap();
     const positions: EditingCellPosition[] = [];
-    edits?.forEach((editRow, rowNode) => {
-        const { rowIndex, rowPinned } = rowNode as RowNode;
-        editRow.forEach((editValue, column) => {
-            const { editorValue, pendingValue, sourceValue: oldValue, state } = editValue;
-            const diff = _sourceAndPendingDiffer(editValue);
-
-            let newValue = editorValue ?? pendingValue;
-
-            if (newValue === UNEDITED) {
-                newValue = undefined;
-            }
-
-            const edit: EditingCellPosition = {
-                newValue,
-                oldValue,
-                state,
-                column,
-                colId: column.getColId(),
-                colKey: column.getColId(),
-                rowIndex: rowIndex!,
-                rowPinned,
-            };
-
-            const editing = state === 'editing';
-            const changed = !editing && diff;
-
+    edits?.forEach((editRow, rowNode: RowNode) => {
+        editRow.forEach((editValue, column: AgColumn) => {
+            const editing = editValue.state === 'editing';
+            const changed = !editing && _sourceAndPendingDiffer(editValue);
             if (editing || changed) {
-                positions.push(edit);
+                const colId = column.colId;
+                let newValue = editValue.editorValue ?? editValue.pendingValue;
+                if (newValue === UNEDITED) {
+                    newValue = undefined;
+                }
+                positions.push({
+                    newValue,
+                    oldValue: editValue.sourceValue,
+                    state: editValue.state,
+                    column,
+                    colId,
+                    colKey: colId,
+                    rowIndex: rowNode.rowIndex!,
+                    rowPinned: rowNode.rowPinned,
+                });
             }
         });
     });

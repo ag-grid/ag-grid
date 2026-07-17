@@ -512,4 +512,139 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
 
         expect(editRequests).toEqual(['ROW_1:field:Top Value']);
     });
+
+    test('batch paste stages every cell once (coalesced), then commit applies them all', async () => {
+        const api = await gridMgr.createGridAndWait('bulkCoalesce', {
+            columnDefs: [
+                { colId: 'a', field: 'a', editable: true },
+                { colId: 'b', field: 'b', editable: true },
+            ],
+            rowData: [
+                { id: 'r0', a: 'a0', b: 'b0' },
+                { id: 'r1', a: 'a1', b: 'b1' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        await new GridRows(api, 'before batch paste').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r0 a:"a0" b:"b0"
+            └── LEAF id:r1 a:"a1" b:"b1"
+        `);
+
+        api.startBatchEdit();
+
+        clipboardUtils.setText('X0\tY0\nX1\tY1');
+        api.setFocusedCell(0, 'a');
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasted;
+
+        expect(api.getEditingCells()).toHaveLength(4);
+
+        await new GridRows(api, 'staged, pre-commit').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:r0 a:⏳"X0" "a0" b:⏳"Y0" "b0"
+            └── LEAF ⏳ id:r1 a:⏳"X1" "a1" b:⏳"Y1" "b1"
+        `);
+
+        api.commitBatchEdit();
+
+        await new GridRows(api, 'after commit').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r0 a:"X0" b:"Y0"
+            └── LEAF id:r1 a:"X1" b:"Y1"
+        `);
+        expect(api.getEditingCells()).toHaveLength(0);
+    });
+
+    test('batch paste scoped purge drops only the cell whose pasted value matches its source', async () => {
+        const api = await gridMgr.createGridAndWait('bulkPurge', {
+            columnDefs: [
+                { colId: 'a', field: 'a', editable: true },
+                { colId: 'b', field: 'b', editable: true },
+            ],
+            rowData: [
+                { id: 'r0', a: 'a0', b: 'b0' },
+                { id: 'r1', a: 'a1', b: 'b1' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        await new GridRows(api, 'purge: before').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r0 a:"a0" b:"b0"
+            └── LEAF id:r1 a:"a1" b:"b1"
+        `);
+
+        api.startBatchEdit();
+
+        // Pre-stage an unrelated pending edit that the scoped purge must NOT remove.
+        clipboardUtils.setText('KEEP');
+        api.setFocusedCell(0, 'a');
+        const preStaged = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await preStaged;
+
+        await new GridRows(api, 'purge: after pre-stage r0/a').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:r0 a:⏳"KEEP" "a0" b:"b0"
+            └── LEAF id:r1 a:"a1" b:"b1"
+        `);
+
+        // Paste a 2×1 block into b: r0/b receives its own source value 'b0' (→ purged), r1/b changes (→ kept).
+        clipboardUtils.setText('b0\nZ1');
+        api.setFocusedCell(0, 'b');
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasted;
+
+        // r0/b purged (no ⏳), r1/b kept, and the pre-staged r0/a survived the scoped purge.
+        await new GridRows(api, 'purge: after paste into b').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:r0 a:⏳"KEEP" "a0" b:"b0"
+            └── LEAF ⏳ id:r1 a:"a1" b:⏳"Z1" "b1"
+        `);
+        expect(
+            api
+                .getEditingCells()
+                .map((c: { rowIndex: number | null; colId: string }) => `${c.rowIndex}:${c.colId}`)
+                .sort()
+        ).toEqual(['0:a', '1:b']);
+    });
+
+    test('batch full-row paste keeps pasted values for non-focused open editors, not their stale values', async () => {
+        const api = await gridMgr.createGridAndWait('bulkFullRowOpenEditor', {
+            editType: 'fullRow',
+            cellSelection: true,
+            columnDefs: [
+                { colId: 'a', field: 'a', editable: true },
+                { colId: 'b', field: 'b', editable: true },
+            ],
+            rowData: [{ id: 'r0', a: 'a0', b: 'b0' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        api.startBatchEdit();
+
+        // Full-row editing opens an editor on EVERY cell of the row; only 'a' is focused, so 'b' stays
+        // stale (showing 'b0') while the paste stages 'Y0' into it.
+        api.setFocusedCell(0, 'a');
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        await waitFor(() => expect(api.getEditingCells().length).toBe(2));
+
+        clipboardUtils.setText('X0\tY0');
+        api.setFocusedCell(0, 'a');
+        const pasteEnd = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasteEnd;
+
+        api.commitBatchEdit();
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'after commit').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r0 a:"X0" b:"Y0"
+        `);
+    });
 });

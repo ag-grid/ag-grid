@@ -17,6 +17,7 @@ import type {
 import type { Column } from '../../interfaces/iColumn';
 import type { EditMap, EditState, EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
@@ -307,20 +308,49 @@ function _createEditorParams(
     });
 }
 
+function purgeEditIfUnchanged(
+    editModelSvc: NonNullable<BeanCollection['editModelSvc']>,
+    rowNode: IRowNode,
+    column: Column,
+    edit: EditValue,
+    includeEditing?: boolean
+): void {
+    if (!includeEditing && (edit.state === 'editing' || edit.pendingValue === UNEDITED)) {
+        return;
+    }
+
+    // remove edits where the pending is equal to the old value
+    if (!_sourceAndPendingDiffer(edit)) {
+        editModelSvc.removeEdits({ rowNode, column });
+    }
+}
+
 export function _purgeUnchangedEdits(beans: BeanCollection, includeEditing?: boolean): void {
     const { editModelSvc } = beans;
-    editModelSvc?.getEditMap().forEach((editRow, rowNode) => {
-        editRow.forEach((edit, column) => {
-            if (!includeEditing && (edit.state === 'editing' || edit.pendingValue === UNEDITED)) {
-                return;
-            }
-
-            if (!_sourceAndPendingDiffer(edit) && (edit.state !== 'editing' || includeEditing)) {
-                // remove edits where the pending is equal to the old value
-                editModelSvc?.removeEdits({ rowNode, column });
-            }
-        });
+    // Read-only iteration (removeEdits only deletes the current entry) — no need for a map copy.
+    editModelSvc?.getEditMap()?.forEach((editRow, rowNode) => {
+        editRow.forEach((edit, column) => purgeEditIfUnchanged(editModelSvc, rowNode, column, edit, includeEditing));
     });
+}
+
+/**
+ * Scoped purge for a single staged cell — O(1) instead of rescanning the whole edit map.
+ * Staging one cell can only make that cell match its source, so bulk operations (paste/fill)
+ * must purge per-cell here rather than calling {@link _purgeUnchangedEdits} per staged cell (O(N^2)).
+ */
+export function _purgeUnchangedEdit(
+    beans: BeanCollection,
+    position: Required<EditPosition>,
+    includeEditing?: boolean
+): void {
+    const { editModelSvc } = beans;
+    if (!editModelSvc) {
+        return;
+    }
+    const edit = editModelSvc.getEdit(position);
+    if (edit) {
+        purgeEditIfUnchanged(editModelSvc, position.rowNode, position.column, edit, includeEditing);
+    }
 }
 
 export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: CellCtrl): void {
@@ -750,7 +780,7 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
 const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationModel => {
     const rowValidationModel = new EditRowValidationModel();
     const getFullRowEditValidationErrors = beans.gos.get('getFullRowEditValidationErrors');
-    // populate row-level errors
+    // populate row-level errors (read-only iteration — no map copy needed)
     const editMap = beans.editModelSvc?.getEditMap();
 
     if (!editMap) {

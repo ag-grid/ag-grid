@@ -141,7 +141,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         const changedRows: IRowNode[] = [];
-        model.getEditMap().forEach((rowEdits, rowNode) => {
+        model.getEditMap()?.forEach((rowEdits, rowNode) => {
             if (!rowEdits || rowEdits.size === 0) {
                 return;
             }
@@ -340,7 +340,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const { beans, model } = this;
         // check all cells that should have an editor have one - in the case of small viewports,
         // editors might have been destroyed along with their corresponding cellCtrl
-        model.getEditMap().forEach((rowEdits, rowNode) =>
+        model.getEditMap()?.forEach((rowEdits, rowNode) =>
             rowEdits.forEach(({ state }, column) => {
                 if (state !== 'editing') {
                     return;

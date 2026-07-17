@@ -30,8 +30,8 @@ const nodeHasLeafEdit = (
         const child = children[i];
         if (child.data) {
             const highlight =
-                editHighlightFn(editModelSvc?.getEdit({ rowNode: child, column })) ||
-                editHighlightFn(editModelSvc?.getEdit({ rowNode: child.pinnedSibling, column }));
+                editHighlightFn(editModelSvc?.getCellEdit(child, column)) ||
+                editHighlightFn(editModelSvc?.getCellEdit(child.pinnedSibling, column));
             if (highlight) {
                 return true;
             }
@@ -58,10 +58,5 @@ export function _hasPinnedEdits(beans: BeanCollection, { rowNode, column }: Edit
     if (!rowNode) {
         return;
     }
-    return editHighlightFn(
-        beans.editModelSvc?.getEdit({
-            rowNode,
-            column,
-        })
-    );
+    return editHighlightFn(beans.editModelSvc?.getCellEdit(rowNode, column));
 }

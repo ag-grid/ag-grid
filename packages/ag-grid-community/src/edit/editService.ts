@@ -2,6 +2,7 @@ import { KeyCode } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
@@ -49,6 +50,7 @@ import {
     _destroyEditors,
     _filterChangedEdits,
     _populateModelValidationErrors,
+    _purgeUnchangedEdit,
     _purgeUnchangedEdits,
     _refreshEditorOnColDefChanged,
     _setupEditor,
@@ -112,6 +114,7 @@ export class EditService extends BeanStub implements NamedBean {
 
     public committing = false;
 
+    private csrm = false;
     private batch: boolean = false;
     private batchStartDispatched: boolean = false;
     private model: EditModelService;
@@ -121,11 +124,16 @@ export class EditService extends BeanStub implements NamedBean {
     private stopping = false;
     private rangeSelectionWhileEditing = 0;
 
+    // Nonzero while a bulk write coalesces per-cell cleanup/refresh (see beginBulkWrite).
+    private bulkWriteDepth = 0;
+    private bulkWriteTouched: Required<EditPosition>[] = [];
+
     public postConstruct(): void {
         const { beans } = this;
         this.model = beans.editModelSvc!;
         this.valueSvc = beans.valueSvc;
         this.rangeSvc = beans.rangeSvc!;
+        this.csrm = _isClientSideRowModel(this.gos, beans.rowModel);
 
         this.addManagedPropertyListener('editType', ({ currentValue }: any) => {
             this.stopEditing(undefined, CANCEL_PARAMS);
@@ -269,7 +277,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public isRowEditing(rowNode?: IRowNode, params?: IsEditingParams): boolean {
-        return !!rowNode && this.model.hasRowEdits(rowNode, params);
+        return !!rowNode && this.model.hasRowEdits(rowNode, params?.checkSiblings);
     }
 
     public enableRangeSelectionWhileEditing(): void {
@@ -403,7 +411,7 @@ export class EditService extends BeanStub implements NamedBean {
         return {
             cancel,
             cellCtrl,
-            edits: this.model.getEditMap(true),
+            edits: this.model.getEditMapCopy(),
             event: event ?? null,
             forceCancel,
             forceStop,
@@ -436,7 +444,7 @@ export class EditService extends BeanStub implements NamedBean {
             this.strategy?.cleanupEditors(position);
         }
 
-        return { res: false, edits: this.model.getEditMap() };
+        return { res: false, edits: this.model.getEditMapCopy() };
     }
 
     private handleStopOrCancel(context: StopContext): StopOutcome {
@@ -448,7 +456,7 @@ export class EditService extends BeanStub implements NamedBean {
         const persist = !this.batch || !willCancel;
         _syncFromEditors(beans, { persist, isCancelling: willCancel || cancel, isStopping: willStop });
 
-        const freshEdits = model.getEditMap();
+        const freshEdits = model.getEditMapCopy();
         const shouldCommit = !willCancel && (!this.batch || commit);
         const editsToDelete = shouldCommit ? this.processEdits(freshEdits, source) : [];
 
@@ -527,7 +535,7 @@ export class EditService extends BeanStub implements NamedBean {
 
             this.bulkRefreshMap(edits, { suppressFlash: true });
 
-            return model.getEditMap();
+            return model.getEditMapCopy();
         }
 
         return edits;
@@ -737,7 +745,7 @@ export class EditService extends BeanStub implements NamedBean {
                 // Reading from valueSvc.getValue('data') can return stale aggData for group nodes when
                 // aggregation is deferred (e.g. inside a changeDetectionSvc batch), causing the edit
                 // to appear as pending (⏳) even after undo/redo restores the original value.
-                this.beans.editModelSvc?.setEdit(position, { sourceValue: edit.pendingValue });
+                this.model.setEdit(position, { sourceValue: edit.pendingValue });
             } else {
                 this.model.clearEditValue(position);
             }
@@ -751,28 +759,30 @@ export class EditService extends BeanStub implements NamedBean {
         this.bulkRefreshMap(edits);
 
         // force refresh of all row cells as custom renderers may depend on multiple cell values
-        let refreshParams = FORCE_REFRESH;
+        let refreshParams: RefreshCellsParams = FORCE_REFRESH;
         if (params?.forceRefreshOfEditCellsOnly) {
-            // Only refresh the cells for the current edits
-            refreshParams = {
-                ...getRowColumnsFromMap(edits),
-                ...FORCE_REFRESH,
-            };
+            // Only refresh the current edit cells: gather row keys + deduped columns in one pass.
+            const rowNodes: IRowNode[] = [];
+            const columns = new Set<Column>();
+            edits.forEach((editRow, rowNode) => {
+                rowNodes.push(rowNode);
+                for (const column of editRow.keys()) {
+                    columns.add(column);
+                }
+            });
+            refreshParams = { rowNodes, columns: Array.from(columns), ...FORCE_REFRESH };
         }
         this.beans.rowRenderer.refreshCells(refreshParams);
     }
 
     private dispatchEditValuesChanged(
-        { rowNode, column }: EditPosition,
+        rowNode: IRowNode,
+        column: Column,
         edit: Partial<Pick<EditValue, 'pendingValue' | 'sourceValue'>> = {}
     ): void {
-        if (!rowNode || !column || !edit) {
-            return;
-        }
-
         const { pendingValue, sourceValue } = edit;
         const { rowIndex, rowPinned, data } = rowNode;
-        this.beans.eventSvc.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'cellEditValuesChanged',
             node: rowNode,
             rowIndex,
@@ -787,71 +797,109 @@ export class EditService extends BeanStub implements NamedBean {
         });
     }
 
+    // A bulk write (paste/fill/range-delete/undo) stages many cells via setDataValue. Between
+    // beginBulkWrite/endBulkWrite the per-cell editor cleanup and refresh are deferred, then applied
+    // once on the outermost endBulkWrite — turning O(N^2) per-cell work into O(N). Callers own try/finally.
+    public beginBulkWrite(): void {
+        this.bulkWriteDepth++;
+    }
+
+    public endBulkWrite(): void {
+        if (--this.bulkWriteDepth === 0) {
+            this.flushBulkWrite();
+        }
+    }
+
+    private flushBulkWrite(): void {
+        const touched = this.bulkWriteTouched;
+        this.bulkWriteTouched = [];
+        if (!this.batch || touched.length === 0) {
+            return;
+        }
+
+        // A pre-existing open editor (rare during a bulk write) is torn down once here; the common
+        // no-editor case skips it in O(1). Staged cells were already scope-purged per cell.
+        if (this.model.hasOpenEditors()) {
+            this.cleanupEditors();
+        }
+
+        // refCell drives CSRM-only ancestor/group refresh, matching bulkRefreshCell/bulkRefreshMap.
+        if (!this.csrm) {
+            return;
+        }
+
+        // Refresh each cell once (a cell can be staged more than once per bulk write), and dedup shared
+        // ancestor (group/total) refreshes across cells too.
+        const seenCells = new Map<IRowNode, Set<Column>>();
+        const seenAncestors = new Map<IRowNode, Set<Column>>();
+        for (let i = 0, len = touched.length; i < len; ++i) {
+            const position = touched[i];
+            const { rowNode, column } = position;
+            if (markSeen(seenCells, rowNode, column)) {
+                this.refCell(rowNode, column, this.model.getCellEdit(rowNode, column), undefined, seenAncestors);
+            }
+        }
+    }
+
     private bulkRefreshCell(position: Required<EditPosition>, params?: RefreshCellsParams): void {
-        if (_isClientSideRowModel(this.gos, this.beans.rowModel)) {
-            this.refCell(position, this.model.getEdit(position), params);
+        if (this.csrm) {
+            const { rowNode, column } = position;
+            this.refCell(rowNode, column, this.model.getCellEdit(rowNode, column), params);
         }
     }
 
     private bulkRefreshMap(editMap: EditMap, params?: RefreshCellsParams): void {
-        if (_isClientSideRowModel(this.gos, this.beans.rowModel)) {
+        if (this.csrm) {
             editMap.forEach((editRow, rowNode) => {
                 for (const column of editRow.keys()) {
-                    this.refCell({ rowNode, column }, editRow.get(column), params);
+                    this.refCell(rowNode, column, editRow.get(column), params);
                 }
             });
         }
     }
 
     private refCell(
-        { rowNode, column }: Required<EditPosition>,
-        edit?: EditValue,
-        params: RefreshCellsParams = {}
+        rowNode: IRowNode,
+        column: Column,
+        edit: EditValue | undefined,
+        params: RefreshCellsParams = {},
+        seenAncestors?: Map<IRowNode, Set<Column>>
     ): void {
         const { beans, gos } = this;
-
-        const updatedNodes: Set<IRowNode> = new Set([rowNode]);
-        const refreshNodes: Set<IRowNode> = new Set();
-
         const pinnedSibling = (rowNode as RowNode).pinnedSibling;
+
+        // Primary cell(s): the row and its pinned sibling (always distinct). Dispatch both, then refresh both.
+        this.dispatchEditValuesChanged(rowNode, column, edit);
         if (pinnedSibling) {
-            updatedNodes.add(pinnedSibling);
+            this.dispatchEditValuesChanged(pinnedSibling, column, edit);
+        }
+        _getCellCtrl(beans, { rowNode, column })?.refreshCell(params);
+        if (pinnedSibling) {
+            _getCellCtrl(beans, { rowNode: pinnedSibling, column })?.refreshCell(params);
         }
 
+        // Ancestor cells whose displayed value depends on this cell (sibling/group/total rows).
+        const batch = this.batch;
         const sibling = rowNode.sibling;
         if (sibling) {
-            refreshNodes.add(sibling);
+            refreshAncestorCell(beans, sibling, column, params, batch, seenAncestors);
         }
 
         let parent = rowNode.parent;
+        if (!parent) {
+            return; // no parent (e.g. pinned rows) — no ancestor cells to refresh
+        }
+        const groupTotalRow = gos.get('groupTotalRow');
+        const grandTotalRow = gos.get('grandTotalRow');
         while (parent) {
-            if (parent.sibling?.footer && gos.get('groupTotalRow')) {
-                refreshNodes.add(parent.sibling);
-            } else if (!parent.parent && parent.sibling && gos.get('grandTotalRow')) {
-                refreshNodes.add(parent.sibling);
-            } else {
-                refreshNodes.add(parent);
-            }
+            const parentSibling = parent.sibling;
+            // Group/grand-total footer rows mirror the aggregated cell; otherwise refresh the parent itself.
+            const target =
+                parentSibling && ((parentSibling.footer && groupTotalRow) || (!parent.parent && grandTotalRow))
+                    ? parentSibling
+                    : parent;
+            refreshAncestorCell(beans, target, column, params, batch, seenAncestors);
             parent = parent.parent;
-        }
-
-        for (const node of updatedNodes) {
-            this.dispatchEditValuesChanged({ rowNode: node, column }, edit);
-        }
-        for (const node of updatedNodes) {
-            _getCellCtrl(beans, { rowNode: node, column })?.refreshCell(params);
-        }
-        for (const node of refreshNodes) {
-            const cellCtrl = _getCellCtrl(beans, { rowNode: node, column });
-            if (cellCtrl) {
-                cellCtrl.refreshCell(params);
-                // During batch, parent/group/grand-total rows need their batch edit CSS
-                // updated even when their aggregated value hasn't changed (dataNeedsUpdating
-                // is false, so refreshCell alone won't run _applyCellEditStyles).
-                if (!params.force && this.batch) {
-                    _applyCellEditStyles(beans, cellCtrl);
-                }
-            }
         }
     }
 
@@ -1019,17 +1067,18 @@ export class EditService extends BeanStub implements NamedBean {
      */
     public getPendingEditValue(rowNode: IRowNode, column: Column, from: Exclude<CellValueResolveFrom, 'data'>): any {
         // Caller (ValueService.getValue) has already resolved any pivot result column.
-        if (from === 'batch' && !this.batch) {
+        const batch = this.batch;
+        if (from === 'batch' && !batch) {
             return undefined; // 'batch' mode: only return edit values when batch editing is active
         }
 
-        const edit = this.model.getEdit({ rowNode, column }, CHECK_SIBLING);
+        const edit = this.model.getCellEditWithSibling(rowNode, column);
         if (!edit) {
             return undefined;
         }
 
         // Skip during stopEditing when value was already committed (non-batch, no editor opened)
-        if (this.stopping && !this.batch && !edit.editorState?.cellStartedEditing) {
+        if (this.stopping && !batch && !edit.editorState?.cellStartedEditing) {
             return undefined;
         }
 
@@ -1049,7 +1098,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public getCellDataValue(position: Required<EditPosition>): any {
-        const edit = this.model.getEdit(position, CHECK_SIBLING);
+        const edit = this.model.getCellEditWithSibling(position.rowNode, position.column);
         if (edit) {
             const newValue = edit.pendingValue;
             if (newValue !== UNEDITED) {
@@ -1091,8 +1140,8 @@ export class EditService extends BeanStub implements NamedBean {
             return false; // don't toggle-back if currently being edited
         }
 
-        this.dispatchEditValuesChanged(position, { ...existing, pendingValue: sourceValue });
-        this.beans.editModelSvc?.removeEdits(position);
+        this.dispatchEditValuesChanged(position.rowNode, position.column, { ...existing, pendingValue: sourceValue });
+        this.model.removeEdits(position);
         _getCellCtrl(this.beans, position)?.refreshCell(FORCE_REFRESH);
         return true; // toggled back to source value
     }
@@ -1196,10 +1245,10 @@ export class EditService extends BeanStub implements NamedBean {
         }
 
         // sourceValue === newValue: setting back to original value removes the edit entirely.
-        this.beans.editModelSvc?.removeEdits(position);
+        this.model.removeEdits(position);
         this.ensureBatchStarted();
 
-        this.dispatchEditValuesChanged(position, {
+        this.dispatchEditValuesChanged(position.rowNode, position.column, {
             ...existing,
             pendingValue: newValue,
         });
@@ -1262,6 +1311,7 @@ export class EditService extends BeanStub implements NamedBean {
         const beans = this.beans;
 
         if (this.batch) {
+            const bulkWrite = this.bulkWriteDepth > 0;
             if (eventSource === 'batch' && _getCellCtrl(beans, position)?.comp?.getCellEditor()) {
                 // 'batch' source with an open editor: write ONLY to pendingValue,
                 // leaving editorValue untouched so the editor keeps showing what
@@ -1281,19 +1331,26 @@ export class EditService extends BeanStub implements NamedBean {
 
                 // 'batch' source (no open editor) stages a pending value without disrupting display;
                 // other sources close the editor, symmetrically with how default setDataValue works.
-                if (eventSource !== 'batch') {
+                // Within a bulk write this cleanup is coalesced into a single flush pass.
+                if (eventSource !== 'batch' && !bulkWrite) {
                     this.cleanupEditors();
                 }
             }
 
-            _purgeUnchangedEdits(beans);
+            // Only the cell just staged can have become unchanged; a full-map rescan here is O(N^2)
+            // across a bulk paste/fill (each staged cell would rescan every pending edit).
+            _purgeUnchangedEdit(beans, position);
 
             // Lazily dispatch batchEditingStarted for direct API writes during batch.
             this.ensureBatchStarted();
 
-            // Refresh the changed cell and dispatch cellEditValuesChanged so consumers
-            // (e.g. find service) react to the pending value update.
-            this.bulkRefreshCell(position);
+            if (bulkWrite) {
+                this.bulkWriteTouched.push(position);
+            } else {
+                // Refresh the changed cell and dispatch cellEditValuesChanged so consumers
+                // (e.g. find service) react to the pending value update.
+                this.bulkRefreshCell(position);
+            }
             return true;
         }
 
@@ -1305,8 +1362,8 @@ export class EditService extends BeanStub implements NamedBean {
         this.syncEditAfterCommit(position, success);
 
         // After undo/redo or direct data writes, the edit's pendingValue may now match sourceValue.
-        // Purge such entries so they don't show as batch-pending (⏳) when the value was restored.
-        _purgeUnchangedEdits(beans);
+        // Only this cell changed, so a scoped purge suffices (a full rescan here would be O(N^2) in bulk).
+        _purgeUnchangedEdit(beans, position);
 
         // Re-fetch: change detection during setDataValue may have recreated the CellCtrl.
         // Only allow flash when the value was actually committed; suppress when setDataValue
@@ -1334,7 +1391,7 @@ export class EditService extends BeanStub implements NamedBean {
             return;
         }
 
-        const hasEdits = model.hasRowEdits(position.rowNode, CHECK_SIBLING);
+        const hasEdits = model.hasRowEdits(position.rowNode, true);
 
         if (!hasEdits) {
             return;
@@ -1345,7 +1402,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         if (compDetails) {
             const { params } = compDetails;
-            params.data = model.getEditRowDataValue(rowNode, CHECK_SIBLING);
+            params.data = model.getEditRowDataValue(rowNode);
             return { compDetails };
         }
 
@@ -1402,7 +1459,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         _syncFromEditors(beans, { persist: true });
 
-        const edits: EditMap = this.model.getEditMap(true);
+        const edits: EditMap = this.model.getEditMapCopy();
         let editValue = edits.get(rowNode)?.get(column)?.pendingValue;
 
         let bulkStartDispatched = false;
@@ -1588,15 +1645,43 @@ export class EditService extends BeanStub implements NamedBean {
     }
 }
 
-function getRowColumnsFromMap(edits: EditMap): { rowNodes: IRowNode[] | undefined; columns: Column[] | undefined } {
-    return {
-        rowNodes: edits ? Array.from(edits.keys()) : undefined,
-        columns: edits
-            ? [...new Set(Array.from(edits.values()).flatMap((er: EditRow) => Array.from(er.keys())))]
-            : undefined,
-    };
-}
-
 function getEditType(gos: GridOptionsService, editType?: EditStrategyType) {
     return editType ?? gos.get('editType') ?? 'singleCell';
 }
+
+/** Records a (node, column) pair; returns false if it was already recorded (a duplicate). */
+const markSeen = (seen: Map<IRowNode, Set<Column>>, node: IRowNode, column: Column): boolean => {
+    let cols = seen.get(node);
+    if (!cols) {
+        cols = new Set();
+        seen.set(node, cols);
+    }
+    if (cols.has(column)) {
+        return false;
+    }
+    cols.add(column);
+    return true;
+};
+
+/** Refreshes one ancestor (group/total/sibling) cell, deduping across a bulk-write flush via `seenAncestors`. */
+const refreshAncestorCell = (
+    beans: BeanCollection,
+    node: IRowNode,
+    column: Column,
+    params: RefreshCellsParams,
+    batch: boolean,
+    seenAncestors: Map<IRowNode, Set<Column>> | undefined
+): void => {
+    if (seenAncestors && !markSeen(seenAncestors, node, column)) {
+        return; // already refreshed this ancestor cell earlier in the bulk-write flush
+    }
+    const cellCtrl = _getCellCtrl(beans, { rowNode: node, column });
+    if (cellCtrl) {
+        cellCtrl.refreshCell(params);
+        // During batch, parent/group/grand-total rows need their batch edit CSS updated even when their
+        // aggregated value is unchanged (dataNeedsUpdating is false, so refreshCell alone won't run it).
+        if (!params.force && batch) {
+            _applyCellEditStyles(beans, cellCtrl);
+        }
+    }
+};

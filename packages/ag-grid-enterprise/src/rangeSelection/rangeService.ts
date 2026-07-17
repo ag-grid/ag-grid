@@ -927,8 +927,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         const batch = !!editSvc?.isBatchEditing();
 
         const { changeDetectionSvc } = beans;
-        changeDetectionSvc?.beginDeferred();
+        editSvc?.beginBulkWrite();
         try {
+            changeDetectionSvc?.beginDeferred();
             this.forEachEditableCellInRanges(cellRanges, (rowNode, column) => {
                 if (restoreSourceInBatch && batch) {
                     editSvc?.batchResetToSourceValue({ rowNode, column });
@@ -939,6 +940,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             });
         } finally {
             changeDetectionSvc?.endDeferred();
+            editSvc?.endBulkWrite();
         }
 
         if (dispatchWrapperEvents) {
