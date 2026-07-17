@@ -67,8 +67,12 @@ export interface MarkdownResolvers {
     };
     /** Resolve a link href (framework prefix, version substitution, absolute URL). */
     resolveLinkHref?: (params: { href: string; framework: MarkdownFramework }) => string;
-    /** Resolve an image path to a servable URL. */
-    resolveImageSrc?: (params: { imagePath: string; pageName: string }) => string;
+    /**
+     * Resolve an image path to a servable URL. May be async — the resolution can go
+     * through the product's asset pipeline. Image tags are pre-resolved before
+     * rendering (see `prefetchImageSrcs`) so inline images render synchronously.
+     */
+    resolveImageSrc?: (params: { imagePath: string; pageName: string }) => Promise<string> | string;
 }
 
 export interface RenderMarkdocToMarkdownOptions {
@@ -97,6 +101,8 @@ interface RenderContext {
     variables: Record<string, unknown>;
     functions: Record<string, MarkdocFunctionLike>;
     resolvers: MarkdownResolvers;
+    /** Image tag `src`s resolved up-front (keyed by page + path), read by the sync renderers. */
+    imageSrc: Map<string, string>;
 }
 
 // Tags with no meaningful Markdown representation (interactive form / cookie
@@ -115,9 +121,11 @@ export async function renderMarkdocToMarkdown(opts: RenderMarkdocToMarkdownOptio
         variables: { ...(markdocConfig.variables ?? {}), ...(variables ?? {}), framework },
         functions: markdocConfig.functions ?? {},
         resolvers,
+        imageSrc: new Map(),
     };
 
     const ast = Markdoc.parse(body ?? '');
+    await prefetchImageSrcs(ast.children, ctx);
     const bodyMarkdown = await renderBlocks(ast.children, ctx);
 
     const frontmatterBlock = buildFrontmatter({ title: frontmatter.title, framework, version });
@@ -248,8 +256,9 @@ async function renderTagBlock(node: Node, ctx: RenderContext): Promise<string> {
             return renderTabs(node, ctx);
         case 'tabItem':
         case 'flex':
-        case 'videoSection':
             return renderBlocks(node.children, ctx);
+        case 'videoSection':
+            return renderVideoSection(node, ctx);
         case 'expandingSection': {
             const header = stringifyAttr(node.attributes.headerText, ctx);
             const inner = await renderBlocks(node.children, ctx);
@@ -581,10 +590,66 @@ async function renderNumberHeading(node: Node, ctx: RenderContext): Promise<stri
     return inner.length ? `${heading}\n\n${inner}` : heading;
 }
 
+const IMAGE_TAGS = new Set(['image', 'imageCaption', 'gif']);
+
+function imageCacheKey(pageName: string, imagePath: string): string {
+    return `${pageName} ${imagePath}`;
+}
+
+/**
+ * Resolve every image tag's `src` up-front and cache it. Image resolution may be async
+ * (the product looks images up through its asset pipeline), but images also appear
+ * inline (e.g. inside table cells), where rendering is synchronous. Pre-resolving lets
+ * the sync renderers read a ready URL from the cache.
+ */
+async function prefetchImageSrcs(nodes: Node[], ctx: RenderContext): Promise<void> {
+    const resolve = ctx.resolvers.resolveImageSrc;
+    if (!resolve) {
+        return;
+    }
+    const pending: Promise<void>[] = [];
+    const walk = (list: Node[]): void => {
+        for (let i = 0, len = list.length; i < len; ++i) {
+            const node = list[i];
+            // Only the selected `if` branch is rendered, so only resolve images inside it.
+            if (node.type === 'tag' && node.tag === 'if') {
+                walk(selectBranch(node, ctx));
+                continue;
+            }
+            if (node.type === 'tag' && node.tag && IMAGE_TAGS.has(node.tag)) {
+                const imagePath = stringifyAttr(node.attributes.imagePath, ctx);
+                const pageName = stringifyAttr(node.attributes.pageName, ctx) || ctx.pageName;
+                const key = imageCacheKey(pageName, imagePath);
+                if (!ctx.imageSrc.has(key)) {
+                    ctx.imageSrc.set(key, imagePath);
+                    pending.push(
+                        Promise.resolve(resolve({ imagePath, pageName }))
+                            .then((src) => {
+                                if (src) {
+                                    ctx.imageSrc.set(key, src);
+                                }
+                            })
+                            // Leave the fallback (raw path) in place if resolution fails.
+                            .catch(() => {})
+                    );
+                }
+            }
+            if (node.children) {
+                walk(node.children);
+            }
+        }
+    };
+    walk(nodes);
+    await Promise.all(pending);
+}
+
 function resolveImagePath(node: Node, ctx: RenderContext): string {
     const imagePath = stringifyAttr(node.attributes.imagePath, ctx);
+    if (!ctx.resolvers.resolveImageSrc) {
+        return imagePath;
+    }
     const pageName = stringifyAttr(node.attributes.pageName, ctx) || ctx.pageName;
-    return ctx.resolvers.resolveImageSrc ? ctx.resolvers.resolveImageSrc({ imagePath, pageName }) : imagePath;
+    return ctx.imageSrc.get(imageCacheKey(pageName, imagePath)) ?? imagePath;
 }
 
 function renderImageTag(node: Node, ctx: RenderContext): string {
@@ -606,6 +671,24 @@ function renderGif(node: Node, ctx: RenderContext): string {
 function renderVideo(node: Node, ctx: RenderContext): string {
     const src = stringifyAttr(node.attributes.videoSrc, ctx);
     return src ? `[Video](${src})` : '';
+}
+
+/**
+ * Render a `videoSection` (a YouTube video with optional header prose) as the header
+ * prose followed by a link to the video — mirroring the YouTube URL the on-page
+ * VideoSection component links to.
+ */
+async function renderVideoSection(node: Node, ctx: RenderContext): Promise<string> {
+    const header = (await renderBlocks(node.children, ctx)).trim();
+    const id = stringifyAttr(node.attributes.id, ctx);
+    if (!id) {
+        return header;
+    }
+    const title = stringifyAttr(node.attributes.title, ctx) || 'Video';
+    const playlist = stringifyAttr(node.attributes.playlist, ctx);
+    const url = `https://www.youtube.com/watch?v=${id}${playlist ? `&list=${playlist}` : ''}`;
+    const link = `[${title}](${url})`;
+    return header.length ? `${header}\n\n${link}` : link;
 }
 
 async function renderExample(node: Node, ctx: RenderContext): Promise<string> {

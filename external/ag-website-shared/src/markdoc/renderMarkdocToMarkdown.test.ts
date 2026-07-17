@@ -352,6 +352,38 @@ describe('renderMarkdocToMarkdown', () => {
         expect(output).not.toContain('-->');
     });
 
+    it('resolves image tags (including inline in tables) via the async resolveImageSrc resolver', async () => {
+        const resolvers: MarkdownResolvers = {
+            resolveImageSrc: async ({ imagePath, pageName }) => `https://example.test/${pageName}/${imagePath}?hashed`,
+        };
+        const body = [
+            '{% image imagePath="resources/diagram.svg" alt="Diagram" /%}',
+            '',
+            '| Browser | Notes |',
+            '| --- | --- |',
+            '| {% image imagePath="resources/chrome.svg" alt="Chrome" width="24px" /%} Chrome | Latest. |',
+        ].join('\n');
+
+        const output = await render(body, { resolvers, pageName: 'supported-browsers' });
+
+        expect(output).toContain('![Diagram](https://example.test/supported-browsers/resources/diagram.svg?hashed)');
+        // Inline image inside a table cell is resolved too (sync render reads the prefetched src).
+        expect(output).toContain('![Chrome](https://example.test/supported-browsers/resources/chrome.svg?hashed)');
+    });
+
+    it('renders a videoSection as its header prose followed by a link to the video', async () => {
+        const body = [
+            '{% videoSection id="98JVaTcoexc" title="Custom Filter Components" showHeader=true %}',
+            'Filter components let you add your own filter types.',
+            '{% /videoSection %}',
+        ].join('\n');
+
+        const output = await render(body);
+
+        expect(output).toContain('Filter components let you add your own filter types.');
+        expect(output).toContain('[Custom Filter Components](https://www.youtube.com/watch?v=98JVaTcoexc)');
+    });
+
     it('normalises output to a single trailing newline and no triple newlines', async () => {
         const output = await render('# A\n\n\n\nParagraph.\n\n\n');
         expect(output.endsWith('\n')).toBe(true);

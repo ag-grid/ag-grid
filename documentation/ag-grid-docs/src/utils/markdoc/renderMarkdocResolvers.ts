@@ -1,13 +1,12 @@
 import type { Framework } from '@ag-grid-types';
 import type { MarkdownFramework, MarkdownResolvers } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
-import { getPagePath } from '@components/docs/utils/filesData';
+import { getPageImages, getPagePath } from '@components/docs/utils/filesData';
 import { getExampleUrl } from '@components/docs/utils/urlPaths';
 import { getGeneratedContents } from '@components/example-generator';
 import { stripOutExampleGeneratorCode } from '@components/example-runner/components/stripOutExampleGeneratorCode';
 import * as snippetTransformer from '@components/snippet/snippetTransformer';
-import { SITE_BASE_URL, agGridVersion } from '@constants';
+import { agGridVersion } from '@constants';
 import { getInternalFramework } from '@utils/framework';
-import { pathJoin } from '@utils/pathJoin';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -126,7 +125,15 @@ export function createGridMarkdownResolvers({ siteRoot }: { siteRoot?: string } 
             }
         },
 
-        resolveImageSrc: ({ imagePath, pageName }) =>
-            toAbsoluteUrl(pathJoin('/', SITE_BASE_URL, 'docs', pageName, imagePath), siteRoot),
+        resolveImageSrc: async ({ imagePath, pageName }) => {
+            try {
+                // Resolve through Astro's asset pipeline (same as the on-page Image component)
+                // so the URL actually resolves; a naive /docs/<page>/<path> URL 404s.
+                const { imageSrc } = await getPageImages({ pageName, imagePath });
+                return imageSrc ? toAbsoluteUrl(imageSrc, siteRoot) : imagePath;
+            } catch {
+                return imagePath;
+            }
+        },
     };
 }
