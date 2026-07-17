@@ -86,7 +86,7 @@ const modDeflateRules = `
 // on-disk check so a path without a .md is left untouched. %1 is the docs path
 // captured below, reused in both the -f test and the rewrite target.
 const markdownNegotiationRules = `    RewriteCond %{HTTP_ACCEPT} text/markdown
-    RewriteCond %{REQUEST_URI} ^/((?:react|angular|vue|javascript)-data-grid/[^/]+?)/?$
+    RewriteCond %{REQUEST_URI} ^/((?:(?:react|angular|vue|javascript)-data-grid/[^/]+?)|license-pricing)/?$
     RewriteCond %{DOCUMENT_ROOT}/%1.md -f
     RewriteRule ^ /%1.md [L]`;
 
@@ -104,8 +104,8 @@ ${markdownNegotiationRules}
 // variant to a browser, or HTML to an agent. Scoped to the docs paths so the rest of
 // the site keeps its default (URL-only) cache key.
 const markdownVaryHeader = `# SE-80: docs pages content-negotiate on Accept (see the markdown rewrite), so shared
-# caches must key on it. Scoped to docs paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(react|angular|vue|javascript)-data-grid/#">
+# caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
+<If "%{REQUEST_URI} =~ m#^/((react|angular|vue|javascript)-data-grid/|license-pricing/?$)#">
     Header append Vary Accept
 </If>`;
 

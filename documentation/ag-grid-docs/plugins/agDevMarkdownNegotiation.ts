@@ -8,6 +8,10 @@ import { DISABLE_MARKDOWN_DOCS, FRAMEWORKS } from '../src/constants';
 // is left alone.
 const DOCS_PAGE_PATH = new RegExp(`/(?:${FRAMEWORKS.join('|')})-data-grid/[^/.]+/?$`);
 
+// Top-level (non-docs) pages that also ship a `.md` twin. Kept in sync with the
+// same page list in the SE-80 htaccess negotiation rule (see htaccessRules.ts).
+const TOP_LEVEL_MD_PATH = /^\/(?:license-pricing)\/?$/;
+
 // A client (typically an AI agent) asks for the markdown variant by sending
 // `Accept: text/markdown`. Browsers never send this, so HTML stays the default.
 // Kept as a simple substring check to match the production Apache rule
@@ -48,7 +52,7 @@ export default function agDevMarkdownNegotiation(): Plugin {
                         return;
                     }
                     const [pathname, query] = (req.url ?? '').split('?');
-                    if (DOCS_PAGE_PATH.test(pathname)) {
+                    if (DOCS_PAGE_PATH.test(pathname) || TOP_LEVEL_MD_PATH.test(pathname)) {
                         const markdownPath = pathname.replace(/\/$/, '') + '.md';
                         req.url = query != null ? `${markdownPath}?${query}` : markdownPath;
                     }

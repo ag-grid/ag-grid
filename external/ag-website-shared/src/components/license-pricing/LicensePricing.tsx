@@ -16,10 +16,10 @@ import type { FunctionComponent } from 'react';
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.json';
 import { Licenses } from './Licenses';
-import { DEV_LICENSE_DATA } from './Licenses';
 import SocialProof from './SocialProof';
 import { ComparisonTable } from './comparison-table/ComparisonTable';
 import styles from './license-pricing.module.scss';
+import { DEV_LICENSE_DATA } from './licenseData';
 
 export type LicenseTab = 'grid' | 'charts';
 
