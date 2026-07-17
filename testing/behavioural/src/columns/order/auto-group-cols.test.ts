@@ -822,6 +822,29 @@ describe('Auto Group Column Order', () => {
             ]);
         });
 
+        test('appends auto group column after a pinned existing auto group column added at runtime', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b', enableRowGroup: true },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                autoGroupColumnDef: { pinned: 'left' },
+            });
+            expect(getColumnOrder(gridApi, 'left')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`]);
+
+            gridApi.addRowGroupColumns(['b']);
+
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+            // both auto cols are pinned left; the new one seats after the existing one, not ahead of it
+            expect(getColumnOrder(gridApi, 'left')).toEqual([
+                `${GROUP_AUTO_COLUMN_ID}-a`,
+                `${GROUP_AUTO_COLUMN_ID}-b`,
+            ]);
+        });
+
         test('orders row group column(s) by rowGroupIndex (lowest first) when enableRtl=true', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 { colId: 'a', rowGroupIndex: 1 },
