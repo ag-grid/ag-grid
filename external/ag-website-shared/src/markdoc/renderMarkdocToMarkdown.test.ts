@@ -332,6 +332,26 @@ describe('renderMarkdocToMarkdown', () => {
         expect(output).toContain('<!-- real html example -->');
     });
 
+    it('strips multi-line HTML comments split across text nodes', async () => {
+        const body = [
+            'Before.',
+            '',
+            '<!--',
+            'authoring note line one',
+            'authoring note line two',
+            '-->',
+            '',
+            'After.',
+        ].join('\n');
+        const output = await render(body);
+
+        expect(output).toContain('Before.');
+        expect(output).toContain('After.');
+        expect(output).not.toContain('authoring note');
+        expect(output).not.toContain('<!--');
+        expect(output).not.toContain('-->');
+    });
+
     it('normalises output to a single trailing newline and no triple newlines', async () => {
         const output = await render('# A\n\n\n\nParagraph.\n\n\n');
         expect(output.endsWith('\n')).toBe(true);

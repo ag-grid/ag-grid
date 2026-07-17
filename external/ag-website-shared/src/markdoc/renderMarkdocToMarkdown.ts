@@ -206,7 +206,10 @@ async function renderBlock(node: Node, ctx: RenderContext): Promise<string> {
         }
         case 'paragraph':
         case 'inline':
-            return renderInlineChildren(node, ctx).trim();
+            // Strip again at the assembled-paragraph level: multi-line HTML comments are split
+            // across separate text nodes at each line break, so the per-node strip below never
+            // sees a whole `<!-- … -->` and can't remove them.
+            return stripHtmlComments(renderInlineChildren(node, ctx)).trim();
         case 'fence':
             return renderFence(node, ctx);
         case 'list':
