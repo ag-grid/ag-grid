@@ -53,6 +53,14 @@ const reRewrite = /^\s*RewriteRule\s+"\^\/\?(.+?)\$"\s+"([^"]+)"\s+\[R=301(?:,NE
 for (const line of lines) {
     const m = line.match(reRewrite);
     if (m) {
+        // Skip the SE-66 charts mirror block + the general charts add-slash rule: those RewriteRules
+        // are regex PATTERNS (alternations, character classes, quantifiers, lookahead), not literal
+        // single-hop `from` paths. They collapse the charts-subdir semantic redirects, and are
+        // predicted independently by gen-charts-expectations.mjs. A genuine single-hop `from` is a
+        // literal path with no unescaped regex metacharacters.
+        if (/[()|[\]{}+*?]/.test(m[1])) {
+            continue;
+        }
         // unescape the \. that the generator inserts
         const from = '/' + m[1].replace(/\\\./g, '.');
         singleHopFroms.add(from);

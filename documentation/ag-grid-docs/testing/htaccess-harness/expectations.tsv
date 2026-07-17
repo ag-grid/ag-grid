@@ -19,11 +19,16 @@ www	/cookies.php	301	/cookies/
 # --- SE-66 apex single-hop (Host: ag-grid.com): one hop straight to the final www URL ---
 apex	/angular-data-grid/cell-rendering/	301	https://www.ag-grid.com/angular-data-grid/component-cell-renderer/
 apex	/charts/react/zoom	301	https://www.ag-grid.com/charts/react/zoom/
-# React bullet-series has no standalone page; it must land on the linear-gauge anchor (matching the
-# other frameworks) in ONE hop, NOT redirect to its own URL and loop. The # is emitted unescaped
-# ([NE] flag) so it stays a fragment. Checked on both hosts.
-apex	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series/
-www	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series/
+# bullet-series has no standalone page; every framework must land on the linear-gauge anchor in ONE
+# hop, NOT redirect to its own URL and loop. Now mirrored generically for all frameworks and BOTH
+# slash forms (see the charts mirror block in htaccessRules.ts). The # is emitted unescaped ([NE])
+# so it stays a fragment, and the anchor is #bullet-series (NO trailing slash — matches the
+# "## Bullet Series" heading id; the earlier react-only rule wrongly used #bullet-series/).
+apex	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
+www	/charts/react/bullet-series/	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
+apex	/charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
+www	/charts/angular/bullet-series	301	https://www.ag-grid.com/charts/angular/linear-gauge/#bullet-series
+www	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gauge/#bullet-series
 
 # --- SE-61 main (non-/charts) ---
 www	/javascript-grid-cell-style/	301	/javascript-data-grid/cell-styles/
@@ -45,9 +50,10 @@ www	/charts/side/axes-types/	301	/charts/javascript/axes-types/
 # path serves; only the bare archive index redirects, to /documentation-archive.
 www	/charts/archive/13.1.0/javascript/getting-started/	200
 www	/charts/archive/	301	/charts/documentation-archive/
-# SE-61 (row 12): no charts-scoped privacy page ever existed, so /charts/privacy* is 410 Gone on www,
-# not a 301 to the apex policy page. (On the apex host the mod_rewrite host-swap to www fires first —
-# a 301 — before the charts mod_alias 410, so apex is not a single-hop 410; SE-61 QA is www-only.)
+# /charts/privacy has no charts-scoped page and must be 410 Gone (NOT a 301 to the apex policy). It
+# is the ONE charts semantic redirect deliberately NOT mirrored into the grid docroot (see
+# htaccessRules.ts), so the charts subdir stays its sole authority: the slashed form hits mod_alias
+# directly for a single 410.
 www	/charts/privacy/	410
 www	/charts/react-charts/react/area-series/	301	/charts/react/area-series/
 www	/charts/javascript/toolbar/	301	/charts/javascript/financial-charts-toolbar/

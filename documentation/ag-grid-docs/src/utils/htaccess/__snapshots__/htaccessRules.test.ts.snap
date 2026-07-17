@@ -263,7 +263,6 @@ AddType application/x-gzip .gz .tgz
     RewriteRule "^/?charts/react/financial-charts$" "https://www.ag-grid.com/charts/react/financial-charts/" [R=301,L]
     RewriteRule "^/?javascript-data-grid/packages/$" "https://www.ag-grid.com/javascript-data-grid/modules/" [R=301,L]
     RewriteRule "^/?charts/react/radial-gauge$" "https://www.ag-grid.com/charts/react/radial-gauge/" [R=301,L]
-    RewriteRule "^/?charts/react/bullet-series/$" "https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series/" [R=301,NE,L]
     RewriteRule "^/?charts/react/range-bar-series$" "https://www.ag-grid.com/charts/react/range-bar-series/" [R=301,L]
     RewriteRule "^/?vue-data-grid/$" "https://www.ag-grid.com/vue-data-grid/getting-started/" [R=301,L]
     RewriteRule "^/?charts/react/pyramid-series$" "https://www.ag-grid.com/charts/react/pyramid-series/" [R=301,L]
@@ -285,6 +284,57 @@ AddType application/x-gzip .gz .tgz
     RewriteRule "^/?documentation/javascript/grid-api/$" "https://www.ag-grid.com/javascript-data-grid/grid-api/" [R=301,L]
     RewriteRule "^/?javascript-data-grid/grid-callbacks/$" "https://www.ag-grid.com/javascript-data-grid/grid-options/" [R=301,L]
     RewriteRule "^/?javascript-grid-cell-rendering/$" "https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/" [R=301,L]
+
+    # ===== SE-66: charts-subdir semantic redirects mirrored into the docroot =====
+    # These duplicate the mod_alias redirects OWNED BY the AG Charts website repo
+    # (packages/ag-charts-website/src/utils/htaccess/redirects.ts, SITE_301_REDIRECTS).
+    # The /charts subdir .htaccess only runs AFTER the docroot has already host-swapped
+    # (apex->www) and/or added a trailing slash, so a legacy charts URL otherwise costs
+    # 2 hops (docroot normalise + subdir redirect). Mirroring the mapping here — before the
+    # host-swap and the general add-slash below — collapses every one to a SINGLE 301 to the
+    # final www URL, for apex and www, slashed and slash-less. Order mirrors the charts repo
+    # (RedirectMatch is first-match-wins: specific before broad). The (.+?)/?$ captures
+    # normalise the trailing slash so the target lands canonical in one hop.
+    # !! KEEP IN SYNC: if a redirect changes in the charts repo, update it here too, or the
+    #    2-hop chain silently returns. Verified 1-hop by the SE-66 hop-trace audit.
+    RewriteRule "^/?charts/(javascript|angular|react|vue)/bullet-series/?$" "https://www.ag-grid.com/charts/$1/linear-gauge/#bullet-series" [R=301,NE,L]
+    RewriteRule "^/?charts/(javascript|angular|react|vue)/fonts/?$" "https://www.ag-grid.com/charts/$1/text/" [R=301,L]
+    RewriteRule "^/?charts/(javascript|angular|react|vue)/?$" "https://www.ag-grid.com/charts/$1/quick-start/" [R=301,L]
+    RewriteRule "^/?charts/(javascript|react)/toolbar/?$" "https://www.ag-grid.com/charts/$1/financial-charts-toolbar/" [R=301,L]
+    RewriteRule "^/?charts/react/line/?$" "https://www.ag-grid.com/charts/react/line-series/" [R=301,L]
+    RewriteRule "^/?charts/archive/?$" "https://www.ag-grid.com/charts/documentation-archive/" [R=301,L]
+    # NOTE: /charts/privacy is deliberately NOT mirrored. The charts subdir has a 301->apex-privacy
+    # rule in its source, but the harness expectations assert a 410 Gone for it — an unresolved
+    # 410-vs-301 discrepancy owned by the charts repo. Mirroring here would force a 301 and could
+    # override whatever the deployed charts .htaccess actually returns, so the charts subdir stays the
+    # single authority for privacy (its no-slash/apex forms therefore keep the extra normalise hop).
+    RewriteRule "^/?charts/javascript-charts/javascript/(.+?)/?$" "https://www.ag-grid.com/charts/javascript/$1/" [R=301,L]
+    RewriteRule "^/?charts/angular-charts/angular/(.+?)/?$" "https://www.ag-grid.com/charts/angular/$1/" [R=301,L]
+    RewriteRule "^/?charts/react-charts/react/(.+?)/?$" "https://www.ag-grid.com/charts/react/$1/" [R=301,L]
+    RewriteRule "^/?charts/vue-charts/vue/(.+?)/?$" "https://www.ag-grid.com/charts/vue/$1/" [R=301,L]
+    RewriteRule "^/?charts/enterprise-charts/react/(.+?)/?$" "https://www.ag-grid.com/charts/react/$1/" [R=301,L]
+    RewriteRule "^/?charts/[a-z]+-charts/gallery(/.*)?$" "https://www.ag-grid.com/charts/gallery/" [R=301,L]
+    RewriteRule "^/?charts/[a-z]+-charts/options(/.*)?$" "https://www.ag-grid.com/charts/options/" [R=301,L]
+    RewriteRule "^/?charts/enterprise-charts/(?!index\\.html$).+$" "https://www.ag-grid.com/charts/enterprise-charts/" [R=301,L]
+    RewriteRule "^/?charts/(?:core|side)/?$" "https://www.ag-grid.com/charts/javascript/quick-start/" [R=301,L]
+    RewriteRule "^/?charts/core/(.+?)/?$" "https://www.ag-grid.com/charts/javascript/$1/" [R=301,L]
+    RewriteRule "^/?charts/side/(.+?)/?$" "https://www.ag-grid.com/charts/javascript/$1/" [R=301,L]
+    RewriteRule "^/?charts/server-side-rendering(/.*)?$" "https://www.ag-grid.com/charts/javascript/server-side-rendering/" [R=301,L]
+    RewriteRule "^/?charts/(javascript|angular|react|vue)/series(/.*)?$" "https://www.ag-grid.com/charts/$1/bar-series/" [R=301,L]
+    RewriteRule "^/?charts/(javascript|angular|react|vue)/axes(/.*)?$" "https://www.ag-grid.com/charts/$1/axes-configuration/" [R=301,L]
+    # ===== end charts mirror =====
+
+    # SE-66 follow-up: collapse the no-slash form of ANY /charts/* page to a single hop, for every
+    # framework. Without this, a slash-less charts request takes two hops — the host-swap below keeps
+    # the no-slash form (hop 1) and the generic "add trailing slash" rule adds it (hop 2). Running
+    # here, before the host-swap, sends the request straight to its slashed www URL in ONE 301, so
+    # apex and www both resolve in a single hop. The file guard (last segment has no dot) mirrors the
+    # generic trailing-slash rule so real files are left alone. The specific single-hop rewrites above
+    # run first ([L]), so charts pages with a DIVERGENT target (e.g. /charts/react/bullet-series) still
+    # win. Charts pages the /charts subdir (ag-charts-website repo) itself redirects to a different
+    # page still take an extra hop for their no-slash form — that redirect is owned by that repo.
+    RewriteCond %{REQUEST_URI} /+[^.]+$
+    RewriteRule "^/?(charts/.+[^/])$" "https://www.ag-grid.com/$1/" [R=301,L]
 
     # Always use https for secure connections (scoped to www/bare domain only
     # so that charts.ag-grid.com and studio.ag-grid.com are not affected)
