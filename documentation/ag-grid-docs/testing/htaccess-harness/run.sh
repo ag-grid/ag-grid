@@ -156,7 +156,12 @@ DefaultRuntimeDir "$WORK"
 Mutex file:$WORK default
 TypesConfig /dev/null
 Listen $PORT$LOADMODULES
-ServerName localhost
+# Pin the canonical name+port so %{SERVER_PORT} is the real listen port ($PORT), not the port implied
+# by a port-less Host header. Without this, sending "Host: www.ag-grid.com" would make Apache treat
+# %{SERVER_PORT} as 80 and fire the https-upgrade rule (which is gated on port 80), redirecting every
+# www row to https and masking the mod_alias/rewrite behaviour under test.
+ServerName localhost:$PORT
+UseCanonicalName On
 PidFile "$WORK/httpd.pid"
 ErrorLog "$WORK/logs/error.log"
 DocumentRoot "$HTDOCS"
@@ -181,7 +186,15 @@ printf '%-5s %-46s %-6s %s\n' "STAT" "PATH" "CODE" "RESULT"
 while IFS=$'\t' read -r host path status loc; do
   [[ "$host" =~ ^#|^$ ]] && continue
   if [ "$CHARTS_OK" = 0 ] && [[ "$path" == /charts/* ]]; then skipped=$((skipped+1)); continue; fi
-  hostarg=(); [ "$host" = "apex" ] && hostarg=(-H "Host: ag-grid.com")
+  # Send an explicit Host per row. "www" rows must use www.ag-grid.com (NOT localhost) so the
+  # host-scoped chain-shortening guard fires for them; "charts" rows use the legacy charts host to
+  # prove that guard skips them. (The high listen port means the https-upgrade rule — gated on
+  # SERVER_PORT 80 — never triggers, so no spurious https redirect.)
+  case "$host" in
+    apex)   hostarg=(-H "Host: ag-grid.com") ;;
+    charts) hostarg=(-H "Host: charts.ag-grid.com") ;;
+    *)      hostarg=(-H "Host: www.ag-grid.com") ;;
+  esac
   read -r code redir < <(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" "${hostarg[@]}" "http://localhost:$PORT$path")
   loc="${loc//www.ag-grid.com/$SITE_HOST}"   # no-op for production; maps to the env host otherwise
   ok=1

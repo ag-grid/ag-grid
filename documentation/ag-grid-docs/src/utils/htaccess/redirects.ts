@@ -354,7 +354,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     { from: '/charts/react/financial-charts', to: 'https://www.ag-grid.com/charts/react/financial-charts/' },
     { from: '/javascript-data-grid/packages/', to: 'https://www.ag-grid.com/javascript-data-grid/modules/' },
     { from: '/charts/react/radial-gauge', to: 'https://www.ag-grid.com/charts/react/radial-gauge/' },
-    { from: '/charts/react/bullet-series/', to: 'https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series/' },
     { from: '/charts/react/range-bar-series', to: 'https://www.ag-grid.com/charts/react/range-bar-series/' },
     { from: '/vue-data-grid/', to: 'https://www.ag-grid.com/vue-data-grid/getting-started/' },
     { from: '/charts/react/pyramid-series', to: 'https://www.ag-grid.com/charts/react/pyramid-series/' },
