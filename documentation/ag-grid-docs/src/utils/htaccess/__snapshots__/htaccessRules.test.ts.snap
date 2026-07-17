@@ -67,7 +67,7 @@ AddType application/x-gzip .gz .tgz
     RewriteEngine On
 
     RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]
-    RewriteRule ^ - [S=235]
+    RewriteRule ^ - [S=238]
 
     # SE-64 / SE-66: single-hop chain shortening. These run before the https-upgrade and
     # host-swap so a matching legacy path on either www.ag-grid.com or ag-grid.com (any
@@ -231,6 +231,9 @@ AddType application/x-gzip .gz .tgz
     RewriteRule "^/?documentation/javascript/server-side-model-row-stores/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model-configuration/" [R=301,L]
     RewriteRule "^/?javascript-grid-value-formatters$" "https://www.ag-grid.com/javascript-data-grid/value-formatters/" [R=301,L]
     RewriteRule "^/?documentation/javascript/accessibility$" "https://www.ag-grid.com/javascript-data-grid/accessibility/" [R=301,L]
+    RewriteRule "^/?javascript-grid/$" "https://www.ag-grid.com/javascript-data-grid/getting-started/" [R=301,L]
+    RewriteRule "^/?react-grid/$" "https://www.ag-grid.com/react-data-grid/getting-started/" [R=301,L]
+    RewriteRule "^/?angular-grid/$" "https://www.ag-grid.com/angular-data-grid/getting-started/" [R=301,L]
     RewriteRule "^/?vue-grid/$" "https://www.ag-grid.com/vue-data-grid/getting-started/" [R=301,L]
     RewriteRule "^/?angular-grid-cell-rendering$" "https://www.ag-grid.com/angular-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?features-overview$" "https://www.ag-grid.com/" [R=301,L]
