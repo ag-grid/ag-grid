@@ -542,7 +542,7 @@ function orderLiveColsLikeState(beans: BeanCollection, params: ApplyColumnStateP
         }
     }
 
-    // Pass 2: remaining displayed cols in `colsList` order. Auto-group cols collect separately to be prepended.
+    // Pass 2: remaining displayed cols in `colsList` order; auto-group cols collect separately to re-seat below.
     let autoGroupMissed: AgColumn[] | null = null;
     for (let i = 0, len = currentList.length; i < len; ++i) {
         const col = currentList[i];
@@ -557,15 +557,12 @@ function orderLiveColsLikeState(beans: BeanCollection, params: ApplyColumnStateP
         }
     }
 
-    const ordered = autoGroupMissed ?? newOrder;
     if (autoGroupMissed !== null) {
-        for (let i = 0, len = newOrder.length; i < len; ++i) {
-            ordered.push(newOrder[i]);
-        }
+        insertMissedAutoGroupCols(newOrder, autoGroupMissed);
     }
 
     // The reorder above ignored lockPosition, so re-place locked cols here.
-    const finalOrder = placeLockedColumns(ordered, beans.gos);
+    const finalOrder = placeLockedColumns(newOrder, beans.gos);
     if (_areEqual(finalOrder, currentList)) {
         return;
     }
@@ -575,6 +572,24 @@ function orderLiveColsLikeState(beans: BeanCollection, params: ApplyColumnStateP
     }
     colModel.colsList = finalOrder;
     colModel.markColsListIndexDirty();
+}
+
+/** In place: seat the missed auto-group cols right after `newOrder`'s last auto-group col (at the head
+ *  when it has none), shifting the tail right — no new array. */
+function insertMissedAutoGroupCols(newOrder: AgColumn[], autoGroupMissed: AgColumn[]): void {
+    let insertAt = 0; // head when no auto-group col is present
+    for (let i = 0, len = newOrder.length; i < len; ++i) {
+        if (newOrder[i].colKind === 'auto-group') {
+            insertAt = i + 1;
+        }
+    }
+    const missedLen = autoGroupMissed.length;
+    for (let i = newOrder.length - 1; i >= insertAt; --i) {
+        newOrder[i + missedLen] = newOrder[i];
+    }
+    for (let i = 0; i < missedLen; ++i) {
+        newOrder[insertAt + i] = autoGroupMissed[i];
+    }
 }
 
 /** Snapshot column state before a mutation. Pair with {@link dispatchColStateChanges} after the
