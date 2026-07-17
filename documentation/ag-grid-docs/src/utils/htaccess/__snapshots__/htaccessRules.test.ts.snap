@@ -66,13 +66,6 @@ AddType application/x-gzip .gz .tgz
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # SE-66: scope the chain-shortening rewrites below (SE-64/66 single-hops + the charts mirror +
-    # the charts add-slash) to the canonical host. They all rewrite to https://www.ag-grid.com, so —
-    # like the https-upgrade rule further down — they must NOT fire for charts.ag-grid.com /
-    # studio.ag-grid.com (which share this docroot), or a /charts/* (or legacy) request on those hosts
-    # would be force-redirected to www. [S] skips the whole chain-shortening span for any other host.
-    # Count = SITE_SINGLE_HOP_REWRITES + 20 charts mirror rules + 1 charts add-slash rule (asserted by
-    # the htaccessRules test, which also freezes the block via snapshot).
     RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]
     RewriteRule ^ - [S=235]
 
