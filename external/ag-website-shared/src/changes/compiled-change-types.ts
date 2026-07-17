@@ -4,7 +4,7 @@
  * files (`change-types.ts`). This is the shape published for the upgrade AI skill and rendered
  * by the docs. Every field is always present; absent values are `null` (never omitted).
  */
-import type { DependencyName, Framework } from './change-types';
+import type { DependencyName, Framework, WrapperFramework } from './change-types';
 
 /** Mitigation advice for a specific set of frameworks. */
 export interface CompiledMitigation {
@@ -15,8 +15,8 @@ export interface CompiledMitigation {
 }
 
 interface CompiledChangeBase {
-    /** Framework variant this entry is scoped to; null = all frameworks. */
-    framework: Framework | null;
+    /** Framework wrapper this entry is scoped to; null = all frameworks (never vanilla `'javascript'` only). */
+    framework: WrapperFramework | null;
     /**
      * Case-sensitive words to search for in an app's source. Partial identifiers don't match
      * (`Bar` matches `Foo-Bar` but not `FooBar`). No word matching anywhere = app guaranteed
@@ -67,6 +67,8 @@ export interface CompiledDependencyChange {
 }
 
 export type CompiledChange = CompiledTransition | CompiledSimpleChange | CompiledDependencyChange;
+
+export type ChangeType = CompiledChange['type'];
 
 export interface CompiledChangelog {
     /** Current released version, as `major.minor.patch`. */

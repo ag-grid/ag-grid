@@ -12,6 +12,14 @@ export const FRAMEWORKS = ['react', 'angular', 'vue', 'javascript'] as const;
  */
 export type Framework = (typeof FRAMEWORKS)[number];
 
+/**
+ * A framework that has a wrapper package: the real frameworks, excluding vanilla `'javascript'`.
+ * Scoping a change to a single framework only makes sense for these; a vanilla-core change reaches
+ * React/Angular/Vue apps too, so "all frameworks" (an omitted scope) is the correct expression, not
+ * `'javascript'`.
+ */
+export type WrapperFramework = Exclude<Framework, 'javascript'>;
+
 /** A piece of mitigation advice, optionally scoped to frameworks. Multiple entries are additive. */
 export interface MitigationAdvice {
     /** Frameworks this applies to; omit for all. */
@@ -21,8 +29,12 @@ export interface MitigationAdvice {
 }
 
 export interface ChangeBase {
-    /** Framework this entry is scoped to; omit for all (including vanilla `'javascript'`). */
-    framework?: Framework;
+    /**
+     * Framework wrapper this entry is scoped to; omit for all frameworks (including vanilla
+     * `'javascript'`). There is deliberately no `'javascript'` scope: a vanilla-core change also
+     * affects React/Angular/Vue apps, so "affects everyone" is expressed by omitting this field.
+     */
+    framework?: WrapperFramework;
 
     /**
      * Case-sensitive words to search for in an app's source. Partial words don't match, so `Bar`
@@ -66,7 +78,7 @@ export interface SimpleChange extends ChangeBase {
 }
 
 /** Dependencies whose minimum version can be raised: the framework wrappers plus TypeScript. */
-export type DependencyName = Exclude<Framework, 'javascript'> | 'typescript';
+export type DependencyName = WrapperFramework | 'typescript';
 
 /**
  * A raised minimum dependency version. Prose is generated from the fields and detection is an exact

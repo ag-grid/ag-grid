@@ -83,7 +83,7 @@ Three kinds of comment go in your output:
 
 ### `framework`
 
-- `framework` only when the change exists solely in one framework wrapper; absent means all frameworks. (For advice that merely _differs_ by framework, keep the record cross-framework and use the `mitigation` array form above.)
+- `framework` only when the change exists solely in one framework wrapper (`'react' | 'angular' | 'vue'`); absent means all frameworks. There is no `'javascript'` scope: a vanilla-core change reaches React/Angular/Vue apps too, so "affects everyone" is expressed by omitting the field, not by `framework: 'javascript'`. (For advice that merely _differs_ by framework, keep the record cross-framework and use the `mitigation` array form above — `mitigation` entries _can_ scope to `'javascript'`.)
 
 ### `dependency` / `minVersion` / `reason` (dependency changes)
 

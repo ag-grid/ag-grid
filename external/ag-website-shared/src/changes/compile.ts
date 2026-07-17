@@ -1,4 +1,11 @@
-import type { ChangeBase, Changelogs, Framework, MitigationAdvice, SimpleChange, TransitionFacts } from './change-types';
+import type {
+    ChangeBase,
+    Changelogs,
+    MitigationAdvice,
+    SimpleChange,
+    TransitionFacts,
+    WrapperFramework,
+} from './change-types';
 import { FRAMEWORKS } from './change-types';
 import type {
     CompiledChange,
@@ -97,7 +104,11 @@ export function compileChangelogs(changelogs: Changelogs, mostRecentVersion: str
         }
     }
 
-    return { mostRecentVersion: toReleaseVersion(mostRecentVersion), minimumSkillVersion: MINIMUM_SKILL_VERSION, changes };
+    return {
+        mostRecentVersion: toReleaseVersion(mostRecentVersion),
+        minimumSkillVersion: MINIMUM_SKILL_VERSION,
+        changes,
+    };
 }
 
 function compileSimpleChange(
@@ -115,7 +126,7 @@ function compileSimpleChange(
 }
 
 interface CompiledBaseFields {
-    framework: Framework | null;
+    framework: WrapperFramework | null;
     detectWords: string[] | null;
     mitigation: CompiledMitigation[];
 }
