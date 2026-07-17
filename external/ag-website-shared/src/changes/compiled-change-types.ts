@@ -6,10 +6,10 @@
  */
 import type { DependencyName, Framework, WrapperFramework } from './change-types';
 
-/** Mitigation advice for a specific set of frameworks. */
+/** A mitigation line. */
 export interface CompiledMitigation {
-    /** Frameworks this advice applies to; always populated (an authored "all" is expanded to every framework). */
-    frameworks: Framework[];
+    /** Frameworks this advice applies to; `null` = non-framework-dependent, shown to every framework. */
+    frameworks: Framework[] | null;
     /** Markdown. */
     content: string;
 }
@@ -24,7 +24,7 @@ interface CompiledChangeBase {
      * cannot be ruled out by searching.
      */
     detectWords: string[] | null;
-    /** Show every entry whose `frameworks` includes the app's framework. Empty = no action needed (accept-only). */
+    /** Show every entry whose `frameworks` is `null` or includes the app's framework. Empty = no action needed (accept-only). */
     mitigation: CompiledMitigation[];
 }
 

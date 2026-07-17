@@ -1023,10 +1023,7 @@ export const v33 = {
             // a string value, so it would not narrow below null's "match all".
             detectWords: null,
             mitigation: [
-                {
-                    content:
-                        'Pass real boolean values (`true` / `false`) to boolean grid options rather than strings. Applications typed with the AG Grid TypeScript definitions are unaffected, since the option types never permitted strings; this only affects apps that bypass the types (for example vanilla JavaScript, or values built from untyped configuration).',
-                },
+                'Pass real boolean values (`true` / `false`) to boolean grid options rather than strings. Applications typed with the AG Grid TypeScript definitions are unaffected, since the option types never permitted strings; this only affects apps that bypass the types (for example vanilla JavaScript, or values built from untyped configuration).',
                 {
                     frameworks: ['react', 'vue', 'javascript'],
                     content:

@@ -20,13 +20,19 @@ export type Framework = (typeof FRAMEWORKS)[number];
  */
 export type WrapperFramework = Exclude<Framework, 'javascript'>;
 
-/** A piece of mitigation advice, optionally scoped to frameworks. Multiple entries are additive. */
-export interface MitigationAdvice {
-    /** Frameworks this applies to; omit for all. */
-    frameworks?: Framework[];
+/** A piece of mitigation advice scoped to a specific set of frameworks. */
+export interface FrameworkMitigationAdvice {
+    /** Frameworks this advice applies to. */
+    frameworks: Framework[];
     /** Markdown. */
     content: string;
 }
+
+/**
+ * One mitigation line. A plain string is non-framework-dependent and shown to every framework;
+ * the object form is scoped to an explicit set of frameworks. Multiple entries are additive.
+ */
+export type MitigationAdvice = string | FrameworkMitigationAdvice;
 
 export interface ChangeBase {
     /**
@@ -47,7 +53,10 @@ export interface ChangeBase {
     /**
      * Markdown: the most direct way to restore pre-change behaviour (for removals, the replacement
      * API; for behaviour changes, the APIs that reinstate the old behaviour). `null` = accept-only.
-     * A plain string is one all-framework entry; use `MitigationAdvice[]` for per-framework advice.
+     * A plain string is one non-framework-dependent line; use `MitigationAdvice[]` for per-framework
+     * advice, mixing plain-string (universal) and scoped (`{ frameworks, content }`) lines. Any
+     * non-null mitigation must include at least one line that is non-framework-dependent or covers
+     * all frameworks, so every framework — including vanilla `'javascript'` — has advice.
      * Long content can be imported: `mitigation: (await import('./v36-migration.md?raw')).default`.
      */
     mitigation: string | MitigationAdvice[] | null;

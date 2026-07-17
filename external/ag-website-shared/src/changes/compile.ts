@@ -6,7 +6,6 @@ import type {
     TransitionFacts,
     WrapperFramework,
 } from './change-types';
-import { FRAMEWORKS } from './change-types';
 import type {
     CompiledChange,
     CompiledChangelog,
@@ -140,19 +139,20 @@ function compileBase(record: ChangeBase): CompiledBaseFields {
 }
 
 /**
- * Normalise authored mitigation into the compiled array form: a plain string becomes one
- * all-framework entry, `null` becomes an empty list, and each entry's `frameworks` is
- * expanded to the full framework list when the author omitted it.
+ * Normalise authored mitigation into the compiled array form: `null` becomes an empty list, a plain
+ * string becomes one non-framework-dependent entry (`frameworks: null`), and each array entry keeps
+ * its `frameworks` (a plain-string entry is non-framework-dependent, so `frameworks: null`).
  */
 function compileMitigation(mitigation: string | MitigationAdvice[] | null): CompiledMitigation[] {
     if (mitigation == null) {
         return [];
     }
-    const entries = typeof mitigation === 'string' ? [{ content: mitigation }] : mitigation;
-    return entries.map((entry) => ({
-        frameworks: entry.frameworks ?? [...FRAMEWORKS],
-        content: entry.content,
-    }));
+    const entries = typeof mitigation === 'string' ? [mitigation] : mitigation;
+    return entries.map((entry) =>
+        typeof entry === 'string'
+            ? { frameworks: null, content: entry }
+            : { frameworks: entry.frameworks, content: entry.content }
+    );
 }
 
 /** Normalise authored detectWords to an array; a single string wraps, `null`/empty becomes `null`. */

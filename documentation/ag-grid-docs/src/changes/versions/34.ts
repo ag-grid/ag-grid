@@ -154,10 +154,7 @@ export const v34 = {
             // the method-removal + parameter details apply to the class-style contract (JS/Angular/Vue);
             // React's only extra is the Filter Buttons props swap.
             mitigation: [
-                {
-                    content:
-                        'Migration is optional; the `IFilterComp` approach continues to work unchanged and is fully supported. To adopt Filter Handlers, set the `enableFilterHandlers` grid option to `true` and change `colDef.filter` from a bare custom component to a `ColumnFilter` object of the form `{ component, doesFilterPass }`, moving the filter-pass logic out of the component into the `doesFilterPass` callback. See [Custom Filter Components](./component-filter/).',
-                },
+                'Migration is optional; the `IFilterComp` approach continues to work unchanged and is fully supported. To adopt Filter Handlers, set the `enableFilterHandlers` grid option to `true` and change `colDef.filter` from a bare custom component to a `ColumnFilter` object of the form `{ component, doesFilterPass }`, moving the filter-pass logic out of the component into the `doesFilterPass` callback. See [Custom Filter Components](./component-filter/).',
                 {
                     frameworks: ['javascript', 'angular', 'vue'],
                     content:

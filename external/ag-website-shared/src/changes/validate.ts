@@ -1,4 +1,5 @@
 import type { ChangeBase, Changelogs, TransitionFacts, VersionChangelog } from './change-types';
+import { FRAMEWORKS } from './change-types';
 import { compareVersions, isValidVersionKey } from './version-utils';
 
 export interface ValidationError {
@@ -81,13 +82,32 @@ function validateRecordsOfVersion(
                 addError(version, `${label}: detectWords contains an empty entry`);
             }
         }
-        if (Array.isArray(record.mitigation)) {
-            for (const advice of record.mitigation) {
-                if (advice.content.trim() === '') {
+        const mitigation = record.mitigation;
+        const hasMitigation = mitigation != null && (typeof mitigation === 'string' || mitigation.length > 0);
+        if (hasMitigation) {
+            const coversAllFrameworks =
+                typeof mitigation === 'string' ||
+                mitigation.some(
+                    (advice) =>
+                        typeof advice === 'string' ||
+                        FRAMEWORKS.every((framework) => advice.frameworks.includes(framework))
+                );
+            if (!coversAllFrameworks) {
+                addError(
+                    version,
+                    `${label}: mitigation must include a non-framework-dependent line or one covering all frameworks`
+                );
+            }
+        }
+        if (Array.isArray(mitigation)) {
+            for (const advice of mitigation) {
+                const content = typeof advice === 'string' ? advice : advice.content;
+                const frameworks = typeof advice === 'string' ? undefined : advice.frameworks;
+                if (content.trim() === '') {
                     addError(version, `${label}: mitigation entry with empty content`);
                 }
-                if (record.framework !== undefined && advice.frameworks !== undefined) {
-                    const otherFrameworks = advice.frameworks.filter((framework) => framework !== record.framework);
+                if (record.framework !== undefined && frameworks !== undefined) {
+                    const otherFrameworks = frameworks.filter((framework) => framework !== record.framework);
                     if (otherFrameworks.length > 0) {
                         addError(
                             version,

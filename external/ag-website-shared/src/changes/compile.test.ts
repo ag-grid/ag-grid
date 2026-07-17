@@ -93,13 +93,13 @@ describe('compileChangelogs', () => {
         expect(JSON.parse(JSON.stringify(compiled))).toEqual(compiled);
     });
 
-    test('mitigation compiles to the array form: string expands to all frameworks, null becomes empty', () => {
+    test('mitigation compiles to the array form: string becomes a non-framework-dependent entry, null becomes empty', () => {
         const { changes } = compileChangelogs(changelogs, '36.0.0');
 
-        // a plain string becomes one entry scoped to every framework
+        // a plain string becomes one non-framework-dependent entry (frameworks: null)
         const columnApiChange = changes.find((change) => change.id === 'columnApi');
         expect(columnApiChange?.mitigation).toEqual([
-            { frameworks: ['react', 'angular', 'vue', 'javascript'], content: 'Replace `columnApi.x(...)` with `api.x(...)`.' },
+            { frameworks: null, content: 'Replace `columnApi.x(...)` with `api.x(...)`.' },
         ]);
 
         // null mitigation becomes an empty list
@@ -107,25 +107,28 @@ describe('compileChangelogs', () => {
         expect(legacyThemesChange?.mitigation).toEqual([]);
     });
 
-    test('per-framework mitigation entries are preserved, with omitted frameworks expanded to all', () => {
-        const { changes } = compileChangelogs({
-            '34': {
-                deprecations: {
-                    filters: {
-                        oldApi: 'the old filter contract',
-                        newApi: 'the new filter contract',
-                        detectWords: null,
-                        mitigation: [
-                            { content: 'Universal advice.' },
-                            { frameworks: ['react'], content: 'React-specific advice.' },
-                        ],
+    test('per-framework mitigation entries are preserved; a plain-string entry is non-framework-dependent', () => {
+        const { changes } = compileChangelogs(
+            {
+                '34': {
+                    deprecations: {
+                        filters: {
+                            oldApi: 'the old filter contract',
+                            newApi: 'the new filter contract',
+                            detectWords: null,
+                            mitigation: [
+                                'Universal advice.',
+                                { frameworks: ['react'], content: 'React-specific advice.' },
+                            ],
+                        },
                     },
                 },
             },
-        }, '36.0.0');
+            '36.0.0'
+        );
         const filtersChange = changes.find((change) => change.id === 'filters');
         expect(filtersChange?.mitigation).toEqual([
-            { frameworks: ['react', 'angular', 'vue', 'javascript'], content: 'Universal advice.' },
+            { frameworks: null, content: 'Universal advice.' },
             { frameworks: ['react'], content: 'React-specific advice.' },
         ]);
     });

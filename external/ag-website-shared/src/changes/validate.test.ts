@@ -75,7 +75,52 @@ describe('validateChangelogs', () => {
         expect(allMessages).toContain('detectWords contains an empty entry');
         expect(allMessages).toContain('behaviourChanges record with empty title');
         expect(allMessages).toContain('mitigation advice for [vue] contradicts framework "react"');
+        expect(allMessages).toContain(
+            'mitigation must include a non-framework-dependent line or one covering all frameworks'
+        );
         expect(allMessages).toContain('dependency "angular": empty minVersion');
-        expect(errors).toHaveLength(6);
+        expect(errors).toHaveLength(7);
+    });
+
+    test('a mitigation must cover all frameworks via a universal line or one listing all four', () => {
+        const base = { detectWords: null } as const;
+
+        // only per-framework lines, none universal or all-four: no advice for some frameworks
+        const uncovered = messagesOf({
+            '32': {
+                behaviourChanges: [
+                    {
+                        ...base,
+                        title: 'Something changed',
+                        mitigation: [
+                            { frameworks: ['react'], content: 'React advice.' },
+                            { frameworks: ['angular', 'vue'], content: 'Angular/Vue advice.' },
+                        ],
+                    },
+                ],
+            },
+        });
+        expect(uncovered.join('\n')).toContain(
+            'mitigation must include a non-framework-dependent line or one covering all frameworks'
+        );
+
+        // a plain-string (universal) line, or one listing all four frameworks, satisfies the rule
+        const covered = messagesOf({
+            '32': {
+                behaviourChanges: [
+                    {
+                        ...base,
+                        title: 'Universal line',
+                        mitigation: ['Do this everywhere.', { frameworks: ['react'], content: 'React extra.' }],
+                    },
+                    {
+                        ...base,
+                        title: 'All-four line',
+                        mitigation: [{ frameworks: ['react', 'angular', 'vue', 'javascript'], content: 'For all.' }],
+                    },
+                ],
+            },
+        });
+        expect(covered).toEqual([]);
     });
 });
