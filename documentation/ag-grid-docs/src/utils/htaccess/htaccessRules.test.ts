@@ -475,6 +475,28 @@ describe('htaccessRules', () => {
             expect(specific).toBeGreaterThan(-1);
             expect(catchAll).toBeGreaterThan(specific);
         });
+
+        it('host-scopes the whole chain-shortening block, with an exact [S] skip count', () => {
+            // The single-hops + mirror + add-slash all rewrite to the canonical www host, so a host
+            // guard skips them for charts.ag-grid.com / studio.ag-grid.com. The [S] count MUST equal
+            // the number of RewriteRules it guards — overshoot would also skip the host canonicalisation
+            // rules (breaking the phase-1 subdomain redirects), undershoot would leak the chain-shortening.
+            const lines = productionContent.split('\n');
+            const guardIdx = lines.findIndex((l) => /RewriteRule \^ - \[S=\d+\]/.test(l));
+            expect(guardIdx).toBeGreaterThan(-1);
+            expect(lines[guardIdx - 1]).toContain('RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]');
+
+            const skip = Number(lines[guardIdx].match(/\[S=(\d+)\]/)![1]);
+            // The guarded span ends just before the https-upgrade host-swap (first `-> www/$1` rule).
+            const hostSwapIdx = lines.findIndex(
+                (l, i) => i > guardIdx && l.includes('https://www.ag-grid.com/$1 [R=301,L]')
+            );
+            expect(hostSwapIdx).toBeGreaterThan(guardIdx);
+            const guardedRuleCount = lines
+                .slice(guardIdx + 1, hostSwapIdx)
+                .filter((l) => /^\s*RewriteRule /.test(l)).length;
+            expect(skip).toBe(guardedRuleCount);
+        });
     });
 
     describe('SE-66 follow-up: no-slash /charts/* pages resolve in a single hop', () => {

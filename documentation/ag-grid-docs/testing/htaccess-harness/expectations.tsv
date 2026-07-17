@@ -58,6 +58,13 @@ www	/charts/privacy/	410
 www	/charts/react-charts/react/area-series/	301	/charts/react/area-series/
 www	/charts/javascript/toolbar/	301	/charts/javascript/financial-charts-toolbar/
 
+# --- SE-66 host scoping: the chain-shortening rewrites must NOT force other hosts to www. On the
+# legacy charts host the guard skips them, so these fall through to the generic same-host add-slash
+# (path unchanged) instead of jumping to the www target. If the guard regressed, row 1 would land on
+# /angular-data-grid/grid-api/ (single-hop) and row 2 on /charts/react/linear-gauge/ (mirror). ---
+charts	/angular-grid-api	301	/angular-grid-api/
+charts	/charts/react/bullet-series	301	/charts/react/bullet-series/
+
 # --- Regression: pre-existing redirects must still work unchanged ---
 www	/javascript-grid/	301	/javascript-data-grid/
 www	/documentation/angular/grouping/	301	/angular-data-grid/grouping/

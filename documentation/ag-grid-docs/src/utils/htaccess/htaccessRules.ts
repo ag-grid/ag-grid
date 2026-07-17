@@ -84,6 +84,9 @@ const getModRewriteRules = (): string => `
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]
+    RewriteRule ^ - [S=${SITE_SINGLE_HOP_REWRITES.length + 21}]
+
     # SE-64 / SE-66: single-hop chain shortening. These run before the https-upgrade and
     # host-swap so a matching legacy path on either www.ag-grid.com or ag-grid.com (any
     # scheme) lands on its final www URL in ONE 301. Inbound query strings are preserved
