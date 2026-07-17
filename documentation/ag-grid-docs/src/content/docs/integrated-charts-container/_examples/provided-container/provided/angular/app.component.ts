@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import type { ElementRef } from '@angular/core';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, signal } from '@angular/core';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 import { AgGridAngular } from 'ag-grid-angular';
@@ -40,9 +40,9 @@ ModuleRegistry.registerModules([
             (gridReady)="onGridReady($event)"
         />
         <div #chartParent class="chart-wrapper">
-            @if (chartRef) {
+            @if (chartRef()) {
                 <div class="chart-wrapper-top">
-                    <h2 class="chart-wrapper-title">Chart created at {{ createdTime }}</h2>
+                    <h2 class="chart-wrapper-title">Chart created at {{ createdTime() }}</h2>
                     <button (click)="updateChart()">Destroy Chart</button>
                 </div>
             } @else {
@@ -62,8 +62,8 @@ export class AppComponent {
     defaultColDef: ColDef = { flex: 1 };
     popupParent: HTMLElement | null = document.body;
     rowData!: any[];
-    chartRef?: ChartRef;
-    createdTime?: string;
+    chartRef = signal<ChartRef | undefined>(undefined);
+    createdTime = signal<string | undefined>(undefined);
 
     @ViewChild('chartParent') chartParent?: ElementRef;
 
@@ -79,12 +79,12 @@ export class AppComponent {
     }
 
     updateChart(chartRef: ChartRef | undefined) {
-        if (this.chartRef !== chartRef) {
+        if (this.chartRef() !== chartRef) {
             // Destroy previous chart if it exists
-            this.chartRef?.destroyChart();
+            this.chartRef()?.destroyChart();
         }
-        this.chartRef = chartRef;
-        this.createdTime = new Date().toLocaleString();
+        this.chartRef.set(chartRef);
+        this.createdTime.set(new Date().toLocaleString());
     }
 
     // Arrow function used to correctly bind this to the component
