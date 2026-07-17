@@ -46,13 +46,13 @@ www	/ag-grid-changelog/child/	301	/changelog/child/
 www	/ag-grid-pipeline/	301	/pipeline/
 www	/ag-grid-pipeline/child	301	/ag-grid-pipeline/child/
 www	/ag-grid-pipeline/child/	301	/pipeline/child/
-www	/javascript-grid/	301	/javascript-data-grid/
+www	/javascript-grid/	301	https://www.ag-grid.com/javascript-data-grid/getting-started/
 www	/javascript-grid/child	301	/javascript-grid/child/
 www	/javascript-grid/child/	301	/javascript-data-grid/child/
-www	/react-grid/	301	/react-data-grid/
+www	/react-grid/	301	https://www.ag-grid.com/react-data-grid/getting-started/
 www	/react-grid/child	301	/react-grid/child/
 www	/react-grid/child/	301	/react-data-grid/child/
-www	/angular-grid/	301	/angular-data-grid/
+www	/angular-grid/	301	https://www.ag-grid.com/angular-data-grid/getting-started/
 www	/angular-grid/child	301	/angular-grid/child/
 www	/angular-grid/child/	301	/angular-data-grid/child/
 www	/vue-grid/	301	https://www.ag-grid.com/vue-data-grid/getting-started/
@@ -6735,6 +6735,9 @@ www	/javascript-grid-value-formatters	301	https://www.ag-grid.com/javascript-dat
 apex	/javascript-grid-value-formatters	301	https://www.ag-grid.com/javascript-data-grid/value-formatters/
 www	/documentation/javascript/accessibility	301	https://www.ag-grid.com/javascript-data-grid/accessibility/
 apex	/documentation/javascript/accessibility	301	https://www.ag-grid.com/javascript-data-grid/accessibility/
+apex	/javascript-grid/	301	https://www.ag-grid.com/javascript-data-grid/getting-started/
+apex	/react-grid/	301	https://www.ag-grid.com/react-data-grid/getting-started/
+apex	/angular-grid/	301	https://www.ag-grid.com/angular-data-grid/getting-started/
 apex	/vue-grid/	301	https://www.ag-grid.com/vue-data-grid/getting-started/
 www	/angular-grid-cell-rendering	301	https://www.ag-grid.com/angular-data-grid/component-cell-renderer/
 apex	/angular-grid-cell-rendering	301	https://www.ag-grid.com/angular-data-grid/component-cell-renderer/

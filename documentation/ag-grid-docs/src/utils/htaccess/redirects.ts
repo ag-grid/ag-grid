@@ -277,6 +277,10 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
         from: '/documentation/javascript/accessibility',
         to: 'https://www.ag-grid.com/javascript-data-grid/accessibility/',
     },
+
+    { from: '/javascript-grid/', to: 'https://www.ag-grid.com/javascript-data-grid/getting-started/' },
+    { from: '/react-grid/', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
+    { from: '/angular-grid/', to: 'https://www.ag-grid.com/angular-data-grid/getting-started/' },
     { from: '/vue-grid/', to: 'https://www.ag-grid.com/vue-data-grid/getting-started/' },
     { from: '/angular-grid-cell-rendering', to: 'https://www.ag-grid.com/angular-data-grid/component-cell-renderer/' },
     { from: '/features-overview', to: 'https://www.ag-grid.com/' },
