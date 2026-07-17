@@ -105,12 +105,11 @@ interface RenderContext {
     imageSrc: Map<string, string>;
 }
 
-// Tags with no meaningful Markdown representation (interactive form / cookie
-// widget / a framework picker whose page already carries the prose). They are
-// dropped outright; their children are not rendered. Every other unhandled tag is
-// offered to the product's `renderTag` resolver, and only rendered as a
+// Tags with no meaningful Markdown representation (a cookie-consent widget). They
+// are dropped outright; their children are not rendered. Every other unhandled tag
+// is offered to the product's `renderTag` resolver, and only rendered as a
 // transparent wrapper (children) if the resolver declines it.
-const DROPPED_TAGS = new Set(['licenseSetup', 'trialLicenceForm', 'oneTrustCookies', 'gettingStarted']);
+const DROPPED_TAGS = new Set(['oneTrustCookies']);
 
 export async function renderMarkdocToMarkdown(opts: RenderMarkdocToMarkdownOptions): Promise<string> {
     const { body, framework, pageName, frontmatter = {}, version, variables, markdocConfig, resolvers = {} } = opts;

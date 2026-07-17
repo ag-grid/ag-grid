@@ -1,5 +1,6 @@
 import type { Framework, Library } from '@ag-grid-types';
 import featuresData from '@ag-website-shared/components/features-section/DocsFeaturesSection.json';
+import { FEATURE_MAP } from '@ag-website-shared/components/getting-started/gettingStartedData';
 import whatsNewData from '@ag-website-shared/content/whats-new/data.json';
 import type { MarkdownFramework } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
 import { getDocumentationArchiveUrl } from '@ag-website-shared/utils/getArchiveUrl';
@@ -69,6 +70,12 @@ export async function renderMarkdocTag(params: RenderMarkdocTagParams): Promise<
                 return renderFeaturesSection(attributes, framework, siteRoot);
             case 'iconsPanel':
                 return renderIconsPanel(siteRoot);
+            case 'gettingStarted':
+                return renderGettingStarted(attributes, framework, siteRoot);
+            case 'licenseSetup':
+                return renderLicenseSetup(framework, siteRoot);
+            case 'trialLicenceForm':
+                return renderTrialLicenceForm(siteRoot);
             default:
                 return null;
         }
@@ -220,6 +227,42 @@ function renderFeaturesSection(
             return `- **${title}** — ${feature.description}`;
         })
         .join('\n');
+}
+
+function renderGettingStarted(
+    attributes: Record<string, any>,
+    framework: MarkdownFramework,
+    siteRoot?: string
+): string {
+    const library = (attributes.library ?? 'grid') as Library;
+    const features = FEATURE_MAP[library] ?? [];
+    if (features.length === 0) {
+        return '';
+    }
+    return features
+        .map((feature) => {
+            const url = toAbsoluteUrl(
+                urlWithPrefix({ url: feature.link, framework: framework as Framework }),
+                siteRoot
+            );
+            return `- [${feature.title}](${url}) — ${feature.description}`;
+        })
+        .join('\n');
+}
+
+// Interactive licence-key setup tool; link to the page that hosts it instead.
+function renderLicenseSetup(framework: MarkdownFramework, siteRoot?: string): string {
+    const url = toAbsoluteUrl(
+        urlWithPrefix({ url: './license-install/', framework: framework as Framework }),
+        siteRoot
+    );
+    return `[Set up your licence key](${url})`;
+}
+
+// Interactive trial-licence request form; link to the licensing page instead.
+function renderTrialLicenceForm(siteRoot?: string): string {
+    const url = toAbsoluteUrl('/license-pricing/', siteRoot);
+    return `[Request a 30-day Enterprise Bundle trial licence](${url})`;
 }
 
 function renderIconsPanel(siteRoot?: string): string {

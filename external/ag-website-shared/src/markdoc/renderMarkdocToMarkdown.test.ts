@@ -202,13 +202,12 @@ describe('renderMarkdocToMarkdown', () => {
         expect(renderApiTable).toHaveBeenCalledTimes(2);
     });
 
-    it('drops interactive/marketing tags without leaving blank-line gaps', async () => {
-        const body = ['Before.', '', '{% trialLicenceForm /%}', '', '{% oneTrustCookies /%}', '', 'After.'].join('\n');
+    it('drops hard-dropped tags without leaving blank-line gaps', async () => {
+        const body = ['Before.', '', '{% oneTrustCookies /%}', '', '{% oneTrustCookies /%}', '', 'After.'].join('\n');
         const output = await render(body);
 
         expect(output).toContain('Before.');
         expect(output).toContain('After.');
-        expect(output).not.toContain('trialLicenceForm');
         expect(output).not.toContain('oneTrustCookies');
         expect(output).not.toMatch(/\n{3,}/);
     });
@@ -243,12 +242,29 @@ describe('renderMarkdocToMarkdown', () => {
 
     it('never offers hard-dropped tags to renderTag', async () => {
         const renderTag = vi.fn(() => 'SHOULD_NOT_APPEAR');
-        const output = await render('Before.\n\n{% trialLicenceForm /%}\n\nAfter.', { resolvers: { renderTag } });
+        const output = await render('Before.\n\n{% oneTrustCookies /%}\n\nAfter.', { resolvers: { renderTag } });
 
         expect(renderTag).not.toHaveBeenCalled();
         expect(output).not.toContain('SHOULD_NOT_APPEAR');
         expect(output).toContain('Before.');
         expect(output).toContain('After.');
+    });
+
+    it('delegates gettingStarted/licenseSetup/trialLicenceForm to renderTag', async () => {
+        const renderTag = vi.fn(({ tag }: { tag: string }) => `RENDERED:${tag}`);
+        const body = [
+            '{% gettingStarted library="grid" /%}',
+            '',
+            '{% licenseSetup /%}',
+            '',
+            '{% trialLicenceForm /%}',
+        ].join('\n');
+        const output = await render(body, { resolvers: { renderTag } });
+
+        for (const tag of ['gettingStarted', 'licenseSetup', 'trialLicenceForm']) {
+            expect(renderTag).toHaveBeenCalledWith(expect.objectContaining({ tag }));
+            expect(output).toContain(`RENDERED:${tag}`);
+        }
     });
 
     it('preserves indentation for conditional content inside a list item', async () => {
