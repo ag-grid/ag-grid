@@ -62,8 +62,6 @@ export class AppComponent {
     defaultColDef: ColDef = { flex: 1 };
     popupParent: HTMLElement | null = document.body;
     rowData!: any[];
-    // Signals so the template updates even though the grid invokes createChartContainer
-    // outside Angular's zone (signal writes schedule change detection independently of zone.js).
     chartRef = signal<ChartRef | undefined>(undefined);
     createdTime = signal<string | undefined>(undefined);
 
