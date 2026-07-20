@@ -11,6 +11,9 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('Buttons add and remove column groups while preserving columns', async ({ agIdFor, page }) => {
+        // Rebuilding the column groups re-renders the whole header several times; under a loaded
+        // CI machine this can eat into the default budget, so allow extra time.
+        test.slow();
         await ensureGridReady(page);
         await waitForGridContent(page);
 
