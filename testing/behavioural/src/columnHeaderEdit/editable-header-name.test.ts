@@ -251,6 +251,32 @@ describe('Editable header name', () => {
 
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
     });
+
+    test('renaming a column group updates its label in the columns tool panel', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([
+            {
+                groupId: 'athleteGroup',
+                headerName: 'Group',
+                headerNameEditable: true,
+                children: [{ field: 'athlete' }, { field: 'age' }],
+            } as any,
+        ]);
+
+        const groupLabel = () =>
+            Array.from(gridDiv.querySelectorAll('.ag-column-select-column-label')).map((el) => el.textContent);
+        expect(groupLabel()).toContain('Group');
+
+        const input = await openEditor(toolPanel, gridDiv, 'Group');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Renamed');
+        pressEnter(input);
+        await asyncSetTimeout(1);
+
+        // The tool panel (and column chooser, which shares agPrimaryColsList) label reflects the new name.
+        expect(groupLabel()).toContain('Renamed');
+        const columnGroup = api.getColumnGroup('athleteGroup')!;
+        expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Renamed');
+    });
 });
 
 describe('Editable group header name', () => {
