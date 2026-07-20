@@ -1,0 +1,101 @@
+import { cleanup, render } from '@testing-library/react';
+import React from 'react';
+
+import type { GridApi } from 'ag-grid-community';
+import {
+    CellSpanModule,
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    RowApiModule,
+    ValidationModule,
+} from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+
+import { asyncSetTimeout, ignoreConsoleLicenseKeyError, nextAnimationFrame } from '../test-utils';
+
+/**
+ * AG-17868 React coverage: the fix lives in the shared SpannedCellCtrl, so it must also hold under
+ * React's async mount/reconciliation, not just the vanilla view layer. Asserted directly on the
+ * rendered `aria-rowspan` (the same source the vanilla GridRows span marker reads).
+ */
+
+const settle = async (): Promise<void> => {
+    await asyncSetTimeout(10);
+    await nextAnimationFrame();
+    await nextAnimationFrame();
+};
+
+/** aria-rowspan of the spanned `group` cell whose value is `value`, or null if none rendered. */
+function spannedGroupRowSpan(value: string): number | null {
+    const cells = Array.from(document.querySelectorAll('.ag-spanned-row [col-id="group"]'));
+    const cell = cells.find((c) => c.textContent === value);
+    return cell ? Number(cell.getAttribute('aria-rowspan')) : null;
+}
+
+/** Whether a regular (non-spanned) `group` cell with `value` is rendered. */
+function hasRegularGroupCell(value: string): boolean {
+    const cells = Array.from(document.querySelectorAll('.ag-row:not(.ag-spanned-row) [col-id="group"]'));
+    return cells.some((c) => c.textContent === value);
+}
+
+describe('row spanning - rowData replacement (React)', () => {
+    beforeAll(() => {
+        ModuleRegistry.registerModules([ClientSideRowModelModule, CellSpanModule, RowApiModule, ValidationModule]);
+        ignoreConsoleLicenseKeyError();
+    });
+
+    afterEach(() => {
+        cleanup();
+    });
+
+    test('setGridOption("rowData") re-spans spanned cells to match the new data', async () => {
+        let resolveReady!: (api: GridApi) => void;
+        const ready = new Promise<GridApi>((resolve) => {
+            resolveReady = resolve;
+        });
+
+        render(
+            <AgGridReact
+                enableCellSpan
+                getRowId={(p) => p.data.id}
+                columnDefs={[
+                    { field: 'group', spanRows: true },
+                    { field: 'label', headerName: 'Row' },
+                ]}
+                rowData={[
+                    { id: 'a0', group: 'A', label: 'r0' },
+                    { id: 'a1', group: 'A', label: 'r1' },
+                    { id: 'a2', group: 'A', label: 'r2' },
+                    { id: 'b0', group: 'B', label: 'r3' },
+                    { id: 'b1', group: 'B', label: 'r4' },
+                ]}
+                suppressRowVirtualisation
+                suppressColumnVirtualisation
+                animateRows={false}
+                onGridReady={(e) => resolveReady(e.api)}
+            />
+        );
+
+        const api = await ready;
+        await settle();
+
+        // BEFORE: group A spans 3 rows, group B spans 2 rows.
+        expect(spannedGroupRowSpan('A')).toBe(3);
+        expect(spannedGroupRowSpan('B')).toBe(2);
+
+        api.setGridOption('rowData', [
+            { id: 'a0', group: 'A', label: 'r0' },
+            { id: 'a1', group: 'A', label: 'r1' },
+            { id: 'a2', group: 'A2', label: 'r2' },
+            { id: 'b0', group: 'B', label: 'r3' },
+            { id: 'b1', group: 'B', label: 'r4' },
+            { id: 'b2', group: 'B', label: 'r5' },
+        ]);
+        await settle();
+
+        // AFTER: group A now spans 2, group B now spans 3, and A2 renders as a regular (non-spanned) cell.
+        expect(spannedGroupRowSpan('A')).toBe(2);
+        expect(spannedGroupRowSpan('B')).toBe(3);
+        expect(hasRegularGroupCell('A2')).toBe(true);
+    });
+});

@@ -21,6 +21,15 @@ export class SpannedCellCtrl extends CellCtrl {
         beans: BeanCollection
     ) {
         super(cellSpan.col, cellSpan.firstNode, beans, rowCtrl);
+
+        // A reused CellSpan keeps its ctrl but its coverage can change, so aria-rowspan (applied
+        // once on mount) must be re-applied on the same cache-rebuild events that refresh height.
+        const refreshAriaRowSpan = this.setAriaRowSpan.bind(this);
+        this.addManagedListeners(beans.eventSvc, {
+            paginationChanged: refreshAriaRowSpan,
+            recalculateRowBounds: refreshAriaRowSpan,
+            pinnedHeightChanged: refreshAriaRowSpan,
+        });
     }
 
     private focusedCellPosition: CellPosition | undefined;
@@ -62,6 +71,9 @@ export class SpannedCellCtrl extends CellCtrl {
      * When cell is spanning, ensure row index is also available on the cell
      */
     private setAriaRowSpan(): void {
+        if (!this.eGui) {
+            return;
+        }
         _setAriaRowSpan(this.eGui, this.cellSpan.spannedNodes.size);
     }
 
