@@ -252,6 +252,53 @@ describe('Editable header name', () => {
         expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
     });
 
+    test('committing whitespace around the name preserves it verbatim (input is not trimmed)', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+        const column = api.getColumn('athlete') as unknown as AgColumn;
+        const events = captureHeaderNameOverrideChanged(column);
+
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await userEvent.clear(input);
+        await userEvent.type(input, '  Athlete  ');
+        pressEnter(input);
+        await asyncSetTimeout(1);
+
+        expect(events.length).toBe(1);
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('  Athlete  ');
+    });
+
+    test('committing an empty name reverts to the colDef header name', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+        const column = api.getColumn('athlete') as unknown as AgColumn;
+
+        // Establish an override first, then clear it out via the editor.
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
+        await asyncSetTimeout(1);
+
+        const input = await openEditor(toolPanel, gridDiv, 'Renamed');
+        await userEvent.clear(input);
+        pressEnter(input);
+        await asyncSetTimeout(1);
+
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
+        expect(api.getState().columnHeaderName).toBeUndefined();
+    });
+
+    test('applying a null header name via column state reverts to the colDef name', async () => {
+        const { api } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+        const column = api.getColumn('athlete') as unknown as AgColumn;
+
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed' }] });
+        await asyncSetTimeout(1);
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Renamed');
+
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: null }] });
+        await asyncSetTimeout(1);
+
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
+        expect(api.getState().columnHeaderName).toBeUndefined();
+    });
+
     test('renaming a column group updates its label in the columns tool panel', async () => {
         const { api, gridDiv, toolPanel } = await createGrid([
             {
@@ -276,6 +323,8 @@ describe('Editable header name', () => {
         expect(groupLabel()).toContain('Renamed');
         const columnGroup = api.getColumnGroup('athleteGroup')!;
         expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Renamed');
+        // The UI-driven rename is persisted to grid state, not just reflected in the display name.
+        expect(api.getState().columnGroup?.headerNames).toEqual([{ groupId: 'athleteGroup', headerName: 'Renamed' }]);
     });
 
     test('renaming one group does not recompute the header name of another group', async () => {
@@ -362,6 +411,23 @@ describe('Editable group header name', () => {
         await asyncSetTimeout(1);
 
         expect(api.getState().columnGroup?.headerNames).toEqual([{ groupId: 'athleteGroup', headerName: 'Renamed' }]);
+    });
+
+    test('a reset preserves the edited group header name', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: groupDefs(),
+            rowData,
+            initialState: {
+                columnGroup: { openColumnGroupIds: [], headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }] },
+            },
+        });
+        await asyncSetTimeout(1);
+
+        api.resetColumnState();
+        await asyncSetTimeout(1);
+
+        const columnGroup = api.getColumnGroup('athleteGroup')!;
+        expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Renamed');
     });
 
     test('an edited group name wins over the group headerValueGetter', async () => {
