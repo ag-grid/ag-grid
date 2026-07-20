@@ -493,6 +493,13 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         orderState[orderIdx++] = { colId: col.colId };
     });
 
+    // Group header names live outside column state, so clear their overrides here too.
+    const groupOverrides = colModel.groupHeaderNameOverrides;
+    if (groupOverrides.size) {
+        groupOverrides.clear();
+        eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged' });
+    }
+
     // Re-order + refresh + dispatch once, over the final (ordered) structure.
     finalizeChange(beans, { state: orderState, applyOrder: true }, source, stateChanges);
     colAnimation?.finish();
@@ -824,7 +831,7 @@ export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn
         pivotSort: resolveInitialPivotSort(colDef),
         aggFunc: colDef.aggFunc ?? colDef.initialAggFunc ?? null,
         showValuesAs: beans.showValuesAsSvc?.colDefSelection(colDef) ?? null,
-        // headerName is intentionally omitted: edited names are data, not layout, so a reset preserves them.
+        headerName: null,
     };
 }
 

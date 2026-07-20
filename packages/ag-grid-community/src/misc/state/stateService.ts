@@ -534,12 +534,14 @@ export class StateService extends BeanStub implements NamedBean {
             defaultState.flex = null;
         }
 
-        // Edited header names are treated as data, not layout: they are applied when present but never
-        // cleared via defaultState, so a column reset preserves them (per AG-115).
-        if (shouldSetState('columnHeaderName', columnHeaderNameState)) {
+        const shouldSetHeaderNameState = shouldSetState('columnHeaderName', columnHeaderNameState);
+        if (shouldSetHeaderNameState) {
             for (const { colId, headerName } of columnHeaderNameState?.columnHeaderNames ?? []) {
                 getColumnState(colId).headerName = headerName;
             }
+        }
+        if (shouldSetHeaderNameState || !partialColumnState) {
+            defaultState.headerName = null;
         }
 
         const columns = columnOrderState?.orderedColIds;

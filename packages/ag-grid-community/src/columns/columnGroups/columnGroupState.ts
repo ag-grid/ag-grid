@@ -88,9 +88,9 @@ export const _setColGroupState = (
 };
 
 export const _resetColGroupState = (beans: BeanCollection, source: ColumnEventType): void => {
-    const stateItems: { groupId: string; open: boolean | undefined }[] = [];
+    const stateItems: { groupId: string; open: boolean | undefined; headerName: string | null }[] = [];
     beans.colModel.colDefGroupsById.forEach((group) => {
-        stateItems.push({ groupId: group.groupId, open: group.colGroupDef?.openByDefault });
+        stateItems.push({ groupId: group.groupId, open: group.colGroupDef?.openByDefault, headerName: null });
     });
     _setColGroupState(beans, stateItems, source);
 };
