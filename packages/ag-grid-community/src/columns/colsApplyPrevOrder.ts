@@ -28,17 +28,22 @@ export const applyPrevColumnsOrder = (
     const preservedOrder: AgColumn[] = [];
     const colPositionMap = new Map<AgColumn, number>();
     const groupHighestLeaf = new Map<AgProvidedColumnGroup, AgColumn>();
+    let hasPreservedAutoGroup = false;
     for (let i = 0; i < prevOrderLen; ++i) {
         const current = colsById[prevOrder[i]];
         if (current != null) {
             colPositionMap.set(current, preservedOrder.length);
             preservedOrder.push(current);
+            hasPreservedAutoGroup ||= current.colKind === 'auto-group';
             let g = current.originalParent;
             while (g != null) {
                 groupHighestLeaf.set(g, current);
                 g = g.originalParent;
             }
         }
+    }
+    if (hasPreservedAutoGroup) {
+        resnapAutoGroupCols(preservedOrder, colsList, colPositionMap);
     }
     if (preservedOrder.length === colsListLen) {
         return preservedOrder; // all preserved — order already correct
@@ -141,6 +146,30 @@ export const applyPrevColumnsOrder = (
         result[pos++] = endCalc[i];
     }
     return result;
+};
+
+/** Re-seat preserved auto-group cols into `colsList` (hierarchy) order without moving their slots: each
+ *  auto-col position in `preservedOrder` takes the next preserved auto col as `colsList` lists them. */
+const resnapAutoGroupCols = (
+    preservedOrder: AgColumn[],
+    colsList: AgColumn[],
+    colPositionMap: Map<AgColumn, number>
+): void => {
+    let autoIdx = 0;
+    const colsListLen = colsList.length;
+    for (let i = 0, len = preservedOrder.length; i < len; ++i) {
+        if (preservedOrder[i].colKind !== 'auto-group') {
+            continue;
+        }
+        while (autoIdx < colsListLen) {
+            const candidate = colsList[autoIdx++];
+            if (candidate.colKind === 'auto-group' && colPositionMap.has(candidate)) {
+                preservedOrder[i] = candidate;
+                colPositionMap.set(candidate, i); // keep the position map in step with the reordered slot
+                break;
+            }
+        }
+    }
 };
 
 /** True when any preserved col sits in a group with siblings — i.e. there are anchors to resolve. */
