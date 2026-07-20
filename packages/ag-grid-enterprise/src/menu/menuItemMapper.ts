@@ -3,6 +3,7 @@ import { _exists } from 'ag-stack';
 
 import type {
     AgColumn,
+    AgProvidedColumnGroup,
     ColumnEventType,
     DefaultMenuItem,
     GetNoteParams,
@@ -83,7 +84,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         node: RowNode | null,
         noteParams: GetNoteParams | undefined,
         sourceElement: () => HTMLElement,
-        source: ColumnEventType
+        source: ColumnEventType,
+        columnGroup: AgProvidedColumnGroup | null = null
     ): (MenuItemDef | 'separator')[] {
         if (!originalList) {
             return [];
@@ -539,8 +541,10 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               action: () => calculatedColsSvc.removeCalculatedColumn(column),
                           }
                         : null;
-                case 'editColumnName':
-                    return column ? (colHeaderEditSvc?.getEditColumnNameMenuItem(column) ?? null) : null;
+                case 'editColumnName': {
+                    const editTarget = column ?? columnGroup;
+                    return editTarget ? (colHeaderEditSvc?.getEditColumnNameMenuItem(editTarget) ?? null) : null;
+                }
                 case 'sortUnSort':
                 case 'sortAscending':
                 case 'sortDescending':
@@ -606,7 +610,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     node,
                     noteParams,
                     sourceElement,
-                    source
+                    source,
+                    columnGroup
                 );
             }
 

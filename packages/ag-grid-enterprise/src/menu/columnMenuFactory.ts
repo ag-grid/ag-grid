@@ -20,7 +20,8 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         parent: { createManagedBean(bean: MenuList): MenuList },
         menuItems: (DefaultMenuItem | MenuItemDef)[],
         column: AgColumn | undefined,
-        sourceElement: () => HTMLElement
+        sourceElement: () => HTMLElement,
+        columnGroup?: AgProvidedColumnGroup
     ): MenuList {
         const menuList = parent.createManagedBean(
             new MenuList(0, {
@@ -36,7 +37,8 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             null,
             undefined,
             sourceElement,
-            'columnMenu'
+            'columnMenu',
+            columnGroup ?? null
         );
 
         menuList.addMenuItems(menuItemsMapped);
@@ -48,7 +50,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         column: AgColumn | null = null,
         columnGroup: AgProvidedColumnGroup | null = null
     ): (DefaultMenuItem | MenuItemDef)[] {
-        const defaultItems = this.getDefaultMenuOptions(column);
+        const defaultItems = this.getDefaultMenuOptions(column, columnGroup);
         let result: (DefaultMenuItem | MenuItemDef)[];
 
         const columnMainMenuItems = (column?.colDef ?? columnGroup?.getColGroupDef())?.mainMenuItems;
@@ -82,7 +84,10 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         return result;
     }
 
-    private getDefaultMenuOptions(column: AgColumn | null): DefaultMenuItem[] {
+    private getDefaultMenuOptions(
+        column: AgColumn | null,
+        columnGroup: AgProvidedColumnGroup | null = null
+    ): DefaultMenuItem[] {
         const result: DefaultMenuItem[] = [];
 
         const { beans, gos } = this;
@@ -107,6 +112,10 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         };
 
         if (!column) {
+            if (beans.colHeaderEditSvc && columnGroup?.colGroupDef?.headerNameEditable) {
+                result.push('editColumnName');
+                result.push(MENU_ITEM_SEPARATOR);
+            }
             addColumnItems();
             return result;
         }

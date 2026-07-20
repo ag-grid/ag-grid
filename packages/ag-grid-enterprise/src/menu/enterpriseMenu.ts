@@ -310,7 +310,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         } else {
             const menuItems = (this.beans.colMenuFactory as ColumnMenuFactory).getMenuItems(column, columnGroup);
             return menuItems.length
-                ? this.createBean(new ColumnContextMenu(menuItems, column, restoreFocusParams, eventSource))
+                ? this.createBean(new ColumnContextMenu(menuItems, column, columnGroup, restoreFocusParams, eventSource))
                 : undefined;
         }
     }
@@ -602,6 +602,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     constructor(
         private readonly menuItems: (DefaultMenuItem | MenuItemDef)[],
         private readonly column: AgColumn | undefined,
+        private readonly columnGroup: AgProvidedColumnGroup | undefined,
         private readonly restoreFocusParams: MenuRestoreFocusParams,
         private readonly sourceElement?: HTMLElement
     ) {
@@ -613,7 +614,8 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
             this,
             this.menuItems,
             this.column,
-            () => this.sourceElement ?? this.getGui()
+            () => this.sourceElement ?? this.getGui(),
+            this.columnGroup
         );
         this.mainMenuList = mainMenuList;
         mainMenuList.addEventListener('closeMenu', this.onHidePopup.bind(this));

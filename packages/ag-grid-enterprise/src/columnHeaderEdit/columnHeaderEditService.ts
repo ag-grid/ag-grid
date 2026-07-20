@@ -1,7 +1,15 @@
-import type { AgColumn, IColumnHeaderEditService, MenuItemDef, NamedBean } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan } from 'ag-grid-community';
+import type {
+    AgColumn,
+    AgProvidedColumnGroup,
+    IColumnHeaderEditService,
+    MenuItemDef,
+    NamedBean,
+} from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { ColumnHeaderEditPopup } from './columnHeaderEditPopup';
+
+type EditTarget = AgColumn | AgProvidedColumnGroup;
 
 export class ColumnHeaderEditService extends BeanStub implements NamedBean, IColumnHeaderEditService {
     beanName = 'colHeaderEditSvc' as const;
@@ -9,9 +17,28 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
     private activePopup: ColumnHeaderEditPopup | null = null;
     private removePopupColListener: (() => void) | null = null;
 
-    private getEditableHeaderName(column: AgColumn): string {
-        const name = this.beans.colNames.getDisplayNameForColumn(column, 'header');
+    private isEditable(target: EditTarget): boolean {
+        return isProvidedColumnGroup(target)
+            ? !!target.colGroupDef?.headerNameEditable
+            : !!target.colDef.headerNameEditable;
+    }
+
+    private getEditableHeaderName(target: EditTarget): string {
+        const { colNames } = this.beans;
+        const name = isProvidedColumnGroup(target)
+            ? colNames.getDisplayNameForProvidedColumnGroup(null, target, 'header')
+            : colNames.getDisplayNameForColumn(target, 'header');
         return name != null ? String(name) : '';
+    }
+
+    private applyHeaderName(target: EditTarget, headerName: string | null): void {
+        if (isProvidedColumnGroup(target)) {
+            if (target.setHeaderNameOverride(headerName)) {
+                this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged' });
+            }
+        } else {
+            target.setHeaderNameOverride(headerName, 'uiColumnHeaderEdit');
+        }
     }
 
     public postConstruct(): void {
@@ -25,21 +52,21 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
         });
     }
 
-    public getEditColumnNameMenuItem(column: AgColumn): MenuItemDef | null {
-        if (!column.colDef.headerNameEditable) {
+    public getEditColumnNameMenuItem(target: EditTarget): MenuItemDef | null {
+        if (!this.isEditable(target)) {
             return null;
         }
         return {
             name: this.getLocaleTextFunc()('editColumnName', 'Edit Column Name'),
             icon: _createIconNoSpan('columnHeaderEdit', this.beans, null),
-            action: () => this.showHeaderNameEditor(column),
+            action: () => this.showHeaderNameEditor(target),
         };
     }
 
-    public showHeaderNameEditor(column: AgColumn): void {
+    public showHeaderNameEditor(target: EditTarget): void {
         this.destroyActivePopup();
 
-        let initialValue = this.getEditableHeaderName(column);
+        let initialValue = this.getEditableHeaderName(target);
 
         const popup = this.createBean(
             new ColumnHeaderEditPopup({
@@ -47,7 +74,7 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
                 onClosed: (committed, value) => {
                     if (committed && value.trim() !== initialValue.trim()) {
                         const trimmed = value.trim();
-                        column.setHeaderNameOverride(trimmed.length ? trimmed : null, 'uiColumnHeaderEdit');
+                        this.applyHeaderName(target, trimmed.length ? trimmed : null);
                     }
                     this.destroyActivePopup();
                 },
@@ -55,10 +82,10 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
         );
         this.activePopup = popup;
 
-        // Keep the editor in sync if the column's def changes underneath it (e.g. a programmatic rename).
-        this.removePopupColListener = this.addManagedListeners(column, {
+        // Keep the editor in sync if the target's name changes underneath it (e.g. a programmatic rename).
+        this.removePopupColListener = this.addManagedListeners(target, {
             headerNameOverrideChanged: () => {
-                initialValue = this.getEditableHeaderName(column);
+                initialValue = this.getEditableHeaderName(target);
                 popup.setValue(initialValue);
             },
         })[0];

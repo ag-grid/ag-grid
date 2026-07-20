@@ -87,8 +87,10 @@ export class ToolPanelContextMenu extends Component {
         this.allowGrouping = columns.some((col) => col.primary && col.isAllowRowGroup());
         this.allowValues = columns.some((col) => col.primary && col.isAllowValue());
         this.allowPivoting = isPivotMode && columns.some((col) => col.isPrimary() && col.isAllowPivot());
-        this.allowEditHeaderName =
-            !isProvidedColumnGroup(column) && !!this.beans.colHeaderEditSvc && !!column.colDef.headerNameEditable;
+        const headerNameEditable = isProvidedColumnGroup(column)
+            ? !!column.colGroupDef?.headerNameEditable
+            : !!column.colDef.headerNameEditable;
+        this.allowEditHeaderName = !!this.beans.colHeaderEditSvc && headerNameEditable;
     }
 
     private buildMenuItemMap(): void {
@@ -279,7 +281,7 @@ export class ToolPanelContextMenu extends Component {
         const { menuItemMap, columns, displayName, beans } = this;
 
         if (this.allowEditHeaderName) {
-            const editColumnNameItem = beans.colHeaderEditSvc!.getEditColumnNameMenuItem(this.column as AgColumn);
+            const editColumnNameItem = beans.colHeaderEditSvc!.getEditColumnNameMenuItem(this.column);
             if (editColumnNameItem) {
                 ret.push(editColumnNameItem);
             }
