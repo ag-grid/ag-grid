@@ -97,7 +97,7 @@ const CellComp = ({
                     // we cannot set state inside render, so hack is to do it in next VM turn
                     if (editingCancelledByUserComp) {
                         cellCtrl.stopEditing(true);
-                        cellCtrl.focusCell(true);
+                        cellCtrl.focusCell({ forceBrowserFocus: true });
                     } else {
                         cellCtrl.cellEditorAttached();
                         cellCtrl.enableEditorTooltipFeature(cellEditor);

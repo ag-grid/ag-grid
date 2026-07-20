@@ -1293,7 +1293,7 @@ export class EditService extends BeanStub implements NamedBean {
         if (restoreFocus) {
             cellCtrl.onEditorAttachedFuncs.push(() => {
                 const latestCellCtrl = _getCellCtrl(this.beans, position);
-                latestCellCtrl?.focusCell(true);
+                latestCellCtrl?.focusCell({ forceBrowserFocus: true });
                 latestCellCtrl?.comp?.getCellEditor()?.focusIn?.();
             });
         }
@@ -1552,7 +1552,7 @@ export class EditService extends BeanStub implements NamedBean {
         // focus the first cell in the range
         const cellCtrl = _getCellCtrl(beans, { rowNode, column })!;
         if (cellCtrl) {
-            cellCtrl.focusCell(true);
+            cellCtrl.focusCell({ forceBrowserFocus: true });
         }
     }
 
