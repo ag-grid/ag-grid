@@ -4,7 +4,7 @@
  * /changelog.md and /pipeline.md.
  *
  * Zero dependencies (Node built-ins only) so it runs under the same bare Node the
- * other jira_reports scripts use on production — no npm install required. Written as
+ * other jira_reports scripts use on production - no npm install required. Written as
  * an ES module (.mjs) so the Astro endpoints (changelog.md.ts / pipeline.md.ts) can
  * import it directly under Vite; Node runs .mjs natively, so the production cron and
  * dev/build share one transform and cannot drift.
@@ -133,7 +133,7 @@ function noteBullet(entry, field) {
     const notes = htmlToText(entry[field]);
     const detail = notes ? `: ${notes}` : '';
     const docLink = entry.documentationUrl ? ` ([docs](${entry.documentationUrl}))` : '';
-    return `- **${entry.key}** — ${summary}${detail}${docLink}`;
+    return `- **${entry.key}** - ${summary}${detail}${docLink}`;
 }
 
 // A lead section (Breaking Changes / Deprecations) listing every entry carrying the

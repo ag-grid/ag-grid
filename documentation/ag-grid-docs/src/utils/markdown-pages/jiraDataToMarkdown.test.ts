@@ -66,7 +66,7 @@ describe('changelogToMarkdown', () => {
         expect(output).toContain('## Breaking Changes');
         expect(output).toContain('### 33.0.0');
         expect(output).toContain(
-            '- **AG-1500** — Remove deprecated option: The `oldOption` has been removed. Use `newOption`.' +
+            '- **AG-1500** - Remove deprecated option: The `oldOption` has been removed. Use `newOption`.' +
                 ' ([docs](https://www.ag-grid.com/react-data-grid/upgrading-to-ag-grid-33/))'
         );
     });
@@ -74,7 +74,7 @@ describe('changelogToMarkdown', () => {
     it('lists deprecations in their own section', () => {
         expect(output).toContain('## Deprecations');
         expect(output).toContain(
-            '- **AG-1499** — Deprecate legacy API: legacyMethod is deprecated. Use modernMethod instead.'
+            '- **AG-1499** - Deprecate legacy API: legacyMethod is deprecated. Use modernMethod instead.'
         );
     });
 
