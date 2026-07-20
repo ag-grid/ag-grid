@@ -191,6 +191,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowExpansionStateChanged: AgEvent<'rowExpansionStateChanged'>;
         showRowGroupColsSetChanged: AgEvent<'showRowGroupColsSetChanged'>;
         rowDragVisibilityChanged: AgEvent<'rowDragVisibilityChanged'>;
+        columnHeaderNameChanged: AgEvent<'columnHeaderNameChanged'>;
     }
 >;
 

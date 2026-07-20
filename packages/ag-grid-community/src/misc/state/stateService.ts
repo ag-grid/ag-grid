@@ -13,6 +13,7 @@ import type {
     AggregationState,
     CellSelectionState,
     ColumnGroupState,
+    ColumnHeaderNameState,
     ColumnOrderState,
     ColumnPinningState,
     ColumnSizingState,
@@ -184,6 +185,7 @@ export class StateService extends BeanStub implements NamedBean {
             'columnPinning',
             'columnSizing',
             'columnVisibility',
+            'columnHeaderName',
             'pivot',
             'rowGroup',
             'sort',
@@ -227,6 +229,10 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             },
             columnGroupOpened: () => this.updateCachedState('columnGroup', this.getColumnGroupState()),
+            columnHeaderNameChanged: () => {
+                this.updateColumnState(['columnHeaderName']);
+                this.updateCachedState('columnGroup', this.getColumnGroupState());
+            },
         });
     }
 
@@ -388,6 +394,7 @@ export class StateService extends BeanStub implements NamedBean {
         columnVisibility?: ColumnVisibilityState;
         columnSizing?: ColumnSizingState;
         columnOrder?: ColumnOrderState;
+        columnHeaderName?: ColumnHeaderNameState;
     } {
         const beans = this.beans;
         return convertColumnState(_getColumnState(beans), beans.colModel.pivotMode);
@@ -408,6 +415,7 @@ export class StateService extends BeanStub implements NamedBean {
             columnVisibility: columnVisibilityState,
             columnSizing: columnSizingState,
             columnOrder: columnOrderState,
+            columnHeaderName: columnHeaderNameState,
         } = state;
         // if any column state property is provided, or from `setState`, should always apply state even if empty
         let forceSetState = false;
@@ -526,6 +534,14 @@ export class StateService extends BeanStub implements NamedBean {
             defaultState.flex = null;
         }
 
+        // Edited header names are treated as data, not layout: they are applied when present but never
+        // cleared via defaultState, so a column reset preserves them (per AG-115).
+        if (shouldSetState('columnHeaderName', columnHeaderNameState)) {
+            for (const { colId, headerName } of columnHeaderNameState?.columnHeaderNames ?? []) {
+                getColumnState(colId).headerName = headerName;
+            }
+        }
+
         const columns = columnOrderState?.orderedColIds;
         const applyOrder = !!columns?.length && !ignoreSet?.has('columnOrder');
         const columnStates = applyOrder ? columns.map((colId) => getColumnState(colId)) : Object.values(columnStateMap);
@@ -598,6 +614,9 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const openColumnGroups = new Set(state.columnGroup?.openColumnGroupIds);
+        const headerNamesById = new Map(
+            (state.columnGroup?.headerNames ?? []).map(({ groupId, headerName }) => [groupId, headerName])
+        );
         const existingColumnGroupState = _getColGroupState(this.beans);
         const stateItems = existingColumnGroupState.map(({ groupId }) => {
             const open = openColumnGroups.has(groupId);
@@ -607,6 +626,7 @@ export class StateService extends BeanStub implements NamedBean {
             return {
                 groupId,
                 open,
+                headerName: headerNamesById.get(groupId) ?? null,
             };
         });
         // probably pivot cols
@@ -614,6 +634,7 @@ export class StateService extends BeanStub implements NamedBean {
             stateItems.push({
                 groupId,
                 open: true,
+                headerName: headerNamesById.get(groupId) ?? null,
             });
         }
         if (stateItems.length) {

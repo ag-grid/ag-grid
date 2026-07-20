@@ -155,6 +155,13 @@ export interface ColumnOrderState {
 
 export interface ColumnGroupState {
     openColumnGroupIds: string[];
+    /** User-edited group header names, keyed by group id. */
+    headerNames?: { groupId: string; headerName: string }[];
+}
+
+export interface ColumnHeaderNameState {
+    /** User-edited column header names, keyed by column id. */
+    columnHeaderNames: { colId: string; headerName: string }[];
 }
 
 export interface RowPinningState {
@@ -179,6 +186,8 @@ export interface GridState {
     columnSizing?: ColumnSizingState;
     /** Includes hidden columns (column state) */
     columnVisibility?: ColumnVisibilityState;
+    /** Includes user-edited column header names (column state) */
+    columnHeaderName?: ColumnHeaderNameState;
     /** Includes Column Filters and Advanced Filter */
     filter?: FilterState;
     /** Includes currently focused cell. Works for Client-Side Row Model only */

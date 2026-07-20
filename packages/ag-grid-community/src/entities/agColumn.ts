@@ -848,6 +848,8 @@ export class AgColumn<TValue = any>
         }
         this.headerNameOverride = headerName;
         this.dispatchColEvent('headerNameOverrideChanged', source);
+        // Grid-level event so the state service can refresh the cached column header-name state.
+        this.beans.eventSvc.dispatchEvent({ type: 'columnHeaderNameChanged' });
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {

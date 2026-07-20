@@ -22,6 +22,7 @@ export function convertColumnState(
     | 'columnVisibility'
     | 'columnSizing'
     | 'columnOrder'
+    | 'columnHeaderName'
 > {
     const sortColumns: SortModelItem[] = [];
     const groupColIds: string[] = [];
@@ -31,6 +32,7 @@ export function convertColumnState(
     const rightColIds: string[] = [];
     const hiddenColIds: string[] = [];
     const columnSizes: ColumnSizeState[] = [];
+    const columnHeaderNames: { colId: string; headerName: string }[] = [];
     const columns: string[] = [];
 
     let defaultSortIndex = 0;
@@ -50,8 +52,12 @@ export function convertColumnState(
             hide,
             width,
             flex,
+            headerName,
         } = columnState[i];
         columns.push(colId);
+        if (headerName != null) {
+            columnHeaderNames.push({ colId, headerName });
+        }
         if (sort) {
             sortColumns[sortIndex ?? defaultSortIndex++] = { colId, sort, type: sortType ?? undefined };
         }
@@ -89,6 +95,7 @@ export function convertColumnState(
         columnVisibility: hiddenColIds.length ? { hiddenColIds } : undefined,
         columnSizing: columnSizes.length ? { columnSizingModel: columnSizes } : undefined,
         columnOrder: columns.length ? { orderedColIds: columns } : undefined,
+        columnHeaderName: columnHeaderNames.length ? { columnHeaderNames } : undefined,
     };
 }
 
@@ -110,15 +117,25 @@ function orderAggregationModel(columns: IndexedAggregationColumnState[]): Aggreg
 }
 
 export function _convertColumnGroupState(
-    columnGroupState: { groupId: string; open: boolean }[]
+    columnGroupState: { groupId: string; open: boolean; headerName?: string | null }[]
 ): ColumnGroupState | undefined {
     const openColumnGroups: string[] = [];
-    for (const { groupId, open } of columnGroupState) {
+    const headerNames: { groupId: string; headerName: string }[] = [];
+    for (const { groupId, open, headerName } of columnGroupState) {
         if (open) {
             openColumnGroups.push(groupId);
         }
+        if (headerName != null) {
+            headerNames.push({ groupId, headerName });
+        }
     }
-    return openColumnGroups.length ? { openColumnGroupIds: openColumnGroups } : undefined;
+    if (!openColumnGroups.length && !headerNames.length) {
+        return undefined;
+    }
+    return {
+        openColumnGroupIds: openColumnGroups,
+        headerNames: headerNames.length ? headerNames : undefined,
+    };
 }
 
 /**
