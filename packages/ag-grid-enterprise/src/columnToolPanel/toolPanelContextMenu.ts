@@ -279,13 +279,10 @@ export class ToolPanelContextMenu extends Component {
         const { menuItemMap, columns, displayName, beans } = this;
 
         if (this.allowEditHeaderName) {
-            const localeTextFunc = this.getLocaleTextFunc();
-            const column = this.column as AgColumn;
-            ret.push({
-                name: localeTextFunc('editColumnName', 'Edit Column Name'),
-                icon: _createIconNoSpan('columnHeaderEdit', beans, null),
-                action: () => beans.colHeaderEditSvc!.showHeaderNameEditor(column),
-            });
+            const editColumnNameItem = beans.colHeaderEditSvc!.getEditColumnNameMenuItem(this.column as AgColumn);
+            if (editColumnNameItem) {
+                ret.push(editColumnNameItem);
+            }
         }
 
         for (const val of menuItemMap.values()) {

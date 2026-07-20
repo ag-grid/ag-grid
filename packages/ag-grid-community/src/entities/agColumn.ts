@@ -847,7 +847,7 @@ export class AgColumn<TValue = any>
             return;
         }
         this.headerNameOverride = headerName;
-        this.dispatchColEvent('colDefChanged', source);
+        this.dispatchColEvent('headerNameOverrideChanged', source);
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {

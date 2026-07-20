@@ -539,16 +539,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               action: () => calculatedColsSvc.removeCalculatedColumn(column),
                           }
                         : null;
-                case 'editColumnName': {
-                    if (!colHeaderEditSvc || !column?.colDef.headerNameEditable) {
-                        return null;
-                    }
-                    return {
-                        name: localeTextFunc('editColumnName', 'Edit Column Name'),
-                        icon: _createIconNoSpan('columnHeaderEdit', beans, null),
-                        action: () => colHeaderEditSvc.showHeaderNameEditor(column),
-                    };
-                }
+                case 'editColumnName':
+                    return column ? (colHeaderEditSvc?.getEditColumnNameMenuItem(column) ?? null) : null;
                 case 'sortUnSort':
                 case 'sortAscending':
                 case 'sortDescending':

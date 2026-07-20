@@ -1,5 +1,5 @@
-import type { AgColumn, IColumnHeaderEditService, NamedBean } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import type { AgColumn, IColumnHeaderEditService, MenuItemDef, NamedBean } from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan } from 'ag-grid-community';
 
 import { ColumnHeaderEditPopup } from './columnHeaderEditPopup';
 
@@ -10,7 +10,7 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
     private removePopupColListener: (() => void) | null = null;
 
     private getEditableHeaderName(column: AgColumn): string {
-        const name = this.beans.colNames.getDisplayNameForColumn(column, 'columnHeaderEdit');
+        const name = this.beans.colNames.getDisplayNameForColumn(column, 'header');
         return name != null ? String(name) : '';
     }
 
@@ -23,6 +23,17 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
                 }
             },
         });
+    }
+
+    public getEditColumnNameMenuItem(column: AgColumn): MenuItemDef | null {
+        if (!column.colDef.headerNameEditable) {
+            return null;
+        }
+        return {
+            name: this.getLocaleTextFunc()('editColumnName', 'Edit Column Name'),
+            icon: _createIconNoSpan('columnHeaderEdit', this.beans, null),
+            action: () => this.showHeaderNameEditor(column),
+        };
     }
 
     public showHeaderNameEditor(column: AgColumn): void {
@@ -46,7 +57,7 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
 
         // Keep the editor in sync if the column's def changes underneath it (e.g. a programmatic rename).
         this.removePopupColListener = this.addManagedListeners(column, {
-            colDefChanged: () => {
+            headerNameOverrideChanged: () => {
                 initialValue = this.getEditableHeaderName(column);
                 popup.setValue(initialValue);
             },

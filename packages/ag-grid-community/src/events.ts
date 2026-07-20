@@ -1031,6 +1031,7 @@ export type ColumnEventType =
     | 'uiColumnDragged'
     | 'uiColumnExpanded'
     | 'uiColumnSorted'
+    | 'uiColumnHeaderEdit'
     | 'contextMenu'
     | 'columnMenu'
     | 'rowModelUpdated'
@@ -1042,8 +1043,7 @@ export type ColumnEventType =
     | 'cellDataTypeInferred'
     | 'rowNumbersService'
     | 'viewportSizeFeature'
-    | 'calculatedColumn'
-    | 'uiColumnHeaderEdit';
+    | 'calculatedColumn';
 
 export interface ColumnEvent<
     T extends AgEventType | ColumnEventName = any,

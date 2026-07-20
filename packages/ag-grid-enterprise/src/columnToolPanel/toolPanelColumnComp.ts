@@ -114,6 +114,7 @@ export class ToolPanelColumnComp extends Component {
             columnRowGroupChanged: onColStateChanged,
             visibleChanged: onColStateChanged,
             colDefChanged: this.onColDefChanged.bind(this),
+            headerNameOverrideChanged: this.onColDefChanged.bind(this),
         });
         this.addManagedListeners(focusWrapper, {
             keydown: this.handleKeyDown.bind(this),

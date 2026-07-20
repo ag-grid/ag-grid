@@ -1268,7 +1268,6 @@ export type ValueGetterFunc<TData = any, TValue = any, TContext = any> = (
 export type HeaderLocation =
     | 'chart'
     | 'columnDrop'
-    | 'columnHeaderEdit'
     | 'columnToolPanel'
     | 'csv'
     | 'filterToolPanel'

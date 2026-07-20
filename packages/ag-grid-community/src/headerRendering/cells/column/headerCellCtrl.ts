@@ -136,6 +136,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         compBean.addManagedPropertyListener('cellSelection', () => this.refreshAria());
         compBean.addManagedListeners(column, {
             colDefChanged: () => this.refresh(),
+            headerNameOverrideChanged: () => this.refresh(),
             formulaRefChanged: () => this.refresh(),
             headerHighlightChanged: this.onHeaderHighlightChanged.bind(this),
         });
