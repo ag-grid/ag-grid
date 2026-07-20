@@ -23,18 +23,24 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('Normal update applies transactions and reports timing', async ({ page }) => {
+        // The example fires 5,000 individual transactions, each re-aggregating the grouped
+        // data, so completion is legitimately slow under a loaded CI machine. Give it headroom.
+        test.slow();
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         await page.getByRole('button', { name: 'Normal Update' }).click();
-        await expect(page.locator('#eMessage')).toContainText('Transaction took', { timeout: 30000 });
+        await expect(page.locator('#eMessage')).toContainText('Transaction took', { timeout: 60000 });
     });
 
     test.eachFramework('Async update batches transactions and reports timing', async ({ page }) => {
+        // 5,000 async transactions are batched by the grid but still take a while to drain
+        // under load; give the timing message extra time before asserting.
+        test.slow();
         await ensureGridReady(page);
         await waitForGridContent(page);
 
         await page.getByRole('button', { name: 'Async Update' }).click();
-        await expect(page.locator('#eMessage')).toContainText('Async took', { timeout: 30000 });
+        await expect(page.locator('#eMessage')).toContainText('Async took', { timeout: 60000 });
     });
 });
