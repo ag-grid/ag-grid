@@ -277,6 +277,41 @@ describe('Editable header name', () => {
         const columnGroup = api.getColumnGroup('athleteGroup')!;
         expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Renamed');
     });
+
+    test('renaming one group does not recompute the header name of another group', async () => {
+        let ageGroupGetterCalls = 0;
+        const { api, gridDiv, toolPanel } = await createGrid([
+            {
+                groupId: 'athleteGroup',
+                headerName: 'Athletes',
+                headerNameEditable: true,
+                children: [{ field: 'athlete' }],
+            } as any,
+            {
+                groupId: 'ageGroup',
+                headerNameEditable: true,
+                headerValueGetter: () => {
+                    ageGroupGetterCalls++;
+                    return 'Ages';
+                },
+                children: [{ field: 'age' }],
+            } as any,
+        ]);
+
+        const input = await openEditor(toolPanel, gridDiv, 'Athletes');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Swimmers');
+
+        // Baseline captured after opening/typing so only the commit's refresh is measured.
+        const callsBeforeCommit = ageGroupGetterCalls;
+        pressEnter(input);
+        await asyncSetTimeout(1);
+
+        // The athleteGroup rename carries its groupId, so untouched groups skip the display-name recompute.
+        expect(ageGroupGetterCalls).toBe(callsBeforeCommit);
+        const athleteGroup = api.getColumnGroup('athleteGroup')!;
+        expect(api.getDisplayNameForColumnGroup(athleteGroup, 'header')).toBe('Swimmers');
+    });
 });
 
 describe('Editable group header name', () => {
