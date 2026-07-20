@@ -12,7 +12,7 @@ import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCt
 import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellComp';
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
 import type { PinnedSectionWidthsCache } from '../headerUtils';
-import { partitionByPinned, updatePinnedSectionWidths } from '../headerUtils';
+import { compareCtrlsByLeft, partitionByPinned, updatePinnedSectionWidths } from '../headerUtils';
 import type { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
 export type HeaderRowType = 'group' | 'column' | 'filter';
@@ -129,7 +129,7 @@ export class HeaderRowComp extends Component {
             const sortByLeft = (
                 a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>,
                 b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>
-            ) => a.getCtrl().column.getLeft()! - b.getCtrl().column.getLeft()!;
+            ) => compareCtrlsByLeft(a.getCtrl(), b.getCtrl());
 
             if (this.gos.get('domLayout') === 'print') {
                 const comps = Object.values(this.headerComps).sort(sortByLeft);
