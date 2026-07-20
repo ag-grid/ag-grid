@@ -1,6 +1,7 @@
 import type { Framework, Library } from '@ag-grid-types';
 import featuresData from '@ag-website-shared/components/features-section/DocsFeaturesSection.json';
 import { FEATURE_MAP } from '@ag-website-shared/components/getting-started/gettingStartedData';
+import { FIGMA_DESIGN_SYSTEM_URL } from '@ag-website-shared/constants';
 import whatsNewData from '@ag-website-shared/content/whats-new/data.json';
 import type { MarkdownFramework } from '@ag-website-shared/markdoc/renderMarkdocToMarkdown';
 import { getDocumentationArchiveUrl } from '@ag-website-shared/utils/getArchiveUrl';
@@ -21,9 +22,6 @@ import { type VersionEntry, buildMajorTable } from './renderMajorTable';
 import { buildMatrixTable } from './renderMatrixTable';
 import { type ModuleNode, buildModuleMappingsTable } from './renderModuleMappings';
 import { toAbsoluteUrl } from './toAbsoluteUrl';
-
-// Source of truth: FigmaCommunityButton.astro. A stable community-file URL.
-const FIGMA_DESIGN_SYSTEM_URL = 'https://www.figma.com/community/file/1360600846643230092/ag-grid-design-system';
 
 interface RenderMarkdocTagParams {
     tag: string;
