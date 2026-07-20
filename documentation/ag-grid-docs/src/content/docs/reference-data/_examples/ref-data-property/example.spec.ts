@@ -2,7 +2,7 @@ import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/t
 
 test.agExample(import.meta, () => {
     // colIds: 'make', 'exteriorColour', 'interiorColour', 'retailPrice' (colId),
-    //         'Retail Price (incl Taxes)' (anonymous) -> '0'.
+    //         'Retail Price (incl Taxes)' (anonymous) -> '0' .
     // Row 0 data: make 'tyt', exteriorColour 'fg', interiorColour 'bw', price 35000.
     // refData maps: tyt->Toyota, fg->Forest Green, bw->Burlywood.
 
