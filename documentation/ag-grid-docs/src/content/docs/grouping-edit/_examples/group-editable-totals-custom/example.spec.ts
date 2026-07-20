@@ -28,16 +28,26 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell(europe, 'amount').first()).toHaveText('440');
     });
 
-    test.eachFramework('editing a segment total distributes equally to leaf rows', async ({ page, agIdFor }) => {
+    test.eachFramework('editing a segment total applies the largest remainder method', async ({ page, agIdFor }) => {
         await waitForGridContent(page);
 
-        // Edit Europe/Corporate to 800: 8 children => 100 each (largest remainder, no remainder).
-        await editGroupCell(page, agIdFor.cell(corporate, 'amount').first(), '800');
+        // Edit Europe/Corporate to 803: 8 children, base = floor(803/8) = 100, remainder = 3.
+        // The first three children (in data order) absorb one extra unit each (101); the rest
+        // stay at the base value (100). A total that divides evenly would not exercise this.
+        await editGroupCell(page, agIdFor.cell(corporate, 'amount').first(), '803');
 
-        await expect(agIdFor.cell('fr-paris', 'amount')).toHaveText('100');
-        await expect(agIdFor.cell(corporate, 'amount').first()).toHaveText('800');
-        // Europe re-aggregates: 800 + Enterprise 180 = 980.
-        await expect(agIdFor.cell(europe, 'amount').first()).toHaveText('980');
+        // First three Corporate leaves receive the remainder.
+        await expect(agIdFor.cell('fr-paris', 'amount')).toHaveText('101');
+        await expect(agIdFor.cell('fr-lyon', 'amount')).toHaveText('101');
+        await expect(agIdFor.cell('de-berlin', 'amount')).toHaveText('101');
+        // The remaining leaves receive the base value.
+        await expect(agIdFor.cell('de-hamburg', 'amount')).toHaveText('100');
+        await expect(agIdFor.cell('uk-manchester', 'amount')).toHaveText('100');
+
+        // The group re-aggregates to the exact edited total (remainder preserved).
+        await expect(agIdFor.cell(corporate, 'amount').first()).toHaveText('803');
+        // Europe re-aggregates: 803 + Enterprise 180 = 983.
+        await expect(agIdFor.cell(europe, 'amount').first()).toHaveText('983');
     });
 
     test.eachFramework('editing a region total cascades recursively through segments', async ({ page, agIdFor }) => {

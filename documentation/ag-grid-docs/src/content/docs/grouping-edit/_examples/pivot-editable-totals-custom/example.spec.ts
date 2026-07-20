@@ -34,8 +34,18 @@ test.agExample(import.meta, () => {
         await expect(editor).toHaveCount(0);
 
         await expect(europeElectronics).toHaveText('500');
+
+        // Every one of the five matching country groups receives an equal share (100),
+        // not just France — a lopsided distribution summing to 500 would otherwise pass.
         await expect(agIdFor.cell(france, electronics).first()).toHaveText('100');
+        await expect(agIdFor.cell('row-group-region-Europe-country-Germany', electronics).first()).toHaveText('100');
+        await expect(agIdFor.cell('row-group-region-Europe-country-Spain', electronics).first()).toHaveText('100');
+        await expect(agIdFor.cell('row-group-region-Europe-country-UK', electronics).first()).toHaveText('100');
+        await expect(agIdFor.cell('row-group-region-Europe-country-Italy', electronics).first()).toHaveText('100');
+
+        // The cascade reaches each country's single Electronics leaf.
         await expect(agIdFor.cell('eu-fr-elec', electronics).first()).toHaveText('100');
+        await expect(agIdFor.cell('eu-de-elec', electronics).first()).toHaveText('100');
 
         // The Clothing pivot category is untouched by the Electronics edit.
         await expect(agIdFor.cell(europe, clothing).first()).toHaveText('360');
