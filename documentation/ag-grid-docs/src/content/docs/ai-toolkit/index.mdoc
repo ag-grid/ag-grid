@@ -15,6 +15,7 @@ Suggested prompts:
 - "Show me all the gold medals won by the USA"
 - "Sort the competitors with the youngest first"
 - "Group by country and show the total number of medals won"
+- "Add a Weighted Total column scoring 3 points per gold, 2 per silver and 1 per bronze"
 
 {% gridExampleRunner title="Natural Language Grid State Management" name="natural-language-grid-state" exampleHeight=600 /%}
 
@@ -23,6 +24,8 @@ Suggested prompts:
 [Structured Outputs](https://platform.openai.com/docs/guides/structured-outputs) is an LLM feature that ensures model responses adhere to a supplied [JSON Schema](https://json-schema.org/). Structured Outputs are supported by many LLMs, including ChatGPT and Gemini.
 
 The AI Toolkit provides a `getStructuredSchema` API that generates a structured schema, based on [grid state](./grid-state/). These outputs can be passed to an LLM, which can then generate valid responses that can be passed directly to the `setState` API method. This ensures reliable, schema-aligned instructions for updating or manipulating the grid based on natural language input.
+
+Some grid changes are not part of Grid State. [Calculated Columns](./calculated-columns/), for example, are managed through column definitions rather than `setState()`. The example extends the LLM response schema with a `columnDefOperations` array for these changes, and applies those operations before any Grid State update.
 
 The schema is made up of a series of "features", each representing a different aspect of the grid that can be manipulated. The following features are currently supported:
 
@@ -49,7 +52,9 @@ At a high level, the AI Toolkit works as follows:
 
 4. **Response Processing & Validation:** The LLM returns a JSON object conforming to the schema.
 
-5. **State Application:** The validated JSON is passed to `gridApi.setState()`.
+5. **Operation Application:** Any non-state operations, such as adding a Calculated Column, are applied through the relevant grid APIs.
+
+6. **State Application:** The validated Grid State JSON is passed to `gridApi.setState()`.
 
 {% imageCaption imagePath="resources/ai-toolkit-sequence-diagram.svg" alt="High Contrast Theme" constrained=true maxWidth="50rem" enableDarkModeFilter=true /%}
 
@@ -147,6 +152,63 @@ gridApi.setState(newGridState, propertiesToIgnore);
 ```
 
 Passing `propertiesToIgnore` (the properties that are unchanged by the LLM) to `setState` ensures that these properties are not overridden after the grid state is updated.
+
+### Column Definition Operations
+
+`getStructuredSchema()` represents Grid State only. For changes managed through column definitions, such as adding a [Calculated Column](./calculated-columns/), extend your top-level schema with an operation shape and apply those operations yourself before calling `setState()`.
+
+An `addCalculatedColumn` operation can be represented as:
+
+```ts
+const schema = {
+    type: 'object',
+    properties: {
+        gridState: gridApi.getStructuredSchema(),
+        columnDefOperations: {
+            type: 'array',
+            items: {
+                anyOf: [
+                    {
+                        type: 'object',
+                        properties: {
+                            operation: { type: 'string', enum: ['addCalculatedColumn'] },
+                            colId: { type: 'string' },
+                            headerName: { type: 'string' },
+                            calculatedExpression: {
+                                type: 'string',
+                                description: 'Use formula syntax with bracketed column IDs, e.g. [gold] * 3 + [silver] * 2 + [bronze]',
+                            },
+                        },
+                        required: ['operation', 'colId', 'headerName', 'calculatedExpression'],
+                        additionalProperties: false,
+                    },
+                ],
+            },
+        },
+    },
+};
+```
+
+Then apply the operations with the column definition APIs:
+
+```ts
+function applyColumnDefOperations(api: GridApi, operations: any[]) {
+    const addedColumns = operations
+        .filter((operation) => operation.operation === 'addCalculatedColumn')
+        .map((operation) => ({
+            colId: operation.colId,
+            headerName: operation.headerName,
+            calculatedExpression: operation.calculatedExpression,
+        }));
+
+    if (addedColumns.length) {
+        const colDefs = api.getColumnDefs() ?? [];
+        api.setGridOption('columnDefs', [...colDefs, ...addedColumns]);
+    }
+}
+```
+
+Steer the LLM towards Calculated Column formula syntax in your system prompt: reference other columns with bracketed column IDs, such as `[gold] * 3 + [silver] * 2 + [bronze]`, wrap literal text in double quotes, such as `"Hello"`, and never use `valueGetter` JavaScript.
 
 ## Excluding Features
 

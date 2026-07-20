@@ -1,3 +1,4 @@
+import type { ShowValuesAsStateValue } from '../entities/colDef-showValuesAs';
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
 import type { RowGroupBulkExpansionState, RowGroupExpansionState } from './iExpansionService';
@@ -118,6 +119,8 @@ export interface AggregationColumnState {
     colId: string;
     /** Only named aggregation functions can be used in state */
     aggFunc: string;
+    /** Active "Show Values As" mode, or `null` to clear it */
+    showValuesAs?: ShowValuesAsStateValue;
 }
 
 export interface AggregationState {

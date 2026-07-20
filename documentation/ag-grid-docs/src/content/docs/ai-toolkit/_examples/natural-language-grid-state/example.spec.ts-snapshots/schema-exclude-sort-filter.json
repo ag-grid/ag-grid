@@ -29,7 +29,8 @@
                 "type": "object",
                 "required": [
                   "colId",
-                  "aggFunc"
+                  "aggFunc",
+                  "showValuesAs"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -52,6 +53,26 @@
                       "first",
                       "last"
                     ]
+                  },
+                  "showValuesAs": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "description": "Built-in Show Values As mode",
+                        "enum": [
+                          "percentOfGrandTotal",
+                          "percentOfColumnTotal",
+                          "percentOfRowTotal",
+                          "percentOfParentRowTotal",
+                          "percentOfParentColumnTotal"
+                        ]
+                      },
+                      {
+                        "type": "null",
+                        "description": "Clear Show Values As for this column"
+                      }
+                    ],
+                    "description": "Show this value relative to a total, or null to clear it"
                   }
                 }
               },
@@ -59,7 +80,8 @@
                 "type": "object",
                 "required": [
                   "colId",
-                  "aggFunc"
+                  "aggFunc",
+                  "showValuesAs"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -82,6 +104,26 @@
                       "first",
                       "last"
                     ]
+                  },
+                  "showValuesAs": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "description": "Built-in Show Values As mode",
+                        "enum": [
+                          "percentOfGrandTotal",
+                          "percentOfColumnTotal",
+                          "percentOfRowTotal",
+                          "percentOfParentRowTotal",
+                          "percentOfParentColumnTotal"
+                        ]
+                      },
+                      {
+                        "type": "null",
+                        "description": "Clear Show Values As for this column"
+                      }
+                    ],
+                    "description": "Show this value relative to a total, or null to clear it"
                   }
                 }
               },
@@ -89,7 +131,8 @@
                 "type": "object",
                 "required": [
                   "colId",
-                  "aggFunc"
+                  "aggFunc",
+                  "showValuesAs"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -112,6 +155,26 @@
                       "first",
                       "last"
                     ]
+                  },
+                  "showValuesAs": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "description": "Built-in Show Values As mode",
+                        "enum": [
+                          "percentOfGrandTotal",
+                          "percentOfColumnTotal",
+                          "percentOfRowTotal",
+                          "percentOfParentRowTotal",
+                          "percentOfParentColumnTotal"
+                        ]
+                      },
+                      {
+                        "type": "null",
+                        "description": "Clear Show Values As for this column"
+                      }
+                    ],
+                    "description": "Show this value relative to a total, or null to clear it"
                   }
                 }
               },
@@ -119,7 +182,8 @@
                 "type": "object",
                 "required": [
                   "colId",
-                  "aggFunc"
+                  "aggFunc",
+                  "showValuesAs"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -142,6 +206,26 @@
                       "first",
                       "last"
                     ]
+                  },
+                  "showValuesAs": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "description": "Built-in Show Values As mode",
+                        "enum": [
+                          "percentOfGrandTotal",
+                          "percentOfColumnTotal",
+                          "percentOfRowTotal",
+                          "percentOfParentRowTotal",
+                          "percentOfParentColumnTotal"
+                        ]
+                      },
+                      {
+                        "type": "null",
+                        "description": "Clear Show Values As for this column"
+                      }
+                    ],
+                    "description": "Show this value relative to a total, or null to clear it"
                   }
                 }
               },
@@ -149,7 +233,8 @@
                 "type": "object",
                 "required": [
                   "colId",
-                  "aggFunc"
+                  "aggFunc",
+                  "showValuesAs"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -172,6 +257,26 @@
                       "first",
                       "last"
                     ]
+                  },
+                  "showValuesAs": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "description": "Built-in Show Values As mode",
+                        "enum": [
+                          "percentOfGrandTotal",
+                          "percentOfColumnTotal",
+                          "percentOfRowTotal",
+                          "percentOfParentRowTotal",
+                          "percentOfParentColumnTotal"
+                        ]
+                      },
+                      {
+                        "type": "null",
+                        "description": "Clear Show Values As for this column"
+                      }
+                    ],
+                    "description": "Show this value relative to a total, or null to clear it"
                   }
                 }
               }

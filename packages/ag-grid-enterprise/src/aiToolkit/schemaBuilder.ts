@@ -200,6 +200,21 @@ class BooleanSchemaBuilder extends BaseSchemaBuilder<'boolean'> {
     }
 }
 
+class NullSchemaBuilder {
+    constructor(private readonly description?: string) {}
+
+    nullable(): this {
+        return this;
+    }
+
+    toJSON(): JSONSchema {
+        return {
+            type: 'null',
+            description: this.description,
+        };
+    }
+}
+
 class ArraySchemaBuilder extends BaseSchemaBuilder<'array'> {
     readonly type = 'array';
 
@@ -366,5 +381,6 @@ export const s = {
         new ObjectSchemaBuilder(properties, description),
     union: (schemas: SchemaBuilder[], description?: string) => new UnionSchemaBuilder(schemas, description),
     literal: (value: string, description?: string) => new LiteralSchemaBuilder(value, description),
+    null: (description?: string) => new NullSchemaBuilder(description),
     ref: (id: string) => new ReferenceSchemaBuilder(id),
 } as const;

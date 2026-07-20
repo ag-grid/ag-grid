@@ -1,5 +1,7 @@
 import { ensureGridReady, expect, test, waitForGridContent, waitForRowAnimations } from '@utils/grid/test-utils';
 
+import { applyColumnDefOperations } from './columnDefOperations';
+
 test.agExample(import.meta, () => {
     test.eachFramework('Grid loads the Olympic winners dataset', async ({ agIdFor, page }) => {
         await ensureGridReady(page);
@@ -75,5 +77,34 @@ test.agExample(import.meta, () => {
         const gridApi = remoteGrid(page);
         const schema = await gridApi.getStructuredSchema({ exclude: ['sort', 'filter'] });
         await expect(JSON.stringify(schema, null, 2)).toMatchSnapshot('schema-exclude-sort-filter.json');
+    });
+
+    test.vanilla('Column definition operation adds a calculated column', async () => {
+        let colDefs: any[] = [{ field: 'gold' }, { field: 'silver' }, { field: 'bronze' }];
+        const gridApi = {
+            getColumnDefs: () => colDefs,
+            setGridOption: (_key: string, nextColDefs: any[]) => {
+                colDefs = nextColDefs;
+            },
+        } as any;
+
+        applyColumnDefOperations(gridApi, [
+            {
+                operation: 'addCalculatedColumn',
+                colId: 'weightedTotal',
+                headerName: 'Weighted Total',
+                calculatedExpression: '[gold] * 3 + [silver] * 2 + [bronze]',
+                cellDataType: 'number',
+                aggFunc: 'sum',
+            },
+        ]);
+
+        expect(colDefs).toContainEqual({
+            colId: 'weightedTotal',
+            headerName: 'Weighted Total',
+            calculatedExpression: '[gold] * 3 + [silver] * 2 + [bronze]',
+            cellDataType: 'number',
+            aggFunc: 'sum',
+        });
     });
 });

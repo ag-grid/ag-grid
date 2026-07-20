@@ -83,12 +83,65 @@ const buildLLMSchema = (gridApi: GridApi): any => {
                 },
                 description: 'List of grid state properties to ignore when applying the new state',
             },
+            columnDefOperations: {
+                type: 'array',
+                items: {
+                    anyOf: [
+                        {
+                            type: 'object',
+                            properties: {
+                                operation: {
+                                    type: 'string',
+                                    enum: ['addCalculatedColumn'],
+                                    description: 'Add a new Calculated Column to the grid',
+                                },
+                                colId: {
+                                    type: 'string',
+                                    description: 'Stable unique column ID',
+                                },
+                                headerName: {
+                                    type: 'string',
+                                    description: 'Column header shown to users',
+                                },
+                                calculatedExpression: {
+                                    type: 'string',
+                                    description:
+                                        'Calculated Column formula. Reference other columns with bracketed column IDs, for example [amount] * 1.2, and wrap literal text in double quotes, for example "Hello"',
+                                },
+                                cellDataType: {
+                                    type: 'string',
+                                    enum: ['text', 'number', 'date', 'boolean'],
+                                    description: 'Cell data type for the calculated result',
+                                },
+                                aggFunc: {
+                                    type: 'string',
+                                    enum: ['sum', 'avg', 'min', 'max', 'count', 'first', 'last'],
+                                    description: 'Aggregation function for grouped rows',
+                                },
+                                width: {
+                                    type: 'number',
+                                    minimum: 20,
+                                    description: 'Column width in pixels',
+                                },
+                                hide: {
+                                    type: 'boolean',
+                                    description: 'Whether the new column should be hidden',
+                                },
+                            },
+                            required: ['operation', 'colId', 'headerName', 'calculatedExpression'],
+                            additionalProperties: false,
+                        },
+                    ],
+                },
+                description:
+                    'Column definition operations that cannot be represented as Grid State. Use this for Calculated Columns.',
+            },
             explanation: {
                 type: 'string',
                 description: 'Human-readable explanation of the changes made to the grid state',
             },
         },
-        required: ['gridState', 'explanation', 'propertiesToIgnore'],
+        required: ['gridState', 'explanation', 'propertiesToIgnore', 'columnDefOperations'],
         additionalProperties: false,
     };
 };

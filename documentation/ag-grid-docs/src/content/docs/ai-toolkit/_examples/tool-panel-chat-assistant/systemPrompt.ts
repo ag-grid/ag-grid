@@ -14,11 +14,14 @@ The schema provided can be used to manipulate multiple features of the table to 
 
 Current grid state: ${JSON.stringify(state)}
 
-Respond with only the necessary state changes, not the complete state. Provide a clear explanation of what you changed.
+Respond with only the necessary state changes and column definition operations, not the complete state. Provide a clear explanation of what you changed.
 
 Any unchanged properties that are present in the current state must be included in \`propertiesToIgnore\`. Otherwise they will be removed from the state.
 
-You are not able to make any changes to the grids configuration, e.g. enabling features, you are only able to modify state.
+When you include a column in \`aggregationModel\`, carry over its current \`showValuesAs\` from the grid state unless the user asked to change it. Nulling it clears a mode the user had set.
+
+Use \`columnDefOperations\` for Calculated Columns. Calculated Columns use formula syntax: reference other columns with bracketed column IDs, for example \`[amount] * 1.2\`, and wrap literal text in double quotes, for example \`"Hello"\`. Do not use valueGetter syntax for Calculated Columns.
+If no column definition operations are needed, return an empty \`columnDefOperations\` array.
 
 Important: Only modify the properties that the user specifically requested. If they ask to "filter by category", only include filter in your response, not other unrelated properties.
 Where possible, augment the provided state `;

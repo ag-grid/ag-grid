@@ -50,6 +50,7 @@ export function convertColumnState(
             hide,
             width,
             flex,
+            showValuesAs,
         } = columnState[i];
         columns.push(colId);
         if (sort) {
@@ -59,7 +60,7 @@ export function convertColumnState(
             groupColIds[rowGroupIndex ?? 0] = colId;
         }
         if (typeof aggFunc === 'string') {
-            aggregationColumns.push({ colId, aggFunc, valueIndex });
+            aggregationColumns.push({ colId, aggFunc, showValuesAs, valueIndex });
         }
         if (pivot) {
             pivotColIds[pivotIndex ?? 0] = colId;
@@ -106,7 +107,13 @@ type IndexedAggregationColumnState = AggregationColumnState & { valueIndex: numb
 function orderAggregationModel(columns: IndexedAggregationColumnState[]): AggregationColumnState[] {
     return columns
         .sort((a, b) => (a.valueIndex ?? Infinity) - (b.valueIndex ?? Infinity))
-        .map((column) => ({ colId: column.colId, aggFunc: column.aggFunc }));
+        .map((column) => {
+            const state: AggregationColumnState = { colId: column.colId, aggFunc: column.aggFunc };
+            if (column.showValuesAs != null) {
+                state.showValuesAs = column.showValuesAs;
+            }
+            return state;
+        });
 }
 
 export function _convertColumnGroupState(
