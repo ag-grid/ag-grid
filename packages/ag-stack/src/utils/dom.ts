@@ -1,5 +1,6 @@
 import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
 import { _setAriaHidden } from './aria';
+import { _last } from './array';
 import { _getDocument, _getWindow } from './document';
 
 /**
@@ -451,6 +452,27 @@ export function _observeResize(
     const resizeObserver = ResizeObserverImpl ? new ResizeObserverImpl(callback) : null;
     resizeObserver?.observe(element);
     return () => resizeObserver?.disconnect();
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _observeIntersection(
+    beans: UtilBeanCollection,
+    element: HTMLElement,
+    callback: (entry: IntersectionObserverEntry) => void,
+    options?: IntersectionObserverInit
+): () => void {
+    const win = _getWindow(beans);
+    const IntersectionObserver = win.IntersectionObserver;
+    // support envs like jsdom that don't have IntersectionObserver
+    const intersectionObserver = IntersectionObserver
+        ? new IntersectionObserver((entries) => {
+              // use _last because when an element rapidly enters then leaves the screen
+              // one callback might return multiple entries for the same element
+              callback(_last(entries));
+          }, options)
+        : null;
+    intersectionObserver?.observe(element);
+    return () => intersectionObserver?.disconnect();
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

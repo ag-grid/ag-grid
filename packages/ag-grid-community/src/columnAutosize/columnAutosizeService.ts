@@ -342,6 +342,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 this.sizeColumnsToFitGridBody(params, 500);
             }, 100);
         } else if (nextTimeout === 500) {
+            // IMPORTANT! in gridCtrl we add content-visibility:auto `contentVisibilityAutoDelay` ms (default 1000) after
+            // first rendering data to avoid breaking size-to-fit. We're relying on the maximum timeout here being less
+            // than the default 1000ms. If you increase this timeout, update the default `contentVisibilityAutoDelay` too.
             window.setTimeout(() => {
                 this.sizeColumnsToFitGridBody(params, -1);
             }, 500);
