@@ -1,8 +1,8 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import type { ColDef, ColGroupDef } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
+import { RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
+import { DragEventDispatcher, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import {
     GROUP_AUTO_COLUMN_ID,
     getAutoGroupColumnIds,
@@ -12,7 +12,7 @@ import {
 
 describe('Auto Group Column Order', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, RowGroupingPanelModule],
     });
 
     afterEach(() => {
@@ -688,6 +688,160 @@ describe('Auto Group Column Order', () => {
             `);
         });
 
+        test('appends auto group column for a row group added at runtime', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            expect(getColumnOrder(gridApi, 'center')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`, 'a', 'b', 'c']);
+
+            gridApi.addRowGroupColumns(['b']);
+
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+            // b is auto-hidden when grouped via the API, so it drops out of the displayed cols.
+            expect(gridApi.getColumn('b')?.isVisible()).toBe(false);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                `${GROUP_AUTO_COLUMN_ID}-a`,
+                `${GROUP_AUTO_COLUMN_ID}-b`,
+                'a',
+                'c',
+            ]);
+        });
+
+        test('appends multiple auto group columns for row groups added at runtime', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+                { colId: 'd' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            expect(getColumnOrder(gridApi, 'center')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`, 'a', 'b', 'c', 'd']);
+
+            gridApi.addRowGroupColumns(['b', 'c']);
+
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b', 'c']);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                `${GROUP_AUTO_COLUMN_ID}-a`,
+                `${GROUP_AUTO_COLUMN_ID}-b`,
+                `${GROUP_AUTO_COLUMN_ID}-c`,
+                'a',
+                'd',
+            ]);
+        });
+
+        test('appends multiple auto group columns when added via applyColumnState', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+                { colId: 'd' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            expect(getColumnOrder(gridApi, 'center')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`, 'a', 'b', 'c', 'd']);
+
+            // Only the pre-existing auto col is named in state; the two new ones are "missed" and must seat after it.
+            gridApi.applyColumnState({
+                state: [
+                    { colId: 'd' },
+                    { colId: `${GROUP_AUTO_COLUMN_ID}-a` },
+                    { colId: 'a', rowGroupIndex: 0 },
+                    { colId: 'b', rowGroupIndex: 1 },
+                    { colId: 'c', rowGroupIndex: 2 },
+                ],
+                applyOrder: true,
+            });
+
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b', 'c']);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                'd',
+                `${GROUP_AUTO_COLUMN_ID}-a`,
+                `${GROUP_AUTO_COLUMN_ID}-b`,
+                `${GROUP_AUTO_COLUMN_ID}-c`,
+                'a',
+                'b',
+                'c',
+            ]);
+        });
+
+        test('appends auto group column in place when a row group is added via applyColumnState', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            expect(getColumnOrder(gridApi, 'center')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`, 'a', 'b', 'c']);
+
+            gridApi.applyColumnState({
+                state: [
+                    { colId: 'c' },
+                    { colId: `${GROUP_AUTO_COLUMN_ID}-a` },
+                    { colId: 'a', rowGroupIndex: 0 },
+                    { colId: 'b', rowGroupIndex: 1 },
+                ],
+                applyOrder: true,
+            });
+
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                'c',
+                `${GROUP_AUTO_COLUMN_ID}-a`,
+                `${GROUP_AUTO_COLUMN_ID}-b`,
+                'a',
+                'b',
+            ]);
+        });
+
+        test('appends auto group column when a column is dragged into the row group panel', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                rowGroupPanelShow: 'always',
+                defaultColDef: { enableRowGroup: true },
+            });
+            expect(getColumnOrder(gridApi, 'center')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`, 'a', 'b', 'c']);
+
+            await dragHeaderToRowGroupPanel(gridApi, 'b');
+
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                `${GROUP_AUTO_COLUMN_ID}-a`,
+                `${GROUP_AUTO_COLUMN_ID}-b`,
+                'a',
+                'c',
+            ]);
+        });
+
+        test('appends auto group column after a pinned existing auto group column added at runtime', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b', enableRowGroup: true },
+                { colId: 'c' },
+            ];
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                autoGroupColumnDef: { pinned: 'left' },
+            });
+            expect(getColumnOrder(gridApi, 'left')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`]);
+
+            gridApi.addRowGroupColumns(['b']);
+
+            expect(gridApi.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+            // both auto cols are pinned left; the new one seats after the existing one, not ahead of it
+            expect(getColumnOrder(gridApi, 'left')).toEqual([`${GROUP_AUTO_COLUMN_ID}-a`, `${GROUP_AUTO_COLUMN_ID}-b`]);
+        });
+
         test('orders row group column(s) by rowGroupIndex (lowest first) when enableRtl=true', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 { colId: 'a', rowGroupIndex: 1 },
@@ -1197,3 +1351,26 @@ describe('Auto Group Column Order', () => {
         });
     });
 });
+
+async function dragHeaderToRowGroupPanel(api: GridApi, colId: string): Promise<void> {
+    const gridEl = getGridElement(api)! as HTMLElement;
+    const source = gridEl.querySelector(`.ag-header-cell[col-id="${colId}"]`) as HTMLElement | null;
+    const panel = gridEl.querySelector('.ag-column-drop-horizontal') as HTMLElement | null;
+    if (!source || !panel) {
+        throw new Error(`drag setup failed: source=${!!source} panel=${!!panel}`);
+    }
+    const dispatcher = new DragEventDispatcher('mouse', null, false);
+    const ownerDocument = source.ownerDocument;
+    const original = ownerDocument.elementsFromPoint?.bind(ownerDocument);
+    ownerDocument.elementsFromPoint = () => [panel];
+    try {
+        await dispatcher.startDrag(source, 5, 15);
+        await dispatcher.movePointer(source, 12, 15);
+        await dispatcher.movePointer(panel, 50, 10);
+        await dispatcher.movePointer(panel, 90, 10);
+        await dispatcher.finishDrag(panel);
+        await asyncSetTimeout(50);
+    } finally {
+        ownerDocument.elementsFromPoint = original as typeof ownerDocument.elementsFromPoint;
+    }
+}
