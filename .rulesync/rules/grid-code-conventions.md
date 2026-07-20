@@ -6,7 +6,7 @@ globs: ['packages/*/src/**/*.ts', 'community-modules/*/src/**/*.ts', 'enterprise
 
 # AG Grid Source Conventions
 
-Grid-specific rules for runtime source, layered on top of the shared [Code Quality Guide](.rulesync/rules/code-quality.md). Scoped to `src` so it loads only when editing grid source, not into the always-on project context.
+Grid-specific rules for runtime source, layered on top of the shared [Code Quality Guide](code-quality.md). Scoped to `src` so it loads only when editing grid source, not into the always-on project context.
 
 ## Prefer inline null checks over `_exists` / `_missing`
 
