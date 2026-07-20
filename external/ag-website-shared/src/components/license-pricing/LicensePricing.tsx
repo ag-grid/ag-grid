@@ -1,5 +1,6 @@
 import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { YOUTUBE_LICENSE_PRICING_URL } from '@ag-website-shared/constants';
 import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-active.svg?react';
 import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
 import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-active.svg?react';
@@ -305,7 +306,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         <div className={styles.videoPrompt}>
                             <a
                                 id="licence-explainer-video-thumbnail"
-                                href="https://www.youtube.com/watch?v=VPr__OKxH50"
+                                href={YOUTUBE_LICENSE_PRICING_URL}
                                 target="_blank"
                                 className={styles.thumbnail}
                             >
@@ -320,7 +321,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 <p>
                                     <a
                                         id="licence-explainer-video-text"
-                                        href="https://www.youtube.com/watch?v=VPr__OKxH50"
+                                        href={YOUTUBE_LICENSE_PRICING_URL}
                                         target="_blank"
                                     >
                                         <span className="icon"></span>

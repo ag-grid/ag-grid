@@ -1,5 +1,6 @@
 import type { Framework } from '@ag-grid-types';
 import { DEV_LICENSE_DATA } from '@ag-website-shared/components/license-pricing/licenseData';
+import { YOUTUBE_LICENSE_PRICING_URL } from '@ag-website-shared/constants';
 import chartsFeaturesData from '@ag-website-shared/content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '@ag-website-shared/content/license-features/gridFeaturesMatrix.json';
 import { resolveSharedUrl } from '@ag-website-shared/utils/resolveSharedUrl';
@@ -12,7 +13,6 @@ import { toAbsoluteUrl } from '../markdoc/toAbsoluteUrl';
 // single framework, matching AGENTS.md.ts / llms.txt.ts.
 const FRAMEWORK: Framework = 'javascript';
 
-const EXPLAINER_VIDEO_URL = 'https://www.youtube.com/watch?v=VPr__OKxH50';
 const ZENDESK_URL = 'https://ag-grid.zendesk.com/hc/en-us';
 
 // Feature-matrix JSON shapes (see gridFeaturesMatrix.json / chartsFeaturesMatrix.json).
@@ -135,7 +135,7 @@ function renderTrial(siteRoot?: string): string {
         ].join('\n'),
         `[Get a trial licence](${trialUrl})`,
         `Already have a licence? See [Installing Your Licence Key](${licenceInstallUrl}).`,
-        `Not sure which licence you need? [Watch our short explainer video](${EXPLAINER_VIDEO_URL}).`,
+        `Not sure which licence you need? [Watch our short explainer video](${YOUTUBE_LICENSE_PRICING_URL}).`,
     ].join('\n\n');
 }
 

@@ -1,3 +1,4 @@
+import { YOUTUBE_LICENSE_PRICING_URL } from '@ag-website-shared/constants';
 import { describe, expect, it } from 'vitest';
 
 import { buildLicensePricingMarkdown } from './buildLicensePricingMarkdown';
@@ -41,7 +42,7 @@ describe('buildLicensePricingMarkdown', () => {
         expect(output).toContain('[Get a trial licence](https://www.ag-grid.com/');
         expect(output).toContain('community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence');
         expect(output).toContain('[Installing Your Licence Key](https://www.ag-grid.com/');
-        expect(output).toContain('https://www.youtube.com/watch?v=VPr__OKxH50');
+        expect(output).toContain(YOUTUBE_LICENSE_PRICING_URL);
     });
 
     it('ends with a single trailing newline', () => {
