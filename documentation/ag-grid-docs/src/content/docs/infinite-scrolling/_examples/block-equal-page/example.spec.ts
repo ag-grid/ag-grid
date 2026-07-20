@@ -17,9 +17,13 @@ test.agExample(import.meta, () => {
 
         await expect(agIdFor.paginationSummaryPanelCurrentPage()).toHaveText('1');
 
-        // Page and block sizes are equal, so each new page hits the server for a fresh block.
+        // Page and block sizes are both the default 100, so page 2 is a fresh block starting at
+        // dataset index 100 (Sabine Völker / Germany) — proving new rows were fetched, not stale data.
         await agIdFor.paginationSummaryPanelButton('next page').click();
         await expect(agIdFor.paginationSummaryPanelCurrentPage()).toHaveText('2');
-        await expect(page.locator('.ag-center-cols-container .ag-row [col-id="athlete"]').first()).not.toBeEmpty();
+        await expect(page.locator('.ag-row[row-index="100"]').locator('[col-id="athlete"]')).toContainText(
+            'Sabine Völker'
+        );
+        await expect(page.locator('.ag-row[row-index="100"]').locator('[col-id="country"]')).toContainText('Germany');
     });
 });

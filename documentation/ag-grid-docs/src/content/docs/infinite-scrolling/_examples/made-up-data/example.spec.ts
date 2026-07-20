@@ -13,15 +13,16 @@ test.agExample(import.meta, () => {
         await expect(dataRow(0).locator('[col-id="b"]')).toContainText('B1 = 18');
     });
 
-    test.eachFramework('scrolling reveals later generated rows', async ({ page }) => {
+    test.eachFramework('scrolling to the bottom reveals the last generated rows', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
+        // rowCount is a known 100, so scrolling to the bottom renders the final rows (index 99).
         await page.locator('.ag-body-viewport').evaluate((el) => {
             el.scrollTop = el.scrollHeight;
         });
 
-        // Row 50: column A => 'A51 = 67' (17 + 50 + 0).
-        await expect(page.locator('.ag-row[row-index="50"]').locator('[col-id="a"]')).toContainText('A51 = 67');
+        // Row 99 (the last row): column A => 'A100 = 116' (17 + 99 + 0).
+        await expect(page.locator('.ag-row[row-index="99"]').locator('[col-id="a"]')).toContainText('A100 = 116');
     });
 });
